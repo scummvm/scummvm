@@ -146,7 +146,7 @@ void Versailles_Documentation::init(const Sprites *sprites, FontManager *fontMan
 }
 
 void Versailles_Documentation::handleDocArea() {
-	g_system->showMouse(false);
+	_engine->showMouse(false);
 
 	// Load all links lazily and free them at the end to not waste memory
 	// Maybe it's not really useful
@@ -173,7 +173,7 @@ void Versailles_Documentation::handleDocArea() {
 
 	_allLinks.clear();
 
-	g_system->showMouse(true);
+	_engine->showMouse(true);
 }
 
 void Versailles_Documentation::handleDocInGame(const Common::String &record) {
@@ -184,7 +184,7 @@ void Versailles_Documentation::handleDocInGame(const Common::String &record) {
 	Common::String nextRecord;
 	MouseBoxes boxes(3);
 
-	g_system->showMouse(false);
+	_engine->showMouse(false);
 	bool end = false;
 	while (!end) {
 		inGamePrepareRecord(docSurface, boxes);
@@ -212,7 +212,7 @@ void Versailles_Documentation::handleDocInGame(const Common::String &record) {
 			error("Invalid case %d when displaying doc record", action);
 		}
 	}
-	g_system->showMouse(true);
+	_engine->showMouse(true);
 }
 
 Common::String Versailles_Documentation::docAreaHandleSummary() {
@@ -327,7 +327,7 @@ Common::String Versailles_Documentation::docAreaHandleSummary() {
 	                      imageDecoder->getPaletteColorCount());
 
 	_engine->setCursor(181);
-	g_system->showMouse(true);
+	_engine->showMouse(true);
 
 	bool redraw = true;
 	uint hoveredBox = -1;
@@ -409,7 +409,7 @@ Common::String Versailles_Documentation::docAreaHandleSummary() {
 		}
 	}
 
-	g_system->showMouse(false);
+	_engine->showMouse(false);
 
 	delete imageDecoder;
 
@@ -456,7 +456,7 @@ Common::String Versailles_Documentation::docAreaHandleTimeline() {
 	               479 - _sprites->getCursor(105).getHeight(), 640, 480);
 
 	_engine->setCursor(181);
-	g_system->showMouse(true);
+	_engine->showMouse(true);
 
 	bool redraw = true;
 	uint hoveredBox = -1;
@@ -515,7 +515,7 @@ Common::String Versailles_Documentation::docAreaHandleTimeline() {
 		}
 	}
 
-	g_system->showMouse(false);
+	_engine->showMouse(false);
 
 	delete imageDecoder;
 
@@ -693,7 +693,7 @@ uint Versailles_Documentation::docAreaHandleRecord(Graphics::ManagedSurface &sur
         MouseBoxes &boxes, Common::String &nextRecord) {
 	// Hovering is only handled for timeline entries
 	_engine->setCursor(181);
-	g_system->showMouse(true);
+	_engine->showMouse(true);
 
 	bool first = true;
 	bool redraw = true;
@@ -856,7 +856,7 @@ uint Versailles_Documentation::docAreaHandleRecord(Graphics::ManagedSurface &sur
 		}
 	}
 
-	g_system->showMouse(false);
+	_engine->showMouse(false);
 	_engine->setCursor(181);
 	return action;
 }
@@ -954,7 +954,7 @@ Common::String Versailles_Documentation::docAreaHandleGeneralMap() {
 	                      imageDecoder->getPaletteColorCount());
 
 	_engine->setCursor(181);
-	g_system->showMouse(true);
+	_engine->showMouse(true);
 
 	bool redraw = true;
 	uint hoveredBox = -1;
@@ -1050,7 +1050,7 @@ Common::String Versailles_Documentation::docAreaHandleGeneralMap() {
 		}
 	}
 
-	g_system->showMouse(false);
+	_engine->showMouse(false);
 
 	delete imageDecoder;
 
@@ -1172,7 +1172,7 @@ Common::String Versailles_Documentation::docAreaHandleCastleMap() {
 	                      imageDecoder->getPaletteColorCount());
 
 	_engine->setCursor(181);
-	g_system->showMouse(true);
+	_engine->showMouse(true);
 
 	bool redraw = true;
 	uint hoveredBox = -1;
@@ -1294,7 +1294,7 @@ Common::String Versailles_Documentation::docAreaHandleCastleMap() {
 		}
 	}
 
-	g_system->showMouse(false);
+	_engine->showMouse(false);
 
 	delete imageDecoder;
 
@@ -1340,7 +1340,7 @@ void Versailles_Documentation::inGamePrepareRecord(Graphics::ManagedSurface &sur
 uint Versailles_Documentation::inGameHandleRecord(Graphics::ManagedSurface &surface,
         MouseBoxes &boxes, Common::String &nextRecord) {
 	_engine->setCursor(181);
-	g_system->showMouse(true);
+	_engine->showMouse(true);
 
 	uint action = -1;
 
@@ -1383,7 +1383,7 @@ uint Versailles_Documentation::inGameHandleRecord(Graphics::ManagedSurface &surf
 		}
 	}
 
-	g_system->showMouse(false);
+	_engine->showMouse(false);
 	_engine->setCursor(181);
 	return action;
 }

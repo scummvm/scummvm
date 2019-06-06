@@ -48,12 +48,12 @@ void ZonFixedImage::run(const CallbackFunctor *callback) {
 
 	_callback = callback;
 
-	g_system->showMouse(true);
+	_engine.showMouse(true);
 	while (!_exit) {
 		(*_callback)(this);
 	}
 	_engine.waitMouseRelease();
-	g_system->showMouse(false);
+	_engine.showMouse(false);
 
 	// Deselect object
 	_inventory.setSelectedObject(nullptr);
@@ -97,10 +97,10 @@ void ZonFixedImage::load(const Common::String &image, const char *zone) {
 	// WORKAROUND: Wait for release after displaying the fixed image to avoid handling events due to mouse being pressed
 	// There is this bug in game
 	// Don't display cursor to prevent displaying an invalid cursor
-	g_system->showMouse(false);
+	_engine.showMouse(false);
 	g_system->updateScreen();
 	_engine.waitMouseRelease();
-	g_system->showMouse(true);
+	_engine.showMouse(true);
 }
 
 void ZonFixedImage::display() const {

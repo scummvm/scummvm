@@ -263,9 +263,9 @@ uint Toolbar::callbackViewObject(uint dragStatus) {
 		return 1;
 	case kDragStatus_Finished:
 		// Just clicked
-		g_system->showMouse(false);
+		_engine->showMouse(false);
 		(*selectedObject->viewCallback())();
-		g_system->showMouse(true);
+		_engine->showMouse(true);
 		_parentMustRedraw = true;
 		_shortExit = true;
 		return 1;
@@ -293,7 +293,7 @@ uint Toolbar::callbackOptions(uint dragStatus) {
 		_shortExit = true;
 		_engine->setMousePos(Common::Point(320, 240)); // Center of screen
 		// Displaying options hides the mouse
-		g_system->showMouse(true);
+		_engine->showMouse(true);
 		return 0;
 	default:
 		return 0;

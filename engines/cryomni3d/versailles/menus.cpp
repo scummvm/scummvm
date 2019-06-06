@@ -96,7 +96,7 @@ uint CryOmni3DEngine_Versailles::displayOptions() {
 	optionsSurface.create(bgFrame->w, bgFrame->h, bgFrame->format);
 
 	setCursor(181);
-	g_system->showMouse(true);
+	showMouse(true);
 
 	uint hoveredBox = -1;
 	uint selectedBox;
@@ -452,7 +452,7 @@ uint CryOmni3DEngine_Versailles::displayOptions() {
 		}
 	}
 
-	g_system->showMouse(false);
+	showMouse(false);
 
 	if (selectedMsg == 42) {
 		_abortCommand = kAbortLoadGame;
@@ -570,7 +570,7 @@ uint CryOmni3DEngine_Versailles::displayFilePicker(const Graphics::Surface *bgFr
 	_fontManager.displayStr(164, 214, _messages[subtitleId]);
 
 	// Draw an empty screen before we list saves
-	g_system->showMouse(false);
+	showMouse(false);
 	g_system->copyRectToScreen(surface.getPixels(), surface.pitch, 0, 0, surface.w, surface.h);
 	g_system->updateScreen();
 
@@ -578,7 +578,7 @@ uint CryOmni3DEngine_Versailles::displayFilePicker(const Graphics::Surface *bgFr
 	getSavesList(_isVisiting, savesList);
 	Common::String saveNameBackup;
 
-	g_system->showMouse(true);
+	showMouse(true);
 
 	MouseBoxes boxes(10); // 6 files + Yes/No/Up/Down buttons
 
@@ -962,7 +962,7 @@ void CryOmni3DEngine_Versailles::displayCredits() {
 		return;
 	}
 
-	g_system->showMouse(false);
+	showMouse(false);
 
 	char line[256];
 	bool end = false;
@@ -1068,7 +1068,7 @@ void CryOmni3DEngine_Versailles::displayCredits() {
 			currentY += lineHeight;
 		}
 	}
-	g_system->showMouse(true);
+	showMouse(true);
 }
 
 } // End of namespace Versailles

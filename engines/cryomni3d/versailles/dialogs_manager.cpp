@@ -42,12 +42,12 @@ bool Versailles_DialogsManager::play(const Common::String &sequence) {
 
 	_engine->setCursor(181);
 	// No need to adjust hide cursor counter, there isn't any in ScummVM
-	bool cursorWasVisible = g_system->showMouse(true);
+	bool cursorWasVisible = _engine->showMouse(true);
 
 	bool slowStop = false;
 	bool didSth = DialogsManager::play(sequence, slowStop);
 
-	g_system->showMouse(cursorWasVisible);
+	_engine->showMouse(cursorWasVisible);
 
 	if (didSth && slowStop) {
 		if (_engine->showSubtitles()) {
@@ -123,7 +123,7 @@ void Versailles_DialogsManager::playDialog(const Common::String &video, const Co
 		return;
 	}
 
-	g_system->showMouse(false);
+	_engine->showMouse(false);
 
 	uint16 width = videoDecoder->getWidth();
 	uint16 height = videoDecoder->getHeight();
@@ -235,7 +235,7 @@ void Versailles_DialogsManager::playDialog(const Common::String &video, const Co
 	// It's intentional that _lastImage is set with the first video image
 
 	delete videoDecoder;
-	g_system->showMouse(true);
+	_engine->showMouse(true);
 }
 
 void Versailles_DialogsManager::displayMessage(const Common::String &text) {

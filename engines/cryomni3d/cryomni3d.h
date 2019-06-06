@@ -33,6 +33,8 @@
 
 #include "engines/engine.h"
 
+#include "graphics/cursorman.h"
+
 #include "cryomni3d/font_manager.h"
 #include "cryomni3d/objects.h"
 #include "cryomni3d/sprites.h"
@@ -106,8 +108,10 @@ public:
 	Image::ImageDecoder *loadHLZ(const Common::String &filename);
 
 	void fillSurface(byte color);
+	/* We use CursorMan because it avoids problems with cursors in GMM */
 	void setCursor(const Graphics::Cursor &cursor) const;
 	void setCursor(uint cursorId) const;
+	bool showMouse(bool visible) { return CursorMan.showMouse(visible); }
 	typedef void (CryOmni3DEngine::*HNMCallback)(uint frameNum);
 	void playHNM(const Common::String &filename,
 	             Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType,

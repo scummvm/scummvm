@@ -600,7 +600,7 @@ void CryOmni3DEngine_Versailles::playTransitionEndLevel(int level) {
 	fillSurface(0);
 
 	// In original game the HNM player just doesn't render the cursor
-	bool cursorWasVisible = g_system->showMouse(false);
+	bool cursorWasVisible = showMouse(false);
 
 	// Videos are like music because if you mute music in game it will mute videos soundtracks
 	playHNM(video, Audio::Mixer::kMusicSoundType);
@@ -618,7 +618,7 @@ void CryOmni3DEngine_Versailles::playTransitionEndLevel(int level) {
 	}
 
 	// Display back cursor there once the palette has been zeroed
-	g_system->showMouse(cursorWasVisible);
+	showMouse(cursorWasVisible);
 
 	fillSurface(0);
 
@@ -1115,7 +1115,7 @@ int CryOmni3DEngine_Versailles::handleWarp() {
 	bool firstDraw = true;
 	bool moving = true;
 	uint actionId;
-	g_system->showMouse(true);
+	showMouse(true);
 	while (!leftButtonPressed && !exit) {
 		int xDelta = 0, yDelta = 0;
 		uint movingCursor = -1;
@@ -1200,7 +1200,7 @@ int CryOmni3DEngine_Versailles::handleWarp() {
 		// Slow down loop but after updating screen
 		g_system->delayMillis(10);
 	}
-	g_system->showMouse(false);
+	showMouse(false);
 	return actionId;
 }
 
@@ -1395,7 +1395,7 @@ void CryOmni3DEngine_Versailles::animateCursor(const Object *obj) {
 		return;
 	}
 
-	bool cursorWasVisible = g_system->showMouse(true);
+	bool cursorWasVisible = showMouse(true);
 
 	for (uint i = 4; i > 0; i--) {
 		// Wait 100ms
@@ -1416,7 +1416,7 @@ void CryOmni3DEngine_Versailles::animateCursor(const Object *obj) {
 		g_system->updateScreen();
 	}
 
-	g_system->showMouse(cursorWasVisible);
+	showMouse(cursorWasVisible);
 }
 
 void CryOmni3DEngine_Versailles::collectObject(Object *obj, const ZonFixedImage *fimg,
@@ -1468,7 +1468,7 @@ void CryOmni3DEngine_Versailles::displayObject(const Common::String &imgName,
 	setMousePos(Common::Point(320, 240)); // Center of screen
 	setCursor(181);
 
-	bool cursorWasVisible = g_system->showMouse(true);
+	bool cursorWasVisible = showMouse(true);
 
 	bool exitImg = false;
 	while (!g_engine->shouldQuit() && !exitImg) {
@@ -1483,7 +1483,7 @@ void CryOmni3DEngine_Versailles::displayObject(const Common::String &imgName,
 	waitMouseRelease();
 	clearKeys();
 
-	g_system->showMouse(cursorWasVisible);
+	showMouse(cursorWasVisible);
 	setMousePos(Common::Point(320, 240)); // Center of screen
 }
 
@@ -1506,12 +1506,12 @@ void CryOmni3DEngine_Versailles::executeSeeAction(uint actionId) {
 void CryOmni3DEngine_Versailles::executeSpeakAction(uint actionId) {
 	PlaceActionKey key(_currentPlaceId, actionId);
 	Common::HashMap<PlaceActionKey, Common::String>::iterator it = _whoSpeaksWhere.find(key);
-	g_system->showMouse(true);
+	showMouse(true);
 	bool doneSth = false;
 	if (it != _whoSpeaksWhere.end()) {
 		doneSth = _dialogsMan.play(it->_value);
 	}
-	g_system->showMouse(false);
+	showMouse(false);
 	_forcePaletteUpdate = true;
 	if (doneSth) {
 		setMousePos(Common::Point(320, 240)); // Center of screen
@@ -1570,7 +1570,7 @@ void CryOmni3DEngine_Versailles::playInGameVideo(const Common::String &filename,
 
 	if (restoreCursorPalette) {
 		// WORKAROUND: Don't mess with mouse when not restoring cursors palette
-		g_system->showMouse(false);
+		showMouse(false);
 	}
 	lockPalette(0, 241);
 	// Videos are like music because if you mute music in game it will mute videos soundtracks
@@ -1582,7 +1582,7 @@ void CryOmni3DEngine_Versailles::playInGameVideo(const Common::String &filename,
 		// Restore cursors colors as 2 first ones may have been erased by the video
 		setPalette(&_cursorPalette[3 * 240], 240, 248);
 		// WORKAROUND: Don't mess with mouse when not restoring cursors palette
-		g_system->showMouse(true);
+		showMouse(true);
 	}
 }
 
