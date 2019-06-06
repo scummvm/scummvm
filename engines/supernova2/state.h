@@ -196,6 +196,7 @@ public:
 	void handleTime();
 	void pauseTimer(bool pause);
 	void setAnimationTimer(int ticks);
+	void dead(StringId messageId);
 	int  dialog(int num, byte rowLength[6], StringId text[6], int number);
 	void sentence(int number, bool brightness);
 	void say(StringId textId);

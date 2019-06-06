@@ -221,6 +221,7 @@ public:
 	virtual bool interact(Action verb, Object &obj1, Object &obj2);
 
 private:
+	void kill();
 };
 
 class Pyramid : public Room {
