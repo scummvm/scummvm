@@ -27,6 +27,7 @@
 
 #include "engines/stark/debug.h"
 #include "engines/stark/formats/xrc.h"
+#include "engines/stark/resources/location.h"
 #include "engines/stark/services/archiveloader.h"
 #include "engines/stark/services/settings.h"
 #include "engines/stark/services/services.h"
@@ -47,7 +48,7 @@ Object *Image::construct(Object *parent, byte subType, uint16 index, const Commo
 	case kImageSub2:
 	case kImageSub3:
 		return new ImageStill(parent, subType, index, name);
-	case kImageSub4:
+	case kImageText:
 		return new ImageText(parent, subType, index, name);
 	default:
 		error("Unknown image subtype %d", subType);
@@ -278,6 +279,14 @@ void ImageText::readData(Formats::XRCReadStream *stream) {
 	_color.b = stream->readByte();
 	_color.a = stream->readByte() | 0xFF;
 	_font = stream->readUint32LE();
+
+	// WORKAROUND: Give more space to text in the Archives' computer
+	// So there are no line breaks in the French version of the game
+	// when using a scaled font.
+	Location *location = findParent<Location>();
+	if (_name == "MAIN" && location && location->getName() == "Archive Database") {
+		_size.x = 80;
+	}
 }
 
 void ImageText::initVisual() {
@@ -306,7 +315,50 @@ void ImageText::initVisual() {
 		text->setTargetWidth(_size.x);
 		text->setTargetHeight(_size.y);
 		text->setFont(FontProvider::kCustomFont, _font);
+
+		// WORKAROUND: Move the "White Cardinal" hotspot in the Archives'
+		// computer so it matches the text. Fixes the hotspot being hard to
+		// use with scaled fonts in the Spanish version of the game.
+		if (_name == "The Church" && _polygons.size() == 2) {
+			fixWhiteCardinalHotspot(text);
+		}
+
 		_visual = text;
+	}
+}
+
+void ImageText::fixWhiteCardinalHotspot(VisualText *text) {
+	Common::Rect textRect = text->getRect();
+
+	Polygon &hotspotPoly = _polygons.back();
+	if (hotspotPoly.size() != 4) {
+		return;
+	}
+
+	Common::Point &topLeft     = hotspotPoly[0];
+	Common::Point &topRight    = hotspotPoly[1];
+	Common::Point &bottomRight = hotspotPoly[2];
+	Common::Point &bottomLeft  = hotspotPoly[3];
+
+	int16 hotspotHeight = bottomLeft.y - topLeft.y;
+	if (hotspotHeight <= 0) {
+		return;
+	}
+
+	bottomLeft .y = textRect.bottom;
+	bottomRight.y = textRect.bottom;
+	topLeft    .y = textRect.bottom - hotspotHeight;
+	topRight   .y = textRect.bottom - hotspotHeight;
+}
+
+void ImageText::resetVisual() {
+	if (!_visual) {
+		return;
+	}
+
+	VisualText *text = _visual->get<VisualText>();
+	if (text) {
+		text->resetTexture();
 	}
 }
 

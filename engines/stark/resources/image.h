@@ -49,7 +49,7 @@ public:
 	enum SubType {
 		kImageSub2 = 2,
 		kImageSub3 = 3,
-		kImageSub4 = 4
+		kImageText = 4
 	};
 
 	/** Image factory */
@@ -127,12 +127,17 @@ public:
 	// Resource API
 	void readData(Formats::XRCReadStream *stream) override;
 
+	/** Reset the text visual so it is recomputed the next frame it is rendered */
+	void resetVisual();
+
 protected:
 	// Resource API
 	void printData() override;
 
 	// Image API
 	void initVisual() override;
+
+	void fixWhiteCardinalHotspot(VisualText *text);
 
 	Common::Point _size;
 	Common::String _text;
