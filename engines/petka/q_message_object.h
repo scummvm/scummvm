@@ -47,6 +47,7 @@ public:
 	QMessageObject();
 
 	void deserialize(Common::SeekableReadStream &stream, const Common::INIFile &namesIni, const Common::INIFile &castIni);
+	void readFromBackgrndBg(Common::SeekableReadStream &stream);
 
 	uint16 getId() const;
 	const Common::String &getName() const;
@@ -54,6 +55,10 @@ public:
 	virtual void processMessage(const QMessage &msg);
 
 protected:
+	int32 _x;
+	int32 _y;
+	int32 _field14;
+	int32 _field18;
 	uint16 _id;
 	int8 _status;
 	Common::String _name;

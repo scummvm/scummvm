@@ -137,4 +137,12 @@ void QMessageObject::processMessage(const QMessage &msg) {
 
 }
 
+void QMessageObject::readFromBackgrndBg(Common::SeekableReadStream &stream) {
+	_x = stream.readSint32LE();
+	_y = stream.readSint32LE();
+	_z = stream.readSint32LE();
+	_field14 = stream.readSint32LE();
+	_field18 = stream.readSint32LE();
+}
+
 } // End of namespace Petka

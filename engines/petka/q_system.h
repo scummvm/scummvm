@@ -23,6 +23,9 @@
 #ifndef PETKA_Q_SYSTEM_H
 #define PETKA_Q_SYSTEM_H
 
+#include "common/ptr.h"
+#include "common/list.h"
+
 #include "petka/q_object.h"
 #include "petka/q_object_bg.h"
 
@@ -32,6 +35,7 @@ class PetkaEngine;
 class QObjectCase;
 class QObjectCursor;
 class QObjectStar;
+class QInterfaceMain;
 class QInterface;
 
 class QSystem {
@@ -59,6 +63,7 @@ private:
 	Common::ScopedPtr<QObjectCursor> _cursor;
 	Common::ScopedPtr<QObjectCase> _case;
 	Common::ScopedPtr<QObjectStar> _star;
+	Common::ScopedPtr<QInterfaceMain> _mainInterface;
 	QInterface *_currInterface;
 	QInterface *_prevInterface;
 };

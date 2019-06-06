@@ -31,6 +31,10 @@
 
 struct ADGameDescription;
 
+namespace Common {
+class SeekableReadStream;
+}
+
 namespace Petka {
 
 class Console;
