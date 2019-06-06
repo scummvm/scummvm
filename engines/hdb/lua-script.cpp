@@ -35,8 +35,9 @@ struct ScriptPatch {
 	const char* replace;
 } scriptPatches[] = {
 	{"GLOBAL_LUA", "for i,npc in npcs do", "for i,npc in pairs(npcs) do"},
-	{"GLOBAL_LUA", "setglobal( npcdef.codename..\"_init\", function() return NPC_Init( npcdef ) end )", "npcdef.codename..\"_init\" = function() return NPC_Init( npcdef ) end"},
-	{"GLOBAL_LUA", "setglobal( npcdef.codename..\"_use\", function(x, y, v1, v2) return NPC_Use( npcdef, x, y, v1, v2 ) end )", "npcdef.codename..\"_use\" = function(x, y, v1, v2) return NPC_Use( npcdef, x, y, v1, v2 ) end"},
+	{"GLOBAL_LUA", "setglobal( npcdef.codename..\"_init\", function() return NPC_Init( %npcdef ) end )", "_G[npcdef.codename .. \"_init\"] = function() return NPC_Init( npcdef ) end"},
+	{"GLOBAL_LUA", "setglobal( npcdef.codename..\"_use\", function(x, y, v1, v2) return NPC_Use( %npcdef, x, y, v1, v2 ) end )", "_G[npcdef.codename .. \"_use\"] = function(x, y, v1, v2) return NPC_Use( npcdef, x, y, v1, v2 ) end"},
+	{"MAP00_DEMO_LUA", "tempfunc = function() emptybed_use( %x, %y, %v1, %v2 ) end", "tempfunc = function() emptybed_use(x, y, v1, v2) end"},
 	{NULL, NULL, NULL},
 };
 
@@ -62,7 +63,6 @@ bool LuaScript::init() {
 
 	return true;
 }
-
 
 /*
 	Called from Lua, this will pop into the menu
@@ -722,7 +722,7 @@ bool LuaScript::executeMPC(Common::SeekableReadStream *stream, const char *name,
 	char *chunk = new char[length];
 	stream->read((void *)chunk, length);
 
-	sanitizeScript(chunk);
+	stripComments(chunk);
 	
 	/*
 			Remove C-style comments from the script
@@ -759,7 +759,7 @@ bool LuaScript::executeFile(const Common::String &filename) {
 	char *fileData = new char[fileSize];
 	file->read((void *)fileData, fileSize);
 
-	sanitizeScript(fileData);
+	stripComments(fileData);
 
 	Common::String fileDataString(fileData);
 
@@ -807,7 +807,7 @@ bool LuaScript::executeChunk(Common::String &chunk, uint chunkSize, const Common
 	return true;
 }
 
-void LuaScript::sanitizeScript(char *chunk) {
+void LuaScript::stripComments(char *chunk) {
 	uint32 offset = 0;
 
 	while (chunk[offset]) {
@@ -816,9 +816,6 @@ void LuaScript::sanitizeScript(char *chunk) {
 			while (chunk[offset] != 0x0d) {
 				chunk[offset++] = ' ';
 			}
-		}
-		else if (chunk[offset] == '%' && chunk[offset] != ' ') { // Update the Upvalue syntax
-			chunk[offset] = ' ';
 		}
 		offset++;
 	}

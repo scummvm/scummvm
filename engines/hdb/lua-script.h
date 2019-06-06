@@ -52,7 +52,7 @@ private:
 
 	bool registerExtensions();
 	bool executeChunk(Common::String &chunk, uint chunkSize, const Common::String &chunkName) const;
-	void sanitizeScript(char *chunk);
+	void stripComments(char *chunk);
 	void addPatches(Common::String &chunk, const char *scriptName);
 
 };
