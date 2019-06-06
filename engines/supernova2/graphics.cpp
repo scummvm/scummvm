@@ -221,21 +221,39 @@ bool MS2Image::loadStream(Common::SeekableReadStream &stream) {
 }
 
 bool MS2Image::loadSections() {
-	_pitch = 320;
+	bool isPoster = _filenumber == 38;
+	int imageWidth = isPoster ? 640 : 320;
+	int imageHeight = isPoster ? 480 : 200;
+	_pitch = imageWidth;
 
 	for (int section = 0; section < _numSections; ++section) {
 		Graphics::Surface *surface = new Graphics::Surface;
 		_sectionSurfaces.push_back(surface);
+		if (isPoster) {
+			surface->create(imageWidth, imageHeight, g_system->getScreenFormat());
+			byte *surfacePixels = static_cast<byte *>(surface->getPixels());
+			for (int i = 0; i < imageWidth * imageHeight / 8; ++i) {
+				*surfacePixels++ = (_encodedImage[i] & 0x80) ? kColorWhite63 : kColorBlack;
+				*surfacePixels++ = (_encodedImage[i] & 0x40) ? kColorWhite63 : kColorBlack;
+				*surfacePixels++ = (_encodedImage[i] & 0x20) ? kColorWhite63 : kColorBlack;
+				*surfacePixels++ = (_encodedImage[i] & 0x10) ? kColorWhite63 : kColorBlack;
+				*surfacePixels++ = (_encodedImage[i] & 0x08) ? kColorWhite63 : kColorBlack;
+				*surfacePixels++ = (_encodedImage[i] & 0x04) ? kColorWhite63 : kColorBlack;
+				*surfacePixels++ = (_encodedImage[i] & 0x02) ? kColorWhite63 : kColorBlack;
+				*surfacePixels++ = (_encodedImage[i] & 0x01) ? kColorWhite63 : kColorBlack;
+			}
+		} else {
 
-		uint32 offset = (_section[section].addressHigh << 16) + _section[section].addressLow;
-		if (offset == kInvalidAddress || _section[section].x2 == 0) {
-			return false;
+			uint32 offset = (_section[section].addressHigh << 16) + _section[section].addressLow;
+			if (offset == kInvalidAddress || _section[section].x2 == 0) {
+				return false;
+			}
+			int width = _section[section].x2 - _section[section].x1 + 1;
+			int height = _section[section].y2 - _section[section].y1 + 1;
+			surface->create(width, height, g_system->getScreenFormat());
+			byte *surfacePixels = static_cast<byte *>(surface->getPixels());
+			Common::copy(_encodedImage + offset, _encodedImage + offset + width * height, surfacePixels);
 		}
-		int width = _section[section].x2 - _section[section].x1 + 1;
-		int height = _section[section].y2 - _section[section].y1 + 1;
-		surface->create(width, height, g_system->getScreenFormat());
-		byte *surfacePixels = static_cast<byte *>(surface->getPixels());
-		Common::copy(_encodedImage + offset, _encodedImage + offset + width * height, surfacePixels);
 	}
 
 	return true;

@@ -688,7 +688,6 @@ bool Games::interact(Action verb, Object &obj1, Object &obj2) {
 Cabin::Cabin(Supernova2Engine *vm, GameManager *gm) {
 	_vm = vm;
 	_gm = gm;
-	_paid = false;
 
 	_fileNumber = 7;
 	_id = CABIN;
@@ -712,7 +711,7 @@ void Cabin::onEntrance() {
 }
 
 void Cabin::animation() {
-	if (_paid) {
+	if (_shown[kMaxSection - 1]) {
 		if (isSectionVisible(1))
 			setSectionVisible(1, kShownFalse);
 		else
@@ -725,30 +724,29 @@ bool Cabin::interact(Action verb, Object &obj1, Object &obj2) {
 	if (verb == ACTION_USE && Object::combine(obj1, obj2, MONEY, SLOT1)) {
 		if (isSectionVisible(2))
 			_vm->renderMessage(kStringTakeMoney);
-		else if (_paid)
+		else if (_shown[kMaxSection - 1])
 			_vm->renderMessage(kStringAlreadyPaid);
 		else if (_gm->_state._money < 10)
 			_vm->renderMessage(kStringNoMoney);
 		else {
 			_vm->renderMessage(kStringPay10Xa);
 			_gm->takeMoney(-10);
-			_paid = true;
+			_shown[kMaxSection - 1] = true;
 		}
-	}
-	else if (verb == ACTION_USE && obj1._id == CHAIR) {
-		if (_paid) {
+	} else if (verb == ACTION_USE && obj1._id == CHAIR) {
+		if (_shown[kMaxSection - 1]) {
 			if (_shown[kMaxSection - 2]) {
 				_vm->paletteFadeOut();
 				_vm->setCurrentImage(31);
 				_vm->renderImage(0);
 				_vm->paletteFadeIn();
-				_paid = true;
+				_shown[kMaxSection - 1] = true;
 				_gm->waitOnInput(100000);
 				_vm->paletteFadeOut();
 				_vm->setCurrentImage(7);
 				_vm->renderImage(0);
 				setSectionVisible(1, kShownFalse);
-				_paid = false;
+				_shown[kMaxSection - 1] = false;
 				_vm->renderRoom(*this);
 				_vm->renderImage(2);
 				_gm->drawMapExits();
@@ -776,8 +774,36 @@ bool Cabin::interact(Action verb, Object &obj1, Object &obj2) {
 			}
 		} else
 			_vm->renderMessage(kStringRest);
-	}
-	else 
+	} else if (verb == ACTION_TAKE && obj1._id == PRIZE) {
+		_vm->renderImage(2 + 128);
+		obj1._click = 255;
+		_gm->takeMoney(400);
+	} else if (verb == ACTION_TAKE && obj1._id == BACK_MONEY) {
+		_vm->renderImage(2 + 128);
+		obj1._click = 255;
+		_gm->takeMoney(10);
+	} else if (verb == ACTION_LOOK && obj1._id == SCRIBBLE1) {
+		_vm->renderMessage(kStringCypher);
+	} else if (verb == ACTION_LOOK && obj1._id == SCRIBBLE2) {
+		_gm->animationOff();
+		_vm->setCurrentImage(28);
+		_vm->renderImage(0);
+		_gm->waitOnInput(100000);
+		_vm->setCurrentImage(7);
+		_vm->renderRoom(*this);
+		_gm->drawGUI();
+		_gm->_state._addressKnown = true;
+		_gm->animationOn();
+	} else if (verb == ACTION_LOOK && obj1._id == SIGN) {
+		_gm->animationOff();
+		_vm->setCurrentImage(38);
+		_vm->renderImage(0);
+		_gm->waitOnInput(100000);
+		_vm->setCurrentImage(7);
+		_vm->renderRoom(*this);
+		_gm->drawGUI();
+		_gm->animationOn();
+	} else 
 		return false;
 	return true;
 }

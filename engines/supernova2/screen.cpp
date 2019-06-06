@@ -340,10 +340,20 @@ void Screen::renderImageSection(const MS2Image *image, int section, bool invert)
 							 image->_section[section].y1,
 							 image->_section[section].x2 + 1,
 							 image->_section[section].y2 + 1);
-	if (_screenWidth != 320) {
-		_screenWidth = 320;
-		_screenHeight = 200;
-		initGraphics(_screenWidth, _screenHeight);
+	if (image->_filenumber == 38) {
+		sectionRect.setWidth(640);
+		sectionRect.setHeight(480);
+		if (_screenWidth != 640) {
+			_screenWidth = 640;
+			_screenHeight = 480;
+			initGraphics(_screenWidth, _screenHeight);
+		}
+	} else {
+		if (_screenWidth != 320) {
+			_screenWidth = 320;
+			_screenHeight = 200;
+			initGraphics(_screenWidth, _screenHeight);
+		}
 	}
 
 	uint offset = 0;
