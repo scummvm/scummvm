@@ -146,7 +146,7 @@ Common::Error HDBGame::run() {
 		return Common::kReadingFailed;
 	}
 
-	lua->initScript(luaStream, luaLength);
+	lua->initScript(luaStream, "MAP00_DEMO_LUA", luaLength);
 
 #if 0
 	lua->executeFile("test.lua");
