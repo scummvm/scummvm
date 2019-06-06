@@ -182,6 +182,8 @@ public:
 	void waitOnInput(int ticks);
 	bool waitOnInput(int ticks, Common::KeyCode &keycode);
 	void showMenu();
+	void animationOff();
+	void animationOn();
 	void edit(Common::String &input, int x, int y, uint length);
 	int invertSection(int section);
 	void drawMapExits();

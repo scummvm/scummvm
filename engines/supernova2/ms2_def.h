@@ -170,7 +170,7 @@ kStringAirportEntrance, kStringAirport, kStringDowntown, kStringCulturePalace, k
 kStringPrivateApartment, kStringLeaveTaxi, kStringPay, kStringAddress, kStringCheater,
 kStringNotEnoughMoney, kStringTaxiAccelerating, kString5MinutesLater, kStringAlreadyHavePole, kStringSawPole,
 kStringOnlyShop, kStringCabinOccupiedSay, kStringTakeMoney, kStringAlreadyPaid, kStringNoMoney,
-kStringPay10Xa, kStringWillPassOut, kStringRest, kString223, kStringWillTakeIt,
+kStringPay10Xa, kStringWillPassOut, kStringRest, kStringCypher, kStringWillTakeIt,
 kStringTooExpensive, kStringWouldBuy, kStringMeHorstHummel, kStringHaveMusicChip, kStringGreatMask,
 kStringThreeYears, kStringStrongDrink, kStringMusicDevice, kStringArtusToothbrush, kStringSellInBulk,
 kStringRarityBooks, kStringEncyclopedia, kStringLargestDictionary, kStringOver400Words, kStringNotSale,

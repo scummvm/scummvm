@@ -797,6 +797,14 @@ void GameManager::drawMapExits() {
 	}
 }
 
+void GameManager::animationOff() {
+	_animationEnabled = false;
+}
+
+void GameManager::animationOn() {
+	_animationEnabled = true;
+}
+
 void GameManager::edit(Common::String &input, int x, int y, uint length) {
 	bool isEditing = true;
 	uint cursorIndex = input.size();
