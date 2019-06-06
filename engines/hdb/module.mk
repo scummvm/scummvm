@@ -6,6 +6,7 @@ MODULE_OBJS := \
 	file-manager.o \
 	hdb.o \
 	lua-script.o \
+	map-loader.o \
 	console.o
 
 MODULE_DIRS += \
