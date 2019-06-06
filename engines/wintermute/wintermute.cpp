@@ -150,7 +150,7 @@ int WintermuteEngine::init() {
 	// check dependencies for games with high resolution assets
 	#if not defined(USE_PNG) || not defined(USE_JPEG) || not defined(USE_VORBIS)
 		if (!(_gameDescription->adDesc.flags & GF_LOWSPEC_ASSETS)) {
-			GUI::MessageDialog dialog(_s("This game requires PNG, JPEG and Vorbis support."));
+			GUI::MessageDialog dialog(_("This game requires PNG, JPEG and Vorbis support."));
 			dialog.runModal();
 			delete _game;
 			_game = nullptr;
@@ -161,9 +161,9 @@ int WintermuteEngine::init() {
 	Common::ArchiveMemberList actors3d;
 	if (BaseEngine::instance().getFileManager()->listMatchingMembers(actors3d, "*.act3d")) {
 		GUI::MessageDialog dialog(
-				_s("This game requires 3D characters support, which is out of ScummVM's scope."),
-				_s("Start anyway"),
-				_s("Cancel")
+				_("This game requires 3D characters support, which is out of ScummVM's scope."),
+				_("Start anyway"),
+				_("Cancel")
 			);
 		if (dialog.runModal() != GUI::kMessageOK) {
 			delete _game;
