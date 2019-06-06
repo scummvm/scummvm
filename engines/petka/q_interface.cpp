@@ -20,11 +20,30 @@
  *
  */
 
+#include "common/stream.h"
+
 #include "petka/q_interface.h"
+#include "petka/q_system.h"
+#include "petka/petka.h"
 
 namespace Petka {
 
 QInterface::QInterface()
 	: _objUnderCursor(nullptr) {}
+
+QInterfaceMain::QInterfaceMain() {
+	Common::ScopedPtr<Common::SeekableReadStream> stream(g_vm->openFile("backgrnd.bg", true));
+	if (!stream)
+		return;
+	_bgs.resize(stream->readUint32LE());
+	for (uint i = 0; i < _bgs.size(); ++i) {
+		_bgs[i].attachedObjIds.resize(stream->readUint32LE());
+		for (uint j = 0; j < _bgs[i].attachedObjIds.size(); ++j) {
+			_bgs[i].attachedObjIds[i] = stream->readUint16LE();
+			QMessageObject *obj = g_vm->getQSystem()->findObject(_bgs[i].attachedObjIds[i]);
+			obj->readFromBackgrndBg(*stream);
+		}
+	}
+}
 
 } // End of namespace Petka

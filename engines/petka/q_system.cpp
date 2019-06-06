@@ -24,6 +24,7 @@
 #include "common/substream.h"
 
 #include "petka/petka.h"
+#include "petka/q_interface.h"
 #include "petka/q_object_case.h"
 #include "petka/q_object_cursor.h"
 #include "petka/q_object_star.h"
@@ -33,7 +34,7 @@ namespace Petka {
 
 QSystem::QSystem(PetkaEngine &vm)
 	: _vm(vm), _cursor(nullptr), _case(nullptr), _star(nullptr),
-	_currInterface(nullptr), _prevInterface(nullptr) {}
+	_mainInterface(nullptr), _currInterface(nullptr), _prevInterface(nullptr) {}
 
 QSystem::~QSystem() {
 
@@ -90,6 +91,9 @@ bool QSystem::init() {
 	_allObjects.push_back(_cursor.get());
 	_allObjects.push_back(_case.get());
 	_allObjects.push_back(_star.get());
+
+	_mainInterface.reset(new QInterfaceMain());
+
 	return true;
 }
 
