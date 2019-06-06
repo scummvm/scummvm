@@ -662,6 +662,16 @@ engine_disable_all() {
 	done
 }
 
+# Disable all unstable engines
+engine_disable_all_unstable() {
+	for engine in $_engines; do
+		engine_build_default=`get_engine_build_default $engine`
+		if test $engine_build_default = no ; then
+			set_var _engine_${engine}_build "no"
+		fi
+	done
+}
+
 # Enable the given engine
 engine_enable() {
 	# Get the parameter
@@ -982,6 +992,8 @@ Game engines:
   --enable-all-engines     enable all engines, including those which are
                            broken or unsupported
   --disable-all-engines    disable all engines
+  --disable-all-unstable-engines    disable only the engines which are
+                                    broken or unsupported
   --enable-engine=<engine name>[,<engine name>...] enable engine(s) listed
   --disable-engine=<engine name>[,<engine name>...] disable engine(s) listed
   --enable-engine-static=<engine name>[,<engine name>...]
@@ -1443,6 +1455,9 @@ for ac_option in $@; do
 		;;
 	--disable-all-engines)
 		engine_disable_all
+		;;
+	--disable-all-unstable-engines)
+		engine_disable_all_unstable
 		;;
 	--enable-engine=* | --enable-engines=*)
 		for engine_name in `echo $ac_option | cut -d '=' -f 2- | tr ',' '\n'`; do
