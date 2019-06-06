@@ -38,8 +38,8 @@ public:
 	~LuaScript();
 
 	bool init();
-	bool initScript(Common::SeekableReadStream *stream, int32 length);
-	bool executeMPC(Common::SeekableReadStream *stream, const char *name, int32 length);
+	bool initScript(Common::SeekableReadStream *stream, const char *scriptName, int32 length);
+	bool executeMPC(Common::SeekableReadStream *stream, const char *name, const char *scriptName, int32 length);
 	bool executeFile(const Common::String &filename);
 
 private:
@@ -51,8 +51,9 @@ private:
 	bool _systemInit;
 
 	bool registerExtensions();
-	bool executeChunk(const char *chunk, uint chunkSize, const Common::String &chunkName) const;
+	bool executeChunk(Common::String &chunk, uint chunkSize, const Common::String &chunkName) const;
 	void sanitizeScript(char *chunk);
+	void addPatches(Common::String &chunk, const char *scriptName);
 
 };
 

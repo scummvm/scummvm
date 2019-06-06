@@ -29,6 +29,15 @@
 
 namespace HDB {
 
+struct ScriptPatch {
+	const char* scriptName;
+	const char* search;
+	const char* replace;
+} scriptPatches[] = {
+	{"GLOBAL_LUA", "for i,npc in npcs do", "for i,npc in pairs(npcs) do"},
+	{NULL, NULL, NULL},
+};
+
 LuaScript::LuaScript() {
 	_state = NULL;
 	_systemInit = false;
@@ -39,7 +48,6 @@ LuaScript::~LuaScript() {
 		lua_close(_state);
 	}
 }
-
 
 bool LuaScript::init() {
 	// Load Global Lua Code
@@ -587,7 +595,7 @@ void debugHook(lua_State *L, lua_Debug *ar) {
 }
 
 
-bool LuaScript::initScript(Common::SeekableReadStream *stream, int32 length) {
+bool LuaScript::initScript(Common::SeekableReadStream *stream, const char *scriptName, int32 length) {
 
 	if (_systemInit) {
 		return false;
@@ -674,14 +682,14 @@ bool LuaScript::initScript(Common::SeekableReadStream *stream, int32 length) {
 
 	// Load GLOBAL_LUA and execute it
 
-	if (!executeMPC(_globalLuaStream, "global code", _globalLuaLength)) {
+	if (!executeMPC(_globalLuaStream, "global code", "GLOBAL_LUA", _globalLuaLength)) {
 		error("LuaScript::initScript: 'global code' failed to execute");
 		return false;
 	}
 
 	// Load script and execute it
 
-	if (!executeMPC(stream, "level code", length)) {
+	if (!executeMPC(stream, "level code", scriptName, length)) {
 		error("LuaScript::initScript: 'level code' failed to execute");
 		return false;
 	}
@@ -704,7 +712,7 @@ bool LuaScript::initScript(Common::SeekableReadStream *stream, int32 length) {
 }
 
 
-bool LuaScript::executeMPC(Common::SeekableReadStream *stream, const char *name, int32 length) {
+bool LuaScript::executeMPC(Common::SeekableReadStream *stream, const char *name, const char *scriptName, int32 length) {
 
 	if (!_systemInit) {
 		return false;
@@ -713,13 +721,17 @@ bool LuaScript::executeMPC(Common::SeekableReadStream *stream, const char *name,
 	char *chunk = new char[length];
 	stream->read((void *)chunk, length);
 
-	/*
-		Remove C-style comments from the script
-		and update the upvalue syntax for Lua 5.1.3
-	*/
 	sanitizeScript(chunk);
+	
+	/*
+			Remove C-style comments from the script
+			and update the upvalue syntax for Lua 5.1.3
+	*/
+	Common::String chunkString(chunk);
 
-	if (!executeChunk(chunk, length, name)) {
+	addPatches(chunkString, scriptName);
+
+	if (!executeChunk(chunkString, length, name)) {
 		delete[] chunk;
 
 		return false;
@@ -748,7 +760,11 @@ bool LuaScript::executeFile(const Common::String &filename) {
 
 	sanitizeScript(fileData);
 
-	if (!executeChunk(fileData, fileSize, filename)) {
+	Common::String fileDataString(fileData);
+
+	addPatches(fileDataString, filename.c_str());
+
+	if (!executeChunk(fileDataString, fileSize, filename)) {
 		delete[] fileData;
 		delete file;
 
@@ -761,14 +777,14 @@ bool LuaScript::executeFile(const Common::String &filename) {
 	return true;
 }
 
-bool LuaScript::executeChunk(const char *chunk, uint chunkSize, const Common::String &chunkName) const {
+bool LuaScript::executeChunk(Common::String &chunk, uint chunkSize, const Common::String &chunkName) const {
 
 	if (!_systemInit) {
 		return false;
 	}
 
 	// Compile Chunk
-	if (luaL_loadbuffer(_state, chunk, chunkSize, chunkName.c_str())) {
+	if (luaL_loadbuffer(_state, chunk.c_str(), chunkSize, chunkName.c_str())) {
 		error("Couldn't compile \"%s\": %s", chunkName.c_str(), lua_tostring(_state, -1));
 		lua_pop(_state, -1);
 
@@ -799,10 +815,24 @@ void LuaScript::sanitizeScript(char *chunk) {
 			while (chunk[offset] != 0x0d) {
 				chunk[offset++] = ' ';
 			}
-		} else if (chunk[offset] == '%' && chunk[offset] != ' ') { // Update the Upvalue syntax
+		}
+		else if (chunk[offset] == '%' && chunk[offset] != ' ') { // Update the Upvalue syntax
 			chunk[offset] = ' ';
 		}
 		offset++;
+	}
+}
+
+void LuaScript::addPatches(Common::String &chunk, const char* scriptName) {
+	ScriptPatch *patch = scriptPatches;
+
+	while (patch->scriptName) {
+		if (scriptName == patch->scriptName) {
+			Common::String searchString(patch->search);
+			Common::String replaceString(patch->replace);
+			Common::replace(chunk, searchString, replaceString);
+		}
+		patch++;
 	}
 }
 }
