@@ -684,8 +684,19 @@ bool LuaScript::initScript(Common::SeekableReadStream *stream, int32 length) {
 		return false;
 	}
 
+
+	// Error handling function to be executed after the function is put on the stack
+	lua_rawgeti(_state, LUA_REGISTRYINDEX, _pcallErrorhandlerRegistryIndex);
+	lua_insert(_state, -2);
+
 	lua_getglobal(_state, "level_init");
-	lua_pcall(_state, 0, 0, 0);
+
+	if (lua_pcall(_state, 0, 0, -2)) {
+		error("An error occured while executing \"%s\": %s.", "level_init", lua_tostring(_state, -1));
+		lua_pop(_state, -1);
+
+		return false;
+	}
 
 	return true;
 }
