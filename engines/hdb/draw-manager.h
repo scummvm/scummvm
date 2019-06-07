@@ -53,6 +53,7 @@ public:
 	int getTileIndex(const char *name);
 	Picture *getPicture(const char *name);
 	int isSky(int skyIndex);
+	void setSky(int skyIndex);
 
 private:
 	int _numTiles;
