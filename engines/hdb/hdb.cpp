@@ -128,7 +128,7 @@ Common::Error HDBGame::run() {
 
 	// Initializes Graphics
 	Graphics::PixelFormat format(2, 5, 6, 5, 0, 11, 5, 0, 0);
-	initGraphics(640, 480, &format);
+	initGraphics(kScreenWidth, kScreenHeight, &format);
 	_console = new Console();
 
 

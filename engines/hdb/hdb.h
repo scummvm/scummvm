@@ -65,6 +65,11 @@ enum GameState {
 	GAME_LOADING
 };
 
+enum {
+	kScreenWidth = 640,
+	kScreenHeight = 480
+};
+
 class HDBGame : public Engine {
 public:
 	HDBGame(OSystem *syst, const ADGameDescription *gameDesc);
