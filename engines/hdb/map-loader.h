@@ -24,7 +24,6 @@
 #define HDB_MAP_LOADER_H
 
 #include "common/system.h"
-#include "common/array.h"
 
 namespace HDB {
 
@@ -78,32 +77,6 @@ private:
 
 	bool _mapLoaded;
 };
-
-#if 0
-class MapLoader {
-public:
-	MapLoader();
-
-	bool loadMap(Common::SeekableReadStream *stream, int32 length);
-	int loadTiles();
-
-	bool isLoaded() {
-		return _mapLoaded;
-	}
-
-	int mapX, mapY; // Coordinates of Map
-	int mapWidth, mapHeight; // Map Dimensions
-	int mapTileX, mapTileY; // Tile Coordinates of Map
-	int mapTileXoff, mapTileYoff; // Tile Coordinates Offset (0-31)
-
-	Common::Array<SeeThroughTile *> mapGratings, mapForegrounds;
-	int numGratings, numForegrounds;
-
-private:
-	bool _mapLoaded;
-};
-#endif
-
 }
 
 #endif // !HDB_MAP_LOADER_H
