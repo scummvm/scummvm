@@ -47,24 +47,24 @@ bool Map::load(Common::SeekableReadStream *stream) {
 	// Reading Background
 	_background = new uint16[_width * _height];
 	stream->seek(_backgroundOffset);
-	for (int i = 0; i < _width * _height; i++) {
+	for (uint i = 0; i < _width * _height; i++) {
 		_background[i] = stream->readUint16LE();
 	}
 
 	// Reading Foreground
 	_foreground = new uint16[_width * _height];
 	stream->seek(_foregroundOffset);
-	for (int i = 0; i < _width * _height; i++) {
+	for (uint i = 0; i < _width * _height; i++) {
 		_foreground[i] = stream->readUint16LE();
 	}
 
 	// Reading Icon List
 	_iconList = new MSMIcon[_iconNum];
-	for (int i = 0; i < _iconNum; i++) {
+	for (uint i = 0; i < _iconNum; i++) {
 		_iconList[i].icon = stream->readUint16LE();
 		_iconList[i].x = stream->readUint16LE();
 		_iconList[i].y = stream->readUint16LE();
-		
+
 		stream->read(_iconList[i].funcInit, 32);
 		stream->read(_iconList[i].funcAction, 32);
 		stream->read(_iconList[i].funcUse, 32);
@@ -133,4 +133,5 @@ int MapLoader::loadTiles() {
 	return 0;
 }
 #endif
+}
 }
