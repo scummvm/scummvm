@@ -12542,6 +12542,60 @@ static const uint16 sq4CdPatchVohaulPocketPalTextSpeech[] = {
 	PATCH_END
 };
 
+// Walking around the sewer tunnels in the following sequence locks up the game:
+//
+//  1. Enter the ladder room (90) from the center room (95) while the slime is
+//     just below the middle of the screen
+//  2. Enter the southwest room (105) from the ladder room (90)
+//
+// The script enterNorth has a code path which fails to advance the state and so
+//  it gets stuck in handsOff mode. If sewer:status is 3, meaning the slime is
+//  moving north or south, then enterNorth assumes that sewer:location, the room
+//  the slime is in, must be room 105 or 90, but in the sequence above it is 95.
+//
+// We fix this by setting enterNorth:state to 1 in the problematic code path so
+//  that the script advances. Sierra fixed this bug after the English PC floppy
+//  versions but forgot to include the fix in the CD version over a year later.
+//
+// Applies to: English PC Floppy, English PC CD
+// Responsible method: enterNorth:changeState(0)
+// Fixes bug #10970
+static const uint16 sq4FloppySignatureSewerLockup[] = {
+	SIG_MAGICDWORD,
+	0x35, 0x01,                         // ldi 01
+	0x65, 0x0a,                         // aTop state [ state = 1 ]
+	0x32, SIG_UINT16(0x002e),           // jmp 002e   [ end of switch ]
+	0x3c,                               // dup
+	0x35, 0x5a,                         // ldi 5a [ ladder room ]
+	0x1a,                               // eq?
+	0x30, SIG_UINT16(0x0027),           // bnt 0027 [ end of switch without setting state ]
+	SIG_END
+};
+
+static const uint16 sq4FloppyPatchSewerLockup[] = {
+	PATCH_ADDTOOFFSET(+11),
+	0x30, PATCH_UINT16(0xfff2),         // bnt fff2 [ set state before end of switch ]
+	PATCH_END
+};
+
+static const uint16 sq4CDSignatureSewerLockup[] = {
+	SIG_MAGICDWORD,
+	0x35, 0x01,                         // ldi 01
+	0x65, 0x14,                         // aTop state [ state = 1 ]
+	0x33, 0x2c,                         // jmp 2c     [ end of switch ]
+	0x3c,                               // dup
+	0x35, 0x5a,                         // ldi 5a [ ladder room ]
+	0x1a,                               // eq?
+	0x31, 0x26,                         // bnt 26 [ end of switch without setting state ]
+	SIG_END
+};
+
+static const uint16 sq4CDPatchSewerLockup[] = {
+	PATCH_ADDTOOFFSET(+10),
+	0x31, 0xf4,                         // bnt f4 [ set state before end of switch ]
+	PATCH_END
+};
+
 //          script, description,                                      signature                                      patch
 static const SciScriptPatcherEntry sq4Signatures[] = {
 	{  true,     1, "Floppy: EGA intro delay fix",                    2, sq4SignatureEgaIntroDelay,                     sq4PatchEgaIntroDelay },
@@ -12549,6 +12603,8 @@ static const SciScriptPatcherEntry sq4Signatures[] = {
 	{  true,   700, "Floppy: throw stuff at sequel police bug",       1, sq4FloppySignatureThrowStuffAtSequelPoliceBug, sq4FloppyPatchThrowStuffAtSequelPoliceBug },
 	{  true,    35, "CD: sidewalk smell message fix",                 1, sq4CdSignatureSidewalkSmellMessage,            sq4CdPatchSidewalkSmellMessage },
 	{  true,    45, "CD: walk in from below for room 45 fix",         1, sq4CdSignatureWalkInFromBelowRoom45,           sq4CdPatchWalkInFromBelowRoom45 },
+	{  true,   105, "Floppy: sewer lockup fix",                       1, sq4FloppySignatureSewerLockup,                 sq4FloppyPatchSewerLockup },
+	{  true,   105, "CD: sewer lockup fix",                           1, sq4CDSignatureSewerLockup,                     sq4CDPatchSewerLockup },
 	{  true,   290, "CD: cedric easter egg fix",                      1, sq4CdSignatureCedricEasterEgg,                 sq4CdPatchCedricEasterEgg },
 	{  true,   290, "CD: cedric lockup fix (1/2)",                    1, sq4CdSignatureCedricLockup1,                   sq4CdPatchCedricLockup1 },
 	{  true,   290, "CD: cedric lockup fix (2/2)",                    1, sq4CdSignatureCedricLockup2,                   sq4CdPatchCedricLockup2 },
