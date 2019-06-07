@@ -98,6 +98,20 @@ Tile *DrawMan::getTile(int index) {
 	return _tLookupArray[index].tData;
 }
 
+int DrawMan::isSky(int index) {
+	if (!index) {
+		return 0;
+	}
+
+	for (int i = 0; i < kMaxSkies; i++) {
+		if(_skyTiles[i] == index) {
+			return index + 1; // The skyTiles are indexed from 1. 0 => No Sky tile
+		}
+	}
+
+	return 0;
+}
+
 Picture::~Picture() {
 	_surface.free();
 }
