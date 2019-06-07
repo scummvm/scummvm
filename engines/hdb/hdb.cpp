@@ -44,7 +44,7 @@ HDBGame::HDBGame(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst
 	g_hdb = this;
 	fileMan = new FileMan;
 	lua = new LuaScript;
-	mapLoader = new MapLoader;
+	//mapLoader = new MapLoader;
 
 	DebugMan.addDebugChannel(kDebugExample1, "Example1", "This is just an example to test");
 	DebugMan.addDebugChannel(kDebugExample2, "Example2", "This is also an example");
@@ -54,7 +54,7 @@ HDBGame::~HDBGame() {
 	delete _console;
 	delete fileMan;
 	delete lua;
-	delete mapLoader;
+	//delete mapLoader;
 	DebugMan.clearAllDebugChannels();
 }
 
@@ -151,13 +151,13 @@ Common::Error HDBGame::run() {
 	lua->initScript(luaStream, "MAP00_DEMO_LUA", luaLength);
 
 	Common::SeekableReadStream *mapStream = fileMan->findFirstData("MAP00_DEMO_MSM", TYPE_BINARY);
-	int32 mapLength = fileMan->getLength("MAP00_DEMO_MSM", TYPE_BINARY);
 	if (mapStream == NULL) {
 		debug("The MAP00_DEMO_MSM MPC entry can't be found.");
 		return Common::kReadingFailed;
 	}
 
-	mapLoader->loadMap(mapStream, mapLength);
+	Map *map = new Map;
+	map->load(mapStream);
 
 #if 0
 	lua->executeFile("test.lua");
