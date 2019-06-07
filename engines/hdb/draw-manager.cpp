@@ -26,16 +26,18 @@ namespace HDB {
 
 DrawMan::DrawMan() {
 	_systemInit = false;
-	cursorDisplay = true;
 }
 
 bool DrawMan::init() {
+
+	_numTiles = g_hdb->_fileMan->getCount("t32_", TYPE_TILE32);
+
+	if (!_numTiles) {
+		return false;
+	}
+
 	_systemInit = true;
 	return true;
-}
-
-void DrawMan::loadTile32(char *name, uint32 *length) {
-	
 }
 
 Picture::~Picture() {
