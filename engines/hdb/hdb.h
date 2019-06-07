@@ -29,6 +29,7 @@
 #include "common/file.h"
 #include "common/events.h"
 #include "common/str.h"
+#include "common/random.h"
 
 #include "gui/debugger.h"
 #include "engines/engine.h"
@@ -86,6 +87,9 @@ public:
 	DrawMan *_drawMan;
 	LuaScript *_lua;
 	Map *_map;
+
+	// Random Source
+	Common::RandomSource *_rnd;
 
 	// Game related members;
 

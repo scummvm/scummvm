@@ -46,7 +46,7 @@ HDBGame::HDBGame(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst
 	_drawMan = new DrawMan;
 	_lua = new LuaScript;
 	_map = new Map;
-	//mapLoader = new MapLoader;
+	_rnd = new Common::RandomSource("hdb");
 
 	DebugMan.addDebugChannel(kDebugExample1, "Example1", "This is just an example to test");
 	DebugMan.addDebugChannel(kDebugExample2, "Example2", "This is also an example");
@@ -58,7 +58,8 @@ HDBGame::~HDBGame() {
 	delete _drawMan;
 	delete _lua;
 	delete _map;
-	//delete mapLoader;
+	delete _rnd;
+
 	DebugMan.clearAllDebugChannels();
 }
 
