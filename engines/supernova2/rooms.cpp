@@ -2438,6 +2438,12 @@ Downstairs1::Downstairs1(Supernova2Engine *vm, GameManager *gm) {
 	_fileNumber = 6;
 	_id = DOWNSTAIRS1;
 	_shown[0] = kShownTrue;
+	_shown[1] = kShownTrue;
+	_shown[3] = kShownTrue;
+
+	_objectState[0] = Object(_id, kStringRight, kStringDefaultDescription, G_RIGHT, EXIT, 1, 1, 0, PYR_ENTRANCE, 14);
+	_objectState[1] = Object(_id, kStringLeft, kStringDefaultDescription, G_LEFT, EXIT, 2, 2, 0, PYR_ENTRANCE, 10);
+	_objectState[2] = Object(_id, kStringCorridor, kStringDefaultDescription, CORRIDOR, EXIT, 3, 3, 0, PYR_ENTRANCE, 2);
 }
 
 void Downstairs1::onEntrance() {
@@ -2448,6 +2454,16 @@ void Downstairs1::animation() {
 }
 
 bool Downstairs1::interact(Action verb, Object &obj1, Object &obj2) {
+	if (!_gm->move(verb, obj1))
+		return false;
+	if (obj1._id == CORRIDOR) {
+		if (_gm->_state._pyraE)
+			_gm->_state._pyraE = 0;
+		else
+			_gm->_state._pyraE = 1;
+	}
+	_gm->passageConstruction();
+	_gm->_newRoom = true;
 	return true;
 }
 
