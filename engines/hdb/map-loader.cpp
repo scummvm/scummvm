@@ -47,14 +47,14 @@ bool Map::load(Common::SeekableReadStream *stream) {
 	// Reading Background
 	_background = new uint16[_width * _height];
 	stream->seek(_backgroundOffset);
-	for (uint i = 0; i < _width * _height; i++) {
+	for (int i = 0; i < _width * _height; i++) {
 		_background[i] = stream->readUint16LE();
 	}
 
 	// Reading Foreground
 	_foreground = new uint16[_width * _height];
 	stream->seek(_foregroundOffset);
-	for (uint i = 0; i < _width * _height; i++) {
+	for (int i = 0; i < _width * _height; i++) {
 		_foreground[i] = stream->readUint16LE();
 	}
 
@@ -79,53 +79,20 @@ bool Map::load(Common::SeekableReadStream *stream) {
 		TODO: Add the InfoList when it comes up
 	*/
 
-	return true;
-}
-
-#if 0
-MapLoader::MapLoader() {
-	_mapLoaded = false;
-}
-
-bool MapLoader::loadMap(Common::SeekableReadStream *stream, int32 length) {
-
-	if (_mapLoaded) {
-		return false;
-	}
-
-	// Load MSM data into _mapHeader
-	_mapHeader = new MSMHeader;
-	stream->read(_mapHeader->name, 32);
-	_mapHeader->width = stream->readUint16LE();
-	_mapHeader->height = stream->readUint16LE();
-	_mapHeader->background = stream->readUint32LE();
-	_mapHeader->foreground = stream->readUint32LE();
-	_mapHeader->iconNum = stream->readUint16LE();
-	_mapHeader->iconList = stream->readUint32LE();
-	_mapHeader->infoNum = stream->readUint16LE();
-	_mapHeader->infoList = stream->readUint32LE();
-
 	/*
-		TODO: Set the InMapName in hdb.cpp
+		TODO: Set the InMapName once its setup
 	*/
 
-	mapWidth = _mapHeader->width;
-	mapHeight = _mapHeader->height;
+	_mapExplosions = new char[_width * _height];
+	_mapExpBarrels = new char[_width * _height];
+	_mapLaserBeams = new char[_width * _height];
 
-	// Create matrices to keep track of Explosions, Barrels and LaserBeams
-	_mapExplosions = new char[mapWidth * mapHeight];
-	_mapExpBarrels = new char[mapWidth * mapHeight];
-	_mapLaserBeams = new char[mapWidth * mapHeight];
 
 	mapX = mapY = 0;
 
-	debug("Background: %d\n", _mapHeader->background);
-	debug("Foreground: %d\n", _mapHeader->foreground);
-	debug("IconList: %d\n", _mapHeader->iconList);
-	debug("InfoList: %d\n", _mapHeader->infoList);
+	_mapLoaded = true;
 
-	warning("STUB: MAPLOADER: LOAD MAP INCOMPLETE");
-	return false;
+	return true;
 }
 
 int MapLoader::loadTiles() {
