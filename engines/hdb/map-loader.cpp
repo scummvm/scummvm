@@ -83,9 +83,9 @@ bool Map::load(Common::SeekableReadStream *stream) {
 		TODO: Set the InMapName once its setup
 	*/
 
-	_mapExplosions = new char[_width * _height];
-	_mapExpBarrels = new char[_width * _height];
-	_mapLaserBeams = new char[_width * _height];
+	_mapExplosions = new byte[_width * _height];
+	_mapExpBarrels = new byte[_width * _height];
+	_mapLaserBeams = new byte[_width * _height];
 
 
 	_mapX = _mapY = 0;

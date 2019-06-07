@@ -72,9 +72,9 @@ private:
 	uint16 *_foreground;
 	MSMIcon *_iconList;
 
-	char *_mapExplosions;
-	char *_mapExpBarrels;
-	char *_mapLaserBeams;
+	byte *_mapExplosions;
+	byte *_mapExpBarrels;
+	byte *_mapLaserBeams;
 
 	bool _mapLoaded;
 };
