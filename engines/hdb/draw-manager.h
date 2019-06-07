@@ -34,6 +34,7 @@ enum {
 };
 
 class Tile;
+class Picture;
 
 struct TileLookup {
 	const char *filename;
@@ -56,6 +57,11 @@ private:
 	TileLookup *_tLookupArray;
 	uint16 _skyTiles[kMaxSkies];
 	int _currentSky;	// 0 if no Sky, 1+ for which Sky to use
+	int _tileSkyStars; // Index of sky_stars tile
+	int _tileSkyStarsLeft; // Left-scrolling stars, slow
+	int _tileSkyClouds; // Index of sky_stars tile
+	Picture *_skyClouds;
+
 	bool _systemInit;
 
 };
