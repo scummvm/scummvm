@@ -46,10 +46,10 @@ bool GameManager::serialize(Common::WriteStream *out) {
 	out->writeByte(_state._elevatorE);
 	out->writeByte(_state._elevatorNumber);
 	out->writeByte(_state._toMuseum);
-	out->writeByte(_state._pyraE);
+	out->writeSint16LE(_state._pyraE);
 	out->writeByte(_state._pyraS);
 	out->writeByte(_state._pyraZ);
-	out->writeByte(_state._pyraDirection);
+	out->writeSint16LE(_state._pyraDirection);
 	out->writeUint32LE(_state._eventTime);
 	out->writeSint32LE(_state._eventCallback);
 
@@ -88,10 +88,10 @@ bool GameManager::deserialize(Common::ReadStream *in, int version) {
 	_state._elevatorE = in->readByte();
 	_state._elevatorNumber = in->readByte();
 	_state._toMuseum = in->readByte();
-	_state._pyraE = in->readByte();
+	_state._pyraE = in->readSint16LE();
 	_state._pyraS = in->readByte();
 	_state._pyraZ = in->readByte();
-	_state._pyraDirection = in->readByte();
+	_state._pyraDirection = in->readSint16LE();
 	_state._eventTime = in->readUint32LE();
 	_state._eventCallback = (EventFunction)in->readSint32LE();
 	_vm->setGameString(kStringMoney, Common::String::format("%d Xa", _state._money));
@@ -287,8 +287,8 @@ void GameManager::destroyRooms() {
 	delete _rooms[LGANG2];
 	delete _rooms[HOLE_ROOM];
 	delete _rooms[IN_HOLE];
-	delete _rooms[BODENTUER];
-	delete _rooms[BODENTUER_U];
+	delete _rooms[FLOORDOOR];
+	delete _rooms[FLOORDOOR_U];
 	delete _rooms[BST_DOOR];
 	delete _rooms[HALL];
 	delete _rooms[COFFIN_ROOM];
@@ -413,8 +413,8 @@ void GameManager::initRooms() {
 	_rooms[LGANG2] = new LGang2(_vm, this);
 	_rooms[HOLE_ROOM] = new HoleRoom(_vm, this);
 	_rooms[IN_HOLE] = new InHole(_vm, this);
-	_rooms[BODENTUER] = new Bodentuer(_vm, this);
-	_rooms[BODENTUER_U] = new BodentuerU(_vm, this);
+	_rooms[FLOORDOOR] = new Floordoor(_vm, this);
+	_rooms[FLOORDOOR_U] = new FloordoorU(_vm, this);
 	_rooms[BST_DOOR] = new BstDoor(_vm, this);
 	_rooms[HALL] = new Hall(_vm, this);
 	_rooms[COFFIN_ROOM] = new CoffinRoom(_vm, this);
@@ -787,6 +787,15 @@ bool GameManager::isNullObject(Object *obj) {
 	return obj == &_nullObject;
 }
 
+void GameManager::screenShake() {
+	for (int i = 0; i < 12; ++i) {
+		_vm->_system->setShakePos(8);
+		wait(1);
+		_vm->_system->setShakePos(0);
+		wait(1);
+	}
+}
+
 void GameManager::showMenu() {
 	_vm->renderBox(0, 138, 320, 62, 0);
 	_vm->renderBox(0, 140, 320, 9, kColorWhite25);
@@ -799,15 +808,20 @@ void GameManager::drawMapExits() {
 // TODO: Preload _exitList on room entry instead on every call
 	_vm->renderBox(281, 161, 39, 39, kColorWhite25);
 
-	for (int i = 0; i < 25; i++)
-		_exitList[i] = -1;
-	for (int i = 0; i < kMaxObject; i++) {
-		if (_currentRoom->getObject(i)->hasProperty(EXIT)) {
-			byte r = _currentRoom->getObject(i)->_direction;
-			_exitList[r] = i;
-			int x = 284 + 7 * (r % 5);
-			int y = 164 + 7 * (r / 5);
-			_vm->renderBox(x, y, 5, 5, kColorDarkRed);
+	if ((_currentRoom >= _rooms[PYR_ENTRANCE] && _currentRoom <= _rooms[HOLE_ROOM]) ||
+		(_currentRoom >= _rooms[FLOORDOOR] && _currentRoom <= _rooms[BST_DOOR]))
+		compass();
+	else {
+		for (int i = 0; i < 25; i++)
+			_exitList[i] = -1;
+		for (int i = 0; i < kMaxObject; i++) {
+			if (_currentRoom->getObject(i)->hasProperty(EXIT)) {
+				byte r = _currentRoom->getObject(i)->_direction;
+				_exitList[r] = i;
+				int x = 284 + 7 * (r % 5);
+				int y = 164 + 7 * (r / 5);
+				_vm->renderBox(x, y, 5, 5, kColorDarkRed);
+			}
 		}
 	}
 }
@@ -1738,9 +1752,247 @@ bool GameManager::talkRest(int mod1, int mod2, int rest) {
 }
 
 void GameManager::pyramidEnd() {
+	_vm->renderMessage(kStringPyramid0);
+	waitOnInput(_messageDuration);
+	_vm->removeMessage();
+	_vm->paletteFadeOut();
+	_vm->loadGame(kSleepAutosaveSlot);
+	changeRoom(CABIN);
+	drawGUI();
+	_rooms[CABIN]->setSectionVisible(kMaxSection - 1, kShownFalse);
+	_rooms[CABIN]->setSectionVisible(kMaxSection - 2, kShownTrue);
+	_rooms[CABIN]->setSectionVisible(1, kShownFalse);
 }
 
 void GameManager::passageConstruction() {
+	static ConstructionEntry constructionTab[9] = {
+		{0, 4, 10, 2, 13},
+		{0, 4, 9,  2, 14},
+		{0, 4, 8,  3,  2},
+		{1, 4, 7,  3,  1},
+		{1, 5, 7,  3,  3},
+		{1, 6, 7,  3,  5},
+		{1, 4, 7,  1,  2},
+		{1, 2, 5,  1,  1},
+		{0, 4, 9,  2, 20}
+	};
+
+	changeRoom(PYR_ENTRANCE);
+	_rooms[PYR_ENTRANCE]->setSectionVisible(1, 
+			!wall(_state._pyraS, _state._pyraZ, _state._pyraDirection, 0, -1));
+	_rooms[PYR_ENTRANCE]->setSectionVisible(2, 
+			!wall(_state._pyraS, _state._pyraZ, _state._pyraDirection, 0,  1));
+	_rooms[PYR_ENTRANCE]->setSectionVisible(7, 
+			wall(_state._pyraS, _state._pyraZ, _state._pyraDirection, 1,  0));
+
+	if (!_rooms[PYR_ENTRANCE]->isSectionVisible(7)) {
+		_rooms[PYR_ENTRANCE]->getObject(3)->_type = EXIT;
+		_rooms[PYR_ENTRANCE]->getObject(3)->_click = 0;
+		_rooms[PYR_ENTRANCE]->setSectionVisible(3, 
+				!wall(_state._pyraS, _state._pyraZ, _state._pyraDirection, 1, -1));
+		_rooms[PYR_ENTRANCE]->setSectionVisible(4, 
+				!wall(_state._pyraS, _state._pyraZ, _state._pyraDirection, 1,  1));
+		_rooms[PYR_ENTRANCE]->setSectionVisible(8, 
+				wall(_state._pyraS, _state._pyraZ, _state._pyraDirection, 2,  0));
+		if (!_rooms[PYR_ENTRANCE]->isSectionVisible(8)) {
+			_rooms[PYR_ENTRANCE]->setSectionVisible(5, 
+				   !wall(_state._pyraS, _state._pyraZ, _state._pyraDirection, 2, -1));
+			_rooms[PYR_ENTRANCE]->setSectionVisible(6, 
+				   !wall(_state._pyraS, _state._pyraZ, _state._pyraDirection, 2,  1));
+		}
+		else {
+			_rooms[PYR_ENTRANCE]->setSectionVisible(5, kShownFalse);
+			_rooms[PYR_ENTRANCE]->setSectionVisible(6, kShownFalse);
+		}
+	} else {
+		_rooms[PYR_ENTRANCE]->getObject(3)->_type = NULLTYPE;
+		_rooms[PYR_ENTRANCE]->getObject(3)->_click = 255;
+		_rooms[PYR_ENTRANCE]->setSectionVisible(3, kShownFalse);
+		_rooms[PYR_ENTRANCE]->setSectionVisible(4, kShownFalse);
+		_rooms[PYR_ENTRANCE]->setSectionVisible(8, kShownFalse);
+	}
+	for (int i = 0; i < 9; i++) {
+		bool b = (_state._pyraE == constructionTab[i]._e &&
+			 _state._pyraS == constructionTab[i]._s &&
+			 _state._pyraZ == constructionTab[i]._z &&
+			 _state._pyraDirection == constructionTab[i]._r);
+		if (constructionTab[i]._a > 12)
+			_rooms[PYR_ENTRANCE]->setSectionVisible(constructionTab[i]._a, b);
+		else if (b)
+			_rooms[PYR_ENTRANCE]->setSectionVisible(constructionTab[i]._a, kShownTrue);
+	}
+
+	_rooms[PYR_ENTRANCE]->setSectionVisible(18, kShownFalse);
+	_rooms[PYR_ENTRANCE]->setSectionVisible(19, kShownFalse);
+	_rooms[PYR_ENTRANCE]->setSectionVisible(21, kShownFalse);
+	_rooms[PYR_ENTRANCE]->getObject(0)->_click = 255;
+
+	if (_state._pyraE == 0 && _state._pyraS == 4 && _state._pyraZ == 10) {
+		switch (_state._pyraDirection) {
+		case 0:
+			_rooms[PYR_ENTRANCE]->setSectionVisible(19, kShownTrue);
+			_rooms[PYR_ENTRANCE]->getObject(0)->_click = 8;
+			break;
+		case 2:
+			_rooms[PYR_ENTRANCE]->setSectionVisible(18, kShownTrue);
+			_rooms[PYR_ENTRANCE]->getObject(0)->_click = 7;
+			break;
+		case 1:
+			_rooms[PYR_ENTRANCE]->setSectionVisible(21, kShownTrue);
+			_rooms[PYR_ENTRANCE]->getObject(0)->_click = 9;
+			break;
+		}
+	}
+	_rooms[PYR_ENTRANCE]->setSectionVisible(9, 
+			 _rooms[PYR_ENTRANCE]->isSectionVisible(7) &
+			!_rooms[PYR_ENTRANCE]->isSectionVisible(1));
+	_rooms[PYR_ENTRANCE]->setSectionVisible(10, 
+			 _rooms[PYR_ENTRANCE]->isSectionVisible(7) &
+			!_rooms[PYR_ENTRANCE]->isSectionVisible(2));
+	_rooms[PYR_ENTRANCE]->setSectionVisible(11, 
+			 _rooms[PYR_ENTRANCE]->isSectionVisible(8) &
+			!_rooms[PYR_ENTRANCE]->isSectionVisible(3));
+	_rooms[PYR_ENTRANCE]->setSectionVisible(12, 
+			 _rooms[PYR_ENTRANCE]->isSectionVisible(8) &
+			!_rooms[PYR_ENTRANCE]->isSectionVisible(4));
+}
+
+byte GameManager::wall(int s, int z, int direction, int stepsForward, int stepsRight) {
+	static char vertical[2][12][11] = {
+		{
+			{0,0,0,0,0,0,0,0,0,0,0},
+			{0,1,0,0,0,0,0,0,0,0,0},
+			{1,0,1,0,0,0,0,0,0,0,0},
+			{1,0,1,0,1,0,0,0,0,0,0},
+			{0,1,0,0,1,0,0,1,0,0,0},
+			{0,0,1,0,0,0,1,0,1,0,0},
+			{0,0,0,1,1,0,1,0,0,0,0},
+			{0,0,0,1,1,0,0,1,0,0,0},
+			{0,0,0,0,0,1,0,1,0,0,0},
+			{0,0,0,0,0,1,1,0,1,0,0},
+			{0,0,0,0,1,0,0,0,1,0,0},
+			{0,0,0,0,1,0,0,0,0,0,0}
+		},
+		{
+			{0,0,0,0,0,0,0,0,0,0,0},
+			{0,0,0,0,1,0,0,0,0,0,0},
+			{0,0,0,0,1,0,0,0,0,0,0},
+			{0,1,0,1,0,0,0,0,0,0,0},
+			{0,1,0,1,1,0,0,0,0,0,0},
+			{1,0,0,0,1,0,0,0,0,0,0},
+			{0,0,0,0,0,1,0,0,1,0,0},
+			{0,0,0,0,0,0,1,1,0,0,1},
+			{0,0,0,0,0,1,0,1,0,0,1},
+			{0,0,0,0,1,0,1,0,1,1,0},
+			{0,0,0,0,0,0,0,0,0,0,0},
+			{0,0,0,0,0,0,0,0,0,0,0}
+		}
+	};
+
+	static char horizontal[2][11][12] = {
+		{
+			{0,1,1,0,0,0,0,0,0,0,0,0},
+			{0,0,1,0,0,0,0,0,0,0,0,0},
+			{0,1,0,1,1,0,0,0,0,0,0,0},
+			{0,1,1,0,0,0,0,0,0,0,0,0},
+			{0,0,1,0,0,1,1,0,1,0,0,0},
+			{0,0,0,0,0,0,0,0,0,0,0,0},
+			{0,0,0,0,0,0,0,1,0,0,0,0},
+			{0,0,0,0,1,1,0,0,0,0,0,0},
+			{0,0,0,0,0,1,0,1,1,0,0,0},
+			{0,0,0,0,0,1,1,0,0,0,0,0},
+			{0,0,0,0,0,0,0,0,0,0,0,0}
+		},
+		{
+			{0,0,0,0,0,0,0,0,0,0,0,0},
+			{0,0,0,0,0,0,0,0,0,0,0,0},
+			{0,1,0,0,1,0,0,0,0,0,0,0},
+			{0,0,0,0,1,0,0,0,0,0,0,0},
+			{0,0,1,1,0,0,0,0,0,0,0,0},
+			{0,1,1,0,0,1,0,0,0,0,0,0},
+			{0,0,0,0,0,0,1,0,1,0,0,0},
+			{0,0,0,0,0,1,1,0,0,0,0,0},
+			{0,0,0,0,0,1,0,1,1,0,1,0},
+			{0,0,0,0,0,1,1,0,0,1,0,0},
+			{0,0,0,0,0,0,0,0,0,0,0,0}
+		}
+	};
+	int newR;
+	if (stepsRight) {
+		if (stepsRight > 0)
+			newR = (direction + 1) & 3;
+		else {
+			newR = (direction - 1) & 3;
+			stepsRight = -stepsRight;
+		}
+		switch (direction) {
+		case 0:
+			return wall(s, z - stepsForward, newR, stepsRight, 0);
+		case 2:
+			return wall(s, z + stepsForward, newR, stepsRight, 0);
+		case 1:
+			return wall(s + stepsForward, z, newR, stepsRight, 0);
+		case 3:
+			return wall(s - stepsForward, z, newR, stepsRight, 0);
+		}
+	}
+	switch (direction) {
+	case 0:
+		return vertical  [_state._pyraE][z + 1 - stepsForward][s] == 0;
+	case 2:
+		return vertical  [_state._pyraE][z     + stepsForward][s] == 0;
+	case 1:
+		return horizontal[_state._pyraE][z][s     + stepsForward] == 0;
+	case 3:
+		return horizontal[_state._pyraE][z][s + 1 - stepsForward] == 0;
+	}
+	return 0;
+}
+
+bool GameManager::move(Action verb, Object &obj) {
+	if (verb == ACTION_WALK && obj._id == CORRIDOR) {
+		switch (_state._pyraDirection) {
+			case 0:
+				_state._pyraZ--;
+				break;
+			case 1:
+				_state._pyraS++;
+				break;
+			case 2:
+				_state._pyraZ++;
+				break;
+			case 3:
+				_state._pyraS--;
+				break;
+		}
+	} else if (verb == ACTION_WALK && obj._id == G_RIGHT) {
+		_state._pyraDirection++;
+		_state._pyraDirection &= 3;
+	} else if (verb == ACTION_WALK && obj._id == G_LEFT) {
+		_state._pyraDirection--;
+		_state._pyraDirection &= 3;
+	} else
+		return false;
+	return true;
+}
+
+void GameManager::compass() {
+	static StringId dirs[7] = {
+		kStringDirection1,
+		kStringDirection2,
+		kStringDirection3,
+		kStringDirection4,
+		kStringDirection1,
+		kStringDirection2,
+		kStringDirection3
+	};
+	_vm->renderBox(281, 161, 39, 39, kColorWhite63);
+	_vm->renderBox(295, 180, 13,  3, kColorDarkBlue);
+	_vm->renderBox(300, 175,  3, 13, kColorDarkBlue);
+	_vm->renderText(dirs[_state._pyraDirection    ], 299, 163, kColorBlack);
+	_vm->renderText(dirs[_state._pyraDirection + 1], 312, 179, kColorBlack);
+	_vm->renderText(dirs[_state._pyraDirection + 2], 299, 191, kColorBlack);
+	_vm->renderText(dirs[_state._pyraDirection + 3], 283, 179, kColorBlack);
 }
 
 }
