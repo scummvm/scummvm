@@ -25,16 +25,54 @@
 namespace HDB {
 
 DrawMan::DrawMan() {
+	_tLookupArray = NULL;
 	_systemInit = false;
 }
 
 bool DrawMan::init() {
 
+	// Read total number of tiles in game
 	_numTiles = g_hdb->_fileMan->getCount("t32_", TYPE_TILE32);
-
 	if (!_numTiles) {
 		return false;
 	}
+
+	// Setup Tile Lookup Array
+	_tLookupArray = new TileLookup[_numTiles];
+	Common::Array<const char *> tileData = *g_hdb->_fileMan->findFiles("t32_", TYPE_TILE32);
+
+	int index = 0, skyIndex = 0;
+	for (; index < _numTiles; index++) {
+		_tLookupArray[index].filename = tileData[index];
+		_tLookupArray[index].tData = NULL;
+		_tLookupArray[index].skyIndex = 0;
+		_tLookupArray[index].animIndex = index;
+		// Check if the loaded Tile is a Sky Tile
+		if (((Common::String)tileData[index]).contains("sky") && (skyIndex < kMaxSkies)) {
+			_tLookupArray[index].skyIndex = skyIndex + 1;
+			_skyTiles[skyIndex] = index;
+			skyIndex++;
+		}
+	}
+
+	/*
+		TODO: Add Animating Tile Info
+	*/
+
+	// Init Sky Data
+	_currentSky = 0;
+
+	/*
+		TODO: Setup Gamma Table
+	*/
+
+	/*
+		TODO: Load Mouse Pointer and Display Cursor
+	*/
+
+	/*
+		TODO: Load all 4 levels of star colors and the snowflake
+	*/
 
 	_systemInit = true;
 	return true;

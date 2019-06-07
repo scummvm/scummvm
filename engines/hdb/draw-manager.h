@@ -33,6 +33,15 @@ enum {
 	kMaxSkies = 10,
 };
 
+class Tile;
+
+struct TileLookup {
+	const char *filename;
+	Tile *tData;
+	uint16 skyIndex;
+	uint16 animIndex;
+};
+
 class DrawMan {
 public:
 
@@ -42,6 +51,9 @@ public:
 
 private:
 	int _numTiles;
+	TileLookup *_tLookupArray;
+	uint16 _skyTiles[kMaxSkies];
+	int _currentSky;	// 0 if no Sky, 1+ for which Sky to use
 	bool _systemInit;
 
 };
