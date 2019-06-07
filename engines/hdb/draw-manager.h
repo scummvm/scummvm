@@ -48,6 +48,7 @@ public:
 	DrawMan();
 
 	bool init();
+	bool cacheTile(int index);
 
 private:
 	int _numTiles;

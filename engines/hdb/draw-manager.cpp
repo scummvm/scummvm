@@ -78,6 +78,29 @@ bool DrawMan::init() {
 	return true;
 }
 
+bool DrawMan::cacheTile(int index) {
+
+	if (index < 0) {
+		return false;
+	}
+	if (index > _numTiles) {
+		return false;
+	}
+	if (_tLookupArray[index].skyIndex) {
+		// We don't draw Sky Tiles, so return true
+		return true;
+	}
+
+	if (_tLookupArray[index].tData == NULL) {
+		Common::SeekableReadStream *stream = g_hdb->_fileMan->findFirstData(_tLookupArray[index].filename, TYPE_TILE32);
+		Tile *tile = new Tile;
+		tile->load(stream);
+		_tLookupArray[index].tData = tile;
+	}
+
+	return true;
+}
+
 Picture::~Picture() {
 	_surface.free();
 }
