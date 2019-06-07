@@ -88,7 +88,7 @@ bool Map::load(Common::SeekableReadStream *stream) {
 	_mapLaserBeams = new char[_width * _height];
 
 
-	mapX = mapY = 0;
+	_mapX = _mapY = 0;
 
 	_mapLoaded = true;
 

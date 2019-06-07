@@ -42,8 +42,8 @@ HDBGame::HDBGame(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst
 	_console = nullptr;
 	_systemInit = false;
 	g_hdb = this;
-	fileMan = new FileMan;
-	lua = new LuaScript;
+	_fileMan = new FileMan;
+	_lua = new LuaScript;
 	//mapLoader = new MapLoader;
 
 	DebugMan.addDebugChannel(kDebugExample1, "Example1", "This is just an example to test");
@@ -52,8 +52,8 @@ HDBGame::HDBGame(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst
 
 HDBGame::~HDBGame() {
 	delete _console;
-	delete fileMan;
-	delete lua;
+	delete _fileMan;
+	delete _lua;
 	//delete mapLoader;
 	DebugMan.clearAllDebugChannels();
 }
@@ -65,11 +65,11 @@ bool HDBGame::init() {
 
 	// Init fileMan
 
-	if (!fileMan->openMPC(getGameFile())) {
+	if (!_fileMan->openMPC(getGameFile())) {
 		error("FileMan::openMPC: Cannot find the hyperspace.mpc data file.");
 		return false;
 	}
-	if (!lua->init()) {
+	if (!_lua->init()) {
 		error("LuaScript::init: Couldn't load the GLOBAL_LUA code.");
 		return false;
 	}
@@ -123,7 +123,7 @@ Common::Error HDBGame::run() {
 	_console = new Console();
 
 
-	Common::SeekableReadStream *titleStream = fileMan->findFirstData("monkeylogoscreen", TYPE_PIC);
+	Common::SeekableReadStream *titleStream = _fileMan->findFirstData("monkeylogoscreen", TYPE_PIC);
 	if (titleStream == NULL) {
 		debug("The TitleScreen MPC entry can't be found.");
 		return Common::kReadingFailed;
@@ -132,7 +132,7 @@ Common::Error HDBGame::run() {
 	Picture *titlePic = new Picture;
 	Graphics::Surface surf = titlePic->load(titleStream);
 
-	Common::SeekableReadStream *tileStream = fileMan->findFirstData("t32_ground1", TYPE_TILE32);
+	Common::SeekableReadStream *tileStream = _fileMan->findFirstData("t32_ground1", TYPE_TILE32);
 	if (tileStream == NULL) {
 		debug("The t32_shipwindow_lr MPC entry can't be found.");
 		return Common::kReadingFailed;
@@ -141,16 +141,16 @@ Common::Error HDBGame::run() {
 	Tile *tile = new Tile;
 	Graphics::Surface surf2 = tile->load(tileStream);
 
-	Common::SeekableReadStream *luaStream = fileMan->findFirstData("MAP00_DEMO_LUA", TYPE_BINARY);
-	int32 luaLength = fileMan->getLength("MAP00_DEMO_LUA", TYPE_BINARY);
+	Common::SeekableReadStream *luaStream = _fileMan->findFirstData("MAP00_DEMO_LUA", TYPE_BINARY);
+	int32 luaLength = _fileMan->getLength("MAP00_DEMO_LUA", TYPE_BINARY);
 	if (luaStream == NULL) {
 		debug("The MAP00_DEMO_LUA MPC entry can't be found.");
 		return Common::kReadingFailed;
 	}
 
-	lua->initScript(luaStream, "MAP00_DEMO_LUA", luaLength);
+	_lua->initScript(luaStream, "MAP00_DEMO_LUA", luaLength);
 
-	Common::SeekableReadStream *mapStream = fileMan->findFirstData("MAP00_DEMO_MSM", TYPE_BINARY);
+	Common::SeekableReadStream *mapStream = _fileMan->findFirstData("MAP00_DEMO_MSM", TYPE_BINARY);
 	if (mapStream == NULL) {
 		debug("The MAP00_DEMO_MSM MPC entry can't be found.");
 		return Common::kReadingFailed;

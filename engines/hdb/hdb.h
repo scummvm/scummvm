@@ -82,8 +82,8 @@ public:
 	Game System Pointers
 	*/
 
-	FileMan *fileMan;
-	LuaScript *lua;
+	FileMan *_fileMan;
+	LuaScript *_lua;
 
 	// Game related members;
 
