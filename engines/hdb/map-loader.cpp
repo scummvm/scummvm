@@ -95,10 +95,18 @@ bool Map::load(Common::SeekableReadStream *stream) {
 	return true;
 }
 
-int MapLoader::loadTiles() {
-	warning("STUB: MAPLOADER: LOAD TILES");
-	return 0;
-}
-#endif
+int Map::loadTiles() {
+
+	int tile, temp;
+	int skyIndex = 0;
+
+	// Load all tiles
+	for (uint j = 0; j < _height; j++) {
+		for (uint i = 0; i < _width; i++) {
+			tile = _background[j * _width + i];
+		}
+	}
+
+	return skyIndex;
 }
 }

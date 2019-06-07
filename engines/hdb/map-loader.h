@@ -51,6 +51,7 @@ public:
 	Map();
 
 	bool load(Common::SeekableReadStream *stream);
+	int loadTiles();
 
 	int mapX, mapY; // Coordinates of Map
 	int mapTileX, mapTileY; // Tile Coordinates of Map
