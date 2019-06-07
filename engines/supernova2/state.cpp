@@ -52,6 +52,9 @@ bool GameManager::serialize(Common::WriteStream *out) {
 	out->writeSint16LE(_state._pyraDirection);
 	out->writeUint32LE(_state._eventTime);
 	out->writeSint32LE(_state._eventCallback);
+	for (int i = 0; i < 15; i++) {
+		out->writeSint16LE(_state._puzzleTab[i]);
+	}
 
 	// Inventory
 	out->writeSint32LE(_inventory.getSize());
@@ -94,6 +97,8 @@ bool GameManager::deserialize(Common::ReadStream *in, int version) {
 	_state._pyraDirection = in->readSint16LE();
 	_state._eventTime = in->readUint32LE();
 	_state._eventCallback = (EventFunction)in->readSint32LE();
+	for (int i = 0; i < 15; i++)
+		_state._puzzleTab[i] = in->readSint16LE();
 	_vm->setGameString(kStringMoney, Common::String::format("%d Xa", _state._money));
 
 	_oldTime = g_system->getMillis();
@@ -370,6 +375,9 @@ void GameManager::initState() {
 	_state._pyraDirection = 0;
 	_state._eventTime = kMaxTimerValue;
 	_state._eventCallback = kNoFn;
+	int16 startPuzzleTab[15] = {12, 3, 14, 1, 11, 0, 2, 13, 9, 5, 4, 10, 7, 6, 8};
+	for (int i = 0; i < 15; i++)
+		_state._puzzleTab[i] = startPuzzleTab[i];
 }
 
 void GameManager::initRooms() {
@@ -1490,6 +1498,8 @@ void GameManager::handleInput() {
 }
 
 void GameManager::executeRoom() {
+	if (_currentRoom == _rooms[PUZZLE_FRONT])
+		puzzleConstruction();
 	if (_processInput && !_vm->_screen->isMessageShown() && _guiEnabled) {
 		handleInput();
 		if (_mouseClicked) {
@@ -1993,6 +2003,22 @@ void GameManager::compass() {
 	_vm->renderText(dirs[_state._pyraDirection + 1], 312, 179, kColorBlack);
 	_vm->renderText(dirs[_state._pyraDirection + 2], 299, 191, kColorBlack);
 	_vm->renderText(dirs[_state._pyraDirection + 3], 283, 179, kColorBlack);
+}
+
+void GameManager::puzzleConstruction() {
+	_vm->setCurrentImage(12);
+	MS2Image *image = _vm->_screen->getCurrentImage();
+	for (int i = 0; i < 16; i ++) {
+		_puzzleField[i] = 255;
+	}
+	for (int i = 0; i < 15; i++) {
+		image->_section[i + 1].x1 = 95 + (_state._puzzleTab[i] % 4) * 33;
+		image->_section[i + 1].x2 = image->_section[i + 1].x1 + 31;
+		image->_section[i + 1].y1 = 24 + (_state._puzzleTab[i] / 4) * 25;
+		image->_section[i + 1].y2 = image->_section[i + 1].y1 + 23;
+
+		_puzzleField[_state._puzzleTab[i]] = i;
+	}
 }
 
 }

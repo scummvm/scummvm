@@ -2330,7 +2330,7 @@ void PyrEntrance::animation() {
 			_gm->wait(3);
 			_vm->renderImage(9);
 			_gm->_rooms[FLOORDOOR]->setSectionVisible(8, kShownFalse);
-			_vm->playSound(kAudioPyramid1);
+			_vm->playSound(kAudioShip3);
 			_gm->screenShake();
 			_gm->_rooms[FLOORDOOR]->setSectionVisible(kMaxSection - 1, kShownTrue);
 		}
@@ -2555,7 +2555,7 @@ bool BottomRightDoor::interact(Action verb, Object &obj1, Object &obj2) {
 			_gm->_rooms[UPPER_DOOR]->getObject(2)->_id = DOOR;
 			_gm->_rooms[UPPER_DOOR]->getObject(2)->_description = kStringMassive;
 		}
-		_vm->playSound(kAudioPyramid1);
+		_vm->playSound(kAudioShip3);
 		_gm->screenShake();
 	}
 	else
@@ -2708,9 +2708,45 @@ PuzzleFront::PuzzleFront(Supernova2Engine *vm, GameManager *gm) {
 	_vm = vm;
 	_gm = gm;
 
-	_fileNumber = 6;
+	_fileNumber = 12;
 	_id = PUZZLE_FRONT;
 	_shown[0] = kShownTrue;
+	_shown[1] = kShownTrue;
+	_shown[2] = kShownTrue;
+	_shown[3] = kShownTrue;
+	_shown[4] = kShownTrue;
+	_shown[5] = kShownTrue;
+	_shown[6] = kShownTrue;
+	_shown[7] = kShownTrue;
+	_shown[8] = kShownTrue;
+	_shown[9] = kShownTrue;
+	_shown[10] = kShownTrue;
+	_shown[11] = kShownTrue;
+	_shown[12] = kShownTrue;
+	_shown[13] = kShownTrue;
+	_shown[14] = kShownTrue;
+	_shown[15] = kShownTrue;
+	_shown[30] = kShownTrue;
+
+	_objectState[0] = Object(_id, kStringRight, kStringDefaultDescription, G_RIGHT, EXIT, 1, 1, 0, PYR_ENTRANCE, 14);
+	_objectState[1] = Object(_id, kStringLeft, kStringDefaultDescription, G_LEFT, EXIT, 2, 2, 0, PYR_ENTRANCE, 10);
+	_objectState[2] = Object(_id, kStringDoor, kStringMassive, DOOR, EXIT | OPENABLE | CLOSED, 255, 255, 0, PYR_ENTRANCE, 2);
+	_objectState[3] = Object(_id, kStringPiece, kStringDefaultDescription, PART0, PRESS, 3, 3, 0);
+	_objectState[4] = Object(_id, kStringPiece, kStringDefaultDescription, PART1, PRESS, 4, 4, 0);
+	_objectState[5] = Object(_id, kStringPiece, kStringDefaultDescription, PART2, PRESS, 5, 5, 0);
+	_objectState[6] = Object(_id, kStringPiece, kStringDefaultDescription, PART3, PRESS, 6, 6, 0);
+	_objectState[7] = Object(_id, kStringPiece, kStringDefaultDescription, PART4, PRESS, 7, 7, 0);
+	_objectState[8] = Object(_id, kStringPiece, kStringDefaultDescription, PART5, PRESS, 8, 8, 0);
+	_objectState[9] = Object(_id, kStringPiece, kStringDefaultDescription, PART6, PRESS, 9, 9, 0);
+	_objectState[10] = Object(_id, kStringPiece, kStringDefaultDescription, PART7, PRESS, 10, 10, 0);
+	_objectState[11] = Object(_id, kStringPiece, kStringDefaultDescription, PART8, PRESS, 11, 11, 0);
+	_objectState[12] = Object(_id, kStringPiece, kStringDefaultDescription, PART9, PRESS, 12, 12, 0);
+	_objectState[13] = Object(_id, kStringPiece, kStringDefaultDescription, PART10, PRESS, 13, 13, 0);
+	_objectState[14] = Object(_id, kStringPiece, kStringDefaultDescription, PART11, PRESS, 14, 14, 0);
+	_objectState[15] = Object(_id, kStringPiece, kStringDefaultDescription, PART12, PRESS, 15, 15, 0);
+	_objectState[16] = Object(_id, kStringPiece, kStringDefaultDescription, PART13, PRESS, 16, 16, 0);
+	_objectState[17] = Object(_id, kStringPiece, kStringDefaultDescription, PART14, PRESS, 17, 17, 0);
+	_objectState[18] = Object(_id, kStringPiece, kStringDefaultDescription, PART15, PRESS, 18, 18, 0);
 }
 
 void PuzzleFront::onEntrance() {
@@ -2721,6 +2757,67 @@ void PuzzleFront::animation() {
 }
 
 bool PuzzleFront::interact(Action verb, Object &obj1, Object &obj2) {
+	MS2Image *image = _vm->_screen->getCurrentImage();
+	if (_gm->move(verb, obj1)) {
+		_gm->passageConstruction();
+		_gm->_newRoom = true;
+	} else if (verb == ACTION_PRESS && obj1._id >= PART0 && obj1._id <= PART15) {
+		int pos = obj1._id - PART0;
+		int newPos = 0;
+		if (pos > 3  && _gm->_puzzleField[pos - 4] == 255)
+			newPos = pos - 4;
+		else if (pos < 12 && _gm->_puzzleField[pos + 4] == 255)
+			newPos = pos + 4;
+		else if ((pos % 4) > 0 && _gm->_puzzleField[pos - 1] == 255)
+			newPos = pos - 1;
+		else if ((pos % 4) < 3 && _gm->_puzzleField[pos + 1] == 255)
+			newPos = pos + 1;
+		else {
+			_vm->renderMessage(kStringPyramid5);
+			return true;
+		}
+		int a = _gm->_puzzleField[pos] + 1;
+		_vm->renderImage(a + 128);
+		image->_section[a].x1 = 95 + (newPos % 4) * 33;
+		image->_section[a].x2 = image->_section[a].x1 + 31;
+		image->_section[a].y1 = 24 + (newPos / 4) * 25;
+		image->_section[a].y2 = image->_section[a].y1 + 23;
+		_vm->renderImage(a);
+		_vm->playSound(kAudioTaxiOpen);
+		_gm->_state._puzzleTab[a - 1] = newPos;
+		_gm->_puzzleField[pos] = 255;
+		_gm->_puzzleField[newPos] = a - 1;
+		_objectState[pos + 3]._click = 255;
+		_objectState[newPos + 3]._click = newPos + 3;
+		for (int i = 0; i < 15; i++)
+			if (_gm->_state._puzzleTab[i] != i)
+				return true;
+		
+		_gm->wait(2);
+		_vm->renderImage(16);
+		for (int i = 1; i < 16; i++)
+			setSectionVisible(i, kShownFalse);
+		_gm->wait(2);
+		_vm->renderImage(17);
+		_gm->wait(2);
+		_vm->renderImage(18);
+		_objectState[2]._type = EXIT;
+		_objectState[2]._id = CORRIDOR;
+		_objectState[2]._description = kStringDefaultDescription;
+		_objectState[2]._click = 0;
+		
+		_gm->_rooms[PUZZLE_BEHIND]->setSectionVisible(31, kShownFalse);
+		_gm->_rooms[PUZZLE_BEHIND]->setSectionVisible(26, kShownTrue);
+		_gm->_rooms[PUZZLE_BEHIND]->setSectionVisible(27, kShownTrue);
+		_gm->_rooms[PUZZLE_BEHIND]->setSectionVisible(29, kShownTrue);
+		_gm->_rooms[PUZZLE_BEHIND]->getObject(2)->_type = EXIT;
+		_gm->_rooms[PUZZLE_BEHIND]->getObject(2)->_id = CORRIDOR;
+		_gm->_rooms[PUZZLE_BEHIND]->getObject(2)->_description = kStringDefaultDescription;
+		_vm->playSound(kAudioShip3);
+		_gm->screenShake();
+	}
+	else
+		return false;
 	return true;
 }
 

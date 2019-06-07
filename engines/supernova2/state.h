@@ -61,6 +61,7 @@ struct GameState {
 	char _pyraS;
 	char _pyraZ;
 	int16 _pyraDirection;
+	int16 _puzzleTab[15];
 };
 
 class Inventory {
@@ -178,6 +179,7 @@ public:
 	byte _rowsStart[6];
 	byte _dials[6];
 	int _taxi_possibility;
+	unsigned char _puzzleField[16];
 
 
 	void takeObject(Object &obj);
@@ -234,6 +236,7 @@ public:
 	byte wall(int s, int z, int direction, int stepsForward, int stepsRight);
 	bool move(Action verb, Object &obj);
 	void compass();
+	void puzzleConstruction();
 
 private:
 	int _prevImgId;
