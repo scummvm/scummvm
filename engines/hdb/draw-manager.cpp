@@ -132,6 +132,29 @@ int DrawMan::isSky(int index) {
 	return 0;
 }
 
+void DrawMan::setSky(int skyIndex) {
+	int tileIndex = _skyTiles[skyIndex - 1];
+	_currentSky = skyIndex;
+
+	// Clear memory used by last sky
+	if (tileIndex != _tileSkyClouds && _skyClouds) {
+		delete _skyClouds;
+		_skyClouds = NULL;
+	}
+
+	// Setup current sky
+	if (tileIndex == _tileSkyStars) {
+		warning("STUB: DRAWMAN::setSky: Setup3DStars");
+		return;
+	} else if (skyIndex == _tileSkyStarsLeft) {
+		warning("STUB: DRAWMAN::setSky: Setup3DStarsLeft");
+		return;
+	} else if (skyIndex == _tileSkyStars) {
+		warning("STUB: DRAWMAN::setSky: getPicture( CLOUDY_SKIES )");
+		return;
+	}
+}
+
 Picture::~Picture() {
 	_surface.free();
 }
