@@ -44,6 +44,7 @@ HDBGame::HDBGame(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst
 	g_hdb = this;
 	_fileMan = new FileMan;
 	_lua = new LuaScript;
+	_map = new Map;
 	//mapLoader = new MapLoader;
 
 	DebugMan.addDebugChannel(kDebugExample1, "Example1", "This is just an example to test");
@@ -54,6 +55,7 @@ HDBGame::~HDBGame() {
 	delete _console;
 	delete _fileMan;
 	delete _lua;
+	delete _map;
 	//delete mapLoader;
 	DebugMan.clearAllDebugChannels();
 }
@@ -156,8 +158,7 @@ Common::Error HDBGame::run() {
 		return Common::kReadingFailed;
 	}
 
-	Map *map = new Map;
-	map->load(mapStream);
+	_map->load(mapStream);
 
 #if 0
 	lua->executeFile("test.lua");
