@@ -976,6 +976,11 @@ begin_credits("Credits");
 				add_person("Neil Millstone", "agent-q", "");
 			end_section();
 
+			begin_section("Nintendo Switch");
+				add_person("", "Cpasjuste", "");
+				add_person("", "rsn8887", "");
+			end_section();
+
 			begin_section("OpenPandora");
 				add_person("John Willis", "DJWillis", "");
 			end_section();
