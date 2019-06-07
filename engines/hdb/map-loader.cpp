@@ -104,6 +104,10 @@ int Map::loadTiles() {
 	for (uint j = 0; j < _height; j++) {
 		for (uint i = 0; i < _width; i++) {
 			tile = _background[j * _width + i];
+			/*
+				TODO: Load tiles through DrawMan 
+			*/
+			warning("STUB: MAP LOAD TILES INCOMPLETE");
 		}
 	}
 
