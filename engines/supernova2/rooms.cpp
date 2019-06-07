@@ -2471,9 +2471,18 @@ BottomRightDoor::BottomRightDoor(Supernova2Engine *vm, GameManager *gm) {
 	_vm = vm;
 	_gm = gm;
 
-	_fileNumber = 6;
+	_fileNumber = 12;
 	_id = BOTTOM_RIGHT_DOOR;
 	_shown[0] = kShownTrue;
+	_shown[19] = kShownTrue;
+	_shown[23] = kShownTrue;
+	_shown[29] = kShownTrue;
+	_shown[30] = kShownTrue;
+
+	_objectState[0] = Object(_id, kStringRight, kStringDefaultDescription, G_RIGHT, EXIT, 1, 1, 0, PYR_ENTRANCE, 14);
+	_objectState[1] = Object(_id, kStringLeft, kStringDefaultDescription, G_LEFT, EXIT, 2, 2, 0, PYR_ENTRANCE, 10);
+	_objectState[2] = Object(_id, kStringDoor, kStringMassive, DOOR, EXIT | OPENABLE | CLOSED, 0, 0, 0, PYR_ENTRANCE, 2);
+	_objectState[3] = Object(_id, kStringButton, kStringDefaultDescription, BUTTON, PRESS, 19, 19, 0);
 }
 
 void BottomRightDoor::onEntrance() {
@@ -2484,6 +2493,73 @@ void BottomRightDoor::animation() {
 }
 
 bool BottomRightDoor::interact(Action verb, Object &obj1, Object &obj2) {
+	if (_gm->move(verb, obj1)) {
+		_gm->passageConstruction();
+		_gm->_newRoom = true;
+	}
+	else if (verb == ACTION_PRESS && obj1._id == BUTTON) {
+		if (isSectionVisible(22)) {
+			_vm->renderImage(21);
+			setSectionVisible(22, kShownFalse);
+			_gm->wait(2);
+			_vm->renderImage(20);
+			setSectionVisible(21, kShownFalse);
+			_gm->wait(2);
+			_vm->renderImage(19);
+			setSectionVisible(20, kShownFalse);
+			_objectState[2]._type = EXIT | OPENABLE | CLOSED;
+			_objectState[2]._id = DOOR;
+			_objectState[2]._description = kStringMassive;
+			_gm->_rooms[BOTTOM_LEFT_DOOR]->setSectionVisible(22, kShownFalse);
+			_gm->_rooms[BOTTOM_LEFT_DOOR]->setSectionVisible(21, kShownFalse);
+			_gm->_rooms[BOTTOM_LEFT_DOOR]->setSectionVisible(20, kShownFalse);
+			_gm->_rooms[BOTTOM_LEFT_DOOR]->setSectionVisible(19, kShownTrue);
+			_gm->_rooms[BOTTOM_LEFT_DOOR]->setSectionVisible(27, kShownFalse);
+			_gm->_rooms[BOTTOM_LEFT_DOOR]->setSectionVisible(28, kShownFalse);
+			_gm->_rooms[BOTTOM_LEFT_DOOR]->setSectionVisible(24, kShownFalse);
+			_gm->_rooms[BOTTOM_LEFT_DOOR]->getObject(2)->_type = EXIT | OPENABLE | CLOSED;
+			_gm->_rooms[BOTTOM_LEFT_DOOR]->getObject(2)->_id = DOOR;
+			_gm->_rooms[BOTTOM_LEFT_DOOR]->getObject(2)->_description = kStringMassive;
+			_gm->_rooms[UPPER_DOOR]->setSectionVisible(26, kShownTrue);
+			_gm->_rooms[UPPER_DOOR]->setSectionVisible(27, kShownTrue);
+			_gm->_rooms[UPPER_DOOR]->setSectionVisible(19, kShownFalse);
+			_gm->_rooms[UPPER_DOOR]->setSectionVisible(25, kShownFalse);
+			_gm->_rooms[UPPER_DOOR]->getObject(2)->_type = EXIT;
+			_gm->_rooms[UPPER_DOOR]->getObject(2)->_id = CORRIDOR;
+			_gm->_rooms[UPPER_DOOR]->getObject(2)->_description = kStringDefaultDescription;
+		} else {
+			_vm->renderImage(20);
+			setSectionVisible(19, kShownFalse);
+			_gm->wait(2);
+			_vm->renderImage(21);
+			_gm->wait(2);
+			_vm->renderImage(22);
+			_objectState[2]._type = EXIT;
+			_objectState[2]._id = CORRIDOR;
+			_objectState[2]._description = kStringDefaultDescription;
+			_gm->_rooms[BOTTOM_LEFT_DOOR]->setSectionVisible(20, kShownTrue);
+			_gm->_rooms[BOTTOM_LEFT_DOOR]->setSectionVisible(21, kShownTrue);
+			_gm->_rooms[BOTTOM_LEFT_DOOR]->setSectionVisible(22, kShownTrue);
+			_gm->_rooms[BOTTOM_LEFT_DOOR]->setSectionVisible(19, kShownFalse);
+			_gm->_rooms[BOTTOM_LEFT_DOOR]->setSectionVisible(27, kShownTrue);
+			_gm->_rooms[BOTTOM_LEFT_DOOR]->setSectionVisible(28, kShownTrue);
+			_gm->_rooms[BOTTOM_LEFT_DOOR]->setSectionVisible(24, kShownTrue);
+			_gm->_rooms[BOTTOM_LEFT_DOOR]->getObject(2)->_type = EXIT;
+			_gm->_rooms[BOTTOM_LEFT_DOOR]->getObject(2)->_id = CORRIDOR;
+			_gm->_rooms[BOTTOM_LEFT_DOOR]->getObject(2)->_description = kStringDefaultDescription;
+			_gm->_rooms[UPPER_DOOR]->setSectionVisible(26, kShownFalse);
+			_gm->_rooms[UPPER_DOOR]->setSectionVisible(27, kShownFalse);
+			_gm->_rooms[UPPER_DOOR]->setSectionVisible(19, kShownTrue);
+			_gm->_rooms[UPPER_DOOR]->setSectionVisible(25, kShownTrue);
+			_gm->_rooms[UPPER_DOOR]->getObject(2)->_type = EXIT | OPENABLE | CLOSED;
+			_gm->_rooms[UPPER_DOOR]->getObject(2)->_id = DOOR;
+			_gm->_rooms[UPPER_DOOR]->getObject(2)->_description = kStringMassive;
+		}
+		_vm->playSound(kAudioPyramid1);
+		_gm->screenShake();
+	}
+	else
+		return false;
 	return true;
 }
 
