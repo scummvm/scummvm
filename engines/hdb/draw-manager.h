@@ -49,6 +49,7 @@ public:
 
 	bool init();
 	Tile *getTile(int index);
+	int isSky(int skyIndex);
 
 private:
 	int _numTiles;
