@@ -27,6 +27,11 @@
 
 namespace HDB {
 
+enum {
+	kScreenXTiles = 17,
+	kScreenYTiles = 16
+};
+
 struct MSMIcon {
 	uint16	icon;					// index into icon list
 	uint16	x;
@@ -52,6 +57,7 @@ public:
 
 	int loadTiles();
 	bool load(Common::SeekableReadStream *stream);
+	void draw();
 
 	int _mapX, _mapY; // Coordinates of Map
 	int _mapTileX, _mapTileY; // Tile Coordinates of Map
