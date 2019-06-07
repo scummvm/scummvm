@@ -65,6 +65,13 @@ enum GameState {
 	GAME_LOADING
 };
 
+enum Flag {
+	kFlagInvisible = 0x20,
+	kFlagForeground = 0x80,
+	kFlagGrating = 0x4000000,
+	kFlagMasked = 0x2000000
+};
+
 enum {
 	kScreenWidth = 640,
 	kScreenHeight = 480
