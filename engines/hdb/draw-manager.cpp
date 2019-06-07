@@ -61,6 +61,10 @@ bool DrawMan::init() {
 
 	// Init Sky Data
 	_currentSky = 0;
+	_tileSkyStars = getTileIndex("t32_sky_stars");
+	_tileSkyStarsLeft = getTileIndex("t32_sky_stars_left_slow");
+	_tileSkyClouds = getTileIndex("t32_sky_stars_stationary"); // Not completely sure about this filename.
+	_skyClouds = NULL;
 
 	/*
 		TODO: Setup Gamma Table
