@@ -119,4 +119,95 @@ bool Map::load(Common::SeekableReadStream *stream) {
 
 	return true;
 }
+
+void Map::draw() {
+	if (!_mapLoaded) {
+		return;
+	}
+
+	int matrixY;
+	int screenX, screenY;
+	int maxTileX, maxTileY;
+
+	// Calculate Tile Offsets and Panning Offsets
+	_mapTileX = _mapX / kTileWidth;
+	_mapTileY = _mapY / kTileHeight;
+	_mapTileXOff = -(_mapX % kTileWidth);
+	_mapTileYOff = -(_mapY % kTileHeight);
+
+	matrixY = _mapTileY * _width;
+	screenY = _mapTileYOff;
+
+	/*
+		Note from Original Source:
+		need to set the number of tiles to draw on the screen.  Most of the time
+		we need to draw an extra tile because we're displaying a half-tile, but
+		sometimes the offset is exactly at 0 and thus we don't need to draw a
+		tile offscreen that we'll never see.  In fact, doing this fixes a bug
+		that could occur because we would be accessing map data that's outside the map
+		when we're at the very bottom of the map.
+	*/
+
+	maxTileX = (_mapTileXOff >= -8) ? kScreenXTiles - 1 : kScreenXTiles;
+	maxTileY = (!_mapTileYOff) ? kScreenYTiles - 1 : kScreenYTiles;
+
+	if (matrixY + (maxTileY - 1)*_width > _height * _width) {
+		return;
+	}
+
+	for (int j = 0; j < maxTileY; j++) {
+		screenX = _mapTileXOff;
+		for (int i = 0; i < maxTileX; i++) {
+
+			// Draw Background Tile
+			uint16 tileIndex = _background[matrixY + _mapTileX + i];
+			if (tileIndex < 0) {
+				tileIndex = 0;
+			}
+
+			// Draw if not a sky tile
+			if (!g_hdb->_drawMan->isSky(tileIndex)) {
+				g_hdb->_drawMan->getTile(tileIndex)->draw(screenX, screenY);
+			}
+
+			// Draw Foreground Tile
+			tileIndex = _foreground[matrixY + _mapTileX + i];
+			if (tileIndex >= 0) {
+				Tile *fTile = g_hdb->_drawMan->getTile(tileIndex);
+				if (!(fTile->_flags & kFlagInvisible)) {
+
+					if ((fTile->_flags & kFlagGrating)) {
+						/*
+						TODO: Implement Gratings Check
+						*/
+						warning("STUB: Map::draw: Gratings Check not found");
+					} else if ((fTile->_flags & kFlagForeground)) {
+						/*
+						TODO: Implement Gratings Check
+						*/
+						warning("STUB: Map::draw: Gratings Check not found");
+					} else {
+						if (fTile->_flags & kFlagMasked) {
+							/*
+								TODO: Implement MaskedMapTile drawing
+							*/
+							warning("STUB: Map::draw: MaskedMapTile drawing not implemented");
+						} else {
+							fTile->draw(screenX, screenY);
+						}
+					}
+				}
+			}
+
+			screenX += kTileWidth;
+		}
+		matrixY += _width;
+		screenY += kTileWidth;
+	}
+
+	/*
+		TODO: Implement animated Map Tiles
+	*/
+}
+
 }
