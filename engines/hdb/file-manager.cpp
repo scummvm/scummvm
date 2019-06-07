@@ -143,6 +143,22 @@ int32 FileMan::getLength(const char *string, DataType type) {
 	return file->ulength;
 }
 
+int FileMan::getCount(char *subString, DataType type) {
+	int count = 0;
+	Common::String fileString;
+
+	for (MPCIterator it = _dir.begin(); it != _dir.end(); it++) {
+		fileString = (*it)->filename;
+		if (fileString.contains(subString)) {
+			if ((*it)->type == type) {
+				count++;
+			}
+		}
+	}
+
+	return count;
+}
+
 #if 0
 MPCEntry **FileMan::findNextData(MPCIterator begin) {
 	Common::String fileString;
@@ -158,17 +174,6 @@ MPCEntry **FileMan::findNextData(MPCIterator begin) {
 	return NULL;
 }
 
-int FileMan::findAmount(char *string, DataType type) {
-	int count = 0;
-	
-	MPCIterator it = findFirstData(string, type);
-	while (it && (*it)->type == type) {
-		count++;
-		it = findNextData(it);
-	}
-
-	return count;
-}
 #endif
 
 } // End of Namespace HDB

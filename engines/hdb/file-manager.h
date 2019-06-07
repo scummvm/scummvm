@@ -76,17 +76,9 @@ public:
 	void closeMPC();
 	void seek(int32 offset, int flag);
 
-	/*
-		TODO: Implement the loadData functions for the various
-		DataTypes as they are encountered.
-
-		void loadData(char *string, uint32 *length);
-	*/
-
 	Common::SeekableReadStream *findFirstData(const char *string, DataType type);
 	int32 getLength(const char *string, DataType type);
-	//MPCEntry **findNextData(MPCIterator it);
-	//int findAmount(char *string, DataType type);
+	int getCount(char *subString, DataType type);
 
 };
 
