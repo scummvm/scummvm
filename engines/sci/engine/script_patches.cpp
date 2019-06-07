@@ -11540,11 +11540,21 @@ static const uint16 sq4FloppyPatchEndlessFlight[] = {
 //  it. Funnily Sierra must have known that, because that new text resource
 //  contains: "Hi! This is a kludge!"
 //
-// We properly fix it by removing the faulty code.
-// Applies to at least: English Floppy
-// Responsible method: sp1::doVerb
+// A copy of this script exists in the arcade when the sequel police arrive, but
+//  it has an additional typo that adds another broken function call to the ATM
+//  card message. Originally these arcade bugs couldn't be triggered because the
+//  police didn't respond to clicks due to their description property not being
+//  set. This Feature behavior was changed in later versions, exposing the bug
+//  on Mac and Amiga until the script was eventually rewritten for localization.
+//
+// We properly fix it by removing the faulty code from both scripts, preventing
+//  crashes in all versions, and by setting an arbitrary sp2:description in
+//  English PC floppy so that the arcade police respond to clicks as intended.
+//
+// Applies to: English PC Floppy, English Mac Floppy, English Amiga Floppy
+// Responsible methods: sp1::doVerb, heap in script 376
 // Fixes bug: found by SCI developer
-static const uint16 sq4FloppySignatureThrowStuffAtSequelPoliceBug[] = {
+static const uint16 sq4FloppySignatureThrowStuffAtSequelPolice[] = {
 	0x47, 0xff, 0x00, 0x02,             // calle [export 0 of script 255], 2
 	0x3a,                               // toss
 	SIG_MAGICDWORD,
@@ -11553,9 +11563,43 @@ static const uint16 sq4FloppySignatureThrowStuffAtSequelPoliceBug[] = {
 	SIG_END
 };
 
-static const uint16 sq4FloppyPatchThrowStuffAtSequelPoliceBug[] = {
+static const uint16 sq4FloppyPatchThrowStuffAtSequelPolice[] = {
 	PATCH_ADDTOOFFSET(+5),
-	0x48,                            // ret
+	0x32, PATCH_UINT16(0x0002),         // jmp 0002
+	PATCH_END
+};
+
+static const uint16 sq4FloppySignatureClickAtmCardOnSequelPolice[] = {
+	0x47, 0xff, 0x00, 0x02,             // calle [export 0 of script 255], 2
+	SIG_MAGICDWORD,
+	0x36,                               // push
+	0x47, 0xff, 0x00, 0x02,             // calle [export 0 of script 255], 2
+	SIG_END
+};
+
+static const uint16 sq4FloppyPatchClickAtmCardOnSequelPolice[] = {
+	PATCH_ADDTOOFFSET(+4),
+	0x32, PATCH_UINT16(0x0002),         // jmp 0002
+	PATCH_END
+};
+
+// set an arbitrary sp2:description so that sp2:doVerb can run.
+//  the description isn't used, it just has to be non-zero.
+static const uint16 sq4FloppySignatureSequelPoliceDescription[] = {
+	SIG_UINT16(0x0000),                 // description = 0
+	SIG_UINT16(0x005a),                 // sighAngle = 90
+	SIG_UINT16(0x6789),                 // actions = 26505
+	SIG_UINT16(0x6789),                 // onMeCheck = 26505
+	SIG_UINT16(0x0000),                 // lookStr = 0
+	SIG_UINT16(0x0002),                 // yStep = 2
+	SIG_MAGICDWORD,
+	SIG_UINT16(0x0179),                 // view = 377
+	SIG_UINT16(0x0004),                 // view = 4
+	SIG_END
+};
+
+static const uint16 sq4FloppyPatchSequelPoliceDescription[] = {
+	PATCH_UINT16(0x2b21),               // description = "It's one of Vohaul's Sequel Policemen!"
 	PATCH_END
 };
 
@@ -12546,7 +12590,10 @@ static const uint16 sq4CdPatchVohaulPocketPalTextSpeech[] = {
 static const SciScriptPatcherEntry sq4Signatures[] = {
 	{  true,     1, "Floppy: EGA intro delay fix",                    2, sq4SignatureEgaIntroDelay,                     sq4PatchEgaIntroDelay },
 	{  true,   298, "Floppy: endless flight",                         1, sq4FloppySignatureEndlessFlight,               sq4FloppyPatchEndlessFlight },
-	{  true,   700, "Floppy: throw stuff at sequel police bug",       1, sq4FloppySignatureThrowStuffAtSequelPoliceBug, sq4FloppyPatchThrowStuffAtSequelPoliceBug },
+	{  true,   376, "Floppy: set sequel police description",          1, sq4FloppySignatureSequelPoliceDescription,     sq4FloppyPatchSequelPoliceDescription },
+	{  true,   376, "Floppy: click atm card on sequel police fix",    1, sq4FloppySignatureClickAtmCardOnSequelPolice,  sq4FloppyPatchClickAtmCardOnSequelPolice },
+	{  true,   376, "Floppy: throw stuff at sequel police fix",       1, sq4FloppySignatureThrowStuffAtSequelPolice,    sq4FloppyPatchThrowStuffAtSequelPolice },
+	{  true,   700, "Floppy: throw stuff at sequel police fix",       1, sq4FloppySignatureThrowStuffAtSequelPolice,    sq4FloppyPatchThrowStuffAtSequelPolice },
 	{  true,    35, "CD: sidewalk smell message fix",                 1, sq4CdSignatureSidewalkSmellMessage,            sq4CdPatchSidewalkSmellMessage },
 	{  true,    45, "CD: walk in from below for room 45 fix",         1, sq4CdSignatureWalkInFromBelowRoom45,           sq4CdPatchWalkInFromBelowRoom45 },
 	{  true,   290, "CD: cedric easter egg fix",                      1, sq4CdSignatureCedricEasterEgg,                 sq4CdPatchCedricEasterEgg },
