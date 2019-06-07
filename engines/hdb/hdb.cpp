@@ -43,6 +43,7 @@ HDBGame::HDBGame(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst
 	_systemInit = false;
 	g_hdb = this;
 	_fileMan = new FileMan;
+	_drawMan = new DrawMan;
 	_lua = new LuaScript;
 	_map = new Map;
 	//mapLoader = new MapLoader;
@@ -54,6 +55,7 @@ HDBGame::HDBGame(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst
 HDBGame::~HDBGame() {
 	delete _console;
 	delete _fileMan;
+	delete _drawMan;
 	delete _lua;
 	delete _map;
 	//delete mapLoader;
@@ -69,6 +71,10 @@ bool HDBGame::init() {
 
 	if (!_fileMan->openMPC(getGameFile())) {
 		error("FileMan::openMPC: Cannot find the hyperspace.mpc data file.");
+		return false;
+	}
+	if (!_drawMan->init()) {
+		error("DrawMan::init: Couldn't initialize DrawMan");
 		return false;
 	}
 	if (!_lua->init()) {

@@ -83,6 +83,7 @@ public:
 	*/
 
 	FileMan *_fileMan;
+	DrawMan *_drawMan;
 	LuaScript *_lua;
 	Map *_map;
 
