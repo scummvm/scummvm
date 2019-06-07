@@ -24,20 +24,9 @@
 #define HDB_MAP_LOADER_H
 
 #include "common/system.h"
+#include "common/array.h"
 
 namespace HDB {
-
-struct MSMHeader {
-	char name[32];
-	uint16 width;
-	uint16 height;
-	uint32 background;
-	uint32 foreground;
-	uint16 iconNum;
-	uint32 iconList;
-	uint16 infoNum;
-	uint32 infoList;
-};
 
 struct MSMIcon {
 	uint16	icon;					// index into icon list
@@ -50,6 +39,39 @@ struct MSMIcon {
 	uint16	dir;					// direction entity is facing
 	uint16	level;					// which floor level entity is on
 	uint16	value1, value2;
+};
+
+struct SeeThroughTile {
+	uint16 x;
+	uint16 y;
+	uint16 tile;
+};
+
+class Map {
+public:
+	Map();
+
+	bool load(Common::SeekableReadStream *stream);
+private:
+	char _name[32];
+	uint16 _width;
+	uint16 _height;
+	uint32 _backgroundOffset;
+	uint32 _foregroundOffset;
+	uint16 _iconNum;
+	uint32 _iconListOffset;
+	uint16 _infoNum;
+	uint32 _infoListOffset;
+
+	uint16 *_background;
+	uint16 *_foreground;
+	MSMIcon *_iconList;
+
+	char *_mapExplosions;
+	char *_mapExpBarrels;
+	char *_mapLaserBeams;
+
+	bool _mapLoaded;
 };
 
 class MapLoader {
