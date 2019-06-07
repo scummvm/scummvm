@@ -50,8 +50,8 @@ class Map {
 public:
 	Map();
 
-	bool load(Common::SeekableReadStream *stream);
 	int loadTiles();
+	bool load(Common::SeekableReadStream *stream);
 
 	int _mapX, _mapY; // Coordinates of Map
 	int _mapTileX, _mapTileY; // Tile Coordinates of Map

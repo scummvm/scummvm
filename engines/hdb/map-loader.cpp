@@ -28,6 +28,26 @@ Map::Map() {
 	_mapLoaded = false;
 }
 
+int Map::loadTiles() {
+
+	int tile, temp;
+	int skyIndex = 0;
+
+	// Load all tiles
+	for (uint j = 0; j < _height; j++) {
+		for (uint i = 0; i < _width; i++) {
+			tile = _background[j * _width + i];
+			if ((temp = g_hdb->_drawMan->isSky(tile)) && !skyIndex) {
+				skyIndex = temp;
+			}
+			g_hdb->_drawMan->getTile(tile);
+			g_hdb->_drawMan->getTile(_foreground[j * _width + i]);
+		}
+	}
+
+	return skyIndex;
+}
+
 bool Map::load(Common::SeekableReadStream *stream) {
 	if (_mapLoaded) {
 		return false;
@@ -87,31 +107,16 @@ bool Map::load(Common::SeekableReadStream *stream) {
 	_mapExpBarrels = new byte[_width * _height];
 	_mapLaserBeams = new byte[_width * _height];
 
-
+	int sky = loadTiles();
+	g_hdb->_drawMan->setSky(sky);
 	_mapX = _mapY = 0;
+	
+	/*
+		TODO: Add the animating tile lists
+	*/
 
 	_mapLoaded = true;
 
 	return true;
-}
-
-int Map::loadTiles() {
-
-	int tile, temp;
-	int skyIndex = 0;
-
-	// Load all tiles
-	for (uint j = 0; j < _height; j++) {
-		for (uint i = 0; i < _width; i++) {
-			tile = _background[j * _width + i];
-			if ((temp = g_hdb->_drawMan->isSky(tile)) && !skyIndex) {
-				skyIndex = temp;
-			}
-			g_hdb->_drawMan->getTile(tile);
-			g_hdb->_drawMan->getTile(_foreground[j * _width + i]);
-		}
-	}
-
-	return skyIndex;
 }
 }
