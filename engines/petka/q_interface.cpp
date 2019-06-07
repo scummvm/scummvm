@@ -22,8 +22,11 @@
 
 #include "common/stream.h"
 
+#include "petka/obj.h"
 #include "petka/q_interface.h"
 #include "petka/q_system.h"
+#include "petka/q_manager.h"
+#include "petka/sound.h"
 #include "petka/petka.h"
 
 namespace Petka {
@@ -42,8 +45,44 @@ QInterfaceMain::QInterfaceMain() {
 		for (uint j = 0; j < _bgs[i].attachedObjIds.size(); ++j) {
 			_bgs[i].attachedObjIds[i] = stream->readUint16LE();
 			QMessageObject *obj = g_vm->getQSystem()->findObject(_bgs[i].attachedObjIds[i]);
-			obj->readFromBackgrndBg(*stream);
+			obj->_x = stream->readSint32LE();
+			obj->_y = stream->readSint32LE();
+			obj->_z = stream->readSint32LE();
+			obj->_field14 = stream->readSint32LE();
+			obj->_field18 = stream->readSint32LE();
 		}
+	}
+}
+
+const Common::Array<BGInfo> QInterfaceMain::bgInfos() {
+	return _bgs;
+}
+
+void QInterfaceStartup::start() {
+	g_vm->getQSystem()->update();
+
+	QObjectBG *bg = (QObjectBG *)g_vm->getQSystem()->findObject("STARTUP");
+	_objs.push_back(bg);
+
+	Sound *s = g_vm->soundMgr()->addSound(g_vm->resMgr()->findSoundName(bg->_musicId), Audio::Mixer::SoundType::kMusicSoundType);
+	s->play(true);
+
+	const Common::Array<BGInfo> infos = g_vm->getQSystem()->_mainInterface->_bgs;
+
+	for (uint i = 0; i < infos.size(); ++i) {
+		if (infos[i].objId != bg->_id) {
+			continue;
+		}
+		QMessageObject *obj = g_vm->getQSystem()->findObject(infos[i].objId);
+		obj->_z = 1;
+		obj->_x = 0;
+		obj->_y = 0;
+		obj->_field24 = 1;
+		obj->_field20 = 1;
+		obj->_field28 = 1;
+		obj->_animate = 1;
+		obj->_isShown = 0;
+		_objs.push_back(obj);
 	}
 }
 

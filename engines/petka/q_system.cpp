@@ -23,24 +23,23 @@
 #include "common/ini-file.h"
 #include "common/substream.h"
 
+#include "graphics/colormasks.h"
+
 #include "petka/petka.h"
 #include "petka/q_interface.h"
-#include "petka/q_object_case.h"
-#include "petka/q_object_cursor.h"
-#include "petka/q_object_star.h"
 #include "petka/q_system.h"
 
 namespace Petka {
 
-QSystem::QSystem(PetkaEngine &vm)
-	: _vm(vm), _cursor(nullptr), _case(nullptr), _star(nullptr),
+QSystem::QSystem()
+	: _cursor(nullptr), _case(nullptr), _star(nullptr),
 	_mainInterface(nullptr), _currInterface(nullptr), _prevInterface(nullptr) {}
 
 QSystem::~QSystem() {
 
 }
 
-Common::String readString(Common::ReadStream &readStream) {
+static Common::String readString(Common::ReadStream &readStream) {
 	uint32 stringSize = readStream.readUint32LE();
 	byte *data = (byte *)malloc(stringSize + 1);
 	readStream.read(data, stringSize);
@@ -49,13 +48,46 @@ Common::String readString(Common::ReadStream &readStream) {
 	return str;
 }
 
+static void readObject(QMessageObject &obj, Common::SeekableReadStream &stream,
+	const Common::INIFile &namesIni, const Common::INIFile &castIni) {
+	obj._id = stream.readUint16LE();
+	obj._name = readString(stream);
+	obj._reactions.resize(stream.readUint32LE());
+
+	for (uint i = 0; i < obj._reactions.size(); ++i) {
+		QReaction *reaction = &obj._reactions[i];
+		reaction->opcode = stream.readUint16LE();
+		reaction->status = stream.readByte();
+		reaction->senderId = stream.readUint16LE();
+		reaction->messages.resize(stream.readUint32LE());
+		for (uint j = 0; j < reaction->messages.size(); ++j) {
+			QMessage *msg = &reaction->messages[j];
+			msg->objId = stream.readUint16LE();
+			msg->opcode = stream.readUint16LE();
+			msg->arg1 = stream.readUint16LE();
+			msg->arg2 = stream.readUint16LE();
+			msg->arg3 = stream.readUint16LE();
+		}
+	}
+
+	namesIni.getKey(obj._name, "all", obj._nameOnScreen);
+
+	Common::String rgbString;
+	if (castIni.getKey(obj._name, "all", rgbString)) {
+		int r, g, b;
+		sscanf(rgbString.c_str(), "%d %d %d", &r, &g, &b);
+		obj._dialogColor = Graphics::RGBToColor<Graphics::ColorMasks<888>>((byte)r, (byte)g, (byte)b);
+	}
+}
+
+
 bool QSystem::init() {
-	Common::ScopedPtr<Common::SeekableReadStream> stream(_vm.openFile("script.dat", true));
+	Common::ScopedPtr<Common::SeekableReadStream> stream(g_vm->openFile("script.dat", true));
 	if (!stream)
 		return false;
-	Common::ScopedPtr<Common::SeekableReadStream> namesStream(_vm.openFile("Names.ini", false));
-	Common::ScopedPtr<Common::SeekableReadStream> castStream(_vm.openFile("Cast.ini", false));
-	Common::ScopedPtr<Common::SeekableReadStream> bgsStream(_vm.openFile("BGs.ini", false));
+	Common::ScopedPtr<Common::SeekableReadStream> namesStream(g_vm->openFile("Names.ini", false));
+	Common::ScopedPtr<Common::SeekableReadStream> castStream(g_vm->openFile("Cast.ini", false));
+	Common::ScopedPtr<Common::SeekableReadStream> bgsStream(g_vm->openFile("BGs.ini", false));
 
 	Common::INIFile namesIni;
 	Common::INIFile castIni;
@@ -74,11 +106,11 @@ bool QSystem::init() {
 
 	Common::String name;
 	for (uint i = 0; i < objsCount; ++i) {
-		_objs[i].deserialize(*stream, namesIni, castIni);
+		readObject(_objs[i], *stream, namesIni, castIni);
 		_allObjects.push_back(&_objs[i]);
 	}
 	for (uint i = 0; i < bgsCount; ++i) {
-		_bgs[i].deserialize(*stream, namesIni, castIni);
+		readObject(_bgs[i], *stream, namesIni, castIni);
 		_allObjects.push_back(&_bgs[i]);
 	}
 
@@ -93,7 +125,9 @@ bool QSystem::init() {
 	_allObjects.push_back(_star.get());
 
 	_mainInterface.reset(new QInterfaceMain());
-
+	_startupInterface.reset(new QInterfaceStartup());
+	_startupInterface->start();
+	_currInterface = _startupInterface.get();
 	return true;
 }
 
@@ -107,13 +141,13 @@ void QSystem::addMessage(uint16 objId, uint16 opcode, int16 arg1, int16 arg2, in
 
 void QSystem::addMessageForAllObjects(uint16 opcode, int16 arg1, int16 arg2, int16 arg3, int32 unk, QMessageObject *sender) {
 	for (uint i = 0; i < _allObjects.size(); ++i) {
-		_messages.push_back({_allObjects[i]->getId(), opcode, arg1, arg2, arg3, sender, unk});
+		_messages.push_back({_allObjects[i]->_id, opcode, arg1, arg2, arg3, sender, unk});
 	}
 }
 
 QMessageObject *QSystem::findObject(int16 id) {
 	for (uint i = 0; i < _allObjects.size(); ++i) {
-		if (_allObjects[i]->getId() == id)
+		if (_allObjects[i]->_id == id)
 			return _allObjects[i];
 	}
 	return nullptr;
@@ -121,7 +155,7 @@ QMessageObject *QSystem::findObject(int16 id) {
 
 QMessageObject *QSystem::findObject(const Common::String &name) {
 	for (uint i = 0; i < _allObjects.size(); ++i) {
-		if (_allObjects[i]->getName() == name)
+		if (_allObjects[i]->_name == name)
 			return _allObjects[i];
 	}
 	return nullptr;
@@ -131,7 +165,7 @@ void QSystem::update() {
 	for (Common::List<QMessage>::iterator it = _messages.begin(); it != _messages.end();) {
 		bool removeMsg = false;
 		for (uint j = 0; j < _allObjects.size(); ++j) {
-			if (it->objId == _allObjects[j]->getId()) {
+			if (it->objId == _allObjects[j]->_id) {
 				_allObjects[j]->processMessage(*it);
 				removeMsg = true;
 				break;

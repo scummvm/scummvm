@@ -142,6 +142,7 @@ Graphics::Surface *QManager::loadBitmap(uint32 id) {
 
 	Graphics::Surface *s = loadBitmapSurface(*stream);
 	if (s) {
+		s->convertToInPlace(g_system->getScreenFormat());
 		QResource &res = _resourceMap.getVal(id);
 		res.type = QResource::kSurface;
 		res.surface = s;

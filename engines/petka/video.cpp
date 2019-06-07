@@ -23,24 +23,37 @@
 #include "common/system.h"
 
 #include "petka/petka.h"
-#include "petka/screen.h"
+#include "petka/q_system.h"
+#include "petka/q_interface.h"
+#include "petka/obj.h"
+#include "petka/video.h"
 
 namespace Petka {
 
-Screen::Screen() :
-	_shake(false), _shift(false),
-	_shakeTime(0), _interface(nullptr) {}
+VideoSystem::VideoSystem() :
+	_shake(false), _shift(false), _shakeTime(0) {
+	addDirtyRect({0, 0, 640, 480});
+}
 
-void Screen::update() {
+void VideoSystem::update() {
+	QInterface *interface = g_vm->getQSystem()->_currInterface;
+	if (interface) {
+		for (uint i = 0; i < interface->_objs.size(); ++i) {
+			interface->_objs[i]->draw();
+		}
+	}
+
+	_rects.clear();
+
 	if (_shake) {
-		int width = w;
+		int width = _screen.w;
 		int x =  0;
 
 		if (_shift) {
 			Graphics::Surface s;
 			s.create(3, 480, g_system->getScreenFormat());
 			g_system->copyRectToScreen(s.getPixels(), s.pitch, 0, 0, s.w, s.h);
-			w -= 3;
+			width -= 3;
 			x = 3;
 		}
 
@@ -50,24 +63,23 @@ void Screen::update() {
 			_shakeTime = time;
 		}
 
-		_dirtyRects.clear();
-		g_system->copyRectToScreen(getPixels(), pitch, x, 0, width, h);
+		g_system->copyRectToScreen(_screen.getPixels(), _screen.pitch, x, 0, width, _screen.h);
 		g_system->updateScreen();
 	} else {
-		Screen::update();
+		_screen.update();
 	}
 }
 
-void Screen::setShake(bool shake) {
-	_shake = true;
+void VideoSystem::addDirtyRect(const Common::Rect &rect) {
+	_rects.push_back(rect);
 }
 
-void Screen::setInterface(QInterface *interface) {
-	_interface = interface;
+const Common::List<Common::Rect> VideoSystem::rects() const {
+	return _rects;
 }
 
-const Common::List<Common::Rect> &Screen::dirtyRects() const {
-	return _dirtyRects;
+Graphics::Screen &VideoSystem::screen() {
+	return _screen;
 }
 
 }

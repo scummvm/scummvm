@@ -42,6 +42,7 @@ class FileMgr;
 class SoundMgr;
 class QManager;
 class QSystem;
+class VideoSystem;
 
 enum {
 	kPetkaDebugGeneral = 1 << 0,
@@ -60,6 +61,8 @@ public:
 
 	QSystem *getQSystem() const;
 	SoundMgr *soundMgr() const;
+	QManager *resMgr() const;
+	VideoSystem *videoSystem() const;
 
 	Common::RandomSource &getRnd();
 
@@ -72,6 +75,7 @@ private:
 	Common::ScopedPtr<QManager> _resMgr;
 	Common::ScopedPtr<SoundMgr> _soundMgr;
 	Common::ScopedPtr<QSystem> _qsystem;
+	Common::ScopedPtr<VideoSystem> _vsys;
 	const ADGameDescription *_desc;
 
 	Common::RandomSource _rnd;
