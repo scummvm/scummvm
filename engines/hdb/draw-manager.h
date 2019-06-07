@@ -48,7 +48,7 @@ public:
 	DrawMan();
 
 	bool init();
-	bool cacheTile(int index);
+	Tile *getTile(int index);
 
 private:
 	int _numTiles;

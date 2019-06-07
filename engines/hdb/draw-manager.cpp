@@ -78,17 +78,14 @@ bool DrawMan::init() {
 	return true;
 }
 
-bool DrawMan::cacheTile(int index) {
+Tile *DrawMan::getTile(int index) {
 
-	if (index < 0) {
-		return false;
-	}
-	if (index > _numTiles) {
-		return false;
+	if (index < 0 || index > _numTiles) {
+		return NULL;
 	}
 	if (_tLookupArray[index].skyIndex) {
-		// We don't draw Sky Tiles, so return true
-		return true;
+		// We don't draw Sky Tiles, so return NULL
+		return NULL;
 	}
 
 	if (_tLookupArray[index].tData == NULL) {
@@ -98,7 +95,7 @@ bool DrawMan::cacheTile(int index) {
 		_tLookupArray[index].tData = tile;
 	}
 
-	return true;
+	return _tLookupArray[index].tData;
 }
 
 Picture::~Picture() {
