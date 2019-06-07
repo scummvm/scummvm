@@ -23,7 +23,7 @@
 #ifndef HDB_DRAW_MANAGER_H
 #define HDB_DRAW_MANAGER_H
 
-#include "graphics/surface.h"
+#include "graphics/managed_surface.h"
 
 #include "hdb/hdb.h"
 
@@ -101,7 +101,7 @@ private:
 	uint _width, _height;
 	char _name[64];
 
-	Graphics::Surface _surface;
+	Graphics::ManagedSurface _surface;
 
 };
 
@@ -113,11 +113,12 @@ public:
 	Graphics::Surface load(Common::SeekableReadStream *stream);
 	void draw(int x, int y);
 
-private:
 	uint32 _flags;
+
+private:
 	char _name[64];
 
-	Graphics::Surface _surface;
+	Graphics::ManagedSurface _surface;
 };
 
 } // End of Namespace HDB
