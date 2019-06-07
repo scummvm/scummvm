@@ -2570,6 +2570,12 @@ BottomLeftDoor::BottomLeftDoor(Supernova2Engine *vm, GameManager *gm) {
 	_fileNumber = 6;
 	_id = BOTTOM_LEFT_DOOR;
 	_shown[0] = kShownTrue;
+	_shown[19] = kShownTrue;
+	_shown[29] = kShownTrue;
+
+	_objectState[0] = Object(_id, kStringRight, kStringDefaultDescription, G_RIGHT, EXIT, 1, 1, 0, PYR_ENTRANCE, 14);
+	_objectState[1] = Object(_id, kStringLeft, kStringDefaultDescription, G_LEFT, EXIT, 2, 2, 0, PYR_ENTRANCE, 10);
+	_objectState[2] = Object(_id, kStringDoor, kStringMassive, DOOR, EXIT | OPENABLE | CLOSED, 0, 0, 0, PYR_ENTRANCE, 2);
 }
 
 void BottomLeftDoor::onEntrance() {
@@ -2580,6 +2586,15 @@ void BottomLeftDoor::animation() {
 }
 
 bool BottomLeftDoor::interact(Action verb, Object &obj1, Object &obj2) {
+	if (_gm->move(verb, obj1)) {
+		if (verb == ACTION_WALK && obj1._id == G_LEFT)
+			_gm->changeRoom(UPSTAIRS2);
+		else
+			_gm->passageConstruction();
+		_gm->_newRoom = true;
+	}
+	else
+		return false;
 	return true;
 }
 
