@@ -52,6 +52,11 @@ public:
 	Map();
 
 	bool load(Common::SeekableReadStream *stream);
+
+	int mapX, mapY; // Coordinates of Map
+	int mapTileX, mapTileY; // Tile Coordinates of Map
+	int mapTileXOff, mapTileYOff; // Tile Coordinates Offset (0-31)
+
 private:
 	char _name[32];
 	uint16 _width;
@@ -74,6 +79,7 @@ private:
 	bool _mapLoaded;
 };
 
+#if 0
 class MapLoader {
 public:
 	MapLoader();
@@ -85,10 +91,18 @@ public:
 		return _mapLoaded;
 	}
 
+	int mapX, mapY; // Coordinates of Map
+	int mapWidth, mapHeight; // Map Dimensions
+	int mapTileX, mapTileY; // Tile Coordinates of Map
+	int mapTileXoff, mapTileYoff; // Tile Coordinates Offset (0-31)
+
+	Common::Array<SeeThroughTile *> mapGratings, mapForegrounds;
+	int numGratings, numForegrounds;
+
 private:
-	MSMHeader *mapHeader;
 	bool _mapLoaded;
 };
+#endif
 
 }
 
