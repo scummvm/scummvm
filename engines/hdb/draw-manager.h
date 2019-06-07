@@ -94,6 +94,7 @@ public:
 	~Picture();
 
 	Graphics::Surface load(Common::SeekableReadStream *stream);
+	void draw(int x, int y);
 
 private:
 
@@ -110,6 +111,7 @@ public:
 	~Tile();
 
 	Graphics::Surface load(Common::SeekableReadStream *stream);
+	void draw(int x, int y);
 
 private:
 	uint32 _flags;

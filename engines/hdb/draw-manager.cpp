@@ -204,6 +204,10 @@ Graphics::Surface Picture::load(Common::SeekableReadStream *stream) {
 	return _surface;
 }
 
+void Picture::draw(int x, int y) {
+	g_system->copyRectToScreen(_surface.getBasePtr(0, 0), _surface.pitch, x, y, _surface.w, _surface.h);
+}
+
 Tile::~Tile() {
 	_surface.free();
 }
@@ -228,6 +232,10 @@ Graphics::Surface Tile::load(Common::SeekableReadStream *stream) {
 	}
 
 	return _surface;
+}
+
+void Tile::draw(int x, int y) {
+	g_system->copyRectToScreen(_surface.getBasePtr(0, 0), _surface.pitch, x, y, _surface.w, _surface.h);
 }
 
 }
