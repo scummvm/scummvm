@@ -53,9 +53,9 @@ public:
 	bool load(Common::SeekableReadStream *stream);
 	int loadTiles();
 
-	int mapX, mapY; // Coordinates of Map
-	int mapTileX, mapTileY; // Tile Coordinates of Map
-	int mapTileXOff, mapTileYOff; // Tile Coordinates Offset (0-31)
+	int _mapX, _mapY; // Coordinates of Map
+	int _mapTileX, _mapTileY; // Tile Coordinates of Map
+	int _mapTileXOff, _mapTileYOff; // Tile Coordinates Offset (0-31)
 
 private:
 	char _name[32];

@@ -68,9 +68,7 @@ public:
 	struct {
 		uint32 id;
 		uint32 dirSize;
-	} dataHeader;
-
-	uint32 readOffset;
+	} _dataHeader;
 	
 	bool openMPC(const Common::String &filename);
 	void closeMPC();

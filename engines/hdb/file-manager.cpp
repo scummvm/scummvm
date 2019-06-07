@@ -39,14 +39,14 @@ bool FileMan::openMPC(const Common::String &filename) {
 		return false;
 	}
 
-	dataHeader.id = _mpcFile->readUint32BE();
+	_dataHeader.id = _mpcFile->readUint32BE();
 	
-	if (dataHeader.id == MKTAG('M', 'P', 'C', 'C')) {
+	if (_dataHeader.id == MKTAG('M', 'P', 'C', 'C')) {
 		_compressed = true;
 		debug("COMPRESSED FILE");
 		return false;
 	}
-	else if (dataHeader.id == MKTAG('M', 'P', 'C', 'U')) {
+	else if (_dataHeader.id == MKTAG('M', 'P', 'C', 'U')) {
 		_compressed = false;
 		
 		offset = _mpcFile->readUint32LE();
@@ -55,11 +55,11 @@ bool FileMan::openMPC(const Common::String &filename) {
 		// Note: The MPC archive format assumes the offset to be uint32,
 		// but Common::File::seek() takes the offset as int32. 
 		
-		dataHeader.dirSize = _mpcFile->readUint32LE();
+		_dataHeader.dirSize = _mpcFile->readUint32LE();
 
-		debug(8, "MPC: Read %d entries", dataHeader.dirSize);
+		debug(8, "MPC: Read %d entries", _dataHeader.dirSize);
 
-		for (uint32 fileIndex = 0; fileIndex < dataHeader.dirSize; fileIndex++) {
+		for (uint32 fileIndex = 0; fileIndex < _dataHeader.dirSize; fileIndex++) {
 			MPCEntry *dirEntry = new MPCEntry();
 
 			for (int i = 0; i < 64; i++) {

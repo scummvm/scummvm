@@ -54,8 +54,8 @@ LuaScript::~LuaScript() {
 
 bool LuaScript::init() {
 	// Load Global Lua Code
-	_globalLuaStream = g_hdb->fileMan->findFirstData("GLOBAL_LUA", TYPE_BINARY);
-	_globalLuaLength = g_hdb->fileMan->getLength("GLOBAL_LUA", TYPE_BINARY);
+	_globalLuaStream = g_hdb->_fileMan->findFirstData("GLOBAL_LUA", TYPE_BINARY);
+	_globalLuaLength = g_hdb->_fileMan->getLength("GLOBAL_LUA", TYPE_BINARY);
 	if (_globalLuaStream == NULL || _globalLuaLength == 0) {
 		error("LuaScript::initScript: 'global code' failed to load");
 		return false;
