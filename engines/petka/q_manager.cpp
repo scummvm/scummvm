@@ -215,7 +215,7 @@ Graphics::Surface *QManager::loadBitmapSurface(Common::SeekableReadStream &strea
 	int extraDataLength = (srcPitch % 4) ? 4 - (srcPitch % 4) : 0;
 
 	Graphics::Surface *s = new Graphics::Surface;
-	s->create(width, height, Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));
+	s->create(width, height, Graphics::PixelFormat(2, 5, 6, 5, 0, 0, 5, 11, 0));
 
 	uint16 *dst = (uint16 *)s->getPixels();
 	for (uint i = 0; i < height; ++i) {
