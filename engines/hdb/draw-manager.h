@@ -30,7 +30,10 @@
 namespace HDB {
 
 enum {
-	kMaxSkies = 10
+	kTileWidth = 32,
+	kTileHeight = 32,
+	kMaxSkies = 10,
+	kNum3DStars = 300
 };
 
 class Tile;
