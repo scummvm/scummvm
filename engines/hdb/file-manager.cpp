@@ -143,7 +143,7 @@ int32 FileMan::getLength(const char *string, DataType type) {
 	return file->ulength;
 }
 
-int FileMan::getCount(char *subString, DataType type) {
+int FileMan::getCount(const char *subString, DataType type) {
 	int count = 0;
 	Common::String fileString;
 
