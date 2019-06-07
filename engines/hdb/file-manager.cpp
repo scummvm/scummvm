@@ -159,6 +159,23 @@ int FileMan::getCount(char *subString, DataType type) {
 	return count;
 }
 
+Common::Array<const char *> *FileMan::findFiles(const char *string, DataType type) {
+	Common::Array<const char *> *result = new Common::Array<const char *>;
+	Common::String fileString;
+
+	// Find MPC Entry
+	for (MPCIterator it = _dir.begin(); it != _dir.end(); it++) {
+		fileString = (*it)->filename;
+		if (fileString.contains(string)) {
+			if ((*it)->type == type) {
+				result->push_back((*it)->filename);
+			}
+		}
+	}
+
+	return result;
+}
+
 #if 0
 MPCEntry **FileMan::findNextData(MPCIterator begin) {
 	Common::String fileString;
