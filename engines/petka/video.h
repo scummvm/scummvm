@@ -20,53 +20,31 @@
  *
  */
 
-#ifndef PETKA_Q_MESSAGE_OBJECT_H
-#define PETKA_Q_MESSAGE_OBJECT_H
+#ifndef PETKA_SCREEN_H
+#define PETKA_SCREEN_H
 
-#include "petka/base.h"
-
-namespace Common {
-	class SeekableReadStream;
-	class INIFile;
-}
+#include "graphics/screen.h"
 
 namespace Petka {
 
-class QVisibleObject {
+class VideoSystem {
 public:
-	QVisibleObject();
-	virtual ~QVisibleObject() {};
+	VideoSystem();
 
-protected:
-	int32 _resourceId;
-	int32 _z;
+	void update();
+
+	void addDirtyRect(const Common::Rect &rect);
+	const Common::List<Common::Rect> rects() const;
+	Graphics::Screen &screen();
+
+private:
+	Graphics::Screen _screen;
+	Common::List<Common::Rect> _rects;
+	uint32 _shakeTime;
+	bool _shake;
+	bool _shift;
 };
 
-class QMessageObject : public QVisibleObject {
-public:
-	QMessageObject();
-
-	void deserialize(Common::SeekableReadStream &stream, const Common::INIFile &namesIni, const Common::INIFile &castIni);
-	void readFromBackgrndBg(Common::SeekableReadStream &stream);
-
-	uint16 getId() const;
-	const Common::String &getName() const;
-
-	virtual void processMessage(const QMessage &msg);
-
-protected:
-	int32 _x;
-	int32 _y;
-	int32 _field14;
-	int32 _field18;
-	uint16 _id;
-	int8 _status;
-	Common::String _name;
-	Common::String _nameOnScreen;
-	int32 _dialogColor;
-	Common::Array<QReaction> _reactions;
-};
-
-} // End of namespace Petka
+}
 
 #endif

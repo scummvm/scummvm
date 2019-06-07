@@ -42,7 +42,7 @@ public:
 	virtual void onRightButtonDown(const Common::Point p) {};
 	virtual void onMouseMove(const Common::Point p) {};
 
-protected:
+public:
 	Common::Array<QVisibleObject *> _objs;
 	QVisibleObject *_objUnderCursor;
 	uint _startIndex;
@@ -57,8 +57,19 @@ class QInterfaceMain : public QInterface {
 public:
 	QInterfaceMain();
 
-private:
+	const Common::Array<BGInfo> bgInfos();
+
+public:
 	Common::Array<BGInfo> _bgs;
+};
+
+class QInterfaceStartup : public QInterface {
+public:
+	//QInterfaceStartup();
+
+	void start() override;
+
+
 };
 
 } // End of namespace Petka

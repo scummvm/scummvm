@@ -20,17 +20,79 @@
  *
  */
 
-#ifndef PETKA_Q_OBJECT_CASE_H
-#define PETKA_Q_OBJECT_CASE_H
+#ifndef PETKA_Q_MESSAGE_OBJECT_H
+#define PETKA_Q_MESSAGE_OBJECT_H
 
-#include "petka/q_object.h"
+#include "petka/base.h"
 
 namespace Petka {
+
+class Screen;
+
+class QVisibleObject {
+public:
+	QVisibleObject();
+	virtual ~QVisibleObject() {};
+
+	virtual void draw() {};
+
+public:
+	int32 _resourceId;
+	int32 _z;
+};
+
+
+class QMessageObject : public QVisibleObject {
+public:
+	QMessageObject();
+
+	virtual void processMessage(const QMessage &msg);
+
+public:
+	int32 _x;
+	int32 _y;
+	int32 _field14;
+	int32 _field18;
+	int32 _field20;
+	int32 _field24;
+	int32 _field28;
+	int32 _isShown;
+	int32 _animate;
+	uint16 _id;
+	int8 _status;
+	Common::String _name;
+	Common::String _nameOnScreen;
+	int32 _dialogColor;
+	Common::Array<QReaction> _reactions;
+};
+
+class QObjectBG : public QMessageObject {
+public:
+	void processMessage(const QMessage &msg) override;
+	void draw() override;
+
+public:
+	int _showMap;
+	int _fxId;
+	int _musicId;
+};
+
+class QObject : public QMessageObject {
+
+};
 
 class QObjectCase : public QObject {
 
 };
 
-} // End of namespace Petka
+class QObjectStar : public QObject {
+
+};
+
+class QObjectCursor : public QObject {
+
+};
+
+} // End of naespace Petka
 
 #endif

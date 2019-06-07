@@ -35,6 +35,7 @@
 #include "video/avi_decoder.h"
 
 #include "petka/file_mgr.h"
+#include "petka/video.h"
 #include "petka/sound.h"
 #include "petka/petka.h"
 #include "petka/q_manager.h"
@@ -46,7 +47,7 @@ PetkaEngine *g_vm;
 
 PetkaEngine::PetkaEngine(OSystem *system, const ADGameDescription *desc)
 	: Engine(system), _console(nullptr), _fileMgr(nullptr), _resMgr(nullptr),
-	_qsystem(nullptr), _desc(desc), _rnd("petka") {
+	_qsystem(nullptr), _vsys(nullptr), _desc(desc), _rnd("petka") {
 	DebugMan.addDebugChannel(kPetkaDebugGeneral, "general", "General issues");
 	_part = 0;
 	_chapter = 0;
@@ -75,13 +76,38 @@ Common::Error PetkaEngine::run() {
 	_fileMgr.reset(new FileMgr());
 	_resMgr.reset(new QManager(*this));
 	_soundMgr.reset(new SoundMgr());
-	_qsystem.reset(new QSystem(*this));
+	_vsys.reset(new VideoSystem());
+	_qsystem.reset(new QSystem());
 
 	loadStores();
 	if (!_resMgr->init())
 		return Common::kNoGameDataFoundError;
 	_qsystem->init();
 
+	while (!shouldQuit()) {
+		Common::Event event;
+		while (_eventMan->pollEvent(event)) {
+			switch (event.type) {
+			case Common::EVENT_QUIT:
+			case Common::EVENT_RTL:
+				return Common::kNoError;
+			case Common::EVENT_MOUSEMOVE:
+				break;
+			case Common::EVENT_LBUTTONDOWN:
+				break;
+			case Common::EVENT_LBUTTONUP:
+				break;
+			case Common::EVENT_RBUTTONDOWN:
+				break;
+			case Common::EVENT_KEYDOWN:
+				break;
+			default:
+				break;
+			}
+		}
+		_vsys->update();
+		_system->delayMillis(15);
+	}
 	return Common::kNoError;
 }
 
@@ -164,6 +190,14 @@ void PetkaEngine::playVideo(Common::SeekableReadStream *stream) {
 
 SoundMgr *PetkaEngine::soundMgr() const {
 	return _soundMgr.get();
+}
+
+QManager *PetkaEngine::resMgr() const {
+	return _resMgr.get();
+}
+
+VideoSystem *PetkaEngine::videoSystem() const {
+	return _vsys.get();
 }
 
 } // End of namespace Petka

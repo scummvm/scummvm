@@ -26,8 +26,7 @@
 #include "common/ptr.h"
 #include "common/list.h"
 
-#include "petka/q_object.h"
-#include "petka/q_object_bg.h"
+#include "petka/obj.h"
 
 namespace Petka {
 
@@ -36,11 +35,12 @@ class QObjectCase;
 class QObjectCursor;
 class QObjectStar;
 class QInterfaceMain;
+class QInterfaceStartup;
 class QInterface;
 
 class QSystem {
 public:
-	explicit QSystem(PetkaEngine &vm);
+	explicit QSystem();
 	~QSystem();
 
 	bool init();
@@ -54,8 +54,7 @@ public:
 	QMessageObject *findObject(int16 id);
 	QMessageObject *findObject(const Common::String &name);
 
-private:
-	PetkaEngine &_vm;
+public:
 	Common::Array<QObject> _objs;
 	Common::Array<QObjectBG> _bgs;
 	Common::Array<QMessageObject *> _allObjects;
@@ -64,6 +63,7 @@ private:
 	Common::ScopedPtr<QObjectCase> _case;
 	Common::ScopedPtr<QObjectStar> _star;
 	Common::ScopedPtr<QInterfaceMain> _mainInterface;
+	Common::ScopedPtr<QInterfaceStartup> _startupInterface;
 	QInterface *_currInterface;
 	QInterface *_prevInterface;
 };
