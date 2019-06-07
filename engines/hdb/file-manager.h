@@ -76,7 +76,7 @@ public:
 
 	Common::SeekableReadStream *findFirstData(const char *string, DataType type);
 	int32 getLength(const char *string, DataType type);
-	int getCount(char *subString, DataType type);
+	int getCount(const char *subString, DataType type);
 	Common::Array<const char *> *findFiles(const char *string, DataType type);
 
 };
