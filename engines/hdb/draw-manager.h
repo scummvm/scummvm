@@ -29,6 +29,10 @@
 
 namespace HDB {
 
+enum {
+	kMaxSkies = 10,
+};
+
 class DrawMan {
 public:
 
