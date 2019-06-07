@@ -23,8 +23,6 @@
 #ifndef HDB_DRAW_MANAGER_H
 #define HDB_DRAW_MANAGER_H
 
-#include "common/array.h"
-#include "common/file.h"
 #include "graphics/surface.h"
 
 #include "hdb/hdb.h"
@@ -35,27 +33,11 @@ class DrawMan {
 public:
 
 	DrawMan();
-	/*
-	struct Tile {
-		MPCEntry *mpcData;
-		Tile32Type *tileData;
-		uint32 flags;
-		uint16 loaded;
-		uint16 skyIndex;
-		uint16 animIndex;
-	};*/
 
 	bool init();
-//	void saveToFile(const Common::String &filename);
-//	void loadFromFile(const Common::String &filename);
-	void loadTile32(char *name, uint32 *length);
-
-	bool cursorDisplay;
-	int cursorX, cursorY;
-//	Common::Array<Tile *> tileArray;
 
 private:
-
+	int _numTiles;
 	bool _systemInit;
 
 };
