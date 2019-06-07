@@ -30,7 +30,7 @@
 namespace HDB {
 
 enum {
-	kMaxSkies = 10,
+	kMaxSkies = 10
 };
 
 class Tile;
