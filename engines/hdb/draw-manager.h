@@ -50,6 +50,8 @@ public:
 
 	bool init();
 	Tile *getTile(int index);
+	int getTileIndex(const char *name);
+	Picture *getPicture(const char *name);
 	int isSky(int skyIndex);
 
 private:

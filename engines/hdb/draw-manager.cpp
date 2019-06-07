@@ -102,6 +102,22 @@ Tile *DrawMan::getTile(int index) {
 	return _tLookupArray[index].tData;
 }
 
+int DrawMan::getTileIndex(const char *name) {
+	for (int i = 0; i < _numTiles; i++) {
+		if (_tLookupArray[i].filename == name) {
+			return i;
+		}
+	}
+	return -1;
+}
+
+Picture *DrawMan::getPicture(const char *name) {
+	Common::SeekableReadStream *stream = g_hdb->_fileMan->findFirstData(name, TYPE_PIC);
+	Picture *picture = new Picture;
+	picture->load(stream);
+	return picture;
+}
+
 int DrawMan::isSky(int index) {
 	if (!index) {
 		return 0;
