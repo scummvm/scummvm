@@ -139,7 +139,7 @@ Common::Error HDBGame::run() {
 	}
 
 	Picture *titlePic = new Picture;
-	Graphics::Surface surf = titlePic->load(titleStream);
+	titlePic->load(titleStream);
 
 	Common::SeekableReadStream *tileStream = _fileMan->findFirstData("t32_ground1", TYPE_TILE32);
 	if (tileStream == NULL) {
@@ -148,7 +148,7 @@ Common::Error HDBGame::run() {
 	}
 
 	Tile *tile = new Tile;
-	Graphics::Surface surf2 = tile->load(tileStream);
+	tile->load(tileStream);
 
 	Common::SeekableReadStream *luaStream = _fileMan->findFirstData("MAP00_DEMO_LUA", TYPE_BINARY);
 	int32 luaLength = _fileMan->getLength("MAP00_DEMO_LUA", TYPE_BINARY);
@@ -187,8 +187,8 @@ Common::Error HDBGame::run() {
 			}
 		}
 
-		g_system->copyRectToScreen(surf.getBasePtr(0, 0), surf.pitch, 0, 0, surf.w, surf.h);
-		g_system->copyRectToScreen(surf2.getBasePtr(0, 0), surf2.pitch, 0, 0, surf2.w, surf2.h);
+		titlePic->draw(0, 0);
+		tile->draw(0, 0);
 
 		g_system->updateScreen();
 		g_system->delayMillis(10);
