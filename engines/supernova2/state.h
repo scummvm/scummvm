@@ -31,6 +31,14 @@
 
 namespace Supernova2 {
 
+struct ConstructionEntry {
+	int _e;
+	int _s;
+	int _z;
+	int _r;
+	int _a;
+};
+
 const int32 kMaxTimerValue = 0x7FFFFFFF;
 
 enum EventFunction { kNoFn, kSoberFn, kPyramidEndFn};
@@ -49,10 +57,10 @@ struct GameState {
 	bool _toMuseum;
 	EventFunction _eventCallback;
 	uint32 _eventTime;
-	char _pyraE;
+	int16 _pyraE;
 	char _pyraS;
 	char _pyraZ;
-	char _pyraDirection;
+	int16 _pyraDirection;
 };
 
 class Inventory {
@@ -171,6 +179,7 @@ public:
 	byte _dials[6];
 	int _taxi_possibility;
 
+
 	void takeObject(Object &obj);
 	void setObjectNull(Object *&obj);
 	bool isNullObject(Object *obj);
@@ -185,6 +194,7 @@ public:
 	void wait(int ticks);
 	void waitOnInput(int ticks);
 	bool waitOnInput(int ticks, Common::KeyCode &keycode);
+	void screenShake();
 	void showMenu();
 	void animationOff();
 	void animationOn();
@@ -221,6 +231,9 @@ public:
 	bool talkRest(int mod1, int mod2, int rest);
 	void pyramidEnd();
 	void passageConstruction();
+	byte wall(int s, int z, int direction, int stepsForward, int stepsRight);
+	bool move(Action verb, Object &obj);
+	void compass();
 
 private:
 	int _prevImgId;

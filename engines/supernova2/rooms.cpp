@@ -2161,13 +2161,13 @@ Pyramid::Pyramid(Supernova2Engine *vm, GameManager *gm) {
 	_vm = vm;
 	_gm = gm;
 
-	_fileNumber = 6;
+	_fileNumber = 8;
 	_id = PYRAMID;
 	_shown[0] = kShownTrue;
 
 	_objectState[0] = Object(_id, kStringRope, kStringDefaultDescription, ROPE, TAKE | COMBINABLE, 255, 255, 1 + 128);
 	_objectState[1] = Object(_id, kStringSign, kStringSignDescription, SIGN, COMBINABLE, 25, 25, 0);
-	_objectState[2] = Object(_id, kStringEntrance, kStringEntrance1Description, PYRA_ENTRANCE, EXIT, 27, 27, 0, PYR_ENTRANCE, 19);
+	_objectState[2] = Object(_id, kStringEntrance, kStringEntrance1Description, PYRA_ENTRANCE, EXIT, 27, 27, 0, PYR_ENTRANCE, 7);
 	_objectState[3] = Object(_id, kStringPyramid, kStringPyramidDescription, NULLOBJECT, NULLTYPE, 26, 26, 0);
 	_objectState[4] = Object(_id, kStringSun, kStringSunDescription, SUN, NULLTYPE, 28, 28, 0);
 	_objectState[5] = Object(_id, kStringOpening, kStringDefaultDescription, HOLE1, COMBINABLE, 0, 0, 0);
@@ -2270,7 +2270,7 @@ bool Pyramid::interact(Action verb, Object &obj1, Object &obj2) {
 		_gm->_rooms[HOLE_ROOM]->setSectionVisible(16, kShownFalse);
 		_gm->_rooms[HOLE_ROOM]->getObject(2)->_click = 255;
 		_gm->_rooms[HOLE_ROOM]->getObject(3)->_type = NULLTYPE;
-	} else if (verb == ACTION_WALK && obj1._type == SUN) {
+	} else if (verb == ACTION_WALK && obj1._id == SUN) {
 		_vm->renderMessage(kStringPyramid3);
 	} else
 		return false;
@@ -2281,19 +2281,117 @@ PyrEntrance::PyrEntrance(Supernova2Engine *vm, GameManager *gm) {
 	_vm = vm;
 	_gm = gm;
 
-	_fileNumber = 6;
+	_fileNumber = 9;
 	_id = PYR_ENTRANCE;
 	_shown[0] = kShownTrue;
+	_shown[1] = kShownFalse;
+	_shown[2] = kShownFalse;
+	_shown[3] = kShownFalse;
+	_shown[4] = kShownTrue;
+	_shown[5] = kShownFalse;
+	_shown[6] = kShownFalse;
+	_shown[7] = kShownFalse;
+	_shown[8] = kShownTrue;
+
+	_objectState[0] = Object(_id, kStringSign, kStringSign5Description, SIGN, NULLTYPE, 255, 255, 0);
+	_objectState[1] = Object(_id, kStringRight, kStringDefaultDescription, G_RIGHT, EXIT, 1, 1, 0, PYR_ENTRANCE, 14);
+	_objectState[2] = Object(_id, kStringLeft, kStringDefaultDescription, G_LEFT, EXIT, 2, 2, 0, PYR_ENTRANCE, 10);
+	_objectState[3] = Object(_id, kStringCorridor, kStringDefaultDescription, CORRIDOR, EXIT, 0, 0, 0, PYR_ENTRANCE, 2);
 }
 
 void PyrEntrance::onEntrance() {
-	setRoomSeen(true);
+	if (_gm->_state._pyraS != 8 || _gm->_state._pyraZ != 5)
+		_waitTime = 0;
 }
 
 void PyrEntrance::animation() {
+	if (_gm->_state._pyraS == 8 && _gm->_state._pyraZ == 5) {
+		if (_waitTime == 700) { // around 1 minute
+			_vm->renderMessage(kStringPyramid4);
+			_gm->waitOnInput(_gm->_messageDuration);
+			_vm->removeMessage();
+			_gm->_state._pyraZ++;
+			_gm->_state._pyraDirection = 0;
+			_gm->changeRoom(FLOORDOOR);
+			_vm->setCurrentImage(14);
+			_vm->renderRoom(*_gm->_rooms[FLOORDOOR]);
+			_gm->drawMapExits();
+			_gm->wait(3);
+			_vm->renderImage(5);
+			_gm->wait(3);
+			_vm->renderImage(6);
+			_gm->_rooms[FLOORDOOR]->setSectionVisible(5, kShownFalse);
+			_gm->wait(3);
+			_vm->renderImage(7);
+			_gm->_rooms[FLOORDOOR]->setSectionVisible(6, kShownFalse);
+			_gm->wait(3);
+			_vm->renderImage(8);
+			_gm->_rooms[FLOORDOOR]->setSectionVisible(7, kShownFalse);
+			_gm->wait(3);
+			_vm->renderImage(9);
+			_gm->_rooms[FLOORDOOR]->setSectionVisible(8, kShownFalse);
+			_vm->playSound(kAudioPyramid1);
+			_gm->screenShake();
+			_gm->_rooms[FLOORDOOR]->setSectionVisible(kMaxSection - 1, kShownTrue);
+		}
+		else {
+			_waitTime++;
+			_gm->setAnimationTimer(1);
+		}
+	}
+	else
+		_gm->setAnimationTimer(kMaxTimerValue);
 }
 
 bool PyrEntrance::interact(Action verb, Object &obj1, Object &obj2) {
+	static RoomEntry roomTab[29] = {
+		{2, 8, 6, 0, FLOORDOOR},
+		{0, 8, 4, 2, FLOORDOOR_U},
+		{0, 4, 11, 2, PYRAMID},
+		{0, 0, 2, 1, UPSTAIRS1},
+		{1, 1, 2, 3, DOWNSTAIRS1},
+		{0, 5, 8, 3, BOTTOM_RIGHT_DOOR},
+		{0, 4, 8, 1, BOTTOM_LEFT_DOOR},
+		{1, 5, 8, 3, UPPER_DOOR},
+		{1, 4, 8, 1, UPPER_DOOR},
+		{0, 4, 8, 0, UPSTAIRS2},
+		{1, 4, 7, 2, DOWNSTAIRS2},
+		{1, 6, 6, 2, PUZZLE_FRONT},
+		{1, 6, 7, 0, PUZZLE_BEHIND},
+		{0, 3, 6, 0, FORMULA1_N},
+		{0, 3, 7, 0, FORMULA1_F},
+		{0, 4, 6, 0, FORMULA2_N},
+		{0, 4, 7, 0, FORMULA2_F},
+		{0, 8, 9, 2, TOMATO_N},
+		{0, 8, 8, 2, TOMATO_F},
+		{1, 4, 2, 0, MONSTER_F},
+		{1, 10, 8, 0, MONSTER_F},
+		{1, 4, 1, 0, MONSTER1_N},
+		{1, 10, 7, 0, MONSTER2_N},
+		{0, 2, 4, 2, DOWNSTAIRS3},
+		{1, 2, 5, 0, UPSTAIRS3},
+		{1, 2, 5, 3, LGANG1},
+		{1, 1, 5, 1, LGANG2},
+		{1, 1, 5, 3, HOLE_ROOM},
+		{0, 7, 4, 0, BST_DOOR}
+	};
+	if (!_gm->move(verb, obj1))
+		return false;
+	if (_gm->_rooms[FLOORDOOR]->isSectionVisible(kMaxSection - 1))
+		roomTab[0]._e = 1;
+	else
+		roomTab[0]._e = 2;
+	for (int i = 0; i < 29; i++) {
+		if (_gm->_state._pyraE == roomTab[i]._e &&
+			_gm->_state._pyraS == roomTab[i]._s &&
+			_gm->_state._pyraZ == roomTab[i]._z &&
+			_gm->_state._pyraDirection == roomTab[i]._r) {
+			_gm->changeRoom(roomTab[i]._exitRoom);
+			return true;
+		}
+	}
+	_gm->passageConstruction();
+	_gm->_newRoom = true;
 	return true;
 }
 
@@ -2777,43 +2875,44 @@ bool InHole::interact(Action verb, Object &obj1, Object &obj2) {
 	return true;
 }
 
-Bodentuer::Bodentuer(Supernova2Engine *vm, GameManager *gm) {
+Floordoor::Floordoor(Supernova2Engine *vm, GameManager *gm) {
 	_vm = vm;
 	_gm = gm;
 
 	_fileNumber = 6;
-	_id = BODENTUER;
+	_id = FLOORDOOR;
 	_shown[0] = kShownTrue;
+	_shown[14] = kShownTrue;
 }
 
-void Bodentuer::onEntrance() {
+void Floordoor::onEntrance() {
 	setRoomSeen(true);
 }
 
-void Bodentuer::animation() {
+void Floordoor::animation() {
 }
 
-bool Bodentuer::interact(Action verb, Object &obj1, Object &obj2) {
+bool Floordoor::interact(Action verb, Object &obj1, Object &obj2) {
 	return true;
 }
 
-BodentuerU::BodentuerU(Supernova2Engine *vm, GameManager *gm) {
+FloordoorU::FloordoorU(Supernova2Engine *vm, GameManager *gm) {
 	_vm = vm;
 	_gm = gm;
 
 	_fileNumber = 6;
-	_id = BODENTUER_U;
+	_id = FLOORDOOR_U;
 	_shown[0] = kShownTrue;
 }
 
-void BodentuerU::onEntrance() {
+void FloordoorU::onEntrance() {
 	setRoomSeen(true);
 }
 
-void BodentuerU::animation() {
+void FloordoorU::animation() {
 }
 
-bool BodentuerU::interact(Action verb, Object &obj1, Object &obj2) {
+bool FloordoorU::interact(Action verb, Object &obj1, Object &obj2) {
 	return true;
 }
 

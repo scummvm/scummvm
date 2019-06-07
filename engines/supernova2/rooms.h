@@ -37,6 +37,14 @@ namespace Supernova2 {
 class GameManager;
 class Supernova2Engine;
 
+struct RoomEntry {
+	int _e;
+	int _s;
+	int _z;
+	int _r;
+	RoomId _exitRoom;
+};
+
 class Room {
 public:
 	Room();
@@ -242,6 +250,7 @@ public:
 	virtual bool interact(Action verb, Object &obj1, Object &obj2);
 
 private:
+	int _waitTime;
 };
 
 class Upstairs1 : public Room {
@@ -484,9 +493,9 @@ public:
 private:
 };
 
-class Bodentuer : public Room {
+class Floordoor : public Room {
 public:
-	Bodentuer(Supernova2Engine *vm, GameManager *gm);
+	Floordoor(Supernova2Engine *vm, GameManager *gm);
 	virtual void onEntrance();
 	virtual void animation();
 	virtual bool interact(Action verb, Object &obj1, Object &obj2);
@@ -494,9 +503,9 @@ public:
 private:
 };
 
-class BodentuerU : public Room {
+class FloordoorU : public Room {
 public:
-	BodentuerU(Supernova2Engine *vm, GameManager *gm);
+	FloordoorU(Supernova2Engine *vm, GameManager *gm);
 	virtual void onEntrance();
 	virtual void animation();
 	virtual bool interact(Action verb, Object &obj1, Object &obj2);
