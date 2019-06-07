@@ -57,12 +57,28 @@ public:
 	Picture *getPicture(const char *name);
 	int isSky(int skyIndex);
 	void setSky(int skyIndex);
+	void setup3DStars();
+	void setup3DStarsLeft();
+	// Add draw functions for the above two
+	//void draw3DStars();
+	//void draw3DStarsLeft();
 
 private:
 	int _numTiles;
 	TileLookup *_tLookupArray;
 	uint16 _skyTiles[kMaxSkies];
 	int _currentSky;	// 0 if no Sky, 1+ for which Sky to use
+
+	struct {
+		int x, y, speed;
+		uint16 color;
+	} _stars3D[kNum3DStars];
+
+	struct {
+		double x, y, speed;
+		uint16 color;
+	} _stars3DSlow[kNum3DStars];
+
 	int _tileSkyStars; // Index of sky_stars tile
 	int _tileSkyStarsLeft; // Left-scrolling stars, slow
 	int _tileSkyClouds; // Index of sky_stars tile
