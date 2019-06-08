@@ -184,7 +184,7 @@ Graphics::Surface Picture::load(Common::SeekableReadStream *stream) {
 	_width = stream->readUint32LE();
 	_height = stream->readUint32LE();
 	stream->read(_name, 64);
-	
+
 	Graphics::PixelFormat format(2, 5, 6, 5, 0, 11, 5, 0, 0);
 
 	debug(8, "Picture: _width: %d, _height: %d", _width, _height);
