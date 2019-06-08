@@ -99,8 +99,9 @@ public:
 	uint8 getGameType() const;
 	Common::Language getLanguage() const;
 
-	bool hasFeature(EngineFeature f) const;
+	bool hasFeature(EngineFeature f) const override;
 
+	static const uint kSaveDescriptionLen = 20;
 private:
 	void pauseEngineIntern(bool);
 

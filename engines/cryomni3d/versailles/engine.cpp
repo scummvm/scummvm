@@ -167,14 +167,19 @@ Common::Error CryOmni3DEngine_Versailles::run() {
 	_isPlaying = false;
 	_isVisiting = false;
 
+	int saveSlot = ConfMan.getInt("save_slot");
+
 #if !defined(DEBUG_FAST_START) || DEBUG_FAST_START<1
-	playTransitionEndLevel(-2);
-	if (shouldAbort()) {
-		return Common::kNoError;
-	}
-	playTransitionEndLevel(-1);
-	if (shouldAbort()) {
-		return Common::kNoError;
+	if (saveSlot == -1) {
+		// Don't play introduction if loading directly a game
+		playTransitionEndLevel(-2);
+		if (shouldAbort()) {
+			return Common::kNoError;
+		}
+		playTransitionEndLevel(-1);
+		if (shouldAbort()) {
+			return Common::kNoError;
+		}
 	}
 #endif
 
@@ -182,11 +187,18 @@ Common::Error CryOmni3DEngine_Versailles::run() {
 	while (!stopGame) {
 		bool exitLoop = false;
 		uint nextStep = 0;
+		if (saveSlot > -1) {
+			nextStep = 28;
+			_loadedSave = saveSlot + 1;
+			// Called in options
+			syncOmni3DSettings();
+		} else {
 #if defined(DEBUG_FAST_START) && DEBUG_FAST_START>=2
-		nextStep = 27;
-		// Called in options
-		syncOmni3DSettings();
+			nextStep = 27;
+			// Called in options
+			syncOmni3DSettings();
 #endif
+		}
 		setCursor(181);
 		while (!exitLoop) {
 			_isPlaying = false;

@@ -27,12 +27,9 @@
 
 #include "cryomni3d/versailles/engine.h"
 
-#define DEBUG_SAVE
-
 namespace CryOmni3D {
 namespace Versailles {
 
-#define SAVE_DESCRIPTION_LEN 20
 
 Common::String CryOmni3DEngine_Versailles::getSaveFileName(bool visit, uint saveNum) const {
 	return Common::String::format("%s%s.%04u", _targetName.c_str(), visit ? "_visit" : "", saveNum);
@@ -47,13 +44,11 @@ bool CryOmni3DEngine_Versailles::canVisit() const {
 }
 
 void CryOmni3DEngine_Versailles::getSavesList(bool visit, Common::StringArray &saveNames) {
-	Common::SaveFileManager *saveMan = g_system->getSavefileManager();
-
-	char saveName[SAVE_DESCRIPTION_LEN + 1];
-	saveName[SAVE_DESCRIPTION_LEN] = '\0';
+	char saveName[kSaveDescriptionLen + 1];
+	saveName[kSaveDescriptionLen] = '\0';
 	Common::String pattern = Common::String::format("%s%s.????", _targetName.c_str(),
 	                         visit ? "_visit" : "");
-	Common::StringArray filenames = saveMan->listSavefiles(pattern);
+	Common::StringArray filenames = _saveFileMan->listSavefiles(pattern);
 	sort(filenames.begin(), filenames.end());   // Sort (hopefully ensuring we are sorted numerically..)
 
 	saveNames.clear();
@@ -72,7 +67,7 @@ void CryOmni3DEngine_Versailles::getSavesList(bool visit, Common::StringArray &s
 			if (!visitFile.open("game0001.sav", visitsSearchSet)) {
 				error("Can't load visit file");
 			}
-			visitFile.read(saveName, SAVE_DESCRIPTION_LEN);
+			visitFile.read(saveName, kSaveDescriptionLen);
 			saveNames.push_back(saveName);
 		} else {
 			warning("visiting mode but no bootstrap");
@@ -94,13 +89,9 @@ void CryOmni3DEngine_Versailles::getSavesList(bool visit, Common::StringArray &s
 			}
 
 			num++;
-#ifdef DEBUG_SAVE
-			Common::InSaveFile *in = _saveFileMan->openRawFile(*file);
-#else
 			Common::InSaveFile *in = _saveFileMan->openForLoading(*file);
-#endif
 			if (in) {
-				if (in->read(saveName, SAVE_DESCRIPTION_LEN) == SAVE_DESCRIPTION_LEN) {
+				if (in->read(saveName, kSaveDescriptionLen) == kSaveDescriptionLen) {
 					saveNames.push_back(saveName);
 				}
 				delete in;
@@ -123,13 +114,7 @@ void CryOmni3DEngine_Versailles::saveGame(bool visit, uint saveNum,
 
 	Common::OutSaveFile *out;
 
-	if (!(out = _saveFileMan->openForSaving(saveFileName,
-#ifdef DEBUG_SAVE
-	                                        false
-#else
-	                                        true
-#endif
-	                                       ))) {
+	if (!(out = _saveFileMan->openForSaving(saveFileName))) {
 		return;
 	}
 
@@ -137,7 +122,7 @@ void CryOmni3DEngine_Versailles::saveGame(bool visit, uint saveNum,
 	syncCountdown();
 
 	// Write save name
-	char saveNameC[SAVE_DESCRIPTION_LEN];
+	char saveNameC[kSaveDescriptionLen];
 	memset(saveNameC, 0, sizeof(saveNameC));
 	strncpy(saveNameC, saveName.c_str(), sizeof(saveNameC));
 	out->write(saveNameC, sizeof(saveNameC));
@@ -216,12 +201,7 @@ bool CryOmni3DEngine_Versailles::loadGame(bool visit, uint saveNum) {
 		in = visitFile;
 	} else {
 		Common::String saveFileName = getSaveFileName(visit, saveNum);
-
-#ifdef DEBUG_SAVE
-		in = _saveFileMan->openRawFile(saveFileName);
-#else
 		in = _saveFileMan->openForLoading(saveFileName);
-#endif
 	}
 
 	if (!in || in->size() != 1260) {
@@ -231,7 +211,7 @@ bool CryOmni3DEngine_Versailles::loadGame(bool visit, uint saveNum) {
 	musicStop();
 
 	// Load save name but don't use it
-	char saveNameC[SAVE_DESCRIPTION_LEN];
+	char saveNameC[kSaveDescriptionLen];
 	in->read(saveNameC, sizeof(saveNameC));
 
 	// dummy values

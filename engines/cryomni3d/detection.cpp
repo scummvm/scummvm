@@ -109,10 +109,8 @@ public:
 	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
 	virtual SaveStateList listSaves(const char *target) const;
-	SaveStateList listSavesForPrefix(const char *prefix, const char *extension) const;
 	virtual int getMaximumSaveSlot() const { return 999; }
 	virtual void removeSaveState(const char *target, int slot) const;
-	virtual SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
 };
 
 bool CryOmni3DMetaEngine::hasFeature(MetaEngineFeature f) const {
@@ -120,50 +118,47 @@ bool CryOmni3DMetaEngine::hasFeature(MetaEngineFeature f) const {
 	    (f == kSupportsListSaves)
 	    || (f == kSupportsLoadingDuringStartup)
 	    || (f == kSupportsDeleteSave)
-	    || (f == kSavesSupportMetaInfo)
-	    || (f == kSavesSupportThumbnail)
-	    || (f == kSavesSupportCreationDate)
-	    || (f == kSavesSupportPlayTime);
-}
-
-SaveStateList CryOmni3DMetaEngine::listSavesForPrefix(const char *prefix,
-        const char *extension) const {
-	Common::String pattern = Common::String::format("%s-###.%s", prefix, extension);
-	Common::StringArray filenames = g_system->getSavefileManager()->listSavefiles(pattern);
-	size_t prefixLen = strlen(prefix);
-
-	SaveStateList saveList;
-	for (Common::StringArray::const_iterator filename = filenames.begin(); filename != filenames.end();
-	        ++filename) {
-		// Extract the slot number from the filename
-		char slot[4];
-		slot[0] = (*filename)[prefixLen + 1];
-		slot[1] = (*filename)[prefixLen + 2];
-		slot[2] = (*filename)[prefixLen + 3];
-		slot[3] = '\0';
-
-		int slotNum = atoi(slot);
-
-		saveList.push_back(SaveStateDescriptor(slotNum, ""));
-	}
-
-	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
-
-	return saveList;
+	    || (f == kSimpleSavesNames);
 }
 
 SaveStateList CryOmni3DMetaEngine::listSaves(const char *target) const {
+	// Replicate constant here to shorten lines
+	static const uint kSaveDescriptionLen = CryOmni3D::CryOmni3DEngine::kSaveDescriptionLen;
 	SaveStateList saveList;
+
+	Common::SaveFileManager *saveMan = g_system->getSavefileManager();
+
+	char saveName[kSaveDescriptionLen + 1];
+	saveName[kSaveDescriptionLen] = '\0';
+	Common::String pattern = Common::String::format("%s.????", target);
+	Common::StringArray filenames = saveMan->listSavefiles(pattern);
+	sort(filenames.begin(), filenames.end());   // Sort (hopefully ensuring we are sorted numerically..)
+
+	int slotNum;
+
+	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end();
+	        ++file) {
+		// Obtain the last 4 digits of the filename, since they correspond to the save slot
+		slotNum = atoi(file->c_str() + file->size() - 4);
+
+		if (slotNum >= 1 && slotNum <= 99) {
+			Common::InSaveFile *in = saveMan->openForLoading(*file);
+			if (in) {
+				if (in->read(saveName, kSaveDescriptionLen) == kSaveDescriptionLen) {
+					saveList.push_back(SaveStateDescriptor(slotNum - 1, saveName));
+				}
+				delete in;
+			}
+		}
+	}
 
 	return saveList;
 }
 
 void CryOmni3DMetaEngine::removeSaveState(const char *target, int slot) const {
+	Common::String filename = Common::String::format("%s.%04d", target, slot + 1);
 
-}
-
-SaveStateDescriptor CryOmni3DMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
-	return SaveStateDescriptor();
+	g_system->getSavefileManager()->removeSavefile(filename);
 }
 
 bool CryOmni3DMetaEngine::createInstance(OSystem *syst, Engine **engine,
