@@ -78,7 +78,7 @@ bool Map::load(Common::SeekableReadStream *stream) {
 	}
 	if (gDebugLevel >= 5) {
 		debug(5, "Background:");
-		Common::hexdump((const byte *)_foreground, 512);
+		Common::hexdump((const byte *)_background, 512);
 	}
 
 
