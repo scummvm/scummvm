@@ -93,6 +93,11 @@ bool DrawMan::init() {
 	return true;
 }
 
+void DrawMan::fillScreen(uint32 color) {
+	_globalSurface.fillRect(Common::Rect(kScreenWidth, kScreenHeight), color);
+	g_system->copyRectToScreen(_globalSurface.getBasePtr(0, 0), _globalSurface.pitch, 0, 0, _globalSurface.w, _globalSurface.h);
+}
+
 Tile *DrawMan::getTile(int index) {
 
 	if (index < 0 || index > _numTiles) {
