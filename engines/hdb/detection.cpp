@@ -50,6 +50,15 @@ static const ADGameDescription gameDescriptions[] = {
 	{
 		"hdb",
 		"",
+		AD_ENTRY1s("hyperspace.mpc", "ff8e51d0872736bc6afe87cfcb846b70", 50339161),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_NO_FLAGS,
+		GUIO1(GUIO_NONE)
+	},
+	{
+		"hdb",
+		"",
 		AD_ENTRY1s("hyperdemo.mpc", "d8743b3b8be56486bcfb1398b2f2aad4", 13816461),
 		Common::EN_ANY,
 		Common::kPlatformUnknown,
