@@ -39,6 +39,7 @@ HDBGame* g_hdb;
 
 HDBGame::HDBGame(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
 	_console = nullptr;
+	_format = Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
 	_systemInit = false;
 	g_hdb = this;
 	_fileMan = new FileMan;
