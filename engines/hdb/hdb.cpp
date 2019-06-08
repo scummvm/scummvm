@@ -27,7 +27,6 @@
 #include "common/debug-channels.h"
 #include "common/file.h"
 #include "common/error.h"
-#include "graphics/surface.h"
 #include "common/stream.h"
 #include "common/memstream.h"
 
@@ -83,7 +82,7 @@ bool HDBGame::init() {
 		return false;
 	}
 
-	gameShutdown = false;
+	_gameShutdown = false;
 	_systemInit = true;
 
 	return true;
@@ -127,8 +126,7 @@ Common::Error HDBGame::run() {
 	}
 
 	// Initializes Graphics
-	Graphics::PixelFormat format(2, 5, 6, 5, 0, 11, 5, 0, 0);
-	initGraphics(kScreenWidth, kScreenHeight, &format);
+	initGraphics(kScreenWidth, kScreenHeight, &_format);
 	_console = new Console();
 
 

@@ -30,6 +30,7 @@
 #include "common/events.h"
 #include "common/str.h"
 #include "common/random.h"
+#include "graphics/surface.h"
 
 #include "gui/debugger.h"
 #include "engines/engine.h"
@@ -110,7 +111,8 @@ public:
 	void start();
 	void changeGameState();
 
-	bool gameShutdown;
+	bool _gameShutdown;
+	Graphics::PixelFormat _format = Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
 
 private:
 	Console *_console;
