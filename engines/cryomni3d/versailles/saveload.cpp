@@ -30,6 +30,16 @@
 namespace CryOmni3D {
 namespace Versailles {
 
+Common::Error CryOmni3DEngine_Versailles::loadGameState(int slot) {
+	_loadedSave = slot + 1;
+	_abortCommand = kAbortLoadGame;
+	return Common::kNoError;
+}
+
+Common::Error CryOmni3DEngine_Versailles::saveGameState(int slot, const Common::String &desc) {
+	saveGame(_isVisiting, slot + 1, desc);
+	return Common::kNoError;
+}
 
 Common::String CryOmni3DEngine_Versailles::getSaveFileName(bool visit, uint saveNum) const {
 	return Common::String::format("%s%s.%04u", _targetName.c_str(), visit ? "_visit" : "", saveNum);

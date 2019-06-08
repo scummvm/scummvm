@@ -188,10 +188,15 @@ void ZonFixedImage::manage() {
 	_usedObject = nullptr;
 	_key.reset();
 
+	// As the game lets load/save from main menu displayed by cliking from the toolbar,
+	// it's safe to enable GMM Load/Save there
+	_engine.setCanLoadSave(true);
+
 	// Force poll events even when we must refresh the cursor
 	if (!_engine.pollEvents() && !_refreshCursor) {
 		g_system->updateScreen();
 		g_system->delayMillis(10);
+		_engine.setCanLoadSave(false);
 		return;
 	}
 	_refreshCursor = false;
@@ -202,9 +207,11 @@ void ZonFixedImage::manage() {
 
 	if (_key == Common::KEYCODE_ESCAPE) {
 		_exit = true;
+		_engine.setCanLoadSave(false);
 		return;
 	} else if (_engine.shouldAbort()) {
 		_exit = true;
+		_engine.setCanLoadSave(false);
 		return;
 	}
 
@@ -221,6 +228,7 @@ void ZonFixedImage::manage() {
 		}
 		// Return without any event to redo the loop and force refresh
 		_refreshCursor = true;
+		_engine.setCanLoadSave(false);
 		return;
 	}
 
@@ -268,6 +276,8 @@ void ZonFixedImage::manage() {
 
 	g_system->updateScreen();
 	g_system->delayMillis(10);
+
+	_engine.setCanLoadSave(false);
 }
 
 void ZonFixedImage::handleMouseZones(const Common::Array<Zone>::const_iterator &currentZone) {

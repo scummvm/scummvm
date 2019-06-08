@@ -67,6 +67,12 @@ CryOmni3DEngine_Versailles::~CryOmni3DEngine_Versailles() {
 	delete _fixedImage;
 }
 
+bool CryOmni3DEngine_Versailles::hasFeature(EngineFeature f) const {
+	return CryOmni3DEngine::hasFeature(f)
+	       || (f == kSupportsSavingDuringRuntime)
+	       || (f == kSupportsLoadingDuringRuntime);
+}
+
 Common::Error CryOmni3DEngine_Versailles::run() {
 	CryOmni3DEngine::run();
 
@@ -1135,6 +1141,7 @@ int CryOmni3DEngine_Versailles::handleWarp() {
 	bool moving = true;
 	uint actionId;
 	showMouse(true);
+	_canLoadSave = true;
 	while (!leftButtonPressed && !exit) {
 		int xDelta = 0, yDelta = 0;
 		uint movingCursor = -1;
@@ -1219,6 +1226,7 @@ int CryOmni3DEngine_Versailles::handleWarp() {
 		// Slow down loop but after updating screen
 		g_system->delayMillis(10);
 	}
+	_canLoadSave = false;
 	showMouse(false);
 	return actionId;
 }

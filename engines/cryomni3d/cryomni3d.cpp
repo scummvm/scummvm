@@ -42,7 +42,8 @@ namespace CryOmni3D {
 
 CryOmni3DEngine::CryOmni3DEngine(OSystem *syst,
                                  const CryOmni3DGameDescription *gamedesc) : Engine(syst), _gameDescription(gamedesc),
-	_fontManager(), _sprites(), _dragStatus(kDragStatus_NoDrag), _autoRepeatNextEvent(-1u) {
+	_canLoadSave(false), _fontManager(), _sprites(), _dragStatus(kDragStatus_NoDrag),
+	_autoRepeatNextEvent(-1u) {
 	if (!_mixer->isReady()) {
 		error("Sound initialization failed");
 	}

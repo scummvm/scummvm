@@ -100,7 +100,10 @@ public:
 	Common::Language getLanguage() const;
 
 	bool hasFeature(EngineFeature f) const override;
+	bool canLoadGameStateCurrently() override { return _canLoadSave; }
+	bool canSaveGameStateCurrently() override { return _canLoadSave; }
 
+	void setCanLoadSave(bool canLoadSave) { _canLoadSave = canLoadSave; }
 	static const uint kSaveDescriptionLen = 20;
 private:
 	void pauseEngineIntern(bool);
@@ -157,6 +160,8 @@ protected:
 	void setBlackPalette();
 
 protected:
+	bool _canLoadSave;
+
 	FontManager _fontManager;
 	Sprites _sprites;
 	Objects _objects;
