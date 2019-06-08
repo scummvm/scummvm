@@ -166,6 +166,7 @@ Common::Error HDBGame::run() {
 	}
 
 	_map->load(mapStream);
+	_map->draw();
 
 #if 0
 	lua->executeFile("test.lua");
@@ -186,9 +187,6 @@ Common::Error HDBGame::run() {
 				break;
 			}
 		}
-
-		titlePic->draw(0, 0);
-		tile->draw(0, 0);
 
 		g_system->updateScreen();
 		g_system->delayMillis(10);
