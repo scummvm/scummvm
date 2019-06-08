@@ -85,9 +85,11 @@ bool DrawMan::init() {
 Tile *DrawMan::getTile(int index) {
 
 	if (index < 0 || index > _numTiles) {
+		debug(6, "getTile(%d): wrong index > %d", index, _numTiles);
 		return NULL;
 	}
 	if (_tLookupArray[index].skyIndex) {
+		debug(6, "getTile(%d): sky tile (%d)", index, _tLookupArray[index].skyIndex);
 		// We don't draw Sky Tiles, so return NULL
 		return NULL;
 	}
