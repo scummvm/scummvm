@@ -30,6 +30,30 @@ namespace Glk {
 namespace AdvSys {
 
 /**
+ * Actions
+ */
+enum Action {
+	A_VERBS = 0,
+	A_PREPOSITIONS = 2,
+	A_FLAG = 4,
+	A_MASK = 5,
+	A_CODE = 6,
+	A_SIZE = 8
+};
+
+/**
+ * Object fields
+ */
+enum ObjectField {
+	O_CLASS = 0,
+	O_NOUNS = 2,
+	O_ADJECTIVES = 4,
+	O_NPROPERTIES = 6,
+	O_PROPERTIES = 8,
+	O_SIZE = 8
+};
+
+/**
  * Built-in variables
  */
 enum Variable {
@@ -106,13 +130,45 @@ public:
  * Game abstraction class
  */
 class Game : public Header {
+private:
+	/**
+	 * Find an object property field
+	 */
+	int findProperty(int obj, int prop) const;
+
+	/**
+	 * Returns true if an object has a given noun
+	 */
+	bool hasNoun(int obj, int noun) const;
+
+	/**
+	 * Returns true if an object has a given adjective
+	 */
+	bool hasAdjective(int obj, int adjective) const;
+
+	/**
+	 * Returns true if an action has a given verb
+	 */
+	bool hasVerb(int act, int* verbs) const;
+
+	/**
+	 * Returns true if an action is in a given list
+	 */
+	bool hasPreposition(int act, int preposition) const {
+		return inList(getActionField(act, A_PREPOSITIONS), preposition);
+	}
+
+	/**
+	 * Check if a word is in an element of a given list
+	 */
+	bool inList(int link, int word) const;
 public:
 	Common::Array<byte> _data;
-	uint _residentOffset;
-	uint _wordCount;
-	uint _objectCount;
-	uint _actionCount;
-	uint _variableCount;
+	int _residentOffset;
+	int _wordCount;
+	int _objectCount;
+	int _actionCount;
+	int _variableCount;
 
 	byte* _residentBase;
 	byte* _wordTable;
@@ -153,14 +209,108 @@ public:
 	void loadGameData(Common::ReadStream& rs);
 
 	/**
-	 * Set a variable value
+	 * Find a word in the dictionary
 	 */
-	void setVariable(uint variableNum, int value);
+	int findWord(const Common::String& word) const;
+
+	/**
+	 * Return a word's type
+	 */
+	int getWordType(int word) const { return _wordTypeTable[word]; }
+
+	/**
+	 * Match an object against a name and list of adjectives
+	 */
+	bool match(int obj, int noun, int* adjectives);
+
+	/**
+	 * Check to see if this is a valid verb
+	 */
+	int checkVerb(int* verbs);
+
+	/**
+	 * Find an action matching a given description
+	 */
+	int findAction(int* verbs, int preposition, int flag);
+
+	/**
+	 * Get an object property
+	 */
+	int getObjectProperty(int obj, int prop);
+
+	/**
+	 * Sets an object property
+	 */
+	void setObjectProperty(int obj, int prop, int val);
+
+	/**
+	 * Gets a field from an object
+	 */
+	int getObjectField(int obj, int offset) const {
+		return READ_LE_UINT16(_residentBase + getObjectLocation(obj) + offset);
+	}
+
+	/**
+	 * Sets a field in an object
+	 */
+	void setObjectField(int obj, int offset, int val) {
+		WRITE_LE_UINT16(_residentBase + getObjectLocation(obj) + offset, val);
+	}
+
+	/**
+	 * Gets a field from an action
+	 */
+	int getActionField(int action, int offset) const {
+		return READ_LE_UINT16(_residentBase + getActionLocation(action) + offset);
+	}
+
+	/**
+	 * Gets a byte field from an action
+	 */
+	int getActionByte(int action, int offset) const {
+		return _residentBase[getActionLocation(action) + offset];
+	}
+
+	/**
+	 * Gets the offset of an object from the object table
+	 */
+	int getObjectLocation(int obj) const;
+
+	/**
+	 * Gets the offset of an action from the action table
+	 */
+	int getActionLocation(int action) const;
 
 	/**
 	 * Get a variable value
 	 */
-	int getVariable(uint variableNum);
+	int getVariable(int variableNum);
+
+	/**
+	 * Set a variable value
+	 */
+	void setVariable(int variableNum, int value);
+
+	/**
+	 * Gets a code byte
+	 */
+	int getCodeByte(int offset) const {
+		return _codeSpace[offset];
+	}
+
+	/**
+	 * Read a word
+	 */
+	int readWord(int offset) const {
+		return READ_LE_UINT16(_residentBase + offset);
+	}
+
+	/**
+	 * Write a word
+	 */
+	void writeWord(int offset, int val) {
+		WRITE_LE_UINT16(_residentBase + offset, val);
+	}
 };
 
 } // End of namespace AdvSys

@@ -21,6 +21,7 @@
  */
 
 #include "glk/advsys/game.h"
+#include "glk/advsys/definitions.h"
 #include "common/memstream.h"
 
 namespace Glk {
@@ -79,6 +80,23 @@ bool Header::init(Common::ReadStream &s) {
 /*--------------------------------------------------------------------------*/
 
 #define MAX_VERSION 102
+#define WORD_SIZE 6
+
+/**
+ * Property flags
+ */
+enum PropertyFlag {
+	P_CLASS = 0x8000
+};
+
+/**
+ * Link fields
+ */
+enum LinkField {
+	L_DATA = 0,
+	L_NEXT = 2,
+	L_SIZE = 4
+};
 
 bool Game::init(Common::SeekableReadStream &s) {
 	// Load the header
@@ -121,6 +139,9 @@ bool Game::init(Common::SeekableReadStream &s) {
 void Game::restart(Common::SeekableReadStream& s) {
 	s.seek(_residentOffset + _saveAreaOffset);
 	s.read(_saveArea, _saveSize);
+	decrypt(_saveArea, _saveSize);
+
+	setVariable(V_OCOUNT, _objectCount);
 }
 
 void Game::saveGameData(Common::WriteStream& ws) {
@@ -131,14 +152,159 @@ void Game::loadGameData(Common::ReadStream& rs) {
 	rs.read(_saveArea, _saveSize);
 }
 
-void Game::setVariable(uint variableNum, int value) {
+int Game::findWord(const Common::String &word) const {
+	// Limit the word to the maximum allowable size
+	Common::String w(word.c_str(), word.c_str() + WORD_SIZE);
+
+	// Iterate over the dictionary for the word
+	for (int idx = 1; idx <= _wordCount; ++idx) {
+		int wordOffset = READ_LE_UINT16(_wordTable + idx * 2);
+		if (w == (const char*)_residentBase + wordOffset + 2)
+			return READ_LE_UINT16(_residentBase + wordOffset);
+	}
+
+	return NIL;
+}
+
+bool Game::match(int obj, int noun, int* adjectives) {
+	if (!hasNoun(obj, noun))
+		return false;
+
+	for (int* adjPtr = adjectives; *adjPtr; ++adjPtr) {
+		if (!hasAdjective(obj, *adjPtr))
+			return false;
+	}
+
+	return true;
+}
+
+int Game::checkVerb(int* verbs) {
+	// Iterate through the actions
+	for (int idx = 1; idx <= _actionCount; ++idx) {
+		if (hasVerb(idx, verbs))
+			return idx;
+	}
+
+	return NIL;
+}
+
+int Game::findAction(int* verbs, int preposition, int flag) {
+	// Iterate through the actions
+	for (int idx = 1; idx <= _actionCount; ++idx) {
+		if ((preposition && !hasPreposition(idx, preposition)) || !hasVerb(idx, verbs))
+			continue;
+
+		int mask = ~getActionByte(idx, A_MASK);
+		if ((flag & mask) == (getActionByte(idx, A_FLAG) & mask))
+			return idx;
+	}
+
+	return NIL;
+}
+
+int Game::getObjectProperty(int obj, int prop) {
+	int field;
+
+	for (; obj; obj = getObjectField(obj, O_CLASS)) {
+		if ((field = findProperty(obj, prop)) != 0)
+			return getObjectField(obj, field);
+	}
+
+	return NIL;
+}
+
+void Game::setObjectProperty(int obj, int prop, int val) {
+	int field;
+
+	for (; obj; obj = getObjectField(obj, O_CLASS)) {
+		if ((field = findProperty(obj, prop)) != 0)
+			return setObjectField(obj, field, val);
+	}
+}
+
+int Game::getObjectLocation(int obj) const {
+	if (obj < 1 || obj > _objectCount)
+		error("Invalid object number %d", obj);
+
+	return READ_LE_UINT16(_objectTable + obj * 2);
+}
+
+int Game::getActionLocation(int action) const {
+	if (action < 1 || action >= _actionCount)
+		error("Invalid action number %d", action);
+
+	return READ_LE_UINT16(_actionTable + action * 2);
+}
+
+int Game::getVariable(int variableNum) {
+	assert(variableNum < _variableCount);
+	return READ_LE_UINT16(_variableTable + variableNum * 2);
+}
+
+void Game::setVariable(int variableNum, int value) {
 	assert(variableNum < _variableCount);
 	WRITE_LE_UINT16(_variableTable + variableNum * 2, value);
 }
 
-int Game::getVariable(uint variableNum) {
-	assert(variableNum < _variableCount);
-	return READ_LE_UINT16(_variableTable + variableNum * 2);
+int Game::findProperty(int obj, int prop) const {
+	int nProp = getObjectField(obj, O_NPROPERTIES);
+
+	for (int idx = 0, p = 0; idx < nProp; ++idx, p += 4) {
+		if ((getObjectField(obj, O_PROPERTIES + p) & ~P_CLASS) == prop)
+			return O_PROPERTIES + p + 2;
+	}
+
+	return NIL;
+}
+
+bool Game::hasNoun(int obj, int noun) const {
+	for (; obj; obj = getObjectField(obj, O_CLASS)) {
+		if (inList(getObjectField(obj, O_NOUNS), noun))
+			return true;
+	}
+
+	return false;
+}
+
+bool Game::hasAdjective(int obj, int adjective) const {
+	for (; obj; obj = getObjectField(obj, O_CLASS)) {
+		if (inList(getObjectField(obj, O_ADJECTIVES), adjective))
+			return true;
+	}
+
+	return false;
+}
+
+bool Game::hasVerb(int act, int* verbs) const {
+	// Get the list of verbs
+	int link = getActionField(act, A_VERBS);
+
+	// Look for the verb
+	for (; link; link = readWord(link + L_NEXT)) {
+		int* verb = verbs;
+		int word = readWord(link + L_DATA);
+
+		for (; *verb && word; link = readWord(link + L_NEXT)) {
+			if (*verb != readWord(word + L_DATA))
+				break;
+
+			++verb;
+		}
+
+		if (!*verb && !word)
+			return true;
+	}
+
+	return true;
+}
+
+bool Game::inList(int link, int word) const {
+	for (; link; link = readWord(link + L_NEXT)) {
+		if (word == readWord(link + L_DATA))
+			return true;
+	}
+
+	return false;
 }
 
 } // End of namespace AdvSys

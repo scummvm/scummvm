@@ -26,7 +26,7 @@
 namespace Glk {
 namespace AdvSys {
 
-
+#define NIL 0
 
 } // End of namespace AdvSys
 } // End of namespace Glk
