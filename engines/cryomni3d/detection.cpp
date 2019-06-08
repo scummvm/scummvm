@@ -69,7 +69,9 @@ Common::Language CryOmni3DEngine::getLanguage() const {
 }
 
 bool CryOmni3DEngine::hasFeature(EngineFeature f) const {
-	return false;
+	return
+	    (f == kSupportsRTL)
+	    || (f == kSupportsSubtitleOptions);
 }
 
 } // End of Namespace CryOmni3D

@@ -22,9 +22,7 @@
 
 namespace CryOmni3D {
 
-//#define GAMEOPTION_PLAY_MYST_FLYBY         GUIO_GAMEOPTIONS1
-
-//#define GUI_OPTIONS_MYST                   GUIO3(GUIO_NOASPECT, GUIO_NOSUBTITLES, GUIO_NOMIDI)
+#define GUI_OPTIONS_VERSAILLES                   GUIO3(GUIO_NOMIDI, GUIO_NOSFX, GUIO_NOASPECT)
 
 static const CryOmni3DGameDescription gameDescriptions[] = {
 	// Versailles 1685
@@ -38,7 +36,7 @@ static const CryOmni3DGameDescription gameDescriptions[] = {
 			Common::FR_FRA,
 			Common::kPlatformWindows,
 			ADGF_UNSTABLE,
-			GUIO1(GUIO_NOASPECT)
+			GUI_OPTIONS_VERSAILLES
 		},
 		GType_VERSAILLES,
 		0,
@@ -56,7 +54,7 @@ static const CryOmni3DGameDescription gameDescriptions[] = {
 			Common::FR_FRA,
 			Common::kPlatformWindows,
 			ADGF_UNSTABLE,
-			GUIO1(GUIO_NOASPECT)
+			GUI_OPTIONS_VERSAILLES
 		},
 		GType_VERSAILLES,
 		0,
@@ -74,7 +72,7 @@ static const CryOmni3DGameDescription gameDescriptions[] = {
 			Common::FR_FRA,
 			Common::kPlatformDOS,
 			ADGF_UNSTABLE,
-			GUIO1(GUIO_NOASPECT)
+			GUI_OPTIONS_VERSAILLES
 		},
 		GType_VERSAILLES,
 		0,
@@ -92,7 +90,7 @@ static const CryOmni3DGameDescription gameDescriptions[] = {
 			Common::FR_FRA,
 			Common::kPlatformMacintosh,
 			ADGF_UNSTABLE,
-			GUIO1(GUIO_NOASPECT)
+			GUI_OPTIONS_VERSAILLES
 		},
 		GType_VERSAILLES,
 		0,
@@ -115,7 +113,7 @@ static const CryOmni3DGameDescription fallbackDescs[] = {
 			Common::UNK_LANG,
 			Common::kPlatformWindows,
 			ADGF_UNSTABLE,
-			GUIO1(GUIO_NOASPECT)
+			GUI_OPTIONS_VERSAILLES
 		},
 		GType_VERSAILLES,
 		0,

@@ -85,7 +85,7 @@ uint CryOmni3DEngine_Versailles::displayOptions() {
 	int drawState = 1;
 
 	uint volumeCursorMiddleY = _sprites.getCursor(102).getHeight() / 2;
-	uint volume = CLIP(ConfMan.getInt("sfx_volume"), 0, 256);
+	uint volume = CLIP(ConfMan.getInt("music_volume"), 0, 256);
 	uint soundVolumeY = ((283 * (256 - volume)) >> 8) + 101;
 	byte volumeForeColor = 243;
 
@@ -251,13 +251,15 @@ uint CryOmni3DEngine_Versailles::displayOptions() {
 							volume = CLIP(((384 - soundVolumeY) << 8) / 283, 0u, 256u);
 							// Global setting
 							ConfMan.setInt("music_volume", volume);
+							// As we modify speech volume, let's unmute it
+							// Using in-game settings resets all scummvm specific settings
+							ConfMan.setBool("speech_mute", false);
 							ConfMan.setInt("speech_volume", volume);
-							ConfMan.setInt("sfx_volume", volume);
 							syncSoundSettings();
 						}
 					} else if (getDragStatus() == 2 &&
 					           !_mixer->hasActiveChannelOfType(Audio::Mixer::kMusicSoundType) &&
-					           _mixer->getVolumeForSoundType(Audio::Mixer::kSFXSoundType) > 0) {
+					           _mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType) > 0) {
 						// Finished dragging
 						_mixer->stopID(SoundIds::kOrgue);
 						do {
@@ -275,7 +277,7 @@ uint CryOmni3DEngine_Versailles::displayOptions() {
 								break;
 							}
 
-							_mixer->playStream(Audio::Mixer::kSFXSoundType, nullptr, audioDecoder, SoundIds::kOrgue);
+							_mixer->playStream(Audio::Mixer::kMusicSoundType, nullptr, audioDecoder, SoundIds::kOrgue);
 							// We lost ownership of the audioDecoder just set it to nullptr and don't use it
 							audioDecoder = nullptr;
 						} while (false);
