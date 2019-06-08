@@ -110,7 +110,7 @@ bool Map::load(Common::SeekableReadStream *stream) {
 	int sky = loadTiles();
 	g_hdb->_drawMan->setSky(sky);
 	_mapX = _mapY = 0;
-	
+
 	/*
 		TODO: Add the animating tile lists
 	*/
