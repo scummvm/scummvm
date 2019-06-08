@@ -185,12 +185,10 @@ Graphics::Surface Picture::load(Common::SeekableReadStream *stream) {
 	_height = stream->readUint32LE();
 	stream->read(_name, 64);
 
-	Graphics::PixelFormat format(2, 5, 6, 5, 0, 11, 5, 0, 0);
-
 	debug(8, "Picture: _width: %d, _height: %d", _width, _height);
 	debug(8, "Picture: _name: %s", _name);
 
-	_surface.create(_width, _height, format);
+	_surface.create(_width, _height, g_hdb->_format);
 	stream->readUint32LE(); // Skip Win32 Surface
 
 	uint16 *ptr;
@@ -218,9 +216,7 @@ Graphics::Surface Tile::load(Common::SeekableReadStream *stream) {
 	_flags = stream->readUint32LE();
 	stream->read(_name, 64);
 
-	Graphics::PixelFormat format(2, 5, 6, 5, 0, 11, 5, 0, 0);
-
-	_surface.create(32, 32, format);
+	_surface.create(32, 32, g_hdb->_format);
 	stream->readUint32LE(); // Skip Win32 Surface
 
 	uint16 *ptr;
