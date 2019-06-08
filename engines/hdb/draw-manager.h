@@ -44,7 +44,10 @@ struct TileLookup {
 	Tile *tData;
 	uint16 skyIndex;
 	uint16 animIndex;
+
+	TileLookup() : filename(NULL), tData(NULL), skyIndex(0), animIndex(0) {}
 };
+
 
 class DrawMan {
 public:
