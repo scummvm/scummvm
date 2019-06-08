@@ -157,9 +157,9 @@ void DrawMan::setSky(int skyIndex) {
 
 void DrawMan::setup3DStars() {
 	for (int i = 0; i < kNum3DStars; i++) {
-		_stars3D[i].x = g_hdb->_rnd->getRandomNumber(kScreenWidth) % kScreenWidth;
-		_stars3D[i].y = g_hdb->_rnd->getRandomNumber(kScreenHeight) % kScreenHeight;
-		_stars3D[i].speed = (g_hdb->_rnd->getRandomNumber(256) % 256);
+		_stars3D[i].x = g_hdb->_rnd->getRandomNumber(kScreenWidth);
+		_stars3D[i].y = g_hdb->_rnd->getRandomNumber(kScreenHeight);
+		_stars3D[i].speed = g_hdb->_rnd->getRandomNumber(256);
 		_stars3D[i].speed >>= 1;
 		_stars3D[i].color = _stars3D[i].speed / 64;
 	}
@@ -167,9 +167,9 @@ void DrawMan::setup3DStars() {
 
 void DrawMan::setup3DStarsLeft() {
 	for (int i = 0; i < kNum3DStars; i++) {
-		_stars3DSlow[i].x = g_hdb->_rnd->getRandomNumber(kScreenWidth) % kScreenWidth;
-		_stars3DSlow[i].y = g_hdb->_rnd->getRandomNumber(kScreenHeight) % kScreenHeight;
-		_stars3DSlow[i].speed = ((double) (1 + (g_hdb->_rnd->getRandomNumber(5) % 5))) / 6.0;
+		_stars3DSlow[i].x = g_hdb->_rnd->getRandomNumber(kScreenWidth);
+		_stars3DSlow[i].y = g_hdb->_rnd->getRandomNumber(kScreenHeight);
+		_stars3DSlow[i].speed = ((double) (1 + g_hdb->_rnd->getRandomNumber(5))) / 6.0;
 		_stars3DSlow[i].color = (int) (_stars3DSlow[i].speed * 4.00);
 	}
 }
