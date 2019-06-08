@@ -26,7 +26,12 @@ namespace HDB {
 
 DrawMan::DrawMan() {
 	_tLookupArray = NULL;
+	_globalSurface.create(kScreenWidth, kScreenHeight, g_hdb->_format);
 	_systemInit = false;
+}
+
+DrawMan::~DrawMan() {
+	_globalSurface.free();
 }
 
 bool DrawMan::init() {
