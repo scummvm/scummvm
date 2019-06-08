@@ -168,7 +168,7 @@ void DrawMan::setSky(int skyIndex) {
 		setup3DStarsLeft();
 		return;
 	} else if (skyIndex == _tileSkyStars) {
-		warning("STUB: DRAWMAN::setSky: getPicture( CLOUDY_SKIES )");
+		_skyClouds = getPicture("cloudy_skies");
 		return;
 	}
 }
@@ -210,6 +210,30 @@ void DrawMan::draw3DStarsLeft() {
 		_stars3DSlow[i].x -= _stars3DSlow[i].speed;
 		if (_stars3DSlow[i].x < kScreenWidth) {
 			_stars3DSlow[i].x = kScreenWidth - 1;
+		}
+	}
+}
+
+void DrawMan::drawSky() {
+	int tile = _skyTiles[_currentSky - 1];
+
+	if (tile == _tileSkyStars) {
+		draw3DStars();
+	}
+	else if (tile == _tileSkyStarsLeft) {
+		draw3DStarsLeft();
+	}
+	else if (tile == _tileSkyClouds) {
+		static int offset = 0, wait = 0;
+		for (int j = -64; j < kScreenHeight; j += 64) {
+			for (int i = -64; i < kScreenWidth; i += 64) {
+				_skyClouds->draw(i + offset, j + offset);
+			}
+		}
+		wait--;
+		if (wait < 1) {
+			offset = (offset + 1) & 63;
+			wait = 5;
 		}
 	}
 }
