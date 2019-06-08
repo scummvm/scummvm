@@ -56,6 +56,7 @@ public:
 	~DrawMan();
 
 	bool init();
+	void fillScreen(uint32 color);
 	Tile *getTile(int index);
 	int getTileIndex(const char *name);
 	Picture *getPicture(const char *name);
