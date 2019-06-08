@@ -103,7 +103,8 @@ void DrawMan::fillScreen(uint32 color) {
 Tile *DrawMan::getTile(int index) {
 
 	if (index < 0 || index > _numTiles) {
-		debug(6, "getTile(%d): wrong index > %d", index, _numTiles);
+		if (index != 0xFFFF)
+			debug(6, "getTile(%d): wrong index > %d", index, _numTiles);
 		return NULL;
 	}
 	if (_tLookupArray[index].skyIndex) {
