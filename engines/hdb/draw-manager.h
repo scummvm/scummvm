@@ -63,9 +63,9 @@ public:
 	void setSky(int skyIndex);
 	void setup3DStars();
 	void setup3DStarsLeft();
-	// Add draw functions for the above two
-	//void draw3DStars();
-	//void draw3DStarsLeft();
+	void draw3DStars();
+	void draw3DStarsLeft();
+	void drawSky();
 
 private:
 	Graphics::ManagedSurface _globalSurface;
