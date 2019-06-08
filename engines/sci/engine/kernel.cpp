@@ -112,11 +112,6 @@ int Kernel::findSelector(const char *selectorName) const {
 	return -1;
 }
 
-// used by Script patcher to figure out, if it's okay to initialize signature/patch-table
-bool Kernel::selectorNamesAvailable() {
-	return !_selectorNames.empty();
-}
-
 void Kernel::loadSelectorNames() {
 	Resource *r = _resMan->findResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_SELECTORS), 0);
 	bool oldScriptHeader = (getSciVersion() == SCI_VERSION_0_EARLY);

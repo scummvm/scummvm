@@ -168,8 +168,6 @@ public:
 	 */
 	int findSelector(const char *selectorName) const;
 
-	bool selectorNamesAvailable();
-
 	// Script dissection/dumping functions
 	void dissectScript(int scriptNumber, Vocabulary *vocab);
 	void dumpScriptObject(const SciSpan<const byte> &script, SciSpan<const byte> object);
