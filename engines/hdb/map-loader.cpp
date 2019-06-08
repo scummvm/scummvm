@@ -174,7 +174,7 @@ void Map::draw() {
 			tileIndex = _foreground[matrixY + _mapTileX + i];
 			if (tileIndex >= 0) {
 				Tile *fTile = g_hdb->_drawMan->getTile(tileIndex);
-				if (!(fTile->_flags & kFlagInvisible)) {
+				if (fTile && !(fTile->_flags & kFlagInvisible)) {
 
 					if ((fTile->_flags & kFlagGrating)) {
 						/*
