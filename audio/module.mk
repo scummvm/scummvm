@@ -1,9 +1,7 @@
 MODULE := audio
 
 MODULE_OBJS := \
-	adlib.o \
 	audiostream.o \
-	fmopl.o \
 	mididrv.o \
 	midiparser_qt.o \
 	midiparser.o \
@@ -30,9 +28,6 @@ MODULE_OBJS := \
 	decoders/wma.o \
 	decoders/xa.o \
 	softsynth/cms.o \
-	softsynth/opl/dbopl.o \
-	softsynth/opl/dosbox.o \
-	softsynth/opl/mame.o \
 	softsynth/fluidsynth.o
 
 ifdef USE_ALSA

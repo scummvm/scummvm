@@ -124,8 +124,8 @@ public:
 		#ifdef USE_MT32EMU
 		LINK_PLUGIN(MT32)
 		#endif
-		LINK_PLUGIN(ADLIB)
 //ResidualVM: disabled belows:
+//		LINK_PLUGIN(ADLIB)
 //		LINK_PLUGIN(PCSPK)
 //		LINK_PLUGIN(PCJR)
 //		LINK_PLUGIN(CMS)

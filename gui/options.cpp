@@ -42,7 +42,7 @@
 #include "audio/mididrv.h"
 #include "audio/musicplugin.h"
 #include "audio/mixer.h"
-#include "audio/fmopl.h"
+//#include "audio/fmopl.h" // ResidualVM removed
 #include "widgets/scrollcontainer.h"
 #include "widgets/edittext.h"
 
@@ -367,10 +367,12 @@ void OptionsDialog::build() {
 	if (!loadMusicDeviceSetting(_midiPopUp, "music_driver"))
 		_midiPopUp->setSelected(0);
 
+#if 0 // ResidualVM specific
 	if (_oplPopUp) {
 		OPL::Config::DriverId id = MAX<OPL::Config::DriverId>(OPL::Config::parse(ConfMan.get("opl_driver", _domain)), 0);
 		_oplPopUp->setSelectedTag(id);
 	}
+#endif
 
 	if (_multiMidiCheckbox) {
 		if (!loadMusicDeviceSetting(_gmDevicePopUp, "gm_device"))
@@ -716,6 +718,7 @@ void OptionsDialog::apply() {
 		}
 	}
 
+#if 0 // ResidualVM specific
 	if (_oplPopUp) {
 		if (_enableAudioSettings) {
 			const OPL::Config::EmulatorDescription *ed = OPL::Config::findDriver(_oplPopUp->getSelectedTag());
@@ -728,6 +731,7 @@ void OptionsDialog::apply() {
 			ConfMan.removeKey("opl_driver", _domain);
 		}
 	}
+#endif
 
 	// MIDI options
 	if (_multiMidiCheckbox) {
@@ -1215,6 +1219,7 @@ void OptionsDialog::addAudioControls(GuiObject *boss, const Common::String &pref
 		}
 	}
 
+#if 0 // ResidualVM specific
 	// The OPL emulator popup & a label
 	_oplPopUpDesc = new StaticTextWidget(boss, prefix + "auOPLPopupDesc", _("AdLib emulator:"), _("AdLib is used for music in many games"));
 	_oplPopUp = new PopUpWidget(boss, prefix + "auOPLPopup", _("AdLib is used for music in many games"));
@@ -1225,6 +1230,7 @@ void OptionsDialog::addAudioControls(GuiObject *boss, const Common::String &pref
 		_oplPopUp->appendEntry(_(ed->description), ed->id);
 		++ed;
 	}
+#endif
 
 	_enableAudioSettings = true;
 }
