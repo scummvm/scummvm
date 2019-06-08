@@ -79,8 +79,14 @@ bool DrawMan::init() {
 		TODO: Load Mouse Pointer and Display Cursor
 	*/
 
+	//Load all 4 levels of star colors
+	_starField[0] = getPicture("pic_star64");
+	_starField[1] = getPicture("pic_star128");
+	_starField[2] = getPicture("pic_star192");
+	_starField[3] = getPicture("pic_star256");
+
 	/*
-		TODO: Load all 4 levels of star colors and the snowflake
+		TODO: Load the snowflake
 	*/
 
 	_systemInit = true;

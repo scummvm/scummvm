@@ -87,6 +87,7 @@ private:
 	int _tileSkyStars; // Index of sky_stars tile
 	int _tileSkyStarsLeft; // Left-scrolling stars, slow
 	int _tileSkyClouds; // Index of sky_stars tile
+	Picture *_starField[4];
 	Picture *_skyClouds;
 
 	bool _systemInit;
