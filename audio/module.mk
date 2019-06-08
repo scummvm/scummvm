@@ -3,12 +3,8 @@ MODULE := audio
 MODULE_OBJS := \
 	audiostream.o \
 	mididrv.o \
-	midiparser_qt.o \
-	midiparser.o \
 	mixer.o \
-	mpu401.o \
 	musicplugin.o \
-	null.o \
 	timestamp.o \
 	decoders/3do.o \
 	decoders/aac.o \
@@ -26,14 +22,7 @@ MODULE_OBJS := \
 	decoders/vorbis.o \
 	decoders/wave.o \
 	decoders/wma.o \
-	decoders/xa.o \
-	softsynth/cms.o \
-	softsynth/fluidsynth.o
-
-ifdef USE_ALSA
-MODULE_OBJS += \
-	alsa_opl.o
-endif
+	decoders/xa.o
 
 ifdef USE_A52
 MODULE_OBJS += \

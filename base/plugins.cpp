@@ -91,57 +91,57 @@ public:
 		// Music plugins
 		// TODO: Use defines to disable or enable each MIDI driver as a
 		// static/dynamic plugin, like it's done for the engines
-		LINK_PLUGIN(AUTO)
-		LINK_PLUGIN(NULL)
-		#if defined(WIN32) && !defined(_WIN32_WCE) && !defined(__SYMBIAN32__)
-		LINK_PLUGIN(WINDOWS)
-		#endif
-		#if defined(USE_ALSA)
-		LINK_PLUGIN(ALSA)
-		#endif
-		#if defined(USE_SEQ_MIDI)
-		LINK_PLUGIN(SEQ)
-		#endif
-		#if defined(USE_SNDIO)
-		LINK_PLUGIN(SNDIO)
-		#endif
-		#if defined(__MINT__)
-		LINK_PLUGIN(STMIDI)
-		#endif
-		#if defined(IRIX)
-		LINK_PLUGIN(DMEDIA)
-		#endif
-		#if defined(__amigaos4__)
-		LINK_PLUGIN(CAMD)
-		#endif
-		#if defined(MACOSX)
-		LINK_PLUGIN(COREAUDIO)
-		LINK_PLUGIN(COREMIDI)
-		#endif
-		#ifdef USE_FLUIDSYNTH
-		LINK_PLUGIN(FLUIDSYNTH)
-		#endif
-		#ifdef USE_MT32EMU
-		LINK_PLUGIN(MT32)
-		#endif
 //ResidualVM: disabled belows:
+//		LINK_PLUGIN(AUTO)
+//		LINK_PLUGIN(NULL)
+//		#if defined(WIN32) && !defined(_WIN32_WCE) && !defined(__SYMBIAN32__)
+//		LINK_PLUGIN(WINDOWS)
+//		#endif
+//		#if defined(USE_ALSA)
+//		LINK_PLUGIN(ALSA)
+//		#endif
+//		#if defined(USE_SEQ_MIDI)
+//		LINK_PLUGIN(SEQ)
+//		#endif
+//		#if defined(USE_SNDIO)
+//		LINK_PLUGIN(SNDIO)
+//		#endif
+//		#if defined(__MINT__)
+//		LINK_PLUGIN(STMIDI)
+//		#endif
+//		#if defined(IRIX)
+//		LINK_PLUGIN(DMEDIA)
+//		#endif
+//		#if defined(__amigaos4__)
+//		LINK_PLUGIN(CAMD)
+//		#endif
+//		#if defined(MACOSX)
+//		LINK_PLUGIN(COREAUDIO)
+//		LINK_PLUGIN(COREMIDI)
+//		#endif
+//		#ifdef USE_FLUIDSYNTH
+//		LINK_PLUGIN(FLUIDSYNTH)
+//		#endif
+//		#ifdef USE_MT32EMU
+//		LINK_PLUGIN(MT32)
+//		#endif
 //		LINK_PLUGIN(ADLIB)
 //		LINK_PLUGIN(PCSPK)
 //		LINK_PLUGIN(PCJR)
 //		LINK_PLUGIN(CMS)
-		#if defined(__ANDROID__)
+//		#if defined(__ANDROID__)
 //		LINK_PLUGIN(EAS)
-		#endif
-		#ifndef DISABLE_SID
+//		#endif
+//		#ifndef DISABLE_SID
 //		LINK_PLUGIN(C64)
-		#endif
+//		#endif
 //		LINK_PLUGIN(AMIGA)
 //		LINK_PLUGIN(APPLEIIGS)
 //		LINK_PLUGIN(TOWNS)
 //		LINK_PLUGIN(PC98)
-		#if defined(USE_TIMIDITY)
-		LINK_PLUGIN(TIMIDITY)
-		#endif
+//		#if defined(USE_TIMIDITY)
+//		LINK_PLUGIN(TIMIDITY)
+//		#endif
 
 		return pl;
 	}

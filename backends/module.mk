@@ -9,12 +9,6 @@ MODULE_OBJS := \
 	fs/abstract-fs.o \
 	fs/stdiostream.o \
 	log/log.o \
-	midi/alsa.o \
-	midi/dmedia.o \
-	midi/seq.o \
-	midi/sndio.o \
-	midi/stmidi.o \
-	midi/timidity.o \
 	saves/savefile.o \
 	saves/default/default-saves.o \
 	timer/default/default-timer.o
@@ -167,8 +161,6 @@ ifdef MACOSX
 MODULE_OBJS += \
 	audiocd/macosx/macosx-audiocd.o \
 	dialogs/macosx/macosx-dialogs.o \
-	midi/coreaudio.o \
-	midi/coremidi.o \
 	updates/macosx/macosx-updates.o \
 	taskbar/macosx/macosx-taskbar.o
 endif
@@ -179,7 +171,6 @@ MODULE_OBJS += \
 	dialogs/win32/win32-dialogs.o \
 	fs/windows/windows-fs.o \
 	fs/windows/windows-fs-factory.o \
-	midi/windows.o \
 	plugins/win32/win32-provider.o \
 	saves/windows/windows-saves.o \
 	updates/win32/win32-updates.o \
@@ -189,8 +180,7 @@ endif
 ifdef AMIGAOS
 MODULE_OBJS += \
 	fs/amigaos4/amigaos4-fs.o \
-	fs/amigaos4/amigaos4-fs-factory.o \
-	midi/camd.o
+	fs/amigaos4/amigaos4-fs-factory.o
 endif
 
 ifdef RISCOS
