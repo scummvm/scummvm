@@ -55,7 +55,7 @@ void IndexPageHandler::handle(Client &client) {
 
 	_code = queryCode;
 	sendCommand(GUI::kStorageCodePassedCmd, 0);
-	HandlerUtils::setMessageHandler(client, _("ScummVM got the code and already connects to your cloud storage!"));
+	HandlerUtils::setMessageHandler(client, _("ResidualVM got the code and already connects to your cloud storage!"));
 }
 
 bool IndexPageHandler::minimalModeSupported() {

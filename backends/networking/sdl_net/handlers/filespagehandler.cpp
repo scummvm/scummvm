@@ -215,7 +215,7 @@ void FilesPageHandler::handle(Client &client) {
 
 	// show an error message if failed to list directory
 	if (!listDirectory(path, content, itemTemplate)) {
-		HandlerUtils::setFilesManagerErrorMessageHandler(client, _("ScummVM couldn't list the directory you specified."));
+		HandlerUtils::setFilesManagerErrorMessageHandler(client, _("ResidualVM couldn't list the directory you specified."));
 		return;
 	}
 

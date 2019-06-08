@@ -317,7 +317,7 @@ void DefinitionRegistry::registerReference(const ResourceReference &reference) {
 	Resources::Object *object = reference.resolve<Resources::Object>();
 	if (!_definitions.contains(object)) {
 		// TODO: There is no guarantee the definition is unique
-		_definitions[object] = object->getType().getName() + stringToCamelCase(object->getName());;
+		_definitions[object] = object->getType().getName() + stringToCamelCase(object->getName());
 	}
 }
 

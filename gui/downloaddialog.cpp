@@ -134,7 +134,7 @@ bool DownloadDialog::selectDirectories() {
 	Common::FSNode dir(_browser->getResult());
 	Common::FSList files;
 	if (!dir.getChildren(files, Common::FSNode::kListAll)) {
-		MessageDialog alert(_("ScummVM couldn't open the specified directory!"));
+		MessageDialog alert(_("ResidualVM couldn't open the specified directory!"));
 		alert.runModal();
 		return false;
 	}
