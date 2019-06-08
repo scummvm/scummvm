@@ -46,6 +46,8 @@ bool DrawMan::init() {
 	_tLookupArray = new TileLookup[_numTiles];
 	Common::Array<const char *> tileData = *g_hdb->_fileMan->findFiles("t32_", TYPE_TILE32);
 
+	assert((uint)_numTiles == tileData.size());
+
 	int index = 0, skyIndex = 0;
 	for (; index < _numTiles; index++) {
 		_tLookupArray[index].filename = tileData[index];
