@@ -404,7 +404,7 @@ Common::String Versailles_Documentation::docAreaHandleSummary() {
 				selectedBox = 7;
 			}
 		}
-		if (g_engine->shouldQuit()) {
+		if (_engine->shouldAbort()) {
 			selectedBox = 7;
 		}
 	}
@@ -510,7 +510,7 @@ Common::String Versailles_Documentation::docAreaHandleTimeline() {
 				selectedBox = leaveBoxId;
 			}
 		}
-		if (g_engine->shouldQuit()) {
+		if (_engine->shouldAbort()) {
 			selectedBox = leaveBoxId;
 		}
 	}
@@ -710,7 +710,7 @@ uint Versailles_Documentation::docAreaHandleRecord(Graphics::ManagedSurface &sur
 
 		if (_engine->pollEvents() || first) {
 			first = false;
-			if (g_engine->shouldQuit()) {
+			if (_engine->shouldAbort()) {
 				// Fake the quit
 				action = 6;
 			}
@@ -1044,7 +1044,7 @@ Common::String Versailles_Documentation::docAreaHandleGeneralMap() {
 			if (_engine->checkKeysPressed(1, Common::KEYCODE_ESCAPE)) {
 				selectedBox = ARRAYSIZE(areas);
 			}
-			if (g_engine->shouldQuit()) {
+			if (_engine->shouldAbort()) {
 				selectedBox = ARRAYSIZE(areas);
 			}
 		}
@@ -1288,7 +1288,7 @@ Common::String Versailles_Documentation::docAreaHandleCastleMap() {
 			if (_engine->checkKeysPressed(1, Common::KEYCODE_ESCAPE)) {
 				selectedBox = ARRAYSIZE(areas);
 			}
-			if (g_engine->shouldQuit()) {
+			if (_engine->shouldAbort()) {
 				selectedBox = ARRAYSIZE(areas);
 			}
 		}
@@ -1351,9 +1351,9 @@ uint Versailles_Documentation::inGameHandleRecord(Graphics::ManagedSurface &surf
 		g_system->delayMillis(10);
 
 		if (_engine->pollEvents()) {
-			if (g_engine->shouldQuit()) {
+			if (_engine->shouldAbort()) {
 				// Fake the quit
-				action = 6;
+				action = 1;
 			}
 			Common::Point mouse = _engine->getMousePos();
 			if (_engine->getDragStatus() == kDragStatus_Pressed) {
@@ -1726,7 +1726,7 @@ uint Versailles_Documentation::handlePopupMenu(const Graphics::ManagedSurface
 		g_system->delayMillis(10);
 
 		if (_engine->pollEvents()) {
-			if (g_engine->shouldQuit()) {
+			if (_engine->shouldAbort()) {
 				// Fake the quit
 				break;
 			}

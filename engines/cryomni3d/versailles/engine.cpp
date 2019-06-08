@@ -169,11 +169,11 @@ Common::Error CryOmni3DEngine_Versailles::run() {
 
 #if !defined(DEBUG_FAST_START) || DEBUG_FAST_START<1
 	playTransitionEndLevel(-2);
-	if (g_engine->shouldQuit()) {
+	if (shouldAbort()) {
 		return Common::kNoError;
 	}
 	playTransitionEndLevel(-1);
-	if (g_engine->shouldQuit()) {
+	if (shouldAbort()) {
 		return Common::kNoError;
 	}
 #endif
@@ -203,7 +203,7 @@ Common::Error CryOmni3DEngine_Versailles::run() {
 					// New game
 #if !defined(DEBUG_FAST_START) || DEBUG_FAST_START<1
 					playTransitionEndLevel(0);
-					if (g_engine->shouldQuit()) {
+					if (shouldAbort()) {
 						stopGame = true;
 						exitLoop = true;
 						break;
@@ -254,6 +254,16 @@ Common::Error CryOmni3DEngine_Versailles::run() {
 		}
 	}
 	return Common::kNoError;
+}
+
+bool CryOmni3DEngine_Versailles::shouldAbort() {
+	if (g_engine->shouldQuit()) {
+		_abortCommand = kAbortQuit;
+		return true;
+	}
+	// If we are not playing _abortCommand isn't used
+	// Even GMM can't load game when not playing
+	return _isPlaying && _abortCommand != kAbortNoAbort;
 }
 
 Common::String CryOmni3DEngine_Versailles::prepareFileName(const Common::String &baseName,
@@ -592,8 +602,7 @@ void CryOmni3DEngine_Versailles::playTransitionEndLevel(int level) {
 	}
 
 	fadeOutPalette();
-	if (g_engine->shouldQuit()) {
-		_abortCommand = kAbortQuit;
+	if (shouldAbort()) {
 		return;
 	}
 
@@ -606,14 +615,12 @@ void CryOmni3DEngine_Versailles::playTransitionEndLevel(int level) {
 	playHNM(video, Audio::Mixer::kMusicSoundType);
 
 	clearKeys();
-	if (g_engine->shouldQuit()) {
-		_abortCommand = kAbortQuit;
+	if (shouldAbort()) {
 		return;
 	}
 
 	fadeOutPalette();
-	if (g_engine->shouldQuit()) {
-		_abortCommand = kAbortQuit;
+	if (shouldAbort()) {
 		return;
 	}
 
@@ -1155,8 +1162,8 @@ int CryOmni3DEngine_Versailles::handleWarp() {
 		actionId = _currentPlace->hitTest(mouseRev);
 
 		exit = handleWarpMouse(&actionId, movingCursor);
-		if (g_engine->shouldQuit()) {
-			_abortCommand = kAbortQuit;
+		if (shouldAbort()) {
+			// We abort if we quit or if we load from GMM
 			exit = true;
 		}
 		if (exit) {
@@ -1225,7 +1232,7 @@ bool CryOmni3DEngine_Versailles::handleWarpMouse(uint *actionId,
 
 		bool mustRedraw = displayToolbar(original);
 		// Don't redraw if we abort game
-		if (_abortCommand != kAbortNoAbort) {
+		if (shouldAbort()) {
 			return true;
 		}
 		if (mustRedraw) {
@@ -1239,7 +1246,7 @@ bool CryOmni3DEngine_Versailles::handleWarpMouse(uint *actionId,
 	if (countDown()) {
 		// Time has changed: need redraw
 		// Don't redraw if we abort game
-		if (_abortCommand != kAbortNoAbort) {
+		if (shouldAbort()) {
 			return true;
 		}
 
@@ -1471,7 +1478,7 @@ void CryOmni3DEngine_Versailles::displayObject(const Common::String &imgName,
 	bool cursorWasVisible = showMouse(true);
 
 	bool exitImg = false;
-	while (!g_engine->shouldQuit() && !exitImg) {
+	while (!shouldAbort() && !exitImg) {
 		if (pollEvents()) {
 			if (getCurrentMouseButton() == 1) {
 				exitImg = true;

@@ -3090,7 +3090,7 @@ IMG_CB(88004b) {
 			break;
 		}
 	}
-	if (!shouldQuit()) {
+	if (!shouldAbort()) {
 		// Close the toilets
 		playInGameVideo("31j32b");
 		// Force reload of the place
@@ -3163,7 +3163,7 @@ INIT_PLACE(1, 3) {
 
 FILTER_EVENT(1, 3) {
 	if (*event == 11301) {
-		while (!g_engine->shouldQuit() && _mixer->isSoundIDActive(SoundIds::kLeb001)) {
+		while (!shouldAbort() && _mixer->isSoundIDActive(SoundIds::kLeb001)) {
 			g_system->updateScreen();
 			g_system->delayMillis(10);
 			pollEvents();

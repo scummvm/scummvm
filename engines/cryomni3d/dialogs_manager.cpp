@@ -323,7 +323,7 @@ bool DialogsManager::play(const Common::String &sequence, bool &slowStop) {
 			// We must give a subject
 			uint playerChoice = askPlayerQuestions(video, questions);
 			didSomething = true;
-			// -1 when shouldQuit
+			// -1 when shouldAbort
 			if (playerChoice == -1u || playerChoice == eocInserted) {
 				break;
 			}

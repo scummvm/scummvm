@@ -231,7 +231,7 @@ public:
 	virtual bool hasPlaceDocumentation() override;
 	virtual bool displayPlaceDocumentation() override;
 	virtual uint displayOptions() override;
-	virtual bool shouldAbort() override { return g_engine->shouldQuit() || _abortCommand != kAbortNoAbort; }
+	virtual bool shouldAbort() override;
 
 private:
 	void setupFonts();

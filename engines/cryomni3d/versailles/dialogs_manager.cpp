@@ -53,7 +53,7 @@ bool Versailles_DialogsManager::play(const Common::String &sequence) {
 		if (_engine->showSubtitles()) {
 			bool skip = false;
 			uint end = g_system->getMillis() + 2000;
-			while (!g_engine->shouldQuit() && g_system->getMillis() < end && !skip) {
+			while (!_engine->shouldAbort() && g_system->getMillis() < end && !skip) {
 				g_system->updateScreen();
 				g_system->delayMillis(10);
 				if (_engine->pollEvents() &&
@@ -189,7 +189,7 @@ void Versailles_DialogsManager::playDialog(const Common::String &video, const Co
 
 		bool skipWait = false;
 		uint end = g_system->getMillis() + duration;
-		while (!g_engine->shouldQuit() && g_system->getMillis() < end && !skipWait) {
+		while (!_engine->shouldAbort() && g_system->getMillis() < end && !skipWait) {
 			g_system->updateScreen();
 			g_system->delayMillis(10);
 			if (_engine->pollEvents() && _engine->checkKeysPressed(1, Common::KEYCODE_SPACE)) {
@@ -206,7 +206,7 @@ void Versailles_DialogsManager::playDialog(const Common::String &video, const Co
 		audioDecoder = nullptr;
 
 		bool skipVideo = false;
-		while (!g_engine->shouldQuit() && _engine->_mixer->isSoundHandleActive(audioHandle) && !skipVideo) {
+		while (!_engine->shouldAbort() && _engine->_mixer->isSoundHandleActive(audioHandle) && !skipVideo) {
 			if (_engine->pollEvents() && _engine->checkKeysPressed(1, Common::KEYCODE_SPACE)) {
 				skipVideo = true;
 			}
@@ -311,7 +311,7 @@ uint Versailles_DialogsManager::askPlayerQuestions(const Common::String &video,
 
 		if (_engine->pollEvents()) {
 			_engine->clearKeys();
-			if (g_engine->shouldQuit()) {
+			if (_engine->shouldAbort()) {
 				finished = true;
 				selectedQuestion = -1;
 				break;

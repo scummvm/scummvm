@@ -137,7 +137,7 @@ void CryOmni3DEngine::playHNM(const Common::String &filename, Audio::Mixer::Soun
 
 	bool skipVideo = false;
 	uint frameNum = 0;
-	while (!g_engine->shouldQuit() && !videoDecoder->endOfVideo() && !skipVideo) {
+	while (!shouldAbort() && !videoDecoder->endOfVideo() && !skipVideo) {
 		if (videoDecoder->needsUpdate()) {
 			const Graphics::Surface *frame = videoDecoder->decodeNextFrame();
 
@@ -208,7 +208,7 @@ void CryOmni3DEngine::displayHLZ(const Common::String &filename) {
 	g_system->updateScreen();
 
 	bool exitImg = false;
-	while (!g_engine->shouldQuit() && !exitImg) {
+	while (!shouldAbort() && !exitImg) {
 		if (pollEvents()) {
 			if (checkKeysPressed(1, Common::KEYCODE_ESCAPE) || getCurrentMouseButton() == 1) {
 				exitImg = true;
@@ -309,7 +309,7 @@ void CryOmni3DEngine::setAutoRepeatClick(uint millis) {
 }
 
 void CryOmni3DEngine::waitMouseRelease() {
-	while (getCurrentMouseButton() != 0 && !g_engine->shouldQuit()) {
+	while (getCurrentMouseButton() != 0 && !shouldAbort()) {
 		pollEvents();
 		g_system->updateScreen();
 		g_system->delayMillis(10);
@@ -396,7 +396,7 @@ void CryOmni3DEngine::fadeOutPalette() {
 		delta[i] = palWork[i] / 25;
 	}
 
-	for (uint step = 0; step < 25 && !g_engine->shouldQuit(); step++) {
+	for (uint step = 0; step < 25 && !shouldAbort(); step++) {
 		for (uint i = 0; i < 256 * 3; i++) {
 			palWork[i] -= delta[i];
 			palOut[i] = palWork[i] >> 8;
@@ -427,7 +427,7 @@ void CryOmni3DEngine::fadeInPalette(const byte *palette) {
 	}
 
 	setBlackPalette();
-	for (uint step = 0; step < 25 && !g_engine->shouldQuit(); step++) {
+	for (uint step = 0; step < 25 && !shouldAbort(); step++) {
 		for (uint i = 0; i < 256 * 3; i++) {
 			palWork[i] += delta[i];
 			palOut[i] = palWork[i] >> 8;

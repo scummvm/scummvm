@@ -428,7 +428,7 @@ bool Toolbar::displayToolbar(const Graphics::Surface *original) {
 		g_system->delayMillis(10);
 
 		_engine->pollEvents();
-		if (g_engine->shouldQuit()) {
+		if (_engine->shouldAbort()) {
 			return false;
 		}
 	}
@@ -438,7 +438,7 @@ bool Toolbar::displayToolbar(const Graphics::Surface *original) {
 	_engine->waitMouseRelease();
 
 	handleToolbarEvents(original);
-	if (g_engine->shouldQuit()) {
+	if (_engine->shouldAbort()) {
 		return false;
 	}
 
@@ -457,7 +457,7 @@ bool Toolbar::displayToolbar(const Graphics::Surface *original) {
 		g_system->delayMillis(10);
 
 		_engine->pollEvents();
-		if (g_engine->shouldQuit()) {
+		if (_engine->shouldAbort()) {
 			return false;
 		}
 	}
@@ -495,7 +495,7 @@ void Toolbar::handleToolbarEvents(const Graphics::Surface *original) {
 		_mouse_in_view_object = false;
 
 		_engine->pollEvents();
-		if (g_engine->shouldQuit()) {
+		if (_engine->shouldAbort()) {
 			exitToolbar = true;
 			break;
 		}

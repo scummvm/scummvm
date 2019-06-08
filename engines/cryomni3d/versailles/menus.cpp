@@ -105,7 +105,7 @@ uint CryOmni3DEngine_Versailles::displayOptions() {
 	bool resetScreen = true;
 	bool forceEvents = true;
 
-	while (!g_engine->shouldQuit() && !end) {
+	while (!shouldAbort() && !end) {
 		if (resetScreen) {
 			setPalette(imageDecoder->getPalette(), imageDecoder->getPaletteStartIndex(),
 			           imageDecoder->getPaletteColorCount());
@@ -465,10 +465,12 @@ uint CryOmni3DEngine_Versailles::displayOptions() {
 	} else if (selectedMsg == 27) {
 		_abortCommand = kAbortNewGame;
 		_isVisiting = false;
-	} else if (g_engine->shouldQuit()) {
+	} else if (shouldAbort()) {
 		// Fake a quit
 		selectedMsg = 40;
-		_abortCommand = kAbortQuit;
+		// shouldAbort called earlier has already set _abortCommand
+		// If GMM is called on main menu in game, return value is ignored so quit isn't important
+		// If GMM is called on main menu out of game, GMM can only quit game and don't load
 	}
 
 	ConfMan.flushToDisk();
@@ -1013,7 +1015,7 @@ void CryOmni3DEngine_Versailles::displayCredits() {
 							}
 							clearKeys();
 						}
-						if (g_engine->shouldQuit()) {
+						if (shouldAbort()) {
 							skipScreen = true;
 							end = true;
 						}
