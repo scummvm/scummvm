@@ -53,6 +53,8 @@ bool Map::load(Common::SeekableReadStream *stream) {
 		return false;
 	}
 
+	debug(5, "map stream size: %d(%x)", stream->size(), stream->size());
+
 	// Load MSM data header
 	stream->read(_name, 32);
 	_width = stream->readUint16LE();
@@ -64,18 +66,32 @@ bool Map::load(Common::SeekableReadStream *stream) {
 	_infoNum = stream->readUint16LE();
 	_infoListOffset = stream->readUint32LE();
 
+	debug(5, "map: w: %d(%x), h: %d(%x) bg: %x fg: %x icon#: %d(%x) icon: %x info#: %d(%x) info: %x",
+			_width, _width, _height, _height, _backgroundOffset, _foregroundOffset, _iconNum, _iconNum,
+			_iconListOffset, _infoNum, _infoNum, _infoListOffset);
+
 	// Reading Background
 	_background = new uint16[_width * _height];
 	stream->seek(_backgroundOffset);
 	for (int i = 0; i < _width * _height; i++) {
 		_background[i] = stream->readUint16LE();
 	}
+	if (gDebugLevel >= 5) {
+		debug(5, "Background:");
+		Common::hexdump((const byte *)_foreground, 512);
+	}
+
 
 	// Reading Foreground
 	_foreground = new uint16[_width * _height];
 	stream->seek(_foregroundOffset);
 	for (int i = 0; i < _width * _height; i++) {
 		_foreground[i] = stream->readUint16LE();
+	}
+
+	if (gDebugLevel >= 5) {
+		debug(5, "Foreground:");
+		Common::hexdump((const byte *)_foreground, 512);
 	}
 
 	// Reading Icon List
