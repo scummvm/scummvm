@@ -53,6 +53,7 @@ class DrawMan {
 public:
 
 	DrawMan();
+	~DrawMan();
 
 	bool init();
 	Tile *getTile(int index);
@@ -67,6 +68,7 @@ public:
 	//void draw3DStarsLeft();
 
 private:
+	Graphics::ManagedSurface _globalSurface;
 	int _numTiles;
 	TileLookup *_tLookupArray;
 	uint16 _skyTiles[kMaxSkies];
