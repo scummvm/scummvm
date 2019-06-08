@@ -165,6 +165,7 @@ Common::Error HDBGame::run() {
 	}
 
 	_map->load(mapStream);
+	_drawMan->drawSky();
 	_map->draw();
 
 #if 0
