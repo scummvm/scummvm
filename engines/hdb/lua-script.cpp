@@ -37,7 +37,7 @@ struct ScriptPatch {
 	{"GLOBAL_LUA", "for i,npc in npcs do", "for i,npc in pairs(npcs) do"},
 	{"GLOBAL_LUA", "setglobal( npcdef.codename..\"_init\", function() return NPC_Init( %npcdef ) end )", "_G[npcdef.codename .. \"_init\"] = function() return NPC_Init( npcdef ) end"},
 	{"GLOBAL_LUA", "setglobal( npcdef.codename..\"_use\", function(x, y, v1, v2) return NPC_Use( %npcdef, x, y, v1, v2 ) end )", "_G[npcdef.codename .. \"_use\"] = function(x, y, v1, v2) return NPC_Use( npcdef, x, y, v1, v2 ) end"},
-	{"MAP00_DEMO_LUA", "tempfunc = function() emptybed_use( %x, %y, %v1, %v2 ) end", "tempfunc = function() emptybed_use(x, y, v1, v2) end"},
+	{"MAP00_LUA", "tempfunc = function() emptybed_use( %x, %y, %v1, %v2 ) end", "tempfunc = function() emptybed_use(x, y, v1, v2) end"},
 	{NULL, NULL, NULL},
 };
 
