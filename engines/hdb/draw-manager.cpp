@@ -192,6 +192,28 @@ void DrawMan::setup3DStarsLeft() {
 	}
 }
 
+void DrawMan::draw3DStars() {
+	fillScreen(0);
+	for (int i = 0; i < kNum3DStars; i++) {
+		warning("STUB: draw3DStars: BlitMaskedPic needed");
+		_stars3D[i].y += (_stars3D[i].speed >> 5) + 1;
+		if (_stars3D[i].y > kScreenHeight) {
+			_stars3D[i].y = 0;
+		}
+	}
+}
+
+void DrawMan::draw3DStarsLeft() {
+	fillScreen(0);
+	for (int i = 0; i < kNum3DStars; i++) {
+		warning("STUB: draw3DStarsLeft: BlitMaskedPic needed");
+		_stars3DSlow[i].x -= _stars3DSlow[i].speed;
+		if (_stars3DSlow[i].x < kScreenWidth) {
+			_stars3DSlow[i].x = kScreenWidth - 1;
+		}
+	}
+}
+
 Picture::~Picture() {
 	_surface.free();
 }
