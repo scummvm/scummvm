@@ -145,7 +145,7 @@ int DrawMan::isSky(int index) {
 
 	for (int i = 0; i < kMaxSkies; i++) {
 		if(_skyTiles[i] == index) {
-			return index + 1; // The skyTiles are indexed from 1. 0 => No Sky tile
+			return i + 1; // The skyTiles are indexed from 1. 0 => No Sky tile
 		}
 	}
 
