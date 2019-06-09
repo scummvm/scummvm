@@ -142,6 +142,13 @@ void Game::restart(Common::SeekableReadStream& s) {
 	decrypt(_saveArea, _saveSize);
 
 	setVariable(V_OCOUNT, _objectCount);
+	_restartFlag = true;
+}
+
+bool Game::shouldRestart() {
+	bool result = _restartFlag;
+	_restartFlag = false;
+	return result;
 }
 
 void Game::saveGameData(Common::WriteStream& ws) {

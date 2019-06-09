@@ -131,6 +131,8 @@ public:
  */
 class Game : public Header {
 private:
+	bool _restartFlag;
+private:
 	/**
 	 * Find an object property field
 	 */
@@ -183,8 +185,8 @@ public:
 	/**
 	 * Constructor
 	 */
-	Game() : Header(), _residentOffset(0), _wordCount(0), _objectCount(0), _actionCount(0),
-		_variableCount(0), _residentBase(nullptr), _wordTable(nullptr),
+	Game() : Header(), _restartFlag(false), _residentOffset(0), _wordCount(0), _objectCount(0),
+		_actionCount(0), _variableCount(0), _residentBase(nullptr), _wordTable(nullptr),
 		_wordTypeTable(nullptr), _objectTable(nullptr), _actionTable(nullptr),
 		_variableTable(nullptr), _saveArea(nullptr) {}
 
@@ -197,6 +199,11 @@ public:
 	 * Restore savegame data from the game to it's initial state
 	 */
 	void restart(Common::SeekableReadStream& s);
+
+	/**
+	 * Returns true if the game is restarting, and resets the flag
+	 */
+	bool shouldRestart();
 
 	/**
 	 * Save the game data to a savegame

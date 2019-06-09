@@ -26,14 +26,49 @@
 namespace Glk {
 namespace AdvSys {
 
+void execute(int offset) {
+	// TODO: Stub
+}
+
+bool getInput() {
+	// TODO: Stub
+	return false;
+}
+
+bool singleAction() {
+	// TODO: Stub
+	return false;
+}
+
+bool nextAction() {
+	// TODO: STub
+	return false;
+}
+
 void AdvSys::runGame() {
 	if (!initialize()) {
 		GUIErrorMessage(_("Could not start AdvSys game"));
 		return;
 	}
 
-	// TODO: play game
-	print("ADVINT v1.2 - Copyright (c) 1986, by David Betz\n");
+	// Outer play loop - this loop re-iterates if a game is restarted
+	while (!shouldQuit()) {
+		// Run game startup
+		execute(_initCodeOffset);
+
+		// Gameplay loop
+		while (!shouldQuit() && !shouldRestart()) {
+			// Run update code
+			execute(_updateCodeOffset);
+
+			// Get and parse a single line
+			if (getInput()) {
+				if (singleAction()) {
+					while (!shouldQuit() && nextAction() && singleAction()) {}
+				}
+			}
+		}
+	}
 
 	deinitialize();
 }
