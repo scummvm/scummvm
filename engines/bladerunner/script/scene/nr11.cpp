@@ -364,7 +364,7 @@ void SceneScriptNR11::PlayerWalkedIn() {
 				Delay(500);
 				Actor_Face_Current_Camera(kActorMcCoy, true);
 				Delay(750);
-				Actor_Says(kActorMcCoy, 5290, 12);
+				Actor_Says(kActorMcCoy, 5290, 12); // Jesus
 				Delay(1000);
 				Actor_Set_Goal_Number(kActorSteele, kGoalSteeleNR11Enter);
 				Actor_Face_Actor(kActorMcCoy, kActorSteele, true);

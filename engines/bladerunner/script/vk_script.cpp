@@ -1343,6 +1343,9 @@ void VKScript::askGrigorian(int questionId) {
 		VK_Eye_Animates(2);
 		VK_Play_Speech_Line(kActorGrigorian, 1110, 0.5f);
 		VK_Play_Speech_Line(kActorMcCoy, 8210, 0.5f);
+		if (_vm->_cutContent) {
+			VK_Play_Speech_Line(kActorMcCoy, 8215, 0.5f);
+		}
 		break;
 	case 7750:                          // High 09
 		VK_Eye_Animates(2);
