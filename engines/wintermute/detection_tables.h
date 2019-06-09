@@ -516,6 +516,7 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Rhiannon: Curse of The Four Branches (Demo: Chapter 1)
 	WME_WINENTRY("rhiannon", "Demo: Chapter 1",
 		WME_ENTRY1s("data.dcp", "d3b6ad94e9a8b29ca3cbda96c8857bd6", 72680676), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, LATEST_VERSION),
+	// Rhiannon: Curse of The Four Branches (Demo: Chapter 5)
 	WME_WINENTRY("rhiannon", "Demo: Chapter 5",
 		WME_ENTRY1s("data.dcp", "88be3fa1389889b2079e54d780803a75", 88644508), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, LATEST_VERSION),
 	// 1 1/2 Ritter: Auf der Suche nach der hinreissenden Herzelinde
