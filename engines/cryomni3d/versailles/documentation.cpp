@@ -280,6 +280,12 @@ Common::String Versailles_Documentation::docAreaHandleSummary() {
 	Image::BitmapDecoder bmpDecoder;
 	Common::File file;
 
+	Image::ImageDecoder *imageDecoder = _engine->loadHLZ("SOM1.HLZ");
+	if (!imageDecoder) {
+		return "";
+	}
+	const Graphics::Surface *bgFrame = imageDecoder->getSurface();
+
 	for (uint i = 0; i < ARRAYSIZE(categories); i++) {
 		if (!categories[i].bmp) {
 			// No BMP to load
@@ -295,12 +301,6 @@ Common::String Versailles_Documentation::docAreaHandleSummary() {
 		bmpDecoder.destroy();
 		file.close();
 	}
-
-	Image::ImageDecoder *imageDecoder = _engine->loadHLZ("SOM1.HLZ");
-	if (!imageDecoder) {
-		return "";
-	}
-	const Graphics::Surface *bgFrame = imageDecoder->getSurface();
 
 	Graphics::ManagedSurface docSurface;
 	docSurface.create(bgFrame->w, bgFrame->h, bgFrame->format);
@@ -410,6 +410,10 @@ Common::String Versailles_Documentation::docAreaHandleSummary() {
 	}
 
 	_engine->showMouse(false);
+
+	for (uint i = 0; i < ARRAYSIZE(categories); i++) {
+		categories[i].highlightedImg.free();
+	}
 
 	delete imageDecoder;
 
@@ -906,6 +910,12 @@ Common::String Versailles_Documentation::docAreaHandleGeneralMap() {
 	Image::BitmapDecoder bmpDecoder;
 	Common::File file;
 
+	Image::ImageDecoder *imageDecoder = _engine->loadHLZ("PLANGR.HLZ");
+	if (!imageDecoder) {
+		return "";
+	}
+	const Graphics::Surface *bgFrame = imageDecoder->getSurface();
+
 	for (uint i = 0; i < ARRAYSIZE(areas); i++) {
 		if (areas[i].bmp) {
 			if (!file.open(areas[i].bmp)) {
@@ -937,12 +947,6 @@ Common::String Versailles_Documentation::docAreaHandleGeneralMap() {
 	}
 	boxes.setupBox(ARRAYSIZE(areas), 639 - _sprites->getCursor(105).getWidth(),
 	               479 - _sprites->getCursor(105).getHeight(), 640, 480);
-
-	Image::ImageDecoder *imageDecoder = _engine->loadHLZ("PLANGR.HLZ");
-	if (!imageDecoder) {
-		return "";
-	}
-	const Graphics::Surface *bgFrame = imageDecoder->getSurface();
 
 	Graphics::ManagedSurface mapSurface;
 	mapSurface.create(bgFrame->w, bgFrame->h, bgFrame->format);
@@ -1051,6 +1055,10 @@ Common::String Versailles_Documentation::docAreaHandleGeneralMap() {
 	}
 
 	_engine->showMouse(false);
+
+	for (uint i = 0; i < ARRAYSIZE(areas); i++) {
+		areas[i].highlightedImg.free();
+	}
 
 	delete imageDecoder;
 
@@ -1538,6 +1546,8 @@ void Versailles_Documentation::drawRecordData(Graphics::ManagedSurface &surface,
 
 	_fontManager->setupBlock(blockCaption);
 	_fontManager->displayBlockText(caption);
+
+	delete imageDecoder;
 }
 
 void Versailles_Documentation::setupRecordBoxes(bool inDocArea, MouseBoxes &boxes) {

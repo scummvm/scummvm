@@ -41,7 +41,7 @@ class Versailles_Documentation {
 public:
 	Versailles_Documentation() : _engine(nullptr), _fontManager(nullptr), _messages(nullptr),
 		_linksData(nullptr), _linksSize(0) { }
-	~Versailles_Documentation() { delete _linksData; }
+	~Versailles_Documentation() { delete [] _linksData; }
 
 	void init(const Sprites *sprites, FontManager *fontManager, const Common::StringArray *messages,
 	          CryOmni3DEngine *engine);

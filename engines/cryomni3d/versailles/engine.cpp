@@ -1607,7 +1607,7 @@ void CryOmni3DEngine_Versailles::playInGameVideo(const Common::String &filename,
 	unlockPalette();
 	if (restoreCursorPalette) {
 		// Restore cursors colors as 2 first ones may have been erased by the video
-		setPalette(&_cursorPalette[3 * 240], 240, 248);
+		setPalette(&_cursorPalette[3 * 240], 240, 8);
 		// WORKAROUND: Don't mess with mouse when not restoring cursors palette
 		showMouse(true);
 	}

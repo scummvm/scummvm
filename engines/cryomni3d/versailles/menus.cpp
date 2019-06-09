@@ -1073,6 +1073,8 @@ void CryOmni3DEngine_Versailles::displayCredits() {
 		}
 	}
 	showMouse(true);
+
+	delete imageDecoder;
 }
 
 } // End of namespace Versailles
