@@ -20,14 +20,20 @@
  *
  */
 
+#include <common/system.h>
 #include "common/stream.h"
+#include "common/events.h"
 
+#include "petka/flc.h"
 #include "petka/obj.h"
 #include "petka/q_interface.h"
 #include "petka/q_system.h"
 #include "petka/q_manager.h"
 #include "petka/sound.h"
 #include "petka/petka.h"
+#include "petka/video.h"
+#include "q_interface.h"
+
 
 namespace Petka {
 
@@ -43,7 +49,7 @@ QInterfaceMain::QInterfaceMain() {
 		_bgs[i].objId = stream->readUint16LE();
 		_bgs[i].attachedObjIds.resize(stream->readUint32LE());
 		for (uint j = 0; j < _bgs[i].attachedObjIds.size(); ++j) {
-			_bgs[i].attachedObjIds[i] = stream->readUint16LE();
+			_bgs[i].attachedObjIds[j] = stream->readUint16LE();
 			QMessageObject *obj = g_vm->getQSystem()->findObject(_bgs[i].attachedObjIds[i]);
 			obj->_x = stream->readSint32LE();
 			obj->_y = stream->readSint32LE();
@@ -54,12 +60,9 @@ QInterfaceMain::QInterfaceMain() {
 	}
 }
 
-const Common::Array<BGInfo> QInterfaceMain::bgInfos() {
-	return _bgs;
-}
-
 void QInterfaceStartup::start() {
 	g_vm->getQSystem()->update();
+	g_vm->getQSystem()->_field48 = 0;
 
 	QObjectBG *bg = (QObjectBG *)g_vm->getQSystem()->findObject("STARTUP");
 	_objs.push_back(bg);
@@ -67,23 +70,84 @@ void QInterfaceStartup::start() {
 	Sound *s = g_vm->soundMgr()->addSound(g_vm->resMgr()->findSoundName(bg->_musicId), Audio::Mixer::SoundType::kMusicSoundType);
 	s->play(true);
 
-	const Common::Array<BGInfo> infos = g_vm->getQSystem()->_mainInterface->_bgs;
+	const Common::Array<BGInfo> &infos = g_vm->getQSystem()->_mainInterface->_bgs;
 
 	for (uint i = 0; i < infos.size(); ++i) {
 		if (infos[i].objId != bg->_id) {
 			continue;
 		}
-		QMessageObject *obj = g_vm->getQSystem()->findObject(infos[i].objId);
-		obj->_z = 1;
-		obj->_x = 0;
-		obj->_y = 0;
-		obj->_field24 = 1;
-		obj->_field20 = 1;
-		obj->_field28 = 1;
-		obj->_animate = 1;
-		obj->_isShown = 0;
-		_objs.push_back(obj);
+		for (uint j = 0; j < infos[i].attachedObjIds.size(); ++j) {
+			QMessageObject *obj = g_vm->getQSystem()->findObject(infos[i].attachedObjIds[j]);
+			obj->_z = 1;
+			obj->_x = 0;
+			obj->_y = 0;
+			obj->_field24 = 1;
+			obj->_field20 = 1;
+			obj->_field28 = 1;
+			obj->_animate = 0;
+			obj->_isShown = 0;
+			_objs.push_back(obj);
+		}
 	}
+
+
+	QObjectCursor *cursor = g_vm->getQSystem()->_cursor.get();
+	cursor->_resourceId = 4901;
+	cursor->_isShown = true;
+	cursor->_animate = false;
+	_objs.push_back(g_vm->getQSystem()->_cursor.get());
+	cursor->setCursorPos(cursor->_x, cursor->_y, 0);
+}
+
+void QInterfaceStartup::onLeftButtonDown(const Common::Point p) {
+	if (!_objUnderCursor)
+		return;
+	switch (_objUnderCursor->_resourceId) {
+	case 4981:
+		g_system->quit();
+		break;
+	case 4982:
+		g_vm->playVideo(g_vm->openFile("credits.avi", false));
+		break;
+	case 4983:
+		// start SaveLoad menu
+		break;
+	case 4984:
+		// new game
+		break;
+	}
+}
+
+void QInterfaceStartup::onMouseMove(const Common::Point p) {
+	_objUnderCursor = nullptr;
+	bool found = false;
+	for (int i = _objs.size() - 1; i >= 0; --i) {
+		QMessageObject *obj = (QMessageObject *)_objs[i];
+		if (obj->_resourceId != 4901 && obj->_resourceId != 4980) {
+			FlicDecoder *flc = g_vm->resMgr()->loadFlic(obj->_resourceId);
+			if (flc) {
+				bool clicked = false;
+				if (!found && obj->isInPoint(p.x, p.y)) {
+					found = true;
+					clicked = true;
+					obj->_isShown = true;
+					_objUnderCursor = obj;
+				}
+				obj->_isShown = clicked;
+				if (flc->getCurFrame() == -1) {
+					flc->decodeNextFrame();
+				}
+				Common::Rect dirty(flc->getBounds());
+				dirty.translate(obj->_x, obj->_y);
+				g_vm->videoSystem()->addDirtyRect(dirty);
+			}
+		}
+	}
+
+	QObjectCursor *cursor = g_vm->getQSystem()->_cursor.get();
+	cursor->_animate = _objUnderCursor != nullptr;
+	cursor->_isShown = true;
+	cursor->setCursorPos(p.x, p.y, 0);
 }
 
 } // End of namespace Petka

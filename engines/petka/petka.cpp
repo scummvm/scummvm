@@ -39,6 +39,7 @@
 #include "petka/sound.h"
 #include "petka/petka.h"
 #include "petka/q_manager.h"
+#include "petka/q_interface.h"
 #include "petka/q_system.h"
 
 namespace Petka {
@@ -92,8 +93,10 @@ Common::Error PetkaEngine::run() {
 			case Common::EVENT_RTL:
 				return Common::kNoError;
 			case Common::EVENT_MOUSEMOVE:
+				_qsystem->_currInterface->onMouseMove(event.mouse);
 				break;
 			case Common::EVENT_LBUTTONDOWN:
+				_qsystem->_currInterface->onLeftButtonDown(event.mouse);
 				break;
 			case Common::EVENT_LBUTTONUP:
 				break;
@@ -106,7 +109,7 @@ Common::Error PetkaEngine::run() {
 			}
 		}
 		_vsys->update();
-		_system->delayMillis(15);
+		_system->delayMillis(20);
 	}
 	return Common::kNoError;
 }
@@ -153,6 +156,7 @@ Common::RandomSource &PetkaEngine::getRnd() {
 }
 
 void PetkaEngine::playVideo(Common::SeekableReadStream *stream) {
+	g_system->getMixer()->pauseAll(true);
 	Graphics::PixelFormat fmt = _system->getScreenFormat();
 
 	Video::AVIDecoder decoder;
@@ -184,8 +188,9 @@ void PetkaEngine::playVideo(Common::SeekableReadStream *stream) {
 		}
 
 		_system->updateScreen();
-		_system->delayMillis(50);
+		_system->delayMillis(15);
 	}
+	g_system->getMixer()->pauseAll(false);
 }
 
 SoundMgr *PetkaEngine::soundMgr() const {

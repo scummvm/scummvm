@@ -33,18 +33,16 @@ namespace Graphics {
 	struct Surface;
 }
 
-namespace Video {
-	class FlicDecoder;
-}
-
 namespace Petka {
 
 class PetkaEngine;
 
+class FlicDecoder;
+
 struct QResource {
 	union {
 		Graphics::Surface *surface;
-		Video::FlicDecoder *flcDecoder;
+		FlicDecoder *flcDecoder;
 	};
 	enum ResType {
 		kSurface,
@@ -64,7 +62,7 @@ public:
 
 	Graphics::Surface *findOrCreateSurface(uint32 id, uint16 w, uint16 h);
 	Graphics::Surface *loadBitmap(uint32 id);
-	Video::FlicDecoder *loadFlic(uint32 id);
+	FlicDecoder *loadFlic(uint32 id);
 
 	void removeResource(uint32 id);
 	void clearUnneeded();

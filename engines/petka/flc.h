@@ -20,55 +20,37 @@
  *
  */
 
-#ifndef PETKA_Q_INTERFACE_H
-#define PETKA_Q_INTERFACE_H
+#ifndef PETKA_FLC_H
+#define PETKA_FLC_H
 
-#include "common/rect.h"
-#include "common/array.h"
+#include "video/flic_decoder.h"
 
 namespace Petka {
 
-class QVisibleObject;
-
-class QInterface {
+class FlicDecoder : public Video::FlicDecoder {
 public:
-	QInterface();
-	virtual ~QInterface() {}
+	void load(Common::SeekableReadStream *flcStream, Common::SeekableReadStream *mskStream);
 
-	virtual void start() {};
-	virtual void stop() {};
+	const Common::Rect &getBounds() const;
+	const Common::Array<Common::Rect> &getMskRects() const;
+	const Graphics::Surface *getCurrentFrame() const;
+	uint32 getTransColor(const Graphics::PixelFormat &fmt) const;
 
-	virtual void onLeftButtonDown(const Common::Point p) {};
-	virtual void onRightButtonDown(const Common::Point p) {};
-	virtual void onMouseMove(const Common::Point p) {};
+protected:
+	class FlicVideoTrack : public Video::FlicDecoder::FlicVideoTrack {
+	public:
+		FlicVideoTrack(Common::SeekableReadStream *stream, uint16 frameCount, uint16 width, uint16 height, bool skipHeader = false);
 
-public:
-	Common::Array<QVisibleObject *> _objs;
-	QVisibleObject *_objUnderCursor;
-	uint _startIndex;
-};
+		bool loadMsk(Common::SeekableReadStream &stream);
 
-struct BGInfo {
-	uint16 objId;
-	Common::Array<uint16> attachedObjIds;
-};
+		const Common::Rect &getBounds() const;
+		const Common::Array<Common::Rect> &getMskRects() const;
+		const Graphics::Surface *getSurface() const;
 
-class QInterfaceMain : public QInterface {
-public:
-	QInterfaceMain();
-
-public:
-	Common::Array<BGInfo> _bgs;
-};
-
-class QInterfaceStartup : public QInterface {
-public:
-	//QInterfaceStartup();
-
-	void start() override;
-
-	void onLeftButtonDown(const Common::Point p) override;
-	void onMouseMove(const Common::Point p) override;
+	private:
+		Common::Rect _bounds;
+		Common::Array<Common::Array<Common::Rect>> _msk;
+	};
 };
 
 } // End of namespace Petka

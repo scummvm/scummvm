@@ -27,14 +27,14 @@
 
 namespace Petka {
 
-class Screen;
-
 class QVisibleObject {
 public:
 	QVisibleObject();
 	virtual ~QVisibleObject() {};
 
 	virtual void draw() {};
+	virtual void update() {};
+	virtual bool isInPoint(int x, int y) { return false; }
 
 public:
 	int32 _resourceId;
@@ -58,8 +58,14 @@ public:
 	int32 _field28;
 	int32 _isShown;
 	int32 _animate;
-	uint16 _id;
+	int _field_34;
+	int _field_38;
+	int _isActive;
+	int _startSound;
+	int _field_44;
+	int _notLoopedSound;
 	int8 _status;
+	uint16 _id;
 	Common::String _name;
 	Common::String _nameOnScreen;
 	int32 _dialogColor;
@@ -78,7 +84,9 @@ public:
 };
 
 class QObject : public QMessageObject {
-
+public:
+	void draw() override;
+	bool isInPoint(int x, int y) override;
 };
 
 class QObjectCase : public QObject {
@@ -90,6 +98,14 @@ class QObjectStar : public QObject {
 };
 
 class QObjectCursor : public QObject {
+public:
+	QObjectCursor();
+
+	void setCursorPos(int x, int y, bool center);
+	void update() override;
+	void draw() override;
+
+private:
 
 };
 

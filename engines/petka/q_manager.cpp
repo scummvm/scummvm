@@ -26,10 +26,9 @@
 
 #include "graphics/surface.h"
 
-#include "petka/petka.h"
+#include "petka/flc.h"
 #include "petka/q_manager.h"
-
-#include "video/flic_decoder.h"
+#include "petka/petka.h"
 
 namespace Petka {
 
@@ -151,7 +150,7 @@ Graphics::Surface *QManager::loadBitmap(uint32 id) {
 	return nullptr;
 }
 
-Video::FlicDecoder *QManager::loadFlic(uint32 id) {
+FlicDecoder *QManager::loadFlic(uint32 id) {
 	if (_resourceMap.contains(id)) {
 		QResource &res = _resourceMap.getVal(id);
 		if (res.type != QResource::kFlic) {
@@ -160,19 +159,21 @@ Video::FlicDecoder *QManager::loadFlic(uint32 id) {
 		return res.flcDecoder;
 	}
 
-	Common::ScopedPtr<Common::SeekableReadStream> stream(loadFileStream(id));
+	Common::String name = findResourceName(id);
+	Common::SeekableReadStream *stream = _vm.openFile(name, false);
 	if (!stream) {
 		return nullptr;
 	}
+	name.erase(name.size() - 3, 3);
+	name.toUppercase();
+	name += "MSK";
 
-	Common::ScopedPtr<Video::FlicDecoder> flc (new Video::FlicDecoder);
-	if (flc->loadStream(stream.release())) {
-		QResource &res = _resourceMap.getVal(id);
-		res.type = QResource::kFlic;
-		res.flcDecoder = flc.release();
-		return res.flcDecoder;
-	}
-	return nullptr;
+	FlicDecoder *flc = new FlicDecoder;
+	flc->load(stream, _vm.openFile(name, false));
+	QResource &res = _resourceMap.getVal(id);
+	res.type = QResource::kFlic;
+	res.flcDecoder = flc;
+	return res.flcDecoder;
 }
 
 void QManager::clear() {

@@ -66,6 +66,8 @@ public:
 	Common::ScopedPtr<QInterfaceStartup> _startupInterface;
 	QInterface *_currInterface;
 	QInterface *_prevInterface;
+
+	int _field48;
 };
 
 } // End of namespace Petka
