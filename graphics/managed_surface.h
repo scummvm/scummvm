@@ -307,10 +307,7 @@ public:
 	 * Copy the data from another Surface, reinitializing the
 	 * surface to match the dimensions of the passed surface
 	 */
-	void copyFrom(const ManagedSurface &surf) {
-		clearDirtyRects();
-		_innerSurface.copyFrom(surf._innerSurface);
-	}
+	void copyFrom(const ManagedSurface &surf);
 
 	/**
 	 * Draw a line.
