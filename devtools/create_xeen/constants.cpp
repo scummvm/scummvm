@@ -807,7 +807,10 @@ const int METAL_DAMAGE_PERCENT[22] = {
 	1, 2, 2, 3, 4, 5, 6, 7, 8, 9, 10
 };
 
-const int METAL_LAC[9] = { -3, 0, -2, -1, 1, 2, 4, 6, 8 };
+const int METAL_LAC[22] = {
+	-3, 0, -2, -1, 1, 2, 4, 6, 8, 0, 1,
+	1, 2, 2, 3, 4, 5, 10, 12, 14, 16, 20
+};
 
 const int ARMOR_STRENGTHS[14] = { 0, 2, 4, 5, 6, 7, 8, 10, 4, 2, 1, 1, 1, 1 };
 
@@ -2057,7 +2060,7 @@ void writeConstants(CCArchive &cc) {
 	file.syncNumbers(WEAPON_DAMAGE_MULTIPLIER, 35);
 	file.syncNumbers(METAL_DAMAGE, 22);
 	file.syncNumbers(METAL_DAMAGE_PERCENT, 22);
-	file.syncNumbers(METAL_LAC, 9);
+	file.syncNumbers(METAL_LAC, 22);
 	file.syncNumbers(ARMOR_STRENGTHS, 14);
 	file.syncNumbers(MAKE_ITEM_ARR1, 6);
 	file.syncNumbers3D((const int *)MAKE_ITEM_ARR2, 6, 7, 2);
