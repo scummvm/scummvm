@@ -159,7 +159,6 @@ struct Menu {
 	Sprite sprites[MAX_MENUBUTTONS];
 	uint16 retvals[MAX_MENUBUTTONS];
 	uint32 disabledButtons;
-	FileStream menuFile;
 	uint16 numButtons;
 	int16 selectedButton;
 	Menu *nextMenu;
@@ -247,11 +246,11 @@ public:
 	void playSpeech(const Common::String &filename);
 	void stopPlayingSpeech();
 
-	FileStream loadFile(Common::String filename, int fileIndex = 0);
+	Common::MemoryReadStreamEndian *loadFile(Common::String filename, int fileIndex = 0);
 	/**
 	 * TODO: Figure out what the extra parameters are, and if they're important.
 	 */
-	FileStream loadFileWithParams(Common::String filename, bool unk1, bool unk2, bool unk3);
+	Common::MemoryReadStreamEndian *loadFileWithParams(Common::String filename, bool unk1, bool unk2, bool unk3);
 
 	void playMovie(Common::String filename);
 	void playMovieMac(Common::String filename);
@@ -692,7 +691,7 @@ public:
 	int _roomIndex;
 	Common::String _screenName; // _screenName = _missionName + _roomIndex
 	Common::String _mapFilename; // Similar to _screenName, but used for .map files?
-	FileStream _mapFile;
+	Common::MemoryReadStreamEndian *_mapFile;
 	Fixed16 _playerActorScale;
 
 	Common::String _txtFilename;

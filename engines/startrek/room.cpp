@@ -45,11 +45,12 @@
 namespace StarTrek {
 
 Room::Room(StarTrekEngine *vm, const Common::String &name) : _vm(vm), _awayMission(&vm->_awayMission) {
-	FileStream rdfFile = _vm->loadFile(name + ".RDF");
+	Common::MemoryReadStreamEndian *rdfFile = _vm->loadFile(name + ".RDF");
 
 	int size = rdfFile->size();
 	_rdfData = new byte[size];
 	rdfFile->read(_rdfData, size);
+	delete rdfFile;
 
 	_roomIndex = name.lastChar() - '0';
 
@@ -436,7 +437,7 @@ void Room::walkCrewmanC(int actorIndex, int16 destX, int16 destY, void (Room::*f
 void Room::loadMapFile(const Common::String &name) {
 	_vm->_mapFilename = name;
 	_vm->_iwFile.reset();
-	_vm->_mapFile.reset();
+	delete _vm->_mapFile;
 	_vm->_iwFile = SharedPtr<IWFile>(new IWFile(_vm, name + ".iw"));
 	_vm->_mapFile = _vm->loadFile(name + ".map");
 }

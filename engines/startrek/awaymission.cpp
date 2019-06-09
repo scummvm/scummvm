@@ -468,7 +468,7 @@ void StarTrekEngine::unloadRoom() {
 	// sub_2394b(); // TODO
 	actorFunc1();
 	_room.reset();
-	_mapFile.reset();
+	delete _mapFile;
 }
 
 int StarTrekEngine::loadActorAnimWithRoomScaling(int actorIndex, const Common::String &animName, int16 x, int16 y) {

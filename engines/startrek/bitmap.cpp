@@ -38,6 +38,17 @@ Bitmap::Bitmap(FileStream stream) {
 	stream->read(pixels, width * height);
 }
 
+Bitmap::Bitmap(Common::MemoryReadStreamEndian *stream) {
+	xoffset = stream->readUint16();
+	yoffset = stream->readUint16();
+	width = stream->readUint16();
+	height = stream->readUint16();
+
+	pixelsArraySize = width * height;
+	pixels = new byte[pixelsArraySize];
+	stream->read(pixels, width * height);
+}
+
 Bitmap::Bitmap(const Bitmap &bitmap) {
 	xoffset = bitmap.xoffset;
 	yoffset = bitmap.yoffset;

@@ -83,7 +83,7 @@ void Graphics::setBackgroundImage(SharedPtr<Bitmap> bitmap) {
 	_backgroundImage = SharedPtr<Bitmap>(new Bitmap(*bitmap));
 }
 
-void Graphics::drawBitmapToBackground(const Common::Rect &origRect, const Common::Rect &drawRect, SharedPtr<Bitmap> bitmap) {
+void Graphics::drawBitmapToBackground(const Common::Rect &origRect, const Common::Rect &drawRect, Bitmap *bitmap) {
 	byte *dest = _backgroundImage->pixels + drawRect.top * SCREEN_WIDTH + drawRect.left;
 	byte *src = bitmap->pixels + (drawRect.left - origRect.left)
 	            + (drawRect.top - origRect.top) * bitmap->width;
@@ -139,13 +139,14 @@ void Graphics::loadPalette(const Common::String &paletteName) {
 	Common::String palFile = paletteName + ".PAL";
 	Common::String lutFile = paletteName + ".LUT";
 
-	FileStream palStream = _vm->loadFile(palFile.c_str());
+	Common::MemoryReadStreamEndian *palStream = _vm->loadFile(palFile.c_str());
 	palStream->read(_palData, 256 * 3);
+	delete palStream;
 
 	// Load LUT file
-	FileStream lutStream = _vm->loadFile(lutFile.c_str());
-
+	Common::MemoryReadStreamEndian *lutStream = _vm->loadFile(lutFile.c_str());
 	lutStream->read(_lutData, 256);
+	delete lutStream;
 }
 
 void Graphics::copyRectBetweenBitmaps(Bitmap *destBitmap, int destX, int destY, Bitmap *srcBitmap, int srcX, int srcY, int width, int height) {
@@ -220,8 +221,9 @@ void Graphics::decPaletteFadeLevel() {
 
 
 void Graphics::loadPri(const Common::String &priFile) {
-	FileStream priStream = _vm->loadFile(priFile + ".pri");
+	Common::MemoryReadStream *priStream = _vm->loadFile(priFile + ".pri");
 	priStream->read(_priData, SCREEN_WIDTH * SCREEN_HEIGHT / 2);
+	delete priStream;
 }
 
 void Graphics::clearPri() {
@@ -244,7 +246,7 @@ byte Graphics::getPriValue(int x, int y) {
 }
 
 SharedPtr<Bitmap> Graphics::loadBitmap(Common::String basename) {
-	return SharedPtr<Bitmap>(new Bitmap(_vm->loadFile(basename + ".BMP")));
+	return SharedPtr<Bitmap>(new Bitmap(SharedPtr<Common::MemoryReadStreamEndian>(_vm->loadFile(basename + ".BMP"))));
 }
 
 Common::Point Graphics::getMousePos() {
@@ -737,14 +739,15 @@ void Graphics::loadEGAData(const char *filename) {
 	if (!_egaData)
 		_egaData = new byte[256];
 
-	FileStream egaStream = _vm->loadFile(filename);
+	Common::MemoryReadStreamEndian *egaStream = _vm->loadFile(filename);
 	egaStream->read(_egaData, 256);
+	delete egaStream;
 }
 
 void Graphics::drawBackgroundImage(const char *filename) {
 	// Draw an stjr BGD image (palette built-in)
 
-	FileStream imageStream = _vm->loadFile(filename);
+	Common::MemoryReadStreamEndian *imageStream = _vm->loadFile(filename);
 	byte *palette = new byte[256 * 3];
 	imageStream->read(palette, 256 * 3);
 
@@ -759,6 +762,7 @@ void Graphics::drawBackgroundImage(const char *filename) {
 
 	byte *pixels = new byte[width * height];
 	imageStream->read(pixels, width * height);
+	delete imageStream;
 
 	_vm->_system->getPaletteManager()->setPalette(palette, 0, 256);
 	_vm->_system->copyRectToScreen(pixels, width, xoffset, yoffset, width, height);

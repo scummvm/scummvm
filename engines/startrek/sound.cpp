@@ -346,7 +346,7 @@ void Sound::loadPCMusicFile(const Common::String &baseSoundName) {
 	}
 
 	debugC(5, kDebugSound, "Loading midi \'%s\'\n", soundName.c_str());
-	FileStream soundStream = _vm->loadFile(soundName.c_str());
+	Common::MemoryReadStreamEndian *soundStream = _vm->loadFile(soundName.c_str());
 
 	if (loadedSoundData != nullptr)
 		delete[] loadedSoundData;
@@ -355,6 +355,8 @@ void Sound::loadPCMusicFile(const Common::String &baseSoundName) {
 
 	// FIXME: should music start playing when this is called?
 	//_midiSlots[0].midiParser->loadMusic(loadedSoundData, soundStream->size());
+
+	delete soundStream;
 }
 
 void Sound::clearMidiSlot(int slot) {

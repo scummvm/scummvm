@@ -81,7 +81,7 @@ void StarTrekEngine::drawStarfield() {
 	int16 yvar = var2a / 2;
 	int16 var8 = _starfieldPointDivisor << 3;
 
-	FileStream file = loadFile("stars.shp");
+	Common::MemoryReadStreamEndian *file = loadFile("stars.shp");
 
 	for (int i = 0; i < NUM_STARS; i++) {
 		Star *star = &_starList[i];
@@ -115,11 +115,11 @@ void StarTrekEngine::drawStarfield() {
 			Common::Rect drawRect = _starfieldRect.findIntersectingRect(starRect);
 
 			file->seek(fileOffset, SEEK_SET);
-			SharedPtr<Bitmap> bitmap = SharedPtr<Bitmap>(new Bitmap(file));
 
+			Bitmap *bitmap = new Bitmap(file);
 			if (!drawRect.isEmpty())
 				_gfx->drawBitmapToBackground(starRect, drawRect, bitmap);
-			bitmap.reset();
+			delete bitmap;
 		} else {
 			star->active = false;
 
@@ -128,6 +128,8 @@ void StarTrekEngine::drawStarfield() {
 			file->seek(file->pos() + offset2, SEEK_SET);
 		}
 	}
+
+	delete file;
 }
 
 /**

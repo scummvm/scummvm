@@ -68,7 +68,7 @@ void StarTrekEngine::loadBanFile(const Common::String &name) {
 	debugC(kDebugGeneral, 7, "Load BAN file: %s.ban", name.c_str());
 	for (int i = 0; i < MAX_BAN_FILES; i++) {
 		if (!_banFiles[i]) {
-			_banFiles[i] = loadFile(name + ".ban");
+			_banFiles[i] = SharedPtr<Common::MemoryReadStreamEndian>(loadFile(name + ".ban"));
 			_banFileOffsets[i] = 0;
 			return;
 		}
@@ -435,7 +435,7 @@ void StarTrekEngine::drawActorToScreen(Actor *actor, const Common::String &_anim
 
 	actor->animFilename = _animName;
 	actor->animType = 2;
-	actor->animFile = loadFile(animFilename + ".anm");
+	actor->animFile = SharedPtr<Common::MemoryReadStreamEndian>(loadFile(animFilename + ".anm"));
 	actor->numAnimFrames = actor->animFile->size() / 22;
 	actor->animFrame = 0;
 	actor->pos.x = x;
@@ -764,7 +764,7 @@ SharedPtr<Bitmap> StarTrekEngine::loadAnimationFrame(const Common::String &filen
 				}
 
 				// Redraw face with xor file
-				FileStream xorFile = loadFile(filename + ".xor");
+				Common::MemoryReadStreamEndian *xorFile = loadFile(filename + ".xor");
 				xorFile->seek(0, SEEK_SET);
 				uint16 xoffset = bitmap->xoffset - xorFile->readUint16();
 				uint16 yoffset = bitmap->yoffset - xorFile->readUint16();
@@ -778,6 +778,8 @@ SharedPtr<Bitmap> StarTrekEngine::loadAnimationFrame(const Common::String &filen
 						*dest++ ^= xorFile->readByte();
 					dest += (bitmap->width - xorWidth);
 				}
+
+				delete xorFile;
 			}
 		}
 	} else {

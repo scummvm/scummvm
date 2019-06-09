@@ -57,7 +57,7 @@ public:
 	 *                 whole bitmap, even if some is outside the drawable space)
 	 * @param drawRect The clipped rectangle to draw at (must be within the drawable space)
 	 */
-	void drawBitmapToBackground(const Common::Rect &origRect, const Common::Rect &drawRect, SharedPtr<Bitmap> bitmap);
+	void drawBitmapToBackground(const Common::Rect &origRect, const Common::Rect &drawRect, Bitmap *bitmap);
 
 	void fillBackgroundRect(const Common::Rect &rect, byte color);
 	byte *getBackgroundPixels();

@@ -152,7 +152,7 @@ void StarTrekEngine::playIntro() {
 			loadSubtitleSprite(2, &subtitleSprite);
 			planetR3.field22 = 2000;
 			planetR3.field24 = 10000 / _starfieldPointDivisor;
-			planetR3.shpFile = loadFile("planet.shp");
+			planetR3.shpFile = SharedPtr<Common::MemoryReadStreamEndian>(loadFile("planet.shp"));
 			initIntroR3ObjectToMove(&planetR3, 6, 10000, 6, 10000, 0);
 			addR3(&planetR3);
 			initIntroR3ObjectToMove(&_enterpriseR3, -15, 250, 15, 500, 18);

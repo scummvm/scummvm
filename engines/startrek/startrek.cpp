@@ -394,7 +394,7 @@ void StarTrekEngine::stopPlayingSpeech() {
  *   - This is supposed to read from a "patches" folder which overrides files in the
  *     packed blob.
  */
-FileStream StarTrekEngine::loadFile(Common::String filename, int fileIndex) {
+Common::MemoryReadStreamEndian *StarTrekEngine::loadFile(Common::String filename, int fileIndex) {
 	filename.toUppercase();
 
 	Common::String basename, extension;
@@ -429,7 +429,7 @@ FileStream StarTrekEngine::loadFile(Common::String filename, int fileIndex) {
 		byte *data = (byte *)malloc(size);
 		file->read(data, size);
 		delete file;
-		return Common::SharedPtr<Common::MemoryReadStreamEndian>(new Common::MemoryReadStreamEndian(data, size, bigEndian));
+		return new Common::MemoryReadStreamEndian(data, size, bigEndian);
 	}
 
 	Common::SeekableReadStream *indexFile = 0;
@@ -559,10 +559,10 @@ FileStream StarTrekEngine::loadFile(Common::String filename, int fileIndex) {
 	stream->read(data, size);
 	delete stream;
 
-	return Common::SharedPtr<Common::MemoryReadStreamEndian>(new Common::MemoryReadStreamEndian(data, size, bigEndian));
+	return new Common::MemoryReadStreamEndian(data, size, bigEndian);
 }
 
-FileStream StarTrekEngine::loadFileWithParams(Common::String filename, bool unk1, bool unk2, bool unk3) {
+Common::MemoryReadStreamEndian *StarTrekEngine::loadFileWithParams(Common::String filename, bool unk1, bool unk2, bool unk3) {
 	return loadFile(filename);
 }
 
@@ -618,7 +618,7 @@ uint16 StarTrekEngine::getRandomWord() {
 }
 
 Common::String StarTrekEngine::getLoadedText(int textIndex) {
-	FileStream txtFile = loadFile(_txtFilename + ".txt");
+	Common::MemoryReadStreamEndian *txtFile = loadFile(_txtFilename + ".txt");
 
 	Common::String str;
 	byte cur;
@@ -630,6 +630,8 @@ Common::String StarTrekEngine::getLoadedText(int textIndex) {
 		} while (cur != '\0');
 		textIndex--;
 	}
+
+	delete txtFile;
 
 	return str;
 }

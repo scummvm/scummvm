@@ -40,6 +40,7 @@ struct Bitmap {
 	byte *pixels;
 
 	Bitmap(FileStream stream);
+	Bitmap(Common::MemoryReadStreamEndian *stream);
 	Bitmap(const Bitmap &bitmap);
 	Bitmap(int w, int h);
 	~Bitmap();
