@@ -48,7 +48,7 @@ uint16 EventParameters::Iterator::readUint16LE() {
 }
 
 uint32 EventParameters::Iterator::readUint32LE() {
-	uint16 result = ((_index + 3) >= _data.size()) ? 0 :
+	uint32 result = ((_index + 3) >= _data.size()) ? 0 :
 		READ_LE_UINT32(&_data[_index]);
 	_index += 4;
 	return result;
