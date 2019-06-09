@@ -25,6 +25,8 @@
 namespace Glk {
 namespace AdvSys {
 
+#define TRUE -1
+
 OpcodeMethod VM::_METHODS[0x34] = {
 	&VM::opBRT,
 	&VM::opBRF,
@@ -117,71 +119,105 @@ void VM::executeOpcode() {
 		error("Unknown opcode %x at offset %d", opcode, _pc);
 	}
 }
-
 void VM::opBRT() {
+	_pc = _stack.back() ? readCodeWord() : _pc + 2;
 }
 
 void VM::opBRF() {
+	_pc = !_stack.back() ? readCodeWord() : _pc + 2;
 }
 
 void VM::opBR() {
+	_pc = readCodeWord();
 }
 
 void VM::opT() {
+	_stack.back() = TRUE;
 }
 
 void VM::opNIL() {
+	_stack.back() = NIL;
 }
 
 void VM::opPUSH() {
+	_stack.push(NIL);
 }
 
 void VM::opNOT() {
+	_stack.back() = _stack.back() ? NIL : TRUE;
 }
 
 void VM::opADD() {
+	int v = _stack.pop();
+	_stack.back() += v;
 }
 
 void VM::opSUB() {
+	int v = _stack.pop();
+	_stack.back() -= v;
 }
 
 void VM::opMUL() {
+	int v = _stack.pop();
+	_stack.back() *= v;
 }
 
 void VM::opDIV() {
+	int v = _stack.pop();
+	_stack.back() = (v == 0) ? 0 : _stack.back() / v;
 }
 
 void VM::opREM() {
+	int v = _stack.pop();
+	_stack.back() = (v == 0) ? 0 : _stack.back() % v;
 }
 
 void VM::opBAND() {
+	int v = _stack.pop();
+	_stack.back() &= v;
 }
 
 void VM::opBOR() {
+	int v = _stack.pop();
+	_stack.back() |= v;
 }
 
 void VM::opBNOT() {
+	_stack.back() = ~_stack.back();
 }
 
 void VM::opLT() {
+	int v = _stack.pop();
+	_stack.back() = (_stack.back() < v) ? TRUE : NIL;
 }
 
 void VM::opEQ() {
+	int v = _stack.pop();
+	_stack.back() = (_stack.back() == v) ? TRUE : NIL;
 }
 
 void VM::opGT() {
+	int v = _stack.pop();
+	_stack.back() = (_stack.back() > v) ? TRUE : NIL;
 }
 
 void VM::opLIT() {
+	_stack.back() = readCodeWord();
 }
 
 void VM::opVAR() {
+	_stack.back() = getVariable(readCodeWord());
 }
 
 void VM::opGETP() {
+	int v = _stack.pop();
+	_stack.back() = getObjectProperty(_stack.back(), v);
 }
 
 void VM::opSETP() {
+	int v3 = _stack.pop();
+	int v2 = _stack.pop();
+	_stack.back() = setObjectProperty(_stack.back(), v2, v3);
 }
 
 void VM::opSET() {
@@ -215,6 +251,7 @@ void VM::opCALL() {
 }
 
 void VM::opSVAR() {
+	_stack.back() = getVariable(readCodeByte());
 }
 
 void VM::opSSET() {

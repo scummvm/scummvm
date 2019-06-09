@@ -220,13 +220,15 @@ int Game::getObjectProperty(int obj, int prop) {
 	return NIL;
 }
 
-void Game::setObjectProperty(int obj, int prop, int val) {
+int Game::setObjectProperty(int obj, int prop, int val) {
 	int field;
 
 	for (; obj; obj = getObjectField(obj, O_CLASS)) {
 		if ((field = findProperty(obj, prop)) != 0)
 			return setObjectField(obj, field, val);
 	}
+
+	return NIL;
 }
 
 int Game::getObjectLocation(int obj) const {

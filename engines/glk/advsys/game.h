@@ -250,7 +250,7 @@ public:
 	/**
 	 * Sets an object property
 	 */
-	void setObjectProperty(int obj, int prop, int val);
+	int setObjectProperty(int obj, int prop, int val);
 
 	/**
 	 * Gets a field from an object
@@ -262,8 +262,9 @@ public:
 	/**
 	 * Sets a field in an object
 	 */
-	void setObjectField(int obj, int offset, int val) {
+	int setObjectField(int obj, int offset, int val) {
 		WRITE_LE_UINT16(_residentBase + getObjectLocation(obj) + offset, val);
+		return val;
 	}
 
 	/**
