@@ -32,8 +32,8 @@
 namespace Petka {
 
 QSystem::QSystem()
-	: _cursor(nullptr), _case(nullptr), _star(nullptr),
-	_mainInterface(nullptr), _currInterface(nullptr), _prevInterface(nullptr) {}
+	: _cursor(nullptr), _case(nullptr), _star(nullptr), _mainInterface(nullptr),
+	_currInterface(nullptr), _prevInterface(nullptr), _field48(0) {}
 
 QSystem::~QSystem() {
 
@@ -85,6 +85,7 @@ bool QSystem::init() {
 	Common::ScopedPtr<Common::SeekableReadStream> stream(g_vm->openFile("script.dat", true));
 	if (!stream)
 		return false;
+	_field48 = 1;
 	Common::ScopedPtr<Common::SeekableReadStream> namesStream(g_vm->openFile("Names.ini", false));
 	Common::ScopedPtr<Common::SeekableReadStream> castStream(g_vm->openFile("Cast.ini", false));
 	Common::ScopedPtr<Common::SeekableReadStream> bgsStream(g_vm->openFile("BGs.ini", false));

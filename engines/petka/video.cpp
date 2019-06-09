@@ -39,6 +39,9 @@ void VideoSystem::update() {
 	QInterface *interface = g_vm->getQSystem()->_currInterface;
 	if (interface) {
 		for (uint i = 0; i < interface->_objs.size(); ++i) {
+			interface->_objs[i]->update();
+		}
+		for (uint i = 0; i < interface->_objs.size(); ++i) {
 			interface->_objs[i]->draw();
 		}
 	}
@@ -57,14 +60,14 @@ void VideoSystem::update() {
 			x = 3;
 		}
 
+		g_system->copyRectToScreen(_screen.getPixels(), _screen.pitch, x, 0, width, _screen.h);
+		g_system->updateScreen();
+
 		uint32 time = g_system->getMillis();
 		if (time - _shakeTime > 30) {
 			_shift = !_shift;
 			_shakeTime = time;
 		}
-
-		g_system->copyRectToScreen(_screen.getPixels(), _screen.pitch, x, 0, width, _screen.h);
-		g_system->updateScreen();
 	} else {
 		_screen.update();
 	}
