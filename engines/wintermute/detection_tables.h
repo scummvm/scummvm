@@ -513,6 +513,11 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Rhiannon: Curse of the four Branches (English PC DVD)
 	WME_WINENTRY("rhiannon", "DVD",
 		WME_ENTRY1s("data.dcp", "6736bbc921bb6ce5161b3ad095a97bd4", 1053441028), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+	// Rhiannon: Curse of The Four Branches (Demo: Chapter 1)
+	WME_WINENTRY("rhiannon", "Demo: Chapter 1",
+		WME_ENTRY1s("data.dcp", "d3b6ad94e9a8b29ca3cbda96c8857bd6", 72680676), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, LATEST_VERSION),
+	WME_WINENTRY("rhiannon", "Demo: Chapter 5",
+		WME_ENTRY1s("data.dcp", "88be3fa1389889b2079e54d780803a75", 88644508), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, LATEST_VERSION),
 	// 1 1/2 Ritter: Auf der Suche nach der hinreissenden Herzelinde
 	WME_WINENTRY("ritter", "",
 		WME_ENTRY1s("data.dcp", "5ac416cee605d3a30f4d59687b1cdab2", 364260278), Common::DE_DEU, ADGF_UNSTABLE, LATEST_VERSION),
