@@ -124,6 +124,17 @@ void ManagedSurface::free() {
 	_offsetFromOwner = Common::Point(0, 0);
 }
 
+void ManagedSurface::copyFrom(const ManagedSurface &surf) {
+	// Surface::copyFrom free pixel pointer so let's free up ManagedSurface to be coherent
+	free();
+
+	_innerSurface.copyFrom(surf._innerSurface);
+	clearDirtyRects();
+
+	// Pixels data is now owned by us
+	_disposeAfterUse = DisposeAfterUse::YES;
+}
+
 bool ManagedSurface::clip(Common::Rect &srcBounds, Common::Rect &destBounds) {
 	if (destBounds.left >= this->w || destBounds.top >= this->h ||
 			destBounds.right <= 0 || destBounds.bottom <= 0)
