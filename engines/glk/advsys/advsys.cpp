@@ -97,7 +97,7 @@ Common::Error AdvSys::loadGameData(strid_t save) {
 	return Common::kNoError;
 }
 
-Common::Error AdvSys::saveGameData(strid_t save, const Common::String& desc) {
+Common::Error AdvSys::saveGameData(strid_t save, const Common::String &desc) {
 	return Common::kNoError;
 }
 

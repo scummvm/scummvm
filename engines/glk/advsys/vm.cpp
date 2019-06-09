@@ -83,7 +83,7 @@ OpcodeMethod VM::_METHODS[0x34] = {
 };
 
 VM::VM(OSystem *syst, const GlkGameDescription &gameDesc) : GlkInterface(syst, gameDesc), Game(),
-		_pc(0), _status(IN_PROGRESS) {
+	_pc(0), _status(IN_PROGRESS) {
 }
 
 ExecutionResult VM::execute(int offset) {
@@ -94,7 +94,7 @@ ExecutionResult VM::execute(int offset) {
 	_stack.clear();
 
 	// Iterate through the script
-	for (_status = IN_PROGRESS; !shouldQuit() && _status == IN_PROGRESS; )
+	for (_status = IN_PROGRESS; !shouldQuit() && _status == IN_PROGRESS;)
 		executeOpcode();
 
 	return _status;

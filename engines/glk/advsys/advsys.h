@@ -64,7 +64,9 @@ public:
 	/**
 	 * Returns the running interpreter type
 	 */
-	virtual InterpreterType getInterpreterType() const override { return INTERPRETER_ADVSYS; }
+	virtual InterpreterType getInterpreterType() const override {
+		return INTERPRETER_ADVSYS;
+	}
 
 	/**
 	 * Load a savegame from the passed stream

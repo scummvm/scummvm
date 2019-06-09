@@ -59,12 +59,12 @@ enum ObjectField {
  * Built-in variables
  */
 enum Variable {
-	V_ACTOR = 1,		///< Actor noun phrase number
-	V_ACTION = 2,		///< Action from phrase
-	V_DOBJECT = 3,		///< First direct object noun phrase number
-	V_NDOBJECTS = 4,	///< Number of direct object noun phrases
-	V_IOBJECT = 5,		///< Indirect object noun phrase number
-	V_OCOUNT = 6		///< Total object count
+	V_ACTOR = 1,        ///< Actor noun phrase number
+	V_ACTION = 2,       ///< Action from phrase
+	V_DOBJECT = 3,      ///< First direct object noun phrase number
+	V_NDOBJECTS = 4,    ///< Number of direct object noun phrases
+	V_IOBJECT = 5,      ///< Indirect object noun phrase number
+	V_OCOUNT = 6        ///< Total object count
 };
 
 /**
@@ -75,7 +75,7 @@ public:
 	/**
 	 * Decrypt a data block
 	 */
-	static void decrypt(byte* data, size_t size);
+	static void decrypt(byte *data, size_t size);
 };
 
 /**
@@ -83,27 +83,27 @@ public:
  */
 class Header : public Decrypter {
 public:
-	bool _valid;				///< Signals whether header is valid
-	size_t _size;				///< Resident size in bytes
-	uint _headerVersion;		///< Header structure version
-	Common::String _name;		///< Adventure name
-	uint _version;				///< Adventure version			
-	uint _wordTableOffset;		///< Word table offset
-	uint _wordTypeTableOffset;	///< Word type table offset
-	uint _objectTableOffset;	///< Object table offset
-	uint _actionTableOffset;	///< Action table offset
-	uint _variableTableOffset;	///< Variable table offset
-	uint _dataSpaceOffset;		///< Data space offset
-	uint _codeSpaceOffset;		///< Code space offset
-	uint _dataBlockOffset;		///< First data block offset
-	uint _messageBlockOffset;	///< First message block offset
-	uint _initCodeOffset;		///< Initialization code offset
-	uint _updateCodeOffset;		///< Update code offset
-	uint _beforeOffset;			///< Code offset before verb handler
-	uint _afterOffset;			///< Code offset after verb handler
-	uint _errorHandlerOffset;	///< Error handler code offset
-	uint _saveAreaOffset;		///< Save area offset
-	uint _saveSize;				///< Save area size
+	bool _valid;                ///< Signals whether header is valid
+	size_t _size;               ///< Resident size in bytes
+	uint _headerVersion;        ///< Header structure version
+	Common::String _name;       ///< Adventure name
+	uint _version;              ///< Adventure version
+	uint _wordTableOffset;      ///< Word table offset
+	uint _wordTypeTableOffset;  ///< Word type table offset
+	uint _objectTableOffset;    ///< Object table offset
+	uint _actionTableOffset;    ///< Action table offset
+	uint _variableTableOffset;  ///< Variable table offset
+	uint _dataSpaceOffset;      ///< Data space offset
+	uint _codeSpaceOffset;      ///< Code space offset
+	uint _dataBlockOffset;      ///< First data block offset
+	uint _messageBlockOffset;   ///< First message block offset
+	uint _initCodeOffset;       ///< Initialization code offset
+	uint _updateCodeOffset;     ///< Update code offset
+	uint _beforeOffset;         ///< Code offset before verb handler
+	uint _afterOffset;          ///< Code offset after verb handler
+	uint _errorHandlerOffset;   ///< Error handler code offset
+	uint _saveAreaOffset;       ///< Save area offset
+	uint _saveSize;             ///< Save area size
 public:
 	/**
 	 * Constructor
@@ -153,7 +153,7 @@ private:
 	/**
 	 * Returns true if an action has a given verb
 	 */
-	bool hasVerb(int act, int* verbs) const;
+	bool hasVerb(int act, int *verbs) const;
 
 	/**
 	 * Returns true if an action is in a given list
@@ -174,15 +174,15 @@ public:
 	int _actionCount;
 	int _variableCount;
 
-	byte* _residentBase;
-	byte* _wordTable;
-	byte* _wordTypeTable;
-	byte* _objectTable;
-	byte* _actionTable;
-	byte* _variableTable;
-	byte* _saveArea;
-	byte* _dataSpace;
-	byte* _codeSpace;
+	byte *_residentBase;
+	byte *_wordTable;
+	byte *_wordTypeTable;
+	byte *_objectTable;
+	byte *_actionTable;
+	byte *_variableTable;
+	byte *_saveArea;
+	byte *_dataSpace;
+	byte *_codeSpace;
 public:
 	/**
 	 * Constructor
@@ -200,7 +200,7 @@ public:
 	/**
 	 * Restore savegame data from the game to it's initial state
 	 */
-	void restart(Common::SeekableReadStream& s);
+	void restart(Common::SeekableReadStream &s);
 
 	/**
 	 * Returns true if the game is restarting, and resets the flag
@@ -210,37 +210,39 @@ public:
 	/**
 	 * Save the game data to a savegame
 	 */
-	void saveGameData(Common::WriteStream& ws);
+	void saveGameData(Common::WriteStream &ws);
 
 	/**
 	 * Restore the game data from a savegame
 	 */
-	void loadGameData(Common::ReadStream& rs);
+	void loadGameData(Common::ReadStream &rs);
 
 	/**
 	 * Find a word in the dictionary
 	 */
-	int findWord(const Common::String& word) const;
+	int findWord(const Common::String &word) const;
 
 	/**
 	 * Return a word's type
 	 */
-	int getWordType(int word) const { return _wordTypeTable[word]; }
+	int getWordType(int word) const {
+		return _wordTypeTable[word];
+	}
 
 	/**
 	 * Match an object against a name and list of adjectives
 	 */
-	bool match(int obj, int noun, int* adjectives);
+	bool match(int obj, int noun, int *adjectives);
 
 	/**
 	 * Check to see if this is a valid verb
 	 */
-	int checkVerb(int* verbs);
+	int checkVerb(int *verbs);
 
 	/**
 	 * Find an action matching a given description
 	 */
-	int findAction(int* verbs, int preposition, int flag);
+	int findAction(int *verbs, int preposition, int flag);
 
 	/**
 	 * Get an object property

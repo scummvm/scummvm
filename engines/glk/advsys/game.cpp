@@ -47,10 +47,10 @@ bool Header::init(Common::ReadStream &s) {
 	Common::MemoryReadStream ms(data, HEADER_SIZE, DisposeAfterUse::NO);
 
 	// Validate the header
-	_valid = !strncmp((const char*)data + 2, "ADVSYS", 6);
+	_valid = !strncmp((const char *)data + 2, "ADVSYS", 6);
 	if (!_valid)
 		return false;
-	
+
 	_size = ms.readUint16LE();
 	ms.skip(6);
 	_headerVersion = ms.readUint16LE();
@@ -103,7 +103,7 @@ bool Game::init(Common::SeekableReadStream &s) {
 	s.seek(0);
 	if (!Header::init(s))
 		return false;
-	
+
 	if (_headerVersion < 101 || _headerVersion > MAX_VERSION)
 		error("Wrong version number");
 
@@ -136,7 +136,7 @@ bool Game::init(Common::SeekableReadStream &s) {
 	return true;
 }
 
-void Game::restart(Common::SeekableReadStream& s) {
+void Game::restart(Common::SeekableReadStream &s) {
 	s.seek(_residentOffset + _saveAreaOffset);
 	s.read(_saveArea, _saveSize);
 	decrypt(_saveArea, _saveSize);
@@ -151,11 +151,11 @@ bool Game::shouldRestart() {
 	return result;
 }
 
-void Game::saveGameData(Common::WriteStream& ws) {
+void Game::saveGameData(Common::WriteStream &ws) {
 	ws.write(_saveArea, _saveSize);
 }
 
-void Game::loadGameData(Common::ReadStream& rs) {
+void Game::loadGameData(Common::ReadStream &rs) {
 	rs.read(_saveArea, _saveSize);
 }
 
@@ -166,18 +166,18 @@ int Game::findWord(const Common::String &word) const {
 	// Iterate over the dictionary for the word
 	for (int idx = 1; idx <= _wordCount; ++idx) {
 		int wordOffset = READ_LE_UINT16(_wordTable + idx * 2);
-		if (w == (const char*)_residentBase + wordOffset + 2)
+		if (w == (const char *)_residentBase + wordOffset + 2)
 			return READ_LE_UINT16(_residentBase + wordOffset);
 	}
 
 	return NIL;
 }
 
-bool Game::match(int obj, int noun, int* adjectives) {
+bool Game::match(int obj, int noun, int *adjectives) {
 	if (!hasNoun(obj, noun))
 		return false;
 
-	for (int* adjPtr = adjectives; *adjPtr; ++adjPtr) {
+	for (int *adjPtr = adjectives; *adjPtr; ++adjPtr) {
 		if (!hasAdjective(obj, *adjPtr))
 			return false;
 	}
@@ -185,7 +185,7 @@ bool Game::match(int obj, int noun, int* adjectives) {
 	return true;
 }
 
-int Game::checkVerb(int* verbs) {
+int Game::checkVerb(int *verbs) {
 	// Iterate through the actions
 	for (int idx = 1; idx <= _actionCount; ++idx) {
 		if (hasVerb(idx, verbs))
@@ -195,7 +195,7 @@ int Game::checkVerb(int* verbs) {
 	return NIL;
 }
 
-int Game::findAction(int* verbs, int preposition, int flag) {
+int Game::findAction(int *verbs, int preposition, int flag) {
 	// Iterate through the actions
 	for (int idx = 1; idx <= _actionCount; ++idx) {
 		if ((preposition && !hasPreposition(idx, preposition)) || !hasVerb(idx, verbs))
@@ -284,13 +284,13 @@ bool Game::hasAdjective(int obj, int adjective) const {
 	return false;
 }
 
-bool Game::hasVerb(int act, int* verbs) const {
+bool Game::hasVerb(int act, int *verbs) const {
 	// Get the list of verbs
 	int link = getActionField(act, A_VERBS);
 
 	// Look for the verb
 	for (; link; link = readWord(link + L_NEXT)) {
-		int* verb = verbs;
+		int *verb = verbs;
 		int word = readWord(link + L_DATA);
 
 		for (; *verb && word; link = readWord(link + L_NEXT)) {
