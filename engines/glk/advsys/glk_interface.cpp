@@ -20,8 +20,7 @@
  *
  */
 
-#ifndef GLK_ADVSYS_DEFINITIONS
-#define GLK_ADVSYS_DEFINITIONS
+#include "glk/advsys/glk_interface.h"
 
 namespace Glk {
 namespace AdvSys {
@@ -29,5 +28,3 @@ namespace AdvSys {
 
 } // End of namespace AdvSys
 } // End of namespace Glk
-
-#endif

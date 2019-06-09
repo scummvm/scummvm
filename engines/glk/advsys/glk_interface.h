@@ -20,12 +20,25 @@
  *
  */
 
-#ifndef GLK_ADVSYS_DEFINITIONS
-#define GLK_ADVSYS_DEFINITIONS
+#ifndef GLK_ADVSYS_GLK_INTERFACE
+#define GLK_ADVSYS_GLK_INTERFACE
+
+#include "glk/glk_api.h"
 
 namespace Glk {
 namespace AdvSys {
 
+/**
+ * Interface class that sits between AdvSys and the GLK base, providing methods for
+ * input and output
+ */
+class GlkInterface : public GlkAPI {
+public:
+	/**
+	 * Constructor
+	 */
+	GlkInterface(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gameDesc) {}
+};
 
 } // End of namespace AdvSys
 } // End of namespace Glk

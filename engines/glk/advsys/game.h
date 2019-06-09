@@ -29,6 +29,8 @@
 namespace Glk {
 namespace AdvSys {
 
+#define NIL 0
+
 /**
  * Actions
  */
@@ -303,6 +305,13 @@ public:
 	 */
 	int getCodeByte(int offset) const {
 		return _codeSpace[offset];
+	}
+
+	/**
+	 * Gets a code byte
+	 */
+	int getCodeWord(int offset) const {
+		return READ_LE_UINT16(_codeSpace + offset);
 	}
 
 	/**

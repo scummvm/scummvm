@@ -24,8 +24,7 @@
 #define GLK_ADVSYS_ADVSYS
 
 #include "common/scummsys.h"
-#include "glk/glk_api.h"
-#include "glk/advsys/game.h"
+#include "glk/advsys/vm.h"
 
 namespace Glk {
 namespace AdvSys {
@@ -33,7 +32,7 @@ namespace AdvSys {
 /**
  * AdvSys game interpreter
  */
-class AdvSys : public GlkAPI, public Game {
+class AdvSys : public VM {
 private:
 	winid_t _window;
 private:
@@ -55,7 +54,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	AdvSys(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gameDesc) {}
+	AdvSys(OSystem *syst, const GlkGameDescription &gameDesc) : VM(syst, gameDesc) {}
 
 	/**
 	 * Run the game

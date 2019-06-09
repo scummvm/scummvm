@@ -28,6 +28,8 @@ MODULE_OBJS := \
 	advsys/advsys.o \
 	advsys/detection.o \
 	advsys/game.o \
+	advsys/glk_interface.o \
+	advsys/vm.o \
 	alan2/alan2.o \
 	alan2/decode.o \
 	alan2/detection.o \
