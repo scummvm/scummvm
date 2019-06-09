@@ -7,7 +7,6 @@ MODULE_OBJS = \
 	common.o \
 	detection.o \
 	events.o \
-	filestream.o \
 	font.o \
 	graphics.o \
 	intro.o \

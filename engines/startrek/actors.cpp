@@ -20,6 +20,9 @@
  *
  */
 
+#include "common/stream.h"
+#include "common/memstream.h"
+
 #include "startrek/iwfile.h"
 #include "startrek/room.h"
 #include "startrek/startrek.h"
@@ -278,7 +281,7 @@ void StarTrekEngine::renderBanBelowSprites() {
 	_gfx->unlockScreenPixels();
 }
 
-void StarTrekEngine::renderBan(byte *destPixels, SharedPtr<FileStream> banFile) {
+void StarTrekEngine::renderBan(byte *destPixels, FileStream banFile) {
 	uint16 offset = banFile->readUint16();
 	int32 size = banFile->readUint16();
 
@@ -761,7 +764,7 @@ SharedPtr<Bitmap> StarTrekEngine::loadAnimationFrame(const Common::String &filen
 				}
 
 				// Redraw face with xor file
-				SharedPtr<FileStream> xorFile = loadFile(filename + ".xor");
+				FileStream xorFile = loadFile(filename + ".xor");
 				xorFile->seek(0, SEEK_SET);
 				uint16 xoffset = bitmap->xoffset - xorFile->readUint16();
 				uint16 yoffset = bitmap->yoffset - xorFile->readUint16();

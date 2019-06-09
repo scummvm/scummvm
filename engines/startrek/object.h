@@ -28,14 +28,18 @@
 #include "startrek/items.h"
 #include "startrek/sprite.h"
 
+#include "common/ptr.h"
+#include "common/stream.h"
+#include "common/memstream.h"
 #include "common/scummsys.h"
 
 namespace StarTrek {
 
 class StarTrekEngine;
-class FileStream;
 class Room;
 
+// FIXME: Eventually get rid of Common::SharedPtr and dispose of file streams properly
+typedef Common::SharedPtr<Common::MemoryReadStreamEndian> FileStream;
 
 // Objects 0-31 are "actors" that are drawn to the screen, are animated, etc.
 // Objects 32-63 are "hotspots" corresponding to specific regions in the screen.
@@ -82,7 +86,7 @@ struct Actor {
 	Sprite sprite;
 	Common::String bitmapFilename;
 	Fixed8 scale;
-	SharedPtr<FileStream> animFile;
+	FileStream animFile;
 	uint16 numAnimFrames;
 	uint16 animFrame;
 	uint32 frameToStartNextAnim;

@@ -504,7 +504,7 @@ void StarTrekEngine::loadMenuButtons(String mnuFilename, int xpos, int ypos) {
 	_activeMenu = new Menu();
 	_activeMenu->nextMenu = oldMenu;
 
-	SharedPtr<FileStream> stream = loadFile(mnuFilename + ".MNU");
+	FileStream stream = loadFile(mnuFilename + ".MNU");
 
 	_activeMenu->menuFile = stream;
 	_activeMenu->numButtons = _activeMenu->menuFile->size() / 16;

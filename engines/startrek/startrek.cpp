@@ -37,7 +37,6 @@
 #include "engines/util.h"
 #include "video/qt_decoder.h"
 
-#include "startrek/filestream.h"
 #include "startrek/iwfile.h"
 #include "startrek/lzss.h"
 #include "startrek/room.h"
@@ -395,7 +394,7 @@ void StarTrekEngine::stopPlayingSpeech() {
  *   - This is supposed to read from a "patches" folder which overrides files in the
  *     packed blob.
  */
-SharedPtr<FileStream> StarTrekEngine::loadFile(Common::String filename, int fileIndex) {
+FileStream StarTrekEngine::loadFile(Common::String filename, int fileIndex) {
 	filename.toUppercase();
 
 	Common::String basename, extension;
@@ -430,7 +429,7 @@ SharedPtr<FileStream> StarTrekEngine::loadFile(Common::String filename, int file
 		byte *data = (byte *)malloc(size);
 		file->read(data, size);
 		delete file;
-		return SharedPtr<FileStream>(new FileStream(data, size, bigEndian));
+		return Common::SharedPtr<Common::MemoryReadStreamEndian>(new Common::MemoryReadStreamEndian(data, size, bigEndian));
 	}
 
 	Common::SeekableReadStream *indexFile = 0;
@@ -560,10 +559,10 @@ SharedPtr<FileStream> StarTrekEngine::loadFile(Common::String filename, int file
 	stream->read(data, size);
 	delete stream;
 
-	return SharedPtr<FileStream>(new FileStream(data, size, bigEndian));
+	return Common::SharedPtr<Common::MemoryReadStreamEndian>(new Common::MemoryReadStreamEndian(data, size, bigEndian));
 }
 
-SharedPtr<FileStream> StarTrekEngine::loadFileWithParams(Common::String filename, bool unk1, bool unk2, bool unk3) {
+FileStream StarTrekEngine::loadFileWithParams(Common::String filename, bool unk1, bool unk2, bool unk3) {
 	return loadFile(filename);
 }
 
@@ -619,15 +618,20 @@ uint16 StarTrekEngine::getRandomWord() {
 }
 
 Common::String StarTrekEngine::getLoadedText(int textIndex) {
-	SharedPtr<FileStream> txtFile = loadFile(_txtFilename + ".txt");
+	FileStream txtFile = loadFile(_txtFilename + ".txt");
 
-	byte *data = txtFile->_data;
+	Common::String str;
+	byte cur;
 	while (textIndex != 0) {
-		while (*(data++) != '\0');
+		do {
+			cur = txtFile->readByte();
+			if (cur != '\0')
+				str += cur;
+		} while (cur != '\0');
 		textIndex--;
 	}
 
-	return (char *)data;
+	return str;
 }
 
 } // End of namespace StarTrek

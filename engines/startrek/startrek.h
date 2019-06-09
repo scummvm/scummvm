@@ -42,7 +42,6 @@
 
 #include "startrek/action.h"
 #include "startrek/awaymission.h"
-#include "startrek/filestream.h"
 #include "startrek/graphics.h"
 #include "startrek/items.h"
 #include "startrek/object.h"
@@ -63,7 +62,8 @@ class StarTrekEngine;
 class Room;
 
 typedef String(StarTrekEngine::*TextGetterFunc)(int, uintptr, String *);
-
+// FIXME: Eventually get rid of Common::SharedPtr and dispose of file streams properly
+typedef Common::SharedPtr<Common::MemoryReadStreamEndian> FileStream;
 
 const int SAVEGAME_DESCRIPTION_LEN = 30;
 
@@ -159,7 +159,7 @@ struct Menu {
 	Sprite sprites[MAX_MENUBUTTONS];
 	uint16 retvals[MAX_MENUBUTTONS];
 	uint32 disabledButtons;
-	SharedPtr<FileStream> menuFile;
+	FileStream menuFile;
 	uint16 numButtons;
 	int16 selectedButton;
 	Menu *nextMenu;
@@ -247,11 +247,11 @@ public:
 	void playSpeech(const Common::String &filename);
 	void stopPlayingSpeech();
 
-	SharedPtr<FileStream> loadFile(Common::String filename, int fileIndex = 0);
+	FileStream loadFile(Common::String filename, int fileIndex = 0);
 	/**
 	 * TODO: Figure out what the extra parameters are, and if they're important.
 	 */
-	SharedPtr<FileStream> loadFileWithParams(Common::String filename, bool unk1, bool unk2, bool unk3);
+	FileStream loadFileWithParams(Common::String filename, bool unk1, bool unk2, bool unk3);
 
 	void playMovie(Common::String filename);
 	void playMovieMac(Common::String filename);
@@ -379,7 +379,7 @@ public:
 	 * "renderBanAboveSprites()" redraws sprites above them if necessary.
 	 */
 	void renderBanBelowSprites();
-	void renderBan(byte *pixelDest, SharedPtr<FileStream> file);
+	void renderBan(byte *pixelDest, FileStream file);
 	void renderBanAboveSprites();
 	void removeActorFromScreen(int actorIndex);
 	void actorFunc1();
@@ -692,7 +692,7 @@ public:
 	int _roomIndex;
 	Common::String _screenName; // _screenName = _missionName + _roomIndex
 	Common::String _mapFilename; // Similar to _screenName, but used for .map files?
-	SharedPtr<FileStream> _mapFile;
+	FileStream _mapFile;
 	Fixed16 _playerActorScale;
 
 	Common::String _txtFilename;
@@ -717,7 +717,7 @@ public:
 
 	// ".BAN" files provide extra miscellaneous animations in the room, ie. flashing
 	// pixels on computer consoles, or fireflies in front of the screen.
-	SharedPtr<FileStream> _banFiles[MAX_BAN_FILES];
+	FileStream _banFiles[MAX_BAN_FILES];
 	uint16 _banFileOffsets[MAX_BAN_FILES];
 
 	Sprite _inventoryIconSprite;

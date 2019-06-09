@@ -20,7 +20,6 @@
  *
  */
 
-#include "startrek/filestream.h"
 #include "startrek/iwfile.h"
 #include "startrek/room.h"
 #include "startrek/startrek.h"
@@ -46,7 +45,7 @@
 namespace StarTrek {
 
 Room::Room(StarTrekEngine *vm, const Common::String &name) : _vm(vm), _awayMission(&vm->_awayMission) {
-	SharedPtr<FileStream> rdfFile = _vm->loadFile(name + ".RDF");
+	FileStream rdfFile = _vm->loadFile(name + ".RDF");
 
 	int size = rdfFile->size();
 	_rdfData = new byte[size];

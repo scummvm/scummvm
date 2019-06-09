@@ -29,7 +29,7 @@ IWFile::IWFile(StarTrekEngine *vm, const Common::String &filename) {
 
 	_vm = vm;
 
-	SharedPtr<FileStream> file = _vm->loadFile(filename);
+	FileStream file = _vm->loadFile(filename);
 	_numEntries = file->readUint16();
 
 	assert(_numEntries < MAX_KEY_POSITIONS);

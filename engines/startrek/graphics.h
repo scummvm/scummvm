@@ -104,7 +104,6 @@ public:
 	SharedPtr<Bitmap> getMouseBitmap();
 	void warpMouse(int16 x, int16 y);
 
-	void drawTextChar(::Graphics::Surface *surface, const Sprite &sprite, int x, int y, const Common::Rect &rect);
 	void drawSprite(const Sprite &sprite, ::Graphics::Surface *surface);
 	/**
 	 * @param sprite The sprite to draw

@@ -139,11 +139,11 @@ void Graphics::loadPalette(const Common::String &paletteName) {
 	Common::String palFile = paletteName + ".PAL";
 	Common::String lutFile = paletteName + ".LUT";
 
-	SharedPtr<FileStream> palStream = _vm->loadFile(palFile.c_str());
+	FileStream palStream = _vm->loadFile(palFile.c_str());
 	palStream->read(_palData, 256 * 3);
 
 	// Load LUT file
-	SharedPtr<FileStream> lutStream = _vm->loadFile(lutFile.c_str());
+	FileStream lutStream = _vm->loadFile(lutFile.c_str());
 
 	lutStream->read(_lutData, 256);
 }
@@ -220,7 +220,7 @@ void Graphics::decPaletteFadeLevel() {
 
 
 void Graphics::loadPri(const Common::String &priFile) {
-	SharedPtr<FileStream> priStream = _vm->loadFile(priFile + ".pri");
+	FileStream priStream = _vm->loadFile(priFile + ".pri");
 	priStream->read(_priData, SCREEN_WIDTH * SCREEN_HEIGHT / 2);
 }
 
@@ -737,14 +737,14 @@ void Graphics::loadEGAData(const char *filename) {
 	if (!_egaData)
 		_egaData = new byte[256];
 
-	SharedPtr<FileStream> egaStream = _vm->loadFile(filename);
+	FileStream egaStream = _vm->loadFile(filename);
 	egaStream->read(_egaData, 256);
 }
 
 void Graphics::drawBackgroundImage(const char *filename) {
 	// Draw an stjr BGD image (palette built-in)
 
-	SharedPtr<FileStream> imageStream = _vm->loadFile(filename);
+	FileStream imageStream = _vm->loadFile(filename);
 	byte *palette = new byte[256 * 3];
 	imageStream->read(palette, 256 * 3);
 
