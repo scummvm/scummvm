@@ -129,7 +129,7 @@ void ManagedSurface::copyFrom(const ManagedSurface &surf) {
 	free();
 
 	_innerSurface.copyFrom(surf._innerSurface);
-	clearDirtyRects();
+	markAllDirty();
 
 	// Pixels data is now owned by us
 	_disposeAfterUse = DisposeAfterUse::YES;
