@@ -2825,9 +2825,15 @@ PuzzleBehind::PuzzleBehind(Supernova2Engine *vm, GameManager *gm) {
 	_vm = vm;
 	_gm = gm;
 
-	_fileNumber = 6;
+	_fileNumber = 12;
 	_id = PUZZLE_BEHIND;
 	_shown[0] = kShownTrue;
+	_shown[29] = kShownTrue;
+	_shown[31] = kShownTrue;
+
+	_objectState[0] = Object(_id, kStringRight, kStringDefaultDescription, G_RIGHT, EXIT, 1, 1, 0, PYR_ENTRANCE, 14);
+	_objectState[1] = Object(_id, kStringLeft, kStringDefaultDescription, G_LEFT, EXIT, 2, 2, 0, PYR_ENTRANCE, 10);
+	_objectState[2] = Object(_id, kStringDoor, kStringMassive, DOOR, EXIT | OPENABLE | CLOSED, 0, 0, 0, PYR_ENTRANCE, 2);
 }
 
 void PuzzleBehind::onEntrance() {
@@ -2838,6 +2844,10 @@ void PuzzleBehind::animation() {
 }
 
 bool PuzzleBehind::interact(Action verb, Object &obj1, Object &obj2) {
+	if (!_gm->move(verb, obj1))
+		return false;
+	_gm->passageConstruction();
+	_gm->_newRoom = true;
 	return true;
 }
 
@@ -2845,9 +2855,15 @@ Formula1F::Formula1F(Supernova2Engine *vm, GameManager *gm) {
 	_vm = vm;
 	_gm = gm;
 
-	_fileNumber = 6;
+	_fileNumber = 14;
 	_id = FORMULA1_F;
 	_shown[0] = kShownTrue;
+	_shown[2] = kShownTrue;
+	_shown[15] = kShownTrue;
+
+	_objectState[0] = Object(_id, kStringRight, kStringDefaultDescription, G_RIGHT, EXIT, 12, 12, 0, PYR_ENTRANCE, 14);
+	_objectState[1] = Object(_id, kStringLeft, kStringDefaultDescription, G_LEFT, EXIT, 11, 11, 0, PYR_ENTRANCE, 10);
+	_objectState[2] = Object(_id, kStringInscription, kStringInscriptionDescription, DOOR, EXIT, 1, 1, 0, PYR_ENTRANCE, 2);
 }
 
 void Formula1F::onEntrance() {
@@ -2858,6 +2874,12 @@ void Formula1F::animation() {
 }
 
 bool Formula1F::interact(Action verb, Object &obj1, Object &obj2) {
+	if (!_gm->move(verb, obj1))
+		return false;
+	if (obj1._id == CORRIDOR)
+		_gm->changeRoom(FORMULA1_N);
+	_gm->passageConstruction();
+	_gm->_newRoom = true;
 	return true;
 }
 
