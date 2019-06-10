@@ -3729,9 +3729,14 @@ Mask::Mask(Supernova2Engine *vm, GameManager *gm) {
 	_vm = vm;
 	_gm = gm;
 
-	_fileNumber = 6;
+	_fileNumber = 18;
 	_id = MASK;
 	_shown[0] = kShownTrue;
+
+	_objectState[0] = Object(_id, kStringExit, kStringDefaultDescription, NULLOBJECT, EXIT, 255, 255, 0, COFFIN_ROOM, 22);
+	_objectState[1] = Object(_id, kStringEye, kStringEyeDescription, EYE1, NULLTYPE, 0, 0, 0);
+	_objectState[2] = Object(_id, kStringEye, kStringEyeDescription, EYE2, NULLTYPE, 1, 1, 0);
+	_objectState[3] = Object(_id, kStringMouth, kStringDefaultDescription, NULLOBJECT, NULLTYPE, 2, 2, 0);
 }
 
 void Mask::onEntrance() {
@@ -3742,7 +3747,33 @@ void Mask::animation() {
 }
 
 bool Mask::interact(Action verb, Object &obj1, Object &obj2) {
-	return true;
+	if (verb == ACTION_OPEN && (obj1._id == EYE1 || obj1._id == EYE2)) {
+		if (obj1._type & OPENED)
+			_vm->renderMessage(kStringPyramid16);
+		else
+			_vm->renderImage(obj1._id - EYE1 + 1);
+		if (isSectionVisible(1) && isSectionVisible(2)) {
+			_gm->reply(kStringPyramid17, 3, 3 + 128);
+			_gm->reply(kStringPyramid18, 3, 3 + 128);
+			_gm->reply(kStringPyramid19, 3, 3 + 128);
+			_vm->playSound(kAudioAppearance1);
+			while(_vm->_sound->isPlaying())
+				_gm->wait(1);
+			_vm->paletteFadeOut();
+			_vm->loadGame(kSleepAutosaveSlot);
+			_gm->changeRoom(CABIN);
+			_gm->_newRoom = true;
+			_gm->drawGUI();
+			_gm->_rooms[CABIN]->setSectionVisible(2, kShownTrue);
+			_gm->_rooms[CABIN]->setSectionVisible(kMaxSection - 1, kShownFalse);
+			_gm->_rooms[CABIN]->setSectionVisible(kMaxSection - 2, kShownTrue);
+			_gm->_rooms[CABIN]->setSectionVisible(1, kShownFalse);
+			_gm->_rooms[CABIN]->getObject(2)->_click = 8;
+			_gm->_state._eventTime = kMaxTimerValue;
+		}
+		return true;
+	}
+	return false;
 }
 
 Museum::Museum(Supernova2Engine *vm, GameManager *gm) {
