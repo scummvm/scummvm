@@ -2778,3 +2778,9 @@ msgid ""
 "werden!\""
 msgstr ""
 "\"These bastards from Artus GmbH and|Commander Sumoti must be unmasked!\""
+
+#: ../../ms2/ms2_pyra.c:1260
+msgid ""
+"Sieht gef„hrlich aus!"
+msgstr ""
+"Looks dangerous!"
