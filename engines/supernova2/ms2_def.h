@@ -157,7 +157,7 @@ kStringDirection4, kStringRope, kStringSign, kStringSignDescription, kStringEntr
 kStringPyramid, kStringPyramidDescription, kStringSun, kStringSunDescription, kStringSign5Description,
 kStringRight, kStringLeft, kStringButton, kStringInscription, kStringTomato,
 kStringFunnyDescription, kStringKnife1, kStringKnife1Description, kStringMonster, kStringRopeDescription,
-kStringEyes, kStringMouth, kStringMonster1Description, kString158, kString159,
+kStringEyes, kStringMouth, kStringMonster1Description, kStringNote, kStringNoteDescription,
 kString160, kString161, kString162, kStringSlot, kString164,
 kString165, kString166, kString167, kString168, kStringExit,
 kString170, kStringToothbrush, kString172, kString173, kString174,

@@ -3139,9 +3139,17 @@ Monster2N::Monster2N(Supernova2Engine *vm, GameManager *gm) {
 	_vm = vm;
 	_gm = gm;
 
-	_fileNumber = 6;
+	_fileNumber = 13;
 	_id = MONSTER2_N;
 	_shown[0] = kShownTrue;
+	_shown[1] = kShownTrue;
+
+	_objectState[0] = Object(_id, kStringRight, kStringDefaultDescription, G_RIGHT, EXIT, 8, 8, 0, PYR_ENTRANCE, 14);
+	_objectState[1] = Object(_id, kStringLeft, kStringDefaultDescription, G_LEFT, EXIT, 7, 7, 0, PYR_ENTRANCE, 10);
+	_objectState[2] = Object(_id, kStringNote, kStringNoteDescription, NOTE, TAKE | COMBINABLE, 255, 255, 2);
+	_objectState[3] = Object(_id, kStringEyes, kStringDefaultDescription, NULLOBJECT, NULLTYPE, 6, 6, 0);
+	_objectState[4] = Object(_id, kStringMouth, kStringDefaultDescription, MOUTH, NULLTYPE, 1, 1, 0);
+	_objectState[5] = Object(_id, kStringMonster, kStringMonster1Description, MONSTER, NULLTYPE, 0, 0, 0);
 }
 
 void Monster2N::onEntrance() {
@@ -3152,6 +3160,40 @@ void Monster2N::animation() {
 }
 
 bool Monster2N::interact(Action verb, Object &obj1, Object &obj2) {
+	if (_gm->move(verb, obj1)) {
+		_gm->passageConstruction();
+		_gm->_newRoom = true;
+	} else if ((verb == ACTION_OPEN || verb == ACTION_PULL) && obj1._id == MOUTH) {
+		if (obj1._type & OPENED)
+			_vm->renderMessage(kStringGenericInteract8);
+		else {
+			obj1._type |= OPENED;
+			if (isSectionVisible(kMaxSection - 1))
+				_vm->renderImage(2);
+			else {
+				_objectState[2]._click = 1;
+				_vm->renderImage(3);
+				setSectionVisible(2, kShownFalse);
+			}
+			_vm->playSound(kAudioTaxiOpen);
+		}
+	} else if (verb == ACTION_CLOSE && obj1._id == MOUTH) {
+		if (obj1._type & OPENED) {
+			_vm->renderImage(1);
+			setSectionVisible(2, kShownFalse);
+			obj1._type &= ~OPENED;
+			_vm->playSound(kAudioElevator1);
+		} else
+			_vm->renderMessage(kStringGenericInteract11);
+	} else if (verb == ACTION_TAKE && (obj1._id == ROPE || obj1._id == NOTE)) {
+		_gm->takeObject(obj1);
+		setSectionVisible(3, kShownFalse);
+		setSectionVisible(4, kShownFalse);
+		setSectionVisible(kMaxSection - 1, kShownTrue);
+	} else if (verb == ACTION_USE && Object::combine(obj1, obj2, TKNIFE, MONSTER)) {
+		_vm->renderMessage(kStringPyramid6);
+	} else
+		return false;
 	return true;
 }
 
