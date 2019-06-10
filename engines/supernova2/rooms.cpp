@@ -3516,9 +3516,18 @@ FloordoorU::FloordoorU(Supernova2Engine *vm, GameManager *gm) {
 	_vm = vm;
 	_gm = gm;
 
-	_fileNumber = 6;
+	_fileNumber = 14;
 	_id = FLOORDOOR_U;
 	_shown[0] = kShownTrue;
+	_shown[12] = kShownTrue;
+	_shown[13] = kShownTrue;
+	_shown[15] = kShownTrue;
+
+	_objectState[0] = Object(_id, kStringRight, kStringDefaultDescription, G_RIGHT, EXIT, 12, 12, 0, PYR_ENTRANCE, 14);
+	_objectState[1] = Object(_id, kStringLeft, kStringDefaultDescription, G_LEFT, EXIT, 11, 11, 0, PYR_ENTRANCE, 10);
+	_objectState[2] = Object(_id, kStringRope, kStringDefaultDescription, ROPE, NULLTYPE, 10, 10, 0, FLOORDOOR, 2);
+	_objectState[3] = Object(_id, kStringOpening, kStringDefaultDescription, HOLE, EXIT, 8, 8, 0, FLOORDOOR, 2);
+	_objectState[4] = Object(_id, kStringPlate, kStringDefaultDescription, NULLOBJECT, NULLTYPE, 9, 9, 0);
 }
 
 void FloordoorU::onEntrance() {
@@ -3529,6 +3538,24 @@ void FloordoorU::animation() {
 }
 
 bool FloordoorU::interact(Action verb, Object &obj1, Object &obj2) {
+	if (_gm->move(verb, obj1)) {
+		_gm->passageConstruction();
+		_gm->_newRoom = true;
+	} else if (verb == ACTION_WALK && obj1._id == HOLE) {
+		_gm->_state._pyraZ = 6;
+		_gm->_state._pyraDirection = 0;
+		_gm->_state._pyraE = 1;
+		return false;
+	} else if (verb == ACTION_USE && obj1._id == ROPE) {
+		_gm->_state._pyraZ = 6;
+		_gm->_state._pyraDirection = 0;
+		_gm->_state._pyraE = 1;
+		_gm->changeRoom(FLOORDOOR);
+		_gm->_newRoom = true;
+	} else if (verb == ACTION_TAKE && obj1._id == ROPE) {
+		_vm->renderMessage(kStringPyramid9);
+	} else
+		return false;
 	return true;
 }
 
