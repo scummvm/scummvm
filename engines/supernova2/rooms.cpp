@@ -3661,9 +3661,16 @@ CoffinRoom::CoffinRoom(Supernova2Engine *vm, GameManager *gm) {
 	_vm = vm;
 	_gm = gm;
 
-	_fileNumber = 6;
+	_fileNumber = 17;
 	_id = COFFIN_ROOM;
 	_shown[0] = kShownTrue;
+
+	_objectState[0] = Object(_id, kStringExit, kStringDefaultDescription, NULLOBJECT, EXIT, 255, 255, 0, HALL, 22);
+	_objectState[1] = Object(_id, kStringCoffin, kStringCreepy, COFFIN, NULLTYPE, 0, 0, 0);
+	_objectState[2] = Object(_id, kStringToothbrush, kStringToothbrushDescription1, NULLOBJECT, NULLTYPE, 1, 1, 0);
+	_objectState[3] = Object(_id, kStringToothpaste, kStringToothbrushDescription1, NULLOBJECT, NULLTYPE, 2, 2, 0);
+	_objectState[4] = Object(_id, kStringBall, kStringBallDescription, L_BALL, NULLTYPE, 3, 3, 0);
+	_objectState[5] = Object(_id, kStringBall, kStringBallDescription, R_BALL, NULLTYPE, 3, 3, 0);
 }
 
 void CoffinRoom::onEntrance() {
@@ -3674,6 +3681,47 @@ void CoffinRoom::animation() {
 }
 
 bool CoffinRoom::interact(Action verb, Object &obj1, Object &obj2) {
+	char change;
+	if (verb == ACTION_OPEN && obj1._id == COFFIN && !isSectionVisible(1)) {
+		_vm->renderMessage(kStringPyramid13);
+	} else if (verb == ACTION_PRESS && (obj1._id == L_BALL || obj1._id == R_BALL)) {
+		if (obj1._id == L_BALL) {
+			if ((change = !isSectionVisible(2))) {
+				_vm->renderImage(2);
+				_vm->playSound(kAudioTaxiOpen);
+			} else
+				_vm->renderMessage(kStringPyramid14);
+		} else {
+			if ((change = !isSectionVisible(3))) {
+				_vm->renderImage(3);
+				_vm->playSound(kAudioTaxiOpen);
+			} else
+				_vm->renderMessage(kStringPyramid14);
+		} if (change) {
+			if (isSectionVisible(2) && isSectionVisible(3)) {
+				_vm->playSound(kAudioShip2);
+				_vm->renderImage(4);
+				_gm->wait(4);
+				_vm->renderImage(5);
+				_gm->wait(4);
+				_vm->renderImage(5);
+				_gm->wait(4);
+				_vm->renderImage(5);
+				_gm->wait(4);
+				_vm->renderImage(1);
+				setSectionVisible(4, kShownFalse);
+				setSectionVisible(5, kShownFalse);
+				setSectionVisible(6, kShownFalse);
+				setSectionVisible(7, kShownFalse);
+			}
+			else
+				_vm->renderMessage(kStringPyramid15);
+		}
+	} else if (verb == ACTION_LOOK && obj1._id == COFFIN && isSectionVisible(1)) {
+		_gm->changeRoom(MASK);
+		_gm->_newRoom = true;
+	} else
+		return false;
 	return true;
 }
 
