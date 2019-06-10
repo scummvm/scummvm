@@ -3634,9 +3634,12 @@ Hall::Hall(Supernova2Engine *vm, GameManager *gm) {
 	_vm = vm;
 	_gm = gm;
 
-	_fileNumber = 6;
+	_fileNumber = 16;
 	_id = HALL;
 	_shown[0] = kShownTrue;
+
+	_objectState[0] = Object(_id, kStringCoffin, kStringDefaultDescription, NULLOBJECT, EXIT, 0, 0, 0, COFFIN_ROOM, 2);
+	_objectState[1] = Object(_id, kStringExit, kStringDefaultDescription, CORRIDOR, EXIT, 255, 255, 0, PYR_ENTRANCE, 22);
 }
 
 void Hall::onEntrance() {
@@ -3647,7 +3650,11 @@ void Hall::animation() {
 }
 
 bool Hall::interact(Action verb, Object &obj1, Object &obj2) {
-	return true;
+	if (verb == ACTION_WALK && obj1._id == CORRIDOR) {
+		_gm->_state._pyraDirection = 2;
+		_gm->passageConstruction();
+	}
+	return false;
 }
 
 CoffinRoom::CoffinRoom(Supernova2Engine *vm, GameManager *gm) {
