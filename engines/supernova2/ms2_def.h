@@ -151,8 +151,8 @@ kString105, kStringSuctionCup, kString107, kStringOpening, kStringLetter,
 kStringMassive, kStringInscriptionDescription, kStringPyramid0, kStringPyramid1, kStringPyramid2,
 kStringPyramid3, kStringPyramid4, kStringPiece, kStringPyramid5, kStringPyramid6,
 kStringPyramid7, kStringPyramid8, kStringPyramid9, kStringPyramid10, kStringPyramid11,
-kStringPyramid12, kStringPyramid13, kStringPyramid14, kStringPyramid15, kString129,
-kString130, kString131, kStringDirection1, kStringDirection2, kStringDirection3,
+kStringPyramid12, kStringPyramid13, kStringPyramid14, kStringPyramid15, kStringPyramid17,
+kStringPyramid18, kStringPyramid19, kStringDirection1, kStringDirection2, kStringDirection3,
 kStringDirection4, kStringRope, kStringSign, kStringSignDescription, kStringEntrance1Description,
 kStringPyramid, kStringPyramidDescription, kStringSun, kStringSunDescription, kStringSign5Description,
 kStringRight, kStringLeft, kStringButton, kStringInscription, kStringTomato,
@@ -161,7 +161,7 @@ kStringEyes, kStringMouth, kStringMonster1Description, kStringNote, kStringNoteD
 kStringOpeningDescription1, kStringOpeningDescription2, kStringNoteDescription1, kStringSlot, kStringSlotDescription3,
 kStringOpeningDescription3, kStringStones, kStringPlate, kStringCoffin, kStringExit,
 kStringCreepy, kStringToothbrush, kStringToothbrushDescription1, kStringToothpaste, kStringBall,
-kStringBallDescription, kString176, kString177, kStringDefaultDescription, kStringLooksMetal,
+kStringBallDescription, kStringEye, kStringEyeDescription, kStringDefaultDescription, kStringLooksMetal,
 kStringTaxiArrives, kStringNothingHappens, kStringEmpty, kStringWalletOpen, kStringAttachMagnet,
 kStringPoleMagnet, kStringCunning, kStringMustBuyFirst, kStringInsertChip, kStringTransferCD,
 kStringCDNotInserted, kStringRemoveChip, kStringChipNotInserted, kStringWhatFor, kStringMMCD,
@@ -249,7 +249,7 @@ kStringIntroTV3, kStringIntroTV4, kStringIntroTV5, kStringIntroTV6, kStringIntro
 kStringIntroTV8, kStringIntroTV9, kStringIntroTV10, kStringIntroTV11, kStringIntroTV12,
 kStringIntroTV13, kStringIntroTV14, kStringIntroTV15, kStringIntroTV16, kStringIntro9,
 kStringIntro10, kStringIntro11, kStringIntro12, kStringIntro13, kStringIntro14, 
-kStringMonsterDescription, kStringDialogSeparator
+kStringMonsterDescription, kStringPyramid16, kStringDialogSeparator
 };
 
 ObjectType operator|(ObjectType a, ObjectType b);
