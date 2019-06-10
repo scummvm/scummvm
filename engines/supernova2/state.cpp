@@ -289,7 +289,7 @@ void GameManager::destroyRooms() {
 	delete _rooms[UPSTAIRS3];
 	delete _rooms[DOWNSTAIRS3];
 	delete _rooms[LCORRIDOR1];
-	delete _rooms[LGANG2];
+	delete _rooms[LCORRIDOR2];
 	delete _rooms[HOLE_ROOM];
 	delete _rooms[IN_HOLE];
 	delete _rooms[FLOORDOOR];
@@ -418,7 +418,7 @@ void GameManager::initRooms() {
 	_rooms[UPSTAIRS3] = new Upstairs3(_vm, this);
 	_rooms[DOWNSTAIRS3] = new Downstairs3(_vm, this);
 	_rooms[LCORRIDOR1] = new LCorridor1(_vm, this);
-	_rooms[LGANG2] = new LGang2(_vm, this);
+	_rooms[LCORRIDOR2] = new LCorridor2(_vm, this);
 	_rooms[HOLE_ROOM] = new HoleRoom(_vm, this);
 	_rooms[IN_HOLE] = new InHole(_vm, this);
 	_rooms[FLOORDOOR] = new Floordoor(_vm, this);
