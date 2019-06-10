@@ -119,19 +119,19 @@ void Room::tug2Tick60() {
 }
 
 void Room::tug2LookAtButton() {
-	showText(TX_TUG2N011);
+	showDescription(TX_TUG2N011);
 }
 
 void Room::tug2LookAtMccoy() {
-	showText(TX_TUG2N005);
+	showDescription(TX_TUG2N005);
 }
 
 void Room::tug2LookAtSpock() {
-	showText(TX_TUG2N007);
+	showDescription(TX_TUG2N007);
 }
 
 void Room::tug2LookAtRedshirt() {
-	showText(TX_TUG2N004);
+	showDescription(TX_TUG2N004);
 }
 
 void Room::tug2GetBomb() {
@@ -140,7 +140,7 @@ void Room::tug2GetBomb() {
 		_awayMission->crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_N;
 		walkCrewman(OBJECT_KIRK, 0xc9, 0xa0, 12);
 	} else
-		showText(TX_TUG2N024);
+		showDescription(TX_TUG2N024);
 }
 
 void Room::tug2KirkReachedBomb() {
@@ -155,33 +155,33 @@ void Room::tug2KirkGotBomb() {
 }
 
 void Room::tug2LookAtBomb() {
-	showText(TX_TUG2N000);
+	showDescription(TX_TUG2N000);
 }
 
 void Room::tug2LookAtGuard1() {
 	if (_awayMission->tug.guard1Status == 0)
-		showText(TX_TUG2N001);
+		showDescription(TX_TUG2N001);
 	else if (_awayMission->tug.guard1Status == 1)
-		showText(TX_TUG2N013);
+		showDescription(TX_TUG2N013);
 	else if (_awayMission->tug.guard1Status == 8)
-		showText(TX_TUG2N015);
+		showDescription(TX_TUG2N015);
 	else if (_awayMission->tug.guard1Status == 2)
-		showText(TX_TUG2N106);
+		showDescription(TX_TUG2N106);
 }
 
 void Room::tug2LookAtGuard2() {
 	if (_awayMission->tug.guard2Status == 0)
-		showText(TX_TUG2N037);
+		showDescription(TX_TUG2N037);
 	else if (_awayMission->tug.guard2Status == 1)
-		showText(TX_TUG2N014);
+		showDescription(TX_TUG2N014);
 	else if (_awayMission->tug.guard2Status == 8)
-		showText(TX_TUG2N016);
+		showDescription(TX_TUG2N016);
 	else if (_awayMission->tug.guard2Status == 2)
-		showText(TX_TUG2N106);
+		showDescription(TX_TUG2N106);
 }
 
 void Room::tug2LookAtWires() {
-	showText(TX_TUG2N010);
+	showDescription(TX_TUG2N010);
 }
 
 void Room::tug2UseSTricorderOnButton() {
@@ -214,7 +214,7 @@ void Room::tug2RedshirtReachedWires() {
 }
 
 void Room::tug2RedshirtDefusedBomb() {
-	showText(TX_TUG2C001);
+	showDescription(TX_TUG2C001);
 	showText(TX_SPEAKER_CHRISTENSEN, TX_TUG2L011);
 	_awayMission->tug.field35 = 4;
 	_awayMission->crewDirectionsAfterWalk[OBJECT_REDSHIRT] = DIR_E;
@@ -376,7 +376,7 @@ void Room::tug2TurnedOffForceField() {
 
 void Room::tug2PrisonersDead() {
 	loadActorAnim2(OBJECT_BRIG, "zapdon", 0, 0, 0);
-	showText(TX_TUG2N026);
+	showDescription(TX_TUG2N026);
 }
 
 void Room::tug2PrisonersReleased() {
@@ -526,7 +526,7 @@ void Room::tug2KirkKillGuard2() {
 void Room::tug2UsePhaserOnWelder() {
 	loseItem(OBJECT_IPWE);
 	giveItem(OBJECT_IPWF);
-	showText(TX_TUG2N006);
+	showDescription(TX_TUG2N006);
 
 	// BUGFIX: this following line didn't exist, despite it existing in TUG1; meaning this
 	// was supposed to give points, but it only did in a specific room.
@@ -534,7 +534,7 @@ void Room::tug2UsePhaserOnWelder() {
 }
 
 void Room::tug2UseWelderOnWireScraps() {
-	showText(TX_TUG2N009);
+	showDescription(TX_TUG2N009);
 	loseItem(OBJECT_IWIRSCRP);
 }
 
@@ -552,7 +552,7 @@ void Room::tug2UseCombBitOnTransmogrifier() {
 }
 
 void Room::tug2ShotByElasi() {
-	showText(TX_TUG2N025);
+	showDescription(TX_TUG2N025);
 	showGameOverMenu();
 
 	// Unused: additional textbox that says "***Game over man!***"
@@ -563,11 +563,11 @@ void Room::tug2WalkToDoor() {
 }
 
 void Room::tug2LookAtDoor() {
-	showText(TX_TUG2N012);
+	showDescription(TX_TUG2N012);
 }
 
 void Room::tug2LookAtKirk() {
-	showText(TX_TUG2N003);
+	showDescription(TX_TUG2N003);
 }
 
 void Room::tug2TalkToKirk() {
@@ -824,19 +824,19 @@ void Room::tug2UseMedkitOnGuard2() {
 
 void Room::tug2LookAnywhere() {
 	if (_awayMission->tug.guard1Status == GUARDSTAT_DEAD && _awayMission->tug.guard2Status == GUARDSTAT_DEAD && _awayMission->tug.field35 == 6)
-		showText(TX_TUG2N019);
+		showDescription(TX_TUG2N019);
 	else if (_awayMission->tug.guard1Status == GUARDSTAT_DEAD && _awayMission->tug.guard2Status == GUARDSTAT_DEAD && !_awayMission->tug.brigForceFieldDown)
-		showText(TX_TUG2N017);
+		showDescription(TX_TUG2N017);
 	else if (_awayMission->tug.guard1Status == GUARDSTAT_STUNNED && _awayMission->tug.guard2Status == GUARDSTAT_STUNNED && _awayMission->tug.field35 == 6)
-		showText(TX_TUG2N020);
+		showDescription(TX_TUG2N020);
 	else if (_awayMission->tug.guard1Status == GUARDSTAT_STUNNED && _awayMission->tug.guard2Status == GUARDSTAT_STUNNED && !_awayMission->tug.brigForceFieldDown)
-		showText(TX_TUG2N018);
+		showDescription(TX_TUG2N018);
 	else if (_awayMission->tug.guard1Status == GUARDSTAT_STUNNED && _awayMission->tug.guard2Status == GUARDSTAT_STUNNED && _awayMission->tug.brigForceFieldDown)
-		showText(TX_TUG2N021);
+		showDescription(TX_TUG2N021);
 	else if (_awayMission->tug.guard1Status == GUARDSTAT_DEAD && _awayMission->tug.guard2Status == GUARDSTAT_DEAD && _awayMission->tug.brigForceFieldDown)
-		showText(TX_TUG2N022);
+		showDescription(TX_TUG2N022);
 	else
-		showText(TX_TUG2N023);
+		showDescription(TX_TUG2N023);
 }
 
 void Room::tug2TalkToBrig() {

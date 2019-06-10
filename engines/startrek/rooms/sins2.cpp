@@ -238,35 +238,35 @@ void Room::sins2Tick40() {
 }
 
 void Room::sins2LookAnywhere() {
-	showText(TX_SIN2N006);
+	showDescription(TX_SIN2N006);
 }
 
 void Room::sins2LookAtOpenDoor() {
-	showText(TX_SIN2N007);
+	showDescription(TX_SIN2N007);
 }
 
 void Room::sins2LookAtTerminal() {
-	showText(TX_SIN2N000);
+	showDescription(TX_SIN2N000);
 }
 
 void Room::sins2LookAtKeypad() {
-	showText(TX_SIN2N001);
+	showDescription(TX_SIN2N001);
 }
 
 void Room::sins2LookAtKirk() {
-	showText(TX_SIN2N003);
+	showDescription(TX_SIN2N003);
 }
 
 void Room::sins2LookAtSpock() {
-	showText(TX_SIN2N005);
+	showDescription(TX_SIN2N005);
 }
 
 void Room::sins2LookAtMccoy() {
-	showText(TX_SIN2N004);
+	showDescription(TX_SIN2N004);
 }
 
 void Room::sins2LookAtRedshirt() {
-	showText(TX_SIN2N002);
+	showDescription(TX_SIN2N002);
 }
 
 void Room::sins2TalkToKirk() {
@@ -289,7 +289,7 @@ void Room::sins2TalkToRedshirt() {
 
 void Room::sins2LookAtDoor() {
 	if (!_awayMission->sins.openedInnerDoor)
-		showText(TX_SIN2N008);
+		showDescription(TX_SIN2N008);
 }
 
 void Room::sins2UseSpockOnDoor() {

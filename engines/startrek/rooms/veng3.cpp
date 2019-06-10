@@ -147,7 +147,7 @@ void Room::veng3WalkToDoor() {
 	if (_awayMission->veng.clearedDebris)
 		walkCrewmanC(OBJECT_KIRK, 0xa6, 0x6e, &Room::veng3ReachedTurbolift2);
 	else
-		showText(TX_VEN3N006);
+		showDescription(TX_VEN3N006);
 }
 
 void Room::veng3ReachedTurbolift2() {
@@ -175,18 +175,18 @@ void Room::veng3SickbayDoorOpened() {
 }
 
 void Room::veng3LookAtSupportBeam() {
-	showText(TX_VEN3N007);
+	showDescription(TX_VEN3N007);
 }
 
 void Room::veng3LookAtDebris() {
 	if (!_awayMission->veng.clearedDebris)
-		showText(TX_VEN3N009);
+		showDescription(TX_VEN3N009);
 	else
-		showText(TX_VEN3N007); // UNUSED (debris is gone)
+		showDescription(TX_VEN3N007); // UNUSED (debris is gone)
 }
 
 void Room::veng3LookAtTurbolift2Door() {
-	showText(TX_VEN3N012);
+	showDescription(TX_VEN3N012);
 
 	if (!_awayMission->veng.lookedAtTurbolift2Door) {
 		_awayMission->veng.lookedAtTurbolift2Door = true;
@@ -198,35 +198,35 @@ void Room::veng3LookAtTurbolift2Door() {
 }
 
 void Room::veng3LookAtSickbayDoor() {
-	showText(TX_VEN3N011);
+	showDescription(TX_VEN3N011);
 }
 
 void Room::veng3LookAtCable() {
-	showText(TX_VEN3N013);
+	showDescription(TX_VEN3N013);
 }
 
 void Room::veng3LookAtDeadGuy() {
-	showText(TX_VEN3N005);
+	showDescription(TX_VEN3N005);
 }
 
 void Room::veng3LookAtKirk() {
-	showText(TX_VEN3N001);
+	showDescription(TX_VEN3N001);
 }
 
 void Room::veng3LookAtMccoy() {
-	showText(TX_VEN3N002);
+	showDescription(TX_VEN3N002);
 }
 
 void Room::veng3LookAtSpock() {
-	showText(TX_VEN3N004);
+	showDescription(TX_VEN3N004);
 }
 
 void Room::veng3LookAtRedshirt() {
-	showText(TX_VEN3N000);
+	showDescription(TX_VEN3N000);
 }
 
 void Room::veng3LookAnywhere() {
-	showText(TX_VEN3N003);
+	showDescription(TX_VEN3N003);
 }
 
 void Room::veng3UseStunPhaserOnDebris() {
@@ -338,7 +338,7 @@ void Room::veng3TalkToRedshirt() {
 }
 
 void Room::veng3GetDebris() {
-	showText(TX_VEN3N010);
+	showDescription(TX_VEN3N010);
 }
 
 void Room::veng3GetCable() {
@@ -354,7 +354,7 @@ void Room::veng3ReachedCable() {
 void Room::veng3PickedUpCable() {
 	_awayMission->disableInput = false;
 	loadActorStandAnim(OBJECT_CABLE);
-	showText(TX_VEN3N014);
+	showDescription(TX_VEN3N014);
 	giveItem(OBJECT_ICABLE2);
 	_awayMission->veng.tookCableFromSickbayHallway = true;
 }

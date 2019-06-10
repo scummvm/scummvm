@@ -42,47 +42,47 @@ void Room::demon2TouchedWarp1() {
 }
 
 void Room::demon2LookAtCave() {
-	showText(9, true);
+	showDescription(9, true);
 }
 
 void Room::demon2LookAtMountain() {
-	showText(7, true);
+	showDescription(7, true);
 }
 
 void Room::demon2LookAtBerries() {
-	showText(12, true);
+	showDescription(12, true);
 }
 
 void Room::demon2LookAtFern() {
-	showText(5, true);
+	showDescription(5, true);
 }
 
 void Room::demon2LookAtMoss() {
-	showText(10, true);
+	showDescription(10, true);
 }
 
 void Room::demon2LookAtLights() {
-	showText(6, true);
+	showDescription(6, true);
 }
 
 void Room::demon2LookAtAnything() {
-	showText(11, true);
+	showDescription(11, true);
 }
 
 void Room::demon2LookAtKirk() {
-	showText(2, true);
+	showDescription(2, true);
 }
 
 void Room::demon2LookAtSpock() {
-	showText(4, true);
+	showDescription(4, true);
 }
 
 void Room::demon2LookAtMcCoy() {
-	showText(3, true);
+	showDescription(3, true);
 }
 
 void Room::demon2LookAtRedshirt() {
-	showText(0, true);
+	showDescription(0, true);
 }
 
 void Room::demon2TalkToKirk() {
@@ -164,7 +164,7 @@ void Room::demon2ReachedBerries() {
 }
 
 void Room::demon2PickedUpBerries() {
-	showText(13, true);
+	showDescription(13, true);
 	giveItem(OBJECT_IBERRY);
 	_awayMission->demon.gotBerries = true;
 	_awayMission->demon.missionScore += 1;

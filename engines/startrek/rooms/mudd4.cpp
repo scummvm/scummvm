@@ -122,7 +122,7 @@ void Room::mudd4ShowLeftConsoleMenu() {
 		TX_BLANK
 	};
 
-	int choice = showText(choices);
+	int choice = showMultipleTexts(choices);
 
 	switch (choice) {
 	case 0: // Sensors
@@ -225,7 +225,7 @@ void Room::mudd4ShowRightConsoleMenu() {
 		TX_BLANK
 	};
 
-	int choice = showText(choices);
+	int choice = showMultipleTexts(choices);
 
 	switch (choice) {
 	case 0: // Communications
@@ -297,7 +297,7 @@ void Room::mudd4KirkUsedCommunications() {
 				TX_BLANK
 			};
 
-			int choice = showText(choices);
+			int choice = showMultipleTexts(choices);
 
 			if (choice == 1) {
 				endMission(_awayMission->mudd.missionScore, 0x1b, _awayMission->mudd.torpedoStatus);
@@ -317,7 +317,7 @@ void Room::mudd4KirkUsedCommunications() {
 
 			showText(TX_SPEAKER_KIRK,  TX_MUD4_020);
 			showText(TX_SPEAKER_SCOTT, TX_MUD4_S03);
-			int choice = showText(choices);
+			int choice = showMultipleTexts(choices);
 
 			if (choice == 1) {
 				endMission(_awayMission->mudd.missionScore, 0x1b, _awayMission->mudd.torpedoStatus);
@@ -365,7 +365,7 @@ void Room::mudd4KirkReachedPositionToTalkToMudd() {
 		};
 
 		showText(TX_SPEAKER_MUDD, TX_MUD4_066);
-		int choice = showText(choices);
+		int choice = showMultipleTexts(choices);
 
 		if (choice == 1) {
 			// Copy of code at very bottom of function
@@ -426,7 +426,7 @@ void Room::mudd4KirkReachedPositionToTalkToMudd() {
 		};
 
 		showText(TX_SPEAKER_MUDD, TX_MUD4_065);
-		int choice = showText(choices);
+		int choice = showMultipleTexts(choices);
 
 		if (choice == 1) {
 			showText(TX_SPEAKER_MUDD, TX_MUD4_074);
@@ -479,7 +479,7 @@ void Room::mudd4UseMedkit() {
 
 void Room::mudd4GetRepairTool() {
 	if (_awayMission->mudd.tookRepairTool)
-		showText(TX_MUD4N012); // NOTE: unused, since the object disappears, can't be selected again
+		showDescription(TX_MUD4N012); // NOTE: unused, since the object disappears, can't be selected again
 	else {
 		_awayMission->disableInput = true;
 		_awayMission->crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_N;
@@ -500,34 +500,34 @@ void Room::mudd4PickedUpRepairTool() {
 }
 
 void Room::mudd4LookAtConsole() {
-	showText(TX_MUD4N000);
+	showDescription(TX_MUD4N000);
 }
 
 void Room::mudd4LookAtViewscreen() {
 	if (_awayMission->mudd.viewScreenEnabled)
-		showText(TX_MUD4N008);
+		showDescription(TX_MUD4N008);
 	else
-		showText(TX_MUD4N013);
+		showDescription(TX_MUD4N013);
 }
 
 void Room::mudd4LookAtKirk() {
-	showText(TX_MUD4N003);
+	showDescription(TX_MUD4N003);
 }
 
 void Room::mudd4LookAtSpock() {
-	showText(TX_MUD4N006);
+	showDescription(TX_MUD4N006);
 }
 
 void Room::mudd4LookAtMccoy() {
-	showText(TX_MUD4N001);
+	showDescription(TX_MUD4N001);
 }
 
 void Room::mudd4LookAtRedshirt() {
-	showText(TX_MUD4N004);
+	showDescription(TX_MUD4N004);
 }
 
 void Room::mudd4LookAtRepairTool() {
-	showText(TX_MUD4N011);
+	showDescription(TX_MUD4N011);
 }
 
 void Room::mudd4TalkToKirk() {

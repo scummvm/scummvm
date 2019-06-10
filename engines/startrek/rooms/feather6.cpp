@@ -146,8 +146,8 @@ void Room::feather6KirkDiedFromStalactites() {
 	_awayMission->feather.missionScore -= 3;
 	_awayMission->feather.diedFromStalactites = true;
 	_awayMission->disableInput = false;
-	showText(TX_FEA6N000);
-	showText(TX_FEA6N004);
+	showDescription(TX_FEA6N000);
+	showDescription(TX_FEA6N004);
 	loadRoomIndex(7, 5);
 }
 
@@ -199,7 +199,7 @@ void Room::feather6UseKnifeOnStalagmites() {
 }
 
 void Room::feather6UseKnifeAnywhere() {
-	showText(TX_FEA6N010);
+	showDescription(TX_FEA6N010);
 }
 
 void Room::feather6UseKnifeOnMccoy() {
@@ -216,11 +216,11 @@ void Room::feather6UseKnifeOnRedshirt() {
 }
 
 void Room::feather6UseCrystalAnywhere() {
-	showText(TX_FEA6N015);
+	showDescription(TX_FEA6N015);
 }
 
 void Room::feather6UseSnakeAnywhere() {
-	showText(TX_FEA6N001);
+	showDescription(TX_FEA6N001);
 }
 
 void Room::feather6UseMedkitAnywhere() {
@@ -232,43 +232,43 @@ void Room::feather6UsePhaser() {
 }
 
 void Room::feather6LookAtEastExit() {
-	showText(TX_FEA6N016);
+	showDescription(TX_FEA6N016);
 }
 
 void Room::feather6LookAnywhere() {
-	showText(TX_FEA6N003);
+	showDescription(TX_FEA6N003);
 }
 
 void Room::feather6LookAtRocks() {
-	showText(TX_FEA6N014);
+	showDescription(TX_FEA6N014);
 }
 
 void Room::feather6LookAtStalagmites() {
-	showText(TX_FEA6N013);
+	showDescription(TX_FEA6N013);
 }
 
 void Room::feather6LookAtCrystals() {
-	showText(TX_FEA6N005);
+	showDescription(TX_FEA6N005);
 }
 
 void Room::feather6LookAtKirk() {
-	showText(TX_FEA6N007);
+	showDescription(TX_FEA6N007);
 }
 
 void Room::feather6LookAtSpock() {
-	showText(TX_FEA6N011);
+	showDescription(TX_FEA6N011);
 }
 
 void Room::feather6LookAtMccoy() {
-	showText(TX_FEA6N002);
+	showDescription(TX_FEA6N002);
 }
 
 void Room::feather6LookAtRedshirt() {
-	showText(TX_FEA6N008);
+	showDescription(TX_FEA6N008);
 }
 
 void Room::feather6LookAtStalactites() {
-	showText(TX_FEA6N012);
+	showDescription(TX_FEA6N012);
 	showText(TX_SPEAKER_SPOCK, TX_FEA6_034);
 	showText(TX_SPEAKER_MCCOY, TX_FEA6_017);
 	showText(TX_SPEAKER_SPOCK, TX_FEA6_033);
@@ -279,7 +279,7 @@ void Room::feather6LookAtStalactites() {
 		TX_FEA6_008, TX_FEA6_006, TX_FEA6_004,
 		TX_BLANK
 	};
-	int choice = showText(choices);
+	int choice = showMultipleTexts(choices);
 
 	if (choice == 0)
 		showText(TX_SPEAKER_SPOCK, TX_FEA6_032);
@@ -312,7 +312,7 @@ void Room::feather6TalkToSpock() {
 			TX_FEA6_003, TX_FEA6_005, TX_FEA6_007,
 			TX_BLANK
 		};
-		int choice = showText(choices);
+		int choice = showMultipleTexts(choices);
 
 		if (choice == 0)
 			showText(TX_SPEAKER_SPOCK, TX_FEA6_029);
@@ -357,7 +357,7 @@ void Room::feather6UseSTricorderOnStalagmites() {
 }
 
 void Room::feather6GetCrystals() {
-	showText(TX_FEA6N020);
+	showDescription(TX_FEA6N020);
 }
 
 void Room::feather6UseKnifeOnCrystals() {
@@ -375,7 +375,7 @@ void Room::feather6DoneCuttingCrystals() {
 	loadActorStandAnim(OBJECT_KIRK);
 	_awayMission->feather.missionScore += 1;
 	giveItem(OBJECT_ICRYSTAL);
-	showText(TX_FEA6N017);
+	showDescription(TX_FEA6N017);
 }
 
 void Room::feather6Timer4Expired() { // Crystal disappears when timer 4 expires

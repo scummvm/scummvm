@@ -107,43 +107,43 @@ void Room::demon5UseBerryOnChub() {
 }
 
 void Room::demon5LookAtRoberts() {
-	showText(1, true);
+	showDescription(1, true);
 }
 
 void Room::demon5LookAtGrisnash() {
-	showText(9, true);
+	showDescription(9, true);
 }
 
 void Room::demon5LookAtStephen() {
-	showText(3, true);
+	showDescription(3, true);
 }
 
 void Room::demon5LookAtKirk() {
-	showText(6, true);
+	showDescription(6, true);
 }
 
 void Room::demon5LookAtSpock() {
-	showText(8, true);
+	showDescription(8, true);
 }
 
 void Room::demon5LookAtMccoy() {
-	showText(7, true);
+	showDescription(7, true);
 }
 
 void Room::demon5LookAtRedshirt() {
-	showText(5, true);
+	showDescription(5, true);
 }
 
 void Room::demon5LookAtMountain() {
-	showText(2, true);
+	showDescription(2, true);
 }
 
 void Room::demon5LookAtCrate() {
-	showText(4, true);
+	showDescription(4, true);
 }
 
 void Room::demon5LookAnywhere() {
-	showText(0, true);
+	showDescription(0, true);
 }
 
 void Room::demon5LookAtChub() {
@@ -159,7 +159,7 @@ void Room::demon5TalkToRoberts() {
 			demon5CheckCompletedStudy();
 		}
 	} else {
-		showText(10, true);
+		showDescription(10, true);
 	}
 }
 
@@ -177,7 +177,7 @@ void Room::demon5TalkToChub() {
 			demon5CheckCompletedStudy();
 		}
 	} else {
-		showText(13, true);
+		showDescription(13, true);
 	}
 }
 
@@ -194,7 +194,7 @@ void Room::demon5TalkToGrisnash() {
 			demon5CheckCompletedStudy();
 		}
 	} else {
-		showText(11, true);
+		showDescription(11, true);
 	}
 }
 
@@ -323,7 +323,7 @@ void Room::demon5CheckCompletedStudy() {
 }
 
 void Room::demon5GetCrate() {
-	showText(12, true);
+	showDescription(12, true);
 }
 
 }

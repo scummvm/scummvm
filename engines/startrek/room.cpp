@@ -409,7 +409,7 @@ int Room::showRoomSpecificText(const char **array) {
 	return _vm->showText(&StarTrekEngine::readTextFromArrayWithChoices, (uintptr)array, 20, 20, textColor, true, false, false);
 }
 
-int Room::showText(const TextRef *textIDs, bool fromRDF, bool lookWithTalker) {
+int Room::showMultipleTexts(const TextRef *textIDs, bool fromRDF, bool lookWithTalker) {
 	int numIDs = 0;
 	int retval;
 	while (textIDs[numIDs] != TX_BLANK)
@@ -441,10 +441,10 @@ int Room::showText(TextRef speaker, TextRef text, bool fromRDF, bool lookWithTal
 	textIDs[0] = speaker;
 	textIDs[1] = text;
 	textIDs[2] = TX_BLANK;
-	return showText(textIDs, fromRDF, lookWithTalker);
+	return showMultipleTexts(textIDs, fromRDF, lookWithTalker);
 }
 
-int Room::showText(TextRef text, bool fromRDF, bool lookWithTalker) {
+int Room::showDescription(TextRef text, bool fromRDF, bool lookWithTalker) {
 	return showText(TX_NULL, text, fromRDF, lookWithTalker);
 }
 

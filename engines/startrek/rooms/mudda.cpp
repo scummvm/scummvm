@@ -44,7 +44,7 @@ void Room::muddaUseLenseOnDegrimer() {
 	loseItem(OBJECT_ILENSES);
 
 	_awayMission->mudd.missionScore++;
-	showText(text[_roomIndex]);
+	showDescription(text[_roomIndex]);
 }
 
 
@@ -102,7 +102,7 @@ void Room::muddaUseDegrimer() {
 		TX_MUD5N001,
 	};
 
-	showText(text[_roomIndex]);
+	showDescription(text[_roomIndex]);
 }
 
 void Room::muddaTick() {
@@ -175,7 +175,7 @@ void Room::muddaTick() {
 				anim += directions[i][_roomIndex];
 				loadActorAnim2(i, anim);
 			}
-			showText(deathText[_roomIndex]);
+			showDescription(deathText[_roomIndex]);
 			showGameOverMenu();
 		}
 	}

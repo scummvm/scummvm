@@ -98,39 +98,39 @@ void Room::love0ReachedDoor1() {
 }
 
 void Room::love0LookAtConsole() {
-	showText(TX_LOV0N006);
+	showDescription(TX_LOV0N006);
 }
 
 void Room::love0LookAtViewscreen() {
-	showText(TX_LOV0N000);
+	showDescription(TX_LOV0N000);
 }
 
 void Room::love0LookAnywhere() {
-	showText(TX_LOV0N009);
+	showDescription(TX_LOV0N009);
 }
 
 void Room::love0LookAtDoor1() {
-	showText(TX_LOV0N008);
+	showDescription(TX_LOV0N008);
 }
 
 void Room::love0LookAtDoor2() {
-	showText(TX_LOV0N007);
+	showDescription(TX_LOV0N007);
 }
 
 void Room::love0LookAtKirk() {
-	showText(TX_LOV0N002);
+	showDescription(TX_LOV0N002);
 }
 
 void Room::love0LookAtMccoy() {
-	showText(TX_LOV0N004);
+	showDescription(TX_LOV0N004);
 }
 
 void Room::love0LookAtSpock() {
-	showText(TX_LOV0N005);
+	showDescription(TX_LOV0N005);
 }
 
 void Room::love0LookAtRedshirt() {
-	showText(TX_LOV0N003);
+	showDescription(TX_LOV0N003);
 }
 
 void Room::love0TalkToKirk() {
@@ -247,7 +247,7 @@ void Room::love0InteractWithConsole() {
 
 	while (true) {
 		showText(TX_SPEAKER_COMPUTER, TX_COMPU192);
-		int choice = showText(choices);
+		int choice = showMultipleTexts(choices);
 
 		switch (choice) {
 		case 0:
@@ -268,7 +268,7 @@ void Room::love0InteractWithConsole() {
 		case 5:
 			return;
 		default:
-			showText(TX_DIALOG_ERROR);
+			showDescription(TX_DIALOG_ERROR);
 			break;
 		}
 	}
@@ -278,7 +278,7 @@ void Room::love0GetDoorOrConsole() {
 	// BUGFIX: There was a problem with "get door 1" where it would execute a bit of
 	// non-code before reaching where it was supposed to be. Not sure if it had any actual
 	// effect.
-	showText(TX_LOV0N001);
+	showDescription(TX_LOV0N001);
 
 	// NOTE: There is an unused block of code that's jumped over in the "get door 2"
 	// function. (Spock says "that's not logical".)

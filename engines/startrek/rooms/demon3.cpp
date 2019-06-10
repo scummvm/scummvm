@@ -85,13 +85,13 @@ void Room::demon3Timer1Expired() {
 // Door just opened
 void Room::demon3Timer3Expired() {
 	if (_awayMission->demon.repairedHand) {
-		showText(8, true);
+		showDescription(8, true);
 		loadActorAnim(14, "door", 0x82, 0xc, 0);
 		loadMapFile("demon3");
 		_awayMission->demon.doorOpened = true;
 		_awayMission->demon.missionScore += 2;
 	} else {
-		showText(7, true);
+		showDescription(7, true);
 	}
 }
 
@@ -357,7 +357,7 @@ void Room::demon3RedshirtUsedPanel() {
 			TX_BLANK
 		};
 		text[1] = textTable[_awayMission->demon.field41 - 1];
-		showText(text, true);
+		showMultipleTexts(text, true);
 		walkCrewman(OBJECT_REDSHIRT, 0xbe, 0x9b, 0);
 	}
 }
@@ -388,7 +388,7 @@ void Room::demon3UsePhaserOnDoor() {
 	_roomVar.demon.usedPhaserOnDoor++;
 
 	if (_roomVar.demon.usedPhaserOnDoor == 1)
-		showText(9, true);
+		showDescription(9, true);
 	else if (_roomVar.demon.usedPhaserOnDoor == 2)
 		showText(TX_SPEAKER_SPOCK, 11, true);
 }
@@ -491,72 +491,72 @@ void Room::demon3TalkToRedshirt() {
 }
 
 void Room::demon3LookAtKirk() {
-	showText(4, true);
+	showDescription(4, true);
 }
 
 void Room::demon3LookAtSpock() {
-	showText(1, true);
+	showDescription(1, true);
 }
 
 void Room::demon3LookAtMccoy() {
-	showText(2, true);
+	showDescription(2, true);
 }
 
 void Room::demon3LookAtRedshirt() {
 	if (_awayMission->redshirtDead) {
-		showText(17, true);
+		showDescription(17, true);
 		// NOTE: there's an alternate string that isn't used? (TX_DEM3N018)
 	} else {
-		showText(3, true);
+		showDescription(3, true);
 	}
 }
 
 void Room::demon3LookAnywhere() {
-	showText(10, true);
+	showDescription(10, true);
 }
 
 void Room::demon3LookAtMiner() {
 	if (_awayMission->demon.healedMiner) {
-		showText(0, true);
+		showDescription(0, true);
 	} else {
-		showText(6, true);
+		showDescription(6, true);
 	}
 }
 
 void Room::demon3LookAtBoulder1() {
-	showText(11, true);
+	showDescription(11, true);
 }
 
 void Room::demon3LookAtBoulder2() {
-	showText(13, true);
+	showDescription(13, true);
 }
 
 void Room::demon3LookAtBoulder3() {
-	showText(13, true);
+	showDescription(13, true);
 }
 
 void Room::demon3LookAtBoulder4() {
-	showText(20, true);
+	showDescription(20, true);
 }
 
 void Room::demon3LookAtStructure() {
-	showText(16, true);
+	showDescription(16, true);
 }
 
 void Room::demon3LookAtDoor() {
 	if (_awayMission->demon.doorOpened) {
-		showText(14, true);
+		showDescription(14, true);
 	} else {
-		showText(12, true);
+		showDescription(12, true);
 	}
 }
 
 void Room::demon3LookAtPanel() {
-	showText(19, true);
+	showDescription(19, true);
 }
 
 void Room::demon3LookAtLight() {
-	showText(15, true);
+	showDescription(15, true);
 }
 
 }

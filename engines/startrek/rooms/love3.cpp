@@ -85,58 +85,58 @@ void Room::love3Timer3Expired() {
 }
 
 void Room::love3LookAtServicePanel() {
-	showText(TX_LOV3NA20);
+	showDescription(TX_LOV3NA20);
 }
 
 void Room::love3LookAtMonitor() {
-	showText(TX_LOV3N000); // BUGFIX: original didn't play the audio
+	showDescription(TX_LOV3N000); // BUGFIX: original didn't play the audio
 }
 
 void Room::love3LookAtWrench() {
-	showText(TX_LOV3N002);
+	showDescription(TX_LOV3N002);
 }
 
 void Room::love3LookAtKirk() {
-	showText(TX_LOV3N003);
+	showDescription(TX_LOV3N003);
 }
 
 void Room::love3LookAtMccoy() {
-	showText(TX_LOV3N005);
+	showDescription(TX_LOV3N005);
 }
 
 void Room::love3LookAtSpock() {
-	showText(TX_LOV3N008);
+	showDescription(TX_LOV3N008);
 }
 
 void Room::love3LookAtRedshirt() {
-	showText(TX_LOV3N004);
+	showDescription(TX_LOV3N004);
 }
 
 void Room::love3LookAnywhere() {
-	showText(TX_LOV3NA23);
+	showDescription(TX_LOV3NA23);
 }
 
 void Room::love3LookAtShaft() {
-	showText(TX_LOV3NA21);
+	showDescription(TX_LOV3NA21);
 }
 
 void Room::love3LookAtGrate() {
-	showText(TX_LOV3N019);
+	showDescription(TX_LOV3N019);
 }
 
 void Room::love3LookAtPanel() {
 	if (_awayMission->love.insulationOnGround)
-		showText(TX_LOV3N017);
+		showDescription(TX_LOV3N017);
 	else
-		showText(TX_LOV3NA22);
+		showDescription(TX_LOV3NA22);
 }
 
 void Room::love3LookAtGasTank() {
-	showText(TX_LOV3N006);
+	showDescription(TX_LOV3N006);
 }
 
 void Room::love3LookAtTurbines() {
-	showText(TX_LOV3N026);
+	showDescription(TX_LOV3N026);
 	showText(TX_SPEAKER_MCCOY, TX_LOV3_009);
 	showText(TX_SPEAKER_SPOCK, TX_LOV3_019);
 	if (!_awayMission->redshirtDead)
@@ -222,11 +222,11 @@ void Room::love3OpenedOrClosedServicePanel() {
 
 	if (_awayMission->love.servicePanelOpen) {
 		if (_awayMission->love.tookN2TankFromServicePanel)
-			showText(TX_LOV3N023);
+			showDescription(TX_LOV3N023);
 		else
-			showText(TX_LOV3N022);
+			showDescription(TX_LOV3N022);
 	} else
-		showText(TX_LOV3N020);
+		showDescription(TX_LOV3N020);
 }
 
 // Use wrench on gas tank, to screw or unscrew it in position
@@ -241,12 +241,12 @@ void Room::love3ReachedGasTankToUnscrew() {
 
 void Room::love3ScrewedOrUnscrewedGasTank() {
 	if (!_awayMission->love.gasTankUnscrewed) {
-		showText(TX_LOV3N012);
+		showDescription(TX_LOV3N012);
 		if (!_awayMission->redshirtDead)
 			showText(TX_SPEAKER_FERRIS, TX_LOV3_022);
 		_awayMission->love.gasTankUnscrewed = true;
 	} else {
-		showText(TX_LOV3N015);
+		showDescription(TX_LOV3N015);
 		_awayMission->love.gasTankUnscrewed = false;
 	}
 }
@@ -268,7 +268,7 @@ void Room::love3ReachedGasTankToPutDown() {
 }
 
 void Room::love3PutN2TankBack() {
-	showText(TX_LOV3N013);
+	showDescription(TX_LOV3N013);
 	_awayMission->love.tookN2TankFromServicePanel = false;
 	loseItem(OBJECT_IN2GAS);
 	loadActorAnim(OBJECT_GAS_TANK, "r4n2", 0, 0, 0);
@@ -291,7 +291,7 @@ void Room::love3OpenedEngineeringPanel() {
 		loadActorAnim(OBJECT_INSULATION, "s3r4p1", 0, 0, 0);
 		_awayMission->love.insulationOnGround = true;
 	}
-	showText(TX_LOV3N021);
+	showDescription(TX_LOV3N021);
 }
 
 
@@ -319,7 +319,7 @@ void Room::love3PouredWaterOnMonitor() {
 
 
 void Room::love3UseCrewmanOnEngineeringPanelOrGrate() {
-	showText(TX_LOV3N030);
+	showDescription(TX_LOV3N030);
 }
 
 
@@ -344,7 +344,7 @@ void Room::love3OpenedOrClosedGrate() {
 	if (!_awayMission->love.grateRemoved) {
 		_awayMission->love.grateRemoved = true;
 		loadActorAnim(OBJECT_GRATE, "s3r4g3", 0, 0, 0);
-		showText(TX_LOV3N016);
+		showDescription(TX_LOV3N016);
 		if (!_awayMission->love.gotPointsForOpeningGrate) {
 			_awayMission->love.gotPointsForOpeningGrate = true;
 			_awayMission->love.missionScore++;
@@ -352,13 +352,13 @@ void Room::love3OpenedOrClosedGrate() {
 	} else {
 		loadActorAnim(OBJECT_GRATE, "s3r4g1", 0x116, 0x8f, 0);
 		_awayMission->love.grateRemoved = false;
-		showText(TX_LOV3N032);
+		showDescription(TX_LOV3N032);
 	}
 }
 
 
 void Room::love3UseCrewmanOnShaft() {
-	showText(TX_LOV3N011);
+	showDescription(TX_LOV3N011);
 }
 
 
@@ -368,13 +368,13 @@ void Room::love3UseWaterOnShaft() {
 
 void Room::love3ReachedShaftUsingWater() {
 	if (!_awayMission->love.grateRemoved)
-		showText(TX_LOV3N025);
+		showDescription(TX_LOV3N025);
 	else
 		loadActorAnimC(OBJECT_KIRK, "kuseme", -1, -1, &Room::love3PouredWaterDownShaft);
 }
 
 void Room::love3PouredWaterDownShaft() {
-	showText(TX_LOV3N009);
+	showDescription(TX_LOV3N009);
 	loseItem(OBJECT_IH2O);
 }
 
@@ -385,13 +385,13 @@ void Room::love3UseNitrousOxideOnShaft() {
 
 void Room::love3ReachedShaftUsingNitrousOxide() {
 	if (!_awayMission->love.grateRemoved)
-		showText(TX_LOV3N025);
+		showDescription(TX_LOV3N025);
 	else
 		loadActorAnimC(OBJECT_KIRK, "kuseme", -1, -1, &Room::love3PouredNitrousOxideDownShaft);
 }
 
 void Room::love3PouredNitrousOxideDownShaft() {
-	showText(TX_LOV3N018);
+	showDescription(TX_LOV3N018);
 	showText(TX_SPEAKER_SPOCK, TX_LOV3_012);
 	loseItem(OBJECT_IN2O);
 }
@@ -403,14 +403,14 @@ void Room::love3UseAmmoniaOnShaft() {
 
 void Room::love3ReachedShaftUsingAmmonia() {
 	if (!_awayMission->love.grateRemoved)
-		showText(TX_LOV3N025);
+		showDescription(TX_LOV3N025);
 	else
 		loadActorAnimC(OBJECT_KIRK, "kuseme", -1, -1, &Room::love3PouredAmmoniaDownShaft);
 }
 
 void Room::love3PouredAmmoniaDownShaft() {
 	if (!_awayMission->love.romulansUnconsciousFromVirus) {
-		showText(TX_LOV3N001);
+		showDescription(TX_LOV3N001);
 		if (!_awayMission->redshirtDead)
 			showText(TX_SPEAKER_FERRIS, TX_LOV3_023);
 	}
@@ -435,7 +435,7 @@ void Room::love3UseRomulanLaughingGasOnShaft() {
 
 void Room::love3ReachedShaftUsingRomulanLaughingGas() {
 	if (!_awayMission->love.grateRemoved)
-		showText(TX_LOV3N025);
+		showDescription(TX_LOV3N025);
 	else {
 		loadActorAnimC(OBJECT_KIRK, "kuseme", -1, -1, &Room::love3PouredRomulanLaughingGasDownShaft);
 		playVoc("EFX24");
@@ -447,10 +447,10 @@ void Room::love3PouredRomulanLaughingGasDownShaft() {
 	_awayMission->love.romulansUnconsciousFromLaughingGas = true;
 
 	if (_awayMission->love.romulansUnconsciousFromVirus) {
-		showText(TX_LOV3NA08);
+		showDescription(TX_LOV3NA08);
 		_awayMission->love.romulansUnconsciousFromLaughingGas = false;
 	} else {
-		showText(TX_LOV3NA09);
+		showDescription(TX_LOV3NA09);
 		playVoc("ROMULANL");
 	}
 }
@@ -470,7 +470,7 @@ void Room::love3PickedUpWrench() {
 	giveItem(OBJECT_IWRENCH);
 	loadActorStandAnim(OBJECT_WRENCH);
 	_awayMission->love.wrenchTaken = true;
-	showText(TX_LOV3N031);
+	showDescription(TX_LOV3N031);
 }
 
 
@@ -481,9 +481,9 @@ void Room::love3GetGasTank() {
 
 void Room::love3ReachedGasTankToGet() {
 	if (_awayMission->love.gasTankUnscrewed)
-		showText(TX_LOV3N007);
+		showDescription(TX_LOV3N007);
 	else
-		showText(TX_LOV3N014);
+		showDescription(TX_LOV3N014);
 }
 
 
@@ -497,7 +497,7 @@ void Room::love3ReachedGasTankUsingAntigrav() {
 		loadActorAnimC(OBJECT_KIRK, "kusehe", -1, -1, &Room::love3PickedUpGasTank);
 		playVoc("SE3PLBAT");
 	} else {
-		showText(TX_LOV3N010);
+		showDescription(TX_LOV3N010);
 		showText(TX_SPEAKER_SPOCK, TX_LOV3_015);
 	}
 }
@@ -507,7 +507,7 @@ void Room::love3PickedUpGasTank() {
 	loadActorStandAnim(OBJECT_GAS_TANK);
 	_awayMission->love.tookN2TankFromServicePanel = true;
 
-	showText(TX_LOV3NJ32);
+	showDescription(TX_LOV3NJ32);
 	if (!_awayMission->redshirtDead)
 		showText(TX_SPEAKER_FERRIS, TX_LOV3_025);
 }
@@ -524,7 +524,7 @@ void Room::love3ReachedInsulationToGet() {
 void Room::love3PickedUpInsulation() {
 	loadActorStandAnim(OBJECT_KIRK);
 	giveItem(OBJECT_IINSULAT);
-	showText(TX_LOV3N029);
+	showDescription(TX_LOV3N029);
 }
 
 }

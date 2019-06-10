@@ -311,7 +311,7 @@ void Room::sins5WireConnected() {
 		_awayMission->sins.wireConnected1 = true;
 		_awayMission->sins.wireConnected2 = true;
 		loadActorAnim2(OBJECT_CABLE, "s5cabl", 0, 0);
-		showText(TX_SIN5N004);
+		showDescription(TX_SIN5N004);
 		loseItem(OBJECT_ICONECT);
 		playMidiMusicTracks(MIDITRACK_30, -1);
 	}
@@ -393,8 +393,8 @@ void Room::sins5Timer2Expired() {
 
 void Room::sins5ComputerLaunchesMissiles() {
 	playMidiMusicTracks(MIDITRACK_2, -1);
-	showText(TX_SIN5N012);
-	showText(TX_SIN5N013);
+	showDescription(TX_SIN5N012);
+	showDescription(TX_SIN5N013);
 	showGameOverMenu();
 }
 
@@ -403,47 +403,47 @@ void Room::sins5Timer3Expired() {
 }
 
 void Room::sins5LookAnywhere() {
-	showText(TX_SIN5N005);
+	showDescription(TX_SIN5N005);
 }
 
 void Room::sins5LookAtKirk() {
-	showText(TX_SIN5N000);
+	showDescription(TX_SIN5N000);
 }
 
 void Room::sins5LookAtSpock() {
-	showText(TX_SIN5N006);
+	showDescription(TX_SIN5N006);
 }
 
 void Room::sins5LookAtMccoy() {
-	showText(TX_SIN5N001);
+	showDescription(TX_SIN5N001);
 }
 
 void Room::sins5LookAtRedshirt() {
-	showText(TX_SIN5N002);
+	showDescription(TX_SIN5N002);
 }
 
 void Room::sins5LookAtLight() {
-	showText(TX_SIN5N007);
+	showDescription(TX_SIN5N007);
 }
 
 void Room::sins5LookAtLeftComputer() {
-	showText(TX_SIN5N010);
+	showDescription(TX_SIN5N010);
 }
 
 void Room::sins5LookAtMiddleComputer() {
-	showText(TX_SIN5N008);
+	showDescription(TX_SIN5N008);
 }
 
 void Room::sins5LookAtRightComputer() {
-	showText(TX_SIN5N009);
+	showDescription(TX_SIN5N009);
 }
 
 void Room::sins5LookAtMissile() {
-	showText(TX_SIN5N003);
+	showDescription(TX_SIN5N003);
 }
 
 void Room::sins5LookAtNorthDoor() {
-	showText(TX_SIN5N011);
+	showDescription(TX_SIN5N011);
 }
 
 void Room::sins5UseMedkitOnCrewman() {

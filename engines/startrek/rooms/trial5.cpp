@@ -198,7 +198,7 @@ void Room::trial5VlictAppeared() {
 		TX_TRI5_003, TX_TRI5_008, TX_TRI5_006,
 		TX_BLANK
 	};
-	int choice = showText(choices);
+	int choice = showMultipleTexts(choices);
 
 	if (choice == 0) { // "Do you want me to help you?"
 		showText(TX_SPEAKER_VLICT, TX_TRI5_023);
@@ -209,7 +209,7 @@ void Room::trial5VlictAppeared() {
 			TX_TRI5_009, TX_TRI5_007,
 			TX_BLANK
 		};
-		choice = showText(choices2);
+		choice = showMultipleTexts(choices2);
 
 		if (choice == 0)
 			choice = 1;
@@ -332,27 +332,27 @@ void Room::trial5GetBlueGem3() {
 }
 
 void Room::trial5LookAtKirk() {
-	showText(TX_TRI5N005);
+	showDescription(TX_TRI5N005);
 }
 
 void Room::trial5LookAtSpock() {
-	showText(TX_TRI5N009);
+	showDescription(TX_TRI5N009);
 }
 
 void Room::trial5LookAtMccoy() {
-	showText(TX_TRI5N008);
+	showDescription(TX_TRI5N008);
 }
 
 void Room::trial5LookAtRedshirt() {
-	showText(TX_TRI5N010);
+	showDescription(TX_TRI5N010);
 }
 
 void Room::trial5LookAtBeam() {
-	showText(TX_TRI5N002);
+	showDescription(TX_TRI5N002);
 }
 
 void Room::trial5LookAtInterface() {
-	showText(TX_TRI5N004);
+	showDescription(TX_TRI5N004);
 }
 
 void Room::trial5UseSTricorderOnInterface() {
@@ -364,43 +364,43 @@ void Room::trial5UseMTricorderOnInterface() {
 }
 
 void Room::trial5LookAtRedGem1() {
-	showText(TX_TRI5N013);
+	showDescription(TX_TRI5N013);
 }
 
 void Room::trial5LookAtRedGem2() {
-	showText(TX_TRI5N014);
+	showDescription(TX_TRI5N014);
 }
 
 void Room::trial5LookAtRedGem3() {
-	showText(TX_TRI5N015);
+	showDescription(TX_TRI5N015);
 }
 
 void Room::trial5LookAtGreenGem1() {
-	showText(TX_TRI5N019);
+	showDescription(TX_TRI5N019);
 }
 
 void Room::trial5LookAtGreenGem2() {
-	showText(TX_TRI5N020);
+	showDescription(TX_TRI5N020);
 }
 
 void Room::trial5LookAtGreenGem3() {
-	showText(TX_TRI5N021);
+	showDescription(TX_TRI5N021);
 }
 
 void Room::trial5LookAtBlueGem1() {
-	showText(TX_TRI5N016);
+	showDescription(TX_TRI5N016);
 }
 
 void Room::trial5LookAtBlueGem2() {
-	showText(TX_TRI5N017);
+	showDescription(TX_TRI5N017);
 }
 
 void Room::trial5LookAtBlueGem3() {
-	showText(TX_TRI5N018);
+	showDescription(TX_TRI5N018);
 }
 
 void Room::trial5LookAtHole() {
-	showText(TX_TRI5N006);
+	showDescription(TX_TRI5N006);
 }
 
 void Room::trial5TalkToKirk() {
@@ -420,22 +420,22 @@ void Room::trial5TalkToRedshirt() {
 }
 
 void Room::trial5UsePhaser() {
-	showText(TX_TRI5N011);
+	showDescription(TX_TRI5N011);
 }
 
 void Room::trial5UseMTricorderAnywhere() {
 	// BUGFIX: Original had Spock doing the animation, not Mccoy
 	mccoyScan(DIR_S, -1, true);
-	showText(TX_TRI5N012);
+	showDescription(TX_TRI5N012);
 }
 
 void Room::trial5UseSTricorderAnywhere() {
 	spockScan(DIR_S, -1, true);
-	showText(TX_TRI5N012);
+	showDescription(TX_TRI5N012);
 }
 
 void Room::trial5UseCommunicator() {
-	showText(TX_TRI5N007);
+	showDescription(TX_TRI5N007);
 }
 
 void Room::trial5UseGemOnHole(int16 item, int16 object, int16 hole) {

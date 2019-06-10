@@ -80,23 +80,23 @@ void Room::love5UseStunPhaserOnPreax() {
 }
 
 void Room::love5LookAtKirk() {
-	showText(TX_LOV5N004);
+	showDescription(TX_LOV5N004);
 }
 
 void Room::love5LookAtSpock() {
-	showText(TX_LOV5N005);
+	showDescription(TX_LOV5N005);
 }
 
 void Room::love5LookAtMccoy() {
-	showText(TX_LOV5N002);
+	showDescription(TX_LOV5N002);
 }
 
 void Room::love5LookAtRedshirt() {
-	showText(TX_LOV5N003);
+	showDescription(TX_LOV5N003);
 }
 
 void Room::love5LookAnywhere() {
-	showText(TX_LOV5N008);
+	showDescription(TX_LOV5N008);
 
 	// There is an unused version of this function, which states "This is Dr. Marcus's
 	// quarters, and there are hostages and 4 romulans here". That description doesn't
@@ -109,24 +109,24 @@ void Room::love5LookAnywhere() {
 }
 
 void Room::love5LookAtDevice() {
-	showText(TX_LOV5N013);
+	showDescription(TX_LOV5N013);
 	showText(TX_SPEAKER_MCCOY, TX_LOV5_028);
 	showText(TX_SPEAKER_MARCUS, TX_LOV5_044);
 }
 
 void Room::love5LookAtConsole() {
-	showText(TX_LOV5N016);
+	showDescription(TX_LOV5N016);
 	showText(TX_SPEAKER_MCCOY, TX_LOV5_031);
 	showText(TX_SPEAKER_MARCUS, TX_LOV5_050);
 }
 
 void Room::love5LookAtDrMarcus() {
 	if (_awayMission->love.freedMarcusAndCheever)
-		showText(TX_LOV5N001);
+		showDescription(TX_LOV5N001);
 	else {
 		// BUGFIX: originally played audio "LOV5N001", which is only the first sentence of
 		// what should be spoken.
-		showText(TX_LOV5N015);
+		showDescription(TX_LOV5N015);
 
 		showText(TX_SPEAKER_MARCUS, TX_LOV5_046);
 	}
@@ -134,9 +134,9 @@ void Room::love5LookAtDrMarcus() {
 
 void Room::love5LookAtDrCheever() {
 	if (_awayMission->love.freedMarcusAndCheever)
-		showText(TX_LOV5N000);
+		showDescription(TX_LOV5N000);
 	else {
-		showText(TX_LOV5N014);
+		showDescription(TX_LOV5N014);
 		showText(TX_SPEAKER_CHEEVER, TX_LOV5_057);
 		if (!_awayMission->redshirtDead) {
 			showText(TX_SPEAKER_FERRIS, TX_LOV5_054);
@@ -147,15 +147,15 @@ void Room::love5LookAtDrCheever() {
 
 void Room::love5LookAtPreax() {
 	if (_awayMission->love.preaxCured)
-		showText(TX_LOV5N011);
+		showDescription(TX_LOV5N011);
 	else
-		showText(TX_LOV5N012);
+		showDescription(TX_LOV5N012);
 }
 
 void Room::love5TalkToPreax() {
 	if (_awayMission->love.preaxCured) {
 		if (!_awayMission->love.freedMarcusAndCheever)
-			showText(TX_LOV5N006);
+			showDescription(TX_LOV5N006);
 		else {
 			const TextRef choices[] = {
 				TX_SPEAKER_KIRK,
@@ -166,7 +166,7 @@ void Room::love5TalkToPreax() {
 			};
 
 			showText(TX_SPEAKER_PREAX, TX_LOV5_059);
-			int choice = showText(choices);
+			int choice = showMultipleTexts(choices);
 
 			switch (choice) {
 			case 1:
@@ -186,7 +186,7 @@ void Room::love5TalkToPreax() {
 				showText(TX_SPEAKER_PREAX, TX_LOV5_060);
 				break;
 			default:
-				showText(TX_DIALOG_ERROR);
+				showDescription(TX_DIALOG_ERROR);
 				break;
 			}
 
@@ -316,7 +316,7 @@ void Room::love5UseMedkitOnPreax() {
 
 void Room::love5UseWaterOnPreax() {
 	if (_awayMission->love.preaxCured) {
-		showText(TX_LOV5N018);
+		showDescription(TX_LOV5N018);
 		showText(TX_SPEAKER_MCCOY, TX_LOV5_029);
 		showText(TX_SPEAKER_KIRK,  TX_LOV5_007);
 		if (!_awayMission->love.gotPointsForHydratingPreax) {
@@ -330,7 +330,7 @@ void Room::love5UseWaterOnPreax() {
 			// BUGFIX: original didn't have correct speaker. Also, you shouldn't lose your
 			// water since it's not actually used here, so a "loseItem" line was removed.
 		} else {
-			showText(TX_LOV5N017);
+			showDescription(TX_LOV5N017);
 			if (!_awayMission->redshirtDead) {
 				showText(TX_SPEAKER_FERRIS, TX_LOV5_053);
 				showText(TX_SPEAKER_KIRK,   TX_LOV5_005);
@@ -366,7 +366,7 @@ void Room::love5CuredPreax() {
 	walkCrewman(OBJECT_MCCOY, 0xdc, 0xc3);
 	_awayMission->crewDirectionsAfterWalk[OBJECT_MCCOY] = DIR_E;
 
-	showText(TX_LOV5N007);
+	showDescription(TX_LOV5N007);
 
 	// BUG: says he's dehydrated, but doesn't check whether you've given water to him
 	// already (like it does in LOVE4).

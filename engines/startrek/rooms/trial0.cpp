@@ -117,7 +117,7 @@ void Room::trial0ReachedRoomCenter() {
 		TX_TRI0_019, TX_TRI0_016, TX_TRI0_021,
 		TX_BLANK
 	};
-	showText(choices1);
+	showMultipleTexts(choices1);
 
 	showText(TX_SPEAKER_VLICT, TX_TRI0_054);
 	showText(TX_SPEAKER_KIRK,  TX_TRI0_004);
@@ -128,7 +128,7 @@ void Room::trial0ReachedRoomCenter() {
 		TX_TRI0_011, TX_TRI0_018, TX_TRI0_015,
 		TX_BLANK
 	};
-	int choice = showText(choices2);
+	int choice = showMultipleTexts(choices2);
 
 	if (choice == 0) { // Kirk intervenes as a warrior
 		showText(TX_SPEAKER_VLICT, TX_TRI0_043);
@@ -153,7 +153,7 @@ void Room::trial0ReachedRoomCenter() {
 			TX_TRI0_023, TX_TRI0_006, TX_TRI0_010,
 			TX_BLANK
 		};
-		choice = showText(choices3);
+		choice = showMultipleTexts(choices3);
 
 		if (choice == 0 || choice == 1) {
 			showText(TX_SPEAKER_VLICT, TX_TRI0_052);
@@ -163,7 +163,7 @@ void Room::trial0ReachedRoomCenter() {
 				TX_TRI0_017, TX_TRI0_020, TX_TRI0_008,
 				TX_BLANK
 			};
-			choice = showText(choices4);
+			choice = showMultipleTexts(choices4);
 
 			if (choice == 0 || choice == 1) {
 				showText(TX_SPEAKER_VLICT, TX_TRI0_057);
@@ -175,7 +175,7 @@ void Room::trial0ReachedRoomCenter() {
 					TX_TRI0_009, TX_TRI0_014, TX_TRI0_013,
 					TX_BLANK
 				};
-				choice = showText(choices5);
+				choice = showMultipleTexts(choices5);
 
 				if (choice == 0 || choice == 1) {
 					showText(TX_SPEAKER_VLICT, TX_TRI0_055);
@@ -205,43 +205,43 @@ void Room::trial0ReachedRoomCenter() {
 }
 
 void Room::trial0LookAtWindow() {
-	showText(TX_TRI0N007);
+	showDescription(TX_TRI0N007);
 }
 
 void Room::trial0LookAtVlict() {
-	showText(TX_TRI0N001);
+	showDescription(TX_TRI0N001);
 }
 
 void Room::trial0LookAtGuard() {
-	showText(TX_TRI0N000);
+	showDescription(TX_TRI0N000);
 }
 
 void Room::trial0LookAtBench() {
-	showText(TX_TRI0N006);
+	showDescription(TX_TRI0N006);
 }
 
 void Room::trial0LookAtSeal() {
-	showText(TX_TRI0N008);
+	showDescription(TX_TRI0N008);
 }
 
 void Room::trial0LookAtKirk() {
-	showText(TX_TRI0N004);
+	showDescription(TX_TRI0N004);
 }
 
 void Room::trial0LookAtSpock() {
-	showText(TX_TRI0N005);
+	showDescription(TX_TRI0N005);
 }
 
 void Room::trial0LookAtMccoy() {
-	showText(TX_TRI0N002);
+	showDescription(TX_TRI0N002);
 }
 
 void Room::trial0LookAtRedshirt() {
-	showText(TX_TRI0N003);
+	showDescription(TX_TRI0N003);
 }
 
 void Room::trial0LookAtQuetzecoatl() {
-	showText(TX_TRI0N009);
+	showDescription(TX_TRI0N009);
 }
 
 void Room::trial0TalkToVlict() {

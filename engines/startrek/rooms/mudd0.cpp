@@ -92,42 +92,42 @@ void Room::mudd0UseCommunicator() {
 void Room::mudd0LookAtFoodBox() {
 	_awayMission->crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_S;
 	loadActorStandAnim(OBJECT_KIRK);
-	showText(TX_MUD0N012);
+	showDescription(TX_MUD0N012);
 }
 
 void Room::mudd0LookAtComponentBox() {
 	_awayMission->crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_S;
 	loadActorStandAnim(OBJECT_KIRK);
-	showText(TX_MUD0N013);
+	showDescription(TX_MUD0N013);
 }
 
 void Room::mudd0LookAnywhere() {
-	showText(TX_MUD0N019);
+	showDescription(TX_MUD0N019);
 }
 
 void Room::mudd0LookAtMemoryDiskBox() {
 	_awayMission->crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_N;
 	loadActorStandAnim(OBJECT_KIRK);
-	showText(TX_MUD0N010);
+	showDescription(TX_MUD0N010);
 }
 
 void Room::mudd0LookAtDegrimerBox() {
 	_awayMission->crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_W;
 	loadActorStandAnim(OBJECT_KIRK);
-	showText(TX_MUD0N008);
+	showDescription(TX_MUD0N008);
 }
 
 void Room::mudd0LookAtLense() {
 	_awayMission->crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_E;
 	loadActorStandAnim(OBJECT_KIRK);
-	showText(TX_MUD0N014);
+	showDescription(TX_MUD0N014);
 }
 
 void Room::mudd0UseSTricorderAnywhere() {
 	// Narrator says something, not Spock (so we don't use "spockScan" function)
 	loadActorAnim2(OBJECT_SPOCK, "sscans", -1, -1, 0);
 	playSoundEffectIndex(SND_TRICORDER);
-	showText(TX_MUD0N015);
+	showDescription(TX_MUD0N015);
 }
 
 void Room::mudd0UseMTricorderAnywhere() {
@@ -136,7 +136,7 @@ void Room::mudd0UseMTricorderAnywhere() {
 	// above.
 	loadActorAnim2(OBJECT_MCCOY, "mscans", -1, -1, 0);
 	playSoundEffectIndex(SND_TRICORDER);
-	showText(TX_MUD0N015);
+	showDescription(TX_MUD0N015);
 }
 
 void Room::mudd0UseSTricorderOnMemoryDiskBox() {
@@ -148,7 +148,7 @@ void Room::mudd0UseSTricorderOnDegrimerBox() {
 	_awayMission->crewDirectionsAfterWalk[OBJECT_SPOCK] = DIR_W;
 	loadActorAnim2(OBJECT_SPOCK, "sscanw", -1, -1, 0);
 	playSoundEffectIndex(SND_TRICORDER);
-	showText(TX_MUD0N000);
+	showDescription(TX_MUD0N000);
 }
 
 void Room::mudd0UseMTricorderOnLense() {
@@ -160,7 +160,7 @@ void Room::mudd0UseMTricorderOnLense() {
 
 void Room::mudd0GetLense() {
 	if (_awayMission->mudd.gotLense)
-		showText(TX_MUD0N016);
+		showDescription(TX_MUD0N016);
 	else {
 		_awayMission->mudd.gotLense = true;
 		_awayMission->mudd.missionScore++;
@@ -173,7 +173,7 @@ void Room::mudd0GetLense() {
 
 void Room::mudd0GetMemoryDisk() {
 	if (_awayMission->mudd.gotMemoryDisk)
-		showText(TX_MUD0N016);
+		showDescription(TX_MUD0N016);
 	else {
 		_awayMission->mudd.gotMemoryDisk = true;
 		_awayMission->mudd.missionScore++;
@@ -185,7 +185,7 @@ void Room::mudd0GetMemoryDisk() {
 
 void Room::mudd0GetDegrimer() {
 	if (_awayMission->mudd.gotDegrimer)
-		showText(TX_MUD0N016);
+		showDescription(TX_MUD0N016);
 	else {
 		_awayMission->mudd.gotDegrimer = true;
 		_awayMission->mudd.missionScore++;
@@ -203,7 +203,7 @@ void Room::mudd0PickedUpLense() {
 
 void Room::mudd0PickedUpItem() {
 	_awayMission->disableInput = false; // NOTE: this was never set to true
-	showText(TX_LOV1N007);
+	showDescription(TX_LOV1N007);
 }
 
 
@@ -236,23 +236,23 @@ void Room::mudd0UseMedkit() {
 }
 
 void Room::mudd0LookAtKirk() {
-	showText(TX_MUD0N004);
+	showDescription(TX_MUD0N004);
 }
 
 void Room::mudd0LookAtSpock() {
-	showText(TX_MUD0N007);
+	showDescription(TX_MUD0N007);
 }
 
 void Room::mudd0LookAtMccoy() {
-	showText(TX_MUD0N001);
+	showDescription(TX_MUD0N001);
 }
 
 void Room::mudd0LookAtRedshirt() {
-	showText(TX_MUD0N005);
+	showDescription(TX_MUD0N005);
 }
 
 void Room::mudd0LookAtMudd() {
-	showText(TX_MUD0N003);
+	showDescription(TX_MUD0N003);
 }
 
 void Room::mudd0TalkToKirk() {

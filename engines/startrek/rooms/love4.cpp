@@ -100,19 +100,19 @@ void Room::love4UseStunPhaserOnRomulan() {
 }
 
 void Room::love4LookAnywhere() {
-	showText(TX_LOV4N009);
+	showDescription(TX_LOV4N009);
 }
 
 void Room::love4LookAtLadder() {
-	showText(TX_LOV4N010);
+	showDescription(TX_LOV4N010);
 }
 
 void Room::love4LookAtDoor() {
-	showText(TX_LOV4N008);
+	showDescription(TX_LOV4N008);
 }
 
 void Room::love4LookAtKirk() {
-	showText(TX_LOV4N002);
+	showDescription(TX_LOV4N002);
 }
 
 void Room::love4LookAtMccoy() {
@@ -121,22 +121,22 @@ void Room::love4LookAtMccoy() {
 	// is thinking it.
 	// Not sure if this was an intentional decision, but there is another unused audio
 	// file which matches with the text more accurately, so I'm using that instead.
-	showText(TX_LOV4N012);
+	showDescription(TX_LOV4N012);
 }
 
 void Room::love4LookAtSpock() {
-	showText(TX_LOV4N003);
+	showDescription(TX_LOV4N003);
 }
 
 void Room::love4LookAtRedshirt() {
-	showText(TX_LOV4N001);
+	showDescription(TX_LOV4N001);
 }
 
 void Room::love4LookAtRomulan() {
 	if (!_awayMission->love.romulansCured)
-		showText(TX_LOV4N006);
+		showDescription(TX_LOV4N006);
 	else
-		showText(TX_LOV4N011);
+		showDescription(TX_LOV4N011);
 }
 
 void Room::love4TalkToKirk() {
@@ -163,7 +163,7 @@ void Room::love4TalkToSpock() {
 
 void Room::love4TalkToRomulan() {
 	if (_awayMission->love.romulansCured)
-		showText(TX_LOV4N007); // BUGFIX: original didn't play audio
+		showDescription(TX_LOV4N007); // BUGFIX: original didn't play audio
 }
 
 void Room::love4UseMTricorderOnRomulan() {
@@ -233,7 +233,7 @@ void Room::love4MccoyReachedRomulan1() {
 void Room::love4MccoyCuredRomulan1() {
 	loadActorAnim2(OBJECT_ROMULAN_1, "s3r5r1", 0x36, 0xb3, 0);
 
-	showText(TX_LOV4N005);
+	showDescription(TX_LOV4N005);
 	if (!_roomVar.love.gaveWaterToRomulans)
 		showText(TX_SPEAKER_MCCOY, TX_LOV4_023);
 
@@ -250,7 +250,7 @@ void Room::love4UseWaterOnRomulan() {
 	else {
 		_roomVar.love.gaveWaterToRomulans = true;
 		if (_awayMission->love.romulansCured) {
-			showText(TX_LOV4N013);
+			showDescription(TX_LOV4N013);
 			showText(TX_SPEAKER_MCCOY, TX_LOV4_026);
 			showText(TX_SPEAKER_KIRK, TX_LOV4_001);
 			if (!_awayMission->love.gotPointsForHydratingRomulans) {
@@ -273,7 +273,7 @@ void Room::love4UseWaterOnRomulan() {
 		if (_awayMission->love.romulansUnconsciousFromVirus)
 			showText(TX_SPEAKER_MCCOY, TX_LOV4_009);
 		else {
-			showText(TX_LOV4N004);
+			showDescription(TX_LOV4N004);
 			if (!_awayMission->redshirtDead) {
 				showText(TX_SPEAKER_FERRIS, TX_LOV4_029);
 				showText(TX_SPEAKER_KIRK,   TX_LOV4_004);

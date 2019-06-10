@@ -159,54 +159,54 @@ void Room::veng8SparkAnim2Done() {
 }
 
 void Room::veng8LookAtPowerPack() {
-	showText(TX_VEN8N004);
+	showDescription(TX_VEN8N004);
 }
 
 void Room::veng8LookAtDoor() {
-	showText(TX_VEN8N009);
+	showDescription(TX_VEN8N009);
 }
 
 void Room::veng8LookAtPowerCircuits() {
-	showText(TX_VEN8N006);
+	showDescription(TX_VEN8N006);
 }
 
 void Room::veng8LookAtControls() {
-	showText(TX_VEN8N007);
+	showDescription(TX_VEN8N007);
 }
 
 void Room::veng8LookAtDeadGuy() {
-	showText(TX_VEN8N003); // Unused, since the dead guy object isn't drawn
+	showDescription(TX_VEN8N003); // Unused, since the dead guy object isn't drawn
 }
 
 void Room::veng8LookAtSlider() {
-	showText(TX_VEN8N008);
+	showDescription(TX_VEN8N008);
 }
 
 void Room::veng8LookAtKirk() {
-	showText(TX_VEN8N001);
+	showDescription(TX_VEN8N001);
 }
 
 void Room::veng8LookAtSpock() {
 	// NOTE: Potential alternative is VEN8N011
-	showText(TX_VEN5N002);
+	showDescription(TX_VEN5N002);
 }
 
 void Room::veng8LookAtMccoy() {
 	// NOTE: Potential alternative is VEN8N002 (though it doesn't fit very well with this
 	// room, so perhaps the circumstances of this room changed in development)
-	showText(TX_VEN5N004);
+	showDescription(TX_VEN5N004);
 }
 
 void Room::veng8LookAtRedshirt() {
-	showText(TX_VEN8N000);
+	showDescription(TX_VEN8N000);
 }
 
 void Room::veng8LookAtTransporter() {
-	showText(TX_VEN8N010);
+	showDescription(TX_VEN8N010);
 }
 
 void Room::veng8LookAnywhere() {
-	showText(TX_VEN8N005);
+	showDescription(TX_VEN8N005);
 }
 
 void Room::veng8TalkToKirk() {

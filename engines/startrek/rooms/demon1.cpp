@@ -197,7 +197,7 @@ void Room::demon1KlingonFinishedAimingWeapon() {
 }
 
 void Room::demon1KirkShot() {
-	showText(0, true);
+	showDescription(0, true);
 	showGameOverMenu();
 }
 
@@ -239,7 +239,7 @@ void Room::demon1KlingonDropsHand() {
 	loadActorAnim(13, "klghnd", 0x10b, 0x8e, 0);
 	_awayMission->disableInput = 0;
 	_awayMission->timers[1] = 0;
-	showText(20, true);
+	showDescription(20, true);
 
 	if (_awayMission->crewDownBitset & (1 << OBJECT_REDSHIRT))
 		return;
@@ -433,79 +433,79 @@ void Room::demon1PickedUpHand() {
 void Room::demon1FinishedGettingHand() {
 
 	if (_awayMission->demon.tookKlingonHand)
-		showText(5, true);
+		showDescription(5, true);
 	else {
 		_awayMission->demon.tookKlingonHand = true;
 		giveItem(OBJECT_IHAND);
-		showText(7, true);
+		showDescription(7, true);
 	}
 }
 
 void Room::demon1LookAtKlingon() {
-	showText(4, true);
+	showDescription(4, true);
 }
 
 void Room::demon1LookAtCattails() {
-	showText(18, true);
+	showDescription(18, true);
 }
 
 void Room::demon1LookAtTulips() {
-	showText(10, true);
+	showDescription(10, true);
 }
 
 void Room::demon1LookAtPods() {
-	showText(19, true);
+	showDescription(19, true);
 }
 
 void Room::demon1LookAtFerns() {
-	showText(9, true);
+	showDescription(9, true);
 }
 
 void Room::demon1LookAtStream() {
-	showText(11, true);
+	showDescription(11, true);
 }
 
 void Room::demon1LookAtMine() {
-	showText(21, true);
+	showDescription(21, true);
 }
 
 void Room::demon1LookAtMountain() {
-	showText(16, true);
+	showDescription(16, true);
 }
 
 void Room::demon1LookAtHand() {
-	showText(23, true);
+	showDescription(23, true);
 }
 void Room::demon1LookAnywhere() {
-	showText(17, true);
+	showDescription(17, true);
 }
 
 void Room::demon1LookAtKirk() {
 	if (_awayMission->crewDownBitset & (1 << OBJECT_KIRK))
-		showText(12, true);
+		showDescription(12, true);
 	else
-		showText(3, true);
+		showDescription(3, true);
 }
 
 void Room::demon1LookAtSpock() {
 	if (_awayMission->crewDownBitset & (1 << OBJECT_SPOCK))
-		showText(15, true);
+		showDescription(15, true);
 	else
-		showText(8, true);
+		showDescription(8, true);
 }
 
 void Room::demon1LookAtMcCoy() {
 	if (_awayMission->crewDownBitset & (1 << OBJECT_MCCOY))
-		showText(13, true);
+		showDescription(13, true);
 	else
-		showText(1, true);
+		showDescription(1, true);
 }
 
 void Room::demon1LookAtRedshirt() {
 	if (_awayMission->crewDownBitset & (1 << OBJECT_REDSHIRT))
-		showText(14, true);
+		showDescription(14, true);
 	else
-		showText(2, true);
+		showDescription(2, true);
 }
 
 void Room::demon1TalkToKirk() {

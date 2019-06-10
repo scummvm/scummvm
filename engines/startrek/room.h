@@ -188,8 +188,8 @@ private:
 	 * Cmd 0x03
 	 */
 	int showRoomSpecificText(const char **textAddr);
-	int showText(const TextRef *text, bool fromRDF = false, bool lookWithTalker = false);
-	int showText(TextRef text, bool fromRDF = false, bool lookWithTalker = false);
+	int showMultipleTexts(const TextRef *text, bool fromRDF = false, bool lookWithTalker = false);
+	int showDescription(TextRef text, bool fromRDF = false, bool lookWithTalker = false);
 	int showText(TextRef speaker, TextRef text, bool fromRDF = false, bool lookWithTalker = false);
 
 	/**

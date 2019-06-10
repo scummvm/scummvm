@@ -158,69 +158,69 @@ void Room::love1ReachedDoor2() {
 }
 
 void Room::love1LookAtLaser() {
-	showText(TX_LOV1N000);
+	showDescription(TX_LOV1N000);
 }
 
 void Room::love1LookAtKirk() {
-	showText(TX_LOV1N003);
+	showDescription(TX_LOV1N003);
 }
 
 void Room::love1LookAtSpock() {
-	showText(TX_LOV1N004);
+	showDescription(TX_LOV1N004);
 }
 
 void Room::love1LookAtMccoy() {
-	showText(TX_LOV1N001);
+	showDescription(TX_LOV1N001);
 }
 
 void Room::love1LookAtRedshirt() {
-	showText(TX_LOV1N002);
+	showDescription(TX_LOV1N002);
 }
 
 void Room::love1LookAnywhere() {
-	showText(TX_LOV1N019);
+	showDescription(TX_LOV1N019);
 }
 
 void Room::love1LookAtNozzle() {
-	showText(TX_LOV1N022);
+	showDescription(TX_LOV1N022);
 }
 
 void Room::love1LookAtLadder() {
-	showText(TX_LOV1N021);
+	showDescription(TX_LOV1N021);
 }
 
 void Room::love1LookAtDoor1Or2() {
-	showText(TX_LOV1N020);
+	showDescription(TX_LOV1N020);
 }
 
 void Room::love1LookAtDoor3() {
-	showText(TX_LOV1N017);
+	showDescription(TX_LOV1N017);
 }
 
 void Room::love1LookAtDistillator() {
-	showText(TX_LOV1N016);
+	showDescription(TX_LOV1N016);
 }
 
 void Room::love1LookAtChamber() {
 	if (_awayMission->love.chamberHasCure)
-		showText(TX_LOV1N013);
+		showDescription(TX_LOV1N013);
 	else
-		showText(TX_LOV1N014);
+		showDescription(TX_LOV1N014);
 }
 
 void Room::love1LookAtReplicator() {
-	showText(TX_LOV1N015);
+	showDescription(TX_LOV1N015);
 }
 
 void Room::love1LookAtFreezer() {
 	if (_awayMission->love.freezerOpen)
-		showText(TX_LOV1N023);
+		showDescription(TX_LOV1N023);
 	else
-		showText(TX_LOV1N018);
+		showDescription(TX_LOV1N018);
 }
 
 void Room::love1LookAtDishes() {
-	showText(TX_LOV1N012);
+	showDescription(TX_LOV1N012);
 }
 
 void Room::love1TalkToKirk() {
@@ -284,17 +284,17 @@ void Room::love1KirkReachedFreezer() {
 	if (_awayMission->love.freezerOpen)
 		loadActorAnim2(OBJECT_KIRK, "kusehw", -1, -1, 9);
 	else
-		showText(TX_LOV1N010);
+		showDescription(TX_LOV1N010);
 }
 
 void Room::love1KirkGotVirusCulture() {
 	giveItem(OBJECT_IDISHES);
-	showText(TX_LOV1N006);
+	showDescription(TX_LOV1N006);
 }
 
 void Room::love1GetFromChamber() {
 	if (!_awayMission->love.chamberHasDish)
-		showText(TX_LOV1N009);
+		showDescription(TX_LOV1N009);
 	else
 		walkCrewman(OBJECT_KIRK, 0xb5, 0x8c, 8);
 }
@@ -306,14 +306,14 @@ void Room::love1KirkReachedChamber() {
 void Room::love1KirkGotCureSample() {
 	if (_awayMission->love.chamberHasCure) {
 		giveItem(OBJECT_ISAMPLE);
-		showText(TX_LOV1N035);
+		showDescription(TX_LOV1N035);
 
 		// BUGFIX: after removing the cure, unset this variable.
 		// Otherwise, any normal dish inserted afterward automagically becomes a cure.
 		_awayMission->love.chamberHasCure = false;
 	} else {
 		giveItem(OBJECT_IDISHES);
-		showText(TX_LOV1N006);
+		showDescription(TX_LOV1N006);
 	}
 
 	loadActorStandAnim(OBJECT_DISH_IN_CHAMBER);
@@ -328,7 +328,7 @@ void Room::love1GetFromNozzle() {
 
 void Room::love1KirkReachedNozzleToGet() {
 	if (_awayMission->love.bottleInNozzle == 0)
-		showText(TX_LOV1N011);
+		showDescription(TX_LOV1N011);
 	else
 		loadActorAnim2(OBJECT_KIRK, "kusemn", -1, -1, 11);
 }
@@ -348,13 +348,13 @@ void Room::love1KirkGotBottleFromNozzle() {
 		giveItem(OBJECT_IRLG);
 		break;
 	default:
-		showText(TX_DIALOG_ERROR);
+		showDescription(TX_DIALOG_ERROR);
 		break;
 	}
 
 	_awayMission->love.bottleInNozzle = BOTTLETYPE_NONE;
 	loadActorStandAnim(OBJECT_BOTTLE);
-	showText(TX_LOV1N007);
+	showDescription(TX_LOV1N007);
 	_roomVar.love.itemInNozzle = 0;
 }
 
@@ -491,7 +491,7 @@ void Room::love1KirkReachedDistillator() {
 
 void Room::love1KirkGotPolyberylcarbonate() {
 	// Result of using insulation on distillator
-	showText(TX_LOV1N034);
+	showDescription(TX_LOV1N034);
 	if (!_awayMission->love.gotPolyberylcarbonate) {
 		_awayMission->love.gotPolyberylcarbonate = true;
 		_awayMission->love.missionScore++;
@@ -561,7 +561,7 @@ void Room::love1ReachedFreezerWithArbitraryItem() {
 }
 
 void Room::love1FinishedUsingArbitraryItemOnFreezer() {
-	showText(TX_LOV1N008);
+	showDescription(TX_LOV1N008);
 }
 
 void Room::love1UseAnythingOnReplicator() {

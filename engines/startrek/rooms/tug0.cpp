@@ -48,9 +48,9 @@ void Room::tug0Tick1() {
 
 void Room::tug0LookAtEngineer() {
 	if (_awayMission->tug.engineerConscious)
-		showText(TX_TUG0N002);
+		showDescription(TX_TUG0N002);
 	else
-		showText(TX_TUG0N014);
+		showDescription(TX_TUG0N014);
 }
 
 void Room::tug0GetEngineer() {
@@ -59,9 +59,9 @@ void Room::tug0GetEngineer() {
 
 void Room::tug0LookAtControls() {
 	if (_awayMission->tug.transporterRepaired)
-		showText(TX_TUG0N012);
+		showDescription(TX_TUG0N012);
 	else
-		showText(TX_TUG0N001);
+		showDescription(TX_TUG0N001);
 }
 
 void Room::tug0UseSpockOnControls() {
@@ -208,15 +208,15 @@ void Room::tug0KirkGotTransmogrifier() {
 
 void Room::tug0LookAtToolbox() {
 	if (_awayMission->tug.gotTransmogrifier)
-		showText(TX_TUG0N008);
+		showDescription(TX_TUG0N008);
 	else
-		showText(TX_TUG0N000);
+		showDescription(TX_TUG0N000);
 }
 
 void Room::tug0UsePhaserOnWelder() {
 	loseItem(OBJECT_IPWE);
 	giveItem(OBJECT_IPWF);
-	showText(TX_TUG0N006);
+	showDescription(TX_TUG0N006);
 
 	// BUGFIX: this following line didn't exist, despite it existing in TUG1; meaning this
 	// was supposed to give points, but it only did in a specific room.
@@ -224,7 +224,7 @@ void Room::tug0UsePhaserOnWelder() {
 }
 
 void Room::tug0UseWelderOnWireScraps() {
-	showText(TX_TUG0N010);
+	showDescription(TX_TUG0N010);
 	loseItem(OBJECT_IWIRSCRP);
 }
 
@@ -387,27 +387,27 @@ void Room::tug0WalkToDoor() {
 }
 
 void Room::tug0LookAtKirk() {
-	showText(TX_TUG0N003);
+	showDescription(TX_TUG0N003);
 }
 
 void Room::tug0LookAtSpock() {
-	showText(TX_TUG0N007);
+	showDescription(TX_TUG0N007);
 }
 
 void Room::tug0LookAtMccoy() {
-	showText(TX_TUG0N005);
+	showDescription(TX_TUG0N005);
 }
 
 void Room::tug0LookAtRedshirt() {
-	showText(TX_TUG0N004);
+	showDescription(TX_TUG0N004);
 }
 
 void Room::tug0LookAtTransporter() {
-	showText(TX_TUG0N013);
+	showDescription(TX_TUG0N013);
 }
 
 void Room::tug0LookAtDoor() {
-	showText(TX_TUG0N011);
+	showDescription(TX_TUG0N011);
 }
 
 void Room::tug0TalkToKirk() {
@@ -444,7 +444,7 @@ void Room::tug0UseCommunicator() {
 }
 
 void Room::tug0LookAnywhere() {
-	showText(TX_TUG0N009);
+	showDescription(TX_TUG0N009);
 }
 
 void Room::tug0UseSTricorderAnywhere() {

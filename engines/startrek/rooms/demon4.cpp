@@ -60,7 +60,7 @@ void Room::demon4FinishedAnimation1() {
 void Room::demon4FinishedAnimation2() {
 	if (!_roomVar.demon.cd) {
 		_roomVar.demon.cd = true;
-		showText(11, true);
+		showDescription(11, true);
 	}
 
 	showGameOverMenu();
@@ -164,7 +164,7 @@ void Room::demon4KirkReachedSecurityEquipment() {
 
 void Room::demon4KirkFinishedUsingSecurityEquipment() {
 	_awayMission->disableInput = false;
-	showText(14, true);
+	showDescription(14, true);
 }
 
 void Room::demon4UseMetalOnNauian() {
@@ -187,7 +187,7 @@ void Room::demon4KirkReachedNauianWithSkull() {
 	showText(TX_SPEAKER_NAUIAN, 36, true);
 
 	const TextRef choices[] = { TX_SPEAKER_KIRK, 6, 3, 5, TX_BLANK };
-	int choice = showText(choices, true);
+	int choice = showMultipleTexts(choices, true);
 
 	switch (choice) {
 	case 0:
@@ -203,7 +203,7 @@ void Room::demon4KirkReachedNauianWithSkull() {
 		break;
 
 	default:
-		showText(TX_DIALOG_ERROR);
+		showDescription(TX_DIALOG_ERROR);
 		break;
 	}
 }
@@ -228,7 +228,7 @@ void Room::demon4TalkToNauian() {
 		showText(TX_SPEAKER_NAUIAN, 44, true);
 
 		const TextRef choices[] = { TX_SPEAKER_KIRK, 2, 4, 9, TX_BLANK };
-		int choice = showText(choices, true);
+		int choice = showMultipleTexts(choices, true);
 
 		switch (choice) {
 		case 0:
@@ -244,14 +244,14 @@ void Room::demon4TalkToNauian() {
 			break;
 
 		default:
-			showText(TX_DIALOG_ERROR);
+			showDescription(TX_DIALOG_ERROR);
 			break;
 		}
 
 		showText(TX_SPEAKER_NAUIAN, 43, true);
 
 		const TextRef choices2[] = { TX_SPEAKER_KIRK, 8, 7, TX_BLANK };
-		choice = showText(choices2, true);
+		choice = showMultipleTexts(choices2, true);
 
 		switch (choice) {
 		case 0:
@@ -261,7 +261,7 @@ void Room::demon4TalkToNauian() {
 		case 1:
 			break;
 		default:
-			showText(TX_DIALOG_ERROR);
+			showDescription(TX_DIALOG_ERROR);
 			break;
 		}
 
@@ -288,47 +288,47 @@ void Room::demon4TalkToNauian() {
 }
 
 void Room::demon4LookAtPattern() {
-	showText(2, true);
+	showDescription(2, true);
 }
 
 void Room::demon4LookAtAlien() {
-	showText(7, true);
+	showDescription(7, true);
 }
 
 void Room::demon4LookAnywhere() {
-	showText(4, true);
+	showDescription(4, true);
 }
 
 void Room::demon4LookAtSecurityEquipment() {
-	showText(8, true);
+	showDescription(8, true);
 }
 
 void Room::demon4LookAtFloor() {
-	showText(9, true);
+	showDescription(9, true);
 }
 
 void Room::demon4LookAtKirk() {
-	showText(3, true);
+	showDescription(3, true);
 }
 
 void Room::demon4LookAtMccoy() {
-	showText(0, true);
+	showDescription(0, true);
 }
 
 void Room::demon4LookAtSpock() {
-	showText(5, true);
+	showDescription(5, true);
 }
 
 void Room::demon4LookAtRedshirt() {
-	showText(1, true);
+	showDescription(1, true);
 }
 
 void Room::demon4LookAtChamber() {
-	showText(6, true);
+	showDescription(6, true);
 }
 
 void Room::demon4LookAtPanel() {
-	showText(12, true);
+	showDescription(12, true);
 }
 
 void Room::demon4UseKirkOnPanel() {
@@ -366,7 +366,7 @@ void Room::demon4CrewmanReachedPanel() {
 		_awayMission->demon.missionScore += 3;
 		_awayMission->timers[0] = 10;
 	} else
-		showText(13, true);
+		showDescription(13, true);
 
 	walkCrewman(_roomVar.demon.crewmanUsingPanel, 0xae, 0x93, 0);
 	_awayMission->disableInput = false;

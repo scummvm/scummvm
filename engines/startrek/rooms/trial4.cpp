@@ -54,7 +54,7 @@ void Room::trial4Tick60() {
 		TX_TRI4_022, TX_TRI4_039, TX_TRI4_032,
 		TX_BLANK
 	};
-	int choice = showText(choices);
+	int choice = showMultipleTexts(choices);
 
 	if (choice == 0) { // "You were trying to kill us"
 		showText(TX_SPEAKER_VLICT, TX_TRI4_064);
@@ -64,7 +64,7 @@ void Room::trial4Tick60() {
 			TX_TRI4_033, TX_TRI4_009, TX_TRI4_002,
 			TX_BLANK
 		};
-		showText(choices2); // choice doesn't matter
+		showMultipleTexts(choices2); // choice doesn't matter
 
 		showText(TX_SPEAKER_VLICT, TX_TRI4_062);
 		showText(TX_SPEAKER_KIRK,  TX_TRI4_014);
@@ -76,7 +76,7 @@ void Room::trial4Tick60() {
 			TX_TRI4_029, TX_TRI4_020, TX_TRI4_030,
 			TX_BLANK
 		};
-		choice = showText(choices3);
+		choice = showMultipleTexts(choices3);
 
 		if (choice == 0) { // "Then you have my deepest respect"
 			// Nothing more
@@ -104,7 +104,7 @@ void Room::trial4Tick60() {
 			TX_TRI4_019, TX_TRI4_025, TX_TRI4_008,
 			TX_BLANK
 		};
-		choice = showText(choices2);
+		choice = showMultipleTexts(choices2);
 
 		if (choice == 1) { // Threatened Vlict
 			showText(TX_SPEAKER_VLICT, TX_TRI4_069);
@@ -118,7 +118,7 @@ void Room::trial4Tick60() {
 			TX_TRI4_027, TX_TRI4_034, TX_TRI4_018,
 			TX_BLANK
 		};
-		choice = showText(choices2);
+		choice = showMultipleTexts(choices2);
 
 		if (choice == 0) { // "Let's stop playing games"
 			showText(TX_SPEAKER_VLICT, TX_TRI4_075);
@@ -131,7 +131,7 @@ void Room::trial4Tick60() {
 				TX_TRI4_028, TX_TRI4_021, TX_TRI4_031,
 				TX_BLANK
 			};
-			choice = showText(choices3);
+			choice = showMultipleTexts(choices3);
 
 			if (choice == 0 || choice == 1) {
 				showText(TX_SPEAKER_VLICT, TX_TRI4_068);
@@ -156,7 +156,7 @@ void Room::trial4Tick60() {
 				TX_TRI4_026, TX_TRI4_024, TX_TRI4_023,
 				TX_BLANK
 			};
-			choice = showText(choices3);
+			choice = showMultipleTexts(choices3);
 
 			if (choice == 0) { // "The empire will learn you betrayed them"
 				showText(TX_SPEAKER_VLICT, TX_TRI4_057);

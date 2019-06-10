@@ -164,35 +164,35 @@ void Room::trial2TouchedHotspot0() { // This is unused
 }
 
 void Room::trial2LookAtKirk() {
-	showText(TX_TRI2N003);
+	showDescription(TX_TRI2N003);
 }
 
 void Room::trial2LookAtSpock() {
-	showText(TX_TRI2N001);
+	showDescription(TX_TRI2N001);
 }
 
 void Room::trial2LookAtMccoy() {
-	showText(TX_TRI2N006);
+	showDescription(TX_TRI2N006);
 }
 
 void Room::trial2LookAtRedshirt() {
-	showText(TX_TRI2N002);
+	showDescription(TX_TRI2N002);
 }
 
 void Room::trial2LookAtInsignia() {
-	showText(TX_TRI2N004);
+	showDescription(TX_TRI2N004);
 }
 
 void Room::trial2LookAtGlob() {
-	showText(TX_TRI2N000);
+	showDescription(TX_TRI2N000);
 }
 
 void Room::trial2LookAtWall() {
-	showText(TX_TRI2N007);
+	showDescription(TX_TRI2N007);
 }
 
 void Room::trial2LookAtDoor() {
-	showText(TX_TRI2N005);
+	showDescription(TX_TRI2N005);
 }
 
 void Room::trial2TalkToKirk() {
@@ -212,11 +212,11 @@ void Room::trial2TalkToRedshirt() {
 }
 
 void Room::trial2TalkToGlob() {
-	showText(TX_QUIET);
+	showDescription(TX_QUIET);
 }
 
 void Room::trial2UsePhaserOnWall() {
-	showText(TX_TRI2N008);
+	showDescription(TX_TRI2N008);
 }
 
 
@@ -410,7 +410,7 @@ void Room::trial2UseCommunicator() {
 			TX_TRI2_003, TX_TRI2_004, TX_TRI2_007,
 			TX_BLANK
 		};
-		int choice = showText(choices);
+		int choice = showMultipleTexts(choices);
 
 		if (choice == 0) { // "Beam us back to the enterprise"
 			_awayMission->trial.missionEndMethod = 1;

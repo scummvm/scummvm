@@ -158,7 +158,7 @@ void Room::loveaTimer2Expired() {
 		if (_awayMission->love.spockInfectionCounter >= 100) { // Spock succumbs, game over
 			loadActorAnim(OBJECT_SPOCK, "sgetdn", -1, -1, 0);
 			playMidiMusicTracks(2, -1); // FIXME: assembly had no second parameter...?
-			showText(TX_GENER004);
+			showDescription(TX_GENER004);
 			showGameOverMenu();
 		} else if (_awayMission->love.spockInfectionCounter == 15) {
 			showText(TX_SPEAKER_SPOCK, TX_SPOKCOFF);
@@ -208,7 +208,7 @@ void Room::loveaUseMTricorderOnHuman() {
 }
 
 void Room::loveaUseRomulanLaughingGas() {
-	showText(TX_LOV2N005);
+	showDescription(TX_LOV2N005);
 	_awayMission->love.releasedRomulanLaughingGas = true;
 	loseItem(OBJECT_IRLG);
 
@@ -217,7 +217,7 @@ void Room::loveaUseRomulanLaughingGas() {
 }
 
 void Room::loveaUseHumanLaughingGas() {
-	showText(TX_LOV2N005);
+	showDescription(TX_LOV2N005);
 	showText(TX_SPEAKER_SPOCK, TX_MUD2_040);
 	_awayMission->love.releasedHumanLaughingGas = true;
 	loseItem(OBJECT_IN2O);
@@ -228,7 +228,7 @@ void Room::loveaUseHumanLaughingGas() {
 }
 
 void Room::loveaUseAmmonia() {
-	showText(TX_LOV2N005);
+	showDescription(TX_LOV2N005);
 	// TODO: redshirt says something in floppy edition only
 	loseItem(OBJECT_INH3);
 }

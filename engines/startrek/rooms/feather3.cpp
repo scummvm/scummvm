@@ -151,7 +151,7 @@ void Room::feather3UseSnakeOnKirk() {
 			loadActorAnim(OBJECT_KNIFE, "s5r3nf", KNIFE_X, KNIFE_Y);
 			_awayMission->feather.field2e = true;
 		} else
-			showText(TX_FEA3N004);
+			showDescription(TX_FEA3N004);
 	}
 }
 
@@ -259,7 +259,7 @@ void Room::feather3Timer3Expired() {
 void Room::feather3TlaoxacKnockedOutFromRockThrow() {
 	_awayMission->disableInput = false;
 	loadActorStandAnim(OBJECT_KIRK);
-	showText(TX_FEA3N006);
+	showDescription(TX_FEA3N006);
 
 	if (!_awayMission->feather.tookKnife && !_awayMission->feather.field2e)
 		showText(TX_SPEAKER_MCCOY, TX_FEA3_008);
@@ -298,7 +298,7 @@ void Room::feather3TalkToTlaoxac() {
 				TX_FEA3_001, TX_FEA3_002, TX_FEA3_003,
 				TX_BLANK
 			};
-			int choice = showText(choices);
+			int choice = showMultipleTexts(choices);
 
 			if (choice == 0)
 				showText(TX_SPEAKER_TLAOXAC, TX_FEA3_037);
@@ -312,7 +312,7 @@ void Room::feather3TalkToTlaoxac() {
 				loadActorAnim(OBJECT_REDSHIRT, "s5r3rd");
 				_awayMission->redshirtDead = true;
 			} else
-				showText(TX_DIALOG_ERROR);
+				showDescription(TX_DIALOG_ERROR);
 		}
 	}
 }
@@ -377,40 +377,40 @@ void Room::feather3Timer1Expired() {
 void Room::feather3PickedUpKnife() {
 	_awayMission->disableInput = false;
 	loadActorStandAnim(OBJECT_KIRK);
-	showText(TX_FEA3N010);
+	showDescription(TX_FEA3N010);
 }
 
 void Room::feather3LookAtSpock() {
 	if (!_awayMission->feather.knockedOutTlaoxac && !_awayMission->feather.tlaoxacTestPassed)
-		showText(TX_FEA3N002);
+		showDescription(TX_FEA3N002);
 	else // ENHANCEMENT: Originally did nothing here. Fall back to default behaviour in the engine.
 		_awayMission->rdfStillDoDefaultAction = true;
 }
 
 void Room::feather3LookAtRedshirt() {
 	if (_awayMission->redshirtDead)
-		showText(TX_FEA3N005);
+		showDescription(TX_FEA3N005);
 	else
-		showText(TX_FEA3N012);
+		showDescription(TX_FEA3N012);
 }
 
 void Room::feather3LookAtTlaoxac() {
 	if (_awayMission->feather.knockedOutTlaoxac)
-		showText(TX_FEA3N003);
+		showDescription(TX_FEA3N003);
 	else
-		showText(TX_FEA3N007);
+		showDescription(TX_FEA3N007);
 }
 
 void Room::feather3LookAtLight() {
-	showText(TX_FEA3N001);
+	showDescription(TX_FEA3N001);
 }
 
 void Room::feather3LookAtMccoy() {
-	showText(TX_FEA3N000);
+	showDescription(TX_FEA3N000);
 }
 
 void Room::feather3LookAtKnife() {
-	showText(TX_FEA3N011);
+	showDescription(TX_FEA3N011);
 }
 
 }

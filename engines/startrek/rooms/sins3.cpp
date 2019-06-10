@@ -172,19 +172,19 @@ void Room::sins3UseSTricorderOnPanel() {
 }
 
 void Room::sins3LookAtDrill() {
-	showText(TX_SIN3N012);
+	showDescription(TX_SIN3N012);
 }
 
 void Room::sins3LookAtPanel() {
-	showText(TX_SIN3N011);
+	showDescription(TX_SIN3N011);
 }
 
 void Room::sins3LookAtMonitor() {
-	showText(TX_SIN3N007);
+	showDescription(TX_SIN3N007);
 }
 
 void Room::sins3LookAnywhere() {
-	showText(TX_SIN3N013);
+	showDescription(TX_SIN3N013);
 }
 
 void Room::sins3UseSTricorderOnWall() {
@@ -197,11 +197,11 @@ void Room::sins3UseSTricorderOnWall() {
 
 void Room::sins3LookAtBox() {
 	if (_awayMission->sins.boxState == 0)
-		showText(TX_SIN3N000);
+		showDescription(TX_SIN3N000);
 	else if (_awayMission->sins.boxState == 1)
-		showText(TX_SIN3N008);
+		showDescription(TX_SIN3N008);
 	else if (_awayMission->sins.boxState == 2)
-		showText(TX_SIN3N005);
+		showDescription(TX_SIN3N005);
 }
 
 void Room::sins3UseKirkOnBox() {
@@ -326,7 +326,7 @@ void Room::sins3SpockReachedPanel() {
 		TX_BLANK
 	};
 
-	int choice = showText(choices);
+	int choice = showMultipleTexts(choices);
 
 	if (choice == 3) // cancel
 		return;
@@ -428,7 +428,7 @@ void Room::sins3RockVaporized() {
 
 void Room::sins3UseDrillAnywhere() {
 	// It isn't possible to "use" a hotspot on something else, so this is never called?
-	showText(TX_SIN3N009);
+	showDescription(TX_SIN3N009);
 }
 
 void Room::sins3GetIDCard() {
@@ -452,27 +452,27 @@ void Room::sins3PickedUpIDCard() {
 
 void Room::sins3LookAtItemBeingDrilled() {
 	if (_awayMission->sins.moldState == 2)
-		showText(TX_SIN3N006);
+		showDescription(TX_SIN3N006);
 	else if (_awayMission->sins.moldState == 3)
-		showText(TX_SIN3N014);
+		showDescription(TX_SIN3N014);
 	else if (_awayMission->sins.moldState == 4)
-		showText(TX_SIN3N010);
+		showDescription(TX_SIN3N010);
 }
 
 void Room::sins3LookAtKirk() {
-	showText(TX_SIN3N003);
+	showDescription(TX_SIN3N003);
 }
 
 void Room::sins3LookAtSpock() {
-	showText(TX_SIN3N004);
+	showDescription(TX_SIN3N004);
 }
 
 void Room::sins3LookAtMccoy() {
-	showText(TX_SIN3N001); // BUGFIX: Speaker is "nobody", not Dr. McCoy
+	showDescription(TX_SIN3N001); // BUGFIX: Speaker is "nobody", not Dr. McCoy
 }
 
 void Room::sins3LookAtRedshirt() {
-	showText(TX_SIN3N002);
+	showDescription(TX_SIN3N002);
 }
 
 void Room::sins3TalkToKirk() {

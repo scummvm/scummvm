@@ -81,63 +81,63 @@ void Room::demon6UsePhaserOnCase() {
 }
 
 void Room::demon6LookAtWorkspace() {
-	showText(3, true);
+	showDescription(3, true);
 }
 
 void Room::demon6LookAtCase() {
-	showText(1, true);
+	showDescription(1, true);
 }
 
 void Room::demon6LookAtTable() {
-	showText(7, true);
+	showDescription(7, true);
 }
 
 void Room::demon6LookAtMineral() {
-	showText(16, true);
+	showDescription(16, true);
 }
 
 void Room::demon6LookAtShells() {
-	showText(11, true);
+	showDescription(11, true);
 }
 
 void Room::demon6LookAtSkull() {
-	showText(17, true);
+	showDescription(17, true);
 }
 
 void Room::demon6LookAtMetal() {
-	showText(5, true);
+	showDescription(5, true);
 }
 
 void Room::demon6LookAtMeteor() {
-	showText(0, true);
+	showDescription(0, true);
 }
 
 void Room::demon6LookAtMountain() {
-	showText(2, true);
+	showDescription(2, true);
 }
 
 void Room::demon6LookAtSynthesizer() {
-	showText(4, true);
+	showDescription(4, true);
 }
 
 void Room::demon6LookAtKirk() {
-	showText(8, true);
+	showDescription(8, true);
 }
 
 void Room::demon6LookAtSpock() {
-	showText(15, true);
+	showDescription(15, true);
 }
 
 void Room::demon6LookAtMccoy() {
-	showText(9, true);
+	showDescription(9, true);
 }
 
 void Room::demon6LookAtRedshirt() {
-	showText(10, true);
+	showDescription(10, true);
 }
 
 void Room::demon6LookAtComputer() {
-	showText(6, true);
+	showDescription(6, true);
 	if (!_awayMission->demon.lookedAtComputer) {
 		_awayMission->demon.lookedAtComputer = true;
 		_awayMission->demon.missionScore++;
@@ -145,11 +145,11 @@ void Room::demon6LookAtComputer() {
 }
 
 void Room::demon6LookAnywhere() {
-	showText(24, true);
+	showDescription(24, true);
 }
 
 void Room::demon6LookAtStephen() {
-	showText(21, true);
+	showDescription(21, true);
 }
 
 void Room::demon6TalkToMccoy() {
@@ -193,7 +193,7 @@ void Room::demon6MccoyReachedSynthesizer() {
 
 void Room::demon6FinishedMakingHypoDytoxin() {
 	playMidiMusicTracks(-1, -1);
-	showText(23, true);
+	showDescription(23, true);
 	showText(TX_SPEAKER_MCCOY, 18, true);
 
 	giveItem(OBJECT_IDETOXIN);
@@ -230,7 +230,7 @@ void Room::demon6SpockFinishedRepairingHand() {
 
 // FIXME: doesn't work
 void Room::demon6UseAnythingOnWorkspace() {
-	showText(20, true);
+	showDescription(20, true);
 }
 
 void Room::demon6StephenIsInsulted() {
@@ -243,7 +243,7 @@ void Room::demon6StephenDescribesItemsInCase() {
 	while (true) {
 		showText(TX_SPEAKER_STEPHEN, 51, true);
 		TextRef choices2[] = { TX_SPEAKER_STEPHEN, 45, 46, 47, 48, 49, 50, TX_BLANK };
-		TextRef choice = showText(choices2, true);
+		TextRef choice = showMultipleTexts(choices2, true);
 
 		switch (choice) {
 		case 0:
@@ -266,7 +266,7 @@ void Room::demon6StephenDescribesItemsInCase() {
 			_roomVar.demon.caseOpened = true;
 			return;
 		default:
-			showText(TX_DIALOG_ERROR);
+			showDescription(TX_DIALOG_ERROR);
 		}
 	}
 }
@@ -277,7 +277,7 @@ void Room::demon6UseCrewmanOnCase() {
 			return;
 		showText(TX_SPEAKER_STEPHEN, 44, true);
 		TextRef choices1[] = {TX_SPEAKER_KIRK, 1, 6, 3, TX_BLANK};
-		TextRef choice = showText(choices1, true);
+		TextRef choice = showMultipleTexts(choices1, true);
 
 		if (choice == 0) {
 			demon6StephenIsInsulted();
@@ -287,19 +287,19 @@ void Room::demon6UseCrewmanOnCase() {
 		} else if (choice == 2) {
 			showText(TX_SPEAKER_STEPHEN, 31, true);
 			TextRef choices3[] = {TX_SPEAKER_KIRK, 1, 6, TX_BLANK};
-			choice = showText(choices3, true);
+			choice = showMultipleTexts(choices3, true);
 
 			if (choice == 0)
 				demon6StephenIsInsulted();
 			else if (choice == 1)
 				demon6StephenDescribesItemsInCase();
 			else
-				showText(TX_DIALOG_ERROR);
+				showDescription(TX_DIALOG_ERROR);
 		} else {
-			showText(TX_DIALOG_ERROR);
+			showDescription(TX_DIALOG_ERROR);
 		}
 	} else {
-		showText(12, true);
+		showDescription(12, true);
 		showText(TX_SPEAKER_MCCOY, 19, true);
 	}
 }
@@ -348,7 +348,7 @@ void Room::demon6UseMetalOnStephen() {
 
 void Room::demon6ReturnItemToStephen(int item) {
 	loseItem(item);
-	showText(19, true);
+	showDescription(19, true);
 	showText(TX_SPEAKER_STEPHEN, 29, true);
 }
 
@@ -421,7 +421,7 @@ void Room::demon6UseSTricoderOnSynthesizer() {
 
 void Room::demon6GetCase() {
 	if (!_roomVar.demon.caseOpened)
-		showText(22, true);
+		showDescription(22, true);
 	else
 		walkCrewman(OBJECT_KIRK, 0xff, 0xba, 5);
 }

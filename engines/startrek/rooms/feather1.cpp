@@ -188,21 +188,21 @@ void Room::feather1QuetzecoatlDisappeared() {
 }
 
 void Room::feather1GetRightVine() {
-	showText(TX_FEA1N008);
+	showDescription(TX_FEA1N008);
 }
 
 void Room::feather1GetLeftVine() {
 	if (_awayMission->feather.vineState == 0)
-		showText(TX_FEA1N009);
+		showDescription(TX_FEA1N009);
 	else
-		showText(TX_FEA1N008);
+		showDescription(TX_FEA1N008);
 }
 
 void Room::feather1GetRocks() {
 	if (_roomVar.feather.crewEscaped[OBJECT_KIRK])
-		showText(TX_FEA1N021);
+		showDescription(TX_FEA1N021);
 	else if (_awayMission->feather.gotRock)
-		showText(TX_FEA1N019);
+		showDescription(TX_FEA1N019);
 	else {
 		walkCrewmanC(OBJECT_KIRK, 0x90, 0xb6, &Room::feather1ReachedRocks);
 		_awayMission->disableInput = true;
@@ -217,7 +217,7 @@ void Room::feather1PickedUpRocks() {
 	_awayMission->disableInput = false;
 	loadActorStandAnim(OBJECT_KIRK);
 	giveItem(OBJECT_IROCK);
-	showText(TX_FEA1N022);
+	showDescription(TX_FEA1N022);
 	_awayMission->feather.gotRock = true;
 }
 
@@ -229,7 +229,7 @@ void Room::feather1GetSnake() {
 		walkCrewmanC(OBJECT_KIRK, 0x90, 0xbe, &Room::feather1ReachedSnake);
 		_awayMission->disableInput = true;
 	} else
-		showText(TX_FEA1N021);
+		showDescription(TX_FEA1N021);
 }
 
 void Room::feather1ReachedSnake() {
@@ -272,9 +272,9 @@ void Room::feather1UseCommunicator() {
 
 void Room::feather1UseRockOnHole() {
 	if (_roomVar.feather.crewEscaped[OBJECT_KIRK])
-		showText(TX_FEA1N021);
+		showDescription(TX_FEA1N021);
 	else if (_awayMission->feather.holeBlocked)
-		showText(TX_FEA1N005);
+		showDescription(TX_FEA1N005);
 	else {
 		_awayMission->feather.missionScore++;
 		walkCrewmanC(OBJECT_KIRK, 0xa3, 0xb6, &Room::feather1ReachedHole);
@@ -364,7 +364,7 @@ void Room::feather1UseRedshirtOnHole() {
 }
 
 void Room::feather1UseRockOnMoss() {
-	showText(TX_FEA1N006);
+	showDescription(TX_FEA1N006);
 }
 
 void Room::feather1UseRockOnSpock() {
@@ -466,7 +466,7 @@ void Room::feather1UseKirkOnVine() {
 		_roomVar.feather.crewmanClimbingVine = OBJECT_KIRK;
 		feather1CrewmanClimbVine();
 	} else
-		showText(TX_FEA1N010);
+		showDescription(TX_FEA1N010);
 }
 
 // This was refactored, due to the similarity of the code for each crewman. Originally, the
@@ -619,58 +619,58 @@ void Room::feather1WalkToExit() {
 }
 
 void Room::feather1LookAnywhere() {
-	showText(TX_FEA1N020);
+	showDescription(TX_FEA1N020);
 }
 
 void Room::feather1LookAtSnake() {
-	showText(TX_FEA1N017);
+	showDescription(TX_FEA1N017);
 }
 
 void Room::feather1LookAtRightVine() {
-	showText(TX_FEA1N015);
+	showDescription(TX_FEA1N015);
 }
 
 void Room::feather1LookAtHole() {
-	showText(TX_FEA1N014);
+	showDescription(TX_FEA1N014);
 }
 
 void Room::feather1LookAtMoss() {
-	showText(TX_FEA1N016);
+	showDescription(TX_FEA1N016);
 }
 
 void Room::feather1LookAtRocks() {
-	showText(TX_FEA1N011);
+	showDescription(TX_FEA1N011);
 }
 
 void Room::feather1LookAtLight() {
-	showText(TX_FEA1N013);
+	showDescription(TX_FEA1N013);
 }
 
 void Room::feather1LookAtEyes() {
-	showText(TX_FEA1N000);
+	showDescription(TX_FEA1N000);
 }
 
 void Room::feather1LookAtKirk() {
-	showText(TX_FEA1N001);
+	showDescription(TX_FEA1N001);
 }
 
 void Room::feather1LookAtSpock() {
-	showText(TX_FEA1N004);
+	showDescription(TX_FEA1N004);
 }
 
 void Room::feather1LookAtMccoy() {
-	showText(TX_FEA1N003);
+	showDescription(TX_FEA1N003);
 }
 
 void Room::feather1LookAtRedshirt() {
-	showText(TX_FEA1N002);
+	showDescription(TX_FEA1N002);
 }
 
 void Room::feather1LookAtLeftVine() {
 	if (_awayMission->feather.vineState == 0)
-		showText(TX_FEA1N012);
+		showDescription(TX_FEA1N012);
 	else
-		showText(TX_FEA1N015);
+		showDescription(TX_FEA1N015);
 }
 
 }
