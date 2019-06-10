@@ -67,15 +67,6 @@ MadeEngine::MadeEngine(OSystem *syst, const MadeGameDescription *gameDesc) : Eng
 	_musicBeatStart = 0;
 	_cdTimeStart = 0;
 
-	_gameId = -1;
-
-	const char *gameid = ConfMan.get("gameid").c_str();
-	for (g = madeSettings; g->gameid; ++g)
-		if (!scumm_stricmp(g->gameid, gameid))
-			_gameId = g->id;
-
-	assert(_gameId != -1);
-
 	_rnd = new Common::RandomSource("made");
 
 	_console = new MadeConsole(this);
