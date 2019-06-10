@@ -2435,7 +2435,7 @@ Downstairs1::Downstairs1(Supernova2Engine *vm, GameManager *gm) {
 	_vm = vm;
 	_gm = gm;
 
-	_fileNumber = 6;
+	_fileNumber = 10;
 	_id = DOWNSTAIRS1;
 	_shown[0] = kShownTrue;
 	_shown[1] = kShownTrue;
@@ -2567,7 +2567,7 @@ BottomLeftDoor::BottomLeftDoor(Supernova2Engine *vm, GameManager *gm) {
 	_vm = vm;
 	_gm = gm;
 
-	_fileNumber = 6;
+	_fileNumber = 12;
 	_id = BOTTOM_LEFT_DOOR;
 	_shown[0] = kShownTrue;
 	_shown[19] = kShownTrue;
@@ -3394,7 +3394,7 @@ InHole::InHole(Supernova2Engine *vm, GameManager *gm) {
 	_vm = vm;
 	_gm = gm;
 
-	_fileNumber = 6;
+	_fileNumber = 11;
 	_id = IN_HOLE;
 	_shown[0] = kShownTrue;
 
