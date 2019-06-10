@@ -341,7 +341,8 @@ void CMSVoice_V0::noteOff() {
 
 void CMSVoice_V0::stop() {
 	_note = 0xFF;
-	_envState = kRelease;
+	if (_envState != kReady)
+		_envState = kRelease;
 	if (_secondaryVoice)
 		_secondaryVoice->stop();
 }
@@ -370,6 +371,8 @@ void CMSVoice_V0::programChange(int program) {
 
 	_transOct = data.getInt8At(pos++);
 	_transFreq = data.getInt8At(pos++);
+
+	debug("CMSVoice_V0::programChange: Voice: %02d, Envelope: %02d, TransOct: %02d, TransFreq: %02d", _id, data[_isSecondary ? 3 : 0], _transOct, _transFreq);
 
 	if (_isSecondary)
 		_envPA = data.getUint8At(pos++);
@@ -551,6 +554,9 @@ void CMSVoice_V0::selectEnvelope(int id) {
 	_vbrMod = *in++;
 	_vbrSteps = *in++;
 	_vbrOn = _vbrMod;
+	_vbrCur = _vbrMod;
+	_vbrState = _vbrSteps & 0x0F;
+	_vbrPhase = 0;
 	if (_id == 1)
 		_envAR1 = _envAR;
 }
@@ -774,7 +780,7 @@ const int CMSVoice_V1::_velocityTable[32] = {
 
 MidiDriver_CMS::MidiDriver_CMS(Audio::Mixer* mixer, ResourceManager* resMan, SciVersion version) : MidiDriver_Emulated(mixer), _resMan(resMan),
 	_version(version), _cms(0), _rate(0), _playSwitch(true), _masterVolume(0), _numVoicesPrimary(version > SCI_VERSION_0_LATE ? 12 : 8),
-	_actualTimerInterval(1000000000 /(_baseFreq*1000)), _reqTimerInterval(1000000000/60000/*18206*/), _numVoicesSecondary(version > SCI_VERSION_0_LATE ? 0 : 4) {
+	_actualTimerInterval(1000000000 /(_baseFreq*1000)), _reqTimerInterval(1000000000/60000), _numVoicesSecondary(version > SCI_VERSION_0_LATE ? 0 : 4) {
 	memset(_voice, 0, sizeof(_voice));
 	_updateTimer = _reqTimerInterval;
 }
@@ -921,7 +927,7 @@ void MidiDriver_CMS::initTrack(SciSpan<const byte>& header) {
 		_channel[i].pitchWheel = 0x2000;
 		_channel[i].pan = 0;
 
-		if (i == numChan)
+		if (i >= numChan)
 			continue;
 
 		uint8 num = header.getInt8At(readPos++) & 0x0F;
@@ -941,22 +947,18 @@ void MidiDriver_CMS::initTrack(SciSpan<const byte>& header) {
 		// This weird driver will assign a second voice if the number of requested voices is exactly 1.
 		// The secondary voice is configured differently (has its own instrument patch data). The secondary
 		// voice is controlled through the primary voice. It will not receive its own separate commands.
-		// The main purpose seems to be to have stereo channels with 2 discrete voices for the left and
-		// right speaker output. However, the instrument patch can also turn this around so that both voices
+		// The main purpose seems providing stereo channels with 2 discrete voices for the left and right
+		// speaker output. However, the instrument patch can also turn this around so that both voices
 		// use the same panning. What an awesome concept...
 		bindVoices(i, num, num == 1, false);
 	}
 }
 
 void MidiDriver_CMS::onTimer() {
-	_updateTimer -= _actualTimerInterval;
-	if (_updateTimer > 0)
-		return;
-
-	_updateTimer += _reqTimerInterval;
-	
-	for (uint i = 0; i < ARRAYSIZE(_voice); ++i)
-		_voice[i]->update();
+	for (_updateTimer -= _actualTimerInterval; _updateTimer <= 0; _updateTimer += _reqTimerInterval) {
+		for (uint i = 0; i < ARRAYSIZE(_voice); ++i)
+			_voice[i]->update();
+	}
 }
 
 void MidiDriver_CMS::noteOn(int channelNr, int note, int velocity) {
