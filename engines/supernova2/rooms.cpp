@@ -2984,7 +2984,7 @@ TomatoF::TomatoF(Supernova2Engine *vm, GameManager *gm) {
 
 	_objectState[0] = Object(_id, kStringRight, kStringDefaultDescription, G_RIGHT, EXIT, 12, 12, 0, PYR_ENTRANCE, 14);
 	_objectState[1] = Object(_id, kStringLeft, kStringDefaultDescription, G_LEFT, EXIT, 11, 11, 0, PYR_ENTRANCE, 10);
-	_objectState[2] = Object(_id, kStringTomato, kStringFunny, CORRIDOR, EXIT, 3, 3, 0, PYR_ENTRANCE, 2);
+	_objectState[2] = Object(_id, kStringTomato, kStringFunnyDescription, CORRIDOR, EXIT, 3, 3, 0, PYR_ENTRANCE, 2);
 }
 
 void TomatoF::onEntrance() {
@@ -3007,9 +3007,16 @@ TomatoN::TomatoN(Supernova2Engine *vm, GameManager *gm) {
 	_vm = vm;
 	_gm = gm;
 
-	_fileNumber = 6;
+	_fileNumber = 13;
 	_id = TOMATO_N;
 	_shown[0] = kShownTrue;
+	_shown[7] = kShownTrue;
+	_shown[8] = kShownTrue;
+
+	_objectState[0] = Object(_id, kStringRight, kStringDefaultDescription, G_RIGHT, EXIT, 8, 8, 0, PYR_ENTRANCE, 14);
+	_objectState[1] = Object(_id, kStringLeft, kStringDefaultDescription, G_LEFT, EXIT, 7, 7, 0, PYR_ENTRANCE, 10);
+	_objectState[2] = Object(_id, kStringKnife1, kStringKnife1Description, TKNIFE, TAKE | COMBINABLE, 5, 5, 7);
+	_objectState[3] = Object(_id, kStringTomato, kStringFunnyDescription, NULLOBJECT, UNNECESSARY, 4, 4, 0);
 }
 
 void TomatoN::onEntrance() {
@@ -3020,6 +3027,14 @@ void TomatoN::animation() {
 }
 
 bool TomatoN::interact(Action verb, Object &obj1, Object &obj2) {
+	if (_gm->move(verb, obj1)) {
+		_gm->passageConstruction();
+		_gm->_newRoom = true;
+	} else if (verb == ACTION_TAKE && obj1._id == TKNIFE) {
+		_gm->takeObject(obj1);
+		setSectionVisible(8, kShownFalse);
+	} else
+		return false;
 	return true;
 }
 
