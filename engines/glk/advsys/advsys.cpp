@@ -26,10 +26,6 @@
 namespace Glk {
 namespace AdvSys {
 
-void execute(int offset) {
-	// TODO: Stub
-}
-
 bool getInput() {
 	// TODO: Stub
 	return false;
@@ -75,8 +71,7 @@ void AdvSys::runGame() {
 
 bool AdvSys::initialize() {
 	// Create a Glk window for the game
-	_window = glk_window_open(0, 0, 0, wintype_TextBuffer, 1);
-	if (!_window)
+	if (!GlkInterface::initialize())
 		return false;
 
 	// Load the game's header
@@ -87,10 +82,6 @@ bool AdvSys::initialize() {
 }
 
 void AdvSys::deinitialize() {
-}
-
-void AdvSys::print(const char *msg) {
-	glk_put_string_stream(glk_window_get_stream(_window), msg);
 }
 
 Common::Error AdvSys::loadGameData(strid_t save) {

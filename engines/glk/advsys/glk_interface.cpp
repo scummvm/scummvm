@@ -25,12 +25,18 @@
 namespace Glk {
 namespace AdvSys {
 
-void GlkInterface::printString(int offset) {
-	// TODO
+bool GlkInterface::initialize() {
+	_window = glk_window_open(0, 0, 0, wintype_TextBuffer, 1);
+	return !_window;
 }
 
-void GlkInterface::printNumber(int number) {
-	// TODO
+void GlkInterface::print(const Common::String &msg) {
+	glk_put_string_stream(glk_window_get_stream(_window), msg.c_str());
+}
+
+void GlkInterface::print(int number) {
+	Common::String s = Common::String::format("%d", number);
+	print(s);
 }
 
 } // End of namespace AdvSys

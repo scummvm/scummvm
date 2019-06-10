@@ -225,12 +225,16 @@ void VM::opSET() {
 }
 
 void VM::opPRINT() {
+	Common::String msg = readString(_stack.top());
+	print(msg);
 }
 
 void VM::opTERPRI() {
+	print("\n");
 }
 
 void VM::opPNUMBER() {
+	print(_stack.top());
 }
 
 void VM::opFINISH() {

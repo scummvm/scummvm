@@ -33,18 +33,25 @@ namespace AdvSys {
  * input and output
  */
 class GlkInterface : public GlkAPI {
+private:
+	winid_t _window;
 protected:
 	/**
-	 * Print a string
-	 * @param offset		String offset
+	 * GLK initialization
 	 */
-	void printString(int offset);
+	bool initialize();
+
+	/**
+	 * Print a string
+	 * @param msg		String
+	 */
+	void print(const Common::String &msg);
 
 	/**
 	 * Print a number
-	 * @param number		Number to print
+	 * @param number	Number to print
 	 */
-	void printNumber(int number);
+	void print(int number);
 public:
 	/**
 	 * Constructor

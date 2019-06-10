@@ -34,8 +34,6 @@ namespace AdvSys {
  */
 class AdvSys : public VM {
 private:
-	winid_t _window;
-private:
 	/**
 	 * Engine initialization
 	 */
@@ -45,11 +43,6 @@ private:
 	 * Engine cleanup
 	 */
 	void deinitialize();
-
-	/**
-	 * Print a string to the window
-	 */
-	void print(const char *msg);
 public:
 	/**
 	 * Constructor
