@@ -2784,3 +2784,9 @@ msgid ""
 "Sieht gef„hrlich aus!"
 msgstr ""
 "Looks dangerous!"
+
+#: ../../ms2/ms2_pyra.c:1017
+msgid ""
+"Das Auge ist schon offen."
+msgstr ""
+"This Eye is already opened."
