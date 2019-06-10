@@ -124,6 +124,7 @@ static const char *const selectorNameTable[] = {
 	"canControl",   // Space Quest 4
 	"looper",       // Space Quest 4
 	"nMsgType",     // Space Quest 4
+	"doVerb",       // Space Quest 4
 	"loop",         // Laura Bow 1 Colonel's Bequest, QFG4
 	"setLoop",      // Laura Bow 1 Colonel's Bequest, QFG4
 	"ignoreActors", // Laura Bow 1 Colonel's Bequest
@@ -232,6 +233,7 @@ enum ScriptPatcherSelectors {
 	SELECTOR_canControl,
 	SELECTOR_looper,
 	SELECTOR_nMsgType,
+	SELECTOR_doVerb,
 	SELECTOR_loop,
 	SELECTOR_setLoop,
 	SELECTOR_ignoreActors,
@@ -11656,6 +11658,51 @@ static const uint16 sq4CdPatchGetPointsForChangingBackClothes[] = {
 	PATCH_END
 };
 
+// The Big And Tall store (room 381) doesn't display its Look message in the CD
+//  version. We add the missing super:doVerb call to theStore:doVerb.
+//
+// Applies to: English PC CD
+// Responsible method: theStore:doVerb
+static const uint16 sq4CdSignatureBigAndTallDescription[] = {
+	0x3c,                               // dup
+	0x35, 0x06,                         // ldi 06
+	0x1a,                               // eq? [ verb == smell ]
+	0x30, SIG_UINT16(0x0013),           // bnt 0013
+	0x38, SIG_SELECTOR16(modNum),       // pushi modNum [ redundant when set to room number ]
+	0x78,                               // push1
+	0x38, SIG_UINT16(0x017d),           // pushi 017d
+	0x38, SIG_SELECTOR16(say),          // pushi say
+	0x78,                               // push1
+	0x39, 0x0a,                         // pushi 0a
+	0x81, 0x59,                         // lag 59
+	0x4a, 0x0c,                         // send 0c [ sq4GlobalNarrator modNum: 381 say: 10 ]
+	SIG_MAGICDWORD,
+	0x33, 0x02,                         // jmp 02
+	0x35, 0x00,                         // ldi 00
+	0x3a,                               // toss
+	SIG_END
+};
+
+static const uint16 sq4CdPatchBigAndTallDescription[] = {
+	0x35, 0x06,                         // ldi 06
+	0x1a,                               // eq? [ verb == smell ]
+	0x31, 0x0a,                         // bnt 0a
+	0x38, PATCH_SELECTOR16(say),        // pushi say
+	0x78,                               // push1
+	0x39, 0x0a,                         // pushi 0a
+	0x81, 0x59,                         // lag 59
+	0x4a, 0x06,                         // send 06 [ sq4GlobalNarrator say: 10 ]
+	0x87, 0x01,                         // lap 01
+	0x78,                               // push1
+	0x1a,                               // eq? [ verb == look ]
+	0x31, 0x08,                         // bnt 08
+	0x38, PATCH_SELECTOR16(doVerb),     // pushi doVerb
+	0x78,                               // push1
+	0x78,                               // push1
+	0x57, 0x7a, 0x06,                   // super Sq4Feature 06 [ super doVerb: 1 ]
+	PATCH_END
+};
+
 // For Space Quest 4 CD, Sierra added a pick up animation for Roger when he
 // picks up the rope.
 //
@@ -12453,6 +12500,7 @@ static const SciScriptPatcherEntry sq4Signatures[] = {
 	{  true,   290, "CD: cedric lockup fix (1/2)",                    1, sq4CdSignatureCedricLockup1,                   sq4CdPatchCedricLockup1 },
 	{  true,   290, "CD: cedric lockup fix (2/2)",                    1, sq4CdSignatureCedricLockup2,                   sq4CdPatchCedricLockup2 },
 	{  true,   370, "CD: sock's door restore and message fix",        1, sq4CdSignatureSocksDoor,                       sq4CdPatchSocksDoor },
+	{  true,   381, "CD: big and tall room description",              1, sq4CdSignatureBigAndTallDescription,           sq4CdPatchBigAndTallDescription },
 	{  true,   391, "CD: missing Audio for universal remote control", 1, sq4CdSignatureMissingAudioUniversalRemote,     sq4CdPatchMissingAudioUniversalRemote },
 	{  true,   396, "CD: get points for changing back clothes fix",   1, sq4CdSignatureGetPointsForChangingBackClothes, sq4CdPatchGetPointsForChangingBackClothes },
 	{  true,   405, "CD/Floppy: zero gravity blast fix",              1, sq4SignatureZeroGravityBlast,                  sq4PatchZeroGravityBlast },
