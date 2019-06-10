@@ -3346,9 +3346,17 @@ HoleRoom::HoleRoom(Supernova2Engine *vm, GameManager *gm) {
 	_vm = vm;
 	_gm = gm;
 
-	_fileNumber = 6;
+	_fileNumber = 9;
 	_id = HOLE_ROOM;
 	_shown[0] = kShownTrue;
+	_shown[8] = kShownTrue;
+	_shown[15] = kShownTrue;
+
+	_objectState[0] = Object(_id, kStringRight, kStringDefaultDescription, G_RIGHT, EXIT, 1, 1, 0, PYR_ENTRANCE, 14);
+	_objectState[1] = Object(_id, kStringLeft, kStringDefaultDescription, G_LEFT, EXIT, 2, 2, 0, PYR_ENTRANCE, 10);
+	_objectState[2] = Object(_id, kStringRope, kStringDefaultDescription, ROPE, NULLTYPE, 255, 255, 0);
+	_objectState[3] = Object(_id, kStringOpening, kStringOpeningDescription1, HOLE, EXIT, 3, 3, 0, IN_HOLE, 12);
+	_objectState[4] = Object(_id, kStringOpening, kStringOpeningDescription2, NULLOBJECT, NULLTYPE, 4, 4, 0);
 }
 
 void HoleRoom::onEntrance() {
@@ -3359,6 +3367,26 @@ void HoleRoom::animation() {
 }
 
 bool HoleRoom::interact(Action verb, Object &obj1, Object &obj2) {
+	if (_gm->move(verb, obj1)) {
+		_gm->passageConstruction();
+		_gm->_newRoom = true;
+	} else if (verb == ACTION_USE && 
+			   (Object::combine(obj1, obj2, ROPE, G_RIGHT) || 
+				Object::combine(obj1, obj2, ROPE, G_LEFT))) {
+		_vm->renderMessage(kStringPyramid7);
+	} else if (verb == ACTION_USE && 
+			   (Object::combine(obj1, obj2, TKNIFE, G_RIGHT) || 
+				Object::combine(obj1, obj2, TKNIFE, G_LEFT))) {
+		_vm->renderMessage(kStringPyramid8);
+	} else if (verb == ACTION_TAKE && obj1._id == ROPE && !(obj1._type & CARRIED)) {
+		_vm->renderMessage(kStringPyramid9);
+	} else if (verb == ACTION_WALK && obj1._id == HOLE && !isSectionVisible(16)) {
+		_vm->renderMessage(kStringPyramid10);
+	} else if (verb == ACTION_USE && obj1._id == ROPE && isSectionVisible(16)) {
+		_gm->changeRoom(IN_HOLE);
+		_gm->_newRoom = true;
+	} else
+		return false;
 	return true;
 }
 
