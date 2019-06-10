@@ -39,5 +39,10 @@ void GlkInterface::print(int number) {
 	print(s);
 }
 
+Common::String GlkInterface::getLine() {
+	// TODO: Stub
+	return "";
+}
+
 } // End of namespace AdvSys
 } // End of namespace Glk

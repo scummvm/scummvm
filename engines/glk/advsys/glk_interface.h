@@ -52,6 +52,11 @@ protected:
 	 * @param number	Number to print
 	 */
 	void print(int number);
+
+	/**
+	 * Get an input line
+	 */
+	Common::String getLine();
 public:
 	/**
 	 * Constructor

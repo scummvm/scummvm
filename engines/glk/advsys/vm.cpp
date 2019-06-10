@@ -285,30 +285,51 @@ void VM::opSVAR() {
 }
 
 void VM::opSSET() {
+	setVariable(getCodeByte(), _stack.top());
 }
 
 void VM::opSPLIT() {
+	_stack.top() = readCodeByte();
 }
 
 void VM::opSNLIT() {
+	_stack.top() = readCodeByte();
 }
 
 void VM::opYORN() {
+	Common::String line = getLine();
+	_stack.top() = line[0] == 'Y' || line[0] == 'y' ? TRUE : NIL;
 }
 
 void VM::opSAVE() {
+	if (saveGame().getCode() != Common::kNoError)
+		print("Sorry, the savegame couldn't be created");
 }
 
 void VM::opRESTORE() {
+	if (saveGame().getCode() != Common::kNoError)
+		print("Sorry, the savegame couldn't be restored");
 }
 
 void VM::opARG() {
+	int argNum = readCodeByte();
+	int varsSize = _stack[_fp - 3];
+	if (argNum >= varsSize)
+		error("Invalid argument number");
+	_stack.top() = _stack[_fp - 4 - argNum];
 }
 
 void VM::opASET() {
+	int argNum = readCodeByte();
+	int varsSize = _stack[_fp - 3];
+	if (argNum >= varsSize)
+		error("Invalid argument number");
+	_stack[_fp - 4 - argNum] = _stack.top();
 }
 
 void VM::opTMP() {
+	int val = readCodeByte();
+
 }
 
 void VM::opTSET() {
