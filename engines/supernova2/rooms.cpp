@@ -2371,7 +2371,7 @@ bool PyrEntrance::interact(Action verb, Object &obj1, Object &obj2) {
 		{0, 2, 4, 2, DOWNSTAIRS3},
 		{1, 2, 5, 0, UPSTAIRS3},
 		{1, 2, 5, 3, LCORRIDOR1},
-		{1, 1, 5, 1, LGANG2},
+		{1, 1, 5, 1, LCORRIDOR2},
 		{1, 1, 5, 3, HOLE_ROOM},
 		{0, 7, 4, 0, BST_DOOR}
 	};
@@ -3313,23 +3313,32 @@ bool LCorridor1::interact(Action verb, Object &obj1, Object &obj2) {
 	return true;
 }
 
-LGang2::LGang2(Supernova2Engine *vm, GameManager *gm) {
+LCorridor2::LCorridor2(Supernova2Engine *vm, GameManager *gm) {
 	_vm = vm;
 	_gm = gm;
 
-	_fileNumber = 6;
-	_id = LGANG2;
+	_fileNumber = 9;
+	_id = LCORRIDOR2;
 	_shown[0] = kShownTrue;
+	_shown[17] = kShownTrue;
+
+	_objectState[0] = Object(_id, kStringRight, kStringDefaultDescription, G_RIGHT, EXIT, 1, 1, 0, PYR_ENTRANCE, 14);
+	_objectState[1] = Object(_id, kStringLeft, kStringDefaultDescription, G_LEFT, EXIT, 2, 2, 0, PYR_ENTRANCE, 10);
+	_objectState[2] = Object(_id, kStringCorridor, kStringDefaultDescription, CORRIDOR, EXIT, 6, 6, 0, PYR_ENTRANCE, 2);
 }
 
-void LGang2::onEntrance() {
+void LCorridor2::onEntrance() {
 	setRoomSeen(true);
 }
 
-void LGang2::animation() {
+void LCorridor2::animation() {
 }
 
-bool LGang2::interact(Action verb, Object &obj1, Object &obj2) {
+bool LCorridor2::interact(Action verb, Object &obj1, Object &obj2) {
+	if (!_gm->move(verb, obj1))
+		return false;
+	_gm->passageConstruction();
+	_gm->_newRoom = true;
 	return true;
 }
 
