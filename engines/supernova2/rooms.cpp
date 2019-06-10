@@ -2370,7 +2370,7 @@ bool PyrEntrance::interact(Action verb, Object &obj1, Object &obj2) {
 		{1, 10, 7, 0, MONSTER2_N},
 		{0, 2, 4, 2, DOWNSTAIRS3},
 		{1, 2, 5, 0, UPSTAIRS3},
-		{1, 2, 5, 3, LGANG1},
+		{1, 2, 5, 3, LCORRIDOR1},
 		{1, 1, 5, 1, LGANG2},
 		{1, 1, 5, 3, HOLE_ROOM},
 		{0, 7, 4, 0, BST_DOOR}
@@ -2878,6 +2878,8 @@ bool Formula1F::interact(Action verb, Object &obj1, Object &obj2) {
 		return false;
 	if (obj1._id == CORRIDOR)
 		_gm->changeRoom(FORMULA1_N);
+	else
+		_gm->passageConstruction();
 	_gm->_newRoom = true;
 	return true;
 }
@@ -2939,6 +2941,8 @@ bool Formula2F::interact(Action verb, Object &obj1, Object &obj2) {
 		return false;
 	if (obj1._id == CORRIDOR)
 		_gm->changeRoom(FORMULA2_N);
+	else
+		_gm->passageConstruction();
 	_gm->_newRoom = true;
 	return true;
 }
@@ -2999,6 +3003,8 @@ bool TomatoF::interact(Action verb, Object &obj1, Object &obj2) {
 		return false;
 	if (obj1._id == CORRIDOR)
 		_gm->changeRoom(TOMATO_N);
+	else
+		_gm->passageConstruction();
 	_gm->_newRoom = true;
 	return true;
 }
@@ -3068,7 +3074,8 @@ bool MonsterF::interact(Action verb, Object &obj1, Object &obj2) {
 			_gm->changeRoom(MONSTER1_N);
 		else
 			_gm->changeRoom(MONSTER2_N);
-	}
+	} else
+		_gm->passageConstruction();
 	_gm->_newRoom = true;
 	return true;
 }
@@ -3228,7 +3235,7 @@ bool Upstairs3::interact(Action verb, Object &obj1, Object &obj2) {
 			_gm->_state._pyraE = 1;
 	}
 	if (obj1._id == G_LEFT)
-		_gm->changeRoom(LGANG1);
+		_gm->changeRoom(LCORRIDOR1);
 	else
 		_gm->passageConstruction();
 	_gm->_newRoom = true;
@@ -3247,7 +3254,7 @@ Downstairs3::Downstairs3(Supernova2Engine *vm, GameManager *gm) {
 
 	_objectState[0] = Object(_id, kStringRight, kStringDefaultDescription, G_RIGHT, EXIT, 1, 1, 0, PYR_ENTRANCE, 14);
 	_objectState[1] = Object(_id, kStringLeft, kStringDefaultDescription, G_LEFT, EXIT, 2, 2, 0, PYR_ENTRANCE, 10);
-	_objectState[2] = Object(_id, kStringCorridor, kStringDefaultDescription, CORRIDOR, EXIT, 0, 0, 0, PYR_ENTRANCE, 2);
+	_objectState[2] = Object(_id, kStringCorridor, kStringDefaultDescription, CORRIDOR, EXIT, 3, 3, 0, PYR_ENTRANCE, 2);
 }
 
 void Downstairs3::onEntrance() {
@@ -3271,23 +3278,38 @@ bool Downstairs3::interact(Action verb, Object &obj1, Object &obj2) {
 	return true;
 }
 
-LGang1::LGang1(Supernova2Engine *vm, GameManager *gm) {
+LCorridor1::LCorridor1(Supernova2Engine *vm, GameManager *gm) {
 	_vm = vm;
 	_gm = gm;
 
-	_fileNumber = 6;
-	_id = LGANG1;
+	_fileNumber = 9;
+	_id = LCORRIDOR1;
 	_shown[0] = kShownTrue;
+	_shown[2] = kShownTrue;
+	_shown[17] = kShownTrue;
+
+	_objectState[0] = Object(_id, kStringRight, kStringDefaultDescription, G_RIGHT, EXIT, 1, 1, 0, PYR_ENTRANCE, 14);
+	_objectState[1] = Object(_id, kStringLeft, kStringDefaultDescription, G_LEFT, EXIT, 2, 2, 0, PYR_ENTRANCE, 10);
+	_objectState[2] = Object(_id, kStringCorridor, kStringDefaultDescription, CORRIDOR, EXIT, 6, 6, 0, PYR_ENTRANCE, 2);
 }
 
-void LGang1::onEntrance() {
+void LCorridor1::onEntrance() {
 	setRoomSeen(true);
 }
 
-void LGang1::animation() {
+void LCorridor1::animation() {
 }
 
-bool LGang1::interact(Action verb, Object &obj1, Object &obj2) {
+bool LCorridor1::interact(Action verb, Object &obj1, Object &obj2) {
+	if (!_gm->move(verb, obj1))
+		return false;
+	if (obj1._id == G_RIGHT)
+		_gm->changeRoom(UPSTAIRS3);
+	else if (obj1._id == CORRIDOR)
+		_gm->changeRoom(HOLE_ROOM);
+	else
+		_gm->passageConstruction();
+	_gm->_newRoom = true;
 	return true;
 }
 

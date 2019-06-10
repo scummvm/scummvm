@@ -453,9 +453,9 @@ public:
 private:
 };
 
-class LGang1 : public Room {
+class LCorridor1 : public Room {
 public:
-	LGang1(Supernova2Engine *vm, GameManager *gm);
+	LCorridor1(Supernova2Engine *vm, GameManager *gm);
 	virtual void onEntrance();
 	virtual void animation();
 	virtual bool interact(Action verb, Object &obj1, Object &obj2);
