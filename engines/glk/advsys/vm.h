@@ -25,7 +25,7 @@
 
 #include "glk/advsys/glk_interface.h"
 #include "glk/advsys/game.h"
-#include "common/array.h"
+#include "common/stack.h"
 
 namespace Glk {
 namespace AdvSys {
@@ -110,34 +110,19 @@ typedef void (VM::*OpcodeMethod)();
  * Main VM for AdvSys
  */
 class VM : public GlkInterface, public Game {
-	class ArrayStack : public Common::Array<int> {
+	class FixedStack : public Common::FixedStack<int, 500> {
 	public:
-		/**
-		 * Push a value onto the stack
-		 */
-		void push(int v) {
-			push_back(v);
+		void resize(size_t newSize) {
+			assert(newSize <= _size);
+			_size = newSize;
 		}
-
-		/**
-		 * Pop a value from the stack
-		 */
-		int pop() {
-			int v = back();
-			pop_back();
-			return v;
-		}
-
-		/**
-		 * Returns the top of the stack (the most recently added value
-		 */
-		int &top() { return back(); }
 	};
 private:
 	static OpcodeMethod _METHODS[0x34];
 	int _pc;
 	ExecutionResult _status;
-	ArrayStack _stack;
+	FixedStack _stack;
+	int _fp;
 private:
 	/**
 	 * Execute a single opcode within the script

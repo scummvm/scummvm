@@ -83,7 +83,7 @@ OpcodeMethod VM::_METHODS[0x34] = {
 };
 
 VM::VM(OSystem *syst, const GlkGameDescription &gameDesc) : GlkInterface(syst, gameDesc), Game(),
-	_pc(0), _status(IN_PROGRESS) {
+	_pc(0), _fp(-1), _status(IN_PROGRESS) {
 }
 
 ExecutionResult VM::execute(int offset) {
@@ -238,21 +238,46 @@ void VM::opPNUMBER() {
 }
 
 void VM::opFINISH() {
+	_status = FINISH;
 }
 
 void VM::opCHAIN() {
+	_status = CHAIN;
 }
 
 void VM::opABORT() {
+	_status = ABORT;
 }
 
 void VM::opEXIT() {
+	quitGame();
+	_status = ABORT;
 }
 
 void VM::opRETURN() {
+	if (_stack.empty()) {
+		_status = CHAIN;
+	} else {
+		int val = _stack.top();
+		_stack.resize(_fp);
+		_fp = _stack.pop();
+		_pc = _stack.pop();
+
+		int varsSize = _stack.pop();
+		_stack.resize(_stack.size() - varsSize);
+		_stack.top() = val;
+	}
 }
 
 void VM::opCALL() {
+	int varSize = readCodeByte();
+	int topIndex = _stack.size() - 1;
+
+	_stack.push(varSize);
+	_stack.push(_pc);
+	_stack.push(_fp);
+	_fp = _stack.size();
+	_pc = getActionField(_stack[topIndex - varSize], A_CODE);
 }
 
 void VM::opSVAR() {
@@ -311,6 +336,26 @@ void VM::opRNDMIZE() {
 }
 
 void VM::opSEND() {
+	int varSize = readCodeByte();
+	int topIndex = _stack.size() - 1;
+
+	_stack.push(varSize);
+	_stack.push(_pc);
+	_stack.push(_fp);
+	_fp = _stack.size();
+
+	int val = _stack[topIndex - varSize];
+	if (val)
+		val = getObjectField(val, O_CLASS);
+	else
+		val = _stack[topIndex - varSize + 1];
+
+	if (val && (val = getObjectProperty(val, _stack[topIndex - varSize + 2])) != 0) {
+		_pc = getActionField(val, A_CODE);
+	} else {
+		// Return NIL if there's no action for the given message
+		opRETURN();
+	}
 }
 
 void VM::opVOWEL() {
