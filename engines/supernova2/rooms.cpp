@@ -3563,9 +3563,29 @@ BstDoor::BstDoor(Supernova2Engine *vm, GameManager *gm) {
 	_vm = vm;
 	_gm = gm;
 
-	_fileNumber = 6;
+	_fileNumber = 15;
 	_id = BST_DOOR;
 	_shown[0] = kShownTrue;
+
+	_objectState[0] = Object(_id, kStringRight, kStringDefaultDescription, G_RIGHT, EXIT, 18, 18, 0, PYR_ENTRANCE, 14);
+	_objectState[1] = Object(_id, kStringLeft, kStringDefaultDescription, G_LEFT, EXIT, 17, 17, 0, PYR_ENTRANCE, 10);
+	_objectState[2] = Object(_id, kStringLetter, kStringDefaultDescription, BST1, PRESS, 0, 0, 0);
+	_objectState[3] = Object(_id, kStringLetter, kStringDefaultDescription, BST2, PRESS, 1, 0, 0);
+	_objectState[4] = Object(_id, kStringLetter, kStringDefaultDescription, BST3, PRESS, 2, 0, 0);
+	_objectState[5] = Object(_id, kStringLetter, kStringDefaultDescription, BST4, PRESS, 3, 0, 0);
+	_objectState[6] = Object(_id, kStringLetter, kStringDefaultDescription, BST5, PRESS, 4, 0, 0);
+	_objectState[7] = Object(_id, kStringLetter, kStringDefaultDescription, BST6, PRESS, 5, 0, 0);
+	_objectState[8] = Object(_id, kStringLetter, kStringDefaultDescription, BST7, PRESS, 6, 0, 0);
+	_objectState[9] = Object(_id, kStringLetter, kStringDefaultDescription, BST8, PRESS, 7, 0, 0);
+	_objectState[10] = Object(_id, kStringLetter, kStringDefaultDescription, BST9, PRESS, 8, 0, 0);
+	_objectState[11] = Object(_id, kStringLetter, kStringDefaultDescription, BST10, PRESS, 9, 0, 0);
+	_objectState[12] = Object(_id, kStringLetter, kStringDefaultDescription, BST11, PRESS, 10, 0, 0);
+	_objectState[13] = Object(_id, kStringLetter, kStringDefaultDescription, BST12, PRESS, 11, 0, 0);
+	_objectState[14] = Object(_id, kStringLetter, kStringDefaultDescription, BST13, PRESS, 12, 0, 0);
+	_objectState[15] = Object(_id, kStringLetter, kStringDefaultDescription, BST14, PRESS, 13, 0, 0);
+	_objectState[16] = Object(_id, kStringLetter, kStringDefaultDescription, BST15, PRESS, 14, 0, 0);
+	_objectState[17] = Object(_id, kStringLetter, kStringDefaultDescription, BST16, PRESS, 15, 0, 0);
+	_objectState[18] = Object(_id, kStringDoor, kStringMassive, DOOR, EXIT | OPENABLE | CLOSED, 16, 16, 0, HALL, 2);
 }
 
 void BstDoor::onEntrance() {
@@ -3576,6 +3596,37 @@ void BstDoor::animation() {
 }
 
 bool BstDoor::interact(Action verb, Object &obj1, Object &obj2) {
+	static char password[16] = {0, 1, 0, 0, 1, 0, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0};
+	if (_gm->move(verb, obj1)) {
+		_gm->passageConstruction();
+		_gm->_newRoom = true;
+	} else if (verb == ACTION_PRESS && obj1._id >= BST1 && obj1._id <= BST16) {
+		int number = obj1._id - (BST1 - 1);
+		if (isSectionVisible(number))
+			_vm->renderImage(number + 128);
+		else
+			_vm->renderImage(number);
+		_vm->playSound(kAudioTaxiOpen);
+		for (number = 1; number <= 16; number++) {
+			if (isSectionVisible(number) != password[number - 1])
+				return true;
+		}
+		_gm->wait(2);
+		_vm->renderImage(17);
+		for (number = 1; number <= 16; number++) {
+			setSectionVisible(number, kShownFalse);
+			_objectState[number + 1]._click = 255;
+		}
+		_gm->wait(2);
+		_vm->renderImage(18);
+		_gm->wait(2);
+		_vm->renderImage(19);
+		_objectState[18]._type = EXIT;
+		_objectState[18]._description = kStringDefaultDescription;
+		_vm->playSound(kAudioShip3);
+		_gm->screenShake();
+	} else
+		return false;
 	return true;
 }
 
