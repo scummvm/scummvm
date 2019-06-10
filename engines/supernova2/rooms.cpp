@@ -3397,6 +3397,10 @@ InHole::InHole(Supernova2Engine *vm, GameManager *gm) {
 	_fileNumber = 6;
 	_id = IN_HOLE;
 	_shown[0] = kShownTrue;
+
+	_objectState[0] = Object(_id, kStringRope, kStringDefaultDescription, ROPE, EXIT, 0, 0, 0, HOLE_ROOM, 2);
+	_objectState[1] = Object(_id, kStringNote, kStringNoteDescription1, NULLOBJECT, TAKE, 255, 255, 1 + 128);
+	_objectState[2] = Object(_id, kStringSlot, kStringSlotDescription3, SLOT, COMBINABLE, 1, 1, 0);
 }
 
 void InHole::onEntrance() {
@@ -3407,6 +3411,21 @@ void InHole::animation() {
 }
 
 bool InHole::interact(Action verb, Object &obj1, Object &obj2) {
+	if (verb == ACTION_USE && Object::combine(obj1, obj2, TKNIFE, SLOT)) {
+		if (isSectionVisible(kMaxSection - 1))
+			_vm->renderMessage(kStringPyramid11);
+		else {
+			_vm->renderImage(1);
+			_objectState[1]._click = 2;
+			setSectionVisible(kMaxSection - 1, kShownTrue);
+		}
+	} else if (verb == ACTION_TAKE && obj1._id == ROPE) {
+		_vm->renderMessage(kStringPyramid9);
+	} else if (verb == ACTION_USE && obj1._id == ROPE) {
+		_gm->changeRoom(HOLE_ROOM);
+		_gm->_newRoom = true;
+	} else
+		return false;
 	return true;
 }
 
@@ -3414,10 +3433,17 @@ Floordoor::Floordoor(Supernova2Engine *vm, GameManager *gm) {
 	_vm = vm;
 	_gm = gm;
 
-	_fileNumber = 6;
+	_fileNumber = 14;
 	_id = FLOORDOOR;
 	_shown[0] = kShownTrue;
 	_shown[14] = kShownTrue;
+
+	_objectState[0] = Object(_id, kStringRight, kStringDefaultDescription, G_RIGHT, EXIT, 12, 12, 0, PYR_ENTRANCE, 14);
+	_objectState[1] = Object(_id, kStringLeft, kStringDefaultDescription, G_LEFT, EXIT, 11, 11, 0, PYR_ENTRANCE, 10);
+	_objectState[2] = Object(_id, kStringKnife1, kStringDefaultDescription, TKNIFE, TAKE | COMBINABLE, 255, 255, 9);
+	_objectState[3] = Object(_id, kStringRope, kStringDefaultDescription, ROPE, TAKE, 255, 255, 11+128);
+	_objectState[4] = Object(_id, kStringOpening, kStringOpeningDescription3, HOLE, EXIT, 4, 4, 0, FLOORDOOR_U, 12);
+	_objectState[5] = Object(_id, kStringStones, kStringDefaultDescription, STONES, COMBINABLE, 5, 5, 0);
 }
 
 void Floordoor::onEntrance() {
@@ -3428,6 +3454,61 @@ void Floordoor::animation() {
 }
 
 bool Floordoor::interact(Action verb, Object &obj1, Object &obj2) {
+	if (_gm->move(verb, obj1)) {
+		_gm->passageConstruction();
+		_gm->_newRoom = true;
+	} else if (verb == ACTION_WALK && obj1._id == HOLE) {
+		if (isSectionVisible(11)) {
+			_gm->_state._pyraZ = 4;
+			_gm->_state._pyraDirection = 2;
+			_gm->_state._pyraE = 0;
+			return false;
+		} else
+			_vm->renderMessage(kStringPyramid12);
+	} else if (verb == ACTION_USE && obj1._id == ROPE && isSectionVisible(11)) {
+		_gm->_state._pyraZ = 4;
+		_gm->_state._pyraDirection = 2;
+		_gm->_state._pyraE = 0 ;
+		_gm->changeRoom(FLOORDOOR_U);
+		_gm->_newRoom = true;
+	} else if (verb == ACTION_USE && Object::combine(obj1, obj2, TKNIFE, STONES)) {
+		_vm->renderImage(10);
+		if (obj1._id == TKNIFE)
+			_gm->_inventory.remove(obj1);
+		else
+			_gm->_inventory.remove(obj2);
+		_objectState[2]._click = 6;
+	} else if (verb == ACTION_USE && 
+			   (Object::combine(obj1, obj2, TKNIFE, G_RIGHT) ||
+				Object::combine(obj1, obj2, TKNIFE, G_LEFT))) {
+		_vm->renderMessage(kStringPyramid8);
+	} else if (verb == ACTION_USE && Object::combine(obj1, obj2, ROPE, TKNIFE) &&
+					isSectionVisible(10)) {
+		_vm->renderImage(11);
+		setSectionVisible(10, kShownFalse);
+		if (obj1._id == ROPE)
+			_gm->_inventory.remove(obj1);
+		else
+			_gm->_inventory.remove(obj2);
+		_objectState[2]._click = 255;
+		_objectState[3]._click = 7;
+		_objectState[3]._type &= ~COMBINABLE;
+	} else if (verb == ACTION_USE && 
+			   (Object::combine(obj1, obj2, ROPE, G_RIGHT) ||
+				Object::combine(obj1, obj2, ROPE, G_LEFT)  ||
+				Object::combine(obj1, obj2, ROPE, STONES))) {
+		_vm->renderMessage(kStringPyramid7);
+	} else if (verb == ACTION_TAKE && obj1._id == ROPE && !(obj1._type & CARRIED)) {
+		_gm->takeObject(obj1);
+		obj1._type |= COMBINABLE;
+		_vm->renderImage(9);
+		_vm->renderImage(10);
+		_objectState[2]._click = 6;
+	} else if (verb == ACTION_TAKE && obj1._id == TKNIFE && !(obj1._type & CARRIED)) {
+		_gm->takeObject(obj1);
+		setSectionVisible(10, kShownFalse);
+	} else
+		return false;
 	return true;
 }
 
