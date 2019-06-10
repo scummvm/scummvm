@@ -65,7 +65,7 @@ bool AdvSysMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &
 		if (!gameFile.open(*file))
 			continue;
 
-		Header hdr(gameFile);
+		Header hdr(&gameFile);
 		if (!hdr._valid)
 			continue;
 

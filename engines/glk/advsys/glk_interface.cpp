@@ -25,6 +25,13 @@
 namespace Glk {
 namespace AdvSys {
 
+void GlkInterface::printString(int offset) {
+	// TODO
+}
+
+void GlkInterface::printNumber(int number) {
+	// TODO
+}
 
 } // End of namespace AdvSys
 } // End of namespace Glk

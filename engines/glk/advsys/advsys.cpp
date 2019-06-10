@@ -80,7 +80,7 @@ bool AdvSys::initialize() {
 		return false;
 
 	// Load the game's header
-	if (!Game::init(_gameFile))
+	if (!Game::init(&_gameFile))
 		return false;
 
 	return true;

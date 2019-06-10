@@ -127,6 +127,11 @@ class VM : public GlkInterface, public Game {
 			pop_back();
 			return v;
 		}
+
+		/**
+		 * Returns the top of the stack (the most recently added value
+		 */
+		int &top() { return back(); }
 	};
 private:
 	static OpcodeMethod _METHODS[0x34];

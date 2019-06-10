@@ -30,6 +30,8 @@ namespace Glk {
 namespace AdvSys {
 
 #define NIL 0
+#define MESSAGE_CACHE_SIZE 8
+#define MESSAGE_BLOCK_SIZE 512
 
 /**
  * Actions
@@ -118,22 +120,36 @@ public:
 	/**
 	 * Constructor
 	 */
-	Header(Common::ReadStream &s) {
+	Header(Common::SeekableReadStream *s) {
 		init(s);
 	}
 
 	/**
 	 * init the header
 	 */
-	bool init(Common::ReadStream &s);
+	bool init(Common::SeekableReadStream *s);
 };
 
 /**
  * Game abstraction class
  */
 class Game : public Header {
+	struct CacheEntry {
+		int _blockNum;
+		char _data[MESSAGE_BLOCK_SIZE];
+
+		/**
+		 * Constructor
+		 */
+		CacheEntry() : _blockNum(-1) {
+			Common::fill(&_data[0], &_data[MESSAGE_BLOCK_SIZE], '\0');
+		}
+	};
 private:
 	bool _restartFlag;
+	Common::SeekableReadStream *_stream;
+	Common::Array<CacheEntry *> _msgCache;
+	int _msgBlockNum, _msgBlockOffset;
 private:
 	/**
 	 * Find an object property field
@@ -166,6 +182,16 @@ private:
 	 * Check if a word is in an element of a given list
 	 */
 	bool inList(int link, int word) const;
+
+	/**
+	 * Reads in a message block from the game file
+	 */
+	void readMsgBlock();
+
+	/**
+	 * Read the next character for a string
+	 */
+	char readMsgChar();
 public:
 	Common::Array<byte> _data;
 	int _residentOffset;
@@ -187,20 +213,22 @@ public:
 	/**
 	 * Constructor
 	 */
-	Game() : Header(), _restartFlag(false), _residentOffset(0), _wordCount(0), _objectCount(0),
-		_actionCount(0), _variableCount(0), _residentBase(nullptr), _wordTable(nullptr),
-		_wordTypeTable(nullptr), _objectTable(nullptr), _actionTable(nullptr),
-		_variableTable(nullptr), _saveArea(nullptr) {}
+	Game();
+
+	/**
+	 * Destructor
+	 */
+	~Game();
 
 	/**
 	 * init data for the game
 	 */
-	bool init(Common::SeekableReadStream &s);
+	bool init(Common::SeekableReadStream *s);
 
 	/**
 	 * Restore savegame data from the game to it's initial state
 	 */
-	void restart(Common::SeekableReadStream &s);
+	void restart();
 
 	/**
 	 * Returns true if the game is restarting, and resets the flag
@@ -330,6 +358,11 @@ public:
 	void writeWord(int offset, int val) {
 		WRITE_LE_UINT16(_residentBase + offset, val);
 	}
+
+	/**
+	 * Read a string from the messages section
+	 */
+	Common::String readString(int msg);
 };
 
 } // End of namespace AdvSys

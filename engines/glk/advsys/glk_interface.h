@@ -33,6 +33,18 @@ namespace AdvSys {
  * input and output
  */
 class GlkInterface : public GlkAPI {
+protected:
+	/**
+	 * Print a string
+	 * @param offset		String offset
+	 */
+	void printString(int offset);
+
+	/**
+	 * Print a number
+	 * @param number		Number to print
+	 */
+	void printNumber(int number);
 public:
 	/**
 	 * Constructor

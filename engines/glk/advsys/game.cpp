@@ -36,12 +36,12 @@ void Decrypter::decrypt(byte *data, size_t size) {
 
 #define HEADER_SIZE 62
 
-bool Header::init(Common::ReadStream &s) {
+bool Header::init(Common::SeekableReadStream *s) {
 	_valid = false;
 	byte data[HEADER_SIZE];
 
 	// Read in the data
-	if (s.read(data, HEADER_SIZE) != HEADER_SIZE)
+	if (s->read(data, HEADER_SIZE) != HEADER_SIZE)
 		return false;
 	decrypt(data, HEADER_SIZE);
 	Common::MemoryReadStream ms(data, HEADER_SIZE, DisposeAfterUse::NO);
@@ -98,9 +98,26 @@ enum LinkField {
 	L_SIZE = 4
 };
 
-bool Game::init(Common::SeekableReadStream &s) {
+Game::Game() : Header(), _stream(nullptr), _restartFlag(false), _residentOffset(0), _wordCount(0),
+		_objectCount(0), _actionCount(0), _variableCount(0), _residentBase(nullptr),
+		_wordTable(nullptr), _wordTypeTable(nullptr), _objectTable(nullptr), _actionTable(nullptr),
+		_variableTable(nullptr), _saveArea(nullptr), _msgBlockNum(-1), _msgBlockOffset(0) {
+	_msgCache.resize(MESSAGE_CACHE_SIZE);
+	for (int idx = 0; idx < MESSAGE_CACHE_SIZE; ++idx)
+		_msgCache[idx] = new CacheEntry();
+}
+
+Game::~Game() {
+	for (int idx = 0; idx < MESSAGE_CACHE_SIZE; ++idx)
+		delete _msgCache[idx];
+}
+
+bool Game::init(Common::SeekableReadStream *s) {
+	// Store a copy of the game file stream
+	_stream = s;
+
 	// Load the header
-	s.seek(0);
+	s->seek(0);
 	if (!Header::init(s))
 		return false;
 
@@ -109,10 +126,10 @@ bool Game::init(Common::SeekableReadStream &s) {
 
 	// Load the needed resident game data and decrypt it
 	_residentOffset = _dataBlockOffset * 512;
-	s.seek(_residentOffset);
+	s->seek(_residentOffset);
 
 	_data.resize(_size);
-	if (!s.read(&_data[0], _size))
+	if (!s->read(&_data[0], _size))
 		return false;
 	decrypt(&_data[0], _size);
 
@@ -136,9 +153,9 @@ bool Game::init(Common::SeekableReadStream &s) {
 	return true;
 }
 
-void Game::restart(Common::SeekableReadStream &s) {
-	s.seek(_residentOffset + _saveAreaOffset);
-	s.read(_saveArea, _saveSize);
+void Game::restart() {
+	_stream->seek(_residentOffset + _saveAreaOffset);
+	_stream->read(_saveArea, _saveSize);
 	decrypt(_saveArea, _saveSize);
 
 	setVariable(V_OCOUNT, _objectCount);
@@ -315,6 +332,70 @@ bool Game::inList(int link, int word) const {
 
 	return false;
 }
+
+Common::String Game::readString(int msg) {
+	// Get the block to use, and ensure it's loaded
+	_msgBlockNum = msg >> 7;
+	_msgBlockOffset = (msg & 0x7f) << 2;
+	readMsgBlock();
+
+	// Read the string
+	Common::String result;
+	char c;
+
+	while ((c = readMsgChar()) != '\0')
+		result += c;
+
+	return result;
+}
+
+char Game::readMsgChar() {
+	if (_msgBlockOffset >= MESSAGE_BLOCK_SIZE) {
+		// Move to the next block
+		++_msgBlockNum;
+		_msgBlockOffset = 0;
+		readMsgBlock();
+	}
+
+	// Return next character
+	return _msgCache[0]->_data[_msgBlockOffset++];
+}
+
+void Game::readMsgBlock() {
+	CacheEntry *ce;
+
+	// Check to see if the specified block is in the cache
+	for (int idx = 0; idx < MESSAGE_CACHE_SIZE; ++idx) {
+		if (_msgCache[idx]->_blockNum == _msgBlockNum) {
+			// If it's not already at the top of the list, move it there to ensure
+			// it'll be last to be unloaded as new blocks are loaded in
+			if (idx != 0) {
+				ce = _msgCache[idx];
+				_msgCache.remove_at(idx);
+				_msgCache.insert_at(0, ce);
+			}
+
+			return;
+		}
+	}
+
+	// At this point we need to load a new block in. Discard the block at the end
+	// and move it to the start for storing the new block to load
+	ce = _msgCache.back();
+	_msgCache.remove_at(_msgCache.size() - 1);
+	_msgCache.insert_at(0, ce);
+
+	// Load the new block
+	ce->_blockNum = _msgBlockNum;
+	_stream->seek((_messageBlockOffset + _msgBlockNum) << 9);
+	if (_stream->read(&ce->_data[0], MESSAGE_BLOCK_SIZE) != MESSAGE_BLOCK_SIZE)
+		error("Error reading message block");
+
+	// Decode the loaded block
+	for (int idx = 0; idx < MESSAGE_BLOCK_SIZE; ++idx)
+		ce->_data[idx] = (ce->_data[idx] + 30) & 0xff;
+}
+
 
 } // End of namespace AdvSys
 } // End of namespace Glk

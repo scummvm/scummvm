@@ -108,23 +108,23 @@ void VM::executeOpcode() {
 	if (opcode >= OP_BRT && opcode <= OP_VOWEL) {
 		(this->*_METHODS[(int)opcode - 1])();
 	} else if (opcode >= OP_XVAR && opcode < OP_XSET) {
-		_stack.back() = getVariable((int)opcode - OP_XVAR);
+		_stack.top() = getVariable((int)opcode - OP_XVAR);
 	} else if (opcode >= OP_XSET && opcode < OP_XPLIT) {
-		setVariable((int)opcode - OP_XSET, _stack.back());
+		setVariable((int)opcode - OP_XSET, _stack.top());
 	} else if (opcode >= OP_XPLIT && opcode < OP_XNLIT) {
-		_stack.back() = (int)opcode - OP_XPLIT;
+		_stack.top() = (int)opcode - OP_XPLIT;
 	} else if (opcode >= OP_XNLIT && (int)opcode < 256) {
-		_stack.back() = OP_XNLIT - opcode;
+		_stack.top() = OP_XNLIT - opcode;
 	} else {
 		error("Unknown opcode %x at offset %d", opcode, _pc);
 	}
 }
 void VM::opBRT() {
-	_pc = _stack.back() ? readCodeWord() : _pc + 2;
+	_pc = _stack.top() ? readCodeWord() : _pc + 2;
 }
 
 void VM::opBRF() {
-	_pc = !_stack.back() ? readCodeWord() : _pc + 2;
+	_pc = !_stack.top() ? readCodeWord() : _pc + 2;
 }
 
 void VM::opBR() {
@@ -132,11 +132,11 @@ void VM::opBR() {
 }
 
 void VM::opT() {
-	_stack.back() = TRUE;
+	_stack.top() = TRUE;
 }
 
 void VM::opNIL() {
-	_stack.back() = NIL;
+	_stack.top() = NIL;
 }
 
 void VM::opPUSH() {
@@ -144,83 +144,84 @@ void VM::opPUSH() {
 }
 
 void VM::opNOT() {
-	_stack.back() = _stack.back() ? NIL : TRUE;
+	_stack.top() = _stack.top() ? NIL : TRUE;
 }
 
 void VM::opADD() {
 	int v = _stack.pop();
-	_stack.back() += v;
+	_stack.top() += v;
 }
 
 void VM::opSUB() {
 	int v = _stack.pop();
-	_stack.back() -= v;
+	_stack.top() -= v;
 }
 
 void VM::opMUL() {
 	int v = _stack.pop();
-	_stack.back() *= v;
+	_stack.top() *= v;
 }
 
 void VM::opDIV() {
 	int v = _stack.pop();
-	_stack.back() = (v == 0) ? 0 : _stack.back() / v;
+	_stack.top() = (v == 0) ? 0 : _stack.top() / v;
 }
 
 void VM::opREM() {
 	int v = _stack.pop();
-	_stack.back() = (v == 0) ? 0 : _stack.back() % v;
+	_stack.top() = (v == 0) ? 0 : _stack.top() % v;
 }
 
 void VM::opBAND() {
 	int v = _stack.pop();
-	_stack.back() &= v;
+	_stack.top() &= v;
 }
 
 void VM::opBOR() {
 	int v = _stack.pop();
-	_stack.back() |= v;
+	_stack.top() |= v;
 }
 
 void VM::opBNOT() {
-	_stack.back() = ~_stack.back();
+	_stack.top() = ~_stack.top();
 }
 
 void VM::opLT() {
 	int v = _stack.pop();
-	_stack.back() = (_stack.back() < v) ? TRUE : NIL;
+	_stack.top() = (_stack.top() < v) ? TRUE : NIL;
 }
 
 void VM::opEQ() {
 	int v = _stack.pop();
-	_stack.back() = (_stack.back() == v) ? TRUE : NIL;
+	_stack.top() = (_stack.top() == v) ? TRUE : NIL;
 }
 
 void VM::opGT() {
 	int v = _stack.pop();
-	_stack.back() = (_stack.back() > v) ? TRUE : NIL;
+	_stack.top() = (_stack.top() > v) ? TRUE : NIL;
 }
 
 void VM::opLIT() {
-	_stack.back() = readCodeWord();
+	_stack.top() = readCodeWord();
 }
 
 void VM::opVAR() {
-	_stack.back() = getVariable(readCodeWord());
+	_stack.top() = getVariable(readCodeWord());
 }
 
 void VM::opGETP() {
 	int v = _stack.pop();
-	_stack.back() = getObjectProperty(_stack.back(), v);
+	_stack.top() = getObjectProperty(_stack.top(), v);
 }
 
 void VM::opSETP() {
 	int v3 = _stack.pop();
 	int v2 = _stack.pop();
-	_stack.back() = setObjectProperty(_stack.back(), v2, v3);
+	_stack.top() = setObjectProperty(_stack.top(), v2, v3);
 }
 
 void VM::opSET() {
+	setVariable(readCodeWord(), _stack.top());
 }
 
 void VM::opPRINT() {
@@ -251,7 +252,7 @@ void VM::opCALL() {
 }
 
 void VM::opSVAR() {
-	_stack.back() = getVariable(readCodeByte());
+	_stack.top() = getVariable(readCodeByte());
 }
 
 void VM::opSSET() {
