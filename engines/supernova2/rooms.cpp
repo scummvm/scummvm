@@ -2947,9 +2947,14 @@ Formula2N::Formula2N(Supernova2Engine *vm, GameManager *gm) {
 	_vm = vm;
 	_gm = gm;
 
-	_fileNumber = 6;
+	_fileNumber = 13;
 	_id = FORMULA2_N;
 	_shown[0] = kShownTrue;
+	_shown[6] = kShownTrue;
+
+	_objectState[0] = Object(_id, kStringRight, kStringDefaultDescription, G_RIGHT, EXIT, 8, 8, 0, PYR_ENTRANCE, 14);
+	_objectState[1] = Object(_id, kStringLeft, kStringDefaultDescription, G_LEFT, EXIT, 7, 7, 0, PYR_ENTRANCE, 10);
+	_objectState[2] = Object(_id, kStringInscription, kStringInscriptionDescription, NULLOBJECT, NULLTYPE, 3, 3, 0);
 }
 
 void Formula2N::onEntrance() {
@@ -2960,6 +2965,10 @@ void Formula2N::animation() {
 }
 
 bool Formula2N::interact(Action verb, Object &obj1, Object &obj2) {
+	if (!_gm->move(verb, obj1))
+		return false;
+	_gm->passageConstruction();
+	_gm->_newRoom = true;
 	return true;
 }
 
