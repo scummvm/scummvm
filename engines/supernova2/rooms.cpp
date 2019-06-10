@@ -2878,7 +2878,6 @@ bool Formula1F::interact(Action verb, Object &obj1, Object &obj2) {
 		return false;
 	if (obj1._id == CORRIDOR)
 		_gm->changeRoom(FORMULA1_N);
-	_gm->passageConstruction();
 	_gm->_newRoom = true;
 	return true;
 }
@@ -2887,9 +2886,14 @@ Formula1N::Formula1N(Supernova2Engine *vm, GameManager *gm) {
 	_vm = vm;
 	_gm = gm;
 
-	_fileNumber = 6;
+	_fileNumber = 13;
 	_id = FORMULA1_N;
 	_shown[0] = kShownTrue;
+	_shown[5] = kShownTrue;
+
+	_objectState[0] = Object(_id, kStringRight, kStringDefaultDescription, G_RIGHT, EXIT, 8, 8, 0, PYR_ENTRANCE, 14);
+	_objectState[1] = Object(_id, kStringLeft, kStringDefaultDescription, G_LEFT, EXIT, 7, 7, 0, PYR_ENTRANCE, 10);
+	_objectState[2] = Object(_id, kStringInscription, kStringInscriptionDescription, NULLOBJECT, NULLTYPE, 2, 2, 0);
 }
 
 void Formula1N::onEntrance() {
@@ -2900,6 +2904,10 @@ void Formula1N::animation() {
 }
 
 bool Formula1N::interact(Action verb, Object &obj1, Object &obj2) {
+	if (!_gm->move(verb, obj1))
+		return false;
+	_gm->passageConstruction();
+	_gm->_newRoom = true;
 	return true;
 }
 
