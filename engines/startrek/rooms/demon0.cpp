@@ -53,7 +53,7 @@ void Room::demon0Tick140() {
 	if (_awayMission->demon.mccoyMentionedFlora)
 		return;
 
-	showText(TX_SPEAKER_MCCOY, TX_DEM0_016);
+	showText(TX_SPEAKER_MCCOY, 16, true);
 
 	_awayMission->demon.mccoyMentionedFlora = true;
 }
@@ -199,18 +199,18 @@ void Room::demon0LookAtPrelate() {
 
 void Room::demon0UsePhaserOnSnow() {
 	// BUG: doesn't check if redshirt is dead.
-	showText(TX_SPEAKER_EVERTS, TX_DEM0_039);
+	showText(TX_SPEAKER_EVERTS, 39, true);
 }
 
 void Room::demon0UsePhaserOnSign() {
-	showText(TX_SPEAKER_MCCOY, TX_DEM0_017);
+	showText(TX_SPEAKER_MCCOY, 17, true);
 }
 
 void Room::demon0UsePhaserOnShelter() {
-	showText(TX_SPEAKER_MCCOY, TX_DEM0_015);
-	showText(TX_SPEAKER_SPOCK, TX_DEM0_013);
+	showText(TX_SPEAKER_MCCOY, 15, true);
+	showText(TX_SPEAKER_SPOCK, 13, true);
 	if (!_awayMission->redshirtDead)
-		showText(TX_SPEAKER_EVERTS, TX_DEM0_040);
+		showText(TX_SPEAKER_EVERTS, 40, true);
 }
 
 void Room::demon0UsePhaserOnPrelate() {

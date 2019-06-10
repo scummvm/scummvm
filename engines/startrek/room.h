@@ -143,8 +143,6 @@ public:
 	 */
 	Common::Point getSpawnPosition(int crewmanIndex);
 
-	int showText(TextRef speaker, TextRef text, bool fromRDF = false);
-
 public:
 	byte *_rdfData;
 
@@ -155,11 +153,15 @@ private:
 	const RoomAction *_roomActionList;
 	int _numRoomActions;
 
+	Common::String _rdfName;
 	int _roomIndex; // ie. for DEMON2, this is 2
 	Common::HashMap<int, Common::String> _lookMessages;
+	Common::HashMap<int, Common::String> _lookWithTalkerMessages;
 	Common::HashMap<int, Common::String> _talkMessages;
 
 	void loadRoomMessages();
+	void loadOtherRoomMessages();
+	void loadRoomMessage(const char *text);
 
 	int findFunctionPointer(int action, void (Room::*funcPtr)());
 
@@ -186,8 +188,10 @@ private:
 	 * Cmd 0x03
 	 */
 	int showRoomSpecificText(const char **textAddr);
-	int showText(const TextRef *text, bool fromRDF = false);
-	int showText(TextRef text, bool fromRDF = false);
+	int showText(const TextRef *text, bool fromRDF = false, bool lookWithTalker = false);
+	int showText(TextRef text, bool fromRDF = false, bool lookWithTalker = false);
+	int showText(TextRef speaker, TextRef text, bool fromRDF = false, bool lookWithTalker = false);
+
 	/**
 	 * Cmd 0x04
 	 */
