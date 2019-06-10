@@ -2300,13 +2300,15 @@ PyrEntrance::PyrEntrance(Supernova2Engine *vm, GameManager *gm) {
 }
 
 void PyrEntrance::onEntrance() {
-	if (_gm->_state._pyraS != 8 || _gm->_state._pyraZ != 5)
-		_waitTime = 0;
+	if (_gm->_state._pyraS == 8 && _gm->_state._pyraZ == 5) {
+		_gm->setAnimationTimer(1);
+		_waitTime = g_system->getMillis() + 60000;
+	}
 }
 
 void PyrEntrance::animation() {
 	if (_gm->_state._pyraS == 8 && _gm->_state._pyraZ == 5) {
-		if (_waitTime == 700) { // around 1 minute
+		if (g_system->getMillis() >= _waitTime) { // around 1 minute
 			_vm->renderMessage(kStringPyramid4);
 			_gm->waitOnInput(_gm->_messageDuration);
 			_vm->removeMessage();
@@ -2335,7 +2337,6 @@ void PyrEntrance::animation() {
 			_gm->_rooms[FLOORDOOR]->setSectionVisible(kMaxSection - 1, kShownTrue);
 		}
 		else {
-			_waitTime++;
 			_gm->setAnimationTimer(1);
 		}
 	}
@@ -2387,6 +2388,7 @@ bool PyrEntrance::interact(Action verb, Object &obj1, Object &obj2) {
 			_gm->_state._pyraZ == roomTab[i]._z &&
 			_gm->_state._pyraDirection == roomTab[i]._r) {
 			_gm->changeRoom(roomTab[i]._exitRoom);
+			_gm->_newRoom = true;
 			return true;
 		}
 	}
@@ -2863,7 +2865,7 @@ Formula1F::Formula1F(Supernova2Engine *vm, GameManager *gm) {
 
 	_objectState[0] = Object(_id, kStringRight, kStringDefaultDescription, G_RIGHT, EXIT, 12, 12, 0, PYR_ENTRANCE, 14);
 	_objectState[1] = Object(_id, kStringLeft, kStringDefaultDescription, G_LEFT, EXIT, 11, 11, 0, PYR_ENTRANCE, 10);
-	_objectState[2] = Object(_id, kStringInscription, kStringInscriptionDescription, DOOR, EXIT, 1, 1, 0, PYR_ENTRANCE, 2);
+	_objectState[2] = Object(_id, kStringInscription, kStringInscriptionDescription, CORRIDOR, EXIT, 1, 1, 0, PYR_ENTRANCE, 2);
 }
 
 void Formula1F::onEntrance() {
@@ -2926,7 +2928,7 @@ Formula2F::Formula2F(Supernova2Engine *vm, GameManager *gm) {
 
 	_objectState[0] = Object(_id, kStringRight, kStringDefaultDescription, G_RIGHT, EXIT, 12, 12, 0, PYR_ENTRANCE, 14);
 	_objectState[1] = Object(_id, kStringLeft, kStringDefaultDescription, G_LEFT, EXIT, 11, 11, 0, PYR_ENTRANCE, 10);
-	_objectState[2] = Object(_id, kStringInscription, kStringInscriptionDescription, DOOR, EXIT, 2, 2, 0, PYR_ENTRANCE, 2);
+	_objectState[2] = Object(_id, kStringInscription, kStringInscriptionDescription, CORRIDOR, EXIT, 2, 2, 0, PYR_ENTRANCE, 2);
 }
 
 void Formula2F::onEntrance() {
@@ -3670,7 +3672,7 @@ CoffinRoom::CoffinRoom(Supernova2Engine *vm, GameManager *gm) {
 	_objectState[2] = Object(_id, kStringToothbrush, kStringToothbrushDescription1, NULLOBJECT, NULLTYPE, 1, 1, 0);
 	_objectState[3] = Object(_id, kStringToothpaste, kStringToothbrushDescription1, NULLOBJECT, NULLTYPE, 2, 2, 0);
 	_objectState[4] = Object(_id, kStringBall, kStringBallDescription, L_BALL, NULLTYPE, 3, 3, 0);
-	_objectState[5] = Object(_id, kStringBall, kStringBallDescription, R_BALL, NULLTYPE, 3, 3, 0);
+	_objectState[5] = Object(_id, kStringBall, kStringBallDescription, R_BALL, NULLTYPE, 4, 4, 0);
 }
 
 void CoffinRoom::onEntrance() {

@@ -250,7 +250,7 @@ public:
 	virtual bool interact(Action verb, Object &obj1, Object &obj2);
 
 private:
-	int _waitTime;
+	uint32 _waitTime;
 };
 
 class Upstairs1 : public Room {
