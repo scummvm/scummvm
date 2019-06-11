@@ -764,6 +764,7 @@ bool Cabin::interact(Action verb, Object &obj1, Object &obj2) {
 				_vm->renderMessage(text);
 				_gm->waitOnInput((text.size() + 20) * _vm->_textSpeed / 10);
 				_vm->removeMessage();
+				_vm->paletteFadeOut();
 				_vm->saveGame(kSleepAutosaveSlot, "autosave");
 				_gm->_inventory.clear();
 				_gm->changeRoom(PYRAMID);

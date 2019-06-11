@@ -1593,6 +1593,7 @@ void GameManager::taxiPayment(int price, int destination) {
 			wait(1);
 		waitOnInput((t2.size() + 20) * _vm->_textSpeed / 10);
 		_vm->removeMessage();
+		_vm->paletteFadeOut();
 
 		switch (destination) {
 		case 0:
