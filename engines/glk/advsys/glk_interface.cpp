@@ -39,7 +39,7 @@ void GlkInterface::print(int number) {
 	print(s);
 }
 
-Common::String GlkInterface::getLine() {
+Common::String GlkInterface::readLine() {
 	// TODO: Stub
 	return "";
 }

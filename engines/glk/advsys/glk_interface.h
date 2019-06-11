@@ -56,7 +56,7 @@ protected:
 	/**
 	 * Get an input line
 	 */
-	Common::String getLine();
+	Common::String readLine();
 public:
 	/**
 	 * Constructor

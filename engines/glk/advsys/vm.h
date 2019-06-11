@@ -187,6 +187,12 @@ public:
  * Main VM for AdvSys
  */
 class VM : public GlkInterface, public Game {
+	struct InputWord {
+		Common::String _text;
+		int _number;
+
+		InputWord() : _number(0) {}
+	};
 private:
 	// Execution fields
 	static OpcodeMethod _METHODS[0x34];
@@ -201,7 +207,13 @@ private:
 	int _adjectiveWords[100];
 	int _nouns[20];
 	int _nounWords[20];
-	Common::String _wordText[100];
+	int _actor;
+	int _action;
+	int _dObject;
+	int _ndObjects;
+	int _iObject;
+	Common::Array<InputWord> _words;
+	InputWord *_wordPtr;
 private:
 	/**
 	 * Execute a single opcode within the script
@@ -221,6 +233,33 @@ private:
 	int readCodeWord() {
 		return getCodeWord(_pc += 2);
 	}
+
+	/**
+	 * Gets an input line and parse it
+	 */
+	bool parseInput();
+
+	/**
+	 * Gets an input line and splits it up into the words array
+	 */
+	bool getLine();
+
+	/**
+	 * Get the next word of a passed input line
+	 * @param line		Input line
+	 * @returns			True if a valid word was extracted
+	 */
+	bool getWord(Common::String &line);
+
+	/**
+	 * Returns true if a passed character is a skippable whitespace
+	 */
+	static bool isWhitespace(char c);
+
+	/**
+	 * Skips over spaces in a passed string
+	 */
+	static bool skipSpaces(Common::String &str);
 private:
 	void opBRT();
 	void opBRF();
@@ -286,6 +325,16 @@ public:
 	 * @returns         Script result code
 	 */
 	ExecutionResult execute(int offset);
+
+	/**
+	 * Get an input line and parse it
+	 */
+	bool getInput();
+
+	/**
+	 * Get the next command (next direct object)
+	 */
+	bool nextCommand();
 };
 
 } // End of namespace AdvSys

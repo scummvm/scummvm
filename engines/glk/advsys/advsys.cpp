@@ -26,20 +26,11 @@
 namespace Glk {
 namespace AdvSys {
 
-bool getInput() {
-	// TODO: Stub
-	return false;
-}
-
 bool singleAction() {
 	// TODO: Stub
 	return false;
 }
 
-bool nextAction() {
-	// TODO: STub
-	return false;
-}
 
 void AdvSys::runGame() {
 	if (!initialize()) {
@@ -60,7 +51,7 @@ void AdvSys::runGame() {
 			// Get and parse a single line
 			if (getInput()) {
 				if (singleAction()) {
-					while (!shouldQuit() && nextAction() && singleAction()) {}
+					while (!shouldQuit() && nextCommand() && singleAction()) {}
 				}
 			}
 		}

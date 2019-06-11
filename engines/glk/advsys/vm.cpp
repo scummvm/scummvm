@@ -21,6 +21,7 @@
  */
 
 #include "glk/advsys/vm.h"
+#include "common/translation.h"
 
 namespace Glk {
 namespace AdvSys {
@@ -83,7 +84,8 @@ OpcodeMethod VM::_METHODS[0x34] = {
 };
 
 VM::VM(OSystem *syst, const GlkGameDescription &gameDesc) : GlkInterface(syst, gameDesc), Game(),
-		_fp(_stack), _pc(0), _status(IN_PROGRESS) {
+		_fp(_stack), _pc(0), _status(IN_PROGRESS), _actor(-1), _action(-1), _dObject(-1),
+		_ndObjects(-1), _iObject(-1) {
 	Common::fill(&_nouns[0], &_nouns[20], 0);
 	Common::fill(&_nounWords[0], &_nounWords[20], -1);
 	Common::fill(&_adjectives[0], &_adjectives[20], (int *)nullptr);
@@ -302,8 +304,8 @@ void VM::opSNLIT() {
 }
 
 void VM::opYORN() {
-	Common::String line = getLine();
-	_stack.top() = line[0] == 'Y' || line[0] == 'y' ? TRUE : NIL;
+	Common::String line = readLine();
+	_stack.top() = !line.empty() && (line[0] == 'Y' || line[0] == 'y') ? TRUE : NIL;
 }
 
 void VM::opSAVE() {
@@ -364,13 +366,13 @@ void VM::opPNOUN() {
 	for (int *aPtr = _adjectives[noun - 1]; *aPtr; ++aPtr, space = true) {
 		if (space)
 			str += " ";
-		str += _wordText[_adjectiveWords[aPtr - _adjectiveLists]];
+		str += _words[_adjectiveWords[aPtr - _adjectiveLists]]._text;
 	}
 
 	// Add the noun
 	if (space)
 		str += " ";
-	str += _wordText[_nounWords[noun - 1]];
+	str += _words[_nounWords[noun - 1]]._text;
 
 	print(str);
 }
@@ -410,6 +412,108 @@ void VM::opSEND() {
 
 void VM::opVOWEL() {
 	// No implementation
+}
+
+bool VM::getInput() {
+	if (!parseInput())
+		return false;
+
+	setVariable(V_ACTOR, _actor);
+	setVariable(V_ACTION, _action);
+	setVariable(V_DOBJECT, _dObject);
+	setVariable(V_NDOBJECTS, _ndObjects);
+	setVariable(V_IOBJECT, _iObject);
+	return true;
+}
+
+bool VM::nextCommand() {
+	if (getVariable(V_NDOBJECTS) > 1) {
+		setVariable(V_ACTOR, _actor);
+		setVariable(V_ACTION, _action);
+		setVariable(V_DOBJECT, getVariable(V_DOBJECT) + 1);
+		setVariable(V_NDOBJECTS, getVariable(V_NDOBJECTS) - 1);
+		setVariable(V_IOBJECT, _iObject);
+		return true;
+	} else {
+		return false;
+	}
+}
+
+bool VM::parseInput() {
+	int noun1 = 0, cnt1 = 0, noun2 = 0, cnt2 = 0;
+	int preposition = 0;
+	bool flag = false;
+
+	// Initialize the parser result fields
+	_actor = _action = _dObject = _iObject = 0;
+	_ndObjects = 0;
+
+	// Get the input line
+	if (!getLine())
+		return false;
+
+	// TODO: stub
+	return false;
+}
+
+bool VM::getLine() {
+	// Let the user type in an input line
+	Common::String line = readLine();
+	if (shouldQuit())
+		return false;
+
+	skipSpaces(line);
+	if (line.empty()) {
+		print(_("Speak up! I can't hear you!\n"));
+		return false;
+	}
+
+	// Get the words of the line
+	_words.clear();
+	while (!line.empty()) {
+		if (!getWord(line))
+			return false;
+	}
+
+	return true;
+}
+
+bool VM::getWord(Common::String &line) {
+	// Find the end of the word
+	const char *wordP = line.c_str();
+	for (; *wordP && !isWhitespace(*wordP); ++wordP) {}
+
+	// Copy out the next word
+	InputWord iw;
+	iw._text = Common::String(line.c_str(), wordP);
+	iw._text.toLowercase();
+
+	// Remove the word from the line
+	line = Common::String(wordP);
+	skipSpaces(line);
+
+	// Look up the word
+	iw._number = findWord(iw._text);
+
+	if (iw._number) {
+		_words.push_back(iw);
+		return false;
+	} else {
+		Common::String msg = Common::String::format(_("I don't know the word \"%s\".\n"), iw._text.c_str());
+		print(msg);
+		return true;
+	}
+}
+
+bool VM::isWhitespace(char c) {
+	return c == ' ' || c == ',' || c == '.';
+}
+
+bool VM::skipSpaces(Common::String &str) {
+	while (!str.empty() && isWhitespace(str[0]))
+		str.deleteChar(0);
+
+	return !str.empty();
 }
 
 } // End of namespace AdvSys
