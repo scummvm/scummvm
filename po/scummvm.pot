@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-05-31 23:02+0200\n"
+"POT-Creation-Date: 2019-06-11 11:40+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -71,7 +71,7 @@ msgstr ""
 #: engines/mohawk/riven_stacks/aspit.cpp:372
 #: engines/mohawk/riven_stacks/aspit.cpp:456
 #: engines/parallaction/saveload.cpp:271 engines/scumm/dialogs.cpp:187
-#: engines/sword1/control.cpp:887
+#: engines/sword1/control.cpp:887 engines/wintermute/wintermute.cpp:166
 msgid "Cancel"
 msgstr ""
 
@@ -1979,7 +1979,7 @@ msgid ""
 "might not work in future versions of ScummVM."
 msgstr ""
 
-#: engines/engine.cpp:546
+#: engines/engine.cpp:546 engines/wintermute/wintermute.cpp:165
 msgid "Start anyway"
 msgstr ""
 
@@ -3948,7 +3948,7 @@ msgid ""
 "load it"
 msgstr ""
 
-#: engines/sci/resource.cpp:826
+#: engines/sci/resource.cpp:827
 msgid ""
 "Missing or corrupt game resources have been detected. Some game features may "
 "not work properly. Please check the console for more information, and verify "
@@ -4887,6 +4887,15 @@ msgstr ""
 
 #: engines/wintermute/detection.cpp:70
 msgid "Apply bilinear filtering to individual sprites"
+msgstr ""
+
+#: engines/wintermute/wintermute.cpp:153
+msgid "This game requires PNG, JPEG and Vorbis support."
+msgstr ""
+
+#: engines/wintermute/wintermute.cpp:164
+msgid ""
+"This game requires 3D characters support, which is out of ScummVM's scope."
 msgstr ""
 
 #: engines/xeen/detection.cpp:89

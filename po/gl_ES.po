@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-05-31 23:02+0200\n"
+"POT-Creation-Date: 2019-06-11 11:40+0200\n"
 "PO-Revision-Date: 2018-10-10 04:23+0000\n"
 "Last-Translator: scootergrisen <scootergrisen@gmail.com>\n"
 "Language-Team: Galician <https://translations.scummvm.org/projects/scummvm/"
@@ -74,7 +74,7 @@ msgstr "Arriba"
 #: engines/mohawk/riven_stacks/aspit.cpp:372
 #: engines/mohawk/riven_stacks/aspit.cpp:456
 #: engines/parallaction/saveload.cpp:271 engines/scumm/dialogs.cpp:187
-#: engines/sword1/control.cpp:887
+#: engines/sword1/control.cpp:887 engines/wintermute/wintermute.cpp:166
 msgid "Cancel"
 msgstr "Cancelar"
 
@@ -2069,7 +2069,7 @@ msgstr ""
 "Por iso, talvez sexa inestable e os ficheiros de gardado talvez non "
 "funcionen en futuras versións de ScummVM."
 
-#: engines/engine.cpp:546
+#: engines/engine.cpp:546 engines/wintermute/wintermute.cpp:165
 msgid "Start anyway"
 msgstr "Iniciar de todos os xeitos"
 
@@ -4165,7 +4165,7 @@ msgstr ""
 "Esta partida gardada creouse cunha versión diferente do xogo. Non é posible "
 "cargala."
 
-#: engines/sci/resource.cpp:826
+#: engines/sci/resource.cpp:827
 msgid ""
 "Missing or corrupt game resources have been detected. Some game features may "
 "not work properly. Please check the console for more information, and verify "
@@ -5165,6 +5165,15 @@ msgstr "Filtraxe bilineal de sprites (LENTA)"
 #: engines/wintermute/detection.cpp:70
 msgid "Apply bilinear filtering to individual sprites"
 msgstr "Aplica a flitraxe bilineal a cada sprite."
+
+#: engines/wintermute/wintermute.cpp:153
+msgid "This game requires PNG, JPEG and Vorbis support."
+msgstr ""
+
+#: engines/wintermute/wintermute.cpp:164
+msgid ""
+"This game requires 3D characters support, which is out of ScummVM's scope."
+msgstr ""
 
 #: engines/xeen/detection.cpp:89
 msgid "Show item costs in standard inventory mode"

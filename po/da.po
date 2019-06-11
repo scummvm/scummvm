@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-05-31 23:02+0200\n"
+"POT-Creation-Date: 2019-06-11 11:40+0200\n"
 "PO-Revision-Date: 2019-05-26 07:29+0000\n"
 "Last-Translator: scootergrisen <scootergrisen@gmail.com>\n"
 "Language-Team: Danish <https://translations.scummvm.org/projects/scummvm/"
@@ -74,7 +74,7 @@ msgstr "Gå op"
 #: engines/mohawk/riven_stacks/aspit.cpp:372
 #: engines/mohawk/riven_stacks/aspit.cpp:456
 #: engines/parallaction/saveload.cpp:271 engines/scumm/dialogs.cpp:187
-#: engines/sword1/control.cpp:887
+#: engines/sword1/control.cpp:887 engines/wintermute/wintermute.cpp:166
 msgid "Cancel"
 msgstr "Annuller"
 
@@ -2043,7 +2043,7 @@ msgstr ""
 "ScummVM. Således, er det sandsynligt, at det er ustabilt, og alle gemte spil "
 "du foretager fungerer muligvis ikke i fremtidige versioner af ScummVM."
 
-#: engines/engine.cpp:546
+#: engines/engine.cpp:546 engines/wintermute/wintermute.cpp:165
 msgid "Start anyway"
 msgstr "Start alligevel"
 
@@ -4128,7 +4128,7 @@ msgstr ""
 "Det gemte spil blev oprettet med en anden version af spillet, kunne ikke "
 "indlæse det"
 
-#: engines/sci/resource.cpp:826
+#: engines/sci/resource.cpp:827
 msgid ""
 "Missing or corrupt game resources have been detected. Some game features may "
 "not work properly. Please check the console for more information, and verify "
@@ -5124,6 +5124,15 @@ msgstr "Sprite bilineær filtrering (langsom)"
 #: engines/wintermute/detection.cpp:70
 msgid "Apply bilinear filtering to individual sprites"
 msgstr "Anvend bilinær filtrering til individuelle sprites"
+
+#: engines/wintermute/wintermute.cpp:153
+msgid "This game requires PNG, JPEG and Vorbis support."
+msgstr ""
+
+#: engines/wintermute/wintermute.cpp:164
+msgid ""
+"This game requires 3D characters support, which is out of ScummVM's scope."
+msgstr ""
 
 #: engines/xeen/detection.cpp:89
 msgid "Show item costs in standard inventory mode"

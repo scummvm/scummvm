@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-05-31 23:02+0200\n"
+"POT-Creation-Date: 2019-06-11 11:40+0200\n"
 "PO-Revision-Date: 2019-06-03 22:13+0000\n"
 "Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -74,7 +74,7 @@ msgstr "Remonter"
 #: engines/mohawk/riven_stacks/aspit.cpp:372
 #: engines/mohawk/riven_stacks/aspit.cpp:456
 #: engines/parallaction/saveload.cpp:271 engines/scumm/dialogs.cpp:187
-#: engines/sword1/control.cpp:887
+#: engines/sword1/control.cpp:887 engines/wintermute/wintermute.cpp:166
 msgid "Cancel"
 msgstr "Annuler"
 
@@ -2069,7 +2069,7 @@ msgstr ""
 "complètement supporté par ScummVM. Il est donc instable et les sauvegardes "
 "peuvent ne pas marcher avec une future version de ScummVM."
 
-#: engines/engine.cpp:546
+#: engines/engine.cpp:546 engines/wintermute/wintermute.cpp:165
 msgid "Start anyway"
 msgstr "Je comprends"
 
@@ -3735,8 +3735,8 @@ msgid ""
 "Please copy the correct font files into your EOB II game data directory.\n"
 "\n"
 msgstr ""
-"Cette version AMIGA nécessite les fichiers de polices de caractères suivants:"
-"\n"
+"Cette version AMIGA nécessite les fichiers de polices de caractères "
+"suivants:\n"
 "\n"
 "EOBF6.FONT\n"
 "EOBF6/6\n"
@@ -4208,7 +4208,7 @@ msgstr ""
 "Cette sauvegarde a été créée par une version différente du jeu et ne peut "
 "être chargée"
 
-#: engines/sci/resource.cpp:826
+#: engines/sci/resource.cpp:827
 msgid ""
 "Missing or corrupt game resources have been detected. Some game features may "
 "not work properly. Please check the console for more information, and verify "
@@ -5223,6 +5223,15 @@ msgstr "Filtrage bilinéaire des images-objets (LENT)"
 #: engines/wintermute/detection.cpp:70
 msgid "Apply bilinear filtering to individual sprites"
 msgstr "Applique un filtrage bilinéaire à chaque image-objet"
+
+#: engines/wintermute/wintermute.cpp:153
+msgid "This game requires PNG, JPEG and Vorbis support."
+msgstr ""
+
+#: engines/wintermute/wintermute.cpp:164
+msgid ""
+"This game requires 3D characters support, which is out of ScummVM's scope."
+msgstr ""
 
 #: engines/xeen/detection.cpp:89
 msgid "Show item costs in standard inventory mode"
