@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2019-06-11 11:40+0200\n"
-"PO-Revision-Date: 2019-06-03 22:06+0000\n"
+"PO-Revision-Date: 2019-06-12 20:24+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
@@ -5157,12 +5157,12 @@ msgstr "Käytä bilineaarista suodatusta yksittäisiin spriteihin"
 
 #: engines/wintermute/wintermute.cpp:153
 msgid "This game requires PNG, JPEG and Vorbis support."
-msgstr ""
+msgstr "Tämä peli vaatii toimiakseen PNG-, JPEG- sekä Vorbis-tuen."
 
 #: engines/wintermute/wintermute.cpp:164
 msgid ""
 "This game requires 3D characters support, which is out of ScummVM's scope."
-msgstr ""
+msgstr "Tämä peli vaatii toimiakseen tuen 3D-hahmoille, jota ScummVM ei tarjoa."
 
 #: engines/xeen/detection.cpp:89
 msgid "Show item costs in standard inventory mode"
