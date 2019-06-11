@@ -103,26 +103,84 @@ enum Opcode {
 	OP_XNLIT   = 0xC0           ///< Extra short load a negative literal
 };
 
+/**
+ * Indexes useable in function pointer array offsets
+ */
+enum FPOffset {
+	FP_FP = 0,
+	FP_PC = 1,
+	FP_ARGS_SIZE = 2,
+	FP_ARGS = 3
+};
+
 class VM;
 typedef void (VM::*OpcodeMethod)();
+
+/**
+ * Fixed stack
+ */
+class FixedStack : public Common::FixedStack<int, 500> {
+public:
+	void resize(size_t newSize) {
+		assert(newSize <= _size);
+		_size = newSize;
+	}
+};
+
+/**
+ * Implements a function pointer reference into the stack. It also allows
+ * positive array indexing to reference the following:
+ *		0  = Previous function pointer
+ *		1  = Return PC
+ *		2  = Size of argument block
+ *		3+ = Any function call arguments
+ */
+class FunctionPointer {
+private:
+	FixedStack &_stack;
+	int _index;
+public:
+	/**
+	 * Constructor
+	 */
+	FunctionPointer(FixedStack &s) : _stack(s), _index(-1) {}
+
+	/**
+	 * Array indexing
+	 */
+	int &operator[](int idx) { return _stack[_index - idx - 1]; }
+
+	/**
+	 * Sets the index in the stack of the function pointer
+	 */
+	FunctionPointer &operator=(int index) {
+		_index = index;
+		return *this;
+	}
+
+	/**
+	 * Returns the index in the stack of the function pointer
+	 */
+	operator int() const { return _index; }
+
+	/**
+	 * Sets the function pointer to the top of the stack
+	 */
+	void set() {
+		_index = _stack.size();
+	}
+};
 
 /**
  * Main VM for AdvSys
  */
 class VM : public GlkInterface, public Game {
-	class FixedStack : public Common::FixedStack<int, 500> {
-	public:
-		void resize(size_t newSize) {
-			assert(newSize <= _size);
-			_size = newSize;
-		}
-	};
 private:
 	static OpcodeMethod _METHODS[0x34];
 	int _pc;
 	ExecutionResult _status;
 	FixedStack _stack;
-	int _fp;
+	FunctionPointer _fp;
 private:
 	/**
 	 * Execute a single opcode within the script

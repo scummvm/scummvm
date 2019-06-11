@@ -83,7 +83,7 @@ OpcodeMethod VM::_METHODS[0x34] = {
 };
 
 VM::VM(OSystem *syst, const GlkGameDescription &gameDesc) : GlkInterface(syst, gameDesc), Game(),
-	_pc(0), _fp(-1), _status(IN_PROGRESS) {
+		_fp(_stack), _pc(0), _status(IN_PROGRESS) {
 }
 
 ExecutionResult VM::execute(int offset) {
@@ -263,21 +263,21 @@ void VM::opRETURN() {
 		_fp = _stack.pop();
 		_pc = _stack.pop();
 
-		int varsSize = _stack.pop();
-		_stack.resize(_stack.size() - varsSize);
+		int argsSize = _stack.pop();
+		_stack.resize(_stack.size() - argsSize);
 		_stack.top() = val;
 	}
 }
 
 void VM::opCALL() {
-	int varSize = readCodeByte();
-	int topIndex = _stack.size() - 1;
+	int argsSize = readCodeByte();
 
-	_stack.push(varSize);
+	_stack.push(argsSize);
 	_stack.push(_pc);
 	_stack.push(_fp);
-	_fp = _stack.size();
-	_pc = getActionField(_stack[topIndex - varSize], A_CODE);
+
+	_fp.set();
+	_pc = getActionField(_fp[_fp[FP_ARGS_SIZE] + FP_ARGS], A_CODE);
 }
 
 void VM::opSVAR() {
@@ -285,7 +285,7 @@ void VM::opSVAR() {
 }
 
 void VM::opSSET() {
-	setVariable(getCodeByte(), _stack.top());
+	setVariable(readCodeByte(), _stack.top());
 }
 
 void VM::opSPLIT() {
@@ -328,8 +328,6 @@ void VM::opASET() {
 }
 
 void VM::opTMP() {
-	int val = readCodeByte();
-
 }
 
 void VM::opTSET() {
@@ -357,21 +355,19 @@ void VM::opRNDMIZE() {
 }
 
 void VM::opSEND() {
-	int varSize = readCodeByte();
-	int topIndex = _stack.size() - 1;
-
-	_stack.push(varSize);
+	int argsSize = readCodeByte();
+	_stack.push(argsSize);
 	_stack.push(_pc);
 	_stack.push(_fp);
-	_fp = _stack.size();
+	_fp.set();
 
-	int val = _stack[topIndex - varSize];
+	int val = _fp[_fp[FP_ARGS_SIZE] + FP_ARGS];
 	if (val)
 		val = getObjectField(val, O_CLASS);
 	else
-		val = _stack[topIndex - varSize + 1];
+		val = _fp[_fp[FP_ARGS_SIZE] + FP_ARGS];
 
-	if (val && (val = getObjectProperty(val, _stack[topIndex - varSize + 2])) != 0) {
+	if (val && (val = getObjectProperty(val, _fp[_fp[FP_ARGS_SIZE] + 1])) != 0) {
 		_pc = getActionField(val, A_CODE);
 	} else {
 		// Return NIL if there's no action for the given message
