@@ -7,16 +7,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Mission Supernova Part 2 1.0\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2017-07-22 19:37+0100\n"
-"PO-Revision-Date: 2018-04-15 05:41+0000\n"
-"Last-Translator: Adrian FrÅhwirth <bonki@scummvm.org>\n"
+"POT-Creation-Date: 2019-06-10 22:58+0100\n"
+"PO-Revision-Date: 2019-06-10 22:13+0000\n"
+"Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
 "Language-Team: none\n"
 "Language: en\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 2.9\n"
+"X-Generator: Weblate 3.3\n"
 
 #: ../../ms2/ms2.c:1641
 msgid "Gehe"
@@ -515,7 +515,8 @@ msgstr "Sunstroke, or what?"
 
 #: ../../ms2/ms2_pyra.c:385
 msgid "Du merkst, da· der Boden|unter dir nachgibt, und|springst zur Seite."
-msgstr "You notice that the ground|is giving way under you,|and you leap aside."
+msgstr ""
+"You notice that the ground|is giving way under you,|and you leap aside."
 
 #: ../../ms2/ms2_pyra.c:537
 msgid "Puzzleteil"
@@ -566,6 +567,10 @@ msgstr "You have already|pushed the ball."
 #: ../../ms2/ms2_pyra.c:944
 msgid "Die Kugel bewegt sich ein StÅck."
 msgstr "The ball moves a bit."
+
+#: ../../ms2/ms2_pyra.c:961
+msgid "Das Auge ist schon offen."
+msgstr "This Eye is already open."
 
 #: ../../ms2/ms2_pyra.c:965
 msgid "Herzlichen GlÅckwunsch!"
@@ -709,6 +714,10 @@ msgstr "It is a relatively sturdy knife."
 #: ../../ms2/ms2_pyra.c:1214
 msgid "Monster"
 msgstr "Monster"
+
+#: ../../ms2/ms2_pyra.c:1192
+msgid "Sieht gefÑhrlich aus!"
+msgstr "Looks dangerous!"
 
 #: ../../ms2/ms2_pyra.c:1200
 msgid "Es ist dick und|ungefÑhr 15 Meter lang."
@@ -1832,7 +1841,8 @@ msgstr "Oh come on! Your disguise isn't that perfect."
 msgid ""
 "Ich werde Ihnen beweisen, da· ich Horst Hummel bin,|indem ich diesen "
 "Wettbewerb hier gewinne."
-msgstr "I will prove to you that I am Horst Hummel|by winning this competition."
+msgstr ""
+"I will prove to you that I am Horst Hummel|by winning this competition."
 
 #: ../../ms2/ms2_r2.c:422
 msgid "Dann kann ich in dieser verdammten Fernsehshow|auftreten."
@@ -2141,7 +2151,8 @@ msgstr "You enter the building through|the side entrance."
 msgid ""
 "Dort schaltest du die Alarmanlage aus,|durch die das Sodo-Skelett gesichert "
 "wird."
-msgstr "There you switch off the alarm system,|which secures the Sodo skeleton."
+msgstr ""
+"There you switch off the alarm system,|which secures the Sodo skeleton."
 
 #: ../../ms2/ms2_r2.c:769
 msgid "Wir betreten einen anderen GebÑudeteil|und holen uns das Gerippe."
@@ -2720,7 +2731,7 @@ msgid ""
 "Aha, mich interessiert au·erdem,|ob es hier auf Axacuss etwas gibt,|das Sie "
 "besonders mîgen."
 msgstr ""
-"I see. I'm also interested in|whether there's anything here on Axacuss |that "
+"I see. I'm also interested in|whether there's anything here on Axacuss that "
 "you particularly like."
 
 #: ../../ms2/ms2_s.c:152
@@ -2778,15 +2789,3 @@ msgid ""
 "werden!\""
 msgstr ""
 "\"These bastards from Artus GmbH and|Commander Sumoti must be unmasked!\""
-
-#: ../../ms2/ms2_pyra.c:1260
-msgid ""
-"Sieht gefÑhrlich aus!"
-msgstr ""
-"Looks dangerous!"
-
-#: ../../ms2/ms2_pyra.c:1017
-msgid ""
-"Das Auge ist schon offen."
-msgstr ""
-"This Eye is already opened."
