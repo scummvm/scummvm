@@ -84,6 +84,11 @@ OpcodeMethod VM::_METHODS[0x34] = {
 
 VM::VM(OSystem *syst, const GlkGameDescription &gameDesc) : GlkInterface(syst, gameDesc), Game(),
 		_fp(_stack), _pc(0), _status(IN_PROGRESS) {
+	Common::fill(&_nouns[0], &_nouns[20], 0);
+	Common::fill(&_nounWords[0], &_nounWords[20], -1);
+	Common::fill(&_adjectives[0], &_adjectives[20], (int *)nullptr);
+	Common::fill(&_adjectiveWords[0], &_adjectiveWords[100], -1);
+	Common::fill(&_adjectiveLists[0], &_adjectiveLists[100], -1);
 }
 
 ExecutionResult VM::execute(int offset) {
@@ -328,30 +333,58 @@ void VM::opASET() {
 }
 
 void VM::opTMP() {
+	int val = readCodeByte();
+	_stack.top() = _fp[-val - 1];
 }
 
 void VM::opTSET() {
+	int val = readCodeByte();
+	_fp[-val - 1] = _stack.top();
 }
 
 void VM::opTSPACE() {
+	_stack.allocate(readCodeByte());
 }
 
 void VM::opCLASS() {
+	_stack.top() = getObjectField(_stack.top(), O_CLASS);
 }
 
 void VM::opMATCH() {
+	int idx = _stack.pop() - 1;
+	_stack.top() = match(_stack.top(), _nouns[idx], _adjectives[idx]) ? TRUE : NIL;
 }
 
 void VM::opPNOUN() {
+	int noun = _stack.top();
+	Common::String str;
+
+	// Add the adjectives
+	bool space = false;
+	for (int *aPtr = _adjectives[noun - 1]; *aPtr; ++aPtr, space = true) {
+		if (space)
+			str += " ";
+		str += _wordText[_adjectiveWords[aPtr - _adjectiveLists]];
+	}
+
+	// Add the noun
+	if (space)
+		str += " ";
+	str += _wordText[_nounWords[noun - 1]];
+
+	print(str);
 }
 
 void VM::opRESTART() {
+	restart();
 }
 
 void VM::opRAND() {
+	_stack.top() = getRandomNumber(_stack.top());
 }
 
 void VM::opRNDMIZE() {
+	// No implementation
 }
 
 void VM::opSEND() {
@@ -376,6 +409,7 @@ void VM::opSEND() {
 }
 
 void VM::opVOWEL() {
+	// No implementation
 }
 
 } // End of namespace AdvSys

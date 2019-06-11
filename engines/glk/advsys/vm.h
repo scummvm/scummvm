@@ -121,9 +121,21 @@ typedef void (VM::*OpcodeMethod)();
  */
 class FixedStack : public Common::FixedStack<int, 500> {
 public:
+	/**
+	 * Resize the stack
+	 */
 	void resize(size_t newSize) {
-		assert(newSize <= _size);
+		assert(newSize <= 500);
 		_size = newSize;
+	}
+
+	/**
+	 * Allocate extra space on the stack
+	 */
+	void allocate(size_t amount) {
+		uint oldSize = _size;
+		resize(_size + amount);
+		Common::fill(&_stack[oldSize], &_stack[oldSize + amount], 0);
 	}
 };
 
@@ -176,11 +188,20 @@ public:
  */
 class VM : public GlkInterface, public Game {
 private:
+	// Execution fields
 	static OpcodeMethod _METHODS[0x34];
 	int _pc;
 	ExecutionResult _status;
 	FixedStack _stack;
 	FunctionPointer _fp;
+
+	// Parser fields
+	int *_adjectives[20];
+	int _adjectiveLists[100];
+	int _adjectiveWords[100];
+	int _nouns[20];
+	int _nounWords[20];
+	Common::String _wordText[100];
 private:
 	/**
 	 * Execute a single opcode within the script
