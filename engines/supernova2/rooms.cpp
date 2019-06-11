@@ -909,7 +909,7 @@ bool Kiosk::interact(Action verb, Object &obj1, Object &obj2) {
 
 	if (verb == ACTION_TAKE && !(obj1._type & CARRIED) &&
 		obj1._id >= BOTTLE && obj1._id <= TOOTHBRUSH) {
-		int price;
+		int price = 0;
 		switch (obj1._id) {
 		case BOTTLE:
 			price = 30;
