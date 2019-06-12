@@ -677,7 +677,7 @@ bool Games::interact(Action verb, Object &obj1, Object &obj2) {
 		_vm->renderMessage(kStringCabinOccupiedSay);
 	}
 	else if (verb == ACTION_LOOK && obj1._id == POSTER) {
-		_gm->_taxi_possibility &= ~4; // add culture palace
+		_gm->_state._taxiPossibility &= ~4; // add culture palace
 		return false;
 	}
 	else 
@@ -1884,7 +1884,7 @@ void Elevator::jobDescription() {
 	_vm->removeMessage();
 	_vm->renderMessage(kStringElevator58);
 	_gm->drawGUI();
-	_gm->_state._startTime = g_system->getMillis() - 2390000;
+	_gm->_state._startTime = g_system->getMillis() - 150000000;
 	_gm->_state._tipsy = false;
 	_gm->_state._toMuseum = true;
 }
@@ -3783,19 +3783,114 @@ Museum::Museum(Supernova2Engine *vm, GameManager *gm) {
 	_vm = vm;
 	_gm = gm;
 
-	_fileNumber = 6;
+	_fileNumber = 29;
 	_id = MUSEUM;
 	_shown[0] = kShownTrue;
+
+	_objectState[0] = Object(_id, kStringDinosaur, kStringDinosaurDescription, NULLOBJECT, NULLTYPE, 0, 0, 0);
+	_objectState[1] = Object(_id, kStringEntrance, kStringDefaultDescription, BIG_DOOR, EXIT | OPENABLE | CLOSED, 1, 1, 0, NULLROOM, 0);
+	_objectState[2] = Object(_id, kStringDoor, kStringDefaultDescription, DOOR, EXIT | OPENABLE | CLOSED, 2, 2, 1, MUS_EING, 9);
+	_objectState[3] = Object(_id, kStringRoad, kStringDefaultDescription, MUS_STREET, EXIT, 3, 3, 0);
 }
 
 void Museum::onEntrance() {
+	_gm->setAnimationTimer(1);
+	if (_gm->_state._alarmCracked && !_gm->_state._alarmOn) {
+		_gm->_state._eventTime = kMaxTimerValue;
+		_gm->_state._alarmOn = false;
+		_gm->_state._haste = false;
+		_vm->renderMessage(kStringMuseum1);
+		_gm->waitOnInput(_gm->_messageDuration);
+		_gm->_state._sirenOn = false;
+		_vm->stopSound();
+		_vm->paletteFadeOut();
+		_vm->_system->fillScreen(kColorBlack);
+		_vm->_screen->setViewportBrightness(255);
+		_vm->renderMessage(kStringMuseum2);
+		_gm->waitOnInput(_gm->_messageDuration);
+		_vm->removeMessage();
+		_vm->_screen->setViewportBrightness(0);
+		_vm->setCurrentImage(26);
+		_vm->loadGame(kSleepAutosaveSlot);
+		_vm->renderImage(0);
+		_vm->paletteFadeIn();
+		if (_gm->_rooms[MUS_RUND]->getObject(4)->_type & CARRIED) {
+			_gm->reply(kStringMuseum3, 1, 1 + 128);
+			_gm->reply(kStringMuseum4, 1, 1 + 128);
+			_gm->takeMoney(30000);
+			_vm->playSound(kAudioAppearance1);
+		} else {
+			_gm->reply(kStringMuseum5, 1, 1 + 128);
+			_gm->say(kStringMuseum6);
+			_gm->reply(kStringMuseum7, 1, 1 + 128);
+		}
+		_vm->paletteFadeOut();
+		_gm->changeRoom(CITY2);
+		_gm->_newRoom = true;
+		_gm->drawGUI();
+	}
 	setRoomSeen(true);
 }
 
 void Museum::animation() {
+	_gm->drawClock();
+	_gm->setAnimationTimer(11);
 }
 
 bool Museum::interact(Action verb, Object &obj1, Object &obj2) {
+	if (verb == ACTION_WALK && obj1._id == MUS_STREET) {
+		if (!_gm->_state._alarmOn && 
+				!(_gm->_rooms[MUS_RUND]->getObject(4)->_type & CARRIED)) {
+			_vm->renderMessage(kStringMuseum10);
+		} else {
+			_gm->_state._eventTime = kMaxTimerValue;
+			if (!_gm->_state._alarmOn) {
+				_vm->renderMessage(kStringMuseum11);
+				if (_gm->_state._sirenOn) {
+					_vm->stopSound();
+					_gm->_state._sirenOn = false;
+				}
+			} else 
+				_vm->renderMessage(kStringMuseum12);
+			_gm->waitOnInput(_gm->_messageDuration);
+			_vm->removeMessage();
+			_vm->paletteFadeOut();
+			_vm->_system->fillScreen(kColorBlack);
+			_vm->_screen->setViewportBrightness(255);
+			_vm->renderMessage(kStringMuseum13);
+			_gm->waitOnInput(_gm->_messageDuration);
+			_vm->removeMessage();
+			_vm->_screen->setViewportBrightness(0);
+			_vm->loadGame(kSleepAutosaveSlot);
+			if (_gm->_state._money >= 8)
+				_gm->takeMoney(-8);
+			if (_gm->_rooms[MUS_RUND]->getObject(4)->_type & CARRIED)
+				_gm->takeObject(*_gm->_rooms[INTRO]->getObject(7));
+			_gm->changeRoom(CULTURE_PALACE);
+			_gm->_newRoom = true;
+			_gm->_state._alarmOn = false;
+			_gm->_state._haste = false;
+			_gm->drawGUI();
+		}
+	} else if (verb == ACTION_USE && Object::combine(obj1, obj2, SP_KEYCARD, DOOR) &&
+			!(_objectState[2]._type & OPENED)) {
+		if (_gm->crackDoor(20)) {
+			_vm->renderImage(1);
+			_objectState[2]._type = EXIT | OPENABLE | OPENED;
+			_vm->playSound(kAudioTaxiOpen);
+		}
+	} else if (verb == ACTION_CLOSE && obj1._id == DOOR && (obj1._type & OPENED)) {
+		_vm->renderImage(1 + 128);
+		_objectState[2]._type = EXIT | OPENABLE | CLOSED;
+		_vm->playSound(kAudioElevator1);
+	} else if (verb == ACTION_USE &&
+					Object::combine(obj1, obj2, SP_KEYCARD, BIG_DOOR)) {
+		_vm->renderMessage(kStringMuseum14);
+	} else if (verb == ACTION_WALK && obj1._id == DOOR) {
+		_gm->_state._haste = true;
+		return false;
+	} else
+		return false;
 	return true;
 }
 

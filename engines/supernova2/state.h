@@ -41,7 +41,7 @@ struct ConstructionEntry {
 
 const int32 kMaxTimerValue = 0x7FFFFFFF;
 
-enum EventFunction { kNoFn, kSoberFn, kPyramidEndFn};
+enum EventFunction { kNoFn, kSoberFn, kPyramidEndFn, kCaughtFn};
 
 struct GameState {
 	int16 _money;
@@ -62,6 +62,11 @@ struct GameState {
 	char _pyraZ;
 	int16 _pyraDirection;
 	int16 _puzzleTab[15];
+	bool _alarmCracked;
+	bool _alarmOn;
+	bool _haste;
+	bool _sirenOn;
+	byte _taxiPossibility;
 };
 
 class Inventory {
@@ -178,9 +183,12 @@ public:
 	byte _rows[6];
 	byte _rowsStart[6];
 	byte _dials[6];
-	int _taxi_possibility;
 	unsigned char _puzzleField[16];
-
+	bool _mapOn;
+	bool _steps;
+	bool _cracking;
+	bool _alarmBefore;
+	RoomId _securityTab[10];
 
 	void takeObject(Object &obj);
 	void setObjectNull(Object *&obj);
@@ -237,6 +245,12 @@ public:
 	bool move(Action verb, Object &obj);
 	void compass();
 	void puzzleConstruction();
+	void drawClock();
+	void caught();
+	void caught2();
+	void alarm();
+	void crack(int time);
+	bool crackDoor(int time);
 
 private:
 	int _prevImgId;

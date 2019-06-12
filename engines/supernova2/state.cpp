@@ -49,9 +49,14 @@ bool GameManager::serialize(Common::WriteStream *out) {
 	out->writeSint16LE(_state._pyraE);
 	out->writeByte(_state._pyraS);
 	out->writeByte(_state._pyraZ);
+	out->writeByte(_state._alarmOn);
+	out->writeByte(_state._alarmCracked);
+	out->writeByte(_state._haste);
+	out->writeByte(_state._sirenOn);
 	out->writeSint16LE(_state._pyraDirection);
 	out->writeUint32LE(_state._eventTime);
 	out->writeSint32LE(_state._eventCallback);
+	out->writeByte(_state._taxiPossibility);
 	for (int i = 0; i < 15; i++) {
 		out->writeSint16LE(_state._puzzleTab[i]);
 	}
@@ -94,9 +99,14 @@ bool GameManager::deserialize(Common::ReadStream *in, int version) {
 	_state._pyraE = in->readSint16LE();
 	_state._pyraS = in->readByte();
 	_state._pyraZ = in->readByte();
+	_state._alarmOn = in->readByte();
+	_state._alarmCracked = in->readByte();
+	_state._haste = in->readByte();
+	_state._sirenOn = in->readByte();
 	_state._pyraDirection = in->readSint16LE();
 	_state._eventTime = in->readUint32LE();
 	_state._eventCallback = (EventFunction)in->readSint32LE();
+	_state._taxiPossibility = in->readByte();
 	for (int i = 0; i < 15; i++)
 		_state._puzzleTab[i] = in->readSint16LE();
 	_vm->setGameString(kStringMoney, Common::String::format("%d Xa", _state._money));
@@ -345,7 +355,13 @@ void GameManager::initState() {
 	_timePaused = false;
 	_messageDuration = 0;
 	_animationTimer = 0;
-	_taxi_possibility = 4;
+	_mapOn = false;
+	_steps = false;
+	_cracking = false;
+	_alarmBefore = false;
+	RoomId startSecurityTab[10] = {MUS6, MUS7, MUS11, MUS10, MUS3, MUS2, MUS1, MUS8, MUS9, MUS5};
+	for (int i = 0; i < 10; i++)
+		_securityTab[i] = startSecurityTab[i];
 
 	_currentSentence = -1;
 	for (int i = 0 ; i < 6 ; ++i) {
@@ -372,9 +388,14 @@ void GameManager::initState() {
 	_state._pyraE = 0;
 	_state._pyraS = 4;
 	_state._pyraZ = 10;
+	_state._alarmOn = false;
+	_state._alarmCracked = false;
+	_state._haste = false;
+	_state._sirenOn = false;
 	_state._pyraDirection = 0;
 	_state._eventTime = kMaxTimerValue;
 	_state._eventCallback = kNoFn;
+	_state._taxiPossibility = 4;
 	int16 startPuzzleTab[15] = {12, 3, 14, 1, 11, 0, 2, 13, 9, 5, 4, 10, 7, 6, 8};
 	for (int i = 0; i < 15; i++)
 		_state._puzzleTab[i] = startPuzzleTab[i];
@@ -515,6 +536,9 @@ void GameManager::updateEvents() {
 			break;
 		case kPyramidEndFn:
 			pyramidEnd();
+			break;
+		case kCaughtFn:
+			caught();
 			break;
 		}
 		_vm->_allowLoadGame = true;
@@ -1500,6 +1524,8 @@ void GameManager::handleInput() {
 void GameManager::executeRoom() {
 	if (_currentRoom == _rooms[PUZZLE_FRONT])
 		puzzleConstruction();
+	if (_state._sirenOn && !_vm->_sound->isPlaying())
+		_vm->_sound->playSiren();
 	if (_processInput && !_vm->_screen->isMessageShown() && _guiEnabled) {
 		handleInput();
 		if (_mouseClicked) {
@@ -1520,7 +1546,10 @@ void GameManager::executeRoom() {
 			g_system->fillScreen(kColorBlack);
 			_vm->renderRoom(*_currentRoom);
 		}
-		drawMapExits();
+		if (_currentRoom->getId() < MUSEUM)
+			drawMapExits();
+		else
+			drawClock();
 		drawInventory();
 		drawStatus();
 		drawCommandBox();
@@ -1626,7 +1655,7 @@ void GameManager::taxi() {
 		kStringLeaveTaxi
 	};
 	Common::String input;
-	int possibility = _taxi_possibility;
+	int possibility = _state._taxiPossibility;
 
 	_state._previousRoom = _currentRoom;
 	_currentRoom = _rooms[INTRO];
@@ -1643,7 +1672,7 @@ void GameManager::taxi() {
 		_currentRoom->removeSentenceByMask(possibility, 1);
 		switch (answer = dialog(6, _dials, dest, 1)) {
 		case 3:
-			_taxi_possibility += 8;
+			_state._taxiPossibility += 8;
 			possibility += 8;
 			taxiUnknownDestination();
 			break;
@@ -2020,6 +2049,135 @@ void GameManager::puzzleConstruction() {
 
 		_puzzleField[_state._puzzleTab[i]] = i;
 	}
+}
+
+void GameManager::alarm() {
+	_vm->_sound->playSiren();
+	_state._sirenOn = true;
+	if (_vm->_screen->isMessageShown())
+		_vm->removeMessage();
+	_vm->renderMessage(kStringMuseum7);
+	_state._eventTime = g_system->getMillis() + 270;
+	_state._eventCallback = kCaughtFn;
+	_state._alarmOn = true;
+}
+
+void GameManager::caught() {
+	if (_vm->_screen->isMessageShown())
+		_vm->removeMessage();
+	if        (_currentRoom <  _rooms[MUS1]) {
+	} else if (_currentRoom <= _rooms[MUS2]) {
+		_vm->renderImage( 8); 
+		_vm->renderImage(18);
+	} else if (_currentRoom == _rooms[MUS3]) {
+		_vm->renderImage(12); 
+		_vm->renderImage(30);
+	} else if (_currentRoom == _rooms[MUS4]) {
+		_vm->renderImage( 8); 
+		_vm->renderImage(18);
+	} else if (_currentRoom == _rooms[MUS5]) {
+		_vm->renderImage( 9); 
+		_vm->renderImage(29);
+	} else if (_currentRoom <= _rooms[MUS7]) {
+		_vm->renderImage( 7); 
+		_vm->renderImage(17);
+	} else if (_currentRoom <= _rooms[MUS9]) {
+		_vm->renderImage( 1); 
+		_vm->renderImage( 7);
+	} else if (_currentRoom <= _rooms[MUS11]) {
+		_vm->renderImage( 2); 
+		_vm->renderImage( 8);
+	}
+	caught2();
+}
+
+void GameManager::caught2() {
+	_vm->renderMessage(kStringMuseum8);
+	_vm->playSound(kAudioCaught);
+	waitOnInput(_messageDuration);
+	_vm->removeMessage();
+	_state._sirenOn = false;
+	_mapOn = false;
+	_state._haste = false;
+	dead(kStringMuseum9);
+}
+
+void GameManager::drawClock() {
+	int time = (g_system->getMillis() - _state._startTime) / 700;
+	int second = time % 100;
+	Room *r;
+	if (!_mapOn) {
+		_vm->renderBox(281, 161, 39, 39, kColorWhite25);
+		char s[9] = "00";
+		s[1] = time % 10 + 48;
+		time /= 10;
+		s[0] = time % 10 + 48;
+		time /= 10;
+		_vm->renderText(s, 293, 180, kColorWhite99);
+		strcpy(s, " 0:00");
+		s[4] = time % 10 + 48;
+		time /= 10;
+		s[3] = time % 10 + 48;
+		time /= 10;
+		s[1] = time % 10 + 48;
+		time /= 10;
+		if (time)
+			s[0] = time % 10 + 48;
+		_vm->renderText(s, 285, 170, kColorWhite99);
+	}
+	if ((r = _rooms[_securityTab[second / 10]]) == _currentRoom) {
+		//arrow();
+		_state._alarmCracked = false;
+		caught();
+	}
+	for (int i = 0; i < 3; i++) {
+		Object *o = r->getObject(i);
+		if ((o->_id == DOOR || o->_id == ENCRYPTED_DOOR || o->_id == SMALL_DOOR) && 
+				(o->_type & OPENED) && ! _state._alarmOn)
+			alarm();
+	}
+	if (!_state._alarmOn && _currentRoom == _rooms[MUS4] && 
+			second >= 21 && second <= 40)
+		alarm();
+	if (_currentRoom == _rooms[MUS_EING] && second >= 22 && second <= 29) {
+		if (!_steps && !_state._alarmCracked) {
+			_steps = true;
+			_vm->renderMessage(kStringMuseum6);
+		}
+	}
+	else _steps = false;
+}
+
+void GameManager::crack(int time) {
+	_alarmBefore = _state._alarmOn;
+	_cracking = true;
+	//hourglass
+	int t = 0;
+	int z;
+	int zv = 0;
+	do {
+		do {
+			wait(1);
+		} while ((z = (g_system->getMillis() - _state._startTime) / 700) == zv);
+		zv = z;
+		drawClock();
+		t++;
+	} while (t < time && _state._alarmOn == _alarmBefore) ;
+	_cracking = false;
+	//arrow
+	if (_state._alarmOn == _alarmBefore)
+		_vm->removeMessage();
+}
+
+bool GameManager::crackDoor(int time) {
+	_vm->renderMessage(kStringMuseum15);
+	crack(time);
+	if (_state._alarmOn != _alarmBefore) {
+		waitOnInput(_messageDuration);
+		_vm->removeMessage();
+		_vm->renderMessage(kStringMuseum16);
+	}
+	return !_state._alarmOn;
 }
 
 }

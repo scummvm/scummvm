@@ -49,6 +49,7 @@ enum AudioId {
 	kAudioShip3,
 	kAudioShipDeath,
 	kAudioDeath,
+	kAudioCaught,
 	kAudioNumSamples
 };
 

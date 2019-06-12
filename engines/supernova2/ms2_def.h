@@ -140,12 +140,12 @@ kString50, kString51, kString52, kString53, kString54,
 kString55, kString56, kString57, kString58, kString59,
 kString60, kString61, kString62, kString63, kString64,
 kString65, kString66, kString67, kString68, kString69,
-kString70, kString71, kString72, kString73, kString74,
-kString75, kString76, kString77, kString78, kString79,
-kString80, kString81, kString82, kString83, kString84,
+kStringMuseum8, kStringMuseum9, kStringMuseum7, kStringMuseum6, kStringMuseum15,
+kStringMuseum16, kStringMuseum10, kStringMuseum12, kStringMuseum13, kStringMuseum14,
+kStringMuseum1, kStringMuseum2, kStringMuseum3, kStringMuseum4, kStringMuseum5,
 kString85, kString86, kString87, kString88, kString89,
-kString90, kString91, kString92, kString93, kString94,
-kStringEntrance, kStringDoor, kString97, kString98, kString99,
+kString90, kString91, kString92, kStringDinosaur, kStringDinosaurDescription,
+kStringEntrance, kStringDoor, kStringRoad, kString98, kString99,
 kString100, kStringCorridor, kString102, kStringDinosaurHead, kString104,
 kString105, kStringSuctionCup, kString107, kStringOpening, kStringLetter,
 kStringMassive, kStringInscriptionDescription, kStringPyramid0, kStringPyramid1, kStringPyramid2,
@@ -249,7 +249,7 @@ kStringIntroTV3, kStringIntroTV4, kStringIntroTV5, kStringIntroTV6, kStringIntro
 kStringIntroTV8, kStringIntroTV9, kStringIntroTV10, kStringIntroTV11, kStringIntroTV12,
 kStringIntroTV13, kStringIntroTV14, kStringIntroTV15, kStringIntroTV16, kStringIntro9,
 kStringIntro10, kStringIntro11, kStringIntro12, kStringIntro13, kStringIntro14, 
-kStringMonsterDescription, kStringPyramid16, kStringDialogSeparator
+kStringMonsterDescription, kStringPyramid16, kStringMuseum11, kStringDialogSeparator
 };
 
 ObjectType operator|(ObjectType a, ObjectType b);
