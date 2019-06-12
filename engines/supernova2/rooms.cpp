@@ -3973,12 +3973,23 @@ Mus2::Mus2(Supernova2Engine *vm, GameManager *gm) {
 	_vm = vm;
 	_gm = gm;
 
-	_fileNumber = 6;
+	_fileNumber = 35;
 	_id = MUS2;
 	_shown[0] = kShownTrue;
+	_shown[3] = kShownTrue;
+	_shown[4] = kShownTrue;
+	_shown[5] = kShownTrue;
+	_shown[6] = kShownTrue;
+	_shown[13] = kShownTrue;
+	_shown[14] = kShownTrue;
+	_shown[22] = kShownTrue;
+
+	_objectState[0] = Object(_id, kStringDoor, kStringDefaultDescription, DOOR, EXIT | OPENABLE, 0, 0, 7, MUS1, 2);
+	_objectState[1] = Object(_id, kStringDoor, kStringDefaultDescription, DOOR, EXIT | OPENABLE, 1, 1, 8, MUS3, 22);
 }
 
 void Mus2::onEntrance() {
+	_gm->pressureAlarmEntrance();
 	setRoomSeen(true);
 }
 
@@ -3986,36 +3997,62 @@ void Mus2::animation() {
 }
 
 bool Mus2::interact(Action verb, Object &obj1, Object &obj2) {
-	return true;
+	_gm->museumDoorInteract(verb, obj1, obj2);
+	return false;
 }
 
 Mus3::Mus3(Supernova2Engine *vm, GameManager *gm) {
 	_vm = vm;
 	_gm = gm;
 
-	_fileNumber = 6;
+	_fileNumber = 35;
 	_id = MUS3;
 	_shown[0] = kShownTrue;
+	_shown[2] = kShownTrue;
+	_shown[3] = kShownTrue;
+	_shown[4] = kShownTrue;
+	_shown[5] = kShownTrue;
+	_shown[13] = kShownTrue;
+	_shown[23] = kShownTrue;
+	_shown[28] = kShownTrue;
+
+	_objectState[0] = Object(_id, kStringDoor, kStringDefaultDescription, DOOR, EXIT | OPENABLE, 0, 0, 7, MUS2, 2);
+	_objectState[1] = Object(_id, kStringDoor, kStringDefaultDescription, DOOR, EXIT | OPENABLE, 5, 5, 12, MUS10, 19);
 }
 
 void Mus3::onEntrance() {
+	_gm->pressureAlarmEntrance();
 	setRoomSeen(true);
 }
 
 void Mus3::animation() {
+	_gm->pressureAlarmCount();
 }
 
 bool Mus3::interact(Action verb, Object &obj1, Object &obj2) {
-	return true;
+	_gm->museumDoorInteract(verb, obj1, obj2);
+	return false;
 }
 
 Mus4::Mus4(Supernova2Engine *vm, GameManager *gm) {
 	_vm = vm;
 	_gm = gm;
 
-	_fileNumber = 6;
+	_fileNumber = 35;
 	_id = MUS4;
 	_shown[0] = kShownTrue;
+	_shown[1] = kShownTrue;
+	_shown[3] = kShownTrue;
+	_shown[4] = kShownTrue;
+	_shown[5] = kShownTrue;
+	_shown[6] = kShownTrue;
+	_shown[14] = kShownTrue;
+	_shown[20] = kShownTrue;
+	_shown[21] = kShownTrue;
+
+	_objectState[0] = Object(_id, kStringDoor, kStringDefaultDescription, DOOR, EXIT | OPENABLE, 0, 0, 7, MUS4, 2);
+	_objectState[1] = Object(_id, kStringCamera, kStringDefaultDescription, NULLOBJECT, NULLTYPE, 7, 7, 0);
+
 }
 
 void Mus4::onEntrance() {
@@ -4026,19 +4063,31 @@ void Mus4::animation() {
 }
 
 bool Mus4::interact(Action verb, Object &obj1, Object &obj2) {
-	return true;
+	_gm->museumDoorInteract(verb, obj1, obj2);
+	return false;
 }
 
 Mus5::Mus5(Supernova2Engine *vm, GameManager *gm) {
 	_vm = vm;
 	_gm = gm;
 
-	_fileNumber = 6;
+	_fileNumber = 35;
 	_id = MUS5;
 	_shown[0] = kShownTrue;
+	_shown[4] = kShownTrue;
+	_shown[5] = kShownTrue;
+	_shown[6] = kShownTrue;
+	_shown[14] = kShownTrue;
+	_shown[24] = kShownTrue;
+
+	_objectState[0] = Object(_id, kStringDoor, kStringDefaultDescription, DOOR, EXIT | OPENABLE, 0, 0, 7, MUS4, 2);
+	_objectState[1] = Object(_id, kStringDoor, kStringDefaultDescription, ENCRYPTED_DOOR, EXIT | OPENABLE | CLOSED | COMBINABLE, 1, 1, 8, MUS6, 22);
+	_objectState[2] = Object(_id, kStringDoor, kStringDefaultDescription, DOOR, EXIT | OPENABLE, 2, 2, 9, MUS9, 5);
+
 }
 
 void Mus5::onEntrance() {
+	_gm->securityEntrance();
 	setRoomSeen(true);
 }
 
@@ -4046,6 +4095,26 @@ void Mus5::animation() {
 }
 
 bool Mus5::interact(Action verb, Object &obj1, Object &obj2) {
+	_gm->museumDoorInteract(verb, obj1, obj2);
+	if (verb == ACTION_USE &&
+			Object::combine(obj1, obj2, SP_KEYCARD, ENCRYPTED_DOOR) && 
+			!(_objectState[1]._type & OPENED)) {
+		if (_gm->crackDoor(50)) {
+			_vm->renderImage(8);
+			_objectState[1]._type = EXIT | OPENABLE | OPENED;
+			_gm->_rooms[MUS6]->getObject(0)->_type = EXIT | OPENABLE | OPENED;
+			_gm->_rooms[MUS6]->setSectionVisible(7, kShownTrue);
+			_vm->playSound(kAudioTaxiOpen);
+		}
+	} else if (verb == ACTION_CLOSE && obj1._id == ENCRYPTED_DOOR && 
+				(obj1._type & OPENED)) {
+		_vm->renderImage(8 + 128);
+		_objectState[1]._type = EXIT | OPENABLE | CLOSED;
+		_gm->_rooms[MUS6]->getObject(0)->_type = EXIT | OPENABLE | CLOSED;
+		_gm->_rooms[MUS6]->setSectionVisible(7, kShownFalse);
+		_vm->playSound(kAudioElevator1);
+	} else
+		return false;
 	return true;
 }
 
@@ -4053,12 +4122,23 @@ Mus6::Mus6(Supernova2Engine *vm, GameManager *gm) {
 	_vm = vm;
 	_gm = gm;
 
-	_fileNumber = 6;
+	_fileNumber = 35;
 	_id = MUS6;
 	_shown[0] = kShownTrue;
+	_shown[3] = kShownTrue;
+	_shown[4] = kShownTrue;
+	_shown[5] = kShownTrue;
+	_shown[6] = kShownTrue;
+	_shown[13] = kShownTrue;
+	_shown[19] = kShownTrue;
+
+	_objectState[0] = Object(_id, kStringDoor, kStringDefaultDescription, ENCRYPTED_DOOR, EXIT | OPENABLE | CLOSED | COMBINABLE, 0, 0, 7, MUS5, 2);
+	_objectState[1] = Object(_id, kStringDoor, kStringDefaultDescription, DOOR, EXIT | OPENABLE, 1, 1, 8, MUS7, 22);
+	_objectState[2] = Object(_id, kStringDoor, kStringDefaultDescription, BIG_DOOR, EXIT | OPENABLE | CLOSED, 6, 6, 0);
 }
 
 void Mus6::onEntrance() {
+	_gm->pressureAlarmEntrance();
 	setRoomSeen(true);
 }
 
@@ -4066,6 +4146,29 @@ void Mus6::animation() {
 }
 
 bool Mus6::interact(Action verb, Object &obj1, Object &obj2) {
+	_gm->museumDoorInteract(verb, obj1, obj2);
+	if (verb == ACTION_USE &&
+			Object::combine(obj1, obj2, SP_KEYCARD, ENCRYPTED_DOOR) && 
+			!(_objectState[0]._type & OPENED)) {
+		if (_gm->crackDoor(50)) {
+			_vm->renderImage(7);
+			_objectState[0]._type = EXIT | OPENABLE | OPENED;
+			_gm->_rooms[MUS5]->getObject(1)->_type = EXIT | OPENABLE | OPENED;
+			_gm->_rooms[MUS5]->setSectionVisible(8, kShownTrue);
+			_vm->playSound(kAudioTaxiOpen);
+		}
+	} else if (verb == ACTION_CLOSE && obj1._id == ENCRYPTED_DOOR && 
+				(obj1._type & OPENED)) {
+		_vm->renderImage(7 + 128);
+		_objectState[0]._type = EXIT | OPENABLE | CLOSED;
+		_gm->_rooms[MUS5]->getObject(1)->_type = EXIT | OPENABLE | CLOSED;
+		_gm->_rooms[MUS5]->setSectionVisible(8, kShownFalse);
+		_vm->playSound(kAudioElevator1);
+	} else if (verb == ACTION_USE &&
+			Object::combine(obj1, obj2, SP_KEYCARD, BIG_DOOR))
+		_vm->renderMessage(kStringMuseum14);
+	else
+		return false;
 	return true;
 }
 
@@ -4073,19 +4176,33 @@ Mus7::Mus7(Supernova2Engine *vm, GameManager *gm) {
 	_vm = vm;
 	_gm = gm;
 
-	_fileNumber = 6;
+	_fileNumber = 35;
 	_id = MUS7;
 	_shown[0] = kShownTrue;
+	_shown[2] = kShownTrue;
+	_shown[3] = kShownTrue;
+	_shown[5] = kShownTrue;
+	_shown[6] = kShownTrue;
+	_shown[14] = kShownTrue;
+	_shown[16] = kShownTrue;
+	_shown[25] = kShownTrue;
+	_shown[28] = kShownTrue;
+
+	_objectState[0] = Object(_id, kStringDoor, kStringDefaultDescription, DOOR, EXIT | OPENABLE, 0, 0, 7, MUS6, 2);
+	_objectState[1] = Object(_id, kStringDoor, kStringDefaultDescription, DOOR, EXIT | OPENABLE, 3, 3, 10, MUS11, 15);
 }
 
 void Mus7::onEntrance() {
+	_gm->pressureAlarmEntrance();
 	setRoomSeen(true);
 }
 
 void Mus7::animation() {
+	_gm->pressureAlarmCount();
 }
 
 bool Mus7::interact(Action verb, Object &obj1, Object &obj2) {
+	_gm->museumDoorInteract(verb, obj1, obj2);
 	return true;
 }
 

@@ -52,6 +52,7 @@ bool GameManager::serialize(Common::WriteStream *out) {
 	out->writeByte(_state._alarmOn);
 	out->writeByte(_state._alarmCracked);
 	out->writeByte(_state._haste);
+	out->writeByte(_state._pressureCounter);
 	out->writeByte(_state._sirenOn);
 	out->writeSint16LE(_state._pyraDirection);
 	out->writeUint32LE(_state._eventTime);
@@ -103,6 +104,7 @@ bool GameManager::deserialize(Common::ReadStream *in, int version) {
 	_state._alarmOn = in->readByte();
 	_state._alarmCracked = in->readByte();
 	_state._haste = in->readByte();
+	_state._pressureCounter = in->readByte();
 	_state._sirenOn = in->readByte();
 	_state._pyraDirection = in->readSint16LE();
 	_state._eventTime = in->readUint32LE();
@@ -394,6 +396,7 @@ void GameManager::initState() {
 	_state._alarmOn = false;
 	_state._alarmCracked = false;
 	_state._haste = false;
+	_state._pressureCounter = 0;
 	_state._sirenOn = false;
 	_state._pyraDirection = 0;
 	_state._eventTime = kMaxTimerValue;
@@ -2270,6 +2273,22 @@ void GameManager::securityEntrance() {
 		else
 			caught();
 	}
+}
+
+void GameManager::pressureAlarmEntrance() {
+	_state._pressureCounter = 0;
+	securityEntrance();
+}
+
+void GameManager::pressureAlarmCount() {
+	if (!(_state._alarmOn ||
+			(_currentRoom == _rooms[MUS22] && _currentRoom->isSectionVisible(6)))) {
+		_state._pressureCounter++;
+		if ((_currentRoom >= _rooms[MUS12] && _state._pressureCounter > 8) || 
+				_state._pressureCounter > 16)
+			alarm();
+	}
+	setAnimationTimer(11);
 }
 
 }
