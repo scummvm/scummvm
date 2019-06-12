@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2019-06-11 11:40+0200\n"
-"PO-Revision-Date: 2019-05-31 22:07+0000\n"
+"PO-Revision-Date: 2019-06-12 20:23+0000\n"
 "Last-Translator: Lothar Serra Mari <serra@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -5231,12 +5231,14 @@ msgstr "Bilineare Filterung auf einzelne Sprites anwenden"
 
 #: engines/wintermute/wintermute.cpp:153
 msgid "This game requires PNG, JPEG and Vorbis support."
-msgstr ""
+msgstr "Dieses Spiel benötigt Unterstützung für PNG, JPEG und Vorbis."
 
 #: engines/wintermute/wintermute.cpp:164
 msgid ""
 "This game requires 3D characters support, which is out of ScummVM's scope."
 msgstr ""
+"Dieses Spiel benötigt die Unterstützung von 3D-Charakteren, welche nicht in "
+"ScummVM enthalten ist."
 
 #: engines/xeen/detection.cpp:89
 msgid "Show item costs in standard inventory mode"
