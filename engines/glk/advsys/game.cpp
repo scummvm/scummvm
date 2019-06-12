@@ -202,7 +202,7 @@ bool Game::match(int obj, int noun, int *adjectives) {
 	return true;
 }
 
-int Game::checkVerb(int *verbs) {
+int Game::checkVerb(const Common::Array<int> &verbs) {
 	// Iterate through the actions
 	for (int idx = 1; idx <= _actionCount; ++idx) {
 		if (hasVerb(idx, verbs))
@@ -212,7 +212,7 @@ int Game::checkVerb(int *verbs) {
 	return NIL;
 }
 
-int Game::findAction(int *verbs, int preposition, int flag) {
+int Game::findAction(const Common::Array<int> &verbs, int preposition, int flag) {
 	// Iterate through the actions
 	for (int idx = 1; idx <= _actionCount; ++idx) {
 		if ((preposition && !hasPreposition(idx, preposition)) || !hasVerb(idx, verbs))
@@ -301,23 +301,23 @@ bool Game::hasAdjective(int obj, int adjective) const {
 	return false;
 }
 
-bool Game::hasVerb(int act, int *verbs) const {
+bool Game::hasVerb(int act, const Common::Array<int> &verbs) const {
 	// Get the list of verbs
 	int link = getActionField(act, A_VERBS);
 
 	// Look for the verb
 	for (; link; link = readWord(link + L_NEXT)) {
-		int *verb = verbs;
+		Common::Array<int>::const_iterator verb = verbs.begin();
 		int word = readWord(link + L_DATA);
 
-		for (; *verb && word; link = readWord(link + L_NEXT)) {
+		for (; verb < verbs.end() && word; link = readWord(link + L_NEXT)) {
 			if (*verb != readWord(word + L_DATA))
 				break;
 
 			++verb;
 		}
 
-		if (!*verb && !word)
+		if (verb == verbs.end() && !word)
 			return true;
 	}
 

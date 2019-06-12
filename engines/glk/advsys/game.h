@@ -46,6 +46,19 @@ enum Action {
 };
 
 /**
+ * Word types
+ */
+enum WordType {
+	WT_UNKNOWN = 0,
+	WT_VERB = 1,
+	WT_NOUN = 2,
+	WT_ADJECTIVE = 3,
+	WT_PREPOSITION = 4,
+	WT_CONJUNCTION = 5,
+	WT_ARTICLE = 6
+};
+
+/**
  * Object fields
  */
 enum ObjectField {
@@ -169,7 +182,7 @@ private:
 	/**
 	 * Returns true if an action has a given verb
 	 */
-	bool hasVerb(int act, int *verbs) const;
+	bool hasVerb(int act, const Common::Array<int> &verbs) const;
 
 	/**
 	 * Returns true if an action is in a given list
@@ -253,8 +266,8 @@ public:
 	/**
 	 * Return a word's type
 	 */
-	int getWordType(int word) const {
-		return _wordTypeTable[word];
+	WordType getWordType(int word) const {
+		return (WordType)_wordTypeTable[word];
 	}
 
 	/**
@@ -265,12 +278,12 @@ public:
 	/**
 	 * Check to see if this is a valid verb
 	 */
-	int checkVerb(int *verbs);
+	int checkVerb(const Common::Array<int> &verbs);
 
 	/**
 	 * Find an action matching a given description
 	 */
-	int findAction(int *verbs, int preposition, int flag);
+	int findAction(const Common::Array<int> &verbs, int preposition, int flag);
 
 	/**
 	 * Get an object property

@@ -113,6 +113,16 @@ enum FPOffset {
 	FP_ARGS = 3
 };
 
+/**
+ * Action flags
+ */
+enum ActionFlag {
+	A_ACTOR = 1,		///< Actor
+	A_DOBJECT = 2,		///< Direct object
+	A_IOBJECT = 4		///< Indirect object
+};
+
+
 class VM;
 typedef void (VM::*OpcodeMethod)();
 
@@ -192,6 +202,7 @@ class VM : public GlkInterface, public Game {
 		int _number;
 
 		InputWord() : _number(0) {}
+		operator int() const { return _number; }
 	};
 private:
 	// Execution fields
@@ -213,7 +224,8 @@ private:
 	int _ndObjects;
 	int _iObject;
 	Common::Array<InputWord> _words;
-	InputWord *_wordPtr;
+	Common::Array<InputWord>::iterator _wordPtr;
+	Common::Array<int> _verbs;
 private:
 	/**
 	 * Execute a single opcode within the script
@@ -250,6 +262,21 @@ private:
 	 * @returns			True if a valid word was extracted
 	 */
 	bool getWord(Common::String &line);
+
+	/**
+	 * Get a noun phrase and return the object it refers to
+	 */
+	bool getNoun();
+
+	/**
+	 * Get a verb phrase and return the action it refers to
+	 */
+	bool getVerb();
+
+	/**
+	 * Called when a parsing error occurs
+	 */
+	void parseError();
 
 	/**
 	 * Returns true if a passed character is a skippable whitespace

@@ -85,7 +85,7 @@ OpcodeMethod VM::_METHODS[0x34] = {
 
 VM::VM(OSystem *syst, const GlkGameDescription &gameDesc) : GlkInterface(syst, gameDesc), Game(),
 		_fp(_stack), _pc(0), _status(IN_PROGRESS), _actor(-1), _action(-1), _dObject(-1),
-		_ndObjects(-1), _iObject(-1) {
+		_ndObjects(-1), _iObject(-1), _wordPtr(nullptr) {
 	Common::fill(&_nouns[0], &_nouns[20], 0);
 	Common::fill(&_nounWords[0], &_nounWords[20], -1);
 	Common::fill(&_adjectives[0], &_adjectives[20], (int *)nullptr);
@@ -452,6 +452,14 @@ bool VM::parseInput() {
 	if (!getLine())
 		return false;
 
+	// Check for actor
+	WordType wordType = getWordType(_words.front());
+	if (wordType == WT_ADJECTIVE || wordType == WT_NOUN) {
+		if (!(_actor = getNoun()))
+			return false;
+		flag |= A_ACTOR;
+	}
+
 	// TODO: stub
 	return false;
 }
@@ -475,6 +483,7 @@ bool VM::getLine() {
 			return false;
 	}
 
+	_wordPtr = _words.begin();
 	return true;
 }
 
@@ -503,6 +512,50 @@ bool VM::getWord(Common::String &line) {
 		print(msg);
 		return true;
 	}
+}
+
+bool VM::getNoun() {
+	// TODO: Stub
+	return false;
+}
+
+bool VM::getVerb() {
+	_verbs.clear();
+
+	if (_words.front() == NIL || getWordType(_words.front()) != WT_VERB) {
+		parseError();
+		return false;
+	}
+
+	_verbs.push_back(*_wordPtr++);
+
+	// Check for a word following the verb
+	if (!_words.empty()) {
+		_verbs.push_back(_words.front());
+
+		if (checkVerb(_verbs)) {
+			++_wordPtr;
+		} else {
+			_verbs.push_back(_words.back());
+
+			if (checkVerb(_verbs)) {
+				_words.pop_back();
+			} else {
+				_verbs.pop_back();
+
+				if (!checkVerb(_verbs)) {
+					parseError();
+					return false;
+				}
+			}
+		}
+	}
+
+	return true;
+}
+
+void VM::parseError() {
+	// TODO
 }
 
 bool VM::isWhitespace(char c) {
