@@ -113,7 +113,6 @@ bool AIScriptOfficerGrayford::Update() {
 		switch (Actor_Query_Which_Set_In(kActorOfficerGrayford)) {
 		case kSetRC03:
 			if (Actor_Query_Which_Set_In(kActorOfficerGrayford) == Player_Query_Current_Set()) {
-//				asdf restore
 				Actor_Set_Goal_Number(kActorOfficerGrayford, kGoalOfficerGrayfordAttackMcCoyAct4);
 				Non_Player_Actor_Combat_Mode_On(kActorOfficerGrayford, kActorCombatStateIdle, true, kActorMcCoy, 18, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, -1, -1, -1, 10, 300, false);
 			}
@@ -136,14 +135,14 @@ bool AIScriptOfficerGrayford::Update() {
 				Non_Player_Actor_Combat_Mode_On(kActorOfficerGrayford, kActorCombatStateIdle, true, kActorMcCoy, 10, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, -1, -1, -1, 10, 300, false);
 			}
 			break;
-// asdf missing UG07 case - would be a type 10 combat, 12 flee?
+// TODO missing UG07 case - would be a type 10 combat, 12 flee?
 		case kSetUG08:
 			if (Actor_Query_Which_Set_In(kActorOfficerGrayford) == Player_Query_Current_Set()) {
 				Actor_Set_Goal_Number(kActorOfficerGrayford, kGoalOfficerGrayfordAttackMcCoyAct4);
 				Non_Player_Actor_Combat_Mode_On(kActorOfficerGrayford, kActorCombatStateIdle, true, kActorMcCoy, 13, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, -1, -1, -1, 10, 300, false);
 			}
 			break;
-// asdf missing UG09 case - would be a type ?? //
+// TODO missing UG09 case - would be a type ?? //
 
 		case kSetUG10:
 			if (Actor_Query_Which_Set_In(kActorOfficerGrayford) == Player_Query_Current_Set()) {
@@ -331,7 +330,7 @@ void AIScriptOfficerGrayford::ClickedByPlayer() {
 		if (Random_Query(1, 2) == 1) {
 			Actor_Says(kActorMcCoy, 5075, 14); // Hey, pal.
 		} else {
-			Actor_Says(kActorMcCoy, 5075, 14); // Hey, pal. TODO asdf bug in the original? Matches the above statement
+			Actor_Says(kActorMcCoy, 5075, 14); // Hey, pal. TODO  bug in the original? Matches the above statement
 		}
 		Actor_Set_Goal_Number(kActorOfficerGrayford, kGoalOfficerGrayfordWalksInPS03c);
 		break;
@@ -359,7 +358,7 @@ void AIScriptOfficerGrayford::ClickedByPlayer() {
 		Actor_Says(kActorOfficerGrayford, 330, 13);
 		Actor_Set_Goal_Number(kActorOfficerGrayford, kGoalOfficerGrayfordWalksInPS09b);
 		break;
-// asdf goals 6 and 9?
+// TODO goals 6 and 9?
 	case kGoalOfficerGrayfordWalksInPS09c:
 		AI_Movement_Track_Flush(kActorOfficerGrayford);
 		Actor_Set_Goal_Number(kActorOfficerGrayford, kGoalOfficerGrayfordStopAndTalk1);
@@ -619,8 +618,7 @@ bool AIScriptOfficerGrayford::GoalChanged(int currentGoalNumber, int newGoalNumb
 	case kGoalOfficerGrayfordHuntingAroundAct4:
 //		debug("Flushing Grayford movement track");
 		AI_Movement_Track_Flush(kActorOfficerGrayford);
-		switch (Random_Query(1, 10)) { // asdf restore
-//		switch (1) {
+		switch (Random_Query(1, 10)) {
 		case 1:
 			// kSetNR01
 //			debug("gray 1 kSetNR01");
@@ -719,8 +717,7 @@ bool AIScriptOfficerGrayford::GoalChanged(int currentGoalNumber, int newGoalNumb
 #endif // BLADERUNNER_ORIGINAL_BUGS
 
 		case 8:
-			switch (Random_Query(1, 7)) { // asdf restore
-//			switch (1) {
+			switch (Random_Query(1, 7)) {
 			case 1:
 				// kSetUG10 -> kSetFreeSlotC
 //				debug("gray 8-1 kSetUG10 -> kSetFreeSlotC");
@@ -801,8 +798,7 @@ bool AIScriptOfficerGrayford::GoalChanged(int currentGoalNumber, int newGoalNumb
 			return false; // does it matter if false or true? case 9 and 10 return false
 #endif // BLADERUNNER_ORIGINAL_BUGS
 		case 9:
-			if (Random_Query(0, 1)) { // asdf restore
-//			if (1) {
+			if (Random_Query(0, 1)) {
 				// kSetUG09 -> kSetFreeSlotC
 //				debug("gray 9-1 kSetUG09 -> kSetFreeSlotC");
 				AI_Movement_Track_Append(kActorOfficerGrayford, 433, 10);

@@ -27,8 +27,6 @@
 #include "bladerunner/obstacles.h"
 #include "bladerunner/savefile.h"
 #include "bladerunner/view.h"
-//#include "bladerunner/scene.h"          // asdf to REMOVE
-//#include "bladerunner/game_constants.h" // asdf to REMOVE
 
 namespace BladeRunner {
 
