@@ -775,6 +775,7 @@ const char *gameText[] = {
 "\"Diese Mistkerle von der Artus GmbH und|Commander Sumoti m\201ssen entlarvt werden!\"", //"These bastards from Artus GmbH and|Commander Sumoti must be unmasked!"
 "Sieht gef\204hrlich aus!", //Looks dangerous
 "Das Auge ist schon offen.", //This Eye is already opened
+"Es gelingt dir, zu fliehen.", //You manage to escape
 "|", //Dialog separator
 NULL
 };
