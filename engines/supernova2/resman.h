@@ -51,14 +51,18 @@ public:
 
 	Audio::SeekableAudioStream *getSoundStream(AudioId index);
 	Audio::AudioStream *getSoundStream(MusicId index);
+	Audio::AudioStream *getSirenStream();
 	MS2Image *getImage(int filenumber);
 	const byte *getCursor(CursorId id) const;
+	int getAudioRate();
 
 private:
 	void initSoundFiles();
 	void initGraphics();
 	void initCursorGraphics();
 	void initImages();
+	void initSiren();
+	byte *generateTone(byte *buffer, int frequency, int length, int audioRate);
 
 private:
 	Common::ScopedPtr<Audio::SeekableAudioStream> _soundSamples[kAudioNumSamples];
@@ -66,6 +70,7 @@ private:
 	Common::ScopedPtr<Common::MemoryReadStream> _musicMadMonkeysBuffer;
 	Common::ScopedPtr<Common::MemoryReadStream> _musicOutroBuffer;
 	Common::ScopedPtr<Audio::AudioStream> _musicIntro;
+	Common::ScopedPtr<Audio::AudioStream> _sirenStream;
 	Common::ScopedPtr<Audio::AudioStream> _musicMadMonkeys;
 	Common::ScopedPtr<Audio::AudioStream> _musicOutro;
 	int _audioRate;

@@ -66,6 +66,7 @@ public:
 
 	void play(AudioId index);
 	void play(MusicId index);
+	void playSiren();
 	void stop();
 	bool isPlaying();
 private:

@@ -28,6 +28,7 @@
 #include "common/system.h"
 #include "graphics/cursorman.h"
 #include "graphics/palette.h"
+#include "common/sinetables.h"
 
 #include "supernova2/graphics.h"
 #include "supernova2/resman.h"
@@ -128,6 +129,7 @@ void ResourceManager::initSoundFiles() {
 		_soundSamples[i].reset(Audio::makeRawStream(buffer, length, _audioRate,
 													streamFlag, DisposeAfterUse::YES));
 	}
+	initSiren();
 
 	_musicIntroBuffer.reset(convertToMod("ms2_data.052"));
 	_musicMadMonkeysBuffer.reset(convertToMod("ms2_data.056"));
@@ -191,11 +193,19 @@ Audio::AudioStream *ResourceManager::getSoundStream(MusicId index) {
 	}
 }
 
+Audio::AudioStream *ResourceManager::getSirenStream() {
+	return _sirenStream.get();
+}
+
 MS2Image *ResourceManager::getImage(int filenumber) {
 	if (filenumber < 47)
 		return &_images[filenumber];
 	else
 		return nullptr;
+}
+
+int ResourceManager::getAudioRate() {
+	return _audioRate;
 }
 
 const byte *ResourceManager::getCursor(CursorId id) const {
@@ -207,6 +217,56 @@ const byte *ResourceManager::getCursor(CursorId id) const {
 	default:
 		return nullptr;
 	}
+}
+
+// Generate a tone which minimal length is the length and ends at the end
+// of sine period
+byte *ResourceManager::generateTone(byte *buffer, int frequency, int length, int audioRate) {
+	Common::SineTable table = Common::SineTable(40000);
+	int numberOfSamplesPerT = audioRate / frequency;
+	int i = 0;
+
+	// Generate minimal length of the tone
+	for(; i < length; i++) {
+		buffer[i] = (byte)
+			((table.at((i * (40000 / numberOfSamplesPerT)) % 40000) * 127) + 127);
+	}
+
+	// Generate the tone until the end of a sine period and try to make
+	// the transition to the next tone a little bit smoother
+	for(; buffer[i - 1] > 127; i++)
+		buffer[i] = (byte)
+			((table.at((i * (40000 / numberOfSamplesPerT)) % 40000) * 127) + 127);
+	for(; buffer[i - 1] < 127; i++)
+		buffer[i] = (byte)
+			((table.at((i * (40000 / numberOfSamplesPerT)) % 40000) * 127) + 127);
+	if (buffer[i - 1] == 127)
+		i++;
+	buffer[i - 2] = (1.2 * 127 + 0.8 * buffer[i - 3]) / 2;
+	return buffer + i - 1;
+}
+
+// Tones with frequencies between 1500 Hz and 1800 Hz, frequencies go up and down
+// with a step of 10 Hz.
+void ResourceManager::initSiren() {
+	int audioRate = 80000;
+	int length = audioRate / 90; // minimal length of each tone
+
+	// * 60 for the minimal length, another 20 * length as a spare, for longer tones
+	byte *buffer = new byte[length * 80]; 
+	byte *pBuffer = buffer;
+
+	for (int i = 0; i < 30; i++)
+		pBuffer = generateTone(pBuffer, 1770 - i * 10, length, audioRate);
+
+	for (int i = 0; i < 30; i++)
+		pBuffer = generateTone(pBuffer, 1530 + i * 10, length, audioRate);
+
+	byte streamFlag = Audio::FLAG_UNSIGNED | Audio::FLAG_LITTLE_ENDIAN;
+
+	_sirenStream.reset(Audio::makeLoopingAudioStream(
+			Audio::makeRawStream(buffer, pBuffer - buffer, audioRate,
+									streamFlag, DisposeAfterUse::YES), 0));
 }
 
 static Common::MemoryReadStream *convertToMod(const char *filename, int version) {
