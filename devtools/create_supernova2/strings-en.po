@@ -2789,3 +2789,9 @@ msgid ""
 "werden!\""
 msgstr ""
 "\"These bastards from Artus GmbH and|Commander Sumoti must be unmasked!\""
+
+#: ../../ms2_mus.c:319
+msgid ""
+"Es gelingt dir, zu fliehen."
+msgstr ""
+"You manage to escape."
