@@ -12148,6 +12148,52 @@ static const uint16 sq4CdPatchBikerTimepodMessage[] = {
 	PATCH_END
 };
 
+// Clicking Walk while getting shot by the Sequel Police outside of Sock's in
+//  room 370 crashes the CD version. This causes an Oops! error in the original.
+//  The lookupSelector error comes from within the Grooper and Grycler classes
+//  but the real bug is that this room's script fails to call handsOff, allowing
+//  movement during ego's death animation, unlike all the other laser scripts.
+//
+// We prevent the crash by adding the missing handsOff call.
+//
+// Applies to: English PC CD
+// Responsible method: sp2Squeeze:changeState(3)
+// Fixes bug #10974
+static const uint16 sq4CdSignatureSocksSequelPoliceHandsOff[] = {
+	0x76,                               // push0 [ y ]
+	0x76,                               // push0
+	0x81, 0x00,                         // lag 00
+	0x4a, 0x04,                         // send 04 [ ego y? ]
+	SIG_MAGICDWORD,
+	0x36,                               // push
+	0x35, 0x20,                         // ldi 20
+	0x04,                               // sub
+	0xa3, 0x00,                         // sal 00 [ local0 = ego:y ]
+	0x38, SIG_SELECTOR16(setMotion),    // pushi setMotion
+	0x78,                               // push1
+	0x76,                               // push0
+	0x81, 0x00,                         // lag 00
+	0x4a, 0x06,                         // send 06 [ ego setMotion: 0 ]
+	SIG_END
+};
+
+static const uint16 sq4CdPatchSocksSequelPoliceHandsOff[] = {
+	0x38, PATCH_SELECTOR16(setMotion),  // pushi setMotion
+	0x78,                               // push1
+	0x76,                               // push0
+	0x76,                               // push0 [ y ]
+	0x76,                               // push0
+	0x81, 0x00,                         // lag 00
+	0x4a, 0x0a,                         // send 0a [ ego setMotion: 0 y?, saves 4 bytes ]
+	0x36,                               // push
+	0x35, 0x20,                         // ldi 20
+	0x04,                               // sub
+	0xa3, 0x00,                         // sal 00 [ local0 = ego:y ]
+	0x76,                               // push0
+	0x45, 0x02, 0x00,                   // callb proc0_2 00 [ handsOff ]
+	PATCH_END
+};
+
 // The door to Sock's is immediately disposed of in the CD version, breaking its
 //  Look message and preventing it from being drawn when restoring a saved game.
 //  We remove the incorrect dispose call along with a redundant addToPic.
@@ -12499,6 +12545,7 @@ static const SciScriptPatcherEntry sq4Signatures[] = {
 	{  true,   290, "CD: cedric easter egg fix",                      1, sq4CdSignatureCedricEasterEgg,                 sq4CdPatchCedricEasterEgg },
 	{  true,   290, "CD: cedric lockup fix (1/2)",                    1, sq4CdSignatureCedricLockup1,                   sq4CdPatchCedricLockup1 },
 	{  true,   290, "CD: cedric lockup fix (2/2)",                    1, sq4CdSignatureCedricLockup2,                   sq4CdPatchCedricLockup2 },
+	{  true,   370, "CD: sock's sequel police hands-off fix",         1, sq4CdSignatureSocksSequelPoliceHandsOff,       sq4CdPatchSocksSequelPoliceHandsOff },
 	{  true,   370, "CD: sock's door restore and message fix",        1, sq4CdSignatureSocksDoor,                       sq4CdPatchSocksDoor },
 	{  true,   381, "CD: big and tall room description",              1, sq4CdSignatureBigAndTallDescription,           sq4CdPatchBigAndTallDescription },
 	{  true,   391, "CD: missing Audio for universal remote control", 1, sq4CdSignatureMissingAudioUniversalRemote,     sq4CdPatchMissingAudioUniversalRemote },
