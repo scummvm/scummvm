@@ -154,6 +154,7 @@ public:
 	int _mouseY;
 	int _mouseField;
 	Room *_currentRoom;
+	Room *_lastRoom;
 	bool _newRoom;
 	Room *_rooms[NUMROOMS];
 	Inventory _inventory;
@@ -251,6 +252,8 @@ public:
 	void alarm();
 	void crack(int time);
 	bool crackDoor(int time);
+	void museumDoorInteract(Action verb, Object &obj1, Object &obj2);
+	void securityEntrance();
 
 private:
 	int _prevImgId;

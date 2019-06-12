@@ -3789,7 +3789,7 @@ Museum::Museum(Supernova2Engine *vm, GameManager *gm) {
 
 	_objectState[0] = Object(_id, kStringDinosaur, kStringDinosaurDescription, NULLOBJECT, NULLTYPE, 0, 0, 0);
 	_objectState[1] = Object(_id, kStringEntrance, kStringDefaultDescription, BIG_DOOR, EXIT | OPENABLE | CLOSED, 1, 1, 0, NULLROOM, 0);
-	_objectState[2] = Object(_id, kStringDoor, kStringDefaultDescription, DOOR, EXIT | OPENABLE | CLOSED, 2, 2, 1, MUS_EING, 9);
+	_objectState[2] = Object(_id, kStringDoor, kStringDefaultDescription, DOOR, EXIT | OPENABLE | CLOSED, 2, 2, 1, MUS_ENTRANCE, 9);
 	_objectState[3] = Object(_id, kStringRoad, kStringDefaultDescription, MUS_STREET, EXIT, 3, 3, 0);
 }
 
@@ -3833,8 +3833,6 @@ void Museum::onEntrance() {
 }
 
 void Museum::animation() {
-	_gm->drawClock();
-	_gm->setAnimationTimer(11);
 }
 
 bool Museum::interact(Action verb, Object &obj1, Object &obj2) {
@@ -3894,36 +3892,72 @@ bool Museum::interact(Action verb, Object &obj1, Object &obj2) {
 	return true;
 }
 
-MusEing::MusEing(Supernova2Engine *vm, GameManager *gm) {
+MusEntrance::MusEntrance(Supernova2Engine *vm, GameManager *gm) {
 	_vm = vm;
 	_gm = gm;
 
-	_fileNumber = 6;
-	_id = MUS_EING;
+	_fileNumber = 32;
+	_id = MUS_ENTRANCE;
 	_shown[0] = kShownTrue;
+	_shown[2] = kShownTrue;
+
+	_objectState[0] = Object(_id, kStringDoor, kStringDefaultDescription, ENCRYPTED_DOOR, EXIT | OPENABLE | OPENED, 1, 1, 2, MUSEUM, 23);
+	_objectState[1] = Object(_id, kStringDoor, kStringDefaultDescription, DOOR, EXIT | OPENABLE, 0, 0, 1, MUS11, 2);
 }
 
-void MusEing::onEntrance() {
+void MusEntrance::onEntrance() {
 	setRoomSeen(true);
 }
 
-void MusEing::animation() {
+void MusEntrance::animation() {
 }
 
-bool MusEing::interact(Action verb, Object &obj1, Object &obj2) {
-	return true;
+bool MusEntrance::interact(Action verb, Object &obj1, Object &obj2) {
+	if (verb == ACTION_OPEN && obj1._id == DOOR)
+		_gm->_rooms[MUS11]->getObject(2)->_type |= OPENED;
+	else if (verb == ACTION_CLOSE && obj1._id == DOOR)
+		_gm->_rooms[MUS11]->getObject(2)->_type &= ~OPENED;
+	else if (verb == ACTION_USE && 
+				Object::combine(obj1, obj2, SP_KEYCARD, ENCRYPTED_DOOR) &&
+				!(_objectState[0]._type & OPENED)) {
+		if (_gm->crackDoor(20)) {
+			_vm->renderImage(2);
+			_objectState[0]._type = EXIT | OPENABLE | OPENED;
+			_vm->playSound(kAudioTaxiOpen);
+		}
+		return true;
+	} else if (verb == ACTION_CLOSE && obj1._id == ENCRYPTED_DOOR &&
+			(obj1._type & OPENED)) {
+		_vm->renderImage(2 + 128);
+		_objectState[0]._type = EXIT | OPENABLE | CLOSED;
+		_vm->playSound(kAudioElevator1);
+		return true;
+	}
+	return false;
 }
 
 Mus1::Mus1(Supernova2Engine *vm, GameManager *gm) {
 	_vm = vm;
 	_gm = gm;
 
-	_fileNumber = 6;
+	_fileNumber = 35;
 	_id = MUS1;
 	_shown[0] = kShownTrue;
+	_shown[1] = kShownTrue;
+	_shown[3] = kShownTrue;
+	_shown[4] = kShownTrue;
+	_shown[6] = kShownTrue;
+	_shown[13] = kShownTrue;
+	_shown[15] = kShownTrue;
+	_shown[26] = kShownTrue;
+	_shown[27] = kShownTrue;
+
+	_objectState[0] = Object(_id, kStringDoor, kStringDefaultDescription, DOOR, EXIT | OPENABLE, 1, 1, 8, MUS2, 22);
+	_objectState[1] = Object(_id, kStringDoor, kStringDefaultDescription, DOOR, EXIT | OPENABLE, 4, 4, 11, MUS8, 9);
 }
 
 void Mus1::onEntrance() {
+	_gm->securityEntrance();
 	setRoomSeen(true);
 }
 
@@ -3931,7 +3965,8 @@ void Mus1::animation() {
 }
 
 bool Mus1::interact(Action verb, Object &obj1, Object &obj2) {
-	return true;
+	_gm->museumDoorInteract(verb, obj1, obj2);
+	return false;
 }
 
 Mus2::Mus2(Supernova2Engine *vm, GameManager *gm) {

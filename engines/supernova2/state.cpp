@@ -72,6 +72,7 @@ bool GameManager::serialize(Common::WriteStream *out) {
 	}
 
 	// Rooms
+	out->writeByte(_lastRoom->getId());
 	out->writeByte(_currentRoom->getId());
 	for (int i = 0; i < NUMROOMS; ++i) {
 		_rooms[i]->serialize(out);
@@ -124,10 +125,12 @@ bool GameManager::deserialize(Common::ReadStream *in, int version) {
 	}
 
 	// Rooms
+	RoomId lastRoomId = static_cast<RoomId>(in->readByte());
 	RoomId curRoomId = static_cast<RoomId>(in->readByte());
 	for (int i = 0; i < NUMROOMS; ++i) {
 		_rooms[i]->deserialize(in, version);
 	}
+	_lastRoom = _rooms[lastRoomId];
 	changeRoom(curRoomId);
 
 	// Some additional variables
@@ -309,7 +312,7 @@ void GameManager::destroyRooms() {
 	delete _rooms[COFFIN_ROOM];
 	delete _rooms[MASK];
 	delete _rooms[MUSEUM];
-	delete _rooms[MUS_EING];
+	delete _rooms[MUS_ENTRANCE];
 	delete _rooms[MUS1];
 	delete _rooms[MUS2];
 	delete _rooms[MUS3];
@@ -449,7 +452,7 @@ void GameManager::initRooms() {
 	_rooms[COFFIN_ROOM] = new CoffinRoom(_vm, this);
 	_rooms[MASK] = new Mask(_vm, this);
 	_rooms[MUSEUM] = new Museum(_vm, this);
-	_rooms[MUS_EING] = new MusEing(_vm, this);
+	_rooms[MUS_ENTRANCE] = new MusEntrance(_vm, this);
 	_rooms[MUS1] = new Mus1(_vm, this);
 	_rooms[MUS2] = new Mus2(_vm, this);
 	_rooms[MUS3] = new Mus3(_vm, this);
@@ -1448,8 +1451,10 @@ void GameManager::handleInput() {
 			} else if (_inputObject[0]->hasProperty(OPENABLE) && !_inputObject[0]->hasProperty(OPENED)) {
 				// This is closed
 				_vm->renderMessage(kStringGenericInteract3);
-			} else
+			} else {
+				_lastRoom = _currentRoom;
 				changeRoom(_inputObject[0]->_exitRoom);
+			}
 
 			break;
 
@@ -2139,7 +2144,7 @@ void GameManager::drawClock() {
 	if (!_state._alarmOn && _currentRoom == _rooms[MUS4] && 
 			second >= 21 && second <= 40)
 		alarm();
-	if (_currentRoom == _rooms[MUS_EING] && second >= 22 && second <= 29) {
+	if (_currentRoom == _rooms[MUS_ENTRANCE] && second >= 22 && second <= 29) {
 		if (!_steps && !_state._alarmCracked) {
 			_steps = true;
 			_vm->renderMessage(kStringMuseum6);
@@ -2178,6 +2183,93 @@ bool GameManager::crackDoor(int time) {
 		_vm->renderMessage(kStringMuseum16);
 	}
 	return !_state._alarmOn;
+}
+
+void GameManager::museumDoorInteract(Action verb, Object &obj1, Object &obj2) {
+	static struct {
+		int _r1;
+		int _o1;
+		int _r2;
+		int _o2;
+	} doorTab[11] = {
+		{MUS1, 0, MUS2, 0},
+		{MUS2, 1, MUS3, 0},
+		{MUS3, 1, MUS10, 0},
+		{MUS10, 1, MUS11, 0},
+		{MUS11, 1, MUS7, 1},
+		{MUS7, 0, MUS6, 1},
+		{MUS6, 0, MUS5, 1},
+		{MUS5, 0, MUS4, 0},
+		{MUS5, 2, MUS9, 1},
+		{MUS9, 0, MUS8, 1},
+		{MUS8, 0, MUS1, 1}
+	};
+	Room *r;
+	if (verb == ACTION_OPEN && obj1._id == DOOR) {
+		for (int i = 0; i < 11; i++) {
+			if ((_currentRoom == _rooms[doorTab[i]._r1]) &&
+				 &obj1 == _currentRoom->getObject(doorTab[i]._o1)) {
+				r = _rooms[doorTab[i]._r2];
+				r->getObject(doorTab[i]._o2)->_type |= OPENED;
+				r->setSectionVisible(r->getObject(doorTab[i]._o2)->_section, kShownTrue);
+			} else if ((_currentRoom == _rooms[doorTab[i]._r2]) &&
+				 &obj1 == _currentRoom->getObject(doorTab[i]._o2)) {
+				r = _rooms[doorTab[i]._r1];
+				r->getObject(doorTab[i]._o1)->_type |= OPENED;
+				r->setSectionVisible(r->getObject(doorTab[i]._o1)->_section, kShownTrue);
+			}
+		}
+	} else if (verb == ACTION_OPEN && obj1._id == DOOR) {
+		for (int i = 0; i < 11; i++) {
+			if ((_currentRoom == _rooms[doorTab[i]._r1]) &&
+				 &obj1 == _currentRoom->getObject(doorTab[i]._o1)) {
+				r = _rooms[doorTab[i]._r2];
+				r->getObject(doorTab[i]._o2)->_type &= ~OPENED;
+				r->setSectionVisible(r->getObject(doorTab[i]._o2)->_section, kShownFalse);
+			} else if ((_currentRoom == _rooms[doorTab[i]._r2]) &&
+				 &obj1 == _currentRoom->getObject(doorTab[i]._o2)) {
+				r = _rooms[doorTab[i]._r1];
+				r->getObject(doorTab[i]._o1)->_type &= ~OPENED;
+				r->setSectionVisible(r->getObject(doorTab[i]._o1)->_section, kShownFalse);
+			}
+		}
+	}
+}
+
+void GameManager::securityEntrance() {
+	static struct {
+		RoomId _r;
+		int _a1;
+		int _a2;
+	} securityList[11] = {
+		{MUS1 ,11,31},
+		{MUS2 , 7,17},
+		{MUS3 , 7,17},
+		{MUS10, 1, 7},
+		{MUS11, 1, 7},
+		{MUS7 ,10,32},
+		{MUS6 , 8,18},
+		{MUS5 , 8,18},
+		{MUS9 , 2, 8},
+		{MUS8 , 2, 8},
+		{MUS1 , 0, 0}
+	};
+
+	int time = (g_system->getMillis() - _state._startTime) / 700;
+	int second = time % 100;
+
+	if (_rooms[_securityTab[second / 10]] == _currentRoom) {
+		int i;
+		for (i = 0; _currentRoom != _rooms[securityList[i]._r]; i++)
+		{}
+		if (_lastRoom == _rooms[securityList[i + 1]._r]) {
+			_vm->renderImage(securityList[i]._a1);
+			_vm->renderImage(securityList[i]._a2);
+			caught2();
+		}
+		else
+			caught();
+	}
 }
 
 }
