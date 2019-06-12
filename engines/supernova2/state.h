@@ -65,6 +65,7 @@ struct GameState {
 	bool _alarmCracked;
 	bool _alarmOn;
 	bool _haste;
+	byte _pressureCounter;
 	bool _sirenOn;
 	byte _taxiPossibility;
 };
@@ -254,6 +255,8 @@ public:
 	bool crackDoor(int time);
 	void museumDoorInteract(Action verb, Object &obj1, Object &obj2);
 	void securityEntrance();
+	void pressureAlarmCount();
+	void pressureAlarmEntrance();
 
 private:
 	int _prevImgId;

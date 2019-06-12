@@ -145,7 +145,7 @@ kStringMuseum16, kStringMuseum10, kStringMuseum12, kStringMuseum13, kStringMuseu
 kStringMuseum1, kStringMuseum2, kStringMuseum3, kStringMuseum4, kStringMuseum5,
 kString85, kString86, kString87, kString88, kString89,
 kString90, kString91, kString92, kStringDinosaur, kStringDinosaurDescription,
-kStringEntrance, kStringDoor, kStringRoad, kString98, kString99,
+kStringEntrance, kStringDoor, kStringRoad, kStringCamera, kStringCameraDescription,
 kString100, kStringCorridor, kString102, kStringDinosaurHead, kString104,
 kString105, kStringSuctionCup, kString107, kStringOpening, kStringLetter,
 kStringMassive, kStringInscriptionDescription, kStringPyramid0, kStringPyramid1, kStringPyramid2,
