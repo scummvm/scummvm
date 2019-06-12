@@ -539,11 +539,11 @@ bool AIScriptOfficerLeary::GoalChanged(int currentGoalNumber, int newGoalNumber)
 			default:
 				return false;
 			}
-#if BLADERUNNER_ORIGINAL_BUGS
-			// fall through - a bug in original game
-#else
+#if !BLADERUNNER_ORIGINAL_BUGS
 			break;
 #endif // BLADERUNNER_ORIGINAL_BUGS
+			// a bug in original game - no break here
+			// fall through
 		case 9:
 			if (Random_Query(1, 2) == 2) {
 				// kSetUG09 -> kSetFreeSlotC
@@ -564,11 +564,11 @@ bool AIScriptOfficerLeary::GoalChanged(int currentGoalNumber, int newGoalNumber)
 			AI_Movement_Track_Append(kActorOfficerLeary, 420, 10);
 			AI_Movement_Track_Append(kActorOfficerLeary, 35, 30); // kSetFreeSlotC
 			AI_Movement_Track_Repeat(kActorOfficerLeary);
-#if BLADERUNNER_ORIGINAL_BUGS
-			// fall through - a bug in original game
-#else
+#if !BLADERUNNER_ORIGINAL_BUGS
 			return false;
 #endif // BLADERUNNER_ORIGINAL_BUGS
+			// a bug in original game - no break or return here
+			// fall through
 		case 10:
 			// kSetUG12 -> kSetFreeSlotC
 //			debug("leary 10 kSetUG12 -> kSetFreeSlotC");
@@ -582,11 +582,11 @@ bool AIScriptOfficerLeary::GoalChanged(int currentGoalNumber, int newGoalNumber)
 		default:
 			return false;
 		}
-#if BLADERUNNER_ORIGINAL_BUGS
-		// fall through - a bug in original game
-#else
-		return false;
+#if !BLADERUNNER_ORIGINAL_BUGS
+			return false;
 #endif // BLADERUNNER_ORIGINAL_BUGS
+		// a bug in original game - no break or return here
+		// fall through
 	case kGoalOfficerLearyPrepareToHuntAroundAct4:
 		// aux goal in order to immediately switch back to kGoalOfficerLearyHuntingAroundAct4 goal
 		// and run GoalChanged() for kGoalOfficerLearyHuntingAroundAct4 again

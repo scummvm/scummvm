@@ -791,12 +791,12 @@ bool AIScriptOfficerGrayford::GoalChanged(int currentGoalNumber, int newGoalNumb
 				return false;
 
 			}
-#if BLADERUNNER_ORIGINAL_BUGS
-			// fall through
-			// bug in the game - there should be nothing track related after AI_Movement_Track_Repeat
-#else
-			return false; // does it matter if false or true? case 9 and 10 return false
+#if !BLADERUNNER_ORIGINAL_BUGS
+			// does it matter if false or true? case 9 and 10 return false
+			return false;
 #endif // BLADERUNNER_ORIGINAL_BUGS
+			// bug in the game - there should be nothing track related after AI_Movement_Track_Repeat
+			// fall through
 		case 9:
 			if (Random_Query(0, 1)) {
 				// kSetUG09 -> kSetFreeSlotC
