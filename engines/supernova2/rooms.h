@@ -563,9 +563,9 @@ public:
 private:
 };
 
-class MusEing : public Room {
+class MusEntrance : public Room {
 public:
-	MusEing(Supernova2Engine *vm, GameManager *gm);
+	MusEntrance(Supernova2Engine *vm, GameManager *gm);
 	virtual void onEntrance();
 	virtual void animation();
 	virtual bool interact(Action verb, Object &obj1, Object &obj2);
