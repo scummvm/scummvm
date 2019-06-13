@@ -105,7 +105,7 @@ void InterfaceStartup::onLeftButtonDown(const Common::Point p) {
 void InterfaceStartup::onMouseMove(const Common::Point p) {
 	_objUnderCursor = nullptr;
 	bool found = false;
-	for (int i = _objs.size() - 1; i >= 0; --i) {
+	for (int i = _objs.size() - 1; i > 0; --i) {
 		QMessageObject *obj = (QMessageObject *)_objs[i];
 		if (obj->_resourceId != 4901 && obj->_resourceId != 4980) {
 			FlicDecoder *flc = g_vm->resMgr()->loadFlic(obj->_resourceId);
