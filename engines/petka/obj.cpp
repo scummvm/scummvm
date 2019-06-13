@@ -209,7 +209,7 @@ void QObjectCursor::draw() {
 		srcRect.clip(640, 480);
 		Common::Rect destRect(srcRect);
 		srcRect.translate(-_x, -_y);
-		g_vm->videoSystem()->screen().transBlitFrom(*s, srcRect, destRect);
+		g_vm->videoSystem()->screen().transBlitFrom(*s, srcRect, destRect, flc->getTransColor(s->format));
 		s->free();
 		delete s;
 	}
