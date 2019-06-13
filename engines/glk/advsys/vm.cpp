@@ -436,8 +436,7 @@ bool VM::nextCommand() {
 
 bool VM::parseInput() {
 	int noun1 = 0, cnt1 = 0, noun2 = 0, cnt2 = 0;
-	int preposition = 0;
-	bool flag = false;
+	int preposition = 0, flags = 0;
 
 	// Initialize the parser result fields
 	_actor = _action = _dObject = _iObject = 0;
@@ -450,15 +449,100 @@ bool VM::parseInput() {
 		return false;
 
 	// Check for actor
-	WordType wordType = getWordType(_words.front());
+	WordType wordType = getWordType(*_wordPtr);
 	if (wordType == WT_ADJECTIVE || wordType == WT_NOUN) {
 		if (!(_actor = getNoun()))
 			return false;
-		flag |= A_ACTOR;
+		flags |= A_ACTOR;
 	}
 
-	// TODO: stub
-	return false;
+	// Check for a verb
+	if (getVerb())
+		return false;
+
+	// Get direct object, preposition, and/or indirect object
+	if (_wordPtr != _words.end()) {
+		// Get any direct objects
+		noun1 = _adjectiveList.size();
+		for (;;) {
+			// Get the next direct object
+			if (!getNoun())
+				return false;
+			++cnt1;
+
+			// Check for more direct objects
+			if (_wordPtr == _words.end() || getWordType(*_wordPtr))
+				break;
+			++_wordPtr;
+		}
+
+		// Get any reposition and indirect object
+		if (_wordPtr != _words.end()) {
+			// Get the preposition
+			if (getWordType(*_wordPtr) == WT_PREPOSITION)
+				preposition = *_wordPtr++;
+
+			// Get the indirect object
+			noun2 = _adjectiveList.size();
+			for (;;) {
+				// Get the indirect object
+				if (!getNoun())
+					return false;
+				++cnt2;
+
+				// Check for more objects
+				if (_wordPtr == _words.end() || getWordType(*_wordPtr) != WT_CONJUNCTION)
+					break;
+				++_wordPtr;
+			}
+		}
+
+		// Ensure we're at the end of the input line
+		if (_wordPtr != _words.end()) {
+			parseError();
+			return false;
+		}
+	}
+
+	// Setup resulting properties
+	if (preposition) {
+		if (cnt2 > 1) {
+			parseError();
+			return false;
+		}
+
+		_dObject = noun1;
+		_ndObjects = cnt1;
+		_iObject = noun2;
+	}
+	else if (noun2) {
+		if (cnt1 > 1) {
+			parseError();
+			return false;
+		}
+
+		preposition = findWord("to");
+		_dObject = noun2;
+		_ndObjects = cnt2;
+		_iObject = noun1;
+	} else {
+		_dObject = noun1;
+		_ndObjects = cnt1;
+	}
+
+	// Setup the flags for the action lookup
+	if (_dObject)
+		flags |= A_DOBJECT;
+	if (_iObject)
+		flags |= A_IOBJECT;
+
+	// Find the action
+	if (!(_action == findAction(_verbs, preposition, flags))) {
+		parseError();
+		return false;
+	}
+
+	return true;
 }
 
 bool VM::getLine() {
