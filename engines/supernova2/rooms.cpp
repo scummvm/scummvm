@@ -499,10 +499,6 @@ TaxiStand::TaxiStand(Supernova2Engine *vm, GameManager *gm) {
 	_shown[0] = kShownTrue;
 	_shown[1] = kShownTrue;
 	_shown[2] = kShownTrue;
-	_shown[3] = kShownFalse;
-	_shown[4] = kShownFalse;
-	_shown[5] = kShownFalse;
-	_shown[6] = kShownFalse;
 	_shown[7] = kShownTrue;
 
 	_objectState[0] = Object(_id, kStringVehicle, kStringVehicleDescription, TAXI, NULLTYPE, 2, 2, 0, NULLROOM, 11);
@@ -640,15 +636,13 @@ bool Street::interact(Action verb, Object &obj1, Object &obj2) {
 			_gm->takeObject(*getObject(3));
 			_vm->playSound(kAudioSuccess);
 		}
-	}
-	else if (verb == ACTION_WALK && obj1._id == REAR_STREET) {
+	} else if (verb == ACTION_WALK && obj1._id == REAR_STREET) {
 		Common::String text = _vm->getGameString(kStringOnlyShop);
 		_vm->renderMessage(text);
 		_gm->waitOnInput((text.size() + 20) * _vm->_textSpeed / 10);
 		_vm->removeMessage();
 		return false;
-	}
-	else 
+	} else 
 		return false;
 	return true;
 }
@@ -675,12 +669,10 @@ void Games::onEntrance() {
 bool Games::interact(Action verb, Object &obj1, Object &obj2) {
 	if (verb == ACTION_WALK && obj1._id == OCCUPIED_CABIN) {
 		_vm->renderMessage(kStringCabinOccupiedSay);
-	}
-	else if (verb == ACTION_LOOK && obj1._id == POSTER) {
+	} else if (verb == ACTION_LOOK && obj1._id == POSTER) {
 		_gm->_state._taxiPossibility &= ~4; // add culture palace
 		return false;
-	}
-	else 
+	} else 
 		return false;
 	return true;
 }
@@ -816,7 +808,6 @@ Kiosk::Kiosk(Supernova2Engine *vm, GameManager *gm) {
 	_fileNumber = 19;
 	_id = KIOSK;
 	_shown[0] = kShownTrue;
-	_shown[1] = kShownFalse;
 	_shown[2] = kShownTrue;
 	_shown[3] = kShownTrue;
 	_shown[4] = kShownTrue;
@@ -939,13 +930,11 @@ bool Kiosk::interact(Action verb, Object &obj1, Object &obj2) {
 		_gm->drawInventory();
 		_gm->drawMapExits();
 		_gm->drawCommandBox();
-	}
-	else if (verb == ACTION_LOOK && obj1._id >= BMASK && obj1._id <= FACES) {
+	} else if (verb == ACTION_LOOK && obj1._id >= BMASK && obj1._id <= FACES) {
 		for(int i = 0; i < 3; i++) {
 			_gm->reply(dialSeller[obj1._id - BMASK][i], 1, 1 + 128);
 		}
-	}
-	else if (verb == ACTION_TALK && obj1._id >= SELLER) {
+	} else if (verb == ACTION_TALK && obj1._id >= SELLER) {
 		int i = 2;
 		if (getObject(9)->_type & CARRIED)
 			i++;
@@ -964,8 +953,7 @@ bool Kiosk::interact(Action verb, Object &obj1, Object &obj2) {
 		_gm->drawInventory();
 		_gm->drawMapExits();
 		_gm->drawCommandBox();
-	}
-	else 
+	} else 
 		return false;
 	return true;
 }
@@ -1119,12 +1107,10 @@ bool CulturePalace::interact(Action verb, Object &obj1, Object &obj2) {
 					_gm->drawMapExits();
 					_gm->drawCommandBox();
 				}
-			}
-			else 
+			} else 
 				notEnoughMoney();
 		}
-	}
-	else 
+	} else 
 		return false;
 	return true;
 }
@@ -1198,7 +1184,6 @@ bool Checkout::interact(Action verb, Object &obj1, Object &obj2) {
 			_vm->renderImage(2 + 128);
 		} else if (_shown[kMaxSection - 2] == 0) {
 			_vm->renderImage(2);
-			//_gm->reply("atnuhh", 0, 0);
 			_gm->reply(kStringCheckout15, 0, 0);
 			_vm->renderImage(2 + 128);
 			if (_gm->_rooms[CULTURE_PALACE]->getObject(4)->_type & CARRIED) {
@@ -1758,8 +1743,7 @@ bool Elevator::interact(Action verb, Object &obj1, Object &obj2) {
 				break;
 			}
 			_gm->drawGUI();
-		}
-		else
+		} else
 			_vm->renderMessage(kStringElevator61);
 	} else if ((verb == ACTION_USE || verb == ACTION_PRESS) && obj1._id == KEYPAD) {
 		_vm->renderMessage(kStringElevator62);
@@ -1797,8 +1781,7 @@ bool Elevator::interact(Action verb, Object &obj1, Object &obj2) {
 			_vm->renderImage(6);
 			_objectState[4]._type |= OPENED;
 			_vm->playSound(kAudioTaxiOpen);
-		}
-		else
+		} else
 			_vm->renderMessage(kStringElevator65);
 	} else
 		return false;
@@ -1896,8 +1879,6 @@ Apartment::Apartment(Supernova2Engine *vm, GameManager *gm) {
 	_fileNumber = 25;
 	_id = APARTMENT;
 	_shown[0] = kShownTrue;
-	_shown[1] = kShownFalse;
-	_shown[2] = kShownFalse;
 	_shown[3] = kShownTrue;
 
 	_objectState[0] = Object(_id, kStringChip, kStringChipDescription, CHIP, TAKE | COMBINABLE, 255, 255, 1);
@@ -1978,13 +1959,6 @@ Ship::Ship(Supernova2Engine *vm, GameManager *gm) {
 	_fileNumber = 45;
 	_id = SHIP;
 	_shown[0] = kShownTrue;
-	_shown[1] = kShownFalse;
-	_shown[2] = kShownFalse;
-	_shown[3] = kShownFalse;
-	_shown[4] = kShownFalse;
-	_shown[5] = kShownFalse;
-	_shown[6] = kShownFalse;
-	_shown[7] = kShownFalse;
 	_shown[8] = kShownTrue;
 
 	_objectState[0] = Object(_id, kStringSwitch, kStringDefaultDescription, SWITCH, PRESS | COMBINABLE, 0, 0, 0);
@@ -2231,8 +2205,7 @@ bool Pyramid::interact(Action verb, Object &obj1, Object &obj2) {
 			_vm->renderImage(1);
 			_gm->_inventory.remove(*rope);
 			_objectState[0]._click = 29;
-		}
-		else
+		} else
 			_vm->renderMessage(kStringPyramid1);
 	} else if (verb == ACTION_USE && hole != nullptr && rope != nullptr) {
 		if (rope->_type & CARRIED)
@@ -2285,13 +2258,7 @@ PyrEntrance::PyrEntrance(Supernova2Engine *vm, GameManager *gm) {
 	_fileNumber = 9;
 	_id = PYR_ENTRANCE;
 	_shown[0] = kShownTrue;
-	_shown[1] = kShownFalse;
-	_shown[2] = kShownFalse;
-	_shown[3] = kShownFalse;
 	_shown[4] = kShownTrue;
-	_shown[5] = kShownFalse;
-	_shown[6] = kShownFalse;
-	_shown[7] = kShownFalse;
 	_shown[8] = kShownTrue;
 
 	_objectState[0] = Object(_id, kStringSign, kStringSign5Description, SIGN, NULLTYPE, 255, 255, 0);
@@ -2336,12 +2303,10 @@ void PyrEntrance::animation() {
 			_vm->playSound(kAudioShip3);
 			_gm->screenShake();
 			_gm->_rooms[FLOORDOOR]->setSectionVisible(kMaxSection - 1, kShownTrue);
-		}
-		else {
+		} else {
 			_gm->setAnimationTimer(1);
 		}
-	}
-	else
+	} else
 		_gm->setAnimationTimer(kMaxTimerValue);
 }
 
@@ -2499,8 +2464,7 @@ bool BottomRightDoor::interact(Action verb, Object &obj1, Object &obj2) {
 	if (_gm->move(verb, obj1)) {
 		_gm->passageConstruction();
 		_gm->_newRoom = true;
-	}
-	else if (verb == ACTION_PRESS && obj1._id == BUTTON) {
+	} else if (verb == ACTION_PRESS && obj1._id == BUTTON) {
 		if (isSectionVisible(22)) {
 			_vm->renderImage(21);
 			setSectionVisible(22, kShownFalse);
@@ -2560,8 +2524,7 @@ bool BottomRightDoor::interact(Action verb, Object &obj1, Object &obj2) {
 		}
 		_vm->playSound(kAudioShip3);
 		_gm->screenShake();
-	}
-	else
+	} else
 		return false;
 	return true;
 }
@@ -2595,8 +2558,7 @@ bool BottomLeftDoor::interact(Action verb, Object &obj1, Object &obj2) {
 		else
 			_gm->passageConstruction();
 		_gm->_newRoom = true;
-	}
-	else
+	} else
 		return false;
 	return true;
 }
@@ -2818,8 +2780,7 @@ bool PuzzleFront::interact(Action verb, Object &obj1, Object &obj2) {
 		_gm->_rooms[PUZZLE_BEHIND]->getObject(2)->_description = kStringDefaultDescription;
 		_vm->playSound(kAudioShip3);
 		_gm->screenShake();
-	}
-	else
+	} else
 		return false;
 	return true;
 }
