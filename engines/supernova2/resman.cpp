@@ -28,7 +28,6 @@
 #include "common/system.h"
 #include "graphics/cursorman.h"
 #include "graphics/palette.h"
-#include "common/sinetables.h"
 
 #include "supernova2/graphics.h"
 #include "supernova2/resman.h"
@@ -222,48 +221,39 @@ const byte *ResourceManager::getCursor(CursorId id) const {
 
 // Generate a tone which minimal length is the length and ends at the end
 // of sine period
-byte *ResourceManager::generateTone(byte *buffer, int frequency, int length, int audioRate) {
-	Common::SineTable table = Common::SineTable(40000);
-	int numberOfSamplesPerT = audioRate / frequency;
+// NOTE: Size of the SineTable has to be the same as audioRate and a multiple of 4
+byte *ResourceManager::generateTone(byte *buffer, int frequency, int length, int audioRate, Common::SineTable &table) {
 	int i = 0;
 
-	// Generate minimal length of the tone
+	// Make sure length is a multiple of audioRate / frequency to end on a full sine wave and not in the middle.
+	// Also the length we have is a minimum length, so only increase it.
+	int r = 1 + (length - 1) * frequency / audioRate;
+	length = (1 + 2 * r * audioRate / frequency) / 2;
 	for(; i < length; i++) {
 		buffer[i] = (byte)
-			((table.at((i * (40000 / numberOfSamplesPerT)) % 40000) * 127) + 127);
+			((table.at((i * frequency) % audioRate) * 127) + 127);
 	}
-
-	// Generate the tone until the end of a sine period and try to make
-	// the transition to the next tone a little bit smoother
-	for(; buffer[i - 1] > 127; i++)
-		buffer[i] = (byte)
-			((table.at((i * (40000 / numberOfSamplesPerT)) % 40000) * 127) + 127);
-	for(; buffer[i - 1] < 127; i++)
-		buffer[i] = (byte)
-			((table.at((i * (40000 / numberOfSamplesPerT)) % 40000) * 127) + 127);
-	if (buffer[i - 1] == 127)
-		i++;
-	buffer[i - 2] = (1.2 * 127 + 0.8 * buffer[i - 3]) / 2;
-	return buffer + i - 1;
+	return buffer + length;
 }
 
 // Tones with frequencies between 1500 Hz and 1800 Hz, frequencies go up and down
 // with a step of 10 Hz.
 void ResourceManager::initSiren() {
-	int audioRate = 80000;
+	int audioRate = 44000;
 	int length = audioRate / 90; // minimal length of each tone
 
 	// * 60 for the minimal length, another 20 * length as a spare, for longer tones
 	byte *buffer = new byte[length * 80]; 
 	byte *pBuffer = buffer;
+	Common::SineTable table(audioRate);
 
 	for (int i = 0; i < 30; i++)
-		pBuffer = generateTone(pBuffer, 1770 - i * 10, length, audioRate);
+		pBuffer = generateTone(pBuffer, 1800 - i * 10, length, audioRate, table);
 
 	for (int i = 0; i < 30; i++)
-		pBuffer = generateTone(pBuffer, 1530 + i * 10, length, audioRate);
+		pBuffer = generateTone(pBuffer, 1500 + i * 10, length, audioRate, table);
 
-	byte streamFlag = Audio::FLAG_UNSIGNED | Audio::FLAG_LITTLE_ENDIAN;
+	byte streamFlag = Audio::FLAG_UNSIGNED;
 
 	_sirenStream.reset(Audio::makeLoopingAudioStream(
 			Audio::makeRawStream(buffer, pBuffer - buffer, audioRate,
