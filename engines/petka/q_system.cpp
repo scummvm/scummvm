@@ -26,7 +26,8 @@
 #include "graphics/colormasks.h"
 
 #include "petka/petka.h"
-#include "petka/q_interface.h"
+#include "petka/interfaces/startup.h"
+#include "petka/interfaces/main.cpp"
 #include "petka/q_system.h"
 
 namespace Petka {
@@ -125,8 +126,8 @@ bool QSystem::init() {
 	_allObjects.push_back(_case.get());
 	_allObjects.push_back(_star.get());
 
-	_mainInterface.reset(new QInterfaceMain());
-	_startupInterface.reset(new QInterfaceStartup());
+	_mainInterface.reset(new InterfaceMain());
+	_startupInterface.reset(new InterfaceStartup());
 	_startupInterface->start();
 	_currInterface = _startupInterface.get();
 	return true;

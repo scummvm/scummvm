@@ -34,9 +34,9 @@ class PetkaEngine;
 class QObjectCase;
 class QObjectCursor;
 class QObjectStar;
-class QInterfaceMain;
-class QInterfaceStartup;
-class QInterface;
+class InterfaceMain;
+class InterfaceStartup;
+class Interface;
 
 class QSystem {
 public:
@@ -62,10 +62,10 @@ public:
 	Common::ScopedPtr<QObjectCursor> _cursor;
 	Common::ScopedPtr<QObjectCase> _case;
 	Common::ScopedPtr<QObjectStar> _star;
-	Common::ScopedPtr<QInterfaceMain> _mainInterface;
-	Common::ScopedPtr<QInterfaceStartup> _startupInterface;
-	QInterface *_currInterface;
-	QInterface *_prevInterface;
+	Common::ScopedPtr<InterfaceMain> _mainInterface;
+	Common::ScopedPtr<InterfaceStartup> _startupInterface;
+	Interface *_currInterface;
+	Interface *_prevInterface;
 
 	int _field48;
 };

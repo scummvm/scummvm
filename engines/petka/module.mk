@@ -6,11 +6,13 @@ MODULE_OBJS = \
     flc.o \
     obj.o \
     petka.o \
-    q_interface.o \
     q_manager.o \
     q_system.o \
     sound.o \
-    video.o
+    video.o \
+    interfaces/interface.o \
+    interfaces/main.o \
+    interfaces/startup.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_PETKA), DYNAMIC_PLUGIN)

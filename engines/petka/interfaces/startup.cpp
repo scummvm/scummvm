@@ -26,41 +26,17 @@
 
 #include "petka/flc.h"
 #include "petka/obj.h"
-#include "petka/q_interface.h"
+#include "petka/interfaces/main.h"
+#include "petka/interfaces/startup.h"
 #include "petka/q_system.h"
 #include "petka/q_manager.h"
 #include "petka/sound.h"
 #include "petka/petka.h"
 #include "petka/video.h"
-#include "q_interface.h"
-
 
 namespace Petka {
 
-QInterface::QInterface()
-	: _objUnderCursor(nullptr) {}
-
-QInterfaceMain::QInterfaceMain() {
-	Common::ScopedPtr<Common::SeekableReadStream> stream(g_vm->openFile("backgrnd.bg", true));
-	if (!stream)
-		return;
-	_bgs.resize(stream->readUint32LE());
-	for (uint i = 0; i < _bgs.size(); ++i) {
-		_bgs[i].objId = stream->readUint16LE();
-		_bgs[i].attachedObjIds.resize(stream->readUint32LE());
-		for (uint j = 0; j < _bgs[i].attachedObjIds.size(); ++j) {
-			_bgs[i].attachedObjIds[j] = stream->readUint16LE();
-			QMessageObject *obj = g_vm->getQSystem()->findObject(_bgs[i].attachedObjIds[i]);
-			obj->_x = stream->readSint32LE();
-			obj->_y = stream->readSint32LE();
-			obj->_z = stream->readSint32LE();
-			obj->_field14 = stream->readSint32LE();
-			obj->_field18 = stream->readSint32LE();
-		}
-	}
-}
-
-void QInterfaceStartup::start() {
+void InterfaceStartup::start() {
 	g_vm->getQSystem()->update();
 	g_vm->getQSystem()->_field48 = 0;
 
@@ -92,14 +68,14 @@ void QInterfaceStartup::start() {
 
 
 	QObjectCursor *cursor = g_vm->getQSystem()->_cursor.get();
-	cursor->_resourceId = 4901;
+	cursor->_resourceId = 5007;
 	cursor->_isShown = true;
 	cursor->_animate = false;
 	_objs.push_back(g_vm->getQSystem()->_cursor.get());
 	cursor->setCursorPos(cursor->_x, cursor->_y, 0);
 }
 
-void QInterfaceStartup::onLeftButtonDown(const Common::Point p) {
+void InterfaceStartup::onLeftButtonDown(const Common::Point p) {
 	if (!_objUnderCursor)
 		return;
 	switch (_objUnderCursor->_resourceId) {
@@ -110,7 +86,7 @@ void QInterfaceStartup::onLeftButtonDown(const Common::Point p) {
 		g_vm->playVideo(g_vm->openFile("credits.avi", false));
 		break;
 	case 4983:
-		// start SaveLoad menu
+
 		break;
 	case 4984:
 		// new game
@@ -118,7 +94,7 @@ void QInterfaceStartup::onLeftButtonDown(const Common::Point p) {
 	}
 }
 
-void QInterfaceStartup::onMouseMove(const Common::Point p) {
+void InterfaceStartup::onMouseMove(const Common::Point p) {
 	_objUnderCursor = nullptr;
 	bool found = false;
 	for (int i = _objs.size() - 1; i >= 0; --i) {
@@ -151,3 +127,5 @@ void QInterfaceStartup::onMouseMove(const Common::Point p) {
 }
 
 } // End of namespace Petka
+
+
