@@ -25,6 +25,7 @@
 
 #include "audio/audiostream.h"
 #include "common/ptr.h"
+#include "common/sinetables.h"
 
 #include "supernova2/graphics.h"
 #include "supernova2/sound.h"
@@ -32,6 +33,7 @@
 
 namespace Common {
 class MemoryReadStream;
+class SineTable;
 }
 
 namespace Supernova2 {
@@ -62,7 +64,7 @@ private:
 	void initCursorGraphics();
 	void initImages();
 	void initSiren();
-	byte *generateTone(byte *buffer, int frequency, int length, int audioRate);
+	byte *generateTone(byte *buffer, int frequency, int length, int audioRate, Common::SineTable &table);
 
 private:
 	Common::ScopedPtr<Audio::SeekableAudioStream> _soundSamples[kAudioNumSamples];
