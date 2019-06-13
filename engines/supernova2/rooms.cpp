@@ -3782,8 +3782,8 @@ void Museum::onEntrance() {
 			_vm->playSound(kAudioAppearance1);
 		} else {
 			_gm->reply(kStringMuseum5, 1, 1 + 128);
-			_gm->say(kStringMuseum6);
-			_gm->reply(kStringMuseum7, 1, 1 + 128);
+			_gm->say(kStringMuseum23);
+			_gm->reply(kStringMuseum24, 1, 1 + 128);
 		}
 		_vm->paletteFadeOut();
 		_gm->changeRoom(CITY2);
