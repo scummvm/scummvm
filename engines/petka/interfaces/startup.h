@@ -20,51 +20,15 @@
  *
  */
 
-#ifndef PETKA_Q_INTERFACE_H
-#define PETKA_Q_INTERFACE_H
+#ifndef PETKA_STARTUP_H
+#define PETKA_STARTUP_H
 
-#include "common/rect.h"
-#include "common/array.h"
+#include "petka/interfaces/interface.h"
 
 namespace Petka {
 
-class QVisibleObject;
-
-class QInterface {
+class InterfaceStartup : public Interface {
 public:
-	QInterface();
-	virtual ~QInterface() {}
-
-	virtual void start() {};
-	virtual void stop() {};
-
-	virtual void onLeftButtonDown(const Common::Point p) {};
-	virtual void onRightButtonDown(const Common::Point p) {};
-	virtual void onMouseMove(const Common::Point p) {};
-
-public:
-	Common::Array<QVisibleObject *> _objs;
-	QVisibleObject *_objUnderCursor;
-	uint _startIndex;
-};
-
-struct BGInfo {
-	uint16 objId;
-	Common::Array<uint16> attachedObjIds;
-};
-
-class QInterfaceMain : public QInterface {
-public:
-	QInterfaceMain();
-
-public:
-	Common::Array<BGInfo> _bgs;
-};
-
-class QInterfaceStartup : public QInterface {
-public:
-	//QInterfaceStartup();
-
 	void start() override;
 
 	void onLeftButtonDown(const Common::Point p) override;

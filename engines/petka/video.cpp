@@ -24,7 +24,7 @@
 
 #include "petka/petka.h"
 #include "petka/q_system.h"
-#include "petka/q_interface.h"
+#include "petka/interfaces/interface.h"
 #include "petka/obj.h"
 #include "petka/video.h"
 
@@ -36,7 +36,7 @@ VideoSystem::VideoSystem() :
 }
 
 void VideoSystem::update() {
-	QInterface *interface = g_vm->getQSystem()->_currInterface;
+	Interface *interface = g_vm->getQSystem()->_currInterface;
 	if (interface) {
 		for (uint i = 0; i < interface->_objs.size(); ++i) {
 			interface->_objs[i]->update();
