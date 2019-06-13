@@ -40,8 +40,21 @@ void GlkInterface::print(int number) {
 }
 
 Common::String GlkInterface::readLine() {
-	// TODO: Stub
-	return "";
+	event_t ev;
+	char line[200];
+
+	glk_request_line_event(_window, line, 199, 0);
+
+	do {
+		glk_select(&ev);
+		if (ev.type == evtype_Quit)
+			return "";
+		else if (ev.type == evtype_LineInput)
+			break;
+	} while (!shouldQuit() && ev.type != evtype_Quit);
+
+	line[199] = '\0';
+	return Common::String(line);
 }
 
 } // End of namespace AdvSys
