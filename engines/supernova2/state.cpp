@@ -326,7 +326,7 @@ void GameManager::destroyRooms() {
 	delete _rooms[MUS9];
 	delete _rooms[MUS10];
 	delete _rooms[MUS11];
-	delete _rooms[MUS_RUND];
+	delete _rooms[MUS_ROUND];
 	delete _rooms[MUS12];
 	delete _rooms[MUS13];
 	delete _rooms[MUS14];
@@ -467,7 +467,7 @@ void GameManager::initRooms() {
 	_rooms[MUS9] = new Mus9(_vm, this);
 	_rooms[MUS10] = new Mus10(_vm, this);
 	_rooms[MUS11] = new Mus11(_vm, this);
-	_rooms[MUS_RUND] = new MusRund(_vm, this);
+	_rooms[MUS_ROUND] = new MusRound(_vm, this);
 	_rooms[MUS12] = new Mus12(_vm, this);
 	_rooms[MUS13] = new Mus13(_vm, this);
 	_rooms[MUS14] = new Mus14(_vm, this);
