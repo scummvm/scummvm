@@ -350,7 +350,7 @@ void SwitchEventSource::convertTouchXYToGameXY(float touchX, float touchY, int *
 	int screenW = _km.x_max;
 
 	int windowH = g_system->getHeight();
-	//int windowW = g_system->getWidth();
+	int windowW = g_system->getWidth();
 
 	bool fullscreen = ConfMan.getBool("fullscreen");
 	bool aspectRatioCorrection = ConfMan.getBool("aspect_ratio");
@@ -362,33 +362,8 @@ void SwitchEventSource::convertTouchXYToGameXY(float touchX, float touchY, int *
 	float sx, sy;
 	float ratio = (float)screenW / (float)screenH;
 
-	if (aspectRatioCorrection && (windowH == 200 || windowH == 400)) {
-		ratio = 4.0f / 3.0f;
-	}
-
-	if (fullscreen || screenH >= dispH) {
-		h = dispH;
-		if (aspectRatioCorrection && (windowH == 200 || windowH == 400)) {
-			ratio = ratio * 1.1f;
-		}
-		w = h * ratio;
-	} else {
-		if (screenH <= dispH / 2 && screenW <= dispW / 2) {
-			h = screenH * 2;
-			w = screenW * 2;
-		} else {
-			h = screenH;
-			w = screenW;
-		}
-		if (aspectRatioCorrection && (windowH == 200 || windowH == 400)) {
-			// stretch the height only if it fits, otherwise make the width smaller
-			if (((float)w * (1.0f / ratio)) <= (float)dispH) {
-				h = w * (1.0f / ratio);
-			} else {
-				w = h * ratio;
-			}
-		}
-	}
+	h = dispH;
+	w = h * ratio;
 
 	x = (dispW - w) / 2;
 	y = (dispH - h) / 2;
