@@ -683,9 +683,9 @@ public:
 private:
 };
 
-class MusRund : public Room {
+class MusRound : public Room {
 public:
-	MusRund(Supernova2Engine *vm, GameManager *gm);
+	MusRound(Supernova2Engine *vm, GameManager *gm);
 	virtual void onEntrance();
 	virtual void animation();
 	virtual bool interact(Action verb, Object &obj1, Object &obj2);

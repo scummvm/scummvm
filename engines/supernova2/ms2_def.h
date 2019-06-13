@@ -92,7 +92,7 @@ enum RoomId {
 	BST_DOOR,HALL,COFFIN_ROOM,MASK,
 
 	MUSEUM,MUS_ENTRANCE,MUS1,MUS2,MUS3,MUS4,MUS5,MUS6,MUS7,MUS8,
-	MUS9,MUS10,MUS11,MUS_RUND,
+	MUS9,MUS10,MUS11,MUS_ROUND,
 	MUS12,MUS13,MUS14,MUS15,MUS16,MUS17,MUS18,MUS19,MUS20,MUS21,MUS22,
 	NUMROOMS,NULLROOM
 };
@@ -121,7 +121,7 @@ enum ObjectId {
 	SMALL_DOOR,BACK_MONEY,WALL,SUCTION_CUP,IMITATION,SP_KEYCARD,ALARM_CRACKER,
 	ENCRYPTED_DOOR,ALARM_ANLAGE,MUS_STREET,BIG_DOOR,MUSIC_SYSTEM,
 	HANDLE,SWITCH,DOOR_SWITCH,SUIT,CABLE,RCABLE,
-	MUSCARD,SKOPF, DISPLAY
+	MUSCARD,HEAD, DISPLAY
 };
 
 enum StringId {
@@ -146,7 +146,7 @@ kStringMuseum1, kStringMuseum2, kStringMuseum3, kStringMuseum4, kStringMuseum5,
 kString85, kString86, kString87, kString88, kString89,
 kString90, kString91, kString92, kStringDinosaur, kStringDinosaurDescription,
 kStringEntrance, kStringDoor, kStringRoad, kStringCamera, kStringCameraDescription,
-kStringMainEntrance, kStringCorridor, kString102, kStringDinosaurHead, kString104,
+kStringMainEntrance, kStringCorridor, kStringDinosaurDescription2, kStringDinosaurHead, kStringDinosaurHeadDescription,
 kString105, kStringSuctionCup, kString107, kStringOpening, kStringLetter,
 kStringMassive, kStringInscriptionDescription, kStringPyramid0, kStringPyramid1, kStringPyramid2,
 kStringPyramid3, kStringPyramid4, kStringPiece, kStringPyramid5, kStringPyramid6,
