@@ -26,12 +26,6 @@
 namespace Glk {
 namespace AdvSys {
 
-bool singleAction() {
-	// TODO: Stub
-	return false;
-}
-
-
 void AdvSys::runGame() {
 	if (!initialize()) {
 		GUIErrorMessage(_("Could not start AdvSys game"));
@@ -73,6 +67,28 @@ bool AdvSys::initialize() {
 }
 
 void AdvSys::deinitialize() {
+}
+
+bool AdvSys::singleAction() {
+	// Do the before code
+	switch (execute(_beforeOffset)) {
+	case ABORT:
+		// Script aborted
+		return false;
+	case CHAIN:
+		// Execute the action handler
+		if (execute(getActionField(getVariable(V_ACTION), A_CODE)) == ABORT)
+			return false;
+
+		// fall through
+	case FINISH:
+		// Do the after code
+		if (execute(_afterOffset) == ABORT)
+			return false;
+		break;
+	}
+
+	return true;
 }
 
 Common::Error AdvSys::loadGameData(strid_t save) {

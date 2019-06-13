@@ -43,6 +43,11 @@ private:
 	 * Engine cleanup
 	 */
 	void deinitialize();
+
+	/**
+	 * Handle a single action
+	 */
+	bool singleAction();
 public:
 	/**
 	 * Constructor
