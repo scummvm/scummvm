@@ -204,16 +204,6 @@ void QObjectCursor::draw() {
 	const Graphics::Surface *frame = flc->getCurrentFrame();
 	if (frame) {
 		Graphics::Surface *s = frame->convertTo(g_system->getScreenFormat(), flc->getPalette());
-
-		/*Common::Rect srcRect(_x, _y, _x + flc->getWidth(), _y + flc->getHeight());
-		srcRect.translate(_x, _y);
-
-		Common::Rect intersect(Common::Rect(640, 480).findIntersectingRect(srcRect));
-		srcRect = intersect;
-		srcRect.translate(-_x, -_y);
-
-		g_vm->videoSystem()->screen().transBlitFrom(*s, srcRect, intersect);*/
-
 		Common::Rect srcRect(flc->getBounds());
 		srcRect.translate(_x, _y);
 		srcRect.clip(640, 480);
