@@ -139,13 +139,11 @@ void KingdomGame::initVariables() {
 	_mouseButton = 0;
 //	_cursorActive = false;
 	_cursorDrawn = false;
-	_oldCursorY = 0;
-	_oldCursorX = 0;
+	_oldCursorPos = Common::Point(0, 0);
 //	_cursorShape = nullptr;
 	_oldCursorDef = 0;
 	_cursorDef = 0;
-	_cursorY = 0;
-	_cursorX = 0;
+	_cursorPos = Common::Point(0, 0);
 	_asMap = 0;
 }
 
@@ -436,8 +434,7 @@ void KingdomGame::initMouse() {
 
 void KingdomGame::setMouse() {
 	g_system->warpMouse(272, 157);
-	_cursorX = 272;
-	_cursorY = 157;
+	_cursorPos = Common::Point(272, 157);
 }
 
 void KingdomGame::initMPlayer() {
@@ -466,8 +463,7 @@ void KingdomGame::playMovie(int movieNum) {
 		_iconsClosed = true;
 		checkMainScreen();
 		setMouse();
-		_oldCursorX = _cursorX;
-		_oldCursorY = _cursorY;
+		_oldCursorPos = _cursorPos;
 	}
 
 	_pMovie = movieNum;
@@ -896,10 +892,8 @@ void KingdomGame::readMouse() {
 
 	Common::Event event;
 	g_system->getEventManager()->pollEvent(event);
-	if (event.type == Common::EVENT_MOUSEMOVE) {
-	_cursorX = event.mouse.x;
-	_cursorY = event.mouse.y;
-	}
+	if (event.type == Common::EVENT_MOUSEMOVE)
+		_cursorPos = event.mouse;
 	if (event.type == Common::EVENT_LBUTTONUP)
 		_mouseButton |= 1;
 	if (event.type == Common::EVENT_RBUTTONUP)
@@ -1415,8 +1409,7 @@ int KingdomGame::getAKey() {
 			retval = _mouseValue;
 			break;
 		case Common::EVENT_MOUSEMOVE:
-			_cursorX = event.mouse.x;
-			_cursorY = event.mouse.y;
+			_cursorPos = event.mouse;
 
 		default:
 			refreshSound();
@@ -1447,8 +1440,7 @@ void KingdomGame::drawCursor() {
 
 	cursorType();
 	setCursor(_cursorDef);
-	_oldCursorX = _cursorX;
-	_oldCursorY = _cursorY;
+	_oldCursorPos = _cursorPos;
 	_oldCursorDef = _cursorDef;
 
 	CursorMan.showMouse(true);
@@ -1469,7 +1461,7 @@ void KingdomGame::cursorType() {
 					return;
 				} else
 					_mouseValue = tmpVal;
-			} else if (_cursorX >= mouseMapMS[var2 + i]._minX && _cursorX < mouseMapMS[var2 + i]._maxX && _cursorY >= mouseMapMS[var2 + i]._minY && _cursorY < mouseMapMS[var2 + i]._maxY) {
+			} else if (_cursorPos.x >= mouseMapMS[var2 + i]._minX && _cursorPos.x < mouseMapMS[var2 + i]._maxX && _cursorPos.y >= mouseMapMS[var2 + i]._minY && _cursorPos.y < mouseMapMS[var2 + i]._maxY) {
 				_mouseValue = mouseMapMS[var2 + i]._mouseValue;
 				break;
 			}
@@ -1593,27 +1585,27 @@ void KingdomGame::cursorTypeExit() {
 int KingdomGame::checkMouseMapAS() {
 	if (isDemo()) {
 		for (int i = 0; i < 16; i++) {
-			if (_cursorX >= _mouseMapASDemo[_logic->_currMap][i]._minX && _cursorX < _mouseMapASDemo[_logic->_currMap][i]._maxX
-				&& _cursorY >= _mouseMapASDemo[_logic->_currMap][i]._minY && _cursorY < _mouseMapASDemo[_logic->_currMap][i]._maxY)
+			if (_cursorPos.x >= _mouseMapASDemo[_logic->_currMap][i]._minX && _cursorPos.x < _mouseMapASDemo[_logic->_currMap][i]._maxX
+				&& _cursorPos.y >= _mouseMapASDemo[_logic->_currMap][i]._minY && _cursorPos.y < _mouseMapASDemo[_logic->_currMap][i]._maxY)
 				return _mouseMapASDemo[_logic->_currMap][i]._mouseValue;
 		}
 		if (_logic->_currMap == 11) {
 			for (int i = 0; i < 16; i++) {
-				if (_cursorX >= _mouseMapASDemo[12][i]._minX && _cursorX < _mouseMapASDemo[12][i]._maxX
-					&& _cursorY >= _mouseMapASDemo[12][i]._minY && _cursorY < _mouseMapASDemo[12][i]._maxY)
+				if (_cursorPos.x >= _mouseMapASDemo[12][i]._minX && _cursorPos.x < _mouseMapASDemo[12][i]._maxX
+					&& _cursorPos.y >= _mouseMapASDemo[12][i]._minY && _cursorPos.y < _mouseMapASDemo[12][i]._maxY)
 					return _mouseMapASDemo[12][i]._mouseValue;
 			}
 		}
 	} else {
 		for (int i = 0; i < 16; i++) {
-			if (_cursorX >= _mouseMapASFull[_logic->_currMap][i]._minX && _cursorX < _mouseMapASFull[_logic->_currMap][i]._maxX
-				&& _cursorY >= _mouseMapASFull[_logic->_currMap][i]._minY && _cursorY < _mouseMapASFull[_logic->_currMap][i]._maxY)
+			if (_cursorPos.x >= _mouseMapASFull[_logic->_currMap][i]._minX && _cursorPos.x < _mouseMapASFull[_logic->_currMap][i]._maxX
+				&& _cursorPos.y >= _mouseMapASFull[_logic->_currMap][i]._minY && _cursorPos.y < _mouseMapASFull[_logic->_currMap][i]._maxY)
 				return _mouseMapASFull[_logic->_currMap][i]._mouseValue;
 		}
 		if (_logic->_currMap == 11) {
 			for (int i = 0; i < 16; i++) {
-				if (_cursorX >= _mouseMapASFull[12][i]._minX && _cursorX < _mouseMapASFull[12][i]._maxX
-					&& _cursorY >= _mouseMapASFull[12][i]._minY && _cursorY < _mouseMapASFull[12][i]._maxY)
+				if (_cursorPos.x >= _mouseMapASFull[12][i]._minX && _cursorPos.x < _mouseMapASFull[12][i]._maxX
+					&& _cursorPos.y >= _mouseMapASFull[12][i]._minY && _cursorPos.y < _mouseMapASFull[12][i]._maxY)
 					return _mouseMapASFull[12][i]._mouseValue;
 			}
 		}
