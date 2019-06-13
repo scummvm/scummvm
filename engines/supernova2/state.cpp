@@ -1340,8 +1340,7 @@ bool GameManager::genericInteract(Action verb, Object &obj1, Object &obj2) {
 				_vm->renderImage(1);
 				_vm->renderImage(2 + 128);
 				_currentRoom->getObject(0)->_click = 255;
-			}
-			else
+			} else
 				_inventory.remove(*o1);
 
 			_vm->renderMessage(kStringInsertChip);
@@ -1416,22 +1415,22 @@ bool GameManager::genericInteract(Action verb, Object &obj1, Object &obj2) {
 }
 
 void GameManager::drawGUI() {
-		drawMapExits();
-		drawInventory();
-		drawStatus();
-		drawCommandBox();
+	drawMapExits();
+	drawInventory();
+	drawStatus();
+	drawCommandBox();
 }
 
 void GameManager::playCD() {
-		CursorMan.showMouse(false);
-		_vm->playSound(kMusicMadMonkeys);
-		Common::KeyCode k = Common::KEYCODE_INVALID;
-		while(_vm->_sound->isPlaying())
-			if (waitOnInput(1, k))
-				break;
-		_vm->_sound->stop();
-		_vm->removeMessage();
-		CursorMan.showMouse(true);
+	CursorMan.showMouse(false);
+	_vm->playSound(kMusicMadMonkeys);
+	Common::KeyCode k = Common::KEYCODE_INVALID;
+	while(_vm->_sound->isPlaying())
+		if (waitOnInput(1, k))
+			break;
+	_vm->_sound->stop();
+	_vm->removeMessage();
+	CursorMan.showMouse(true);
 }
 
 void GameManager::handleInput() {
@@ -1847,8 +1846,7 @@ void GameManager::passageConstruction() {
 				   !wall(_state._pyraS, _state._pyraZ, _state._pyraDirection, 2, -1));
 			_rooms[PYR_ENTRANCE]->setSectionVisible(6, 
 				   !wall(_state._pyraS, _state._pyraZ, _state._pyraDirection, 2,  1));
-		}
-		else {
+		} else {
 			_rooms[PYR_ENTRANCE]->setSectionVisible(5, kShownFalse);
 			_rooms[PYR_ENTRANCE]->setSectionVisible(6, kShownFalse);
 		}
@@ -2152,8 +2150,7 @@ void GameManager::drawClock() {
 			_steps = true;
 			_vm->renderMessage(kStringMuseum6);
 		}
-	}
-	else _steps = false;
+	} else _steps = false;
 }
 
 void GameManager::crack(int time) {
@@ -2263,14 +2260,12 @@ void GameManager::securityEntrance() {
 
 	if (_rooms[_securityTab[second / 10]] == _currentRoom) {
 		int i;
-		for (i = 0; _currentRoom != _rooms[securityList[i]._r]; i++)
-		{}
+		for (i = 0; _currentRoom != _rooms[securityList[i]._r]; i++) {}
 		if (_lastRoom == _rooms[securityList[i + 1]._r]) {
 			_vm->renderImage(securityList[i]._a1);
 			_vm->renderImage(securityList[i]._a2);
 			caught2();
-		}
-		else
+		} else
 			caught();
 	}
 }
