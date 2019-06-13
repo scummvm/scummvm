@@ -39,7 +39,7 @@
 #include "petka/sound.h"
 #include "petka/petka.h"
 #include "petka/q_manager.h"
-#include "petka/q_interface.h"
+#include "petka/interfaces/interface.h"
 #include "petka/q_system.h"
 
 namespace Petka {
