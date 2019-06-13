@@ -12,6 +12,7 @@ MODULE_OBJS = \
     video.o \
     interfaces/interface.o \
     interfaces/main.o \
+    interfaces/save_load.o \
     interfaces/startup.o
 
 # This module can be built as a plugin

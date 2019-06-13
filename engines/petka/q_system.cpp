@@ -27,7 +27,8 @@
 
 #include "petka/petka.h"
 #include "petka/interfaces/startup.h"
-#include "petka/interfaces/main.cpp"
+#include "petka/interfaces/main.h"
+#include "petka/interfaces/save_load.h"
 #include "petka/q_system.h"
 
 namespace Petka {
@@ -128,8 +129,9 @@ bool QSystem::init() {
 
 	_mainInterface.reset(new InterfaceMain());
 	_startupInterface.reset(new InterfaceStartup());
+	_saveLoadInterface.reset(new InterfaceSaveLoad());
 	_startupInterface->start();
-	_currInterface = _startupInterface.get();
+	_prevInterface = _currInterface = _startupInterface.get();
 	return true;
 }
 
