@@ -170,16 +170,6 @@ private:
 	int findProperty(int obj, int prop) const;
 
 	/**
-	 * Returns true if an object has a given noun
-	 */
-	bool hasNoun(int obj, int noun) const;
-
-	/**
-	 * Returns true if an object has a given adjective
-	 */
-	bool hasAdjective(int obj, int adjective) const;
-
-	/**
 	 * Returns true if an action has a given verb
 	 */
 	bool hasVerb(int act, const Common::Array<int> &verbs) const;
@@ -205,6 +195,16 @@ private:
 	 * Read the next character for a string
 	 */
 	char readMsgChar();
+protected:
+	/**
+	 * Returns true if an object has a given noun
+	 */
+	bool hasNoun(int obj, int noun) const;
+
+	/**
+	 * Returns true if an object has a given adjective
+	 */
+	bool hasAdjective(int obj, int adjective) const;
 public:
 	Common::Array<byte> _data;
 	int _residentOffset;
@@ -269,11 +269,6 @@ public:
 	WordType getWordType(int word) const {
 		return (WordType)_wordTypeTable[word];
 	}
-
-	/**
-	 * Match an object against a name and list of adjectives
-	 */
-	bool match(int obj, int noun, int *adjectives);
 
 	/**
 	 * Check to see if this is a valid verb

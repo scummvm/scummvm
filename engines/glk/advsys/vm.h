@@ -204,6 +204,19 @@ class VM : public GlkInterface, public Game {
 		InputWord() : _number(0) {}
 		operator int() const { return _number; }
 	};
+	struct AdjectiveEntry {
+		int _list;
+		int _word;
+
+		AdjectiveEntry() : _list(0), _word(0) {}
+	};
+	struct Noun {
+		int _noun;
+		int _num;
+		AdjectiveEntry *_adjective;
+
+		Noun() : _noun(0), _num(0), _adjective(nullptr) {}
+	};
 private:
 	// Execution fields
 	static OpcodeMethod _METHODS[0x34];
@@ -213,11 +226,6 @@ private:
 	FunctionPointer _fp;
 
 	// Parser fields
-	int *_adjectives[20];
-	int _adjectiveLists[100];
-	int _adjectiveWords[100];
-	int _nouns[20];
-	int _nounWords[20];
 	int _actor;
 	int _action;
 	int _dObject;
@@ -226,6 +234,8 @@ private:
 	Common::Array<InputWord> _words;
 	Common::Array<InputWord>::iterator _wordPtr;
 	Common::Array<int> _verbs;
+	Common::Array<AdjectiveEntry> _adjectiveList;
+	Common::Array<Noun> _nouns;
 private:
 	/**
 	 * Execute a single opcode within the script
@@ -266,12 +276,17 @@ private:
 	/**
 	 * Get a noun phrase and return the object it refers to
 	 */
-	bool getNoun();
+	uint getNoun();
 
 	/**
 	 * Get a verb phrase and return the action it refers to
 	 */
 	bool getVerb();
+
+	/**
+	 * Match an object against a name and list of adjectives
+	 */
+	bool match(int obj, int noun, const AdjectiveEntry *adjectives);
 
 	/**
 	 * Called when a parsing error occurs

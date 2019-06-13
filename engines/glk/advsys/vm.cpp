@@ -86,11 +86,6 @@ OpcodeMethod VM::_METHODS[0x34] = {
 VM::VM(OSystem *syst, const GlkGameDescription &gameDesc) : GlkInterface(syst, gameDesc), Game(),
 		_fp(_stack), _pc(0), _status(IN_PROGRESS), _actor(-1), _action(-1), _dObject(-1),
 		_ndObjects(-1), _iObject(-1), _wordPtr(nullptr) {
-	Common::fill(&_nouns[0], &_nouns[20], 0);
-	Common::fill(&_nounWords[0], &_nounWords[20], -1);
-	Common::fill(&_adjectives[0], &_adjectives[20], (int *)nullptr);
-	Common::fill(&_adjectiveWords[0], &_adjectiveWords[100], -1);
-	Common::fill(&_adjectiveLists[0], &_adjectiveLists[100], -1);
 }
 
 ExecutionResult VM::execute(int offset) {
@@ -354,7 +349,7 @@ void VM::opCLASS() {
 
 void VM::opMATCH() {
 	int idx = _stack.pop() - 1;
-	_stack.top() = match(_stack.top(), _nouns[idx], _adjectives[idx]) ? TRUE : NIL;
+	_stack.top() = match(_stack.top(), _nouns[idx]._noun, _nouns[idx]._adjective) ? TRUE : NIL;
 }
 
 void VM::opPNOUN() {
@@ -363,16 +358,16 @@ void VM::opPNOUN() {
 
 	// Add the adjectives
 	bool space = false;
-	for (int *aPtr = _adjectives[noun - 1]; *aPtr; ++aPtr, space = true) {
+	for (const AdjectiveEntry *aPtr = &_adjectiveList[noun - 1]; aPtr->_list; ++aPtr, space = true) {
 		if (space)
 			str += " ";
-		str += _words[_adjectiveWords[aPtr - _adjectiveLists]]._text;
+		str += _words[aPtr->_word]._text;
 	}
 
 	// Add the noun
 	if (space)
 		str += " ";
-	str += _words[_nounWords[noun - 1]]._text;
+	str += _words[_nouns[noun - 1]._num]._text;
 
 	print(str);
 }
@@ -447,6 +442,8 @@ bool VM::parseInput() {
 	// Initialize the parser result fields
 	_actor = _action = _dObject = _iObject = 0;
 	_ndObjects = 0;
+	_adjectiveList.clear();
+	_nouns.clear();
 
 	// Get the input line
 	if (!getLine())
@@ -514,15 +511,35 @@ bool VM::getWord(Common::String &line) {
 	}
 }
 
-bool VM::getNoun() {
-	// TODO: Stub
-	return false;
+uint VM::getNoun() {
+	// Skip over optional article if present
+	if (_wordPtr != _words.end() && getWordType(*_wordPtr) == WT_ARTICLE)
+		++_wordPtr;
+
+	// Get optional adjectives
+	uint alStart = _adjectiveList.size();
+	while (_wordPtr != _words.end() && getWordType(*_wordPtr) == WT_ADJECTIVE) {
+		AdjectiveEntry ae;
+		ae._list = *_wordPtr++;
+		ae._word = _wordPtr - _words.begin() - 1;
+		_adjectiveList.push_back(ae);
+	}
+	_adjectiveList.push_back(AdjectiveEntry());
+
+	// Add a noun entry to the list
+	Noun n;
+	n._adjective = &_adjectiveList[alStart];
+	n._noun = *_wordPtr++;
+	n._num = _wordPtr - _words.begin() - 1;
+	_nouns.push_back(n);
+
+	return _nouns.size();
 }
 
 bool VM::getVerb() {
 	_verbs.clear();
 
-	if (_words.front() == NIL || getWordType(_words.front()) != WT_VERB) {
+	if (*_wordPtr == NIL || getWordType(*_wordPtr) != WT_VERB) {
 		parseError();
 		return false;
 	}
@@ -554,8 +571,20 @@ bool VM::getVerb() {
 	return true;
 }
 
+bool VM::match(int obj, int noun, const VM::AdjectiveEntry *adjectives) {
+	if (!hasNoun(obj, noun))
+		return false;
+
+	for (const VM::AdjectiveEntry *adjPtr = adjectives; adjPtr->_list; ++adjPtr) {
+		if (!hasAdjective(obj, adjPtr->_list))
+			return false;
+	}
+
+	return true;
+}
+
 void VM::parseError() {
-	// TODO
+	print(_("I don't understand.\n"));
 }
 
 bool VM::isWhitespace(char c) {

@@ -190,18 +190,6 @@ int Game::findWord(const Common::String &word) const {
 	return NIL;
 }
 
-bool Game::match(int obj, int noun, int *adjectives) {
-	if (!hasNoun(obj, noun))
-		return false;
-
-	for (int *adjPtr = adjectives; *adjPtr; ++adjPtr) {
-		if (!hasAdjective(obj, *adjPtr))
-			return false;
-	}
-
-	return true;
-}
-
 int Game::checkVerb(const Common::Array<int> &verbs) {
 	// Iterate through the actions
 	for (int idx = 1; idx <= _actionCount; ++idx) {
