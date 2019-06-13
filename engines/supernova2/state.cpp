@@ -1531,6 +1531,7 @@ void GameManager::handleInput() {
 void GameManager::executeRoom() {
 	if (_currentRoom == _rooms[PUZZLE_FRONT])
 		puzzleConstruction();
+	debug("Siren: %d    Sound: %d", _state._sirenOn, _vm->_sound->isPlaying());
 	if (_state._sirenOn && !_vm->_sound->isPlaying())
 		_vm->_sound->playSiren();
 	if (_processInput && !_vm->_screen->isMessageShown() && _guiEnabled) {
@@ -2063,7 +2064,7 @@ void GameManager::alarm() {
 	if (_vm->_screen->isMessageShown())
 		_vm->removeMessage();
 	_vm->renderMessage(kStringMuseum7);
-	_state._eventTime = g_system->getMillis() + 270;
+	_state._eventTime = g_system->getMillis() + 18900;
 	_state._eventCallback = kCaughtFn;
 	_state._alarmOn = true;
 }
