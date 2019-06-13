@@ -27,6 +27,7 @@
 #include "petka/flc.h"
 #include "petka/obj.h"
 #include "petka/interfaces/main.h"
+#include "petka/interfaces/save_load.h"
 #include "petka/interfaces/startup.h"
 #include "petka/q_system.h"
 #include "petka/q_manager.h"
@@ -94,7 +95,7 @@ void InterfaceStartup::onLeftButtonDown(const Common::Point p) {
 		g_vm->playVideo(g_vm->openFile("credits.avi", false));
 		break;
 	case kLoad:
-
+		g_vm->getQSystem()->_saveLoadInterface->startSaveLoad(0);
 		break;
 	case kNewGame:
 

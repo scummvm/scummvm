@@ -101,6 +101,7 @@ Common::Error PetkaEngine::run() {
 			case Common::EVENT_LBUTTONUP:
 				break;
 			case Common::EVENT_RBUTTONDOWN:
+				_qsystem->_currInterface->onRightButtonDown(event.mouse);
 				break;
 			case Common::EVENT_KEYDOWN:
 				break;

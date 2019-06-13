@@ -34,6 +34,7 @@ class PetkaEngine;
 class QObjectCase;
 class QObjectCursor;
 class QObjectStar;
+class InterfaceSaveLoad;
 class InterfaceMain;
 class InterfaceStartup;
 class Interface;
@@ -63,6 +64,7 @@ public:
 	Common::ScopedPtr<QObjectCase> _case;
 	Common::ScopedPtr<QObjectStar> _star;
 	Common::ScopedPtr<InterfaceMain> _mainInterface;
+	Common::ScopedPtr<InterfaceSaveLoad> _saveLoadInterface;
 	Common::ScopedPtr<InterfaceStartup> _startupInterface;
 	Interface *_currInterface;
 	Interface *_prevInterface;
