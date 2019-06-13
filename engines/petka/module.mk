@@ -3,6 +3,7 @@ MODULE := engines/petka
 MODULE_OBJS = \
     detection.o \
     file_mgr.o \
+    flc.o \
     obj.o \
     petka.o \
     q_interface.o \
