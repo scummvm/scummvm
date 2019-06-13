@@ -36,6 +36,13 @@
 
 namespace Petka {
 
+enum {
+	kExit = 4981,
+	kCredits = 4982,
+	kLoad = 4983,
+	kNewGame = 4984
+};
+
 void InterfaceStartup::start() {
 	g_vm->getQSystem()->update();
 	g_vm->getQSystem()->_field48 = 0;
@@ -64,6 +71,7 @@ void InterfaceStartup::start() {
 			obj->_isShown = 0;
 			_objs.push_back(obj);
 		}
+		break;
 	}
 
 
@@ -79,17 +87,17 @@ void InterfaceStartup::onLeftButtonDown(const Common::Point p) {
 	if (!_objUnderCursor)
 		return;
 	switch (_objUnderCursor->_resourceId) {
-	case 4981:
+	case kExit:
 		g_system->quit();
 		break;
-	case 4982:
+	case kCredits:
 		g_vm->playVideo(g_vm->openFile("credits.avi", false));
 		break;
-	case 4983:
+	case kLoad:
 
 		break;
-	case 4984:
-		// new game
+	case kNewGame:
+
 		break;
 	}
 }
