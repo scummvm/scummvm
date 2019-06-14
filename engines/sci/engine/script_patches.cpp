@@ -1301,6 +1301,114 @@ static const uint16 freddypharkasPatchMacHopSingh[] = {
 	PATCH_END
 };
 
+// At the start of act 4 the church key is removed from inventory but reappears
+//  in the church door. The door script attempts to prevent this by not drawing
+//  the key in act 4 but the verb handler is missing this check. Looking at the
+//  door in act 4 still brings up the inset with the key. Sierra fixed this in
+//  Mac but forgot to include the fix in the CD version a year later.
+//
+// We fix this by replacing a duplicate inventory check with an act 4 check so
+//  that the key no longer appears in the inset and can't be picked up again.
+//
+// Applies to: PC Floppy, PC CD
+// Responsible method: inDoorInset:init
+// Fixes bug #10975
+static const uint16 freddypharkasSignatureChurchKey[] = {
+	SIG_MAGICDWORD,
+	0x76,                           // push0
+	0x59, 0x01,                     // &rest 01
+	0x57, SIG_ADDTOOFFSET(+1), 0x04,// super Inset 04 [ super: init &rest ]
+	0x38, SIG_SELECTOR16(has),      // pushi has
+	0x78,                           // push1
+	0x39, 0x06,                     // pushi 06
+	0x81, 0x00,                     // lag 00
+	0x4a, 0x06,                     // send 06 [ ego has: 6 (church key) ]
+	SIG_END
+};
+
+static const uint16 freddypharkasPatchChurchKey[] = {
+	PATCH_ADDTOOFFSET(+6),
+	0x89, 0x78,                     // lsg 78 [ act number ]
+	0x35, 0x04,                     // ldi 04
+	0x20,                           // ge?
+	0x33, 0x03,                     // jmp 03
+	PATCH_END
+};
+
+// After leaving the desk letter in the grave, the letter reappears in the desk.
+//  The desk script only checks if the letter is in inventory. Sierra started to
+//  fix this in the CD version by setting a new flag but forgot to check it.
+//
+// We fix this by testing Letter's owner, if -1 then it is in the grave.
+//
+// Applies to: All versions
+// Responsible method: deskDrawer:doVerb(1)
+// Fixes bug #10975
+static const uint16 freddypharkasSignatureDeskLetter[] = {
+	SIG_MAGICDWORD,
+	0x30, SIG_UINT16(0x0055),       // bnt 0055
+	0x38, SIG_SELECTOR16(has),      // pushi has
+	0x78,                           // push1
+	0x39, 0x1f,                     // pushi 1f
+	0x81, 0x00,                     // lag 00
+	0x4a, 0x06,                     // send 06 [ ego has: 31 (Letter) ]
+	0x18,                           // not
+	0x31, 0x1f,                     // bnt 1f
+	0x78,                           // push1
+	0x39, 0x31,                     // pushi 31
+	0x45, 0x02, 0x02,               // callb proc0_2 02 [ is flag 49 set? ]
+	0x31, 0x17,                     // bnt 17
+	0x38, SIG_ADDTOOFFSET(+2),      // pushi stopUpd
+	0x76,                           // push0
+	0x81, 0x00,                     // lag 00
+	0x4a, 0x04,                     // send 04 [ ego stopUpd: (optimization) ]
+	0x38, SIG_ADDTOOFFSET(+2),      // pushi setInset
+	0x78,                           // push1
+	0x72, SIG_UINT16(0x0522),       // lofsa inLetterInset
+	0x36,                           // push
+	0x81, 0x02,                     // lag 02
+	0x4a, 0x06,                     // send 06  [ rm610 setInset: inLetterInset ]
+	0x32, SIG_UINT16(0x008f),       // jmp 008f [ end of method ]
+	0x78,                           // push1
+	0x39, 0x31,                     // pushi 31
+	0x45, 0x02, 0x02,               // callb proc0_2 02 [ is flag 49 set? ]
+	0x31, 0x11,                     // bnt 11 [ drawer is closed ]
+	SIG_END
+};
+
+static const uint16 freddypharkasPatchDeskLetter[] = {
+	0x31, 0x56,                     // bnt 56
+	0x78,                           // push1
+	0x39, 0x31,                     // pushi 31
+	0x45, 0x02, 0x02,               // callb proc0_2 02 [ is flag 49 set? ]
+	0x31, 0x3e,                     // bnt 3e  [ drawer is closed ]
+	0x38, PATCH_SELECTOR16(has),    // pushi has
+	0x78,                           // push1
+	0x39, 0x1f,                     // pushi 1f
+	0x81, 0x00,                     // lag 00
+	0x4a, 0x06,                     // send 06 [ ego has: 31 (Letter) ]
+	0x2f, 0x21,                     // bt 21   [ drawer is open and empty ]
+	0x39, PATCH_SELECTOR8(at),      // pushi at
+	0x78,                           // push1
+	0x39, 0x1f,                     // pushi 1f
+	0x81, 0x09,                     // lag 09
+	0x4a, 0x06,                     // send 06 [ fpInv at: 31 (Letter) ]
+	0x38, PATCH_SELECTOR16(owner),  // pushi owner
+	0x76,                           // push0
+	0x4a, 0x04,                     // send 04 [ Letter owner? ]
+	0x39, 0xff,                     // pushi ff
+	0x1a,                           // eq?
+	0x2f, 0x0d,                     // bt 0d   [ drawer is open and empty ]
+	0x38, PATCH_GETORIGINALUINT16(+33), // pushi setInset
+	0x78,                           // push1
+	0x74, PATCH_UINT16(0x0522),     // lofss inLetterInset
+	0x81, 0x02,                     // lag 02
+	0x4a, 0x06,                     // send 06 [ rm610 setInset: inLetterInset ]
+	0x3a,                           // toss
+	0x48,                           // ret
+	PATCH_END
+};
+
 //          script, description,                                      signature                            patch
 static const SciScriptPatcherEntry freddypharkasSignatures[] = {
 	{  true,     0, "CD: score early disposal",                    1, freddypharkasSignatureScoreDisposal, freddypharkasPatchScoreDisposal },
@@ -1309,7 +1417,9 @@ static const SciScriptPatcherEntry freddypharkasSignatures[] = {
 	{  false,  200, "Mac: skip broken hop singh scene",            1, freddypharkasSignatureMacHopSingh,   freddypharkasPatchMacHopSingh },
 	{  true,   235, "CD: canister pickup hang",                    3, freddypharkasSignatureCanisterHang,  freddypharkasPatchCanisterHang },
 	{  true,   270, "Mac: easter egg hang",                        1, freddypharkasSignatureMacEasterEgg,  freddypharkasPatchMacEasterEgg },
+	{  true,   310, "church key reappears",                        1, freddypharkasSignatureChurchKey,     freddypharkasPatchChurchKey },
 	{  true,   320, "ladder event issue",                          2, freddypharkasSignatureLadderEvent,   freddypharkasPatchLadderEvent },
+	{  true,   610, "desk letter reappears",                       1, freddypharkasSignatureDeskLetter,    freddypharkasPatchDeskLetter },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
