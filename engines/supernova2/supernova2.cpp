@@ -513,6 +513,7 @@ bool Supernova2Engine::deserialize(Common::ReadStream *in, int version) {
 }
 
 bool Supernova2Engine::loadGame(int slot) {
+	stopSound();
 	if (slot < 0)
 		return false;
 

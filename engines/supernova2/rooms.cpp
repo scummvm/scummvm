@@ -1867,7 +1867,9 @@ void Elevator::jobDescription() {
 	_vm->removeMessage();
 	_vm->renderMessage(kStringElevator58);
 	_gm->drawGUI();
-	_gm->_state._startTime = g_system->getMillis() - 150000000;
+
+	// 21:72:72
+	_gm->_state._startTime = g_system->getMillis() - 130363200;
 	_gm->_state._tipsy = false;
 	_gm->_state._toMuseum = true;
 }
@@ -3772,10 +3774,13 @@ void Museum::onEntrance() {
 		_vm->removeMessage();
 		_vm->_screen->setViewportBrightness(0);
 		_vm->setCurrentImage(26);
+		bool hasDinosaurHead = false;
+		if (_gm->_rooms[MUS_ROUND]->getObject(4)->_type & CARRIED)
+			hasDinosaurHead = true;
 		_vm->loadGame(kSleepAutosaveSlot);
 		_vm->renderImage(0);
 		_vm->paletteFadeIn();
-		if (_gm->_rooms[MUS_ROUND]->getObject(4)->_type & CARRIED) {
+		if (hasDinosaurHead) {
 			_gm->reply(kStringMuseum3, 1, 1 + 128);
 			_gm->reply(kStringMuseum4, 1, 1 + 128);
 			_gm->takeMoney(30000);
@@ -3790,7 +3795,6 @@ void Museum::onEntrance() {
 		_gm->_newRoom = true;
 		_gm->drawGUI();
 	}
-	setRoomSeen(true);
 }
 
 void Museum::animation() {
@@ -3803,7 +3807,7 @@ bool Museum::interact(Action verb, Object &obj1, Object &obj2) {
 			_vm->renderMessage(kStringMuseum10);
 		} else {
 			_gm->_state._eventTime = kMaxTimerValue;
-			if (!_gm->_state._alarmOn) {
+			if (_gm->_state._alarmOn) {
 				_vm->renderMessage(kStringMuseum11);
 				if (_gm->_state._sirenOn) {
 					_vm->stopSound();
@@ -3820,10 +3824,13 @@ bool Museum::interact(Action verb, Object &obj1, Object &obj2) {
 			_gm->waitOnInput(_gm->_messageDuration);
 			_vm->removeMessage();
 			_vm->_screen->setViewportBrightness(0);
+			bool hasDinosaurHead = false;
+			if (_gm->_rooms[MUS_ROUND]->getObject(4)->_type & CARRIED)
+				hasDinosaurHead = true;
 			_vm->loadGame(kSleepAutosaveSlot);
 			if (_gm->_state._money >= 8)
 				_gm->takeMoney(-8);
-			if (_gm->_rooms[MUS_ROUND]->getObject(4)->_type & CARRIED)
+			if (hasDinosaurHead)
 				_gm->takeObject(*_gm->_rooms[INTRO]->getObject(7));
 			_gm->changeRoom(CULTURE_PALACE);
 			_gm->_newRoom = true;
@@ -3951,7 +3958,6 @@ Mus2::Mus2(Supernova2Engine *vm, GameManager *gm) {
 
 void Mus2::onEntrance() {
 	_gm->pressureAlarmEntrance();
-	setRoomSeen(true);
 }
 
 void Mus2::animation() {
@@ -3983,7 +3989,6 @@ Mus3::Mus3(Supernova2Engine *vm, GameManager *gm) {
 
 void Mus3::onEntrance() {
 	_gm->pressureAlarmEntrance();
-	setRoomSeen(true);
 }
 
 void Mus3::animation() {
@@ -4011,7 +4016,7 @@ Mus4::Mus4(Supernova2Engine *vm, GameManager *gm) {
 	_shown[20] = kShownTrue;
 	_shown[21] = kShownTrue;
 
-	_objectState[0] = Object(_id, kStringDoor, kStringDefaultDescription, DOOR, EXIT | OPENABLE, 0, 0, 7, MUS4, 2);
+	_objectState[0] = Object(_id, kStringDoor, kStringDefaultDescription, DOOR, EXIT | OPENABLE, 1, 1, 8, MUS5, 22);
 	_objectState[1] = Object(_id, kStringCamera, kStringDefaultDescription, NULLOBJECT, NULLTYPE, 7, 7, 0);
 
 }
@@ -4100,7 +4105,6 @@ Mus6::Mus6(Supernova2Engine *vm, GameManager *gm) {
 
 void Mus6::onEntrance() {
 	_gm->pressureAlarmEntrance();
-	setRoomSeen(true);
 }
 
 void Mus6::animation() {
@@ -4155,7 +4159,6 @@ Mus7::Mus7(Supernova2Engine *vm, GameManager *gm) {
 
 void Mus7::onEntrance() {
 	_gm->pressureAlarmEntrance();
-	setRoomSeen(true);
 }
 
 void Mus7::animation() {
@@ -4164,7 +4167,7 @@ void Mus7::animation() {
 
 bool Mus7::interact(Action verb, Object &obj1, Object &obj2) {
 	_gm->museumDoorInteract(verb, obj1, obj2);
-	return true;
+	return false;
 }
 
 Mus8::Mus8(Supernova2Engine *vm, GameManager *gm) {
@@ -4325,7 +4328,6 @@ Mus11::Mus11(Supernova2Engine *vm, GameManager *gm) {
 
 void Mus11::onEntrance() {
 	_gm->pressureAlarmEntrance();
-	setRoomSeen(true);
 }
 
 void Mus11::animation() {
@@ -4363,7 +4365,7 @@ MusRound::MusRound(Supernova2Engine *vm, GameManager *gm) {
 	_objectState[1] = Object(_id, kStringCorridor, kStringDefaultDescription, NULLOBJECT, EXIT, 1, 1, 0, MUS13, 10);
 	_objectState[2] = Object(_id, kStringCorridor, kStringDefaultDescription, NULLOBJECT, EXIT, 2, 2, 0, MUS12, 14);
 	_objectState[3] = Object(_id, kStringDinosaur, kStringDinosaurDescription2, NULLOBJECT, NULLTYPE, 3, 3, 0);
-	_objectState[3] = Object(_id, kStringDinosaurHead, kStringDinosaurHeadDescription, HEAD, TAKE, 4, 4, 2);
+	_objectState[4] = Object(_id, kStringDinosaurHead, kStringDinosaurHeadDescription, HEAD, TAKE, 4, 4, 2);
 }
 
 void MusRound::onEntrance() {
@@ -4417,7 +4419,6 @@ Mus12::Mus12(Supernova2Engine *vm, GameManager *gm) {
 
 void Mus12::onEntrance() {
 	_gm->pressureAlarmEntrance();
-	setRoomSeen(true);
 }
 
 void Mus12::animation() {
@@ -4425,7 +4426,7 @@ void Mus12::animation() {
 }
 
 bool Mus12::interact(Action verb, Object &obj1, Object &obj2) {
-	return true;
+	return false;
 }
 
 Mus13::Mus13(Supernova2Engine *vm, GameManager *gm) {
@@ -4447,7 +4448,6 @@ Mus13::Mus13(Supernova2Engine *vm, GameManager *gm) {
 
 void Mus13::onEntrance() {
 	_gm->pressureAlarmEntrance();
-	setRoomSeen(true);
 }
 
 void Mus13::animation() {
@@ -4455,7 +4455,7 @@ void Mus13::animation() {
 }
 
 bool Mus13::interact(Action verb, Object &obj1, Object &obj2) {
-	return true;
+	return false;
 }
 
 Mus14::Mus14(Supernova2Engine *vm, GameManager *gm) {
@@ -4478,7 +4478,6 @@ Mus14::Mus14(Supernova2Engine *vm, GameManager *gm) {
 
 void Mus14::onEntrance() {
 	_gm->pressureAlarmEntrance();
-	setRoomSeen(true);
 }
 
 void Mus14::animation() {
@@ -4486,7 +4485,7 @@ void Mus14::animation() {
 }
 
 bool Mus14::interact(Action verb, Object &obj1, Object &obj2) {
-	return true;
+	return false;
 }
 
 Mus15::Mus15(Supernova2Engine *vm, GameManager *gm) {
@@ -4505,7 +4504,6 @@ Mus15::Mus15(Supernova2Engine *vm, GameManager *gm) {
 
 void Mus15::onEntrance() {
 	_gm->pressureAlarmEntrance();
-	setRoomSeen(true);
 }
 
 void Mus15::animation() {
@@ -4513,7 +4511,7 @@ void Mus15::animation() {
 }
 
 bool Mus15::interact(Action verb, Object &obj1, Object &obj2) {
-	return true;
+	return false;
 }
 
 Mus16::Mus16(Supernova2Engine *vm, GameManager *gm) {
@@ -4532,7 +4530,6 @@ Mus16::Mus16(Supernova2Engine *vm, GameManager *gm) {
 
 void Mus16::onEntrance() {
 	_gm->pressureAlarmEntrance();
-	setRoomSeen(true);
 }
 
 void Mus16::animation() {
@@ -4540,7 +4537,7 @@ void Mus16::animation() {
 }
 
 bool Mus16::interact(Action verb, Object &obj1, Object &obj2) {
-	return true;
+	return false;
 }
 
 Mus17::Mus17(Supernova2Engine *vm, GameManager *gm) {
@@ -4563,7 +4560,6 @@ Mus17::Mus17(Supernova2Engine *vm, GameManager *gm) {
 
 void Mus17::onEntrance() {
 	_gm->pressureAlarmEntrance();
-	setRoomSeen(true);
 }
 
 void Mus17::animation() {
@@ -4571,7 +4567,7 @@ void Mus17::animation() {
 }
 
 bool Mus17::interact(Action verb, Object &obj1, Object &obj2) {
-	return true;
+	return false;
 }
 
 Mus18::Mus18(Supernova2Engine *vm, GameManager *gm) {
@@ -4590,7 +4586,6 @@ Mus18::Mus18(Supernova2Engine *vm, GameManager *gm) {
 
 void Mus18::onEntrance() {
 	_gm->pressureAlarmEntrance();
-	setRoomSeen(true);
 }
 
 void Mus18::animation() {
@@ -4598,7 +4593,7 @@ void Mus18::animation() {
 }
 
 bool Mus18::interact(Action verb, Object &obj1, Object &obj2) {
-	return true;
+	return false;
 }
 
 Mus19::Mus19(Supernova2Engine *vm, GameManager *gm) {
@@ -4621,7 +4616,6 @@ Mus19::Mus19(Supernova2Engine *vm, GameManager *gm) {
 
 void Mus19::onEntrance() {
 	_gm->pressureAlarmEntrance();
-	setRoomSeen(true);
 }
 
 void Mus19::animation() {
@@ -4629,7 +4623,7 @@ void Mus19::animation() {
 }
 
 bool Mus19::interact(Action verb, Object &obj1, Object &obj2) {
-	return true;
+	return false;
 }
 
 Mus20::Mus20(Supernova2Engine *vm, GameManager *gm) {
@@ -4647,7 +4641,6 @@ Mus20::Mus20(Supernova2Engine *vm, GameManager *gm) {
 
 void Mus20::onEntrance() {
 	_gm->pressureAlarmEntrance();
-	setRoomSeen(true);
 }
 
 void Mus20::animation() {
@@ -4655,7 +4648,7 @@ void Mus20::animation() {
 }
 
 bool Mus20::interact(Action verb, Object &obj1, Object &obj2) {
-	return true;
+	return false;
 }
 
 Mus21::Mus21(Supernova2Engine *vm, GameManager *gm) {
@@ -4678,7 +4671,6 @@ Mus21::Mus21(Supernova2Engine *vm, GameManager *gm) {
 
 void Mus21::onEntrance() {
 	_gm->pressureAlarmEntrance();
-	setRoomSeen(true);
 }
 
 void Mus21::animation() {
@@ -4686,7 +4678,7 @@ void Mus21::animation() {
 }
 
 bool Mus21::interact(Action verb, Object &obj1, Object &obj2) {
-	return true;
+	return false;
 }
 
 Mus22::Mus22(Supernova2Engine *vm, GameManager *gm) {
@@ -4709,7 +4701,6 @@ Mus22::Mus22(Supernova2Engine *vm, GameManager *gm) {
 
 void Mus22::onEntrance() {
 	_gm->pressureAlarmEntrance();
-	setRoomSeen(true);
 }
 
 void Mus22::animation() {
@@ -4749,7 +4740,8 @@ bool Mus22::interact(Action verb, Object &obj1, Object &obj2) {
 				_gm->_state._alarmCracked = true;
 			}
 		}
-	}
+	} else
+		return false;
 	return true;
 }
 
