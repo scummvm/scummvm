@@ -1180,6 +1180,10 @@ static const SciMessageWorkaroundEntry messageWorkarounds[] = {
 	{ GID_FREDDYPHARKAS, SCI_MEDIA_CD,     K_LANG_ENGLISH,  -1,  660,  35,   0,   0,  4, { MSG_WORKAROUND_EXTRACT,  660,  35,   0,   0,  2, 53,   0,   0, NULL } },
 	{ GID_FREDDYPHARKAS, SCI_MEDIA_CD,     K_LANG_ENGLISH,  -1,  660,  35,   0,   0,  5, { MSG_WORKAROUND_EXTRACT,  660,  35,   0,   0,  1, 53, 210,  57, NULL } },
 	{ GID_FREDDYPHARKAS, SCI_MEDIA_CD,     K_LANG_ENGLISH,  -1,  660,  35,   0,   0,  6, { MSG_WORKAROUND_EXTRACT,  660,  35,   0,   0,  3, 12,   0,   0, NULL } },
+	// Wrong talker when clicking guns on Srini in room 300
+	{ GID_FREDDYPHARKAS, SCI_MEDIA_FLOPPY, K_LANG_NONE,     -1,  300,  17,  47,   0,  1, { MSG_WORKAROUND_EXTRACT,  300,  17,  47,   0,  1, 40,   0,   0, NULL } },
+	// Missing message when clicking full bottles of water on spigot in room 320
+	{ GID_FREDDYPHARKAS, SCI_MEDIA_FLOPPY, K_LANG_NONE,     -1,  320,  16,  34,   7,  1, { MSG_WORKAROUND_REMAP,    320,  37,  34,   7,  1,  0,   0,   0, NULL } },
 	// Missing message when clicking flashlight and other items on Magentia in room 290, floppy 1.0 - bug #10782
 	{ GID_GK1,           SCI_MEDIA_FLOPPY, K_LANG_NONE,     -1,  290,   8,   0,  35,  1, { MSG_WORKAROUND_REMAP,    290,   8,   0,   0,  1,  0,   0,   0, NULL } },
 	// Missing message when clicking photocopy of the veve on the artist after giving sketch and original veve in room 410 - bug #10818
