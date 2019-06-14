@@ -236,11 +236,13 @@ void Supernova2Engine::setGameString(int idx, const Common::String &string) {
 }
 
 void Supernova2Engine::playSound(AudioId sample) {
-	_sound->play(sample);
+	if (!shouldQuit())
+		_sound->play(sample);
 }
 
 void Supernova2Engine::playSound(MusicId index) {
-	_sound->play(index);
+	if (!shouldQuit())
+		_sound->play(index);
 }
 
 void Supernova2Engine::renderImage(int section) {
@@ -349,11 +351,13 @@ void Supernova2Engine::paletteBrightness() {
 }
 
 void Supernova2Engine::paletteFadeOut() {
-	_screen->paletteFadeOut();
+	if (!shouldQuit())
+		_screen->paletteFadeOut();
 }
 
 void Supernova2Engine::paletteFadeIn() {
-	_screen->paletteFadeIn(255);
+	if (!shouldQuit())
+		_screen->paletteFadeIn(255);
 }
 
 void Supernova2Engine::setColor63(byte value) {
@@ -483,8 +487,9 @@ Common::Error Supernova2Engine::loadGameState(int slot) {
 }
 
 bool Supernova2Engine::canSaveGameStateCurrently() {
-	// Do not allow saving when either _allowSaveGame, _animationEnabled or _guiEnabled is false
-	return _allowSaveGame && _gm->_animationEnabled && _gm->_guiEnabled;
+	// Do not allow saving when either _allowSaveGame, _animationEnabled or _guiEnabled is false or if _haste is true
+	return _allowSaveGame && _gm->_animationEnabled && _gm->_guiEnabled &&
+		!_gm->_state._haste;
 }
 
 Common::Error Supernova2Engine::saveGameState(int slot, const Common::String &desc) {

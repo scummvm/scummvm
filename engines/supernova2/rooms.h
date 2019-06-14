@@ -178,6 +178,7 @@ public:
 
 private:
 	void appearance();
+	void shouting();
 };
 
 class City1 : public Room {
