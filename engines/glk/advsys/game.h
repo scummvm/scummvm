@@ -213,7 +213,6 @@ public:
 	int _actionCount;
 	int _variableCount;
 
-	byte *_residentBase;
 	byte *_wordTable;
 	byte *_wordTypeTable;
 	byte *_objectTable;
@@ -294,14 +293,14 @@ public:
 	 * Gets a field from an object
 	 */
 	int getObjectField(int obj, int offset) const {
-		return READ_LE_UINT16(_residentBase + getObjectLocation(obj) + offset);
+		return READ_LE_UINT16(_dataSpace + getObjectLocation(obj) + offset);
 	}
 
 	/**
 	 * Sets a field in an object
 	 */
 	int setObjectField(int obj, int offset, int val) {
-		WRITE_LE_UINT16(_residentBase + getObjectLocation(obj) + offset, val);
+		WRITE_LE_UINT16(_dataSpace + getObjectLocation(obj) + offset, val);
 		return val;
 	}
 
@@ -309,14 +308,14 @@ public:
 	 * Gets a field from an action
 	 */
 	int getActionField(int action, int offset) const {
-		return READ_LE_UINT16(_residentBase + getActionLocation(action) + offset);
+		return READ_LE_UINT16(_dataSpace + getActionLocation(action) + offset);
 	}
 
 	/**
 	 * Gets a byte field from an action
 	 */
 	int getActionByte(int action, int offset) const {
-		return _residentBase[getActionLocation(action) + offset];
+		return _dataSpace[getActionLocation(action) + offset];
 	}
 
 	/**
@@ -357,14 +356,14 @@ public:
 	 * Read a word
 	 */
 	int readWord(int offset) const {
-		return READ_LE_UINT16(_residentBase + offset);
+		return READ_LE_UINT16(_dataSpace + offset);
 	}
 
 	/**
 	 * Write a word
 	 */
 	void writeWord(int offset, int val) {
-		WRITE_LE_UINT16(_residentBase + offset, val);
+		WRITE_LE_UINT16(_dataSpace + offset, val);
 	}
 
 	/**

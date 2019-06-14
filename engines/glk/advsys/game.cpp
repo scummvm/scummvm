@@ -99,9 +99,9 @@ enum LinkField {
 };
 
 Game::Game() : Header(), _stream(nullptr), _restartFlag(false), _residentOffset(0), _wordCount(0),
-		_objectCount(0), _actionCount(0), _variableCount(0), _residentBase(nullptr),
-		_wordTable(nullptr), _wordTypeTable(nullptr), _objectTable(nullptr), _actionTable(nullptr),
-		_variableTable(nullptr), _saveArea(nullptr), _msgBlockNum(-1), _msgBlockOffset(0) {
+		_objectCount(0), _actionCount(0), _variableCount(0), _wordTable(nullptr), _wordTypeTable(nullptr),
+		_objectTable(nullptr), _actionTable(nullptr), _variableTable(nullptr), _saveArea(nullptr),
+		_msgBlockNum(-1), _msgBlockOffset(0) {
 	_msgCache.resize(MESSAGE_CACHE_SIZE);
 	for (int idx = 0; idx < MESSAGE_CACHE_SIZE; ++idx)
 		_msgCache[idx] = new CacheEntry();
@@ -133,7 +133,6 @@ bool Game::init(Common::SeekableReadStream *s) {
 		return false;
 	decrypt(&_data[0], _size);
 
-	_residentBase = &_data[0];
 	_wordTable = &_data[_wordTableOffset];
 	_wordTypeTable = &_data[_wordTypeTableOffset];
 	_objectTable = &_data[_objectTableOffset];
@@ -183,8 +182,8 @@ int Game::findWord(const Common::String &word) const {
 	// Iterate over the dictionary for the word
 	for (int idx = 1; idx <= _wordCount; ++idx) {
 		int wordOffset = READ_LE_UINT16(_wordTable + idx * 2);
-		if (w == (const char *)_residentBase + wordOffset + 2)
-			return READ_LE_UINT16(_residentBase + wordOffset);
+		if (w == (const char *)_dataSpace + wordOffset + 2)
+			return readWord(wordOffset);
 	}
 
 	return NIL;
