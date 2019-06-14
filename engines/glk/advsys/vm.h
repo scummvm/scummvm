@@ -165,7 +165,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	FunctionPointer(FixedStack &s) : _stack(s), _index(-1) {}
+	FunctionPointer(FixedStack &s) : _stack(s), _index(0) {}
 
 	/**
 	 * Array indexing

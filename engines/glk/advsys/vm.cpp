@@ -104,8 +104,7 @@ ExecutionResult VM::execute(int offset) {
 
 void VM::executeOpcode() {
 	// Get next opcode
-	uint opcode = getCodeByte(_pc);
-	++_pc;
+	uint opcode = readCodeByte();
 
 	if (opcode >= OP_BRT && opcode <= OP_VOWEL) {
 		(this->*_METHODS[(int)opcode - 1])();
