@@ -1253,9 +1253,9 @@ void GameManager::dead(StringId messageId) {
 	destroyRooms();
 	initRooms();
 	initState();
+	changeRoom(AIRPORT);
 	initGui();
 	_inventory.clear();
-	changeRoom(AIRPORT);
 	g_system->fillScreen(kColorBlack);
 	_vm->paletteFadeIn();
 
@@ -2064,7 +2064,7 @@ void GameManager::alarm() {
 	if (_vm->_screen->isMessageShown())
 		_vm->removeMessage();
 	_vm->renderMessage(kStringMuseum7);
-	_state._eventTime = g_system->getMillis() + 18900;
+	_state._eventTime = g_system->getMillis() + 16200;
 	_state._eventCallback = kCaughtFn;
 	_state._alarmOn = true;
 }
@@ -2110,7 +2110,7 @@ void GameManager::caught2() {
 }
 
 void GameManager::drawClock() {
-	int time = (g_system->getMillis() - _state._startTime) / 700;
+	int time = (g_system->getMillis() - _state._startTime) / 600;
 	int second = time % 100;
 	Room *r;
 	if (!_mapOn) {
@@ -2164,11 +2164,11 @@ void GameManager::crack(int time) {
 	do {
 		do {
 			wait(1);
-		} while ((z = (g_system->getMillis() - _state._startTime) / 700) == zv);
+		} while ((z = (g_system->getMillis() - _state._startTime) / 600) == zv);
 		zv = z;
 		drawClock();
 		t++;
-	} while (t < time && _state._alarmOn == _alarmBefore) ;
+	} while (t < time && _state._alarmOn == _alarmBefore);
 	_cracking = false;
 	//arrow
 	if (_state._alarmOn == _alarmBefore)
@@ -2220,7 +2220,7 @@ void GameManager::museumDoorInteract(Action verb, Object &obj1, Object &obj2) {
 				r->setSectionVisible(r->getObject(doorTab[i]._o1)->_section, kShownTrue);
 			}
 		}
-	} else if (verb == ACTION_OPEN && obj1._id == DOOR) {
+	} else if (verb == ACTION_CLOSE && obj1._id == DOOR) {
 		for (int i = 0; i < 11; i++) {
 			if ((_currentRoom == _rooms[doorTab[i]._r1]) &&
 				 &obj1 == _currentRoom->getObject(doorTab[i]._o1)) {
@@ -2256,7 +2256,7 @@ void GameManager::securityEntrance() {
 		{MUS1 , 0, 0}
 	};
 
-	int time = (g_system->getMillis() - _state._startTime) / 700;
+	int time = (g_system->getMillis() - _state._startTime) / 600;
 	int second = time % 100;
 
 	if (_rooms[_securityTab[second / 10]] == _currentRoom) {
