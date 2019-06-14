@@ -650,7 +650,7 @@ void GameManager::processInput() {
 		mouseLocation = onNone;
 
 	if (_mouseClickType == Common::EVENT_LBUTTONUP) {
-		if (_vm->_screen->isMessageShown()) {
+		if (_vm->_screen->isMessageShown() && !_cracking) {
 			// Hide the message and consume the event
 			_vm->removeMessage();
 			if (mouseLocation != onCmdButton)
@@ -1174,6 +1174,8 @@ void GameManager::changeRoom(RoomId id) {
 }
 
 void GameManager::wait(int ticks) {
+	if (_vm->shouldQuit())
+		return;
 	uint32 end = g_system->getMillis() + ticksToMsec(ticks);
 	do {
 		g_system->delayMillis(_vm->_delay);
@@ -1183,6 +1185,8 @@ void GameManager::wait(int ticks) {
 }
 
 void GameManager::waitOnInput(int ticks) {
+	if (_vm->shouldQuit())
+		return;
 	uint32 end = g_system->getMillis() + ticksToMsec(ticks);
 	do {
 		g_system->delayMillis(_vm->_delay);
@@ -1192,6 +1196,8 @@ void GameManager::waitOnInput(int ticks) {
 }
 
 bool GameManager::waitOnInput(int ticks, Common::KeyCode &keycode) {
+	if (_vm->shouldQuit())
+		return false;
 	keycode = Common::KEYCODE_INVALID;
 	uint32 end = g_system->getMillis() + ticksToMsec(ticks);
 	do {
@@ -1257,7 +1263,9 @@ void GameManager::dead(StringId messageId) {
 	initGui();
 	_inventory.clear();
 	g_system->fillScreen(kColorBlack);
-	_vm->paletteFadeIn();
+	_vm->_screen->setViewportBrightness(255);
+	_vm->_screen->setGuiBrightness(255);
+	_vm->paletteBrightness();
 
 	_guiEnabled = true;
 }
@@ -1405,10 +1413,7 @@ bool GameManager::genericInteract(Action verb, Object &obj1, Object &obj2) {
 		//karte_an = false
 		_vm->removeMessage();
 		_vm->renderRoom(*_currentRoom);
-		drawMapExits();
-		drawInventory();
-		drawStatus();
-		drawCommandBox();
+		drawGUI();
 	} else
 		return false;
 	return true;
@@ -1531,7 +1536,6 @@ void GameManager::handleInput() {
 void GameManager::executeRoom() {
 	if (_currentRoom == _rooms[PUZZLE_FRONT])
 		puzzleConstruction();
-	debug("Siren: %d    Sound: %d", _state._sirenOn, _vm->_sound->isPlaying());
 	if (_state._sirenOn && !_vm->_sound->isPlaying())
 		_vm->_sound->playSiren();
 	if (_processInput && !_vm->_screen->isMessageShown() && _guiEnabled) {
@@ -1621,7 +1625,9 @@ void GameManager::taxiPayment(int price, int destination) {
 
 		_vm->paletteFadeOut();
 		_vm->_system->fillScreen(kColorBlack);
-		_vm->paletteFadeIn();
+		_vm->_screen->setViewportBrightness(255);
+		_vm->_screen->setGuiBrightness(255);
+		_vm->paletteBrightness();
 
 		Common::String t2 = _vm->getGameString(kString5MinutesLater);
 		_vm->renderMessage(t2);
@@ -2034,8 +2040,8 @@ void GameManager::compass() {
 		kStringDirection3
 	};
 	_vm->renderBox(281, 161, 39, 39, kColorWhite63);
-	_vm->renderBox(295, 180, 13,  3, kColorDarkBlue);
-	_vm->renderBox(300, 175,  3, 13, kColorDarkBlue);
+	_vm->renderBox(295, 180, 13,  3, kColorWhite44);
+	_vm->renderBox(300, 175,  3, 13, kColorWhite44);
 	_vm->renderText(dirs[_state._pyraDirection    ], 299, 163, kColorBlack);
 	_vm->renderText(dirs[_state._pyraDirection + 1], 312, 179, kColorBlack);
 	_vm->renderText(dirs[_state._pyraDirection + 2], 299, 191, kColorBlack);
@@ -2106,7 +2112,7 @@ void GameManager::caught2() {
 	_state._sirenOn = false;
 	_mapOn = false;
 	_state._haste = false;
-	dead(kStringMuseum9);
+	//dead(kStringMuseum9);
 }
 
 void GameManager::drawClock() {
@@ -2157,7 +2163,7 @@ void GameManager::drawClock() {
 void GameManager::crack(int time) {
 	_alarmBefore = _state._alarmOn;
 	_cracking = true;
-	//hourglass
+	_vm->_screen->changeCursor(ResourceManager::kCursorWait);
 	int t = 0;
 	int z;
 	int zv = 0;
@@ -2170,7 +2176,7 @@ void GameManager::crack(int time) {
 		t++;
 	} while (t < time && _state._alarmOn == _alarmBefore);
 	_cracking = false;
-	//arrow
+	_vm->_screen->changeCursor(ResourceManager::kCursorNormal);
 	if (_state._alarmOn == _alarmBefore)
 		_vm->removeMessage();
 }

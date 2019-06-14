@@ -28,6 +28,7 @@
 #include "common/keyboard.h"
 #include "supernova2/rooms.h"
 #include "supernova2/sound.h"
+#include "supernova2/resman.h"
 
 namespace Supernova2 {
 

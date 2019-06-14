@@ -705,9 +705,9 @@ void Cabin::onEntrance() {
 void Cabin::animation() {
 	if (_shown[kMaxSection - 1]) {
 		if (isSectionVisible(1))
-			setSectionVisible(1, kShownFalse);
+			_vm->renderImage(1 + 128);
 		else
-			setSectionVisible(1, kShownTrue);
+			_vm->renderImage(1);
 	}
 	_gm->setAnimationTimer(4);
 }
@@ -733,7 +733,7 @@ bool Cabin::interact(Action verb, Object &obj1, Object &obj2) {
 				_vm->renderImage(0);
 				_vm->paletteFadeIn();
 				_shown[kMaxSection - 1] = true;
-				_gm->waitOnInput(100000);
+				_gm->getInput();
 				_vm->paletteFadeOut();
 				_vm->setCurrentImage(7);
 				_vm->renderImage(0);
@@ -741,17 +741,14 @@ bool Cabin::interact(Action verb, Object &obj1, Object &obj2) {
 				_shown[kMaxSection - 1] = false;
 				_vm->renderRoom(*this);
 				_vm->renderImage(2);
-				_gm->drawMapExits();
-				_gm->drawInventory();
-				_gm->drawStatus();
-				_gm->drawCommandBox();
+				_gm->drawGUI();
 				_vm->paletteFadeIn();
 				getObject(3)->_click = 8;
 			} else {
 				_gm->_state._tipsy = false;
 				_vm->paletteFadeOut();
 				_vm->_system->fillScreen(kColorBlack);
-				_vm->paletteFadeIn();
+				_vm->_screen->setViewportBrightness(255);
 				Common::String text = _vm->getGameString(kStringWillPassOut);
 				_vm->renderMessage(text);
 				_gm->waitOnInput((text.size() + 20) * _vm->_textSpeed / 10);
@@ -760,10 +757,7 @@ bool Cabin::interact(Action verb, Object &obj1, Object &obj2) {
 				_vm->saveGame(kSleepAutosaveSlot, "autosave");
 				_gm->_inventory.clear();
 				_gm->changeRoom(PYRAMID);
-				_gm->drawStatus();
-				_gm->drawInventory();
-				_gm->drawMapExits();
-				_gm->drawCommandBox();
+				_gm->drawGUI();
 			}
 		} else
 			_vm->renderMessage(kStringRest);
@@ -781,7 +775,7 @@ bool Cabin::interact(Action verb, Object &obj1, Object &obj2) {
 		_gm->animationOff();
 		_vm->setCurrentImage(28);
 		_vm->renderImage(0);
-		_gm->waitOnInput(100000);
+		_gm->getInput();
 		_vm->setCurrentImage(7);
 		_vm->renderRoom(*this);
 		_gm->drawGUI();
@@ -791,7 +785,7 @@ bool Cabin::interact(Action verb, Object &obj1, Object &obj2) {
 		_gm->animationOff();
 		_vm->setCurrentImage(38);
 		_vm->renderImage(0);
-		_gm->waitOnInput(100000);
+		_gm->getInput();
 		_vm->setCurrentImage(7);
 		_vm->renderRoom(*this);
 		_gm->drawGUI();
@@ -859,10 +853,7 @@ void Kiosk::onEntrance() {
 		_gm->reply(kStringYouAreCrazy, 1, 1 +128);
 		_gm->say(kStringYouIdiot);
 		_gm->reply(kStringShutUp, 1, 1 +128);
-		_gm->drawStatus();
-		_gm->drawInventory();
-		_gm->drawMapExits();
-		_gm->drawCommandBox();
+		_gm->drawGUI();
 		setRoomSeen(true);
 	}
 }
@@ -926,10 +917,7 @@ bool Kiosk::interact(Action verb, Object &obj1, Object &obj2) {
 			_gm->takeObject(obj1);
 			_gm->takeMoney(-price);
 		}
-		_gm->drawStatus();
-		_gm->drawInventory();
-		_gm->drawMapExits();
-		_gm->drawCommandBox();
+		_gm->drawGUI();
 	} else if (verb == ACTION_LOOK && obj1._id >= BMASK && obj1._id <= FACES) {
 		for(int i = 0; i < 3; i++) {
 			_gm->reply(dialSeller[obj1._id - BMASK][i], 1, 1 + 128);
@@ -949,10 +937,7 @@ bool Kiosk::interact(Action verb, Object &obj1, Object &obj2) {
 			_gm->reply(kStringImSorry, 1, 1 + 128);
 			break;
 		}
-		_gm->drawStatus();
-		_gm->drawInventory();
-		_gm->drawMapExits();
-		_gm->drawCommandBox();
+		_gm->drawGUI();
 	} else 
 		return false;
 	return true;
@@ -1070,10 +1055,7 @@ bool CulturePalace::interact(Action verb, Object &obj1, Object &obj2) {
 		}
 		_vm->renderImage(1 + 128);
 		setSectionVisible(2, kShownFalse);
-		_gm->drawStatus();
-		_gm->drawInventory();
-		_gm->drawMapExits();
-		_gm->drawCommandBox();
+		_gm->drawGUI();
 	}
 	else if (verb == ACTION_GIVE && obj2._id == AXACUSSER && _shown[kMaxSection - 2]) {
 		_vm->renderImage(1);
@@ -1096,16 +1078,10 @@ bool CulturePalace::interact(Action verb, Object &obj1, Object &obj2) {
 					_shown[kMaxSection - 2] = false;
 					_shown[kMaxSection - 3] = true;
 					_gm->_rooms[CHECKOUT]->addSentence(1,1);
-					_gm->drawStatus();
-					_gm->drawInventory();
-					_gm->drawMapExits();
-					_gm->drawCommandBox();
+					_gm->drawGUI();
 				} else {
 					notEnoughMoney();
-					_gm->drawStatus();
-					_gm->drawInventory();
-					_gm->drawMapExits();
-					_gm->drawCommandBox();
+					_gm->drawGUI();
 				}
 			} else 
 				notEnoughMoney();
@@ -1138,10 +1114,7 @@ void Checkout::onEntrance() {
 		_gm->reply(kStringCommon, 1, 1 + 128);
 		_gm->say(kStringIWillProof);
 		_gm->say(kStringIWillPerform);
-		_gm->drawStatus();
-		_gm->drawInventory();
-		_gm->drawMapExits();
-		_gm->drawCommandBox();
+		_gm->drawGUI();
 	}
 	setRoomSeen(true);
 }
@@ -1335,12 +1308,107 @@ bool Checkout::interact(Action verb, Object &obj1, Object &obj2) {
 	return true;
 }
 
+void Checkout::shouting() {
+	static int i = 0;
+	switch(i)
+	{
+	case  50:
+		_vm->renderMessage(kStringShout1, 100, 60);
+		break;
+	case 130:
+		_vm->renderMessage(kStringShout2, 50, 90);
+		break;
+	case 200:
+		_vm->renderMessage(kStringShout3, 200, 80);
+		break;
+	case 300:
+		_vm->renderMessage(kStringShout4, 70, 30);
+		break;
+	case 400:
+		_vm->renderMessage(kStringShout5, 190, 90);
+		break;
+	case 450:
+		_vm->renderMessage(kStringShout6, 160, 60);
+		break;
+	case 500:
+		_vm->renderMessage(kStringShout7, 180, 70);
+		break;
+	case 530:
+		_vm->renderMessage(kStringShout8, 50, 20);
+		break;
+	case 610:
+		_vm->renderMessage(kStringShout9, 230, 50);
+		break;
+	case 650:
+		_vm->renderMessage(kStringShout10, 100, 90);
+		break;
+	case 720:
+		_vm->renderMessage(kStringShout11, 176, 65);
+		break;
+	case 800:
+		_vm->renderMessage(kStringShout12, 60, 20);
+		break;
+	case 850:
+		_vm->renderMessage(kStringShout13, 160, 40);
+		break;
+	case 930:
+		_vm->renderMessage(kStringShout14, 60, 95);
+		break;
+	case 1000:
+		_vm->renderMessage(kStringShout15, 100, 65);
+		break;
+	case  70:
+			  // fall through
+	case 150:
+			  // fall through
+	case 220:
+			  // fall through
+	case 320:
+			  // fall through
+	case 420:
+			  // fall through
+	case 470:
+			  // fall through
+	case 520:
+			  // fall through
+	case 550:
+			  // fall through
+	case 630:
+			  // fall through
+	case 680:
+			  // fall through
+	case 740:
+			  // fall through
+	case 820:
+			  // fall through
+	case 870:
+			  // fall through
+	case 950:
+			  // fall through
+	case 1020:
+		_vm->removeMessage();
+		break;
+	default: {} //do nothing
+	}
+	i++;
+}
+
 void Checkout::appearance() {
 	int xp = 0;
-	_gm->playCD();
+	CursorMan.showMouse(false);
+	_vm->playSound(kMusicMadMonkeys);
+	Common::KeyCode k = Common::KEYCODE_INVALID;
+	while(_vm->_sound->isPlaying()) {
+		if (_gm->waitOnInput(1, k))
+			break;
+		shouting();
+	}
+	_vm->_sound->stop();
+	_vm->removeMessage();
+	CursorMan.showMouse(true);
 	_vm->removeMessage();
 	_vm->playSound(kAudioAppearance1);
-	while (_vm->_sound->isPlaying())
+	while (_vm->_sound->isPlaying() && !_vm->shouldQuit())
 		_gm->wait(1);
 	_vm->paletteFadeOut();
 
@@ -1464,7 +1532,9 @@ void Checkout::appearance() {
 	_vm->paletteFadeOut();
 
 	_vm->_system->fillScreen(kColorBlack);
-	_vm->paletteFadeIn();
+	_vm->_screen->setViewportBrightness(255);
+	_vm->_screen->setGuiBrightness(255);
+	_vm->paletteBrightness();
 	_vm->renderMessage(kStringAppearance22);
 	_gm->waitOnInput(_gm->_messageDuration);
 	_vm->removeMessage();
@@ -1483,6 +1553,9 @@ void Checkout::appearance() {
 	_vm->renderMessage(kStringAppearance27);
 	_gm->waitOnInput(_gm->_messageDuration);
 	_vm->removeMessage();
+	_vm->_screen->setViewportBrightness(0);
+	_vm->_screen->setGuiBrightness(0);
+	_vm->paletteBrightness();
 	_vm->setCurrentImage(44);
 	_vm->renderImage(0);
 	_vm->paletteFadeIn();
@@ -1506,7 +1579,9 @@ void Checkout::appearance() {
 	} while (image->_section[1].y1 < 200);
 	_vm->paletteFadeOut();
 	_vm->_system->fillScreen(kColorBlack);
-	_vm->paletteFadeIn();
+	_vm->_screen->setViewportBrightness(255);
+	_vm->_screen->setGuiBrightness(255);
+	_vm->paletteBrightness();
 	_vm->renderMessage(kStringAppearance28);
 	_gm->waitOnInput(_gm->_messageDuration);
 	_vm->removeMessage();
@@ -1693,12 +1768,11 @@ bool Elevator::interact(Action verb, Object &obj1, Object &obj2) {
 				setSectionVisible(4, kShownFalse);
 				_vm->paletteFadeOut();
 				_vm->_system->fillScreen(kColorBlack);
-				_vm->paletteFadeIn();
+				_vm->_screen->setViewportBrightness(255);
 				_vm->renderMessage(kStringElevator14);
 				_gm->waitOnInput(_gm->_messageDuration);
 				_vm->removeMessage();
-				_vm->paletteFadeOut();
-				_vm->paletteFadeOut();
+				_vm->_screen->setViewportBrightness(0);
 				_vm->setCurrentImage(26);
 				_vm->renderImage(0);
 				_vm->paletteFadeIn();
@@ -1789,12 +1863,12 @@ bool Elevator::interact(Action verb, Object &obj1, Object &obj2) {
 }
 
 void Elevator::jobDescription() {
-	static StringId dialBoss2[5] = {
+	static StringId dialBoss2[3] = {
 		kStringElevator8,
 		kStringElevator9,
 		kStringElevator10
 	};
-	byte dialsBoss2[4] = {1,1,2,1};
+	byte dialsBoss2[4] = {1,1,1,1};
 
 	_gm->reply(kStringElevator29, 1, 1 + 128);
 	_gm->reply(kStringElevator30, 1, 1 + 128);
@@ -1844,11 +1918,13 @@ void Elevator::jobDescription() {
 	_gm->reply(kStringElevator54, 1, 1 + 128);
 	_vm->paletteFadeOut();
 	_vm->_system->fillScreen(kColorBlack);
-	_vm->paletteFadeIn();
+	_vm->_screen->setViewportBrightness(255);
 	_vm->renderMessage(kStringElevator55);
 	_gm->waitOnInput(_gm->_messageDuration);
 	_vm->removeMessage();
-	_vm->paletteFadeOut();
+	_vm->_screen->setViewportBrightness(0);
+	_gm->_state._tipsy = false;
+	_gm->_state._toMuseum = true;
 	_vm->saveGame(kSleepAutosaveSlot, "autosave");
 	_gm->_inventory.clear();
 	_gm->takeObject(*_gm->_rooms[INTRO]->getObject(3));
@@ -1870,8 +1946,6 @@ void Elevator::jobDescription() {
 
 	// 21:72:72
 	_gm->_state._startTime = g_system->getMillis() - 130363200;
-	_gm->_state._tipsy = false;
-	_gm->_state._toMuseum = true;
 }
 
 Apartment::Apartment(Supernova2Engine *vm, GameManager *gm) {
@@ -1998,7 +2072,7 @@ bool Ship::interact(Action verb, Object &obj1, Object &obj2) {
 		_gm->wait(2);
 		_vm->renderImage(6);
 		_vm->playSound(kAudioShip1);
-		while (_vm->_sound->isPlaying())
+		while (_vm->_sound->isPlaying() && !_vm->shouldQuit())
 			_gm->wait(1);
 		_vm->renderImage(6 + 128);
 		_vm->renderImage(7);
@@ -2023,7 +2097,7 @@ bool Ship::interact(Action verb, Object &obj1, Object &obj2) {
 			_vm->renderMessage(kStringShip4);
 	} else if (verb == ACTION_USE && Object::combine(obj1, obj2, CABLE, RCABLE)) {
 		_objectState[6]._description = kStringDefaultDescription;
-		if (_objectState[6]._click == 6)
+		if (_objectState[6]._click == 5)
 			_vm->renderImage(8 + 128);
 		if (_objectState[6]._type & CARRIED)
 			_gm->_inventory.remove(_objectState[6]);
@@ -2129,7 +2203,7 @@ bool Ship::interact(Action verb, Object &obj1, Object &obj2) {
 
 void Ship::kill() {
 	_vm->playSound(kAudioShipDeath);
-	while (_vm->_sound->isPlaying())
+	while (_vm->_sound->isPlaying() && !_vm->shouldQuit())
 		_gm->wait(1);
 	_gm->dead(kStringShip0);
 }
@@ -3728,6 +3802,7 @@ bool Mask::interact(Action verb, Object &obj1, Object &obj2) {
 			_vm->paletteFadeOut();
 			_vm->loadGame(kSleepAutosaveSlot);
 			_gm->changeRoom(CABIN);
+			_gm->setAnimationTimer(1);
 			_gm->_newRoom = true;
 			_gm->drawGUI();
 			_gm->_rooms[CABIN]->setSectionVisible(2, kShownTrue);
@@ -4733,7 +4808,7 @@ bool Mus22::interact(Action verb, Object &obj1, Object &obj2) {
 			_vm->renderMessage(kStringMuseum20);
 		else {
 			_vm->renderMessage(kStringMuseum21);
-			_gm->crackDoor(20);
+			_gm->crack(20);
 			if (!_gm->_state._alarmOn) {
 				_vm->renderMessage(kStringMuseum22);
 				_vm->playSound(kAudioSuccess);

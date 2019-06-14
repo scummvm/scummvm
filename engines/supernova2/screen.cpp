@@ -28,7 +28,6 @@
 #include "graphics/surface.h"
 
 #include "supernova2/imageid.h"
-#include "supernova2/resman.h"
 #include "supernova2/state.h"
 #include "supernova2/screen.h"
 #include "supernova2/supernova2.h"
@@ -181,7 +180,11 @@ Screen::Screen(Supernova2Engine *vm, ResourceManager *resMan)
 	, _textCursorY(0)
 	, _messageShown(false) {
 
-	CursorMan.replaceCursor(_resMan->getCursor(ResourceManager::kCursorNormal),
+	changeCursor(ResourceManager::kCursorNormal);
+}
+
+void Screen::changeCursor(ResourceManager::CursorId id) {
+	CursorMan.replaceCursor(_resMan->getCursor(id),
 							16, 16, 0, 0, kColorCursorTransparent);
 	CursorMan.replaceCursorPalette(initVGAPalette, 0, 16);
 	CursorMan.showMouse(true);

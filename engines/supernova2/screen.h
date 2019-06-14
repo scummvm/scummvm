@@ -29,6 +29,7 @@
 
 #include "supernova2/imageid.h"
 #include "supernova2/ms2_def.h"
+#include "supernova2/resman.h"
 
 namespace Supernova2 {
 
@@ -135,6 +136,7 @@ public:
 public:
 	Screen(Supernova2Engine *vm, ResourceManager *resMan);
 
+	void changeCursor(ResourceManager::CursorId);
 	int getViewportBrightness() const;
 	void setViewportBrightness(int brightness);
 	int getGuiBrightness() const;
