@@ -106,6 +106,12 @@ void VM::executeOpcode() {
 	// Get next opcode
 	uint opcode = readCodeByte();
 
+	if (gDebugLevel > 0) {
+		Common::String s;
+		for (int idx = (int)_stack.size() - 1; idx >= 0; --idx) s += Common::String::format("  %d", _stack[idx]);
+		debug("%.4x - %.2x - %d%s", _pc - 1, opcode, _stack.size(), s.c_str());
+	}
+
 	if (opcode >= OP_BRT && opcode <= OP_VOWEL) {
 		(this->*_METHODS[(int)opcode - 1])();
 	} else if (opcode >= OP_XVAR && opcode < OP_XSET) {
@@ -256,7 +262,7 @@ void VM::opEXIT() {
 }
 
 void VM::opRETURN() {
-	if (_stack.empty()) {
+	if (_fp == 0) {
 		_status = CHAIN;
 	} else {
 		int val = _stack.top();
@@ -314,18 +320,16 @@ void VM::opRESTORE() {
 
 void VM::opARG() {
 	int argNum = readCodeByte();
-	int varsSize = _stack[_fp - 3];
-	if (argNum >= varsSize)
+	if (argNum >= _fp[FP_ARGS_SIZE])
 		error("Invalid argument number");
-	_stack.top() = _stack[_fp - 4 - argNum];
+	_stack.top() = _fp[argNum + FP_ARGS];
 }
 
 void VM::opASET() {
 	int argNum = readCodeByte();
-	int varsSize = _stack[_fp - 3];
-	if (argNum >= varsSize)
+	if (argNum >= _fp[FP_ARGS_SIZE])
 		error("Invalid argument number");
-	_stack[_fp - 4 - argNum] = _stack.top();
+	_fp[argNum + FP_ARGS] = _stack.top();
 }
 
 void VM::opTMP() {

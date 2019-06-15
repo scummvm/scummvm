@@ -253,7 +253,9 @@ private:
 	 * Gets the next code word and increases the PC counter to after it
 	 */
 	int readCodeWord() {
-		return getCodeWord(_pc += 2);
+		int v = getCodeWord(_pc);
+		_pc += 2;
+		return v;
 	}
 
 	/**
