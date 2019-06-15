@@ -1496,7 +1496,7 @@ void ProjectProvider::createProject(BuildSetup &setup) {
 	}
 
 	// We also need to add the UUID of the main project file.
-	const std::string svmUUID = _uuidMap[setup.projectName] = createUUID();
+	const std::string svmUUID = _uuidMap[setup.projectName] = createUUID(setup.projectName);
 
 	createWorkspace(setup);
 
@@ -1581,7 +1581,7 @@ ProjectProvider::UUIDMap ProjectProvider::createUUIDMap(const BuildSetup &setup)
 		if (!i->enable || isSubEngine(i->name, setup.engines))
 			continue;
 
-		result[i->name] = createUUID();
+		result[i->name] = createUUID(i->name);
 	}
 
 	return result;
@@ -1595,17 +1595,20 @@ ProjectProvider::UUIDMap ProjectProvider::createToolsUUIDMap() const {
 		if (!i->enable)
 			continue;
 
-		result[i->name] = createUUID();
+		result[i->name] = createUUID(i->name);
 	}
 
 	return result;
 }
 
+const int kUUIDLen = 16;
+
 std::string ProjectProvider::createUUID() const {
 #ifdef USE_WIN32_API
 	UUID uuid;
-	if (UuidCreate(&uuid) != RPC_S_OK)
-		error("UuidCreate failed");
+	RPC_STATUS status = UuidCreateSequential(&uuid);
+	if (status != RPC_S_OK && status != RPC_S_UUID_LOCAL_ONLY)
+		error("UuidCreateSequential failed");
 
 	unsigned char *string = 0;
 	if (UuidToStringA(&uuid, &string) != RPC_S_OK)
@@ -1616,25 +1619,81 @@ std::string ProjectProvider::createUUID() const {
 	RpcStringFreeA(&string);
 	return result;
 #else
-	unsigned char uuid[16];
+	unsigned char uuid[kUUIDLen];
 
-	for (int i = 0; i < 16; ++i)
+	for (int i = 0; i < kUUIDLen; ++i)
 		uuid[i] = (unsigned char)((std::rand() / (double)(RAND_MAX)) * 0xFF);
 
 	uuid[8] &= 0xBF; uuid[8] |= 0x80;
 	uuid[6] &= 0x4F; uuid[6] |= 0x40;
 
+	return UUIDToString(uuid);
+#endif
+}
+
+std::string ProjectProvider::createUUID(const std::string &name) const {
+#ifdef USE_WIN32_API
+	HCRYPTPROV hProv = NULL;
+	if (!CryptAcquireContext(&hProv, NULL, NULL, PROV_RSA_FULL, CRYPT_VERIFYCONTEXT)) {
+		error("CryptAcquireContext failed");
+	}
+	
+	// Use MD5 hashing algorithm
+	HCRYPTHASH hHash = NULL;
+	if (!CryptCreateHash(hProv, CALG_MD5, 0, 0, &hHash)) {
+		CryptReleaseContext(hProv, 0);
+		error("CryptCreateHash failed");
+	}
+
+	// Hash unique ScummVM namespace {5f5b43e8-35ff-4f1e-ad7e-a2a87e9b5254}
+	const BYTE uuidNs[kUUIDLen] =
+		{ 0x5f, 0x5b, 0x43, 0xe8, 0x35, 0xff, 0x4f, 0x1e, 0xad, 0x7e, 0xa2, 0xa8, 0x7e, 0x9b, 0x52, 0x54 };
+	if (!CryptHashData(hHash, uuidNs, kUUIDLen, 0)) {
+		CryptDestroyHash(hHash);
+		CryptReleaseContext(hProv, 0);
+		error("CryptHashData failed");
+	}
+
+	// Hash project name
+	if (!CryptHashData(hHash, (const BYTE *)name.c_str(), name.length(), 0)) {
+		CryptDestroyHash(hHash);
+		CryptReleaseContext(hProv, 0);
+		error("CryptHashData failed");
+	}
+
+	// Get resulting UUID
+	BYTE uuid[kUUIDLen];
+	DWORD len = kUUIDLen;
+	if (!CryptGetHashParam(hHash, HP_HASHVAL, uuid, &len, 0)) {
+		CryptDestroyHash(hHash);
+		CryptReleaseContext(hProv, 0);
+		error("CryptGetHashParam failed");
+	}
+
+	// Add version and variant
+	uuid[6] &= 0x0F; uuid[6] |= 0x30;
+	uuid[8] &= 0x3F; uuid[8] |= 0x80;
+
+	CryptDestroyHash(hHash);
+	CryptReleaseContext(hProv, 0);
+
+	return UUIDToString(uuid);
+#else
+	// Fallback to random UUID
+	return createUUID();
+#endif
+}
+
+std::string ProjectProvider::UUIDToString(unsigned char *uuid) const {
 	std::stringstream uuidString;
 	uuidString << std::hex << std::uppercase << std::setfill('0');
-	for (int i = 0; i < 16; ++i) {
+	for (int i = 0; i < kUUIDLen; ++i) {
 		uuidString << std::setw(2) << (int)uuid[i];
 		if (i == 3 || i == 5 || i == 7 || i == 9) {
 			uuidString << std::setw(0) << '-';
 		}
 	}
-
 	return uuidString.str();
-#endif
 }
 
 std::string ProjectProvider::getLastPathComponent(const std::string &path) {

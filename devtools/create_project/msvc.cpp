@@ -46,7 +46,7 @@ void MSVCProvider::createWorkspace(const BuildSetup &setup) {
 	const std::string svmProjectUUID = svmUUID->second;
 	assert(!svmProjectUUID.empty());
 
-	std::string solutionUUID = createUUID();
+	std::string solutionUUID = createUUID(setup.projectName + ".sln");
 
 	std::ofstream solution((setup.outputDir + '/' + setup.projectName + ".sln").c_str());
 	if (!solution)
