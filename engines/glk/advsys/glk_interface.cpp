@@ -31,7 +31,10 @@ bool GlkInterface::initialize() {
 }
 
 void GlkInterface::print(const Common::String &msg) {
-	glk_put_string_stream(glk_window_get_stream(_window), msg.c_str());
+	// Don't print out text if loading a savegame directly from the launcher, since we don't
+	// want any of the intro text displayed by the startup code to show
+	if (_saveSlot == -1)
+		glk_put_string_stream(glk_window_get_stream(_window), msg.c_str());
 }
 
 void GlkInterface::print(int number) {

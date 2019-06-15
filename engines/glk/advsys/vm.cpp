@@ -310,12 +310,12 @@ void VM::opYORN() {
 
 void VM::opSAVE() {
 	if (saveGame().getCode() != Common::kNoError)
-		print("Sorry, the savegame couldn't be created");
+		print(_("Sorry, the savegame couldn't be created"));
 }
 
 void VM::opRESTORE() {
 	if (saveGame().getCode() != Common::kNoError)
-		print("Sorry, the savegame couldn't be restored");
+		print(_("Sorry, the savegame couldn't be restored"));
 }
 
 void VM::opARG() {

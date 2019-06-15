@@ -22,11 +22,15 @@
 
 #include "glk/advsys/advsys.h"
 #include "common/translation.h"
+#include "common/config-manager.h"
 
 namespace Glk {
 namespace AdvSys {
 
 void AdvSys::runGame() {
+	// Check for savegame
+	_saveSlot = ConfMan.hasKey("save_slot") ? ConfMan.getInt("save_slot") : -1;
+
 	if (!initialize()) {
 		GUIErrorMessage(_("Could not start AdvSys game"));
 		return;
@@ -36,6 +40,13 @@ void AdvSys::runGame() {
 	while (!shouldQuit()) {
 		// Run game startup
 		execute(_initCodeOffset);
+
+		if (_saveSlot != -1) {
+			Common::ErrorCode err = loadGameState(_saveSlot).getCode();
+			_saveSlot = -1;
+			if (err != Common::kNoError)
+				print(_("Sorry, the savegame couldn't be restored"));
+		}
 
 		// Gameplay loop
 		while (!shouldQuit() && !shouldRestart()) {

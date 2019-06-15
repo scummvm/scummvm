@@ -36,6 +36,8 @@ class GlkInterface : public GlkAPI {
 private:
 	winid_t _window;
 protected:
+	int _saveSlot;
+protected:
 	/**
 	 * GLK initialization
 	 */
@@ -61,7 +63,8 @@ public:
 	/**
 	 * Constructor
 	 */
-	GlkInterface(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gameDesc) {}
+	GlkInterface(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gameDesc),
+		_saveSlot(-1) {}
 };
 
 } // End of namespace AdvSys
