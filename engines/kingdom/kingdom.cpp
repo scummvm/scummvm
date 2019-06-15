@@ -1461,7 +1461,7 @@ void KingdomGame::cursorType() {
 					return;
 				} else
 					_mouseValue = tmpVal;
-			} else if (_cursorPos.x >= mouseMapMS[var2 + i]._minX && _cursorPos.x < mouseMapMS[var2 + i]._maxX && _cursorPos.y >= mouseMapMS[var2 + i]._minY && _cursorPos.y < mouseMapMS[var2 + i]._maxY) {
+			} else if (mouseMapMS[var2 + i]._area.contains(_cursorPos)) {
 				_mouseValue = mouseMapMS[var2 + i]._mouseValue;
 				break;
 			}
@@ -1585,27 +1585,23 @@ void KingdomGame::cursorTypeExit() {
 int KingdomGame::checkMouseMapAS() {
 	if (isDemo()) {
 		for (int i = 0; i < 16; i++) {
-			if (_cursorPos.x >= _mouseMapASDemo[_logic->_currMap][i]._minX && _cursorPos.x < _mouseMapASDemo[_logic->_currMap][i]._maxX
-				&& _cursorPos.y >= _mouseMapASDemo[_logic->_currMap][i]._minY && _cursorPos.y < _mouseMapASDemo[_logic->_currMap][i]._maxY)
+			if (_mouseMapASDemo[_logic->_currMap][i]._area.contains(_cursorPos))
 				return _mouseMapASDemo[_logic->_currMap][i]._mouseValue;
 		}
 		if (_logic->_currMap == 11) {
 			for (int i = 0; i < 16; i++) {
-				if (_cursorPos.x >= _mouseMapASDemo[12][i]._minX && _cursorPos.x < _mouseMapASDemo[12][i]._maxX
-					&& _cursorPos.y >= _mouseMapASDemo[12][i]._minY && _cursorPos.y < _mouseMapASDemo[12][i]._maxY)
+				if (_mouseMapASDemo[12][i]._area.contains(_cursorPos))
 					return _mouseMapASDemo[12][i]._mouseValue;
 			}
 		}
 	} else {
 		for (int i = 0; i < 16; i++) {
-			if (_cursorPos.x >= _mouseMapASFull[_logic->_currMap][i]._minX && _cursorPos.x < _mouseMapASFull[_logic->_currMap][i]._maxX
-				&& _cursorPos.y >= _mouseMapASFull[_logic->_currMap][i]._minY && _cursorPos.y < _mouseMapASFull[_logic->_currMap][i]._maxY)
+			if (_mouseMapASFull[_logic->_currMap][i]._area.contains(_cursorPos))
 				return _mouseMapASFull[_logic->_currMap][i]._mouseValue;
 		}
 		if (_logic->_currMap == 11) {
 			for (int i = 0; i < 16; i++) {
-				if (_cursorPos.x >= _mouseMapASFull[12][i]._minX && _cursorPos.x < _mouseMapASFull[12][i]._maxX
-					&& _cursorPos.y >= _mouseMapASFull[12][i]._minY && _cursorPos.y < _mouseMapASFull[12][i]._maxY)
+				if (_mouseMapASFull[12][i]._area.contains(_cursorPos))
 					return _mouseMapASFull[12][i]._mouseValue;
 			}
 		}
