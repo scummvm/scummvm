@@ -50,6 +50,12 @@ GlkEngine::GlkEngine(OSystem *syst, const GlkGameDescription &gameDesc) :
 		_copySelect(false), _terminated(false), _pcSpeaker(nullptr),
 		gli_register_obj(nullptr), gli_unregister_obj(nullptr), gli_register_arr(nullptr),
 		gli_unregister_arr(nullptr) {
+	// Set up debug channels
+	DebugMan.addDebugChannel(kDebugCore, "core", "Core engine debug level");
+	DebugMan.addDebugChannel(kDebugScripts, "scripts", "Game scripts");
+	DebugMan.addDebugChannel(kDebugGraphics, "graphics", "Graphics handling");
+	DebugMan.addDebugChannel(kDebugSound, "sound", "Sound and Music handling");
+
 	g_vm = this;
 }
 
@@ -68,12 +74,6 @@ GlkEngine::~GlkEngine() {
 }
 
 void GlkEngine::initialize() {
-	// Set up debug channels
-	DebugMan.addDebugChannel(kDebugCore, "core", "Core engine debug level");
-	DebugMan.addDebugChannel(kDebugScripts, "scripts", "Game scripts");
-	DebugMan.addDebugChannel(kDebugGraphics, "graphics", "Graphics handling");
-	DebugMan.addDebugChannel(kDebugSound, "sound", "Sound and Music handling");
-
 	initGraphicsMode();
 
 	_conf = new Conf(getInterpreterType());
