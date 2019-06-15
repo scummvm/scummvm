@@ -50,12 +50,13 @@ Common::String GlkInterface::readLine() {
 		glk_select(&ev);
 		if (ev.type == evtype_Quit)
 			return "";
-		else if (ev.type == evtype_LineInput)
-			break;
+		else if (ev.type == evtype_LineInput) {
+			line[ev.val1] = '\0';
+			return Common::String(line);
+		}
 	} while (!shouldQuit() && ev.type != evtype_Quit);
 
-	line[199] = '\0';
-	return Common::String(line);
+	return "";
 }
 
 } // End of namespace AdvSys

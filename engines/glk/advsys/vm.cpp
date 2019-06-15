@@ -590,11 +590,11 @@ bool VM::getWord(Common::String &line) {
 
 	if (iw._number) {
 		_words.push_back(iw);
-		return false;
+		return true;
 	} else {
 		Common::String msg = Common::String::format(_("I don't know the word \"%s\".\n"), iw._text.c_str());
 		print(msg);
-		return true;
+		return false;
 	}
 }
 
