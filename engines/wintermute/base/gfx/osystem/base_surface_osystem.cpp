@@ -433,7 +433,8 @@ bool BaseSurfaceOSystem::drawSprite(int x, int y, Rect32 *rect, Rect32 *newRect,
 	// But no checking is in place for that yet.
 
 	// Optimize by not doing alpha-blits if we lack alpha
-	if (_alphaType == Graphics::ALPHA_OPAQUE && !transform._alphaDisable) {
+	// If angle is not 0, then transparent regions are added near the corners
+	if (_alphaType == Graphics::ALPHA_OPAQUE && transform._angle == 0) {
 		transform._alphaDisable = true;
 	}
 
