@@ -43,6 +43,7 @@ Common::String GlkInterface::readLine() {
 	event_t ev;
 	char line[200];
 
+	print(": ");
 	glk_request_line_event(_window, line, 199, 0);
 
 	do {

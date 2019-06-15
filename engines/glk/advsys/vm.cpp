@@ -109,7 +109,7 @@ void VM::executeOpcode() {
 	if (gDebugLevel > 0) {
 		Common::String s;
 		for (int idx = (int)_stack.size() - 1; idx >= 0; --idx) s += Common::String::format("  %d", _stack[idx]);
-		debug("%.4x - %.2x - %d%s", _pc - 1, opcode, _stack.size(), s.c_str());
+		debugC(kDebugScripts, "%.4x - %.2x - %d%s", _pc - 1, opcode, _stack.size(), s.c_str());
 	}
 
 	if (opcode >= OP_BRT && opcode <= OP_VOWEL) {
