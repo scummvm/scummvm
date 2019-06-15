@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2019-06-11 11:40+0200\n"
-"PO-Revision-Date: 2019-05-26 07:29+0000\n"
+"PO-Revision-Date: 2019-06-19 14:46+0000\n"
 "Last-Translator: scootergrisen <scootergrisen@gmail.com>\n"
 "Language-Team: Danish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/da/>\n"
@@ -467,11 +467,11 @@ msgstr "Aktiv"
 
 #: gui/fluidsynth-dialog.cpp:73
 msgid "Room:"
-msgstr "Rum:"
+msgstr "Rummelighed:"
 
 #: gui/fluidsynth-dialog.cpp:80
 msgid "Damp:"
-msgstr "Dæmp:"
+msgstr "Dæmpning:"
 
 #: gui/fluidsynth-dialog.cpp:87
 msgid "Width:"
@@ -606,11 +606,11 @@ msgstr "~A~fslut"
 
 #: gui/launcher.cpp:142 backends/platform/sdl/macosx/appmenu_osx.mm:209
 msgid "Quit ScummVM"
-msgstr "Slut ScummVM"
+msgstr "Afslut ScummVM"
 
 #: gui/launcher.cpp:143
 msgid "A~b~out..."
-msgstr "~O~m..."
+msgstr "~O~m ..."
 
 #: gui/launcher.cpp:143 backends/platform/sdl/macosx/appmenu_osx.mm:203
 msgid "About ScummVM"
@@ -618,7 +618,7 @@ msgstr "Om ScummVM"
 
 #: gui/launcher.cpp:144
 msgid "~O~ptions..."
-msgstr "~I~ndstillinger..."
+msgstr "~I~ndstillinger ..."
 
 #: gui/launcher.cpp:144
 msgid "Change global ScummVM options"
@@ -634,7 +634,7 @@ msgstr "Start det valgte spil"
 
 #: gui/launcher.cpp:149
 msgid "~L~oad..."
-msgstr "Ind~l~æs..."
+msgstr "Ind~l~æs ..."
 
 #: gui/launcher.cpp:149
 msgid "Load saved game for selected game"
@@ -642,7 +642,7 @@ msgstr "Indlæs gemte spil for det valgte spil"
 
 #: gui/launcher.cpp:154
 msgid "~A~dd Game..."
-msgstr "~T~ilføj spil..."
+msgstr "~T~ilføj spil ..."
 
 #: gui/launcher.cpp:154 gui/launcher.cpp:161
 msgid "Hold Shift for Mass Add"
@@ -650,7 +650,7 @@ msgstr "Hold Skift for at tilføje flere"
 
 #: gui/launcher.cpp:156
 msgid "~E~dit Game..."
-msgstr "~R~ediger spil..."
+msgstr "~R~ediger spil ..."
 
 #: gui/launcher.cpp:156 gui/launcher.cpp:163
 msgid "Change game options"
@@ -667,12 +667,12 @@ msgstr "Fjerner spil fra listen. Spillets datafiler forbliver uberørt"
 #: gui/launcher.cpp:161
 msgctxt "lowres"
 msgid "~A~dd Game..."
-msgstr "~T~ilføj spil..."
+msgstr "~T~ilføj spil ..."
 
 #: gui/launcher.cpp:163
 msgctxt "lowres"
 msgid "~E~dit Game..."
-msgstr "~R~ediger spil..."
+msgstr "~R~ediger spil ..."
 
 #: gui/launcher.cpp:165
 msgctxt "lowres"
@@ -748,11 +748,11 @@ msgstr "Vælg spillet:"
 
 #: gui/launcher.cpp:722
 msgid "Mass Add..."
-msgstr "Tilføj flere..."
+msgstr "Tilføj flere ..."
 
 #: gui/launcher.cpp:724
 msgid "Record..."
-msgstr "Optag..."
+msgstr "Optag ..."
 
 #: gui/massadd.cpp:76 gui/massadd.cpp:79
 msgid "... progress ..."
@@ -833,7 +833,7 @@ msgstr "stræktilstanden kunne ikke ændres"
 
 #: gui/options.cpp:583
 msgid "the aspect ratio setting could not be changed"
-msgstr "højde-bredde-forhold-indstillingen ikke kunne ændres"
+msgstr "højde-/breddeforhold-indstillingen ikke kunne ændres"
 
 #: gui/options.cpp:589
 msgid "the fullscreen setting could not be changed"
@@ -928,11 +928,11 @@ msgstr "Brug lineær filtrering når grafik skaleres"
 
 #: gui/options.cpp:1096
 msgid "Aspect ratio correction"
-msgstr "Rettelse af højde-bredde-forhold"
+msgstr "Rettelse af højde-/breddeforhold"
 
 #: gui/options.cpp:1096
 msgid "Correct aspect ratio for 320x200 games"
-msgstr "Rettelse af højde-bredde-forhold til 320x200-spil"
+msgstr "Rettelse af højde-/breddeforhold til 320x200-spil"
 
 #: gui/options.cpp:1104
 msgid "Preferred device:"
@@ -982,7 +982,7 @@ msgstr "Brug ikke generel MIDI-musik"
 
 #: gui/options.cpp:1169 gui/options.cpp:1231
 msgid "Use first available device"
-msgstr "Brug første tilgængelig enhed"
+msgstr "Brug første tilgængelige enhed"
 
 #: gui/options.cpp:1181
 msgid "SoundFont:"
@@ -1112,7 +1112,7 @@ msgstr "Mute alle"
 
 #: gui/options.cpp:1294
 msgid "SFX volume:"
-msgstr "Lydstyrke (SFX):"
+msgstr "Lydstyrke (lydeffekter):"
 
 #: gui/options.cpp:1294 gui/options.cpp:1296 gui/options.cpp:1297
 msgid "Special sound effects volume"
@@ -1121,7 +1121,7 @@ msgstr "Lydstyrke (specielle lydeffekter)"
 #: gui/options.cpp:1296
 msgctxt "lowres"
 msgid "SFX volume:"
-msgstr "Lydstyrke (SFX):"
+msgstr "Lydstyrke (lydeffekter):"
 
 #: gui/options.cpp:1304
 msgid "Speech volume:"
@@ -1146,12 +1146,12 @@ msgstr "FluidSynth-indstillinger"
 
 #: gui/options.cpp:1605
 msgid "Theme Path:"
-msgstr "Tema sti:"
+msgstr "Temasti:"
 
 #: gui/options.cpp:1607
 msgctxt "lowres"
 msgid "Theme Path:"
-msgstr "Tema sti:"
+msgstr "Temasti:"
 
 #: gui/options.cpp:1613 gui/options.cpp:1615 gui/options.cpp:1616
 msgid "Specifies path to additional data used by all games or ScummVM"
@@ -1986,7 +1986,7 @@ msgstr "Kunne ikke skifte til stræktilstand: '"
 
 #: engines/engine.cpp:343
 msgid "Could not apply aspect ratio setting."
-msgstr "Kunne ikke anvende rettelse af højde-bredde-forhold-indstilling."
+msgstr "Kunne ikke anvende rettelse af højde-/breddeforhold-indstilling."
 
 #: engines/engine.cpp:348
 msgid "Could not apply fullscreen setting."
@@ -2101,7 +2101,7 @@ msgstr ""
 #: audio/mididrv.cpp:209 audio/mididrv.cpp:221 audio/mididrv.cpp:257
 #: audio/mididrv.cpp:272
 msgid "Attempting to fall back to the next available device..."
-msgstr "Forsøger at falde tilbage til den næste tilgængelig enhed..."
+msgstr "Forsøger at falde tilbage til den næste tilgængelig enhed ..."
 
 #: audio/mididrv.cpp:221
 #, c-format
@@ -2315,7 +2315,7 @@ msgstr "OpenGL"
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:272
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:75
 msgid "Center"
-msgstr "Center"
+msgstr "Centrér"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:273
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:76
@@ -2340,12 +2340,12 @@ msgstr "Opløsning: %dx%d"
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:723
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2511
 msgid "Enabled aspect ratio correction"
-msgstr "Aktivér rettelse af højde-bredde-forhold"
+msgstr "Aktivér rettelse af højde-/breddeforhold"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:725
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2517
 msgid "Disabled aspect ratio correction"
-msgstr "Deaktivér rettelse af højde-bredde-forhold"
+msgstr "Deaktivér rettelse af højde-/breddeforhold"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:745
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2534
@@ -2938,7 +2938,7 @@ msgstr ""
 
 #: backends/updates/macosx/macosx-updates.mm:79
 msgid "Check for Updates..."
-msgstr "Søg efter opdateringer..."
+msgstr "Søg efter opdateringer ..."
 
 #: engines/access/resources.cpp:44 engines/drascula/drascula.cpp:971
 #: engines/hugo/hugo.cpp:437 engines/lure/lure.cpp:64
@@ -3895,7 +3895,7 @@ msgstr "Indlæs fil"
 
 #: engines/parallaction/saveload.cpp:201
 msgid "Loading game..."
-msgstr "Indlæser spil..."
+msgstr "Indlæser spil ..."
 
 #: engines/parallaction/saveload.cpp:209
 msgid "Save file"
@@ -3903,7 +3903,7 @@ msgstr "Gem fil"
 
 #: engines/parallaction/saveload.cpp:216
 msgid "Saving game..."
-msgstr "Gemmer spil..."
+msgstr "Gemmer spil ..."
 
 #: engines/parallaction/saveload.cpp:269
 msgid ""
@@ -4447,7 +4447,7 @@ msgstr "Hæv/sænk skaleringsfaktor"
 
 #: engines/scumm/help.cpp:103
 msgid "Toggle aspect-ratio correction"
-msgstr "Rettelse af højde-bredde-forhold til/fra"
+msgstr "Rettelse af højde-/breddeforhold til/fra"
 
 #: engines/scumm/help.cpp:108
 msgid "* Note that using ctrl-f and"
