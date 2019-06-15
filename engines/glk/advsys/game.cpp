@@ -250,12 +250,16 @@ int Game::getActionLocation(int action) const {
 }
 
 int Game::getVariable(int variableNum) {
-	assert(variableNum < _variableCount);
+	if (variableNum < 1 || variableNum > _variableCount)
+		error("Invalid ariable number %d", variableNum);
+
 	return READ_LE_UINT16(_variableTable + variableNum * 2);
 }
 
 void Game::setVariable(int variableNum, int value) {
-	assert(variableNum < _variableCount);
+	if (variableNum < 1 || variableNum > _variableCount)
+		error("Invalid ariable number %d", variableNum);
+
 	WRITE_LE_UINT16(_variableTable + variableNum * 2, value);
 }
 
