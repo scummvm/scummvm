@@ -65,10 +65,7 @@ namespace Kingdom {
 	};
 
 	struct HotSpot {
-		int16 _minX;
-		int16 _maxX;
-		int16 _minY;
-		int16 _maxY;
+		Common::Rect _area;
 		int16 _mouseValue;
 	};
 
