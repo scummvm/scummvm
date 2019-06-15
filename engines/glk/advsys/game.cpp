@@ -243,7 +243,7 @@ int Game::getObjectLocation(int obj) const {
 }
 
 int Game::getActionLocation(int action) const {
-	if (action < 1 || action >= _actionCount)
+	if (action < 1 || action > _actionCount)
 		error("Invalid action number %d", action);
 
 	return READ_LE_UINT16(_actionTable + action * 2);
@@ -297,18 +297,16 @@ bool Game::hasVerb(int act, const Common::Array<int> &verbs) const {
 		Common::Array<int>::const_iterator verb = verbs.begin();
 		int word = readWord(link + L_DATA);
 
-		for (; verb < verbs.end() && word; link = readWord(link + L_NEXT)) {
+		for (; verb < verbs.end() && word; ++verb, word = readWord(word + L_NEXT)) {
 			if (*verb != readWord(word + L_DATA))
 				break;
-
-			++verb;
 		}
 
 		if (verb == verbs.end() && !word)
 			return true;
 	}
 
-	return true;
+	return false;
 }
 
 bool Game::inList(int link, int word) const {

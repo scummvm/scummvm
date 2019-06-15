@@ -444,8 +444,9 @@ bool VM::parseInput() {
 	// Initialize the parser result fields
 	_actor = _action = _dObject = _iObject = 0;
 	_ndObjects = 0;
-	_adjectiveList.clear();
 	_nouns.clear();
+	_adjectiveList.clear();
+	_adjectiveList.reserve(20);
 
 	// Get the input line
 	if (!getLine())
@@ -460,7 +461,7 @@ bool VM::parseInput() {
 	}
 
 	// Check for a verb
-	if (getVerb())
+	if (!getVerb())
 		return false;
 
 	// Get direct object, preposition, and/or indirect object
@@ -517,8 +518,7 @@ bool VM::parseInput() {
 		_dObject = noun1;
 		_ndObjects = cnt1;
 		_iObject = noun2;
-	}
-	else if (noun2) {
+	} else if (noun2) {
 		if (cnt1 > 1) {
 			parseError();
 			return false;
@@ -540,7 +540,7 @@ bool VM::parseInput() {
 		flags |= A_IOBJECT;
 
 	// Find the action
-	if (!(_action == findAction(_verbs, preposition, flags))) {
+	if (!(_action = findAction(_verbs, preposition, flags))) {
 		parseError();
 		return false;
 	}
@@ -612,6 +612,7 @@ uint VM::getNoun() {
 		_adjectiveList.push_back(ae);
 	}
 	_adjectiveList.push_back(AdjectiveEntry());
+	assert(_adjectiveList.size() <= 20);
 
 	// Add a noun entry to the list
 	Noun n;
@@ -626,7 +627,7 @@ uint VM::getNoun() {
 bool VM::getVerb() {
 	_verbs.clear();
 
-	if (*_wordPtr == NIL || getWordType(*_wordPtr) != WT_VERB) {
+	if (_wordPtr == _words.end() || getWordType(*_wordPtr) != WT_VERB) {
 		parseError();
 		return false;
 	}
@@ -634,8 +635,8 @@ bool VM::getVerb() {
 	_verbs.push_back(*_wordPtr++);
 
 	// Check for a word following the verb
-	if (!_words.empty()) {
-		_verbs.push_back(_words.front());
+	if (_wordPtr < _words.end()) {
+		_verbs.push_back(*_wordPtr);
 
 		if (checkVerb(_verbs)) {
 			++_wordPtr;
