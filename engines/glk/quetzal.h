@@ -53,35 +53,55 @@ public:
 	/**
 	 * Iterator for the chunks list
 	 */
-	struct Iterator : public Chunk {
+	struct Iterator {
 	private:
 		Common::SeekableReadStream *_stream;
 		Common::Array<Chunk> &_chunks;
 		int _index;
-		int _size;
 	public:
 		/**
 		 * Constructor
 		 */
-		Iterator(Common::SeekableReadStream *stream, Common::Array<Chunk> &chunks, int index, int size) :
-			_stream(stream), _chunks(chunks), _index(index), _size(size) {}
+		Iterator(Common::SeekableReadStream *stream, Common::Array<Chunk> &chunks, int index) :
+			_stream(stream), _chunks(chunks), _index(index) {}
+
+		/**
+		 * Deference
+		 */
+		Chunk &operator*() const { return _chunks[_index]; }
 
 		/**
 		 * Incrementer
 		 */
-		Iterator &operator++() { ++_index; }
+		Iterator &operator++() {
+			++_index;
+			return *this;
+		}
 		
 		/**
 		 * Decrementer
 		 */
-		Iterator &operator--() { --_index; }
+		Iterator &operator--() {
+			--_index;
+			return *this;
+		}
+
+		/**
+		 * Equality test
+		 */
+		bool operator==(const Iterator &rhs) { return _index == rhs._index; }
+
+		/**
+		 * Inequality test
+		 */
+		bool operator!=(const Iterator &rhs) { return _index != rhs._index; }
 
 		/**
 		 * Get a read stream for the contents of a chunk
 		 */
 		Common::SeekableReadStream *getStream() {
-			_stream->seek(_offset);
-			return _stream->readStream(_size);
+			_stream->seek(_chunks[_index]._offset);
+			return _stream->readStream(_chunks[_index]._size);
 		}
 	};
 private:
@@ -106,12 +126,12 @@ public:
 	/**
 	 * Return an iterator for the beginning of the chunks list
 	 */
-	Iterator begin() { return Iterator(_stream, _chunks, 0, _chunks.size()); }
+	Iterator begin() { return Iterator(_stream, _chunks, 0); }
 
 	/**
 	 * Return an iterator for the beginning of the chunks list
 	 */
-	Iterator end() { return Iterator(_stream, _chunks, 0, _chunks.size()); }
+	Iterator end() { return Iterator(_stream, _chunks, _chunks.size()); }
 };
 
 /**

@@ -31,8 +31,10 @@ void QuetzalReader::clear() {
 }
 
 bool QuetzalReader::open(Common::SeekableReadStream *stream, uint32 formType) {
-	_chunks.clear();
+	clear();
 	stream->seek(0);
+	_stream = stream;
+
 	if (stream->readUint32BE() != ID_FORM)
 		return false;
 
@@ -54,7 +56,7 @@ bool QuetzalReader::open(Common::SeekableReadStream *stream, uint32 formType) {
 		// Get in the chunk header
 		Chunk c;
 		c._id = stream->readUint32BE();
-		c._size = stream->readUint32BE() - 8;
+		c._size = stream->readUint32BE();
 		c._offset = stream->pos();
 		_chunks.push_back(c);
 

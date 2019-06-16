@@ -38,18 +38,6 @@ private:
 	QuetzalReader _reader;
 	QuetzalWriter _writer;
 	zword frames[STACK_SIZE / 4 + 1];
-/*
-private:
-	void write_byte(zbyte b) { _out->writeByte(b); }
-	void write_bytx(zword b) { _out->writeByte(b & 0xFF); }
-	void write_word(zword w) { _out->writeUint16BE(w); }
-	void write_long(uint l) { _out->writeUint32BE(l); }
-	void write_run(zword run) { write_byte(0); write_byte(run); }
-	void write_chnk(uint32 id, zword len) {
-		_out->writeUint32BE(id);
-		_out->writeUint32BE(len);
-	}
-	*/
 public:
 	/**
 	 * Constructor

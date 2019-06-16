@@ -172,47 +172,27 @@ bool Quetzal::save(Common::WriteStream *svf, Processor *proc, const Common::Stri
 	return true;
 }
 
-int Quetzal::restore(Common::SeekableReadStream *svf, Processor *proc) {
+int Quetzal::restore(Common::SeekableReadStream *sv, Processor *proc) {
 	Processor &p = *proc;
-	uint ifzslen, currlen, tmpl;
+	uint tmpl, currlen;
 	offset_t pc;
-	zword i, tmpw;
+	zword tmpw;
 	int fatal = 0;	// Set to -1 when errors must be fatal.
-	zbyte skip, progress = GOT_NONE;
-	int x, y;
+	zbyte progress = GOT_NONE;
+	int i, x, y;
 
-	// Check it's really an `IFZS' file.
-	tmpl = svf->readUint32BE();
-	ifzslen = svf->readUint32BE();
-	currlen = svf->readUint32BE();
-	if (tmpl != ID_FORM || currlen != ID_IFZS) {
+	// Load the savefile for reading
+	if (!_reader.open(sv, ID_IFZS)) {
 		p.print_string("This is not a saved game file!\n");
 		return 0;
 	}
-	if ((ifzslen & 1) || ifzslen<4)
-		// Sanity checks
-		return 0;
-	ifzslen -= 4;
 
 	// Read each chunk and process it
-	while (ifzslen > 0) {
-		// Read chunk header
-		if (ifzslen < 8)
-			// Couldn't contain a chunk
-			return 0;
+	for (QuetzalReader::Iterator it = _reader.begin(); it != _reader.end(); ++it) {
+		Common::SeekableReadStream *s = it.getStream();
+		currlen = (*it)._size;
 
-		tmpl = svf->readUint32BE();
-		currlen = svf->readUint32BE();
-		ifzslen -= 8;	// Reduce remaining by size of header
-
-		// Handle chunk body
-		if (ifzslen < currlen)
-			// Chunk goes past EOF?!
-			return 0;
-		skip = currlen & 1;
-		ifzslen -= currlen + (uint)skip;
-
-		switch (tmpl) {
+		switch ((*it)._id) {
 		// `IFhd' header chunk; must be first in file
 		case ID_IFhd:
 			if (progress & GOT_HEADER) {
@@ -223,17 +203,17 @@ int Quetzal::restore(Common::SeekableReadStream *svf, Processor *proc) {
 			if (currlen < 13)
 				return fatal;
 
-			tmpw = svf->readUint16BE();
+			tmpw = s->readUint16BE();
 			if (tmpw != p.h_release)
 				progress = GOT_ERROR;
 
-			for (i = H_SERIAL; i < H_SERIAL + 6; ++i) {
-				x = svf->readByte();
-				if (x != p[i])
+			for (int idx = H_SERIAL; idx < H_SERIAL + 6; ++idx) {
+				x = s->readByte();
+				if (x != p[idx])
 					progress = GOT_ERROR;
 			}
 
-			tmpw = svf->readUint16BE();
+			tmpw = s->readUint16BE();
 			if (tmpw != p.h_checksum)
 				progress = GOT_ERROR;
 
@@ -242,17 +222,15 @@ int Quetzal::restore(Common::SeekableReadStream *svf, Processor *proc) {
 				return fatal;
 			}
 
-			x = svf->readByte();
+			x = s->readByte();
 			pc = (uint)x << 16;
-			x = svf->readByte();
+			x = s->readByte();
 			pc |= (uint)x << 8;
-			x = svf->readByte();
+			x = s->readByte();
 			pc |= (uint)x;
 
 			fatal = -1;		// Setting PC means errors must be fatal
 			p.setPC(pc);
-
-			svf->skip(currlen - 13);	// Skip rest of chunk
 			break;
 
 		// `Stks' stacks chunk; restoring this is quite complex. ;)
@@ -273,8 +251,8 @@ int Quetzal::restore(Common::SeekableReadStream *svf, Processor *proc) {
 				if (currlen < 8)
 					return fatal;
 
-				svf->skip(6);
-				tmpw = svf->readUint16BE();
+				s->skip(6);
+				tmpw = s->readUint16BE();
 
 				if (tmpw > STACK_SIZE) {
 					p.print_string("Save-file has too much stack (and I can't cope).\n");
@@ -285,7 +263,7 @@ int Quetzal::restore(Common::SeekableReadStream *svf, Processor *proc) {
 				if (currlen < (uint)tmpw * 2)
 					return fatal;
 				for (i = 0; i < tmpw; ++i)
-					*--p._sp = svf->readUint16BE();
+					*--p._sp = s->readUint16BE();
 				currlen -= tmpw * 2;
 			}
 
@@ -300,12 +278,12 @@ int Quetzal::restore(Common::SeekableReadStream *svf, Processor *proc) {
 				}
 
 				// Read PC, procedure flag and formal param count
-				tmpl = svf->readUint32BE();
+				tmpl = s->readUint32BE();
 				y = (int)(tmpl & 0x0F);		// Number of formals
 				tmpw = y << 8;
 
 				// Read result variable
-				x = svf->readByte();
+				x = s->readByte();
 
 				// Check the procedure flag...
 				if (tmpl & 0x10) {
@@ -328,7 +306,7 @@ int Quetzal::restore(Common::SeekableReadStream *svf, Processor *proc) {
 				*--p._sp = (zword)(p._fp - p._stack - 1);	// FP
 
 				// Read and process argument mask
-				x = svf->readByte();
+				x = s->readByte();
 				++x;		// Should now be a power of 2
 				for (i = 0; i<8; ++i)
 					if (x & (1 << i))
@@ -343,7 +321,7 @@ int Quetzal::restore(Common::SeekableReadStream *svf, Processor *proc) {
 				p._fp = p._sp;	// FP for next frame
 
 				// Read amount of eval stack used
-				tmpw = svf->readUint16BE();
+				tmpw = s->readUint16BE();
 
 				tmpw += y;	// Amount of stack + number of locals
 				if (p._sp - p._stack <= tmpw) {
@@ -354,14 +332,13 @@ int Quetzal::restore(Common::SeekableReadStream *svf, Processor *proc) {
 					return fatal;
 				
 				for (i = 0; i < tmpw; ++i)
-					--*p._sp = svf->readUint16BE();
+					--*p._sp = s->readUint16BE();
 				currlen -= tmpw * 2;
 			}
 
 			// End of `Stks' processing...
 			break;
 
-		// Any more special chunk types must go in HERE or ABOVE
 		// `CMem' compressed memory chunk; uncompress it
 		case ID_CMem:
 			if (!(progress & GOT_MEMORY)) {
@@ -369,13 +346,13 @@ int Quetzal::restore(Common::SeekableReadStream *svf, Processor *proc) {
 				
 				i = 0;	// Bytes written to data area
 				for (; currlen > 0; --currlen) {
-					x = svf->readByte();
+					x = s->readByte();
 					if (x == 0) {
 						// Start of run
 						// Check for bogus run
 						if (currlen < 2) {
 							p.print_string("File contains bogus `CMem' chunk.\n");
-							svf->skip(currlen);
+							s->skip(currlen);
 
 							currlen = 1;
 							i = 0xFFFF;
@@ -384,7 +361,7 @@ int Quetzal::restore(Common::SeekableReadStream *svf, Processor *proc) {
 
 						// Copy story file to memory during the run
 						--currlen;
-						x = svf->readByte();
+						x = s->readByte();
 						for (; x >= 0 && i < p.h_dynamic_size; --x, ++i)
 							p[i] = _storyFile->readByte();
 					} else {
@@ -397,7 +374,7 @@ int Quetzal::restore(Common::SeekableReadStream *svf, Processor *proc) {
 					// Make sure we don't load too much
 					if (i > p.h_dynamic_size) {
 						p.print_string("warning: `CMem' chunk too long!\n");
-						svf->skip(currlen);
+						s->skip(currlen);
 						break;	// Keep going; there may be a `UMem' too
 					}
 				}
@@ -410,14 +387,14 @@ int Quetzal::restore(Common::SeekableReadStream *svf, Processor *proc) {
 					progress |= GOT_MEMORY;		// Only if succeeded
 				break;
 			}
+			break;
 
-			// fall through
-
+		// 'UMem' Uncompressed memory chunk
 		case ID_UMem:
 			if (!(progress & GOT_MEMORY)) {
 				// Must be exactly the right size
 				if (currlen == p.h_dynamic_size) {
-					if (svf->read(p.zmp, currlen) == currlen) {
+					if (s->read(p.zmp, currlen) == currlen) {
 						progress |= GOT_MEMORY;	// Only on success
 						break;
 					}
@@ -427,16 +404,13 @@ int Quetzal::restore(Common::SeekableReadStream *svf, Processor *proc) {
 				
 				// Fall into default action (skip chunk) on errors
 			}
-
-			// fall through
+			break;
 
 		default:
-			svf->seek(currlen, SEEK_CUR);		// Skip chunk
 			break;
 		}
 
-		if (skip)
-			svf->skip(1);						// Skip pad byte
+		delete s;
 	}
 
 	// We've reached the end of the file. For the restoration to have been a
