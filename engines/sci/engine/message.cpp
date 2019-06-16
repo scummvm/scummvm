@@ -245,7 +245,7 @@ bool MessageState::getRecord(CursorStack &stack, bool recurse, MessageRecord &re
 	} else if (workaround.type == MSG_WORKAROUND_FAKE) {
 		// return a fake message record hard-coded in the workaround.
 		//  this leaves the stack unchanged.
-		record.tuple = stack.top();
+		record.tuple = tuple;
 		record.refTuple = MessageTuple();
 		record.string = workaround.text;
 		record.length = strlen(workaround.text);
@@ -262,7 +262,7 @@ bool MessageState::getRecord(CursorStack &stack, bool recurse, MessageRecord &re
 		if (reader->findRecord(textTuple, textRecord)) {
 			uint32 textLength = (workaround.substringLength == 0) ? textRecord.length : workaround.substringLength;
 			if (workaround.substringIndex + textLength <= textRecord.length) {
-				record.tuple = stack.top();
+				record.tuple = tuple;
 				record.refTuple = MessageTuple();
 				record.string = textRecord.string + workaround.substringIndex;
 				record.length = textLength;
@@ -274,9 +274,9 @@ bool MessageState::getRecord(CursorStack &stack, bool recurse, MessageRecord &re
 	}
 
 	while (1) {
-		tuple = stack.top();
+		MessageTuple &t = stack.top();
 
-		if (!reader->findRecord(tuple, record)) {
+		if (!reader->findRecord(t, record)) {
 			// Tuple not found
 			if (recurse && (stack.size() > 1)) {
 				stack.pop();
@@ -291,7 +291,7 @@ bool MessageState::getRecord(CursorStack &stack, bool recurse, MessageRecord &re
 			MessageTuple &ref = record.refTuple;
 
 			if (ref.noun || ref.verb || ref.cond) {
-				tuple.seq++;
+				t.seq++;
 				stack.push(ref);
 				continue;
 			}
