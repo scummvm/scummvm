@@ -139,6 +139,7 @@ protected:
 	virtual bool handleMouseButtonDown(SDL_Event &ev, Common::Event &event);
 	virtual bool handleMouseButtonUp(SDL_Event &ev, Common::Event &event);
 	virtual bool handleSysWMEvent(SDL_Event &ev, Common::Event &event);
+	virtual int mapSDLJoystickButtonToOSystem(Uint8 sdlButton);
 	virtual bool handleJoyButtonDown(SDL_Event &ev, Common::Event &event);
 	virtual bool handleJoyButtonUp(SDL_Event &ev, Common::Event &event);
 	virtual bool handleJoyAxisMotion(SDL_Event &ev, Common::Event &event);
@@ -148,9 +149,12 @@ protected:
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	virtual bool handleJoystickAdded(const SDL_JoyDeviceEvent &event);
 	virtual bool handleJoystickRemoved(const SDL_JoyDeviceEvent &device);
+	virtual int mapSDLControllerButtonToOSystem(Uint8 sdlButton);
 	virtual bool handleControllerButton(const SDL_Event &ev, Common::Event &event, bool buttonUp);
 	virtual bool handleControllerAxisMotion(const SDL_Event &ev, Common::Event &event);
 #endif
+
+	bool shouldGenerateMouseEvents();
 
 	//@}
 

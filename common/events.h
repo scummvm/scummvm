@@ -86,7 +86,52 @@ enum EventType {
 	EVENT_VIRTUAL_KEYBOARD = 20,
 #endif
 
-	EVENT_DROP_FILE = 23
+	EVENT_DROP_FILE = 23,
+
+	EVENT_JOYAXIS_MOTION = 24,
+	EVENT_JOYBUTTON_DOWN = 25,
+	EVENT_JOYBUTTON_UP = 26
+};
+
+const int16 JOYAXIS_MIN = -32768;
+const int16 JOYAXIS_MAX = 32767;
+
+/**
+ * Data structure for joystick events
+ */
+struct JoystickState {
+	/** The axis for EVENT_JOYAXIS_MOTION events */
+	byte axis;
+	/** The new axis position for EVENT_JOYAXIS_MOTION events */
+	int16 position;
+	/**
+	 * The button index for EVENT_JOYBUTTON_DOWN/UP events
+	 *
+	 * Some of the button indices match well-known game controller
+	 * buttons. See JoystickButton.
+	 */
+	byte button;
+};
+
+/**
+ *  The list named buttons available from a joystick
+ */
+enum JoystickButton {
+	JOYSTICK_BUTTON_A,
+	JOYSTICK_BUTTON_B,
+	JOYSTICK_BUTTON_X,
+	JOYSTICK_BUTTON_Y,
+	JOYSTICK_BUTTON_BACK,
+	JOYSTICK_BUTTON_GUIDE,
+	JOYSTICK_BUTTON_START,
+	JOYSTICK_BUTTON_LEFT_STICK,
+	JOYSTICK_BUTTON_RIGHT_STICK,
+	JOYSTICK_BUTTON_LEFT_SHOULDER,
+	JOYSTICK_BUTTON_RIGHT_SHOULDER,
+	JOYSTICK_BUTTON_DPAD_UP,
+	JOYSTICK_BUTTON_DPAD_DOWN,
+	JOYSTICK_BUTTON_DPAD_LEFT,
+	JOYSTICK_BUTTON_DPAD_RIGHT
 };
 
 typedef uint32 CustomEventType;
@@ -129,6 +174,12 @@ struct Event {
 
 	/* The path of the file or directory dragged to the ScummVM window */
 	Common::String path;
+
+	/**
+	 * Joystick data; only valid for joystick events (EVENT_JOYAXIS_MOTION,
+	 * EVENT_JOYBUTTON_DOWN and EVENT_JOYBUTTON_UP).
+	 */
+	JoystickState joystick;
 
 	Event() : type(EVENT_INVALID), kbdRepeat(false) {
 #ifdef ENABLE_KEYMAPPER
