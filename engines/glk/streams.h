@@ -66,23 +66,6 @@ struct StreamResult {
 };
 typedef StreamResult stream_result_t;
 
-struct SavegameHeader {
-	uint8 _version;
-	byte _interpType;
-	byte _language;
-	Common::String _md5;
-	Common::String _saveName;
-	int _year, _month, _day;
-	int _hour, _minute;
-	int _totalFrames;
-
-	/**
-	 * Constructor
-	 */
-	SavegameHeader() : _version(0), _interpType(0), _language(0), _year(0), _month(0), _day(0),
-		_hour(0), _minute(0), _totalFrames(0) {}
-};
-
 /**
  * File details
  */
@@ -474,16 +457,6 @@ private:
 	 * Get a UTF8 character
 	 */
 	int getCharUtf8();
-public:
-	/**
-	 * Read a savegame header from a stream
-	 */
-	static bool readSavegameHeader(Common::SeekableReadStream *stream, SavegameHeader &header);
-
-	/**
-	 * Write out a savegame header
-	 */
-	static void writeSavegameHeader(Common::WriteStream *stream, const Common::String &saveName);
 public:
 	/**
 	 * Constructor

@@ -785,10 +785,6 @@ FileStream::FileStream(Streams *streams, frefid_t fref, uint fmode, uint rock, b
 		if (!_outFile)
 			error("Could open file for writing - %s", fname.c_str());
 
-		// For creating savegames, write out the header. Frotz is a special case,
-		// since the Quetzal format is used for compatibility
-		if (fref->_slotNumber != -1 && g_vm->getInterpreterType() != INTERPRETER_FROTZ)
-			writeSavegameHeader(_outFile, fref->_description);
 	} else if (fmode == filemode_Read) {
 		if (_file.open(fname)) {
 			_inStream = &_file;
@@ -799,23 +795,6 @@ FileStream::FileStream(Streams *streams, frefid_t fref, uint fmode, uint rock, b
 
 		if (!_inStream)
 			error("Could not open for reading - %s", fname.c_str());
-
-		if (_inFile) {
-			// It's a save file, so skip over the header
-			SavegameHeader header;
-			if (!(g_vm->getInterpreterType() == INTERPRETER_FROTZ ?
-					Frotz::FrotzMetaEngine::readSavegameHeader(_inStream, header) :
-					readSavegameHeader(_inStream, header)))
-				error("Invalid savegame");
-
-			if (g_vm->getInterpreterType() != INTERPRETER_FROTZ) {
-				if (header._interpType != g_vm->getInterpreterType() || header._language != g_vm->getLanguage()
-						|| header._md5 != g_vm->getGameMD5())
-					error("Savegame is for a different game");
-
-				g_vm->_events->setTotalPlayTicks(header._totalFrames);
-			}
-		}
 	}
 }
 
@@ -1357,73 +1336,6 @@ uint FileStream::getLineUni(uint32 *ubuf, uint len) {
 		ubuf[lx] = '\0';
 		return lx;
 	}
-}
-
-static Common::String readString(Common::ReadStream *src) {
-	char c;
-	Common::String result;
-	while ((c = src->readByte()) != 0)
-		result += c;
-
-	return result;
-}
-
-bool FileStream::readSavegameHeader(Common::SeekableReadStream *stream, SavegameHeader &header) {
-	header._totalFrames = 0;
-
-	// Validate the header Id
-	if (stream->readUint32BE() != MKTAG('G', 'A', 'R', 'G'))
-		return false;
-
-	// Check the savegame version
-	header._version = stream->readByte();
-	if (header._version > SAVEGAME_VERSION)
-		error("Savegame is too recent");
-
-	// Read the interpreter, language, and game Id
-	header._interpType = stream->readByte();
-	header._language = stream->readByte();
-	header._md5 = readString(stream);
-
-	// Read in name
-	header._saveName = readString(stream);
-
-	// Read in save date/time
-	header._year = stream->readUint16LE();
-	header._month = stream->readUint16LE();
-	header._day = stream->readUint16LE();
-	header._hour = stream->readUint16LE();
-	header._minute = stream->readUint16LE();
-	header._totalFrames = stream->readUint32LE();
-
-	return true;
-}
-
-void FileStream::writeSavegameHeader(Common::WriteStream *stream, const Common::String &saveName) {
-	// Write out a savegame header
-	stream->writeUint32BE(MKTAG('G', 'A', 'R', 'G'));
-	stream->writeByte(SAVEGAME_VERSION);
-
-	// Write out intrepreter type, language, and game Id
-	stream->writeByte(g_vm->getInterpreterType());
-	stream->writeByte(g_vm->getLanguage());
-	Common::String md5 = g_vm->getGameMD5();
-	stream->write(md5.c_str(), md5.size());
-	stream->writeByte('\0');
-
-	// Write savegame name
-	stream->write(saveName.c_str(), saveName.size());
-	stream->writeByte('\0');
-
-	// Write out the save date/time
-	TimeDate td;
-	g_system->getTimeAndDate(td);
-	stream->writeUint16LE(td.tm_year + 1900);
-	stream->writeUint16LE(td.tm_mon + 1);
-	stream->writeUint16LE(td.tm_mday);
-	stream->writeUint16LE(td.tm_hour);
-	stream->writeUint16LE(td.tm_min);
-	stream->writeUint32LE(g_vm->_events->getTotalPlayTicks());
 }
 
 /*--------------------------------------------------------------------------*/

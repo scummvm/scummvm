@@ -22,6 +22,7 @@
 
 #include "glk/glk.h"
 #include "glk/detection.h"
+#include "glk/quetzal.h"
 #include "glk/advsys/detection.h"
 #include "glk/advsys/advsys.h"
 #include "glk/alan2/detection.h"
@@ -242,7 +243,6 @@ SaveStateList GlkMetaEngine::listSaves(const char *target) const {
 	Common::StringArray filenames;
 	Common::String saveDesc;
 	Common::String pattern = Common::String::format("%s.0##", target);
-	Glk::SavegameHeader header;
 
 	filenames = saveFileMan->listSavefiles(pattern);
 
@@ -255,10 +255,9 @@ SaveStateList GlkMetaEngine::listSaves(const char *target) const {
 			Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(*file);
 
 			if (in) {
-				if (Glk::FileStream::readSavegameHeader(in, header))
-					saveList.push_back(SaveStateDescriptor(slot, header._saveName));
-				else if (Glk::Frotz::FrotzMetaEngine::readSavegameHeader(in, header))
-					saveList.push_back(SaveStateDescriptor(slot, header._saveName));
+				Common::String saveName;
+				if (Glk::QuetzalReader::getSavegameDescription(in, saveName))
+					saveList.push_back(SaveStateDescriptor(slot, saveName));
 
 				delete in;
 			}
@@ -282,20 +281,17 @@ void GlkMetaEngine::removeSaveState(const char *target, int slot) const {
 SaveStateDescriptor GlkMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
 	Common::String filename = Common::String::format("%s.%03d", target, slot);
 	Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(filename);
+	SaveStateDescriptor ssd;
+	bool result = false;
 
 	if (in) {
-		Glk::SavegameHeader header;
-		if (Glk::FileStream::readSavegameHeader(in, header)) {
-			// Create the return descriptor
-			SaveStateDescriptor desc(slot, header._saveName);
-			desc.setSaveDate(header._year, header._month, header._day);
-			desc.setSaveTime(header._hour, header._minute);
-			desc.setPlayTime(header._totalFrames * GAME_FRAME_TIME);
-
-			delete in;
-			return desc;
-		}
+		result = Glk::QuetzalReader::getSavegameMetaInfo(in, ssd);
+		ssd.setSaveSlot(slot);
+		delete in;
 	}
+
+	if (result)
+		return ssd;
 
 	return SaveStateDescriptor();
 }

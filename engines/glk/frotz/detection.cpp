@@ -159,40 +159,5 @@ void FrotzMetaEngine::detectClashes(Common::StringMap &map) {
 	}
 }
 
-bool FrotzMetaEngine::readSavegameHeader(Common::SeekableReadStream *stream, Glk::SavegameHeader &header) {
-	stream->seek(0);
-	if (stream->readUint32BE() != ID_FORM)
-		return false;
-	stream->readUint32BE();
-	if (stream->readUint32BE() != ID_IFZS)
-		return false;
-
-	header._interpType = INTERPRETER_FROTZ;
-	header._saveName = _("Unnamed savegame");
-
-	while (stream->pos() < stream->size()) {
-		uint type = stream->readUint32BE();
-		size_t len = stream->readUint32BE();
-
-		if (type == ID_ANNO) {
-			// Read savegame name from the annotation chunk
-			char *buffer = new char[len + 1];
-			stream->read(buffer, len);
-			buffer[len] = '\0';
-			header._saveName = Common::String(buffer);
-			break;
-
-		} else {
-			if (len & 1)
-				// Length must be even
-				++len;
-			stream->skip(len);
-		}
-	}
-
-	stream->seek(0);
-	return true;
-}
-
 } // End of namespace Frotz
 } // End of namespace Glk

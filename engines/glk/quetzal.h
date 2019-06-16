@@ -27,6 +27,7 @@
 #include "common/endian.h"
 #include "common/memstream.h"
 #include "common/stream.h"
+#include "engines/savestate.h"
 #include "glk/blorb.h"
 
 namespace Glk {
@@ -121,7 +122,7 @@ public:
 	/**
 	 * Opens a Quetzal file for access
 	 */
-	bool open(Common::SeekableReadStream *stream, uint32 formType = ID_IFSF);
+	bool open(Common::SeekableReadStream *stream, uint32 formType = 0);
 
 	/**
 	 * Return an iterator for the beginning of the chunks list
@@ -132,6 +133,16 @@ public:
 	 * Return an iterator for the beginning of the chunks list
 	 */
 	Iterator end() { return Iterator(_stream, _chunks, _chunks.size()); }
+
+	/**
+	 * Loads a Quetzal save and extracts it's description from an ANNO chunk
+	 */
+	static bool getSavegameDescription(Common::SeekableReadStream *rs, Common::String &saveName);
+
+	/**
+	 * Loads a Quetzal save and extract's it's description and meta info
+	 */
+	static bool getSavegameMetaInfo(Common::SeekableReadStream *rs, SaveStateDescriptor &ssd);
 };
 
 /**

@@ -1,4 +1,5 @@
 engines/glk/glk_api.cpp
+engines/glk/quetzal.cpp
 engines/glk/streams.cpp
 engines/glk/advsys/advsys.cpp
 engines/glk/advsys/vm.cpp

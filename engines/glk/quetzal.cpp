@@ -25,8 +25,18 @@
 #include "glk/events.h"
 #include "common/memstream.h"
 #include "common/system.h"
+#include "common/translation.h"
 
 namespace Glk {
+
+static Common::String readString(Common::ReadStream *src) {
+	char c;
+	Common::String result;
+	while ((c = src->readByte()) != 0)
+		result += c;
+
+	return result;
+}
 
 void QuetzalReader::clear() {
 	_chunks.clear();
@@ -44,8 +54,12 @@ bool QuetzalReader::open(Common::SeekableReadStream *stream, uint32 formType) {
 	uint32 size = stream->readUint32BE();
 	uint32 fileFormType = stream->readUint32BE();
 
-	if (formType != ID_IFSF && fileFormType != formType)
+	if (formType != ID_IFSF)
 		return false;
+	if ((formType != 0 && fileFormType != formType) ||
+		(formType == 0 && (fileFormType == ID_IFZS || fileFormType == ID_IFSF)))
+		return false;
+
 	if ((int)size > stream->size() || (size & 1) || (size < 4))
 		return false;
 	size -= 4;
@@ -70,6 +84,58 @@ bool QuetzalReader::open(Common::SeekableReadStream *stream, uint32 formType) {
 
 		size -= 8 + chunkRemainder;
 		stream->skip(chunkRemainder);
+	}
+
+	return true;
+}
+
+bool QuetzalReader::getSavegameDescription(Common::SeekableReadStream *rs, Common::String &saveName) {
+	QuetzalReader r;
+	if (!r.open(rs, 0))
+		return false;
+
+	for (Iterator it = r.begin(); it != r.end(); ++it) {
+		if ((*it)._id == ID_ANNO) {
+			Common::SeekableReadStream *s = it.getStream();
+			saveName = readString(s);
+			delete s;
+
+			return true;
+		}
+	}
+
+	saveName = _("Untitled Savegame");
+	return true;
+}
+
+bool QuetzalReader::getSavegameMetaInfo(Common::SeekableReadStream *rs, SaveStateDescriptor &ssd) {
+	QuetzalReader r;
+	if (!r.open(rs, 0))
+		return false;
+
+	ssd.setDescription(_("Untitled Savegame"));
+
+	for (Iterator it = r.begin(); it != r.end(); ++it) {
+		if ((*it)._id == ID_ANNO) {
+			Common::SeekableReadStream *s = it.getStream();
+			ssd.setDescription(readString(s));
+			delete s;
+
+			return true;
+		} else if ((*it)._id == ID_SCVM) {
+			Common::SeekableReadStream *s = it.getStream();
+			int year = s->readUint16BE();
+			int month = s->readUint16BE();
+			int day = s->readUint16BE();
+			int hour = s->readUint16BE();
+			int minute = s->readUint16BE();
+			uint32 playTime = s->readUint32BE();
+			delete s;
+
+			ssd.setSaveDate(year, month, day);
+			ssd.setSaveTime(hour, minute);
+			ssd.setPlayTime(playTime);
+		}
 	}
 
 	return true;
@@ -122,19 +188,26 @@ void QuetzalWriter::addCommonChunks(const Common::String &saveName) {
 		ws.writeByte(0);
 	}
 
-	// Write 'SCVM' chunk with gameplay statistics
+	// Write 'SCVM' chunk with game version & gameplay statistics
 	{
 		Common::WriteStream &ws = add(ID_SCVM);
 
 		// Write out the save date/time
 		TimeDate td;
 		g_system->getTimeAndDate(td);
-		ws.writeSint16LE(td.tm_year + 1900);
-		ws.writeSint16LE(td.tm_mon + 1);
-		ws.writeSint16LE(td.tm_mday);
-		ws.writeSint16LE(td.tm_hour);
-		ws.writeSint16LE(td.tm_min);
-		ws.writeUint32LE(g_vm->_events->getTotalPlayTicks());
+		ws.writeSint16BE(td.tm_year + 1900);
+		ws.writeSint16BE(td.tm_mon + 1);
+		ws.writeSint16BE(td.tm_mday);
+		ws.writeSint16BE(td.tm_hour);
+		ws.writeSint16BE(td.tm_min);
+		ws.writeUint32BE(g_vm->_events->getTotalPlayTicks());
+
+		// Write out intrepreter type, language, and game Id
+		ws.writeByte(g_vm->getInterpreterType());
+		ws.writeByte(g_vm->getLanguage());
+		Common::String md5 = g_vm->getGameMD5();
+		ws.write(md5.c_str(), md5.size());
+		ws.writeByte('\0');
 	}
 }
 
