@@ -25,6 +25,11 @@
 
 namespace Glk {
 
+void QuetzalReader::clear() {
+	_chunks.clear();
+	_stream = nullptr;
+}
+
 bool QuetzalReader::open(Common::SeekableReadStream *stream, uint32 formType) {
 	_chunks.clear();
 	stream->seek(0);
@@ -74,7 +79,7 @@ Common::WriteStream &QuetzalWriter::add(uint32 chunkId) {
 			error("Duplicate chunk added");
 	}
 
-	_chunks.push_back(Chunk());
+	_chunks.push_back(Chunk(chunkId));
 	return _chunks.back()._stream;
 }
 
@@ -82,7 +87,7 @@ void QuetzalWriter::save(Common::WriteStream *out, uint32 formType) {
 	// Calculate the size of the chunks
 	uint size = 4;
 	for (uint idx = 0; idx < _chunks.size(); ++idx)
-		size += _chunks[idx]._stream.size();
+		size += 8 + _chunks[idx]._stream.size() + (_chunks[idx]._stream.size() & 1);
 
 	// Write out the header
 	out->writeUint32BE(ID_FORM);
@@ -92,10 +97,9 @@ void QuetzalWriter::save(Common::WriteStream *out, uint32 formType) {
 	// Loop through writing the chunks
 	for (uint idx = 0; idx < _chunks.size(); ++idx) {
 		Common::MemoryWriteStreamDynamic &s = _chunks[idx]._stream;
-		uint chunkSize = s.size() + (s.size() & 1);
 
 		out->writeUint32BE(_chunks[idx]._id);
-		out->writeUint32BE(chunkSize);
+		out->writeUint32BE(s.size());
 		out->write(s.getData(), s.size());
 		if (s.size() & 1)
 			out->writeByte(0);

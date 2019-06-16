@@ -35,19 +35,11 @@ class Processor;
 class Quetzal {
 private:
 	Common::SeekableReadStream *_storyFile;
-	Common::WriteStream *_out;
+	QuetzalReader _reader;
+	QuetzalWriter _writer;
 	zword frames[STACK_SIZE / 4 + 1];
+/*
 private:
-	/**
-	 * Read a 16-bit value from the file
-	 */
-	bool read_word(Common::ReadStream *f, zword *result);
-
-	/**
-	 * Read  32-bit value from the file
-	 */
-	bool read_long(Common::ReadStream *f, uint *result);
-
 	void write_byte(zbyte b) { _out->writeByte(b); }
 	void write_bytx(zword b) { _out->writeByte(b & 0xFF); }
 	void write_word(zword w) { _out->writeUint16BE(w); }
@@ -57,6 +49,7 @@ private:
 		_out->writeUint32BE(id);
 		_out->writeUint32BE(len);
 	}
+	*/
 public:
 	/**
 	 * Constructor

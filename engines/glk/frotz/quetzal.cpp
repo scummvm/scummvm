@@ -39,177 +39,138 @@ enum ParseState {
 	GOT_ERROR  = 0x80
 };
 
-
-bool Quetzal::read_word(Common::ReadStream *f, zword *result) {
-	*result = f->readUint16BE();
-	return true;
-}
-
-bool Quetzal::read_long(Common::ReadStream *f, uint *result) {
-	*result = f->readUint32BE();
-	return true;
-}
+#define WRITE_RUN(RUN) ws.writeByte(0); ws.writeByte((byte)(RUN))
 
 bool Quetzal::save(Common::WriteStream *svf, Processor *proc, const Common::String &desc) {
 	Processor &p = *proc;
-	uint ifzslen = 0, cmemlen = 0, stkslen = 0, descLen = 0;
 	offset_t pc;
 	zword i, j, n;
 	zword nvars, nargs, nstk;
 	zbyte var;
-	long cmempos, stkspos;
 	int c;
 
-	// Set a temporary memory stream for writing out the data. This is needed, since we need to
-	// do some seeking within it at the end to fill out totals before properly writing it all out
-	Common::MemoryWriteStreamDynamic saveData(DisposeAfterUse::YES);
-	_out = &saveData;
-
-	// Write `IFZS' header.
-	write_chnk(ID_FORM, 0);
-	write_long(ID_IFZS);
+	// Reset Quetzal writer
+	_writer.clear();
 
 	// Write `IFhd' chunk
-	pc = p.getPC();
-	write_chnk(ID_IFhd, 13);
-	write_word(p.h_release);
-	for (i = H_SERIAL; i<H_SERIAL + 6; ++i)
-		write_byte(p[i]);
+	{
+		Common::WriteStream &ws = _writer.add(ID_IFhd);
+		pc = p.getPC();
+		ws.writeUint16BE(p.h_release);
+		ws.write(&p[H_SERIAL], 6);
+		ws.writeUint16BE(p.h_checksum);
 
-	write_word(p.h_checksum);
-	write_long(pc << 8);		// Includes pad
+		ws.writeByte((pc >> 16) & 0xff);
+		ws.writeByte((pc >> 8) & 0xff);
+		ws.writeByte(pc & 0xff);
+	}
 
 	// Write 'ANNO' chunk
-	descLen = desc.size() + 1;
-	write_chnk(ID_ANNO, descLen);
-	saveData.write(desc.c_str(), desc.size());
-	write_byte(0);
-	if ((desc.size() % 2) == 0) {
-		write_byte(0);
-		++descLen;
+	{
+		Common::WriteStream &ws = _writer.add(ID_ANNO);
+		ws.write(desc.c_str(), desc.size());
+		ws.writeByte(0);
 	}
 
 	// Write `CMem' chunk.
-	cmempos = saveData.pos();
-	write_chnk(ID_CMem, 0);
-	_storyFile->seek(0);
+	{
+		Common::WriteStream &ws = _writer.add(ID_CMem);
+		_storyFile->seek(0);
 
-	// j holds current run length.
-	for (i = 0, j = 0, cmemlen = 0; i < p.h_dynamic_size; ++i) {
-		c = _storyFile->readByte();
-		c ^= p[i];
+		// j holds current run length.
+		for (i = 0, j = 0; i < p.h_dynamic_size; ++i) {
+			c = _storyFile->readByte();
+			c ^= p[i];
 
-		if (c == 0) {
-			// It's a run of equal bytes
-			++j;
-		} else {
-			// Write out any run there may be.
-			if (j > 0) {
-				for (; j > 0x100; j -= 0x100) {
-					write_run(0xFF);
-					cmemlen += 2;
-				}
-				write_run(j - 1);
-				cmemlen += 2;
-				j = 0;
+			if (c == 0) {
+				// It's a run of equal bytes
+				++j;
 			}
+			else {
+				// Write out any run there may be.
+				if (j > 0) {
+					for (; j > 0x100; j -= 0x100) {
+						WRITE_RUN(0xFF);
+					}
+					WRITE_RUN(j - 1);
+					j = 0;
+				}
 
-			// Any runs are now written. Write this (nonzero) byte
-			write_byte((zbyte)c);
-			++cmemlen;
+				// Any runs are now written. Write this (nonzero) byte
+				ws.writeByte(c);
+			}
 		}
 	}
-
-	// Reached end of dynamic memory. We ignore any unwritten run there may be at this point.
-	if (cmemlen & 1)
-		// Chunk length must be even.
-		write_byte(0);
 
 	// Write `Stks' chunk. You are not expected to understand this. ;)
-	stkspos = saveData.pos();
-	write_chnk(ID_Stks, 0);
+	{
+		Common::WriteStream &ws = _writer.add(ID_Stks);
 
-	// We construct a list of frame indices, most recent first, in `frames'.
-	// These indices are the offsets into the `stack' array of the word before
-	// the first word pushed in each frame.
-	frames[0] = p._sp - p._stack;	// The frame we'd get by doing a call now.
-	for (i = p._fp - p._stack + 4, n = 0; i < STACK_SIZE + 4; i = p._stack[i - 3] + 5)
-		frames[++n] = i;
+		// We construct a list of frame indices, most recent first, in `frames'.
+		// These indices are the offsets into the `stack' array of the word before
+		// the first word pushed in each frame.
+		frames[0] = p._sp - p._stack;	// The frame we'd get by doing a call now.
+		for (i = p._fp - p._stack + 4, n = 0; i < STACK_SIZE + 4; i = p._stack[i - 3] + 5)
+			frames[++n] = i;
 
-	// All versions other than V6 can use evaluation stack outside a function
-	// context. We write a faked stack frame (most fields zero) to cater for this.
-	if (p.h_version != V6) {
-		for (i = 0; i < 6; ++i)
-			write_byte(0);
-		nstk = STACK_SIZE - frames[n];
-		write_word(nstk);
-		for (j = STACK_SIZE - 1; j >= frames[n]; --j)
-			write_word(p._stack[j]);
-		stkslen = 8 + 2 * nstk;
-	}
-
-	// Write out the rest of the stack frames.
-	for (i = n; i > 0; --i) {
-		zword *pf = p._stack + frames[i] - 4;	// Points to call frame
-		nvars = (pf[0] & 0x0F00) >> 8;
-		nargs = pf[0] & 0x00FF;
-		nstk = frames[i] - frames[i - 1] - nvars - 4;
-		pc = ((uint)pf[3] << 9) | pf[2];
-
-		// Check type of call
-		switch (pf[0] & 0xF000)	{
-		case 0x0000:
-			// Function
-			var = p[pc];
-			pc = ((pc + 1) << 8) | nvars;
-			break;
-
-		case 0x1000:
-			// Procedure
-			var = 0;
-			pc = (pc << 8) | 0x10 | nvars;	// Set procedure flag
-			break;
-
-		default:
-			p.runtimeError(ERR_SAVE_IN_INTER);
-			return 0;
+		// All versions other than V6 can use evaluation stack outside a function
+		// context. We write a faked stack frame (most fields zero) to cater for this.
+		if (p.h_version != V6) {
+			for (i = 0; i < 6; ++i)
+				ws.writeByte(0);
+			nstk = STACK_SIZE - frames[n];
+			ws.writeUint16BE(nstk);
+			for (j = STACK_SIZE - 1; j >= frames[n]; --j)
+				ws.writeUint16BE(p._stack[j]);
 		}
-		if (nargs != 0)
-			nargs = (1 << nargs) - 1;	// Make args into bitmap
 
-		// Write the main part of the frame...
-		write_long(pc);
-		write_byte(var);
-		write_byte(nargs);
-		write_word(nstk);
+		// Write out the rest of the stack frames.
+		for (i = n; i > 0; --i) {
+			zword *pf = p._stack + frames[i] - 4;	// Points to call frame
+			nvars = (pf[0] & 0x0F00) >> 8;
+			nargs = pf[0] & 0x00FF;
+			nstk = frames[i] - frames[i - 1] - nvars - 4;
+			pc = ((uint)pf[3] << 9) | pf[2];
 
-		// Write the variables and eval stack
-		for (j = 0, --pf; j<nvars + nstk; ++j, --pf)
-			write_word(*pf);
+			// Check type of call
+			switch (pf[0] & 0xF000) {
+			case 0x0000:
+				// Function
+				var = p[pc];
+				pc = ((pc + 1) << 8) | nvars;
+				break;
 
-		// Calculate length written thus far
-		stkslen += 8 + 2 * (nvars + nstk);
+			case 0x1000:
+				// Procedure
+				var = 0;
+				pc = (pc << 8) | 0x10 | nvars;	// Set procedure flag
+				break;
+
+			default:
+				p.runtimeError(ERR_SAVE_IN_INTER);
+				return 0;
+			}
+			if (nargs != 0)
+				nargs = (1 << nargs) - 1;	// Make args into bitmap
+
+			// Write the main part of the frame...
+			ws.writeUint32BE(pc);
+			ws.writeByte(var);
+			ws.writeByte(nargs);
+			ws.writeUint16BE(nstk);
+
+			// Write the variables and eval stack
+			for (j = 0, --pf; j<nvars + nstk; ++j, --pf)
+				ws.writeUint16BE(*pf);
+		}
 	}
-
-	// Fill in variable chunk lengths
-	ifzslen = 4 * 8 + 4 + 14 + cmemlen + stkslen + descLen;
-	if (cmemlen & 1)
-		++ifzslen;
-
-	saveData.seek(4);
-	saveData.writeUint32BE(ifzslen);
-	saveData.seek(cmempos + 4);
-	saveData.writeUint32BE(cmemlen);
-	saveData.seek(stkspos + 4);
-	saveData.writeUint32BE(stkslen);
 
 	// Write the save data out
-	svf->write(saveData.getData(), saveData.size());
+	_writer.save(svf, ID_IFZS);
 
 	// After all that, still nothing went wrong!
 	return true;
 }
-
 
 int Quetzal::restore(Common::SeekableReadStream *svf, Processor *proc) {
 	Processor &p = *proc;

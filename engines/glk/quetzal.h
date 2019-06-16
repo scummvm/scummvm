@@ -94,6 +94,11 @@ public:
 	QuetzalReader() : _stream(nullptr) {}
 
 	/**
+	 * Clear
+	 */
+	void clear();
+
+	/**
 	 * Opens a Quetzal file for access
 	 */
 	bool open(Common::SeekableReadStream *stream, uint32 formType = ID_IFSF);
@@ -124,10 +129,20 @@ class QuetzalWriter {
 		 * Constructor
 		 */
 		Chunk() : _id(0), _stream(DisposeAfterUse::YES) {}
+
+		/**
+		 * Constructor
+		 */
+		Chunk(uint32 id) : _id(id), _stream(DisposeAfterUse::YES) {}
 	};
 private:
 	Common::Array<Chunk> _chunks;
 public:
+	/**
+	 * Clear
+	 */
+	void clear() { _chunks.clear(); }
+
 	/**
 	 * Add a chunk
 	 */
