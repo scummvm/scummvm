@@ -103,6 +103,9 @@ bool AdvSys::singleAction() {
 }
 
 Common::Error AdvSys::readSaveData(Common::SeekableReadStream *rs) {
+	if ((int)rs->size() != _saveSize)
+		return Common::kReadingFailed;
+
 	rs->read(_saveArea, rs->size());
 	return Common::kNoError;
 }

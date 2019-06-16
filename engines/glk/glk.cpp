@@ -190,11 +190,21 @@ Common::Error GlkEngine::loadGameState(int slot) {
 		// so if present we can validate the save is for this game
 		for (QuetzalReader::Iterator it = r.begin(); it != r.end(); ++it) {
 			if ((*it)._id == ID_SCVM) {
+				// Skip over date/time & playtime
+				Common::SeekableReadStream *rs = it.getStream();
+				rs->skip(14);
 
+				byte interpType = rs->readByte();
+				byte language = rs->readByte();
+				Common::String md5 = QuetzalReader::readString(rs);
+				delete rs;
+
+				if (interpType != getInterpreterType() || language != getLanguage() || md5 != getGameMD5())
+					errCode = Common::kReadingFailed;
 			}
 		}
 
-		if (errCode != Common::kNoError) {
+		if (errCode == Common::kNoError) {
 			// Scan for an uncompressed memory chunk
 			errCode = Common::kReadingFailed;		// Presume we won't find chunk
 			for (QuetzalReader::Iterator it = r.begin(); it != r.end(); ++it) {
@@ -202,6 +212,7 @@ Common::Error GlkEngine::loadGameState(int slot) {
 					Common::SeekableReadStream *rs = it.getStream();
 					errCode = readSaveData(rs).getCode();
 					delete rs;
+					break;
 				}
 			}
 		}
@@ -228,7 +239,7 @@ Common::Error GlkEngine::saveGameState(int slot, const Common::String &desc) {
 		errCode = writeGameData(&ws).getCode();
 	}
 
-	if (errCode != Common::kNoError) {
+	if (errCode == Common::kNoError) {
 		w.save(*file, desc);
 	}
 

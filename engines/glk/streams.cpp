@@ -781,7 +781,7 @@ FileStream::FileStream(Streams *streams, frefid_t fref, uint fmode, uint rock, b
 	Common::String fname = fref->_slotNumber == -1 ? fref->_filename : fref->getSaveName();
 
 	if (fmode == filemode_Write || fmode == filemode_ReadWrite || fmode == filemode_WriteAppend) {
-		_outFile = g_system->getSavefileManager()->openForSaving(fname, fref->_slotNumber != -1 && g_vm->getInterpreterType() != INTERPRETER_FROTZ);
+		_outFile = g_system->getSavefileManager()->openForSaving(fname, false);
 		if (!_outFile)
 			error("Could open file for writing - %s", fname.c_str());
 

@@ -45,10 +45,8 @@ bool QuetzalReader::open(Common::SeekableReadStream *stream, uint32 formType) {
 	uint32 size = stream->readUint32BE();
 	uint32 fileFormType = stream->readUint32BE();
 
-	if (formType != ID_IFSF)
-		return false;
 	if ((formType != 0 && fileFormType != formType) ||
-		(formType == 0 && (fileFormType == ID_IFZS || fileFormType == ID_IFSF)))
+		(formType == 0 && fileFormType != ID_IFZS && fileFormType != ID_IFSF))
 		return false;
 
 	if ((int)size > stream->size() || (size & 1) || (size < 4))
@@ -112,7 +110,6 @@ bool QuetzalReader::getSavegameMetaInfo(Common::SeekableReadStream *rs, SaveStat
 			ssd.setDescription(readString(s));
 			delete s;
 
-			return true;
 		} else if ((*it)._id == ID_SCVM) {
 			Common::SeekableReadStream *s = it.getStream();
 			int year = s->readUint16BE();
