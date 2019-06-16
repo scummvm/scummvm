@@ -681,12 +681,20 @@ PerformJump: /* goto label for successful jumping... ironic, no? */
 
 			case op_save:
 				push_callstub(inst[1].desttype, inst[1].value);
+#ifdef TODO
 				value = saveGameData(find_stream_by_id(inst[0].value), "Savegame").getCode() == Common::kNoError ? 0 : 1;
+#else
+				error("TODO");
+#endif
 				pop_callstub(value);
 				break;
 
 			case op_restore:
+#ifdef TODO
 				value = loadGameData(find_stream_by_id(inst[0].value)).getCode() == Common::kNoError ? 0 : 1;
+#else
+				error("TODO");
+#endif
 				if (value == 0) {
 					/* We've succeeded, and the stack now contains the callstub
 					   saved during saveundo. Ignore this opcode's operand. */

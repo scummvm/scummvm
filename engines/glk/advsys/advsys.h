@@ -67,14 +67,15 @@ public:
 	}
 
 	/**
-	 * Load a savegame from the passed stream
+	 * Load a savegame from the passed Quetzal file chunk stream
 	 */
-	virtual Common::Error loadGameData(strid_t save) override;
+	virtual Common::Error readSaveData(Common::SeekableReadStream *rs) override;
 
 	/**
-	 * Save the game to the passed stream
+	 * Save the game. The passed write stream represents access to the UMem chunk
+	 * in the Quetzal save file that will be created
 	 */
-	virtual Common::Error saveGameData(strid_t save, const Common::String &desc) override;
+	virtual Common::Error writeGameData(Common::WriteStream *ws) override;
 };
 
 } // End of namespace AdvSys

@@ -152,7 +152,7 @@ void Hugo::runGame() {
 	hugo_closefiles();
 }
 
-Common::Error Hugo::loadGameData(strid_t save) {
+Common::Error Hugo::readSaveData(Common::SeekableReadStream *rs) {
 	char testid[3], testserial[9];
 	int lbyte, hbyte;
 	int j;
@@ -160,18 +160,18 @@ Common::Error Hugo::loadGameData(strid_t save) {
 	long i;
 
 	/* Check ID */
-	testid[0] = (char)hugo_fgetc(save);
-	testid[1] = (char)hugo_fgetc(save);
+	testid[0] = (char)hugo_fgetc(rs);
+	testid[1] = (char)hugo_fgetc(rs);
 	testid[2] = '\0';
-	if (hugo_ferror(save)) goto RestoreError;
+	if (hugo_ferror(rs)) goto RestoreError;
 
 	if (strcmp(testid, id)) {
-		GUIErrorMessage("Incorrect save file.");
+		GUIErrorMessage("Incorrect rs file.");
 		goto RestoreError;
 	}
 
 	/* Check serial number */
-	if (!hugo_fgets(testserial, 9, save)) goto RestoreError;
+	if (!hugo_fgets(testserial, 9, rs)) goto RestoreError;
 	if (strcmp(testserial, serial))
 	{
 		GUIErrorMessage("Save file created by different version.");
@@ -181,7 +181,7 @@ Common::Error Hugo::loadGameData(strid_t save) {
 	/* Restore variables */
 	for (k=0; k<MAXGLOBALS+MAXLOCALS; k++)
 	{
-		if ((lbyte = hugo_fgetc(save))==EOF || (hbyte = hugo_fgetc(save))==EOF)
+		if ((lbyte = hugo_fgetc(rs))==EOF || (hbyte = hugo_fgetc(rs))==EOF)
 			goto RestoreError;
 		var[k] = lbyte + hbyte * 256;
 	}
@@ -193,11 +193,11 @@ Common::Error Hugo::loadGameData(strid_t save) {
 
 	while (i<codeend-(long)(objtable*16L))
 	{
-		if ((hbyte = hugo_fgetc(save))==EOF && hugo_ferror(save)) goto RestoreError;
+		if ((hbyte = hugo_fgetc(rs))==EOF && hugo_ferror(rs)) goto RestoreError;
 
 		if (hbyte==0)
 		{
-			if ((lbyte = hugo_fgetc(save))==EOF && hugo_ferror(save)) goto RestoreError;
+			if ((lbyte = hugo_fgetc(rs))==EOF && hugo_ferror(rs)) goto RestoreError;
 			SETMEM(objtable*16L+i, (unsigned char)lbyte);
 			i++;
 
@@ -217,28 +217,25 @@ Common::Error Hugo::loadGameData(strid_t save) {
 	}
 
 	/* Restore undo data */
-	if ((lbyte = hugo_fgetc(save))==EOF || (hbyte = hugo_fgetc(save))==EOF)
+	if ((lbyte = hugo_fgetc(rs))==EOF || (hbyte = hugo_fgetc(rs))==EOF)
 		goto RestoreError;
 	undosize = lbyte + hbyte*256;
 
 	/* We can only restore undo data if it was saved by a port with
 	   the same MAXUNDO as us */
-	if (undosize==MAXUNDO)
-	{
-		for (k=0; k<MAXUNDO; k++)
-		{
-			for (j=0; j<5; j++)
-			{
-				if ((lbyte = hugo_fgetc(save))==EOF || (hbyte = hugo_fgetc(save))==EOF)
+	if (undosize == MAXUNDO) {
+		for (k = 0; k < MAXUNDO; k++) {
+			for (j=0; j<5; j++) {
+				if ((lbyte = hugo_fgetc(rs))==EOF || (hbyte = hugo_fgetc(rs))==EOF)
 					goto RestoreError;
 				undostack[k][j] = lbyte + hbyte*256;
 			}
 		}
-		if ((lbyte = hugo_fgetc(save))==EOF || (hbyte = hugo_fgetc(save))==EOF) goto RestoreError;
+		if ((lbyte = hugo_fgetc(rs))==EOF || (hbyte = hugo_fgetc(rs))==EOF) goto RestoreError;
 		undoptr = lbyte + hbyte*256;
-		if ((lbyte = hugo_fgetc(save))==EOF || (hbyte = hugo_fgetc(save))==EOF) goto RestoreError;
+		if ((lbyte = hugo_fgetc(rs))==EOF || (hbyte = hugo_fgetc(rs))==EOF) goto RestoreError;
 		undoturn = lbyte + hbyte*256;
-		if ((lbyte = hugo_fgetc(save))==EOF || (hbyte = hugo_fgetc(save))==EOF) goto RestoreError;
+		if ((lbyte = hugo_fgetc(rs))==EOF || (hbyte = hugo_fgetc(rs))==EOF) goto RestoreError;
 		undoinvalid = (unsigned char)lbyte, undorecord = (unsigned char)hbyte;
 	}
 	else undoinvalid = true;
@@ -249,32 +246,31 @@ RestoreError:
 	return Common::kReadingFailed;
 }
 
-Common::Error Hugo::saveGameData(strid_t save, const Common::String &desc) {
+Common::Error Hugo::writeGameData(Common::WriteStream *ws) {
 	int c, j;
 	int lbyte, hbyte;
 	long i;
 	int samecount = 0;
 
 	/* Write ID */
-	if (hugo_fputc(id[0], save) == EOF || hugo_fputc(id[1], save) == EOF) goto SaveError;
+	if (hugo_fputc(id[0], ws) == EOF || hugo_fputc(id[1], ws) == EOF) goto SaveError;
 
 	/* Write serial number */
-	if (hugo_fputs(serial, save) == EOF) goto SaveError;
+	if (hugo_fputs(serial, ws) == EOF) goto SaveError;
 
 	/* Save variables */
 	for (c = 0; c<MAXGLOBALS + MAXLOCALS; c++)
 	{
 		hbyte = (unsigned int)var[c] / 256;
 		lbyte = (unsigned int)var[c] - hbyte * 256;
-		if (hugo_fputc(lbyte, save) == EOF || hugo_fputc(hbyte, save) == EOF) goto SaveError;
+		if (hugo_fputc(lbyte, ws) == EOF || hugo_fputc(hbyte, ws) == EOF) goto SaveError;
 	}
 
 	/* Save objtable to end of code space */
 
 	if (hugo_fseek(game, objtable * 16L, SEEK_SET)) goto SaveError;
 
-	for (i = 0; i <= codeend - (long)(objtable * 16L); i++)
-	{
+	for (i = 0; i <= codeend - (long)(objtable * 16L); i++) {
 		if ((lbyte = hugo_fgetc(game)) == EOF) goto SaveError;
 		hbyte = MEM(objtable * 16L + i);
 
@@ -282,45 +278,42 @@ Common::Error Hugo::saveGameData(strid_t save, const Common::String &desc) {
 		if (lbyte == hbyte && samecount<255) samecount++;
 
 		/* If memory differs (or samecount exceeds 1 byte) */
-		else
-		{
+		else {
 			if (samecount)
-				if (hugo_fputc(samecount, save) == EOF) goto SaveError;
+				if (hugo_fputc(samecount, ws) == EOF) goto SaveError;
 
 			if (lbyte != hbyte)
 			{
-				if (hugo_fputc(0, save) == EOF) goto SaveError;
-				if (hugo_fputc(hbyte, save) == EOF) goto SaveError;
+				if (hugo_fputc(0, ws) == EOF) goto SaveError;
+				if (hugo_fputc(hbyte, ws) == EOF) goto SaveError;
 				samecount = 0;
 			}
 			else samecount = 1;
 		}
 	}
 	if (samecount)
-		if (hugo_fputc(samecount, save) == EOF) goto SaveError;
+		if (hugo_fputc(samecount, ws) == EOF) goto SaveError;
 
 	/* Save undo data */
 
 	/* Save the number of turns in this port's undo stack */
 	hbyte = (unsigned int)MAXUNDO / 256;
 	lbyte = (unsigned int)MAXUNDO - hbyte * 256;
-	if (hugo_fputc(lbyte, save) == EOF || hugo_fputc(hbyte, save) == EOF)
+	if (hugo_fputc(lbyte, ws) == EOF || hugo_fputc(hbyte, ws) == EOF)
 		goto SaveError;
-	for (c = 0; c<MAXUNDO; c++)
-	{
-		for (j = 0; j<5; j++)
-		{
+	for (c = 0; c < MAXUNDO; c++) {
+		for (j = 0; j < 5; j++) {
 			hbyte = (unsigned int)undostack[c][j] / 256;
 			lbyte = (unsigned int)undostack[c][j] - hbyte * 256;
-			if (hugo_fputc(lbyte, save) == EOF || hugo_fputc(hbyte, save) == EOF)
+			if (hugo_fputc(lbyte, ws) == EOF || hugo_fputc(hbyte, ws) == EOF)
 				goto SaveError;
 		}
 	}
-	if (hugo_fputc(undoptr - (undoptr / 256) * 256, save) == EOF || hugo_fputc(undoptr / 256, save) == EOF)
+	if (hugo_fputc(undoptr - (undoptr / 256) * 256, ws) == EOF || hugo_fputc(undoptr / 256, ws) == EOF)
 		goto SaveError;
-	if (hugo_fputc(undoturn - (undoturn / 256) * 256, save) == EOF || hugo_fputc(undoturn / 256, save) == EOF)
+	if (hugo_fputc(undoturn - (undoturn / 256) * 256, ws) == EOF || hugo_fputc(undoturn / 256, ws) == EOF)
 		goto SaveError;
-	if (hugo_fputc(undoinvalid, save) == EOF || hugo_fputc(undorecord, save) == EOF)
+	if (hugo_fputc(undoinvalid, ws) == EOF || hugo_fputc(undorecord, ws) == EOF)
 		goto SaveError;
 
 	return Common::kNoError;

@@ -61,14 +61,14 @@ void Alan2::runGame() {
 	// TODO
 }
 
-Common::Error Alan2::loadGameData(strid_t file) {
+Common::Error Alan2::readSaveData(Common::SeekableReadStream *rs) {
 	// TODO
-	return Common::kNoError;
+	return Common::kReadingFailed;
 }
 
-Common::Error Alan2::saveGameData(strid_t file, const Common::String &desc) {
+Common::Error Alan2::writeGameData(Common::WriteStream *ws) {
 	// TODO
-	return Common::kNoError;
+	return Common::kWritingFailed;
 }
 
 bool Alan2::is_gamefile_valid() {

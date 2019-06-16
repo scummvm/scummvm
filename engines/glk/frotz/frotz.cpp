@@ -26,6 +26,7 @@
 #include "glk/frotz/quetzal.h"
 #include "engines/util.h"
 #include "common/config-manager.h"
+#include "common/translation.h"
 
 namespace Glk {
 namespace Frotz {
@@ -90,17 +91,13 @@ void Frotz::initialize() {
 	z_restart();
 }
 
-Common::Error Frotz::saveGameData(strid_t file, const Common::String &desc) {
-	Quetzal q(story_fp);
-	bool success = q.save(*file, this, desc);
+Common::Error Frotz::loadGameState(int slot) {
+	FileReference ref(slot, "", fileusage_SavedGame | fileusage_TextMode);
 
-	if (!success)
-		print_string("Error writing save file\n");
+	strid_t file = _streams->openFileStream(&ref, filemode_Read);
+	if (file == nullptr)
+		return Common::kReadingFailed;
 
-	return Common::kNoError;
-}
-
-Common::Error Frotz::loadGameData(strid_t file) {
 	Quetzal q(story_fp);
 	bool success = q.restore(*file, this) == 2;
 
@@ -123,13 +120,31 @@ Common::Error Frotz::loadGameData(strid_t file) {
 		 * seems to cover up most of the resulting badness.
 		 */
 		if (h_version > V3 && h_version != V6 && (h_screen_rows != old_screen_rows
-					|| h_screen_cols != old_screen_cols))
+			|| h_screen_cols != old_screen_cols))
 			erase_window(1);
 	} else {
-		error("Error reading save file");
+		error(_("Error reading save file"));
 	}
 
 	return Common::kNoError;
+}
+
+Common::Error Frotz::saveGameState(int slot, const Common::String &desc) {
+	Common::String msg;
+	FileReference ref(slot, desc, fileusage_BinaryMode | fileusage_SavedGame);
+
+	strid_t file = _streams->openFileStream(&ref, filemode_Write);
+	if (file == nullptr)
+		return Common::kWritingFailed;
+
+	Quetzal q(story_fp);
+	bool success = q.save(*file, this, desc);
+
+	if (!success)
+		print_string(_("Error writing save file\n"));
+
+	return Common::kNoError;
+
 }
 
 } // End of namespace Frotz

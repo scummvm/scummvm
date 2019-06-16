@@ -198,14 +198,15 @@ public:
 	virtual Common::Error saveGameState(int slot, const Common::String &desc) override;
 
 	/**
-	 * Load a savegame from the passed file
+	 * Load a savegame from the passed Quetzal file chunk stream
 	 */
-	virtual Common::Error loadGameData(strid_t file) = 0;
+	virtual Common::Error readSaveData(Common::SeekableReadStream *rs) = 0;
 
 	/**
-	 * Save the game to the passed file
+	 * Save the game. The passed write stream represents access to the UMem chunk
+	 * in the Quetzal save file that will be created
 	 */
-	virtual Common::Error saveGameData(strid_t file, const Common::String &desc) = 0;
+	virtual Common::Error writeGameData(Common::WriteStream *ws) = 0;
 
 	/**
 	 * Generate a beep

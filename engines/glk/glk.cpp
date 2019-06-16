@@ -33,6 +33,7 @@
 #include "glk/conf.h"
 #include "glk/events.h"
 #include "glk/picture.h"
+#include "glk/quetzal.h"
 #include "glk/screen.h"
 #include "glk/selection.h"
 #include "glk/sound.h"
@@ -182,10 +183,32 @@ Common::Error GlkEngine::loadGameState(int slot) {
 	if (file == nullptr)
 		return Common::kReadingFailed;
 
-	Common::Error result = loadGameData(file);
+	Common::ErrorCode errCode = Common::kNoError;
+	QuetzalReader r;
+	if (r.open(*file, ID_IFSF)) {
+		// First scan for a SCVM chunk. It has information of the game the save is for,
+		// so if present we can validate the save is for this game
+		for (QuetzalReader::Iterator it = r.begin(); it != r.end(); ++it) {
+			if ((*it)._id == ID_SCVM) {
+
+			}
+		}
+
+		if (errCode != Common::kNoError) {
+			// Scan for an uncompressed memory chunk
+			errCode = Common::kReadingFailed;		// Presume we won't find chunk
+			for (QuetzalReader::Iterator it = r.begin(); it != r.end(); ++it) {
+				if ((*it)._id == ID_UMem) {
+					Common::SeekableReadStream *rs = it.getStream();
+					errCode = readSaveData(rs).getCode();
+					delete rs;
+				}
+			}
+		}
+	}
 
 	file->close();
-	return result;
+	return errCode;
 }
 
 Common::Error GlkEngine::saveGameState(int slot, const Common::String &desc) {
@@ -196,10 +219,21 @@ Common::Error GlkEngine::saveGameState(int slot, const Common::String &desc) {
 	if (file == nullptr)
 		return Common::kWritingFailed;
 
-	Common::Error result = saveGameData(file, desc);
+	Common::ErrorCode errCode = Common::kNoError;
+	QuetzalWriter w;
+
+	// Add the uncompressed memory chunk with the game's save data
+	{
+		Common::WriteStream &ws = w.add(ID_UMem);
+		errCode = writeGameData(&ws).getCode();
+	}
+
+	if (errCode != Common::kNoError) {
+		w.save(*file, desc);
+	}
 
 	file->close();
-	return result;
+	return errCode;
 }
 
 void GlkEngine::beep() {

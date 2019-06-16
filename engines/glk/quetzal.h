@@ -143,6 +143,11 @@ public:
 	 * Loads a Quetzal save and extract's it's description and meta info
 	 */
 	static bool getSavegameMetaInfo(Common::SeekableReadStream *rs, SaveStateDescriptor &ssd);
+
+	/**
+	 * Support method for reading a string from a stream
+	 */
+	static Common::String readString(Common::ReadStream *src);
 };
 
 /**

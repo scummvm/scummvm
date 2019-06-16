@@ -42,14 +42,14 @@ bool TADS::hasFeature(EngineFeature f) const {
 	return GlkAPI::hasFeature(f);
 }
 
-Common::Error TADS::loadGameData(strid_t file) {
+Common::Error TADS::readSaveData(Common::SeekableReadStream *rs) {
 	// TODO
-	return Common::kNoError;
+	return Common::kReadingFailed;
 }
 
-Common::Error TADS::saveGameData(strid_t file, const Common::String &desc) {
+Common::Error TADS::writeGameData(Common::WriteStream *ws) {
 	// TODO
-	return Common::kNoError;
+	return Common::kWritingFailed;
 }
 
 } // End of namespace TADS

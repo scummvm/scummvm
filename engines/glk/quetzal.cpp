@@ -29,15 +29,6 @@
 
 namespace Glk {
 
-static Common::String readString(Common::ReadStream *src) {
-	char c;
-	Common::String result;
-	while ((c = src->readByte()) != 0)
-		result += c;
-
-	return result;
-}
-
 void QuetzalReader::clear() {
 	_chunks.clear();
 	_stream = nullptr;
@@ -139,6 +130,15 @@ bool QuetzalReader::getSavegameMetaInfo(Common::SeekableReadStream *rs, SaveStat
 	}
 
 	return true;
+}
+
+Common::String QuetzalReader::readString(Common::ReadStream *src) {
+	char c;
+	Common::String result;
+	while ((c = src->readByte()) != 0)
+		result += c;
+
+	return result;
 }
 
 /*--------------------------------------------------------------------------*/

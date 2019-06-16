@@ -58,14 +58,14 @@ void Magnetic::runGame() {
 	// TODO
 }
 
-Common::Error Magnetic::loadGameData(strid_t file) {
+Common::Error Magnetic::readSaveData(Common::SeekableReadStream *rs) {
 	// TODO
-	return Common::kNoError;
+	return Common::kReadingFailed;
 }
 
-Common::Error Magnetic::saveGameData(strid_t file, const Common::String &desc) {
+Common::Error Magnetic::writeGameData(Common::WriteStream *ws) {
 	// TODO
-	return Common::kNoError;
+	return Common::kWritingFailed;
 }
 
 bool Magnetic::is_gamefile_valid() {

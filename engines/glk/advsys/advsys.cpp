@@ -102,11 +102,13 @@ bool AdvSys::singleAction() {
 	return true;
 }
 
-Common::Error AdvSys::loadGameData(strid_t save) {
+Common::Error AdvSys::readSaveData(Common::SeekableReadStream *rs) {
+	rs->read(_saveArea, rs->size());
 	return Common::kNoError;
 }
 
-Common::Error AdvSys::saveGameData(strid_t save, const Common::String &desc) {
+Common::Error AdvSys::writeGameData(Common::WriteStream *ws) {
+	ws->write(_saveArea, _saveSize);
 	return Common::kNoError;
 }
 
