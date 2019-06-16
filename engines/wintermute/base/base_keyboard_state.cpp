@@ -84,13 +84,30 @@ bool BaseKeyboardState::scCallMethod(ScScript *script, ScStack *stack, ScStack *
 		uint32 vKeyCode;
 
 		if (val->_type == VAL_STRING && strlen(val->getString()) > 0) {
+			// IsKeyDown(strings) checks if a key with given ASCII code is pressed
+			// Only 1st character of given string is used for the check
+
+			// This check must be case insensitive, which means that 
+			// IsKeyDown("a") & IsKeyDown("A") are either both true or both false 
 			const char *str = val->getString();
 			char temp = str[0];
 			if (temp >= 'A' && temp <= 'Z') {
 				temp += ('a' - 'A');
 			}
-			vKeyCode = (int)temp;
+
+			// Common::KeyCode is equal to ASCII code for any lowercase ASCII character
+			if (temp >= ' ' && temp <= '~') {
+				vKeyCode = (int)temp;
+			} else {
+				warning("Unhandled IsKeyDown(string): check for non-ASCII character");
+				vKeyCode = 0;
+			}
 		} else {
+			// IsKeyDown(int) checks if a key with given keycode is pressed
+			// For letters, single keycode is used for upper and lower case
+			// This mean that IsKeyDown(65) is true for both 'a' and Shift+'a'
+
+			// See "MSDN: Virtual-Key Codes" for more details on original WME keycodes
 			vKeyCode = vKeyToKeyCode(val->getInt());
 		}
 
