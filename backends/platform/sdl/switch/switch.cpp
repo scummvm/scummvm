@@ -51,7 +51,7 @@ void OSystem_Switch::initBackend() {
 	ConfMan.registerDefault("gfx_mode", "2x");
 	ConfMan.registerDefault("filtering", true);
 	ConfMan.registerDefault("output_rate", 48000);
-	ConfMan.registerDefault("touchpad_mouse_mode", true);
+	ConfMan.registerDefault("touchpad_mouse_mode", false);
 
 	if (!ConfMan.hasKey("joystick_num")) {
 		ConfMan.setInt("joystick_num", 0);
@@ -72,7 +72,7 @@ void OSystem_Switch::initBackend() {
 		ConfMan.setInt("output_rate", 48000);
 	}
 	if (!ConfMan.hasKey("touchpad_mouse_mode")) {
-		ConfMan.setBool("touchpad_mouse_mode", true);
+		ConfMan.setBool("touchpad_mouse_mode", false);
 	}
 
 	// Create the savefile manager
