@@ -47,6 +47,17 @@ Common::String GlkInterface::readLine() {
 	char line[200];
 
 	print(": ");
+
+	if (!_pendingLine.empty()) {
+		// The next input line has been manually provided, so return it
+		print(_pendingLine);
+		print("\n");
+
+		Common::String l = _pendingLine;
+		_pendingLine = "";
+		return l;
+	}
+
 	glk_request_line_event(_window, line, 199, 0);
 
 	do {

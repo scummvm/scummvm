@@ -46,6 +46,8 @@ void AdvSys::runGame() {
 			_saveSlot = -1;
 			if (err != Common::kNoError)
 				print(_("Sorry, the savegame couldn't be restored"));
+			else
+				_pendingLine = "look";		// Do a look action after loading the savegame
 		}
 
 		// Gameplay loop

@@ -37,6 +37,7 @@ private:
 	winid_t _window;
 protected:
 	int _saveSlot;
+	Common::String _pendingLine;
 protected:
 	/**
 	 * GLK initialization
