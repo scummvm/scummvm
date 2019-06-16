@@ -11813,6 +11813,52 @@ static const uint16 sq4CdPatchBigAndTallDescription[] = {
 	PATCH_END
 };
 
+// Clicking Do on the Monolith Burger door responds with the message for looking
+//  at the boss and clicking Taste responds with the taste message for the bush.
+//  The verb handler is missing the modNum for both and also sets the wrong cond
+//  for the second.
+//
+// Applies to: English PC CD
+// Responsible method: door:doVerb(4)
+// Fixes bug #10976
+static const uint16 sq4CdSignatureMonolithBurgerDoor[] = {
+	SIG_MAGICDWORD,
+	0x31, 0x13,                         // bnt 13
+	0x38, SIG_SELECTOR16(modNum),       // pushi modNum
+	0x78,                               // push1
+	0x38, SIG_UINT16(0x0177),           // pushi 0177
+	0x38, SIG_SELECTOR16(say),          // pushi say
+	0x78,                               // push1
+	0x78,                               // push1
+	0x81, 0x59,                         // lag 59
+	0x4a, 0x0c,                         // send 0c [ Sq4GlobalNarrator modNum 375: say: 1 ]
+	SIG_ADDTOOFFSET(+9),
+	0x38, SIG_SELECTOR16(say),          // pushi say
+	0x78,                               // push1
+	0x7a,                               // push2
+	0x81, 0x59,                         // lag 59
+	0x4a, 0x06,                         // send 06 [ Sq4GlobalNarrator say: 2 ]
+	SIG_ADDTOOFFSET(+25),
+	0x38, SIG_SELECTOR16(say),          // pushi say
+	0x78,                               // push1
+	0x39, 0x0b,                         // pushi 0b
+	0x81, 0x59,                         // lag 59
+	0x4a, 0x06,                         // send 06 [ Sq4GlobalNarrator say: 11 ]
+	SIG_END
+};
+
+static const uint16 sq4CdPatchMonolithBurgerDoor[] = {
+	PATCH_ADDTOOFFSET(+13),
+	0x36,                               // push
+	PATCH_ADDTOOFFSET(+13),
+	0x35, 0x02,                         // ldi 02
+	0x33, 0xe3,                         // jmp e3 [ Sq4GlobalNarrator modNum 375: say: 2 ]
+	PATCH_ADDTOOFFSET(+30),
+	0x35, 0x04,                         // ldi 04
+	0x33, 0xc1,                         // jmp c1 [ Sq4GlobalNarrator modNum 375: say: 4 ]
+	PATCH_END
+};
+
 // For Space Quest 4 CD, Sierra added a pick up animation for Roger when he
 // picks up the rope.
 //
@@ -12658,6 +12704,7 @@ static const SciScriptPatcherEntry sq4Signatures[] = {
 	{  true,   370, "CD: sock's sequel police hands-off fix",         1, sq4CdSignatureSocksSequelPoliceHandsOff,       sq4CdPatchSocksSequelPoliceHandsOff },
 	{  true,   370, "CD: sock's door restore and message fix",        1, sq4CdSignatureSocksDoor,                       sq4CdPatchSocksDoor },
 	{  true,   381, "CD: big and tall room description",              1, sq4CdSignatureBigAndTallDescription,           sq4CdPatchBigAndTallDescription },
+	{  true,   385, "CD: monolith burger door message fix",           1, sq4CdSignatureMonolithBurgerDoor,              sq4CdPatchMonolithBurgerDoor },
 	{  true,   391, "CD: missing Audio for universal remote control", 1, sq4CdSignatureMissingAudioUniversalRemote,     sq4CdPatchMissingAudioUniversalRemote },
 	{  true,   396, "CD: get points for changing back clothes fix",   1, sq4CdSignatureGetPointsForChangingBackClothes, sq4CdPatchGetPointsForChangingBackClothes },
 	{  true,   405, "CD/Floppy: zero gravity blast fix",              1, sq4SignatureZeroGravityBlast,                  sq4PatchZeroGravityBlast },
