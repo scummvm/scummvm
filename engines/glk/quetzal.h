@@ -1,0 +1,144 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ */
+
+#ifndef GLK_QUETZAL
+#define GLK_QUETZAL
+
+#include "common/array.h"
+#include "common/endian.h"
+#include "common/memstream.h"
+#include "common/stream.h"
+#include "glk/blorb.h"
+
+namespace Glk {
+
+enum QueztalTag {
+	ID_IFSF = MKTAG('I', 'F', 'S', 'F'),
+	ID_IFZS = MKTAG('I', 'F', 'Z', 'S'),
+	ID_IFhd = MKTAG('I', 'F', 'h', 'd'),
+	ID_UMem = MKTAG('U', 'M', 'e', 'm'),
+	ID_CMem = MKTAG('C', 'M', 'e', 'm'),
+	ID_Stks = MKTAG('S', 't', 'k', 's'),
+	ID_SCVM = MKTAG('S', 'C', 'V', 'M')
+};
+
+/**
+ * Quetzal save file reader
+ */
+class QuetzalReader {
+	struct Chunk {
+		uint32 _id;
+		size_t _offset, _size;
+	};
+public:
+	/**
+	 * Iterator for the chunks list
+	 */
+	struct Iterator : public Chunk {
+	private:
+		Common::SeekableReadStream *_stream;
+		Common::Array<Chunk> &_chunks;
+		int _index;
+		int _size;
+	public:
+		/**
+		 * Constructor
+		 */
+		Iterator(Common::SeekableReadStream *stream, Common::Array<Chunk> &chunks, int index, int size) :
+			_stream(stream), _chunks(chunks), _index(index), _size(size) {}
+
+		/**
+		 * Incrementer
+		 */
+		Iterator &operator++() { ++_index; }
+		
+		/**
+		 * Decrementer
+		 */
+		Iterator &operator--() { --_index; }
+
+		/**
+		 * Get a read stream for the contents of a chunk
+		 */
+		Common::SeekableReadStream *getStream() {
+			_stream->seek(_offset);
+			return _stream->readStream(_size);
+		}
+	};
+private:
+	Common::SeekableReadStream *_stream;
+	Common::Array<Chunk> _chunks;
+public:
+	/**
+	 * Constructor
+	 */
+	QuetzalReader() : _stream(nullptr) {}
+
+	/**
+	 * Opens a Quetzal file for access
+	 */
+	bool open(Common::SeekableReadStream *stream, uint32 formType = ID_IFSF);
+
+	/**
+	 * Return an iterator for the beginning of the chunks list
+	 */
+	Iterator begin() { return Iterator(_stream, _chunks, 0, _chunks.size()); }
+
+	/**
+	 * Return an iterator for the beginning of the chunks list
+	 */
+	Iterator end() { return Iterator(_stream, _chunks, 0, _chunks.size()); }
+};
+
+/**
+ * Quetzal save file writer
+ */
+class QuetzalWriter {
+	/**
+	 * Chunk entry
+	 */
+	struct Chunk {
+		uint32 _id;
+		Common::MemoryWriteStreamDynamic _stream;
+
+		/**
+		 * Constructor
+		 */
+		Chunk() : _id(0), _stream(DisposeAfterUse::YES) {}
+	};
+private:
+	Common::Array<Chunk> _chunks;
+public:
+	/**
+	 * Add a chunk
+	 */
+	Common::WriteStream &add(uint32 chunkId);
+
+	/**
+	 * Save the added chunks to file
+	 */
+	void save(Common::WriteStream *out, uint32 formType = ID_IFSF);
+};
+
+} // End of namespace Glk
+
+#endif

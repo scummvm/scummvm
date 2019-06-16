@@ -11,6 +11,7 @@ MODULE_OBJS := \
 	glk_dispa.o \
 	pc_speaker.o \
 	picture.o \
+	quetzal.o \
 	raw_decoder.o \
 	screen.o \
 	selection.o \
