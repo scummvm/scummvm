@@ -125,6 +125,7 @@ static const char *const selectorNameTable[] = {
 	"looper",       // Space Quest 4
 	"nMsgType",     // Space Quest 4
 	"doVerb",       // Space Quest 4
+	"setRegions",   // Space Quest 4
 	"loop",         // Laura Bow 1 Colonel's Bequest, QFG4
 	"setLoop",      // Laura Bow 1 Colonel's Bequest, QFG4
 	"ignoreActors", // Laura Bow 1 Colonel's Bequest
@@ -234,6 +235,7 @@ enum ScriptPatcherSelectors {
 	SELECTOR_looper,
 	SELECTOR_nMsgType,
 	SELECTOR_doVerb,
+	SELECTOR_setRegions,
 	SELECTOR_loop,
 	SELECTOR_setLoop,
 	SELECTOR_ignoreActors,
@@ -12304,6 +12306,171 @@ static const uint16 sq4CdPatchBikerTimepodMessage[] = {
 	PATCH_END
 };
 
+// Hiding from the Sequel Police in the electronics store (room 390) locks up
+//  the CD version and has a subsequent animation bug.
+//
+// This scene is triggered by going east to the escalator after the police
+//  arrive and then back to the electronics store. Police appear on both sides
+//  and the only way to survive is to hide in the store while they talk before
+//  splitting up. Their first message fails to set a caller, locking up the
+//  game, and their other messages contain typos and newline characters left
+//  over from floppy versions.
+//
+// We fix the lockup by passing the missing "self" parameter so that the script
+//  proceeds. This exposes the next bug, where the police walk to the beltways
+//  and instead of standing, shoot wildly into the mall. The script doesn't
+//  remove their Walk cyclers and so they continue to animate. This worked in
+//  floppy versions but the Cycle classes were upgraded in CD with different
+//  behavior. We fix this by removing the Walk cyclers.
+//
+// Applies to: English PC CD
+// Responsible method: sp1Squeeze:changeState
+// Fixes bug #10977
+static const uint16 sq4CdSignatureHzSoGoodSequelPoliceLockup[] = {
+	0x38, SIG_SELECTOR16(say),          // pushi say
+	0x78,                               // push1
+	SIG_MAGICDWORD,
+	0x78,                               // push1
+	0x72, SIG_UINT16(0x0630),           // lofsa tSP1
+	0x4a, 0x06,                         // send 06  [ tSP1 say: 1 ]
+	0x32, SIG_UINT16(0x01c1),           // jmp 01c1 [ end of method ]
+	SIG_END
+};
+
+static const uint16 sq4CdPatchHzSoGoodSequelPoliceLockup[] = {
+	PATCH_ADDTOOFFSET(+3),
+	0x7a,                               // push2
+	PATCH_ADDTOOFFSET(+4),
+	0x7c,                               // pushSelf
+	0x4a, 0x08,                         // send 06 [ tSP1 say: 1 self ]
+	0x3a,                               // toss
+	0x48,                               // ret
+	PATCH_END
+};
+
+static const uint16 sq4CdSignatureHzSoGoodSequelPoliceCycler[] = {
+	0x31, 0x20,                         // bnt 20 [ state 12 ]
+	SIG_ADDTOOFFSET(+29),
+	SIG_MAGICDWORD,
+	0x32, SIG_UINT16(0x00a9),           // jmp 00a9 [ end of method ]
+	0x3c,                               // dup
+	0x35, 0x0c,                         // ldi 0c
+	0x1a,                               // eq?
+	0x30, SIG_UINT16(0x0030),           // bnt 0030 [ state 13 ]
+	0x7a,                               // push2 [ view ]
+	0x78,                               // push1
+	0x39, 0x0d,                         // pushi 0d
+	0x38, SIG_SELECTOR16(setLoop),      // pushi setLoop
+	SIG_ADDTOOFFSET(+32),
+	0x4a, 0x24,                         // send 24 [ sp1 view: 13 setLoop: ... ]
+	SIG_ADDTOOFFSET(+11),
+	0x31, 0x21,                         // bnt 21 [ state 14 ]
+	SIG_ADDTOOFFSET(+30),
+	0x32, SIG_UINT16(0x004b),           // jmp 004b [ end of method ]
+	0x3c,                               // dup
+	0x35, 0x0e,                         // ldi 0e
+	0x1a,                               // eq?
+	0x30, SIG_UINT16(0x0030),           // bnt 0030 [ state 15 ]
+	0x7a,                               // push2 [ view ]
+	0x78,                               // push1
+	0x39, 0x0d,                         // pushi 0d
+	0x38, SIG_SELECTOR16(setLoop),      // pushi setLoop
+	SIG_ADDTOOFFSET(+37),
+	0x4a, 0x26,                         // send 26 [ sp2 view: 13 setLoop: ... ]
+	SIG_END
+};
+
+static const uint16 sq4CdPatchHzSoGoodSequelPoliceCycler[] = {
+	0x31, 0x1d,                         // bnt 1d [ state 12 ]
+	PATCH_ADDTOOFFSET(+29),
+	0x3c,                               // dup
+	0x35, 0x0c,                         // ldi 0c
+	0x1a,                               // eq?
+	0x31, 0x34,                         // bnt 34 [ state 13 ]
+	0x38, PATCH_SELECTOR16(setCycle),   // pushi setCycle
+	0x78,                               // push1
+	0x76,                               // push0
+	0x7a,                               // push2 [ view ]
+	0x78,                               // push1
+	0x39, 0x0d,                         // pushi 0d
+	0x39, PATCH_SELECTOR8(loop),        // pushi loop
+	PATCH_ADDTOOFFSET(+32),
+	0x4a, 0x2a,                         // send 2a [ sp1 setCycle: 0 view: 13 loop: ... ]
+	PATCH_ADDTOOFFSET(+11),
+	0x31, 0x1e,                         // bnt 1e [ state 14 ]
+	PATCH_ADDTOOFFSET(+30),
+	0x3c,                               // dup
+	0x35, 0x0e,                         // ldi 0e
+	0x1a,                               // eq?
+	0x31, 0x34,                         // bnt 34 [ state 15 ]
+	0x38, PATCH_SELECTOR16(setCycle),   // pushi setCycle
+	0x78,                               // push1
+	0x76,                               // push0
+	0x7a,                               // push2 [ view ]
+	0x78,                               // push1
+	0x39, 0x0d,                         // pushi 0d
+	0x39, PATCH_SELECTOR8(loop),        // pushi loop
+	PATCH_ADDTOOFFSET(+37),
+	0x4a, 0x2c,                         // send 2c [ sp2 setCycle: 0 view: 13 loop: ... ]
+	PATCH_END
+};
+
+// Room 370 in front of Sock's is missing a flag check and runs a lethal Sequel
+//  Police script when escaping the Skate-O-Rama after hiding in the electronics
+//  store. A lockup bug in the CD version prevented getting this far. As this is
+//  the wrong time to run the script, the police are drawn as if they're still
+//  swimming in zero gravity.
+//
+// Flag 23 is set when the police pursue in escalator room 400 and triggers the
+//  squeeze scripts that force entering the Skate-O-Rama in rooms 370 and 390.
+//  Flag 22 is set when exiting the Skate-O-Rama after dodging the police. The
+//  two rooms handle these flags differently and are out of sync. Room 370
+//  clears flag 23 and doesn't test 22 while room 390 doesn't clear 23 and does
+//  test 22. The result is that room 370 doesn't see that you've escaped the
+//  Skate-O-Rama and assumes the police are still pursuing from room 400.
+//
+// We fix this by only running sp1Squeeze in room 370 when coming from room 400.
+//  This is equivalent to adding the missing flag 22 check but can be done in
+//  the available bytes. To make room we use the clear-flag method's return
+//  value, which is the previous flag value, and only test if the previous room
+//  number is even, which only room 400 is. This patch is split into two parts
+//  to surround a bnt instruction whose operand size changed between versions.
+//
+// Applies to: All versions
+// Responsible method: rm570:init
+// Fixes bug #10977
+static const uint16 sq4SignatureSocksSequelPoliceFlag1[] = {
+	0x78,                               // push1
+	SIG_MAGICDWORD,
+	0x39, 0x17,                         // pushi 17
+	0x45, 0x06, 0x02,                   // callb proc0_6 [ is flag 23 set? ]
+	SIG_END
+};
+
+static const uint16 sq4PatchSocksSequelPoliceFlag1[] = {
+	PATCH_ADDTOOFFSET(+3),
+	0x45, 0x08, 0x02,                   // callb proc0_8 [ clear flag 23, was flag set? ]
+	PATCH_END
+};
+
+static const uint16 sq4SignatureSocksSequelPoliceFlag2[] = {
+	0x78,                               // push1
+	SIG_MAGICDWORD,
+	0x39, 0x17,                         // pushi 17
+	0x45, 0x08, 0x02,                   // callb proc0_8 [ clear flag 23 ]
+	SIG_ADDTOOFFSET(+0x27),
+	0x38, SIG_SELECTOR16(setRegions),   // pushi setRegions
+	SIG_END
+};
+
+static const uint16 sq4PatchSocksSequelPoliceFlag2[] = {
+	0x81, 0x0c,                         // lag 0c
+	0x78,                               // push1
+	0x12,                               // and   [ is previous room number odd? ]
+	0x2f, 0x27,                         // bt 27 [ skip sp1Squeeze ]
+	PATCH_END
+};
+
 // Clicking Walk while getting shot by the Sequel Police outside of Sock's in
 //  room 370 crashes the CD version. This causes an Oops! error in the original.
 //  The lookupSelector error comes from within the Grooper and Grycler classes
@@ -12703,8 +12870,12 @@ static const SciScriptPatcherEntry sq4Signatures[] = {
 	{  true,   290, "CD: cedric lockup fix (2/2)",                    1, sq4CdSignatureCedricLockup2,                   sq4CdPatchCedricLockup2 },
 	{  true,   370, "CD: sock's sequel police hands-off fix",         1, sq4CdSignatureSocksSequelPoliceHandsOff,       sq4CdPatchSocksSequelPoliceHandsOff },
 	{  true,   370, "CD: sock's door restore and message fix",        1, sq4CdSignatureSocksDoor,                       sq4CdPatchSocksDoor },
+	{  true,   370, "CD/Floppy: sock's sequel police flag fix (1/2)", 1, sq4SignatureSocksSequelPoliceFlag1,            sq4PatchSocksSequelPoliceFlag1 },
+	{  true,   370, "CD/Floppy: sock's sequel police flag fix (2/2)", 1, sq4SignatureSocksSequelPoliceFlag2,            sq4PatchSocksSequelPoliceFlag2 },
 	{  true,   381, "CD: big and tall room description",              1, sq4CdSignatureBigAndTallDescription,           sq4CdPatchBigAndTallDescription },
 	{  true,   385, "CD: monolith burger door message fix",           1, sq4CdSignatureMonolithBurgerDoor,              sq4CdPatchMonolithBurgerDoor },
+	{  true,   390, "CD: hz so good sequel police lockup fix",        1, sq4CdSignatureHzSoGoodSequelPoliceLockup,      sq4CdPatchHzSoGoodSequelPoliceLockup },
+	{  true,   390, "CD: hz so good sequel police cycler fix",        1, sq4CdSignatureHzSoGoodSequelPoliceCycler,      sq4CdPatchHzSoGoodSequelPoliceCycler },
 	{  true,   391, "CD: missing Audio for universal remote control", 1, sq4CdSignatureMissingAudioUniversalRemote,     sq4CdPatchMissingAudioUniversalRemote },
 	{  true,   396, "CD: get points for changing back clothes fix",   1, sq4CdSignatureGetPointsForChangingBackClothes, sq4CdPatchGetPointsForChangingBackClothes },
 	{  true,   405, "CD/Floppy: zero gravity blast fix",              1, sq4SignatureZeroGravityBlast,                  sq4PatchZeroGravityBlast },
