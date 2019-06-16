@@ -470,7 +470,7 @@ void KingdomGame::playMovie(int movieNum) {
 	readMouse();
 	_mouseButton = 0;
 	_keyActive = false;
-	const char *path = _movieNames[movieNum];
+	const Common::String path = Common::String::format("King%.3d.mve", movieNum);
 	// Check if the file is available. If not the original does the following: _ATimer = 55, display of error with a check of timer, exit
 	// That can be replaced by an error()
 
