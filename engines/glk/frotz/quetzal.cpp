@@ -65,13 +65,6 @@ bool Quetzal::save(Common::WriteStream *svf, Processor *proc, const Common::Stri
 		ws.writeByte(pc & 0xff);
 	}
 
-	// Write 'ANNO' chunk
-	{
-		Common::WriteStream &ws = _writer.add(ID_ANNO);
-		ws.write(desc.c_str(), desc.size());
-		ws.writeByte(0);
-	}
-
 	// Write `CMem' chunk.
 	{
 		Common::WriteStream &ws = _writer.add(ID_CMem);
@@ -166,7 +159,7 @@ bool Quetzal::save(Common::WriteStream *svf, Processor *proc, const Common::Stri
 	}
 
 	// Write the save data out
-	_writer.save(svf, ID_IFZS);
+	_writer.save(svf, desc, ID_IFZS);
 
 	// After all that, still nothing went wrong!
 	return true;

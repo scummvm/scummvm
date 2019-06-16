@@ -21,7 +21,10 @@
  */
 
 #include "glk/quetzal.h"
+#include "glk/glk_api.h"
+#include "glk/events.h"
 #include "common/memstream.h"
+#include "common/system.h"
 
 namespace Glk {
 
@@ -85,7 +88,10 @@ Common::WriteStream &QuetzalWriter::add(uint32 chunkId) {
 	return _chunks.back()._stream;
 }
 
-void QuetzalWriter::save(Common::WriteStream *out, uint32 formType) {
+void QuetzalWriter::save(Common::WriteStream *out, const Common::String &saveName, uint32 formType) {
+	// Add chunks common to all Glk savegames
+	addCommonChunks(saveName);
+	
 	// Calculate the size of the chunks
 	uint size = 4;
 	for (uint idx = 0; idx < _chunks.size(); ++idx)
@@ -105,6 +111,30 @@ void QuetzalWriter::save(Common::WriteStream *out, uint32 formType) {
 		out->write(s.getData(), s.size());
 		if (s.size() & 1)
 			out->writeByte(0);
+	}
+}
+
+void QuetzalWriter::addCommonChunks(const Common::String &saveName) {
+	// Write 'ANNO' chunk
+	{
+		Common::WriteStream &ws = add(ID_ANNO);
+		ws.write(saveName.c_str(), saveName.size());
+		ws.writeByte(0);
+	}
+
+	// Write 'SCVM' chunk with gameplay statistics
+	{
+		Common::WriteStream &ws = add(ID_SCVM);
+
+		// Write out the save date/time
+		TimeDate td;
+		g_system->getTimeAndDate(td);
+		ws.writeSint16LE(td.tm_year + 1900);
+		ws.writeSint16LE(td.tm_mon + 1);
+		ws.writeSint16LE(td.tm_mday);
+		ws.writeSint16LE(td.tm_hour);
+		ws.writeSint16LE(td.tm_min);
+		ws.writeUint32LE(g_vm->_events->getTotalPlayTicks());
 	}
 }
 

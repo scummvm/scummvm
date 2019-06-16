@@ -157,6 +157,11 @@ class QuetzalWriter {
 	};
 private:
 	Common::Array<Chunk> _chunks;
+
+	/**
+	 * Add chunks common to all Glk savegames
+	 */
+	void addCommonChunks(const Common::String &saveName);
 public:
 	/**
 	 * Clear
@@ -171,7 +176,7 @@ public:
 	/**
 	 * Save the added chunks to file
 	 */
-	void save(Common::WriteStream *out, uint32 formType = ID_IFSF);
+	void save(Common::WriteStream *out, const Common::String &saveName, uint32 formType = ID_IFSF);
 };
 
 } // End of namespace Glk
