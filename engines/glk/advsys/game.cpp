@@ -134,7 +134,7 @@ bool Game::init(Common::SeekableReadStream *s) {
 	decrypt(&_data[0], _size);
 
 	_wordTable = &_data[_wordTableOffset];
-	_wordTypeTable = &_data[_wordTypeTableOffset];
+	_wordTypeTable = &_data[_wordTypeTableOffset - 1];
 	_objectTable = &_data[_objectTableOffset];
 	_actionTable = &_data[_actionTableOffset];
 	_variableTable = &_data[_variableTableOffset];

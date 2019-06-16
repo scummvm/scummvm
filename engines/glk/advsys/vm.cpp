@@ -467,7 +467,7 @@ bool VM::parseInput() {
 	// Get direct object, preposition, and/or indirect object
 	if (_wordPtr != _words.end()) {
 		// Get any direct objects
-		noun1 = _adjectiveList.size();
+		noun1 = _adjectiveList.size() + 1;
 		for (;;) {
 			// Get the next direct object
 			if (!getNoun())
@@ -475,7 +475,7 @@ bool VM::parseInput() {
 			++cnt1;
 
 			// Check for more direct objects
-			if (_wordPtr == _words.end() || getWordType(*_wordPtr))
+			if (_wordPtr == _words.end() || getWordType(*_wordPtr) != WT_CONJUNCTION)
 				break;
 			++_wordPtr;
 		}
@@ -617,7 +617,7 @@ uint VM::getNoun() {
 	// Add a noun entry to the list
 	Noun n;
 	n._adjective = &_adjectiveList[alStart];
-	n._noun = *_wordPtr++;
+	n._noun = (_wordPtr == _words.end()) ? 0 : *_wordPtr++;
 	n._num = _wordPtr - _words.begin() - 1;
 	_nouns.push_back(n);
 
@@ -641,6 +641,7 @@ bool VM::getVerb() {
 		if (checkVerb(_verbs)) {
 			++_wordPtr;
 		} else {
+			_verbs.pop_back();
 			_verbs.push_back(_words.back());
 
 			if (checkVerb(_verbs)) {
