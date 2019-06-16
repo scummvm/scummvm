@@ -97,13 +97,16 @@ bool AdvSys::singleAction() {
 		if (execute(_afterOffset) == ABORT)
 			return false;
 		break;
+
+	default:
+		break;
 	}
 
 	return true;
 }
 
 Common::Error AdvSys::readSaveData(Common::SeekableReadStream *rs) {
-	if ((int)rs->size() != _saveSize)
+	if (rs->size() != (int)_saveSize)
 		return Common::kReadingFailed;
 
 	rs->read(_saveArea, rs->size());

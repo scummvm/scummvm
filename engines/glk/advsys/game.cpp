@@ -28,8 +28,8 @@ namespace Glk {
 namespace AdvSys {
 
 void Decrypter::decrypt(byte *data, size_t size) {
-	for (; --size; ++data)
-		*data = ~(*data + 30);
+	for (size_t idx = 0; idx < size; ++idx)
+		*data++ = ~(*data + 30);
 }
 
 /*--------------------------------------------------------------------------*/
