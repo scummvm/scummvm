@@ -33,7 +33,12 @@ AI::~AI() {
 }
 
 void AI::cineStart(bool abortable, char *abortFunc) {
-	warning("STUB: AI::cineStart");
+	_cineAbortable = abortable;
+	_cineAborted = false;
+	_cineAbortFunc = abortFunc;
+	_cineActive = true;
+	_playerLock = false;
+	_cameraLock = false;
 }
 
 void AI::cineSetCamera(int x, int y) {
