@@ -67,6 +67,8 @@ enum Flags {
 	ENGINE_FLAG_400 = 0x400,
 
 	ENGINE_FLAG_1000_TEXT_ENABLED = 0x1000,
+	ENGINE_FLAG_8000     =     0x8000, // speech dialog is playing.
+
 	ENGINE_FLAG_10000    =    0x10000,
 	ENGINE_FLAG_80000    =    0x80000,
 	ENGINE_FLAG_100000   =   0x100000,
@@ -114,6 +116,7 @@ class ActorManager;
 class SequenceOpcodes;
 class ScriptOpcodes;
 class Talk;
+class Sound;
 struct DragonINI;
 
 
@@ -130,6 +133,7 @@ public:
 	Inventory *_inventory;
 	Cursor *_cursor;
 	Talk *_talk;
+	Sound *_sound;
 
 	uint16 unkArray_uint16[42];
 	opCode1AStruct opCode1A_tbl[8];

@@ -43,6 +43,7 @@
 #include "scriptopcodes.h"
 #include "bag.h"
 #include "talk.h"
+#include "sound.h"
 
 namespace Dragons {
 
@@ -65,6 +66,7 @@ DragonsEngine::DragonsEngine(OSystem *syst) : Engine(syst) {
 	_inventory = new Inventory(this);
 	_cursor = new Cursor(this);
 	_talk = NULL;
+	_sound = new Sound(this);
 
 	_leftMouseButtonUp = false;
 	_rightMouseButtonUp = false;
@@ -567,6 +569,11 @@ void DragonsEngine::updateHandler() {
 
 	_cursor->updateVisibility();
 	_inventory->updateVisibility();
+
+	// 0x8001b200
+	if (isFlagSet(ENGINE_FLAG_8000) && !_sound->isSpeechPlaying()) {
+		clearFlags(ENGINE_FLAG_8000);
+	}
 
 	//TODO logic here
 	for (uint16 i = 0; i < 0x17; i++) {

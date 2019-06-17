@@ -19,34 +19,50 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
+#ifndef DRAGONS_SOUND_H
+#define DRAGONS_SOUND_H
 
-#ifndef DRAGONS_TALK_H
-#define DRAGONS_TALK_H
+#include "common/scummsys.h"
+#include "audio/mixer.h"
+#include "audio/audiostream.h"
 
-#include <common/str.h>
 
 namespace Dragons {
 
-class BigfileArchive;
-class Actor;
 class DragonsEngine;
+struct SpeechLocation;
 
-class Talk {
+class Sound {
 private:
 	DragonsEngine *_vm;
-	BigfileArchive *_bigfileArchive;
+	Audio::SoundHandle _speechHandle;
+
 public:
-	Talk(DragonsEngine *vm, BigfileArchive *bigfileArchive);
-	void init();
-	char *loadText(uint32 textIndex);
-	void printWideText(byte *text);
+	Sound(DragonsEngine *vm);
+	void playSpeech(uint32 textIndex);
+	bool isSpeechPlaying();
+private:
+	bool getSpeechLocation(uint32 talkId, struct SpeechLocation *location);
 
-	void FUN_8003239c(char *dialog, int16 x, int16 y, int32 param_4, uint16 param_5, Actor *actor, uint16 startSequenceId, uint16 endSequenceId, uint32 textId);
+private:
+	class PSXAudioTrack {
+	public:
+		PSXAudioTrack(Common::SeekableReadStream *sector, Audio::Mixer::SoundType soundType);
+		~PSXAudioTrack();
 
-	void conversation_related_maybe(uint16 *dialogText, uint16 x, uint16 y, uint16 param_4, int16 param_5, uint32 textId, int16 param_7);
+		void queueAudioFromSector(Common::SeekableReadStream *sector);
+		Audio::QueuingAudioStream *getAudioStream() {
+			return _audStream;
+		}
+	private:
+		Audio::QueuingAudioStream *_audStream;
 
+		struct ADPCMStatus {
+			int16 sample[2];
+		} _adpcmStatus[2];
+	};
 };
 
 } // End of namespace Dragons
 
-#endif //DRAGONS_TALK_H
+#endif //DRAGONS_SOUND_H
