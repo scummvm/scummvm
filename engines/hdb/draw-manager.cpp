@@ -270,6 +270,9 @@ Graphics::Surface Picture::load(Common::SeekableReadStream *stream) {
 }
 
 void Picture::draw(int x, int y) {
+	if (x == kScreenWidth || y == kScreenHeight) {
+		return;
+	}
 	Common::Rect clip(_surface.getBounds());
 	clip.clip(Common::Rect(0, 0, kScreenWidth - 1 - x, kScreenHeight - 1 - y));
 	if (!clip.isEmpty()) {
@@ -279,6 +282,9 @@ void Picture::draw(int x, int y) {
 }
 
 void Picture::drawMasked(int x, int y) {
+	if (x == kScreenWidth || y == kScreenHeight) {
+		return;
+	}
 	_surface.transBlitFrom(_surface, 0xf81f);
 	Common::Rect clip(_surface.getBounds());
 	clip.clip(Common::Rect(0, 0, kScreenWidth - 1 - x, kScreenHeight - 1 - y));
@@ -313,6 +319,9 @@ Graphics::Surface Tile::load(Common::SeekableReadStream *stream) {
 }
 
 void Tile::draw(int x, int y) {
+	if (x == kScreenWidth || y == kScreenHeight) {
+		return;
+	}
 	Common::Rect clip(_surface.getBounds());
 	clip.clip(Common::Rect(0, 0, kScreenWidth - 1 - x, kScreenHeight - 1 - y));
 	if (!clip.isEmpty()) {
