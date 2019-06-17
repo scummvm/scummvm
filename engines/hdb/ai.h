@@ -91,6 +91,8 @@ public:
 	void cineSetCamera(int x, int y);
 	void cineResetCamera();
 	void cineMoveCamera(int x, int y, int speed);
+	void cineWait(int seconds);
+	void cineWaitUntilDone();
 
 	Common::Array<CineCommand *> *_cine;
 
