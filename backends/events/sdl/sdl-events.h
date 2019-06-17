@@ -143,6 +143,7 @@ protected:
 	virtual bool handleJoyButtonDown(SDL_Event &ev, Common::Event &event);
 	virtual bool handleJoyButtonUp(SDL_Event &ev, Common::Event &event);
 	virtual bool handleJoyAxisMotion(SDL_Event &ev, Common::Event &event);
+	virtual bool handleJoyHatMotion(SDL_Event &ev, Common::Event &event);
 	virtual void updateKbdMouse();
 	virtual bool handleKbdMouse(Common::Event &event);
 
@@ -223,6 +224,8 @@ protected:
 	 * window is not focused).
 	 */
 	Common::Event _fakeMouseMove;
+
+	uint8 _lastHatPosition;
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	/**
