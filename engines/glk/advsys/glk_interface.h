@@ -65,7 +65,7 @@ public:
 	 * Constructor
 	 */
 	GlkInterface(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gameDesc),
-		_saveSlot(-1) {}
+		_window(nullptr), _saveSlot(-1) {}
 };
 
 } // End of namespace AdvSys
