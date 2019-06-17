@@ -315,7 +315,7 @@ void VM::opSAVE() {
 }
 
 void VM::opRESTORE() {
-	if (saveGame().getCode() != Common::kNoError)
+	if (loadGame().getCode() != Common::kNoError)
 		print(_("Sorry, the savegame couldn't be restored"));
 }
 

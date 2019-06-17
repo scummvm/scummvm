@@ -83,7 +83,6 @@ void AdvSys::deinitialize() {
 }
 
 bool AdvSys::singleAction() {
-	debug("------------------");
 	// Do the before code
 	switch (execute(_beforeOffset)) {
 	case ABORT:
