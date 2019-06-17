@@ -644,7 +644,6 @@ bool LuaScript::initScript(Common::SeekableReadStream *stream, const char *scrip
 		spawn names into Lua once they are implemented.
 	*/
 
-
 	// Register panic callback function
 	lua_atpanic(_state, panicCB);
 
@@ -696,7 +695,6 @@ bool LuaScript::initScript(Common::SeekableReadStream *stream, const char *scrip
 		return false;
 	}
 
-
 	// Error handling function to be executed after the function is put on the stack
 	lua_rawgeti(_state, LUA_REGISTRYINDEX, _pcallErrorhandlerRegistryIndex);
 	lua_insert(_state, -2);
@@ -705,6 +703,24 @@ bool LuaScript::initScript(Common::SeekableReadStream *stream, const char *scrip
 
 	if (lua_pcall(_state, 0, 0, -2)) {
 		error("An error occured while executing \"%s\": %s.", "level_init", lua_tostring(_state, -1));
+		lua_pop(_state, -1);
+
+		return false;
+	}
+
+	return true;
+}
+
+bool LuaScript::callFunction(const char *name, int returns) {
+
+	if (!_systemInit) {
+		return false;
+	}
+
+	lua_getglobal(_state, name);
+
+	if (lua_pcall(_state, 0, 0, -2)) {
+		error("An error occured while executing \"%s\": %s.", name, lua_tostring(_state, -1));
 		lua_pop(_state, -1);
 
 		return false;
