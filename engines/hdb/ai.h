@@ -96,6 +96,8 @@ public:
 private:
 	// Cinematics Variables
 	bool _cineAbortable;
+	bool _cineAborted;
+	char *_cineAbortFunc;
 	bool _cineActive;
 	bool _playerLock;
 	bool _cameraLock;
