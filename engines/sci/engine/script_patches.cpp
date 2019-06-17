@@ -11377,6 +11377,51 @@ static const uint16 qfg4RunesPuzzlePatch2[] = {
 	PATCH_END
 };
 
+// The Domovoi in room 320 has a complex bug in the CD version. If you don't
+//  talk to him before Bella wakes you up then you can't get the doll and the
+//  game can't be completed. The event logic was changed in the floppy patch and
+//  again in the CD version, which introduced the bug. Working backwards...
+//
+// To get the doll from the inn's cabinet:
+// - It must be late at night
+// - Inn event 15 has occurred or is occurring
+//
+// To trigger inn event 15 ("You see that the Domovoi is here again"):
+// - It must be late at night
+// - You saved the monastery's Domovoi
+// - You clicked Talk on the Domovoi during inn event 3 (new requirement in CD)
+// - You didn't just enter from your room and hear crying
+//
+// To trigger inn event 3 ("You have the feeling you are being watched"):
+// - It must be late at night
+// - You haven't already clicked Talk on the Domovoi during inn event 3
+// - You haven't been woken by Bella (new requirement in CD)
+// - You didn't just enter from your room and hear crying
+//
+// The two new requirements create an unwinnable state. Once Bella wakes you,
+//  event 3 is no longer possible, cascading to event 15 and the doll. This also
+//  prevents the Domovoi from appearing in your room as that requires talking
+//  to him during event 3. Putting it all together, the new Bella requirement's
+//  only effect is to suppress a mandatory event, and so it is safe to remove.
+//
+// Applies to: English CD
+// Responsible methods: rm320:init, heroTeller:respond
+// Fixes bug: #10978
+static const uint16 qfg4DomovoiInnSignature[] = {
+	SIG_MAGICDWORD,
+	0x78,                               // push1
+	0x38, SIG_UINT16(0x0088),           // pushi 0088
+	0x45, 0x04, SIG_UINT16(0x0002),     // callb proc0_4 [ is flag 136 set? (has Bella woken you up?) ]
+	0x18,                               // not
+	0x31,                               // bnt [ skip inn event 3 ]
+	SIG_END
+};
+
+static const uint16 qfg4DomovoiInnPatch[] = {
+	0x32, PATCH_UINT16(0x0008),         // jmp 0008 [ skip flag 136 check ]
+	PATCH_END
+};
+
 // The script that determines how much money a revenant has is missing the first
 //  parameter to kRandom, which should be zero as it is with other monsters.
 //  Instead of awarding the intended 15 to 40 kopeks, it always awards 15 and
@@ -11422,6 +11467,8 @@ static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,   270, "fix town gate after a staff dream",           1, qfg4DreamGateSignature,        qfg4DreamGatePatch },
 	{  true,   320, "fix pathfinding at the inn",                  1, qfg4InnPathfindingSignature,   qfg4InnPathfindingPatch },
 	{  true,   320, "fix talking to absent innkeeper",             1, qfg4AbsentInnkeeperSignature,  qfg4AbsentInnkeeperPatch },
+	{  true,   320, "CD: fix domovoi never appearing",             1, qfg4DomovoiInnSignature,       qfg4DomovoiInnPatch },
+	{  true,   324, "CD: fix domovoi never appearing",             1, qfg4DomovoiInnSignature,       qfg4DomovoiInnPatch },
 	{  true,   340, "CD/Floppy: fix guild tunnel access (1/3)",    1, qfg4GuildWalkSignature1,       qfg4GuildWalkPatch1 },
 	{  true,   340, "CD/Floppy: fix guild tunnel access (2/3)",    1, qfg4GuildWalkSignature2,       qfg4GuildWalkPatch2 },
 	{  false,  340, "CD: fix guild tunnel access (3/3)",           1, qfg4GuildWalkCDSignature3,     qfg4GuildWalkCDPatch3 },
