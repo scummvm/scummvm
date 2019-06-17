@@ -25,6 +25,7 @@
 #include "common/debug-channels.h"
 #include "common/events.h"
 #include "common/file.h"
+#include "common/language.h"
 #include "engines/util.h"
 #include "graphics/scaler.h"
 #include "graphics/thumbnail.h"
@@ -195,11 +196,12 @@ Common::Error GlkEngine::loadGameState(int slot) {
 				rs->skip(14);
 
 				uint32 interpType = rs->readUint32BE();
-				byte language = rs->readByte();
+				Common::String langCode = QuetzalReader::readString(rs);
 				Common::String md5 = QuetzalReader::readString(rs);
 				delete rs;
 
-				if (interpType != INTERPRETER_IDS[getInterpreterType()] || language != getLanguage() || md5 != getGameMD5())
+				if (interpType != INTERPRETER_IDS[getInterpreterType()] ||
+					parseLanguage(langCode) !=getLanguage() || md5 != getGameMD5())
 					errCode = Common::kReadingFailed;
 			}
 		}

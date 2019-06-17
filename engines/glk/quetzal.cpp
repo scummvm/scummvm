@@ -23,8 +23,9 @@
 #include "glk/quetzal.h"
 #include "glk/glk_api.h"
 #include "glk/events.h"
-#include "common/memstream.h"
 #include "common/system.h"
+#include "common/language.h"
+#include "common/memstream.h"
 #include "common/translation.h"
 
 namespace Glk {
@@ -202,7 +203,7 @@ void QuetzalWriter::addCommonChunks(const Common::String &saveName) {
 		ws.write(saveName.c_str(), saveName.size());
 		ws.writeByte(0);
 	}
-
+	Common::Language l;
 	// Write 'SCVM' chunk with game version & gameplay statistics
 	{
 		Common::WriteStream &ws = add(ID_SCVM);
@@ -219,7 +220,8 @@ void QuetzalWriter::addCommonChunks(const Common::String &saveName) {
 
 		// Write out intrepreter type, language, and game Id
 		ws.writeUint32BE(INTERPRETER_IDS[g_vm->getInterpreterType()]);
-		ws.writeByte(g_vm->getLanguage());
+		const char *langCode = getLanguageCode(g_vm->getLanguage());
+		ws.write(langCode, strlen(langCode) + 1);
 		Common::String md5 = g_vm->getGameMD5();
 		ws.write(md5.c_str(), md5.size());
 		ws.writeByte('\0');
