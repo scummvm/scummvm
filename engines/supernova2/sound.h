@@ -68,6 +68,8 @@ public:
 	void play(AudioId index);
 	void play(MusicId index);
 	void playSiren();
+	void setVolume(int volume);
+	int getVolume();
 	void stop();
 	bool isPlaying();
 private:

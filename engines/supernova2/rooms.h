@@ -228,9 +228,12 @@ public:
 	virtual void onEntrance();
 	virtual void animation();
 	virtual bool interact(Action verb, Object &obj1, Object &obj2);
+	Common::String _outroText;
+	Common::String _outroText2;
 
 private:
 	void kill();
+	void outro();
 };
 
 class Pyramid : public Room {

@@ -70,4 +70,12 @@ void Sound::stop() {
 		_mixer->stopHandle(_soundHandle);
 }
 
+int Sound::getVolume() {
+	return _mixer->getChannelVolume(_soundHandle);
+}
+
+void Sound::setVolume(int volume) {
+	_mixer->setChannelVolume(_soundHandle, volume);
+}
+
 }
