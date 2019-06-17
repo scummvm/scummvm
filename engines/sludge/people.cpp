@@ -837,7 +837,7 @@ void PeopleManager::killMostPeople() {
 	for (OnScreenPersonList::iterator it = _allPeople->begin(); it != _allPeople->end(); ++it) {
 		if (!((*it)->extra & EXTRA_NOREMOVE)) {
 			OnScreenPerson *killPeople = (*it);
-			_allPeople->reverse_erase(it);
+			it = _allPeople->reverse_erase(it);
 
 			// Gone from the list... now free some memory
 			if (killPeople->continueAfterWalking)
