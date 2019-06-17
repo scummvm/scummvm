@@ -488,7 +488,7 @@ bool VM::parseInput() {
 				preposition = *_wordPtr++;
 
 			// Get the indirect object
-			noun2 = _adjectiveList.size();
+			noun2 = _adjectiveList.size() + 1;
 			for (;;) {
 				// Get the indirect object
 				if (!getNoun())
@@ -615,10 +615,15 @@ uint VM::getNoun() {
 	_adjectiveList.push_back(AdjectiveEntry());
 	assert(_adjectiveList.size() <= 20);
 
+	if (_wordPtr == _words.end() || getWordType(*_wordPtr) != WT_NOUN) {
+		parseError();
+		return NIL;
+	}
+
 	// Add a noun entry to the list
 	Noun n;
 	n._adjective = &_adjectiveList[alStart];
-	n._noun = (_wordPtr == _words.end()) ? 0 : *_wordPtr++;
+	n._noun = *_wordPtr++;
 	n._num = _wordPtr - _words.begin() - 1;
 	_nouns.push_back(n);
 
