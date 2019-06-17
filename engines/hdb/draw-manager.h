@@ -121,6 +121,7 @@ public:
 
 	Graphics::Surface load(Common::SeekableReadStream *stream);
 	void draw(int x, int y);
+	void drawMasked(int x, int y);
 
 	uint32 _flags;
 

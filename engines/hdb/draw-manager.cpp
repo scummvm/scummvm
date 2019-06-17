@@ -330,4 +330,17 @@ void Tile::draw(int x, int y) {
 //	g_system->copyRectToScreen(_surface.getBasePtr(0, 0), _surface.pitch, x, y, _surface.w, _surface.h);
 }
 
+void Tile::drawMasked(int x, int y) {
+	if (x == kScreenWidth || y == kScreenHeight) {
+		return;
+	}
+	_surface.transBlitFrom(_surface, 0xf81f);
+	Common::Rect clip(_surface.getBounds());
+	clip.clip(Common::Rect(0, 0, kScreenWidth - 1 - x, kScreenHeight - 1 - y));
+	if (!clip.isEmpty()) {
+		g_hdb->_drawMan->_globalSurface.copyRectToSurface(_surface.getBasePtr(0, 0), _surface.pitch, x, y, clip.width(), clip.height());
+	}
+	//	g_system->copyRectToScreen(_surface.getBasePtr(0, 0), _surface.pitch, x, y, _surface.w, _surface.h);
+}
+
 }
