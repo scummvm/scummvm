@@ -41,6 +41,7 @@
 #include "hdb/draw-manager.h"
 #include "hdb/lua-script.h"
 #include "hdb/map-loader.h"
+#include "hdb/ai.h"
 
 #define MAX_SNDCACHE_MEM	0x400000	// 4Mb of sounds in memory
 #define MAX_TILES_CACHED	3500		// Max no of tiles in memory at once
