@@ -94,6 +94,7 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  ZVISION:
    - Fixed graphical glitch in Zork: Grand Inquisitor.
+   - Packaged the required fonts with ScummVM.
 
  PS Vita port:
    - Implemented front touch and optional rear touch controls.

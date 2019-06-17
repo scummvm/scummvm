@@ -1207,24 +1207,18 @@ corresponding destination.
 Download the Liberation(tm) fonts package
 <https://releases.pagure.org/liberation-fonts/liberation-fonts-ttf-2.00.1.tar.gz>
 and unpack all the ttf files into your ScummVM extras directory.
-Alternatively, download the GNU FreeFont TTF package
-<https://ftp.gnu.org/gnu/freefont/freefont-ttf.zip> and unzip all the
-ttf files from the sfd directory into your ScummVM extras directory,
-though at the time of writing these fonts cause some text rendering
-issues. Download the subtitles patch
-<https://www.thezorklibrary.com/installguides/znpatch.zip> and unzip the
-addon directory into the game root directory
+Alternatively, ScummVM comes with the GNU FreeFont fonts, though at the
+time of writing these fonts cause some text rendering issues. Download
+the subtitles patch <https://www.thezorklibrary.com/installguides/znpatch.zip>
+and unzip the addon directory into the game root directory
 
 #### 3.26.2) Zork: Grand Inquisitor
 
 Download the Liberation(tm) fonts package
 <https://releases.pagure.org/liberation-fonts/liberation-fonts-ttf-2.00.1.tar.gz>
 and unpack all the ttf files into your ScummVM extras directory.
-Alternatively, download the GNU FreeFont TTF package
-<https://ftp.gnu.org/gnu/freefont/freefont-ttf.zip> and unzip all the
-ttf files from the sfd directory into your ScummVM extras directory,
-though at the time of writing these fonts cause some text rendering
-issues.
+Alternatively, ScummVM comes with the GNU FreeFont fonts, though at the
+time of writing these fonts cause some text rendering issues.
 
 ### 3.27) Commodore64 games notes
 
