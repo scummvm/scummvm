@@ -116,4 +116,18 @@ void AI::cineMoveCamera(int x, int y, int speed) {
 	_cine->push_back(cmd);
 }
 
+void AI::cineWait(int seconds) {
+	CineCommand *cmd = new CineCommand;
+	cmd->start = 0;
+	cmd->cmdType = C_WAIT;
+	cmd->delay = seconds;
+	_cine->push_back(cmd);
+}
+
+void AI::cineWaitUntilDone() {
+	CineCommand *cmd = new CineCommand;
+	cmd->cmdType = C_WAITUNTILDONE;
+	_cine->push_back(cmd);
+}
+
 } // End of Namespace
