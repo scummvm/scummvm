@@ -39,6 +39,11 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"carolreed7",      "Carol Reed 7 - Blue Madonna"},
 	{"carolreed8",      "Carol Reed 8 - Amber's Blood"},
 	{"carolreed9",      "Carol Reed 9 - Cold Case Summer"},
+	{"carolreed10",     "Carol Reed 10 - Bosch's Damnation"},
+	{"carolreed11",     "Carol Reed 11 - Shades Of Black"},
+	{"carolreed12",     "Carol Reed 12 - Profound Red"},
+	{"carolreed13",     "Carol Reed 13 - The Birdwatcher"},
+	{"carolreed14",     "Carol Reed 14 - The Fall Of April"},
 	{"chivalry",        "Chivalry is Not Dead"},
 	{"conspiracao",     "Conspiracao Dumont"},
 	{"corrosion",       "Corrosion: Cold Winter Waiting"},
@@ -69,6 +74,7 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"pizzamorgana",    "Pizza Morgana: Episode 1 - Monsters and Manipulations in the Magical Forest"},
 	{"projectdoom",     "Project: Doom"},
 	{"projectjoe",      "Project Joe"},
+	{"rebeccacarlson1", "Rebecca Carlson Mystery 01 - Silent Footsteps"},
 	{"reversion1",      "Reversion: The Escape"},
 	{"reversion2",      "Reversion: The Meeting"},
 	{"rhiannon",        "Rhiannon: Curse of the four Branches"},
@@ -213,6 +219,21 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Carol Reed 9 - Cold Case Summer
 	WME_WINENTRY("carolreed9", "",
 		WME_ENTRY1s("data.dcp", "2b343b48a7aee508d728a546b414a255", 620005266), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+	// Carol Reed 10 - Bosch's Damnation
+	WME_WINENTRY("carolreed10", "",
+		WME_ENTRY1s("data.dcp", "5c698e28fe10854ea52964e3768e50e4", 588439599), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+	// Carol Reed 11 - Shades Of Black
+	WME_WINENTRY("carolreed11", "",
+		WME_ENTRY1s("data.dcp", "a1e9f54b48493e9c6d737e3a94779d8c", 525450069), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+	// Carol Reed 12 - Profound Red
+	WME_WINENTRY("carolreed12", "",
+		WME_ENTRY1s("data.dcp", "edc1e69dc52ec2a65fa431a51c783c2e", 944403699), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+	// Carol Reed 13 - The Birdwatcher
+	WME_WINENTRY("carolreed13", "",
+		WME_ENTRY1s("data.dcp", "954392d19f0c928b700f17badd35d488", 1267391173), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+	// Carol Reed 14 - The Fall Of April
+	WME_WINENTRY("carolreed14", "",
+		WME_ENTRY1s("data.dcp", "38c9088dca07c9623562e8efdea4c856", 1256960150), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
 	// Chivalry is Not Dead
 	WME_WINENTRY("chivalry", "",
 		WME_ENTRY1s("data.dcp", "ebd0915d9a12df5224be22f53bb23eb6", 7278306), Common::EN_ANY, ADGF_NO_FLAGS, LATEST_VERSION),
@@ -225,6 +246,9 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Corrosion: Cold Winter Waiting
 	WME_WINENTRY("corrosion", "",
 		WME_ENTRY1s("data.dcp", "ae885b1a8faa0b27f43c0e8f0df02fc9", 525931618), Common::EN_ANY, ADGF_NO_FLAGS, LATEST_VERSION),
+	// Corrosion: Cold Winter Waiting (Enhanced Edition)
+	WME_WINENTRY("corrosion", "Enhanced Edition",
+		WME_ENTRY1s("data.dcp", "eeeb63910f6fc6ad1fe9c06db0b0ea2c", 643363346), Common::EN_ANY, ADGF_NO_FLAGS, LATEST_VERSION),
 	// Dead City (Czech)
 	// The Czech data are in data.dcp, so in this case we'll have to
 	// just detect the english version twice, to give the user a choice.
@@ -403,6 +427,9 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Project Lonely Robot
 	WME_WINENTRY("lonelyrobot", "beta",
 		WME_ENTRY1s("data.dcp", "a0cf7ad5bab957416dcda454e9f28ef0", 3420120), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, LATEST_VERSION),
+	// Rebecca Carlson Mystery 01 - Silent Footsteps
+	WME_WINENTRY("rebeccacarlson1", "",
+		WME_ENTRY1s("data.dcp", "5fac4824b7ffdaee982dc18a45428182", 773144334), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
 	// Reversion: The Escape Version 1.0
 	WME_WINENTRY("reversion1", "Version 1.0",
 		WME_ENTRY1s("data.dcp", "cd616f98ebfd047e0c540b50b4b70761", 254384531), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
@@ -513,6 +540,9 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Rhiannon: Curse of the four Branches (English PC DVD)
 	WME_WINENTRY("rhiannon", "DVD",
 		WME_ENTRY1s("data.dcp", "6736bbc921bb6ce5161b3ad095a97bd4", 1053441028), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+	// Rhiannon: Curse of the four Branches (Premium Edition)
+	WME_WINENTRY("rhiannon", "Premium Edition",
+		WME_ENTRY1s("data.dcp", "8debcadeda038f43d9ca9b97d827e7f3", 928484275), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
 	// Rhiannon: Curse of The Four Branches (Demo: Chapter 1)
 	WME_WINENTRY("rhiannon", "Demo: Chapter 1",
 		WME_ENTRY1s("data.dcp", "d3b6ad94e9a8b29ca3cbda96c8857bd6", 72680676), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, LATEST_VERSION),
