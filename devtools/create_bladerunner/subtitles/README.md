@@ -13,17 +13,17 @@ For this guide it is assumed that this folder is "C:\Westwood\BladeRunner\"
 ```
 python2.7 devtools/create_bladerunner/subtitles/quotesSpreadsheetCreator/quoteSpreadsheetCreator.py -op "/c/Westwood/Blade Runner/AUDIO_FRA" -ip "/c/Westwood/Blade Runner" -ian "devtools/create_bladerunner/subtitles/common/actornames.txt" -xwav -ld FR_FRA
 ```
-This could take a few minutes to complete. Please refer to the [quotesSpreadsheetCreator](#quotesspreadsheetcreator) section of this document.
+This could take a few minutes to complete. Please refer to the [quotesSpreadsheetCreator](#quotesspreadsheetcreator-quotespreadsheetcreatorpy) section of this document.
 6. When you've completed the above step, an Excel file should be created in your current folder, named "out-French.xls". Open this file with a spreadsheet editor app (tested with Microsoft Excel 2007 and LibreOffice Calc 6.2.4) and select the "INGQUO_#.TR#" sheet.
     * Please keep the column A ("Filename") as is. Do not modify the contents of this column.
-	* Edit column B ("Quote") to put in the text for your transcript of the corresponding audio file
-	* Use column G ("ShortHandFileName") to play the audio file for the quote to be transcribed in the same line. You should be able to double click in MS Excel or Ctrl+Click on the specific cell; an audio player will be launched automatically to play the audio file.
-	* Note that the columns used by the tool that will create the final subtitles file are only columns A and B.
+    * Edit column B ("Quote") to put in the text for your transcript of the corresponding audio file
+    * Use column G ("ShortHandFileName") to play the audio file for the quote to be transcribed in the same line. You should be able to double click in MS Excel or Ctrl+Click on the specific cell; an audio player will be launched automatically to play the audio file.
+    * Note that the columns used by the tool that will create the final subtitles file are only columns A and B.
 7. The rest of the sheets in the Excel file, excluding the "SBTLVERS.TRE" which contains versioning info) are the sheets for the video cutscenes. We don't provide links to the audio cues for those subtitles, but we do provide the timings for the English version of these scenes which you can use as a guide, along with the English transcript available online here: https://docs.google.com/spreadsheets/d/17ew0YyhSwqcqZg6bXrIgz0GkA62dhgViHN15lOu5Hj8/edit?usp=sharing
     * Note that the important columns used by the tool that will create the final subtitles file are in this case only columns C ("Subtitle"), J ("Frame Start") and K ("Frame End").
-	* Fill in column C with the subtitle text, and set the values in columns J and K to adjust when the subtitle should start and when it should stop being displayed respectively.
+    * Fill in column C with the subtitle text, and set the values in columns J and K to adjust when the subtitle should start and when it should stop being displayed respectively.
 8. You may edit the info in the "SBTLVERS.TRE" sheet to fill in the credits and a version number for your transcript.
-9. If you're transcribing for a non-Latin language, you will need to create a special font for the subtitles in order for the game to display your transcript properly. Please, refer to the [fontCreator](#fontcreator) section of this document for this process.
+9. If you're transcribing for a non-Latin language, you will need to create a special font for the subtitles in order for the game to display your transcript properly. Please, refer to the [fontCreator](#fontcreator-fontcreatorpy) section of this document for this process.
 
 ## Building and installing a SUBTITLES.MIX file with a "make" command
 You need to follow these instructions:
