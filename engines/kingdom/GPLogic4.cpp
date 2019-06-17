@@ -115,12 +115,8 @@ void Logic::GPL4_991() {
 		_vm->playMovie(194);
 		_vm->_noIFScreen = true;
 		_vm->fShowPic(107);
-		_currMap = 3;
-		dsAll();
-		_pouch = false;
-		_vm->playSound(1);
-		memset(_inventory, -1, 19);
-		_statPlay = 994;
+
+		characterDeath();
 	} else {
 		_vm->_bTimer = 36;
 		while(_vm->_bTimer) {
@@ -167,12 +163,8 @@ void Logic::GPL4_992() {
 		_vm->playMovie(194);
 		_vm->_noIFScreen = true;
 		_vm->fShowPic(107);
-		_currMap = 3;
-		dsAll();
-		_pouch = false;
-		_vm->playSound(1);
-		memset(_inventory, -1, 19);
-		_statPlay = 994;
+
+		characterDeath();
 	} else {
 		_vm->_bTimer = 36;
 		while(_vm->_bTimer != 0) {
@@ -216,12 +208,8 @@ void Logic::GPL4_992_demo() {
 		_vm->playMovie(194);
 		_vm->_noIFScreen = true;
 		_vm->fShowPic(107);
-		_currMap = 3;
-		dsAll();
-		_pouch = false;
-		_vm->playSound(1);
-		memset(_inventory, -1, 19);
-		_statPlay = 994;
+
+		characterDeath();
 	} else {
 		_vm->_bTimer = 36;
 		while(_vm->_bTimer != 0) {
@@ -264,12 +252,8 @@ void Logic::GPL4_993() {
 		_vm->playMovie(194);
 		_vm->_noIFScreen = true;
 		_vm->fShowPic(107);
-		_currMap = 3;
-		dsAll();
-		_pouch = false;
-		_vm->playSound(1);
-		memset(_inventory, -1, 19);
-		_statPlay = 994;
+
+		characterDeath();
 	} else {
 		_vm->_bTimer = 36;
 		while (_vm->_bTimer != 0) {
@@ -317,12 +301,8 @@ void Logic::GPL4_993_demo() {
 		_vm->playMovie(194);
 		_vm->_noIFScreen = true;
 		_vm->fShowPic(107);
-		_currMap = 3;
-		dsAll();
-		_pouch = false;
-		_vm->playSound(1);
-		memset(_inventory, -1, 19);
-		_statPlay = 994;
+
+		characterDeath();
 	} else {
 		_vm->_bTimer = 36;
 		while (_vm->_bTimer != 0) {

@@ -152,8 +152,7 @@ void Logic::initOpcodes() {
 	if (_vm->isDemo())
 		initOpcodesDemo();
 	else
-		initOpcodesFull();
-	
+		initOpcodesFull();	
 }
 
 void Logic::initOpcodesDemo() {
@@ -404,12 +403,8 @@ void Logic::endCredits() {
 	_vm->drawRect(4, 17, 228, 161, 0);
 	_vm->playMovie(201);
 	_vm->fShowPic(125);
-	_currMap = 3;
-	dsAll();
-	_pouch = false;
-	memset(_inventory, 0xFF, 19);
-	_statPlay = 994;
-	_vm->_loopFlag = true;
+
+	characterDeath();
 }
 
 void Logic::gameHelp_Sub43C() {
@@ -564,6 +559,15 @@ void Logic::switchAS() {
 	_pouch = _oldPouch;
 	_help = _oldHelp;
 	_vm->_iconsClosed = _vm->_oldIconsClosed;
+}
+
+void Logic::characterDeath() {
+	_currMap = 3;
+	dsAll();
+	_pouch = false;
+	memset(_inventory, -1, 19);
+	_statPlay = 994;
+	_vm->_loopFlag = true;
 }
 
 void Logic::executeOpcode() {
