@@ -158,6 +158,8 @@ Common::Error HDBGame::run() {
 
 	_lua->initScript(luaStream, "MAP00_LUA", luaLength);
 
+	_lua->callFunction("level_loaded", 0);
+
 	Common::SeekableReadStream *mapStream = _fileMan->findFirstData("MAP00_MSM", TYPE_BINARY);
 	if (mapStream == NULL) {
 		debug("The MAP00_MSM MPC entry can't be found.");
