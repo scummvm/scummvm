@@ -455,7 +455,7 @@ def getSupportedInGameQuotesSheetsList():
 	supportedInGameQuotesSheetsList = []
 	for tmpActiveLanguageDescriptionCodeTuple in SUPPORTED_LANGUAGES_DESCRIPTION_CODE_TLIST:
 		if (gActiveLanguageDescriptionCodeTuple[1] != '#' and tmpActiveLanguageDescriptionCodeTuple[1] == gActiveLanguageDescriptionCodeTuple[1]) \
-			or (gActiveLanguageDescriptionCodeTuple[1] == '#' and tmpActiveLanguageDescriptionCodeTuple[1] != '#' and tmpActiveLanguageDescriptionCodeTuple[1] != 'R'):
+			or (gActiveLanguageDescriptionCodeTuple[1] == '#' and tmpActiveLanguageDescriptionCodeTuple[1] != '#' and tmpActiveLanguageDescriptionCodeTuple[0] != 'RU_RUS'):
 			supportedInGameQuotesSheetsList += [(x + '%s.TR%s' % (tmpActiveLanguageDescriptionCodeTuple[1], tmpActiveLanguageDescriptionCodeTuple[1])) for x in SUPPORTED_INGAME_DIALOGUE_SHEETS]
 	return supportedInGameQuotesSheetsList
 
@@ -465,7 +465,7 @@ def getSupportedSubtitleSheetsList():
 	mergedListOfSupportedSubtitleSheets += [(x + 'E.VQA') for x in SUPPORTED_VIDEO_DIALOGUE_SHEETS_ENGLISH]
 	for tmpActiveLanguageDescriptionCodeTuple in SUPPORTED_LANGUAGES_DESCRIPTION_CODE_TLIST:
 		if (gActiveLanguageDescriptionCodeTuple[1] != '#' and tmpActiveLanguageDescriptionCodeTuple[1] == gActiveLanguageDescriptionCodeTuple[1]) \
-			or (gActiveLanguageDescriptionCodeTuple[1] == '#' and tmpActiveLanguageDescriptionCodeTuple[1] != '#' and tmpActiveLanguageDescriptionCodeTuple[1] != 'R'):
+			or (gActiveLanguageDescriptionCodeTuple[1] == '#' and tmpActiveLanguageDescriptionCodeTuple[1] != '#' and tmpActiveLanguageDescriptionCodeTuple[0] != 'RU_RUS'):
 			mergedListOfSupportedSubtitleSheets += [(x + '%s.VQA' % (tmpActiveLanguageDescriptionCodeTuple[1])) for x in SUPPORTED_VIDEO_DIALOGUE_SHEETS_LOCALIZED]
 	return mergedListOfSupportedSubtitleSheets
 
@@ -473,7 +473,7 @@ def getSupportedTranslatedTrxFilenamesList():
 	listOfSupportedTranslatedTrxFilenames = []
 	for tmpActiveLanguageDescriptionCodeTuple in SUPPORTED_LANGUAGES_DESCRIPTION_CODE_TLIST:
 		if (gActiveLanguageDescriptionCodeTuple[1] != '#' and tmpActiveLanguageDescriptionCodeTuple[1] == gActiveLanguageDescriptionCodeTuple[1]) \
-			or (gActiveLanguageDescriptionCodeTuple[1] == '#' and tmpActiveLanguageDescriptionCodeTuple[1] != '#' and tmpActiveLanguageDescriptionCodeTuple[1] != 'R'):
+			or (gActiveLanguageDescriptionCodeTuple[1] == '#' and tmpActiveLanguageDescriptionCodeTuple[1] != '#' and tmpActiveLanguageDescriptionCodeTuple[0] != 'RU_RUS'):
 			for translatedTRxFileName in [ (x[0] + '%s' % (tmpActiveLanguageDescriptionCodeTuple[1])) for x in SUPPORTED_TRANSLATION_SHEETS] :
 				if translatedTRxFileName[:-1] != SUPPORTED_DIALOGUE_VERSION_SHEET[:-1] or tmpActiveLanguageDescriptionCodeTuple[1] == 'E':
 					listOfSupportedTranslatedTrxFilenames.append(translatedTRxFileName)
