@@ -52,7 +52,7 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"four",            "Four"},
 	{"framed",          "Framed"},
 	{"ghostsheet",      "Ghost in the Sheet"},
-	{"hamlet",          "Hamlet or the last game without MMORPS features, shaders and product placement"},
+	{"hamlet",          "Hamlet or the last game without MMORPG features, shaders and product placement"},
 	{"helga",           "Helga Deep In Trouble"},
 	{"jamesperis",      "James Peris: No License Nor Control"},
 	{"kulivocko",       "Kulivocko"},
@@ -299,10 +299,12 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Ghost in the Sheet (Demo)
 	WME_WINENTRY("ghostsheet", "Demo",
 		WME_ENTRY1s("data.dcp", "dc1f6595f412ac25a52eaf47dad4ab81", 169083), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, LATEST_VERSION),
-	// Hamlet or the last game without MMORPS features, shaders and product placement
+	// Hamlet or the last game without MMORPG features, shaders and product placement
 	WME_WINENTRY("hamlet", "",
-
 		WME_ENTRY1s("data.dcp", "f624add957a77c9930529fb28cc2450f", 88183022), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+	// Hamlet or the last game without MMORPG features, shaders and product placement
+	WME_WINENTRY("hamlet", "",
+		WME_ENTRY1s("data.dcp", "74130d3c13f4a8caa2aafb9ee23f2639", 88184289), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
 	// Helga Deep In Trouble (English)
 	WME_WINENTRY("helga", "",
 		WME_ENTRY2s("english.dcp", "bfa136b21bdbc7d8691c0770a6d40bc3", 135931,
