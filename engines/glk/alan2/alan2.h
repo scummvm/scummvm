@@ -26,19 +26,9 @@
 #include "common/scummsys.h"
 #include "common/stack.h"
 #include "glk/glk_api.h"
-#include "glk/alan2/acode.h"
-#include "glk/alan2/types.h"
 
 namespace Glk {
 namespace Alan2 {
-
-typedef Common::FixedStack<Aptr, 100> Alan2Stack;
-class Decode;
-class Execute;
-class Interpreter;
-class SaveLoad;
-
-#define N_EVTS 100
 
 /**
  * Alan2 game interpreter
@@ -78,63 +68,9 @@ public:
 	 */
 	virtual Common::Error writeGameData(Common::WriteStream *ws) override;
 
-	/**
-	 * Output a string to the screen
-	 */
-	void output(const Common::String str);
-
-	/**
-	 * Print a message from the message table
-	 */
-	void printMessage(MsgKind msg);
-
-	/**
-	 * Print an error from the message table, force new player input and abort
-	 */
-	void printError(MsgKind msg);
-
-	/**
-	 * Make a new paragraph, i.e one empty line (one or two newlines)
-	 */
-	void paragraph();
-
-	/**
-	 * Print the the status line on the top of the screen
-	 */
-	void statusLine();
-
-	/**
-	 * Make a newline, but check for screen full
-	 */
-	void newLine();
-
-	// Engine variables
-	Alan2Stack *_stack;
-	int pc;
-	ParamElem *params;
-	Aword *memory;	// The Amachine memory
-	int memTop;		// Top of memory
-	CurVars cur;	// Amachine variables
-	int col;
-	bool fail;
-	int scores[100];	// FIXME: type + size
-	AcdHdr *header;
-	bool _needSpace;		// originally "needsp"
-
-	EvtElem *evts;					// Event table pointer
-	bool looking;					// LOOKING? flag
-	int dscrstkp;   	            // Describe-stack pointer
-	Common::File *_txtFile;
-	bool _anyOutput;
-	winid_t _bottomWindow;
-
-	Decode *_decode;
-	Execute *_execute;
-	Interpreter *_interpreter;
-	SaveLoad *_saveLoad;
 };
 
-extern Alan2 *_vm;
+extern Alan2 *g_vm;
 
 } // End of namespace Alan2
 } // End of namespace Glk

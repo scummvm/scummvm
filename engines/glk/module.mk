@@ -32,13 +32,7 @@ MODULE_OBJS := \
 	advsys/glk_interface.o \
 	advsys/vm.o \
 	alan2/alan2.o \
-	alan2/decode.o \
 	alan2/detection.o \
-	alan2/execute.o \
-	alan2/interpreter.o \
-	alan2/parse.o \
-	alan2/rules.o \
-	alan2/saveload.o \
 	frotz/bitmap_font.o \
 	frotz/config.o \
 	frotz/detection.o \

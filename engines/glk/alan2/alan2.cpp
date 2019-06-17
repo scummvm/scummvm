@@ -21,10 +21,6 @@
  */
 
 #include "glk/alan2/alan2.h"
-#include "glk/alan2/decode.h"
-#include "glk/alan2/execute.h"
-#include "glk/alan2/interpreter.h"
-#include "glk/alan2/saveload.h"
 #include "common/config-manager.h"
 #include "common/translation.h"
 #include "common/error.h"
@@ -36,24 +32,15 @@
 namespace Glk {
 namespace Alan2 {
 
-Alan2 *_vm = nullptr;
+Alan2 *g_vm = nullptr;
 
 Alan2::Alan2(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gameDesc),
 		vm_exited_cleanly(false) {
-	_vm = this;
-	looking = false;
-	dscrstkp = 0;
+	g_vm = this;
 }
 
 void Alan2::runGame() {
 	Common::String gameFileName = _gameFile.getName();
-
-	// TODO: Initialize these properly
-	int tmp = 0;
-	_decode = new Decode(nullptr, nullptr);
-	_execute = new Execute();
-	_saveLoad = new SaveLoad(gameFileName, nullptr, nullptr, nullptr, nullptr, &tmp);
-	_interpreter = new Interpreter(_execute, _saveLoad, _stack);
 
 	if (!is_gamefile_valid())
 		return;
@@ -83,28 +70,6 @@ bool Alan2::is_gamefile_valid() {
 	}
 
 	return true;
-}
-
-void Alan2::output(const Common::String str) {
-	// TODO
-}
-
-void Alan2::printMessage(MsgKind msg) {
-	// TODO
-}
-
-void Alan2::printError(MsgKind msg) {
-	// TODO
-}
-
-void Alan2::paragraph() {
-	if (col != 1)
-		newLine();
-	newLine();
-}
-
-void Alan2::newLine() {
-	// TODO
 }
 
 } // End of namespace Alan2
