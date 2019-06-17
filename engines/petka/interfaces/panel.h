@@ -20,34 +20,37 @@
  *
  */
 
-#ifndef PETKA_SCREEN_H
-#define PETKA_SCREEN_H
+#ifndef PETKA_PANEL_H
+#define PETKA_PANEL_H
 
-#include "graphics/screen.h"
+#include "petka/interfaces/interface.h"
 
 namespace Petka {
 
-class FlicDecoder;
-
-class VideoSystem {
+class InterfacePanel : public Interface {
 public:
-	VideoSystem();
+	void start() override;
 
-	void update();
-
-	void addDirtyRect(const Common::Rect &rect);
-	void addDirtyRect(Common::Point pos, FlicDecoder &flc);
-	const Common::List<Common::Rect> rects() const;
-	Graphics::Screen &screen();
+	void onLeftButtonDown(const Common::Point p) override;
+	void onMouseMove(const Common::Point p) override;
 
 private:
-	Graphics::Screen _screen;
-	Common::List<Common::Rect> _rects;
-	uint32 _shakeTime;
-	bool _shake;
-	bool _shift;
+	void readSettings();
+	void applySettings();
+
+	void updateSliders();
+	void updateSubtitles();
+
+private:
+	int _savedXOffset;
+	int _savedSceneWidth;
+	int _subtitles;
+	int _speechFrame;
+	int _musicFrame;
+	int _sfxFrame;
+	int _speedFrame;
 };
 
-}
+} // End of namespace Petka
 
 #endif

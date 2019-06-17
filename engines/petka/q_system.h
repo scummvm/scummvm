@@ -37,6 +37,7 @@ class QObjectStar;
 class InterfaceSaveLoad;
 class InterfaceMain;
 class InterfaceStartup;
+class InterfacePanel;
 class Interface;
 
 class QSystem {
@@ -66,6 +67,7 @@ public:
 	Common::ScopedPtr<InterfaceMain> _mainInterface;
 	Common::ScopedPtr<InterfaceSaveLoad> _saveLoadInterface;
 	Common::ScopedPtr<InterfaceStartup> _startupInterface;
+	Common::ScopedPtr<InterfacePanel> _panelInterface;
 	Interface *_currInterface;
 	Interface *_prevInterface;
 

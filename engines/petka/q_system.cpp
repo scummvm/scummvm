@@ -29,6 +29,7 @@
 #include "petka/interfaces/startup.h"
 #include "petka/interfaces/main.h"
 #include "petka/interfaces/save_load.h"
+#include "petka/interfaces/panel.h"
 #include "petka/q_system.h"
 
 namespace Petka {

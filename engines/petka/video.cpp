@@ -22,6 +22,7 @@
 
 #include "common/system.h"
 
+#include "petka/flc.h"
 #include "petka/petka.h"
 #include "petka/q_system.h"
 #include "petka/interfaces/interface.h"
@@ -83,6 +84,12 @@ const Common::List<Common::Rect> VideoSystem::rects() const {
 
 Graphics::Screen &VideoSystem::screen() {
 	return _screen;
+}
+
+void VideoSystem::addDirtyRect(Common::Point pos, FlicDecoder &flc) {
+	Common::Rect rect = flc.getBounds();
+	rect.translate(pos.x, pos.y);
+	addDirtyRect(rect);
 }
 
 }
