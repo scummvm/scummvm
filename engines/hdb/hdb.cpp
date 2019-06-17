@@ -188,8 +188,6 @@ Common::Error HDBGame::run() {
 			}
 		}
 
-		Graphics::ManagedSurface backBuffer = _drawMan->_globalSurface;
-		g_system->copyRectToScreen(backBuffer.getBasePtr(0, 0), backBuffer.pitch, 0, 0, backBuffer.w, backBuffer.h);
 		g_system->updateScreen();
 		g_system->delayMillis(10);
 	}
