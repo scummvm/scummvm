@@ -136,7 +136,7 @@ kString30, kString31, kStringGenericInteract1, kStringGenericInteract2, kStringG
 kStringGenericInteract4, kStringGenericInteract5, kStringGenericInteract6, kStringGenericInteract7, kStringGenericInteract8,
 kStringGenericInteract9, kStringGenericInteract10, kStringGenericInteract11, kStringGenericInteract12, kStringGenericInteract13,
 kStringIntro1, kStringIntro2, kStringIntro3, kStringIntro4, kStringIntro5,
-kString50, kString51, kString52, kString53, kString54,
+kStringOutro1, kStringOutro2, kStringOutro3, kStringOutro4, kStringOutro5,
 kStringShout1, kStringShout2, kStringShout3, kStringShout4, kStringShout5,
 kStringShout6, kStringShout7, kStringShout8, kStringShout9, kStringShout10,
 kStringShout11, kStringShout12, kStringShout13, kStringShout14, kStringShout15,

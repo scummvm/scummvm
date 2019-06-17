@@ -350,9 +350,9 @@ void Supernova2Engine::paletteBrightness() {
 	_screen->paletteBrightness();
 }
 
-void Supernova2Engine::paletteFadeOut() {
+void Supernova2Engine::paletteFadeOut(int minBrightness) {
 	if (!shouldQuit())
-		_screen->paletteFadeOut();
+		_screen->paletteFadeOut(minBrightness);
 }
 
 void Supernova2Engine::paletteFadeIn() {

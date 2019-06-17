@@ -111,7 +111,7 @@ Marquee::Marquee(Screen *screen, MarqueeId id, const char *text)
 		_y = 191;
 		_loop = true;
 	} else if (id == kMarqueeOutro) {
-		_y = 1;
+		_y = 191;
 	}
 
 	_textWidth = Screen::textWidth(_text);
@@ -125,10 +125,18 @@ void Marquee::clearText() {
 	_screen->renderBox(_x, _y - 1, _textWidth + 1, 9, kColorBlack);
 }
 
-void Marquee::renderCharacter() {
+void Marquee::reset() {
+	_text = _textBegin;
+	clearText();
+	_textWidth = Screen::textWidth(_text);
+	_x = kScreenWidth / 2 - _textWidth / 2;
+	_screen->_textCursorX = _x;
+}
+
+bool Marquee::renderCharacter() {
 	if (_delay != 0) {
 		_delay--;
-		return;
+		return true;
 	}
 
 	switch (*_text) {
@@ -141,6 +149,8 @@ void Marquee::renderCharacter() {
 			_x = kScreenWidth / 2 - _textWidth / 2;
 			_screen->_textCursorX = _x;
 		}
+		else
+			return false;
 		break;
 	case '\0':
 		clearText();
@@ -165,6 +175,7 @@ void Marquee::renderCharacter() {
 		_delay = 1;
 		break;
 	}
+	return true;
 }
 
 Screen::Screen(Supernova2Engine *vm, ResourceManager *resMan)
@@ -591,8 +602,8 @@ void Screen::paletteBrightness() {
 	_vm->_system->getPaletteManager()->setPalette(palette, 0, 255);
 }
 
-void Screen::paletteFadeOut() {
-	while (_guiBrightness > 10) {
+void Screen::paletteFadeOut(int minBrightness) {
+	while (_guiBrightness > minBrightness + 10) {
 		_guiBrightness -= 10;
 		if (_viewportBrightness > _guiBrightness)
 			_viewportBrightness = _guiBrightness;
@@ -600,8 +611,8 @@ void Screen::paletteFadeOut() {
 		_vm->_system->updateScreen();
 		_vm->_system->delayMillis(_vm->_delay);
 	}
-	_guiBrightness = 0;
-	_viewportBrightness = 0;
+	_guiBrightness = minBrightness;
+	_viewportBrightness = minBrightness;
 	paletteBrightness();
 	_vm->_system->updateScreen();
 }

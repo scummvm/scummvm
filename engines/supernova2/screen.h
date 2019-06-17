@@ -102,7 +102,8 @@ public:
 
 	Marquee(Screen *screen, MarqueeId id, const char *text);
 
-	void renderCharacter();
+	bool renderCharacter();
+	void reset();
 
 private:
 	void clearText();
@@ -145,7 +146,7 @@ public:
 	const ImageInfo *getImageInfo(ImageId id) const;
 	bool isMessageShown() const;
 	void paletteFadeIn(int maxViewportBrightness);
-	void paletteFadeOut();
+	void paletteFadeOut(int minBrightness);
 	void paletteBrightness();
 	void renderImage(ImageId id, bool removeImage = false);
 	void renderImage(int section);

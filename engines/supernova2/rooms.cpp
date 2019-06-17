@@ -2044,6 +2044,30 @@ Ship::Ship(Supernova2Engine *vm, GameManager *gm) {
 	_objectState[4] = Object(_id, kStringSpaceSuit, kStringSpaceSuitDescription, SUIT, TAKE, 255, 255, 1);
 	_objectState[5] = Object(_id, kStringCable, kStringCableDescription1, RCABLE, COMBINABLE, 255, 255, 0);
 	_objectState[6] = Object(_id, kStringCable, kStringCableDescription2, CABLE, TAKE | COMBINABLE, 255, 255, 8 + 128);
+
+	_outroText = 
+		_vm->getGameString(kStringIntro1) + '\0' + 
+		_vm->getGameString(kStringIntro2) + '\0' + 
+		_vm->getGameString(kStringIntro3) + '\0' + 
+		_vm->getGameString(kStringIntro4) + '\0' + 
+		_vm->getGameString(kStringIntro5) + '\0' + 
+		"^Matthias Neef#" + '\0' +
+		"^Sascha Otterbach#" + '\0' +
+		"^Thomas Mazzoni#" + '\0' +
+		"^Matthias Klein#" + '\0' +
+		"^Gerrit Rothmaier#" + '\0' +
+		"^Thomas Hassler#" + '\0' +
+		"^Rene Kach#" + '\0' +
+		'\233' + '\0';
+	Common::String waitString = "##################";
+	_outroText2 = 
+		waitString + '\0' +
+		_vm->getGameString(kStringOutro1) + '\0' + 
+		_vm->getGameString(kStringOutro2) + '\0' + 
+		_vm->getGameString(kStringOutro3) + '\0' + 
+		_vm->getGameString(kStringOutro4) + '\0' + 
+		_vm->getGameString(kStringOutro5) + '\0' + 
+		'\233' + '\0';
 }
 
 void Ship::onEntrance() {
@@ -2194,11 +2218,62 @@ bool Ship::interact(Action verb, Object &obj1, Object &obj2) {
 		_vm->renderImage(12);
 		_gm->wait(18);
 		// TODO some palette stuff
-		_vm->renderImage(13);
-		_vm->playSound(kMusicMadMonkeys);
+		outro();
 	} else
 		return false;
 	return true;
+}
+
+void Ship::outro() {
+	_vm->_screen->paletteFadeOut(100);
+	_vm->renderImage(13);
+	// Because the screen is partialy faded out, the original values (63, 20, 20)
+	// should be multiplied by 2.55, but are multiplied by 3.5, because the color
+	// looks closer to the original
+	byte palette[768];
+	_vm->_system->getPaletteManager()->grabPalette(palette, 0, 255);
+	palette[282] = 220;
+	palette[283] = 70;
+	palette[284] = 70;
+	// Restore marquee colors
+	for (int i = 0; i < 3; i++) {
+		palette[kColorPurple * 3 + i] *= 2.5;
+		palette[kColorLightYellow * 3 + i] *= 2.5;
+	}
+	_vm->_system->getPaletteManager()->setPalette(palette, 0, 255);
+	_vm->playSound(kMusicMadMonkeys);
+	_vm->renderBox(0, 190, 320, 10, kColorBlack);
+	Marquee marquee(_vm->_screen, Marquee::kMarqueeOutro, _outroText.c_str());
+	for(int i = 0; i < 2; i++) {
+		while (!_vm->shouldQuit()) {
+			_gm->updateEvents();
+			
+			if (!marquee.renderCharacter() || _gm->_mouseClicked || _gm->_keyPressed)
+				break;
+			g_system->updateScreen();
+			g_system->delayMillis(_vm->_delay);
+		}
+		marquee.reset();
+	}
+	Marquee marquee2(_vm->_screen, Marquee::kMarqueeOutro, _outroText2.c_str());
+	while (!_vm->shouldQuit()) {
+		_gm->updateEvents();
+		
+		if (!marquee2.renderCharacter() || _gm->_mouseClicked || _gm->_keyPressed)
+			break;
+		g_system->updateScreen();
+		g_system->delayMillis(_vm->_delay);
+	}
+	// TODO: End with some end of music
+	int volume;
+	do {
+		volume = _vm->_sound->getVolume() - 10;
+		_vm->_sound->setVolume(volume);
+		_gm->waitOnInput(1);
+	} while (volume > 10 && !_vm->shouldQuit());
+	Common::Event event;
+	event.type = Common::EVENT_RTL;
+	_vm->getEventManager()->pushEvent(event);
 }
 
 void Ship::kill() {

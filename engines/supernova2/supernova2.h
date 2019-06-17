@@ -100,7 +100,7 @@ public:
 	void playSound(AudioId sample);
 	void playSound(MusicId index);
 	void paletteFadeIn();
-	void paletteFadeOut();
+	void paletteFadeOut(int minBrightness = 0);
 	void paletteBrightness();
 	void renderImage(int section);
 	void renderImage(ImageId id, bool removeImage = false);
