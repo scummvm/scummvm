@@ -32,6 +32,58 @@ AI::~AI() {
 	delete _cine;
 }
 
+void AI::processCines() {
+
+	bool complete, bailOut;
+
+	if (!_cineActive) {
+		return;
+	}
+
+	bailOut = complete = false;
+
+	// TODO: Make sure Dialogs are timing out
+
+	// TODO: Make sure Cine Pics are drawing
+
+	// TODO: Check for Game Pause
+
+	for (Common::Array<CineCommand *>::iterator it = _cine->begin(); it != _cine->end(); it++) {
+		switch ((*it)->cmdType) {
+		case C_SETCAMERA:
+			_cameraX = (*it)->x;
+			_cameraY = (*it)->y;
+			warning("STUB: Map::CenterMAPXY required");
+			_cameraLock = true;
+			complete = true;
+			break;
+		case C_RESETCAMERA:
+			int px, py;
+			_cameraLock = false;
+			warning("STUB: AI::GetPlayerXY required");
+			warning("STUB: MAP::CenterMapXY required");
+			complete = true;
+			break;
+		case C_MOVECAMERA:
+			_cameraLock = true;
+			if (!((*it)->start)) {
+				(*it)->xv = (((double) (*it)->x) - _cameraX) / (double) (*it)->speed;
+				(*it)->yv = (((double) (*it)->y) - _cameraY) / (double) (*it)->speed;
+				(*it)->start = 1;
+			}
+			_cameraX += (*it)->xv;
+			_cameraY += (*it)->yv;
+			if (abs(_cameraX - (*it)->x) <= 1 && abs(_cameraY - (*it)->y) <= 1) {
+				_cameraX = (*it)->x;
+				_cameraY = (*it)->y;
+				complete = true;
+			}
+			warning("STUB: MAP::CenterMapXY required");
+			break;
+		}
+	}
+}
+
 void AI::cineStart(bool abortable, char *abortFunc) {
 	_cineAbortable = abortable;
 	_cineAborted = false;

@@ -86,6 +86,7 @@ public:
 	~AI();
 
 	// Cinematic Functions
+	void processCines();
 	void cineStart(bool abortable, char *abortFunc);
 	void cineSetCamera(int x, int y);
 	void cineResetCamera();
