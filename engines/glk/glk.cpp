@@ -194,12 +194,12 @@ Common::Error GlkEngine::loadGameState(int slot) {
 				Common::SeekableReadStream *rs = it.getStream();
 				rs->skip(14);
 
-				byte interpType = rs->readByte();
+				uint32 interpType = rs->readUint32BE();
 				byte language = rs->readByte();
 				Common::String md5 = QuetzalReader::readString(rs);
 				delete rs;
 
-				if (interpType != getInterpreterType() || language != getLanguage() || md5 != getGameMD5())
+				if (interpType != INTERPRETER_IDS[getInterpreterType()] || language != getLanguage() || md5 != getGameMD5())
 					errCode = Common::kReadingFailed;
 			}
 		}

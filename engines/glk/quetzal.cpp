@@ -29,6 +29,24 @@
 
 namespace Glk {
 
+const uint32 INTERPRETER_IDS[INTERPRETER_TADS3 + 1] = {
+	MKTAG('A', 'S', 'Y', 'S'),
+	MKTAG('A', 'G', 'I', 'L'),
+	MKTAG('A', 'L', 'N', '2'),
+	MKTAG('A', 'L', 'N', '3'),
+	MKTAG('Z', 'C', 'O', 'D'),
+	MKTAG('G', 'E', 'A', 'S'),
+	MKTAG('G', 'L', 'U', 'L'),
+	MKTAG('H', 'U', 'G', 'O'),
+	MKTAG('J', 'A', 'C', 'L'),
+	MKTAG('L', 'V', 'L', '9'),
+	MKTAG('M', 'A', 'G', 'N'),
+	MKTAG('S', 'C', 'A', 'R'),
+	MKTAG('S', 'C', 'O', 'T'),
+	MKTAG('T', 'A', 'D', '2'),
+	MKTAG('T', 'A', 'D', '3')
+};
+
 void QuetzalReader::clear() {
 	_chunks.clear();
 	_stream = nullptr;
@@ -200,7 +218,7 @@ void QuetzalWriter::addCommonChunks(const Common::String &saveName) {
 		ws.writeUint32BE(g_vm->_events->getTotalPlayTicks());
 
 		// Write out intrepreter type, language, and game Id
-		ws.writeByte(g_vm->getInterpreterType());
+		ws.writeUint32BE(INTERPRETER_IDS[g_vm->getInterpreterType()]);
 		ws.writeByte(g_vm->getLanguage());
 		Common::String md5 = g_vm->getGameMD5();
 		ws.write(md5.c_str(), md5.size());

@@ -29,6 +29,7 @@
 #include "common/stream.h"
 #include "engines/savestate.h"
 #include "glk/blorb.h"
+#include "glk/glk_types.h"
 
 namespace Glk {
 
@@ -41,6 +42,8 @@ enum QueztalTag {
 	ID_Stks = MKTAG('S', 't', 'k', 's'),
 	ID_SCVM = MKTAG('S', 'C', 'V', 'M')
 };
+
+extern const uint32 INTERPRETER_IDS[INTERPRETER_TADS3 + 1];
 
 /**
  * Quetzal save file reader
