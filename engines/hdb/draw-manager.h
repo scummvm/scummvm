@@ -102,13 +102,14 @@ public:
 
 	Graphics::Surface load(Common::SeekableReadStream *stream);
 	void draw(int x, int y);
+	void drawMasked(int x, int y);
 
 private:
 
 	uint _width, _height;
 	char _name[64];
 
-	Graphics::ManagedSurface _surface;
+	Graphics::Surface _surface;
 
 };
 
@@ -125,7 +126,7 @@ public:
 private:
 	char _name[64];
 
-	Graphics::ManagedSurface _surface;
+	Graphics::Surface _surface;
 };
 
 } // End of Namespace HDB

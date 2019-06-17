@@ -273,6 +273,13 @@ void Picture::draw(int x, int y) {
 	g_system->copyRectToScreen(_surface.getBasePtr(0, 0), _surface.pitch, x, y, _surface.w, _surface.h);
 }
 
+void Picture::drawMasked(int x, int y) {
+	Graphics::ManagedSurface tempSurf;
+	tempSurf.create(_surface.w, _surface.h);
+	tempSurf.transBlitFrom(_surface, 0xf81f);
+	g_system->copyRectToScreen(tempSurf.getBasePtr(0, 0), tempSurf.pitch, x, y, tempSurf.w, tempSurf.h);
+}
+
 Tile::~Tile() {
 	_surface.free();
 }
