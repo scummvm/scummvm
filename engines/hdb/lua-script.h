@@ -39,6 +39,7 @@ public:
 
 	bool init();
 	bool initScript(Common::SeekableReadStream *stream, const char *scriptName, int32 length);
+	bool callFunction(const char *name, int returns);
 	bool executeMPC(Common::SeekableReadStream *stream, const char *name, const char *scriptName, int32 length);
 	bool executeFile(const Common::String &filename);
 
