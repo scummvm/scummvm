@@ -209,7 +209,7 @@ void DrawMan::draw3DStars() {
 void DrawMan::draw3DStarsLeft() {
 	fillScreen(0);
 	for (int i = 0; i < kNum3DStars; i++) {
-		warning("STUB: draw3DStarsLeft: BlitMaskedPic needed");
+		_starField[_stars3DSlow[i].color]->drawMasked((int)_stars3DSlow[i].x, (int)_stars3DSlow[i].y);
 		_stars3DSlow[i].x -= _stars3DSlow[i].speed;
 		if (_stars3DSlow[i].x < kScreenWidth) {
 			_stars3DSlow[i].x = kScreenWidth - 1;
