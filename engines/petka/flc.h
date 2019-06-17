@@ -31,6 +31,8 @@ class FlicDecoder : public Video::FlicDecoder {
 public:
 	void load(Common::SeekableReadStream *flcStream, Common::SeekableReadStream *mskStream);
 
+	void setFrame(int frame);
+
 	const Common::Rect &getBounds() const;
 	const Common::Array<Common::Rect> &getMskRects() const;
 	const Graphics::Surface *getCurrentFrame() const;

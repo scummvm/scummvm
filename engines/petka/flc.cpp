@@ -89,6 +89,17 @@ uint32 FlicDecoder::getTransColor(const Graphics::PixelFormat &fmt) const {
 	return 0;
 }
 
+void FlicDecoder::setFrame(int frame) {
+	FlicVideoTrack *flc = ((FlicVideoTrack *) getTrack(0));
+	if (!flc || flc->getCurFrame() + 1 == frame)
+		return;
+
+	flc->rewind();
+	do {
+		flc->decodeNextFrame();
+	} while (flc->getCurFrame() + 1 != frame);
+}
+
 FlicDecoder::FlicVideoTrack::FlicVideoTrack(Common::SeekableReadStream *stream, uint16 frameCount, uint16 width, uint16 height, bool skipHeader)
 	: Video::FlicDecoder::FlicVideoTrack(stream, frameCount, width, height, skipHeader) {}
 
