@@ -209,7 +209,7 @@ void Map::draw() {
 							/*
 								TODO: Implement MaskedMapTile drawing
 							*/
-							warning("STUB: Map::draw: MaskedMapTile drawing not implemented");
+							fTile->drawMasked(screenX, screenY);
 						} else {
 							fTile->draw(screenX, screenY);
 						}
