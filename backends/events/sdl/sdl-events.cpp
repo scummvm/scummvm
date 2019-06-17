@@ -101,7 +101,7 @@ void SdlEventSource::loadGameControllerMappingFile() {
 #endif
 
 SdlEventSource::SdlEventSource()
-    : EventSource(), _scrollLock(false), _joystick(0), _lastScreenID(0), _graphicsManager(0), _queuedFakeMouseMove(false)
+    : EventSource(), _scrollLock(false), _joystick(0), _lastScreenID(0), _graphicsManager(0), _queuedFakeMouseMove(false), _lastHatPosition(SDL_HAT_CENTERED)
 #if SDL_VERSION_ATLEAST(2, 0, 0)
       , _queuedFakeKeyUp(false), _fakeKeyUp(), _controller(nullptr)
 #endif
@@ -674,6 +674,8 @@ bool SdlEventSource::dispatchSDLEvent(SDL_Event &ev, Common::Event &event) {
 			return handleJoyButtonUp(ev, event);
 		case SDL_JOYAXISMOTION:
 			return handleJoyAxisMotion(ev, event);
+		case SDL_JOYHATMOTION:
+			return handleJoyHatMotion(ev, event);
 		}
 	}
 
@@ -1038,6 +1040,39 @@ bool SdlEventSource::handleJoyAxisMotion(SDL_Event &ev, Common::Event &event) {
 		_km.joy_y = ev.jaxis.value;
 		return handleAxisToMouseMotion(_km.joy_x, _km.joy_y);
 	}
+
+	return false;
+}
+
+#define HANDLE_HAT_UP(new, old, mask, joybutton) \
+	if ((old & mask) && !(new & mask)) { \
+		event.joystick.button = joybutton; \
+		g_system->getEventManager()->pushEvent(event); \
+	}
+
+#define HANDLE_HAT_DOWN(new, old, mask, joybutton) \
+	if ((new & mask) && !(old & mask)) { \
+		event.joystick.button = joybutton; \
+		g_system->getEventManager()->pushEvent(event); \
+	}
+
+bool SdlEventSource::handleJoyHatMotion(SDL_Event &ev, Common::Event &event) {
+	if (shouldGenerateMouseEvents())
+		return false;
+
+	event.type = Common::EVENT_JOYBUTTON_UP;
+	HANDLE_HAT_UP(ev.jhat.value, _lastHatPosition, SDL_HAT_UP, Common::JOYSTICK_BUTTON_DPAD_UP)
+	HANDLE_HAT_UP(ev.jhat.value, _lastHatPosition, SDL_HAT_DOWN, Common::JOYSTICK_BUTTON_DPAD_DOWN)
+	HANDLE_HAT_UP(ev.jhat.value, _lastHatPosition, SDL_HAT_LEFT, Common::JOYSTICK_BUTTON_DPAD_LEFT)
+	HANDLE_HAT_UP(ev.jhat.value, _lastHatPosition, SDL_HAT_RIGHT, Common::JOYSTICK_BUTTON_DPAD_RIGHT)
+
+	event.type = Common::EVENT_JOYBUTTON_DOWN;
+	HANDLE_HAT_DOWN(ev.jhat.value, _lastHatPosition, SDL_HAT_UP, Common::JOYSTICK_BUTTON_DPAD_UP)
+	HANDLE_HAT_DOWN(ev.jhat.value, _lastHatPosition, SDL_HAT_DOWN, Common::JOYSTICK_BUTTON_DPAD_DOWN)
+	HANDLE_HAT_DOWN(ev.jhat.value, _lastHatPosition, SDL_HAT_LEFT, Common::JOYSTICK_BUTTON_DPAD_LEFT)
+	HANDLE_HAT_DOWN(ev.jhat.value, _lastHatPosition, SDL_HAT_RIGHT, Common::JOYSTICK_BUTTON_DPAD_RIGHT)
+
+	_lastHatPosition = ev.jhat.value;
 
 	return false;
 }
