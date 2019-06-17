@@ -1081,7 +1081,7 @@ void ScriptOpcodes::opSetActorFlag0x1000(ScriptOpCall &scriptOpCall) {
 	}
 
 	DragonINI *ini = _vm->getINI(iniId - 1);
-	ini->actor->isFlagSet(ACTOR_FLAG_1000);
+	ini->actor->setFlag(ACTOR_FLAG_1000);
 }
 
 void ScriptOpcodes::opCode_Unk7(ScriptOpCall &scriptOpCall) {

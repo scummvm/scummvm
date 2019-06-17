@@ -22,6 +22,7 @@ MODULE_OBJS := \
 	scriptopcodes.o \
 	sequenceopcodes.o \
 	specialopcodes.o \
+	sound.o \
 	talk.o
 
 MODULE_DIRS += \

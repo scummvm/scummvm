@@ -24,6 +24,7 @@
 #include "bigfile.h"
 #include "actor.h"
 #include "talk.h"
+#include "sound.h"
 #include "dragons.h"
 
 namespace Dragons {
@@ -71,8 +72,21 @@ Talk::FUN_8003239c(char *dialog, int16 x, int16 y, int32 param_4, uint16 param_5
 	uint32 uVar4 = 0; //TODO FUN_8001d1ac(0,textId,0);
 
 	actor->updateSequence(startSequenceId);
-	//TODO conversation_related_maybe(&dialog[10],(int)x,(int)y,param_4 & 0xffff,(uint)param_5,textId,uVar4 & 0xffff);
+	_vm->_sound->playSpeech(textId);
+	conversation_related_maybe(NULL /*TODO &dialog[10]*/, (int)x, (int)y,param_4 & 0xffff, (uint)param_5, textId, uVar4 & 0xffff);
+
 	actor->updateSequence(endSequenceId);
 }
+
+void
+Talk::conversation_related_maybe(uint16 *dialogText, uint16 x, uint16 y, uint16 param_4, int16 param_5, uint32 textId,
+								 int16 param_7) {
+	//TODO display dialog text here and wait for audio stream to complete.
+
+	while (_vm->isFlagSet(ENGINE_FLAG_8000)) {
+		_vm->waitForFrames(1);
+	}
+}
+
 
 } // End of namespace Dragons
