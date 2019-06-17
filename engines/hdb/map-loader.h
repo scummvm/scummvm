@@ -58,6 +58,8 @@ public:
 	int loadTiles();
 	bool load(Common::SeekableReadStream *stream);
 	void draw();
+	void getMapXY(int *x, int *y);
+	void setMapXY(int x, int y);
 
 	int _mapX, _mapY; // Coordinates of Map
 	int _mapTileX, _mapTileY; // Tile Coordinates of Map

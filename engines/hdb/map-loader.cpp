@@ -228,4 +228,26 @@ void Map::draw() {
 	*/
 }
 
+void Map::getMapXY(int *x, int *y) {
+	*x = _mapX;
+	*y = _mapY;
+}
+
+void Map::setMapXY(int x, int y) {
+	if (x < 0) {
+		x = 0;
+	} else if (x > (_width * kTileWidth - 480)) {
+		x = _width * kTileWidth - 480;
+	}
+
+	if (y < 0) {
+		y = 0;
+	} else if (y > (_height * kTileHeight - 480)) {
+		y = _height * kTileHeight - 480;
+	}
+
+	_mapX = x;
+	_mapY = y;
+}
+
 }
