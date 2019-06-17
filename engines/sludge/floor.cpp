@@ -116,6 +116,7 @@ void FloorManager::setFloorNull() {
 			delete[] _currentFloor->polygon[i].vertexID;
 			delete[] _currentFloor->matrix[i];
 		}
+		_currentFloor->numPolygons = 0;
 		delete[] _currentFloor->polygon;
 		_currentFloor->polygon = nullptr;
 		delete[] _currentFloor->vertex;
