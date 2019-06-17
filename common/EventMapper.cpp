@@ -73,6 +73,12 @@ List<Event> DefaultEventMapper::mapEvent(const Event &ev, EventSource *source) {
 #endif
 	}
 
+	if (ev.type == EVENT_JOYBUTTON_DOWN) {
+		if (ev.joystick.button == JOYSTICK_BUTTON_START || ev.joystick.button == JOYSTICK_BUTTON_GUIDE) {
+			mappedEvent.type = EVENT_MAINMENU;
+		}
+	}
+
 	// if it didn't get mapped, just pass it through
 	if (mappedEvent.type == EVENT_INVALID)
 		mappedEvent = ev;

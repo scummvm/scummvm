@@ -190,7 +190,7 @@ uint InputDeviceManager::convertJoystickToKey(uint joybutton) {
 		return Common::KEYCODE_TILDE; // Open Inventory Panel
 	case Common::JOYSTICK_BUTTON_RIGHT_SHOULDER:
 		return Common::KEYCODE_KP_MULTIPLY; // Open Biochip Panel
-	case Common::JOYSTICK_BUTTON_START:
+	case Common::JOYSTICK_BUTTON_BACK:
 		return Common::KEYCODE_p; // Pause
 	case Common::JOYSTICK_BUTTON_DPAD_UP:
 		return Common::KEYCODE_UP;
