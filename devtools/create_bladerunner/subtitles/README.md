@@ -9,11 +9,10 @@ The official English, German, French, Italian and Spanish versions of the game s
 3. Make sure you've created a Blade Runner game directory and added Blade Runner in ScummVM as per the instructions in the wiki (the actual required files are __1.TLK, 2.TLK, 3.TLK, A.TLK and SPCHSFX.TLK__): https://wiki.scummvm.org/index.php?title=User_Manual/Installing_a_game_for_use_with_ScummVM#Blade_Runner
 For this guide it is assumed that this folder is "C:\Westwood\BladeRunner\"
 4. Create a folder on your HDD to export all speech audio from the game. Eg. create a "C:\Westwood\Blade Runner\AUDIO_FRA\" folder.
-5. Export all speech audio from the game and create an Excel file (xls) with links to the audio files. You will need to have some free HDD space for this step (around 650MB). Using a command line interface (eg MSYS2) navigate to the ScummVM repository folder and issue a command like the following, making sure you specify the correct target language code for your requirements; supported language code are "EN_ANY" for English, "FR_FRA" for French, "DE_DEU" for German, "IT_ITA" for Italian, "ES_ESP" for Spanish. In the following example we assume we need to export the audio from the French version of the game.
+5. Export all speech audio from the game and create an Excel file (xls) with links to the audio files. You will need to have some free HDD space for this step (around 650MB). Using a command line interface (eg MSYS2) navigate to the ScummVM repository folder and issue a command like the following, making sure you specify the correct target language code for your requirements; supported language code are "EN_ANY" for English, "FR_FRA" for French, "DE_DEU" for German, "IT_ITA" for Italian, "ES_ESP" for Spanish. In the following example we assume we need to export the audio from the French version of the game. This could take a few minutes to complete. Please refer to the [quotesSpreadsheetCreator](#quotesspreadsheetcreator-quotespreadsheetcreatorpy) section of this document for more command-line options for this tool.
 ```
 python2.7 devtools/create_bladerunner/subtitles/quotesSpreadsheetCreator/quoteSpreadsheetCreator.py -op "/c/Westwood/Blade Runner/AUDIO_FRA" -ip "/c/Westwood/Blade Runner" -ian "devtools/create_bladerunner/subtitles/common/actornames.txt" -xwav -ld FR_FRA
 ```
-This could take a few minutes to complete. Please refer to the [quotesSpreadsheetCreator](#quotesspreadsheetcreator-quotespreadsheetcreatorpy) section of this document.
 6. When you've completed the above step, an Excel file should be created in your current folder, named "out-French.xls". Open this file with a spreadsheet editor app (tested with Microsoft Excel 2007 and LibreOffice Calc 6.2.4) and select the "INGQUO_#.TR#" sheet.
     * Please keep the column A ("Filename") as is. Do not modify the contents of this column.
     * Edit column B ("Quote") to put in the text for your transcript of the corresponding audio file
@@ -37,9 +36,9 @@ https://docs.google.com/spreadsheets/d/17ew0YyhSwqcqZg6bXrIgz0GkA62dhgViHN15lOu5
 ```
 make devtools/create_bladerunner/subtitles
 ```
-5. You may need to install some required Python 2 libraries such as Pillow (or PIL), xlrd, xlwt and wave (which is part of the Python 2 Standard Library).
-6. Copy the output file "SUBTITLES.MIX", created in the ScummVM root folder, into your Blade Runner game directory.
-7. Launch the Blade Runner game using ScummVM.
+6. You may need to install some required Python 2 libraries such as Pillow (or PIL), xlrd, xlwt and wave (which is part of the Python 2 Standard Library).
+7. Copy the output file "SUBTITLES.MIX", created in the ScummVM root folder, into your Blade Runner game directory.
+8. Launch the Blade Runner game using ScummVM.
  
 ## quotesSpreadsheetCreator (quoteSpreadsheetCreator.py)
 (requires python libs *xlwt* (tested with version 1.3.0), *wave* (included in the Python 2 Standard Library)
