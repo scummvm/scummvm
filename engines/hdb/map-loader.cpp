@@ -62,9 +62,9 @@ bool Map::load(Common::SeekableReadStream *stream) {
 	_backgroundOffset = stream->readUint32LE();
 	_foregroundOffset = stream->readUint32LE();
 	_iconNum = stream->readUint16LE();
+	_infoNum = stream->readUint16LE();            // not used in the original
 	_iconListOffset = stream->readUint32LE();
-	_infoNum = stream->readUint16LE();
-	_infoListOffset = stream->readUint32LE();
+	_infoListOffset = stream->readUint32LE();     // not used in the original
 
 	debug(5, "map: w: %d(%x), h: %d(%x) bg: %x fg: %x icon#: %d(%x) icon: %x info#: %d(%x) info: %x",
 			_width, _width, _height, _height, _backgroundOffset, _foregroundOffset, _iconNum, _iconNum,
