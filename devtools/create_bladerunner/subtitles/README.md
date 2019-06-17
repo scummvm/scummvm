@@ -2,6 +2,29 @@
 Some tools written in __Python 2.7__ to help add support for subtitles in Westwood's point and click adventure game Blade Runner (1997) for PC.
 The official English, German, French, Italian and Spanish versions of the game should be supported.
 
+## Quick guide for volunteer transcribers
+0. Please make sure you have an audio player installed in your Operating System (such as vlc).
+1. You will need python 2.7 installed for this guide, as well as the python libraries Pillow (or PIL), xlrd, xlwt, wave and xlutils.
+2. Using git, checkout the latest revision of the ScummVM repository in github.
+3. Make sure you've created a Blade Runner game directory and added Blade Runner in ScummVM as per the instructions in the wiki (the actual required files are __1.TLK, 2.TLK, 3.TLK, A.TLK and SPCHSFX.TLK__): https://wiki.scummvm.org/index.php?title=User_Manual/Installing_a_game_for_use_with_ScummVM#Blade_Runner
+For this guide it is assumed that this folder is "C:\Westwood\BladeRunner\"
+4. Create a folder on your HDD to export all speech audio from the game. Eg. create a "C:\Westwood\Blade Runner\AUDIO_FRA\" folder.
+5. Export all speech audio from the game and create an Excel file (xls) with links to the audio files. You will need to have some free HDD space for this step (around 650MB). Using a command line interface (eg MSYS2) navigate to the ScummVM repository folder and issue a command like the following, making sure you specify the correct target language code for your requirements; supported language code are "EN_ANY" for English, "FR_FRA" for French, "DE_DEU" for German, "IT_ITA" for Italian, "ES_ESP" for Spanish. In the following example we assume we need to export the audio from the French version of the game.
+```
+python2.7 devtools/create_bladerunner/subtitles/quotesSpreadsheetCreator/quoteSpreadsheetCreator.py -op "/c/Westwood/Blade Runner/AUDIO_FRA" -ip "/c/Westwood/Blade Runner" -ian "devtools/create_bladerunner/subtitles/common/actornames.txt" -xwav -ld FR_FRA
+```
+This could take a few minutes to complete. Please refer to the [quotesSpreadsheetCreator](#quotesspreadsheetcreator) section of this document.
+6. When you've completed the above step, an Excel file should be created in your current folder, named "out-French.xls". Open this file with a spreadsheet editor app (tested with Microsoft Excel 2007 and LibreOffice Calc 6.2.4) and select the "INGQUO_#.TR#" sheet.
+    * Please keep the column A ("Filename") as is. Do not modify the contents of this column.
+	* Edit column B ("Quote") to put in the text for your transcript of the corresponding audio file
+	* Use column G ("ShortHandFileName") to play the audio file for the quote to be transcribed in the same line. You should be able to double click in MS Excel or Ctrl+Click on the specific cell; an audio player will be launched automatically to play the audio file.
+	* Note that the columns used by the tool that will create the final subtitles file are only columns A and B.
+7. The rest of the sheets in the Excel file, excluding the "SBTLVERS.TRE" which contains versioning info) are the sheets for the video cutscenes. We don't provide links to the audio cues for those subtitles, but we do provide the timings for the English version of these scenes which you can use as a guide, along with the English transcript available online here: https://docs.google.com/spreadsheets/d/17ew0YyhSwqcqZg6bXrIgz0GkA62dhgViHN15lOu5Hj8/edit?usp=sharing
+    * Note that the important columns used by the tool that will create the final subtitles file are in this case only columns C ("Subtitle"), J ("Frame Start") and K ("Frame End").
+	* Fill in column C with the subtitle text, and set the values in columns J and K to adjust when the subtitle should start and when it should stop being displayed respectively.
+8. You may edit the info in the "SBTLVERS.TRE" sheet to fill in the credits and a version number for your transcript.
+9. If you're transcribing for a non-Latin language, you will need to create a special font for the subtitles in order for the game to display your transcript properly. Please, refer to the [fontCreator](#fontcreator) section of this document for this process.
+
 ## Building and installing a SUBTITLES.MIX file with a "make" command
 You need to follow these instructions:
 1. Download the online Excel transcript and save it as "englishTranscript.xlsx" into the "devtools\create_bladerunner\subtitles\sampleInput" folder.
@@ -34,7 +57,7 @@ Syntax Notes:
 4. The "-ld" optional switch is followed by a language description for the language of the game you are exporting Text Resources from. This switch is meaningful when you also use the "-xtre" switch to export Text Resource files.
     * Valid language values are: EN_ANY, DE_DEU, FR_FRA, IT_ITA, ES_ESP, RU_RUS 
     * Default language value is: EN_ANY (English)
-5. The "-xwav" optional switch will export __ALL__ game's audio files (AUD) (that are either speech or speech-related) in a WAV format. This is expected to run for a few minutes and take up quite a lot of your HDD space (about 650MB).
+5. The "-xwav" optional switch will export __ALL__ game's audio files (AUD) (that are either speech or speech-related) in a WAV format. This is expected to run for a few minutes and take up quite a lot of your HDD space (around 650MB).
 6. The "-xtre" optional switch will add extra sheets to the output Excel with the contents of each of the game's Text Resource files (TRx) (on sheet per TRx file).
 7. The "-xdevs" optional switch will add a sheet for Developer Commentary text and some additional voice-overs from SFX.MIX.
 8. The "-xpogo" optional switch will add a sheet for the POGO text.

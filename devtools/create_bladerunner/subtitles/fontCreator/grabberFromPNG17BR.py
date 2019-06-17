@@ -6,7 +6,7 @@
 #			   FON file for the Westwood Blade Runner PC game.
 #
 # Author:	   antoniou
-#w
+#
 # Created:	   16-05-2018
 # Copyright:   (c) antoniou 2018
 # Licence:
@@ -45,22 +45,22 @@
 #           This should get rid of semi-transparent pixels while maintaining the "aliasing" effect. There could be a better way but this should work ok.
 
 
-# DONE: A way to export game fonts to png image (in order to be able to create new expanded fonts keeping glyph consistency!)
+# DONE: A way to export game fonts to PNG image (in order to be able to create new expanded fonts keeping glyph consistency!)
 #           Also override the corruption in TAHOMA18 while exporting
 # TODO: Re-Check the order of fonts in (in-game resource font files) TAHOMA18 (stored corrupted) and TAHOMA24 (in good condition).
 # TODO: print a warning for mismatch of number of letters in encoding override (or internal) and detected fonts in ROW IMAGE (especially if we expect a double exclamation mark at the start - and we ignoring one of the two)
-# TODO: Don't crash if mismatch in detected letter (fewer) in row image vs the letters in ascii list of overrideEncoding file
+# TODO: Don't crash if mismatch in detected letter (fewer) in row image vs the letters in ASCII list of overrideEncoding file
 # TODO: A more detailed readme for this tool and how to use it
 #
 # DONE: enforce overrideEncoding.txt -- this tool should no longer work without one
-# DONE: Test greek subs too
+# DONE: Test Greek subs too
 # DONE: Letter fonts should be spaced by TAB when copied into GIMP or other app to create the image row of all character glyphs
 # DONE: First character should be repeated in the ROW file (but taken into consideration once) in order to get the pixels for the TAB space between letters (left-start column to left-start column)
 # DONE: Use the tab space pixels to calculate the KERNING for each letter (x offset)
 # DONE: update the image segment size bytes in the header after having completed populating the image segment
-# DONE: allow settin explicit kerning and width addon for cases like i and l characters
+# DONE: allow setting explicit kerning and width addon for cases like i and l characters
 # DONE: entrée (boiled dog question) - has an e like goose liver pate --> TESTED
-# DONE: Tested ok "si senor" from peruvian lady / insect dealer too!
+# DONE: Tested ok "si senor" from Peruvian lady / insect dealer too!
 # DONE: ability to manually set kerning (x-offset) for fonts by letter like a list in parameters or in overrideEncoding.txt }  i:1,j:-1,l:1	 (no space or white line characters) - POSITIVE OR NEGATIVE VALUES BOTH ADMITTED
 # DONE: a value of '-' for this means ignore
 # DONE: ability to manually set extra width (additional columns at the end of glyph, with transparent color) for fonts by letter like a list in parameters or in overrideEncoding.txt }	 i:1,j:2,l:1 - POSITIVE VALUES ONLY

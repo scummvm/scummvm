@@ -56,19 +56,26 @@ if 	(not osLibFound) \
 	sys.stdout.write("[Error] Errors were found when trying to import required python libraries\n")
 	sys.exit(1)
 
+
 from os import walk, errno, path
+
+pathToParent = os.path.join(os.path.dirname(os.path.abspath(__file__)), os.pardir)
+pathToCommon = os.path.join(pathToParent, "common")
+sys.path.append(pathToCommon)
+
 from xlwt import *
 from audFileLib import *
 from treFileLib import *
 from pogoTextResource import *
 from devCommentaryText import *
+from subtlsVersTextResource import *
 
 # encoding=utf8
 #reload(sys)
 #sys.setdefaultencoding('utf8')
 
 COMPANY_EMAIL = "classic.adventures.in.greek@gmail.com"
-APP_VERSION = "0.80"
+APP_VERSION = "0.85"
 APP_NAME = "sortBladeRunnerWavs"
 APP_WRAPPER_NAME = "quotesSpreadsheetCreator.py"
 APP_NAME_SPACED = "Blade Runner Transcript Excel Creator (bare bones)"
@@ -133,8 +140,10 @@ SUPPORTED_PLACEHOLDER_VQA_LOCALIZED_FILES = [
 	('END06_', 'Underground getaway - Steele Ending')
 	]
 SUPPORTED_SPECIAL_POGO_FILE = 'POGO.TR'
+SUPPORTED_DIALOGUE_VERSION_SHEET = 'SBTLVERS.TRE'
 
-SUPPORTED_LANGUAGES_DESCRIPTION_CODE_TLIST = [('EN_ANY', 'E', 'English'), ('DE_DEU', 'G', 'German'), ('FR_FRA', 'F', 'French'), ('IT_ITA', 'I', 'Italian'), ('ES_ESP', 'S', 'Spanish'), ('RU_RUS', 'R', 'Russian')]
+# v0.85: Russian code (RU_RUS) now corresponds to 'E' suffix instead of 'R' since the unofficial Russian version supported uses the English resources without renaming them, and this is how the ScummVM engine handles that version currently.
+SUPPORTED_LANGUAGES_DESCRIPTION_CODE_TLIST = [('EN_ANY', 'E', 'English'), ('DE_DEU', 'G', 'German'), ('FR_FRA', 'F', 'French'), ('IT_ITA', 'I', 'Italian'), ('ES_ESP', 'S', 'Spanish'), ('RU_RUS', 'E', 'Russian')]
 DEFAULT_LANG_DESC_CODE = SUPPORTED_LANGUAGES_DESCRIPTION_CODE_TLIST[0]
 
 gTraceModeEnabled = False
@@ -531,7 +540,7 @@ def auxPopulateExtraSpeechAudioRow(sh = None, n = 0, pFilenameStr = '', pTextStr
 						if gStringReplacementForRootFolderWithExportedFiles and gNumReplaceStartingCharacters > 0:
 							realPathOfFileNameToLink = realPathOfFileNameToLink.replace(realPathOfFileNameToLink[:gNumReplaceStartingCharacters], gStringReplacementForRootFolderWithExportedFiles)
 
-						hyperlinkAudioFormula = 'HYPERLINK("file://%s","%s")' % (realPathOfFileNameToLink, shortHandFileName)
+						hyperlinkAudioFormula = 'HYPERLINK("file:///%s","%s")' % (realPathOfFileNameToLink, shortHandFileName)
 						sh.write(n, 6, Formula(hyperlinkAudioFormula))
 						break
 			foundMatch = True
@@ -816,6 +825,41 @@ def outputXLS(filename, sheet, listTlkWavs, listDevsWavs, parseTREResourcesAlso 
 	global gNumReplaceStartingCharacters
 
 	book = xlwt.Workbook()
+	# first add version info sheet
+	sbtlVersTRInstance = sbtlVersTextResource(gTraceModeEnabled)
+	vrsn_sheet = book.add_sheet(SUPPORTED_DIALOGUE_VERSION_SHEET)
+	n = 0
+	col1_name = 'Subtitles Version Info'
+	vrsn_sheet.write(n, 0, col1_name)
+	# Second Row
+	n = 1
+	col1_name = 'ID'
+	col2_name = 'Value'
+	col3_name = 'Notes'
+	vrsn_sheet.write(n, 0, col1_name)
+	vrsn_sheet.write(n, 1, col2_name)
+	vrsn_sheet.write(n, 2, col3_name)
+	n += 1
+	objUTF8Unicode = None
+	for m, e1 in enumerate(sbtlVersTRInstance.getSbtlVersEntriesList(), n):
+		vrsn_sheet.write(m, 0, e1[0])
+		tmpQuoteID = int(e1[0])
+		for i1 in range(1,3):
+			objStr = e1[i1]
+			try:
+				# We assume utf-8 charset (since we get the text from a python script)
+				# populate row with quote ID == 3 and column B with the description of language used in the command's execution (or assumed)
+				if tmpQuoteID == 3 and i1 == 1:
+					objUTF8Unicode = unicode(gActiveLanguageDescriptionCodeTuple[2], 'utf-8')
+				else:
+					objUTF8Unicode = unicode(objStr, 'utf-8')
+			except Exception as e:
+				print '[Error] Failed to create unicode string: ' + str(e)
+				objUTF8Unicode = unicode("???", 'utf-8')
+			vrsn_sheet.write(m, i1, objUTF8Unicode)
+	#
+	# Add ingame quotes sheet
+	#
 	sh = book.add_sheet(sheet)
 	# First Row
 	n = 0      # keeps track of rows
@@ -887,7 +931,7 @@ def outputXLS(filename, sheet, listTlkWavs, listDevsWavs, parseTREResourcesAlso 
 				# also works in Windows + LibreOffice (run from msys) -- tried something like:
 				#	python sortBladeRunnerWavs.py -op /g/WORKSPACE/BladeRunnerWorkspace/br-mixer-master/data/WAV -m "G:/WORKSPACE/BladeRunnerWorkspace/br-mixer-master/data/WAV"
 				# put real full path for each file as FILE URL, and real (or approximate shorthand file name as alias)
-				hyperlinkAudioFormula = 'HYPERLINK("file://%s","%s")' % (realPathOfFileNameToLink, shortHandFileName)
+				hyperlinkAudioFormula = 'HYPERLINK("file:///%s","%s")' % (realPathOfFileNameToLink, shortHandFileName)
 				sh.write(m, 6, Formula(hyperlinkAudioFormula))
 			else:
 				sh.write(m, 0, e1)
