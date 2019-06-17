@@ -80,6 +80,25 @@ void AI::processCines() {
 			}
 			warning("STUB: MAP::CenterMapXY required");
 			break;
+		case C_WAIT:
+			if (!((*it)->start)) {
+				(*it)->start = 1;
+				(*it)->delay = g_system->getMillis() * 23.5 + (*it)->delay * 1000;
+			} else {
+				if ((*it)->delay < g_system->getMillis() * 23.5) {
+					complete = true;
+				} else {
+					bailOut = true;
+				}
+			}
+			break;
+		case C_WAITUNTILDONE:
+			if ((uint) (it - _cine->begin()) == _cine->size() - 1) {
+				complete = true;
+			} else {
+				bailOut = true;
+			}
+			break;
 		}
 	}
 }
