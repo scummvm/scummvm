@@ -55,6 +55,8 @@ public:
 	DrawMan();
 	~DrawMan();
 
+	Graphics::ManagedSurface _globalSurface;
+
 	bool init();
 	void fillScreen(uint32 color);
 	Tile *getTile(int index);
@@ -69,7 +71,6 @@ public:
 	void drawSky();
 
 private:
-	Graphics::ManagedSurface _globalSurface;
 	int _numTiles;
 	TileLookup *_tLookupArray;
 	uint16 _skyTiles[kMaxSkies];
@@ -109,7 +110,7 @@ private:
 	uint _width, _height;
 	char _name[64];
 
-	Graphics::Surface _surface;
+	Graphics::ManagedSurface _surface;
 
 };
 
@@ -126,7 +127,7 @@ public:
 private:
 	char _name[64];
 
-	Graphics::Surface _surface;
+	Graphics::ManagedSurface _surface;
 };
 
 } // End of Namespace HDB

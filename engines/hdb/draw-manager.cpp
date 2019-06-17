@@ -97,7 +97,7 @@ bool DrawMan::init() {
 
 void DrawMan::fillScreen(uint32 color) {
 	_globalSurface.fillRect(Common::Rect(kScreenWidth, kScreenHeight), color);
-	g_system->copyRectToScreen(_globalSurface.getBasePtr(0, 0), _globalSurface.pitch, 0, 0, _globalSurface.w, _globalSurface.h);
+//	g_system->copyRectToScreen(_globalSurface.getBasePtr(0, 0), _globalSurface.pitch, 0, 0, _globalSurface.w, _globalSurface.h);
 }
 
 Tile *DrawMan::getTile(int index) {
@@ -270,14 +270,14 @@ Graphics::Surface Picture::load(Common::SeekableReadStream *stream) {
 }
 
 void Picture::draw(int x, int y) {
-	g_system->copyRectToScreen(_surface.getBasePtr(0, 0), _surface.pitch, x, y, _surface.w, _surface.h);
+	g_hdb->_drawMan->_globalSurface.copyRectToSurface(_surface.getBasePtr(0, 0), _surface.pitch, x, y, _surface.w, _surface.h);
+//	g_system->copyRectToScreen(_surface.getBasePtr(0, 0), _surface.pitch, x, y, _surface.w, _surface.h);
 }
 
 void Picture::drawMasked(int x, int y) {
-	Graphics::ManagedSurface tempSurf;
-	tempSurf.create(_surface.w, _surface.h);
-	tempSurf.transBlitFrom(_surface, 0xf81f);
-	g_system->copyRectToScreen(tempSurf.getBasePtr(0, 0), tempSurf.pitch, x, y, tempSurf.w, tempSurf.h);
+	_surface.transBlitFrom(_surface, 0xf81f);
+	g_hdb->_drawMan->_globalSurface.copyRectToSurface(_surface.getBasePtr(0, 0), _surface.pitch, x, y, _surface.w, _surface.h);
+//	g_system->copyRectToScreen(tempSurf.getBasePtr(0, 0), tempSurf.pitch, x, y, tempSurf.w, tempSurf.h);
 }
 
 Tile::~Tile() {
@@ -305,7 +305,8 @@ Graphics::Surface Tile::load(Common::SeekableReadStream *stream) {
 }
 
 void Tile::draw(int x, int y) {
-	g_system->copyRectToScreen(_surface.getBasePtr(0, 0), _surface.pitch, x, y, _surface.w, _surface.h);
+	g_hdb->_drawMan->_globalSurface.copyRectToSurface(_surface.getBasePtr(0, 0), _surface.pitch, x, y, _surface.w, _surface.h);
+//	g_system->copyRectToScreen(_surface.getBasePtr(0, 0), _surface.pitch, x, y, _surface.w, _surface.h);
 }
 
 }
