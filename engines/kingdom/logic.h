@@ -294,6 +294,7 @@ public:
 	void executeOpcode();
 	void initPlay();
 	void switchAS();
+	void characterDeath();
 	void synchronize(Common::Serializer &s);
 };
 }
