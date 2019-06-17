@@ -93,6 +93,7 @@ ExecutionResult VM::execute(int offset) {
 	_pc = offset;
 
 	// Clear the stack
+	_fp.clear();
 	_stack.clear();
 
 	// Iterate through the script
@@ -398,9 +399,9 @@ void VM::opSEND() {
 	if (val)
 		val = getObjectField(val, O_CLASS);
 	else
-		val = _fp[_fp[FP_ARGS_SIZE] + FP_ARGS];
+		val = _fp[_fp[FP_ARGS_SIZE] + FP_ARGS - 1];
 
-	if (val && (val = getObjectProperty(val, _fp[_fp[FP_ARGS_SIZE] + 1])) != 0) {
+	if (val && (val = getObjectProperty(val, _fp[_fp[FP_ARGS_SIZE] + FP_ARGS - 2])) != 0) {
 		_pc = getActionField(val, A_CODE);
 	} else {
 		// Return NIL if there's no action for the given message

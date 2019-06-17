@@ -181,6 +181,11 @@ public:
 	}
 
 	/**
+	 * Clear the function pointer
+	 */
+	void clear() { _index = 0; }
+
+	/**
 	 * Returns the index in the stack of the function pointer
 	 */
 	operator int() const { return _index; }
