@@ -909,7 +909,7 @@ void LuaScript::addPatches(Common::String &chunk, const char* scriptName) {
 	}
 }
 
-void LuaScript::checkParameters(char *func, int params) {
+void LuaScript::checkParameters(const char *func, int params) {
 	int stackTop = lua_gettop(_state);
 	if (stackTop < params) {
 		warning("%s: Not Enough Parameters", func);

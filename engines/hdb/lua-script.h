@@ -42,7 +42,7 @@ public:
 	bool callFunction(const char *name, int returns);
 	bool executeMPC(Common::SeekableReadStream *stream, const char *name, const char *scriptName, int32 length);
 	bool executeFile(const Common::String &filename);
-	void checkParameters(char *func, int params);
+	void checkParameters(const char *func, int params);
 
 private:
 	lua_State *_state;
