@@ -132,8 +132,6 @@ bool GameManager::deserialize(Common::ReadStream *in, int version) {
 	for (int i = 0; i < NUMROOMS; ++i) {
 		_rooms[i]->deserialize(in, version);
 	}
-	delete _rooms[SHIP];
-	_rooms[SHIP] = new Ship(_vm, this);
 	_lastRoom = _rooms[lastRoomId];
 	changeRoom(curRoomId);
 

@@ -81,12 +81,9 @@ bool MS2Image::init(int filenumber) {
 }
 
 bool MS2Image::loadFromEngineDataFile() {
-	//TODO
-	/*Common::String name;
-	if (_filenumber == 1)
+	Common::String name;
+	if (_filenumber == 28)
 		name = "IMG1";
-	else if (_filenumber == 2)
-		name = "IMG2";
 	else
 		return false;
 
@@ -96,16 +93,16 @@ bool MS2Image::loadFromEngineDataFile() {
 	// or the format is not as expected. We will get those warning when reading the
 	// strings anyway (actually the engine will even refuse to start).
 	Common::File f;
-	if (!f.open(SUPERNOVA_DAT))
+	if (!f.open(SUPERNOVA2_DAT))
 		return false;
 
 	char id[5], lang[5];
 	id[4] = lang[4] = '\0';
 	f.read(id, 3);
-	if (strncmp(id, "MSN", 3) != 0)
+	if (strncmp(id, "MS2", 3) != 0)
 		return false;
 	int version = f.readByte();
-	if (version != SUPERNOVA_DAT_VERSION)
+	if (version != SUPERNOVA2_DAT_VERSION)
 		return false;
 
 	while (!f.eos()) {
@@ -118,7 +115,7 @@ bool MS2Image::loadFromEngineDataFile() {
 			return f.read(_encodedImage, size) == size;
 		} else
 			f.skip(size);
-	}*/
+	}
 
 	return false;
 }
@@ -222,8 +219,9 @@ bool MS2Image::loadStream(Common::SeekableReadStream &stream) {
 
 bool MS2Image::loadSections() {
 	bool isPoster = _filenumber == 38;
-	int imageWidth = isPoster ? 640 : 320;
-	int imageHeight = isPoster ? 480 : 200;
+	bool isCypheredText = _filenumber == 28 && ConfMan.get("language") == "en";
+	int imageWidth = isPoster || isCypheredText ? 640 : 320;
+	int imageHeight = isPoster || isCypheredText ? 480 : 200;
 	_pitch = imageWidth;
 
 	for (int section = 0; section < _numSections; ++section) {
@@ -241,6 +239,19 @@ bool MS2Image::loadSections() {
 				*surfacePixels++ = (_encodedImage[i] & 0x04) ? kColorWhite63 : kColorBlack;
 				*surfacePixels++ = (_encodedImage[i] & 0x02) ? kColorWhite63 : kColorBlack;
 				*surfacePixels++ = (_encodedImage[i] & 0x01) ? kColorWhite63 : kColorBlack;
+			}
+		} else if (isCypheredText) {
+			surface->create(imageWidth, imageHeight, g_system->getScreenFormat());
+			byte *surfacePixels = static_cast<byte *>(surface->getPixels());
+			for (int i = 0; i < imageWidth * imageHeight / 8; ++i) {
+				*surfacePixels++ = (_encodedImage[i] & 0x80) ? kColorWhite44 : kColorBlack;
+				*surfacePixels++ = (_encodedImage[i] & 0x40) ? kColorWhite44 : kColorBlack;
+				*surfacePixels++ = (_encodedImage[i] & 0x20) ? kColorWhite44 : kColorBlack;
+				*surfacePixels++ = (_encodedImage[i] & 0x10) ? kColorWhite44 : kColorBlack;
+				*surfacePixels++ = (_encodedImage[i] & 0x08) ? kColorWhite44 : kColorBlack;
+				*surfacePixels++ = (_encodedImage[i] & 0x04) ? kColorWhite44 : kColorBlack;
+				*surfacePixels++ = (_encodedImage[i] & 0x02) ? kColorWhite44 : kColorBlack;
+				*surfacePixels++ = (_encodedImage[i] & 0x01) ? kColorWhite44 : kColorBlack;
 			}
 		} else {
 

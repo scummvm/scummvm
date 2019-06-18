@@ -87,9 +87,9 @@ void writeImage(File& outputFile, const char *name, const char* language) {
 				else {
 					// We have finished reading the header.
 					// Check the size is as expected.
-					if (w != 640 || h != 480) {
+					if ((w != 640 || h != 480) && (w != 320 || h != 200)) {
 						imgFile.close();
-						printf("Binary pbm file '%s' doesn't have the expected size (expected: 640x480, read: %dx%d). This image will be skipped.\n", fileName, w, h);
+						printf("Binary pbm file '%s' doesn't have the expected size (expected: 640x480 or 320x200, read: %dx%d). This image will be skipped.\n", fileName, w, h);
 						return;
 					}
 					// And break out of the loop.
@@ -121,13 +121,13 @@ void writeImage(File& outputFile, const char *name, const char* language) {
 			outputFile.writeByte(0);
 	}
 
-	// Write block size (640*480 / 8)
-	outputFile.writeLong(38400);
+	// Write block size
+	outputFile.writeLong(w * h / 8);
 
-	// Write all the bytes. We should have 38400 bytes (640 * 480 / 8)
+	// Write all the bytes. We should have w * h / 8 bytes
 	// However we need to invert the bits has the engine expects 1 for the background and 0 for the text (black)
 	// but pbm uses 0 for white and 1 for black.
-	for (i = 0 ; i < 38400 ; ++i) {
+	for (i = 0 ; i < w * h / 8 ; ++i) {
 		byte b = imgFile.readByte();
 		outputFile.writeByte(~b);
 	}
@@ -222,7 +222,7 @@ int main(int argc, char *argv[]) {
 	// 3 bytes: 'MS2'
 	// 1 byte:  version
 	// -- data blocks
-	// 4 bytes: header  'IMG1' and 'IMG2' for newspaper images (for file 1 and file 2 respectively),
+	// 4 bytes: header  'IMG1' cyphered text image
 	//                  'TEXT' for strings
 	// 4 bytes: language code ('en\0', 'de\0'- see common/language.cpp)
 	// 4 bytes: block size n (uint32)
@@ -240,7 +240,7 @@ int main(int argc, char *argv[]) {
 	// Other languages
 	const char **l = &lang[0];
 	while(*l) {
-	//	writeImage(outputFile, "img1", *l);
+		writeImage(outputFile, "img1", *l);
 	//	writeImage(outputFile, "img2", *l);
 		writeStrings(outputFile, *l);
 		++l;
