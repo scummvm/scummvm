@@ -851,4 +851,14 @@ void LuaScript::addPatches(Common::String &chunk, const char* scriptName) {
 		patch++;
 	}
 }
+
+void LuaScript::checkParameters(char *func, int params) {
+	int stackTop = lua_gettop(_state);
+	if (stackTop < params) {
+		warning("%s: Not Enough Parameters", func);
+	} else if (stackTop > params) {
+		warning("%s: Too Many Parameters", func);
+	}
+}
+
 }
