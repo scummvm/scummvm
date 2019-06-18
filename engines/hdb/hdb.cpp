@@ -46,6 +46,7 @@ HDBGame::HDBGame(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst
 	_drawMan = new DrawMan;
 	_lua = new LuaScript;
 	_map = new Map;
+	_ai = new AI;
 	_rnd = new Common::RandomSource("hdb");
 
 	DebugMan.addDebugChannel(kDebugExample1, "Example1", "This is just an example to test");
@@ -58,6 +59,7 @@ HDBGame::~HDBGame() {
 	delete _drawMan;
 	delete _lua;
 	delete _map;
+	delete _ai;
 	delete _rnd;
 
 	DebugMan.clearAllDebugChannels();
@@ -72,6 +74,10 @@ bool HDBGame::init() {
 
 	if (!_fileMan->openMPC(getGameFile())) {
 		error("FileMan::openMPC: Cannot find the hyperspace.mpc data file.");
+		return false;
+	}
+	if (!_ai->init()) {
+		error("AI::init: Couldn't initialize AI");
 		return false;
 	}
 	if (!_drawMan->init()) {
