@@ -69,7 +69,15 @@ bool LuaScript::init() {
 */
 
 static int cineStart(lua_State *L) {
-	warning("STUB: START CINE");
+	double abortable = lua_tonumber(L, 1);
+	char *abortFunc = (char *) lua_tostring(L, 2);
+
+	g_hdb->_lua->checkParameters("cineStart", 2);
+
+	lua_pop(L, 2);
+
+	g_hdb->_ai->cineStart((bool)abortable, abortFunc);
+
 	return 0;
 }
 
