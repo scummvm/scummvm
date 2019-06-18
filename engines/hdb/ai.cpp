@@ -105,15 +105,15 @@ void AI::processCines() {
 		case C_MOVECAMERA:
 			_cameraLock = true;
 			if (!(_cine[i]->start)) {
-				debug(3, "C_MOVECAMERA: [%d] now: x: %d, y: %d, speed: %d", i, _cine[i]->x, i, _cine[i]->y, _cine[i]->speed);
+				debug(3, "C_MOVECAMERA: [%d] now: x: %f, y: %f, speed: %d", i, _cine[i]->x, _cine[i]->y, _cine[i]->speed);
 				_cine[i]->xv = (((double)_cine[i]->x) - _cameraX) / (double)_cine[i]->speed;
 				_cine[i]->yv = (((double)_cine[i]->y) - _cameraY) / (double)_cine[i]->speed;
 				_cine[i]->start = 1;
 			}
 			_cameraX += _cine[i]->xv;
 			_cameraY += _cine[i]->yv;
-			debug(3, "C_MOVECAMERA: _cine[%d]->xv: %d, _cine[%d]->yv: %d", i, _cine[i]->xv, i, _cine[i]->yv);
-			debug(3, "C_MOVECAMERA: abs(_cameraX - _cine[i]->x): %d, abs(_cameraY - _cine[i]->y): %d", abs(_cameraX - _cine[i]->x), abs(_cameraY - _cine[i]->y));
+			debug(3, "C_MOVECAMERA: _cine[%d]->xv: %f, _cine[%d]->yv: %f", i, _cine[i]->xv, i, _cine[i]->yv);
+			debug(3, "C_MOVECAMERA: abs(_cameraX - _cine[i]->x): %f, abs(_cameraY - _cine[i]->y): %f", abs(_cameraX - _cine[i]->x), abs(_cameraY - _cine[i]->y));
 			if (abs(_cameraX - _cine[i]->x) <= 1 && abs(_cameraY - _cine[i]->y) <= 1) {
 				_cameraX = _cine[i]->x;
 				_cameraY = _cine[i]->y;
@@ -203,7 +203,7 @@ void AI::cineMoveCamera(int x, int y, int speed) {
 	cmd->start = 0;
 	cmd->x = x * kTileWidth;
 	cmd->y = y * kTileHeight;
-	debug("Setting up C_MOVECAMERA: x: %d, y: %d", cmd->x, cmd->y);
+	debug("Setting up C_MOVECAMERA: x: %f, y: %f", cmd->x, cmd->y);
 	cmd->cmdType = C_MOVECAMERA;
 	_cine.push_back(cmd);
 }
