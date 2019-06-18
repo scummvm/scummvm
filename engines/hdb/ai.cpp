@@ -32,6 +32,11 @@ AI::~AI() {
 	delete _cine;
 }
 
+bool AI::init() {
+	warning("STUB: AI::init required");
+	return true;
+}
+
 void AI::processCines() {
 
 	bool complete, bailOut;

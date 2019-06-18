@@ -85,6 +85,8 @@ public:
 	AI();
 	~AI();
 
+	bool init();
+
 	// Cinematic Functions
 	void processCines();
 	void cineStart(bool abortable, char *abortFunc);
