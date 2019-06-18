@@ -319,6 +319,46 @@ enum CineType {
 	C_ENDLIST
 };
 
+struct AIEntity {
+	AIType type;
+	AIState state;
+	AIDir dir;
+
+	void *draw;											// Current frame to draw
+
+	void (*aiInit)(AIEntity *e);						// func ptr to init routine
+	void (*aiInit2)(AIEntity *e);						// func ptr to init2 routine - graphic init only (this for LoadGame functionality)
+	void (*aiAction)(AIEntity *e);						// func ptr to action routine
+	void (*aiUse)(AIEntity *e);							// func ptr to use routine
+	void (*aiDraw)(AIEntity *e, int x, int y);			// func ptr to extra drawing routine (only for special stuff) - pass in mapx, mapy
+
+	char		luaFuncInit[32];						// Lua function for Init (always called after entity's init). These are ptrs into the map header.
+	char		luaFuncAction[32];						// Lua function for Action
+	char		luaFuncUse[32];							// Lua function for Use
+	uint16		level;									// which floor level we're on
+	uint16		value1, value2;							// extra values we might need
+	AIDir		dir2;									// this is from TED
+
+	uint16		x, y;
+	uint16		drawXOff, drawYOoff;					// might need a drawing offset
+	uint16		onScreen;								// FLAG: is this entity onscreen?
+	uint16		moveSpeed;								// movement speed of this entity
+	uint16		xVel, yVel;								// movement values
+	uint16		tileX, tileY;
+	uint16		goalX, goalY;							// where we're trying to go - TILE COORDS
+	uint16		touchpX, touchpY, touchpTile, touchpWait;		// ACTION index a touchplate is using, which you're on
+	uint32		stunnedWait;							// if we're stunned, this is the delay before being normal again
+	uint16		sequence;								// to use for specially-coded sequences
+	char		entityName[32];						// the name of the entity, as registered by the Lua init function for the entity
+	char		printedName[32];						// the name of the entity/item, the way it should be printed
+
+	uint16		animFrame;								// which frame we're on
+	uint16		animDelay;								// changes every frame; based on anim_cycle at start
+	uint16		animCycle;								// delay between frame animations
+
+	// TODO: Add the frame arrays needed
+};
+
 struct CineCommand {
 	CineType cmdType;
 	double x, y;
@@ -328,12 +368,12 @@ struct CineCommand {
 	uint32	delay;
 	int	speed;
 	char *title;
-	char *string;
+	const char *string;
 	char *id;
-	// AIEntity *entity
+	AIEntity *e;
 
 	CineCommand() : cmdType(C_NO_COMMAND), x(0.0), y(0.0), x2(0.0), y2(0.0), xv(0.0), yv(0.0),
-				start(0), end(0), delay(0), speed(0), title(NULL), string(NULL), id(NULL) {}
+				start(0), end(0), delay(0), speed(0), title(NULL), string(NULL), id(NULL), e(NULL) {}
 };
 
 class AI {
