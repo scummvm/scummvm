@@ -101,6 +101,7 @@ public:
 	DrawMan *_drawMan;
 	LuaScript *_lua;
 	Map *_map;
+	AI *_ai;
 
 	// Random Source
 	Common::RandomSource *_rnd;
