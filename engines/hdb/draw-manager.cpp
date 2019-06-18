@@ -119,7 +119,8 @@ void DrawMan::setFade(bool fadeIn, bool black, int steps) {
 }
 
 void DrawMan::updateFade() {
-	warning("STUB: DrawMan::updateFade required");
+	_fadeInfo.active = false;
+	warning("STUB: DrawMan::updateFade incomplete");
 }
 
 Tile *DrawMan::getTile(int index) {
