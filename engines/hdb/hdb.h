@@ -92,6 +92,7 @@ public:
 	const char *getGameFile() const;
 	uint32 getGameFlags() const;
 	Common::Platform getPlatform() const;
+	int isDemo() const;
 
 	/*
 	Game System Pointers
