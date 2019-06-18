@@ -61,6 +61,9 @@ public:
 	void fillScreen(uint32 color);
 	void setFade(bool fadeIn, bool black, int steps);
 	void updateFade();
+	bool isFadeActive() { return _fadeInfo.active; }
+	bool isFadeStaying() { return _fadeInfo.stayFaded; }
+	void turnOffFade() { _fadeInfo.active = _fadeInfo.stayFaded = false; }
 
 	Tile *getTile(int index);
 	int getTileIndex(const char *name);
