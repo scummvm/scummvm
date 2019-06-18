@@ -504,7 +504,7 @@ void KIA::handleKeyDown(const Common::KeyState &kbd) {
 		break;
 	case Common::KEYCODE_F5:
 		if (_currentSectionId != kKIASectionSuspects) {
-			if (_forceOpen) {
+			if (!_forceOpen) {
 				open(kKIASectionSuspects);
 				_log->next();
 				_log->clearFuture();
