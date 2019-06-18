@@ -59,9 +59,12 @@ public:
 
 	bool init();
 	void fillScreen(uint32 color);
+	void setFade(bool fadeIn, bool black, int steps);
+
 	Tile *getTile(int index);
 	int getTileIndex(const char *name);
 	Picture *getPicture(const char *name);
+
 	int isSky(int skyIndex);
 	void setSky(int skyIndex);
 	void setup3DStars();
