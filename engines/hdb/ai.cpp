@@ -223,6 +223,16 @@ void AI::cineWaitUntilDone() {
 	_cine.push_back(cmd);
 }
 
+void AI::cineSetEntity(const char *entName, int x, int y, int level) {
+	CineCommand *cmd = new CineCommand;
+	cmd->string = entName;
+	cmd->x = x * kTileWidth;
+	cmd->y = y * kTileHeight;
+	cmd->x2 = level;
+	cmd->cmdType = C_SETENTITY;
+	_cine.push_back(cmd);
+}
+
 void AI::cineFadeIn(bool isBlack, int steps) {
 	CineCommand *cmd = new CineCommand;
 	cmd->speed = steps;
