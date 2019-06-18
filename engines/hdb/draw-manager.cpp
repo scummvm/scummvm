@@ -97,7 +97,7 @@ bool DrawMan::init() {
 
 void DrawMan::fillScreen(uint32 color) {
 	_globalSurface.fillRect(Common::Rect(kScreenWidth, kScreenHeight), color);
-//	g_system->copyRectToScreen(_globalSurface.getBasePtr(0, 0), _globalSurface.pitch, 0, 0, _globalSurface.w, _globalSurface.h);
+	g_system->fillScreen(color);
 }
 
 void DrawMan::updateVideo() {
