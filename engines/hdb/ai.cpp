@@ -29,6 +29,44 @@ bool AI::init() {
 	return true;
 }
 
+static const char *cineTypeStr[] = {
+	"C_NO_COMMAND",
+	"C_STOPCINE",
+	"C_LOCKPLAYER",
+	"C_UNLOCKPLAYER",
+	"C_SETCAMERA",
+	"C_MOVECAMERA",
+	"C_WAIT",
+	"C_WAITUNTILDONE",
+	"C_MOVEENTITY",
+	"C_DIALOG",
+	"C_ANIMENTITY",
+	"C_RESETCAMERA",
+	"C_SETENTITY",
+	"C_STARTMAP",
+	"C_MOVEPIC",
+	"C_MOVEMASKEDPIC",
+	"C_DRAWPIC",
+	"C_DRAWMASKEDPIC",
+	"C_FADEIN",
+	"C_FADEOUT",
+	"C_SPAWNENTITY",
+	"C_PLAYSOUND",
+	"C_CLEAR_FG",
+	"C_SET_FG",
+	"C_SET_BG",
+	"C_FUNCTION",
+	"C_ENTITYFACE",
+	"C_USEENTITY",
+	"C_REMOVEENTITY",
+	"C_SETANIMFRAME",
+	"C_TEXTOUT",
+	"C_CENTERTEXTOUT",
+	"C_PLAYVOICE",
+
+	"C_ENDLIST"
+};
+
 void AI::processCines() {
 
 	bool complete, bailOut;
@@ -46,6 +84,9 @@ void AI::processCines() {
 	// TODO: Check for Game Pause
 
 	for (uint i = 0; i < _cine.size();i++) {
+		debug(3, "processCines: [%d] %s now: %d  start: %d delay: %d", i, cineTypeStr[_cine[i]->cmdType],
+				_cine[i]->start, _cine[i]->delay);
+
 		switch (_cine[i]->cmdType) {
 		case C_SETCAMERA:
 			_cameraX = _cine[i]->x;
