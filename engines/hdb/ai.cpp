@@ -24,14 +24,6 @@
 
 namespace HDB {
 
-AI::AI() {
-	_cine = new Common::Array<CineCommand *>;
-}
-
-AI::~AI() {
-	delete _cine;
-}
-
 bool AI::init() {
 	warning("STUB: AI::init required");
 	return true;
@@ -53,12 +45,12 @@ void AI::processCines() {
 
 	// TODO: Check for Game Pause
 
-	for (Common::Array<CineCommand *>::iterator it = _cine->begin(); it != _cine->end(); it++) {
-		switch ((*it)->cmdType) {
+	for (uint i = 0; i < _cine.size();i++) {
+		switch (_cine[i]->cmdType) {
 		case C_SETCAMERA:
-			_cameraX = (*it)->x;
-			_cameraY = (*it)->y;
-			g_hdb->_map->centerMapXY((int) _cameraX + 16, (int) _cameraY + 16);
+			_cameraX = _cine[i]->x;
+			_cameraY = _cine[i]->y;
+			g_hdb->_map->centerMapXY((int)_cameraX + 16, (int)_cameraY + 16);
 			_cameraLock = true;
 			complete = true;
 			break;
@@ -71,26 +63,26 @@ void AI::processCines() {
 			break;
 		case C_MOVECAMERA:
 			_cameraLock = true;
-			if (!((*it)->start)) {
-				(*it)->xv = (((double) (*it)->x) - _cameraX) / (double) (*it)->speed;
-				(*it)->yv = (((double) (*it)->y) - _cameraY) / (double) (*it)->speed;
-				(*it)->start = 1;
+			if (!(_cine[i]->start)) {
+				_cine[i]->xv = (((double)_cine[i]->x) - _cameraX) / (double)_cine[i]->speed;
+				_cine[i]->yv = (((double)_cine[i]->y) - _cameraY) / (double)_cine[i]->speed;
+				_cine[i]->start = 1;
 			}
-			_cameraX += (*it)->xv;
-			_cameraY += (*it)->yv;
-			if (abs(_cameraX - (*it)->x) <= 1 && abs(_cameraY - (*it)->y) <= 1) {
-				_cameraX = (*it)->x;
-				_cameraY = (*it)->y;
+			_cameraX += _cine[i]->xv;
+			_cameraY += _cine[i]->yv;
+			if (abs(_cameraX - _cine[i]->x) <= 1 && abs(_cameraY - _cine[i]->y) <= 1) {
+				_cameraX = _cine[i]->x;
+				_cameraY = _cine[i]->y;
 				complete = true;
 			}
 			g_hdb->_map->centerMapXY((int)_cameraX + 16, (int)_cameraY + 16);
 			break;
 		case C_WAIT:
-			if (!((*it)->start)) {
-				(*it)->start = 1;
-				(*it)->delay = g_system->getMillis() + (*it)->delay * 1000;
+			if (!(_cine[i]->start)) {
+				_cine[i]->start = 1;
+				_cine[i]->delay = g_system->getMillis() + _cine[i]->delay * 1000;
 			} else {
-				if ((*it)->delay < g_system->getMillis()) {
+				if (_cine[i]->delay < g_system->getMillis()) {
 					complete = true;
 				} else {
 					bailOut = true;
@@ -98,31 +90,43 @@ void AI::processCines() {
 			}
 			break;
 		case C_WAITUNTILDONE:
-			if ((uint) (it - _cine->begin()) == _cine->size() - 1) {
+			if (!i) {
 				complete = true;
 			} else {
 				bailOut = true;
 			}
 			break;
 		case C_FADEIN:
-			if (!(*it)->start) {
-				g_hdb->_drawMan->setFade(true, (bool)(*it)->end, (*it)->speed);
-				(*it)->start = 1;
+			if (!_cine[i]->start) {
+				g_hdb->_drawMan->setFade(true, (bool)_cine[i]->end, _cine[i]->speed);
+				_cine[i]->start = 1;
 			} else if (!g_hdb->_drawMan->isFadeActive()) {
 				complete = true;
 			}
 			break;
 		case C_FADEOUT:
-			if (!(*it)->start) {
-				g_hdb->_drawMan->setFade(false, (bool)(*it)->end, (*it)->speed);
-				(*it)->start = 1;
+			if (!_cine[i]->start) {
+				g_hdb->_drawMan->setFade(false, (bool)_cine[i]->end, _cine[i]->speed);
+				_cine[i]->start = 1;
 			} else if (!g_hdb->_drawMan->isFadeActive()) {
 				complete = true;
 			}
 			break;
 		default:
-			warning("STUB: AI::PROCESSCINES incomplete for %d", (*it)->cmdType);
+			warning("STUB: AI::PROCESSCINES incomplete for %d", _cine[i]->cmdType);
 			break;
+		}
+
+		if (bailOut) {
+			return;
+		}
+
+		if (complete) {
+			if (_cine.size()) {
+				_cine.remove_at(i);
+				i--;
+				complete = false;
+			}
 		}
 	}
 }
@@ -141,13 +145,13 @@ void AI::cineSetCamera(int x, int y) {
 	cmd->x = x * kTileWidth;
 	cmd->y = y * kTileHeight;
 	cmd->cmdType = C_SETCAMERA;
-	_cine->push_back(cmd);
+	_cine.push_back(cmd);
 }
 
 void AI::cineResetCamera() {
 	CineCommand *cmd = new CineCommand;
 	cmd->cmdType = C_RESETCAMERA;
-	_cine->push_back(cmd);
+	_cine.push_back(cmd);
 }
 
 void AI::cineMoveCamera(int x, int y, int speed) {
@@ -156,7 +160,7 @@ void AI::cineMoveCamera(int x, int y, int speed) {
 	cmd->x = x * kTileWidth;
 	cmd->y = y * kTileHeight;
 	cmd->cmdType = C_MOVECAMERA;
-	_cine->push_back(cmd);
+	_cine.push_back(cmd);
 }
 
 void AI::cineWait(int seconds) {
@@ -164,13 +168,13 @@ void AI::cineWait(int seconds) {
 	cmd->start = 0;
 	cmd->cmdType = C_WAIT;
 	cmd->delay = seconds;
-	_cine->push_back(cmd);
+	_cine.push_back(cmd);
 }
 
 void AI::cineWaitUntilDone() {
 	CineCommand *cmd = new CineCommand;
 	cmd->cmdType = C_WAITUNTILDONE;
-	_cine->push_back(cmd);
+	_cine.push_back(cmd);
 }
 
 void AI::cineFadeIn(bool isBlack, int steps) {
@@ -179,7 +183,7 @@ void AI::cineFadeIn(bool isBlack, int steps) {
 	cmd->end = (int) isBlack;
 	cmd->start = 0;
 	cmd->cmdType = C_FADEIN;
-	_cine->push_back(cmd);
+	_cine.push_back(cmd);
 }
 
 void AI::cineFadeOut(bool isBlack, int steps) {
@@ -188,7 +192,7 @@ void AI::cineFadeOut(bool isBlack, int steps) {
 	cmd->end = (int) isBlack;
 	cmd->start = 0;
 	cmd->cmdType = C_FADEOUT;
-	_cine->push_back(cmd);
+	_cine.push_back(cmd);
 }
 
 } // End of Namespace

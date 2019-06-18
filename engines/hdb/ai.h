@@ -81,10 +81,6 @@ struct CineCommand {
 
 class AI {
 public:
-
-	AI();
-	~AI();
-
 	bool init();
 
 	// Cinematic Functions
@@ -98,7 +94,7 @@ public:
 	void cineFadeIn(bool isBlack, int steps);
 	void cineFadeOut(bool isBlack, int steps);
 
-	Common::Array<CineCommand *> *_cine;
+	Common::Array<CineCommand *> _cine;
 
 private:
 	// Cinematics Variables
