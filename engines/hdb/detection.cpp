@@ -38,6 +38,13 @@ uint32 HDBGame::getGameFlags() const {
 	return _gameDescription->flags;
 }
 
+int HDBGame::isDemo() const {
+	if (getGameFlags() & ADGF_DEMO) {
+		return 1;
+	}
+	return 0;
+}
+
 } // End of namespace HDB
 
 static const PlainGameDescriptor hdbGames[] = {
