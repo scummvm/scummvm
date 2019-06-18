@@ -52,23 +52,22 @@ const uint kLoadButtonIndex = 2;
 const uint kContinueButtonIndex = 3;
 const uint kExitButtonIndex = 4;
 const uint kSaveButtonIndex = 5;
-
+const uint kSfxLabelIndex = 7;
 const uint kSubtitleButtonIndex = 8;
+const uint kSfxVolumeSliderIndex = 9;
+const uint kSpeedSliderIndex = 10;
+const uint kMusicLabelIndex = 11;
 const uint kSubtitleLabelIndex = 12;
-
+const uint kSpeechLabelIndex = 13;
+const uint kSpeedLabelIndex = 14;
 const uint kSpeechVolumeSliderIndex = 15;
+const uint kMusicVolumeSliderIndex = 16;
 const uint kDecSpeechButtonIndex = 17;
 const uint kIncSpeechButtonIndex = 18;
-
-const uint kMusicVolumeSliderIndex = 16;
 const uint kDecMusicButtonIndex = 19;
 const uint kIncMusicButtonIndex = 20;
-
-const uint kSfxVolumeSliderIndex = 9;
 const uint kDecSfxButtonIndex = 21;
 const uint kIncSfxButtonIndex = 22;
-
-const uint kSpeedSliderIndex = 10;
 const uint kDecSpeedButtonIndex = 23;
 const uint kIncSpeedButtonIndex = 24;
 
@@ -87,7 +86,7 @@ void InterfacePanel::start() {
 		for (uint j = 0; j < infos[i].attachedObjIds.size(); ++j) {
 			QMessageObject *obj = g_vm->getQSystem()->findObject(infos[i].attachedObjIds[j]);
 			FlicDecoder *flc = g_vm->resMgr()->loadFlic(obj->_resourceId);
-			flc->decodeNextFrame();
+			flc->setFrame(1);
 			obj->_z = 1;
 			obj->_x = kObjectsPoints[j].x;
 			obj->_y = kObjectsPoints[j].y;
@@ -180,6 +179,51 @@ void InterfacePanel::onLeftButtonDown(const Common::Point p) {
 }
 
 void InterfacePanel::onMouseMove(const Common::Point p) {
+	bool found = false;
+	for (uint i = _objs.size() - 1; i > 0; --i) {
+		QMessageObject *obj = (QMessageObject *)_objs[i];
+		int frame = 1;
+		if (!found && obj->isInPoint(p.x, p.y)) {
+			found = true;
+			if ((i >= kNewGameButtonIndex && i <= kSaveButtonIndex) || (i >= kDecSpeechButtonIndex && i <= kIncSpeedButtonIndex)) {
+				frame = 2;
+			}
+		}
+		if (obj->_field20 == frame)
+			continue;
+		obj->_field20 = frame;
+		obj->_field24 = frame;
+
+		int pointIndex;
+		switch (i) {
+		case kDecSpeechButtonIndex:
+		case kIncSpeechButtonIndex:
+			pointIndex = kSpeechLabelIndex - 1;
+			obj = (QMessageObject *)_objs[kSpeechLabelIndex];
+			break;
+		case kDecMusicButtonIndex:
+		case kIncMusicButtonIndex:
+			pointIndex = kMusicLabelIndex - 1;
+			obj = (QMessageObject *)_objs[kMusicLabelIndex];
+			break;
+		case kDecSfxButtonIndex:
+		case kIncSfxButtonIndex:
+			pointIndex = kSfxLabelIndex - 1;
+			obj = (QMessageObject *)_objs[kSfxLabelIndex];
+			break;
+		case kIncSpeedButtonIndex:
+		case kDecSpeedButtonIndex:
+			pointIndex = kSpeedLabelIndex - 1;
+			obj = (QMessageObject *)_objs[kSpeedLabelIndex];
+			break;
+		default:
+			pointIndex = i - 1;
+			break;
+		}
+		FlicDecoder *flc = g_vm->resMgr()->loadFlic(obj->_resourceId);
+		flc->setFrame(frame);
+		g_vm->videoSystem()->addDirtyRect(kObjectsPoints[pointIndex], *flc);
+	}
 	QObjectCursor *cursor = g_vm->getQSystem()->_cursor.get();
 	cursor->_isShown = 1;
 	cursor->setCursorPos(p.x, p.y, 0);
