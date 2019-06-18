@@ -62,6 +62,7 @@ public:
 	uint16 getMapFGTileIndex(int x, int y);
 	void getMapXY(int *x, int *y);
 	void setMapXY(int x, int y);
+	void centerMapXY(int x, int y);
 
 	int _mapX, _mapY; // Coordinates of Map
 	int _mapTileX, _mapTileY; // Tile Coordinates of Map
