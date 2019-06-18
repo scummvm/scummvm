@@ -60,6 +60,7 @@ public:
 	bool init();
 	void fillScreen(uint32 color);
 	void setFade(bool fadeIn, bool black, int steps);
+	void updateFade();
 
 	Tile *getTile(int index);
 	int getTileIndex(const char *name);
