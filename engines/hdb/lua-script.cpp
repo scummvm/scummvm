@@ -211,7 +211,15 @@ static int cineUseEntity(lua_State *L) {
 }
 
 static int cineSetEntity(lua_State *L) {
-	warning("STUB: CINE SET ENTITY");
+	const char *entName = lua_tostring(L, 1);
+	double x = lua_tonumber(L, 2);
+	double y = lua_tonumber(L, 3);
+	double level = lua_tonumber(L, 4);
+
+	g_hdb->_lua->checkParameters("cineSetEntity", 4);
+
+	lua_pop(L, 4);
+	g_hdb->_ai->cineSetEntity(entName, (int)x, (int)y, (int)level);
 	return 0;
 }
 
@@ -321,7 +329,28 @@ static int getEntityXY(lua_State *L) {
 }
 
 static int setEntity(lua_State *L) {
-	warning("STUB: SET ENTITY");
+	AIEntity *e = NULL;
+
+	const char *entName = lua_tostring(L, 1);
+	double x = lua_tonumber(L, 2);
+	double y = lua_tonumber(L, 3);
+	double level = lua_tonumber(L, 4);
+
+	g_hdb->_lua->checkParameters("setEntity", 4);
+
+	lua_pop(L, 4);
+	warning("STUB: LuaScript setEntity: locateEntity needed");
+	if (e) {
+		e->x = (int)x * kTileWidth;
+		e->tileX = (int)x;
+		e->y = (int)y * kTileHeight;
+		e->tileY = (int)y;
+		e->level = (int)level;
+		e->goalX = e->goalY = e->xVel = e->yVel = 0;
+		e->state = STATE_STANDDOWN;
+	} else {
+		warning("Could'nt SetEntity on '%s'", entName);
+	}
 	return 0;
 }
 
