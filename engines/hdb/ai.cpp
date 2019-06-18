@@ -85,7 +85,7 @@ void AI::processCines() {
 
 	for (uint i = 0; i < _cine.size();i++) {
 		debug(3, "processCines: [%d] %s now: %d  start: %d delay: %d", i, cineTypeStr[_cine[i]->cmdType],
-				_cine[i]->start, _cine[i]->delay);
+				g_system->getMillis(), _cine[i]->start, _cine[i]->delay);
 
 		switch (_cine[i]->cmdType) {
 		case C_SETCAMERA:
