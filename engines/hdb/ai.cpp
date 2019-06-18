@@ -104,6 +104,9 @@ void AI::processCines() {
 				bailOut = true;
 			}
 			break;
+		default:
+			warning("STUB: AI::PROCESSCINES incomplete for %d", (*it)->cmdType);
+			break;
 		}
 	}
 }
