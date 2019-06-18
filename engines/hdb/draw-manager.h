@@ -59,6 +59,8 @@ public:
 
 	bool init();
 	void fillScreen(uint32 color);
+	void updateVideo();
+
 	void setFade(bool fadeIn, bool black, int steps);
 	void updateFade();
 	bool isFadeActive() { return _fadeInfo.active; }

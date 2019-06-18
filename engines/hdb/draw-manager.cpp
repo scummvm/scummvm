@@ -100,6 +100,11 @@ void DrawMan::fillScreen(uint32 color) {
 //	g_system->copyRectToScreen(_globalSurface.getBasePtr(0, 0), _globalSurface.pitch, 0, 0, _globalSurface.w, _globalSurface.h);
 }
 
+void DrawMan::updateVideo() {
+	updateFade();
+	warning("STUB: DrawMan::updateVideo incomplete");
+}
+
 void DrawMan::setFade(bool fadeIn, bool black, int steps) {
 	_fadeInfo.isFadeIn = fadeIn;
 	_fadeInfo.isBlack = black;
