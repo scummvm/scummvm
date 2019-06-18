@@ -203,6 +203,7 @@ void AI::cineMoveCamera(int x, int y, int speed) {
 	cmd->start = 0;
 	cmd->x = x * kTileWidth;
 	cmd->y = y * kTileHeight;
+	cmd->speed = speed;
 	debug("Setting up C_MOVECAMERA: x: %f, y: %f", cmd->x, cmd->y);
 	cmd->cmdType = C_MOVECAMERA;
 	_cine.push_back(cmd);
