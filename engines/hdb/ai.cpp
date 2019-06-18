@@ -127,7 +127,7 @@ void AI::processCines() {
 	}
 }
 
-void AI::cineStart(bool abortable, char *abortFunc) {
+void AI::cineStart(bool abortable, const char *abortFunc) {
 	_cineAbortable = abortable;
 	_cineAborted = false;
 	_cineAbortFunc = abortFunc;
