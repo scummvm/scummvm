@@ -304,7 +304,7 @@ void Picture::draw(int x, int y) {
 	clip.moveTo(x, y);
 	clip.clip(g_hdb->_drawMan->_globalSurface.getBounds());
 	if (!clip.isEmpty()) {
-		g_system->copyRectToScreen(g_hdb->_drawMan->_globalSurface.getBasePtr(x, y), g_hdb->_drawMan->_globalSurface.pitch, x, y, clip.width(), clip.height());
+		g_system->copyRectToScreen(g_hdb->_drawMan->_globalSurface.getBasePtr(clip.left, clip.top), g_hdb->_drawMan->_globalSurface.pitch, clip.left, clip.top, clip.width(), clip.height());
 	}
 }
 
@@ -315,7 +315,7 @@ void Picture::drawMasked(int x, int y) {
 	clip.moveTo(x, y);
 	clip.clip(g_hdb->_drawMan->_globalSurface.getBounds());
 	if (!clip.isEmpty()) {
-		g_system->copyRectToScreen(g_hdb->_drawMan->_globalSurface.getBasePtr(x, y), g_hdb->_drawMan->_globalSurface.pitch, x, y, clip.width(), clip.height());
+		g_system->copyRectToScreen(g_hdb->_drawMan->_globalSurface.getBasePtr(clip.left, clip.top), g_hdb->_drawMan->_globalSurface.pitch, clip.left, clip.top, clip.width(), clip.height());
 	}
 }
 
@@ -350,7 +350,7 @@ void Tile::draw(int x, int y) {
 	clip.moveTo(x, y);
 	clip.clip(g_hdb->_drawMan->_globalSurface.getBounds());
 	if (!clip.isEmpty()) {
-		g_system->copyRectToScreen(g_hdb->_drawMan->_globalSurface.getBasePtr(x, y), g_hdb->_drawMan->_globalSurface.pitch, x, y, clip.width(), clip.height());
+		g_system->copyRectToScreen(g_hdb->_drawMan->_globalSurface.getBasePtr(clip.left, clip.top), g_hdb->_drawMan->_globalSurface.pitch, clip.left, clip.top, clip.width(), clip.height());
 	}
 }
 
@@ -361,7 +361,7 @@ void Tile::drawMasked(int x, int y) {
 	clip.moveTo(x, y);
 	clip.clip(g_hdb->_drawMan->_globalSurface.getBounds());
 	if (!clip.isEmpty()) {
-		g_system->copyRectToScreen(g_hdb->_drawMan->_globalSurface.getBasePtr(x, y), g_hdb->_drawMan->_globalSurface.pitch, x, y, clip.width(), clip.height());
+		g_system->copyRectToScreen(g_hdb->_drawMan->_globalSurface.getBasePtr(clip.left, clip.top), g_hdb->_drawMan->_globalSurface.pitch, clip.left, clip.top, clip.width(), clip.height());
 	}
 }
 
