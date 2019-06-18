@@ -106,17 +106,18 @@ void AI::processCines() {
 			break;
 		case C_FADEIN:
 			if (!(*it)->start) {
-				warning("STUB: DrawMan::setFade required");
-			} else {
-				warning("STUB: DrawMan::fadeActive required");
+				g_hdb->_drawMan->setFade(true, (bool) (*it)->end, (*it)->speed);
+				(*it)->start = 1;
+			} else if (!g_hdb->_drawMan->isFadeActive()) {
+				complete = true;
 			}
 			break;
 		case C_FADEOUT:
 			if (!(*it)->start) {
-				warning("STUB: DrawMan::setFade required");
-			}
-			else {
-				warning("STUB: DrawMan::fadeActive required");
+				g_hdb->_drawMan->setFade(false, (bool)(*it)->end, (*it)->speed);
+				(*it)->start = 1;
+			} else if (!g_hdb->_drawMan->isFadeActive()) {
+				complete = true;
 			}
 			break;
 		default:
