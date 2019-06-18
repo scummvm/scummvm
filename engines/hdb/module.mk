@@ -1,14 +1,14 @@
 MODULE := engines/hdb
 
 MODULE_OBJS := \
-	detection.o \
+	ai.o \
+	console.o \
 	draw-manager.o \
+	detection.o \
 	file-manager.o \
 	hdb.o \
 	lua-script.o \
-	map-loader.o \
-	ai.o \
-	console.o
+	map-loader.o
 
 MODULE_DIRS += \
 	engines/hdb
