@@ -20,13 +20,17 @@
  *
  */
 
-#ifndef GLK_ALAN2_UTIL
-#define GLK_ALAN2_UTIL
-
-#include "glk/alan2/types.h"
+#ifndef GLK_ALAN2_INTER
+#define GLK_ALAN2_INTER
 
 namespace Glk {
 namespace Alan2 {
+
+#ifdef _PROTOTYPES_
+extern void interpret(Aaddr adr);
+#else
+extern void interpret();
+#endif
 
 } // End of namespace Alan2
 } // End of namespace Glk

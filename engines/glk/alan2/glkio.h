@@ -20,13 +20,27 @@
  *
  */
 
-#ifndef GLK_ALAN2_UTIL
-#define GLK_ALAN2_UTIL
+#ifndef GLK_ALAN2_GLKIO
+#define GLK_ALAN2_GLKIO
 
-#include "glk/alan2/types.h"
+/* Header file for Glk output for Alan interpreter
+ */
+
+#include "glk/windows.h"
 
 namespace Glk {
 namespace Alan2 {
+
+winid_t glkMainWin;
+winid_t glkStatusWin;
+
+/* NB: this header must be included in any file which calls print() */
+
+#define print glkio_printf
+#undef printf
+#define printf glkio_printf
+
+void glkio_printf(char *, ...);
 
 } // End of namespace Alan2
 } // End of namespace Glk

@@ -20,13 +20,25 @@
  *
  */
 
-#ifndef GLK_ALAN2_UTIL
-#define GLK_ALAN2_UTIL
-
-#include "glk/alan2/types.h"
+#ifndef GLK_ALAN2_REVERSE
+#define GLK_ALAN2_REVERSE
 
 namespace Glk {
 namespace Alan2 {
+
+#ifdef _PROTOTYPES_
+
+extern void reverseHdr(AcdHdr *hdr);
+extern void reverseACD(Boolean v25);
+extern void reverse(Aword *word);
+extern Aword reversed(Aword word);
+
+#else
+extern void reverseHdr();
+extern void reverseACD();
+extern void reverse();
+extern Aword reversed();
+#endif
 
 } // End of namespace Alan2
 } // End of namespace Glk

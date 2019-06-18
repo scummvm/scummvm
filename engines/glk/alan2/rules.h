@@ -20,13 +20,23 @@
  *
  */
 
-#ifndef GLK_ALAN2_UTIL
-#define GLK_ALAN2_UTIL
+#ifndef GLK_ALAN2_RULES
+#define GLK_ALAN2_RULES
 
-#include "glk/alan2/types.h"
+/* Header file for rules handler in Alan interpreter */
 
 namespace Glk {
 namespace Alan2 {
+
+/* TYPES */
+
+#ifdef _PROTOTYPES_
+
+extern void rules(void);
+
+#else
+extern void rules();
+#endif
 
 } // End of namespace Alan2
 } // End of namespace Glk

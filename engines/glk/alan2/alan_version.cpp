@@ -20,15 +20,26 @@
  *
  */
 
-#ifndef GLK_ALAN2_UTIL
-#define GLK_ALAN2_UTIL
-
-#include "glk/alan2/types.h"
+#include "glk/alan2/alan_version.h"
 
 namespace Glk {
 namespace Alan2 {
 
+Product alan = {
+  "Alan",
+  "Adventure Language System",
+  "Alan 2.8(6)",
+  "Alan 2.8(6) -- Adventure Language System (2001-07-13 14:35)",
+  "2001-07-13",
+  "14:35:07",
+  "Thomas Nilsson",
+  "",
+  "cygwin",
+  {"2.8(6)", 2, 8, 6, 995034907, ""}
+};
+
+static char *alanId =
+  "@(#)RELEASE ";
+
 } // End of namespace Alan2
 } // End of namespace Glk
-
-#endif

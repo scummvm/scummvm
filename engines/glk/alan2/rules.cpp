@@ -20,15 +20,64 @@
  *
  */
 
-#ifndef GLK_ALAN2_UTIL
-#define GLK_ALAN2_UTIL
-
 #include "glk/alan2/types.h"
+#include "glk/alan2/main.h"
+#include "glk/alan2/inter.h"
+#include "glk/alan2/debug.h"
+#include "glk/alan2/exe.h"
+#include "glk/alan2/stack.h"
+
+#include "glk/alan2/rules.h"
+
+#ifdef GLK
+#include "glk/alan2/glkio.h"
+#endif
 
 namespace Glk {
 namespace Alan2 {
 
+#ifdef _PROTOTYPES_
+void rules(void)
+#else
+void rules()
+#endif
+{
+  Boolean change = TRUE;
+  int i;
+  
+  for (i = 1; !endOfTable(&ruls[i-1]); i++)
+    ruls[i-1].run = FALSE;
+  
+  while (change) {
+    change = FALSE;
+    for (i = 1; !endOfTable(&ruls[i-1]); i++) 
+      if (!ruls[i-1].run) {
+	if (trcflg) {
+	  printf("\n<RULE %d (at ", i);
+	  debugsay(cur.loc);
+	  if (!stpflg)
+	    printf("), Evaluating");
+	  else
+	    printf("), Evaluating:>\n");
+	}
+	interpret(ruls[i-1].exp);
+	if (pop()) {
+	  change = TRUE;
+	  ruls[i-1].run = TRUE;
+	  if (trcflg)
+	    if (!stpflg)
+	      printf(", Executing:>\n");
+	    else {
+	      printf("\nRULE %d (at ", i);
+	      debugsay(cur.loc);
+	      printf("), Executing:>\n");
+	    }
+	  interpret(ruls[i-1].stms);
+	} else if (trcflg && !stpflg)
+	  printf(":>\n");
+      }
+  }
+}
+
 } // End of namespace Alan2
 } // End of namespace Glk
-
-#endif

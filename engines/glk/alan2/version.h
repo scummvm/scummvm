@@ -20,13 +20,38 @@
  *
  */
 
-#ifndef GLK_ALAN2_UTIL
-#define GLK_ALAN2_UTIL
+#ifndef GLK_ALAN2_VERSION
+#define GLK_ALAN2_VERSION
 
-#include "glk/alan2/types.h"
+#include "common/system.h"
 
 namespace Glk {
 namespace Alan2 {
+
+typedef int64 Time;
+
+struct Version {
+  char*  string;
+  int    version;
+  int    revision;
+  int    correction;
+  Time   time;
+  char  *state;
+};
+
+struct Product {
+  char*   name;
+  char*   slogan;
+  char*   shortHeader;
+  char*   longHeader;
+  char*   date;
+  char*   time;
+  char*   user;
+  char*   host;
+  char*   ostype;
+  Version version;
+};
+
 
 } // End of namespace Alan2
 } // End of namespace Glk

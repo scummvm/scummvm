@@ -20,15 +20,55 @@
  *
  */
 
-#ifndef GLK_ALAN2_UTIL
-#define GLK_ALAN2_UTIL
-
 #include "glk/alan2/types.h"
+#include "glk/alan2/main.h"
+#include "glk/alan2/stack.h"
 
 namespace Glk {
 namespace Alan2 {
 
+/* PRIVATE DATA */
+
+#define STACKSIZE 100
+
+/* The AMACHINE STACK */
+static Aptr stack[STACKSIZE];
+static int stackp = 0;
+
+
+#ifdef _PROTOTYPES_
+void push(Aptr i)
+#else
+void push(i)
+     Aptr i;
+#endif
+{
+  if (stackp == STACKSIZE)
+    syserr("Out of stack space.");
+  stack[stackp++] = i;
+}
+
+
+#ifdef _PROTOTYPES_
+Aptr pop(void)
+#else
+Aptr pop()
+#endif
+{
+  if (stackp == 0)
+    syserr("Stack underflow.");
+  return(stack[--stackp]);
+}
+
+
+#ifdef _PROTOTYPES_
+Aptr top(void)
+#else
+Aptr top()
+#endif
+{
+  return(stack[stackp-1]);
+}
+
 } // End of namespace Alan2
 } // End of namespace Glk
-
-#endif

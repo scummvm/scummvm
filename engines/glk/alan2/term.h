@@ -20,13 +20,21 @@
  *
  */
 
-#ifndef GLK_ALAN2_UTIL
-#define GLK_ALAN2_UTIL
+#ifndef GLK_ALAN2_TERM
+#define GLK_ALAN2_TERM
 
-#include "glk/alan2/types.h"
+/* Header file for terminal functions in ARUN, the Alan interpreter */
 
 namespace Glk {
 namespace Alan2 {
+
+#ifdef _PROTOTYPES_
+
+extern void getPageSize(void);
+
+#else
+extern void getPageSize();
+#endif
 
 } // End of namespace Alan2
 } // End of namespace Glk

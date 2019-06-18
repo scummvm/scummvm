@@ -20,13 +20,33 @@
  *
  */
 
-#ifndef GLK_ALAN2_UTIL
-#define GLK_ALAN2_UTIL
+#ifndef GLK_ALAN2_PARSE
+#define GLK_ALAN2_PARSE
 
-#include "glk/alan2/types.h"
+/* Parse data for ALAN interpreter module. */
 
 namespace Glk {
 namespace Alan2 {
+
+extern int wrds[];		/* List of Parsed Word */
+extern int wrdidx;		/* and an index into it */
+
+extern ParamElem *params;	/* List of parameters */
+extern Boolean plural;
+
+extern LitElem litValues[];
+extern int litCount;
+
+extern int vrbwrd;
+
+#ifdef _PROTOTYPES_
+
+/* Parse a new player command */
+extern void parse(void);
+
+#else
+extern void parse();
+#endif
 
 } // End of namespace Alan2
 } // End of namespace Glk

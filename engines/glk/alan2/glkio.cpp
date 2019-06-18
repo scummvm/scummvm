@@ -20,15 +20,28 @@
  *
  */
 
-#ifndef GLK_ALAN2_UTIL
-#define GLK_ALAN2_UTIL
-
-#include "glk/alan2/types.h"
+#include "glk/glk.h"
+#include "glk/alan2/alan2.h"
+#include "glk/alan2/glkio.h"
 
 namespace Glk {
 namespace Alan2 {
 
+void glkio_printf(char *fmt, ...) {
+	va_list argp;
+	va_start(argp, fmt);
+	if (glkMainWin) {
+		char buf[1024];	/* FIXME: buf size should be foolproof */
+		vsprintf(buf, fmt, argp);
+		g_vm->glk_put_string(buf);
+	} else {
+		// assume stdio is available in this case only
+		Common::String str = Common::String::vformat(fmt, argp);
+		warning(fmt, argp);
+	}
+
+	va_end(argp);
+}
+
 } // End of namespace Alan2
 } // End of namespace Glk
-
-#endif

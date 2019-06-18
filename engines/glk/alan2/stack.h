@@ -20,13 +20,27 @@
  *
  */
 
-#ifndef GLK_ALAN2_UTIL
-#define GLK_ALAN2_UTIL
+#ifndef GLK_ALAN2_STACK
+#define GLK_ALAN2_STACK
 
-#include "glk/alan2/types.h"
+/* Header file for stack handler in Alan interpreter */
 
 namespace Glk {
 namespace Alan2 {
+
+/* TYPES */
+
+#ifdef _PROTOTYPES_
+
+extern Aptr pop(void);
+extern void push(Aptr item);
+extern Aptr top(void);
+
+#else
+extern Aptr pop();
+extern void push();
+extern Aptr top();
+#endif
 
 } // End of namespace Alan2
 } // End of namespace Glk

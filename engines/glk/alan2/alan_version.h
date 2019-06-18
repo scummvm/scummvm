@@ -20,13 +20,15 @@
  *
  */
 
-#ifndef GLK_ALAN2_UTIL
-#define GLK_ALAN2_UTIL
+#ifndef GLK_ALAN2_ALAN_VERSION
+#define GLK_ALAN2_ALAN_VERSION
 
-#include "glk/alan2/types.h"
+#include "glk/alan2/version.h"
 
 namespace Glk {
 namespace Alan2 {
+
+extern Product alan;
 
 } // End of namespace Alan2
 } // End of namespace Glk

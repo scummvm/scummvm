@@ -20,13 +20,26 @@
  *
  */
 
-#ifndef GLK_ALAN2_UTIL
-#define GLK_ALAN2_UTIL
+/* TYPES */
 
-#include "glk/alan2/types.h"
+#ifndef GLK_ALAN2_DEBUG
+#define GLK_ALAN2_DEBUG
 
 namespace Glk {
 namespace Alan2 {
+
+#ifdef _PROTOTYPES_
+
+extern void saveInfo(void);
+extern void restoreInfo(void);
+extern void debug(void);
+extern void debugsay(int item);
+#else
+extern void saveInfo();
+extern void restoreInfo();
+extern void debug();
+extern void debugsay();
+#endif
 
 } // End of namespace Alan2
 } // End of namespace Glk

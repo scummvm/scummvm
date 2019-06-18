@@ -20,13 +20,29 @@
  *
  */
 
-#ifndef GLK_ALAN2_UTIL
-#define GLK_ALAN2_UTIL
+#ifndef GLK_ALAN2_ARGS
+#define GLK_ALAN2_ARGS
+
+/* Handles the various startup methods on all machines.
+ *
+ * Main function args() will set up global variable advnam and the flags,
+ * the terminal will also be set up and connected.
+ */
 
 #include "glk/alan2/types.h"
 
 namespace Glk {
 namespace Alan2 {
+
+#ifndef PROGNAME
+#define PROGNAME "alan2"
+#endif
+
+#ifdef _PROTOTYPES_
+extern void args(int argc, char *argv[]);
+#else
+extern void args();
+#endif
 
 } // End of namespace Alan2
 } // End of namespace Glk
