@@ -106,7 +106,7 @@ void AI::processCines() {
 			break;
 		case C_FADEIN:
 			if (!(*it)->start) {
-				g_hdb->_drawMan->setFade(true, (bool) (*it)->end, (*it)->speed);
+				g_hdb->_drawMan->setFade(true, (bool)(*it)->end, (*it)->speed);
 				(*it)->start = 1;
 			} else if (!g_hdb->_drawMan->isFadeActive()) {
 				complete = true;
