@@ -88,9 +88,9 @@ void AI::processCines() {
 		case C_WAIT:
 			if (!((*it)->start)) {
 				(*it)->start = 1;
-				(*it)->delay = g_system->getMillis() * 23.5 + (*it)->delay * 1000;
+				(*it)->delay = g_system->getMillis() + (*it)->delay * 1000;
 			} else {
-				if ((*it)->delay < g_system->getMillis() * 23.5) {
+				if ((*it)->delay < g_system->getMillis()) {
 					complete = true;
 				} else {
 					bailOut = true;
