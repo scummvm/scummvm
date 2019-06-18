@@ -197,7 +197,7 @@ void InterfacePanel::updateSliders() {
 	g_vm->videoSystem()->addDirtyRect(kObjectsPoints[kMusicVolumeSliderIndex - 1], *flc);
 
 	flc = g_vm->resMgr()->loadFlic(_objs[kSfxVolumeSliderIndex]->_resourceId);
-	flc->setFrame(_speechFrame);
+	flc->setFrame(_sfxFrame);
 	g_vm->videoSystem()->addDirtyRect(kObjectsPoints[kSfxVolumeSliderIndex - 1], *flc);
 
 	flc = g_vm->resMgr()->loadFlic(_objs[kSpeedSliderIndex]->_resourceId);
@@ -208,11 +208,11 @@ void InterfacePanel::updateSliders() {
 void InterfacePanel::updateSubtitles() {
 	applySettings();
 	FlicDecoder *flc = g_vm->resMgr()->loadFlic(_objs[kSubtitleButtonIndex]->_resourceId);
-	flc->setFrame(_subtitles != 0 ? 1 : 7);
+	flc->setFrame(_subtitles == 0 ? 1 : 7);
 	g_vm->videoSystem()->addDirtyRect(kObjectsPoints[kSubtitleButtonIndex - 1], *flc);
 
 	flc = g_vm->resMgr()->loadFlic(_objs[kSubtitleLabelIndex]->_resourceId);
-	flc->setFrame(_subtitles != 0 ? 1 : 2);
+	flc->setFrame(_subtitles == 0 ? 1 : 2);
 	g_vm->videoSystem()->addDirtyRect(kObjectsPoints[kSubtitleLabelIndex - 1], *flc);
 }
 
