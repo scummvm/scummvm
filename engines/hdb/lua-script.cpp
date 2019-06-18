@@ -140,7 +140,15 @@ static int cineResetCamera(lua_State *L) {
 }
 
 static int cineMoveCamera(lua_State *L) {
-	warning("STUB: CINE MOVE CAMERA");
+	double x = lua_tonumber(L, 1);
+	double y = lua_tonumber(L, 2);
+	double speed = lua_tonumber(L, 3);
+
+	g_hdb->_lua->checkParameters("cineMoveCamera", 3);
+
+	lua_pop(L, 3);
+	g_hdb->_ai->cineMoveCamera((int) x, (int) y, (int) speed);
+
 	return 0;
 }
 
