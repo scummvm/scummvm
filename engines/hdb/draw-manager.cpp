@@ -100,6 +100,24 @@ void DrawMan::fillScreen(uint32 color) {
 //	g_system->copyRectToScreen(_globalSurface.getBasePtr(0, 0), _globalSurface.pitch, 0, 0, _globalSurface.w, _globalSurface.h);
 }
 
+void DrawMan::setFade(bool fadeIn, bool black, int steps) {
+	_fadeInfo.isFadeIn = fadeIn;
+	_fadeInfo.isBlack = black;
+
+	if (!steps) {
+		steps = 1;
+	}
+	_fadeInfo.speed = steps;
+
+	if (fadeIn) {
+		_fadeInfo.curStep = 0;
+	} else {
+		_fadeInfo.curStep = 255;
+	}
+
+	_fadeInfo.active = true;
+}
+
 Tile *DrawMan::getTile(int index) {
 
 	if (index < 0 || index > _numTiles) {
