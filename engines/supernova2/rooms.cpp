@@ -1394,6 +1394,8 @@ void Checkout::shouting() {
 }
 
 void Checkout::appearance() {
+	_vm->_allowSaveGame = false;
+	_vm->_allowLoadGame = false;
 	int xp = 0;
 	CursorMan.showMouse(false);
 	_vm->playSound(kMusicMadMonkeys);
@@ -1599,6 +1601,8 @@ void Checkout::appearance() {
 	_vm->_screen->setViewportBrightness(1);
 	_vm->paletteBrightness();
 	_gm->drawGUI();
+	_vm->_allowSaveGame = true;
+	_vm->_allowLoadGame = true;
 }
 
 City1::City1(Supernova2Engine *vm, GameManager *gm) {
@@ -1702,7 +1706,6 @@ void Elevator::onEntrance() {
 		_objectState[5]._type &= ~OPENED;
 	else
 		_objectState[5]._type |= OPENED;
-	setRoomSeen(true);
 }
 
 void Elevator::animation() {
@@ -3970,10 +3973,14 @@ bool Museum::interact(Action verb, Object &obj1, Object &obj2) {
 			_vm->paletteFadeOut();
 			_vm->_system->fillScreen(kColorBlack);
 			_vm->_screen->setViewportBrightness(255);
+			_vm->_screen->setGuiBrightness(255);
+			_vm->_screen->paletteBrightness();
 			_vm->renderMessage(kStringMuseum13);
 			_gm->waitOnInput(_gm->_messageDuration);
 			_vm->removeMessage();
 			_vm->_screen->setViewportBrightness(0);
+			_vm->_screen->setGuiBrightness(0);
+			_vm->_screen->paletteBrightness();
 			bool hasDinosaurHead = false;
 			if (_gm->_rooms[MUS_ROUND]->getObject(4)->_type & CARRIED)
 				hasDinosaurHead = true;
