@@ -104,6 +104,21 @@ void AI::processCines() {
 				bailOut = true;
 			}
 			break;
+		case C_FADEIN:
+			if (!(*it)->start) {
+				warning("STUB: DrawMan::setFade required");
+			} else {
+				warning("STUB: DrawMan::fadeActive required");
+			}
+			break;
+		case C_FADEOUT:
+			if (!(*it)->start) {
+				warning("STUB: DrawMan::setFade required");
+			}
+			else {
+				warning("STUB: DrawMan::fadeActive required");
+			}
+			break;
 		default:
 			warning("STUB: AI::PROCESSCINES incomplete for %d", (*it)->cmdType);
 			break;
