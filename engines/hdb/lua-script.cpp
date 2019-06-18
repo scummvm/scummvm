@@ -153,12 +153,17 @@ static int cineMoveCamera(lua_State *L) {
 }
 
 static int cineWait(lua_State *L) {
-	warning("STUB: CINE WAIT");
+	double seconds = lua_tonumber(L, 1);
+
+	g_hdb->_lua->checkParameters("cineWait", 1);
+
+	lua_pop(L, 1);
+	g_hdb->_ai->cineWait((int) seconds);
 	return 0;
 }
 
 static int cineWaitUntilDone(lua_State *L) {
-	warning("STUB: CINE WAIT UNTIL DONE");
+	g_hdb->_ai->cineWaitUntilDone();
 	return 0;
 }
 
