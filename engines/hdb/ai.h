@@ -89,7 +89,7 @@ public:
 
 	// Cinematic Functions
 	void processCines();
-	void cineStart(bool abortable, char *abortFunc);
+	void cineStart(bool abortable, const char *abortFunc);
 	void cineSetCamera(int x, int y);
 	void cineResetCamera();
 	void cineMoveCamera(int x, int y, int speed);
@@ -104,7 +104,7 @@ private:
 	// Cinematics Variables
 	bool _cineAbortable;
 	bool _cineAborted;
-	char *_cineAbortFunc;
+	const char *_cineAbortFunc;
 	bool _cineActive;
 	bool _playerLock;
 	bool _cameraLock;
