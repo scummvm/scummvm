@@ -388,6 +388,7 @@ public:
 	void cineMoveCamera(int x, int y, int speed);
 	void cineWait(int seconds);
 	void cineWaitUntilDone();
+	void cineSetEntity(const char *entName, int x, int y, int level);
 	void cineFadeIn(bool isBlack, int steps);
 	void cineFadeOut(bool isBlack, int steps);
 
