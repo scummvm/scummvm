@@ -135,7 +135,7 @@ static int cineSetCamera(lua_State *L) {
 }
 
 static int cineResetCamera(lua_State *L) {
-	warning("STUB: CINE RESET CAMERA");
+	g_hdb->_ai->cineResetCamera();
 	return 0;
 }
 
