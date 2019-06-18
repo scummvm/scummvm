@@ -140,6 +140,19 @@ void AI::processCines() {
 				bailOut = true;
 			}
 			break;
+		case C_SETENTITY:
+			warning("STUB: AI::locateEntity required");
+			if (_cine[i]->e) {
+				_cine[i]->e->tileX = (int)_cine[i]->x / kTileWidth;
+				_cine[i]->e->x = (int)_cine[i]->x;
+				_cine[i]->e->tileY = (int)_cine[i]->y / kTileHeight;
+				_cine[i]->e->y = (int)_cine[i]->y;
+				_cine[i]->e->level = (int)_cine[i]->x2;
+			} else {
+				warning("Can't locate '%s' in setEntity", _cine[i]->title);
+			}
+			complete = true;
+			break;
 		case C_FADEIN:
 			if (!_cine[i]->start) {
 				g_hdb->_drawMan->setFade(true, (bool)_cine[i]->end, _cine[i]->speed);
