@@ -122,7 +122,15 @@ static int cineUnlockPlayer(lua_State *L) {
 }
 
 static int cineSetCamera(lua_State *L) {
-	warning("STUB: CINE SET CAMERA");
+	double x = lua_tonumber(L, 1);
+	double y = lua_tonumber(L, 2);
+
+	g_hdb->_lua->checkParameters("cineSetCamera", 2);
+
+	lua_pop(L, 2);
+
+	g_hdb->_ai->cineSetCamera((int) x, (int) y);
+
 	return 0;
 }
 
