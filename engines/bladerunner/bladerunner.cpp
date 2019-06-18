@@ -2101,6 +2101,8 @@ bool BladeRunnerEngine::loadGame(Common::SeekableReadStream &stream) {
 	_policeMaze->load(s);
 	_crimesDatabase->load(s);
 
+	_actorUpdateCounter = 0;
+	_actorUpdateTimeLast = 0;
 	_gameIsLoading = false;
 
 	_settings->setNewSetAndScene(_settings->getSet(), _settings->getScene());
@@ -2139,6 +2141,8 @@ void BladeRunnerEngine::newGame(int difficulty) {
 
 	InitScript initScript(this);
 	initScript.SCRIPT_Initialize_Game();
+	_actorUpdateCounter = 0;
+	_actorUpdateTimeLast = 0;
 	initChapterAndScene();
 
 	_settings->setStartingGame();
