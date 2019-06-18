@@ -281,7 +281,7 @@ Graphics::Surface Picture::load(Common::SeekableReadStream *stream) {
 	uint16 *ptr;
 
 	for (uint y = 0; y < _height; y++) {
-		ptr = (uint16 *) _surface.getBasePtr(0, y);
+		ptr = (uint16 *)_surface.getBasePtr(0, y);
 		for (uint x = 0; x < _width; x++) {
 			*ptr = TO_LE_16(stream->readUint16LE());
 			ptr++;
