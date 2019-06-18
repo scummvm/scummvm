@@ -264,4 +264,67 @@ void Map::setMapXY(int x, int y) {
 	_mapY = y;
 }
 
+// Sets _mapX and _mapY and tries to center the map around X, Y
+void Map::centerMapXY(int x, int y) {
+	int checkx = x / kTileWidth;
+	int checky = y / kTileHeight;
+
+	int minx, miny, maxx, maxy;
+
+	// Scan from centerX to right edge
+	maxx = (_width - (16/2)) * kTileWidth;
+	for (int i = checkx + 1; i <= checkx + (16 / 2); i++) {
+		if (!getMapBGTileIndex(i, checky)) {
+			maxx = (i - (16 / 2)) * kTileWidth;
+			break;
+		}
+	}
+
+	// Scan from centerX to left edge
+	minx = 0;
+	for (int i = checkx - 1; i >= checkx - (16 / 2); i--) {
+		if (!getMapBGTileIndex(i, checky)) {
+			// +1 because we don't want to see one whole tile
+			minx = (1 + i + (16 / 2)) * kTileWidth;
+			break;
+		}
+	}
+
+	// Scan from centerY to bottom edge
+	maxy = (_height - (16/2)) * kTileHeight;
+	for (int i = checky + 1; i <= checky + (16 / 2); i++) {
+		if (!getMapBGTileIndex(checkx, i)) {
+			maxy = (i - (16 / 2)) * kTileHeight;
+			break;
+		}
+	}
+
+	// Scan from centerY to top edge
+	miny = 0;
+	for (int i = checky - 1; i >= checkx - (16 / 2); i--) {
+		if (!getMapBGTileIndex(checkx, i)) {
+			// +! because we don't want to see one whole tile
+			miny = (1 + i + (16 / 2)) * kTileHeight;
+			break;
+		}
+	}
+
+	if (x < minx) {
+		x = minx;
+	} else if (x > maxx) {
+		x = maxx;
+	}
+
+	if (y < miny) {
+		y = miny;
+	} else if (y > maxy) {
+		y = maxy;
+	}
+
+	x -= (480 / 2);
+	y -= (480 / 2);
+
+	setMapXY(x, y);
+}
+
 }
