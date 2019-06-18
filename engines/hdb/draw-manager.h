@@ -74,7 +74,17 @@ private:
 	int _numTiles;
 	TileLookup *_tLookupArray;
 	uint16 _skyTiles[kMaxSkies];
+
 	int _currentSky;	// 0 if no Sky, 1+ for which Sky to use
+	struct {
+		bool active;
+		bool stayFaded;
+		bool isBlack;
+		int speed;
+		bool isFadeIn;
+
+		int curStep;
+	} _fadeInfo;
 
 	struct {
 		int x, y, speed;
