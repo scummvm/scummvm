@@ -322,65 +322,64 @@ Common::Error BladeRunnerEngine::run() {
 		return Common::Error(Common::kUnknownError, _("Failed to initialize resources"));
 	}
 
-	if (warnUserAboutUnsupportedGame()) {
-		// improvement: Use a do-while() loop to handle the normal end-game state
-		// so that the game won't exit abruptly after end credits
-		do {
-			// additional code for gracefully handling end-game after _endCredits->show()
-			_gameOver = false;
-			_gameIsRunning = true;
-			if (!playerHasControl()) {
-				// force a player gains control
-				playerGainsControl(true);
-			}
-			if (_mouse->isDisabled()) {
-				// force a mouse enable here since otherwise, after end-game,
-				// we need extra call(s) to mouse->enable to get the _disabledCounter to 0
-				_mouse->enable(true);
-			}
-			// end of additional code for gracefully handling end-game
 
-			if (ConfMan.hasKey("save_slot") && ConfMan.getInt("save_slot") != -1) {
-				// when loading from ScummVM main menu, we should emulate
-				// the Kia pause/resume in order to get a valid "current" time when the game
-				// is actually loaded (assuming delays can be introduced by a popup warning dialogue)
-				if(!_time->isLocked()) {
-					_time->pause();
-				}
-				loadGameState(ConfMan.getInt("save_slot"));
-				ConfMan.set("save_slot", "-1");
-				if(_time->isLocked()) {
-					_time->resume();
-				}
-			} else if (hasSavegames) {
-				_kia->_forceOpen = true;
-				_kia->open(kKIASectionLoad);
+	// improvement: Use a do-while() loop to handle the normal end-game state
+	// so that the game won't exit abruptly after end credits
+	do {
+		// additional code for gracefully handling end-game after _endCredits->show()
+		_gameOver = false;
+		_gameIsRunning = true;
+		if (!playerHasControl()) {
+			// force a player gains control
+			playerGainsControl(true);
+		}
+		if (_mouse->isDisabled()) {
+			// force a mouse enable here since otherwise, after end-game,
+			// we need extra call(s) to mouse->enable to get the _disabledCounter to 0
+			_mouse->enable(true);
+		}
+		// end of additional code for gracefully handling end-game
+
+		if (ConfMan.hasKey("save_slot") && ConfMan.getInt("save_slot") != -1) {
+			// when loading from ScummVM main menu, we should emulate
+			// the Kia pause/resume in order to get a valid "current" time when the game
+			// is actually loaded (assuming delays can be introduced by a popup warning dialogue)
+			if(!_time->isLocked()) {
+				_time->pause();
 			}
-			// TODO: why is game starting new game here when everything is done in startup?
-			//  else {
-			// 	newGame(kGameDifficultyMedium);
-			// }
-
-			gameLoop();
-
-			_mouse->disable();
-
-			if (_gameOver) {
-				// In the original game this created a single "END_GAME_STATE.END"
-				// which had the a valid format of a save game but was never accessed
-				// from the loading screen. (Due to the .END extension)
-				// It was also a single file that was overwritten each time the player
-				// finished the game.
-				// Maybe its purpose was debugging (?) by renaming it to .SAV and also
-				// for the game to "know" if the player has already finished the game at least once (?)
-				// although that latter one seems not to be used for anything, or maybe it was planned
-				// to be used for a sequel (?). We will never know.
-				// Disabling as in current state it will only fill-up save slots
-				// autoSaveGame(4, true);
-				_endCredits->show();
+			loadGameState(ConfMan.getInt("save_slot"));
+			ConfMan.set("save_slot", "-1");
+			if(_time->isLocked()) {
+				_time->resume();
 			}
-		} while (_gameOver); // if main game loop ended and _gameOver == false, then shutdown
-	}
+		} else if (hasSavegames) {
+			_kia->_forceOpen = true;
+			_kia->open(kKIASectionLoad);
+		}
+		// TODO: why is game starting new game here when everything is done in startup?
+		//  else {
+		// 	newGame(kGameDifficultyMedium);
+		// }
+
+		gameLoop();
+
+		_mouse->disable();
+
+		if (_gameOver) {
+			// In the original game this created a single "END_GAME_STATE.END"
+			// which had the a valid format of a save game but was never accessed
+			// from the loading screen. (Due to the .END extension)
+			// It was also a single file that was overwritten each time the player
+			// finished the game.
+			// Maybe its purpose was debugging (?) by renaming it to .SAV and also
+			// for the game to "know" if the player has already finished the game at least once (?)
+			// although that latter one seems not to be used for anything, or maybe it was planned
+			// to be used for a sequel (?). We will never know.
+			// Disabling as in current state it will only fill-up save slots
+			// autoSaveGame(4, true);
+			_endCredits->show();
+		}
+	} while (_gameOver); // if main game loop ended and _gameOver == false, then shutdown
 
 	shutdown();
 
