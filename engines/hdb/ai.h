@@ -319,6 +319,11 @@ enum CineType {
 	C_ENDLIST
 };
 
+struct AIStateDef {
+	AIState state;
+	char name[64];
+};
+
 struct AIEntity {
 	AIType type;
 	AIState state;
@@ -357,6 +362,14 @@ struct AIEntity {
 	uint16		animCycle;								// delay between frame animations
 
 	// TODO: Add the frame arrays needed
+};
+
+struct AIEntTypeInfo {
+	AIType type;
+	char *luaName;
+	AIStateDef *stateDef;
+	void (*initFunc)(AIEntity *e);
+	void (*initFunc2)(AIEntity *e);
 };
 
 struct CineCommand {
