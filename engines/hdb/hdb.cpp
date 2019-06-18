@@ -172,10 +172,6 @@ Common::Error HDBGame::run() {
 		return Common::kReadingFailed;
 	}
 
-	_map->load(mapStream);
-	_drawMan->drawSky();
-	_map->draw();
-
 #if 0
 	lua->executeFile("test.lua");
 #endif
@@ -195,6 +191,11 @@ Common::Error HDBGame::run() {
 				break;
 			}
 		}
+
+		_map->load(mapStream);
+		_drawMan->drawSky();
+		_map->draw();
+		_ai->processCines();
 
 		g_system->updateScreen();
 		g_system->delayMillis(10);
