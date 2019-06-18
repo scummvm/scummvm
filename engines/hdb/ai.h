@@ -95,6 +95,8 @@ public:
 	void cineMoveCamera(int x, int y, int speed);
 	void cineWait(int seconds);
 	void cineWaitUntilDone();
+	void cineFadeIn(bool isBlack, int steps);
+	void cineFadeOut(bool isBlack, int steps);
 
 	Common::Array<CineCommand *> *_cine;
 

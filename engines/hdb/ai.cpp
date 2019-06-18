@@ -157,4 +157,22 @@ void AI::cineWaitUntilDone() {
 	_cine->push_back(cmd);
 }
 
+void AI::cineFadeIn(bool isBlack, int steps) {
+	CineCommand *cmd = new CineCommand;
+	cmd->speed = steps;
+	cmd->end = (int) isBlack;
+	cmd->start = 0;
+	cmd->cmdType = C_FADEIN;
+	_cine->push_back(cmd);
+}
+
+void AI::cineFadeOut(bool isBlack, int steps) {
+	CineCommand *cmd = new CineCommand;
+	cmd->speed = steps;
+	cmd->end = (int) isBlack;
+	cmd->start = 0;
+	cmd->cmdType = C_FADEOUT;
+	_cine->push_back(cmd);
+}
+
 } // End of Namespace
