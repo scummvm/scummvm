@@ -87,22 +87,50 @@ static int cineStop(lua_State *L) {
 }
 
 static int cineFadeInBlack(lua_State *L) {
-	warning("STUB: CINE FADE IN BLACK");
+	double steps = lua_tonumber(L, 1);
+
+	g_hdb->_lua->checkParameters("cineFadeInBlack", 1);
+
+	lua_pop(L, 1);
+
+	g_hdb->_ai->cineFadeIn(false, (int) steps);
+
 	return 0;
 }
 
 static int cineFadeOutBlack(lua_State *L) {
-	warning("STUB: CINE FADE OUT BLACK");
+	double steps = lua_tonumber(L, 1);
+
+	g_hdb->_lua->checkParameters("cineFadeOutBlack", 1);
+
+	lua_pop(L, 1);
+
+	g_hdb->_ai->cineFadeOut(false, (int)steps);
+
 	return 0;
 }
 
 static int cineFadeInWhite(lua_State *L) {
-	warning("STUB: CINE FADE IN WHITE");
+	double steps = lua_tonumber(L, 1);
+
+	g_hdb->_lua->checkParameters("cineFadeInWhite", 1);
+
+	lua_pop(L, 1);
+
+	g_hdb->_ai->cineFadeIn(true, (int)steps);
+
 	return 0;
 }
 
 static int cineFadeOutWhite(lua_State *L) {
-	warning("STUB: CINE FADE OUT WHITE");
+	double steps = lua_tonumber(L, 1);
+
+	g_hdb->_lua->checkParameters("cineFadeOutWhite", 1);
+
+	lua_pop(L, 1);
+
+	g_hdb->_ai->cineFadeOut(true, (int)steps);
+
 	return 0;
 }
 
