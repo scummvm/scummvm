@@ -217,37 +217,25 @@ void InterfacePanel::updateSubtitles() {
 }
 
 void InterfacePanel::readSettings() {
-
+	_speechFrame = 1 + 30 * ConfMan.getInt("speech_volume") / 255;
+	_musicFrame = 1 + 40 * ConfMan.getInt("music_volume") / 255;
+	_sfxFrame = 1 + 30 * ConfMan.getInt("sfx_volume") / 255;
+	_subtitles = ConfMan.getBool("subtitles");
+	//_speedFrame = 1 + ConfMan.getInt("petka_speed") / 4;
 }
 
 void InterfacePanel::applySettings() {
-	if (_speechFrame < 1)
-		_speechFrame = 1;
-	else if (_speechFrame > 31)
-		_speechFrame = 31;
-
-	if (_musicFrame < 1)
-		_musicFrame = 1;
-	else if (_musicFrame > 41)
-		_musicFrame = 41;
-
-	if (_sfxFrame < 1)
-		_sfxFrame = 1;
-	else if (_sfxFrame > 31)
-		_sfxFrame = 31;
-
-	if (_speedFrame < 1)
-		_speedFrame = 1;
-	else if (_speedFrame > 26)
-		_speedFrame = 26;
+	_speechFrame = MIN(MAX(1, _speechFrame), 31);
+	_musicFrame = MIN(MAX(1, _musicFrame), 41);
+	_sfxFrame = MIN(MAX(1, _sfxFrame), 31);
+	_speedFrame = MIN(MAX(1, _speedFrame), 26);
 
 	ConfMan.setInt("speech_volume", 255 * (_speechFrame - 1) / (31 - 1));
 	ConfMan.setInt("music_volume", 255 * (_musicFrame - 1) / (41 - 1));
 	ConfMan.setInt("sfx_volume", 255 * (_sfxFrame - 1) / (31 - 1));
-
-	// speed
-	// subtitles
-
+	ConfMan.setBool("subtitles", _subtitles);
+	//ConfMan.setInt("petka_speed", 4 * (_speedFrame - 1));
+	ConfMan.flushToDisk();
 	g_vm->syncSoundSettings();
 }
 
