@@ -22,6 +22,7 @@
 
 #include "common/str.h"
 #include "common/system.h"
+#include "common/config-manager.h"
 #include "engines/util.h"
 #include "graphics/cursorman.h"
 #include "graphics/palette.h"
@@ -354,7 +355,8 @@ void Screen::renderImageSection(const MS2Image *image, int section, bool invert)
 							 image->_section[section].y1,
 							 image->_section[section].x2 + 1,
 							 image->_section[section].y2 + 1);
-	if (image->_filenumber == 38) {
+	if (image->_filenumber == 38 ||
+			(image->_filenumber == 28 && ConfMan.get("language") == "en")) {
 		sectionRect.setWidth(640);
 		sectionRect.setHeight(480);
 		if (_screenWidth != 640) {
