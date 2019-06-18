@@ -121,6 +121,25 @@ void HDBGame::changeGameState() {
 	}
 }
 
+void HDBGame::paint() {
+	switch (_gameState) {
+	case GAME_TITLE:
+		warning("STUB: MENU::DrawTitle required");
+		break;
+	case GAME_MENU:
+		warning("STUB: MENU::DrawMenu required");
+		break;
+	case GAME_PLAY:
+		warning("STUB: DrawMan::DrawPointer required");
+		break;
+	case GAME_LOADING:
+		warning("STUB: DrawMan::DrawLoadingScreen required");
+		break;
+	}
+
+	_drawMan->updateVideo();
+}
+
 Common::Error HDBGame::run() {
 
 	// Initialize System
@@ -193,6 +212,7 @@ Common::Error HDBGame::run() {
 		_drawMan->drawSky();
 		_map->draw();
 		_ai->processCines();
+		paint();
 
 		g_system->updateScreen();
 		g_system->delayMillis(10);

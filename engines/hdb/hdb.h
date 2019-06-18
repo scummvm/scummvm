@@ -112,6 +112,7 @@ public:
 
 	void start();
 	void changeGameState();
+	void paint();
 
 	bool _gameShutdown;
 	Graphics::PixelFormat _format;
