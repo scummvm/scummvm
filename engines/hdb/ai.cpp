@@ -53,7 +53,7 @@ void AI::processCines() {
 		case C_SETCAMERA:
 			_cameraX = (*it)->x;
 			_cameraY = (*it)->y;
-			warning("STUB: Map::CenterMAPXY required");
+			g_hdb->_map->centerMapXY((int) _cameraX + 16, (int) _cameraY + 16);
 			_cameraLock = true;
 			complete = true;
 			break;
@@ -78,7 +78,7 @@ void AI::processCines() {
 				_cameraY = (*it)->y;
 				complete = true;
 			}
-			warning("STUB: MAP::CenterMapXY required");
+			g_hdb->_map->centerMapXY((int)_cameraX + 16, (int)_cameraY + 16);
 			break;
 		case C_WAIT:
 			if (!((*it)->start)) {
