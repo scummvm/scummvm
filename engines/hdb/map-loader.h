@@ -58,6 +58,8 @@ public:
 	int loadTiles();
 	bool load(Common::SeekableReadStream *stream);
 	void draw();
+	uint16 getMapBGTileIndex(int x, int y);
+	uint16 getMapFGTileIndex(int x, int y);
 	void getMapXY(int *x, int *y);
 	void setMapXY(int x, int y);
 

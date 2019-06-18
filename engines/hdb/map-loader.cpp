@@ -228,6 +228,20 @@ void Map::draw() {
 	*/
 }
 
+uint16 Map::getMapBGTileIndex(int x, int y) {
+	if (x < 0 || x >= _width || y < 0 || y >= _height) {
+		return 0;
+	}
+	return _background[y * _width + x];
+}
+
+uint16 Map::getMapFGTileIndex(int x, int y) {
+	if (x < 0 || x >= _width || y < 0 || y >= _height) {
+		return 0;
+	}
+	return _foreground[y * _width + x];
+}
+
 void Map::getMapXY(int *x, int *y) {
 	*x = _mapX;
 	*y = _mapY;
