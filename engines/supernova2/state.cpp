@@ -37,7 +37,7 @@ bool GameManager::serialize(Common::WriteStream *out) {
 
 	// GameState
 	out->writeSint16LE(_state._money);
-	out->writeSint32LE(_state._startTime);
+	out->writeSint32LE(_state._startTime - g_system->getMillis());
 	out->writeByte(_state._addressKnown);
 	out->writeByte(_state._poleMagnet);
 	out->writeByte(_state._admission);
@@ -55,7 +55,7 @@ bool GameManager::serialize(Common::WriteStream *out) {
 	out->writeByte(_state._pressureCounter);
 	out->writeByte(_state._sirenOn);
 	out->writeSint16LE(_state._pyraDirection);
-	out->writeUint32LE(_state._eventTime);
+	out->writeUint32LE(_state._eventTime - g_system->getMillis());
 	out->writeSint32LE(_state._eventCallback);
 	out->writeByte(_state._taxiPossibility);
 	for (int i = 0; i < 15; i++) {
@@ -89,7 +89,7 @@ bool GameManager::deserialize(Common::ReadStream *in, int version) {
 
 	// GameState
 	_state._money = in->readSint16LE();
-	_state._startTime = in->readSint32LE();
+	_state._startTime = in->readSint32LE() + g_system->getMillis();
 	_state._addressKnown = in->readByte();
 	_state._poleMagnet = in->readByte();
 	_state._admission = in->readByte();
@@ -107,7 +107,7 @@ bool GameManager::deserialize(Common::ReadStream *in, int version) {
 	_state._pressureCounter = in->readByte();
 	_state._sirenOn = in->readByte();
 	_state._pyraDirection = in->readSint16LE();
-	_state._eventTime = in->readUint32LE();
+	_state._eventTime = in->readUint32LE() + g_system->getMillis();
 	_state._eventCallback = (EventFunction)in->readSint32LE();
 	_state._taxiPossibility = in->readByte();
 	for (int i = 0; i < 15; i++)
@@ -524,6 +524,8 @@ void GameManager::initGui() {
 }
 
 void GameManager::updateEvents() {
+	if (_currentRoom == _rooms[ELEVATOR])
+		debug("%d %d", _state._elevatorE, _state._elevatorNumber);
 	handleTime();
 	if (_animationEnabled && !_vm->_screen->isMessageShown() && _animationTimer == 0)
 		_currentRoom->animation();
@@ -879,6 +881,7 @@ void GameManager::edit(Common::String &input, int x, int y, uint length) {
 	int overdrawWidth = ((int)((length + 1) * (kFontWidth + 2)) > (kScreenWidth - x)) ?
 						kScreenWidth - x : (length + 1) * (kFontWidth + 2);
 
+	_guiEnabled = false;
 	while (isEditing) {
 		_vm->_screen->setTextCursorPos(x, y);
 		_vm->_screen->setTextCursorColor(kColorWhite99);
@@ -938,6 +941,7 @@ void GameManager::edit(Common::String &input, int x, int y, uint length) {
 			break;
 		}
 	}
+	_guiEnabled = true;
 }
 
 void GameManager::takeMoney(int amount) {
@@ -1496,7 +1500,7 @@ void GameManager::handleInput() {
 				byte i = _inputObject[0]->_click;
 				_inputObject[0]->_click  = _inputObject[0]->_click2;
 				_inputObject[0]->_click2 = i;
-				//_sound->play(kAudioDoorOpen);
+				_vm->_sound->play(kAudioTaxiOpen);
 			}
 			break;
 
@@ -1515,7 +1519,7 @@ void GameManager::handleInput() {
 				byte i = _inputObject[0]->_click;
 				_inputObject[0]->_click  = _inputObject[0]->_click2;
 				_inputObject[0]->_click2 = i;
-				//_sound->play(kAudioDoorClose);
+				_vm->_sound->play(kAudioElevator1);
 			}
 			break;
 
@@ -1729,6 +1733,7 @@ void GameManager::taxi() {
 			_vm->renderImage(0);
 			_vm->renderImage(1);
 			_vm->renderImage(6);
+			_vm->playSound(kAudioSuccess);
 			taxiPayment(14, answer);
 			break;
 		default:
@@ -2112,7 +2117,7 @@ void GameManager::caught2() {
 	_state._sirenOn = false;
 	_mapOn = false;
 	_state._haste = false;
-	//dead(kStringMuseum9);
+	dead(kStringMuseum9);
 }
 
 void GameManager::drawClock() {
