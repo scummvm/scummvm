@@ -131,6 +131,8 @@ bool Map::load(Common::SeekableReadStream *stream) {
 		TODO: Add the animating tile lists
 	*/
 
+	g_hdb->_ai->initAllEnts();
+
 	_mapLoaded = true;
 
 	return true;
