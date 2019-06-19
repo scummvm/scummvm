@@ -451,6 +451,7 @@ public:
 
 	// Entity Functions
 	AIEntity *spawn(AIType type, AIDir dir, int x, int y, char *funcInit, char *funcAction, char *funcUse, AIDir dir2, int level, int value1, int value2, int callInit);
+	bool cacheEntGfx(AIEntity *e, bool init);
 	AIEntity *locateEntity(const char *luaName);
 	void removeEntity(AIEntity *e);
 	void initAllEnts();
