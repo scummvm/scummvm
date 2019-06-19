@@ -730,6 +730,8 @@ bool LuaScript::initScript(Common::SeekableReadStream *stream, const char *scrip
 		spawn names into Lua once they are implemented.
 	*/
 
+	warning("STUB: LuaScript::initScript: Load ai_all_ents");
+
 	// Register panic callback function
 	lua_atpanic(_state, panicCB);
 
