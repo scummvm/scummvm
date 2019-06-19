@@ -414,6 +414,7 @@ public:
 	void restartSystem();
 
 	// Entity Functions
+	AIEntity *spawn(AIType type, AIDir dir, int x, int y, char *funcInit, char *funcAction, char *funcUse, AIDir dir2, int level, int value1, int value2, int callInit);
 	AIEntity *locateEntity(const char *luaName);
 	void removeEntity(AIEntity *e);
 	void initAllEnts();
