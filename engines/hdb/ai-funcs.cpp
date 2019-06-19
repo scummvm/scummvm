@@ -33,6 +33,10 @@ AIEntity *AI::locateEntity(const char *luaName) {
 	return NULL;
 }
 
+void AI::removeEntity(AIEntity *e) {
+	_ents->erase(&e);
+}
+
 // Check to see if we can get this entity
 bool AI::getTableEnt(AIType type) {
 	switch (type) {
