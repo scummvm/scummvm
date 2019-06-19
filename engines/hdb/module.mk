@@ -1,7 +1,9 @@
 MODULE := engines/hdb
 
 MODULE_OBJS := \
-	ai.o \
+	ai-init.o \
+	ai-cinematic.o \
+	ai-player.o \
 	console.o \
 	draw-manager.o \
 	detection.o \

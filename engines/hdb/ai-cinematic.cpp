@@ -24,11 +24,6 @@
 
 namespace HDB {
 
-bool AI::init() {
-	warning("STUB: AI::init required");
-	return true;
-}
-
 static const char *cineTypeStr[] = {
 	"C_NO_COMMAND",
 	"C_STOPCINE",
