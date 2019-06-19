@@ -131,6 +131,390 @@ bool Map::load(Common::SeekableReadStream *stream) {
 		TODO: Add the animating tile lists
 	*/
 
+	struct {
+		AIType type;
+		AIDir dir;
+	} aiInfo[] = {
+		{ AI_GUY,			DIR_DOWN },
+		{ AI_GUY,			DIR_UP },
+		{ AI_GUY,			DIR_RIGHT },
+		{ AI_GUY,			DIR_LEFT },
+
+		{ ITEM_ENV_WHITE,	DIR_NONE },
+		{ ITEM_ENV_BLUE,	DIR_NONE },
+		{ ITEM_ENV_RED,		DIR_NONE },
+		{ ITEM_ENV_GREEN,	DIR_NONE },
+
+		{ AI_LASER,			DIR_RIGHT },
+		{ AI_LASER,			DIR_DOWN },
+		{ AI_LASER,			DIR_LEFT },
+		{ AI_LASER,			DIR_UP },
+
+		{ AI_DIVERTER,		DIR_DOWN },
+		{ AI_DIVERTER,		DIR_UP },
+		{ AI_DIVERTER,		DIR_RIGHT },
+		{ AI_DIVERTER,		DIR_LEFT },
+
+		{ AI_FOURFIRER,		DIR_RIGHT },
+		{ AI_FOURFIRER,		DIR_DOWN},
+		{ AI_FOURFIRER,		DIR_LEFT },
+		{ AI_FOURFIRER,		DIR_UP },
+
+		{ INFO_ARROW_TURN,	DIR_DOWN },
+		{ INFO_ARROW_TURN,	DIR_UP },
+		{ INFO_ARROW_TURN,	DIR_RIGHT },
+		{ INFO_ARROW_TURN,	DIR_LEFT },
+
+		{ INFO_ARROW_STOP,	DIR_DOWN },
+		{ INFO_ARROW_STOP,	DIR_UP },
+		{ INFO_ARROW_STOP,	DIR_RIGHT },
+		{ INFO_ARROW_STOP,	DIR_LEFT },
+
+		{ ITEM_CELL,		DIR_NONE },
+
+		{ AI_CRATE,			DIR_NONE },
+		{ AI_LIGHTBARREL,	DIR_NONE },
+		{ AI_HEAVYBARREL,	DIR_NONE },
+		{ AI_BOOMBARREL,	DIR_NONE },
+
+		{ ITEM_TRANSCEIVER, DIR_NONE },
+		{ ITEM_CLUB,		DIR_NONE },
+		{ ITEM_ROBOSTUNNER, DIR_NONE },
+		{ ITEM_SLUGSLINGER, DIR_NONE },
+
+		{ AI_SCIENTIST,		DIR_DOWN },
+		{ AI_SCIENTIST,		DIR_UP },
+		{ AI_SCIENTIST,		DIR_RIGHT },
+		{ AI_SCIENTIST,		DIR_LEFT },
+
+		{ AI_WORKER,		DIR_DOWN },
+		{ AI_WORKER,		DIR_UP },
+		{ AI_WORKER,		DIR_RIGHT },
+		{ AI_WORKER,		DIR_LEFT },
+
+		{ AI_SHOCKBOT,		DIR_DOWN },
+		{ AI_SHOCKBOT,		DIR_UP },
+		{ AI_SHOCKBOT,		DIR_RIGHT },
+		{ AI_SHOCKBOT,		DIR_LEFT },
+
+		{ AI_RIGHTBOT,		DIR_DOWN },
+		{ AI_RIGHTBOT,		DIR_UP },
+		{ AI_RIGHTBOT,		DIR_RIGHT },
+		{ AI_RIGHTBOT,		DIR_LEFT },
+
+		{ AI_PUSHBOT,		DIR_DOWN },
+		{ AI_PUSHBOT,		DIR_UP },
+		{ AI_PUSHBOT,		DIR_RIGHT },
+		{ AI_PUSHBOT,		DIR_LEFT },
+
+		{ AI_LISTENBOT,		DIR_DOWN },
+		{ AI_LISTENBOT,		DIR_UP },
+		{ AI_LISTENBOT,		DIR_RIGHT },
+		{ AI_LISTENBOT,		DIR_LEFT },
+
+		{ ITEM_MONKEYSTONE, DIR_NONE },
+
+		{ INFO_TELEPORTER1,	DIR_NONE },
+		{ INFO_TELEPORTER2,	DIR_NONE },
+		{ INFO_TELEPORTER3,	DIR_NONE },
+		{ INFO_TELEPORTER4,	DIR_NONE },
+		{ INFO_TELEPORTER5,	DIR_NONE },
+		{ INFO_TELEPORTER6,	DIR_NONE },
+		{ INFO_TELEPORTER7,	DIR_NONE },
+		{ INFO_TELEPORTER8,	DIR_NONE },
+		{ INFO_TELEPORTER9,	DIR_NONE },
+		{ INFO_TELEPORTER10,	DIR_NONE },
+		{ INFO_TELEPORTER11,	DIR_NONE },
+		{ INFO_TELEPORTER12,	DIR_NONE },
+		{ INFO_TELEPORTER13,	DIR_NONE },
+		{ INFO_TELEPORTER14,	DIR_NONE },
+		{ INFO_TELEPORTER15,	DIR_NONE },
+		{ INFO_TELEPORTER16,	DIR_NONE },
+		{ INFO_TELEPORTER17,	DIR_NONE },
+		{ INFO_TELEPORTER18,	DIR_NONE },
+		{ INFO_TELEPORTER19,	DIR_NONE },
+		{ INFO_TELEPORTER20,	DIR_NONE },
+
+		{ INFO_LEVELEXIT,	DIR_NONE },
+
+		{ INFO_ACTION1,		DIR_NONE },
+		{ INFO_ACTION2,		DIR_NONE },
+		{ INFO_ACTION3,		DIR_NONE },
+		{ INFO_ACTION4,		DIR_NONE },
+		{ INFO_ACTION5,		DIR_NONE },
+		{ INFO_ACTION6,		DIR_NONE },
+		{ INFO_ACTION7,		DIR_NONE },
+		{ INFO_ACTION8,		DIR_NONE },
+		{ INFO_ACTION9,		DIR_NONE },
+		{ INFO_ACTION10,	DIR_NONE },
+		{ INFO_ACTION11,	DIR_NONE },
+		{ INFO_ACTION12,	DIR_NONE },
+		{ INFO_ACTION13,	DIR_NONE },
+		{ INFO_ACTION14,	DIR_NONE },
+		{ INFO_ACTION15,	DIR_NONE },
+		{ INFO_ACTION16,	DIR_NONE },
+		{ INFO_ACTION17,	DIR_NONE },
+		{ INFO_ACTION18,	DIR_NONE },
+		{ INFO_ACTION19,	DIR_NONE },
+		{ INFO_ACTION20,	DIR_NONE },
+
+		{ AI_SPACEDUDE,		DIR_DOWN },
+		{ AI_SPACEDUDE,		DIR_UP },
+		{ AI_SPACEDUDE,		DIR_RIGHT },
+		{ AI_SPACEDUDE,		DIR_LEFT },
+
+		{ AI_SERGEANT,		DIR_DOWN },
+		{ AI_SERGEANT,		DIR_UP },
+		{ AI_SERGEANT,		DIR_RIGHT },
+		{ AI_SERGEANT,		DIR_LEFT },
+
+		{ AI_MAINTBOT,		DIR_DOWN },
+		{ AI_MAINTBOT,		DIR_UP },
+		{ AI_MAINTBOT,		DIR_RIGHT },
+		{ AI_MAINTBOT,		DIR_LEFT },
+
+		{ INFO_ACTION_AUTO,	DIR_NONE },
+
+		{ ITEM_GEM_WHITE,	DIR_NONE },
+		{ ITEM_GEM_BLUE,	DIR_NONE },
+		{ ITEM_GEM_RED,		DIR_NONE },
+		{ ITEM_GEM_GREEN,	DIR_NONE },
+
+		{ INFO_SET_MUSIC,	DIR_NONE },
+		{ INFO_LUA,			DIR_NONE },
+		{ INFO_HERE,		DIR_NONE },
+
+		{ AI_VORTEXIAN,		DIR_DOWN },
+
+		{ AI_CHICKEN,		DIR_DOWN },
+		{ AI_CHICKEN,		DIR_UP },
+		{ AI_CHICKEN,		DIR_RIGHT },
+		{ AI_CHICKEN,		DIR_LEFT },
+
+		{ ITEM_GOO_CUP,		DIR_NONE },
+		{ ITEM_TEACUP,		DIR_NONE },
+		{ ITEM_COOKIE,		DIR_NONE },
+		{ ITEM_BURGER,		DIR_NONE },
+		{ ITEM_PDA,			DIR_NONE },
+		{ ITEM_BOOK,		DIR_NONE },
+		{ ITEM_CLIPBOARD,	DIR_NONE },
+		{ ITEM_NOTE,		DIR_NONE },
+		{ ITEM_KEYCARD_WHITE,	DIR_NONE },
+		{ ITEM_KEYCARD_BLUE,	DIR_NONE },
+		{ ITEM_KEYCARD_RED,		DIR_NONE },
+		{ ITEM_KEYCARD_GREEN,	DIR_NONE },
+		{ ITEM_KEYCARD_PURPLE,	DIR_NONE },
+		{ ITEM_KEYCARD_BLACK,	DIR_NONE },
+		{ AI_MAGIC_EGG,		DIR_NONE },
+		{ AI_ICE_BLOCK,		DIR_NONE },
+		{ ITEM_CABKEY,		DIR_NONE },
+
+		{ AI_DEADWORKER,	DIR_NONE },
+		{ AI_OMNIBOT,		DIR_DOWN },
+		{ AI_OMNIBOT,		DIR_UP },
+		{ AI_OMNIBOT,		DIR_RIGHT },
+		{ AI_OMNIBOT,		DIR_LEFT },
+		{ AI_TURNBOT,		DIR_DOWN },
+		{ AI_TURNBOT,		DIR_UP },
+		{ AI_TURNBOT,		DIR_RIGHT },
+		{ AI_TURNBOT,		DIR_LEFT },
+		{ AI_DOLLY,			DIR_DOWN },
+		{ AI_DOLLY,			DIR_UP },
+		{ AI_DOLLY,			DIR_RIGHT },
+		{ AI_DOLLY,			DIR_LEFT },
+
+		{ INFO_TRIGGER,		DIR_NONE },
+
+		{ ITEM_DOLLYTOOL1,	DIR_NONE },
+		{ ITEM_DOLLYTOOL2,	DIR_NONE },
+		{ ITEM_DOLLYTOOL3,	DIR_NONE },
+		{ ITEM_DOLLYTOOL4,	DIR_NONE },
+
+		{ AI_RAILRIDER_ON,	DIR_UP },
+		{ AI_RAILRIDER_ON,	DIR_DOWN },
+		{ AI_RAILRIDER_ON,	DIR_LEFT },
+		{ AI_RAILRIDER_ON,	DIR_RIGHT },
+		{ AI_RAILRIDER,		DIR_UP },
+		{ AI_RAILRIDER,		DIR_DOWN },
+		{ AI_RAILRIDER,		DIR_LEFT },
+		{ AI_RAILRIDER,		DIR_RIGHT },
+
+		{ ITEM_SODA,		DIR_NONE },
+		{ INFO_ARROW_4WAY,	DIR_NONE },
+		{ AI_DEADEYE,		DIR_DOWN },
+		{ AI_DEADEYE,		DIR_UP },
+		{ AI_DEADEYE,		DIR_RIGHT },
+		{ AI_DEADEYE,		DIR_LEFT },
+		{ AI_MEERKAT,		DIR_NONE },
+		{ AI_FATFROG,		DIR_DOWN },
+		{ AI_FATFROG,		DIR_RIGHT },
+		{ AI_FATFROG,		DIR_LEFT },
+		{ AI_GOODFAIRY,		DIR_DOWN },
+		{ AI_GOODFAIRY,		DIR_UP },
+		{ AI_GOODFAIRY,		DIR_RIGHT },
+		{ AI_GOODFAIRY,		DIR_LEFT },
+		{ AI_BADFAIRY,		DIR_DOWN },
+		{ AI_BADFAIRY,		DIR_UP },
+		{ AI_BADFAIRY,		DIR_RIGHT },
+		{ AI_BADFAIRY,		DIR_LEFT },
+		{ AI_ACCOUNTANT,	DIR_DOWN },
+		{ AI_ACCOUNTANT,	DIR_UP },
+		{ AI_ACCOUNTANT,	DIR_RIGHT },
+		{ AI_ACCOUNTANT,	DIR_LEFT },
+		{ AI_ICEPUFF,		DIR_NONE },
+		{ AI_DRAGON,		DIR_NONE },
+		{ AI_BUZZFLY,		DIR_DOWN },
+		{ AI_BUZZFLY,		DIR_UP },
+		{ AI_BUZZFLY,		DIR_RIGHT },
+		{ AI_BUZZFLY,		DIR_LEFT },
+
+		{ AI_FROGSTATUE,	DIR_NONE },
+		{ ITEM_SLICER,		DIR_NONE },
+		{ INFO_FAIRY_SRC,	DIR_NONE },
+		{ INFO_FAIRY_SRC2,	DIR_NONE },
+		{ INFO_FAIRY_SRC3,	DIR_NONE },
+		{ INFO_FAIRY_SRC4,	DIR_NONE },
+		{ INFO_FAIRY_SRC5,	DIR_NONE },
+		{ INFO_FAIRY_DEST,	DIR_NONE },
+		{ INFO_FAIRY_DEST2,	DIR_NONE },
+		{ INFO_FAIRY_DEST3,	DIR_NONE },
+		{ INFO_FAIRY_DEST4,	DIR_NONE },
+		{ INFO_FAIRY_DEST5,	DIR_NONE },
+		{ INFO_QMARK,		DIR_NONE },
+		{ INFO_DEBUG,		DIR_NONE },
+		{ AI_NONE,			DIR_NONE },
+
+		{ AI_NONE,			DIR_NONE }
+	};
+
+	// Scan all icons and init all Entities
+	warning("STUB: Map::load: SetupProgressBar");
+	for (int i = 0; i < _iconNum;i++) {
+		// Don't spawn Action Mode Entities in Puzzle Mode
+		if (!g_hdb->getActionMode()) {
+			switch (aiInfo[_iconList[i].icon].type) {
+			case AI_DEADEYE:
+				if (_iconList[i].value1 == 1)	// For non-moving DeadEyes
+					break;
+			case AI_FOURFIRER:
+			case AI_LISTENBOT:
+			case ITEM_CLUB:
+			case ITEM_ROBOSTUNNER:
+			case ITEM_SLUGSLINGER:
+				continue;
+			}
+		}
+
+		// Handle special icons that aren't moving AI entities
+		switch (aiInfo[_iconList[i].icon].type) {
+		default:
+			g_hdb->_ai->spawn(
+				aiInfo[_iconList[i].icon].type,
+				aiInfo[_iconList[i].icon].dir,
+				_iconList[i].x,
+				_iconList[i].y,
+				_iconList[i].funcInit,
+				_iconList[i].funcAction,
+				_iconList[i].funcUse,
+				(AIDir)_iconList[i].dir,
+				_iconList[i].level,
+				_iconList[i].value1,
+				_iconList[i].value2,
+				0
+			);
+			break;
+		case INFO_ARROW_4WAY:
+			warning("STUB: Map::load: AddToPathList required");
+			break;
+		case INFO_ARROW_TURN:
+			warning("STUB: Map::load: AddToPathList required");
+			break;
+		case INFO_ARROW_STOP:
+			warning("STUB: Map::load: AddToPathList required");
+			break;
+
+		case INFO_ACTION1:
+		case INFO_ACTION2:
+		case INFO_ACTION3:
+		case INFO_ACTION4:
+		case INFO_ACTION5:
+		case INFO_ACTION6:
+		case INFO_ACTION7:
+		case INFO_ACTION8:
+		case INFO_ACTION9:
+		case INFO_ACTION10:
+		case INFO_ACTION11:
+		case INFO_ACTION12:
+		case INFO_ACTION13:
+		case INFO_ACTION14:
+		case INFO_ACTION15:
+		case INFO_ACTION16:
+		case INFO_ACTION17:
+		case INFO_ACTION18:
+		case INFO_ACTION19:
+		case INFO_ACTION20:
+			warning("STUB: Map::load: AddToActionList required");
+			break;
+		case INFO_ACTION_AUTO:
+			warning("STUB: Map::load: AddToAutoList required");
+			break;
+
+		case INFO_TELEPORTER1:
+		case INFO_TELEPORTER2:
+		case INFO_TELEPORTER3:
+		case INFO_TELEPORTER4:
+		case INFO_TELEPORTER5:
+		case INFO_TELEPORTER6:
+		case INFO_TELEPORTER7:
+		case INFO_TELEPORTER8:
+		case INFO_TELEPORTER9:
+		case INFO_TELEPORTER10:
+		case INFO_TELEPORTER11:
+		case INFO_TELEPORTER12:
+		case INFO_TELEPORTER13:
+		case INFO_TELEPORTER14:
+		case INFO_TELEPORTER15:
+		case INFO_TELEPORTER16:
+		case INFO_TELEPORTER17:
+		case INFO_TELEPORTER18:
+		case INFO_TELEPORTER19:
+		case INFO_TELEPORTER20:
+			warning("STUB: Map::load: AddToTeleporterList required");
+			break;
+
+		case INFO_SET_MUSIC:
+		case INFO_PROMOTE:
+		case INFO_DEMOTE:
+			break;
+
+		case INFO_LUA:
+			warning("STUB: Map::load: AddToLUAList required");
+			break;
+		case INFO_HERE:
+			warning("STUB: Map::load: AddToHereList required");
+			break;
+		case INFO_TRIGGER:
+			warning("STUB: Map::load: AddToTriggerList required");
+			break;
+
+		case INFO_FAIRY_SRC:
+		case INFO_FAIRY_SRC2:
+		case INFO_FAIRY_SRC3:
+		case INFO_FAIRY_SRC4:
+		case INFO_FAIRY_SRC5:
+			warning("STUB: Map::load: AddToFairystones(SRC) required");
+			break;
+
+		case INFO_FAIRY_DEST:
+		case INFO_FAIRY_DEST2:
+		case INFO_FAIRY_DEST3:
+		case INFO_FAIRY_DEST4:
+		case INFO_FAIRY_DEST5:
+			warning("STUB: Map::load: AddToFairystones(DEST) required");
+			break;
+		}
+	}
+
 	g_hdb->_ai->initAllEnts();
 
 	_mapLoaded = true;
