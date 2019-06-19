@@ -38,11 +38,8 @@ uint32 HDBGame::getGameFlags() const {
 	return _gameDescription->flags;
 }
 
-int HDBGame::isDemo() const {
-	if (getGameFlags() & ADGF_DEMO) {
-		return 1;
-	}
-	return 0;
+bool HDBGame::isDemo() const {
+	return (getGameFlags() & ADGF_DEMO);
 }
 
 } // End of namespace HDB
