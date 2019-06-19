@@ -29,7 +29,10 @@ namespace HDB {
 
 enum {
 	kMaxInventory = 10,
-	kMaxDeliveries = 5
+	kMaxDeliveries = 5,
+	kPlayerMoveSpeed = 4,
+	kEnemyMoveSpeed = 2,
+	kPushMoveSpeed = (kPlayerMoveSpeed >> 1)
 };
 
 enum AIType {
