@@ -65,6 +65,7 @@ static void switches(argc, argv)
      char *argv[];
 #endif
 {
+#ifndef GLK
   uint i;
   
   advnam = "";
@@ -111,6 +112,7 @@ static void switches(argc, argv)
 		advnam[strlen(advnam)-4] = '\0';
     }
   }
+#endif
 }
 
 

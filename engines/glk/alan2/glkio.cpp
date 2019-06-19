@@ -27,6 +27,9 @@
 namespace Glk {
 namespace Alan2 {
 
+winid_t glkMainWin;
+winid_t glkStatusWin;
+
 void glkio_printf(char *fmt, ...) {
 	va_list argp;
 	va_start(argp, fmt);

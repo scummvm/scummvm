@@ -65,6 +65,7 @@ extern int dictsize;		/* Number of entries in dictionary */
 /* The text and message file */
 extern Common::File *txtfil;
 extern Common::WriteStream *logfil;
+extern Common::SeekableReadStream *codfil;
 
 #undef ftell
 #undef fgetc
@@ -79,7 +80,8 @@ extern Common::WriteStream *logfil;
 
 
 /* File names */
-extern char *advnam;
+extern const char *advnam;
+extern char codfnm[256];
 
 /* Screen formatting info */
 extern int col, lin;

@@ -30,6 +30,17 @@
 namespace Glk {
 namespace Alan2 {
 
+#ifdef GLK
+extern void fprintf(Common::WriteStream *ws, const char *fmt, ...) {
+	va_list args;
+	va_start(args, fmt);
+	Common::String s = Common::String::vformat(fmt, args);
+	va_end(args);
+
+	ws->write(s.c_str(), s.size());
+}
+#endif
+
 #ifdef _PROTOTYPES_
 extern void syserr(char str[]);
 #endif

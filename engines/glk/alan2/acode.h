@@ -23,15 +23,17 @@
 #ifndef GLK_ALAN2_ACODE
 #define GLK_ALAN2_ACODE
 
+#include "common/stream.h"
+
 namespace Glk {
 namespace Alan2 {
 
 typedef size_t Aptr;            /* Type for an ACODE memory address */
 
-typedef unsigned int Aword;     /* Type for an ACODE word */
-typedef unsigned int Aaddr;     /* Type for an ACODE address */
-typedef unsigned int Abool;     /* Type for an ACODE Boolean value */
-typedef signed int Aint;        /* Type for an ACODE Integer value */
+typedef uint32 Aword;           /* Type for an ACODE word */
+typedef uint32 Aaddr;           /* Type for an ACODE address */
+typedef uint32 Abool;           /* Type for an ACODE Boolean value */
+typedef int32 Aint;             /* Type for an ACODE Integer value */
 typedef int CodeValue;          /* Definition for the packing process */
 
 #ifdef UNUSED
@@ -208,45 +210,55 @@ typedef enum VarClass {
 #define I_OP(x)    ((x&0x8000000)?(x)|0x0f0000000:(x)&0x0fffffff)
 
 
-typedef struct AcdHdr {
-/* Important info */
-  char vers[4];			/* 01 - Version of compiler */
-  Aword size;			/* 02 - Size of ACD-file in Awords */
-/* Options */
-  Abool pack;			/* 03 - Is the text packed ? */
-  Aword paglen;			/* 04 - Length of a page */
-  Aword pagwidth;		/* 05 - and width */
-  Aword debug;			/* 06 - Option debug */
-/* Data structures */
-  Aaddr dict;			/* 07 - Dictionary */
-  Aaddr oatrs;			/* 08 - Object default attributes */
-  Aaddr latrs;			/* 09 - Location default attributes */
-  Aaddr aatrs;			/* 0a - Actor default attributes */
-  Aaddr acts;			/* 0b - Actor table */
-  Aaddr objs;			/* 0c - Object table */
-  Aaddr locs;			/* 0d - Location table */
-  Aaddr stxs;			/* 0e - Syntax table */
-  Aaddr vrbs;			/* 0f - Verb table */
-  Aaddr evts;			/* 10 - Event table */
-  Aaddr cnts;			/* 11 - Container table */
-  Aaddr ruls;			/* 12 - Rule table */
-  Aaddr init;			/* 13 - String init table */
-  Aaddr start;			/* 14 - Start code */
-  Aword msgs;			/* 15 - Messages table */
-/* Miscellaneous */
-  Aword objmin, objmax;		/* 16 - Interval for object codes */
-  Aword actmin, actmax;		/* 18 - Interval for actor codes */
-  Aword cntmin, cntmax;		/* 1a - Interval for container codes */
-  Aword locmin, locmax;		/* 1c - Interval for location codes */
-  Aword dirmin, dirmax;		/* 1e - Interval for direction codes */
-  Aword evtmin, evtmax;		/* 20 - Interval for event codes */
-  Aword rulmin, rulmax;		/* 22 - Interval for rule codes */
-  Aword maxscore;		/* 24 - Maximum score */
-  Aaddr scores;			/* 25 - Score table */
-  Aaddr freq;			/* 26 - Address to Char freq's for coding */
-  Aword acdcrc;			/* 27 - Checksum for acd code (excl. hdr) */
-  Aword txtcrc;			/* 28 - Checksum for text data file */
-} AcdHdr;
+struct AcdHdr {
+	/* Important info */
+	char vers[4];		/* 01 - Version of compiler */
+	Aword size;			/* 02 - Size of ACD-file in Awords */
+	/* Options */
+	Abool pack;			/* 03 - Is the text packed ? */
+	Aword paglen;		/* 04 - Length of a page */
+	Aword pagwidth;		/* 05 - and width */
+	Aword debug;		/* 06 - Option debug */
+	/* Data structures */
+	Aaddr dict;			/* 07 - Dictionary */
+	Aaddr oatrs;		/* 08 - Object default attributes */
+	Aaddr latrs;		/* 09 - Location default attributes */
+	Aaddr aatrs;		/* 0a - Actor default attributes */
+	Aaddr acts;			/* 0b - Actor table */
+	Aaddr objs;			/* 0c - Object table */
+	Aaddr locs;			/* 0d - Location table */
+	Aaddr stxs;			/* 0e - Syntax table */
+	Aaddr vrbs;			/* 0f - Verb table */
+	Aaddr evts;			/* 10 - Event table */
+	Aaddr cnts;			/* 11 - Container table */
+	Aaddr ruls;			/* 12 - Rule table */
+	Aaddr init;			/* 13 - String init table */
+	Aaddr start;		/* 14 - Start code */
+	Aword msgs;			/* 15 - Messages table */
+	/* Miscellaneous */
+	Aword objmin, objmax;		/* 16 - Interval for object codes */
+	Aword actmin, actmax;		/* 18 - Interval for actor codes */
+	Aword cntmin, cntmax;		/* 1a - Interval for container codes */
+	Aword locmin, locmax;		/* 1c - Interval for location codes */
+	Aword dirmin, dirmax;		/* 1e - Interval for direction codes */
+	Aword evtmin, evtmax;		/* 20 - Interval for event codes */
+	Aword rulmin, rulmax;		/* 22 - Interval for rule codes */
+	Aword maxscore;		/* 24 - Maximum score */
+	Aaddr scores;		/* 25 - Score table */
+	Aaddr freq;			/* 26 - Address to Char freq's for coding */
+	Aword acdcrc;		/* 27 - Checksum for acd code (excl. hdr) */
+	Aword txtcrc;		/* 28 - Checksum for text data file */
+
+	/**
+	 * Constructor
+	 */
+	AcdHdr();
+
+	/**
+	 * Loads the header from the passed stream
+	 */
+	void load(Common::SeekableReadStream &s);
+};
 
 /* Error message numbers */
 typedef enum MsgKind {

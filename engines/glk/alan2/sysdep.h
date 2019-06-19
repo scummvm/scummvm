@@ -37,6 +37,7 @@
  */
 
 #include "common/scummsys.h"
+#include "common/stream.h"
 
 namespace Glk {
 namespace Alan2 {
@@ -55,7 +56,7 @@ namespace Alan2 {
 #undef rand
 #define rand() g_vm->getRandomNumber(0x7fffffff)
 #undef fprintf
-#define fprintf(FP, STR) FP->write(STR, strlen(STR) + 1)
+extern void fprintf(Common::WriteStream *ws, const char *fmt, ...);
 #endif
 
 /* Place definitions of OS and compiler here if necessary */

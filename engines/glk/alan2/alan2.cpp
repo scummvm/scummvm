@@ -21,6 +21,7 @@
  */
 
 #include "glk/alan2/alan2.h"
+#include "glk/alan2/main.h"
 #include "common/config-manager.h"
 #include "common/translation.h"
 #include "common/error.h"
@@ -45,7 +46,16 @@ void Alan2::runGame() {
 	if (!is_gamefile_valid())
 		return;
 
-	// TODO
+	Common::String filename = getFilename();
+	while (filename.contains('.'))
+		filename.deleteLastChar();
+	advnam = filename.c_str();
+
+	codfil = &_gameFile;
+	strncpy(codfnm, getFilename().c_str(), 255);
+	codfnm[255] = '\0';
+
+	run();
 }
 
 Common::Error Alan2::readSaveData(Common::SeekableReadStream *rs) {
