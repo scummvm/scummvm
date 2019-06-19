@@ -960,4 +960,14 @@ void LuaScript::checkParameters(const char *func, int params) {
 	}
 }
 
+const char *LuaScript::getStringOffStack() {
+	if (!_systemInit) {
+		return NULL;
+	}
+
+	const char *string = lua_tostring(_state, 1);
+	lua_remove(_state, 1);
+	return string;
+}
+
 }
