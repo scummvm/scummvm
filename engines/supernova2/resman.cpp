@@ -133,7 +133,6 @@ void ResourceManager::initSoundFiles() {
 
 	_musicIntroBuffer.reset(convertToMod("ms2_data.052"));
 	_musicMadMonkeysBuffer.reset(convertToMod("ms2_data.056"));
-	_musicOutroBuffer.reset(convertToMod("ms2_data.049"));
 }
 
 void ResourceManager::initGraphics() {
@@ -185,9 +184,6 @@ Audio::AudioStream *ResourceManager::getSoundStream(MusicId index) {
 	case kMusicMadMonkeys:
 		_musicMadMonkeys.reset(Audio::makeProtrackerStream(_musicMadMonkeysBuffer.get()));
 		return _musicMadMonkeys.get();
-	case kMusicOutro:
-		_musicOutro.reset(Audio::makeProtrackerStream(_musicOutroBuffer.get()));
-		return _musicOutro.get();
 	default:
 		error("Invalid music constant in playAudio()");
 	}
@@ -202,21 +198,6 @@ MS2Image *ResourceManager::getImage(int filenumber) {
 		return &_images[filenumber];
 	else
 		return nullptr;
-}
-
-int ResourceManager::getAudioRate() {
-	return _audioRate;
-}
-
-const byte *ResourceManager::getCursor(CursorId id) const {
-	switch (id) {
-	case kCursorNormal:
-		return _cursorNormal;
-	case kCursorWait:
-		return _cursorWait;
-	default:
-		return nullptr;
-	}
 }
 
 // Generate a tone which minimal length is the length and ends at the end
@@ -444,6 +425,21 @@ static Common::MemoryReadStream *convertToMod(const char *filename, int version)
 		buffer.write(buf, nb);
 
 	return new Common::MemoryReadStream(buffer.getData(), buffer.size(), DisposeAfterUse::YES);
+}
+
+int ResourceManager::getAudioRate() {
+	return _audioRate;
+}
+
+const byte *ResourceManager::getCursor(CursorId id) const {
+	switch (id) {
+	case kCursorNormal:
+		return _cursorNormal;
+	case kCursorWait:
+		return _cursorWait;
+	default:
+		return nullptr;
+	}
 }
 
 

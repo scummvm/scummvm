@@ -236,11 +236,13 @@ void SupernovaEngine::setGameString(int idx, const Common::String &string) {
 }
 
 void SupernovaEngine::playSound(AudioId sample) {
-	_sound->play(sample);
+	if (!shouldQuit())
+		_sound->play(sample);
 }
 
 void SupernovaEngine::playSound(MusicId index) {
-	_sound->play(index);
+	if (!shouldQuit())
+		_sound->play(index);
 }
 
 void SupernovaEngine::renderImage(int section) {
@@ -264,6 +266,7 @@ bool SupernovaEngine::setCurrentImage(int filenumber) {
 void SupernovaEngine::saveScreen(int x, int y, int width, int height) {
 	_screen->saveScreen(x, y, width, height);
 }
+
 void SupernovaEngine::saveScreen(const GuiElement &guiElement) {
 	_screen->saveScreen(guiElement);
 }
@@ -344,12 +347,15 @@ void SupernovaEngine::paletteBrightness() {
 }
 
 void SupernovaEngine::paletteFadeOut() {
-	_screen->paletteFadeOut();
+	if (!shouldQuit())
+		_screen->paletteFadeOut();
 }
 
 void SupernovaEngine::paletteFadeIn() {
-	_gm->roomBrightness();
-	_screen->paletteFadeIn(_gm->_roomBrightness);
+	if (!shouldQuit()) {
+		_gm->roomBrightness();
+		_screen->paletteFadeIn(_gm->_roomBrightness);
+	}
 }
 
 void SupernovaEngine::setColor63(byte value) {
@@ -531,7 +537,6 @@ bool SupernovaEngine::quitGameDialog() {
 	guiQuitNo.setTextPosition(173, 112);
 
 	_gm->animationOff();
-	_gm->saveTime();
 	saveScreen(guiQuitBox);
 
 	renderBox(guiQuitBox);
@@ -565,7 +570,6 @@ bool SupernovaEngine::quitGameDialog() {
 
 	_gm->resetInputState();
 	restoreScreen();
-	_gm->loadTime();
 	_gm->animationOn();
 
 	return quit;

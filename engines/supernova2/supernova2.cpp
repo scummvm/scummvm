@@ -42,11 +42,10 @@
 #include "gui/saveload.h"
 
 #include "supernova2/resman.h"
-#include "supernova2/sound.h"
 #include "supernova2/screen.h"
+#include "supernova2/sound.h"
 #include "supernova2/supernova2.h"
 #include "supernova2/state.h"
-
 
 namespace Supernova2 {
 
@@ -90,7 +89,7 @@ Supernova2Engine::Supernova2Engine(OSystem *syst)
 	if (ConfMan.hasKey("textspeed"))
 		_textSpeed = ConfMan.getInt("textspeed");
 
-	DebugMan.addDebugChannel(1 , "general", "Supernova 2 general debug channel");
+	DebugMan.addDebugChannel(kDebugGeneral , "general", "Supernova 2 general debug channel");
 }
 
 Supernova2Engine::~Supernova2Engine() {
@@ -118,6 +117,8 @@ Common::Error Supernova2Engine::run() {
 			_system->delayMillis(end);
 	}
 
+	_mixer->stopAll();
+
 	return Common::kNoError;
 }
 
@@ -134,7 +135,7 @@ void Supernova2Engine::init() {
 
 	_resMan = new ResourceManager();
 	_sound = new Sound(_mixer, _resMan);
-	_gm = new GameManager(this);
+	_gm = new GameManager(this, _sound);
 	_screen = new Screen(this, _resMan);
 	_console = new Console(this, _gm);
 
@@ -164,7 +165,6 @@ void Supernova2Engine::pauseEngineIntern(bool pause) {
 	_mixer->pauseAll(pause);
 	_gm->pauseTimer(pause);
 }
-
 
 Common::Error Supernova2Engine::loadGameStrings() {
 	Common::String cur_lang = ConfMan.get("language");
@@ -364,7 +364,7 @@ void Supernova2Engine::setColor63(byte value) {
 	_screen->setColor63(value);
 }
 
-/*void Supernova2Engine::setTextSpeed() {
+void Supernova2Engine::setTextSpeed() {
 	const Common::String &textSpeedString = getGameString(kStringTextSpeed);
 	int stringWidth = Screen::textWidth(textSpeedString);
 	int textX = (kScreenWidth - stringWidth) / 2;
@@ -376,7 +376,6 @@ void Supernova2Engine::setColor63(byte value) {
 	int boxHeight = 27;
 
 	_gm->animationOff();
-	_gm->saveTime();
 	saveScreen(boxX, boxY, boxWidth, boxHeight);
 
 	renderBox(boxX, boxY, boxWidth, boxHeight, kColorBlue);
@@ -414,11 +413,10 @@ void Supernova2Engine::setColor63(byte value) {
 	_gm->resetInputState();
 
 	restoreScreen();
-	_gm->loadTime();
 	_gm->animationOn();
-}*/
+}
 
-/*bool Supernova2Engine::quitGameDialog() {
+bool Supernova2Engine::quitGameDialog() {
 	bool quit = false;
 
 	GuiElement guiQuitBox;
@@ -438,7 +436,6 @@ void Supernova2Engine::setColor63(byte value) {
 	guiQuitNo.setTextPosition(173, 112);
 
 	_gm->animationOff();
-	_gm->saveTime();
 	saveScreen(guiQuitBox);
 
 	renderBox(guiQuitBox);
@@ -472,11 +469,10 @@ void Supernova2Engine::setColor63(byte value) {
 
 	_gm->resetInputState();
 	restoreScreen();
-	_gm->loadTime();
 	_gm->animationOn();
 
 	return quit;
-}*/
+}
 
 bool Supernova2Engine::canLoadGameStateCurrently() {
 	return _allowLoadGame;

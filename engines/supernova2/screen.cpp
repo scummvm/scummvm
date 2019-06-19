@@ -195,13 +195,6 @@ Screen::Screen(Supernova2Engine *vm, ResourceManager *resMan)
 	changeCursor(ResourceManager::kCursorNormal);
 }
 
-void Screen::changeCursor(ResourceManager::CursorId id) {
-	CursorMan.replaceCursor(_resMan->getCursor(id),
-							16, 16, 0, 0, kColorCursorTransparent);
-	CursorMan.replaceCursorPalette(initVGAPalette, 0, 16);
-	CursorMan.showMouse(true);
-}
-
 int Screen::getGuiBrightness() const {
 	return _guiBrightness;
 }
@@ -637,6 +630,13 @@ void Screen::paletteFadeIn(int maxViewportBrightness) {
 void Screen::setColor63(byte value) {
 	byte color[3] = {value, value, value};
 	_vm->_system->getPaletteManager()->setPalette(color, 63, 1);
+}
+
+void Screen::changeCursor(ResourceManager::CursorId id) {
+	CursorMan.replaceCursor(_resMan->getCursor(id),
+							16, 16, 0, 0, kColorCursorTransparent);
+	CursorMan.replaceCursorPalette(initVGAPalette, 0, 16);
+	CursorMan.showMouse(true);
 }
 
 }
