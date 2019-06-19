@@ -403,6 +403,30 @@ public:
 	AIEntity *locateEntity(const char *luaName);
 
 	// Player Functions
+	AIEntity *getPlayer() {
+		warning("STUB: AI::getPlayer: dummyplayer not supported");
+		return _player;
+	}
+
+	void getPlayerXY(int *x, int *y) {
+		if (_player) {
+			*x = _player->x;
+			*y = _player->y;
+		} else {
+			*x = *y = 0;
+		}
+	}
+
+	void setPlayerXY(int x, int y) {
+		if (_player) {
+			_player->x = x;
+			_player->tileX = x / kTileWidth;
+			_player->y = y;
+			_player->tileY = y / kTileHeight;
+			_player->xVel = _player->yVel = 0;
+		}
+	}
+
 	void assignPlayer(AIEntity *p) {
 		_player = p;
 	}
