@@ -525,6 +525,7 @@ public:
 	virtual bool interact(Action verb, Object &obj1, Object &obj2);
 
 private:
+	char _password[16];
 };
 
 class Hall : public Room {

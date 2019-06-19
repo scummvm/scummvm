@@ -132,6 +132,8 @@ bool GameManager::deserialize(Common::ReadStream *in, int version) {
 	for (int i = 0; i < NUMROOMS; ++i) {
 		_rooms[i]->deserialize(in, version);
 	}
+	delete _rooms[BST_DOOR];
+	_rooms[BST_DOOR] = new BstDoor(_vm, this);
 	_lastRoom = _rooms[lastRoomId];
 	changeRoom(curRoomId);
 
@@ -524,8 +526,6 @@ void GameManager::initGui() {
 }
 
 void GameManager::updateEvents() {
-	if (_currentRoom == _rooms[ELEVATOR])
-		debug("%d %d", _state._elevatorE, _state._elevatorNumber);
 	handleTime();
 	if (_animationEnabled && !_vm->_screen->isMessageShown() && _animationTimer == 0)
 		_currentRoom->animation();
@@ -1317,7 +1317,7 @@ bool GameManager::genericInteract(Action verb, Object &obj1, Object &obj2) {
 			_vm->renderMessage(kStringNothingHappens);
 	} else if (verb == ACTION_USE && Object::combine(obj1, obj2, ROD, MAGNET)) {
 		Object *o1, *o2;
-		if (obj2._type == ROD) {
+		if (obj2._id == ROD) {
 			o1 = &obj2;
 			o2 = &obj1;
 		} else {
