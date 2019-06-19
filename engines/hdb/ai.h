@@ -321,7 +321,7 @@ enum CineType {
 
 struct AIStateDef {
 	AIState state;
-	char name[64];
+	const char name[64];
 };
 
 struct AIEntity {
@@ -366,7 +366,7 @@ struct AIEntity {
 
 struct AIEntTypeInfo {
 	AIType type;
-	char *luaName;
+	const char *luaName;
 	AIStateDef *stateDef;
 	void (*initFunc)(AIEntity *e);
 	void (*initFunc2)(AIEntity *e);
