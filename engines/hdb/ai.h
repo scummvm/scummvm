@@ -401,6 +401,9 @@ public:
 
 	// Entity Functions
 	AIEntity *locateEntity(const char *luaName);
+	bool getTableEnt(AIType type);
+	bool walkThroughEnt(AIType type);
+	void getItemSound(AIType type);
 
 	// Player Functions
 	AIEntity *getPlayer() {
