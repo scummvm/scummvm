@@ -119,6 +119,13 @@ public:
 
 	void useEntity(AIEntity *e);
 
+	int getActionMode() {
+		return _actionMode;
+	}
+	void setActionMode(int status) {
+		_actionMode = status;
+	}
+
 	bool _gameShutdown;
 	Graphics::PixelFormat _format;
 
@@ -129,6 +136,7 @@ private:
 
 	bool _systemInit;
 	GameState _gameState;
+	int _actionMode; // 0 or 1
 
 };
 
