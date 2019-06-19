@@ -25,7 +25,11 @@
 namespace HDB {
 
 AIEntity *AI::locateEntity(const char *luaName) {
-	warning("STUB: AI::locateEntity required");
+	for (Common::Array<AIEntity *>::iterator it = _ents->begin(); it != _ents->end(); it++) {
+		if (Common::matchString((*it)->entityName, luaName)) {
+			return *it;
+		}
+	}
 	return NULL;
 }
 
