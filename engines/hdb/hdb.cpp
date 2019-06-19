@@ -85,6 +85,10 @@ bool HDBGame::init() {
 		error("LuaScript::init: Couldn't load the GLOBAL_LUA code.");
 	}
 
+	// REMOVE: Putting this here since Menu hasn't been implemented yet.
+	// Defaults the game into Action Mode
+	setActionMode(1);
+
 	_gameShutdown = false;
 	_systemInit = true;
 
