@@ -241,6 +241,13 @@ void AI::cineSetEntity(const char *entName, int x, int y, int level) {
 	_cine.push_back(cmd);
 }
 
+void AI::cineUse(const char *entName) {
+	CineCommand *cmd = new CineCommand;
+	cmd->string = entName;
+	cmd->cmdType = C_USEENTITY;
+	_cine.push_back(cmd);
+}
+
 void AI::cineFadeIn(bool isBlack, int steps) {
 	CineCommand *cmd = new CineCommand;
 	cmd->speed = steps;
