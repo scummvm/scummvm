@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2019-06-19 16:46+0200\n"
-"PO-Revision-Date: 2019-06-19 19:54+0000\n"
+"PO-Revision-Date: 2019-06-19 20:16+0000\n"
 "Last-Translator: Lothar Serra Mari <serra@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -3221,7 +3221,7 @@ msgstr "Zeigt Grafiken über helle Spielpalette an"
 
 #: engines/glk/glk_api.cpp:63
 msgid "[ press any key to exit ]"
-msgstr ""
+msgstr "[ zum Beenden beliebige Taste drücken ]"
 
 #: engines/glk/quetzal.cpp:115 engines/glk/quetzal.cpp:124
 msgid "Untitled Savegame"
@@ -3234,6 +3234,7 @@ msgstr "AdvSys-Spiel konnte nicht gestartet werden"
 #: engines/glk/advsys/advsys.cpp:48 engines/glk/advsys/vm.cpp:319
 msgid "Sorry, the savegame couldn't be restored"
 msgstr ""
+"Entschuldigung, aber der Spielstand konnte nicht wiederhergestellt werden"
 
 #: engines/glk/advsys/vm.cpp:314
 msgid "Sorry, the savegame couldn't be created"
@@ -3241,12 +3242,12 @@ msgstr "Entschuldigung, aber der Spielstand konnte nicht erstellt werden"
 
 #: engines/glk/advsys/vm.cpp:560
 msgid "Speak up! I can't hear you!\n"
-msgstr ""
+msgstr "Sprich lauter! Ich kann dich nicht hören!\n"
 
 #: engines/glk/advsys/vm.cpp:596
 #, c-format
 msgid "I don't know the word \"%s\".\n"
-msgstr ""
+msgstr "Ich kenne das Wort \"%s\" nicht.\n"
 
 #: engines/glk/advsys/vm.cpp:682
 msgid "I don't understand.\n"
