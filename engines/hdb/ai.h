@@ -407,6 +407,7 @@ public:
 	~AI();
 
 	bool init();
+	void clearPersistent();
 	void restartSystem();
 
 	// Entity Functions
