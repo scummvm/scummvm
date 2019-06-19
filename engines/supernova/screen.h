@@ -29,7 +29,7 @@
 
 #include "supernova/imageid.h"
 #include "supernova/msn_def.h"
-#include "supernova2/resman.h"
+#include "supernova/resman.h"
 
 namespace Supernova {
 
@@ -63,6 +63,7 @@ enum Color {
 	kColorLightGreen  = 13,
 	kColorLightYellow = 14,
 	kColorLightRed    = 15,
+	kColorPurple      = 35,
 	kColorCursorTransparent = kColorWhite25
 };
 
@@ -101,7 +102,8 @@ public:
 
 	Marquee(Screen *screen, MarqueeId id, const char *text);
 
-	void renderCharacter();
+	bool renderCharacter();
+	void reset();
 
 private:
 	void clearText();
@@ -141,11 +143,11 @@ public:
 	void setViewportBrightness(int brightness);
 	int getGuiBrightness() const;
 	void setGuiBrightness(int brightness);
-	const MSNImage *getCurrentImage() const;
+	MSNImage *getCurrentImage();
 	const ImageInfo *getImageInfo(ImageId id) const;
 	bool isMessageShown() const;
 	void paletteFadeIn(int maxViewportBrightness);
-	void paletteFadeOut();
+	void paletteFadeOut(int minBrightness);
 	void paletteBrightness();
 	void renderImage(ImageId id, bool removeImage = false);
 	void renderImage(int section);
@@ -154,7 +156,7 @@ public:
 	void saveScreen(const GuiElement &guiElement);
 	void restoreScreen();
 	void renderRoom(Room &room);
-	void renderMessage(const char *text, MessagePosition position = kMessageNormal);
+	void renderMessage(const char *text, MessagePosition position = kMessageNormal, int positionX = -1, int positionY = -1);
 	void renderMessage(const Common::String &text, MessagePosition position = kMessageNormal);
 	void renderMessage(StringId stringId, MessagePosition position = kMessageNormal,
 					   Common::String var1 = "", Common::String var2 = "");
@@ -176,6 +178,7 @@ public:
 	byte getTextCursorColor();
 	void setTextCursorColor(byte color);
 	void update();
+	void changeCursor(ResourceManager::CursorId);
 
 private:
 	void renderImageSection(const MSNImage *image, int section, bool invert);
@@ -183,7 +186,7 @@ private:
 private:
 	SupernovaEngine *_vm;
 	ResourceManager *_resMan;
-	const MSNImage *_currentImage;
+	MSNImage *_currentImage;
 	ScreenBufferStack _screenBuffer;
 	int _screenWidth;
 	int _screenHeight;

@@ -95,12 +95,12 @@ Supernova2Engine::Supernova2Engine(OSystem *syst)
 Supernova2Engine::~Supernova2Engine() {
 	DebugMan.clearAllDebugChannels();
 
+	delete _sleepAutoSave;
 	delete _console;
 	delete _gm;
+	delete _sound;
 	delete _resMan;
 	delete _screen;
-	delete _sleepAutoSave;
-	delete _sound;
 }
 
 Common::Error Supernova2Engine::run() {
@@ -293,6 +293,7 @@ void Supernova2Engine::renderMessage(StringId stringId, MessagePosition position
 	_gm->_messageDuration = (getGameString(stringId).size() + 20) * _textSpeed / 10;
 	_screen->renderMessage(stringId, position, var1, var2);
 }
+
 void Supernova2Engine::renderMessage(StringId stringId, int x, int y) {
 	_gm->_messageDuration = (getGameString(stringId).size() + 20) * _textSpeed / 10;
 	_screen->renderMessage(getGameString(stringId).c_str(), kMessageNormal, x, y);
@@ -356,8 +357,10 @@ void Supernova2Engine::paletteFadeOut(int minBrightness) {
 }
 
 void Supernova2Engine::paletteFadeIn() {
-	if (!shouldQuit())
-		_screen->paletteFadeIn(255);
+	if (!shouldQuit()) {
+		_gm->roomBrightness();
+		_screen->paletteFadeIn(_gm->_roomBrightness);
+	}
 }
 
 void Supernova2Engine::setColor63(byte value) {
@@ -376,6 +379,7 @@ void Supernova2Engine::setTextSpeed() {
 	int boxHeight = 27;
 
 	_gm->animationOff();
+	_gm->saveTime();
 	saveScreen(boxX, boxY, boxWidth, boxHeight);
 
 	renderBox(boxX, boxY, boxWidth, boxHeight, kColorBlue);
@@ -413,6 +417,7 @@ void Supernova2Engine::setTextSpeed() {
 	_gm->resetInputState();
 
 	restoreScreen();
+	_gm->loadTime();
 	_gm->animationOn();
 }
 

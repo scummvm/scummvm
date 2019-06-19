@@ -25,6 +25,7 @@
 
 #include "audio/audiostream.h"
 #include "common/ptr.h"
+#include "common/sinetables.h"
 
 #include "supernova/graphics.h"
 #include "supernova/sound.h"
@@ -47,27 +48,37 @@ public:
 	static const int kNumImageFiles = 45;
 
 public:
-	ResourceManager();
+	ResourceManager(int MSPart);
+	~ResourceManager();
 
 	Audio::SeekableAudioStream *getSoundStream(AudioId index);
 	Audio::AudioStream *getSoundStream(MusicId index);
-	const MSNImage *getImage(int filenumber) const;
+	Audio::AudioStream *getSirenStream();
+	MSNImage *getImage(int filenumber);
 	const byte *getImage(CursorId id) const;
+	const byte *getCursor(CursorId id) const;
+	int getAudioRate();
 
 private:
 	void initSoundFiles();
 	void initGraphics();
 	void initCursorGraphics();
 	void initImages();
+	void initSiren();
+	byte *generateTone(byte *buffer, int frequency, int length, int audioRate, Common::SineTable &table);
 
 private:
 	Common::ScopedPtr<Audio::SeekableAudioStream> _soundSamples[kAudioNumSamples];
 	Common::ScopedPtr<Common::MemoryReadStream> _musicIntroBuffer;
 	Common::ScopedPtr<Common::MemoryReadStream> _musicOutroBuffer;
+	Common::ScopedPtr<Common::MemoryReadStream> _musicMadMonkeysBuffer;
 	Common::ScopedPtr<Audio::AudioStream> _musicIntro;
 	Common::ScopedPtr<Audio::AudioStream> _musicOutro;
+	Common::ScopedPtr<Audio::AudioStream> _sirenStream;
+	Common::ScopedPtr<Audio::AudioStream> _musicMadMonkeys;
+	int _MSPart;
 	int _audioRate;
-	MSNImage _images[kNumImageFiles];
+	MSNImage *_images[kNumImageFiles];
 	byte _cursorNormal[256];
 	byte _cursorWait[256];
 };

@@ -92,10 +92,16 @@ static const byte mouseWait[64] = {
 };
 
 
-ResourceManager::ResourceManager()
-	: _audioRate(11931) {
+ResourceManager::ResourceManager(int MSPart)
+	: _audioRate(11931)
+	, _MSPart(MSPart) {
 	initSoundFiles();
 	initGraphics();
+}
+
+ResourceManager::~ResourceManager() {
+	for (int i = 0; i < kNumImageFiles; i++)
+		delete _images[i];
 }
 
 void ResourceManager::initSoundFiles() {
@@ -164,10 +170,12 @@ void ResourceManager::initCursorGraphics() {
 
 void ResourceManager::initImages() {
 	for (int i = 0; i < 44; ++i) {
-		if (!_images[i].init(i))
+		_images[i] = new MSNImage(_MSPart);
+		if (!_images[i]->init(i))
 			error("Failed reading image file msn_data.%03d", i);
 	}
-	if (!_images[44].init(55))
+	_images[44] = new MSNImage(_MSPart);
+	if (!_images[44]->init(55))
 			error("Failed reading image file msn_data.055");
 }
 
@@ -183,6 +191,9 @@ Audio::AudioStream *ResourceManager::getSoundStream(MusicId index) {
 	case kMusicIntro:
 		_musicIntro.reset(Audio::makeProtrackerStream(_musicIntroBuffer.get()));
 		return _musicIntro.get();
+	case kMusicMadMonkeys:
+		_musicMadMonkeys.reset(Audio::makeProtrackerStream(_musicMadMonkeysBuffer.get()));
+		return _musicMadMonkeys.get();
 	case kMusicOutro:
 		_musicOutro.reset(Audio::makeProtrackerStream(_musicOutroBuffer.get()));
 		return _musicOutro.get();
@@ -191,11 +202,15 @@ Audio::AudioStream *ResourceManager::getSoundStream(MusicId index) {
 	}
 }
 
-const MSNImage *ResourceManager::getImage(int filenumber) const {
+Audio::AudioStream *ResourceManager::getSirenStream() {
+	return _sirenStream.get();
+}
+
+MSNImage *ResourceManager::getImage(int filenumber) {
 	if (filenumber < 44)
-		return &_images[filenumber];
+		return _images[filenumber];
 	else if (filenumber == 55)
-		return &_images[44];
+		return _images[44];
 	else
 		return nullptr;
 }
@@ -209,6 +224,47 @@ const byte *ResourceManager::getImage(CursorId id) const {
 	default:
 		return nullptr;
 	}
+}
+
+// Generate a tone which minimal length is the length and ends at the end
+// of sine period
+// NOTE: Size of the SineTable has to be the same as audioRate and a multiple of 4
+byte *ResourceManager::generateTone(byte *buffer, int frequency, int length, int audioRate, Common::SineTable &table) {
+	int i = 0;
+
+	// Make sure length is a multiple of audioRate / frequency to end on a full sine wave and not in the middle.
+	// Also the length we have is a minimum length, so only increase it.
+	int r = 1 + (length - 1) * frequency / audioRate;
+	length = (1 + 2 * r * audioRate / frequency) / 2;
+	for(; i < length; i++) {
+		buffer[i] = (byte)
+			((table.at((i * frequency) % audioRate) * 127) + 127);
+	}
+	return buffer + length;
+}
+
+// Tones with frequencies between 1500 Hz and 1800 Hz, frequencies go up and down
+// with a step of 10 Hz.
+void ResourceManager::initSiren() {
+	int audioRate = 44000;
+	int length = audioRate / 90; // minimal length of each tone
+
+	// * 60 for the minimal length, another 20 * length as a spare, for longer tones
+	byte *buffer = new byte[length * 80]; 
+	byte *pBuffer = buffer;
+	Common::SineTable table(audioRate);
+
+	for (int i = 0; i < 30; i++)
+		pBuffer = generateTone(pBuffer, 1800 - i * 10, length, audioRate, table);
+
+	for (int i = 0; i < 30; i++)
+		pBuffer = generateTone(pBuffer, 1500 + i * 10, length, audioRate, table);
+
+	byte streamFlag = Audio::FLAG_UNSIGNED;
+
+	_sirenStream.reset(Audio::makeLoopingAudioStream(
+			Audio::makeRawStream(buffer, pBuffer - buffer, audioRate,
+									streamFlag, DisposeAfterUse::YES), 0));
 }
 
 static Common::MemoryReadStream *convertToMod(const char *filename, int version) {
@@ -395,6 +451,22 @@ static Common::MemoryReadStream *convertToMod(const char *filename, int version)
 		buffer.write(buf, nb);
 
 	return new Common::MemoryReadStream(buffer.getData(), buffer.size(), DisposeAfterUse::YES);
+}
+
+int ResourceManager::getAudioRate() {
+	return _audioRate;
+}
+
+//TODO: leave only one function for getting Cursor image
+const byte *ResourceManager::getCursor(CursorId id) const {
+	switch (id) {
+	case kCursorNormal:
+		return _cursorNormal;
+	case kCursorWait:
+		return _cursorWait;
+	default:
+		return nullptr;
+	}
 }
 
 }

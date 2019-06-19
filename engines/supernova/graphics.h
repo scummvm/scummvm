@@ -38,7 +38,7 @@ namespace Supernova {
 
 class MSNImage : public Image::ImageDecoder {
 public:
-	MSNImage();
+	MSNImage(int MSPart);
 	virtual ~MSNImage();
 
 	virtual void destroy();
@@ -79,6 +79,7 @@ public:
 	} _clickField[kMaxClickFields];
 
 private:
+	int _MSPart;
 	bool loadFromEngineDataFile();
 	bool loadSections();
 };

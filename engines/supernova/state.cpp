@@ -506,6 +506,10 @@ void GameManager::initGui() {
 	_guiInventoryArrow[1].setTextPosition(273, 186);
 }
 
+bool GameManager::canSaveGameStateCurrently() {
+	return _animationEnabled && _guiEnabled;
+}
+
 void GameManager::updateEvents() {
 	handleTime();
 	if (_animationEnabled && !_vm->_screen->isMessageShown() && _animationTimer == 0)

@@ -44,10 +44,14 @@ namespace Common {
 namespace Supernova {
 
 #define SAVEGAME_HEADER MKTAG('M','S','N','1')
+#define SAVEGAME_HEADER2 MKTAG('M','S','N','2')
 #define SAVEGAME_VERSION 9
 
 #define SUPERNOVA_DAT "supernova.dat"
 #define SUPERNOVA_DAT_VERSION 1
+
+#define SUPERNOVA2_DAT "supernova2.dat"
+#define SUPERNOVA2_DAT_VERSION 1
 
 class GuiElement;
 class ResourceManager;
@@ -83,6 +87,7 @@ public:
 
 	uint _delay;
 	int  _textSpeed;
+	char _MSPart;
 
 	Common::Error loadGameStrings();
 	void init();
@@ -102,7 +107,7 @@ public:
 	void playSound(AudioId sample);
 	void playSound(MusicId index);
 	void paletteFadeIn();
-	void paletteFadeOut();
+	void paletteFadeOut(int minBrightness = 0);
 	void paletteBrightness();
 	void renderImage(int section);
 	void renderImage(ImageId id, bool removeImage = false);
@@ -115,6 +120,7 @@ public:
 	void renderMessage(const Common::String &text, MessagePosition position = kMessageNormal);
 	void renderMessage(StringId stringId, MessagePosition position = kMessageNormal,
 					   Common::String var1 = "", Common::String var2 = "");
+	void renderMessage(StringId stringId, int x, int y);
 	void removeMessage();
 	void renderText(const uint16 character);
 	void renderText(const char *text);
@@ -128,6 +134,7 @@ public:
 	void renderBox(int x, int y, int width, int height, byte color);
 	void renderBox(const GuiElement &guiElement);
 	void setColor63(byte value);
+	void stopSound();
 };
 
 }
