@@ -2,6 +2,7 @@ MODULE := engines/hdb
 
 MODULE_OBJS := \
 	ai-init.o \
+	ai-inventory.o \
 	ai-cinematic.o \
 	ai-funcs.o \
 	ai-player.o \
