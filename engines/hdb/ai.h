@@ -393,6 +393,9 @@ struct CineCommand {
 
 class AI {
 public:
+	AI();
+	~AI();
+
 	bool init();
 
 	// Cinematic Functions
@@ -410,6 +413,9 @@ public:
 	Common::Array<CineCommand *> _cine;
 
 private:
+
+	Common::Array<AIEntity *> *_ents;
+
 	// Cinematics Variables
 	bool _cineAbortable;
 	bool _cineAborted;

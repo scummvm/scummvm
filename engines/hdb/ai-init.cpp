@@ -666,6 +666,14 @@ AIEntTypeInfo aiEntList[] = {
 	{ END_AI_TYPES,			NULL,					NULL,					NULL,					NULL }
 };
 
+AI::AI() {
+	_ents = new Common::Array<AIEntity *>;
+}
+
+AI::~AI() {
+	delete _ents;
+}
+
 bool AI::init() {
 	warning("STUB: AI::init required");
 	return true;
