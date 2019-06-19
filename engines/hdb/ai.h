@@ -399,6 +399,8 @@ public:
 	bool init();
 	void restartSystem();
 
+	// Entity Functions
+	AIEntity *locateEntity(const char *luaName);
 
 	// Cinematic Functions
 	void processCines();
