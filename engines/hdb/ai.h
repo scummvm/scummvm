@@ -397,6 +397,8 @@ public:
 	~AI();
 
 	bool init();
+	void restartSystem();
+
 
 	// Cinematic Functions
 	void processCines();

@@ -675,7 +675,16 @@ AI::~AI() {
 }
 
 bool AI::init() {
-	warning("STUB: AI::init required");
+	warning("STUB: AI::init incomplete");
+
+	restartSystem();
 	return true;
+}
+
+void AI::restartSystem() {
+	warning("STUB: AI::restartSystem incomplete");
+
+	// Clear the Entity List
+	_ents->clear();
 }
 } // End of Namespace
