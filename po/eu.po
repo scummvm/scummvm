@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-06-11 11:40+0200\n"
+"POT-Creation-Date: 2019-06-19 16:46+0200\n"
 "PO-Revision-Date: 2018-08-06 21:35+0000\n"
 "Last-Translator: Erik Zubiria <zubiriaerik@hotmail.com>\n"
 "Language-Team: Basque <https://translations.scummvm.org/projects/scummvm/"
@@ -1924,7 +1924,7 @@ msgstr "It~z~uli abiarazlera"
 #: engines/cge2/events.cpp:64 engines/cine/various.cpp:348
 #: engines/cruise/menu.cpp:212 engines/dm/loadsave.cpp:199
 #: engines/drascula/saveload.cpp:383 engines/dreamweb/saveload.cpp:262
-#: engines/glk/streams.cpp:1496 engines/gnap/menu.cpp:464
+#: engines/glk/streams.cpp:1408 engines/gnap/menu.cpp:464
 #: engines/hugo/file.cpp:298 engines/mads/nebular/dialogs_nebular.cpp:350
 #: engines/mohawk/dialogs.cpp:163 engines/mohawk/myst.cpp:954
 #: engines/mohawk/riven.cpp:685 engines/neverhood/menumodule.cpp:880
@@ -1946,7 +1946,7 @@ msgstr "Gorde jokoa:"
 #: engines/cge/events.cpp:72 engines/cge2/events.cpp:64
 #: engines/cine/various.cpp:348 engines/cruise/menu.cpp:212
 #: engines/dm/loadsave.cpp:199 engines/drascula/saveload.cpp:383
-#: engines/dreamweb/saveload.cpp:262 engines/glk/streams.cpp:1496
+#: engines/dreamweb/saveload.cpp:262 engines/glk/streams.cpp:1408
 #: engines/gnap/menu.cpp:464 engines/hugo/file.cpp:298
 #: engines/mads/nebular/dialogs_nebular.cpp:350 engines/mohawk/dialogs.cpp:163
 #: engines/mohawk/myst.cpp:954 engines/mohawk/riven.cpp:685
@@ -2622,13 +2622,13 @@ msgstr ""
 
 #: backends/platform/symbian/src/SymbianActions.cpp:38
 #: backends/platform/wince/CEActionsSmartphone.cpp:39
-#: engines/glk/scott/scott.cpp:393
+#: engines/glk/scott/scott.cpp:394
 msgid "Up"
 msgstr "Gora"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:39
 #: backends/platform/wince/CEActionsSmartphone.cpp:40
-#: engines/glk/scott/scott.cpp:393
+#: engines/glk/scott/scott.cpp:394
 msgid "Down"
 msgstr "Behera"
 
@@ -3080,7 +3080,7 @@ msgstr ""
 #: engines/cge/events.cpp:83 engines/cge2/events.cpp:75
 #: engines/cine/various.cpp:359 engines/dm/dm.cpp:276
 #: engines/dm/loadsave.cpp:187 engines/drascula/saveload.cpp:396
-#: engines/dreamweb/saveload.cpp:170 engines/glk/streams.cpp:1505
+#: engines/dreamweb/saveload.cpp:170 engines/glk/streams.cpp:1417
 #: engines/gnap/menu.cpp:473 engines/hugo/file.cpp:400
 #: engines/mads/nebular/dialogs_nebular.cpp:377
 #: engines/neverhood/menumodule.cpp:893
@@ -3096,7 +3096,7 @@ msgstr "Jokoa kargatu:"
 #: engines/cge/events.cpp:83 engines/cge2/events.cpp:75
 #: engines/cine/various.cpp:359 engines/dm/dm.cpp:276
 #: engines/dm/loadsave.cpp:187 engines/drascula/saveload.cpp:396
-#: engines/dreamweb/saveload.cpp:170 engines/glk/streams.cpp:1505
+#: engines/dreamweb/saveload.cpp:170 engines/glk/streams.cpp:1417
 #: engines/gnap/menu.cpp:473 engines/hugo/file.cpp:400
 #: engines/mads/nebular/dialogs_nebular.cpp:377
 #: engines/neverhood/menumodule.cpp:893
@@ -3150,25 +3150,25 @@ msgstr "'%s' bideo fitxategia ez da aurkitu!"
 msgid "Failed to initialize resources"
 msgstr ""
 
-#: engines/bladerunner/bladerunner.cpp:910
+#: engines/bladerunner/bladerunner.cpp:909
 msgid "A required game resource was not found"
 msgstr ""
 
-#: engines/bladerunner/bladerunner.cpp:2066
+#: engines/bladerunner/bladerunner.cpp:2065
 msgid ""
 "WARNING: This game was saved in Restored Cut Content mode, but you are "
 "playing in Original Content mode. The mode will be adjusted to Restored Cut "
 "Content for this session until you completely Quit the game."
 msgstr ""
 
-#: engines/bladerunner/bladerunner.cpp:2068
+#: engines/bladerunner/bladerunner.cpp:2067
 msgid ""
 "WARNING: This game was saved in Original Content mode, but you are playing "
 "in Restored Cut Content mode. The mode will be adjusted to Original Content "
 "mode for this session until you completely Quit the game."
 msgstr ""
 
-#: engines/bladerunner/bladerunner.cpp:2070
+#: engines/bladerunner/bladerunner.cpp:2069
 msgid "Continue"
 msgstr ""
 
@@ -3207,239 +3207,288 @@ msgstr "Erabili paleta argia"
 msgid "Display graphics using the game's bright palette"
 msgstr "Erakutsi grafikoak jokoaren paleta argia erabilita"
 
-#: engines/glk/scott/scott.cpp:98
+#: engines/glk/glk_api.cpp:63
+msgid "[ press any key to exit ]"
+msgstr ""
+
+#: engines/glk/quetzal.cpp:115 engines/glk/quetzal.cpp:124
+#, fuzzy
+msgid "Untitled Savegame"
+msgstr "Titulurik gabeko joko gordea"
+
+#: engines/glk/advsys/advsys.cpp:35
+#, fuzzy
+msgid "Could not start AdvSys game"
+msgstr "Ezin izan da aldatu bideo modura : '"
+
+#: engines/glk/advsys/advsys.cpp:48 engines/glk/advsys/vm.cpp:319
+msgid "Sorry, the savegame couldn't be restored"
+msgstr ""
+
+#: engines/glk/advsys/vm.cpp:314
+#, fuzzy
+msgid "Sorry, the savegame couldn't be created"
+msgstr "ezin izan da bideo-modua aldatu."
+
+#: engines/glk/advsys/vm.cpp:560
+msgid "Speak up! I can't hear you!\n"
+msgstr ""
+
+#: engines/glk/advsys/vm.cpp:596
+#, c-format
+msgid "I don't know the word \"%s\".\n"
+msgstr ""
+
+#: engines/glk/advsys/vm.cpp:682
+msgid "I don't understand.\n"
+msgstr ""
+
+#: engines/glk/alan2/alan2.cpp:76
+msgid "This is too short to be a valid Alan2 file."
+msgstr ""
+
+#: engines/glk/alan2/alan2.cpp:81
+msgid "This is not a valid Alan2 file."
+msgstr ""
+
+#: engines/glk/frotz/frotz.cpp:126
+#, fuzzy
+msgid "Error reading save file"
+msgstr "Jokoa exekutatzean errorea:"
+
+#: engines/glk/frotz/frotz.cpp:144
+#, fuzzy
+msgid "Error writing save file\n"
+msgstr "Jokoa exekutatzean errorea:"
+
+#: engines/glk/glulxe/glulxe.cpp:79 engines/glk/magnetic/magnetic.cpp:73
+msgid "This is too short to be a valid Glulx file."
+msgstr ""
+
+#: engines/glk/glulxe/glulxe.cpp:84 engines/glk/magnetic/magnetic.cpp:78
+msgid "This is not a valid Glulx file."
+msgstr ""
+
+#: engines/glk/glulxe/glulxe.cpp:91 engines/glk/magnetic/magnetic.cpp:85
+msgid "This Glulx file is too old a version to execute."
+msgstr ""
+
+#: engines/glk/glulxe/glulxe.cpp:95 engines/glk/magnetic/magnetic.cpp:89
+msgid "This Glulx file is too new a version to execute."
+msgstr ""
+
+#: engines/glk/scott/scott.cpp:99
 msgid "I don't understand your command. "
 msgstr ""
 
-#: engines/glk/scott/scott.cpp:101
+#: engines/glk/scott/scott.cpp:102
 msgid "I can't do that yet. "
 msgstr ""
 
-#: engines/glk/scott/scott.cpp:117
+#: engines/glk/scott/scott.cpp:118
 msgid "Light has run out! "
 msgstr ""
 
-#: engines/glk/scott/scott.cpp:119
+#: engines/glk/scott/scott.cpp:120
 msgid "Your light has run out. "
 msgstr ""
 
-#: engines/glk/scott/scott.cpp:128
+#: engines/glk/scott/scott.cpp:129
 msgid "Light runs out in "
 msgstr ""
 
-#: engines/glk/scott/scott.cpp:130
+#: engines/glk/scott/scott.cpp:131
 #, fuzzy
 msgid " turns. "
 msgstr "Piztu"
 
-#: engines/glk/scott/scott.cpp:133
+#: engines/glk/scott/scott.cpp:134
 msgid "Your light is growing dim. "
 msgstr ""
 
-#: engines/glk/scott/scott.cpp:393
+#: engines/glk/scott/scott.cpp:394
 msgid "North"
 msgstr ""
 
-#: engines/glk/scott/scott.cpp:393
+#: engines/glk/scott/scott.cpp:394
 msgid "South"
 msgstr ""
 
-#: engines/glk/scott/scott.cpp:393
+#: engines/glk/scott/scott.cpp:394
 msgid "East"
 msgstr ""
 
-#: engines/glk/scott/scott.cpp:393
+#: engines/glk/scott/scott.cpp:394
 msgid "West"
 msgstr ""
 
-#: engines/glk/scott/scott.cpp:405
+#: engines/glk/scott/scott.cpp:406
 msgid "You can't see. It is too dark!\n"
 msgstr ""
 
-#: engines/glk/scott/scott.cpp:407
+#: engines/glk/scott/scott.cpp:408
 msgid "I can't see. It is too dark!\n"
 msgstr ""
 
-#: engines/glk/scott/scott.cpp:417
+#: engines/glk/scott/scott.cpp:418
 #, c-format
 msgid "You are in a %s\n"
 msgstr ""
 
-#: engines/glk/scott/scott.cpp:419
+#: engines/glk/scott/scott.cpp:420
 #, c-format
 msgid "I'm in a %s\n"
 msgstr ""
 
-#: engines/glk/scott/scott.cpp:424
+#: engines/glk/scott/scott.cpp:425
 msgid ""
 "\n"
 "Obvious exits: "
 msgstr ""
 
-#: engines/glk/scott/scott.cpp:437
+#: engines/glk/scott/scott.cpp:438
 msgid "none"
 msgstr ""
 
-#: engines/glk/scott/scott.cpp:446
+#: engines/glk/scott/scott.cpp:447
 msgid ""
 "\n"
 "You can also see: "
 msgstr ""
 
-#: engines/glk/scott/scott.cpp:449
+#: engines/glk/scott/scott.cpp:450
 msgid ""
 "\n"
 "I can also see: "
 msgstr ""
 
-#: engines/glk/scott/scott.cpp:529
+#: engines/glk/scott/scott.cpp:533
 #, fuzzy
 msgid "Saved.\n"
 msgstr "Gorde"
 
-#: engines/glk/scott/scott.cpp:620
+#: engines/glk/scott/scott.cpp:624
 msgid "You use word(s) I don't know! "
 msgstr ""
 
-#: engines/glk/scott/scott.cpp:748 engines/glk/scott/scott.cpp:1071
-#: engines/glk/scott/scott.cpp:1093
+#: engines/glk/scott/scott.cpp:752 engines/glk/scott/scott.cpp:1075
+#: engines/glk/scott/scott.cpp:1097
 msgid "You are carrying too much. "
 msgstr ""
 
-#: engines/glk/scott/scott.cpp:750
+#: engines/glk/scott/scott.cpp:754
 msgid "I've too much to carry! "
 msgstr ""
 
-#: engines/glk/scott/scott.cpp:781
+#: engines/glk/scott/scott.cpp:785
 msgid "You are dead.\n"
 msgstr ""
 
-#: engines/glk/scott/scott.cpp:783
+#: engines/glk/scott/scott.cpp:787
 msgid "I am dead.\n"
 msgstr ""
 
-#: engines/glk/scott/scott.cpp:795
+#: engines/glk/scott/scott.cpp:799
 #, fuzzy
 msgid "The game is now over.\n"
 msgstr "Jokoa EZ da kargatu"
 
-#: engines/glk/scott/scott.cpp:810
+#: engines/glk/scott/scott.cpp:814
 msgid "You have stored "
 msgstr ""
 
-#: engines/glk/scott/scott.cpp:812
+#: engines/glk/scott/scott.cpp:816
 #, fuzzy
 msgid "I've stored "
 msgstr "Kargatu"
 
-#: engines/glk/scott/scott.cpp:814
+#: engines/glk/scott/scott.cpp:818
 msgid " treasures.  On a scale of 0 to 100, that rates "
 msgstr ""
 
-#: engines/glk/scott/scott.cpp:818
+#: engines/glk/scott/scott.cpp:822
 msgid "Well done.\n"
 msgstr ""
 
-#: engines/glk/scott/scott.cpp:827
+#: engines/glk/scott/scott.cpp:831
 msgid "You are carrying:\n"
 msgstr ""
 
-#: engines/glk/scott/scott.cpp:829
+#: engines/glk/scott/scott.cpp:833
 msgid "I'm carrying:\n"
 msgstr ""
 
-#: engines/glk/scott/scott.cpp:844
+#: engines/glk/scott/scott.cpp:848
 msgid "Nothing"
 msgstr ""
 
-#: engines/glk/scott/scott.cpp:973
+#: engines/glk/scott/scott.cpp:977
 msgid "Give me a direction too."
 msgstr ""
 
-#: engines/glk/scott/scott.cpp:982
+#: engines/glk/scott/scott.cpp:986
 msgid "Dangerous to move in the dark! "
 msgstr ""
 
-#: engines/glk/scott/scott.cpp:990
+#: engines/glk/scott/scott.cpp:994
 msgid "You fell down and broke your neck. "
 msgstr ""
 
-#: engines/glk/scott/scott.cpp:992
+#: engines/glk/scott/scott.cpp:996
 msgid "I fell down and broke my neck. "
 msgstr ""
 
-#: engines/glk/scott/scott.cpp:997
+#: engines/glk/scott/scott.cpp:1001
 msgid "You can't go in that direction. "
 msgstr ""
 
-#: engines/glk/scott/scott.cpp:999
+#: engines/glk/scott/scott.cpp:1003
 msgid "I can't go in that direction. "
 msgstr ""
 
-#: engines/glk/scott/scott.cpp:1057
+#: engines/glk/scott/scott.cpp:1061
 msgid "It is dark.\n"
 msgstr ""
 
-#: engines/glk/scott/scott.cpp:1073 engines/glk/scott/scott.cpp:1095
+#: engines/glk/scott/scott.cpp:1077 engines/glk/scott/scott.cpp:1099
 msgid "I've too much to carry. "
 msgstr ""
 
-#: engines/glk/scott/scott.cpp:1078 engines/glk/scott/scott.cpp:1126
+#: engines/glk/scott/scott.cpp:1082 engines/glk/scott/scott.cpp:1130
 msgid ": O.K.\n"
 msgstr ""
 
-#: engines/glk/scott/scott.cpp:1084
+#: engines/glk/scott/scott.cpp:1088
 msgid "Nothing taken."
 msgstr ""
 
-#: engines/glk/scott/scott.cpp:1088 engines/glk/scott/scott.cpp:1136
+#: engines/glk/scott/scott.cpp:1092 engines/glk/scott/scott.cpp:1140
 #, fuzzy
 msgid "What ? "
 msgstr "Zer da"
 
-#: engines/glk/scott/scott.cpp:1101
+#: engines/glk/scott/scott.cpp:1105
 msgid "It is beyond your power to do that. "
 msgstr ""
 
-#: engines/glk/scott/scott.cpp:1103
+#: engines/glk/scott/scott.cpp:1107
 msgid "It's beyond my power to do that. "
 msgstr ""
 
-#: engines/glk/scott/scott.cpp:1107
+#: engines/glk/scott/scott.cpp:1111
 msgid "O.K. "
 msgstr ""
 
-#: engines/glk/scott/scott.cpp:1132
+#: engines/glk/scott/scott.cpp:1136
 msgid "Nothing dropped.\n"
 msgstr ""
 
-#: engines/glk/scott/scott.cpp:1142
+#: engines/glk/scott/scott.cpp:1146
 msgid "It's beyond your power to do that.\n"
 msgstr ""
 
-#: engines/glk/scott/scott.cpp:1144
+#: engines/glk/scott/scott.cpp:1148
 msgid "It's beyond my power to do that.\n"
-msgstr ""
-
-#: engines/glk/frotz/detection.cpp:171
-#, fuzzy
-msgid "Unnamed savegame"
-msgstr "Titulurik gabeko joko gordea"
-
-#: engines/glk/glulxe/glulxe.cpp:79
-msgid "This is too short to be a valid Glulx file."
-msgstr ""
-
-#: engines/glk/glulxe/glulxe.cpp:84
-msgid "This is not a valid Glulx file."
-msgstr ""
-
-#: engines/glk/glulxe/glulxe.cpp:91
-msgid "This Glulx file is too old a version to execute."
-msgstr ""
-
-#: engines/glk/glulxe/glulxe.cpp:95
-msgid "This Glulx file is too new a version to execute."
 msgstr ""
 
 #: engines/gob/inter_playtoons.cpp:255 engines/gob/inter_v2.cpp:1467
@@ -5200,6 +5249,10 @@ msgid ""
 "This saved game uses version %u, but this engine only supports up to version "
 "%d. You will need an updated version of the engine to use this saved game."
 msgstr ""
+
+#, fuzzy
+#~ msgid "Unnamed savegame"
+#~ msgstr "Titulurik gabeko joko gordea"
 
 #~ msgid "Windowed mode"
 #~ msgstr "Leiho modua"
