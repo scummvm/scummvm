@@ -156,7 +156,23 @@ void HDBGame::useEntity(AIEntity *e) {
 	added = false;
 
 	if (_ai->getTableEnt(e->type)) {
-		warning("STUB: HDBGame::useEntity Process Gettable Entity");
+		memcpy(&temp, e, sizeof(AIEntity));
+
+		_ai->getItemSound(e->type);
+
+		added = _ai->addToInventory(e);
+		if (added) {
+			e = &temp;
+
+			if (temp.aiUse) {
+				temp.aiUse(&temp);
+			}
+
+			if (temp.luaFuncUse[0]) {
+				_lua->callFunction(temp.luaFuncUse, 0);
+			}
+		}
+
 	} else {
 		// These should be run over or run through
 		if (_ai->walkThroughEnt(e->type) || e->type == AI_NONE) {
