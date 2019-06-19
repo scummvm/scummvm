@@ -169,6 +169,33 @@ Picture *DrawMan::getPicture(const char *name) {
 	return picture;
 }
 
+Tile *DrawMan::getGfx(const char *name, uint32 size) {
+	// Try to find graphic
+	for (Common::Array<GfxCache *>::iterator it = _gfxCache->begin(); it != _gfxCache->end(); it++) {
+		if (Common::matchString((*it)->name, name)) {
+			if ((*it)->loaded == -1) {	// Marked for Deletetion?
+				(*it)->loaded = 1;		// Reactivate it
+				return (*it)->gfx;
+			}
+		}
+	}
+
+	GfxCache *gc = new GfxCache;
+	strcpy(gc->name, name);
+
+	Common::SeekableReadStream *stream = g_hdb->_fileMan->findFirstData(name, TYPE_TILE32);
+
+	Tile *gfxTile = new Tile;
+	gfxTile->load(stream);
+
+	gc->size = size;
+	gc->loaded = 1;
+
+	_gfxCache->push_back(gc);
+
+	return gc->gfx;
+}
+
 int DrawMan::isSky(int index) {
 	if (!index) {
 		return 0;
