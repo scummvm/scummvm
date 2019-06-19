@@ -136,7 +136,7 @@ void AI::processCines() {
 			}
 			break;
 		case C_SETENTITY:
-			warning("STUB: AI::locateEntity required");
+			_cine[i]->e = locateEntity(_cine[i]->string);
 			if (_cine[i]->e) {
 				_cine[i]->e->tileX = (int)_cine[i]->x / kTileWidth;
 				_cine[i]->e->x = (int)_cine[i]->x;
