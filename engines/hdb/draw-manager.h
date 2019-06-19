@@ -79,6 +79,8 @@ public:
 	int getTileIndex(const char *name);
 	Picture *getPicture(const char *name);
 
+	Tile *getGfx(const char *name, uint32 size);
+
 	int isSky(int skyIndex);
 	void setSky(int skyIndex);
 	void setup3DStars();
