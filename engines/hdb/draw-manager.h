@@ -92,6 +92,8 @@ private:
 	TileLookup *_tLookupArray;
 	uint16 _skyTiles[kMaxSkies];
 
+	Common::Array<GfxCache *> *_gfxCache;
+
 	int _currentSky;	// 0 if no Sky, 1+ for which Sky to use
 	struct {
 		bool active;
