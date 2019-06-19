@@ -28,6 +28,8 @@
 namespace HDB {
 
 enum {
+	kMaxAnimFrames = 8,
+	kMaxDeathFrames = 12,
 	kMaxInventory = 10,
 	kMaxDeliveries = 5,
 	kPlayerMoveSpeed = 4,
@@ -369,7 +371,41 @@ struct AIEntity {
 	uint16		animDelay;								// changes every frame; based on anim_cycle at start
 	uint16		animCycle;								// delay between frame animations
 
-	// TODO: Add the frame arrays needed
+	union {
+		uint16 blinkFrames;
+		uint16 int1;
+	};
+	void *blinkGfx[kMaxAnimFrames];
+
+	union {
+		uint16 special1Frames;
+		uint16 int2;
+	};
+	void *special1Gfx[kMaxAnimFrames];
+
+	uint16		standdownFrames;
+	Tile		*standdownGfx[kMaxAnimFrames];
+
+	uint16		standupFrames;
+	Tile		*standupGfx[kMaxAnimFrames];
+
+	uint16		standleftFrames;
+	Tile		*standleftGfx[kMaxAnimFrames];
+
+	uint16		standrightFrames;
+	Tile		*standrightGfx[kMaxAnimFrames];
+
+	uint16		moveupFrames;
+	Tile		*moveupGfx[kMaxAnimFrames];
+
+	uint16		movedownFrames;
+	Tile		*movedownGfx[kMaxAnimFrames];
+
+	uint16		moveleftFrames;
+	Tile		*moveleftGfx[kMaxAnimFrames];
+
+	uint16		moverightFrames;
+	Tile		*moverightGfx[kMaxAnimFrames];
 };
 
 struct AIEntTypeInfo {
