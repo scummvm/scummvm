@@ -48,6 +48,14 @@ struct TileLookup {
 	TileLookup() : filename(NULL), tData(NULL), skyIndex(0), animIndex(0) {}
 };
 
+struct GfxCache {
+	char name[32];
+	Tile *gfx;
+	uint32 size;
+	uint16 loaded;
+
+	GfxCache() : name(""), gfx(NULL), size(0), loaded(0) {}
+};
 
 class DrawMan {
 public:
