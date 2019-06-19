@@ -71,6 +71,7 @@ enum GameState {
 enum Flag {
 	kFlagInvisible = 0x20,
 	kFlagForeground = 0x80,
+	kFlagStairTop = 0x400000,
 	kFlagGrating = 0x4000000,
 	kFlagMasked = 0x2000000
 };
