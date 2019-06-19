@@ -198,12 +198,12 @@ void Map::draw() {
 						/*
 						TODO: Implement Gratings Check
 						*/
-						warning("STUB: Map::draw: Gratings Check not found");
+						debug(9, "STUB: Map::draw: Gratings Check not found");
 					} else if ((fTile->_flags & kFlagForeground)) {
 						/*
 						TODO: Implement Gratings Check
 						*/
-						warning("STUB: Map::draw: Gratings Check not found");
+						debug(9, "STUB: Map::draw: Foreground Check not found");
 					} else {
 						if (fTile->_flags & kFlagMasked) {
 							/*

@@ -124,7 +124,7 @@ void HDBGame::changeGameState() {
 void HDBGame::paint() {
 	switch (_gameState) {
 	case GAME_TITLE:
-		warning("STUB: MENU::DrawTitle required");
+		debug(9, "STUB: MENU::DrawTitle required");
 		break;
 	case GAME_MENU:
 		warning("STUB: MENU::DrawMenu required");
