@@ -140,6 +140,11 @@ void HDBGame::paint() {
 	_drawMan->updateVideo();
 }
 
+// PLAYER is trying to use this entity
+void HDBGame::useEntity(AIEntity *e) {
+	warning("STUB: HDBGame::useEntity required");
+}
+
 Common::Error HDBGame::run() {
 
 	// Initialize System

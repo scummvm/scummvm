@@ -116,6 +116,8 @@ public:
 	void changeGameState();
 	void paint();
 
+	void useEntity(AIEntity *e);
+
 	bool _gameShutdown;
 	Graphics::PixelFormat _format;
 
