@@ -23,9 +23,14 @@
 #include <common/debug.h>
 #include "bigfile.h"
 #include "actor.h"
+#include "actorresource.h"
 #include "talk.h"
 #include "sound.h"
 #include "dragons.h"
+#include "dragonini.h"
+#include "dragonimg.h"
+#include "dragonobd.h"
+#include "scene.h"
 
 namespace Dragons {
 
@@ -81,11 +86,84 @@ Talk::FUN_8003239c(char *dialog, int16 x, int16 y, int32 param_4, uint16 param_5
 void
 Talk::conversation_related_maybe(uint16 *dialogText, uint16 x, uint16 y, uint16 param_4, int16 param_5, uint32 textId,
 								 int16 param_7) {
-	//TODO display dialog text here and wait for audio stream to complete.
+	//TODO display dialog text here while we wait for audio stream to complete.
 
 	while (_vm->isFlagSet(ENGINE_FLAG_8000)) {
 		_vm->waitForFrames(1);
 	}
+}
+
+
+uint32 Talk::displayDialogAroundINI(uint32 iniId, uint16 *dialogText, uint32 textIndex)
+
+{
+	DragonINI *ini = iniId == 0 ? _vm->_dragonINIResource->getFlickerRecord() : _vm->getINI(iniId - 1);
+
+	if ((ini->field_1a_flags_maybe & 1) == 0) {
+		IMG *local_v1_184 = _vm->_dragonIMG->getIMG(ini->field_2);
+		int x, y;
+		if (local_v1_184->field_e == 0) {
+			y = (uint)(ushort)local_v1_184->y;
+			x = local_v1_184->field_a;
+		}
+		else {
+			x = local_v1_184->field_a;
+			y = (uint)(ushort)local_v1_184->y << 3;
+		}
+		displayDialogAroundPoint
+				(dialogText,
+						((x - _vm->_scene->_camera.x) * 0x10000) >> 0x13,
+				 ((y - _vm->_scene->_camera.y) * 0x10000) >> 0x13,
+				 READ_LE_UINT16(_vm->_dragonOBD->getFromOpt(ini->id) + 6)
+						,1,textIndex);
+	}
+	else {
+		displayDialogAroundActor
+				(ini->actor,
+				 READ_LE_UINT16(_vm->_dragonOBD->getFromOpt(ini->id) + 6),
+				 dialogText,textIndex);
+	}
+	return 1;
+}
+
+void
+Talk::displayDialogAroundPoint(uint16 *dialogText, uint16 x, uint16 y, uint16 param_4, int16 param_5, uint32 textId) {
+// TODO
+//
+//		puVar1 = &DAT_80011a60;
+//		puVar2 = local_58;
+//		do {
+//			puVar8 = puVar2;
+//			puVar7 = puVar1;
+//			uVar4 = puVar7[1];
+//			uVar5 = puVar7[2];
+//			uVar6 = puVar7[3];
+//			*puVar8 = *puVar7;
+//			puVar8[1] = uVar4;
+//			puVar8[2] = uVar5;
+//			puVar8[3] = uVar6;
+//			puVar1 = puVar7 + 4;
+//			puVar2 = puVar8 + 4;
+//		} while (puVar7 + 4 != (undefined4 *)&DAT_80011a80);
+//		uVar4 = puVar7[5];
+//		puVar8[4] = _DAT_80011a80;
+//		puVar8[5] = uVar4;
+		_vm->data_800633fc = 1;
+
+		// sVar3 = FUN_8001d1ac(0,textId,0);
+		_vm->_sound->playSpeech(textId);
+
+//		if (dialogText == (uint16_t *)0x0) {
+//			dialogText = (uint16_t *)local_58;
+//		}
+		conversation_related_maybe(dialogText + 5,x,y,param_4,param_5,textId,0); // sVar3); TODO I think this is audio status
+}
+
+void Talk::displayDialogAroundActor(Actor *actor, uint16 param_2, uint16 *dialogText, uint32 textIndex) {
+	displayDialogAroundPoint
+			(dialogText,(ushort)((int)(((uint)actor->x_pos - _vm->_scene->_camera.x) * 0x10000) >> 0x13),
+			 (short)((int)((((uint)actor->y_pos - (uint)actor->frame->yOffset) - (uint)_vm->_scene->_camera.y) * 0x10000) >> 0x13) - 3,
+			 param_2,1,textIndex);
 }
 
 

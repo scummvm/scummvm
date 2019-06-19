@@ -41,6 +41,10 @@ public:
 	char *loadText(uint32 textIndex);
 	void printWideText(byte *text);
 
+	uint32 displayDialogAroundINI(uint32 iniId, uint16 *dialogText, uint32 textIndex);
+	void displayDialogAroundPoint(uint16 *dialogText, uint16 x, uint16 y, uint16 param_4, int16 param_5, uint32 textId);
+	void displayDialogAroundActor(Actor *actor, uint16 param_2, uint16 *dialogText, uint32 textIndex);
+
 	void FUN_8003239c(char *dialog, int16 x, int16 y, int32 param_4, uint16 param_5, Actor *actor, uint16 startSequenceId, uint16 endSequenceId, uint32 textId);
 
 	void conversation_related_maybe(uint16 *dialogText, uint16 x, uint16 y, uint16 param_4, int16 param_5, uint32 textId, int16 param_7);

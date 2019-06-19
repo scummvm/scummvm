@@ -82,6 +82,7 @@ protected:
 
 	// Opcodes
 	void opUnk1(ScriptOpCall &scriptOpCall);
+	void opUnk2(ScriptOpCall &scriptOpCall);
 	void opExecuteScript(ScriptOpCall &scriptOpCall); //op 4
 	void opActorSetSequenceID2(ScriptOpCall &scriptOpCall); //op 5
 	void opUnk6(ScriptOpCall &scriptOpCall);

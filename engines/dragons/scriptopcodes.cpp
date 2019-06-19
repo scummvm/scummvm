@@ -92,6 +92,7 @@ void ScriptOpcodes::initOpcodes() {
 	}
 	// Register opcodes
 	OPCODE(1, opUnk1);
+	OPCODE(2, opUnk2); //dialog related
 
 	OPCODE(4,  opExecuteScript);
 	OPCODE(5,  opActorSetSequenceID2);
@@ -228,6 +229,22 @@ void ScriptOpcodes::opUnk1(ScriptOpCall &scriptOpCall) {
 	} else {
 		scriptOpCall._code += field6;
 	}
+}
+
+void ScriptOpcodes::opUnk2(ScriptOpCall &scriptOpCall) {
+	ARG_INT16(field0);
+	ARG_INT16(field2);
+	ARG_INT16(field4);
+	ARG_INT16(field6);
+	ARG_INT16(field8);
+	ARG_INT16(fieldA);
+	ARG_INT16(fieldC);
+	ARG_INT16(fieldE);
+
+	if (scriptOpCall._field8 == 2) {
+		//TODO do something here.
+	}
+	scriptOpCall._code += fieldA;
 }
 
 void ScriptOpcodes::opExecuteScript(ScriptOpCall &scriptOpCall) {
@@ -779,11 +796,13 @@ void ScriptOpcodes::opUnk11FlickerTalk(ScriptOpCall &scriptOpCall) {
 		}
 	}
 	// TODO sVar1 = findTextToDtSpeechIndex(textIndex);
+	char *dialog = _vm->_talk->loadText(textIndex);
+
 //	pcVar2 = (char *)0x0;
 //	if (((unkFlags1 & 1) == 0) && (((engine_flags_maybe & 0x1000) == 0 || (sVar1 == -1)))) {
 //		pcVar2 = load_string_from_dragon_txt(textIndex,acStack2016);
 //	}
-//	FUN_80031d98((uint)iniId,pcVar2,textIndex);
+	_vm->_talk->displayDialogAroundINI(iniId, NULL, textIndex); //TODO need to pass dialog here (pcVar2). not NULL
 	if (iniId == 0) {
 		if (!_vm->isFlagSet(ENGINE_FLAG_2000000)) {
 			if (_vm->getCurrentSceneId() != 0x32) {
