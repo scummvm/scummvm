@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2019-06-19 16:46+0200\n"
-"PO-Revision-Date: 2019-06-12 20:24+0000\n"
+"PO-Revision-Date: 2019-06-19 19:54+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
@@ -3185,60 +3185,52 @@ msgstr "Näytä grafiikat käyttäen pelin kirkasta palettia"
 
 #: engines/glk/glk_api.cpp:63
 msgid "[ press any key to exit ]"
-msgstr ""
+msgstr "[ paina mitä tahansa näppäintä poistuaksesi ]"
 
 #: engines/glk/quetzal.cpp:115 engines/glk/quetzal.cpp:124
-#, fuzzy
 msgid "Untitled Savegame"
 msgstr "Nimetön pelitallennus"
 
 #: engines/glk/advsys/advsys.cpp:35
-#, fuzzy
 msgid "Could not start AdvSys game"
-msgstr "Videotilan vaihto ei onnistunut:'"
+msgstr "AdvSys-pelin käynnistys epäonnistui"
 
 #: engines/glk/advsys/advsys.cpp:48 engines/glk/advsys/vm.cpp:319
 msgid "Sorry, the savegame couldn't be restored"
-msgstr ""
+msgstr "Valitettavasti pelitallennuksen lataus epäonnistui"
 
 #: engines/glk/advsys/vm.cpp:314
-#, fuzzy
 msgid "Sorry, the savegame couldn't be created"
-msgstr "videotilaa ei voitu vaihtaa"
+msgstr "Valitettavasti pelitallennusta ei kyetty luomaan"
 
 #: engines/glk/advsys/vm.cpp:560
 msgid "Speak up! I can't hear you!\n"
-msgstr ""
+msgstr "Puhu lujempaa! En kuule sinua!\n"
 
 #: engines/glk/advsys/vm.cpp:596
 #, c-format
 msgid "I don't know the word \"%s\".\n"
-msgstr ""
+msgstr "En tunne sanaa \"%s\".\n"
 
 #: engines/glk/advsys/vm.cpp:682
-#, fuzzy
 msgid "I don't understand.\n"
-msgstr "En ymmärrä komentoasi. "
+msgstr "En ymmärrä komentoasi.\n"
 
 #: engines/glk/alan2/alan2.cpp:76
-#, fuzzy
 msgid "This is too short to be a valid Alan2 file."
-msgstr "Tämä on liian lyhyt ollakseen validi Glulx-tiedosto."
+msgstr "Tämä on liian lyhyt ollakseen validi Alan2-tiedosto."
 
 #: engines/glk/alan2/alan2.cpp:81
-#, fuzzy
 msgid "This is not a valid Alan2 file."
-msgstr "Tämä ei ole validi Glulx-tiedosto."
+msgstr "Tämä ei ole validi Alan2-tiedosto."
 
 #: engines/glk/frotz/frotz.cpp:126
-#, fuzzy
 msgid "Error reading save file"
-msgstr "Virhe ajettaessa peliä:"
+msgstr "Pelitallennusta lukiessa tapahtui virhe"
 
 #: engines/glk/frotz/frotz.cpp:144
-#, fuzzy
 msgid "Error writing save file\n"
-msgstr "Virhe ajettaessa peliä:"
+msgstr "Pelitallennusta kirjoittaessa tapahtui virhe\n"
 
 #: engines/glk/glulxe/glulxe.cpp:79 engines/glk/magnetic/magnetic.cpp:73
 msgid "This is too short to be a valid Glulx file."
