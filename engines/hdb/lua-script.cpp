@@ -339,7 +339,7 @@ static int setEntity(lua_State *L) {
 	g_hdb->_lua->checkParameters("setEntity", 4);
 
 	lua_pop(L, 4);
-	warning("STUB: LuaScript setEntity: locateEntity needed");
+	e = g_hdb->_ai->locateEntity(entName);
 	if (e) {
 		e->x = (int)x * kTileWidth;
 		e->tileX = (int)x;
@@ -349,7 +349,7 @@ static int setEntity(lua_State *L) {
 		e->goalX = e->goalY = e->xVel = e->yVel = 0;
 		e->state = STATE_STANDDOWN;
 	} else {
-		warning("Could'nt SetEntity on '%s'", entName);
+		warning("Couldn't SetEntity on '%s'", entName);
 	}
 	return 0;
 }
