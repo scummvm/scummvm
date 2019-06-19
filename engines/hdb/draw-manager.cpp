@@ -26,11 +26,13 @@ namespace HDB {
 
 DrawMan::DrawMan() {
 	_tLookupArray = NULL;
+	_gfxCache = new Common::Array<GfxCache *>;
 	_globalSurface.create(kScreenWidth, kScreenHeight, g_hdb->_format);
 	_systemInit = false;
 }
 
 DrawMan::~DrawMan() {
+	delete _gfxCache;
 	_globalSurface.free();
 }
 
