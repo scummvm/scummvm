@@ -39,7 +39,6 @@ MODULE_OBJS := \
 	alan2/decode.o \
 	alan2/exe.o \
 	alan2/glkio.o \
-	alan2/glkstart.o \
 	alan2/inter.o \
 	alan2/main.o \
 	alan2/params.o \

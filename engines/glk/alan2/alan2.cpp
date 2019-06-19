@@ -22,6 +22,7 @@
 
 #include "glk/alan2/alan2.h"
 #include "glk/alan2/main.h"
+#include "glk/alan2/glkio.h"
 #include "common/config-manager.h"
 #include "common/translation.h"
 #include "common/error.h"
@@ -46,16 +47,30 @@ void Alan2::runGame() {
 	if (!is_gamefile_valid())
 		return;
 
-	Common::String filename = getFilename();
-	while (filename.contains('.'))
-		filename.deleteLastChar();
-	advnam = filename.c_str();
+	initialize();
+
+	Glk::Alan2::run();
+}
+
+void Alan2::initialize() {
+	// first, open a window for error output
+	glkMainWin = g_vm->glk_window_open(0, 0, 0, wintype_TextBuffer, 0);
+	if (glkMainWin == nullptr)
+		::error("FATAL ERROR: Cannot open initial window");
+
+	g_vm->glk_stylehint_set(wintype_TextGrid, style_User1, stylehint_ReverseColor, 1);
+	glkStatusWin = g_vm->glk_window_open(glkMainWin, winmethod_Above |
+		winmethod_Fixed, 1, wintype_TextGrid, 0);
+	g_vm->glk_set_window(glkMainWin);
+
+	_advName = getFilename();
+	while (_advName.contains('.'))
+		_advName.deleteLastChar();
+	advnam = _advName.c_str();
 
 	codfil = &_gameFile;
 	strncpy(codfnm, getFilename().c_str(), 255);
 	codfnm[255] = '\0';
-
-	Glk::Alan2::run();
 }
 
 Common::Error Alan2::readSaveData(Common::SeekableReadStream *rs) {

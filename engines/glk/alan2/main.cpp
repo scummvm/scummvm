@@ -1903,9 +1903,11 @@ static void openFiles()
   Run the adventure
 
   */
-void run(void)
-{
+void run() {
   openFiles();
+
+  // Set default line and column
+  col = lin = 1;
 
   //setjmp(restart_label);	/* Return here if he wanted to restart */
 

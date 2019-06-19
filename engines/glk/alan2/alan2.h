@@ -36,11 +36,17 @@ namespace Alan2 {
 class Alan2 : public GlkAPI {
 public:
 	bool vm_exited_cleanly;
+	Common::String _advName;
 private:
 	/**
 	 * Validates the game file, and if it's invalid, displays an error dialog
 	 */
 	bool is_gamefile_valid();
+
+	/**
+	 * Initialization
+	 */
+	void initialize();
 public:
 	/**
 	 * Constructor
