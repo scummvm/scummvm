@@ -402,6 +402,39 @@ public:
 	// Entity Functions
 	AIEntity *locateEntity(const char *luaName);
 
+	// Player Functions
+	void assignPlayer(AIEntity *p) {
+		_player = p;
+	}
+
+	bool playerDead() {
+		return _playerDead;
+	}
+
+	bool playerOnIce() {
+		return _playerOnIce;
+	}
+
+	bool playerLocked() {
+		return _playerLock;
+	}
+
+	void setPlayerLock(bool status) {
+		_playerLock = status;
+	}
+
+	void setPlayerInvisible(bool status) {
+		_playerInvisible = status;
+	}
+
+	bool playerRunning() {
+		return _playerRunning;
+	}
+
+	void togglePlayerRunning() {
+		_playerRunning = !_playerRunning;
+	}
+
 	// Cinematic Functions
 	void processCines();
 	void cineStart(bool abortable, const char *abortFunc);
@@ -420,6 +453,14 @@ public:
 private:
 
 	Common::Array<AIEntity *> *_ents;
+	AIEntity *_player;
+
+	// Player Variables
+	bool _playerDead;
+	bool _playerInvisible;	// While on RailRider for example
+	bool _playerOnIce;
+	bool _playerEmerging;
+	bool _playerRunning;
 
 	// Cinematics Variables
 	bool _cineAbortable;
