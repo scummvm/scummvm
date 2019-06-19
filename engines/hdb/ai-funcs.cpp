@@ -50,6 +50,9 @@ void AI::initAllEnts() {
 			}
 		}
 	}
+
+	warning("STUB: initAllEnts: Cache graphics for Inventory and Deliveries");
+	warning("STUB: initAllEnts: LaserScan required");
 }
 
 // Check to see if we can get this entity
