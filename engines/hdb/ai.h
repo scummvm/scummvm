@@ -372,7 +372,7 @@ struct AIEntTypeInfo {
 	void (*initFunc2)(AIEntity *e);
 };
 
-AIEntTypeInfo aiEntList[];
+extern AIEntTypeInfo aiEntList[];
 
 struct CineCommand {
 	CineType cmdType;
