@@ -182,7 +182,7 @@ void HDBGame::useEntity(AIEntity *e) {
 
 	// Look at Entity
 	if (e->type != AI_RAILRIDER_ON) {
-		warning("STUB: HDBGame::useEntity AI::lookAtEntity required");
+		_ai->lookAtEntity(e);
 	}
 
 	// Grab animation
