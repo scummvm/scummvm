@@ -730,7 +730,13 @@ bool LuaScript::initScript(Common::SeekableReadStream *stream, const char *scrip
 		spawn names into Lua once they are implemented.
 	*/
 
-	warning("STUB: LuaScript::initScript: Load ai_all_ents");
+	// Set the Entity Spawn Names  in Lua
+	int j = 0;
+	while (aiEntList[j].luaName) {
+		lua_pushnumber(_state, aiEntList[j].type);
+		lua_setglobal(_state, aiEntList[j].luaName);
+		j++;
+	}
 
 	// Register panic callback function
 	lua_atpanic(_state, panicCB);
