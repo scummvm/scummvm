@@ -56,7 +56,8 @@ enum AudioId {
 
 enum MusicId {
 	kMusicIntro = 49,
-	kMusicOutro = 52
+	kMusicOutro = 52,
+	kMusicMadMonkeys = 51
 };
 
 class Sound {
@@ -67,6 +68,9 @@ public:
 
 	void play(AudioId index);
 	void play(MusicId index);
+	void playSiren();
+	void setVolume(int volume);
+	int getVolume();
 	void stop();
 	bool isPlaying();
 private:

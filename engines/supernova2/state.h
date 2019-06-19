@@ -165,6 +165,7 @@ public:
 	bool _processInput;
 	bool _guiEnabled;
 	bool _animationEnabled;
+	byte _roomBrightness;
 	Action _inputVerb;
 	Object _nullObject;
 	Object *_currentInputObject;
@@ -209,6 +210,7 @@ public:
 	void waitOnInput(int ticks);
 	bool waitOnInput(int ticks, Common::KeyCode &keycode);
 	void screenShake();
+	void roomBrightness() {}
 	void showMenu();
 	void animationOff();
 	void animationOn();
@@ -223,6 +225,8 @@ public:
 	void handleInput();
 	void handleTime();
 	void pauseTimer(bool pause);
+	void loadTime() {}
+	void saveTime() {}
 	void setAnimationTimer(int ticks);
 	void dead(StringId messageId);
 	int  dialog(int num, byte rowLength[6], StringId text[6], int number);

@@ -352,6 +352,7 @@ void GameManager::initState() {
 	_processInput = false;
 	_guiEnabled = true;
 	_animationEnabled = true;
+	_roomBrightness = 255;
 	_mouseClicked = false;
 	_keyPressed = false;
 	_mouseX = -1;

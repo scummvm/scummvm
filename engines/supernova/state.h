@@ -187,6 +187,7 @@ public:
 	void initRooms();
 	void destroyRooms();
 	void initGui();
+	bool canSaveGameStateCurrently();
 	bool genericInteract(Action verb, Object &obj1, Object &obj2);
 	bool isHelmetOff();
 	void great(uint number);

@@ -35,7 +35,8 @@
 
 namespace Supernova {
 
-MSNImage::MSNImage() {
+MSNImage::MSNImage(int MSPart)
+	: _MSPart(MSPart) {
 	_palette = nullptr;
 	_encodedImage = nullptr;
 	_filenumber = -1;
@@ -68,9 +69,17 @@ MSNImage::~MSNImage() {
 
 bool MSNImage::init(int filenumber) {
 	Common::File file;
-	if (!file.open(Common::String::format("msn_data.%03d", filenumber))) {
-		warning("Image data file msn_data.%03d could not be read!", filenumber);
-		return false;
+	if (_MSPart == 1) {
+		if (!file.open(Common::String::format("msn_data.%03d", filenumber))) {
+			warning("Image data file msn_data.%03d could not be read!", filenumber);
+			return false;
+		}
+	}
+	else if (_MSPart == 2) {
+		if (!file.open(Common::String::format("ms2_data.%03d", filenumber))) {
+			warning("Image data file ms2_data.%03d could not be read!", filenumber);
+			return false;
+		}
 	}
 
 	_filenumber = filenumber;
@@ -81,30 +90,49 @@ bool MSNImage::init(int filenumber) {
 
 bool MSNImage::loadFromEngineDataFile() {
 	Common::String name;
-	if (_filenumber == 1)
-		name = "IMG1";
-	else if (_filenumber == 2)
-		name = "IMG2";
-	else
-		return false;
+	Common::File f;
+	char id[5], lang[5];
+	id[4] = lang[4] = '\0';
+	if (_MSPart == 1) {
+		if (_filenumber == 1)
+			name = "IMG1";
+		else if (_filenumber == 2)
+			name = "IMG2";
+		else
+
+			return false;
+		if (!f.open(SUPERNOVA_DAT))
+			return false;
+		
+		f.read(id, 3);
+		if (strncmp(id, "MSN", 3) != 0)
+			return false;
+		int version = f.readByte();
+		if (version != SUPERNOVA_DAT_VERSION)
+			return false;
+	} else if (_MSPart == 2) {
+		if (_filenumber == 28)
+			name = "IMG1";
+		else
+			return false;
+
+		if (!f.open(SUPERNOVA2_DAT))
+			return false;
+
+		f.read(id, 3);
+		if (strncmp(id, "MS2", 3) != 0)
+			return false;
+		int version = f.readByte();
+		if (version != SUPERNOVA2_DAT_VERSION)
+			return false;
+	}
 
 	Common::String cur_lang = ConfMan.get("language");
 
 	// Note: we don't print any warning or errors here if we cannot find the file
 	// or the format is not as expected. We will get those warning when reading the
 	// strings anyway (actually the engine will even refuse to start).
-	Common::File f;
-	if (!f.open(SUPERNOVA_DAT))
-		return false;
 
-	char id[5], lang[5];
-	id[4] = lang[4] = '\0';
-	f.read(id, 3);
-	if (strncmp(id, "MSN", 3) != 0)
-		return false;
-	int version = f.readByte();
-	if (version != SUPERNOVA_DAT_VERSION)
-		return false;
 
 	while (!f.eos()) {
 		f.read(id, 4);
@@ -219,9 +247,11 @@ bool MSNImage::loadStream(Common::SeekableReadStream &stream) {
 }
 
 bool MSNImage::loadSections() {
-	bool isNewspaper = _filenumber == 1 || _filenumber == 2;
-	int imageWidth = isNewspaper ? 640 : 320;
-	int imageHeight = isNewspaper ? 480 : 200;
+	bool isNewspaper = (_MSPart == 1 && (_filenumber == 1 || _filenumber == 2)) ||
+					   (_MSPart == 2 && _filenumber == 38);
+	bool isCypheredText = _MSPart == 2 && _filenumber == 28 && ConfMan.get("language") == "en";
+	int imageWidth = isNewspaper || isCypheredText ? 640 : 320;
+	int imageHeight = isNewspaper || isCypheredText ? 480 : 200;
 	_pitch = imageWidth;
 
 	for (int section = 0; section < _numSections; ++section) {
@@ -240,6 +270,19 @@ bool MSNImage::loadSections() {
 				*surfacePixels++ = (_encodedImage[i] & 0x04) ? kColorWhite63 : kColorBlack;
 				*surfacePixels++ = (_encodedImage[i] & 0x02) ? kColorWhite63 : kColorBlack;
 				*surfacePixels++ = (_encodedImage[i] & 0x01) ? kColorWhite63 : kColorBlack;
+			}
+		} else if (isCypheredText) {
+			surface->create(imageWidth, imageHeight, g_system->getScreenFormat());
+			byte *surfacePixels = static_cast<byte *>(surface->getPixels());
+			for (int i = 0; i < imageWidth * imageHeight / 8; ++i) {
+				*surfacePixels++ = (_encodedImage[i] & 0x80) ? kColorWhite44 : kColorBlack;
+				*surfacePixels++ = (_encodedImage[i] & 0x40) ? kColorWhite44 : kColorBlack;
+				*surfacePixels++ = (_encodedImage[i] & 0x20) ? kColorWhite44 : kColorBlack;
+				*surfacePixels++ = (_encodedImage[i] & 0x10) ? kColorWhite44 : kColorBlack;
+				*surfacePixels++ = (_encodedImage[i] & 0x08) ? kColorWhite44 : kColorBlack;
+				*surfacePixels++ = (_encodedImage[i] & 0x04) ? kColorWhite44 : kColorBlack;
+				*surfacePixels++ = (_encodedImage[i] & 0x02) ? kColorWhite44 : kColorBlack;
+				*surfacePixels++ = (_encodedImage[i] & 0x01) ? kColorWhite44 : kColorBlack;
 			}
 		} else {
 			uint32 offset = (_section[section].addressHigh << 16) + _section[section].addressLow;
