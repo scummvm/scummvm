@@ -66,7 +66,7 @@ Aword *memory;
 //static AcdHdr dummyHeader;	/* Dummy to use until memory allocated */
 AcdHdr *header;
 
-int memTop = 0;			/* Top of load memory */
+int memTop;			    /* Top of load memory */
 
 int conjWord;			/* First conjunction in dictonary, for ',' */
 
@@ -217,12 +217,15 @@ void usage()
 
  */
 #ifdef _PROTOTYPES_
-void syserr(char *str)
+void syserr(const char *str)
 #else
 void syserr(str)
      char *str;
 #endif
 {
+#ifdef GLK
+	::error("%s", str);
+#else
   output("$n$nAs you enter the twilight zone of Adventures, you stumble \
 and fall to your knees. In front of you, you can vaguely see the outlines \
 of an Adventure that never was.$n$nSYSTEM ERROR: ");
@@ -247,6 +250,7 @@ of an Adventure that never was.$n$nSYSTEM ERROR: ");
 #endif
 
   terminate(0);
+#endif
 }
 
 
@@ -1515,8 +1519,10 @@ static void load()
   int i;
   char err[100];
 
+  Aword *ptr = (Aword *)&tmphdr;
   codfil->seek(0);
-  tmphdr.load(*codfil);
+  for (i = 0; i < sizeof(tmphdr) / sizeof(Aword); ++i, ++ptr)
+	  *ptr = codfil->readUint32LE();
   checkvers(&tmphdr);
 
   /* Allocate and load memory */
@@ -1535,14 +1541,14 @@ static void load()
 #endif
       memory = (Aword *)allocate(tmphdr.size * sizeof(Aword));
   }
+  memTop = tmphdr.size;
   header = (AcdHdr *) addrTo(0);
 
   if ((tmphdr.size * sizeof(Aword)) > codfil->size())
 	  ::error("Header size is greater than filesize");
 
   codfil->seek(0);
-  Aword *ptr = addrTo(0);
-  for (int idx = 0; idx < tmphdr.size; ++idx, ++ptr)
+  for (i = 0, ptr = memory; i < tmphdr.size; ++i, ++ptr)
 	  *ptr = codfil->readUint32LE();
 
   /* Calculate checksum */

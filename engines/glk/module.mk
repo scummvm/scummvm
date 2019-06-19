@@ -31,7 +31,6 @@ MODULE_OBJS := \
 	advsys/game.o \
 	advsys/glk_interface.o \
 	advsys/vm.o \
-	alan2/acode.o \
 	alan2/alan2.o \
 	alan2/detection.o \
 	alan2/alan_version.o \

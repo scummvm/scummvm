@@ -209,7 +209,11 @@ typedef enum VarClass {
 #define I_CLASS(x) ((x)>>28)
 #define I_OP(x)    ((x&0x8000000)?(x)|0x0f0000000:(x)&0x0fffffff)
 
+#include "common/pack-start.h"	// START STRUCT PACKING
 
+/**
+  * Game header 
+  */
 struct AcdHdr {
 	/* Important info */
 	char vers[4];		/* 01 - Version of compiler */
@@ -248,17 +252,9 @@ struct AcdHdr {
 	Aaddr freq;			/* 26 - Address to Char freq's for coding */
 	Aword acdcrc;		/* 27 - Checksum for acd code (excl. hdr) */
 	Aword txtcrc;		/* 28 - Checksum for text data file */
+} PACKED_STRUCT;
 
-	/**
-	 * Constructor
-	 */
-	AcdHdr();
-
-	/**
-	 * Loads the header from the passed stream
-	 */
-	void load(Common::SeekableReadStream &s);
-};
+#include "common/pack-end.h"	// END STRUCT PACKING
 
 /* Error message numbers */
 typedef enum MsgKind {

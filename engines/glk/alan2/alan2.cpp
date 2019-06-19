@@ -55,7 +55,7 @@ void Alan2::runGame() {
 	strncpy(codfnm, getFilename().c_str(), 255);
 	codfnm[255] = '\0';
 
-	run();
+	Glk::Alan2::run();
 }
 
 Common::Error Alan2::readSaveData(Common::SeekableReadStream *rs) {
