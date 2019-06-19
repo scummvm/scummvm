@@ -404,6 +404,7 @@ public:
 	bool getTableEnt(AIType type);
 	bool walkThroughEnt(AIType type);
 	void getItemSound(AIType type);
+	void lookAtEntity(AIEntity *e);
 
 	// Player Functions
 	AIEntity *getPlayer() {
@@ -475,6 +476,10 @@ public:
 	void cineFadeIn(bool isBlack, int steps);
 	void cineFadeOut(bool isBlack, int steps);
 
+	// Waypoint & Movement Functions
+	void lookAtXY(int x, int y);
+
+	// Cinematic Variables
 	Common::Array<CineCommand *> _cine;
 
 private:
