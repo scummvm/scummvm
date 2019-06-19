@@ -21,6 +21,7 @@
  */
 
 #include "common/system.h"
+#include "common/config-manager.h"
 #include "graphics/palette.h"
 #include "graphics/cursorman.h"
 
@@ -3704,17 +3705,26 @@ BstDoor::BstDoor(Supernova2Engine *vm, GameManager *gm) {
 	_objectState[16] = Object(_id, kStringLetter, kStringDefaultDescription, BST15, PRESS, 14, 0, 0);
 	_objectState[17] = Object(_id, kStringLetter, kStringDefaultDescription, BST16, PRESS, 15, 0, 0);
 	_objectState[18] = Object(_id, kStringDoor, kStringMassive, DOOR, EXIT | OPENABLE | CLOSED, 16, 16, 0, HALL, 2);
+
+	char germanPassword[16] =  {0, 1, 0, 0, 1, 0, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0};
+	char englishPassword[16] = {0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0};
+	if (ConfMan.get("language") == "en")
+		for (int i = 0; i < 16; i++)
+			_password[i] = englishPassword[i];
+	else
+		for (int i = 0; i < 16; i++)
+			_password[i] = germanPassword[i];
 }
 
 void BstDoor::onEntrance() {
-	setRoomSeen(true);
+	if (ConfMan.get("language") == "en")
+		_vm->_screen->renderMessage("You are almost there", kMessageNormal, 105, 130);
 }
 
 void BstDoor::animation() {
 }
 
 bool BstDoor::interact(Action verb, Object &obj1, Object &obj2) {
-	static char password[16] = {0, 1, 0, 0, 1, 0, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0};
 	if (_gm->move(verb, obj1)) {
 		_gm->passageConstruction();
 		_gm->_newRoom = true;
@@ -3726,7 +3736,7 @@ bool BstDoor::interact(Action verb, Object &obj1, Object &obj2) {
 			_vm->renderImage(number);
 		_vm->playSound(kAudioTaxiOpen);
 		for (number = 1; number <= 16; number++) {
-			if (isSectionVisible(number) != password[number - 1])
+			if (isSectionVisible(number) != _password[number - 1])
 				return true;
 		}
 		_gm->wait(2);
