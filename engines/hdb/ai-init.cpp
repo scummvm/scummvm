@@ -677,6 +677,8 @@ AI::~AI() {
 bool AI::init() {
 	warning("STUB: AI::init incomplete");
 
+	_playerRunning = false;
+
 	restartSystem();
 	return true;
 }
@@ -684,7 +686,17 @@ bool AI::init() {
 void AI::restartSystem() {
 	warning("STUB: AI::restartSystem incomplete");
 
+	// Clear Player
+	_player = NULL;
+	_playerDead = false;
+	_playerInvisible = false;
+	_playerOnIce = false;
+	_playerEmerging = false;
+
 	// Clear the Entity List
 	_ents->clear();
+
+	// Clear Cinematic System
+	_cineActive = _cameraLock = _playerLock = _cineAborted = false;
 }
 } // End of Namespace
