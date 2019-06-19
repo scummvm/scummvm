@@ -100,4 +100,59 @@ bool AI::walkThroughEnt(AIType type) {
 void AI::getItemSound(AIType type) {
 	warning("STUB: AI: getItemSound required");
 }
+
+void AI::lookAtEntity(AIEntity *e) {
+	lookAtXY(e->tileX, e->tileY);
+}
+
+// Change player direction to XY
+void AI::lookAtXY(int x, int y) {
+	int distX, distY;
+
+	distX = abs(_player->tileX - x);
+	distY = abs(_player->tileY - y);
+
+	if (distX > distY) {
+		// X takes precedence
+		if (x < _player->tileX) {
+			_player->dir = DIR_LEFT;
+		} else if (x > _player->tileX) {
+			_player->dir = DIR_RIGHT;
+		} else if (y < _player->tileY) {
+			_player->dir = DIR_UP;
+		} else {
+			_player->dir = DIR_DOWN;
+		}
+	} else {
+		// Y takes precedence
+		if (y < _player->tileY) {
+			_player->dir = DIR_UP;
+		} else if (y > _player->tileY) {
+			_player->dir = DIR_DOWN;
+		} else if (x < _player->tileX) {
+			_player->dir = DIR_LEFT;
+		} else {
+			_player->dir = DIR_RIGHT;
+		}
+	}
+
+	switch (_player->dir) {
+	case DIR_UP:
+		_player->state = STATE_STANDUP;
+		warning("STUB: Set _player->draw to Player standup_gfx");
+		break;
+	case DIR_DOWN:
+		_player->state = STATE_STANDDOWN;
+		warning("STUB: Set _player->draw to Player standdown_gfx");
+		break;
+	case DIR_LEFT:
+		_player->state = STATE_STANDLEFT;
+		warning("STUB: Set _player->draw to Player standleft_gfx");
+		break;
+	case DIR_RIGHT:
+		_player->state = STATE_STANDRIGHT;
+		warning("STUB: Set _player->draw to Player standright_gfx");
+		break;
+	}
+}
 } // End of Namespace
