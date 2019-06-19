@@ -68,9 +68,15 @@ AIEntity *AI::spawn(AIType type, AIDir dir, int x, int y, char *funcInit, char *
 	if (e->luaFuncUse[0] == '*')
 		e->luaFuncUse[0] = 0;
 
-	_ents->push_back(e);
+	e->standdownFrames = e->standupFrames = e->standleftFrames = e->standrightFrames = 0;
+	e->movedownFrames = e->moveupFrames = e->moveleftFrames = e->moverightFrames = 0;
+	e->blinkFrames = 0;
 
-	warning("STUB: AI::spawn: CacheEntGfx required");
+	if (!cacheEntGfx(e, (bool)callInit)) {
+		return NULL;
+	} else {
+		_ents->push_back(e);
+	}
 
 	return e;
 }
