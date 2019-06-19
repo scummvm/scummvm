@@ -102,7 +102,7 @@ void DrawMan::fillScreen(uint32 color) {
 
 void DrawMan::updateVideo() {
 	updateFade();
-	warning("STUB: DrawMan::updateVideo incomplete");
+	debug(9, "STUB: DrawMan::updateVideo incomplete");
 }
 
 void DrawMan::setFade(bool fadeIn, bool black, int steps) {
@@ -125,7 +125,7 @@ void DrawMan::setFade(bool fadeIn, bool black, int steps) {
 
 void DrawMan::updateFade() {
 	_fadeInfo.active = false;
-	warning("STUB: DrawMan::updateFade incomplete");
+	debug(9, "STUB: DrawMan::updateFade incomplete");
 }
 
 Tile *DrawMan::getTile(int index) {
