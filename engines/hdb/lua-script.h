@@ -44,6 +44,8 @@ public:
 	bool executeFile(const Common::String &filename);
 	void checkParameters(const char *func, int params);
 
+	const char *getStringOffStack();
+
 private:
 	lua_State *_state;
 	int _pcallErrorhandlerRegistryIndex;
@@ -56,7 +58,6 @@ private:
 	bool executeChunk(Common::String &chunk, uint chunkSize, const Common::String &chunkName) const;
 	void stripComments(char *chunk);
 	void addPatches(Common::String &chunk, const char *scriptName);
-
 };
 
 }
