@@ -148,6 +148,13 @@ void AI::processCines() {
 			}
 			complete = true;
 			break;
+		case C_USEENTITY:
+			_cine[i]->e = locateEntity(_cine[i]->string);
+			warning("STUB: PROCESSCINES: USEENTITY: HDBGame::useEntity required;");
+			warning("STUB: PROCESSCINES: USEENTITY: CheckActionList required;");
+			warning("STUB: PROCESSCINES: USEENTITY: CheckAutoList required;");
+			complete = true;
+			break;
 		case C_FADEIN:
 			if (!_cine[i]->start) {
 				g_hdb->_drawMan->setFade(true, (bool)_cine[i]->end, _cine[i]->speed);
