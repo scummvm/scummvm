@@ -144,7 +144,7 @@ void AI::processCines() {
 				_cine[i]->e->y = (int)_cine[i]->y;
 				_cine[i]->e->level = (int)_cine[i]->x2;
 			} else {
-				warning("Can't locate '%s' in setEntity", _cine[i]->title);
+				warning("Can't locate '%s' in setEntity", _cine[i]->string);
 			}
 			complete = true;
 			break;
