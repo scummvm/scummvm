@@ -24,6 +24,57 @@
 
 namespace HDB {
 
+AIEntity *AI::spawn(AIType type, AIDir dir, int x, int y, char *funcInit, char *funcAction, char *funcUse, AIDir dir2, int level, int value1, int value2, int callInit) {
+	AIEntity *e = new AIEntity;
+
+	e->type = type;
+	e->dir = dir;
+
+	// Set Co-ordinates & Speed
+	e->x = x * kTileWidth;
+	e->tileX = x;
+	e->y = y * kTileHeight;
+	e->tileY = y;
+	e->moveSpeed = kPlayerMoveSpeed; // Default Speed
+	if (!g_hdb->getActionMode()) {
+		e->moveSpeed /= 2;
+	}
+
+	// Other variables
+	e->dir2 = dir2;
+	if (!level)
+		level = 1;
+	e->level = level;
+	e->value1 = value1;
+	e->value2 = value2;
+	e->animCycle = 2;	// Game frames to wait before animating graphic frames
+	e->animDelay = e->animCycle;
+	e->animFrame = 0;
+
+	if (funcInit) {
+		strcpy(e->luaFuncInit, funcInit);
+	}
+	if (funcAction) {
+		strcpy(e->luaFuncAction, funcAction);
+	}
+	if (funcUse) {
+		strcpy(e->luaFuncUse, funcUse);
+	}
+
+	if (e->luaFuncInit[0] == '*')
+		e->luaFuncInit[0] = 0;
+	if (e->luaFuncAction[0] == '*')
+		e->luaFuncAction[0] = 0;
+	if (e->luaFuncUse[0] == '*')
+		e->luaFuncUse[0] = 0;
+
+	_ents->push_back(e);
+
+	warning("STUB: AI::spawn: CacheEntGfx required");
+
+	return e;
+}
+
 AIEntity *AI::locateEntity(const char *luaName) {
 	for (Common::Array<AIEntity *>::iterator it = _ents->begin(); it != _ents->end(); it++) {
 		if (Common::matchString((*it)->entityName, luaName)) {
