@@ -206,7 +206,12 @@ static int cinePlayVoice(lua_State *L) {
 }
 
 static int cineUseEntity(lua_State *L) {
-	warning("STUB: CINE USE ENTITY");
+	const char *string = lua_tostring(L, 1);
+
+	g_hdb->_lua->checkParameters("cineUseEntity", 1);
+
+	lua_pop(L, 1);
+	g_hdb->_ai->cineUse(string);
 	return 0;
 }
 
