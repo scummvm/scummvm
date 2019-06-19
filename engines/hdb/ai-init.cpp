@@ -668,6 +668,8 @@ AIEntTypeInfo aiEntList[] = {
 
 AI::AI() {
 	_ents = new Common::Array<AIEntity *>;
+	// REMOVE: Remove for final. Used here due to lack of a MENU
+	_numGems = _numGooCups = _numMonkeystones = 0;
 }
 
 AI::~AI() {
@@ -681,6 +683,10 @@ bool AI::init() {
 
 	restartSystem();
 	return true;
+}
+
+void AI::clearPersistent() {
+	_numGems = _numGooCups = _numMonkeystones = 0;
 }
 
 void AI::restartSystem() {
