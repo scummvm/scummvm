@@ -142,7 +142,58 @@ void HDBGame::paint() {
 
 // PLAYER is trying to use this entity
 void HDBGame::useEntity(AIEntity *e) {
-	warning("STUB: HDBGame::useEntity required");
+	warning("STUB: HDBGame::useEntity incomplete");
+
+	AIEntity *p, temp;
+	bool added;
+
+	p = _ai->getPlayer();
+	// Check if entity is on same level or if its a stairtop
+	if ((p->level != e->level) && !(_map->getMapBGTileFlags(p->tileX, p->tileY) & kFlagStairTop)) {
+		return;
+	}
+
+	added = false;
+
+	if (_ai->getTableEnt(e->type)) {
+		warning("STUB: HDBGame::useEntity Process Gettable Entity");
+	} else {
+		// These should be run over or run through
+		if (_ai->walkThroughEnt(e->type) || e->type == AI_NONE) {
+			return;
+		}
+
+		if (e->aiUse) {
+			e->aiUse(e);
+		}
+
+		if (e->luaFuncUse[0]) {
+			_lua->callFunction(e->luaFuncUse, 0);
+		}
+	}
+
+	/*
+		PUSHING
+		If its a pushable object, push it. Unless it's in/on water.
+	*/
+	if (e->type == AI_CRATE || e->type == AI_LIGHTBARREL || e->type == AI_BOOMBARREL || e->type == AI_MAGIC_EGG || e->type == AI_ICE_BLOCK || e->type == AI_FROGSTATUE || e->type == AI_DIVERTER) {
+		warning("STUB: HDBGame::useEntity PUSHING required");
+	}
+
+	// Look at Entity
+	if (e->type != AI_RAILRIDER_ON) {
+		warning("STUB: HDBGame::useEntity AI::lookAtEntity required");
+	}
+
+	// Grab animation
+	if (added) {
+		warning("STUB: HDBGame::useEntity show Grab Animation");
+	}
+
+	// Can't push it - make a sound
+	if (e->type == AI_HEAVYBARREL) {
+		warning("STUB: HDBGame::useEntity Play HEAVYBARREL sound");
+	}
 }
 
 Common::Error HDBGame::run() {
