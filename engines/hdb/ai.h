@@ -413,6 +413,7 @@ public:
 	// Entity Functions
 	AIEntity *locateEntity(const char *luaName);
 	void removeEntity(AIEntity *e);
+	void initAllEnts();
 	bool getTableEnt(AIType type);
 	bool walkThroughEnt(AIType type);
 	void getItemSound(AIType type);

@@ -37,6 +37,21 @@ void AI::removeEntity(AIEntity *e) {
 	_ents->erase(&e);
 }
 
+// Initializes each entity after map is loaded
+void AI::initAllEnts() {
+	for (Common::Array<AIEntity *>::iterator it = _ents->begin(); it != _ents->end(); it++) {
+		(*it)->aiInit((*it));
+		if ((*it)->luaFuncInit[0]) {
+			if (g_hdb->_lua->callFunction((*it)->luaFuncInit, 2)) {
+				strcpy((*it)->entityName, g_hdb->_lua->getStringOffStack());
+				strcpy((*it)->printedName, g_hdb->_lua->getStringOffStack());
+			} else {
+				warning("'%s' doesn't exists", (*it)->luaFuncInit);
+			}
+		}
+	}
+}
+
 // Check to see if we can get this entity
 bool AI::getTableEnt(AIType type) {
 	switch (type) {
