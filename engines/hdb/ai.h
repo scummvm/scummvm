@@ -27,6 +27,11 @@
 
 namespace HDB {
 
+enum {
+	kMaxInventory = 10,
+	kMaxDeliveries = 5
+};
+
 enum AIType {
 	AI_NONE,
 	AI_GUY,
@@ -374,6 +379,11 @@ struct AIEntTypeInfo {
 
 extern AIEntTypeInfo aiEntList[];
 
+struct InvEnt {
+	uint16 keep;
+	AIEntity ent;
+};
+
 struct CineCommand {
 	CineType cmdType;
 	double x, y;
@@ -479,6 +489,9 @@ public:
 	// Waypoint & Movement Functions
 	void lookAtXY(int x, int y);
 
+	// Inventory Functions
+	bool addToInventory(AIEntity *e);
+
 	// Cinematic Variables
 	Common::Array<CineCommand *> _cine;
 
@@ -493,6 +506,15 @@ private:
 	bool _playerOnIce;
 	bool _playerEmerging;
 	bool _playerRunning;
+
+	// Player Resources and Deliveries
+
+	int _numGems;
+	int _numGooCups;
+	int _numMonkeystones;
+
+	InvEnt _inventory[kMaxInventory];
+	int _numInventory;
 
 	// Cinematics Variables
 	bool _cineAbortable;
