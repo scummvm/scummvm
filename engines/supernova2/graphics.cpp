@@ -74,7 +74,6 @@ bool MS2Image::init(int filenumber) {
 	}
 
 	_filenumber = filenumber;
-
 	loadStream(file);
 
 	return true;

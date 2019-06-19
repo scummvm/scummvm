@@ -137,7 +137,6 @@ public:
 public:
 	Screen(Supernova2Engine *vm, ResourceManager *resMan);
 
-	void changeCursor(ResourceManager::CursorId);
 	int getViewportBrightness() const;
 	void setViewportBrightness(int brightness);
 	int getGuiBrightness() const;
@@ -177,6 +176,7 @@ public:
 	byte getTextCursorColor();
 	void setTextCursorColor(byte color);
 	void update();
+	void changeCursor(ResourceManager::CursorId);
 
 private:
 	void renderImageSection(const MS2Image *image, int section, bool invert);

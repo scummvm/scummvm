@@ -29,6 +29,7 @@
 
 #include "supernova/imageid.h"
 #include "supernova/msn_def.h"
+#include "supernova2/resman.h"
 
 namespace Supernova {
 

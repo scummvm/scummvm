@@ -145,16 +145,6 @@ bool GameManager::deserialize(Common::ReadStream *in, int version) {
 	return !in->err();
 }
 
-StringId GameManager::guiCommands[] = {
-	kStringCommandGo, kStringCommandLook, kStringCommandTake, kStringCommandOpen, kStringCommandClose,
-	kStringCommandPress, kStringCommandPull, kStringCommandUse, kStringCommandTalk, kStringCommandGive
-};
-
-StringId GameManager::guiStatusCommands[] = {
-	kStringStatusCommandGo, kStringStatusCommandLook, kStringStatusCommandTake, kStringStatusCommandOpen, kStringStatusCommandClose,
-	kStringStatusCommandPress, kStringStatusCommandPull, kStringStatusCommandUse, kStringStatusCommandTalk, kStringStatusCommandGive
-};
-
 void Inventory::add(Object &obj) {
 	if (_numObjects < kMaxCarry) {
 		_inventory[_numObjects++] = &obj;
@@ -206,6 +196,7 @@ Object *Inventory::get(ObjectId id) const {
 	return _nullObject;
 }
 
+
 GuiElement::GuiElement()
 	: _isHighlighted(false)
 	, _bgColorNormal(kColorWhite25)
@@ -254,9 +245,20 @@ void GuiElement::setHighlight(bool isHighlighted_) {
 	}
 }
 
-GameManager::GameManager(Supernova2Engine *vm)
+StringId GameManager::guiCommands[] = {
+	kStringCommandGo, kStringCommandLook, kStringCommandTake, kStringCommandOpen, kStringCommandClose,
+	kStringCommandPress, kStringCommandPull, kStringCommandUse, kStringCommandTalk, kStringCommandGive
+};
+
+StringId GameManager::guiStatusCommands[] = {
+	kStringStatusCommandGo, kStringStatusCommandLook, kStringStatusCommandTake, kStringStatusCommandOpen, kStringStatusCommandClose,
+	kStringStatusCommandPress, kStringStatusCommandPull, kStringStatusCommandUse, kStringStatusCommandTalk, kStringStatusCommandGive
+};
+
+GameManager::GameManager(Supernova2Engine *vm, Sound *sound)
 	: _inventory(&_nullObject, _inventoryScroll)
 	, _vm(vm)
+    , _sound(sound)
     , _mouseClickType(Common::EVENT_INVALID) {
 	initRooms();
 	changeRoom(INTRO);
@@ -594,14 +596,14 @@ void GameManager::processInput(Common::KeyState &state) {
 		// show game info
 		break;
 	case Common::KEYCODE_F4:
-		//_vm->setTextSpeed();
+		_vm->setTextSpeed();
 		break;
 	case Common::KEYCODE_F5:
 		// load/save
 		break;
 	case Common::KEYCODE_x:
 		if (state.flags & Common::KBD_ALT) {
-			//if (_vm->quitGameDialog())
+			if (_vm->quitGameDialog())
 				_vm->quitGame();
 		}
 		break;
@@ -825,146 +827,6 @@ void GameManager::setObjectNull(Object *&obj) {
 
 bool GameManager::isNullObject(Object *obj) {
 	return obj == &_nullObject;
-}
-
-void GameManager::screenShake() {
-	for (int i = 0; i < 12; ++i) {
-		_vm->_system->setShakePos(8);
-		wait(1);
-		_vm->_system->setShakePos(0);
-		wait(1);
-	}
-}
-
-void GameManager::showMenu() {
-	_vm->renderBox(0, 138, 320, 62, 0);
-	_vm->renderBox(0, 140, 320, 9, kColorWhite25);
-	drawCommandBox();
-	_vm->renderBox(281, 161, 39, 39, kColorWhite25);
-	drawInventory();
-}
-
-void GameManager::drawMapExits() {
-// TODO: Preload _exitList on room entry instead on every call
-	_vm->renderBox(281, 161, 39, 39, kColorWhite25);
-
-	if ((_currentRoom >= _rooms[PYR_ENTRANCE] && _currentRoom <= _rooms[HOLE_ROOM]) ||
-		(_currentRoom >= _rooms[FLOORDOOR] && _currentRoom <= _rooms[BST_DOOR]))
-		compass();
-	else {
-		for (int i = 0; i < 25; i++)
-			_exitList[i] = -1;
-		for (int i = 0; i < kMaxObject; i++) {
-			if (_currentRoom->getObject(i)->hasProperty(EXIT)) {
-				byte r = _currentRoom->getObject(i)->_direction;
-				_exitList[r] = i;
-				int x = 284 + 7 * (r % 5);
-				int y = 164 + 7 * (r / 5);
-				_vm->renderBox(x, y, 5, 5, kColorDarkRed);
-			}
-		}
-	}
-}
-
-void GameManager::animationOff() {
-	_animationEnabled = false;
-}
-
-void GameManager::animationOn() {
-	_animationEnabled = true;
-}
-
-void GameManager::edit(Common::String &input, int x, int y, uint length) {
-	bool isEditing = true;
-	uint cursorIndex = input.size();
-	// NOTE: Pixels for char needed = kFontWidth + 2px left and right side bearing
-	int overdrawWidth = ((int)((length + 1) * (kFontWidth + 2)) > (kScreenWidth - x)) ?
-						kScreenWidth - x : (length + 1) * (kFontWidth + 2);
-
-	_guiEnabled = false;
-	while (isEditing) {
-		_vm->_screen->setTextCursorPos(x, y);
-		_vm->_screen->setTextCursorColor(kColorWhite99);
-		_vm->renderBox(x, y - 1, overdrawWidth, 9, kColorWhite35);
-		for (uint i = 0; i < input.size(); ++i) {
-			// Draw char highlight depending on cursor position
-			if (i == cursorIndex) {
-				_vm->renderBox(_vm->_screen->getTextCursorPos().x, y - 1,
-							   Screen::textWidth(input[i]), 9, kColorWhite99);
-				_vm->_screen->setTextCursorColor(kColorWhite35);
-				_vm->renderText(input[i]);
-				_vm->_screen->setTextCursorColor(kColorWhite99);
-			} else
-				_vm->renderText(input[i]);
-		}
-
-		if (cursorIndex == input.size()) {
-			_vm->renderBox(_vm->_screen->getTextCursorPos().x + 1, y - 1, 6, 9, kColorWhite35);
-			_vm->renderBox(_vm->_screen->getTextCursorPos().x, y - 1, 1, 9, kColorWhite99);
-		}
-
-		getKeyInput(true);
-		if (_vm->shouldQuit())
-			break;
-		switch (_key.keycode) {
-		case Common::KEYCODE_RETURN:
-		case Common::KEYCODE_ESCAPE:
-			isEditing = false;
-			break;
-		case Common::KEYCODE_UP:
-		case Common::KEYCODE_DOWN:
-			cursorIndex = input.size();
-			break;
-		case Common::KEYCODE_LEFT:
-			if (cursorIndex != 0)
-				--cursorIndex;
-			break;
-		case Common::KEYCODE_RIGHT:
-			if (cursorIndex != input.size())
-				++cursorIndex;
-			break;
-		case Common::KEYCODE_DELETE:
-			if (cursorIndex != input.size())
-				input.deleteChar(cursorIndex);
-			break;
-		case Common::KEYCODE_BACKSPACE:
-			if (cursorIndex != 0) {
-				--cursorIndex;
-				input.deleteChar(cursorIndex);
-			}
-			break;
-		default:
-			if (Common::isPrint(_key.ascii) && input.size() < length) {
-				input.insertChar(_key.ascii, cursorIndex);
-				++cursorIndex;
-			}
-			break;
-		}
-	}
-	_guiEnabled = true;
-}
-
-void GameManager::takeMoney(int amount) {
-	_state._money += amount;
-	_vm->setGameString(kStringMoney, Common::String::format("%d Xa", _state._money));
-}
-
-void GameManager::drawStatus() {
-	int index = static_cast<int>(_inputVerb);
-	_vm->renderBox(0, 140, 320, 9, kColorWhite25);
-	_vm->renderText(_vm->getGameString(guiStatusCommands[index]), 1, 141, kColorDarkGreen);
-
-	if (isNullObject(_inputObject[0]))
-		_vm->renderText(_currentInputObject->_name);
-	else {
-		_vm->renderText(_inputObject[0]->_name);
-		if (_inputVerb == ACTION_GIVE)
-			_vm->renderText(kPhrasalVerbParticleGiveTo);
-		else if (_inputVerb == ACTION_USE)
-			_vm->renderText(kPhrasalVerbParticleUseWith);
-
-		_vm->renderText(_currentInputObject->_name);
-	}
 }
 
 void GameManager::sentence(int number, bool brightness) {
@@ -1245,6 +1107,146 @@ void GameManager::pauseTimer(bool pause) {
 	} else {
 		_oldTime = g_system->getMillis();
 		_timerPaused = false;
+	}
+}
+
+void GameManager::screenShake() {
+	for (int i = 0; i < 12; ++i) {
+		_vm->_system->setShakePos(8);
+		wait(1);
+		_vm->_system->setShakePos(0);
+		wait(1);
+	}
+}
+
+void GameManager::showMenu() {
+	_vm->renderBox(0, 138, 320, 62, 0);
+	_vm->renderBox(0, 140, 320, 9, kColorWhite25);
+	drawCommandBox();
+	_vm->renderBox(281, 161, 39, 39, kColorWhite25);
+	drawInventory();
+}
+
+void GameManager::drawMapExits() {
+// TODO: Preload _exitList on room entry instead on every call
+	_vm->renderBox(281, 161, 39, 39, kColorWhite25);
+
+	if ((_currentRoom >= _rooms[PYR_ENTRANCE] && _currentRoom <= _rooms[HOLE_ROOM]) ||
+		(_currentRoom >= _rooms[FLOORDOOR] && _currentRoom <= _rooms[BST_DOOR]))
+		compass();
+	else {
+		for (int i = 0; i < 25; i++)
+			_exitList[i] = -1;
+		for (int i = 0; i < kMaxObject; i++) {
+			if (_currentRoom->getObject(i)->hasProperty(EXIT)) {
+				byte r = _currentRoom->getObject(i)->_direction;
+				_exitList[r] = i;
+				int x = 284 + 7 * (r % 5);
+				int y = 164 + 7 * (r / 5);
+				_vm->renderBox(x, y, 5, 5, kColorDarkRed);
+			}
+		}
+	}
+}
+
+void GameManager::animationOff() {
+	_animationEnabled = false;
+}
+
+void GameManager::animationOn() {
+	_animationEnabled = true;
+}
+
+void GameManager::edit(Common::String &input, int x, int y, uint length) {
+	bool isEditing = true;
+	uint cursorIndex = input.size();
+	// NOTE: Pixels for char needed = kFontWidth + 2px left and right side bearing
+	int overdrawWidth = ((int)((length + 1) * (kFontWidth + 2)) > (kScreenWidth - x)) ?
+						kScreenWidth - x : (length + 1) * (kFontWidth + 2);
+
+	_guiEnabled = false;
+	while (isEditing) {
+		_vm->_screen->setTextCursorPos(x, y);
+		_vm->_screen->setTextCursorColor(kColorWhite99);
+		_vm->renderBox(x, y - 1, overdrawWidth, 9, kColorWhite35);
+		for (uint i = 0; i < input.size(); ++i) {
+			// Draw char highlight depending on cursor position
+			if (i == cursorIndex) {
+				_vm->renderBox(_vm->_screen->getTextCursorPos().x, y - 1,
+							   Screen::textWidth(input[i]), 9, kColorWhite99);
+				_vm->_screen->setTextCursorColor(kColorWhite35);
+				_vm->renderText(input[i]);
+				_vm->_screen->setTextCursorColor(kColorWhite99);
+			} else
+				_vm->renderText(input[i]);
+		}
+
+		if (cursorIndex == input.size()) {
+			_vm->renderBox(_vm->_screen->getTextCursorPos().x + 1, y - 1, 6, 9, kColorWhite35);
+			_vm->renderBox(_vm->_screen->getTextCursorPos().x, y - 1, 1, 9, kColorWhite99);
+		}
+
+		getKeyInput(true);
+		if (_vm->shouldQuit())
+			break;
+		switch (_key.keycode) {
+		case Common::KEYCODE_RETURN:
+		case Common::KEYCODE_ESCAPE:
+			isEditing = false;
+			break;
+		case Common::KEYCODE_UP:
+		case Common::KEYCODE_DOWN:
+			cursorIndex = input.size();
+			break;
+		case Common::KEYCODE_LEFT:
+			if (cursorIndex != 0)
+				--cursorIndex;
+			break;
+		case Common::KEYCODE_RIGHT:
+			if (cursorIndex != input.size())
+				++cursorIndex;
+			break;
+		case Common::KEYCODE_DELETE:
+			if (cursorIndex != input.size())
+				input.deleteChar(cursorIndex);
+			break;
+		case Common::KEYCODE_BACKSPACE:
+			if (cursorIndex != 0) {
+				--cursorIndex;
+				input.deleteChar(cursorIndex);
+			}
+			break;
+		default:
+			if (Common::isPrint(_key.ascii) && input.size() < length) {
+				input.insertChar(_key.ascii, cursorIndex);
+				++cursorIndex;
+			}
+			break;
+		}
+	}
+	_guiEnabled = true;
+}
+
+void GameManager::takeMoney(int amount) {
+	_state._money += amount;
+	_vm->setGameString(kStringMoney, Common::String::format("%d Xa", _state._money));
+}
+
+void GameManager::drawStatus() {
+	int index = static_cast<int>(_inputVerb);
+	_vm->renderBox(0, 140, 320, 9, kColorWhite25);
+	_vm->renderText(_vm->getGameString(guiStatusCommands[index]), 1, 141, kColorDarkGreen);
+
+	if (isNullObject(_inputObject[0]))
+		_vm->renderText(_currentInputObject->_name);
+	else {
+		_vm->renderText(_inputObject[0]->_name);
+		if (_inputVerb == ACTION_GIVE)
+			_vm->renderText(kPhrasalVerbParticleGiveTo);
+		else if (_inputVerb == ACTION_USE)
+			_vm->renderText(kPhrasalVerbParticleUseWith);
+
+		_vm->renderText(_currentInputObject->_name);
 	}
 }
 

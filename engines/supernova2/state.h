@@ -135,7 +135,7 @@ private:
 
 class GameManager {
 public:
-	GameManager(Supernova2Engine *vm);
+	GameManager(Supernova2Engine *vm, Sound *sound);
 	~GameManager();
 
 	void updateEvents();
@@ -148,6 +148,7 @@ public:
 	static StringId guiCommands[];
 	static StringId guiStatusCommands[];
 	Supernova2Engine *_vm;
+	Sound *_sound;
 	Common::KeyState _key;
 	Common::EventType _mouseClickType;
 	bool _mouseClicked;
