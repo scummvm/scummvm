@@ -679,6 +679,17 @@ AI::~AI() {
 bool AI::init() {
 	warning("STUB: AI::init incomplete");
 
+	// Clear Waypoint list and load Waypoint graphics
+	_numWaypoints = 0;
+	_waypointGfx[0] = new Tile;
+	_waypointGfx[0]->load(g_hdb->_fileMan->findFirstData("icon_waypoint_select1", TYPE_TILE32));
+	_waypointGfx[1] = new Tile;
+	_waypointGfx[1]->load(g_hdb->_fileMan->findFirstData("icon_waypoint_select2", TYPE_TILE32));
+	_waypointGfx[2] = new Tile;
+	_waypointGfx[2]->load(g_hdb->_fileMan->findFirstData("icon_waypoint_select3", TYPE_TILE32));
+	_waypointGfx[3] = new Tile;
+	_waypointGfx[3]->load(g_hdb->_fileMan->findFirstData("icon_waypoint_select4", TYPE_TILE32));
+
 	_playerRunning = false;
 
 	restartSystem();
