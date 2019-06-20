@@ -462,6 +462,9 @@ public:
 	void removeEntity(AIEntity *e);
 	void setEntityGoal(AIEntity *e, int x, int y);
 	void initAllEnts();
+
+	void animLuaEntity(const char *initName, AIState st);
+
 	bool getTableEnt(AIType type);
 	bool walkThroughEnt(AIType type);
 	void getItemSound(AIType type);

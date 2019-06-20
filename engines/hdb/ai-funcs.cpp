@@ -589,6 +589,16 @@ void AI::initAllEnts() {
 	warning("STUB: initAllEnts: LaserScan required");
 }
 
+void AI::animLuaEntity(const char *initName, AIState st) {
+	for (Common::Array<AIEntity *>::iterator it = _ents->begin(); it != _ents->end(); it++) {
+		if (Common::matchString((*it)->entityName, initName)) {
+			(*it)->state = st;
+			(*it)->animFrame = 0;
+			(*it)->animDelay = (*it)->animCycle;
+		}
+	}
+}
+
 // Check to see if we can get this entity
 bool AI::getTableEnt(AIType type) {
 	switch (type) {
