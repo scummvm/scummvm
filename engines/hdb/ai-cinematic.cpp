@@ -273,6 +273,18 @@ void AI::cineSetEntity(const char *entName, int x, int y, int level) {
 	_cine.push_back(cmd);
 }
 
+void AI::cineMoveEntity(const char *entName, int x, int y, int level, int speed) {
+	CineCommand *cmd = new CineCommand;
+	cmd->x = x;
+	cmd->y = y;
+	cmd->x2 = level;
+	cmd->start = 0;
+	cmd->speed = speed;
+	cmd->title = entName;
+	cmd->cmdType = C_MOVEENTITY;
+	_cine.push_back(cmd);
+}
+
 void AI::cineUse(const char *entName) {
 	CineCommand *cmd = new CineCommand;
 	cmd->string = entName;

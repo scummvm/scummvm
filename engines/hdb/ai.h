@@ -535,6 +535,7 @@ public:
 	void cineWait(int seconds);
 	void cineWaitUntilDone();
 	void cineSetEntity(const char *entName, int x, int y, int level);
+	void cineMoveEntity(const char *entName, int x, int y, int level, int speed);
 	void cineUse(const char *entName);
 	void cineFadeIn(bool isBlack, int steps);
 	void cineFadeOut(bool isBlack, int steps);
