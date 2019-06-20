@@ -60,6 +60,8 @@ private:
 	void addPatches(Common::String &chunk, const char *scriptName);
 };
 
+void lua_printstack(lua_State *L);
+
 }
 
 #endif // !HDB_LUA_SCRIPT_H
