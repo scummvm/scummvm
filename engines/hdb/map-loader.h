@@ -43,12 +43,16 @@ struct MSMIcon {
 	uint16	dir;					// direction entity is facing
 	uint16	level;					// which floor level entity is on
 	uint16	value1, value2;
+
+	MSMIcon(): icon(0), x(0), y(0), funcInit(""), funcAction(""), funcUse(""), dir(0), level(0), value1(0), value2(0) {}
 };
 
 struct SeeThroughTile {
 	uint16 x;
 	uint16 y;
 	uint16 tile;
+
+	SeeThroughTile() : x(0), y(0), tile(0) {}
 };
 
 class Map {
