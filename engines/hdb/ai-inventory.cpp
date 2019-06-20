@@ -61,7 +61,7 @@ bool AI::addToInventory(AIEntity *e) {
 		return false;
 	}
 
-	memcpy(&_inventory[_numInventory].ent, e, sizeof(AIEntity));
+	_inventory[_numInventory]->ent = e;
 	_numInventory++;
 
 	// If weapon, ready it
