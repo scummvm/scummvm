@@ -308,7 +308,13 @@ static int cineFunction(lua_State *L) {
 }
 
 static int cineEntityFace(lua_State *L) {
-	warning("STUB: CINE ENTITY FACE");
+	const char *luaName = lua_tostring(L, 1);
+	double dir = lua_tonumber(L, 2);
+
+	g_hdb->_lua->checkParameters("CineEntityFace", 2);
+
+	lua_pop(L, 2);
+	g_hdb->_ai->cineEntityFace(luaName, dir);
 	return 0;
 }
 
