@@ -79,4 +79,21 @@ bool AI::addToInventory(AIEntity *e) {
 	return true;
 }
 
+// Clear out the Player inventory except Gems,
+// Monkeystones and Goo Cups unless its marked
+void AI::clearInventory() {
+	int keepslot = 0;
+	for (int i = 0; i < _numInventory; i++) {
+		if (!_inventory[i]->keep) {
+			_inventory[i] = NULL;
+		} else {
+			if (i != keepslot) {
+				_inventory[keepslot] = _inventory[i];
+				_inventory[i] = NULL;
+			}
+			keepslot++;
+		}
+	}
+	_numInventory = keepslot;
+}
 } // End of Namespace

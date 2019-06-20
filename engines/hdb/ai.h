@@ -636,6 +636,7 @@ public:
 
 	// Inventory Functions
 	bool addToInventory(AIEntity *e);
+	void clearInventory();
 
 	// Cinematic Variables
 	Common::Array<CineCommand *> _cine;
