@@ -32,6 +32,7 @@ enum {
 	kMaxDeathFrames = 12,
 	kMaxInventory = 10,
 	kMaxDeliveries = 5,
+	kMaxWaypoints = 10,
 	kPlayerMoveSpeed = 4,
 	kEnemyMoveSpeed = 2,
 	kPushMoveSpeed = (kPlayerMoveSpeed >> 1)
@@ -423,6 +424,10 @@ struct InvEnt {
 	AIEntity ent;
 };
 
+struct Waypoint {
+	int x, y, level;
+};
+
 struct CineCommand {
 	CineType cmdType;
 	double x, y;
@@ -621,6 +626,10 @@ private:
 
 	InvEnt _inventory[kMaxInventory];
 	int _numInventory;
+
+	Waypoint _waypoints[kMaxWaypoints];
+	int _numWaypoints;
+	Tile *_waypointGfx[4]; // Animating waypoint gfx
 
 	// Cinematics Variables
 	bool _cineAbortable;
