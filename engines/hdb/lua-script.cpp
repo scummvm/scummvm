@@ -960,6 +960,13 @@ void LuaScript::checkParameters(const char *func, int params) {
 	}
 }
 
+void lua_printstack(lua_State *L) {
+	int n = lua_gettop(L);
+	for (int i = 1; i <= n; i++)  {
+		debug(1, "STACK %d %s %s", i, lua_tostring(L, i), luaL_typename(L, i));
+	}
+}
+
 const char *LuaScript::getStringOffStack() {
 	if (!_systemInit) {
 		return NULL;
