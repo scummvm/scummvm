@@ -200,6 +200,18 @@ void AI::cineStart(bool abortable, const char *abortFunc) {
 	_cameraLock = false;
 }
 
+void AI::cineLockPlayer() {
+	CineCommand *cmd = new CineCommand;
+	cmd->cmdType = C_LOCKPLAYER;
+	_cine.push_back(cmd);
+}
+
+void AI::cineUnlockPlayer() {
+	CineCommand *cmd = new CineCommand;
+	cmd->cmdType = C_UNLOCKPLAYER;
+	_cine.push_back(cmd);
+}
+
 void AI::cineSetCamera(int x, int y) {
 	CineCommand *cmd = new CineCommand;
 	cmd->x = x * kTileWidth;
