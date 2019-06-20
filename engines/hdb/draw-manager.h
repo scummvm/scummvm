@@ -82,6 +82,8 @@ public:
 	int getTileIndex(const char *name);
 	Picture *getPicture(const char *name);
 
+	// Returns: true->Tile, false->Pic
+	bool selectGfxType(const char *name);
 	Tile *getTileGfx(const char *name, uint32 size);
 	Picture *getPicGfx(const char *name, uint32 size);
 

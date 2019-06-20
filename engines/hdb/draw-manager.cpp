@@ -169,6 +169,53 @@ Picture *DrawMan::getPicture(const char *name) {
 	return picture;
 }
 
+// Returns: true->Tile, false->Pic
+bool DrawMan::selectGfxType(const char *name) {
+	// Check for Pic types
+	if (Common::matchString(name, "clubup1"))
+		return false;
+	if (Common::matchString(name, "clubup2"))
+		return false;
+	if (Common::matchString(name, "clubup3"))
+		return false;
+	if (Common::matchString(name, "clubup4"))
+		return false;
+	if (Common::matchString(name, "clubdown1"))
+		return false;
+	if (Common::matchString(name, "clubdown2"))
+		return false;
+	if (Common::matchString(name, "clubdown3"))
+		return false;
+	if (Common::matchString(name, "clubdown4"))
+		return false;
+	if (Common::matchString(name, "clubleft1"))
+		return false;
+	if (Common::matchString(name, "clubleft2"))
+		return false;
+	if (Common::matchString(name, "clubleft3"))
+		return false;
+	if (Common::matchString(name, "clubleft4"))
+		return false;
+	if (Common::matchString(name, "clubright1"))
+		return false;
+	if (Common::matchString(name, "clubright2"))
+		return false;
+	if (Common::matchString(name, "clubright3"))
+		return false;
+	if (Common::matchString(name, "clubright4"))
+		return false;
+	if (Common::matchString(name, "slug_shot1"))
+		return false;
+	if (Common::matchString(name, "slug_shot2"))
+		return false;
+	if (Common::matchString(name, "slug_shot3"))
+		return false;
+	if (Common::matchString(name, "slug_shot4"))
+		return false;
+
+	return true;
+}
+
 Tile *DrawMan::getTileGfx(const char *name, uint32 size) {
 	// Try to find graphic
 	for (Common::Array<GfxCache *>::iterator it = _gfxCache->begin(); it != _gfxCache->end(); it++) {
