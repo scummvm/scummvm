@@ -52,7 +52,7 @@ struct GfxCache {
 	char name[32];
 	Tile *gfx;
 	uint32 size;
-	uint16 loaded;
+	int16 loaded;
 
 	GfxCache() : name(""), gfx(NULL), size(0), loaded(0) {}
 };
