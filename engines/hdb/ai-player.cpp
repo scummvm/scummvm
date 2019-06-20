@@ -132,7 +132,50 @@ void aiPlayerAction(AIEntity *e) {
 }
 
 void aiPlayerDraw(AIEntity *e, int mx, int my) {
-	warning("STUB: AI: aiPlayerDraw required");
+	switch (e->state) {
+	case STATE_ATK_CLUB_UP:
+		g_hdb->_ai->_clubUpGfx[e->animFrame]->drawMasked(e->x + e->drawXOff - mx, e->y + e->drawYOff - my);
+		break;
+	case STATE_ATK_CLUB_DOWN:
+		g_hdb->_ai->_clubDownGfx[e->animFrame]->drawMasked(e->x + e->drawXOff - mx, e->y + e->drawYOff - my);
+		break;
+	case STATE_ATK_CLUB_LEFT:
+		g_hdb->_ai->_clubLeftGfx[e->animFrame]->drawMasked(e->x + e->drawXOff - mx, e->y + e->drawYOff - my);
+		break;
+	case STATE_ATK_CLUB_RIGHT:
+		g_hdb->_ai->_clubRightGfx[e->animFrame]->drawMasked(e->x + e->drawXOff - mx, e->y + e->drawYOff - my);
+		break;
+	default:
+		warning("AI-PLAYER: aiPlayerDraw: Unintended State");
+		break;
+	}
+
+	if (e->sequence) {
+		static int frame = 0;
+		switch (e->dir) {
+		case DIR_UP:
+			g_hdb->_ai->_stunLightningGfx[frame]->drawMasked(e->x - mx, e->y - 32 - my);
+			g_hdb->_ai->_stunLightningGfx[frame]->drawMasked(e->x - mx, e->y - 64 - my);
+			break;
+		case DIR_DOWN:
+			g_hdb->_ai->_stunLightningGfx[frame]->drawMasked(e->x - mx, e->y + 32 - my);
+			g_hdb->_ai->_stunLightningGfx[frame]->drawMasked(e->x - mx, e->y + 64 - my);
+			break;
+		case DIR_LEFT:
+			g_hdb->_ai->_stunLightningGfx[frame]->drawMasked(e->x - 32 - mx, e->y - my);
+			g_hdb->_ai->_stunLightningGfx[frame]->drawMasked(e->x - 64 - mx, e->y - my);
+			break;
+		case DIR_RIGHT:
+			g_hdb->_ai->_stunLightningGfx[frame]->drawMasked(e->x + 32 - mx, e->y - my);
+			g_hdb->_ai->_stunLightningGfx[frame]->drawMasked(e->x + 64 - mx, e->y - my);
+			break;
+		case DIR_NONE:
+			warning("AI-PLAYER: aiPlayerDraw: DIR_NONE found");
+			break;
+		}
+
+		frame = (frame + 1) & 3;
+	}
 }
 
 void aiGemAttackInit(AIEntity *e) {
