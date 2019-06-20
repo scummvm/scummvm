@@ -234,7 +234,16 @@ static int cineRemoveEntity(lua_State *L) {
 }
 
 static int cineMoveEntity(lua_State *L) {
-	warning("STUB: CINE MOVE ENTITY");
+	const char *entName = lua_tostring(L, 1);
+	double x = lua_tonumber(L, 2);
+	double y = lua_tonumber(L, 3);
+	double level = lua_tonumber(L, 4);
+	double speed = lua_tonumber(L, 5);
+
+	g_hdb->_lua->checkParameters("cineMoveEntity", 5);
+
+	lua_pop(L, 5);
+	g_hdb->_ai->cineMoveEntity(entName, (int)x, (int)y, (int)level, (int)speed);
 	return 0;
 }
 

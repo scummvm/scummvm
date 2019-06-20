@@ -178,7 +178,7 @@ void AI::processCines() {
 					complete = true;
 				}
 			}
-
+			break;
 		case C_USEENTITY:
 			_cine[i]->e = locateEntity(_cine[i]->string);
 			warning("STUB: PROCESSCINES: USEENTITY: HDBGame::useEntity required;");
