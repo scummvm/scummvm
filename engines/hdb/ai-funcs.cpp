@@ -551,7 +551,41 @@ void AI::initAllEnts() {
 		}
 	}
 
-	warning("STUB: initAllEnts: Cache graphics for Inventory and Deliveries");
+	for (int i = 0; i < _numInventory; i++) {
+		AIEntity *temp = &_inventory[i].ent;
+
+		// Clear out all ptrs in entity before writing
+		for (int j = 0; i < kMaxAnimFrames; i++) {
+			temp->blinkGfx[j] = NULL;
+			temp->movedownGfx[j] = NULL;
+			temp->moveupGfx[j] = NULL;
+			temp->moveleftGfx[j] = NULL;
+			temp->moverightGfx[j] = NULL;
+			temp->standdownGfx[j] = NULL;
+			temp->standupGfx[j] = NULL;
+			temp->standleftGfx[j] = NULL;
+			temp->standrightGfx[j] = NULL;
+			temp->special1Gfx[j] = NULL;
+		}
+
+		temp->blinkFrames = 0;
+		temp->movedownFrames = 0;
+		temp->moveupFrames = 0;
+		temp->moveleftFrames = 0;
+		temp->moverightFrames = 0;
+		temp->standdownFrames = 0;
+		temp->standupFrames = 0;
+		temp->standleftFrames = 0;
+		temp->standrightFrames = 0;
+
+		temp->draw = NULL;
+		temp->aiDraw = NULL;
+		temp->aiAction = temp->aiInit = temp->aiUse = NULL;
+
+		cacheEntGfx(temp, false);
+	}
+
+	warning("STUB: initAllEnts: Cache graphics for Deliveries");
 	warning("STUB: initAllEnts: LaserScan required");
 }
 
