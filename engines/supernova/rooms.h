@@ -26,6 +26,7 @@
 #include "common/str.h"
 
 #include "supernova/msn_def.h"
+#include "supernova/room.h"
 
 namespace Common {
 class ReadStream;
@@ -36,43 +37,6 @@ namespace Supernova {
 
 class GameManager1;
 class SupernovaEngine;
-
-class Room {
-public:
-	Room();
-
-	bool hasSeen();
-	void setRoomSeen(bool seen);
-	int getFileNumber() const;
-	RoomId getId() const;
-	void setSectionVisible(uint section, bool visible);
-	bool isSectionVisible(uint index) const;
-	void removeSentence(int sentence, int number);
-	void addSentence(int sentence, int number);
-	void addAllSentences(int number);
-	bool sentenceRemoved(int sentence, int number);
-	bool allSentencesRemoved(int maxSentence, int number);
-	Object *getObject(uint index);
-
-	virtual ~Room();
-	virtual void animation();
-	virtual void onEntrance();
-	virtual bool interact(Action verb, Object &obj1, Object &obj2);
-	virtual bool serialize(Common::WriteStream *out);
-	virtual bool deserialize(Common::ReadStream *in, int version);
-
-protected:
-	int _fileNumber;
-	bool _shown[kMaxSection];
-	byte _sentenceRemoved[kMaxDialog];
-	Object _objectState[kMaxObject];
-	RoomId _id;
-	SupernovaEngine *_vm;
-	GameManager1 *_gm;
-
-private:
-	bool _seen;
-};
 
 // Room 0
 class Intro : public Room {
