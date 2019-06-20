@@ -36,6 +36,7 @@
 #include "supernova/rooms.h"
 #include "supernova/sound.h"
 #include "supernova/imageid.h"
+#include "supernova/game-manager.h"
 
 namespace Common {
 	class MemoryReadWriteStream;
@@ -58,6 +59,7 @@ class ResourceManager;
 class Sound;
 class console;
 class GameManager;
+class GameManager1;
 class Screen;
 
 class SupernovaEngine : public Engine {

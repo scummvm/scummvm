@@ -46,6 +46,7 @@
 #include "supernova/sound.h"
 #include "supernova/supernova.h"
 #include "supernova/state.h"
+#include "supernova/game-manager.h"
 
 namespace Supernova {
 
@@ -141,7 +142,8 @@ void SupernovaEngine::init() {
 
 	_resMan = new ResourceManager(_MSPart);
 	_sound = new Sound(_mixer, _resMan);
-	_gm = new GameManager(this, _sound);
+	if (_MSPart == 1)
+		_gm = new GameManager1(this, _sound);
 	_screen = new Screen(this, _resMan);
 	_console = new Console(this, _gm);
 

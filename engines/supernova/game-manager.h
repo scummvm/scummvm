@@ -20,56 +20,22 @@
  *
  */
 
-#ifndef SUPERNOVA2_STATE_H
-#define SUPERNOVA2_STATE_H
+#ifndef SUPERNOVA_GAME_MANAGER_H
+#define SUPERNOVA_GAME_MANAGER_H
 
 #include "common/events.h"
 #include "common/rect.h"
 #include "common/keyboard.h"
-#include "supernova2/rooms.h"
-#include "supernova2/sound.h"
-#include "supernova2/resman.h"
+#include "common/error.h"
+#include "supernova/rooms.h"
+#include "supernova/sound.h"
 
-namespace Supernova2 {
-
-struct ConstructionEntry {
-	int _e;
-	int _s;
-	int _z;
-	int _r;
-	int _a;
-};
+namespace Supernova {
 
 const int32 kMaxTimerValue = 0x7FFFFFFF;
 
-enum EventFunction { kNoFn, kSoberFn, kPyramidEndFn, kCaughtFn};
+enum EventFunction { kNoFn, kSupernovaFn, kGuardReturnedFn, kGuardWalkFn, kTaxiFn, kSearchStartFn, kSoberFn, kPyramidEndFn, kCaughtFn};
 
-struct GameState {
-	int16 _money;
-	int32 _startTime;
-	bool _addressKnown;
-	Room *_previousRoom;
-	bool _poleMagnet;
-	char _admission;
-	bool _tipsy;
-	bool _dark;
-	char _elevatorE;
-	char _elevatorNumber;
-	bool _toMuseum;
-	EventFunction _eventCallback;
-	uint32 _eventTime;
-	int16 _pyraE;
-	char _pyraS;
-	char _pyraZ;
-	int16 _pyraDirection;
-	int16 _puzzleTab[15];
-	bool _alarmCracked;
-	bool _alarmOn;
-	bool _haste;
-	byte _pressureCounter;
-	bool _sirenOn;
-	byte _taxiPossibility;
-};
 
 class Inventory {
 public:
@@ -135,19 +101,19 @@ private:
 
 class GameManager {
 public:
-	GameManager(Supernova2Engine *vm, Sound *sound);
-	~GameManager();
+	GameManager(SupernovaEngine *vm, Sound *sound);
+	virtual ~GameManager();
 
-	void updateEvents();
+	virtual void updateEvents();
 	void processInput(Common::KeyState &state);
 	void processInput();
-	void executeRoom();
-	bool serialize(Common::WriteStream *out);
-	bool deserialize(Common::ReadStream *in, int version);
+	virtual void executeRoom();
+	virtual bool serialize(Common::WriteStream *out);
+	virtual bool deserialize(Common::ReadStream *in, int version);
 
 	static StringId guiCommands[];
 	static StringId guiStatusCommands[];
-	Supernova2Engine *_vm;
+	SupernovaEngine *_vm;
 	Sound *_sound;
 	Common::KeyState _key;
 	Common::EventType _mouseClickType;
@@ -161,7 +127,6 @@ public:
 	bool _newRoom;
 	Room *_rooms[NUMROOMS];
 	Inventory _inventory;
-	GameState _state;
 	bool _processInput;
 	bool _guiEnabled;
 	bool _animationEnabled;
@@ -186,49 +151,43 @@ public:
 	StringId _texts[6];
 	byte _rows[6];
 	byte _rowsStart[6];
-	byte _dials[6];
-
-	//state
-	unsigned char _puzzleField[16];
-	bool _mapOn;
-	bool _steps;
-	bool _cracking;
-	bool _alarmBefore;
-	RoomId _securityTab[10];
-	int _restTime;
+	int32 _time;
 
 	void takeObject(Object &obj);
 	void setObjectNull(Object *&obj);
 	bool isNullObject(Object *obj);
 
-	void initState();
-	void initRooms();
-	void destroyRooms();
+	virtual void initState();
+	virtual void initRooms();
+	virtual void destroyRooms();
 	void initGui();
-	bool genericInteract(Action verb, Object &obj1, Object &obj2);
-	uint16 getKeyInput(bool blockForPrintChar = false);
+	virtual bool canSaveGameStateCurrently();
+	virtual bool genericInteract(Action verb, Object &obj1, Object &obj2);
+	Common::EventType getMouseInput();
+	int getKeyInput();
 	void getInput();
 	void wait(int ticks);
 	void waitOnInput(int ticks);
 	bool waitOnInput(int ticks, Common::KeyCode &keycode);
 	void screenShake();
-	void roomBrightness() {}
+	virtual void roomBrightness();
 	void showMenu();
 	void animationOff();
 	void animationOn();
 	void edit(Common::String &input, int x, int y, uint length);
 	int invertSection(int section);
-	void drawMapExits();
+	virtual void drawMapExits();
 	void drawStatus();
 	void drawCommandBox();
 	void drawInventory();
+	void drawGUI();
 	void changeRoom(RoomId id);
 	void resetInputState();
-	void handleInput();
-	void handleTime();
+	virtual void handleInput();
+	virtual void handleTime();
 	void pauseTimer(bool pause);
-	void loadTime() {}
-	void saveTime() {}
+	virtual void loadTime();
+	virtual void saveTime();
 	void setAnimationTimer(int ticks);
 	void dead(StringId messageId);
 	int  dialog(int num, byte rowLength[6], StringId text[6], int number);
@@ -238,33 +197,7 @@ public:
 	void reply(StringId textId, int aus1, int aus2);
 	void reply(const char *text, int aus1, int aus2);
 	void mousePosDialog(int x, int y);
-	void takeMoney(int amount);
-	void taxi();
-	void leaveTaxi();
-	void taxiUnknownDestination();
-	void taxiPayment(int price, int destination);
-	void playerTakeOut();
-	void sober();
-	void playCD();
-	void drawGUI();
-	bool talk(int mod1, int mod2, int rest, MessagePosition pos, StringId id);
-	bool talkRest(int mod1, int mod2, int rest);
-	void pyramidEnd();
-	void passageConstruction();
-	byte wall(int s, int z, int direction, int stepsForward, int stepsRight);
-	bool move(Action verb, Object &obj);
-	void compass();
-	void puzzleConstruction();
-	void drawClock();
-	void caught();
-	void caught2();
-	void alarm();
-	void crack(int time);
-	bool crackDoor(int time);
-	void museumDoorInteract(Action verb, Object &obj1, Object &obj2);
-	void securityEntrance();
-	void pressureAlarmCount();
-	void pressureAlarmEntrance();
+	virtual void takeMoney(int amount);
 
 private:
 	int _prevImgId;
@@ -272,4 +205,4 @@ private:
 
 }
 
-#endif // SUPERNOVA2_STATE_H
+#endif // SUPERNOVA_GAME_MANAGER_H

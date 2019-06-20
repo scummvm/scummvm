@@ -180,7 +180,7 @@ bool Room::interact(Action verb, Object &obj1, Object &obj2) {
 }
 
 
-Intro::Intro(SupernovaEngine *vm, GameManager *gm) {
+Intro::Intro(SupernovaEngine *vm, GameManager1 *gm) {
 	_vm = vm;
 	_gm = gm;
 
@@ -606,7 +606,7 @@ void Intro::leaveCutscene() {
 	_vm->_allowLoadGame = true;
 }
 
-ShipCorridor::ShipCorridor(SupernovaEngine *vm, GameManager *gm) {
+ShipCorridor::ShipCorridor(SupernovaEngine *vm, GameManager1 *gm) {
 	_vm = vm;
 	_gm = gm;
 
@@ -655,7 +655,7 @@ bool ShipCorridor::interact(Action verb, Object &obj1, Object &obj2) {
 	return false;
 }
 
-ShipHall::ShipHall(SupernovaEngine *vm, GameManager *gm) {
+ShipHall::ShipHall(SupernovaEngine *vm, GameManager1 *gm) {
 	_vm = vm;
 	_gm = gm;
 
@@ -702,7 +702,7 @@ bool ShipHall::interact(Action verb, Object &obj1, Object &obj2) {
 	return true;
 }
 
-ShipSleepCabin::ShipSleepCabin(SupernovaEngine *vm, GameManager *gm) {
+ShipSleepCabin::ShipSleepCabin(SupernovaEngine *vm, GameManager1 *gm) {
 	_vm = vm;
 	_gm = gm;
 
@@ -844,8 +844,8 @@ bool ShipSleepCabin::interact(Action verb, Object &obj1, Object &obj2) {
 			}
 			_gm->_state._arrivalDaysLeft -= _gm->_state._timeSleep;
 			*energyDaysLeft -= _gm->_state._timeSleep;
-			_gm->_state._time = ticksToMsec(786520); // 12pm
-			_gm->_state._alarmOn = (_gm->_state._timeAlarm > _gm->_state._time);
+			_gm->_time = ticksToMsec(786520); // 12pm
+			_gm->_state._alarmOn = (_gm->_state._timeAlarm > _gm->_time);
 			if (*energyDaysLeft == 0) {
 				_gm->turnOff();
 				room = _gm->_rooms[GENERATOR];
@@ -915,7 +915,7 @@ void ShipSleepCabin::onEntrance() {
 	}
 }
 
-ShipCockpit::ShipCockpit(SupernovaEngine *vm, GameManager *gm) {
+ShipCockpit::ShipCockpit(SupernovaEngine *vm, GameManager1 *gm) {
 	_vm = vm;
 	_gm = gm;
 
@@ -1000,7 +1000,7 @@ void ShipCockpit::onEntrance() {
 	setRoomSeen(true);
 }
 
-ShipCabinL1::ShipCabinL1(SupernovaEngine *vm, GameManager *gm) {
+ShipCabinL1::ShipCabinL1(SupernovaEngine *vm, GameManager1 *gm) {
 	_vm = vm;
 	_gm = gm;
 
@@ -1027,7 +1027,7 @@ ShipCabinL1::ShipCabinL1(SupernovaEngine *vm, GameManager *gm) {
 	_objectState[11] = Object(_id, kStringToilet, kStringDefaultDescription, BATHROOM_DOOR, EXIT, 255, 255, 0, BATHROOM, 22);
 }
 
-ShipCabinL2::ShipCabinL2(SupernovaEngine *vm, GameManager *gm) {
+ShipCabinL2::ShipCabinL2(SupernovaEngine *vm, GameManager1 *gm) {
 	_vm = vm;
 	_gm = gm;
 
@@ -1105,7 +1105,7 @@ bool ShipCabinL2::interact(Action verb, Object &obj1, Object &obj2) {
 	return true;
 }
 
-ShipCabinL3::ShipCabinL3(SupernovaEngine *vm, GameManager *gm) {
+ShipCabinL3::ShipCabinL3(SupernovaEngine *vm, GameManager1 *gm) {
 	_vm = vm;
 	_gm = gm;
 
@@ -1218,7 +1218,7 @@ bool ShipCabinL3::interact(Action verb, Object &obj1, Object &obj2) {
 	return true;
 }
 
-ShipCabinR1::ShipCabinR1(SupernovaEngine *vm, GameManager *gm) {
+ShipCabinR1::ShipCabinR1(SupernovaEngine *vm, GameManager1 *gm) {
 	_vm = vm;
 	_gm = gm;
 
@@ -1239,7 +1239,7 @@ ShipCabinR1::ShipCabinR1(SupernovaEngine *vm, GameManager *gm) {
 	_objectState[8] = Object(_id, kStringToilet,kStringDefaultDescription,BATHROOM_DOOR,EXIT,255,255,0,BATHROOM,22);
 }
 
-ShipCabinR2::ShipCabinR2(SupernovaEngine *vm, GameManager *gm) {
+ShipCabinR2::ShipCabinR2(SupernovaEngine *vm, GameManager1 *gm) {
 	_vm = vm;
 	_gm = gm;
 
@@ -1261,7 +1261,7 @@ ShipCabinR2::ShipCabinR2(SupernovaEngine *vm, GameManager *gm) {
 	_objectState[8] = Object(_id, kStringToilet,kStringDefaultDescription,BATHROOM_DOOR,EXIT,255,255,0,BATHROOM,22);
 }
 
-ShipCabinR3::ShipCabinR3(SupernovaEngine *vm, GameManager *gm) {
+ShipCabinR3::ShipCabinR3(SupernovaEngine *vm, GameManager1 *gm) {
 	_vm = vm;
 	_gm = gm;
 
@@ -1349,7 +1349,7 @@ void ShipCabinR3::onEntrance() {
 	setRoomSeen(true);
 }
 
-ShipCabinBathroom::ShipCabinBathroom(SupernovaEngine *vm, GameManager *gm) {
+ShipCabinBathroom::ShipCabinBathroom(SupernovaEngine *vm, GameManager1 *gm) {
 	_vm = vm;
 	_gm = gm;
 
@@ -1362,7 +1362,7 @@ ShipCabinBathroom::ShipCabinBathroom(SupernovaEngine *vm, GameManager *gm) {
 	_objectState[2] = Object(_id, kStringExit,kStringDefaultDescription,BATHROOM_EXIT,EXIT,255,255,0,CABIN_R3,2);
 }
 
-ShipAirlock::ShipAirlock(SupernovaEngine *vm, GameManager *gm) {
+ShipAirlock::ShipAirlock(SupernovaEngine *vm, GameManager1 *gm) {
 	_vm = vm;
 	_gm = gm;
 
@@ -1488,7 +1488,7 @@ void ShipAirlock::onEntrance() {
 	setRoomSeen(true);
 }
 
-ShipHold::ShipHold(SupernovaEngine *vm, GameManager *gm) {
+ShipHold::ShipHold(SupernovaEngine *vm, GameManager1 *gm) {
 	_vm = vm;
 	_gm = gm;
 
@@ -1566,7 +1566,7 @@ void ShipHold::onEntrance() {
 	_gm->_rooms[COCKPIT]->setRoomSeen(true);
 }
 
-ShipLandingModule::ShipLandingModule(SupernovaEngine *vm, GameManager *gm) {
+ShipLandingModule::ShipLandingModule(SupernovaEngine *vm, GameManager1 *gm) {
 	_vm = vm;
 	_gm = gm;
 
@@ -1680,7 +1680,7 @@ bool ShipLandingModule::interact(Action verb, Object &obj1, Object &obj2) {
 	return true;
 }
 
-ShipGenerator::ShipGenerator(SupernovaEngine *vm, GameManager *gm) {
+ShipGenerator::ShipGenerator(SupernovaEngine *vm, GameManager1 *gm) {
 	_vm = vm;
 	_gm = gm;
 
@@ -1847,7 +1847,7 @@ bool ShipGenerator::interact(Action verb, Object &obj1, Object &obj2) {
 	return true;
 }
 
-ShipOuterSpace::ShipOuterSpace(SupernovaEngine *vm, GameManager *gm) {
+ShipOuterSpace::ShipOuterSpace(SupernovaEngine *vm, GameManager1 *gm) {
 	_vm = vm;
 	_gm = gm;
 
@@ -1861,7 +1861,7 @@ ShipOuterSpace::ShipOuterSpace(SupernovaEngine *vm, GameManager *gm) {
 
 
 // Arsano
-ArsanoRocks::ArsanoRocks(SupernovaEngine *vm, GameManager *gm) {
+ArsanoRocks::ArsanoRocks(SupernovaEngine *vm, GameManager1 *gm) {
 	_vm = vm;
 	_gm = gm;
 
@@ -1896,7 +1896,7 @@ bool ArsanoRocks::interact(Action verb, Object &obj1, Object &obj2) {
 	return false;
 }
 
-ArsanoCave::ArsanoCave(SupernovaEngine *vm, GameManager *gm) {
+ArsanoCave::ArsanoCave(SupernovaEngine *vm, GameManager1 *gm) {
 	_vm = vm;
 	_gm = gm;
 
@@ -1907,7 +1907,7 @@ ArsanoCave::ArsanoCave(SupernovaEngine *vm, GameManager *gm) {
 	_objectState[1] = Object(_id, kStringExit,kStringDefaultDescription,NULLOBJECT,EXIT,255,255,0,MEETUP,2);
 }
 
-ArsanoMeetup::ArsanoMeetup(SupernovaEngine *vm, GameManager *gm) {
+ArsanoMeetup::ArsanoMeetup(SupernovaEngine *vm, GameManager1 *gm) {
 	_vm = vm;
 	_gm = gm;
 
@@ -1998,7 +1998,7 @@ bool ArsanoMeetup::interact(Action verb, Object &obj1, Object &obj2) {
 	return true;
 }
 
-ArsanoEntrance::ArsanoEntrance(SupernovaEngine *vm, GameManager *gm) {
+ArsanoEntrance::ArsanoEntrance(SupernovaEngine *vm, GameManager1 *gm) {
 	_vm = vm;
 	_gm = gm;
 
@@ -2269,7 +2269,7 @@ bool ArsanoEntrance::interact(Action verb, Object &obj1, Object &obj2) {
 	return true;
 }
 
-ArsanoRemaining::ArsanoRemaining(SupernovaEngine *vm, GameManager *gm) {
+ArsanoRemaining::ArsanoRemaining(SupernovaEngine *vm, GameManager1 *gm) {
 	_vm = vm;
 	_gm = gm;
 
@@ -2445,7 +2445,7 @@ void ArsanoRemaining::animation() {
 	_gm->setAnimationTimer(3);
 }
 
-ArsanoRoger::ArsanoRoger(SupernovaEngine *vm, GameManager *gm) {
+ArsanoRoger::ArsanoRoger(SupernovaEngine *vm, GameManager1 *gm) {
 	_vm = vm;
 	_gm = gm;
 
@@ -2575,9 +2575,9 @@ bool ArsanoRoger::interact(Action verb, Object &obj1, Object &obj2) {
 		_vm->removeMessage();
 		_vm->_screen->setGuiBrightness(0);
 		_vm->paletteBrightness();
-		_gm->_state._time += ticksToMsec(125000); // 2 hours
-		_gm->_state._alarmOn = (_gm->_state._timeAlarm > _gm->_state._time);
-		_gm->_state._eventTime = _gm->_state._time + ticksToMsec(4000);
+		_gm->_time += ticksToMsec(125000); // 2 hours
+		_gm->_state._alarmOn = (_gm->_state._timeAlarm > _gm->_time);
+		_gm->_state._eventTime = _gm->_time + ticksToMsec(4000);
 		_gm->_state._eventCallback = kSupernovaFn;
 		setSectionVisible(11, false);
 		setSectionVisible(1, false);
@@ -2596,7 +2596,7 @@ bool ArsanoRoger::interact(Action verb, Object &obj1, Object &obj2) {
 	return true;
 }
 
-ArsanoGlider::ArsanoGlider(SupernovaEngine *vm, GameManager *gm) {
+ArsanoGlider::ArsanoGlider(SupernovaEngine *vm, GameManager1 *gm) {
 	_vm = vm;
 	_gm = gm;
 
@@ -2695,7 +2695,7 @@ bool ArsanoGlider::interact(Action verb, Object &obj1, Object &obj2) {
 	return true;
 }
 
-ArsanoMeetup2::ArsanoMeetup2(SupernovaEngine *vm, GameManager *gm) {
+ArsanoMeetup2::ArsanoMeetup2(SupernovaEngine *vm, GameManager1 *gm) {
 	_vm = vm;
 	_gm = gm;
 
@@ -2851,7 +2851,7 @@ void ArsanoMeetup2::shipStart() {
 	_vm->renderImage(11 + 128);
 }
 
-ArsanoMeetup3::ArsanoMeetup3(SupernovaEngine *vm, GameManager *gm) {
+ArsanoMeetup3::ArsanoMeetup3(SupernovaEngine *vm, GameManager1 *gm) {
 	_vm = vm;
 	_gm = gm;
 
@@ -2993,7 +2993,7 @@ bool ArsanoMeetup3::interact(Action verb, Object &obj1, Object &obj2) {
 }
 
 // Axacuss
-AxacussCell::AxacussCell(SupernovaEngine *vm, GameManager *gm) {
+AxacussCell::AxacussCell(SupernovaEngine *vm, GameManager1 *gm) {
 	_vm = vm;
 	_gm = gm;
 
@@ -3018,8 +3018,8 @@ AxacussCell::AxacussCell(SupernovaEngine *vm, GameManager *gm) {
 void AxacussCell::onEntrance() {
 	if (_gm->_state._dream) {
 		_vm->renderMessage(kStringAxacussCell_1);
-		_gm->_state._time = ticksToMsec(500000);
-		_gm->_state._alarmOn = (_gm->_state._timeAlarm > _gm->_state._time);
+		_gm->_time = ticksToMsec(500000);
+		_gm->_state._alarmOn = (_gm->_state._timeAlarm > _gm->_time);
 		_gm->_state._powerOff = false;
 		_gm->_state._dream = false;
 	}
@@ -3188,7 +3188,7 @@ bool AxacussCell::interact(Action verb, Object &obj1, Object &obj2) {
 	return true;
 }
 
-AxacussCorridor1::AxacussCorridor1(SupernovaEngine *vm, GameManager *gm) {
+AxacussCorridor1::AxacussCorridor1(SupernovaEngine *vm, GameManager1 *gm) {
 	_vm = vm;
 	_gm = gm;
 
@@ -3212,7 +3212,7 @@ void AxacussCorridor1::onEntrance() {
 }
 
 
-AxacussCorridor2::AxacussCorridor2(SupernovaEngine *vm, GameManager *gm) {
+AxacussCorridor2::AxacussCorridor2(SupernovaEngine *vm, GameManager1 *gm) {
 	_vm = vm;
 	_gm = gm;
 
@@ -3236,7 +3236,7 @@ void AxacussCorridor2::onEntrance() {
 	_gm->corridorOnEntrance();
 }
 
-AxacussCorridor3::AxacussCorridor3(SupernovaEngine *vm, GameManager *gm) {
+AxacussCorridor3::AxacussCorridor3(SupernovaEngine *vm, GameManager1 *gm) {
 	_vm = vm;
 	_gm = gm;
 
@@ -3262,7 +3262,7 @@ void AxacussCorridor4::onEntrance() {
 		_gm->busted(0);
 }
 
-AxacussCorridor4::AxacussCorridor4(SupernovaEngine *vm, GameManager *gm) {
+AxacussCorridor4::AxacussCorridor4(SupernovaEngine *vm, GameManager1 *gm) {
 	_vm = vm;
 	_gm = gm;
 
@@ -3317,7 +3317,7 @@ bool AxacussCorridor4::interact(Action verb, Object &obj1, Object &obj2) {
 	return true;
 }
 
-AxacussCorridor5::AxacussCorridor5(SupernovaEngine *vm, GameManager *gm) {
+AxacussCorridor5::AxacussCorridor5(SupernovaEngine *vm, GameManager1 *gm) {
 	_vm = vm;
 	_gm = gm;
 
@@ -3434,7 +3434,7 @@ bool AxacussCorridor5::interact(Action verb, Object &obj1, Object &obj2) {
 	return false;
 }
 
-AxacussCorridor6::AxacussCorridor6(SupernovaEngine *vm, GameManager *gm) {
+AxacussCorridor6::AxacussCorridor6(SupernovaEngine *vm, GameManager1 *gm) {
 	_vm = vm;
 	_gm = gm;
 
@@ -3474,7 +3474,7 @@ bool AxacussCorridor6::interact(Action verb, Object &obj1, Object &obj2) {
 	return true;
 }
 
-AxacussCorridor7::AxacussCorridor7(SupernovaEngine *vm, GameManager *gm) {
+AxacussCorridor7::AxacussCorridor7(SupernovaEngine *vm, GameManager1 *gm) {
 	_vm = vm;
 	_gm = gm;
 
@@ -3497,7 +3497,7 @@ void AxacussCorridor7::onEntrance() {
 	_gm->corridorOnEntrance();
 }
 
-AxacussCorridor8::AxacussCorridor8(SupernovaEngine *vm, GameManager *gm) {
+AxacussCorridor8::AxacussCorridor8(SupernovaEngine *vm, GameManager1 *gm) {
 	_vm = vm;
 	_gm = gm;
 
@@ -3543,7 +3543,7 @@ bool AxacussCorridor8::interact(Action verb, Object &obj1, Object &obj2) {
 	return true;
 }
 
-AxacussCorridor9::AxacussCorridor9(SupernovaEngine *vm, GameManager *gm) {
+AxacussCorridor9::AxacussCorridor9(SupernovaEngine *vm, GameManager1 *gm) {
 	_vm = vm;
 	_gm = gm;
 
@@ -3588,7 +3588,7 @@ bool AxacussCorridor9::interact(Action verb, Object &obj1, Object &obj2) {
 	return true;
 }
 
-AxacussBcorridor::AxacussBcorridor(SupernovaEngine *vm, GameManager *gm) {
+AxacussBcorridor::AxacussBcorridor(SupernovaEngine *vm, GameManager1 *gm) {
 	_vm = vm;
 	_gm = gm;
 
@@ -3690,7 +3690,7 @@ bool AxacussBcorridor::interact(Action verb, Object &obj1, Object &obj2) {
 	return true;
 }
 
-AxacussIntersection::AxacussIntersection(SupernovaEngine *vm, GameManager *gm) {
+AxacussIntersection::AxacussIntersection(SupernovaEngine *vm, GameManager1 *gm) {
 	_vm = vm;
 	_gm = gm;
 
@@ -3740,7 +3740,7 @@ bool AxacussIntersection::interact(Action verb, Object &obj1, Object &obj2) {
 	return true;
 }
 
-AxacussExit::AxacussExit(SupernovaEngine *vm, GameManager *gm) {
+AxacussExit::AxacussExit(SupernovaEngine *vm, GameManager1 *gm) {
 	_vm = vm;
 	_gm = gm;
 
@@ -3791,7 +3791,7 @@ bool AxacussExit::interact(Action verb, Object &obj1, Object &obj2) {
 	return true;
 }
 
-AxacussOffice1::AxacussOffice1(SupernovaEngine *vm, GameManager *gm) {
+AxacussOffice1::AxacussOffice1(SupernovaEngine *vm, GameManager1 *gm) {
 	_vm = vm;
 	_gm = gm;
 
@@ -3895,7 +3895,7 @@ bool AxacussOffice1::interact(Action verb, Object &obj1, Object &obj2) {
 	return true;
 }
 
-AxacussOffice2::AxacussOffice2(SupernovaEngine *vm, GameManager *gm) {
+AxacussOffice2::AxacussOffice2(SupernovaEngine *vm, GameManager1 *gm) {
 	_vm = vm;
 	_gm = gm;
 
@@ -3940,7 +3940,7 @@ bool AxacussOffice2::interact(Action verb, Object &obj1, Object &obj2) {
 	return true;
 }
 
-AxacussOffice3::AxacussOffice3(SupernovaEngine *vm, GameManager *gm) {
+AxacussOffice3::AxacussOffice3(SupernovaEngine *vm, GameManager1 *gm) {
 	_vm = vm;
 	_gm = gm;
 
@@ -3989,7 +3989,7 @@ bool AxacussOffice3::interact(Action verb, Object &obj1, Object &obj2) {
 	return true;
 }
 
-AxacussOffice4::AxacussOffice4(SupernovaEngine *vm, GameManager *gm) {
+AxacussOffice4::AxacussOffice4(SupernovaEngine *vm, GameManager1 *gm) {
 	_vm = vm;
 	_gm = gm;
 
@@ -4031,7 +4031,7 @@ bool AxacussOffice4::interact(Action verb, Object &obj1, Object &obj2) {
 	return true;
 }
 
-AxacussOffice5::AxacussOffice5(SupernovaEngine *vm, GameManager *gm) {
+AxacussOffice5::AxacussOffice5(SupernovaEngine *vm, GameManager1 *gm) {
 	_vm = vm;
 	_gm = gm;
 
@@ -4066,7 +4066,7 @@ bool AxacussOffice5::interact(Action verb, Object &obj1, Object &obj2) {
 	return true;
 }
 
-AxacussElevator::AxacussElevator(SupernovaEngine *vm, GameManager *gm) {
+AxacussElevator::AxacussElevator(SupernovaEngine *vm, GameManager1 *gm) {
 	_vm = vm;
 	_gm = gm;
 
@@ -4132,8 +4132,8 @@ bool AxacussElevator::interact(Action verb, Object &obj1, Object &obj2) {
 		_vm->removeMessage();
 		_vm->_screen->setGuiBrightness(0);
 		_vm->paletteBrightness();
-		_gm->_state._time += ticksToMsec(125000); // 2 hours
-		_gm->_state._alarmOn = (_gm->_state._timeAlarm > _gm->_state._time);
+		_gm->_time += ticksToMsec(125000); // 2 hours
+		_gm->_state._alarmOn = (_gm->_state._timeAlarm > _gm->_time);
 		return false;
 	} else
 		return false;
@@ -4141,7 +4141,7 @@ bool AxacussElevator::interact(Action verb, Object &obj1, Object &obj2) {
 	return true;
 }
 
-AxacussStation::AxacussStation(SupernovaEngine *vm, GameManager *gm) {
+AxacussStation::AxacussStation(SupernovaEngine *vm, GameManager1 *gm) {
 	_vm = vm;
 	_gm = gm;
 
@@ -4167,7 +4167,7 @@ bool AxacussStation::interact(Action verb, Object &obj1, Object &obj2) {
 	return true;
 }
 
-AxacussSign::AxacussSign(SupernovaEngine *vm, GameManager *gm) {
+AxacussSign::AxacussSign(SupernovaEngine *vm, GameManager1 *gm) {
 	_vm = vm;
 	_gm = gm;
 
@@ -4186,7 +4186,7 @@ bool AxacussSign::interact(Action verb, Object &obj1, Object &obj2) {
 		_gm->takeMoney(-180);
 		_vm->renderImage(2);
 		setSectionVisible(1, false);
-		_gm->_state._eventTime = _gm->_state._time + ticksToMsec(600);
+		_gm->_state._eventTime = _gm->_time + ticksToMsec(600);
 		_gm->_state._eventCallback = kTaxiFn;
 		return true;
 	}
@@ -4194,7 +4194,7 @@ bool AxacussSign::interact(Action verb, Object &obj1, Object &obj2) {
 }
 
 
-Outro::Outro(SupernovaEngine *vm, GameManager *gm) {
+Outro::Outro(SupernovaEngine *vm, GameManager1 *gm) {
 	_vm = vm;
 	_gm = gm;
 
