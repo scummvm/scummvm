@@ -83,6 +83,18 @@ void AI::processCines() {
 				g_system->getMillis(), _cine[i]->start, _cine[i]->delay);
 
 		switch (_cine[i]->cmdType) {
+		case C_LOCKPLAYER:
+			_playerLock = true;
+			complete = true;
+			if (_player) {
+				stopEntity(_player);
+			}
+			clearWaypoints();
+			break;
+		case C_UNLOCKPLAYER:
+			_playerLock = false;
+			complete = true;
+			break;
 		case C_SETCAMERA:
 			_cameraX = _cine[i]->x;
 			_cameraY = _cine[i]->y;
