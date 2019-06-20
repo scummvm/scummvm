@@ -25,7 +25,31 @@
 namespace HDB {
 
 void aiPlayerInit(AIEntity *e) {
-	warning("STUB: AI: aiPlayerInit required");
+	g_hdb->_ai->clearInventory();
+	e->aiAction = aiPlayerAction;
+	e->draw = g_hdb->_ai->getStandFrameDir(e);
+
+	switch (e->dir) {
+	case DIR_UP:
+		e->state = STATE_STANDUP;
+		break;
+	case DIR_DOWN:
+		e->state = STATE_STANDDOWN;
+		break;
+	case DIR_LEFT:
+		e->state = STATE_STANDLEFT;
+		break;
+	case DIR_RIGHT:
+		e->state = STATE_STANDRIGHT;
+		break;
+	case DIR_NONE:
+		warning("AI-PLAYER: aiPlayerInit: DIR_NONE found");
+		break;
+	}
+
+	e->moveSpeed = kPlayerMoveSpeed;
+	strcpy(e->entityName, "player");
+	g_hdb->_ai->assignPlayer(e);
 }
 
 void aiPlayerInit2(AIEntity *e) {
