@@ -385,7 +385,14 @@ static int removeEntity(lua_State *L) {
 }
 
 static int animEntity(lua_State *L) {
-	warning("STUB: ANIM ENTITY");
+	const char *entName = lua_tostring(L, 1);
+	double state = lua_tonumber(L, 2);
+
+	g_hdb->_lua->checkParameters("animEntity", 2);
+
+	lua_pop(L, 2);
+	int s = (int)state;
+	g_hdb->_ai->animLuaEntity(entName, (AIState)s);
 	return 0;
 }
 
