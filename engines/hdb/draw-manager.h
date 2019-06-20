@@ -50,11 +50,14 @@ struct TileLookup {
 
 struct GfxCache {
 	char name[32];
-	Tile *gfx;
+	union {
+		Tile *tileGfx;
+		Picture *picGfx;
+	};
 	uint32 size;
 	int16 loaded;
 
-	GfxCache() : name(""), gfx(NULL), size(0), loaded(0) {}
+	GfxCache() : name(""), tileGfx(NULL), picGfx(NULL), size(0), loaded(0) {}
 };
 
 class DrawMan {
