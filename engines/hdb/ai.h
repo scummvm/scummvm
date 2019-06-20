@@ -566,67 +566,67 @@ private:
 	bool _playerEmerging;
 	bool _playerRunning;
 
-	uint16		pushupFrames;
-	Tile		*pushupGfx[kMaxAnimFrames];
+	uint16		_pushupFrames;
+	Tile		*_pushupGfx[kMaxAnimFrames];
 
-	uint16		pushdownFrames;
-	Tile		*pushdownGfx[kMaxAnimFrames];
+	uint16		_pushdownFrames;
+	Tile		*_pushdownGfx[kMaxAnimFrames];
 
-	uint16		pushleftFrames;
-	Tile		*pushleftGfx[kMaxAnimFrames];
+	uint16		_pushleftFrames;
+	Tile		*_pushleftGfx[kMaxAnimFrames];
 
-	uint16		pushrightFrames;
-	Tile		*pushrightGfx[kMaxAnimFrames];
+	uint16		_pushrightFrames;
+	Tile		*_pushrightGfx[kMaxAnimFrames];
 
-	Tile		*getGfx[5];			// only 1 frame in each direction (+1 for DIR_NONE at start)
+	Tile		*_getGfx[5];			// only 1 frame in each direction (+1 for DIR_NONE at start)
 
-	uint16		dyingFrames;
-	Tile		*dyingGfx[kMaxDeathFrames];
+	uint16		_dyingFrames;
+	Tile		*_dyingGfx[kMaxDeathFrames];
 
-	Tile		*goodjobGfx;			// only 1 frame
+	Tile		*_goodjobGfx;			// only 1 frame
 
-	uint16		horrible1Frames;
-	Tile		*horrible1Gfx[kMaxDeathFrames];
-	uint16		horrible2Frames;
-	Tile		*horrible2Gfx[kMaxDeathFrames];
-	uint16		horrible3Frames;
-	Tile		*horrible3Gfx[kMaxDeathFrames];
-	uint16		horrible4Frames;
-	Tile		*horrible4Gfx[kMaxDeathFrames];
-	uint16		plummetFrames;
-	Tile		*plummetGfx[kMaxDeathFrames];
+	uint16		_horrible1Frames;
+	Tile		*_horrible1Gfx[kMaxDeathFrames];
+	uint16		_horrible2Frames;
+	Tile		*_horrible2Gfx[kMaxDeathFrames];
+	uint16		_horrible3Frames;
+	Tile		*_horrible3Gfx[kMaxDeathFrames];
+	uint16		_horrible4Frames;
+	Tile		*_horrible4Gfx[kMaxDeathFrames];
+	uint16		_plummetFrames;
+	Tile		*_plummetGfx[kMaxDeathFrames];
 
-	uint16		clubUpFrames;
-	Tile		*clubUpGfx[kMaxAnimFrames];
-	uint16		clubDownFrames;
-	Tile		*clubDownGfx[kMaxAnimFrames];
-	uint16		clubLeftFrames;
-	Tile		*clubLeftGfx[kMaxAnimFrames];
-	uint16		clubRightFrames;
-	Tile		*clubRightGfx[kMaxAnimFrames];
+	uint16		_clubUpFrames;
+	Tile		*_clubUpGfx[kMaxAnimFrames];
+	uint16		_clubDownFrames;
+	Tile		*_clubDownGfx[kMaxAnimFrames];
+	uint16		_clubLeftFrames;
+	Tile		*_clubLeftGfx[kMaxAnimFrames];
+	uint16		_clubRightFrames;
+	Tile		*_clubRightGfx[kMaxAnimFrames];
 
-	uint16		stunUpFrames;
-	Tile		*stunUpGfx[kMaxAnimFrames];
-	uint16		stunDownFrames;
-	Tile		*stunDownGfx[kMaxAnimFrames];
-	uint16		stunLeftFrames;
-	Tile		*stunLeftGfx[kMaxAnimFrames];
-	uint16		stunRightFrames;
-	Tile		*stunRightGfx[kMaxAnimFrames];
-	Tile		*stun_lightningGfx[kMaxAnimFrames];
-	Tile		*stunnedGfx[kMaxAnimFrames];
+	uint16		_stunUpFrames;
+	Tile		*_stunUpGfx[kMaxAnimFrames];
+	uint16		_stunDownFrames;
+	Tile		*_stunDownGfx[kMaxAnimFrames];
+	uint16		_stunLeftFrames;
+	Tile		*_stunLeftGfx[kMaxAnimFrames];
+	uint16		_stunRightFrames;
+	Tile		*_stunRightGfx[kMaxAnimFrames];
+	Tile		*_stun_lightningGfx[kMaxAnimFrames];
+	Tile		*_stunnedGfx[kMaxAnimFrames];
 
-	uint16		slugUpFrames;
-	Tile		*slugUpGfx[kMaxAnimFrames];
-	uint16		slugDownFrames;
-	Tile		*slugDownGfx[kMaxAnimFrames];
-	uint16		slugLeftFrames;
-	Tile		*slugLeftGfx[kMaxAnimFrames];
-	uint16		slugRightFrames;
-	Tile		*slugRightGfx[kMaxAnimFrames];
+	uint16		_slugUpFrames;
+	Tile		*_slugUpGfx[kMaxAnimFrames];
+	uint16		_slugDownFrames;
+	Tile		*_slugDownGfx[kMaxAnimFrames];
+	uint16		_slugLeftFrames;
+	Tile		*_slugLeftGfx[kMaxAnimFrames];
+	uint16		_slugRightFrames;
+	Tile		*_slugRightGfx[kMaxAnimFrames];
 
-	uint16		slugAttackFrames;
-	Tile		*slugAttackGfx[kMaxAnimFrames];
+	uint16		_slugAttackFrames;
+	Tile		*_slugAttackGfx[kMaxAnimFrames];
 
 	// Player Resources and Deliveries
 
