@@ -603,6 +603,10 @@ bool OSystem_Android::setTextInClipboard(const Common::String &text) {
 	return JNI::setTextInClipboard(text);
 }
 
+bool OSystem_Android::isConnectionLimited() {
+	return JNI::isConnectionLimited();
+}
+
 Common::String OSystem_Android::getSystemProperty(const char *name) const {
 	char value[PROP_VALUE_MAX];
 

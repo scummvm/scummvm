@@ -156,15 +156,6 @@ MODULE_OBJS += \
 endif
 endif
 
-# Connection::isLimited
-ifeq ($(BACKEND),android)
-MODULE_OBJS += \
-	networking/connection/islimited-android.o
-else
-MODULE_OBJS += \
-	networking/connection/islimited-default.o
-endif
-
 ifdef POSIX
 MODULE_OBJS += \
 	fs/posix/posix-fs.o \
