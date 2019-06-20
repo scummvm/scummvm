@@ -21,6 +21,7 @@
  */
 
 #include <string>
+#include "glk/alan2/alan2.h"
 #include "glk/alan2/types.h"
 
 #ifdef USE_READLINE
@@ -212,6 +213,9 @@ static void agetline()
       fprintf(logfil, "> ");
 #ifdef USE_READLINE
     if (!readline(buf)) {
+		if (g_vm->shouldQuit())
+			return;
+
       newline();
       quit();
     }
@@ -257,6 +261,9 @@ static void scan()
   char *str;
 
   agetline();
+  if (g_vm->shouldQuit())
+	  return;
+
   wrds[0] = 0;
   for (i = 0; i < litCount; i++)
     if (litValues[i].type == TYPSTR && litValues[i].value != 0)
@@ -820,6 +827,8 @@ void parse()
   if (wrds[wrdidx] == EOF) {
     wrdidx = 0;
     scan();
+	if (g_vm->shouldQuit())
+		return;
   } else if (anyOutput)
     para();
 

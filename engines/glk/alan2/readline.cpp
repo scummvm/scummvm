@@ -53,7 +53,11 @@ Boolean readline(char usrbuf[])
 	  g_vm->glk_select(&event);
     if (evtype_Arrange == event.type)
       statusline();
+	if (g_vm->shouldQuit())
+		return false;
+
   } while (event.type != evtype_LineInput);
+
   usrbuf[event.val1] = 0;
   return TRUE;
 }

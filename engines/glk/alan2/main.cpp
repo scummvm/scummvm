@@ -1763,7 +1763,9 @@ static void movactor()
   cur.loc = where(cur.act);
   if (cur.act == HERO) {
     parse();
-    fail = FALSE;			/* fail only aborts one actor */
+	if (g_vm->shouldQuit())
+		return;
+	fail = FALSE;			/* fail only aborts one actor */
     rules();
   } else if (act->script != 0) {
     for (scr = (ScrElem *) addrTo(act->scradr); !endOfTable(scr); scr++)
@@ -1902,30 +1904,33 @@ static void openFiles()
 
   */
 void run() {
-  openFiles();
+	openFiles();
 
-  // Set default line and column
-  col = lin = 1;
+	// Set default line and column
+	col = lin = 1;
 
-  //setjmp(restart_label);	/* Return here if he wanted to restart */
+	//setjmp(restart_label);	/* Return here if he wanted to restart */
 
-  init();			/* Load, initialise and start the adventure */
+	init();			/* Load, initialise and start the adventure */
 
-  while (TRUE) {
+	while (TRUE) {
 #ifdef MALLOC
-    if (malloc_verify() == 0) syserr("Error in heap.");
+		if (malloc_verify() == 0) syserr("Error in heap.");
 #endif
-    if (dbgflg)
-      debug();
+		if (dbgflg)
+			debug();
 
-    eventchk();
-    cur.tick++;
-//    (void) setjmp(jmpbuf);
+		eventchk();
+		cur.tick++;
+		//    (void) setjmp(jmpbuf);
 
-    /* Move all characters */
-    for (cur.act = ACTMIN; cur.act <= ACTMAX; cur.act++)
-      movactor();
-  }
+		// Move all characters
+		for (cur.act = ACTMIN; cur.act <= ACTMAX; cur.act++) {
+			movactor();
+			if (g_vm->shouldQuit())
+				return;
+		}
+	}
 }
 
 } // End of namespace Alan2

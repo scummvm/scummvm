@@ -236,7 +236,7 @@ void quit()
   char choices[10];
 
   para();
-  while (TRUE) {
+  while (!g_vm->shouldQuit()) {
     col = 1;
     statusline();
     prmsg(M_QUITACTION);
