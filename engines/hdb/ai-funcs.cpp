@@ -101,298 +101,309 @@ bool AI::cacheEntGfx(AIEntity *e, bool init) {
 				for (Common::Array<const char *>::iterator it = gfxFiles->begin(); it != gfxFiles->end(); it++) {
 					size = g_hdb->_fileMan->getLength((*it), TYPE_TILE32);
 
-					Tile *gfx = g_hdb->_drawMan->getGfx((*it), size);
-					switch (list[j].state) {
-					case STATE_STANDDOWN:
-						e->standdownGfx[e->standdownFrames] = gfx;
-						e->standdownFrames++;
-						break;
-					case STATE_STANDUP:
-						e->standupGfx[e->standupFrames] = gfx;
-						e->standupFrames++;
-						break;
-					case STATE_STANDLEFT:
-						e->standleftGfx[e->standleftFrames] = gfx;
-						e->standleftFrames++;
-						break;
-					case STATE_STANDRIGHT:
-						e->standrightGfx[e->standrightFrames] = gfx;
-						e->standrightFrames++;
-						break;
-					case STATE_BLINK:
-						e->blinkGfx[e->blinkFrames] = gfx;
-						e->blinkFrames++;
-						break;
-					case STATE_MOVEDOWN:
-						e->movedownGfx[e->movedownFrames] = gfx;
-						e->movedownFrames++;
-						break;
-					case STATE_MOVEUP:
-						e->moveupGfx[e->moveupFrames] = gfx;
-						e->moveupFrames++;
-						break;
-					case STATE_MOVELEFT:
-						e->moveleftGfx[e->moveleftFrames] = gfx;
-						e->moveleftFrames++;
-						break;
-					case STATE_MOVERIGHT:
-						e->moverightGfx[e->moverightFrames] = gfx;
-						e->moverightFrames++;
-						break;
+					if (g_hdb->_drawMan->selectGfxType((*it))) {
+						Tile *gfx = g_hdb->_drawMan->getTileGfx((*it), size);
 
-					// Special Player Frames
-					case STATE_PUSHDOWN:
-						_pushdownGfx[_pushdownFrames] = gfx;
-						_pushdownFrames++;
-						break;
-					case STATE_PUSHUP:
-						_pushupGfx[_pushupFrames] = gfx;
-						_pushupFrames++;
-						break;
-					case STATE_PUSHLEFT:
-						_pushleftGfx[_pushleftFrames] = gfx;
-						_pushleftFrames++;
-						break;
-					case STATE_PUSHRIGHT:
-						_pushrightGfx[_pushrightFrames] = gfx;
-						_pushrightFrames++;
-						break;
-					case STATE_GRABUP:
-						_getGfx[DIR_UP] = gfx; break;
-					case STATE_GRABDOWN:
-						_getGfx[DIR_DOWN] = gfx; break;
-					case STATE_GRABLEFT:
-						_getGfx[DIR_LEFT] = gfx; break;
-					case STATE_GRABRIGHT:
-						_getGfx[DIR_RIGHT] = gfx; break;
+						switch (list[j].state) {
+						case STATE_STANDDOWN:
+							e->standdownGfx[e->standdownFrames] = gfx;
+							e->standdownFrames++;
+							break;
+						case STATE_STANDUP:
+							e->standupGfx[e->standupFrames] = gfx;
+							e->standupFrames++;
+							break;
+						case STATE_STANDLEFT:
+							e->standleftGfx[e->standleftFrames] = gfx;
+							e->standleftFrames++;
+							break;
+						case STATE_STANDRIGHT:
+							e->standrightGfx[e->standrightFrames] = gfx;
+							e->standrightFrames++;
+							break;
+						case STATE_BLINK:
+							e->blinkGfx[e->blinkFrames] = gfx;
+							e->blinkFrames++;
+							break;
+						case STATE_MOVEDOWN:
+							e->movedownGfx[e->movedownFrames] = gfx;
+							e->movedownFrames++;
+							break;
+						case STATE_MOVEUP:
+							e->moveupGfx[e->moveupFrames] = gfx;
+							e->moveupFrames++;
+							break;
+						case STATE_MOVELEFT:
+							e->moveleftGfx[e->moveleftFrames] = gfx;
+							e->moveleftFrames++;
+							break;
+						case STATE_MOVERIGHT:
+							e->moverightGfx[e->moverightFrames] = gfx;
+							e->moverightFrames++;
+							break;
 
-					case STATE_ATK_CLUB_UP:
-						_clubUpGfx[_clubUpFrames] = gfx;
-						_clubUpFrames++;
-						break;
-					case STATE_ATK_CLUB_DOWN:
-						_clubDownGfx[_clubDownFrames] = gfx;
-						_clubDownFrames++;
-						break;
-					case STATE_ATK_CLUB_LEFT:
-						_clubLeftGfx[_clubLeftFrames] = gfx;
-						_clubLeftFrames++;
-						break;
-					case STATE_ATK_CLUB_RIGHT:
-						_clubRightGfx[_clubRightFrames] = gfx;
-						_clubRightFrames++;
-						break;
+							// Special Player Frames
+						case STATE_PUSHDOWN:
+							_pushdownGfx[_pushdownFrames] = gfx;
+							_pushdownFrames++;
+							break;
+						case STATE_PUSHUP:
+							_pushupGfx[_pushupFrames] = gfx;
+							_pushupFrames++;
+							break;
+						case STATE_PUSHLEFT:
+							_pushleftGfx[_pushleftFrames] = gfx;
+							_pushleftFrames++;
+							break;
+						case STATE_PUSHRIGHT:
+							_pushrightGfx[_pushrightFrames] = gfx;
+							_pushrightFrames++;
+							break;
+						case STATE_GRABUP:
+							_getGfx[DIR_UP] = gfx; break;
+						case STATE_GRABDOWN:
+							_getGfx[DIR_DOWN] = gfx; break;
+						case STATE_GRABLEFT:
+							_getGfx[DIR_LEFT] = gfx; break;
+						case STATE_GRABRIGHT:
+							_getGfx[DIR_RIGHT] = gfx; break;
 
-					case STATE_ATK_STUN_UP:
-						_stunUpGfx[_stunUpFrames] = gfx;
-						_stunUpFrames++;
-						break;
-					case STATE_ATK_STUN_DOWN:
-						_stunDownGfx[_stunDownFrames] = gfx;
-						_stunDownFrames++;
-						break;
-					case STATE_ATK_STUN_LEFT:
-						_stunLeftGfx[_stunLeftFrames] = gfx;
-						_stunLeftFrames++;
-						break;
-					case STATE_ATK_STUN_RIGHT:
-						_stunRightGfx[_stunRightFrames] = gfx;
-						_stunRightFrames++;
-						break;
+						case STATE_ATK_STUN_UP:
+							_stunUpGfx[_stunUpFrames] = gfx;
+							_stunUpFrames++;
+							break;
+						case STATE_ATK_STUN_DOWN:
+							_stunDownGfx[_stunDownFrames] = gfx;
+							_stunDownFrames++;
+							break;
+						case STATE_ATK_STUN_LEFT:
+							_stunLeftGfx[_stunLeftFrames] = gfx;
+							_stunLeftFrames++;
+							break;
+						case STATE_ATK_STUN_RIGHT:
+							_stunRightGfx[_stunRightFrames] = gfx;
+							_stunRightFrames++;
+							break;
 
-					case STATE_ATK_SLUG_UP:
-						_slugUpGfx[_slugUpFrames] = gfx;
-						_slugUpFrames++;
-						break;
-					case STATE_ATK_SLUG_DOWN:
-						_slugDownGfx[_slugDownFrames] = gfx;
-						_slugDownFrames++;
-						break;
-					case STATE_ATK_SLUG_LEFT:
-						_slugLeftGfx[_slugLeftFrames] = gfx;
-						_slugLeftFrames++;
-						break;
-					case STATE_ATK_SLUG_RIGHT:
-						_slugRightGfx[_slugRightFrames] = gfx;
-						_slugRightFrames++;
-						break;
+						case STATE_ATK_SLUG_UP:
+							_slugUpGfx[_slugUpFrames] = gfx;
+							_slugUpFrames++;
+							break;
+						case STATE_ATK_SLUG_DOWN:
+							_slugDownGfx[_slugDownFrames] = gfx;
+							_slugDownFrames++;
+							break;
+						case STATE_ATK_SLUG_LEFT:
+							_slugLeftGfx[_slugLeftFrames] = gfx;
+							_slugLeftFrames++;
+							break;
+						case STATE_ATK_SLUG_RIGHT:
+							_slugRightGfx[_slugRightFrames] = gfx;
+							_slugRightFrames++;
+							break;
 
-					// Maintenance Bot
-					case STATE_USEUP:
-						e->standupGfx[4] = gfx;
-						break;
-					case STATE_USEDOWN:
-						e->standdownGfx[4] = gfx;
-						break;
-					case STATE_USELEFT:
-						e->standleftGfx[4] = gfx;
-						break;
-					case STATE_USERIGHT:
-						e->standrightGfx[4] = gfx;
-						break;
+							// Maintenance Bot
+						case STATE_USEUP:
+							e->standupGfx[4] = gfx;
+							break;
+						case STATE_USEDOWN:
+							e->standdownGfx[4] = gfx;
+							break;
+						case STATE_USELEFT:
+							e->standleftGfx[4] = gfx;
+							break;
+						case STATE_USERIGHT:
+							e->standrightGfx[4] = gfx;
+							break;
 
-					// Death & Dying for Player
-					case STATE_DYING:
-						_dyingGfx[_dyingFrames] = gfx;
-						_dyingFrames++;
-						break;
-					case STATE_GOODJOB:
-						_goodjobGfx = gfx;
-						break;
+							// Death & Dying for Player
+						case STATE_DYING:
+							_dyingGfx[_dyingFrames] = gfx;
+							_dyingFrames++;
+							break;
+						case STATE_GOODJOB:
+							_goodjobGfx = gfx;
+							break;
 
-					case STATE_HORRIBLE1:
-						_horrible1Gfx[_horrible1Frames] = gfx;
-						_horrible1Frames++;
-						break;
-					case STATE_HORRIBLE2:
-						_horrible2Gfx[_horrible2Frames] = gfx;
-						_horrible2Frames++;
-						break;
-					case STATE_HORRIBLE3:
-						_horrible3Gfx[_horrible3Frames] = gfx;
-						_horrible3Frames++;
-						break;
-					case STATE_HORRIBLE4:
-						_horrible4Gfx[_horrible4Frames] = gfx;
-						_horrible4Frames++;
-						break;
-					case STATE_PLUMMET:
-						_plummetGfx[_plummetFrames] = gfx;
-						_plummetFrames++;
-						break;
+						case STATE_HORRIBLE1:
+							_horrible1Gfx[_horrible1Frames] = gfx;
+							_horrible1Frames++;
+							break;
+						case STATE_HORRIBLE2:
+							_horrible2Gfx[_horrible2Frames] = gfx;
+							_horrible2Frames++;
+							break;
+						case STATE_HORRIBLE3:
+							_horrible3Gfx[_horrible3Frames] = gfx;
+							_horrible3Frames++;
+							break;
+						case STATE_HORRIBLE4:
+							_horrible4Gfx[_horrible4Frames] = gfx;
+							_horrible4Frames++;
+							break;
+						case STATE_PLUMMET:
+							_plummetGfx[_plummetFrames] = gfx;
+							_plummetFrames++;
+							break;
 
-					// floating frames - overwrite "standup" info
-					case STATE_FLOATING:
-						e->blinkGfx[e->blinkFrames] = gfx;
-						e->blinkFrames++;
-						break;
+							// floating frames - overwrite "standup" info
+						case STATE_FLOATING:
+							e->blinkGfx[e->blinkFrames] = gfx;
+							e->blinkFrames++;
+							break;
 
-					// melted frames - go in the special area (lightbarrels)
-					// shocking frames - go in the special1 area (shockbots)
-					// exploding frames, same
-					case STATE_MELTED:
-					case STATE_SHOCKING:
-					case STATE_EXPLODING:
-						e->special1Gfx[e->special1Frames] = gfx;
-						e->special1Frames++;
-						break;
+							// melted frames - go in the special area (lightbarrels)
+							// shocking frames - go in the special1 area (shockbots)
+							// exploding frames, same
+						case STATE_MELTED:
+						case STATE_SHOCKING:
+						case STATE_EXPLODING:
+							e->special1Gfx[e->special1Frames] = gfx;
+							e->special1Frames++;
+							break;
 
-					// ICEPUFF spawning states
-					case STATE_ICEP_PEEK:
-						e->blinkGfx[e->blinkFrames] = gfx;
-						e->blinkFrames++;
-						break;
-					case STATE_ICEP_APPEAR:
-						e->standupGfx[e->standupFrames] = gfx;
-						e->standupFrames++;
-						break;
-					case STATE_ICEP_THROWDOWN:
-						e->standdownGfx[e->standdownFrames] = gfx;
-						e->standdownFrames++;
-						break;
-					case STATE_ICEP_THROWRIGHT:
-						e->standrightGfx[e->standrightFrames] = gfx;
-						e->standrightFrames++;
-						break;
-					case STATE_ICEP_THROWLEFT:
-						e->standleftGfx[e->standleftFrames] = gfx;
-						e->standleftFrames++;
-						break;
-					case STATE_ICEP_DISAPPEAR:
-						e->special1Gfx[e->special1Frames] = gfx;
-						e->special1Frames++;
-						break;
+							// ICEPUFF spawning states
+						case STATE_ICEP_PEEK:
+							e->blinkGfx[e->blinkFrames] = gfx;
+							e->blinkFrames++;
+							break;
+						case STATE_ICEP_APPEAR:
+							e->standupGfx[e->standupFrames] = gfx;
+							e->standupFrames++;
+							break;
+						case STATE_ICEP_THROWDOWN:
+							e->standdownGfx[e->standdownFrames] = gfx;
+							e->standdownFrames++;
+							break;
+						case STATE_ICEP_THROWRIGHT:
+							e->standrightGfx[e->standrightFrames] = gfx;
+							e->standrightFrames++;
+							break;
+						case STATE_ICEP_THROWLEFT:
+							e->standleftGfx[e->standleftFrames] = gfx;
+							e->standleftFrames++;
+							break;
+						case STATE_ICEP_DISAPPEAR:
+							e->special1Gfx[e->special1Frames] = gfx;
+							e->special1Frames++;
+							break;
 
-					// FATFROG spawning states
-					case STATE_LICKDOWN:
-						e->movedownGfx[e->movedownFrames] = gfx;
-						e->movedownFrames++;
-						break;
-					case STATE_LICKLEFT:
-						e->moveleftGfx[e->moveleftFrames] = gfx;
-						e->moveleftFrames++;
-						break;
-					case STATE_LICKRIGHT:
-						e->moverightGfx[e->moverightFrames] = gfx;
-						e->moverightFrames++;
-						break;
+							// FATFROG spawning states
+						case STATE_LICKDOWN:
+							e->movedownGfx[e->movedownFrames] = gfx;
+							e->movedownFrames++;
+							break;
+						case STATE_LICKLEFT:
+							e->moveleftGfx[e->moveleftFrames] = gfx;
+							e->moveleftFrames++;
+							break;
+						case STATE_LICKRIGHT:
+							e->moverightGfx[e->moverightFrames] = gfx;
+							e->moverightFrames++;
+							break;
 
-					// MEERKAT spawning states
-					case STATE_MEER_MOVE:
-						e->standdownGfx[e->standdownFrames] = gfx;
-						e->standdownFrames++;
-						break;
-					case STATE_MEER_APPEAR:
-						e->standleftGfx[e->standleftFrames] = gfx;
-						e->standleftFrames++;
-						break;
-					case STATE_MEER_BITE:
-						e->standrightGfx[e->standrightFrames] = gfx;
-						e->standrightFrames++;
-						break;
-					case STATE_MEER_DISAPPEAR:
-						e->standupGfx[e->standupFrames] = gfx;
-						e->standupFrames++;
-						break;
-					case STATE_MEER_LOOK:
-						e->movedownGfx[e->movedownFrames] = gfx;
-						e->movedownFrames++;
-						break;
+							// MEERKAT spawning states
+						case STATE_MEER_MOVE:
+							e->standdownGfx[e->standdownFrames] = gfx;
+							e->standdownFrames++;
+							break;
+						case STATE_MEER_APPEAR:
+							e->standleftGfx[e->standleftFrames] = gfx;
+							e->standleftFrames++;
+							break;
+						case STATE_MEER_BITE:
+							e->standrightGfx[e->standrightFrames] = gfx;
+							e->standrightFrames++;
+							break;
+						case STATE_MEER_DISAPPEAR:
+							e->standupGfx[e->standupFrames] = gfx;
+							e->standupFrames++;
+							break;
+						case STATE_MEER_LOOK:
+							e->movedownGfx[e->movedownFrames] = gfx;
+							e->movedownFrames++;
+							break;
 
-					// DIVERTER spawning states
-					case STATE_DIVERTER_BL:
-						e->standdownGfx[e->standdownFrames] = gfx;
-						e->standdownFrames++;
-						break;
-					case STATE_DIVERTER_BR:
-						e->standupGfx[e->standupFrames] = gfx;
-						e->standupFrames++;
-						break;
-					case STATE_DIVERTER_TL:
-						e->standleftGfx[e->standleftFrames] = gfx;
-						e->standleftFrames++;
-						break;
-					case STATE_DIVERTER_TR:
-						e->standrightGfx[e->standrightFrames] = gfx;
-						e->standrightFrames++;
-						break;
-					// DOLLY states
-					// angry[4] = standright[4]
-					// kissright[4]/kissleft[4] = standleft[8]
-					// panic[4]/laugh[4] = standdown[8]
-					// dollyuseright[5] = special1[5]
-					case STATE_ANGRY:
-						e->standrightGfx[e->standrightFrames] = gfx;
-						e->standrightFrames++;
-						break;
-					case STATE_KISSRIGHT:
-						e->standleftGfx[e->standleftFrames] = gfx;
-						e->standleftFrames++;
-						break;
-					case STATE_KISSLEFT:
-						e->standleftGfx[4 + e->int1] = gfx;
-						e->int1++;
-						break;
-					case STATE_PANIC:
-						e->standdownGfx[e->standdownFrames] = gfx;
-						e->standdownFrames++;
-						break;
-					case STATE_LAUGH:
-						e->standdownGfx[4 + e->value1] = gfx;
-						e->value1++;
-						break;
-					case STATE_DOLLYUSERIGHT:
-						e->special1Gfx[e->special1Frames] = gfx;
-						e->special1Frames++;
-						break;
+							// DIVERTER spawning states
+						case STATE_DIVERTER_BL:
+							e->standdownGfx[e->standdownFrames] = gfx;
+							e->standdownFrames++;
+							break;
+						case STATE_DIVERTER_BR:
+							e->standupGfx[e->standupFrames] = gfx;
+							e->standupFrames++;
+							break;
+						case STATE_DIVERTER_TL:
+							e->standleftGfx[e->standleftFrames] = gfx;
+							e->standleftFrames++;
+							break;
+						case STATE_DIVERTER_TR:
+							e->standrightGfx[e->standrightFrames] = gfx;
+							e->standrightFrames++;
+							break;
+							// DOLLY states
+							// angry[4] = standright[4]
+							// kissright[4]/kissleft[4] = standleft[8]
+							// panic[4]/laugh[4] = standdown[8]
+							// dollyuseright[5] = special1[5]
+						case STATE_ANGRY:
+							e->standrightGfx[e->standrightFrames] = gfx;
+							e->standrightFrames++;
+							break;
+						case STATE_KISSRIGHT:
+							e->standleftGfx[e->standleftFrames] = gfx;
+							e->standleftFrames++;
+							break;
+						case STATE_KISSLEFT:
+							e->standleftGfx[4 + e->int1] = gfx;
+							e->int1++;
+							break;
+						case STATE_PANIC:
+							e->standdownGfx[e->standdownFrames] = gfx;
+							e->standdownFrames++;
+							break;
+						case STATE_LAUGH:
+							e->standdownGfx[4 + e->value1] = gfx;
+							e->value1++;
+							break;
+						case STATE_DOLLYUSERIGHT:
+							e->special1Gfx[e->special1Frames] = gfx;
+							e->special1Frames++;
+							break;
 
-					// SARGE yelling
-					case STATE_YELL:
-						e->special1Gfx[e->special1Frames] = gfx;
-						e->special1Frames++;
-						break;
-					default:
-						warning("AI-FUNCS: cacheEntGfx: Unknown State");
+							// SARGE yelling
+						case STATE_YELL:
+							e->special1Gfx[e->special1Frames] = gfx;
+							e->special1Frames++;
+							break;
+						default:
+							warning("AI-FUNCS: cacheEntGfx: Unknown State");
+							break;
+						}
+					} else {
+						Picture *gfx = g_hdb->_drawMan->getPicGfx((*it), size);
+
+						switch (list[j].state) {
+						case STATE_ATK_CLUB_UP:
+							_clubUpGfx[_clubUpFrames] = gfx;
+							_clubUpFrames++;
+							break;
+						case STATE_ATK_CLUB_DOWN:
+							_clubDownGfx[_clubDownFrames] = gfx;
+							_clubDownFrames++;
+							break;
+						case STATE_ATK_CLUB_LEFT:
+							_clubLeftGfx[_clubLeftFrames] = gfx;
+							_clubLeftFrames++;
+							break;
+						case STATE_ATK_CLUB_RIGHT:
+							_clubRightGfx[_clubRightFrames] = gfx;
+							_clubRightFrames++;
+							break;
+						default:
+							warning("AI-FUNCS: cacheEntGfx: Unknown State");
+							break;
+						}
 					}
 				}
 				j++;
