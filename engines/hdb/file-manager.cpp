@@ -96,6 +96,8 @@ Common::SeekableReadStream *FileMan::findFirstData(const char *string, DataType 
 	Common::String fileString;
 	MPCEntry *file = NULL;
 
+	debug(2, "Looking for Data: '%s'", string);
+
 	// Find MPC Entry
 	for (MPCIterator it = _dir.begin(); it != _dir.end(); it++) {
 		fileString = (*it)->filename;
@@ -103,11 +105,14 @@ Common::SeekableReadStream *FileMan::findFirstData(const char *string, DataType 
 			if ((*it)->type == type) {
 				file = *it;
 				break;
+			} else {
+				debug(2, "Found Data but type mismatch: '%s', target: %d, found: %d", string, type, (*it)->type);
 			}
 		}
 	}
 
 	if (file == NULL) {
+		debug(2, "Couldn't find Data: '%s'", string);
 		return NULL;
 	}
 
