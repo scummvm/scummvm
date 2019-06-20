@@ -377,7 +377,7 @@ bool AI::cacheEntGfx(AIEntity *e, bool init) {
 							e->special1Frames++;
 							break;
 						default:
-							warning("AI-FUNCS: cacheEntGfx: Unknown State");
+							warning("AI-FUNCS: cacheEntGfx: Unintended State");
 							break;
 						}
 					} else {
@@ -401,7 +401,7 @@ bool AI::cacheEntGfx(AIEntity *e, bool init) {
 							_clubRightFrames++;
 							break;
 						default:
-							warning("AI-FUNCS: cacheEntGfx: Unknown State");
+							warning("AI-FUNCS: cacheEntGfx: Unintended State");
 							break;
 						}
 					}
@@ -468,7 +468,7 @@ void AI::stopEntity(AIEntity *e) {
 		e->state = STATE_FLOATING;
 		return;
 	default:
-		warning("AI-FUNCS: stopEntity: Unknown State");
+		warning("AI-FUNCS: stopEntity: Unintended State");
 	}
 
 	if (e->type != AI_DIVERTER) {
@@ -498,7 +498,7 @@ void AI::stopEntity(AIEntity *e) {
 				e->state = STATE_NONE;
 			break;
 		default:
-			warning("AI-FUNCS: stopEntity: Unknown Dir");
+			warning("AI-FUNCS: stopEntity: DIR_NONE");
 		}
 	}
 }
@@ -737,7 +737,7 @@ void AI::lookAtXY(int x, int y) {
 		warning("STUB: Set _player->draw to Player standright_gfx");
 		break;
 	default:
-		warning("AI-FUNCS: lookAtXY: Unknown Dir");
+		warning("AI-FUNCS: lookAtXY: DIR_NONE");
 	}
 }
 } // End of Namespace

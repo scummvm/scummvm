@@ -403,7 +403,7 @@ bool Map::load(Common::SeekableReadStream *stream) {
 			case ITEM_SLUGSLINGER:
 				continue;
 			default:
-				warning("MAP-LOADER: load: Unknown Type");
+				warning("MAP-LOADER: load: Unintended Type");
 			}
 		}
 
