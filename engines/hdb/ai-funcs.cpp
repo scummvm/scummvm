@@ -142,79 +142,79 @@ bool AI::cacheEntGfx(AIEntity *e, bool init) {
 
 					// Special Player Frames
 					case STATE_PUSHDOWN:
-						pushdownGfx[pushdownFrames] = gfx;
-						pushdownFrames++;
+						_pushdownGfx[_pushdownFrames] = gfx;
+						_pushdownFrames++;
 						break;
 					case STATE_PUSHUP:
-						pushupGfx[pushupFrames] = gfx;
-						pushupFrames++;
+						_pushupGfx[_pushupFrames] = gfx;
+						_pushupFrames++;
 						break;
 					case STATE_PUSHLEFT:
-						pushleftGfx[pushleftFrames] = gfx;
-						pushleftFrames++;
+						_pushleftGfx[_pushleftFrames] = gfx;
+						_pushleftFrames++;
 						break;
 					case STATE_PUSHRIGHT:
-						pushrightGfx[pushrightFrames] = gfx;
-						pushrightFrames++;
+						_pushrightGfx[_pushrightFrames] = gfx;
+						_pushrightFrames++;
 						break;
 					case STATE_GRABUP:
-						getGfx[DIR_UP] = gfx; break;
+						_getGfx[DIR_UP] = gfx; break;
 					case STATE_GRABDOWN:
-						getGfx[DIR_DOWN] = gfx; break;
+						_getGfx[DIR_DOWN] = gfx; break;
 					case STATE_GRABLEFT:
-						getGfx[DIR_LEFT] = gfx; break;
+						_getGfx[DIR_LEFT] = gfx; break;
 					case STATE_GRABRIGHT:
-						getGfx[DIR_RIGHT] = gfx; break;
+						_getGfx[DIR_RIGHT] = gfx; break;
 
 					case STATE_ATK_CLUB_UP:
-						clubUpGfx[clubUpFrames] = gfx;
-						clubUpFrames++;
+						_clubUpGfx[_clubUpFrames] = gfx;
+						_clubUpFrames++;
 						break;
 					case STATE_ATK_CLUB_DOWN:
-						clubDownGfx[clubDownFrames] = gfx;
-						clubDownFrames++;
+						_clubDownGfx[_clubDownFrames] = gfx;
+						_clubDownFrames++;
 						break;
 					case STATE_ATK_CLUB_LEFT:
-						clubLeftGfx[clubLeftFrames] = gfx;
-						clubLeftFrames++;
+						_clubLeftGfx[_clubLeftFrames] = gfx;
+						_clubLeftFrames++;
 						break;
 					case STATE_ATK_CLUB_RIGHT:
-						clubRightGfx[clubRightFrames] = gfx;
-						clubRightFrames++;
+						_clubRightGfx[_clubRightFrames] = gfx;
+						_clubRightFrames++;
 						break;
 
 					case STATE_ATK_STUN_UP:
-						stunUpGfx[stunUpFrames] = gfx;
-						stunUpFrames++;
+						_stunUpGfx[_stunUpFrames] = gfx;
+						_stunUpFrames++;
 						break;
 					case STATE_ATK_STUN_DOWN:
-						stunDownGfx[stunDownFrames] = gfx;
-						stunDownFrames++;
+						_stunDownGfx[_stunDownFrames] = gfx;
+						_stunDownFrames++;
 						break;
 					case STATE_ATK_STUN_LEFT:
-						stunLeftGfx[stunLeftFrames] = gfx;
-						stunLeftFrames++;
+						_stunLeftGfx[_stunLeftFrames] = gfx;
+						_stunLeftFrames++;
 						break;
 					case STATE_ATK_STUN_RIGHT:
-						stunRightGfx[stunRightFrames] = gfx;
-						stunRightFrames++;
+						_stunRightGfx[_stunRightFrames] = gfx;
+						_stunRightFrames++;
 						break;
 
 					case STATE_ATK_SLUG_UP:
-						slugUpGfx[slugUpFrames] = gfx;
-						slugUpFrames++;
+						_slugUpGfx[_slugUpFrames] = gfx;
+						_slugUpFrames++;
 						break;
 					case STATE_ATK_SLUG_DOWN:
-						slugDownGfx[slugDownFrames] = gfx;
-						slugDownFrames++;
+						_slugDownGfx[_slugDownFrames] = gfx;
+						_slugDownFrames++;
 						break;
 					case STATE_ATK_SLUG_LEFT:
-						slugLeftGfx[slugLeftFrames] = gfx;
-						slugLeftFrames++;
+						_slugLeftGfx[_slugLeftFrames] = gfx;
+						_slugLeftFrames++;
 						break;
 					case STATE_ATK_SLUG_RIGHT:
-						slugRightGfx[slugRightFrames] = gfx;
-						slugRightFrames++;
+						_slugRightGfx[_slugRightFrames] = gfx;
+						_slugRightFrames++;
 						break;
 
 					// Maintenance Bot
@@ -233,32 +233,32 @@ bool AI::cacheEntGfx(AIEntity *e, bool init) {
 
 					// Death & Dying for Player
 					case STATE_DYING:
-						dyingGfx[dyingFrames] = gfx;
-						dyingFrames++;
+						_dyingGfx[_dyingFrames] = gfx;
+						_dyingFrames++;
 						break;
 					case STATE_GOODJOB:
-						goodjobGfx = gfx;
+						_goodjobGfx = gfx;
 						break;
 
 					case STATE_HORRIBLE1:
-						horrible1Gfx[horrible1Frames] = gfx;
-						horrible1Frames++;
+						_horrible1Gfx[_horrible1Frames] = gfx;
+						_horrible1Frames++;
 						break;
 					case STATE_HORRIBLE2:
-						horrible2Gfx[horrible2Frames] = gfx;
-						horrible2Frames++;
+						_horrible2Gfx[_horrible2Frames] = gfx;
+						_horrible2Frames++;
 						break;
 					case STATE_HORRIBLE3:
-						horrible3Gfx[horrible3Frames] = gfx;
-						horrible3Frames++;
+						_horrible3Gfx[_horrible3Frames] = gfx;
+						_horrible3Frames++;
 						break;
 					case STATE_HORRIBLE4:
-						horrible4Gfx[horrible4Frames] = gfx;
-						horrible4Frames++;
+						_horrible4Gfx[_horrible4Frames] = gfx;
+						_horrible4Frames++;
 						break;
 					case STATE_PLUMMET:
-						plummetGfx[plummetFrames] = gfx;
-						plummetFrames++;
+						_plummetGfx[_plummetFrames] = gfx;
+						_plummetFrames++;
 						break;
 
 					// floating frames - overwrite "standup" info
