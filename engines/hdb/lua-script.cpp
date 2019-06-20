@@ -811,14 +811,13 @@ bool LuaScript::initScript(Common::SeekableReadStream *stream, const char *scrip
 }
 
 bool LuaScript::callFunction(const char *name, int returns) {
-
 	if (!_systemInit) {
 		return false;
 	}
 
 	lua_getglobal(_state, name);
 
-	if (lua_pcall(_state, 0, 0, -2)) {
+	if (lua_pcall(_state, 0, returns, -2)) {
 		error("An error occured while executing \"%s\": %s.", name, lua_tostring(_state, -1));
 		lua_pop(_state, -1);
 
