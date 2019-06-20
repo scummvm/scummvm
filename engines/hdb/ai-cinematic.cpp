@@ -179,6 +179,33 @@ void AI::processCines() {
 				}
 			}
 			break;
+		case C_ENTITYFACE:
+		{
+			AIEntity *e = locateEntity(_cine[i]->title);
+
+			if (e) {
+				int d = (int)_cine[i]->x;
+				e->dir = (AIDir)d;
+				switch (e->dir) {
+				case DIR_UP:
+					e->state = STATE_STANDUP;
+					break;
+				case DIR_DOWN:
+					e->state = STATE_STANDDOWN;
+					break;
+				case DIR_LEFT:
+					e->state = STATE_STANDLEFT;
+					break;
+				case DIR_RIGHT:
+					e->state = STATE_STANDRIGHT;
+					break;
+				}
+			} else {
+				warning("Can't find %s to ENTITYFACE", _cine[i]->title);
+			}
+			complete = true;
+			break;
+		}
 		case C_USEENTITY:
 			_cine[i]->e = locateEntity(_cine[i]->string);
 			warning("STUB: PROCESSCINES: USEENTITY: HDBGame::useEntity required;");
