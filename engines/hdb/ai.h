@@ -382,7 +382,7 @@ struct AIEntity {
 		uint16 special1Frames;
 		uint16 int2;
 	};
-	void *special1Gfx[kMaxAnimFrames];
+	Tile *special1Gfx[kMaxAnimFrames];
 
 	uint16		standdownFrames;
 	Tile		*standdownGfx[kMaxAnimFrames];
