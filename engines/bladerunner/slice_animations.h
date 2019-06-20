@@ -66,13 +66,14 @@ class SliceAnimations {
 	struct PageFile {
 		int                  _fileNumber;
 		SliceAnimations     *_sliceAnimations;
-		Common::File         _file;
+		Common::File         _files[5];
 		Common::Array<int32> _pageOffsets;
+		Common::Array<int8>  _pageOffsetsFileIdx;
 
 		PageFile(SliceAnimations *sliceAnimations) : _sliceAnimations(sliceAnimations), _fileNumber(-1) {}
 
-		bool  open(const Common::String &name);
-		void  close();
+		bool  open(const Common::String &name, int8 fileIdx);
+		void  close(int8 fileIdx);
 		void *loadPage(uint32 page);
 	};
 
