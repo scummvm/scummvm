@@ -192,6 +192,11 @@ Common::String OSystem::getSystemLanguage() const {
 	return "en_US";
 }
 
+bool OSystem::isConnectionLimited() {
+	warning("OSystem::isConnectionLimited(): not limited by default");
+	return false;
+}
+
 Common::TimerManager *OSystem::getTimerManager() {
 	return _timerManager;
 }

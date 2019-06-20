@@ -22,7 +22,6 @@
 
 #include "gui/downloaddialog.h"
 #include "backends/cloud/cloudmanager.h"
-#include "backends/networking/connection/islimited.h"
 #include "common/config-manager.h"
 #include "common/translation.h"
 #include "engines/metaengine.h"
@@ -114,7 +113,7 @@ void DownloadDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 }
 
 bool DownloadDialog::selectDirectories() {
-	if (Networking::Connection::isLimited()) {
+	if (g_system->isConnectionLimited()) {
 		MessageDialog alert(_("It looks like your connection is limited. "
 			"Do you really want to download files with it?"), _("Yes"), _("No"));
 		if (alert.runModal() != GUI::kMessageOK)

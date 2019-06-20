@@ -1482,6 +1482,13 @@ public:
 	 */
 	virtual Common::String getSystemLanguage() const;
 
+	/**
+	 * Returns whether connection's limited (if available on the target system).
+	 *
+	 * Returns true if connection seems limited.
+	 */
+	virtual bool isConnectionLimited();
+
 	//@}
 };
 
