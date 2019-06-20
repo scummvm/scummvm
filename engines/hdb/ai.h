@@ -436,7 +436,7 @@ struct CineCommand {
 	int start, end;
 	uint32	delay;
 	int	speed;
-	char *title;
+	const char *title;
 	const char *string;
 	char *id;
 	AIEntity *e;
