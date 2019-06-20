@@ -298,6 +298,10 @@ void DrawMan::drawSky() {
 	}
 }
 
+Picture::Picture() : _width(0), _height(0), _name("") {
+	_surface.create(_width, _height, g_hdb->_format);
+}
+
 Picture::~Picture() {
 	_surface.free();
 }
@@ -346,6 +350,10 @@ void Picture::drawMasked(int x, int y) {
 	if (!clip.isEmpty()) {
 		g_system->copyRectToScreen(g_hdb->_drawMan->_globalSurface.getBasePtr(clip.left, clip.top), g_hdb->_drawMan->_globalSurface.pitch, clip.left, clip.top, clip.width(), clip.height());
 	}
+}
+
+Tile::Tile() : _flags(0), _name("") {
+	_surface.create(32, 32, g_hdb->_format);
 }
 
 Tile::~Tile() {
