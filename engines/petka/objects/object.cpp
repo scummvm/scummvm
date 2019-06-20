@@ -33,7 +33,7 @@
 #include "petka/video.h"
 #include "petka/q_system.h"
 #include "petka/q_manager.h"
-#include "petka/obj.h"
+#include "petka/objects/object.h"
 
 namespace Petka {
 
@@ -47,8 +47,8 @@ void QMessageObject::processMessage(const QMessage &msg) {
 	for (uint i = 0; i < _reactions.size(); ++i) {
 		QReaction &r = _reactions[i];
 		if (r.opcode != msg.opcode ||
-		(r.status != -1 && r.status != _status) ||
-		(r.senderId != -1 && r.senderId != msg.sender->_id)) {
+			(r.status != -1 && r.status != _status) ||
+			(r.senderId != -1 && r.senderId != msg.sender->_id)) {
 			continue;
 		}
 		for (uint j = 0; j < r.messages.size(); ++j) {
@@ -57,15 +57,16 @@ void QMessageObject::processMessage(const QMessage &msg) {
 				break;
 			}
 			if (rMsg.opcode == kIf &&
-			(rMsg.arg1 == -1 || rMsg.arg1 != msg.arg1) &&
-			(rMsg.arg2 == -1 || rMsg.arg2 != msg.arg2) &&
-			(rMsg.arg3 == -1 || rMsg.arg3 != msg.arg3)) {
+				(rMsg.arg1 == -1 || rMsg.arg1 != msg.arg1) &&
+				(rMsg.arg2 == -1 || rMsg.arg2 != msg.arg2) &&
+				(rMsg.arg3 == -1 || rMsg.arg3 != msg.arg3)) {
 				break;
 			}
 			if (rMsg.opcode == kRandom && rMsg.arg2 != -1) {
-				rMsg.arg1 = (int16)g_vm->getRnd().getRandomNumber((uint)(rMsg.arg2 - 1));
+				rMsg.arg1 = (int16) g_vm->getRnd().getRandomNumber((uint) (rMsg.arg2 - 1));
 			}
-			g_vm->getQSystem()->addMessage(rMsg.objId, rMsg.opcode, rMsg.arg1, rMsg.arg2, rMsg.arg3, rMsg.unk, rMsg.sender);
+			g_vm->getQSystem()->addMessage(rMsg.objId, rMsg.opcode, rMsg.arg1, rMsg.arg2, rMsg.arg3, rMsg.unk,
+										   rMsg.sender);
 
 			switch (rMsg.opcode) {
 			case kPlay:
@@ -95,7 +96,7 @@ void QMessageObject::processMessage(const QMessage &msg) {
 
 		break;
 	case kStatus:
-		_status = (int8)msg.arg1;
+		_status = (int8) msg.arg1;
 		break;
 	case kHide:
 		break;
@@ -114,7 +115,7 @@ bool QObject::isInPoint(int x, int y) {
 	Common::Rect rect(_x, _y, _x + flc->getWidth(), _y + flc->getHeight());
 	if (!rect.contains(x, y))
 		return false;
-	return *(byte *)flc->getCurrentFrame()->getBasePtr(x -_x, y - _y) != 0;
+	return *(byte *) flc->getCurrentFrame()->getBasePtr(x - _x, y - _y) != 0;
 }
 
 void QObject::draw() {
@@ -149,113 +150,4 @@ void QObject::draw() {
 	delete s;
 }
 
-void QObjectBG::processMessage(const QMessage &msg) {
-	QMessageObject::processMessage(msg);
-	switch (msg.opcode) {
-	case kSet:
-		_resourceId = msg.arg1;
-	case kMusic:
-		_musicId = msg.arg1;
-		break;
-	case kBGsFX:
-		_fxId = msg.arg1;
-		break;
-	case kMap:
-		_showMap = msg.arg1 != 0;
-		break;
-	case kNoMap:
-		_showMap = 0;
-		break;
-	case kGoTo:
-		break;
-	case kSetSeq:
-		break;
-	case kEndSeq:
-		break;
-	}
-
 }
-
-void QObjectBG::draw() {
-	Graphics::Surface *s = g_vm->resMgr()->loadBitmap(_resourceId);
-	if (s) {
-		const Common::List<Common::Rect> &dirty = g_vm->videoSystem()->rects();
-		for (Common::List<Common::Rect>::const_iterator it = dirty.begin(); it != dirty.end(); ++it) {
-			g_vm->videoSystem()->screen().blitFrom(*s, *it, Common::Point(it->left, it->top));
-		}
-	}
-}
-
-QObjectCursor::QObjectCursor() {
-	_id = 4097;
-	_z = 1000;
-	_resourceId = 5002;
-	Common::Point pos = g_vm->getEventManager()->getMousePos();
-	_x = pos.x;
-	_y = pos.y;
-	g_vm->resMgr()->loadFlic(5002);
-}
-
-void QObjectCursor::draw() {
-	if (!_isShown) {
-		return;
-	}
-	FlicDecoder *flc = g_vm->resMgr()->loadFlic(_resourceId);
-	const Graphics::Surface *frame = flc->getCurrentFrame();
-	if (frame) {
-		Graphics::Surface *s = frame->convertTo(g_system->getScreenFormat(), flc->getPalette());
-		Common::Rect srcRect(flc->getBounds());
-		srcRect.translate(_x, _y);
-		srcRect.clip(640, 480);
-		Common::Rect destRect(srcRect);
-		srcRect.translate(-_x, -_y);
-		g_vm->videoSystem()->screen().transBlitFrom(*s, srcRect, destRect, flc->getTransColor(s->format));
-		s->free();
-		delete s;
-	}
-}
-
-void QObjectCursor::update() {
-	if (!_isShown || !_animate)
-		return;
-	FlicDecoder *flc = g_vm->resMgr()->loadFlic(_resourceId);
-	while (flc && flc->needsUpdate()) {
-		flc->decodeNextFrame();
-		if (flc->endOfVideo()) {
-			flc->rewind();
-		}
-		Common::Rect dirty(flc->getBounds());
-		dirty.translate(_x, _y);
-		g_vm->videoSystem()->addDirtyRect(dirty);
-	}
-}
-
-void QObjectCursor::setCursorPos(int x, int y, bool center) {
-	FlicDecoder *flc = g_vm->resMgr()->loadFlic(_resourceId);
-	if (!_animate) {
-		flc->stop();
-		flc->rewind();
-		flc->decodeNextFrame();
-	} else if (!flc->isPlaying()) {
-		flc->rewind();
-		flc->start();
-	}
-
-	Common::Rect dirty(flc->getBounds());
-	dirty.translate(_x, _y);
-	g_vm->videoSystem()->addDirtyRect(dirty);
-
-	if (center) {
-		x = x - flc->getBounds().left - dirty.width() / 2;
-		y = y - flc->getBounds().top - dirty.height() / 2;
-	}
-
-	_x = x;
-	_y = y;
-
-	dirty = flc->getBounds();
-	dirty.translate(_x, _y);
-	g_vm->videoSystem()->addDirtyRect(dirty);
-}
-
-} // End of namespace Petka

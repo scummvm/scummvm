@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef PETKA_Q_MESSAGE_OBJECT_H
-#define PETKA_Q_MESSAGE_OBJECT_H
+#ifndef PETKA_OBJECT_H
+#define PETKA_OBJECT_H
 
 #include "petka/base.h"
 
@@ -72,16 +72,6 @@ public:
 	Common::Array<QReaction> _reactions;
 };
 
-class QObjectBG : public QMessageObject {
-public:
-	void processMessage(const QMessage &msg) override;
-	void draw() override;
-
-public:
-	int _showMap;
-	int _fxId;
-	int _musicId;
-};
 
 class QObject : public QMessageObject {
 public:
@@ -89,26 +79,6 @@ public:
 	bool isInPoint(int x, int y) override;
 };
 
-class QObjectCase : public QObject {
-
-};
-
-class QObjectStar : public QObject {
-
-};
-
-class QObjectCursor : public QObject {
-public:
-	QObjectCursor();
-
-	void setCursorPos(int x, int y, bool center);
-	void update() override;
-	void draw() override;
-
-private:
-
-};
-
-} // End of naespace Petka
+} // End of namespace Petka
 
 #endif

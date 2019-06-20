@@ -26,7 +26,7 @@
 #include "common/config-manager.h"
 #include "common/system.h"
 
-#include "petka/obj.h"
+#include "petka/objects/object_cursor.h"
 #include "petka/petka.h"
 #include "petka/q_system.h"
 #include "petka/flc.h"

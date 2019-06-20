@@ -26,7 +26,7 @@
 #include "petka/petka.h"
 #include "petka/q_system.h"
 #include "petka/interfaces/interface.h"
-#include "petka/obj.h"
+#include "petka/objects/object.h"
 #include "petka/video.h"
 
 namespace Petka {

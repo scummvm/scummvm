@@ -26,7 +26,7 @@
 #include "common/ptr.h"
 #include "common/list.h"
 
-#include "petka/obj.h"
+#include "petka/objects/object_bg.h"
 
 namespace Petka {
 
