@@ -27,7 +27,7 @@
 #include "common/rect.h"
 #include "common/keyboard.h"
 #include "common/error.h"
-#include "supernova/rooms.h"
+#include "supernova/room.h"
 #include "supernova/sound.h"
 
 namespace Supernova {

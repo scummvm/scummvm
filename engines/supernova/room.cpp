@@ -26,7 +26,7 @@
 
 #include "supernova/screen.h"
 #include "supernova/supernova.h"
-#include "supernova/state.h"
+#include "supernova/game-manager.h"
 
 namespace Supernova {
 

@@ -33,7 +33,7 @@
 #include "supernova/console.h"
 #include "supernova/graphics.h"
 #include "supernova/msn_def.h"
-#include "supernova/rooms.h"
+#include "supernova/room.h"
 #include "supernova/sound.h"
 #include "supernova/imageid.h"
 #include "supernova/game-manager.h"
