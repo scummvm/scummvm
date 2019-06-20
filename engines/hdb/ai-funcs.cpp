@@ -428,6 +428,64 @@ bool AI::cacheEntGfx(AIEntity *e, bool init) {
 	return true;
 }
 
+// Stops the movement of an entity
+void AI::stopEntity(AIEntity *e) {
+	if (e == _player) {
+		clearWaypoints();
+		// Reset Player speed
+		e->moveSpeed = kPlayerMoveSpeed;
+	}
+
+	// Reset animation
+	e->animFrame = 0;
+
+	// Align with tile boundaries
+	e->x = e->tileX * kTileWidth;
+	e->y = e->tileY * kTileHeight;
+	e->goalX = e->tileX;
+	e->goalY = e->tileY;
+	e->drawXOff = e->drawYOff = 0;
+
+	// Don't change the state of Diverters or Floating entities
+	switch (e->state) {
+	case STATE_FLOATLEFT:
+	case STATE_FLOATRIGHT:
+	case STATE_FLOATUP:
+	case STATE_FLOATDOWN:
+		e->state = STATE_FLOATING;
+		return;
+	}
+
+	if (e->type != AI_DIVERTER) {
+		switch (e->dir) {
+		case DIR_UP:
+			if (e->standupFrames)
+				e->state = STATE_STANDUP;
+			else
+				e->state = STATE_NONE;
+			break;
+		case DIR_DOWN:
+			if (e->standdownFrames)
+				e->state = STATE_STANDDOWN;
+			else
+				e->state = STATE_NONE;
+			break;
+		case DIR_LEFT:
+			if (e->standleftFrames)
+				e->state = STATE_STANDLEFT;
+			else
+				e->state = STATE_NONE;
+			break;
+		case DIR_RIGHT:
+			if (e->standrightFrames)
+				e->state = STATE_STANDRIGHT;
+			else
+				e->state = STATE_NONE;
+			break;
+		}
+	}
+}
+
 AIEntity *AI::locateEntity(const char *luaName) {
 	for (Common::Array<AIEntity *>::iterator it = _ents->begin(); it != _ents->end(); it++) {
 		if (Common::matchString((*it)->entityName, luaName)) {

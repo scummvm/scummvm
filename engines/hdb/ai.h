@@ -356,7 +356,7 @@ struct AIEntity {
 	AIDir		dir2;									// this is from TED
 
 	uint16		x, y;
-	uint16		drawXOff, drawYOoff;					// might need a drawing offset
+	uint16		drawXOff, drawYOff;					// might need a drawing offset
 	uint16		onScreen;								// FLAG: is this entity onscreen?
 	uint16		moveSpeed;								// movement speed of this entity
 	uint16		xVel, yVel;								// movement values
@@ -457,6 +457,7 @@ public:
 	// Entity Functions
 	AIEntity *spawn(AIType type, AIDir dir, int x, int y, char *funcInit, char *funcAction, char *funcUse, AIDir dir2, int level, int value1, int value2, int callInit);
 	bool cacheEntGfx(AIEntity *e, bool init);
+	void stopEntity(AIEntity *e);
 	AIEntity *locateEntity(const char *luaName);
 	void removeEntity(AIEntity *e);
 	void initAllEnts();
