@@ -20,40 +20,17 @@
  *
  */
 
-#include <common/system.h>
-#include "common/stream.h"
-#include "common/events.h"
+#ifndef PETKA_OBJECT_STAR_H
+#define PETKA_OBJECT_STAR_H
 
-#include "petka/flc.h"
 #include "petka/objects/object.h"
-#include "petka/interfaces/main.h"
-#include "petka/q_system.h"
-#include "petka/q_manager.h"
-#include "petka/sound.h"
-#include "petka/petka.h"
-#include "petka/video.h"
 
 namespace Petka {
 
-InterfaceMain::InterfaceMain() {
-	Common::ScopedPtr<Common::SeekableReadStream> stream(g_vm->openFile("backgrnd.bg", true));
-	if (!stream)
-		return;
-	_bgs.resize(stream->readUint32LE());
-	for (uint i = 0; i < _bgs.size(); ++i) {
-		_bgs[i].objId = stream->readUint16LE();
-		_bgs[i].attachedObjIds.resize(stream->readUint32LE());
-		for (uint j = 0; j < _bgs[i].attachedObjIds.size(); ++j) {
-			_bgs[i].attachedObjIds[j] = stream->readUint16LE();
-			QMessageObject *obj = g_vm->getQSystem()->findObject(_bgs[i].attachedObjIds[i]);
-			obj->_x = stream->readSint32LE();
-			obj->_y = stream->readSint32LE();
-			obj->_z = stream->readSint32LE();
-			obj->_field14 = stream->readSint32LE();
-			obj->_field18 = stream->readSint32LE();
-		}
-	}
-}
+class QObjectStar : public QObject {
+
+};
 
 } // End of namespace Petka
 
+#endif

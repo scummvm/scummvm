@@ -30,6 +30,9 @@
 #include "petka/interfaces/main.h"
 #include "petka/interfaces/save_load.h"
 #include "petka/interfaces/panel.h"
+#include "petka/objects/object_cursor.h"
+#include "petka/objects/object_case.h"
+#include "petka/objects/object_star.h"
 #include "petka/q_system.h"
 
 namespace Petka {

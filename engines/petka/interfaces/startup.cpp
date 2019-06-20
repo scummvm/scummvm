@@ -25,7 +25,7 @@
 #include "common/events.h"
 
 #include "petka/flc.h"
-#include "petka/obj.h"
+#include "petka/objects/object_cursor.h"
 #include "petka/interfaces/main.h"
 #include "petka/interfaces/save_load.h"
 #include "petka/interfaces/startup.h"

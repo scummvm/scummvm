@@ -20,40 +20,58 @@
  *
  */
 
-#include <common/system.h>
+#include "common/ini-file.h"
 #include "common/stream.h"
+#include "common/system.h"
 #include "common/events.h"
 
+#include "graphics/colormasks.h"
+#include "graphics/surface.h"
+
 #include "petka/flc.h"
-#include "petka/objects/object.h"
-#include "petka/interfaces/main.h"
-#include "petka/q_system.h"
-#include "petka/q_manager.h"
-#include "petka/sound.h"
 #include "petka/petka.h"
 #include "petka/video.h"
+#include "petka/q_system.h"
+#include "petka/q_manager.h"
+#include "petka/objects/object_bg.h"
 
 namespace Petka {
 
-InterfaceMain::InterfaceMain() {
-	Common::ScopedPtr<Common::SeekableReadStream> stream(g_vm->openFile("backgrnd.bg", true));
-	if (!stream)
-		return;
-	_bgs.resize(stream->readUint32LE());
-	for (uint i = 0; i < _bgs.size(); ++i) {
-		_bgs[i].objId = stream->readUint16LE();
-		_bgs[i].attachedObjIds.resize(stream->readUint32LE());
-		for (uint j = 0; j < _bgs[i].attachedObjIds.size(); ++j) {
-			_bgs[i].attachedObjIds[j] = stream->readUint16LE();
-			QMessageObject *obj = g_vm->getQSystem()->findObject(_bgs[i].attachedObjIds[i]);
-			obj->_x = stream->readSint32LE();
-			obj->_y = stream->readSint32LE();
-			obj->_z = stream->readSint32LE();
-			obj->_field14 = stream->readSint32LE();
-			obj->_field18 = stream->readSint32LE();
+void QObjectBG::processMessage(const QMessage &msg) {
+	QMessageObject::processMessage(msg);
+	switch (msg.opcode) {
+	case kSet:
+		_resourceId = msg.arg1;
+	case kMusic:
+		_musicId = msg.arg1;
+		break;
+	case kBGsFX:
+		_fxId = msg.arg1;
+		break;
+	case kMap:
+		_showMap = msg.arg1 != 0;
+		break;
+	case kNoMap:
+		_showMap = 0;
+		break;
+	case kGoTo:
+		break;
+	case kSetSeq:
+		break;
+	case kEndSeq:
+		break;
+	}
+
+}
+
+void QObjectBG::draw() {
+	Graphics::Surface *s = g_vm->resMgr()->loadBitmap(_resourceId);
+	if (s) {
+		const Common::List<Common::Rect> &dirty = g_vm->videoSystem()->rects();
+		for (Common::List<Common::Rect>::const_iterator it = dirty.begin(); it != dirty.end(); ++it) {
+			g_vm->videoSystem()->screen().blitFrom(*s, *it, Common::Point(it->left, it->top));
 		}
 	}
 }
 
-} // End of namespace Petka
-
+}

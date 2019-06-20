@@ -24,6 +24,7 @@
 #include "petka/q_system.h"
 #include "petka/q_manager.h"
 #include "petka/video.h"
+#include "petka/objects/object_cursor.h"
 #include "petka/interfaces/save_load.h"
 
 namespace Petka {

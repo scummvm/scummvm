@@ -4,7 +4,6 @@ MODULE_OBJS = \
     detection.o \
     file_mgr.o \
     flc.o \
-    obj.o \
     petka.o \
     q_manager.o \
     q_system.o \
@@ -12,9 +11,14 @@ MODULE_OBJS = \
     video.o \
     interfaces/interface.o \
     interfaces/main.o \
-    interface/panel.o \
+    interfaces/panel.o \
     interfaces/save_load.o \
-    interfaces/startup.o
+    interfaces/startup.o \
+    objects/object.o \
+    objects/object_bg.o \
+    objects/object_case.o \
+    objects/object_cursor.o \
+    objects/object_star.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_PETKA), DYNAMIC_PLUGIN)
