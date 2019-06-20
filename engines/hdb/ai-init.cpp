@@ -704,5 +704,9 @@ void AI::restartSystem() {
 
 	// Clear Cinematic System
 	_cineActive = _cameraLock = _playerLock = _cineAborted = false;
+
+	// Clear waypoints
+	memset(&_waypoints[0], 0, sizeof(_waypoints));
+	_numWaypoints = 0;
 }
 } // End of Namespace
