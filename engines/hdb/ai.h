@@ -639,14 +639,6 @@ public:
 	bool addToInventory(AIEntity *e);
 	void clearInventory();
 
-	// Cinematic Variables
-	Common::Array<CineCommand *> _cine;
-
-private:
-
-	Common::Array<AIEntity *> *_ents;
-	AIEntity *_player;
-
 	// Player Variables
 	bool _playerDead;
 	bool _playerInvisible;	// While on RailRider for example
@@ -685,13 +677,13 @@ private:
 	Tile		*_plummetGfx[kMaxDeathFrames];
 
 	uint16		_clubUpFrames;
-	Tile		*_clubUpGfx[kMaxAnimFrames];
+	Picture		*_clubUpGfx[kMaxAnimFrames];
 	uint16		_clubDownFrames;
-	Tile		*_clubDownGfx[kMaxAnimFrames];
+	Picture		*_clubDownGfx[kMaxAnimFrames];
 	uint16		_clubLeftFrames;
-	Tile		*_clubLeftGfx[kMaxAnimFrames];
+	Picture		*_clubLeftGfx[kMaxAnimFrames];
 	uint16		_clubRightFrames;
-	Tile		*_clubRightGfx[kMaxAnimFrames];
+	Picture		*_clubRightGfx[kMaxAnimFrames];
 
 	uint16		_stunUpFrames;
 	Tile		*_stunUpGfx[kMaxAnimFrames];
@@ -701,7 +693,7 @@ private:
 	Tile		*_stunLeftGfx[kMaxAnimFrames];
 	uint16		_stunRightFrames;
 	Tile		*_stunRightGfx[kMaxAnimFrames];
-	Tile		*_stun_lightningGfx[kMaxAnimFrames];
+	Tile		*_stunLightningGfx[kMaxAnimFrames];
 	Tile		*_stunnedGfx[kMaxAnimFrames];
 
 	uint16		_slugUpFrames;
@@ -714,7 +706,7 @@ private:
 	Tile		*_slugRightGfx[kMaxAnimFrames];
 
 	uint16		_slugAttackFrames;
-	Tile		*_slugAttackGfx[kMaxAnimFrames];
+	Picture		*_slugAttackGfx[kMaxAnimFrames];
 
 	// Player Resources and Deliveries
 
@@ -728,6 +720,14 @@ private:
 	Waypoint _waypoints[kMaxWaypoints];
 	int _numWaypoints;
 	Tile *_waypointGfx[4]; // Animating waypoint gfx
+
+	// Cinematic Variables
+	Common::Array<CineCommand *> _cine;
+
+private:
+
+	Common::Array<AIEntity *> *_ents;
+	AIEntity *_player;
 
 	// Cinematics Variables
 	bool _cineAbortable;
