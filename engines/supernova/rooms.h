@@ -34,7 +34,7 @@ class WriteStream;
 
 namespace Supernova {
 
-class GameManager;
+class GameManager1;
 class SupernovaEngine;
 
 class Room {
@@ -68,7 +68,7 @@ protected:
 	Object _objectState[kMaxObject];
 	RoomId _id;
 	SupernovaEngine *_vm;
-	GameManager *_gm;
+	GameManager1 *_gm;
 
 private:
 	bool _seen;
@@ -77,7 +77,7 @@ private:
 // Room 0
 class Intro : public Room {
 public:
-	Intro(SupernovaEngine *vm, GameManager *gm);
+	Intro(SupernovaEngine *vm, GameManager1 *gm);
 	virtual void onEntrance();
 
 private:
@@ -99,21 +99,21 @@ private:
 // Spaceship
 class ShipCorridor : public Room {
 public:
-	ShipCorridor(SupernovaEngine *vm, GameManager *gm);
+	ShipCorridor(SupernovaEngine *vm, GameManager1 *gm);
 
 	virtual bool interact(Action verb, Object &obj1, Object &obj2);
 };
 
 class ShipHall: public Room {
 public:
-	ShipHall(SupernovaEngine *vm, GameManager *gm);
+	ShipHall(SupernovaEngine *vm, GameManager1 *gm);
 
 	virtual bool interact(Action verb, Object &obj1, Object &obj2);
 };
 
 class ShipSleepCabin: public Room {
 public:
-	ShipSleepCabin(SupernovaEngine *vm, GameManager *gm);
+	ShipSleepCabin(SupernovaEngine *vm, GameManager1 *gm);
 
 	virtual bool interact(Action verb, Object &obj1, Object &obj2);
 	virtual void animation();
@@ -125,7 +125,7 @@ private:
 
 class ShipCockpit : public Room {
 public:
-	ShipCockpit(SupernovaEngine *vm, GameManager *gm);
+	ShipCockpit(SupernovaEngine *vm, GameManager1 *gm);
 
 	virtual bool interact(Action verb, Object &obj1, Object &obj2);
 	virtual void animation();
@@ -137,36 +137,36 @@ private:
 
 class ShipCabinL1: public Room {
 public:
-	ShipCabinL1(SupernovaEngine *vm, GameManager *gm);
+	ShipCabinL1(SupernovaEngine *vm, GameManager1 *gm);
 };
 
 class ShipCabinL2 : public Room {
 public:
-	ShipCabinL2(SupernovaEngine *vm, GameManager *gm);
+	ShipCabinL2(SupernovaEngine *vm, GameManager1 *gm);
 
 	virtual bool interact(Action verb, Object &obj1, Object &obj2);
 };
 
 class ShipCabinL3 : public Room {
 public:
-	ShipCabinL3(SupernovaEngine *vm, GameManager *gm);
+	ShipCabinL3(SupernovaEngine *vm, GameManager1 *gm);
 
 	virtual bool interact(Action verb, Object &obj1, Object &obj2);
 };
 
 class ShipCabinR1 : public Room {
 public:
-	ShipCabinR1(SupernovaEngine *vm, GameManager *gm);
+	ShipCabinR1(SupernovaEngine *vm, GameManager1 *gm);
 };
 
 class ShipCabinR2 : public Room {
 public:
-	ShipCabinR2(SupernovaEngine *vm, GameManager *gm);
+	ShipCabinR2(SupernovaEngine *vm, GameManager1 *gm);
 };
 
 class ShipCabinR3 : public Room {
 public:
-	ShipCabinR3(SupernovaEngine *vm, GameManager *gm);
+	ShipCabinR3(SupernovaEngine *vm, GameManager1 *gm);
 
 	virtual bool interact(Action verb, Object &obj1, Object &obj2);
 	virtual void onEntrance();
@@ -174,12 +174,12 @@ public:
 
 class ShipCabinBathroom : public Room  {
 public:
-	ShipCabinBathroom(SupernovaEngine *vm, GameManager *gm);
+	ShipCabinBathroom(SupernovaEngine *vm, GameManager1 *gm);
 };
 
 class ShipAirlock : public Room {
 public:
-	ShipAirlock(SupernovaEngine *vm, GameManager *gm);
+	ShipAirlock(SupernovaEngine *vm, GameManager1 *gm);
 
 	virtual bool interact(Action verb, Object &obj1, Object &obj2);
 	virtual void onEntrance();
@@ -187,7 +187,7 @@ public:
 
 class ShipHold : public Room {
 public:
-	ShipHold(SupernovaEngine *vm, GameManager *gm);
+	ShipHold(SupernovaEngine *vm, GameManager1 *gm);
 
 	virtual bool interact(Action verb, Object &obj1, Object &obj2);
 	virtual void onEntrance();
@@ -195,28 +195,28 @@ public:
 
 class ShipLandingModule : public Room {
 public:
-	ShipLandingModule(SupernovaEngine *vm, GameManager *gm);
+	ShipLandingModule(SupernovaEngine *vm, GameManager1 *gm);
 
 	virtual bool interact(Action verb, Object &obj1, Object &obj2);
 };
 
 class ShipGenerator : public Room {
 public:
-	ShipGenerator(SupernovaEngine *vm, GameManager *gm);
+	ShipGenerator(SupernovaEngine *vm, GameManager1 *gm);
 
 	virtual bool interact(Action verb, Object &obj1, Object &obj2);
 };
 
 class ShipOuterSpace : public Room {
 public:
-	ShipOuterSpace(SupernovaEngine *vm, GameManager *gm);
+	ShipOuterSpace(SupernovaEngine *vm, GameManager1 *gm);
 };
 
 
 // Arsano
 class ArsanoRocks : public Room {
 public:
-	ArsanoRocks(SupernovaEngine *vm, GameManager *gm);
+	ArsanoRocks(SupernovaEngine *vm, GameManager1 *gm);
 
 	virtual void onEntrance();
 	virtual bool interact(Action verb, Object &obj1, Object &obj2);
@@ -224,12 +224,12 @@ public:
 
 class ArsanoCave : public Room {
 public:
-	ArsanoCave(SupernovaEngine *vm, GameManager *gm);
+	ArsanoCave(SupernovaEngine *vm, GameManager1 *gm);
 };
 
 class ArsanoMeetup : public Room {
 public:
-	ArsanoMeetup(SupernovaEngine *vm, GameManager *gm);
+	ArsanoMeetup(SupernovaEngine *vm, GameManager1 *gm);
 
 	virtual void onEntrance();
 	virtual void animation();
@@ -242,7 +242,7 @@ private:
 
 class ArsanoEntrance : public Room {
 public:
-	ArsanoEntrance(SupernovaEngine *vm, GameManager *gm);
+	ArsanoEntrance(SupernovaEngine *vm, GameManager1 *gm);
 
 	virtual bool interact(Action verb, Object &obj1, Object &obj2);
 	virtual void animation();
@@ -256,7 +256,7 @@ private:
 
 class ArsanoRemaining : public Room {
 public:
-	ArsanoRemaining(SupernovaEngine *vm, GameManager *gm);
+	ArsanoRemaining(SupernovaEngine *vm, GameManager1 *gm);
 
 	virtual void animation();
 
@@ -267,7 +267,7 @@ private:
 
 class ArsanoRoger : public Room {
 public:
-	ArsanoRoger(SupernovaEngine *vm, GameManager *gm);
+	ArsanoRoger(SupernovaEngine *vm, GameManager1 *gm);
 
 	virtual void animation();
 	virtual void onEntrance();
@@ -281,7 +281,7 @@ private:
 
 class ArsanoGlider : public Room {
 public:
-	ArsanoGlider(SupernovaEngine *vm, GameManager *gm);
+	ArsanoGlider(SupernovaEngine *vm, GameManager1 *gm);
 
 	virtual void animation();
 	virtual bool interact(Action verb, Object &obj1, Object &obj2);
@@ -292,7 +292,7 @@ private:
 
 class ArsanoMeetup2 : public Room {
 public:
-	ArsanoMeetup2(SupernovaEngine *vm, GameManager *gm);
+	ArsanoMeetup2(SupernovaEngine *vm, GameManager1 *gm);
 
 	virtual void onEntrance();
 	virtual bool interact(Action verb, Object &obj1, Object &obj2);
@@ -313,7 +313,7 @@ private:
 
 class ArsanoMeetup3 : public Room {
 public:
-	ArsanoMeetup3(SupernovaEngine *vm, GameManager *gm);
+	ArsanoMeetup3(SupernovaEngine *vm, GameManager1 *gm);
 
 	virtual bool interact(Action verb, Object &obj1, Object &obj2);
 
@@ -329,7 +329,7 @@ private:
 // Axacuss
 class AxacussCell : public Room {
 public:
-	AxacussCell(SupernovaEngine *vm, GameManager *gm);
+	AxacussCell(SupernovaEngine *vm, GameManager1 *gm);
 
 	virtual bool interact(Action verb, Object &obj1, Object &obj2);
 	virtual void animation();
@@ -338,28 +338,28 @@ public:
 
 class AxacussCorridor1 : public Room {
 public:
-	AxacussCorridor1(SupernovaEngine *vm, GameManager *gm);
+	AxacussCorridor1(SupernovaEngine *vm, GameManager1 *gm);
 
 	virtual void onEntrance();
 };
 
 class AxacussCorridor2 : public Room {
 public:
-	AxacussCorridor2(SupernovaEngine *vm, GameManager *gm);
+	AxacussCorridor2(SupernovaEngine *vm, GameManager1 *gm);
 
 	virtual void onEntrance();
 };
 
 class AxacussCorridor3 : public Room {
 public:
-	AxacussCorridor3(SupernovaEngine *vm, GameManager *gm);
+	AxacussCorridor3(SupernovaEngine *vm, GameManager1 *gm);
 
 	virtual void onEntrance();
 };
 
 class AxacussCorridor4 : public Room {
 public:
-	AxacussCorridor4(SupernovaEngine *vm, GameManager *gm);
+	AxacussCorridor4(SupernovaEngine *vm, GameManager1 *gm);
 
 	virtual void onEntrance();
 	virtual void animation();
@@ -368,7 +368,7 @@ public:
 
 class AxacussCorridor5 : public Room {
 public:
-	AxacussCorridor5(SupernovaEngine *vm, GameManager *gm);
+	AxacussCorridor5(SupernovaEngine *vm, GameManager1 *gm);
 
 	virtual void onEntrance();
 	virtual bool interact(Action verb, Object &obj1, Object &obj2);
@@ -387,7 +387,7 @@ private:
 
 class AxacussCorridor6 : public Room {
 public:
-	AxacussCorridor6(SupernovaEngine *vm, GameManager *gm);
+	AxacussCorridor6(SupernovaEngine *vm, GameManager1 *gm);
 
 	virtual void onEntrance();
 	virtual bool interact(Action verb, Object &obj1, Object &obj2);
@@ -395,14 +395,14 @@ public:
 
 class AxacussCorridor7 : public Room {
 public:
-	AxacussCorridor7(SupernovaEngine *vm, GameManager *gm);
+	AxacussCorridor7(SupernovaEngine *vm, GameManager1 *gm);
 
 	virtual void onEntrance();
 };
 
 class AxacussCorridor8 : public Room {
 public:
-	AxacussCorridor8(SupernovaEngine *vm, GameManager *gm);
+	AxacussCorridor8(SupernovaEngine *vm, GameManager1 *gm);
 
 	virtual void onEntrance();
 	virtual bool interact(Action verb, Object &obj1, Object &obj2);
@@ -410,7 +410,7 @@ public:
 
 class AxacussCorridor9 : public Room {
 public:
-	AxacussCorridor9(SupernovaEngine *vm, GameManager *gm);
+	AxacussCorridor9(SupernovaEngine *vm, GameManager1 *gm);
 
 	virtual void onEntrance();
 	virtual bool interact(Action verb, Object &obj1, Object &obj2);
@@ -418,7 +418,7 @@ public:
 
 class AxacussBcorridor : public Room {
 public:
-	AxacussBcorridor(SupernovaEngine *vm, GameManager *gm);
+	AxacussBcorridor(SupernovaEngine *vm, GameManager1 *gm);
 
 	virtual void onEntrance();
 	virtual bool interact(Action verb, Object &obj1, Object &obj2);
@@ -426,7 +426,7 @@ public:
 
 class AxacussIntersection : public Room {
 public:
-	AxacussIntersection(SupernovaEngine *vm, GameManager *gm);
+	AxacussIntersection(SupernovaEngine *vm, GameManager1 *gm);
 
 	virtual bool interact(Action verb, Object &obj1, Object &obj2);
 
@@ -436,7 +436,7 @@ private:
 
 class AxacussExit : public Room {
 public:
-	AxacussExit(SupernovaEngine *vm, GameManager *gm);
+	AxacussExit(SupernovaEngine *vm, GameManager1 *gm);
 
 	virtual bool interact(Action verb, Object &obj1, Object &obj2);
 
@@ -446,35 +446,35 @@ private:
 
 class AxacussOffice1 : public Room {
 public:
-	AxacussOffice1(SupernovaEngine *vm, GameManager *gm);
+	AxacussOffice1(SupernovaEngine *vm, GameManager1 *gm);
 
 	virtual bool interact(Action verb, Object &obj1, Object &obj2);
 };
 
 class AxacussOffice2 : public Room {
 public:
-	AxacussOffice2(SupernovaEngine *vm, GameManager *gm);
+	AxacussOffice2(SupernovaEngine *vm, GameManager1 *gm);
 
 	virtual bool interact(Action verb, Object &obj1, Object &obj2);
 };
 
 class AxacussOffice3 : public Room {
 public:
-	AxacussOffice3(SupernovaEngine *vm, GameManager *gm);
+	AxacussOffice3(SupernovaEngine *vm, GameManager1 *gm);
 
 	virtual bool interact(Action verb, Object &obj1, Object &obj2);
 };
 
 class AxacussOffice4 : public Room {
 public:
-	AxacussOffice4(SupernovaEngine *vm, GameManager *gm);
+	AxacussOffice4(SupernovaEngine *vm, GameManager1 *gm);
 
 	virtual bool interact(Action verb, Object &obj1, Object &obj2);
 };
 
 class AxacussOffice5 : public Room {
 public:
-	AxacussOffice5(SupernovaEngine *vm, GameManager *gm);
+	AxacussOffice5(SupernovaEngine *vm, GameManager1 *gm);
 
 	virtual void onEntrance();
 	virtual bool interact(Action verb, Object &obj1, Object &obj2);
@@ -482,28 +482,28 @@ public:
 
 class AxacussElevator : public Room {
 public:
-	AxacussElevator(SupernovaEngine *vm, GameManager *gm);
+	AxacussElevator(SupernovaEngine *vm, GameManager1 *gm);
 
 	virtual bool interact(Action verb, Object &obj1, Object &obj2);
 };
 
 class AxacussStation : public Room {
 public:
-	AxacussStation(SupernovaEngine *vm, GameManager *gm);
+	AxacussStation(SupernovaEngine *vm, GameManager1 *gm);
 
 	virtual bool interact(Action verb, Object &obj1, Object &obj2);
 };
 
 class AxacussSign : public Room {
 public:
-	AxacussSign(SupernovaEngine *vm, GameManager *gm);
+	AxacussSign(SupernovaEngine *vm, GameManager1 *gm);
 
 	virtual bool interact(Action verb, Object &obj1, Object &obj2);
 };
 
 class Outro : public Room {
 public:
-	Outro(SupernovaEngine *vm, GameManager *gm);
+	Outro(SupernovaEngine *vm, GameManager1 *gm);
 
 	virtual void onEntrance();
 	virtual void animation();

@@ -1,14 +1,15 @@
 MODULE := engines/supernova
 
 MODULE_OBJS := \
+	console.o \
 	detection.o \
-	state.o \
 	graphics.o \
 	resman.o \
 	rooms.o \
 	screen.o \
-	console.o \
 	sound.o \
+	game-manager.o \
+	state.o \
 	supernova.o
 
 MODULE_DIRS += \
