@@ -303,6 +303,14 @@ void AI::cineMoveEntity(const char *entName, int x, int y, int level, int speed)
 	_cine.push_back(cmd);
 }
 
+void AI::cineEntityFace(const char *luaName, double dir) {
+	CineCommand *cmd = new CineCommand;
+	cmd->title = luaName;
+	cmd->x = dir;
+	cmd->cmdType = C_ENTITYFACE;
+	_cine.push_back(cmd);
+}
+
 void AI::cineUse(const char *entName) {
 	CineCommand *cmd = new CineCommand;
 	cmd->string = entName;
