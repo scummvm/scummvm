@@ -537,6 +537,7 @@ public:
 
 	// Waypoint & Movement Functions
 	void lookAtXY(int x, int y);
+	void clearWaypoints();
 
 	// Inventory Functions
 	bool addToInventory(AIEntity *e);

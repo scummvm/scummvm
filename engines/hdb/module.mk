@@ -6,6 +6,7 @@ MODULE_OBJS := \
 	ai-cinematic.o \
 	ai-funcs.o \
 	ai-player.o \
+	ai-waypoint.o \
 	console.o \
 	draw-manager.o \
 	detection.o \
