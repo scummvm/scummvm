@@ -36,7 +36,6 @@ extern winid_t glkStatusWin;
 
 /* NB: this header must be included in any file which calls print() */
 
-#define print glkio_printf
 #undef printf
 #define printf glkio_printf
 

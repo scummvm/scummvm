@@ -1519,17 +1519,14 @@ static void load()
   int i;
   char err[100];
 
-  Aword *ptr = (Aword *)&tmphdr;
+  Aword *ptr = (Aword *)&tmphdr + 1;
   codfil->seek(0);
-  for (i = 0; i < sizeof(tmphdr) / sizeof(Aword); ++i, ++ptr)
-	  *ptr = codfil->readUint32LE();
+  codfil->read(&tmphdr.vers[0], 4);
+  for (i = 1; i < sizeof(tmphdr) / sizeof(Aword); ++i, ++ptr)
+	  *ptr = codfil->readUint32BE();
   checkvers(&tmphdr);
 
   /* Allocate and load memory */
-
-#ifdef REVERSED
-  reverseHdr(&tmphdr);
-#endif
 
   /* No memory allocated yet? */
   if (memory == NULL) {
@@ -1548,7 +1545,8 @@ static void load()
 	  ::error("Header size is greater than filesize");
 
   codfil->seek(0);
-  for (i = 0, ptr = memory; i < tmphdr.size; ++i, ++ptr)
+  codfil->read(&header->vers[0], 4);
+  for (i = 1, ptr = memory + 1; i < tmphdr.size; ++i, ++ptr)
 	  *ptr = codfil->readUint32LE();
 
   /* Calculate checksum */
@@ -1573,7 +1571,7 @@ static void load()
     }
   }
 
-#ifdef REVERSED
+#if defined(SCUMM_LITTLE_ENDIAN)
   if (dbgflg||trcflg||stpflg)
     output("<Hmm, this is a little-endian machine, fixing byte ordering....");
   reverseACD(tmphdr.vers[0] == 2 && tmphdr.vers[1] == 5); /* Reverse all words in the ACD file */

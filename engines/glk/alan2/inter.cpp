@@ -257,7 +257,7 @@ void interpret(adr)
 	  printf("PRINT \t%5ld, %5ld\t\"", fpos, len);
 	  col = 34;		/* To format it better! */
 	}
-	print((char *)fpos, len);
+	print(fpos, len);
 	if (stpflg)
 	  printf("\"");
 	break;
