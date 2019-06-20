@@ -359,7 +359,7 @@ struct AIEntity {
 	uint16		drawXOff, drawYOff;					// might need a drawing offset
 	uint16		onScreen;								// FLAG: is this entity onscreen?
 	uint16		moveSpeed;								// movement speed of this entity
-	uint16		xVel, yVel;								// movement values
+	int16		xVel, yVel;								// movement values
 	uint16		tileX, tileY;
 	uint16		goalX, goalY;							// where we're trying to go - TILE COORDS
 	uint16		touchpX, touchpY, touchpTile, touchpWait;		// ACTION index a touchplate is using, which you're on
@@ -460,6 +460,7 @@ public:
 	void stopEntity(AIEntity *e);
 	AIEntity *locateEntity(const char *luaName);
 	void removeEntity(AIEntity *e);
+	void setEntityGoal(AIEntity *e, int x, int y);
 	void initAllEnts();
 	bool getTableEnt(AIType type);
 	bool walkThroughEnt(AIType type);
