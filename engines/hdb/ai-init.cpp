@@ -710,6 +710,39 @@ void AI::restartSystem() {
 	_playerOnIce = false;
 	_playerEmerging = false;
 
+	// Clean up Player Graphics Storage
+	memset(_horrible1Gfx, NULL, kMaxDeathFrames * sizeof(Tile *));
+	memset(_horrible2Gfx, NULL, kMaxDeathFrames * sizeof(Tile *));
+	memset(_horrible3Gfx, NULL, kMaxDeathFrames * sizeof(Tile *));
+	memset(_horrible4Gfx, NULL, kMaxDeathFrames * sizeof(Tile *));
+	memset(_plummetGfx, NULL, kMaxDeathFrames * sizeof(Tile *));
+	memset(_dyingGfx, NULL, kMaxDeathFrames * sizeof(Tile *));
+
+	memset(_pushdownGfx, NULL, kMaxAnimFrames * sizeof(Tile *));
+	memset(_pushupGfx, NULL, kMaxAnimFrames * sizeof(Tile *));
+	memset(_pushleftGfx, NULL, kMaxAnimFrames * sizeof(Tile *));
+	memset(_pushrightGfx, NULL, kMaxAnimFrames * sizeof(Tile *));
+	memset(_stunDownGfx, NULL, kMaxAnimFrames * sizeof(Tile *));
+	memset(_stunUpGfx, NULL, kMaxAnimFrames * sizeof(Tile *));
+	memset(_stunLeftGfx, NULL, kMaxAnimFrames * sizeof(Tile *));
+	memset(_stunRightGfx, NULL, kMaxAnimFrames * sizeof(Tile *));
+	memset(_slugDownGfx, NULL, kMaxAnimFrames * sizeof(Tile *));
+	memset(_slugUpGfx, NULL, kMaxAnimFrames * sizeof(Tile *));
+	memset(_slugLeftGfx, NULL, kMaxAnimFrames * sizeof(Tile *));
+	memset(_slugRightGfx, NULL, kMaxAnimFrames * sizeof(Tile *));
+
+	if (_clubDownFrames) {
+		_clubDownFrames = 3;
+		_clubUpFrames = 3;
+		_clubLeftFrames = 3;
+		_clubRightFrames = 3;
+	}
+
+	memset(_clubDownGfx, NULL, kMaxAnimFrames * sizeof(Tile *));
+	memset(_clubUpGfx, NULL, kMaxAnimFrames * sizeof(Tile *));
+	memset(_clubLeftGfx, NULL, kMaxAnimFrames * sizeof(Tile *));
+	memset(_clubRightGfx, NULL, kMaxAnimFrames * sizeof(Tile *));
+
 	// Clear the Entity List
 	_ents->clear();
 
