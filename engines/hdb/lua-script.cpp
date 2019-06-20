@@ -140,12 +140,12 @@ static int cineStartMap(lua_State *L) {
 }
 
 static int cineLockPlayer(lua_State *L) {
-	warning("STUB: CINE LOCK PLAYER");
+	g_hdb->_ai->cineLockPlayer();
 	return 0;
 }
 
 static int cineUnlockPlayer(lua_State *L) {
-	warning("STUB: CINE UNLOCK PLAYER");
+	g_hdb->_ai->cineUnlockPlayer();
 	return 0;
 }
 
