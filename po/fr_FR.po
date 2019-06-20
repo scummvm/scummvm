@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2019-06-19 16:46+0200\n"
-"PO-Revision-Date: 2019-06-03 22:13+0000\n"
-"Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
+"PO-Revision-Date: 2019-06-22 10:59+0000\n"
+"Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
 "Language: fr_FR\n"
@@ -3213,8 +3213,9 @@ msgid "Display graphics using the game's bright palette"
 msgstr "Utiliser la palette lumineuse du jeu pour l'affichage"
 
 #: engines/glk/glk_api.cpp:63
+#, fuzzy
 msgid "[ press any key to exit ]"
-msgstr ""
+msgstr "[ appuyez sur une touche pour sortir ]"
 
 #: engines/glk/quetzal.cpp:115 engines/glk/quetzal.cpp:124
 #, fuzzy
@@ -3224,50 +3225,49 @@ msgstr "Sauvegarde sans nom"
 #: engines/glk/advsys/advsys.cpp:35
 #, fuzzy
 msgid "Could not start AdvSys game"
-msgstr "Impossible de changer le mode vidéo à: '"
+msgstr "Impossible de lancer le jeu AdvSys"
 
 #: engines/glk/advsys/advsys.cpp:48 engines/glk/advsys/vm.cpp:319
 msgid "Sorry, the savegame couldn't be restored"
-msgstr ""
+msgstr "Désolé, la sauvegarde n'a pas pu être restaurée"
 
 #: engines/glk/advsys/vm.cpp:314
 #, fuzzy
 msgid "Sorry, the savegame couldn't be created"
-msgstr "le mode vidéo n'a pu être changé"
+msgstr "Désolé, la sauvegarde n'a pas pu être créée"
 
 #: engines/glk/advsys/vm.cpp:560
+#, fuzzy
 msgid "Speak up! I can't hear you!\n"
-msgstr ""
+msgstr "Plus fort! Je ne vous entends pas!\n"
 
 #: engines/glk/advsys/vm.cpp:596
-#, c-format
+#, c-format, fuzzy
 msgid "I don't know the word \"%s\".\n"
-msgstr ""
+msgstr "Je ne connais pas le mot \"%s\".\n"
 
 #: engines/glk/advsys/vm.cpp:682
-#, fuzzy
 msgid "I don't understand.\n"
-msgstr "Je ne comprends pas votre ordre. "
+msgstr "Je ne comprends pas.\n"
 
 #: engines/glk/alan2/alan2.cpp:76
 #, fuzzy
 msgid "This is too short to be a valid Alan2 file."
-msgstr "C'est trop court pour être un fichier Glulx valide."
+msgstr "C'est trop court pour être un fichier Alan2 valide."
 
 #: engines/glk/alan2/alan2.cpp:81
 #, fuzzy
 msgid "This is not a valid Alan2 file."
-msgstr "Ce n'est pas un fichier Glulx valide."
+msgstr "Ce n'est pas un fichier Alan2 valide."
 
 #: engines/glk/frotz/frotz.cpp:126
 #, fuzzy
 msgid "Error reading save file"
-msgstr "Erreur lors de l'exécution du jeu : "
+msgstr "Erreur lors de la lecture de la sauvegarde"
 
 #: engines/glk/frotz/frotz.cpp:144
-#, fuzzy
 msgid "Error writing save file\n"
-msgstr "Erreur lors de l'exécution du jeu : "
+msgstr "Erreur lors de l'écriture de la sauvegarde\n"
 
 #: engines/glk/glulxe/glulxe.cpp:79 engines/glk/magnetic/magnetic.cpp:73
 msgid "This is too short to be a valid Glulx file."
@@ -5278,13 +5278,17 @@ msgid "Apply bilinear filtering to individual sprites"
 msgstr "Applique un filtrage bilinéaire à chaque image-objet"
 
 #: engines/wintermute/wintermute.cpp:153
+#, fuzzy
 msgid "This game requires PNG, JPEG and Vorbis support."
-msgstr ""
+msgstr "Ce jeu nécessite le support des formats PNG, JPEG et Vorbis."
 
 #: engines/wintermute/wintermute.cpp:164
+#, fuzzy
 msgid ""
 "This game requires 3D characters support, which is out of ScummVM's scope."
 msgstr ""
+"Ce jeu nécessite le support des personnages en 3D, ce qui est en dehors du "
+"périmètre de ScummVM."
 
 #: engines/xeen/detection.cpp:89
 msgid "Show item costs in standard inventory mode"
