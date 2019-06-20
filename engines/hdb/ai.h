@@ -526,6 +526,8 @@ public:
 	// Cinematic Functions
 	void processCines();
 	void cineStart(bool abortable, const char *abortFunc);
+	void cineLockPlayer();
+	void cineUnlockPlayer();
 	void cineSetCamera(int x, int y);
 	void cineResetCamera();
 	void cineMoveCamera(int x, int y, int speed);
