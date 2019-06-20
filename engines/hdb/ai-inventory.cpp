@@ -51,6 +51,9 @@ bool AI::addToInventory(AIEntity *e) {
 		_numMonkeystones++;
 		removeEntity(e);
 		return true;
+	default:
+		warning("AI-INVENTORY: addToInventory: Unknown Type");
+		return false;
 	}
 
 	if (_numInventory >= kMaxInventory) {
@@ -67,6 +70,8 @@ bool AI::addToInventory(AIEntity *e) {
 	case ITEM_ROBOSTUNNER:
 	case ITEM_SLUGSLINGER:
 		warning("STUB: addToInventory: Ready weapon");
+	default:
+		warning("AI-INVENTORY: addToInventory: Unknown Type");
 	}
 
 	warning("STUB: addToInventory: Print a 'You Got' message");

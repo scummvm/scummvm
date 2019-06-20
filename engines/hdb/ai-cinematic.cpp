@@ -199,6 +199,8 @@ void AI::processCines() {
 				case DIR_RIGHT:
 					e->state = STATE_STANDRIGHT;
 					break;
+				default:
+					warning("AI-CINEMATIC: processCines: Unknown Dir");
 				}
 			} else {
 				warning("Can't find %s to ENTITYFACE", _cine[i]->title);
