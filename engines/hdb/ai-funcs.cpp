@@ -499,6 +499,44 @@ void AI::removeEntity(AIEntity *e) {
 	_ents->erase(&e);
 }
 
+void AI::setEntityGoal(AIEntity *e, int x, int y) {
+	int xv, yv;
+
+	e->xVel = e->yVel = 0;
+
+	xv = x - e->tileX;
+	if (xv < 0) {
+		e->xVel = -e->moveSpeed;
+		e->state = STATE_MOVELEFT;
+		e->dir = DIR_LEFT;
+	} else if (xv > 0) {
+		e->xVel = e->moveSpeed;
+		e->state = STATE_MOVERIGHT;
+		e->dir = DIR_RIGHT;
+	}
+
+	yv = y - e->tileY;
+	if (yv < 0) {
+		e->yVel = -e->moveSpeed;
+		e->state = STATE_MOVELEFT;
+		e->dir = DIR_LEFT;
+	} else if (yv > 0) {
+		e->yVel = e->moveSpeed;
+		e->state = STATE_MOVERIGHT;
+		e->dir = DIR_RIGHT;
+	}
+
+	if (e->type == AI_GUY && _playerRunning) {
+		e->xVel = e->xVel << 1;
+		e->yVel = e->yVel << 1;
+	}
+
+	e->goalX = x;
+	e->goalY = y;
+	e->animFrame = 0;
+	e->drawXOff = e->drawYOff = 0;
+}
+
 // Initializes each entity after map is loaded
 void AI::initAllEnts() {
 	for (Common::Array<AIEntity *>::iterator it = _ents->begin(); it != _ents->end(); it++) {
