@@ -53,7 +53,78 @@ void aiPlayerInit(AIEntity *e) {
 }
 
 void aiPlayerInit2(AIEntity *e) {
-	warning("STUB: AI: aiPlayerInit2 required");
+	if (!g_hdb->_ai->_clubUpGfx[0]) {
+		warning("STUB: weapon_sel_gfx uninitialized");
+		g_hdb->_ai->_clubUpGfx[0] = new Picture;
+		g_hdb->_ai->_clubUpGfx[0]->load(g_hdb->_fileMan->findFirstData("clubup1", TYPE_PIC));
+		g_hdb->_ai->_clubUpGfx[1] = new Picture;
+		g_hdb->_ai->_clubUpGfx[1]->load(g_hdb->_fileMan->findFirstData("clubup2", TYPE_PIC));
+		g_hdb->_ai->_clubUpGfx[2] = new Picture;
+		g_hdb->_ai->_clubUpGfx[2]->load(g_hdb->_fileMan->findFirstData("clubup3", TYPE_PIC));
+		g_hdb->_ai->_clubUpGfx[3] = new Picture;
+		g_hdb->_ai->_clubUpGfx[3]->load(g_hdb->_fileMan->findFirstData("clubup3", TYPE_PIC));
+
+		g_hdb->_ai->_clubDownGfx[0] = new Picture;
+		g_hdb->_ai->_clubDownGfx[0]->load(g_hdb->_fileMan->findFirstData("clubdown1", TYPE_PIC));
+		g_hdb->_ai->_clubDownGfx[1] = new Picture;
+		g_hdb->_ai->_clubDownGfx[1]->load(g_hdb->_fileMan->findFirstData("clubdown2", TYPE_PIC));
+		g_hdb->_ai->_clubDownGfx[2] = new Picture;
+		g_hdb->_ai->_clubDownGfx[2]->load(g_hdb->_fileMan->findFirstData("clubdown3", TYPE_PIC));
+		g_hdb->_ai->_clubDownGfx[3] = new Picture;
+		g_hdb->_ai->_clubDownGfx[3]->load(g_hdb->_fileMan->findFirstData("clubdown3", TYPE_PIC));
+
+		g_hdb->_ai->_clubLeftGfx[0] = new Picture;
+		g_hdb->_ai->_clubLeftGfx[0]->load(g_hdb->_fileMan->findFirstData("clubleft1", TYPE_PIC));
+		g_hdb->_ai->_clubLeftGfx[1] = new Picture;
+		g_hdb->_ai->_clubLeftGfx[1]->load(g_hdb->_fileMan->findFirstData("clubleft2", TYPE_PIC));
+		g_hdb->_ai->_clubLeftGfx[2] = new Picture;
+		g_hdb->_ai->_clubLeftGfx[2]->load(g_hdb->_fileMan->findFirstData("clubleft3", TYPE_PIC));
+		g_hdb->_ai->_clubLeftGfx[3] = new Picture;
+		g_hdb->_ai->_clubLeftGfx[3]->load(g_hdb->_fileMan->findFirstData("clubleft3", TYPE_PIC));
+
+		g_hdb->_ai->_clubRightGfx[0] = new Picture;
+		g_hdb->_ai->_clubRightGfx[0]->load(g_hdb->_fileMan->findFirstData("clubright1", TYPE_PIC));
+		g_hdb->_ai->_clubRightGfx[1] = new Picture;
+		g_hdb->_ai->_clubRightGfx[1]->load(g_hdb->_fileMan->findFirstData("clubright2", TYPE_PIC));
+		g_hdb->_ai->_clubRightGfx[2] = new Picture;
+		g_hdb->_ai->_clubRightGfx[2]->load(g_hdb->_fileMan->findFirstData("clubright3", TYPE_PIC));
+		g_hdb->_ai->_clubRightGfx[3] = new Picture;
+		g_hdb->_ai->_clubRightGfx[3]->load(g_hdb->_fileMan->findFirstData("clubright3", TYPE_PIC));
+
+		g_hdb->_ai->_clubUpFrames = 4;
+		g_hdb->_ai->_clubDownFrames = 4;
+		g_hdb->_ai->_clubLeftFrames = 4;
+		g_hdb->_ai->_clubRightFrames = 4;
+
+		g_hdb->_ai->_slugAttackGfx[0] = new Picture;
+		g_hdb->_ai->_slugAttackGfx[0]->load(g_hdb->_fileMan->findFirstData("slug_shot1", TYPE_PIC));
+		g_hdb->_ai->_slugAttackGfx[1] = new Picture;
+		g_hdb->_ai->_slugAttackGfx[1]->load(g_hdb->_fileMan->findFirstData("slug_shot2", TYPE_PIC));
+		g_hdb->_ai->_slugAttackGfx[2] = new Picture;
+		g_hdb->_ai->_slugAttackGfx[2]->load(g_hdb->_fileMan->findFirstData("slug_shot3", TYPE_PIC));
+		g_hdb->_ai->_slugAttackGfx[3] = new Picture;
+		g_hdb->_ai->_slugAttackGfx[3]->load(g_hdb->_fileMan->findFirstData("slug_shot4", TYPE_PIC));
+
+		int32 size = g_hdb->_fileMan->getLength("shock_spark_sit01", TYPE_TILE32);
+		g_hdb->_ai->_stunLightningGfx[0] = g_hdb->_drawMan->getTileGfx("shock_spark_sit01", size);
+		size = g_hdb->_fileMan->getLength("shock_spark_sit02", TYPE_TILE32);
+		g_hdb->_ai->_stunLightningGfx[1] = g_hdb->_drawMan->getTileGfx("shock_spark_sit02", size);
+		size = g_hdb->_fileMan->getLength("shock_spark_sit03", TYPE_TILE32);
+		g_hdb->_ai->_stunLightningGfx[2] = g_hdb->_drawMan->getTileGfx("shock_spark_sit03", size);
+		size = g_hdb->_fileMan->getLength("shock_spark_sit04", TYPE_TILE32);
+		g_hdb->_ai->_stunLightningGfx[3] = g_hdb->_drawMan->getTileGfx("shock_spark_sit04", size);
+
+		size = g_hdb->_fileMan->getLength("starstun_sit01", TYPE_TILE32);
+		g_hdb->_ai->_stunnedGfx[0] = g_hdb->_drawMan->getTileGfx("starstun_sit01", size);
+		size = g_hdb->_fileMan->getLength("starstun_sit02", TYPE_TILE32);
+		g_hdb->_ai->_stunnedGfx[1] = g_hdb->_drawMan->getTileGfx("starstun_sit02", size);
+		size = g_hdb->_fileMan->getLength("starstun_sit03", TYPE_TILE32);
+		g_hdb->_ai->_stunnedGfx[2] = g_hdb->_drawMan->getTileGfx("starstun_sit03", size);
+		size = g_hdb->_fileMan->getLength("starstun_sit04", TYPE_TILE32);
+		g_hdb->_ai->_stunnedGfx[3] = g_hdb->_drawMan->getTileGfx("starstun_sit04", size);
+	}
+
+	e->draw = g_hdb->_ai->getStandFrameDir(e);
 }
 
 void aiPlayerAction(AIEntity *e) {
