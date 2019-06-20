@@ -720,7 +720,7 @@ private:
 	int _numGooCups;
 	int _numMonkeystones;
 
-	InvEnt _inventory[kMaxInventory];
+	InvEnt *_inventory[kMaxInventory];
 	int _numInventory;
 
 	Waypoint _waypoints[kMaxWaypoints];
