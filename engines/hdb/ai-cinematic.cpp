@@ -161,6 +161,24 @@ void AI::processCines() {
 			}
 			complete = true;
 			break;
+		case C_MOVEENTITY:
+			if (!_cine[i]->start) {
+				AIEntity *e = locateEntity(_cine[i]->title);
+				if (e) {
+					_cine[i]->e = e;
+					_cine[i]->e->moveSpeed = _cine[i]->speed;
+					_cine[i]->e->level = (int)_cine[i]->x2;
+					setEntityGoal(_cine[i]->e, (int)_cine[i]->x, (int)_cine[i]->y);
+					_cine[i]->start = 1;
+				} else {
+					warning("Can't locate '%s' in moveEntity", _cine[i]->title);
+				}
+			} else {
+				if (!_cine[i]->e->goalX) {
+					complete = true;
+				}
+			}
+
 		case C_USEENTITY:
 			_cine[i]->e = locateEntity(_cine[i]->string);
 			warning("STUB: PROCESSCINES: USEENTITY: HDBGame::useEntity required;");
