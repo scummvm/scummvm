@@ -332,7 +332,14 @@ enum CineType {
 
 struct AIStateDef {
 	AIState state;
-	const char name[64];
+	char name[64];
+
+	AIStateDef() : state(STATE_NONE), name("") {}
+	AIStateDef(AIState state, const char *inputName) : state(state) {
+		for (int i = 0;i < 64;i++) {
+			name[i] = inputName[i];
+		}
+	}
 };
 
 struct AIEntity {
@@ -376,7 +383,7 @@ struct AIEntity {
 		uint16 blinkFrames;
 		uint16 int1;
 	};
-	void *blinkGfx[kMaxAnimFrames];
+	Tile *blinkGfx[kMaxAnimFrames];
 
 	union {
 		uint16 special1Frames;
@@ -407,6 +414,88 @@ struct AIEntity {
 
 	uint16		moverightFrames;
 	Tile		*moverightGfx[kMaxAnimFrames];
+
+	AIEntity() : luaFuncInit(""), luaFuncAction(""), luaFuncUse(""), entityName(""), printedName("") {
+		type = AI_NONE;
+		state = STATE_NONE;
+		dir = DIR_NONE;
+
+		draw = NULL;
+
+		aiInit = aiInit2 = NULL;
+		aiAction = NULL;
+		aiUse = NULL;
+		aiDraw = NULL;
+
+		level = 0;
+		value1 = value2 = 0;
+		dir2 = DIR_NONE;
+
+		x = y = 0;
+		drawXOff = drawYOff = 0;
+		onScreen = 0;
+		moveSpeed = 0;
+		xVel = yVel = 0;
+		tileX = tileY = 0;
+		goalX = goalY = 0;
+		touchpX = touchpY = touchpTile = touchpWait = 0;
+		stunnedWait = 0;
+		sequence = 0;
+
+		animCycle = 0;
+		animDelay = 0;
+		animFrame = 0;
+
+		blinkFrames = 0;
+		for (int i = 0; i < kMaxAnimFrames; i++) {
+			blinkGfx[i] = new Tile;
+		}
+
+		special1Frames = 0;
+		for (int i = 0; i < kMaxAnimFrames; i++) {
+			special1Gfx[i] = new Tile;
+		}
+
+		standdownFrames = 0;
+		for (int i = 0; i < kMaxAnimFrames; i++) {
+			standdownGfx[i] = new Tile;
+		}
+
+		standupFrames = 0;
+		for (int i = 0; i < kMaxAnimFrames; i++) {
+			standupGfx[i] = new Tile;
+		}
+
+		standleftFrames = 0;
+		for (int i = 0; i < kMaxAnimFrames; i++) {
+			standleftGfx[i] = new Tile;
+		}
+
+		standrightFrames = 0;
+		for (int i = 0; i < kMaxAnimFrames; i++) {
+			standrightGfx[i] = new Tile;
+		}
+
+		movedownFrames = 0;
+		for (int i = 0; i < kMaxAnimFrames; i++) {
+			movedownGfx[i] = new Tile;
+		}
+
+		moveupFrames = 0;
+		for (int i = 0; i < kMaxAnimFrames; i++) {
+			moveupGfx[i] = new Tile;
+		}
+
+		moveleftFrames = 0;
+		for (int i = 0; i < kMaxAnimFrames; i++) {
+			moveleftGfx[i] = new Tile;
+		}
+
+		moverightFrames = 0;
+		for (int i = 0; i < kMaxAnimFrames; i++) {
+			moverightGfx[i] = new Tile;
+		}
+	}
 };
 
 struct AIEntTypeInfo {
@@ -415,17 +504,25 @@ struct AIEntTypeInfo {
 	AIStateDef *stateDef;
 	void (*initFunc)(AIEntity *e);
 	void (*initFunc2)(AIEntity *e);
+
+	AIEntTypeInfo() : type(AI_NONE), luaName(NULL), stateDef(NULL), initFunc(NULL), initFunc2(NULL) {}
+	AIEntTypeInfo(AIType type, const char *luaName, AIStateDef *stateDef, void(*initFunc)(AIEntity *e), void(*initFunc2)(AIEntity *e)) : type(type), luaName(luaName), stateDef(stateDef), initFunc(initFunc), initFunc2(initFunc2) {}
+
 };
 
 extern AIEntTypeInfo aiEntList[];
 
 struct InvEnt {
 	uint16 keep;
-	AIEntity ent;
+	AIEntity *ent;
+
+	InvEnt() : keep(0), ent(NULL) {}
 };
 
 struct Waypoint {
 	int x, y, level;
+
+	Waypoint() : x(0), y(0), level(0) {}
 };
 
 struct CineCommand {
