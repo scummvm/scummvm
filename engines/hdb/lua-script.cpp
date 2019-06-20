@@ -829,6 +829,9 @@ bool LuaScript::initScript(Common::SeekableReadStream *stream, const char *scrip
 		return false;
 	}
 
+	// Remove the error handler function from the stack
+	lua_pop(_state, 1);
+
 	return true;
 }
 
@@ -941,6 +944,9 @@ bool LuaScript::executeChunk(Common::String &chunk, uint chunkSize, const Common
 
 		return false;
 	}
+
+	// Remove the error handler function from the stack
+	lua_pop(_state, 1);
 
 	return true;
 }
