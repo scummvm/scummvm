@@ -63,14 +63,15 @@ void Alan2::initialize() {
 		winmethod_Fixed, 1, wintype_TextGrid, 0);
 	g_vm->glk_set_window(glkMainWin);
 
-	_advName = getFilename();
-	while (_advName.contains('.'))
-		_advName.deleteLastChar();
-	advnam = _advName.c_str();
-
+	// Set up the code file to point to the already opened game file
 	codfil = &_gameFile;
 	strncpy(codfnm, getFilename().c_str(), 255);
 	codfnm[255] = '\0';
+
+	// Open up the text file
+	txtfil = new Common::File();
+	if (!txtfil->open(Common::String::format("%s.dat", advnam)))
+		::error("Could not open adventure text data file");
 }
 
 Common::Error Alan2::readSaveData(Common::SeekableReadStream *rs) {
@@ -84,6 +85,12 @@ Common::Error Alan2::writeGameData(Common::WriteStream *ws) {
 }
 
 bool Alan2::is_gamefile_valid() {
+	// Set up adventure name
+	_advName = getFilename();
+	while (_advName.contains('.'))
+		_advName.deleteLastChar();
+	advnam = _advName.c_str();
+
 	if (_gameFile.size() < 8) {
 		GUIErrorMessage(_("This is too short to be a valid Alan2 file."));
 		return false;
@@ -94,7 +101,7 @@ bool Alan2::is_gamefile_valid() {
 		return false;
 	}
 
-	return true;
+	return Common::File::exists(Common::String::format("%s.dat", advnam));
 }
 
 } // End of namespace Alan2
