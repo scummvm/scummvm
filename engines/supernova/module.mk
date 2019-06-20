@@ -6,11 +6,11 @@ MODULE_OBJS := \
 	graphics.o \
 	resman.o \
 	room.o \
-	rooms.o \
+	supernova1/rooms.o \
 	screen.o \
 	sound.o \
 	game-manager.o \
-	state.o \
+	supernova1/state.o \
 	supernova.o
 
 MODULE_DIRS += \

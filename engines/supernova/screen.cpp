@@ -30,7 +30,7 @@
 
 #include "supernova/imageid.h"
 #include "supernova/resman.h"
-#include "supernova/state.h"
+#include "supernova/game-manager.h"
 #include "supernova/screen.h"
 #include "supernova/supernova.h"
 

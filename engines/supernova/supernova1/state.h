@@ -27,7 +27,7 @@
 #include "common/events.h"
 #include "common/rect.h"
 #include "common/keyboard.h"
-#include "supernova/rooms.h"
+#include "supernova/supernova1/rooms.h"
 #include "supernova/room.h"
 #include "supernova/sound.h"
 #include "supernova/game-manager.h"
