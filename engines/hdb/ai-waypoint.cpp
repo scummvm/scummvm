@@ -29,4 +29,37 @@ void AI::clearWaypoints() {
 	_numWaypoints = 0;
 }
 
+void *AI::getStandFrameDir(AIEntity *e) {
+	switch (e->dir) {
+	case DIR_DOWN:
+		if (e->standdownFrames)
+			return e->standdownGfx[0];
+		else if (e->movedownFrames)
+			return e->movedownGfx[0];
+		break;
+	case DIR_UP:
+		if (e->standupFrames)
+			return e->standupGfx[0];
+		else if (e->moveupFrames)
+			return e->moveupGfx[0];
+		break;
+	case DIR_LEFT:
+		if (e->standleftFrames)
+			return e->standleftGfx[0];
+		else if (e->moveleftFrames)
+			return e->moveleftGfx[0];
+		break;
+	case DIR_RIGHT:
+		if (e->standrightFrames)
+			return e->standrightGfx[0];
+		else if (e->moverightFrames)
+			return e->moverightGfx[0];
+		break;
+	case DIR_NONE:
+		warning("AI-WAYPOINT: getStandFrameDir: DIR_NONE found");
+		break;
+	}
+	return e->standdownGfx[0];
+}
+
 } // End of Namespace

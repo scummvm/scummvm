@@ -633,6 +633,7 @@ public:
 	// Waypoint & Movement Functions
 	void lookAtXY(int x, int y);
 	void clearWaypoints();
+	void *getStandFrameDir(AIEntity *e);
 
 	// Inventory Functions
 	bool addToInventory(AIEntity *e);
