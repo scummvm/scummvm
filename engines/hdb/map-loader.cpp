@@ -402,6 +402,8 @@ bool Map::load(Common::SeekableReadStream *stream) {
 			case ITEM_ROBOSTUNNER:
 			case ITEM_SLUGSLINGER:
 				continue;
+			default:
+				warning("MAP-LOADER: load: Unknown Type");
 			}
 		}
 
