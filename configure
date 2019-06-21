@@ -5019,6 +5019,10 @@ esac
 
 if test "$_opengl_mode" = auto ; then
 	case $_backend in
+		android)
+			# Android always runs in GLES mode
+			_opengl_mode=gles
+			;;
 		sdl)
 			case $_sdlversion in
 				1.2.*)

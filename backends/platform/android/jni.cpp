@@ -111,8 +111,6 @@ const JNINativeMethod JNI::_natives[] = {
 		(void *)JNI::main },
 	{ "pushEvent", "(IIIIIII)V",
 		(void *)JNI::pushEvent },
-	{ "enableZoning", "(Z)V",
-		(void *)JNI::enableZoning },
 	{ "setPause", "(Z)V",
 		(void *)JNI::setPause },
 	{ "getCurrentCharset", "()Ljava/lang/String;",
@@ -660,12 +658,6 @@ void JNI::pushEvent(JNIEnv *env, jobject self, int type, int arg1, int arg2,
 	assert(_system);
 
 	_system->pushEvent(type, arg1, arg2, arg3, arg4, arg5, arg6);
-}
-
-void JNI::enableZoning(JNIEnv *env, jobject self, jboolean enable) {
-	assert(_system);
-
-	_system->enableZoning(enable);
 }
 
 void JNI::setPause(JNIEnv *env, jobject self, jboolean value) {
