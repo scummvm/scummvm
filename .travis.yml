@@ -54,9 +54,9 @@ branches:
 matrix:
   include:
     - os: linux
-      compiler:
-        - gcc
-        - clang
+      compiler: gcc
+    - os: linux
+      compiler: clang
     - os: osx
       compiler: clang
 
