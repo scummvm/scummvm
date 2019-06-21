@@ -24,6 +24,7 @@
 #define GLK_ALAN2
 
 #include "common/scummsys.h"
+#include "common/serializer.h"
 #include "common/stack.h"
 #include "glk/glk_api.h"
 
@@ -47,6 +48,11 @@ private:
 	 * Initialization
 	 */
 	void initialize();
+
+	/**
+	 * Synchronize data to or from a save file
+	 */
+	void synchronizeSave(Common::Serializer &s);
 public:
 	/**
 	 * Constructor

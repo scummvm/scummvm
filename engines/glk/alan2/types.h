@@ -25,6 +25,8 @@
 
 #include "glk/alan2/sysdep.h"
 #include "glk/alan2/acode.h"
+#include "common/serializer.h"
+#include "common/stream.h"
 
 namespace Glk {
 namespace Alan2 {
@@ -89,6 +91,11 @@ struct CurVars {
     tick,
     score,
     visits;
+
+	/**
+	 * Read or write data to/from a save file
+	 */
+  void synchronize(Common::Serializer &s);
 };
 
 #include "common/pack-start.h"	// START STRUCT PACKING
@@ -246,6 +253,11 @@ struct EvtqElem {	/* EVENT QUEUE ELEMENT */
   int time;
   int event;
   int where;
+
+  /**
+   * Read or write data to/from a save file
+   */
+  void synchronize(Common::Serializer &s);
 } PACKED_STRUCT;
 
 struct IniElem {	/* STRING INITIALISATION TABLE */

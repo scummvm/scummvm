@@ -26,6 +26,8 @@
 /* Header file for instruction execution unit in Alan interpreter
  */
 
+#include "glk/alan2/types.h"
+
 namespace Glk {
 namespace Alan2 {
 
