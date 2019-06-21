@@ -105,8 +105,8 @@ void AI::processCines() {
 		case C_RESETCAMERA:
 			int px, py;
 			_cameraLock = false;
-			warning("STUB: AI::GetPlayerXY required");
-			warning("STUB: MAP::CenterMapXY required");
+			g_hdb->_ai->getPlayerXY(&px, &py);
+			g_hdb->_map->centerMapXY(px + 16, py + 16);
 			complete = true;
 			break;
 		case C_MOVECAMERA:
