@@ -707,29 +707,7 @@ int FWScript::execute() {
 
 	if (_script._size) {
 		while (!ret) {
-
-			if (g_cine->getGameType() == Cine::GType_OS) {
-				if (_pos == 0x0f9a) {
-					if (!scumm_stricmp(currentPrcName, "AUTO00.PRC"))
-						g_cine->_globalVars[200] = g_cine->_objectTable[235].costume;
-				}
-			} else {
-				if (_pos == 0x2c) {
-					if (g_cine->_objectTable[1].x == 0x0131) {
-						if (!scumm_stricmp(currentPrcName, "TOTO.PRC"))
-							g_cine->_objectTable[2].x = 0x02;
-					}
-				} /*else if (!scumm_stricmp(currentPrcName, "CODE2.PRC")) {
-					if (_pos == 1) {
-						//globalVars[0] = objectTable[scriptElement->scriptPtr[6]].frame;
-					} else if (_pos == 504) {
-						//_currentScriptElement->localVars[1] = _currentScriptElement->localVars[2] = 0;
-						//globalVars[251] = 0;
-						g_cine->_globalVars[251] = g_cine->_globalVars[251];
-					}
-				}*/
-			} 
-
+			_line = _pos;
 			byte opcode = getNextByte();
 			OpFunc handler = _info->opcodeHandler(opcode);
 
