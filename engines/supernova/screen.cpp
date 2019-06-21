@@ -263,7 +263,7 @@ void Screen::setTextCursorColor(byte color) {
 	_textColor = color;
 }
 
-void Screen::renderMessage(StringId stringId, MessagePosition position,
+void Screen::renderMessage(int stringId, MessagePosition position,
 						   Common::String var1, Common::String var2) {
 	Common::String text = _vm->getGameString(stringId);
 
@@ -293,7 +293,7 @@ void Screen::renderText(const char *text) {
 	renderText(text, _textCursorX, _textCursorY, _textColor);
 }
 
-void Screen::renderText(StringId stringId) {
+void Screen::renderText(int stringId) {
 	renderText(_vm->getGameString(stringId));
 }
 
@@ -357,7 +357,7 @@ void Screen::renderText(const Common::String &text, int x, int y, byte color) {
 		renderText(text.c_str(), x, y, color);
 }
 
-void Screen::renderText(StringId stringId, int x, int y, byte color) {
+void Screen::renderText(int stringId, int x, int y, byte color) {
 	renderText(_vm->getGameString(stringId), x, y, color);
 }
 
@@ -458,7 +458,7 @@ void Screen::restoreScreen() {
 }
 
 void Screen::renderRoom(Room &room) {
-	if (room.getId() == INTRO)
+	if (room.getId() == INTRO1 || room.getId() == INTRO2)
 		return;
 
 	if (setCurrentImage(room.getFileNumber())) {

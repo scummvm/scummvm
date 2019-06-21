@@ -46,13 +46,13 @@ namespace Supernova {
 
 #define SAVEGAME_HEADER MKTAG('M','S','N','1')
 #define SAVEGAME_HEADER2 MKTAG('M','S','N','2')
-#define SAVEGAME_VERSION 9
+#define SAVEGAME_VERSION 10
 
 #define SUPERNOVA_DAT "supernova.dat"
-#define SUPERNOVA_DAT_VERSION 1
+#define SUPERNOVA_DAT_VERSION 2
 
 #define SUPERNOVA2_DAT "supernova2.dat"
-#define SUPERNOVA2_DAT_VERSION 1
+#define SUPERNOVA2_DAT_VERSION 2
 
 class GuiElement;
 class ResourceManager;
@@ -120,18 +120,18 @@ public:
 	void renderRoom(Room &room);
 	void renderMessage(const char *text, MessagePosition position = kMessageNormal);
 	void renderMessage(const Common::String &text, MessagePosition position = kMessageNormal);
-	void renderMessage(StringId stringId, MessagePosition position = kMessageNormal,
+	void renderMessage(int stringId, MessagePosition position = kMessageNormal,
 					   Common::String var1 = "", Common::String var2 = "");
-	void renderMessage(StringId stringId, int x, int y);
+	void renderMessage(int stringId, int x, int y);
 	void removeMessage();
 	void renderText(const uint16 character);
 	void renderText(const char *text);
 	void renderText(const Common::String &text);
-	void renderText(StringId stringId);
+	void renderText(int stringId);
 	void renderText(const uint16 character, int x, int y, byte color);
 	void renderText(const char *text, int x, int y, byte color);
 	void renderText(const Common::String &text, int x, int y, byte color);
-	void renderText(StringId stringId, int x, int y, byte color);
+	void renderText(int stringId, int x, int y, byte color);
 	void renderText(const GuiElement &guiElement);
 	void renderBox(int x, int y, int width, int height, byte color);
 	void renderBox(const GuiElement &guiElement);

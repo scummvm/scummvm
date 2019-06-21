@@ -64,12 +64,11 @@ public:
 
 protected:
 	int _fileNumber;
-	bool _shown[kMaxSection];
+	char _shown[kMaxSection];
 	byte _sentenceRemoved[kMaxDialog];
 	Object _objectState[kMaxObject];
 	RoomId _id;
 	SupernovaEngine *_vm;
-	GameManager1 *_gm;
 
 private:
 	bool _seen;

@@ -64,7 +64,7 @@ class GameState {
 		bool   _playerHidden;
 };
 
-class GameManager1 : public GameManager {
+class GameManager1: public GameManager {
 public:
 	GameManager1(SupernovaEngine *vm, Sound *sound);
 	virtual ~GameManager1();

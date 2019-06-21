@@ -46,6 +46,7 @@
 #include "supernova/sound.h"
 #include "supernova/supernova.h"
 #include "supernova/supernova1/state.h"
+#include "supernova/supernova2/state.h"
 #include "supernova/game-manager.h"
 
 namespace Supernova {
@@ -142,9 +143,11 @@ void SupernovaEngine::init() {
 
 	_resMan = new ResourceManager(_MSPart);
 	_sound = new Sound(_mixer, _resMan);
+	_screen = new Screen(this, _resMan);
 	if (_MSPart == 1)
 		_gm = new GameManager1(this, _sound);
-	_screen = new Screen(this, _resMan);
+	else if (_MSPart == 2)
+		_gm = new GameManager2(this, _sound);
 	_console = new Console(this, _gm);
 
 	setTotalPlayTime(0);
@@ -320,12 +323,12 @@ void SupernovaEngine::renderMessage(const Common::String &text, MessagePosition 
 	_screen->renderMessage(text, position);
 }
 
-void SupernovaEngine::renderMessage(StringId stringId, MessagePosition position, Common::String var1, Common::String var2) {
+void SupernovaEngine::renderMessage(int stringId, MessagePosition position, Common::String var1, Common::String var2) {
 	_gm->_messageDuration = (getGameString(stringId).size() + 20) * _textSpeed / 10;
 	_screen->renderMessage(stringId, position, var1, var2);
 }
 
-void SupernovaEngine::renderMessage(StringId stringId, int x, int y) {
+void SupernovaEngine::renderMessage(int stringId, int x, int y) {
 	_gm->_messageDuration = (getGameString(stringId).size() + 20) * _textSpeed / 10;
 	_screen->renderMessage(getGameString(stringId).c_str(), kMessageNormal, x, y);
 }
@@ -346,7 +349,7 @@ void SupernovaEngine::renderText(const Common::String &text) {
 	_screen->renderText(text);
 }
 
-void SupernovaEngine::renderText(StringId stringId) {
+void SupernovaEngine::renderText(int stringId) {
 	_screen->renderText(stringId);
 }
 
@@ -366,7 +369,7 @@ void SupernovaEngine::renderText(const Common::String &text, int x, int y, byte 
 	_screen->renderText(text, x, y, color);
 }
 
-void SupernovaEngine::renderText(StringId stringId, int x, int y, byte color) {
+void SupernovaEngine::renderText(int stringId, int x, int y, byte color) {
 	_screen->renderText(stringId, x, y, color);
 }
 
@@ -688,7 +691,7 @@ bool SupernovaEngine::loadGame(int slot) {
 
 	byte saveVersion = savefile->readByte();
 	// Save version 1 was used during development and is no longer supported
-	if (saveVersion > SAVEGAME_VERSION || saveVersion == 1) {
+	if (saveVersion > SAVEGAME_VERSION || saveVersion < 10) {
 		warning("Save game version %i not supported", saveVersion);
 		delete savefile;
 		return false; //Common::kUnknownError;

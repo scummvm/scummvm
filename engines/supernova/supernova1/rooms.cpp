@@ -35,7 +35,7 @@ Intro::Intro(SupernovaEngine *vm, GameManager1 *gm) {
 	_gm = gm;
 
 	_fileNumber = -1;
-	_id = INTRO;
+	_id = INTRO1;
 	_shown[0] = kShownFalse;
 
 	_objectState[0] =
@@ -162,7 +162,7 @@ bool Intro::animate(int section1, int section2, int duration) {
 }
 
 bool Intro::animate(int section1, int section2, int duration,
-					MessagePosition position, StringId textId) {
+					MessagePosition position, int textId) {
 	Common::KeyCode key = Common::KEYCODE_INVALID;
 	const Common::String& text = _vm->getGameString(textId);
 	_vm->renderMessage(text, position);
@@ -187,7 +187,7 @@ bool Intro::animate(int section1, int section2, int duration,
 }
 
 bool Intro::animate(int section1, int section2, int section3, int section4,
-					int duration, MessagePosition position, StringId textId) {
+					int duration, MessagePosition position, int textId) {
 	Common::KeyCode key = Common::KEYCODE_INVALID;
 	const Common::String& text = _vm->getGameString(textId);
 	_vm->renderMessage(text, position);
@@ -266,7 +266,7 @@ void Intro::cutscene() {
 	exitOnEscape(28);
 	_vm->removeMessage();
 
-	StringId textCounting[4] =
+	int textCounting[4] =
 	{kStringIntroCutscene7, kStringIntroCutscene8, kStringIntroCutscene9, kStringIntroCutscene10};
 	_vm->setCurrentImage(31);
 	_vm->renderImage(0);
@@ -461,7 +461,7 @@ ShipCorridor::ShipCorridor(SupernovaEngine *vm, GameManager1 *gm) {
 	_gm = gm;
 
 	_fileNumber = 17;
-	_id = CORRIDOR;
+	_id = CORRIDOR_ROOM;
 	_shown[0] = kShownTrue;
 	_shown[4] = kShownTrue;
 
@@ -518,7 +518,7 @@ ShipHall::ShipHall(SupernovaEngine *vm, GameManager1 *gm) {
 	_objectState[2] = Object(_id, kStringHatch, kStringStasisHatchDescription, NULLOBJECT, OPENABLE | CLOSED | EXIT, 1, 1, 2, SLEEP, 8);
 	_objectState[3] = Object(_id, kStringSlot, kStringSlotDescription, SLEEP_SLOT, COMBINABLE, 2, 2, 0, NULLROOM, 0);
 	_objectState[4] = Object(_id, kStringLadder, kStringDefaultDescription, NULLOBJECT, NULLTYPE, 3, SLEEP, 0, NULLROOM, 0);
-	_objectState[5] = Object(_id, kStringCorridor, kStringDefaultDescription, NULLOBJECT, EXIT, 6, 6, 0, CORRIDOR, 19);
+	_objectState[5] = Object(_id, kStringCorridor, kStringDefaultDescription, NULLOBJECT, EXIT, 6, 6, 0, CORRIDOR_ROOM, 19);
 }
 
 bool ShipHall::interact(Action verb, Object &obj1, Object &obj2) {
@@ -869,7 +869,7 @@ ShipCabinL1::ShipCabinL1(SupernovaEngine *vm, GameManager1 *gm) {
 	_objectState[3] = Object(_id, kStringMagnete, kStringMagneteDescription, NULLOBJECT, UNNECESSARY, 8, 8, 0, NULLROOM, 0);
 	_objectState[4] = Object(_id, kStringImage, kStringGenericDescription4, NULLOBJECT, UNNECESSARY, 9, 9, 0);
 	_objectState[5] = Object(_id, kStringPen, kStringPenDescription, PEN, TAKE | COMBINABLE, 10, 10, 5 | 128);
-	_objectState[6] = Object(_id, kStringHatch, kStringDefaultDescription, NULLOBJECT, OPENABLE | OPENED | EXIT, 3, 3, 24 | 128, CORRIDOR, 9);
+	_objectState[6] = Object(_id, kStringHatch, kStringDefaultDescription, NULLOBJECT, OPENABLE | OPENED | EXIT, 3, 3, 24 | 128, CORRIDOR_ROOM, 9);
 	_objectState[7] = Object(_id, kStringSlot, kStringSlotDescription, NULLOBJECT, COMBINABLE, 0, 0, 0);
 	_objectState[8] = Object(_id, kStringShelf, kStringDefaultDescription, NULLOBJECT, OPENABLE | CLOSED, 1, 1, 0);
 	_objectState[9] = Object(_id, kStringCompartment, kStringDefaultDescription, NULLOBJECT, OPENABLE | CLOSED, 2, 2, 0);
@@ -905,7 +905,7 @@ ShipCabinL2::ShipCabinL2(SupernovaEngine *vm, GameManager1 *gm) {
 	_objectState[16] = Object(_id, kStringJunk,kStringJunkDescription,NULLOBJECT,UNNECESSARY,38,38,0);
 	_objectState[17] = Object(_id, kStringMagnete,kStringMagneteDescription,NULLOBJECT,UNNECESSARY,23,23,0);
 	_objectState[18] = Object(_id, kStringToilet,kStringDefaultDescription,BATHROOM_DOOR,EXIT,255,255,0,BATHROOM,22);
-	_objectState[19] = Object(_id, kStringHatch,kStringDefaultDescription,NULLOBJECT,OPENABLE | OPENED | EXIT,3,3,24 | 128,CORRIDOR,9);
+	_objectState[19] = Object(_id, kStringHatch,kStringDefaultDescription,NULLOBJECT,OPENABLE | OPENED | EXIT,3,3,24 | 128,CORRIDOR_ROOM,9);
 	_objectState[20] = Object(_id, kStringSlot,kStringSlotDescription,NULLOBJECT,COMBINABLE,0,0,0);
 	_objectState[21] = Object(_id, kStringShelf,kStringDefaultDescription,NULLOBJECT,OPENABLE | CLOSED,1,1,0);
 	_objectState[22] = Object(_id, kStringCompartment,kStringDefaultDescription,NULLOBJECT,OPENABLE | CLOSED,2,2,0);
@@ -979,7 +979,7 @@ ShipCabinL3::ShipCabinL3(SupernovaEngine *vm, GameManager1 *gm) {
 	_objectState[8] = Object(_id, kStringWire,kStringDefaultDescription,WIRE,COMBINABLE,18,18,0);
 	_objectState[9] = Object(_id, kStringWire,kStringDefaultDescription,WIRE2,COMBINABLE,19,19,0);
 	_objectState[10] = Object(_id, kStringPlug,kStringDefaultDescription,PLUG,COMBINABLE,20,20,0);
-	_objectState[11] = Object(_id, kStringHatch,kStringDefaultDescription,NULLOBJECT,OPENABLE | OPENED | EXIT,3,3,24 | 128,CORRIDOR,9);
+	_objectState[11] = Object(_id, kStringHatch,kStringDefaultDescription,NULLOBJECT,OPENABLE | OPENED | EXIT,3,3,24 | 128,CORRIDOR_ROOM,9);
 	_objectState[12] = Object(_id, kStringSlot,kStringSlotDescription,NULLOBJECT,COMBINABLE,0,0,0);
 	_objectState[13] = Object(_id, kStringShelf,kStringDefaultDescription,NULLOBJECT,OPENABLE | CLOSED,1,1,0);
 	_objectState[14] = Object(_id, kStringCompartment,kStringDefaultDescription,NULLOBJECT,OPENABLE | CLOSED,2,2,0);
@@ -1081,7 +1081,7 @@ ShipCabinR1::ShipCabinR1(SupernovaEngine *vm, GameManager1 *gm) {
 	_objectState[0] = Object(_id, kStringImage,kStringImageDescription1,NULLOBJECT,UNNECESSARY,5,5,0);
 	_objectState[1] = Object(_id, kStringDrawingInstruments,kStringDrawingInstrumentsDescription,NULLOBJECT,UNNECESSARY,6,6,0);
 	_objectState[2] = Object(_id, kStringMagnete,kStringMagneteDescription,NULLOBJECT,UNNECESSARY,7,7,0);
-	_objectState[3] = Object(_id, kStringHatch,kStringDefaultDescription,NULLOBJECT,OPENABLE | OPENED | EXIT,3,3,15 | 128,CORRIDOR,5);
+	_objectState[3] = Object(_id, kStringHatch,kStringDefaultDescription,NULLOBJECT,OPENABLE | OPENED | EXIT,3,3,15 | 128,CORRIDOR_ROOM,5);
 	_objectState[4] = Object(_id, kStringSlot,kStringSlotDescription,NULLOBJECT,COMBINABLE,0,0,0);
 	_objectState[5] = Object(_id, kStringShelf,kStringDefaultDescription,NULLOBJECT,OPENABLE | CLOSED,1,1,0);
 	_objectState[6] = Object(_id, kStringCompartment,kStringDefaultDescription,NULLOBJECT,OPENABLE | CLOSED,2,2,0);
@@ -1103,7 +1103,7 @@ ShipCabinR2::ShipCabinR2(SupernovaEngine *vm, GameManager1 *gm) {
 	_objectState[0] = Object(_id, kStringChessGame,kStringChessGameDescription1,NULLOBJECT,UNNECESSARY,11,11,0);
 	_objectState[1] = Object(_id, kStringTennisRacket,kStringTennisRacketDescription,NULLOBJECT,UNNECESSARY,8,8,0);
 	_objectState[2] = Object(_id, kStringTennisBall,kStringGenericDescription2,NULLOBJECT,UNNECESSARY,9,9,0);
-	_objectState[3] = Object(_id, kStringHatch,kStringDefaultDescription,NULLOBJECT,OPENABLE | OPENED | EXIT,3,3,15 | 128,CORRIDOR,5);
+	_objectState[3] = Object(_id, kStringHatch,kStringDefaultDescription,NULLOBJECT,OPENABLE | OPENED | EXIT,3,3,15 | 128,CORRIDOR_ROOM,5);
 	_objectState[4] = Object(_id, kStringSlot,kStringSlotDescription,NULLOBJECT,COMBINABLE,0,0,0);
 	_objectState[5] = Object(_id, kStringShelf,kStringDefaultDescription,NULLOBJECT,OPENABLE | CLOSED,1,1,0);
 	_objectState[6] = Object(_id, kStringCompartment,kStringDefaultDescription,NULLOBJECT,OPENABLE | CLOSED,2,2,0);
@@ -1140,7 +1140,7 @@ ShipCabinR3::ShipCabinR3(SupernovaEngine *vm, GameManager1 *gm) {
 	_objectState[15] = Object(_id, kStringCompartment,kStringCompartmentDescription,SHELF4,OPENABLE | CLOSED,24,25,13);
 	_objectState[16] = Object(_id, kStringBook,kStringBookHitchhiker,BOOK,TAKE,26,26,14);
 	_objectState[17] = Object(_id, kStringDiscman,kStringDiscmanDescription,DISCMAN,TAKE | COMBINABLE,33,33,16);
-	_objectState[18] = Object(_id, kStringHatch,kStringDefaultDescription,NULLOBJECT,OPENABLE | EXIT,3,3,15 | 128,CORRIDOR,5);
+	_objectState[18] = Object(_id, kStringHatch,kStringDefaultDescription,NULLOBJECT,OPENABLE | EXIT,3,3,15 | 128,CORRIDOR_ROOM,5);
 	_objectState[19] = Object(_id, kStringSlot,kStringSlotDescription,NULLOBJECT,COMBINABLE,0,0,0);
 	_objectState[20] = Object(_id, kStringShelf,kStringDefaultDescription,NULLOBJECT,OPENABLE | CLOSED,1,1,0);
 	_objectState[21] = Object(_id, kStringCompartment,kStringDefaultDescription,NULLOBJECT,OPENABLE | CLOSED,2,2,0);
@@ -1194,7 +1194,7 @@ bool ShipCabinR3::interact(Action verb, Object &obj1, Object &obj2) {
 
 void ShipCabinR3::onEntrance() {
 	for (int i = 0; i < 3; ++i)
-		_gm->_inventory.add(*_gm->_rooms[INTRO]->getObject(i));
+		_gm->_inventory.add(*_gm->_rooms[INTRO1]->getObject(i));
 
 	setRoomSeen(true);
 }
@@ -1221,7 +1221,7 @@ ShipAirlock::ShipAirlock(SupernovaEngine *vm, GameManager1 *gm) {
 	_shown[0] = kShownTrue;
 	_shown[6] = kShownTrue;
 
-	_objectState[0] = Object(_id, kStringHatch,kStringHatchDescription1,NULLOBJECT,EXIT | OPENABLE | OPENED | CLOSED,0,0,0,CORRIDOR,10);
+	_objectState[0] = Object(_id, kStringHatch,kStringHatchDescription1,NULLOBJECT,EXIT | OPENABLE | OPENED | CLOSED,0,0,0,CORRIDOR_ROOM,10);
 	_objectState[1] = Object(_id, kStringHatch,kStringHatchDescription2,NULLOBJECT,EXIT | OPENABLE | CLOSED,1,1,0,HOLD,14);
 	_objectState[2] = Object(_id, kStringButton,kStringDefaultDescription,BUTTON1,PRESS,2,2,0);
 	_objectState[3] = Object(_id, kStringButton,kStringDefaultDescription,BUTTON2,PRESS,3,3,0);
@@ -2591,7 +2591,7 @@ bool ArsanoMeetup2::interact(Action verb, Object &obj1, Object &obj2) {
 	if (((verb == ACTION_WALK) &&
 			((obj1._id == SPACESHIP) || (obj1._id == ROGER_W))) ||
 			((verb == ACTION_TALK) && (obj1._id == ROGER_W))) {
-		_gm->changeRoom(INTRO);
+		_gm->changeRoom(INTRO1);
 		_vm->setCurrentImage(30);
 		_vm->renderImage(0);
 		_vm->paletteBrightness();
@@ -2823,17 +2823,17 @@ bool ArsanoMeetup3::interact(Action verb, Object &obj1, Object &obj2) {
 		_gm->reply(kStringArsanoMeetup3_28, 1, 1 + 128);
 		_vm->paletteFadeOut();
 		// Remove all objects from the inventory except the Knife, Watch and Discman
-		bool has_knife = _gm->_rooms[INTRO]->getObject(1)->hasProperty(CARRIED);
-		bool has_watch = _gm->_rooms[INTRO]->getObject(2)->hasProperty(CARRIED);
-		bool has_discman = _gm->_rooms[INTRO]->getObject(3)->hasProperty(CARRIED);
+		bool has_knife = _gm->_rooms[INTRO1]->getObject(1)->hasProperty(CARRIED);
+		bool has_watch = _gm->_rooms[INTRO1]->getObject(2)->hasProperty(CARRIED);
+		bool has_discman = _gm->_rooms[INTRO1]->getObject(3)->hasProperty(CARRIED);
 		_gm->_inventory.clear();
 		_gm->_inventoryScroll = 0;
 		if (has_knife)
-			_gm->_inventory.add(*_gm->_rooms[INTRO]->getObject(1));
+			_gm->_inventory.add(*_gm->_rooms[INTRO1]->getObject(1));
 		if (has_watch)
-			_gm->_inventory.add(*_gm->_rooms[INTRO]->getObject(2));
+			_gm->_inventory.add(*_gm->_rooms[INTRO1]->getObject(2));
 		if (has_discman)
-			_gm->_inventory.add(*_gm->_rooms[INTRO]->getObject(3));
+			_gm->_inventory.add(*_gm->_rooms[INTRO1]->getObject(3));
 		_gm->changeRoom(CELL);
 		_gm->_state._dream = true;
 	} else
@@ -3158,7 +3158,7 @@ bool AxacussCorridor4::interact(Action verb, Object &obj1, Object &obj2) {
 	} else if ((verb == ACTION_TAKE) && (obj1._id == WATCH) && !obj1.hasProperty(CARRIED)) {
 		setSectionVisible(29, false);
 		getObject(4)->_click = 255;
-		_gm->takeObject(*_gm->_rooms[INTRO]->getObject(2));
+		_gm->takeObject(*_gm->_rooms[INTRO1]->getObject(2));
 		if (isSectionVisible(9))
 			_vm->renderImage(9);
 	} else
@@ -4004,7 +4004,7 @@ AxacussStation::AxacussStation(SupernovaEngine *vm, GameManager1 *gm) {
 
 bool AxacussStation::interact(Action verb, Object &obj1, Object &obj2) {
 	if ((verb == ACTION_LOOK) && (obj1._id == STATION_SIGN)) {
-		_gm->changeRoom(SIGN);
+		_gm->changeRoom(SIGN_ROOM);
 	} else if ((verb == ACTION_WALK) && (obj1._id == DOOR) && obj1.hasProperty(OPENED)) {
 		_gm->great(0);
 		_gm->_guiEnabled = false;
@@ -4022,7 +4022,7 @@ AxacussSign::AxacussSign(SupernovaEngine *vm, GameManager1 *gm) {
 	_gm = gm;
 
 	_fileNumber = 32;
-	_id = SIGN;
+	_id = SIGN_ROOM;
 	_shown[0] = kShownTrue;
 	_shown[1] = kShownTrue;
 

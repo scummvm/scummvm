@@ -45,7 +45,7 @@ public:
 	};
 
 public:
-	static const int kNumImageFiles = 45;
+	static const int kNumImageFiles = 47;
 
 public:
 	ResourceManager(int MSPart);
@@ -60,15 +60,17 @@ public:
 	int getAudioRate();
 
 private:
-	void initSoundFiles();
+	void initSoundFiles1();
+	void initSoundFiles2();
 	void initGraphics();
 	void initCursorGraphics();
-	void initImages();
+	void initImages1();
+	void initImages2();
 	void initSiren();
 	byte *generateTone(byte *buffer, int frequency, int length, int audioRate, Common::SineTable &table);
 
 private:
-	Common::ScopedPtr<Audio::SeekableAudioStream> _soundSamples[kAudioNumSamples];
+	Common::ScopedPtr<Audio::SeekableAudioStream> _soundSamples[kAudioNumSamples1];
 	Common::ScopedPtr<Common::MemoryReadStream> _musicIntroBuffer;
 	Common::ScopedPtr<Common::MemoryReadStream> _musicOutroBuffer;
 	Common::ScopedPtr<Common::MemoryReadStream> _musicMadMonkeysBuffer;
