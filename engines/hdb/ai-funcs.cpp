@@ -1145,7 +1145,9 @@ void AI::drawEnts(int x, int y, int w, int h) {
 
 			switch (e->type) {
 			case AI_VORTEXIAN:
-				warning("STUB: AI::drawEnts: Tile Alpha Blitting required");
+				if (e->draw)
+					e->draw->drawMasked(e->x - x + e->drawXOff, e->y - y + e->drawYOff);
+				debug(1, "STUB: AI::drawEnts: Replace Masked Blitting with Alpha Masked Blitting");
 				break;
 			case AI_GUY: // Draw Player Last
 				break;
