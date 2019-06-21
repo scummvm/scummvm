@@ -695,19 +695,19 @@ void Map::removeBGTileAnimation(int x, int y) {
 
 	if (flags & kFlagAnimFast) {
 		for(Common::Array<uint32>::iterator it = _listBGAnimFast.begin(); it!=_listBGAnimFast.end(); it++)
-			if (i == (*it)) {
+			if ((uint)i == (*it)) {
 				_listBGAnimFast.erase(it);
 				break;
 			}
 	} else if (flags & kFlagAnimSlow) {
 		for (Common::Array<uint32>::iterator it = _listBGAnimSlow.begin(); it != _listBGAnimSlow.end(); it++)
-			if (i == (*it)) {
+			if ((uint)i == (*it)) {
 				_listBGAnimSlow.erase(it);
 				break;
 			}
 	} else if (flags & kFlagAnimMedium) {
 		for (Common::Array<uint32>::iterator it = _listBGAnimMedium.begin(); it != _listBGAnimMedium.end(); it++)
-			if (i == (*it)) {
+			if ((uint)i == (*it)) {
 				_listBGAnimMedium.erase(it);
 				break;
 			}
@@ -721,19 +721,19 @@ void Map::removeFGTileAnimation(int x, int y) {
 
 	if (flags & kFlagAnimFast) {
 		for(Common::Array<uint32>::iterator it = _listFGAnimFast.begin(); it!=_listFGAnimFast.end(); it++)
-			if (i == (*it)) {
+			if ((uint)i == (*it)) {
 				_listFGAnimFast.erase(it);
 				break;
 			}
 	} else if (flags & kFlagAnimSlow) {
 		for (Common::Array<uint32>::iterator it = _listFGAnimSlow.begin(); it != _listFGAnimSlow.end(); it++)
-			if (i == (*it)) {
+			if ((uint)i == (*it)) {
 				_listFGAnimSlow.erase(it);
 				break;
 			}
 	} else if (flags & kFlagAnimMedium) {
 		for (Common::Array<uint32>::iterator it = _listFGAnimMedium.begin(); it != _listFGAnimMedium.end(); it++)
-			if (i == (*it)) {
+			if ((uint)i == (*it)) {
 				_listFGAnimMedium.erase(it);
 				break;
 			}
