@@ -700,6 +700,73 @@ bool AI::init() {
 	_waypointGfx[3] = new Tile;
 	_waypointGfx[3]->load(g_hdb->_fileMan->findFirstData("icon_waypoint_select4", TYPE_ICON32));
 
+	// Setup Vars to reference SPECIAL Map Tiles
+	_useSwitchOff	= g_hdb->_drawMan->getTileIndex("anim_t32_switch_off01");
+	_useSwitchOn	= g_hdb->_drawMan->getTileIndex("t32_switch_on");
+	_useSwitch2Off	= g_hdb->_drawMan->getTileIndex("anim_t32_1switch_off01");
+	_useSwitch2On	= g_hdb->_drawMan->getTileIndex("t32_1switch_on");
+//	_useHandswitchOn	= g_hdb->_drawMan->getTileIndex("t32_ship_handswitch_on");
+//	_useHandswitchOff	= g_hdb->_drawMan->getTileIndex("anim_t32_ship_handswitch_off1");
+	_useHolderEmpty	= g_hdb->_drawMan->getTileIndex("anim_t32_holder_empty1");
+	_useHolderFull	= g_hdb->_drawMan->getTileIndex("t32_holder_full");
+	_useMailsorter	= g_hdb->_drawMan->getTileIndex("anim_t32_mailsort1");
+	_useAskcomp		= g_hdb->_drawMan->getTileIndex("anim_t32_askcomp1");
+
+	_targetDoorN	= g_hdb->_drawMan->getTileIndex("t32_door_n_1");
+	_targetDoorP	= g_hdb->_drawMan->getTileIndex("t32_door_p_1");
+	_targetDoorS	= g_hdb->_drawMan->getTileIndex("t32_door_s_1");
+	_targetDoorNv	= g_hdb->_drawMan->getTileIndex("t32_door_nv_1");
+	_targetDoorPv	= g_hdb->_drawMan->getTileIndex("t32_door_pv_1");
+	_targetDoorSv	= g_hdb->_drawMan->getTileIndex("t32_door_sv_1");
+
+	_targetDoor2N	= g_hdb->_drawMan->getTileIndex("t32_door2_n_1");
+	_targetDoor2P	= g_hdb->_drawMan->getTileIndex("t32_door2_p_1");
+	_targetDoor2S	= g_hdb->_drawMan->getTileIndex("t32_door2_s_1");
+	_targetDoor2Nv	= g_hdb->_drawMan->getTileIndex("t32_door2_nv_1");
+	_targetDoor2Pv	= g_hdb->_drawMan->getTileIndex("t32_door2_pv_1");
+	_targetDoor2Sv	= g_hdb->_drawMan->getTileIndex("t32_door2_sv_1");
+
+	_target2DoorN	= g_hdb->_drawMan->getTileIndex("t32_e2_door_n_1");
+	_target2DoorP	= g_hdb->_drawMan->getTileIndex("t32_e2_door_p_1");
+	_target2DoorS	= g_hdb->_drawMan->getTileIndex("t32_e2_door_s_1");
+	_target2DoorNv	= g_hdb->_drawMan->getTileIndex("t32_e2_door_nv_1");
+	_target2DoorPv	= g_hdb->_drawMan->getTileIndex("t32_e2_door_pv_1");
+	_target2DoorSv	= g_hdb->_drawMan->getTileIndex("t32_e2_door_sv_1");
+
+	_target3DoorN	= g_hdb->_drawMan->getTileIndex("t32_e3_door_n_1");
+	_target3DoorP	= g_hdb->_drawMan->getTileIndex("t32_e3_door_p_1");
+	_target3DoorS	= g_hdb->_drawMan->getTileIndex("t32_e3_door_s_1");
+	_target3DoorNv	= g_hdb->_drawMan->getTileIndex("t32_e3_door_nv_1");
+	_target3DoorPv	= g_hdb->_drawMan->getTileIndex("t32_e3_door_pv_1");
+	_target3DoorSv	= g_hdb->_drawMan->getTileIndex("t32_e3_door_sv_1");
+
+	_targetBridgeU	= g_hdb->_drawMan->getTileIndex("t32_bridgeup1");
+	_targetBridgeD	= g_hdb->_drawMan->getTileIndex("t32_bridgedown1");
+	_targetBridgeL	= g_hdb->_drawMan->getTileIndex("t32_bridgeleft1");
+	_targetBridgeR	= g_hdb->_drawMan->getTileIndex("t32_bridgeright1");
+	_targetBridgeMidLR	= g_hdb->_drawMan->getTileIndex("t32_mgrate_mid");
+	_targetBridgeMidUD	= g_hdb->_drawMan->getTileIndex("t32_mgrate_tbmid");
+	_touchplateOn	= g_hdb->_drawMan->getTileIndex("t32_touchplateon");
+	_touchplateOff	= g_hdb->_drawMan->getTileIndex("t32_touchplateoff");
+	_blockpole		= g_hdb->_drawMan->getTileIndex("t32_blockpole_1");
+	_useTeleporter	= g_hdb->_drawMan->getTileIndex("anim_t32_teleporter1");
+
+	_useSwitchOff	= g_hdb->_drawMan->getTileIndex("t32_temple_touchplate_on");
+	_useSwitchOff	= g_hdb->_drawMan->getTileIndex("t32_temple_touchplate_off");
+
+	_kcHolderWhiteOff	= g_hdb->_drawMan->getTileIndex("anim_t32_kcholder_white_off1");
+	_kcHolderWhiteOn	= g_hdb->_drawMan->getTileIndex("t32_kcholder_white_on");
+	_kcHolderBlueOff	= g_hdb->_drawMan->getTileIndex("anim_t32_kcholder_blue_off1");
+	_kcHolderBlueOn		= g_hdb->_drawMan->getTileIndex("t32_kcholder_blue_on");
+	_kcHolderRedOff		= g_hdb->_drawMan->getTileIndex("anim_t32_kcholder_red_off1");
+	_kcHolderRedOn		= g_hdb->_drawMan->getTileIndex("t32_kcholder_red_on");
+	_kcHolderGreenOff	= g_hdb->_drawMan->getTileIndex("anim_t32_kcholder_green_off1");
+	_kcHolderGreenOn	= g_hdb->_drawMan->getTileIndex("t32_kcholder_green_on");
+	_kcHolderPurpleOff	= g_hdb->_drawMan->getTileIndex("anim_t32_kcholder_purple_off1");
+	_kcHolderPurpleOn	= g_hdb->_drawMan->getTileIndex("t32_kcholder_purple_on");
+	_kcHolderBlackOff	= g_hdb->_drawMan->getTileIndex("anim_t32_kcholder_black_off1");
+	_kcHolderBlackOn	= g_hdb->_drawMan->getTileIndex("t32_kcholder_black_on");
+
 	_playerRunning = false;
 
 	restartSystem();
