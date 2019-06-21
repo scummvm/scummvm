@@ -288,6 +288,11 @@ Common::Error HDBGame::run() {
 		_drawMan->drawSky();
 		_map->draw();
 		_ai->processCines();
+
+		// Update Timer that's NOT used for in-game Timing
+		_prevTimeSlice = _timeSlice;
+		_timeSlice = g_system->getMillis();
+
 		paint();
 
 		g_system->updateScreen();

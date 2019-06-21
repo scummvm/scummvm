@@ -134,10 +134,31 @@ public:
 		_actionMode = status;
 	}
 
+	void resetTimer() {
+		_timePlayed = _timeSeconds = 0;
+	}
+
+	uint16 getTime() {
+		return _timePlayed / 1000;
+	}
+
+	uint16 getTimeSlice() {
+		return _timeSlice;
+	}
+
+	uint16 getTimeSliceDelta() {
+		return _timeSlice - _prevTimeSlice;
+	}
+
 	bool _gameShutdown;
 	Graphics::PixelFormat _format;
 
 private:
+
+	uint32 _timePlayed;
+	uint32 _timeSlice, _prevTimeSlice;
+	uint32 _timeSeconds;
+
 	Console *_console;
 
 	// Game Variables
