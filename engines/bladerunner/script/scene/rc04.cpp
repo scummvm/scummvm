@@ -51,7 +51,7 @@ void SceneScriptRC04::SceneLoaded() {
 	Obstacle_Object("GRNDNEON07", true);
 	Unobstacle_Object("DisplayTrim", true);
 	Unobstacle_Object("Display01", true);
-	Actor_Set_Goal_Number(kActorGenwalkerA, 200);
+	Actor_Set_Goal_Number(kActorGenwalkerA, kGoalGenwalkerABulletBobsTrackGun);
 }
 
 bool SceneScriptRC04::MouseClick(int x, int y) {

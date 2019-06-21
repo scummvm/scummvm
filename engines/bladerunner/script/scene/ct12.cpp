@@ -318,7 +318,7 @@ void SceneScriptCT12::PlayerWalkedIn() {
 }
 
 void SceneScriptCT12::PlayerWalkedOut() {
-	Game_Flag_Reset(kFlagGenericWalkerWaiting);
+	Game_Flag_Reset(kFlagGenericWalkerWaiting); // A bug? why is this here? Left over code?
 	if (Game_Flag_Query(kFlagCT12ToUG09)) {
 		Game_Flag_Reset(kFlagMcCoyInChinaTown);
 		Game_Flag_Set(kFlagMcCoyInUnderground);

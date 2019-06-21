@@ -79,9 +79,17 @@ void SceneScriptCT01::InitializeScene() {
 			}
 			// Pause generic walkers outside special loop
 			// so that they're always paused when McCoy enters (less chance to collide with him)
+			// We use the previously unused kVariableGenericWalkerConfig
+			// The flag kFlagGenericWalkerWaiting will not do, because it can be reset
+			// if a walker is already moving (goal == 1).
 			// There's also another flag called kFlagUnpauseGenWalkers
 			// but the usage of that flag seems more obscure and dubious for this purpose
-			Game_Flag_Set(kFlagGenericWalkerWaiting);
+			// Furthermore, kFlagUnpauseGenWalkers seems to be a code remnant, since the
+			// walkers tracks are never pause in that occasion (or any other)
+			Actor_Set_Goal_Number(kActorGenwalkerA, kGoalGenwalkerDefault);
+			Actor_Set_Goal_Number(kActorGenwalkerB, kGoalGenwalkerDefault);
+			Actor_Set_Goal_Number(kActorGenwalkerC, kGoalGenwalkerDefault);
+			Global_Variable_Set(kVariableGenericWalkerConfig, -1);
 		}
 		Setup_Scene_Information(-530.0f, -6.5f, 241.0f, 506);
 		Game_Flag_Set(kFlagArrivedFromSpinner1);
@@ -505,9 +513,9 @@ void SceneScriptCT01::PlayerWalkedIn() {
 		if (_vm->_cutContent) {
 			// unpause generic walkers here, less chance to collide with McCOy while he enters the scene
 			if( Game_Flag_Query(kFlagArrivedFromSpinner1)
-				&& Game_Flag_Query(kFlagGenericWalkerWaiting)
+				&& Global_Variable_Query(kVariableGenericWalkerConfig) < 0
 			) {
-				Game_Flag_Reset(kFlagGenericWalkerWaiting);
+				Global_Variable_Set(kVariableGenericWalkerConfig, 2);
 			}
 		}
 		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -314.0f, -6.5f, 326.0f, 0, false, false, false);

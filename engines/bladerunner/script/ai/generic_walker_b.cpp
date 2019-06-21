@@ -42,17 +42,17 @@ void AIScriptGenericWalkerB::Initialize() {
 	isInside = false;
 	deltaX = 0.0f;
 	deltaZ = 0.0f;
-	Actor_Set_Goal_Number(kActorGenwalkerB, 0);
+	Actor_Set_Goal_Number(kActorGenwalkerB, kGoalGenwalkerDefault);
 }
 
 bool AIScriptGenericWalkerB::Update() {
 	switch (Actor_Query_Goal_Number(kActorGenwalkerB)) {
-		case 0:
+		case kGoalGenwalkerDefault:
 			if (prepareWalker()) {
 				return true;
 			}
 			break;
-		case 1:
+		case kGoalGenwalkerMoving:
 			if (deltaX != 0.0f || deltaZ != 0.0f) {
 				movingUpdate();
 			}
@@ -71,8 +71,8 @@ void AIScriptGenericWalkerB::TimerExpired(int timer) {
 }
 
 void AIScriptGenericWalkerB::CompletedMovementTrack() {
-	if (Actor_Query_Goal_Number(kActorGenwalkerB) > 0) {
-		Actor_Set_Goal_Number(kActorGenwalkerB, 0);
+	if (Actor_Query_Goal_Number(kActorGenwalkerB) > kGoalGenwalkerDefault) {
+		Actor_Set_Goal_Number(kActorGenwalkerB, kGoalGenwalkerDefault);
 		if (!Game_Flag_Query(kFlagGenericWalkerWaiting)) {
 			Game_Flag_Set(kFlagGenericWalkerWaiting);
 			AI_Countdown_Timer_Reset(kActorGenwalkerB, kActorTimerAIScriptCustomTask2);
@@ -133,8 +133,8 @@ void AIScriptGenericWalkerB::OtherAgentEnteredThisScene(int otherActorId) {
 }
 
 void AIScriptGenericWalkerB::OtherAgentExitedThisScene(int otherActorId) {
-	if (Actor_Query_Goal_Number(kActorGenwalkerB) && otherActorId == kActorMcCoy) {
-		Actor_Set_Goal_Number(kActorGenwalkerB, 0);
+	if (Actor_Query_Goal_Number(kActorGenwalkerB) > kGoalGenwalkerDefault && otherActorId == kActorMcCoy) {
+		Actor_Set_Goal_Number(kActorGenwalkerB, kGoalGenwalkerDefault);
 	}
 	//return false;
 }
@@ -148,7 +148,7 @@ void AIScriptGenericWalkerB::ShotAtAndMissed() {
 }
 
 bool AIScriptGenericWalkerB::ShotAtAndHit() {
-	if (Actor_Query_Goal_Number(kActorGenwalkerB)) {
+	if (Actor_Query_Goal_Number(kActorGenwalkerB) > kGoalGenwalkerDefault) {
 		AI_Movement_Track_Flush(kActorGenwalkerB);
 		_animationState = kGenericWalkerBStatesDie;
 		_animationFrame = 0;
@@ -168,12 +168,12 @@ int AIScriptGenericWalkerB::GetFriendlinessModifierIfGetsClue(int otherActorId, 
 }
 
 bool AIScriptGenericWalkerB::GoalChanged(int currentGoalNumber, int newGoalNumber) {
-	if (newGoalNumber == 0) {
+	if (newGoalNumber == kGoalGenwalkerDefault) {
 		AI_Movement_Track_Flush(kActorGenwalkerB);
 		Actor_Put_In_Set(kActorGenwalkerB, kSetFreeSlotH);
 		Global_Variable_Set(kVariableGenericWalkerBModel, -1);
 		return false;
-	} else if (newGoalNumber == 1) {
+	} else if (newGoalNumber == kGoalGenwalkerMoving) {
 		return true;
 	}
 	return false;
@@ -236,7 +236,7 @@ bool AIScriptGenericWalkerB::UpdateAnimation(int *animation, int *frame) {
 		if (++_animationFrame >= Slice_Animation_Query_Number_Of_Frames(874))
 		{
 			_animationFrame = 0;
-			Actor_Set_Goal_Number(kActorGenwalkerB, 0);
+			Actor_Set_Goal_Number(kActorGenwalkerB, kGoalGenwalkerDefault);
 			_animationState = kGenericWalkerBStatesIdle;
 			deltaX = 0.0f;
 			deltaZ = 0.0f;
@@ -336,7 +336,7 @@ bool AIScriptGenericWalkerB::prepareWalker() {
 	Game_Flag_Set(kFlagGenericWalkerWaiting);
 	AI_Countdown_Timer_Reset(kActorGenwalkerB, kActorTimerAIScriptCustomTask2);
 	AI_Countdown_Timer_Start(kActorGenwalkerB, kActorTimerAIScriptCustomTask2, Random_Query(4, 12));
-	Actor_Set_Goal_Number(kActorGenwalkerB, 1);
+	Actor_Set_Goal_Number(kActorGenwalkerB, kGoalGenwalkerMoving);
 	return true;
 }
 

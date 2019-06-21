@@ -1197,7 +1197,7 @@ enum Variables {
 	kVariableGenericWalkerAModel = 32,
 	kVariableGenericWalkerBModel = 33,
 	kVariableGenericWalkerCModel = 34,
-	kVariableGenericWalkerConfig = 35, // has no use
+	kVariableGenericWalkerConfig = 35, // Re-purposed in restored cut content version - original: has no real use
 	kVariableBB10ShelvesAvailable = 36,
 	kVariableWalkLoopActor = 37,
 	kVariableWalkLoopRun = 38,
@@ -2345,6 +2345,13 @@ enum GoalBulletBob {
 	kGoalBulletBobDead = 4,
 	kGoalBulletBobShotMcCoy = 6,
 	kGoalBulletBobGone = 99
+};
+
+// applies to all generic walkers
+enum GoalGenericWalker {
+	kGoalGenwalkerDefault = 0, // setup walker model and path
+	kGoalGenwalkerMoving = 1,
+	kGoalGenwalkerABulletBobsTrackGun = 200  // only kActorGenWalkerA will change goal to this
 };
 
 enum GoalRachael {

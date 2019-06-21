@@ -43,22 +43,22 @@ void AIScriptGenericWalkerA::Initialize() {
 	isInside = false;
 	deltaX = 0.0f;
 	deltaZ = 0.0f;
-	Actor_Set_Goal_Number(kActorGenwalkerA, 0);
+	Actor_Set_Goal_Number(kActorGenwalkerA, kGoalGenwalkerDefault);
 }
 
 bool AIScriptGenericWalkerA::Update() {
 	switch (Actor_Query_Goal_Number(kActorGenwalkerA)) {
-		case 0:
+		case kGoalGenwalkerDefault:
 			if (prepareWalker()) {
 				return true;
 			}
 			break;
-		case 1:
+		case kGoalGenwalkerMoving:
 			if (deltaX != 0.0f || deltaZ != 0.0f) {
 				movingUpdate();
 			}
 			break;
-		case 200: // Automatic gun at Bullet Bob
+		case kGoalGenwalkerABulletBobsTrackGun: // Automatic gun at Bullet Bob
 			Actor_Face_Actor(kActorGenwalkerA, kActorMcCoy, true);
 			break;
 	}
@@ -75,8 +75,8 @@ void AIScriptGenericWalkerA::TimerExpired(int timer) {
 }
 
 void AIScriptGenericWalkerA::CompletedMovementTrack() {
-	if (Actor_Query_Goal_Number(kActorGenwalkerA) > 0) {
-		Actor_Set_Goal_Number(kActorGenwalkerA, 0);
+	if (Actor_Query_Goal_Number(kActorGenwalkerA) > kGoalGenwalkerDefault) {
+		Actor_Set_Goal_Number(kActorGenwalkerA, kGoalGenwalkerDefault);
 		if (!Game_Flag_Query(kFlagGenericWalkerWaiting)) {
 			Game_Flag_Set(kFlagGenericWalkerWaiting);
 			AI_Countdown_Timer_Reset(kActorGenwalkerA, kActorTimerAIScriptCustomTask2);
@@ -93,7 +93,7 @@ void AIScriptGenericWalkerA::ReceivedClue(int clueId, int fromActorId) {
 
 void AIScriptGenericWalkerA::ClickedByPlayer() {
 	Actor_Face_Actor(kActorMcCoy, kActorGenwalkerA, true);
-	if (Actor_Query_Goal_Number(kActorGenwalkerA) == 200) {
+	if (Actor_Query_Goal_Number(kActorGenwalkerA) == kGoalGenwalkerABulletBobsTrackGun) {
 		Actor_Says(kActorMcCoy, 5290, 18);   // kActorGenwalkerA here is actually the tracking gun in Bullet Bob's
 	} else {
 		switch (Random_Query(1, 10)) {
@@ -141,8 +141,8 @@ void AIScriptGenericWalkerA::OtherAgentEnteredThisScene(int otherActorId) {
 }
 
 void AIScriptGenericWalkerA::OtherAgentExitedThisScene(int otherActorId) {
-	if (Actor_Query_Goal_Number(kActorGenwalkerA) && otherActorId == kActorMcCoy) {
-		Actor_Set_Goal_Number(kActorGenwalkerA, 0);
+	if (Actor_Query_Goal_Number(kActorGenwalkerA) > kGoalGenwalkerDefault && otherActorId == kActorMcCoy) {
+		Actor_Set_Goal_Number(kActorGenwalkerA, kGoalGenwalkerDefault);
 	}
 	//return false;
 }
@@ -156,7 +156,7 @@ void AIScriptGenericWalkerA::ShotAtAndMissed() {
 }
 
 bool AIScriptGenericWalkerA::ShotAtAndHit() {
-	if (Actor_Query_Goal_Number(kActorGenwalkerA)) {
+	if (Actor_Query_Goal_Number(kActorGenwalkerA) > kGoalGenwalkerDefault) {
 		AI_Movement_Track_Flush(kActorGenwalkerA);
 		_animationState = kGenericWalkerAStatesDie;
 		_animationFrame = 0;
@@ -176,14 +176,15 @@ int AIScriptGenericWalkerA::GetFriendlinessModifierIfGetsClue(int otherActorId, 
 }
 
 bool AIScriptGenericWalkerA::GoalChanged(int currentGoalNumber, int newGoalNumber) {
-	if (newGoalNumber == 0) {
+	if (newGoalNumber == kGoalGenwalkerDefault) {
 		AI_Movement_Track_Flush(kActorGenwalkerA);
 		Actor_Put_In_Set(kActorGenwalkerA, kSetFreeSlotH);
 		Global_Variable_Set(kVariableGenericWalkerAModel, -1);
 		return false;
-	} else if (newGoalNumber == 1) {
+	} else if (newGoalNumber == kGoalGenwalkerMoving) {
 		return true;
-	} else if (newGoalNumber == 200) {
+	} else if (newGoalNumber == kGoalGenwalkerABulletBobsTrackGun) {
+		// Bullet Bob's tracking gun
 		Actor_Put_In_Set(kActorGenwalkerA, kSetRC04);
 		Actor_Set_At_XYZ(kActorGenwalkerA, 0.0, 36.0, -172.0, 491);
 		Actor_Change_Animation_Mode(kActorGenwalkerA, kAnimationModeCombatIdle);
@@ -249,7 +250,7 @@ bool AIScriptGenericWalkerA::UpdateAnimation(int *animation, int *frame) {
 		if (++_animationFrame >= Slice_Animation_Query_Number_Of_Frames(874))
 		{
 			_animationFrame = 0;
-			Actor_Set_Goal_Number(kActorGenwalkerA, 0);
+			Actor_Set_Goal_Number(kActorGenwalkerA, kGoalGenwalkerDefault);
 			_animationState = kGenericWalkerAStatesIdle;
 			deltaX = 0.0f;
 			deltaZ = 0.0f;
@@ -360,7 +361,7 @@ bool AIScriptGenericWalkerA::prepareWalker() {
 	Game_Flag_Set(kFlagGenericWalkerWaiting);
 	AI_Countdown_Timer_Reset(kActorGenwalkerA, kActorTimerAIScriptCustomTask2);
 	AI_Countdown_Timer_Start(kActorGenwalkerA, kActorTimerAIScriptCustomTask2, Random_Query(4, 12));
-	Actor_Set_Goal_Number(kActorGenwalkerA, 1);
+	Actor_Set_Goal_Number(kActorGenwalkerA, kGoalGenwalkerMoving);
 	return true;
 }
 
