@@ -664,6 +664,7 @@ public:
 
 	// Waypoint & Movement Functions
 	void lookAtXY(int x, int y);
+	void removeFirstWaypoint();
 	void clearWaypoints();
 	Tile *getStandFrameDir(AIEntity *e);
 
