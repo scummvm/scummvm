@@ -417,12 +417,32 @@ static int clearForeground(lua_State *L) {
 }
 
 static int setForeground(lua_State *L) {
-	warning("STUB: SET FOREGROUND");
+	double x = lua_tonumber(L, 1);
+	double y = lua_tonumber(L, 2);
+	const char *tileName = lua_tostring(L, 3);
+
+	g_hdb->_lua->checkParameters("setForeground", 3);
+
+	lua_pop(L, 3);
+	int index = g_hdb->_drawMan->getTileIndex(tileName);
+	g_hdb->_drawMan->getTile(index);
+	g_hdb->_map->setMapFGTileIndex((int)x, (int)y, index);
+	g_hdb->_map->addFGTileAnimation((int)x, (int)y);
 	return 0;
 }
 
 static int setBackground(lua_State *L) {
-	warning("STUB: CLEAR BACKGROUND");
+	double x = lua_tonumber(L, 1);
+	double y = lua_tonumber(L, 2);
+	const char *tileName = lua_tostring(L, 3);
+
+	g_hdb->_lua->checkParameters("setBackground", 3);
+
+	lua_pop(L, 3);
+	int index = g_hdb->_drawMan->getTileIndex(tileName);
+	g_hdb->_drawMan->getTile(index);
+	g_hdb->_map->setMapBGTileIndex((int)x, (int)y, index);
+	g_hdb->_map->addBGTileAnimation((int)x, (int)y);
 	return 0;
 }
 
