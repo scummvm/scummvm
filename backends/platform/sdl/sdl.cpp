@@ -45,8 +45,8 @@
 #include "backends/graphics/surfacesdl/surfacesdl-graphics.h"
 #ifdef USE_OPENGL
 #include "backends/graphics/openglsdl/openglsdl-graphics.h"
-#include "graphics/cursorman.h"
 #endif
+#include "graphics/cursorman.h"
 
 #include <time.h>	// for getTimeAndDate()
 
