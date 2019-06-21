@@ -51,13 +51,14 @@ branches:
  only:
    - master
 
-compiler:
-  - gcc
-  - clang
-
-os:
-  - linux
-  - osx
+matrix:
+  include:
+    - os: linux
+      compiler:
+        - gcc
+        - clang
+    - os: osx
+      compiler: clang
 
 dist: trusty
 
