@@ -921,6 +921,85 @@ void AI::animLuaEntity(const char *initName, AIState st) {
 	}
 }
 
+void AI::drawEnts(int x, int y, int w, int h) {
+
+	static int stunAnim = 0;
+
+	// Draw Floating Entities
+	warning("STUB: AI::drawEnts: Draw Floating Entities");
+
+	// Draw all other Ents
+	_numLevel2Ents = 0;
+
+	for (Common::Array<AIEntity *>::iterator it = _ents->begin(); it != _ents->end(); it++) {
+		AIEntity *e = (*it);
+		if (e->type == AI_LASER || e->type == AI_DIVERTER) {
+			if (e->aiDraw) {
+				if (e->level == 2 && _numLevel2Ents < kMaxLevel2Ents) {
+					_entsLevel2[_numLevel2Ents]->aiDraw = e->aiDraw;
+					_entsLevel2[_numLevel2Ents]->x = x;
+					_entsLevel2[_numLevel2Ents]->y = y;
+					_entsLevel2[_numLevel2Ents]->e = e;
+					_entsLevel2[_numLevel2Ents]->stunnedWait = 0;
+					_numLevel2Ents++;
+				} else {
+					e->aiDraw(e, x, y);
+				}
+			}
+		}
+
+		if ((e->x > x - kTileWidth) && (e->x < x + w) && (e->y > y - kTileHeight) && (e->y < y + h)) {
+			// If extra drawing func is present, call it
+			if (e->aiDraw && e->type != AI_LASER && e->type != AI_DIVERTER) {
+				if (e->level == 2 && _numLevel2Ents < kMaxLevel2Ents) {
+					_entsLevel2[_numLevel2Ents]->aiDraw = e->aiDraw;
+					_entsLevel2[_numLevel2Ents]->draw = e->draw;
+					_entsLevel2[_numLevel2Ents]->x = x;
+					_entsLevel2[_numLevel2Ents]->y = y;
+					_entsLevel2[_numLevel2Ents]->e = e;
+					_entsLevel2[_numLevel2Ents]->stunnedWait = 0;
+					_numLevel2Ents++;
+				} else
+					e->aiDraw(e, x, y);
+			}
+
+			switch (e->type) {
+			case AI_VORTEXIAN:
+				warning("STUB: AI::drawEnts: Tile Alpha Blitting required");
+				break;
+			case AI_GUY: // Draw Player Last
+				break;
+			default:
+				if (e->level == 2 && _numLevel2Ents < kMaxLevel2Ents) {
+					_entsLevel2[_numLevel2Ents]->aiDraw = NULL;
+					_entsLevel2[_numLevel2Ents]->draw = e->draw;
+					_entsLevel2[_numLevel2Ents]->x = e->x - x + e->drawXOff;
+					_entsLevel2[_numLevel2Ents]->y = e->y - y + e->drawYOff;
+					_entsLevel2[_numLevel2Ents]->e = NULL;
+					_entsLevel2[_numLevel2Ents]->stunnedWait = e->stunnedWait;
+					_numLevel2Ents++;
+				} else {
+					if (e->draw)
+						e->draw->drawMasked(e->x - x + e->drawXOff, e->y - y + e->drawYOff);
+
+					if (e->stunnedWait)
+						g_hdb->_ai->_stunnedGfx[stunAnim]->drawMasked(e->x - x, e->y - y);
+				}
+				break;
+			}
+			e->onScreen = 1;
+		} else
+			e->onScreen = 0;
+	}
+
+	warning("STUB: AI::drawEnts: Increment Stun Timer");
+
+	// Draw player last
+	if (_player && _player->level < 2 && !_playerInvisible && _player->draw) {
+		_player->draw->drawMasked(_player->x - x + _player->drawXOff, _player->y - y + _player->drawYOff);
+	}
+}
+
 // Check to see if we can get this entity
 bool AI::getTableEnt(AIType type) {
 	switch (type) {
