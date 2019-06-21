@@ -48,7 +48,6 @@ const char *gameText[] = {
 "Rede",    //Talk
 "Gib",    //Give
 // 10
-"Gespr\204ch beenden",    //End of conversation
 "Gehe zu ",    //Go to 
 "Schau ",    //Look at 
 "Nimm ",    //Take 
@@ -63,6 +62,9 @@ const char *gameText[] = {
 "Gib ",    //Give 
 " an ",    // to 
 " mit ",    // with 
+"Es ist nichts Besonderes daran.",    //There's nothing special about it.
+"|", //Dialog separator
+"Gespr\204ch beenden",    //End of conversation
 "Laden",    //Load
 "Speichern",    //Save
 // 25
@@ -249,7 +251,6 @@ const char *gameText[] = {
 "Hmm, die Kugel sieht lose aus.",    //Hmm, the ball looks loose.
 "Auge",    //Eye
 "Irgendwas stimmt damit nicht.",    //Something is wrong with that.
-"Es ist nichts Besonderes daran.",    //There's nothing special about it.
 "Sieht nach Metall aus.",    //It looks like metal.
 // 180
 "Ein Taxi kommt angerauscht,|du steigst ein.",    //A taxi arrives, and you get in.
@@ -776,7 +777,6 @@ const char *gameText[] = {
 "Sieht gef\204hrlich aus!", //Looks dangerous
 "Das Auge ist schon offen.", //This Eye is already opened
 "Es gelingt dir, zu fliehen.", //You manage to escape
-"|", //Dialog separator
 NULL
 };
 
