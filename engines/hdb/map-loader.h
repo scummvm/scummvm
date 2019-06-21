@@ -29,7 +29,9 @@ namespace HDB {
 
 enum {
 	kScreenXTiles = 17,
-	kScreenYTiles = 16
+	kScreenYTiles = 16,
+	kMaxGratings = 250,
+	kMaxForegrounds = 250
 };
 
 struct MSMIcon {
@@ -47,6 +49,14 @@ struct MSMIcon {
 	MSMIcon(): icon(0), x(0), y(0), funcInit(""), funcAction(""), funcUse(""), dir(0), level(0), value1(0), value2(0) {}
 };
 
+struct Foreground {
+	uint16 x;
+	uint16 y;
+	uint16 tile;
+
+	Foreground() : x(0), y(0), tile(0) {}
+};
+
 struct SeeThroughTile {
 	uint16 x;
 	uint16 y;
@@ -58,6 +68,7 @@ struct SeeThroughTile {
 class Map {
 public:
 	Map();
+	~Map();
 
 	int loadTiles();
 	bool load(Common::SeekableReadStream *stream);
@@ -82,6 +93,9 @@ public:
 	int _mapX, _mapY; // Coordinates of Map
 	int _mapTileX, _mapTileY; // Tile Coordinates of Map
 	int _mapTileXOff, _mapTileYOff; // Tile Coordinates Offset (0-31)
+
+	Foreground *_gratings[kMaxGratings], *_foregrounds[kMaxForegrounds];
+	int _numGratings, _numForegrounds;
 
 	int _animCycle;	// Tile Animation Counter
 	Common::Array<uint32> _listBGAnimSlow;
