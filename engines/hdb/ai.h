@@ -543,6 +543,8 @@ struct CineCommand {
 				start(0), end(0), delay(0), speed(0), title(NULL), string(NULL), id(NULL), e(NULL) {}
 };
 
+#define onEvenTile(x, y)	( !(x & 31) && !(y & 31) )
+
 class AI {
 public:
 	AI();
