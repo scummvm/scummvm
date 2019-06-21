@@ -3432,7 +3432,10 @@ if test -n "$_host"; then
 			;;
 		switch)
 			_backend="switch"
-			_opengl_mode=gles2
+			# _opengl_mode=gles2 compiles but crashes when switching between
+			# SDL2 graphics and GLES2 graphics. This is a known problem on since
+			# SDL2 was adapted to use GLES2 as backend on the platform.
+			_opengl_mode=none
 			_vkeybd=yes
 			_port_mk="backends/platform/sdl/switch/switch.mk"
 			;;
