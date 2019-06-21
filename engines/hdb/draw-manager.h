@@ -95,6 +95,8 @@ public:
 	void draw3DStarsLeft();
 	void drawSky();
 
+	int animateTile(int tileIndex);
+
 private:
 	int _numTiles;
 	TileLookup *_tLookupArray;

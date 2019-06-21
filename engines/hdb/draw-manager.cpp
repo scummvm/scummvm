@@ -377,6 +377,10 @@ void DrawMan::drawSky() {
 	}
 }
 
+int DrawMan::animateTile(int tileIndex) {
+	return _tLookupArray[tileIndex].animIndex;
+}
+
 Picture::Picture() : _width(0), _height(0), _name("") {
 	_surface.create(_width, _height, g_hdb->_format);
 }
