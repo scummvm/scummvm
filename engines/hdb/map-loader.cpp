@@ -642,6 +642,20 @@ uint16 Map::getMapFGTileIndex(int x, int y) {
 	return _foreground[y * _width + x];
 }
 
+void Map::setMapBGTileIndex(int x, int y, int index) {
+	if (x < 0 || x >= _width || y < 0 || y >= _height) {
+		return;
+	}
+	_background[y * _width + x] = index;
+}
+
+void Map::setMapFGTileIndex(int x, int y, int index) {
+	if (x < 0 || x >= _width || y < 0 || y >= _height) {
+		return;
+	}
+	_foreground[y * _width + x] = index;
+}
+
 void Map::getMapXY(int *x, int *y) {
 	*x = _mapX;
 	*y = _mapY;
