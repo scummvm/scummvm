@@ -630,6 +630,9 @@ public:
 	void cineUse(const char *entName);
 	void cineFadeIn(bool isBlack, int steps);
 	void cineFadeOut(bool isBlack, int steps);
+	void cineClearForeground(int x, int y);
+	void cineSetBackground(int x, int y, int index);
+	void cineSetForeground(int x, int y, int index);
 
 	// Waypoint & Movement Functions
 	void lookAtXY(int x, int y);
