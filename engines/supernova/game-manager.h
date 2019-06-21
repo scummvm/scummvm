@@ -111,8 +111,8 @@ public:
 	virtual bool serialize(Common::WriteStream *out);
 	virtual bool deserialize(Common::ReadStream *in, int version);
 
-	static StringId guiCommands[];
-	static StringId guiStatusCommands[];
+	static int guiCommands[];
+	static int guiStatusCommands[];
 	SupernovaEngine *_vm;
 	Sound *_sound;
 	Common::KeyState _key;
@@ -125,7 +125,7 @@ public:
 	Room *_currentRoom;
 	Room *_lastRoom;
 	bool _newRoom;
-	Room *_rooms[NUMROOMS];
+	Room **_rooms;
 	Inventory _inventory;
 	bool _processInput;
 	bool _guiEnabled;
@@ -148,7 +148,7 @@ public:
 	// Dialog
 	int _currentSentence;
 	int _sentenceNumber[6];
-	StringId _texts[6];
+	int _texts[6];
 	byte _rows[6];
 	byte _rowsStart[6];
 	int32 _time;
@@ -189,12 +189,12 @@ public:
 	virtual void loadTime();
 	virtual void saveTime();
 	void setAnimationTimer(int ticks);
-	void dead(StringId messageId);
-	int  dialog(int num, byte rowLength[6], StringId text[6], int number);
+	void dead(int messageId);
+	int  dialog(int num, byte rowLength[6], int text[6], int number);
 	void sentence(int number, bool brightness);
-	void say(StringId textId);
+	void say(int textId);
 	void say(const char *text);
-	void reply(StringId textId, int aus1, int aus2);
+	void reply(int textId, int aus1, int aus2);
 	void reply(const char *text, int aus1, int aus2);
 	void mousePosDialog(int x, int y);
 	virtual void takeMoney(int amount);

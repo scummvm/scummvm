@@ -44,7 +44,8 @@ struct AudioInfo {
 
 static Common::MemoryReadStream *convertToMod(const char *filename, int version = 1);
 
-static const AudioInfo audioInfo[kAudioNumSamples] = {
+static const AudioInfo audioInfo[] = {
+	// Supernova 1
 	{44,     0,    -1},
 	{45,     0,    -1},
 	{46,     0,  2510},
@@ -64,7 +65,29 @@ static const AudioInfo audioInfo[kAudioNumSamples] = {
 	{54,  8010, 24020},
 	{54, 24020, 30030},
 	{54, 30030, 31040},
-	{54, 31040,    -1}
+	{54, 31040,    -1},
+
+	{0 ,     0,     0},
+	// Supernova 2
+	{55,     18230,    -1},
+	{47,     0,     16010},
+	{47,     16010, 17020},
+	{49,     8010,     -1},
+	{49,     0,      8010},
+	{53,     30020,    -1},
+	{55,     7010,  17020},
+	{55,     0,      7010},
+	{53,     5010,  30020},
+	{55,     18230,    -1},
+	{55,     17020, 18230},
+	{53,     0,      5010},
+	{47,     17020,    -1},
+	{51,     9020,     -1},
+	{51,     0,      6010},
+	{50,     0,        -1},
+	{51,     6010,   9020},
+	{54,     0,        -1},
+	{48,     0,        -1}
 };
 
 static const byte mouseNormal[64] = {
@@ -95,16 +118,25 @@ static const byte mouseWait[64] = {
 ResourceManager::ResourceManager(int MSPart)
 	: _audioRate(11931)
 	, _MSPart(MSPart) {
-	initSoundFiles();
+	if (MSPart == 1)
+		initSoundFiles1();
+	else if (MSPart == 2)
+		initSoundFiles2();
 	initGraphics();
 }
 
 ResourceManager::~ResourceManager() {
-	for (int i = 0; i < kNumImageFiles; i++)
-		delete _images[i];
+	if (_MSPart == 1) {	
+		for (int i = 0; i < 44; i++)
+			delete _images[i];
+	}
+	if (_MSPart == 2) {	
+		for (int i = 0; i < 47; i++)
+			delete _images[i];
+	}
 }
 
-void ResourceManager::initSoundFiles() {
+void ResourceManager::initSoundFiles1() {
 	// Sound
 	// Note:
 	//   - samples start with a header of 6 bytes: 01 SS SS 00 AD 00
@@ -113,7 +145,7 @@ void ResourceManager::initSoundFiles() {
 	// Skip those in the buffer
 	Common::File file;
 
-	for (int i = 0; i < kAudioNumSamples; ++i) {
+	for (int i = 0; i < kAudioNumSamples1; ++i) {
 		if (!file.open(Common::String::format("msn_data.%03d", audioInfo[i]._filenumber))) {
 			error("File %s could not be read!", file.getName());
 		}
@@ -141,10 +173,51 @@ void ResourceManager::initSoundFiles() {
 	_musicOutroBuffer.reset(convertToMod("msn_data.049"));
 }
 
+void ResourceManager::initSoundFiles2() {
+	// Sound
+	// Note:
+	//   - samples start with a header of 6 bytes: 01 SS SS 00 AD 00
+	//     where SS SS (LE uint16) is the size of the sound sample + 2
+	//   - samples end with a footer of 4 bytes: 00 00
+	// Skip those in the buffer
+	Common::File file;
+
+	for (int i = 0; i < kAudioNumSamples2 - kAudioNumSamples1 - 1; ++i) {
+		if (!file.open(Common::String::format("ms2_data.%03d", audioInfo[i + kAudioNumSamples1 + 1]._filenumber))) {
+			error("File %s could not be read!", file.getName());
+		}
+
+		int length = 0;
+		byte *buffer = nullptr;
+
+		if (audioInfo[i + kAudioNumSamples1 + 1]._offsetEnd == -1) {
+			file.seek(0, SEEK_END);
+			length = file.pos() - audioInfo[i + kAudioNumSamples1 + 1]._offsetStart - 10;
+		} else {
+			length = audioInfo[i + kAudioNumSamples1 + 1]._offsetEnd - audioInfo[i + kAudioNumSamples1 + 1]._offsetStart - 10;
+		}
+		buffer = new byte[length];
+		file.seek(audioInfo[i + kAudioNumSamples1 + 1]._offsetStart + 6);
+		file.read(buffer, length);
+		file.close();
+
+		byte streamFlag = Audio::FLAG_UNSIGNED | Audio::FLAG_LITTLE_ENDIAN;
+		_soundSamples[i].reset(Audio::makeRawStream(buffer, length, _audioRate,
+													streamFlag, DisposeAfterUse::YES));
+	}
+	initSiren();
+
+	_musicIntroBuffer.reset(convertToMod("ms2_data.052", 2));
+	_musicMadMonkeysBuffer.reset(convertToMod("ms2_data.056", 2));
+}
+
 void ResourceManager::initGraphics() {
 	Screen::initPalette();
 	initCursorGraphics();
-	initImages();
+	if (_MSPart == 1)
+		initImages1();
+	else if (_MSPart == 2)
+		initImages2();
 }
 
 void ResourceManager::initCursorGraphics() {
@@ -168,7 +241,7 @@ void ResourceManager::initCursorGraphics() {
 	}
 }
 
-void ResourceManager::initImages() {
+void ResourceManager::initImages1() {
 	for (int i = 0; i < 44; ++i) {
 		_images[i] = new MSNImage(_MSPart);
 		if (!_images[i]->init(i))
@@ -179,8 +252,20 @@ void ResourceManager::initImages() {
 			error("Failed reading image file msn_data.055");
 }
 
+void ResourceManager::initImages2() {
+	for (int i = 0; i < 47; ++i) {
+		_images[i] = new MSNImage(_MSPart);
+		if (!_images[i]->init(i))
+			error("Failed reading image file ms2_data.%03d", i);
+	}
+}
+
 Audio::SeekableAudioStream *ResourceManager::getSoundStream(AudioId index) {
-	Audio::SeekableAudioStream *stream = _soundSamples[index].get();
+	Audio::SeekableAudioStream *stream;
+	if (_MSPart == 1)
+		stream = _soundSamples[index].get();
+	else if (_MSPart == 2)
+		stream = _soundSamples[index - kAudioNumSamples1 - 1].get();
 	stream->rewind();
 
 	return stream;
@@ -207,12 +292,20 @@ Audio::AudioStream *ResourceManager::getSirenStream() {
 }
 
 MSNImage *ResourceManager::getImage(int filenumber) {
-	if (filenumber < 44)
-		return _images[filenumber];
-	else if (filenumber == 55)
-		return _images[44];
-	else
-		return nullptr;
+	if (_MSPart == 1) {
+		if (filenumber < 44)
+			return _images[filenumber];
+		else if (filenumber == 55)
+			return _images[44];
+		else
+			return nullptr;
+	} else if (_MSPart == 2) {
+		if (filenumber < 47)
+			return _images[filenumber];
+		else
+			return nullptr;
+	}
+	else return nullptr;
 }
 
 const byte *ResourceManager::getImage(CursorId id) const {

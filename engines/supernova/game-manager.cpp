@@ -140,12 +140,12 @@ void GuiElement::setHighlight(bool isHighlighted_) {
 	}
 }
 
-StringId GameManager::guiCommands[] = {
+int GameManager::guiCommands[] = {
 	kStringCommandGo, kStringCommandLook, kStringCommandTake, kStringCommandOpen, kStringCommandClose,
 	kStringCommandPress, kStringCommandPull, kStringCommandUse, kStringCommandTalk, kStringCommandGive
 };
 
-StringId GameManager::guiStatusCommands[] = {
+int GameManager::guiStatusCommands[] = {
 	kStringStatusCommandGo, kStringStatusCommandLook, kStringStatusCommandTake, kStringStatusCommandOpen, kStringStatusCommandClose,
 	kStringStatusCommandPress, kStringStatusCommandPull, kStringStatusCommandUse, kStringStatusCommandTalk, kStringStatusCommandGive
 };
@@ -480,7 +480,7 @@ void GameManager::sentence(int number, bool brightness) {
 	}
 }
 
-void GameManager::say(StringId textId) {
+void GameManager::say(int textId) {
 	Common::String str = _vm->getGameString(textId);
 	if (!str.empty())
 		say(str.c_str());
@@ -510,7 +510,7 @@ void GameManager::say(const char *text) {
 	_vm->renderBox(0, 138, 320, 62, kColorBlack);
 }
 
-void GameManager::reply(StringId textId, int aus1, int aus2) {
+void GameManager::reply(int textId, int aus1, int aus2) {
 	Common::String str = _vm->getGameString(textId);
 	if (!str.empty())
 		reply(str.c_str(), aus1, aus2);
@@ -536,7 +536,7 @@ void GameManager::reply(const char *text, int aus1, int aus2) {
 		_vm->removeMessage();
 }
 
-int GameManager::dialog(int num, byte rowLength[6], StringId text[6], int number) {
+int GameManager::dialog(int num, byte rowLength[6], int text[6], int number) {
 	_vm->_allowLoadGame = false;
 	_guiEnabled = false;
 
@@ -769,9 +769,14 @@ void GameManager::edit(Common::String &input, int x, int y, uint length) {
 	bool isEditing = true;
 	uint cursorIndex = input.size();
 	// NOTE: Pixels for char needed = kFontWidth + 2px left and right side bearing
-	int overdrawWidth = ((int)((length + 1) * (kFontWidth + 2)) > (kScreenWidth - x)) ?
-						kScreenWidth - x : (length + 1) * (kFontWidth + 2);
+	int overdrawWidth;
 
+	if (_vm->_MSPart == 1)
+		overdrawWidth = ((int)((length + 1) * (kFontWidth + 2)) > (kScreenWidth - x)) ?
+						kScreenWidth - x : (length + 1) * (kFontWidth + 2);
+	else if (_vm->_MSPart == 2)
+		overdrawWidth = ((int)((length + 1) * (kFontWidth2 + 2)) > (kScreenWidth - x)) 
+			? kScreenWidth - x : (length + 1) * (kFontWidth2 + 2);
 	_guiEnabled = false;
 	while (isEditing) {
 		_vm->_screen->setTextCursorPos(x, y);
@@ -788,10 +793,10 @@ void GameManager::edit(Common::String &input, int x, int y, uint length) {
 				_vm->renderBox(_vm->_screen->getTextCursorPos().x, y - 1,
 							   Screen::textWidth(input[i]), 9, kColorWhite99);
 				_vm->_screen->setTextCursorColor(background);
-				_vm->renderText(input[i]);
+				_vm->renderText((uint16)input[i]);
 				_vm->_screen->setTextCursorColor(kColorWhite99);
 			} else
-				_vm->renderText(input[i]);
+				_vm->renderText((uint16)input[i]);
 		}
 
 		if (cursorIndex == input.size()) {
@@ -860,7 +865,7 @@ void GameManager::drawStatus() {
 	}
 }
 
-void GameManager::dead(StringId messageId) {
+void GameManager::dead(int messageId) {
 	_vm->paletteFadeOut();
 	_guiEnabled = false;
 	if (_vm->_MSPart == 1)
@@ -869,7 +874,10 @@ void GameManager::dead(StringId messageId) {
 		_vm->setCurrentImage(43);
 	_vm->renderImage(0);
 	_vm->renderMessage(messageId);
-	_sound->play(kAudioDeath);
+	if (_vm->_MSPart == 1)
+		_sound->play(kAudioDeath);
+	else if (_vm->_MSPart == 2)
+		_sound->play(kAudioDeath2);
 	_vm->paletteFadeIn();
 	getInput();
 	_vm->paletteFadeOut();
@@ -881,7 +889,7 @@ void GameManager::dead(StringId messageId) {
 	if (_vm->_MSPart == 1)
 		changeRoom(CABIN_R3);
 	else if (_vm->_MSPart == 2)
-		changeRoom(CABIN_R3);
+		changeRoom(AIRPORT);
 	initGui();
 	_inventory.clear();
 	g_system->fillScreen(kColorBlack);

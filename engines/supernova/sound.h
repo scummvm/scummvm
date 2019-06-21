@@ -31,6 +31,7 @@ class SupernovaEngine;
 class ResourceManager;
 
 enum AudioId {
+	// Supernova 1
 	kAudioFoundLocation,        // 44|0
 	kAudioCrash,                // 45|0
 	kAudioVoiceHalt,            // 46|0
@@ -51,11 +52,34 @@ enum AudioId {
 	kAudioSlideDoor,            // 54|24020
 	kAudioDoorOpen,             // 54|30030
 	kAudioDoorClose,            // 54|31040
-	kAudioNumSamples
+	kAudioNumSamples1,
+
+	// Supernova 2
+	kAudioIntroDing,
+	kAudioSuccess2,
+	kAudioTaxiOpen,
+	kAudioTaxiLeaving,
+	kAudioTaxiArriving,
+	kAudioKiosk,
+	kAudioStage1,
+	kAudioStage2,
+	kAudioAppearance1,
+	kAudioAppearance2,
+	kAudioAppearance3,
+	kAudioElevatorBell,
+	kAudioElevator1,
+	kAudioShip1,
+	kAudioShip2,
+	kAudioShip3,
+	kAudioShipDeath,
+	kAudioDeath2,
+	kAudioCaught,
+	kAudioNumSamples2
 };
 
 enum MusicId {
 	kMusicIntro = 49,
+	kMusicIntro2 = 52,
 	kMusicOutro = 52,
 	kMusicMadMonkeys = 51
 };

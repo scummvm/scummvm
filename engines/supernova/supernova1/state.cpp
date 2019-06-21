@@ -28,6 +28,7 @@
 #include "supernova/screen.h"
 #include "supernova/supernova.h"
 #include "supernova/supernova1/state.h"
+#include "supernova/supernova1/stringid.h"
 
 namespace Supernova {
 
@@ -75,7 +76,7 @@ bool GameManager1::serialize(Common::WriteStream *out) {
 
 	// Rooms
 	out->writeByte(_currentRoom->getId());
-	for (int i = 0; i < NUMROOMS; ++i) {
+	for (int i = 0; i < NUMROOMS1; ++i) {
 		_rooms[i]->serialize(out);
 	}
 
@@ -144,7 +145,7 @@ bool GameManager1::deserialize(Common::ReadStream *in, int version) {
 
 	// Rooms
 	RoomId curRoomId = static_cast<RoomId>(in->readByte());
-	for (int i = 0; i < NUMROOMS; ++i) {
+	for (int i = 0; i < NUMROOMS1; ++i) {
 		_rooms[i]->deserialize(in, version);
 	}
 	changeRoom(curRoomId);
@@ -179,7 +180,7 @@ static Common::String timeToString(int msec) {
 GameManager1::GameManager1(SupernovaEngine *vm, Sound *sound)
 	: GameManager(vm, sound) {
 	initRooms();
-	changeRoom(INTRO);
+	changeRoom(INTRO1);
 	initState();
 }
 
@@ -188,8 +189,8 @@ GameManager1::~GameManager1() {
 }
 
 void GameManager1::destroyRooms() {
-	delete _rooms[INTRO];
-	delete _rooms[CORRIDOR];
+	delete _rooms[INTRO1];
+	delete _rooms[CORRIDOR_ROOM];
 	delete _rooms[HALL];
 	delete _rooms[SLEEP];
 	delete _rooms[COCKPIT];
@@ -236,8 +237,9 @@ void GameManager1::destroyRooms() {
 	delete _rooms[OFFICE_L];
 	delete _rooms[ELEVATOR];
 	delete _rooms[STATION];
-	delete _rooms[SIGN];
+	delete _rooms[SIGN_ROOM];
 	delete _rooms[OUTRO];
+	delete _rooms;
 }
 
 void GameManager1::initState() {
@@ -297,8 +299,9 @@ void GameManager1::initState() {
 }
 
 void GameManager1::initRooms() {
-	_rooms[INTRO] = new Intro(_vm, this);
-	_rooms[CORRIDOR] = new ShipCorridor(_vm, this);
+	_rooms = new Room *[NUMROOMS1];
+	_rooms[INTRO1] = new Intro(_vm, this);
+	_rooms[CORRIDOR_ROOM] = new ShipCorridor(_vm, this);
 	_rooms[HALL] = new ShipHall(_vm, this);
 	_rooms[SLEEP] = new ShipSleepCabin(_vm, this);
 	_rooms[COCKPIT] = new ShipCockpit(_vm, this);
@@ -345,7 +348,7 @@ void GameManager1::initRooms() {
 	_rooms[OFFICE_L] = new AxacussOffice5(_vm, this);
 	_rooms[ELEVATOR] = new AxacussElevator(_vm, this);
 	_rooms[STATION] = new AxacussStation(_vm, this);
-	_rooms[SIGN] = new AxacussSign(_vm, this);
+	_rooms[SIGN_ROOM] = new AxacussSign(_vm, this);
 	_rooms[OUTRO] = new Outro(_vm, this);
 }
 
@@ -408,7 +411,7 @@ void GameManager1::updateEvents() {
 		case Common::EVENT_LBUTTONUP:
 			// fallthrough
 		case Common::EVENT_RBUTTONUP:
-			if (_currentRoom->getId() != INTRO && _sound->isPlaying())
+			if (_currentRoom->getId() != INTRO1 && _sound->isPlaying())
 				return;
 			_mouseClicked = true;
 			// fallthrough
@@ -449,7 +452,7 @@ void GameManager1::telomat(int nr) {
 		"Alga Hurz Li"
 	};
 
-	StringId dial1[4];
+	int dial1[4];
 	dial1[0] = kStringTelomat1;
 	dial1[1] = kNoString;
 	dial1[2] = kStringTelomat3;
@@ -457,7 +460,7 @@ void GameManager1::telomat(int nr) {
 
 	static byte rows1[3] = {1, 2, 1};
 
-	StringId dial2[4];
+	int dial2[4];
 	dial2[0] = kStringTelomat4;
 	dial2[1] = kStringTelomat5;
 	dial2[2] = kStringTelomat6;
@@ -947,7 +950,7 @@ void GameManager1::guardWalkEvent() {
 }
 
 void GameManager1::taxiEvent() {
-	if (_currentRoom->getId() == SIGN) {
+	if (_currentRoom->getId() == SIGN_ROOM) {
 		changeRoom(STATION);
 		_vm->renderRoom(*_currentRoom);
 	}
@@ -966,8 +969,8 @@ void GameManager1::taxiEvent() {
 		_vm->renderImage(invertSection(i - 1));
 		_vm->renderImage(i);
 	}
-	_rooms[SIGN]->setSectionVisible(2, false);
-	_rooms[SIGN]->setSectionVisible(3, true);
+	_rooms[SIGN_ROOM]->setSectionVisible(2, false);
+	_rooms[SIGN_ROOM]->setSectionVisible(3, true);
 }
 
 void GameManager1::searchStartEvent() {
@@ -1098,7 +1101,7 @@ void GameManager1::shot(int a, int b) {
 }
 
 void GameManager1::takeMoney(int amount) {
-	Object *moneyObject = _rooms[INTRO]->getObject(4);
+	Object *moneyObject = _rooms[INTRO1]->getObject(4);
 	_state._money += amount;
 	_vm->setGameString(kStringInventoryMoney, Common::String::format("%d Xa", _state._money));
 
@@ -1567,7 +1570,7 @@ void GameManager1::guard3Shot() {
 }
 
 void GameManager1::alarm() {
-	if (_rooms[INTRO]->getObject(2)->hasProperty(CARRIED)) {
+	if (_rooms[INTRO1]->getObject(2)->hasProperty(CARRIED)) {
 		alarmSound();
 		if (_currentRoom->getId() == GUARD)
 			guardShot();

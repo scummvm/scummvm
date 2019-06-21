@@ -44,6 +44,7 @@ class Screen;
 const int kScreenWidth  = 320;
 const int kScreenHeight = 200;
 const int kFontWidth = 5;
+const int kFontWidth2 = 4;
 const int kFontHeight = 8;
 
 enum Color {
@@ -158,17 +159,17 @@ public:
 	void renderRoom(Room &room);
 	void renderMessage(const char *text, MessagePosition position = kMessageNormal, int positionX = -1, int positionY = -1);
 	void renderMessage(const Common::String &text, MessagePosition position = kMessageNormal);
-	void renderMessage(StringId stringId, MessagePosition position = kMessageNormal,
+	void renderMessage(int stringId, MessagePosition position = kMessageNormal,
 					   Common::String var1 = "", Common::String var2 = "");
 	void removeMessage();
 	void renderText(const uint16 character);
 	void renderText(const char *text);
 	void renderText(const Common::String &text);
-	void renderText(StringId stringId);
+	void renderText(int stringId);
 	void renderText(const uint16 character, int x, int y, byte color);
 	void renderText(const char *text, int x, int y, byte color);
 	void renderText(const Common::String &text, int x, int y, byte color);
-	void renderText(StringId stringId, int x, int y, byte color);
+	void renderText(int stringId, int x, int y, byte color);
 	void renderText(const GuiElement &guiElement);
 	void renderBox(int x, int y, int width, int height, byte color);
 	void renderBox(const GuiElement &guiElement);

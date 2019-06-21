@@ -35,7 +35,6 @@ Room::Room() {
 	_fileNumber = 0;
 	_id = NULLROOM;
 	_vm = nullptr;
-	_gm = nullptr;
 
 	for (int i = 0; i < kMaxSection; ++i)
 		_shown[i] = kShownFalse;
@@ -96,8 +95,8 @@ bool Room::deserialize(Common::ReadStream *in, int version) {
 
 	int numObjects = in->readSint32LE();
 	for (int i = 0; i < numObjects; ++i) {
-		_objectState[i]._name = static_cast<StringId>(in->readSint32LE());
-		_objectState[i]._description = static_cast<StringId>(in->readSint32LE());
+		_objectState[i]._name = in->readSint32LE();
+		_objectState[i]._description = in->readSint32LE();
 		_objectState[i]._roomId = in->readByte();
 		_objectState[i]._id = static_cast<ObjectId>(in->readSint32LE());
 		_objectState[i]._type = static_cast<ObjectType>(in->readSint32LE());
