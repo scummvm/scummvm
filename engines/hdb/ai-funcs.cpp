@@ -924,6 +924,7 @@ void AI::animLuaEntity(const char *initName, AIState st) {
 void AI::drawEnts(int x, int y, int w, int h) {
 
 	static int stunAnim = 0;
+	static uint32 stunTimer = g_hdb->getTimeSlice();
 
 	// Draw Floating Entities
 	for (Common::Array<AIEntity *>::iterator it = _floats->begin(); it != _floats->end(); it++) {
@@ -1003,7 +1004,10 @@ void AI::drawEnts(int x, int y, int w, int h) {
 			e->onScreen = 0;
 	}
 
-	warning("STUB: AI::drawEnts: Increment Stun Timer");
+	if (stunTimer < g_hdb->getTimeSlice()) {
+		stunAnim = (stunAnim + 1) & 3;
+		stunTimer = g_hdb->getTimeSlice();
+	}
 
 	// Draw player last
 	if (_player && _player->level < 2 && !_playerInvisible && _player->draw) {
