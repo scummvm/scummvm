@@ -24,6 +24,21 @@
 
 namespace HDB {
 
+void AI::removeFirstWaypoint() {
+	if (!_numWaypoints)
+		return;
+
+	int i;
+	for (i = 0;i < _numWaypoints;i++) {
+		_waypoints[i] = _waypoints[i + 1];
+	}
+
+	_waypoints[i].x = 0;
+	_waypoints[i].y = 0;
+	_waypoints[i].level = 0;
+	_numWaypoints--;
+}
+
 void AI::clearWaypoints() {
 	memset(&_waypoints[0], 0, sizeof(_waypoints));
 	_numWaypoints = 0;
