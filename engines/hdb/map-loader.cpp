@@ -126,9 +126,11 @@ bool Map::load(Common::SeekableReadStream *stream) {
 	g_hdb->_drawMan->setSky(sky);
 	_mapX = _mapY = 0;
 
-	/*
-		TODO: Add the animating tile lists
-	*/
+	// Setup animating Tile lists
+	for (int i = 0; i < _width*_height;i++) {
+		addBGTileAnimation(i % _width, i / _width);
+		addFGTileAnimation(i % _width, i / _width);
+	}
 
 	struct {
 		AIType type;
