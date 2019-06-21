@@ -154,6 +154,9 @@ Tile *DrawMan::getTile(int index) {
 }
 
 int DrawMan::getTileIndex(const char *name) {
+	if (!name) {
+		return -1;
+	}
 	for (int i = 0; i < _numTiles; i++) {
 		if (Common::matchString(_tLookupArray[i].filename, name)) {
 			return i;
