@@ -365,4 +365,30 @@ void AI::cineFadeOut(bool isBlack, int steps) {
 	_cine.push_back(cmd);
 }
 
+void AI::cineClearForeground(int x, int y) {
+	CineCommand *cmd = new CineCommand;
+	cmd->x = x;
+	cmd->y = y;
+	cmd->cmdType = C_CLEAR_FG;
+	_cine.push_back(cmd);
+}
+
+void AI::cineSetBackground(int x, int y, int index) {
+	CineCommand *cmd = new CineCommand;
+	cmd->x = x;
+	cmd->y = y;
+	cmd->start = index;
+	cmd->cmdType = C_SET_BG;
+	_cine.push_back(cmd);
+}
+
+void AI::cineSetForeground(int x, int y, int index) {
+	CineCommand *cmd = new CineCommand;
+	cmd->x = x;
+	cmd->y = y;
+	cmd->start = index;
+	cmd->cmdType = C_SET_FG;
+	_cine.push_back(cmd);
+}
+
 } // End of Namespace
