@@ -717,7 +717,10 @@ void Map::addBGTileAnimation(int x, int y) {
 
 	int i = y * _width + x;
 
-	uint32 flags = g_hdb->_drawMan->getTile(_background[i])->_flags;
+	Tile *tile = g_hdb->_drawMan->getTile(_background[i]);
+	if (!tile)
+		return;
+	uint32 flags = tile->_flags;
 
 	// BACKGROUND
 	if (flags & kFlagAnimFast) {
@@ -733,7 +736,10 @@ void Map::addFGTileAnimation(int x, int y) {
 
 	int i = y * _width + x;
 
-	uint32 flags = g_hdb->_drawMan->getTile(_foreground[i])->_flags;
+	Tile *tile = g_hdb->_drawMan->getTile(_foreground[i]);
+	if (!tile)
+		return;
+	uint32 flags = tile->_flags;
 
 	// FOREGROUND
 	if (flags & kFlagAnimFast) {
@@ -748,7 +754,10 @@ void Map::addFGTileAnimation(int x, int y) {
 void Map::removeBGTileAnimation(int x, int y) {
 	int i = y * _width + x;
 
-	uint32 flags = g_hdb->_drawMan->getTile(_background[i])->_flags;
+	Tile *tile = g_hdb->_drawMan->getTile(_background[i]);
+	if (!tile)
+		return;
+	uint32 flags = tile->_flags;
 
 	if (flags & kFlagAnimFast) {
 		for(Common::Array<uint32>::iterator it = _listBGAnimFast.begin(); it!=_listBGAnimFast.end(); it++)
@@ -774,7 +783,10 @@ void Map::removeBGTileAnimation(int x, int y) {
 void Map::removeFGTileAnimation(int x, int y) {
 	int i = y * _width + x;
 
-	uint32 flags = g_hdb->_drawMan->getTile(_foreground[i])->_flags;
+	Tile *tile = g_hdb->_drawMan->getTile(_foreground[i]);
+	if (!tile)
+		return;
+	uint32 flags = tile->_flags;
 
 	if (flags & kFlagAnimFast) {
 		for(Common::Array<uint32>::iterator it = _listFGAnimFast.begin(); it!=_listFGAnimFast.end(); it++)
