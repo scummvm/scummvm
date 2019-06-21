@@ -67,6 +67,9 @@ public:
 	uint32 getMapFGTileFlags(int x, int y);
 	uint16 getMapBGTileIndex(int x, int y);
 	uint16 getMapFGTileIndex(int x, int y);
+	void setMapBGTileIndex(int x, int y, int index);
+	void setMapFGTileIndex(int x, int y, int index);
+
 	void getMapXY(int *x, int *y);
 	void setMapXY(int x, int y);
 	void centerMapXY(int x, int y);
