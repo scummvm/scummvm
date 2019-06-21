@@ -549,6 +549,7 @@ public:
 	void setEntityGoal(AIEntity *e, int x, int y);
 	void initAllEnts();
 
+	void animEntFrames(AIEntity *e);
 	void animLuaEntity(const char *initName, AIState st);
 
 	bool getTableEnt(AIType type);
