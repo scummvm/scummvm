@@ -747,6 +747,7 @@ public:
 private:
 
 	Common::Array<AIEntity *> *_ents;
+	Common::Array<AIEntity *> *_floats;
 	AIEntity *_player;
 
 	// Cinematics Variables

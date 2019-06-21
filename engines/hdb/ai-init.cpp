@@ -668,12 +668,22 @@ AIEntTypeInfo aiEntList[] = {
 
 AI::AI() {
 	_ents = new Common::Array<AIEntity *>;
+	_floats = new Common::Array<AIEntity *>;
+
+	for (int i = 0; i < kMaxLevel2Ents;i++) {
+		_entsLevel2[i] = new AIEntLevel2;
+	}
+
 	// REMOVE: Remove for final. Used here due to lack of a MENU
 	_numGems = _numGooCups = _numMonkeystones = _numInventory = 0;
 }
 
 AI::~AI() {
 	delete _ents;
+	delete _floats;
+	for (int i = 0; i < kMaxLevel2Ents;i++) {
+		delete _entsLevel2[i];
+	}
 }
 
 bool AI::init() {
