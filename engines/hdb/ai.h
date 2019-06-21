@@ -203,6 +203,16 @@ enum AIDir {
 	DIR_RIGHT
 };
 
+enum Death {
+	DEATH_NORMAL,
+	DEATH_FRIED,
+	DEATH_DROWNED,
+	DEATH_GRABBED,
+	DEATH_SHOCKED,
+	DEATH_PANICZONE,
+	DEATH_PLUMMET
+};
+
 enum AIState {
 	STATE_NONE,
 	STATE_STANDDOWN,
@@ -562,6 +572,7 @@ public:
 	void removeEntity(AIEntity *e);
 	void setEntityGoal(AIEntity *e, int x, int y);
 	void initAllEnts();
+	void killPlayer(Death method);
 
 	void animEntFrames(AIEntity *e);
 	void animLuaEntity(const char *initName, AIState st);

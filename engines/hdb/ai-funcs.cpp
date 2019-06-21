@@ -606,6 +606,53 @@ void AI::initAllEnts() {
 	warning("STUB: initAllEnts: LaserScan required");
 }
 
+void AI::killPlayer(Death method) {
+
+	int x = _player->x, y = _player->y;
+
+	stopEntity(_player);
+	_player->x = x;
+	_player->y = y;
+	_playerInvisible = false;
+	_playerDead = true;
+
+	warning("STUB: killPlayer: Close Dialogs");
+
+	switch (method) {
+	case DEATH_NORMAL:
+		_player->state = STATE_DYING;
+		warning("STUB: killPlayer: Play SND_GUY_DYING");
+		break;
+	case DEATH_FRIED:
+		_player->state = STATE_HORRIBLE1;
+		warning("STUB: killPlayer: Play SND_GUY_FRIED");
+		break;
+	case DEATH_SHOCKED:
+		_player->state = STATE_HORRIBLE2;
+		warning("STUB: killPlayer: Play SND_GUY_DYING");
+		warning("STUB: killPlayer: Play SND_SHOCKBOT_SHOCK");
+		break;
+	case DEATH_GRABBED:
+		_player->state = STATE_HORRIBLE3;
+		warning("STUB: killPlayer: Play SND_GUY_GRABBED");
+		break;
+	case DEATH_DROWNED:
+		_player->state = STATE_HORRIBLE4;
+		warning("STUB: killPlayer: Play SND_GUY_DROWN");
+		break;
+	case DEATH_PANICZONE:
+		_player->state = STATE_DYING;
+		warning("STUB: killPlayer: Play SND_PANIC_DEATH");
+		break;
+	case DEATH_PLUMMET:
+		_player->state = STATE_PLUMMET;
+		warning("STUB: killPlayer: Play SND_GUY_PLUMMET");
+		break;
+	}
+
+	warning("STUB: killPlayer: Stop Music");
+}
+
 void AI::animEntFrames(AIEntity *e) {
 	int max = 1;
 	// Set current graphic to draw
