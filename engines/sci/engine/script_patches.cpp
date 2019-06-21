@@ -11424,6 +11424,260 @@ static const uint16 qfg4DomovoiInnPatch[] = {
 	PATCH_END
 };
 
+// During the final battle with Ad Avis his initial timer is never stopped,
+//  reducing the intended time the player has to complete the sequence by more
+//  than half, and bringing Ad Avis back to life after he's killed.
+//
+// sTimeItOut state 0 sets a timeout when the battle starts. Its length depends
+//  on the detected cpu speed and game version. In the floppy versions this was
+//  a minimum of 400 seconds, which is so long that it masked the bug, but in CD
+//  it was reduced to 20 seconds. This is supposed to be how long the player has
+//  to tell the joke, after which sUltimakeJoke sets a second timeout in which
+//  the character-specific actions are to be done, but sTimeItOut finishes first
+//  and forces the player to complete both phases during the first shorter one.
+//  When Ad Avis is killed his death scripts only stop sUltimakeJoke, as they
+//  don't expect sTimeItOut to be running, and so when sTimeItOut times out it
+//  kills the player unless the death script has already called avis:dispose.
+//
+// We fix this by patching sTimeItOut state 1 to abort the script if the joke
+//  has been told. This is equivalent to the NRS patch that ships with the GOG
+//  version, which disposes sTimeItOut when telling the joke, and so this patch
+//  is applied to all versions except that one.
+//
+// Applies to: All versions
+// Responsible method: sTimeItOut:changeState(1)
+// Fixes bug: #10844
+static const uint16 qfg4AdAvisTimeoutSignature[] = {
+	0x30, SIG_UINT16(0x002c),           // bnt 002c [ state 1 ]
+	SIG_ADDTOOFFSET(+0x29),
+	SIG_MAGICDWORD,
+	0x32, SIG_UINT16(0x00ae),           // jmp 00ae [ end of method ]
+	0x3c,                               // dup
+	0x35, 0x01,                         // ldi 01
+	0x1a,                               // eq?
+	0x30, SIG_UINT16(0x0027),           // bnt 0027 [ state 2 ]
+	SIG_END
+};
+
+static const uint16 qfg4AdAvisTimeoutPatch[] = {
+	0x30, PATCH_UINT16(0x0029),         // bnt 0029 [ state 1 ]
+	PATCH_ADDTOOFFSET(+0x29),
+	0x3c,                               // dup
+	0x35, 0x01,                         // ldi 01
+	0x1a,                               // eq?
+	0x31, 0x2b,                         // bnt 2b [ state 2 ]
+	0x83, 0x04,                         // lal 04 [ has joke been told? ]
+	0x2f, 0x27,                         // bt 27  [ abort script if joke has been told ]
+	PATCH_END
+};
+
+// During the final battle with Ad Avis if the player casts a non-fatal spell at
+//  him then they can't cast any more spells. Instead they receive a message
+//  about being too busy or it not being a good place and must wait to die.
+//  Another symptom of this bug is that fighters and thieves don't get to see
+//  the staff transform if they've previously thrown a weapon.
+//
+// SpellItem:doVerb(4) determines if a spell is allowed. If hero:view is the
+//  wrong value then it says "This isn't a good place..." and if the room has
+//  a script it says "You're too busy...". avis:getHurt breaks one or both of
+//  these conditions by setting the room script to sMessages. If the game speed
+//  is set to less than high then avis:getHurt runs while the "project" room
+//  script is animating hero. Setting the room script to sMessages interrupts
+//  this and hero is left on view 14, breaking the first spell condition. Even
+//  if the game speed is set to high and hero's animation completes, sMessages
+//  fails to dispose itself, leaving it as the room script when it's complete
+//  and breaking the second spell condition.
+//
+// We fix this by reassigning sMessages from the room's script to midBlast, an
+//  arbitrary Prop that no scripts depend on. project is no longer interrupted,
+//  hero's animation completes at all speeds, and it no longer matters that
+//  sMessage fails to dispose itself. Due to script changes, this patch is only
+//  applied once to floppy and twice to CD.
+//
+// We also include a version of this for the offsets in the NRS patch, which is
+//  important as that ships with the GOG version.
+//
+// Applies to: All versions
+// Responsible method: avis:getHurt
+// Fixes bug: #10835
+static const uint16 qfg4AdAvisSpellsFloppySignature[] = {
+	SIG_MAGICDWORD,
+	0x72, SIG_UINT16(0x0096),           // lofsa sMessages
+	0x36,                               // push
+	0x81, 0x02,                         // lag 02
+	0x4a, SIG_UINT16(0x0006),           // send 06 [ rm730 setScript: sMessages ]
+	SIG_END
+};
+
+static const uint16 qfg4AdAvisSpellsFloppyPatch[] = {
+	0x74, PATCH_ADDTOOFFSET(+2),        // lofss sMessages
+	0x72, PATCH_UINT16(0x0668),         // lofsa midBlast
+	SIG_END
+};
+
+static const uint16 qfg4AdAvisSpellsCDSignature[] = {
+	SIG_MAGICDWORD,
+	0x72, SIG_UINT16(0x00a6),           // lofsa sMessages
+	0x36,                               // push
+	0x81, 0x02,                         // lag 02
+	0x4a, SIG_UINT16(0x0006),           // send 06 [ rm730 setScript: sMessages ]
+	SIG_END
+};
+
+static const uint16 qfg4AdAvisSpellsCDPatch[] = {
+	0x74, PATCH_ADDTOOFFSET(+2),        // lofss sMessages
+	0x72, PATCH_UINT16(0x06b6),         // lofsa midBlast
+	SIG_END
+};
+
+static const uint16 qfg4AdAvisSpellsNrsSignature[] = {
+	SIG_MAGICDWORD,
+	0x72, SIG_UINT16(0x00a8),           // lofsa sMessages
+	0x36,                               // push
+	0x81, 0x02,                         // lag 02
+	0x4a, SIG_UINT16(0x0006),           // send 06 [ rm730 setScript: sMessages ]
+	SIG_END
+};
+
+static const uint16 qfg4AdAvisSpellsNrsPatch[] = {
+	0x74, PATCH_ADDTOOFFSET(+2),        // lofss sMessages
+	0x72, PATCH_UINT16(0x06b8),         // lofsa midBlast
+	SIG_END
+};
+
+// If the magic user defeats Ad Avis with the game speed set to less than high
+//  then they aren't allowed to cast the final summon staff spell and complete
+//  the game. Instead they receive "You're too busy to cast a spell right now."
+//
+// Spells can't be cast if a room script is set, as described in the above patch
+//  notes. When Ad Avis is killed, avis:getHurt sets hero's view and loop before
+//  running sAdavisDies. If the game speed isn't set to high then the "project"
+//  script that deployed the final projectile spell is still running and waiting
+//  on hero's animation to complete. By changing the view and loop, avis:getHurt
+//  prevents project from advancing to its next state and completing, leaving it
+//  stuck as the room script and blocking the final spell.
+//
+// We can't prevent project from being the room script as that's game-wide
+//  behavior, and we can't prevent it from being interrupted since avis:getHurt
+//  needs to set hero's final view/loop, but we can still fix the bug by setting
+//  sAdavisDies as the room's script instead of hero's. This disposes project if
+//  it's still running and guarantees that the room script is cleared since
+//  sAdavisDies always disposes of itself.
+//
+// Applies to: All versions
+// Responsible method: avis:getHurt
+// Fixes bug: #10835
+static const uint16 qfg4AdAdvisLastSpellSignature[] = {
+	0x38, SIG_SELECTOR16(setScript),    // pushi setScript
+	0x78,                               // push1
+	0x72, SIG_ADDTOOFFSET(+2),          // lofsa sAdavisDies
+	SIG_MAGICDWORD,
+	0x36,                               // push
+	0x81, 0x00,                         // lag 00
+	0x4a, SIG_UINT16(0x0006),           // send 06 [ hero setScript: sAdavisDies ]
+	SIG_END
+};
+
+static const uint16 qfg4AdAdvisLastSpellPatch[] = {
+	PATCH_ADDTOOFFSET(+8),
+	0x81, 0x02,                         // lag 02 [ rm730 ]
+	SIG_END
+};
+
+// When throwing a weapon or casting a spell at Ad Avis in room 730, sMessages
+//  tests the projectile type incorrectly and transposes the message responses.
+//
+// Applies to: All versions
+// Responsible method: sMessages:changeState(2)
+// Fixes bug: #10989
+static const uint16 qfg4AdAvisMessageSignature[] = {
+	0x8b, SIG_MAGICDWORD, 0x01,         // lsl 01 [ 0 if weapon thrown, else a spell ]
+	0x35, 0x00,                         // ldi 00
+	0x1a,                               // eq?
+	SIG_END
+};
+
+static const uint16 qfg4AdAvisMessagePatch[] = {
+	PATCH_ADDTOOFFSET(+4),
+	0x1c,                               // ne?
+	PATCH_END
+};
+
+// Throwing a rock or dagger at Ad Avis after telling the joke kills him.
+//  avis:getHurt fails to test the projectile type correctly in CD, or at all in
+//  floppy, and so all versions mistake this for casting a spell with the staff.
+//
+// We fix this by testing the projectile type and not allowing a thrown weapon
+//  to kill Ad Avis. This replaces an unnecessary hero:script test.
+//
+// Applies to: All versions
+// Responsible method: avis:getHurt
+// Fixes bug: #10989
+static const uint16 qfg4AdAvisThrowWeaponSignature[] = {
+	SIG_MAGICDWORD,
+	0x38, SIG_SELECTOR16(script),       // pushi script
+	0x76,                               // push0
+	0x81, 0x00,                         // lag 00
+	0x4a, SIG_UINT16(0x0004),           // send 04 [ hero script? ]
+	0x18,                               // not
+	0x30, SIG_ADDTOOFFSET(+2),          // bnt [ projectile doesn't kill ad avis ]
+	0x39, SIG_SELECTOR8(view),          // pushi view
+	SIG_END
+};
+
+static const uint16 qfg4AdAvisThrowWeaponPatch[] = {
+	0x83, 0x01,                        // lal 01 [ 0 if weapon thrown, else a spell ]
+	0x33, 0x06,                        // jmp 06 [ throwing a weapon doesn't kill ad avis ]
+	PATCH_END
+};
+
+// When a fighter or paladin selects the staff in the final battle with Ad Avis
+//  after throwing a rock or dagger they enter an infinite animation loop due to
+//  not clearing hero:cycler. Multiple bugs in this room prevented getting this
+//  far, but we fixed those, so we also fix this by clearing the cycler.
+//
+// Applies to: All versions
+// Responsible method: sDoTheStaff:changeState(3)
+// Fixes bug: #10835
+static const uint16 qfg4FighterSpearSignature[] = {
+	0x39, SIG_SELECTOR8(view),          // pushi view [ start of fighter code, same as paladin ]
+	SIG_ADDTOOFFSET(0x3e),
+	0x3c,                               // dup
+	0x35, SIG_MAGICDWORD, 0x03,         // ldi 03
+	0x1a,                               // eq? [ is paladin? (last condition so always true) ]
+	0x30, SIG_UINT16(0x0022),           // bnt 0022
+	0x39, SIG_SELECTOR8(view),          // pushi view
+	0x78,                               // push1
+	0x39, 0x0a,                         // pushi 0a
+	0x38, SIG_SELECTOR16(setLoop),      // pushi setLoop
+	0x7a,                               // push2
+	0x76,                               // push0
+	0x78,                               // push1
+	0x38, SIG_SELECTOR16(setCel),       // pushi setCel
+	SIG_ADDTOOFFSET(+13),
+	0x4a, SIG_UINT16(0x001c),           // send 1c [ hero view: 10 setLoop 0 1 setCel: 0 ... ]
+	SIG_END
+};
+
+static const uint16 qfg4FighterSpearPatch[] = {
+	0x33, 0x3e,                         // jmp 3e [ use patched paladin code for fighter ]
+	PATCH_ADDTOOFFSET(0x3e),
+	0x39, PATCH_SELECTOR8(view),        // pushi view
+	0x78,                               // push1
+	0x39, 0x0a,                         // pushi 0a
+	0x38, PATCH_SELECTOR16(setLoop),    // pushi setLoop
+	0x7a,                               // push2
+	0x76,                               // push0
+	0x78,                               // push1
+	0x38, PATCH_SELECTOR16(setCel),     // pushi setCel
+	0x39, 0x01,                         // pushi 01
+	0x39, 0x00,                         // pushi 00
+	0x38, PATCH_SELECTOR16(setCycle),   // pushi setCycle
+	PATCH_ADDTOOFFSET(+13),
+	0x4a, PATCH_UINT16(0x0022),         // send 22 [ hero view: 10 setLoop 0 1 setCel: 0 setCycle: 0 ... ]
+	PATCH_END
+};
+
 // The script that determines how much money a revenant has is missing the first
 //  parameter to kRandom, which should be zero as it is with other monsters.
 //  Instead of awarding the intended 15 to 40 kopeks, it always awards 15 and
@@ -11508,6 +11762,14 @@ static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,   710, "fix tentacle retraction for fighter",         1, qfg4PitRopeFighterSignature,   qfg4PitRopeFighterPatch },
 	{  true,   710, "fix tentacle retraction for mage (1/2)",      1, qfg4PitRopeMageSignature1,     qfg4PitRopeMagePatch1 },
 	{  true,   710, "fix tentacle retraction for mage (2/2)",      1, qfg4PitRopeMageSignature2,     qfg4PitRopeMagePatch2 },
+	{  true,   730, "fix ad avis timeout",                         1, qfg4AdAvisTimeoutSignature,    qfg4AdAvisTimeoutPatch },
+	{  true,   730, "Floppy: fix casting spells at ad avis",       1, qfg4AdAvisSpellsFloppySignature, qfg4AdAvisSpellsFloppyPatch },
+	{  true,   730, "CD: fix casting spells at ad avis",           2, qfg4AdAvisSpellsCDSignature,   qfg4AdAvisSpellsCDPatch },
+	{  true,   730, "NRS: fix casting spells at ad avis",          2, qfg4AdAvisSpellsNrsSignature,  qfg4AdAvisSpellsNrsPatch },
+	{  true,   730, "fix casting last spell at ad avis",           1, qfg4AdAdvisLastSpellSignature, qfg4AdAdvisLastSpellPatch },
+	{  true,   730, "fix ad avis projectile message",              1, qfg4AdAvisMessageSignature,    qfg4AdAvisMessagePatch },
+	{  true,   730, "fix throwing weapons at ad avis",             1, qfg4AdAvisThrowWeaponSignature,qfg4AdAvisThrowWeaponPatch },
+	{  true,   730, "fix fighter's spear animation",               1, qfg4FighterSpearSignature,     qfg4FighterSpearPatch },
 	{  true,   800, "fix setScaler calls",                         1, qfg4SetScalerSignature,        qfg4SetScalerPatch },
 	{  true,   800, "fix grapnel removing hero's scaler",          1, qfg4RopeScalerSignature,       qfg4RopeScalerPatch },
 	{  true,   801, "fix runes puzzle (1/2)",                      1, qfg4RunesPuzzleSignature1,     qfg4RunesPuzzlePatch1 },
