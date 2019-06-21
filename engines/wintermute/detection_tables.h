@@ -51,6 +51,7 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"dfafadventure",   "DFAF Adventure"},
 	{"dreamcat",        "Dreamcat"},
 	{"dreaming",        "Des Reves Elastiques Avec Mille Insectes Nommes Georges"},
+	{"driller",         "The Driller Incident"},
 	{"dirtysplit",      "Dirty Split"},
 	{"dreamscape",      "Dreamscape"},
 	{"escapemansion",   "Escape from the Mansion"},
@@ -298,6 +299,12 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Des Reves Elastiques Avec Mille Insectes Nommes Georges
 	WME_WINENTRY("dreaming", "",
 		WME_ENTRY1s("data.dcp", "4af26d97ea063fc1277ce30ae431de90", 8804073), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+	// The Driller Incident (English)
+	WME_WINENTRY("driller", "",
+		WME_ENTRY1s("data.dcp","9cead7a85244263e0a5ff8f69dd7a1fc", 13671792), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+	// The Driller Incident (Russian)
+	WME_WINENTRY("driller", "",
+		WME_ENTRY1s("data.dcp","5bec2442339dd1ecf221873fff704617", 13671830), Common::RU_RUS, ADGF_UNSTABLE, LATEST_VERSION),
 	// Dreamcat
 	WME_WINENTRY("dreamcat", "",
 		WME_ENTRY1s("data.dcp","189bd4eef29034f4ff4ed30120eaac4e", 7758040), Common::EN_ANY, ADGF_UNSTABLE | GF_LOWSPEC_ASSETS, LATEST_VERSION),
