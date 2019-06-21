@@ -332,14 +332,7 @@ enum CineType {
 
 struct AIStateDef {
 	AIState state;
-	char name[64];
-
-	AIStateDef() : state(STATE_NONE), name("") {}
-	AIStateDef(AIState state, const char *inputName) : state(state) {
-		for (int i = 0;i < 64;i++) {
-			name[i] = inputName[i];
-		}
-	}
+	const char name[64];
 };
 
 struct AIEntity {
@@ -504,10 +497,6 @@ struct AIEntTypeInfo {
 	AIStateDef *stateDef;
 	void (*initFunc)(AIEntity *e);
 	void (*initFunc2)(AIEntity *e);
-
-	AIEntTypeInfo() : type(AI_NONE), luaName(NULL), stateDef(NULL), initFunc(NULL), initFunc2(NULL) {}
-	AIEntTypeInfo(AIType type, const char *luaName, AIStateDef *stateDef, void(*initFunc)(AIEntity *e), void(*initFunc2)(AIEntity *e)) : type(type), luaName(luaName), stateDef(stateDef), initFunc(initFunc), initFunc2(initFunc2) {}
-
 };
 
 extern AIEntTypeInfo aiEntList[];
