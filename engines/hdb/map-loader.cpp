@@ -578,6 +578,8 @@ void Map::draw() {
 		return;
 	}
 
+	_numForegrounds = _numGratings = 0;
+
 	for (int j = 0; j < maxTileY; j++) {
 		screenX = _mapTileXOff;
 		for (int i = 0; i < maxTileX; i++) {
@@ -599,21 +601,22 @@ void Map::draw() {
 				Tile *fTile = g_hdb->_drawMan->getTile(tileIndex);
 				if (fTile && !(fTile->_flags & kFlagInvisible)) {
 
-					if ((fTile->_flags & kFlagGrating)) {
-						/*
-						TODO: Implement Gratings Check
-						*/
-						debug(9, "STUB: Map::draw: Gratings Check not found");
+					if ((fTile->_flags & kFlagGrating) && (_numGratings < kMaxGratings)) {
+						// Check for Gratings Flag
+						_gratings[_numGratings]->x = screenX;
+						_gratings[_numGratings]->y = screenY;
+						_gratings[_numGratings]->tile = tileIndex;
+						if (_numGratings < kMaxGratings)
+							_numGratings++;
 					} else if ((fTile->_flags & kFlagForeground)) {
-						/*
-						TODO: Implement Gratings Check
-						*/
-						debug(9, "STUB: Map::draw: Foreground Check not found");
+						// Check for Foregrounds Flag
+						_foregrounds[_numForegrounds]->x = screenX;
+						_foregrounds[_numForegrounds]->y = screenY;
+						_foregrounds[_numForegrounds]->tile = tileIndex;
+						if (_numForegrounds < kMaxForegrounds)
+							_numForegrounds++;
 					} else {
 						if (fTile->_flags & kFlagMasked) {
-							/*
-								TODO: Implement MaskedMapTile drawing
-							*/
 							fTile->drawMasked(screenX, screenY);
 						} else {
 							fTile->draw(screenX, screenY);
