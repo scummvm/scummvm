@@ -688,6 +688,58 @@ void Map::addFGTileAnimation(int x, int y) {
 	}
 }
 
+void Map::removeBGTileAnimation(int x, int y) {
+	int i = y * _width + x;
+
+	uint32 flags = g_hdb->_drawMan->getTile(_background[i])->_flags;
+
+	if (flags & kFlagAnimFast) {
+		for(Common::Array<uint32>::iterator it = _listBGAnimFast.begin(); it!=_listBGAnimFast.end(); it++)
+			if (i == (*it)) {
+				_listBGAnimFast.erase(it);
+				break;
+			}
+	} else if (flags & kFlagAnimSlow) {
+		for (Common::Array<uint32>::iterator it = _listBGAnimSlow.begin(); it != _listBGAnimSlow.end(); it++)
+			if (i == (*it)) {
+				_listBGAnimSlow.erase(it);
+				break;
+			}
+	} else if (flags & kFlagAnimMedium) {
+		for (Common::Array<uint32>::iterator it = _listBGAnimMedium.begin(); it != _listBGAnimMedium.end(); it++)
+			if (i == (*it)) {
+				_listBGAnimMedium.erase(it);
+				break;
+			}
+	}
+}
+
+void Map::removeFGTileAnimation(int x, int y) {
+	int i = y * _width + x;
+
+	uint32 flags = g_hdb->_drawMan->getTile(_foreground[i])->_flags;
+
+	if (flags & kFlagAnimFast) {
+		for(Common::Array<uint32>::iterator it = _listFGAnimFast.begin(); it!=_listFGAnimFast.end(); it++)
+			if (i == (*it)) {
+				_listFGAnimFast.erase(it);
+				break;
+			}
+	} else if (flags & kFlagAnimSlow) {
+		for (Common::Array<uint32>::iterator it = _listFGAnimSlow.begin(); it != _listFGAnimSlow.end(); it++)
+			if (i == (*it)) {
+				_listFGAnimSlow.erase(it);
+				break;
+			}
+	} else if (flags & kFlagAnimMedium) {
+		for (Common::Array<uint32>::iterator it = _listFGAnimMedium.begin(); it != _listFGAnimMedium.end(); it++)
+			if (i == (*it)) {
+				_listFGAnimMedium.erase(it);
+				break;
+			}
+	}
+}
+
 void Map::getMapXY(int *x, int *y) {
 	*x = _mapX;
 	*y = _mapY;
