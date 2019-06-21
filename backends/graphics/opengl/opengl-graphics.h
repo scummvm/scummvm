@@ -72,7 +72,7 @@ public:
 
 #ifdef USE_RGB_COLOR
 	virtual Graphics::PixelFormat getScreenFormat() const override;
-	virtual Common::List<Graphics::PixelFormat> getSupportedFormats() const override = 0;
+	virtual Common::List<Graphics::PixelFormat> getSupportedFormats() const override;
 #endif
 
 	virtual void beginGFXTransaction() override;

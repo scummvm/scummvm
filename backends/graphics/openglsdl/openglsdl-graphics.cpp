@@ -330,56 +330,6 @@ void OpenGLSdlGraphicsManager::initSize(uint w, uint h, const Graphics::PixelFor
 	return OpenGLGraphicsManager::initSize(w, h, format);
 }
 
-#ifdef USE_RGB_COLOR
-Common::List<Graphics::PixelFormat> OpenGLSdlGraphicsManager::getSupportedFormats() const {
-	Common::List<Graphics::PixelFormat> formats;
-
-	// Our default mode is (memory layout wise) RGBA8888 which is a different
-	// logical layout depending on the endianness. We chose this mode because
-	// it is the only 32bit color mode we can safely assume to be present in
-	// OpenGL and OpenGL ES implementations. Thus, we need to supply different
-	// logical formats based on endianness.
-#ifdef SCUMM_LITTLE_ENDIAN
-	// ABGR8888
-	formats.push_back(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
-#else
-	// RGBA8888
-	formats.push_back(Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
-#endif
-	// RGB565
-	formats.push_back(Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));
-	// RGBA5551
-	formats.push_back(Graphics::PixelFormat(2, 5, 5, 5, 1, 11, 6, 1, 0));
-	// RGBA4444
-	formats.push_back(Graphics::PixelFormat(2, 4, 4, 4, 4, 12, 8, 4, 0));
-
-#if !USE_FORCED_GLES && !USE_FORCED_GLES2
-#if !USE_FORCED_GL
-	if (!isGLESContext()) {
-#endif
-#ifdef SCUMM_LITTLE_ENDIAN
-		// RGBA8888
-		formats.push_back(Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
-#else
-		// ABGR8888
-		formats.push_back(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
-#endif
-#if !USE_FORCED_GL
-	}
-#endif
-#endif
-
-	// RGB555, this is used by SCUMM HE 16 bit games.
-	// This is not natively supported by OpenGL ES implementations, we convert
-	// the pixel format internally.
-	formats.push_back(Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0));
-
-	formats.push_back(Graphics::PixelFormat::createFormatCLUT8());
-
-	return formats;
-}
-#endif
-
 void OpenGLSdlGraphicsManager::updateScreen() {
 	if (_ignoreResizeEvents) {
 		--_ignoreResizeEvents;
