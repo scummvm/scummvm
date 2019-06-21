@@ -59,6 +59,11 @@ const char *gameText[] = {
 	"Benutze ",     // kStringStatusCommandUse
 	"Rede mit ",    // kStringStatusCommandTalk
 	"Gib ",         // kStringStatusCommandGive
+	" an ", // kPhrasalVerbParticleGiveTo
+	" mit ", // kPhrasalVerbParticleUseWith
+	"Es ist nichts Besonderes daran.",       // kStringDefaultDescription
+	"|", // kStringDialogSeparator
+	"Gespr\204ch beenden", // kStringConversationEnd
 	// 20
 	"V2.02",            // kStringTitleVersion
 	"Teil 1:",          // kStringTitle1
@@ -81,7 +86,6 @@ const char *gameText[] = {
 	"^Rene Koch#",                           // kStringIntro12
 	"\233",                                  // kStringIntro13
 	"Hmm, er scheint kaputt zu sein.",       // kStringBroken
-	"Es ist nichts Besonderes daran.",       // kStringDefaultDescription
 	"Das mu\341t du erst nehmen.",              // kStringTakeMessage
 	// 40
 	"Keycard",                               // kStringKeycard
@@ -541,7 +545,6 @@ const char *gameText[] = {
 	"Wo soll ich die Schuhe ablegen?", // kStringArsanoDialog8
 	// 420
 	"Schwachsinn! Ich gehe jetzt nach oben!", // kStringArsanoDialog9
-	"|", // kStringDialogSeparator
 	"K\224nnten Sie mir ein Gericht empfehlen?", // kStringDialogArsanoRoger1
 	"Wie lange dauert es denn noch bis zur Supernova?", // kStringDialogArsanoRoger2
 	"Sie kommen mir irgendwie bekannt vor.", // kStringDialogArsanoRoger3
@@ -735,8 +738,6 @@ const char *gameText[] = {
 	"Es ist eine Art elektronische Zeitung.", // kStringGenericInteract_10
 	"Halt, hier ist ein interessanter Artikel.", // kStringGenericInteract_11
 	"Hmm, irgendwie komme|ich mir verarscht vor.", // kStringGenericInteract_12
-	" an ", // kPhrasalVerbParticleGiveTo
-	" mit ", // kPhrasalVerbParticleUseWith
 	// 585
 	"Es ist eine Uhr mit extra|lautem Wecker. Sie hat einen|Knopf zum Verstellen der Alarmzeit.|Uhrzeit: %s   Alarmzeit: %s", // kStringGenericInteract_13
 	"Neue Alarmzeit (hh:mm) :", // kStringGenericInteract_14
@@ -775,7 +776,6 @@ const char *gameText[] = {
 	"Behalt es lieber!", // kStringGenericInteract_42
 	// 615
 	"Das geht nicht.", // kStringGenericInteract_43
-	"Gespr\204ch beenden", // kStringConversationEnd
 	"Du hast das komische Gef\201hl,|da\341 drau\341en etwas passiert,|und eilst zum Restaurant.", // kStringSupernova1
 	"Da! Die Supernova!", // kStringSupernova2
 	"Zwei Minuten sp\204ter ...", // kStringSupernova3
