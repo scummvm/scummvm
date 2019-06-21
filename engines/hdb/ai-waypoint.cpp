@@ -29,7 +29,7 @@ void AI::clearWaypoints() {
 	_numWaypoints = 0;
 }
 
-void *AI::getStandFrameDir(AIEntity *e) {
+Tile *AI::getStandFrameDir(AIEntity *e) {
 	switch (e->dir) {
 	case DIR_DOWN:
 		if (e->standdownFrames)

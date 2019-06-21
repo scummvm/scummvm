@@ -341,7 +341,7 @@ struct AIEntity {
 	AIState state;
 	AIDir dir;
 
-	void *draw;											// Current frame to draw
+	Tile *draw;											// Current frame to draw
 
 	void (*aiInit)(AIEntity *e);						// func ptr to init routine
 	void (*aiInit2)(AIEntity *e);						// func ptr to init2 routine - graphic init only (this for LoadGame functionality)
@@ -649,7 +649,7 @@ public:
 	// Waypoint & Movement Functions
 	void lookAtXY(int x, int y);
 	void clearWaypoints();
-	void *getStandFrameDir(AIEntity *e);
+	Tile *getStandFrameDir(AIEntity *e);
 
 	// Inventory Functions
 	bool addToInventory(AIEntity *e);
