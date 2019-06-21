@@ -78,6 +78,14 @@ public:
 	int _mapTileX, _mapTileY; // Tile Coordinates of Map
 	int _mapTileXOff, _mapTileYOff; // Tile Coordinates Offset (0-31)
 
+	int _animCycle;	// Tile Animation Counter
+	Common::Array<uint32> _listBGAnimSlow;
+	Common::Array<uint32> _listBGAnimMedium;
+	Common::Array<uint32> _listBGAnimFast;
+	Common::Array<uint32> _listFGAnimSlow;
+	Common::Array<uint32> _listFGAnimMedium;
+	Common::Array<uint32> _listFGAnimFast;
+
 private:
 	char _name[32];
 	uint16 _width;
