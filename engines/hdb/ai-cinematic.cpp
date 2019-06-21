@@ -209,8 +209,11 @@ void AI::processCines() {
 			break;
 		}
 		case C_USEENTITY:
-			_cine[i]->e = locateEntity(_cine[i]->string);
-			warning("STUB: PROCESSCINES: USEENTITY: HDBGame::useEntity required;");
+			for (Common::Array<AIEntity *>::iterator it = _ents->begin(); it != _ents->end(); it++) {
+				if (Common::matchString((*it)->entityName, _cine[i]->string)) {
+					g_hdb->useEntity((*it));
+				}
+			}
 			warning("STUB: PROCESSCINES: USEENTITY: CheckActionList required;");
 			warning("STUB: PROCESSCINES: USEENTITY: CheckAutoList required;");
 			complete = true;
