@@ -653,6 +653,127 @@ void AI::killPlayer(Death method) {
 	warning("STUB: killPlayer: Stop Music");
 }
 
+/*
+	Note from original:
+	Moves the entity along toward its goal, sets current frame to draw
+	depending on its current state.  Special checking is done for the
+	player in here to move him along his waypoints.
+*/
+void AI::animateEntity(AIEntity *e) {
+
+	int bgTileFlags, bgTileIndex;
+	int fgTileFlags, fgTileIndex;
+
+	// Move entity if player is not dead
+	if (!_playerDead) {
+		e->x += e->xVel;
+		e->y += e->yVel;
+		e->tileX = e->x / kTileWidth;
+		e->tileY = e->y / kTileHeight;
+	}
+
+	// For non-players, check for trigger being hit
+	if (onEvenTile(e->x, e->y)) {
+		warning("STUB: animateEntity: Check for Triggers being hit");
+	}
+
+	// If player, then scroll the screen with the player
+	if (e == _player && !_playerDead) {
+		if (!_cameraLock)
+			g_hdb->_map->centerMapXY(e->x + 16, e->y + 16);
+
+		// Check if player walked into teleporter
+		warning("STUB: animateEntity: Check Teleporter List");
+
+		// Check for bad tiles (DEATH)
+		int cx = (e->x + 16) / kTileWidth;
+		int cy = (e->y + 16) / kTileHeight;
+		bgTileFlags = g_hdb->_map->getMapBGTileFlags(cx, cy);
+		fgTileFlags = g_hdb->_map->getMapFGTileFlags(cx, cy);
+		if ((bgTileFlags & kFlagPlayerDie) && !(checkFloating(cx, cy)) && !(fgTileFlags & kFlagGrating)) {
+			if (bgTileFlags & kFlagEnergyFloor)
+				killPlayer(DEATH_SHOCKED);
+			else if ((bgTileFlags & kFlagPlasmaFloor) || (bgTileFlags & kFlagRadFloor))
+				killPlayer(DEATH_FRIED);
+			else
+				killPlayer(DEATH_NORMAL);
+			return;
+		}
+
+		// Check if player wants to stop
+		// If yes, sets last waypoint right in front of player
+		int xOff = 0, yOff = 0;
+		if (_numWaypoints > 1) {
+
+			switch (e->dir) {
+			case DIR_UP:
+				xOff = 0;
+				yOff = -1;
+				break;
+			case DIR_DOWN:
+				xOff = 0;
+				yOff = 1;
+				break;
+			case DIR_LEFT:
+				xOff = -1;
+				yOff = 0;
+				break;
+			case DIR_RIGHT:
+				xOff = 1;
+				yOff = 0;
+				break;
+			case DIR_NONE:
+				warning("AI-FUNCS: animateEntity: DIR_NONE found");
+				break;
+			}
+			if ((e->tileX+xOff == _waypoints[_numWaypoints-1].x && e->tileY + yOff == _waypoints[_numWaypoints - 1].y) && e->level == _waypoints[_numWaypoints - 1].level) {
+				memset(&_waypoints[0], 0, sizeof(_waypoints));
+				_numWaypoints = 1;
+				_waypoints[0].x = e->tileX + xOff;
+				_waypoints[0].y = e->tileY + yOff;
+				_waypoints[0].level = e->level;
+				e->goalX = e->tileX + xOff;
+				e->goalY = e->tileY + yOff;
+			}
+		}
+	}
+
+	// Check for moving up/down stair levels
+	bgTileIndex = g_hdb->_map->getMapBGTileIndex(e->tileX, e->tileY);
+	bgTileFlags = g_hdb->_map->getMapBGTileFlags(e->tileX, e->tileY);
+	fgTileFlags = g_hdb->_map->getMapFGTileFlags(e->tileX, e->tileY);
+	if (bgTileFlags & kFlagStairTop)
+		e->level = 2;
+	else if (bgTileFlags & kFlagStairBot)
+		e->level = 1;
+
+	// Reached goal?
+	// Cinematic require less accuracy for NPCs
+	int result;
+	if (_cineActive && e != _player)
+		result = (abs(e->x - (e->goalX * kTileWidth)) <= abs(e->xVel)) && (abs(e->y - (e->goalY * kTileHeight)) <= abs(e->yVel));
+	else
+		result = (e->x == e->goalX * kTileWidth) && (e->y == e->goalY * kTileHeight);
+
+	if (result) {
+		// If player, this is a waypoint goal.
+		// Drop one waypoint from list
+		if (e == _player) {
+			removeFirstWaypoint();
+			_playerEmerging = false;
+		}
+
+		// If entity not player, stop it here
+		// If entity is player and no waypoints are left, stop it here
+		if (e != _player || (!_numWaypoints && e == _player)) {
+			warning("STUB: animateEntity: Stop entity");
+		} else if (onEvenTile(e->x, e->y))
+			setEntityGoal(e, _waypoints[0].x, _waypoints[0].y);
+	}
+
+	animEntFrames(e);
+}
+
 void AI::animEntFrames(AIEntity *e) {
 	int max = 1;
 	// Set current graphic to draw
