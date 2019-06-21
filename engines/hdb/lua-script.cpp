@@ -288,17 +288,41 @@ static int cineSpawnEntity(lua_State *L) {
 }
 
 static int cineClearForeground(lua_State *L) {
-	warning("STUB: CINE CLEAR FOREGROUND");
+	double x = lua_tonumber(L, 1);
+	double y = lua_tonumber(L, 1);
+
+	g_hdb->_lua->checkParameters("cineClearForeground", 2);
+
+	lua_pop(L, 2);
+	g_hdb->_ai->cineClearForeground((int)x, (int)y);
 	return 0;
 }
 
 static int cineSetForeground(lua_State *L) {
-	warning("STUB: CINE SET FOREGROUND");
+	double x = lua_tonumber(L, 1);
+	double y = lua_tonumber(L, 1);
+	const char *tileName = lua_tostring(L, 3);
+
+	g_hdb->_lua->checkParameters("cineSetForeground", 3);
+
+	lua_pop(L, 3);
+	int index = g_hdb->_drawMan->getTileIndex(tileName);
+	g_hdb->_drawMan->getTile(index);
+	g_hdb->_ai->cineSetForeground((int)x, (int)y, index);
 	return 0;
 }
 
 static int cineSetBackground(lua_State *L) {
-	warning("STUB: CINE SET BACKGROUND");
+	double x = lua_tonumber(L, 1);
+	double y = lua_tonumber(L, 1);
+	const char *tileName = lua_tostring(L, 3);
+
+	g_hdb->_lua->checkParameters("cineSetBackground", 3);
+
+	lua_pop(L, 3);
+	int index = g_hdb->_drawMan->getTileIndex(tileName);
+	g_hdb->_drawMan->getTile(index);
+	g_hdb->_ai->cineSetBackground((int)x, (int)y, index);
 	return 0;
 }
 
