@@ -49,11 +49,6 @@ public:
 	virtual int getStretchMode() const override;
 
 	virtual void initSize(uint w, uint h, const Graphics::PixelFormat *format) override;
-
-#ifdef USE_RGB_COLOR
-	virtual Common::List<Graphics::PixelFormat> getSupportedFormats() const override;
-#endif
-
 	virtual void updateScreen() override;
 
 	// EventObserver API
