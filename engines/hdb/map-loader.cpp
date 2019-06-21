@@ -631,9 +631,40 @@ void Map::draw() {
 		screenY += kTileWidth;
 	}
 
-	/*
-		TODO: Implement animated Map Tiles
-	*/
+	// Animate FAST Map Tiles
+	if (!(_animCycle % kAnimFastFrames)) {
+		for (Common::Array<uint32>::iterator it = _listBGAnimFast.begin(); it != _listBGAnimFast.end(); it++) {
+			_background[(*it)] = g_hdb->_drawMan->animateTile(_background[(*it)]);
+		}
+
+		for (Common::Array<uint32>::iterator it = _listFGAnimFast.begin(); it != _listFGAnimFast.end(); it++) {
+			_foreground[(*it)] = g_hdb->_drawMan->animateTile(_foreground[(*it)]);
+		}
+	}
+
+	// Animate MEDIUM Map Tiles
+	if (!(_animCycle % kAnimFastFrames)) {
+		for (Common::Array<uint32>::iterator it = _listBGAnimMedium.begin(); it != _listBGAnimMedium.end(); it++) {
+			_background[(*it)] = g_hdb->_drawMan->animateTile(_background[(*it)]);
+		}
+
+		for (Common::Array<uint32>::iterator it = _listFGAnimMedium.begin(); it != _listFGAnimMedium.end(); it++) {
+			_foreground[(*it)] = g_hdb->_drawMan->animateTile(_foreground[(*it)]);
+		}
+	}
+
+	// Animate SLOW Map Tiles
+	if (!(_animCycle % kAnimFastFrames)) {
+		for (Common::Array<uint32>::iterator it = _listBGAnimSlow.begin(); it != _listBGAnimSlow.end(); it++) {
+			_background[(*it)] = g_hdb->_drawMan->animateTile(_background[(*it)]);
+		}
+
+		for (Common::Array<uint32>::iterator it = _listFGAnimSlow.begin(); it != _listFGAnimSlow.end(); it++) {
+			_foreground[(*it)] = g_hdb->_drawMan->animateTile(_foreground[(*it)]);
+		}
+	}
+
+	_animCycle++;
 }
 
 void Map::drawEnts() {
