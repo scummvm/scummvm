@@ -42,15 +42,7 @@ namespace Alan2 {
 static int pc;
 
 
-#ifdef _PROTOTYPES_
-static void if_(
-     Aword v
-)
-#else
-static void if_(v)
-     Aword v;
-#endif
-{
+static void if_(Aword v) {
   int lev = 1;
   Aword i;
 
@@ -75,13 +67,7 @@ static void if_(v)
   }
 }
 
-
-#ifdef _PROTOTYPES_
-static void else_(void)
-#else
-static void else_()
-#endif
-{
+static void else_() {
   int lev = 1;
   Aword i;
 
@@ -101,25 +87,13 @@ static void else_()
   }
 }
 
-
-#ifdef _PROTOTYPES_
-static void depstart(void)
-#else
-static void depstart(void)
-#endif
-{
+static void depstart() {
   /* A DEPSTART was executed so skip across the redundant DEPCASE to
      start at the first expression */
   pc++;
 }
 
-
-#ifdef _PROTOTYPES_
-static void swap(void)
-#else
-static void swap()
-#endif
-{
+static void swap() {
   Aptr v1 = pop();
   Aptr v2 = pop();
 
@@ -127,17 +101,7 @@ static void swap()
   push(v2);
 }
 
-
-
-#ifdef _PROTOTYPES_
-static void depexec(
-     Aword v
-)
-#else
-static void depexec(v)
-     Aword v;
-#endif
-{
+static void depexec(Aword v) {
   int lev = 1;
   Aword i;
 
@@ -163,13 +127,7 @@ static void depexec(v)
     }
 }
 
-
-#ifdef _PROTOTYPES_
-static void depcase(void)
-#else
-static void depcase()
-#endif
-{
+static void depcase() {
   int lev = 1;
   Aword i;
 
@@ -192,14 +150,7 @@ static void depcase()
   }
 }
 
-
-#ifdef _PROTOTYPES_
-void interpret(Aaddr adr)
-#else
-void interpret(adr)
-     Aaddr adr;
-#endif
-{
+void interpret(Aaddr adr) {
   Aaddr oldpc;
   Aword i;
   

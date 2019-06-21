@@ -36,37 +36,19 @@ static Aptr stack[STACKSIZE];
 static int stackp = 0;
 
 
-#ifdef _PROTOTYPES_
-void push(Aptr i)
-#else
-void push(i)
-     Aptr i;
-#endif
-{
+void push(Aptr i) {
   if (stackp == STACKSIZE)
     syserr("Out of stack space.");
   stack[stackp++] = i;
 }
 
-
-#ifdef _PROTOTYPES_
-Aptr pop(void)
-#else
-Aptr pop()
-#endif
-{
+Aptr pop() {
   if (stackp == 0)
     syserr("Stack underflow.");
   return(stack[--stackp]);
 }
 
-
-#ifdef _PROTOTYPES_
-Aptr top(void)
-#else
-Aptr top()
-#endif
-{
+Aptr top() {
   return(stack[stackp-1]);
 }
 

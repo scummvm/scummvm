@@ -26,11 +26,7 @@
 namespace Glk {
 namespace Alan2 {
 
-#ifdef _PROTOTYPES_
 extern void interpret(Aaddr adr);
-#else
-extern void interpret();
-#endif
 
 } // End of namespace Alan2
 } // End of namespace Glk

@@ -36,12 +36,7 @@
 namespace Glk {
 namespace Alan2 {
 
-#ifdef _PROTOTYPES_
-void rules(void)
-#else
-void rules()
-#endif
-{
+void rules() {
   Boolean change = TRUE;
   int i;
   

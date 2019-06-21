@@ -37,7 +37,6 @@ extern int etop;		/* Event queue top pointer */
 extern Boolean looking;		/* LOOKING? flag */
 extern int dscrstkp;		/* Point into describe stack */
 
-#ifdef _PROTOTYPES_
 extern void sys(Aword fpos, Aword len);
 extern Boolean confirm(MsgKind msgno);
 extern Aptr attribute(Aword item, Aword atr);
@@ -79,49 +78,6 @@ extern Aint agrsum(Aword atr, Aword whr);
 extern Aint agrcount(Aword whr);
 extern Abool isHere(Aword item);
 extern Abool isNear(Aword item);
-
-#else
-extern void sys();
-extern Boolean confirm();
-extern Aptr attribute();
-extern void say();
-extern void saynum();
-extern void saystr();
-extern Aptr strattr();
-extern void setstr();
-extern void getstr();
-extern void print();
-extern void look();
-extern void make();
-extern void set();
-extern void incr();
-extern void decr();
-extern void use();
-extern void describe();
-extern void list();
-extern void locate();
-extern void empty();
-extern void score();
-extern void visits();
-extern void schedule();
-extern void cancl();
-extern void quit();
-extern void restart();
-extern void save();
-extern void restore();
-extern void say();
-extern void sayint();
-extern Aword rnd();
-extern Abool btw();
-extern Aword contains()
-extern Abool streq();
-extern Abool in();
-extern Aword where();
-extern Aword agrmax();
-extern Aword agrsum();
-extern Abool isHere();
-extern Abool isNear();
-#endif
 
 } // End of namespace Alan2
 } // End of namespace Glk

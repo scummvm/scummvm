@@ -33,12 +33,7 @@ namespace Alan2 {
 #define LINELENGTH 80
 #define HISTORYLENGTH 20
 
-#ifdef _PROTOTYPES_
 extern Boolean readline(char usrbuf[]);
-
-#else
-extern Boolean readline();
-#endif
 
 } // End of namespace Alan2
 } // End of namespace Glk

@@ -32,13 +32,7 @@ static int decodeBuffer;	/* Bits to be input */
 static int bitsToGo;		/* Bits still in buffer */
 static int garbageBits;		/* Bits past EOF */
 
-
-#ifdef _PROTOTYPES_
-static int inputBit(void)
-#else
-static int inputBit()
-#endif
-{
+static int inputBit() {
   int bit;
 
   if (!bitsToGo) {		/* More bits available ? */
@@ -63,12 +57,7 @@ static CodeValue value;			/* Currently seen code value */
 static CodeValue low, high;		/* Current code region */
 
 
-#ifdef _PROTOTYPES_
-void startDecoding(void)
-#else
-void startDecoding()
-#endif
-{
+void startDecoding() {
   int i;
 
   bitsToGo = 0;
@@ -81,13 +70,7 @@ void startDecoding()
   high = TOPVALUE;
 }
 
-
-#ifdef _PROTOTYPES_
-int decodeChar(void)
-#else
-int decodeChar()
-#endif
-{
+int decodeChar() {
   long range;
   int f;
   int symbol;
@@ -144,12 +127,7 @@ typedef struct DecodeInfo {
   restore and continue later.
 
  */
-#ifdef _PROTOTYPES_
-void *pushDecode(void)
-#else
-void *pushDecode()
-#endif
-{
+void *pushDecode() {
   DecodeInfo *info;
 
   info = (DecodeInfo *) allocate(sizeof(DecodeInfo));
@@ -171,13 +149,7 @@ void *pushDecode()
   continue after having decoded something else.
 
  */
-#ifdef _PROTOTYPES_
-void popDecode(void *i)
-#else
-void popDecode(i)
-    void *i;
-#endif
-{
+void popDecode(void *i) {
   DecodeInfo *info = (DecodeInfo *) i;
   fseek(txtfil, info->fpos, 0);
   decodeBuffer = info->buffer;

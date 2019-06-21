@@ -54,23 +54,11 @@ Boolean looking = FALSE;        /* LOOKING? flag */
 int dscrstkp = 0;               /* Describe-stack pointer */
 
 
-#ifdef _PROTOTYPES_
-void dscrobjs(void);
-void dscracts(void);
-#else
 void dscrobjs();
 void dscracts();
-#endif
 
 
-
-#ifdef _PROTOTYPES_
-void print(Aword fpos, Aword len)
-#else
-void print(fpos, len)
-     Aword fpos, len;
-#endif
-{
+void print(Aword fpos, Aword len) {
   char str[2*WIDTH];            /* String buffer */
   int outlen = 0;               /* Current output length */
   int ch;
@@ -125,14 +113,7 @@ void print(fpos, len)
   }
 }
 
-
-#ifdef _PROTOTYPES_
-void sys(Aword fpos, Aword len)
-#else
-void sys(fpos, len)
-     Aword fpos, len;
-#endif
-{
+void sys(Aword fpos, Aword len) {
 #ifdef GLK
 	::error("system calls aren't supported");
 #else
@@ -145,14 +126,7 @@ void sys(fpos, len)
 #endif
 }
 
-
-#ifdef _PROTOTYPES_
-void getstr(Aword fpos, Aword len)
-#else
-void getstr(fpos, len)
-     Aword fpos, len;
-#endif
-{
+void getstr(Aword fpos, Aword len) {
   char *buf = (char *)allocate(len+1);
 
   push((Aptr) buf);            /* Push the address to the string */
@@ -167,15 +141,7 @@ void getstr(fpos, len)
   *buf = '\0';
 }
 
-
-
-#ifdef _PROTOTYPES_
-void score(Aword sc)
-#else
-void score(sc)
-     Aword sc;
-#endif
-{
+void score(Aword sc) {
   char buf[80];
 
   if (sc == 0) {
@@ -191,24 +157,11 @@ void score(sc)
   }
 }
 
-#ifdef _PROTOTYPES_
-void visits(Aword v)
-#else
-void visits(v)
-     Aword v;
-#endif
-{
+void visits(Aword v) {
   cur.visits = v;
 }
 
-
-#ifdef _PROTOTYPES_
-Boolean confirm(MsgKind msgno)
-#else
-Boolean confirm(msgno)
-     MsgKind msgno;
-#endif
-{
+Boolean confirm(MsgKind msgno) {
   char buf[80];
 
   /* This is a bit of a hack since we really want to compare the input,
@@ -225,13 +178,7 @@ Boolean confirm(msgno)
   return (buf[0] == '\0');
 }
 
-
-#ifdef _PROTOTYPES_
-void quit(void)
-#else
-void quit()
-#endif
-{
+void quit() {
   char buf[80];
   char choices[10];
 
@@ -257,14 +204,7 @@ void quit()
   syserr("Fallthrough in QUIT");
 }
 
-
-
-#ifdef _PROTOTYPES_
-void restart(void)
-#else
-void restart()
-#endif
-{
+void restart() {
   para();
   if (confirm(M_REALLY)) {
     //longjmp(restart_label, TRUE);
@@ -274,15 +214,7 @@ void restart()
   syserr("Fallthrough in RESTART");
 }
 
-
-
-#ifdef _PROTOTYPES_
-void cancl(Aword evt)
-#else
-void cancl(evt)
-     Aword evt;
-#endif
-{
+void cancl(Aword evt) {
   int i;
 
   for(i = etop-1; i>=0; i--)
@@ -298,14 +230,7 @@ void cancl(evt)
     }
 }
 
-
-#ifdef _PROTOTYPES_
-void schedule(Aword evt, Aword whr, Aword aft)
-#else
-void schedule(evt, whr, aft)
-     Aword evt, whr, aft;
-#endif
-{  int i;
+void schedule(Aword evt, Aword whr, Aword aft) {  int i;
    int time;
   
   cancl(evt);
@@ -335,17 +260,10 @@ void schedule(evt, whr, aft)
   Get an attribute value from an attribute list
 
  */
-#ifdef _PROTOTYPES_
 static Aptr getatr(
      Aaddr atradr,              /* IN - ACODE address to attribute table */
      Aaddr atr                  /* IN - The attribute to read */
-)
-#else
-static Aptr getatr(atradr, atr)
-     Aaddr atradr;              /* IN - ACODE address to attribute table */
-     Aaddr atr;                 /* IN - The attribute to read */
-#endif
-{
+) {
   AtrElem *at;
 
   at = (AtrElem *) addrTo(atradr);
@@ -360,19 +278,11 @@ static Aptr getatr(atradr, atr)
   Set a particular attribute to a value.
 
  */
-#ifdef _PROTOTYPES_
 static void setatr(
      Aaddr atradr,              /* IN - ACODE address to attribute table */
      Aword atr,                 /* IN - attribute code */
      Aword val                  /* IN - new value */
-)
-#else
-static void setatr(atradr, atr, val)
-     Aaddr atradr;              /* IN - ACODE address to attribute table */
-     Aword atr;                 /* IN - attribute code */
-     Aword val;                 /* IN - new value */
-#endif
-{
+) {
   AtrElem *at;
   
   at = (AtrElem *) addrTo(atradr);
@@ -386,44 +296,19 @@ static void setatr(atradr, atr, val)
 
   */
 
-#ifdef _PROTOTYPES_
-static void makloc(Aword loc, Aword atr, Aword val)
-#else
-static void makloc(loc, atr, val)
-     Aword loc, atr, val;
-#endif
-{
+static void makloc(Aword loc, Aword atr, Aword val) {
   setatr(locs[loc-LOCMIN].atrs, atr, val);
 }
 
-#ifdef _PROTOTYPES_
-static void makobj(Aword obj, Aword atr, Aword val)
-#else
-static  void makobj(obj, atr, val)
-	    Aword obj, atr, val;
-#endif
-{
+static void makobj(Aword obj, Aword atr, Aword val) {
   setatr(objs[obj-OBJMIN].atrs, atr, val);
 }
 
-#ifdef _PROTOTYPES_
-static void makact(Aword act, Aword atr, Aword val)
-#else
-static void makact(act, atr, val)
-	    Aword act, atr, val;
-#endif
-{
+static void makact(Aword act, Aword atr, Aword val) {
   setatr(acts[act-ACTMIN].atrs, atr, val);
 }
 
-
-#ifdef _PROTOTYPES_
-void make(Aword id, Aword atr, Aword val)
-#else
-void make(id, atr, val)
-	  Aword id, atr, val;
-#endif
-{
+void make(Aword id, Aword atr, Aword val) {
   char str[80];
 
   if (isObj(id))
@@ -445,46 +330,20 @@ void make(id, atr, val)
 
  */
 
-#ifdef _PROTOTYPES_
-static void setloc(Aword loc, Aword atr, Aword val)
-#else
-static void setloc(loc, atr, val)
-     Aword loc, atr, val;
-#endif
-{
+static void setloc(Aword loc, Aword atr, Aword val) {
   setatr(locs[loc-LOCMIN].atrs, atr, val);
   locs[loc-LOCMIN].describe = 0;
 }
 
-
-#ifdef _PROTOTYPES_
-static void setobj(Aword obj, Aword atr, Aword val)
-#else
-static void setobj(obj, atr, val)
-     Aword obj, atr, val;
-#endif
-{
+static void setobj(Aword obj, Aword atr, Aword val) {
   setatr(objs[obj-OBJMIN].atrs, atr, val);
 }
 
-#ifdef _PROTOTYPES_
-static void setact(Aword act, Aword atr, Aword val)
-#else
-static void setact(act, atr, val)
-     Aword act, atr, val;
-#endif
-{
+static void setact(Aword act, Aword atr, Aword val) {
   setatr(acts[act-ACTMIN].atrs, atr, val);
 }
 
-
-#ifdef _PROTOTYPES_
-void set(Aword id, Aword atr, Aword val)
-#else
-void set(id, atr, val)
-     Aword id, atr, val;
-#endif
-{
+void set(Aword id, Aword atr, Aword val) {
   char str[80];
 
   if (isObj(id))
@@ -499,14 +358,7 @@ void set(id, atr, val)
   }
 }
 
-
-#ifdef _PROTOTYPES_
-void setstr(Aword id, Aword atr, Aword str)
-#else
-void setstr(id, atr, str)
-     Aword id, atr, str;
-#endif
-{
+void setstr(Aword id, Aword atr, Aword str) {
   free((char *)attribute(id, atr));
   set(id, atr, str);
 }
@@ -526,64 +378,31 @@ void setstr(id, atr, str)
   Increment a particular attribute by a value.
 
  */
-#ifdef _PROTOTYPES_
 static void incratr(
 	Aaddr atradr,           /* IN - ACODE address to attribute table */
 	Aword atr,              /* IN - attribute code */
 	Aword step              /* IN - step to increment by */
-)
-#else
-static void incratr(atradr, atr, step)
-     Aaddr atradr, atr, step;
-#endif
-{
+) {
   AtrElem *at;
   
   at = (AtrElem *) addrTo(atradr);
   at[atr-1].val += step;
 }
 
-
-#ifdef _PROTOTYPES_
-static void incrloc(Aword loc, Aword atr, Aword step)
-#else
-static void incrloc(loc, atr, step)
-     Aword loc, atr, step;
-#endif
-{
+static void incrloc(Aword loc, Aword atr, Aword step) {
   incratr(locs[loc-LOCMIN].atrs, atr, step);
   locs[loc-LOCMIN].describe = 0;
 }
 
-
-#ifdef _PROTOTYPES_
-static void incrobj(Aword obj, Aword atr, Aword step)
-#else
-static void incrobj(obj, atr, step)
-     Aword obj, atr, step;
-#endif
-{
+static void incrobj(Aword obj, Aword atr, Aword step) {
   incratr(objs[obj-OBJMIN].atrs, atr, step);
 }
 
-#ifdef _PROTOTYPES_
-static void incract(Aword act, Aword atr, Aword step)
-#else
-static void incract(act, atr, step)
-     Aword act, atr, step;
-#endif
-{
+static void incract(Aword act, Aword atr, Aword step) {
   incratr(acts[act-ACTMIN].atrs, atr, step);
 }
 
-
-#ifdef _PROTOTYPES_
-void incr(Aword id, Aword atr, Aword step)
-#else
-void incr(id, atr, step)
-     Aword id, atr, step;
-#endif
-{
+void incr(Aword id, Aword atr, Aword step) {
   char str[80];
 
   if (isObj(id))
@@ -598,13 +417,7 @@ void incr(id, atr, step)
   }
 }
 
-#ifdef _PROTOTYPES_
-void decr(Aword id, Aword atr, Aword step)
-#else
-void decr(id, atr, step)
-     Aword id, atr, step;
-#endif
-{
+void decr(Aword id, Aword atr, Aword step) {
   char str[80];
 
   if (isObj(id))
@@ -620,52 +433,25 @@ void decr(id, atr, step)
 }
 
 
-
 /*----------------------------------------------------------------------
 
   attribute()
 
   */
 
-#ifdef _PROTOTYPES_
-static Aptr locatr(Aword loc, Aword atr)
-#else
-static Aptr locatr(loc, atr)
-     Aword loc, atr;
-#endif
-{
+static Aptr locatr(Aword loc, Aword atr) {
   return getatr(locs[loc-LOCMIN].atrs, atr);
 }
 
-
-
-#ifdef _PROTOTYPES_
-static Aptr objatr(Aword obj, Aword atr)
-#else
-static Aptr objatr(obj, atr)
-     Aword obj, atr;
-#endif
-{
+static Aptr objatr(Aword obj, Aword atr) {
   return getatr(objs[obj-OBJMIN].atrs, atr);
 }
 
-#ifdef _PROTOTYPES_
-static Aptr actatr(Aword act, Aword atr)
-#else
-static Aptr actatr(act, atr)
-     Aword act, atr;
-#endif
-{
+static Aptr actatr(Aword act, Aword atr) {
   return getatr(acts[act-ACTMIN].atrs, atr);
 }
 
-#ifdef _PROTOTYPES_
-static Aptr litatr(Aword lit, Aword atr)
-#else
-static Aptr litatr(lit, atr)
-     Aword lit, atr;
-#endif
-{
+static Aptr litatr(Aword lit, Aword atr) {
   char str[80];
 
   if (atr == 1)
@@ -677,14 +463,7 @@ static Aptr litatr(lit, atr)
   return (Aptr)EOF;
 }
 
-
-#ifdef _PROTOTYPES_
-Aptr attribute(Aword id, Aword atr)
-#else
-Aptr attribute(id, atr)
-     Aword id, atr;
-#endif
-{
+Aptr attribute(Aword id, Aword atr) {
   char str[80];
 
   if (isObj(id))
@@ -702,14 +481,7 @@ Aptr attribute(id, atr)
   return (Aptr)EOF;
 }
 
-
-#ifdef _PROTOTYPES_
-Aptr strattr(Aword id, Aword atr)
-#else
-Aptr strattr(id, atr)
-     Aword id, atr;
-#endif
-{
+Aptr strattr(Aword id, Aword atr) {
   return (Aptr) strdup((char *)attribute(id, atr));
 }
 
@@ -720,13 +492,7 @@ Aptr strattr(id, atr)
 
   */
 
-#ifdef _PROTOTYPES_
-static Aword objloc(Aword obj)
-#else
-static Aword objloc(obj)
-     Aword obj;
-#endif
-{
+static Aword objloc(Aword obj) {
   if (isCnt(objs[obj-OBJMIN].loc)) /* In something ? */
     if (isObj(objs[obj-OBJMIN].loc) || isAct(objs[obj-OBJMIN].loc))
       return(where(objs[obj-OBJMIN].loc));
@@ -736,25 +502,11 @@ static Aword objloc(obj)
     return(objs[obj-OBJMIN].loc);
 }
 
-
-#ifdef _PROTOTYPES_
-static Aword actloc(Aword act)
-#else
-static Aword actloc(act)
-     Aword act;
-#endif
-{
+static Aword actloc(Aword act) {
   return(acts[act-ACTMIN].loc);
 }
 
-
-#ifdef _PROTOTYPES_
-Aword where(Aword id)
-#else
-Aword where(id)
-     Aword id;
-#endif
-{
+Aword where(Aword id) {
   char str[80];
 
   if (isObj(id))
@@ -769,20 +521,13 @@ Aword where(id)
 }
 
 
-
 /*----------------------------------------------------------------------
 
   aggregates
 
   */
 
-#ifdef _PROTOTYPES_
-Aint agrmax(Aword atr, Aword whr)
-#else
-Aint agrmax(atr, whr)
-     Aword atr, whr;
-#endif
-{
+Aint agrmax(Aword atr, Aword whr) {
   Aword i;
   Aint max = 0;
 
@@ -796,13 +541,7 @@ Aint agrmax(atr, whr)
   return(max);
 }
 
-#ifdef _PROTOTYPES_
-Aint agrsum(Aword atr, Aword whr)
-#else
-Aint agrsum(atr, whr)
-     Aword atr, whr;
-#endif
-{
+Aint agrsum(Aword atr, Aword whr) {
   Aword i;
   Aint sum = 0;
 
@@ -816,14 +555,7 @@ Aint agrsum(atr, whr)
   return(sum);
 }
 
-
-#ifdef _PROTOTYPES_
-Aint agrcount(Aword whr)
-#else
-Aint agrcount(whr)
-     Aword whr;
-#endif
-{
+Aint agrcount(Aword whr) {
   Aword i;
   Aword count = 0;
 
@@ -844,13 +576,7 @@ Aint agrcount(whr)
 
   */
 
-#ifdef _PROTOTYPES_
-static void locobj(Aword obj, Aword whr)
-#else
-static void locobj(obj, whr)
-     Aword obj, whr;
-#endif
-{
+static void locobj(Aword obj, Aword whr) {
   if (isCnt(whr)) { /* Into a container */
     if (whr == obj)
       syserr("Locating something inside itself.");
@@ -865,14 +591,7 @@ static void locobj(obj, whr)
   }
 }
 
-
-#ifdef _PROTOTYPES_
-static void locact(Aword act, Aword whr)
-#else
-static void locact(act, whr)
-     Aword act, whr;
-#endif
-{
+static void locact(Aword act, Aword whr) {
   Aword prevact = cur.act;
   Aword prevloc = cur.loc;
 
@@ -904,14 +623,7 @@ static void locact(act, whr)
     cur.loc = prevloc;
 }
 
-
-#ifdef _PROTOTYPES_
-void locate(Aword id, Aword whr)
-#else
-void locate(id, whr)
-     Aword id, whr;
-#endif
-{
+void locate(Aword id, Aword whr) {
   char str[80];
 
   if (isObj(id))
@@ -931,13 +643,7 @@ void locate(id, whr)
 
   */
 
-#ifdef _PROTOTYPES_
-static Abool objhere(Aword obj)
-#else
-static Abool objhere(obj)
-     Aword obj;
-#endif
-{
+static Abool objhere(Aword obj) {
   if (isCnt(objs[obj-OBJMIN].loc)) {    /* In something? */
     if (isObj(objs[obj-OBJMIN].loc) || isAct(objs[obj-OBJMIN].loc))
       return(isHere(objs[obj-OBJMIN].loc));
@@ -947,25 +653,11 @@ static Abool objhere(obj)
     return(objs[obj-OBJMIN].loc == cur.loc);
 }
 
-
-#ifdef _PROTOTYPES_
-static Aword acthere(Aword act)
-#else
-static Aword acthere(act)
-     Aword act;
-#endif
-{
+static Aword acthere(Aword act) {
   return(acts[act-ACTMIN].loc == cur.loc);
 }
 
-
-#ifdef _PROTOTYPES_
-Abool isHere(Aword id)
-#else
-Abool isHere(id)
-     Aword id;
-#endif
-{
+Abool isHere(Aword id) {
   char str[80];
 
   if (isObj(id))
@@ -985,13 +677,7 @@ Abool isHere(id)
 
   */
 
-#ifdef _PROTOTYPES_
-static Aword objnear(Aword obj)
-#else
-static Aword objnear(obj)
-     Aword obj;
-#endif
-{
+static Aword objnear(Aword obj) {
   if (isCnt(objs[obj-OBJMIN].loc)) {    /* In something? */
     if (isObj(objs[obj-OBJMIN].loc) || isAct(objs[obj-OBJMIN].loc))
       return(isNear(objs[obj-OBJMIN].loc));
@@ -1001,25 +687,11 @@ static Aword objnear(obj)
     return(exitto(where(obj), cur.loc));
 }
 
-
-#ifdef _PROTOTYPES_
-static Aword actnear(Aword act)
-#else
-static Aword actnear(act)
-     Aword act;
-#endif
-{
+static Aword actnear(Aword act) {
   return(exitto(where(act), cur.loc));
 }
 
-
-#ifdef _PROTOTYPES_
-Abool isNear(Aword id)
-#else
-Abool isNear(id)
-     Aword id;
-#endif
-{
+Abool isNear(Aword id) {
   char str[80];
 
   if (isObj(id))
@@ -1034,21 +706,13 @@ Abool isNear(id)
 }
 
 
-
 /*----------------------------------------------------------------------
 
   in()
 
   */
 
-#ifdef _PROTOTYPES_
-Abool in(Aword obj, Aword cnt)
-#else
-Abool in(obj, cnt)
-     Aword obj;
-     Aword cnt;
-#endif
-{
+Abool in(Aword obj, Aword cnt) {
   if (!isObj(obj))
     return(FALSE);
   if (!isCnt(cnt))
@@ -1064,45 +728,19 @@ Abool in(obj, cnt)
 
   */
 
-#ifdef _PROTOTYPES_
-static void sayloc(Aword loc)
-#else
-static void sayloc(loc)
-     Aword loc;
-#endif
-{
+static void sayloc(Aword loc) {
   interpret(locs[loc-LOCMIN].nams);
 }
 
-
-#ifdef _PROTOTYPES_
-static void sayobj(Aword obj)
-#else
-static void sayobj(obj)
-     Aword obj;
-#endif
-{
+static void sayobj(Aword obj) {
   interpret(objs[obj-OBJMIN].dscr2);
 }
 
-#ifdef _PROTOTYPES_
-static void sayact(Aword act)
-#else
-static void sayact(act)
-     Aword act;
-#endif
-{
+static void sayact(Aword act) {
   interpret(acts[act-ACTMIN].nam);
 }
 
-
-#ifdef _PROTOTYPES_
-void sayint(Aword val)
-#else
-void sayint(val)
-     Aword val;
-#endif
-{
+void sayint(Aword val) {
   char buf[25];
 
   if (isHere(HERO)) {
@@ -1111,27 +749,13 @@ void sayint(val)
   }
 }
 
-
-#ifdef _PROTOTYPES_
-void saystr(char *str)
-#else
-void saystr(str)
-     char *str;
-#endif
-{
+void saystr(char *str) {
   if (isHere(HERO))
     output(str);
   free(str);
 }
 
-
-#ifdef _PROTOTYPES_
-static void saylit(Aword lit)
-#else
-static void saylit(lit)
-     Aword lit;
-#endif
-{
+static void saylit(Aword lit) {
   char *str;
 
   if (isNum(lit))
@@ -1142,14 +766,7 @@ static void saylit(lit)
   }    
 }
 
-	
-#ifdef _PROTOTYPES_
-void sayarticle(Aword id)
-#else
-void sayarticle(id)
-     Aword id;
-#endif
-{
+void sayarticle(Aword id) {
   if (!isObj(id))
     syserr("Trying to say article of something *not* an object.");
   if (objs[id-OBJMIN].art != 0)
@@ -1158,14 +775,7 @@ void sayarticle(id)
     prmsg(M_ARTICLE);
 }
 
-
-#ifdef _PROTOTYPES_
-void say(Aword id)
-#else
-void say(id)
-     Aword id;
-#endif
-{
+void say(Aword id) {
   char str[80];
 
   if (isHere(HERO)) {
@@ -1191,25 +801,12 @@ void say(id)
 
   */
 
-#ifdef _PROTOTYPES_
-static void dscrloc(Aword loc)
-#else
-static void dscrloc(loc)
-     Aword loc;
-#endif
-{
+static void dscrloc(Aword loc) {
   if (locs[loc-LOCMIN].dscr != 0)
     interpret(locs[loc-LOCMIN].dscr);
 }
 
-
-#ifdef _PROTOTYPES_
-static void dscrobj(Aword obj)
-#else
-static void dscrobj(obj)
-     Aword obj;
-#endif
-{
+static void dscrobj(Aword obj) {
   objs[obj-OBJMIN].describe = FALSE;
   if (objs[obj-OBJMIN].dscr1 != 0)
     interpret(objs[obj-OBJMIN].dscr1);
@@ -1223,14 +820,7 @@ static void dscrobj(obj)
   }
 }
 
-
-#ifdef _PROTOTYPES_
-static void dscract(Aword act)
-#else
-static void dscract(act)
-     Aword act;
-#endif
-{
+static void dscract(Aword act) {
   ScrElem *scr = NULL;
 
   if (acts[act-ACTMIN].script != 0) {
@@ -1253,13 +843,7 @@ static void dscract(act)
 
 static Aword dscrstk[255];
 
-#ifdef _PROTOTYPES_
-void describe(Aword id)
-#else
-void describe(id)
-     Aword id;
-#endif
-{
+void describe(Aword id) {
   int i;
   char str[80];
 
@@ -1289,13 +873,7 @@ void describe(id)
 
   */
 
-#ifdef _PROTOTYPES_
-void use(Aword act, Aword scr)
-#else
-void use(act, scr)
-     Aword act, scr;
-#endif
-{
+void use(Aword act, Aword scr) {
   char str[80];
 
   if (!isAct(act)) {
@@ -1308,20 +886,13 @@ void use(act, scr)
 }
 
 
-
 /*----------------------------------------------------------------------
 
   list()
 
   */
 
-#ifdef _PROTOTYPES_
-void list(Aword cnt)
-#else
-void list(cnt)
-     Aword cnt;
-#endif
-{
+void list(Aword cnt) {
   int i;
   Aword props;
   Aword prevobj;
@@ -1391,21 +962,13 @@ void list(cnt)
 
   */
 
-#ifdef _PROTOTYPES_
-void empty(Aword cnt, Aword whr)
-#else
-void empty(cnt, whr)
-     Aword cnt;
-     Aword whr;
-#endif
-{
+void empty(Aword cnt, Aword whr) {
   int i;
 
   for (i = OBJMIN; i <= OBJMAX; i++)
     if (in(i, cnt))
       locate(i, whr);
 }
-
 
 
 /*----------------------------------------------------------------------*\
@@ -1418,12 +981,7 @@ void empty(cnt, whr)
 
 \*----------------------------------------------------------------------*/
 
-#ifdef _PROTOTYPES_
-void dscrobjs(void)
-#else
-void dscrobjs()
-#endif
-{
+void dscrobjs() {
   int i;
   int prevobj;
   Boolean found = FALSE;
@@ -1471,13 +1029,7 @@ void dscrobjs()
     objs[i-OBJMIN].describe = TRUE;
 }
 
-
-#ifdef _PROTOTYPES_
-void dscracts(void)
-#else
-void dscracts()
-#endif
-{
+void dscracts() {
   int i;
   
   for (i = HERO+1; i <= ACTMAX; i++)
@@ -1490,13 +1042,7 @@ void dscracts()
     acts[i-ACTMIN].describe = TRUE;
 }
 
-
-#ifdef _PROTOTYPES_
-void look(void)
-#else
-void look()
-#endif
-{
+void look() {
   int i;
 
   if (looking)
@@ -1527,7 +1073,6 @@ needsp = FALSE;
 }
 
 
-
 static char savfnm[256];
 
 
@@ -1544,12 +1089,7 @@ void save() {
 
 #else
 
-#ifdef _PROTOTYPES_
-void save(void)
-#else
-void save()
-#endif
-{
+void save() {
   int i;
   char str[256];
   AtrElem *atr;
@@ -1645,12 +1185,7 @@ void restore() {
 
 #else
 
-#ifdef _PROTOTYPES_
-void restore(void)
-#else
-void restore()
-#endif
-{
+void restore() {
   int i,tmp;
   FILE *savfil;
   char str[256];
@@ -1748,13 +1283,7 @@ void restore()
 
   */
 
-#ifdef _PROTOTYPES_
-Aword rnd(Aword from, Aword to)
-#else
-Aword rnd(from, to)
-     Aword from, to;
-#endif
-{
+Aword rnd(Aword from, Aword to) {
   if (to == from)
     return to;
   else if (to > from)
@@ -1771,13 +1300,7 @@ Aword rnd(from, to)
 
   */
 
-#ifdef _PROTOTYPES_
-Abool btw(Aint val, Aint low, Aint high)
-#else
-Abool btw(val, low, high)
-     Aint val, low, high;
-#endif
-{
+Abool btw(Aint val, Aint low, Aint high) {
   if (high > low)
     return low <= val && val <= high;
   else
@@ -1792,13 +1315,7 @@ Abool btw(val, low, high)
 
   */
 
-#ifdef _PROTOTYPES_
-Aword contains(Aptr string, Aptr substring)
-#else
-Aword contains(string, substring)
-     Aptr string, substring;;
-#endif
-{
+Aword contains(Aptr string, Aptr substring) {
   Abool found;
 
   strlow((char *)string);
@@ -1813,7 +1330,6 @@ Aword contains(string, substring)
 }
 
 
-
 /*----------------------------------------------------------------------
 
   streq()
@@ -1821,13 +1337,7 @@ Aword contains(string, substring)
   Compare two strings approximately, ignore case
 
   */
-#ifdef _PROTOTYPES_
-Abool streq(char a[], char b[])
-#else
-Abool streq(a, b)
-     char a[], b[];             /* IN - Strings to compare */
-#endif
-{
+Abool streq(char a[], char b[]) {
   Boolean eq;
 
   strlow(a);

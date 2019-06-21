@@ -43,7 +43,6 @@ namespace Glk {
 namespace Alan2 {
 
 #define GLK
-#define _PROTOTYPES_
 #define __win__
 
 #ifdef GLK
@@ -136,21 +135,18 @@ extern void fprintf(Common::WriteStream *ws, const char *fmt, ...);
 #endif
 
 #ifdef __STDC__
-#define _PROTOTYPES_
 #include <stdlib.h>
 #include <string.h>
 #endif
 
 #ifdef __vms__
 /* Our VAXC doesn't define __STDC__ */
-#define _PROTOTYPES_
 #include <stdlib.h>
 #include <string.h>
 #endif
 
 
 #ifdef __mac__
-#define _PROTOTYPES_
 #include <stdlib.h>
 #include <string.h>
 #include <unix.h>
@@ -354,8 +350,6 @@ extern char *strdup(char *str);
 #endif
 
 
-#ifdef _PROTOTYPES_
-
 /* Native character functions */
 extern int isSpace(int c);      /* IN - Native character to test */
 extern int isLower(int c);      /* IN - Native character to test */
@@ -384,25 +378,6 @@ extern void fromIso(char copy[], /* OUT - Mapped string */
 extern void toNative(char copy[], /* OUT - Mapped string */
 		     char original[], /* IN - string to convert */
 		     int charset); /* IN - current character set */
-#else
-extern int isSpace();
-extern int isLower();
-extern int isUpper();
-extern int isLetter();
-extern int toLower();
-extern int toUpper();
-extern char *strlow();
-extern char *strupp();
-
-extern int isISOLetter();
-extern char toLowerCase();
-extern char toUpperCase();
-extern char *stringLower();
-extern char *stringUpper();
-
-extern void toIso();
-extern void fromIso();
-#endif
 
 } // End of namespace Alan2
 } // End of namespace Glk

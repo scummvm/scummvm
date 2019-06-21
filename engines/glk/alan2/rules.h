@@ -30,13 +30,7 @@ namespace Alan2 {
 
 /* TYPES */
 
-#ifdef _PROTOTYPES_
-
 extern void rules(void);
-
-#else
-extern void rules();
-#endif
 
 } // End of namespace Alan2
 } // End of namespace Glk

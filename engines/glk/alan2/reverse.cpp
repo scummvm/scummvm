@@ -34,13 +34,7 @@ namespace Alan2 {
   Return the reversed bytes in the Aword
 
 */
-#ifdef _PROTOTYPES_
-Aword reversed(Aword w) /* IN - The ACODE word to swap bytes of */
-#else
-Aword reversed(w)
-     Aword w;                   /* IN - The ACODE word to swap bytes of */
-#endif
-{
+Aword reversed(Aword w /* IN - The ACODE word to swap bytes of */) {
   Aword s;                      /* The swapped ACODE word */
   char *wp, *sp;
   int i;
@@ -54,26 +48,11 @@ Aword reversed(w)
   return s;
 }
 
-
-#ifdef _PROTOTYPES_
-void reverse(Aword *w)          /* IN - The ACODE word to reverse bytes in */
-#else
-void reverse(w)
-     Aword *w;                  /* IN - The ACODE word to reverse bytes in */
-#endif
-{
+void reverse(Aword *w /* IN - The ACODE word to reverse bytes in */) {
   *w = reversed(*w);
 }
 
-
-#ifdef _PROTOTYPES_
-static void reverseTable(Aword adr, int len)
-#else
-static void reverseTable(adr, len)
-     Aword adr;
-     int len;
-#endif
-{
+static void reverseTable(Aword adr, int len) {
   Aword *e = &memory[adr];
   int i;
 
@@ -86,14 +65,7 @@ static void reverseTable(adr, len)
     }
 }
 
-
-#ifdef _PROTOTYPES_
-static void reverseStms(Aword adr)
-#else
-static void reverseStms(adr)
-     Aword adr;
-#endif
-{
+static void reverseStms(Aword adr) {
   Aword *e = &memory[adr];
 
   if (adr != 0)
@@ -104,14 +76,7 @@ static void reverseStms(adr)
     }
 }
 
-
-#ifdef _PROTOTYPES_
-static void reverseMsgs(Aword adr)
-#else
-static void reverseMsgs(adr)
-     Aword adr;
-#endif
-{
+static void reverseMsgs(Aword adr) {
   MsgElem *e = (MsgElem *) &memory[adr];
 
   if (adr != 0 && !endOfTable(e)) {
@@ -123,14 +88,7 @@ static void reverseMsgs(adr)
   }
 }    
 
-
-#ifdef _PROTOTYPES_
-static void reverseWrds(Aword adr)
-#else
-static void reverseWrds(adr)
-     Aword adr;
-#endif
-{
+static void reverseWrds(Aword adr) {
   WrdElem *e = (WrdElem *) &memory[adr];
 
   if (adr != 0 && !endOfTable(e)) {
@@ -145,13 +103,7 @@ static void reverseWrds(adr)
   }
 }    
 
-#ifdef _PROTOTYPES_
-static void reverseChks(Aword adr)
-#else
-static void reverseChks(adr)
-     Aword adr;
-#endif
-{
+static void reverseChks(Aword adr) {
   ChkElem *e = (ChkElem *) &memory[adr];
 
   if (adr != 0 && !endOfTable(e)) {
@@ -164,13 +116,7 @@ static void reverseChks(adr)
   }
 }    
 
-#ifdef _PROTOTYPES_
-static void reverseAlts(Aword adr)
-#else
-static void reverseAlts(adr)
-     Aword adr;
-#endif
-{
+static void reverseAlts(Aword adr) {
   AltElem *e = (AltElem *)&memory[adr];
 
   if (adr != 0 && !endOfTable(e) && !e->done) {
@@ -184,14 +130,7 @@ static void reverseAlts(adr)
   }
 }    
 
-
-#ifdef _PROTOTYPES_
-static void reverseVrbs(Aword adr)
-#else
-static void reverseVrbs(adr)
-     Aword adr;
-#endif
-{
+static void reverseVrbs(Aword adr) {
   VrbElem *e = (VrbElem *)&memory[adr];
 
   if (adr != 0 && !endOfTable(e)) {
@@ -203,14 +142,7 @@ static void reverseVrbs(adr)
   }
 }    
 
-
-#ifdef _PROTOTYPES_
-static void reverseSteps(Aword adr)
-#else
-static void reverseSteps(adr)
-     Aword adr;
-#endif
-{
+static void reverseSteps(Aword adr) {
   StepElem *e = (StepElem *) &memory[adr];
 
   if (adr != 0 && !endOfTable(e)) {
@@ -223,14 +155,7 @@ static void reverseSteps(adr)
   }
 }    
 
-
-#ifdef _PROTOTYPES_
-static void reverseScrs(Aword adr)
-#else
-static void reverseScrs(adr)
-     Aword adr;
-#endif
-{
+static void reverseScrs(Aword adr) {
   ScrElem *e = (ScrElem *) &memory[adr];
 
   if (adr != 0 && !endOfTable(e)) {
@@ -243,14 +168,7 @@ static void reverseScrs(adr)
   }
 }    
 
-
-#ifdef _PROTOTYPES_
-static void reverseActs(Aword adr)
-#else
-static void reverseActs(adr)
-     Aword adr;
-#endif
-{
+static void reverseActs(Aword adr) {
   ActElem *e = (ActElem *) &memory[adr];
 
   if (adr != 0 && !endOfTable(e)) {
@@ -266,14 +184,7 @@ static void reverseActs(adr)
   }
 }    
 
-#ifdef _PROTOTYPES_
-static void reverseObjs(Aword adr, Boolean v2_5)
-#else
-static void reverseObjs(adr, v2_5)
-     Aword adr;
-     Boolean v2_5;              /* TRUE if it's a v2.5 format game */
-#endif
-{
+static void reverseObjs(Aword adr, Boolean v2_5) {
   ObjElem *e = (ObjElem *) &memory[adr];
   ObjElem25 *e25 = (ObjElem25 *) &memory[adr];
 
@@ -303,14 +214,7 @@ static void reverseObjs(adr, v2_5)
   }
 }
 
-
-#ifdef _PROTOTYPES_
-static void reverseExts(Aword adr)
-#else
-static void reverseExts(adr)
-     Aword adr;
-#endif
-{
+static void reverseExts(Aword adr) {
   ExtElem *e = (ExtElem *) &memory[adr];
 
   if (adr != 0 && !endOfTable(e)) {
@@ -325,13 +229,7 @@ static void reverseExts(adr)
   }
 }    
 
-#ifdef _PROTOTYPES_
-static void reverseLocs(Aword adr)
-#else
-static void reverseLocs(adr)
-     Aword adr;
-#endif
-{
+static void reverseLocs(Aword adr) {
   LocElem *e = (LocElem *) &memory[adr];
 
   if (adr != 0 && !endOfTable(e)) {
@@ -348,14 +246,7 @@ static void reverseLocs(adr)
   }
 }    
 
-
-#ifdef _PROTOTYPES_
-static void reverseClas(Aword adr)
-#else
-static void reverseClas(adr)
-     Aword adr;
-#endif
-{
+static void reverseClas(Aword adr) {
   ClaElem *e = (ClaElem *) &memory[adr];
 
   if (adr != 0 && !endOfTable(e)) {
@@ -369,14 +260,7 @@ static void reverseClas(adr)
     reverse(&((Aword *)e)[1]);  /* The verb code is stored after the table */
 }    
 
-
-#ifdef _PROTOTYPES_
-static void reverseElms(Aword adr)
-#else
-static void reverseElms(adr)
-     Aword adr;
-#endif
-{
+static void reverseElms(Aword adr) {
   ElmElem *e = (ElmElem *) &memory[adr];
 
   if (adr != 0 && !endOfTable(e)) {
@@ -389,14 +273,7 @@ static void reverseElms(adr)
   }
 }    
 
-
-#ifdef _PROTOTYPES_
-static void reverseStxs(Aword adr)
-#else
-static void reverseStxs(adr)
-     Aword adr;
-#endif
-{
+static void reverseStxs(Aword adr) {
   StxElem *e = (StxElem *) &memory[adr];
 
   if (adr != 0 && !endOfTable(e)) {
@@ -408,13 +285,7 @@ static void reverseStxs(adr)
   }
 }    
 
-#ifdef _PROTOTYPES_
-static void reverseEvts(Aword adr)
-#else
-static void reverseEvts(adr)
-     Aword adr;
-#endif
-{
+static void reverseEvts(Aword adr) {
   EvtElem *e = (EvtElem *) &memory[adr];
 
   if (adr != 0 && !endOfTable(e)) {
@@ -426,15 +297,7 @@ static void reverseEvts(adr)
   }
 }    
 
-
-
-#ifdef _PROTOTYPES_
-static void reverseLims(Aword adr)
-#else
-static void reverseLims(adr)
-     Aword adr;
-#endif
-{
+static void reverseLims(Aword adr) {
   LimElem *e = (LimElem *) &memory[adr];
 
   if (adr != 0 && !endOfTable(e)) {
@@ -446,14 +309,7 @@ static void reverseLims(adr)
   }
 }    
 
-
-#ifdef _PROTOTYPES_
-static void reverseCnts(Aword adr)
-#else
-static void reverseCnts(adr)
-     Aword adr;
-#endif
-{
+static void reverseCnts(Aword adr) {
   CntElem *e = (CntElem *) &memory[adr];
 
   if (adr != 0 && !endOfTable(e)) {
@@ -468,14 +324,7 @@ static void reverseCnts(adr)
   }
 }    
 
-
-#ifdef _PROTOTYPES_
-static void reverseRuls(Aword adr)
-#else
-static void reverseRuls(adr)
-     Aword adr;
-#endif
-{
+static void reverseRuls(Aword adr) {
   RulElem *e = (RulElem *) &memory[adr];
 
   if (adr != 0 && !endOfTable(e)) {
@@ -489,7 +338,6 @@ static void reverseRuls(adr)
 }    
 
 
-
 /*----------------------------------------------------------------------
 
   reverseHdr()
@@ -497,13 +345,7 @@ static void reverseRuls(adr)
   Reverse the header structure.
 
 */
-#ifdef _PROTOTYPES_
-void reverseHdr(AcdHdr *hdr)
-#else
-void reverseHdr(hdr)
-     AcdHdr *hdr;
-#endif
-{
+void reverseHdr(AcdHdr *hdr) {
   int i;
 
   /* Reverse all words in the header except the first (version marking) */
@@ -520,13 +362,7 @@ void reverseHdr(hdr)
   makes the .ACD files fully compatible across architectures
 
   */
-#ifdef _PROTOTYPES_
-void reverseACD(Boolean v2_5)
-#else
-void reverseACD(v2_5)
-     Boolean v2_5;
-#endif
-{
+void reverseACD(Boolean v2_5) {
   reverseHdr(header);
   reverseWrds(header->dict);
   reverseTable(header->oatrs, sizeof(AtrElem));

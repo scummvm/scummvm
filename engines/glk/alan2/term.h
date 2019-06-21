@@ -28,13 +28,7 @@
 namespace Glk {
 namespace Alan2 {
 
-#ifdef _PROTOTYPES_
-
-extern void getPageSize(void);
-
-#else
 extern void getPageSize();
-#endif
 
 } // End of namespace Alan2
 } // End of namespace Glk

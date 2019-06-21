@@ -97,8 +97,6 @@ extern Boolean needsp;
 
 #define endOfTable(x) eot((Aword *) x)
 
-
-#ifdef _PROTOTYPES_
 extern void *allocate(unsigned long len);
 extern void terminate(int code);
 extern void usage(void);
@@ -127,29 +125,6 @@ extern Boolean isStr(Aword x);
 
 /* Run the game! */
 extern void run(void);
-
-#else
-extern void *allocate();
-extern void terminate();
-extern void syserr();
-extern void usage();
-extern void error();
-extern void output();
-extern void statusline();
-extern void prmsg();
-extern void print();
-extern void para();
-extern void newline();
-extern Boolean checklim();
-extern Boolean possible();
-extern Boolean eot();
-extern Boolean isObj();
-extern Boolean isCnt();
-extern Boolean isAct();
-extern Boolean isLoc();
-extern Boolean isLit();
-extern void run();
-#endif
 
 } // End of namespace Alan2
 } // End of namespace Glk

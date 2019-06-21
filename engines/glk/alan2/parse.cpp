@@ -97,16 +97,7 @@ static char isobuf[LISTLEN+1];	/* The input buffer in ISO */
 static Boolean eol = TRUE;	/* Looking at End of line? Yes, initially */
 
 
-
-#ifdef _PROTOTYPES_
-static void unknown(
-     char token[]
-)
-#else
-static void unknown(token)
-     char token[];
-#endif
-{
+static void unknown(char token[]) {
   char *str = (char *)allocate((int)strlen(token)+4);
 
   str[0] = '\'';
@@ -122,19 +113,10 @@ static void unknown(token)
 }
 
 
-
 static char *token;
 
 
-#ifdef _PROTOTYPES_
-static int lookup(
-     char wrd[]
-)
-#else
-static int lookup(wrd)
-     char wrd[];
-#endif
-{
+static int lookup(char wrd[]) {
   int i;
 
   for (i = 0; !endOfTable(&dict[i]); i++) {
@@ -145,31 +127,14 @@ static int lookup(wrd)
   return(EOF);
 }
 
-
-#ifdef _PROTOTYPES_
-static int number(
-     char token[]		/* IN - The string to convert to a number */
-)
-#else
-static int number(token)
-     char token[];		/* IN - The string to convert to a number */
-#endif
-{
+static int number(char token[]		/* IN - The string to convert to a number */) {
   int i;
 
   sscanf(token, "%d", &i);
   return i;
 }
 
-#ifdef _PROTOTYPES_
-static char *gettoken(
-     char *buf
-)
-#else
-static char *gettoken(buf)
-     char *buf;
-#endif
-{
+static char *gettoken(char *buf) {
   static char *marker;
   static char oldch;
 
@@ -196,13 +161,7 @@ static char *gettoken(buf)
   return buf;
 }
 
-
-#ifdef _PROTOTYPES_
-static void agetline(void)
-#else
-static void agetline()
-#endif
-{
+static void agetline() {
   para();
   do {
 #if defined(HAVE_ANSI) || defined(GLK)
@@ -249,13 +208,7 @@ static void agetline()
   lin = 1;
 }
 
-
-#ifdef _PROTOTYPES_
-static void scan(void)
-#else
-static void scan()
-#endif
-{
+static void scan() {
   int i;
   int w;
   char *str;
@@ -301,7 +254,6 @@ static void scan()
 }
 
 
-
 /*----------------------------------------------------------------------*\
 
   PARSE DATA & PROCEDURES
@@ -321,12 +273,7 @@ static void scan()
 static int allLength;		/* No. of objects matching 'all' */
 
 
-#ifdef _PROTOTYPES_
-static void nonverb(void)
-#else
-static void nonverb()
-#endif
-{
+static void nonverb() {
   if (isDir(wrds[wrdidx])) {
     wrdidx++;
     if (wrds[wrdidx] != EOF && !isConj(wrds[wrdidx]))
@@ -339,16 +286,7 @@ static void nonverb()
     error(M_WHAT);
 }
 
-
-#ifdef _PROTOTYPES_
-static void buildall(
-     ParamElem list[]
-)
-#else
-static void buildall(list)
-     ParamElem list[];
-#endif
-{
+static void buildall(ParamElem list[]) {
   int o, i = 0;
   Boolean found = FALSE;
   
@@ -364,16 +302,7 @@ static void buildall(list)
     list[i].code = EOF;
 }
 
-
-#ifdef _PROTOTYPES_
-static void unambig(
-     ParamElem plst[]
-)
-#else
-static void unambig(plst)
-     ParamElem plst[];
-#endif
-{
+static void unambig(ParamElem plst[]) {
   int i;
   Boolean found = FALSE;	/* Adjective or noun found ? */
   static ParamElem *refs;	/* Entities referenced by word */
@@ -477,16 +406,7 @@ static void unambig(plst)
   }
 }
   
-  
-#ifdef _PROTOTYPES_
-static void simple(
-     ParamElem olst[]
-)
-#else
-static void simple(olst)
-     ParamElem olst[];
-#endif
-{
+static void simple(ParamElem olst[]) {
   static ParamElem *tlst = NULL;
   int savidx = wrdidx;
   Boolean savplur = FALSE;
@@ -543,15 +463,7 @@ static void simple(olst)
   entity tables. Particularly this goes for literals...
 
 */
-#ifdef _PROTOTYPES_
-static void complex(
-     ParamElem olst[]
-)
-#else
-static void complex(olst)
-     ParamElem olst[];
-#endif
-{
+static void complex(ParamElem olst[]) {
   static ParamElem *alst = NULL;
 
   if (alst == NULL)
@@ -576,16 +488,7 @@ static void complex(olst)
     simple(olst);		/* Look for simple noun group */
 }
 
-
-#ifdef _PROTOTYPES_
-static Boolean claCheck(
-     ClaElem *cla		/* IN - The cla elem to check */
-)
-#else
-static Boolean claCheck(cla)
-     ClaElem *cla;		/* IN - The cla elem to check */
-#endif
-{
+static Boolean claCheck(ClaElem *cla /* IN - The cla elem to check */) {
   Boolean ok = FALSE;
 
   if ((cla->classes&(Aword)CLA_OBJ) != 0)
@@ -614,8 +517,7 @@ static Boolean claCheck(cla)
   access to remote object), we need to remove non-present parameters
 
 */
-static void resolve(ParamElem plst[])
-{
+static void resolve(ParamElem plst[]) {
   int i;
 
   if (allLength > 0) return;	/* ALL has already done this */
@@ -630,16 +532,7 @@ static void resolve(ParamElem plst[])
       }
 }
 
-
-#ifdef _PROTOTYPES_
-static void tryMatch(
-  ParamElem mlst[]		/* OUT - List of params allowed by multiple */
-)
-#else
-static void tryMatch(mlst)
-  ParamElem mlst[];		/* OUT - List of params allowed by multiple */
-#endif
-{
+static void tryMatch(ParamElem mlst[] /* OUT - List of params allowed by multiple */) {
   ElmElem *elms;		/* Pointer to element list */
   StxElem *stx;			/* Pointer to syntax list */
   ClaElem *cla;			/* Pointer to class definitions */
@@ -791,16 +684,7 @@ static void tryMatch(mlst)
   plural = anyPlural;		/* Remember that we found plural objects */
 }
 
-  
-#ifdef _PROTOTYPES_
-static void match(
-     ParamElem *mlst		/* OUT - List of params allowed by multiple */
-)
-#else
-static void match(mlst)
-     ParamElem *mlst;		/* OUT - List of params allowed by multiple */
-#endif
-{
+static void match(ParamElem *mlst /* OUT - List of params allowed by multiple */) {
   tryMatch(mlst);			/* ... to understand what he said */
   if (wrds[wrdidx] != EOF && !isConj(wrds[wrdidx]))
     error(M_WHAT);
@@ -808,13 +692,7 @@ static void match(mlst)
     wrdidx++;			/* If so skip the AND */
 }
 
-
-#ifdef _PROTOTYPES_
-void parse(void)
-#else
-void parse()
-#endif
-{
+void parse() {
   if (mlst == NULL) {		/* Allocate large enough paramlists */
     mlst = (ParamElem *) allocate(sizeof(ParamElem)*(MAXENTITY+1));
     mlst[0].code = EOF;

@@ -27,13 +27,7 @@
 namespace Glk {
 namespace Alan2 {
 
-#ifdef _PROTOTYPES_
-void compact(ParamElem a[])
-#else
-void compact(a)
-     ParamElem a[];
-#endif
-{
+void compact(ParamElem a[]) {
   int i, j;
   
   for (i = 0, j = 0; a[j].code != (Aword)EOF; j++)
@@ -42,14 +36,7 @@ void compact(a)
   a[i].code = (Aword)EOF;
 }
 
-
-#ifdef _PROTOTYPES_
-int lstlen(ParamElem a[])
-#else
-int lstlen(a)
-     ParamElem a[];
-#endif
-{
+int lstlen(ParamElem a[]) {
   int i = 0;
 
   while (a[i].code != (Aword)EOF)
@@ -57,29 +44,14 @@ int lstlen(a)
   return (i);
 }
 
-
-#ifdef _PROTOTYPES_
-Boolean inlst(ParamElem l[], Aword e)
-#else
-Boolean inlst(l, e)
-     ParamElem l[];
-     Aword e;
-#endif
-{
+Boolean inlst(ParamElem l[], Aword e) {
   int i;
 
   for (i = 0; l[i].code != (Aword)EOF && l[i].code != e; i++);
   return (l[i].code == e);
 }
 
-
-#ifdef _PROTOTYPES_
-void lstcpy(ParamElem a[], ParamElem b[])
-#else
-void lstcpy(a, b)
-     ParamElem a[], b[];
-#endif
-{
+void lstcpy(ParamElem a[], ParamElem b[]) {
   int i;
 
   for (i = 0; b[i].code != (Aword)EOF; i++)
@@ -87,14 +59,7 @@ void lstcpy(a, b)
   a[i].code = (Aword)EOF;
 }
 
-
-#ifdef _PROTOTYPES_
-void sublst(ParamElem a[], ParamElem b[])
-#else
-void sublst(a, b)
-     ParamElem a[], b[];
-#endif
-{
+void sublst(ParamElem a[], ParamElem b[]) {
   int i;
 
   for (i = 0; a[i].code != (Aword)EOF; i++)
@@ -103,14 +68,7 @@ void sublst(a, b)
   compact(a);
 }
 
-
-#ifdef _PROTOTYPES_
-void mrglst(ParamElem a[], ParamElem b[])
-#else
-void mrglst(a, b)
-     ParamElem a[], b[];
-#endif
-{
+void mrglst(ParamElem a[], ParamElem b[]) {
   int i,last;
 
   for (last = 0; a[last].code != (Aword)EOF; last++); /* Find end of list */
@@ -121,14 +79,7 @@ void mrglst(a, b)
     }
 }
 
-
-#ifdef _PROTOTYPES_
-void isect(ParamElem a[], ParamElem b[])
-#else
-void isect(a, b)
-     ParamElem a[], b[];
-#endif
-{
+void isect(ParamElem a[], ParamElem b[]) {
   int i, last = 0;
 
   for (i = 0; a[i].code != (Aword)EOF; i++)
@@ -137,15 +88,7 @@ void isect(a, b)
   a[last].code = (Aword)EOF;
 }
 
-
-#ifdef _PROTOTYPES_
-void cpyrefs(ParamElem p[], Aword r[])
-#else
-void cpyrefs(p, r)
-     ParamElem p[];
-     Aword r[];
-#endif
-{
+void cpyrefs(ParamElem p[], Aword r[]) {
   int i;
 
   for (i = 0; r[i] != (Aword)EOF; i++) {

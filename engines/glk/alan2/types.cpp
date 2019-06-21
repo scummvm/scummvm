@@ -20,21 +20,26 @@
  *
  */
 
-#ifndef GLK_ALAN2_STACK
-#define GLK_ALAN2_STACK
-
-/* Header file for stack handler in Alan interpreter */
+#include "glk/alan2/types.h"
 
 namespace Glk {
 namespace Alan2 {
 
-/* TYPES */
+void CurVars::synchronize(Common::Serializer &s) {
+	s.syncAsSint32LE(vrb);
+	s.syncAsSint32LE(obj);
+	s.syncAsSint32LE(loc);
+	s.syncAsSint32LE(act);
+	s.syncAsSint32LE(tick);
+	s.syncAsSint32LE(score);
+	s.syncAsSint32LE(visits);
+}
 
-extern Aptr pop(void);
-extern void push(Aptr item);
-extern Aptr top(void);
+void EvtqElem::synchronize(Common::Serializer &s) {
+	s.syncAsSint32LE(time);
+	s.syncAsSint32LE(event);
+	s.syncAsSint32LE(where);
+};
 
 } // End of namespace Alan2
 } // End of namespace Glk
-
-#endif

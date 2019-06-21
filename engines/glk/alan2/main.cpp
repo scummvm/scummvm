@@ -131,13 +131,7 @@ Boolean skipsp = FALSE;
   return buffers...
 
  */
-#ifdef _PROTOTYPES_
-void terminate(int code)
-#else
-void terminate(code)
-     int code;
-#endif
-{
+void terminate(int code) {
 #ifdef __amiga__
 #ifdef AZTEC_C
 #include <fcntl.h>
@@ -184,12 +178,7 @@ void terminate(code)
   usage()
 
   */
-#ifdef _PROTOTYPES_
-void usage(void)
-#else
-void usage()
-#endif
-{
+void usage() {
   printf("Usage:\n\n");
   printf("    %s [<switches>] <adventure>\n\n", PROGNAME);
   printf("where the possible optional switches are:\n");
@@ -216,13 +205,7 @@ void usage()
   Print a little text blaming the user for the system error.
 
  */
-#ifdef _PROTOTYPES_
-void syserr(const char *str)
-#else
-void syserr(str)
-     char *str;
-#endif
-{
+void syserr(const char *str) {
 #ifdef GLK
 	::error("%s", str);
 #else
@@ -261,13 +244,7 @@ of an Adventure that never was.$n$nSYSTEM ERROR: ");
   Print an error message, force new player input and abort.
 
   */
-#ifdef _PROTOTYPES_
-void error(MsgKind msgno)	/* IN - The error message number */
-#else
-void error(msgno)
-     MsgKind msgno;		/* IN - The error message number */
-#endif
-{
+void error(MsgKind msgno /* IN - The error message number */) {
   if (msgno != MSGMAX)
     prmsg(msgno);
   wrds[wrdidx] = EOF;		/* Force new player input */
@@ -285,8 +262,7 @@ void error(msgno)
   Print the the status line on the top of the screen.
 
   */
-void statusline(void)
-{
+void statusline() {
 #ifdef GLK
   uint glkWidth;
   char line[100];
@@ -354,13 +330,11 @@ needsp = FALSE;
   Print some text and log it if logging is on.
 
  */
-void logprint(char str[])
-{
+void logprint(char str[]) {
   printf(str);
   if (logflg)
     fprintf(logfil, "%s", str);
 }
-
 
 
 /*======================================================================
@@ -370,12 +344,7 @@ void logprint(char str[])
   Make a newline, but check for screen full.
 
  */
-#ifdef _PROTOTYPES_
-void newline(void)
-#else
-void newline()
-#endif
-{
+void newline() {
 #ifdef GLK
 	g_vm->glk_put_char('\n');
 #else
@@ -409,12 +378,7 @@ void newline()
   Make a new paragraph, i.e one empty line (one or two newlines).
 
  */
-#ifdef _PROTOTYPES_
-void para(void)
-#else
-void para()
-#endif
-{
+void para() {
   if (col != 1)
     newline();
   newline();
@@ -428,12 +392,7 @@ void para()
   Clear the screen.
 
  */
-#ifdef _PROTOTYPES_
-void clear(void)
-#else
-void clear()
-#endif
-{
+void clear() {
 #ifdef GLK
 	g_vm->glk_window_clear(glkMainWin);
 #else
@@ -453,13 +412,7 @@ void clear()
   Safely allocate new memory.
 
 */
-#ifdef _PROTOTYPES_
-void *allocate(unsigned long len)		/* IN - Length to allocate */
-#else
-void *allocate(len)
-     unsigned long len;			/* IN - Length to allocate */
-#endif
-{
+void *allocate(unsigned long len /* IN - Length to allocate */) {
   void *p = (void *)malloc((size_t)len);
 
   if (p == NULL)
@@ -476,13 +429,7 @@ void *allocate(len)
   Justify a string so that it wraps at end of screen.
 
  */
-#ifdef _PROTOTYPES_
-static void just(char str[])
-#else
-static void just(str)
-     char str[];
-#endif
-{
+static void just(char str[]) {
 #ifdef GLK
   logprint(str);
 #else
@@ -524,12 +471,7 @@ static void just(str)
   Output a space if needed.
 
  */
-#ifdef _PROTOTYPES_
-static void space(void)
-#else
-static void space()
-#endif
-{
+static void space() {
   if (skipsp)
     skipsp = FALSE;
   else {
@@ -542,7 +484,6 @@ static void space()
 }
 
 
-
 /*----------------------------------------------------------------------
 
   sayparam()
@@ -551,13 +492,7 @@ static void space()
   them if possible.
 
 */
-#ifdef _PROTOTYPES_
-static void sayparam(int p)
-#else
-static void sayparam(p)
-     int p;
-#endif
-{
+static void sayparam(int p) {
   int i;
 
   for (i = 0; i <= p; i++)
@@ -591,15 +526,9 @@ static void sayparam(p)
   T = tabulation
   $ = no space needed after this
  */
-#ifdef _PROTOTYPES_
 static void prsym(
-		  char *str	/* IN - The string starting with '$' */
-)
-#else
-static void prsym(str)
-     char *str;			/* IN - The string starting with '$' */
-#endif
-{
+	char *str	/* IN - The string starting with '$' */
+) {
   switch (toLower(str[1])) {
   case 'n':
     newline();
@@ -671,13 +600,7 @@ static void prsym(str)
   recogniced and performed.
 
  */
-#ifdef _PROTOTYPES_
-void output(char original[])
-#else
-void output(original)
-     char original[];
-#endif
-{
+void output(char original[]) {
   char ch;
   char *str, *copy;
   char *symptr;
@@ -718,13 +641,7 @@ void output(original)
   Print a message from the message table.
   
   */
-#ifdef _PROTOTYPES_
-void prmsg(MsgKind msg)		/* IN - message number */
-#else
-void prmsg(msg)
-     MsgKind msg;		/* IN - message number */
-#endif
-{
+void prmsg(MsgKind msg /* IN - message number */) {
   interpret(msgs[msg].stms);
 }
 
@@ -739,89 +656,39 @@ void prmsg(msg)
 \*----------------------------------------------------------------------*/
 
 /* How to know we are at end of a table */
-#ifdef _PROTOTYPES_
-Boolean eot(Aword *adr)
-#else
-Boolean eot(adr)
-     Aword *adr;
-#endif
-{
+Boolean eot(Aword *adr) {
   return *adr == EOF;
 }
 
-
-#ifdef _PROTOTYPES_
-Boolean isObj(Aword x)
-#else
-Boolean isObj(x)
-     Aword x;
-#endif
-{
+Boolean isObj(Aword x) {
   return x >= OBJMIN && x <= OBJMAX;
 }
 
-#ifdef _PROTOTYPES_
-Boolean isCnt(Aword x)
-#else
-Boolean isCnt(x)
-     Aword x;
-#endif
-{
+Boolean isCnt(Aword x) {
   return (x >= CNTMIN && x <= CNTMAX) ||
     (isObj(x) && objs[x-OBJMIN].cont != 0) ||
     (isAct(x) && acts[x-ACTMIN].cont != 0);
 }
 
-#ifdef _PROTOTYPES_
-Boolean isAct(Aword x)
-#else
-Boolean isAct(x)
-     Aword x;
-#endif
-{
+Boolean isAct(Aword x) {
   return x >= ACTMIN && x <= ACTMAX;
 }
 
-#ifdef _PROTOTYPES_
-Boolean isLoc(Aword x)
-#else
-Boolean isLoc(x)
-     Aword x;
-#endif
-{
+Boolean isLoc(Aword x) {
   return x >= LOCMIN && x <= LOCMAX;
 }
 
-#ifdef _PROTOTYPES_
-Boolean isNum(Aword x)
-#else
-Boolean isNum(x)
-     Aword x;
-#endif
-{
+Boolean isNum(Aword x) {
   return x >= LITMIN && x <= LITMAX && litValues[x-LITMIN].type == TYPNUM;
 }
 
-#ifdef _PROTOTYPES_
-Boolean isStr(Aword x)
-#else
-Boolean isStr(x)
-     Aword x;
-#endif
-{
+Boolean isStr(Aword x) {
   return x >= LITMIN && x <= LITMAX && litValues[x-LITMIN].type == TYPSTR;
 }
 
-#ifdef _PROTOTYPES_
-Boolean isLit(Aword x)
-#else
-Boolean isLit(x)
-     Aword x;
-#endif
-{
+Boolean isLit(Aword x) {
   return x >= LITMIN && x <= LITMAX;
 }
-
 
 
 /*======================================================================
@@ -831,13 +698,7 @@ Boolean isLit(x)
   Is there an exit from one location to another?
 
   */
-#ifdef _PROTOTYPES_
-Boolean exitto(int to, int from)
-#else
-Boolean exitto(to, from)
-     int to, from;
-#endif
-{
+Boolean exitto(int to, int from) {
   ExtElem *ext;
 
   if (locs[from-LOCMIN].exts == 0)
@@ -849,8 +710,7 @@ Boolean exitto(to, from)
 
   return(FALSE);
 }
-    
-      
+
 
 #ifdef CHECKOBJ
 /*======================================================================
@@ -898,13 +758,7 @@ void checkobj(obj)
   Count the number of items in a container.
 
   */
-#ifdef _PROTOTYPES_
-static int count(int cnt)	/* IN - the container to count */
-#else
-static int count(cnt)
-     int cnt;			/* IN - the container to count */
-#endif
-{
+static int count(int cnt /* IN - the container to count */) {
   int i, j = 0;
   
   for (i = OBJMIN; i <= OBJMAX; i++)
@@ -915,24 +769,16 @@ static int count(cnt)
 }
 
 
-
 /*----------------------------------------------------------------------
   sumatr()
 
   Sum the values of one attribute in a container. Recursively.
 
   */
-#ifdef _PROTOTYPES_
 static int sumatr(
      Aword atr,			/* IN - the attribute to sum over */
      Aword cnt			/* IN - the container to sum */
-)
-#else
-static int sumatr(atr, cnt)
-     Aword atr;			/* IN - the attribute to sum over */
-     Aword cnt;			/* IN - the container to sum */
-#endif
-{
+) {
   int i;
   int sum = 0;
 
@@ -946,25 +792,16 @@ static int sumatr(atr, cnt)
 }
 
 
-
-
 /*======================================================================
   checklim()
 
   Checks if a limit for a container is exceeded.
 
   */
-#ifdef _PROTOTYPES_
 Boolean checklim(
      Aword cnt,			/* IN - Container code */
      Aword obj			/* IN - The object to add */
-)
-#else
-Boolean checklim(cnt, obj)
-     Aword cnt;			/* IN - Container code */
-     Aword obj;			/* IN - The object to add */
-#endif
-{
+) {
   LimElem *lim;
   Aword props;
 
@@ -999,9 +836,6 @@ Boolean checklim(cnt, obj)
 }
 
 
-
-
-
 /*----------------------------------------------------------------------*\
 
   Action routines
@@ -1016,17 +850,10 @@ Boolean checklim(cnt, obj)
   Tries a check, returns TRUE if it passed, FALSE else.
 
   */
-#ifdef _PROTOTYPES_
 static Boolean trycheck(
      Aaddr adr,			/* IN - ACODE address to check table */
      Boolean act		/* IN - Act if it fails ? */
-)
-#else
-static Boolean trycheck(adr, act)
-     Aaddr adr;			/* IN - ACODE address to check table */
-     Boolean act;		/* IN - Act if it fails ? */
-#endif
-{
+) {
   ChkElem *chk;
 
   chk = (ChkElem *) addrTo(adr);
@@ -1054,13 +881,7 @@ static Boolean trycheck(adr, act)
   Move hero in a direction.
 
   */
-#ifdef _PROTOTYPES_
-void go(int dir)
-#else
-void go(dir)
-     int dir;
-#endif
-{
+void go(int dir) {
   ExtElem *ext;
   Boolean ok;
   Aword oldloc;
@@ -1109,7 +930,6 @@ void go(dir)
 }
 
 
-
 /*----------------------------------------------------------------------
 
   findalt()
@@ -1118,17 +938,10 @@ void go(dir)
   the address to it.
 
  */
-#ifdef _PROTOTYPES_
 static AltElem *findalt(
      Aword vrbsadr,		/* IN - Address to start of list */
      Aword param		/* IN - Which parameter to match */
-)
-#else
-static AltElem *findalt(vrbsadr, param)
-     Aword vrbsadr;		/* IN - Address to start of list */
-     Aword param;		/* IN - Which parameter to match */
-#endif
-{
+) {
   VrbElem *vrb;
   AltElem *alt;
 
@@ -1146,8 +959,6 @@ static AltElem *findalt(vrbsadr, param)
 }
 
 
-
-
 /*======================================================================
 
   possible()
@@ -1155,12 +966,7 @@ static AltElem *findalt(vrbsadr, param)
   Check if current action is possible according to the CHECKs.
 
   */
-#ifdef _PROTOTYPES_
-Boolean possible(void)
-#else
-Boolean possible()
-#endif
-{
+Boolean possible() {
   AltElem *alt[MAXPARAMS+2];	/* List of alt-pointers, one for each param */
   int i;			/* Parameter index */
   
@@ -1197,7 +1003,6 @@ Boolean possible()
 }
 
 
-
 /*----------------------------------------------------------------------
 
   do_it()
@@ -1205,12 +1010,7 @@ Boolean possible()
   Execute the action commanded by hero.
 
   */
-#ifdef _PROTOTYPES_
-static void do_it(void)
-#else
-static void do_it()
-#endif
-{
+static void do_it() {
   AltElem *alt[MAXPARAMS+2];	/* List of alt-pointers, one for each param */
   Boolean done[MAXPARAMS+2];	/* Is it done */
   int i;			/* Parameter index */
@@ -1339,7 +1139,6 @@ static void do_it()
 }
 
 
-
 /*======================================================================
 
   action()
@@ -1348,15 +1147,7 @@ static void do_it()
   such as THEM or lists of objects.
 
   */
-#ifdef _PROTOTYPES_
-void action(
-     ParamElem plst[]		/* IN - Plural parameter list */
-)
-#else
-void action(plst)
-     ParamElem plst[];
-#endif
-{
+void action(ParamElem plst[] /* IN - Plural parameter list */) {
   int i, mpos;
   char marker[10];
 
@@ -1380,7 +1171,6 @@ void action(plst)
 }
 
 
-
 /*----------------------------------------------------------------------*\
 
   Event Handling
@@ -1395,12 +1185,7 @@ void action(plst)
 
   Check if any events are pending. If so execute them.
   */
-#ifdef _PROTOTYPES_
-static void eventchk(void)
-#else
-static void eventchk()
-#endif
-{
+static void eventchk() {
   while (etop != 0 && eventq[etop-1].time == cur.tick) {
     etop--;
     if (isLoc(eventq[etop].where))
@@ -1415,9 +1200,6 @@ static void eventchk()
     interpret(evts[eventq[etop].event-EVTMIN].code);
   }
 }
-
-
-
 
 
 /*----------------------------------------------------------------------*\
@@ -1450,13 +1232,7 @@ static char logfnm[256];
   checkvers()
 
  */
-#ifdef _PROTOTYPES_
-static void checkvers(AcdHdr *header)
-#else
-static void checkvers(header)
-     AcdHdr *header;
-#endif
-{
+static void checkvers(AcdHdr *header) {
   char vers[4];
   char state[2];
 
@@ -1508,12 +1284,7 @@ static void checkvers(header)
   load()
 
  */
-#ifdef _PROTOTYPES_
-static void load(void)
-#else
-static void load()
-#endif
-{
+static void load() {
   AcdHdr tmphdr;
   Aword crc = 0;
   int i;
@@ -1598,12 +1369,7 @@ static void load()
   checkdebug()
 
  */
-#ifdef _PROTOTYPES_
-static void checkdebug(void)
-#else
-static void checkdebug()
-#endif
-{
+static void checkdebug() {
   /* Make sure he can't debug if not allowed! */
   if (!header->debug) {
     if (dbgflg|trcflg|stpflg)
@@ -1628,12 +1394,7 @@ static void checkdebug()
   initheader()
 
  */
-#ifdef _PROTOTYPES_
-static void initheader(void)
-#else
-static void initheader()
-#endif
-{
+static void initheader() {
   dict = (WrdElem *) addrTo(header->dict);
   /* Find out number of entries in dictionary */
   for (dictsize = 0; !endOfTable(&dict[dictsize]); dictsize++);
@@ -1658,12 +1419,7 @@ static void initheader()
   initstrings()
 
   */
-#ifdef _PROTOTYPES_
-static void initstrings(void)
-#else
-static void initstrings()
-#endif
-{
+static void initstrings() {
   IniElem *init;
 
   for (init = (IniElem *) addrTo(header->init); !endOfTable(init); init++) {
@@ -1678,12 +1434,7 @@ static void initstrings()
   start()
 
  */
-#ifdef _PROTOTYPES_
-static void start(void)
-#else
-static void start()
-#endif
-{
+static void start() {
   int startloc;
 
   cur.tick = -1;
@@ -1707,12 +1458,7 @@ static void start()
   Initialization, program load etc.
 
   */
-#ifdef _PROTOTYPES_
-static void init(void)
-#else
-static void init()
-#endif
-{
+static void init() {
   int i;
 
   /* Initialise some status */
@@ -1750,12 +1496,7 @@ static void init()
   Let the current actor move. If player, ask him.
 
  */
-#ifdef _PROTOTYPES_
-static void movactor(void)
-#else
-static void movactor()
-#endif
-{
+static void movactor() {
   ScrElem *scr;
   StepElem *step;
   ActElem *act = (ActElem *) &acts[cur.act-ACTMIN];
@@ -1844,12 +1585,7 @@ static void movactor()
   Open the necessary files.
 
   */
-#ifdef _PROTOTYPES_
-static void openFiles(void)
-#else
-static void openFiles()
-#endif
-{
+static void openFiles() {
   char str[256];
   char *usr = "";
   time_t tick;

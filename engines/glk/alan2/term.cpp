@@ -34,12 +34,7 @@ namespace Alan2 {
   from the header.
 
  */
-#ifdef _PROTOTYPES_
-void getPageSize(void)
-#else
-void getPageSize()
-#endif
-{
+void getPageSize() {
 #ifdef GLK
   paglen = 0;
   pagwidth = 0;

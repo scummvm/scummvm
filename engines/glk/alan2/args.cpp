@@ -54,17 +54,7 @@ BPTR cd;
 namespace Glk {
 namespace Alan2 {
 
-#ifdef _PROTOTYPES_
-static void switches(
-     unsigned argc,
-     char *argv[]
-)
-#else
-static void switches(argc, argv)
-     unsigned argc;
-     char *argv[];
-#endif
-{
+static void switches(unsigned argc, char *argv[]) {
 #ifndef GLK
   uint i;
   
@@ -173,18 +163,7 @@ wb_parse(void)
 #endif
 #endif
 
-
-#ifdef _PROTOTYPES_
-void args(
-     int argc,
-     char * argv[]
-)
-#else
-void args(argc, argv)
-    int argc;
-    char *argv[];
-#endif
-{
+void args(int argc, char * argv[]) {
   char *prgnam;
 
 #ifdef __mac__

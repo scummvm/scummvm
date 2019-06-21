@@ -45,15 +45,7 @@
 namespace Glk {
 namespace Alan2 {
 
-#ifdef _PROTOTYPES_
-static void showatrs(
-  Aword atradr
-)
-#else
-static void showatrs(atradr)
-  Aword atradr;
-#endif
-{
+static void showatrs(Aword atradr) {
   AtrElem *at;
   int i;
   char str[80];
@@ -71,13 +63,7 @@ static void showatrs(atradr)
   }
 }
 
-
-#ifdef _PROTOTYPES_
-static void showobjs(void)
-#else
-static void showobjs()
-#endif
-{
+static void showobjs() {
   char str[80];
   int obj;
 
@@ -89,16 +75,7 @@ static void showobjs()
   }
 }
 
-
-#ifdef _PROTOTYPES_
-static void showobj(
-  int obj
-)
-#else
-static void showobj(obj)
-  int obj;
-#endif
-{
+static void showobj(int obj) {
   char str[80];
 #define OBJ (obj-OBJMIN)
 
@@ -138,13 +115,7 @@ static void showobj(obj)
 #undef OBJ
 }
 
-
-#ifdef _PROTOTYPES_
-static void showcnts(void)
-#else
-static void showcnts()
-#endif
-{
+static void showcnts() {
   char str[80];
   int cnt;
 #define  CNT (cnt-CNTMIN)
@@ -162,16 +133,7 @@ static void showcnts()
 #undef CNT
 }
 
-
-#ifdef _PROTOTYPES_
-static void showcnt(
-  int cnt
-)
-#else
-static void showcnt(cnt)
-  int cnt;
-#endif
-{
+static void showcnt(int cnt) {
   char str[80];
   int i;
   Abool found = FALSE;
@@ -211,13 +173,7 @@ static void showcnt(cnt)
 #undef CNT
 }
 
-
-#ifdef _PROTOTYPES_
-static void showlocs(void)
-#else
-static void showlocs()
-#endif
-{
+static void showlocs() {
   char str[80];
   int loc;
 
@@ -229,16 +185,7 @@ static void showlocs()
   }
 }
 
-
-#ifdef _PROTOTYPES_
-static void showloc(
-  int loc
-)
-#else
-static void showloc(loc)
-  int loc;
-#endif
-{
+static void showloc(int loc) {
   char str[80];
 
   
@@ -256,13 +203,7 @@ static void showloc(loc)
   showatrs(locs[loc-LOCMIN].atrs);
 }
 
-
-#ifdef _PROTOTYPES_
-static void showacts(void)
-#else
-static void showacts()
-#endif
-{
+static void showacts() {
   char str[80];
   int act;
 
@@ -274,16 +215,7 @@ static void showacts()
   }
 }
 
-
-#ifdef _PROTOTYPES_
-static void showact(
-  int act
-)
-#else
-static void showact(act)
-  int act;
-#endif
-{
+static void showact(int act) {
   char str[80];
   Boolean oldstp;
   
@@ -318,13 +250,7 @@ static void showact(act)
   showatrs(acts[act-ACTMIN].atrs);
 }
 
-
-#ifdef _PROTOTYPES_
-static void showevts(void)
-#else
-static void showevts()
-#endif
-{
+static void showevts() {
   int evt, i;
   char str[80];
   Boolean scheduled;
@@ -353,37 +279,21 @@ static void showevts()
 static Boolean trc, stp;
 static int loc;
 
-#ifdef _PROTOTYPES_
-void saveInfo(void)
-#else
-void saveInfo()
-#endif
-{
+void saveInfo() {
   /* Save some important things */
   trc = trcflg; trcflg = FALSE;
   stp = stpflg; stpflg = FALSE;
   loc = cur.loc; cur.loc = where(HERO);
 }
 
-#ifdef _PROTOTYPES_
-void restoreInfo(void)
-#else
-void restoreInfo()
-#endif
-{
+void restoreInfo() {
   /* Restore! */
   trcflg = trc;
   stpflg = stp;
   cur.loc = loc;
 }
 
-
-#ifdef _PROTOTYPES_
-void debug(void)
-#else
-void debug()
-#endif
-{
+void debug() {
   char buf[256];
   char c;
   int i;
@@ -483,13 +393,7 @@ void debug()
   shown to the player.
 
 */
-#ifdef _PROTOTYPES_
-void debugsay(int item)
-#else
-void debugsay(item)
-     int item;
-#endif
-{
+void debugsay(int item) {
   saveInfo();
   needsp = FALSE;
   col = 1;

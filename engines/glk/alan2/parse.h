@@ -39,14 +39,8 @@ extern int litCount;
 
 extern int vrbwrd;
 
-#ifdef _PROTOTYPES_
-
 /* Parse a new player command */
 extern void parse(void);
-
-#else
-extern void parse();
-#endif
 
 } // End of namespace Alan2
 } // End of namespace Glk

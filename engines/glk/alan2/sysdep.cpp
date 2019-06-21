@@ -41,9 +41,7 @@ extern void fprintf(Common::WriteStream *ws, const char *fmt, ...) {
 }
 #endif
 
-#ifdef _PROTOTYPES_
 extern void syserr(char str[]);
-#endif
 
 #ifdef __vms__
 
