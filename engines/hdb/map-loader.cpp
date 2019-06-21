@@ -26,6 +26,24 @@ namespace HDB {
 
 Map::Map() {
 	_mapLoaded = false;
+
+	for (int i = 0; i < kMaxGratings;i++) {
+		_gratings[i] = new Foreground;
+	}
+
+	for (int i = 0; i < kMaxForegrounds;i++) {
+		_foregrounds[i] = new Foreground;
+	}
+}
+
+Map::~Map() {
+	for (int i = 0; i < kMaxGratings;i++) {
+		delete _gratings[i];
+	}
+
+	for (int i = 0; i < kMaxForegrounds;i++) {
+		delete _foregrounds[i];
+	}
 }
 
 int Map::loadTiles() {
