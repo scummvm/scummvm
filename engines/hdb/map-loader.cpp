@@ -81,7 +81,6 @@ bool Map::load(Common::SeekableReadStream *stream) {
 		Common::hexdump((const byte *)_background, 512);
 	}
 
-
 	// Reading Foreground
 	_foreground = new uint16[_width * _height];
 	stream->seek(_foregroundOffset);
@@ -612,6 +611,10 @@ void Map::draw() {
 	/*
 		TODO: Implement animated Map Tiles
 	*/
+}
+
+void Map::drawEnts() {
+	g_hdb->_ai->drawEnts(_mapX, _mapY, kScreenXTiles * kTileWidth, kScreenYTiles * kTileHeight);
 }
 
 uint32 Map::getMapBGTileFlags(int x, int y) {
