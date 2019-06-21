@@ -74,6 +74,8 @@ public:
 	bool load(Common::SeekableReadStream *stream);
 	void draw();
 	void drawEnts();
+	void drawGratings();
+	void drawForegrounds();
 
 	uint32 getMapBGTileFlags(int x, int y);
 	uint32 getMapFGTileFlags(int x, int y);

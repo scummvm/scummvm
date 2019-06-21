@@ -671,6 +671,22 @@ void Map::drawEnts() {
 	g_hdb->_ai->drawEnts(_mapX, _mapY, kScreenXTiles * kTileWidth, kScreenYTiles * kTileHeight);
 }
 
+void Map::drawGratings() {
+	for (int i = 0; i < kMaxGratings;i++) {
+		g_hdb->_drawMan->getTile(_gratings[i]->tile)->drawMasked(_gratings[i]->x, _gratings[i]->y);
+	}
+
+	debug(1, "Gratings Count: %d", _numGratings);
+}
+
+void Map::drawForegrounds() {
+	for (int i = 0; i < kMaxForegrounds;i++) {
+		g_hdb->_drawMan->getTile(_foregrounds[i]->tile)->drawMasked(_foregrounds[i]->x, _foregrounds[i]->y);
+	}
+
+	debug(1, "Foregrounds Count: %d", _numForegrounds);
+}
+
 uint32 Map::getMapBGTileFlags(int x, int y) {
 	if (x < 0 || x >= _width || y < 0 || y >= _height) {
 		return 0;
