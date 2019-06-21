@@ -231,6 +231,21 @@ void AI::processCines() {
 				complete = true;
 			}
 			break;
+		case C_CLEAR_FG:
+			g_hdb->_map->setMapFGTileIndex((int)_cine[i]->x, (int)_cine[i]->y, -1);
+			g_hdb->_map->removeFGTileAnimation((int)_cine[i]->x, (int)_cine[i]->y);
+			complete = true;
+			break;
+		case C_SET_BG:
+			g_hdb->_map->setMapBGTileIndex((int)_cine[i]->x, (int)_cine[i]->y, (int)_cine[i]->start);
+			g_hdb->_map->addBGTileAnimation((int)_cine[i]->x, (int)_cine[i]->y);
+			complete = true;
+			break;
+		case C_SET_FG:
+			g_hdb->_map->setMapFGTileIndex((int)_cine[i]->x, (int)_cine[i]->y, (int)_cine[i]->start);
+			g_hdb->_map->addFGTileAnimation((int)_cine[i]->x, (int)_cine[i]->y);
+			complete = true;
+			break;
 		default:
 			warning("STUB: AI::PROCESSCINES incomplete for %d", _cine[i]->cmdType);
 			break;
