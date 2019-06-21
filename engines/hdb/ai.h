@@ -748,6 +748,76 @@ public:
 	int _numGooCups;
 	int _numMonkeystones;
 
+	// Special Tiles that are usable
+	// These variables hold the tile-indices set
+	// in ai-init.cpp
+
+	int			_useSwitchOff;			// the door opening switch
+	int			_useSwitchOn;			// state, when opened
+	int			_useHolderEmpty;		// cell holding switch
+	int			_useHolderFull;		// state, when full
+	int			_useSwitch2Off;		// another switch
+	int			_useSwitch2On;			// state, when opened
+	int			_useMailsorter;			// mailsorter entity
+	int			_useAskcomp;			// askcomp entitiy
+	int			_useTeleporter;			// teleporter entity
+	int			_useHandswitchOn;		// 2-sided handswitch
+	int			_useHandswitchOff;		// 2-sided handswitch
+
+	int			_targetDoorN;			// horz SILVER door
+	int			_targetDoorP;			// horz BLUE door
+	int			_targetDoorS;			// horz RED door
+	int			_targetDoorNv;			// vert SILVER door
+	int			_targetDoorPv;			// vert BLUE door
+	int			_targetDoorSv;			// vert RED door
+
+	int			_targetDoor2N;			// horz SILVER door
+	int			_targetDoor2P;			// horz BLUE door
+	int			_targetDoor2S;			// horz RED door
+	int			_targetDoor2Nv;			// vert SILVER door
+	int			_targetDoor2Pv;			// vert BLUE door
+	int			_targetDoor2Sv;			// vert RED door
+
+	int			_target2DoorN;			// horz SILVER door
+	int			_target2DoorP;			// horz BLUE door
+	int			_target2DoorS;			// horz RED door
+	int			_target2DoorNv;			// vert SILVER door
+	int			_target2DoorPv;			// vert BLUE door
+	int			_target2DoorSv;			// vert RED door
+
+	int			_target3DoorN;			// horz SILVER door
+	int			_target3DoorP;			// horz BLUE door
+	int			_target3DoorS;			// horz RED door
+	int			_target3DoorNv;			// vert SILVER door
+	int			_target3DoorPv;			// vert BLUE door
+	int			_target3DoorSv;			// vert RED door
+
+	int			_targetBridgeU;		// bridge extending UP
+	int			_targetBridgeD;		// bridge extending DOWN
+	int			_targetBridgeL;		// bridge extending LEFT
+	int			_targetBridgeR;		// bridge extending RIGHT
+
+	int			_targetBridgeMidLR;	// bridge grating plank LEFT/RIGHT
+	int			_targetBridgeMidUD;	// bridge grating plank UP/DOWN
+	int			_touchplateOn;			// touchplate ON
+	int			_touchplateOff;
+	int			_templeTouchpOn;		// touchplate ON
+	int			_templeTouchpOff;
+	int			_blockpole;				// blockpole
+
+	int			_kcHolderWhiteOff;	// keycard holders
+	int			_kcHolderWhiteOn;
+	int			_kcHolderBlueOff;
+	int			_kcHolderBlueOn;
+	int			_kcHolderRedOff;
+	int			_kcHolderRedOn;
+	int			_kcHolderGreenOff;
+	int			_kcHolderGreenOn;
+	int			_kcHolderPurpleOff;
+	int			_kcHolderPurpleOn;
+	int			_kcHolderBlackOff;
+	int			_kcHolderBlackOn;
+
 	AIEntLevel2 *_entsLevel2[kMaxLevel2Ents];
 	int _numLevel2Ents;
 
