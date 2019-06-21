@@ -48,7 +48,7 @@ AudioPlayer::AudioPlayer(BladeRunnerEngine *vm) {
 		_tracks[i].stream = nullptr;
 	}
 
-	_sfxVolume =BLADERUNNER_ORIGINAL_SETTINGS ? 65 : 100;
+	_sfxVolume = BLADERUNNER_ORIGINAL_SETTINGS ? 65 : 100;
 }
 
 AudioPlayer::~AudioPlayer() {

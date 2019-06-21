@@ -465,20 +465,6 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 	_gameFlags = new GameFlags();
 	_gameFlags->setFlagCount(_gameInfo->getFlagCount());
 
-	// Assign default values to the ScummVM configuration manager, in case settings are missing
-	ConfMan.registerDefault("subtitles", "true");
-	ConfMan.registerDefault("sfx_volume", 192);
-	ConfMan.registerDefault("music_volume", 192);
-	ConfMan.registerDefault("speech_volume", 192);
-	ConfMan.registerDefault("mute", "false");
-	ConfMan.registerDefault("speech_mute", "false");
-
-	// get value from the ScummVM configuration manager
-	syncSoundSettings();
-
-	_sitcomMode = ConfMan.getBool("sitcom");
-	_shortyMode = ConfMan.getBool("shorty");
-
 	_items = new Items(this);
 
 	_audioCache = new AudioCache();
@@ -493,6 +479,19 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 
 	_ambientSounds = new AmbientSounds(this);
 
+	// Assign default values to the ScummVM configuration manager, in case settings are missing
+	ConfMan.registerDefault("subtitles", "true");
+	ConfMan.registerDefault("sfx_volume", 192);
+	ConfMan.registerDefault("music_volume", 192);
+	ConfMan.registerDefault("speech_volume", 192);
+	ConfMan.registerDefault("mute", "false");
+	ConfMan.registerDefault("speech_mute", "false");
+
+	// get value from the ScummVM configuration manager
+	syncSoundSettings();
+
+	_sitcomMode = ConfMan.getBool("sitcom");
+	_shortyMode = ConfMan.getBool("shorty");
 	// BLADE.INI was read here, but it was replaced by ScummVM configuration
 
 	_chapters = new Chapters(this);
@@ -1844,16 +1843,17 @@ void BladeRunnerEngine::syncSoundSettings() {
 	_mixer->setVolumeForSoundType(_mixer->kMusicSoundType, ConfMan.getInt("music_volume"));
 	_mixer->setVolumeForSoundType(_mixer->kSFXSoundType, ConfMan.getInt("sfx_volume"));
 	_mixer->setVolumeForSoundType(_mixer->kSpeechSoundType, ConfMan.getInt("speech_volume"));
-
 	// debug("syncSoundSettings: Volumes synced as Music: %d, Sfx: %d, Speech: %d", ConfMan.getInt("music_volume"), ConfMan.getInt("sfx_volume"), ConfMan.getInt("speech_volume"));
 
+	bool allSoundIsMuted = false;
 	if (ConfMan.hasKey("mute")) {
-		_mixer->muteSoundType(_mixer->kMusicSoundType, ConfMan.getBool("mute"));
-		_mixer->muteSoundType(_mixer->kSFXSoundType, ConfMan.getBool("mute"));
-		_mixer->muteSoundType(_mixer->kSpeechSoundType, ConfMan.getBool("mute"));
+		allSoundIsMuted = ConfMan.getBool("mute");
+		_mixer->muteSoundType(_mixer->kMusicSoundType, allSoundIsMuted);
+		_mixer->muteSoundType(_mixer->kSFXSoundType, allSoundIsMuted);
+		_mixer->muteSoundType(_mixer->kSpeechSoundType, allSoundIsMuted);
 	}
 
-	if (ConfMan.hasKey("speech_mute")) {
+	if (ConfMan.hasKey("speech_mute") && !allSoundIsMuted) {
 		// if true it means show only subtitles
 		// "subtitles" key will already be set appropriately by Engine::syncSoundSettings();
 		// but we need to mute the speech

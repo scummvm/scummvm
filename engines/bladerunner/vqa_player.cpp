@@ -24,6 +24,7 @@
 
 #include "bladerunner/bladerunner.h"
 #include "bladerunner/time.h"
+#include "bladerunner/audio_player.h"
 
 #include "audio/decoders/raw.h"
 
@@ -134,7 +135,7 @@ int VQAPlayer::update(bool forceDraw, bool advanceFrame, bool useTime, Graphics:
 						queueAudioFrame(_decoder.decodeAudioFrame());
 					}
 				}
-				_vm->_mixer->playStream(Audio::Mixer::kPlainSoundType, &_soundHandle, _audioStream);
+				_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle, _audioStream);
 				_audioStarted = true;
 			}
 			if (_frameNext + audioPreloadFrames < _frameEnd) {
