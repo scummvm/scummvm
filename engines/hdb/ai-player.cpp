@@ -215,15 +215,21 @@ void aiDollyInit2(AIEntity *e) {
 }
 
 void aiSergeantInit(AIEntity *e) {
-	warning("STUB: AI: aiSergeantInit required");
+	e->moveSpeed = kPlayerMoveSpeed >> 1;
+	if (e->value1)
+		e->aiAction = aiSergeantAction;
 }
 
 void aiSergeantInit2(AIEntity *e) {
-	warning("STUB: AI: aiSergeantInit2 required");
+	e->draw = g_hdb->_ai->getStandFrameDir(e);
 }
 
 void aiSergeantAction(AIEntity *e) {
-	warning("STUB: AI: aiSergeantAction required");
+	if (e->goalX) {
+		warning("AI-PLAYER: aiSergeantAction: Play SND_FOOTSTEPS sounds");
+		g_hdb->_ai->animateEntity(e);
+	} else
+		g_hdb->_ai->animEntFrames(e);
 }
 
 void aiSpacedudeInit(AIEntity *e) {
