@@ -565,6 +565,8 @@ public:
 	void animLuaEntity(const char *initName, AIState st);
 	void drawEnts(int x, int y, int w, int h);
 
+	bool checkFloating(int x, int y);
+
 	bool getTableEnt(AIType type);
 	bool walkThroughEnt(AIType type);
 	void getItemSound(AIType type);

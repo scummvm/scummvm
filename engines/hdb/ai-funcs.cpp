@@ -1015,6 +1015,14 @@ void AI::drawEnts(int x, int y, int w, int h) {
 	}
 }
 
+bool AI::checkFloating(int x, int y) {
+	for (Common::Array<AIEntity *>::iterator it = _floats->begin(); it != _floats->end(); it++) {
+		if ((*it)->tileX == x && (*it)->tileY == y)
+			return true;
+	}
+	return false;
+}
+
 // Check to see if we can get this entity
 bool AI::getTableEnt(AIType type) {
 	switch (type) {
