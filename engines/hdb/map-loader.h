@@ -69,6 +69,8 @@ public:
 	uint16 getMapFGTileIndex(int x, int y);
 	void setMapBGTileIndex(int x, int y, int index);
 	void setMapFGTileIndex(int x, int y, int index);
+	void addBGTileAnimation(int x, int y);
+	void addFGTileAnimation(int x, int y);
 
 	void getMapXY(int *x, int *y);
 	void setMapXY(int x, int y);

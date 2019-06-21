@@ -656,6 +656,38 @@ void Map::setMapFGTileIndex(int x, int y, int index) {
 	_foreground[y * _width + x] = index;
 }
 
+void Map::addBGTileAnimation(int x, int y) {
+
+	int i = y * _width + x;
+
+	uint32 flags = g_hdb->_drawMan->getTile(_background[i])->_flags;
+
+	// BACKGROUND
+	if (flags & kFlagAnimFast) {
+		_listBGAnimFast.push_back(i);
+	} else if (flags & kFlagAnimSlow) {
+		_listBGAnimSlow.push_back(i);
+	} else if (flags & kFlagAnimMedium) {
+		_listBGAnimMedium.push_back(i);
+	}
+}
+
+void Map::addFGTileAnimation(int x, int y) {
+
+	int i = y * _width + x;
+
+	uint32 flags = g_hdb->_drawMan->getTile(_foreground[i])->_flags;
+
+	// FOREGROUND
+	if (flags & kFlagAnimFast) {
+		_listFGAnimFast.push_back(i);
+	} else if (flags & kFlagAnimSlow) {
+		_listFGAnimSlow.push_back(i);
+	} else if (flags & kFlagAnimMedium) {
+		_listFGAnimMedium.push_back(i);
+	}
+}
+
 void Map::getMapXY(int *x, int *y) {
 	*x = _mapX;
 	*y = _mapY;
