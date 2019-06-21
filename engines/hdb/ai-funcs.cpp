@@ -926,7 +926,18 @@ void AI::drawEnts(int x, int y, int w, int h) {
 	static int stunAnim = 0;
 
 	// Draw Floating Entities
-	warning("STUB: AI::drawEnts: Draw Floating Entities");
+	for (Common::Array<AIEntity *>::iterator it = _floats->begin(); it != _floats->end(); it++) {
+		AIEntity *e = (*it);
+		if (e->aiDraw) {
+			e->aiDraw(e, x, y);
+		}
+
+		if ((e->x > x - kTileWidth) && (e->x < x + w) && (e->y > y - kTileHeight) && (e->y < y + h)) {
+			e->draw->drawMasked(e->x - x + e->drawXOff, e->y - y + e->drawYOff);
+			e->onScreen = 1;
+		} else
+			e->onScreen = 0;
+	}
 
 	// Draw all other Ents
 	_numLevel2Ents = 0;
