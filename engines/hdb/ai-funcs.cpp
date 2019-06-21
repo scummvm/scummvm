@@ -606,6 +606,311 @@ void AI::initAllEnts() {
 	warning("STUB: initAllEnts: LaserScan required");
 }
 
+void AI::animEntFrames(AIEntity *e) {
+	int max = 1;
+	// Set current graphic to draw
+	switch (e->state) {
+	case STATE_STANDDOWN:
+		e->draw = e->standdownGfx[0];
+		max = 1;
+		break;
+	case STATE_STANDUP:
+		e->draw = e->standupGfx[0];
+		max = 1;
+		break;
+	case STATE_STANDLEFT:
+		e->draw = e->standleftGfx[0];
+		max = 1;
+		break;
+	case STATE_STANDRIGHT:
+		e->draw = e->standrightGfx[0];
+		max = 1;
+		break;
+	case STATE_BLINK:
+		e->draw = e->blinkGfx[e->animFrame];
+		max = e->blinkFrames;
+		break;
+	case STATE_MOVEUP:
+		e->draw = e->moveupGfx[e->animFrame];
+		max = e->moveupFrames;
+		break;
+	case STATE_MOVEDOWN:
+		e->draw = e->movedownGfx[e->animFrame];
+		max = e->movedownFrames;
+		break;
+	case STATE_MOVELEFT:
+		e->draw = e->moveleftGfx[e->animFrame];
+		max = e->moveleftFrames;
+		break;
+	case STATE_MOVERIGHT:
+		e->draw = e->moverightGfx[e->animFrame];
+		max = e->moverightFrames;
+		break;
+	case STATE_PUSHDOWN:
+		e->draw = _pushdownGfx[e->animFrame];
+		max = _pushdownFrames;
+		break;
+	case STATE_PUSHUP:
+		e->draw = _pushupGfx[e->animFrame];
+		max = _pushupFrames;
+		break;
+	case STATE_PUSHLEFT:
+		e->draw = _pushleftGfx[e->animFrame];
+		max = _pushleftFrames;
+		break;
+	case STATE_PUSHRIGHT:
+		e->draw = _pushrightGfx[e->animFrame];
+		max = _pushrightFrames;
+		break;
+
+	case STATE_GRABUP:
+		e->draw = _getGfx[DIR_UP];
+		max = 1;
+		break;
+	case STATE_GRABDOWN:
+		e->draw = _getGfx[DIR_DOWN];
+		max = 1;
+		break;
+	case STATE_GRABLEFT:
+		e->draw = _getGfx[DIR_LEFT];
+		max = 1;
+		break;
+	case STATE_GRABRIGHT:
+		e->draw = _getGfx[DIR_RIGHT];
+		max = 1;
+		break;
+
+	case STATE_HORRIBLE1:
+		e->draw = _horrible1Gfx[e->animFrame];
+		max = _horrible1Frames;
+		if (e->animFrame == max - 1)
+			e->state = STATE_DEAD;
+		break;
+	case STATE_HORRIBLE2:
+	{
+		static int		click = 0;
+		e->draw = _horrible2Gfx[e->animFrame];
+		max = _horrible2Frames;
+		click++;
+		if (click == 16) {
+			warning("STUB: Play SND_SHOCKBOT_SHOCK");
+			click = 0;
+		}
+	}
+	break;
+	case STATE_HORRIBLE3:
+	{
+		static int		click = 0;
+		e->draw = _horrible3Gfx[e->animFrame];
+		max = _horrible3Frames;
+		click++;
+		if (click == 32) {
+			warning("STUB: Play SND_GUY_GRABBED");
+			click = 0;
+		}
+	}
+	break;
+	case STATE_HORRIBLE4:
+		e->draw = _horrible4Gfx[e->animFrame];
+		max = _horrible4Frames;
+		if (e->animFrame == max - 1)
+			e->state = STATE_DEAD;
+		break;
+
+	case STATE_PLUMMET:
+		e->draw = _plummetGfx[e->animFrame];
+		max = _plummetFrames;
+		if (e->animFrame == max - 1) {
+			e->state = STATE_NONE;
+			setPlayerInvisible(true);
+		}
+		break;
+
+		//
+		// maintenance bot uses stuff
+		//
+	case STATE_USEDOWN:
+		e->draw = e->standdownGfx[4];
+		return;
+	case STATE_USEUP:
+		e->draw = e->standupGfx[4];
+		return;
+	case STATE_USELEFT:
+		e->draw = e->standleftGfx[4];
+		return;
+	case STATE_USERIGHT:
+		e->draw = e->standrightGfx[4];
+		return;
+
+		//
+		// death!
+		//
+	case STATE_DYING:
+		e->draw = _dyingGfx[e->animFrame];
+		max = _dyingFrames;
+		if (e->animFrame == max - 1)
+			e->state = STATE_DEAD;
+		break;
+
+	case STATE_DEAD:
+		e->draw = _dyingGfx[_dyingFrames - 1];
+		max = _dyingFrames;
+		break;
+
+	case STATE_GOODJOB:
+		e->draw = _goodjobGfx;
+		max = 1;
+		break;
+
+		//
+		// floating stuff uses the "standup" frames for animating the float
+		//
+	case STATE_FLOATING:
+	case STATE_FLOATDOWN:
+	case STATE_FLOATUP:
+	case STATE_FLOATLEFT:
+	case STATE_FLOATRIGHT:
+		e->draw = e->blinkGfx[e->animFrame];
+		max = e->blinkFrames;
+		break;
+	case STATE_MELTED:
+	case STATE_EXPLODING:
+		e->draw = e->special1Gfx[e->animFrame];
+		max = e->special1Frames;
+		if (e->type == AI_BOOMBARREL) {			// while exploding, call this function
+			aiBarrelExplodeSpread(e);
+			if (e->animFrame == max - 1) {
+				removeEntity(e);
+				return;
+			}
+		}
+		break;
+
+		//
+		// ICEPUFF states
+		//
+	case STATE_ICEP_PEEK:
+		e->draw = e->blinkGfx[e->animFrame];
+		max = e->blinkFrames;
+		break;
+	case STATE_ICEP_APPEAR:
+		e->draw = e->standupGfx[e->animFrame];
+		max = e->standupFrames;
+		break;
+	case STATE_ICEP_THROWDOWN:
+		e->draw = e->standdownGfx[e->animFrame];
+		max = e->standdownFrames;
+		break;
+	case STATE_ICEP_THROWRIGHT:
+		e->draw = e->standrightGfx[e->animFrame];
+		max = e->standrightFrames;
+		break;
+	case STATE_ICEP_THROWLEFT:
+		e->draw = e->standleftGfx[e->animFrame];
+		max = e->standleftFrames;
+		break;
+	case STATE_ICEP_DISAPPEAR:
+		e->draw = e->special1Gfx[e->animFrame];
+		max = e->special1Frames;
+		break;
+
+		//
+		// MEERKAT states
+		//
+	case STATE_MEER_MOVE:
+		e->draw = e->standdownGfx[e->animFrame];
+		max = e->standdownFrames;
+		break;
+	case STATE_MEER_APPEAR:
+		e->draw = e->standleftGfx[e->animFrame];
+		max = e->standleftFrames;
+		break;
+	case STATE_MEER_BITE:
+		e->draw = e->standrightGfx[e->animFrame];
+		max = e->standrightFrames;
+		break;
+	case STATE_MEER_DISAPPEAR:
+		e->draw = e->standupGfx[e->animFrame];
+		max = e->standupFrames;
+		break;
+	case STATE_MEER_LOOK:
+		e->draw = e->movedownGfx[e->animFrame];
+		max = e->movedownFrames;
+		break;
+
+		//
+		// DIVERTER spawning states
+		//
+	case STATE_DIVERTER_BL:
+		e->draw = e->standdownGfx[e->animFrame];
+		max = e->standdownFrames;
+		break;
+	case STATE_DIVERTER_BR:
+		e->draw = e->standupGfx[e->animFrame];
+		max = e->standupFrames;
+		break;
+	case STATE_DIVERTER_TL:
+		e->draw = e->standleftGfx[e->animFrame];
+		max = e->standleftFrames;
+		break;
+	case STATE_DIVERTER_TR:
+		e->draw = e->standrightGfx[e->animFrame];
+		max = e->standrightFrames;
+		break;
+
+		//
+		// DOLLY states
+		// angry[4] = standright[4]
+		// kissright[4]/kissleft[4] = standleft[8]
+		// panic[4]/laugh[4] = standdown[8]
+		// dollyuseright[5] = special1[5]
+		//
+	case STATE_ANGRY:
+		e->draw = e->standrightGfx[e->animFrame];
+		max = 2;
+		break;
+	case STATE_KISSRIGHT:
+		e->draw = e->standleftGfx[e->animFrame];
+		max = 4;
+		break;
+	case STATE_KISSLEFT:
+		e->draw = e->standleftGfx[e->animFrame + 4];
+		max = 4;
+		break;
+	case STATE_PANIC:
+		e->draw = e->standdownGfx[e->animFrame];
+		max = 2;
+		break;
+	case STATE_LAUGH:
+		e->draw = e->standdownGfx[e->animFrame + 4];
+		max = 2;
+		break;
+	case STATE_DOLLYUSERIGHT:
+		e->draw = e->special1Gfx[e->animFrame];
+		max = e->special1Frames;
+		break;
+
+		// SARGE yelling
+	case STATE_YELL:
+		e->draw = e->special1Gfx[e->animFrame];
+		max = e->special1Frames;
+		break;
+	default:
+		warning("AI-FUNCS: animEntFrames: Unintended State");
+		break;
+	}
+
+	// Cycle animation frames
+	if (e->animDelay-- > 0)
+		return;
+	e->animDelay = e->animCycle;
+
+	e->animFrame++;
+	if (e->animFrame == max) {
+		e->animFrame = 0;
+	}
+}
+
 void AI::animLuaEntity(const char *initName, AIState st) {
 	for (Common::Array<AIEntity *>::iterator it = _ents->begin(); it != _ents->end(); it++) {
 		if (Common::matchString((*it)->entityName, initName)) {
