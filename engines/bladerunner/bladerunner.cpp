@@ -1164,7 +1164,7 @@ void BladeRunnerEngine::handleKeyUp(Common::Event &event) {
 		return;
 	}
 
-	if (_vqaIsPlaying) {
+	if (_vqaIsPlaying && event.kbd.keycode == Common::KEYCODE_ESCAPE) {
 		_vqaStopIsRequested = true;
 		_vqaIsPlaying = false;
 
