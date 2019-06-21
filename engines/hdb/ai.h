@@ -30,6 +30,7 @@ namespace HDB {
 enum {
 	kMaxAnimFrames = 8,
 	kMaxDeathFrames = 12,
+	kMaxLevel2Ents = 60,
 	kMaxInventory = 10,
 	kMaxDeliveries = 5,
 	kMaxWaypoints = 10,
@@ -508,6 +509,17 @@ struct InvEnt {
 	InvEnt() : keep(0), ent(NULL) {}
 };
 
+struct AIEntLevel2 {
+	uint16 x;
+	uint16 y;
+	Tile *draw;
+	AIEntity *e;
+	void(*aiDraw)(AIEntity *e, int x, int y);
+	uint32 stunnedWait;
+
+	AIEntLevel2() : x(0), y(0), draw(NULL), e(NULL), aiDraw(NULL), stunnedWait(0) {}
+};
+
 struct Waypoint {
 	int x, y, level;
 
@@ -717,6 +729,9 @@ public:
 	int _numGems;
 	int _numGooCups;
 	int _numMonkeystones;
+
+	AIEntLevel2 *_entsLevel2[kMaxLevel2Ents];
+	int _numLevel2Ents;
 
 	InvEnt *_inventory[kMaxInventory];
 	int _numInventory;
