@@ -157,7 +157,9 @@ bool IMuseInternal::isMT32(int sound) {
 	case MKTAG('S', 'P', 'K', ' '):
 		return false;
 
-	case MKTAG('A', 'M', 'I', ' '):
+	case MKTAG('A', 'M', 'I', ' '): // Amiga
+		return false;
+
 	case MKTAG('R', 'O', 'L', ' '):
 		return true;
 
@@ -199,7 +201,9 @@ bool IMuseInternal::isMIDI(int sound) {
 	case MKTAG('S', 'P', 'K', ' '):
 		return false;
 
-	case MKTAG('A', 'M', 'I', ' '):
+	case MKTAG('A', 'M', 'I', ' '): // Amiga
+		return false;
+
 	case MKTAG('R', 'O', 'L', ' '):
 		return true;
 
@@ -236,7 +240,9 @@ bool IMuseInternal::supportsPercussion(int sound) {
 	case MKTAG('S', 'P', 'K', ' '):
 		return false;
 
-	case MKTAG('A', 'M', 'I', ' '):
+	case MKTAG('A', 'M', 'I', ' '): // Amiga
+		return false;
+
 	case MKTAG('R', 'O', 'L', ' '):
 		return true;
 

@@ -274,6 +274,7 @@ public:
 	virtual void volume(byte value) { controlChange(7, value); }
 	virtual void panPosition(byte value) { controlChange(10, value); }
 	virtual void pitchBendFactor(byte value) = 0;
+	virtual void transpose(int8 value) {}
 	virtual void detune(byte value) { controlChange(17, value); }
 	virtual void priority(byte value) { }
 	virtual void sustain(bool value) { controlChange(64, value ? 1 : 0); }

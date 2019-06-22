@@ -5,4 +5,4 @@ engines/scumm/input.cpp
 engines/scumm/scumm.cpp
 engines/scumm/players/player_v3m.cpp
 engines/scumm/players/player_v5m.cpp
-
+engines/scumm/imuse/drivers/amiga.cpp

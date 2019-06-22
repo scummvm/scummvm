@@ -32,6 +32,7 @@ MODULE_OBJS := \
 	imuse/pcspk.o \
 	imuse/sysex_samnmax.o \
 	imuse/sysex_scumm.o \
+	imuse/drivers/amiga.o \
 	input.o \
 	midiparser_ro.o \
 	object.o \
