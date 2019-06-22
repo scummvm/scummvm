@@ -214,15 +214,15 @@ void AI::processCines() {
 					g_hdb->useEntity((*it));
 				}
 			}
-			for (int i = 0; i < kMaxActions; i++) {
-				if (_actions[i].entityName && Common::matchString(_actions[i].entityName, "door1")) {
-					checkActionList(&_dummyPlayer, _actions[i].x1, _actions[i].y1, false);
-					checkActionList(&_dummyPlayer, _actions[i].x2, _actions[i].y2, false);
+			for (int k = 0; k < kMaxActions; k++) {
+				if (_actions[k].entityName && Common::matchString(_actions[k].entityName, "door1")) {
+					checkActionList(&_dummyPlayer, _actions[k].x1, _actions[k].y1, false);
+					checkActionList(&_dummyPlayer, _actions[k].x2, _actions[k].y2, false);
 				}
 			}
-			for (int i = 0;i < kMaxAutoActions;i++) {
-				if (_autoActions[i].entityName && Common::matchString(_autoActions[i].entityName, _cine[i]->string) && !_autoActions[i].activated)
-					checkAutoList(&_dummyPlayer, _autoActions[i].x, _autoActions[i].y);
+			for (int j = 0; j < kMaxAutoActions; j++) {
+				if (_autoActions[j].entityName && Common::matchString(_autoActions[j].entityName, _cine[i]->string) && !_autoActions[j].activated)
+					checkAutoList(&_dummyPlayer, _autoActions[j].x, _autoActions[j].y);
 			}
 			complete = true;
 			break;
