@@ -29,6 +29,7 @@ namespace HDB {
 
 enum {
 	kMaxAnimFrames = 8,
+	kMaxAnimTFrames = 16,
 	kMaxDeathFrames = 12,
 	kMaxLevel2Ents = 60,
 	kMaxInventory = 10,
@@ -304,6 +305,12 @@ enum AIState {
 	STATE_ENDSTATES
 };
 
+enum AnimSpeed {
+	ANIM_SLOW,
+	ANIM_NORMAL,
+	ANIM_FAST
+};
+
 enum CineType {
 	C_NO_COMMAND,
 	C_STOPCINE,
@@ -513,13 +520,6 @@ struct AIEntTypeInfo {
 
 extern AIEntTypeInfo aiEntList[];
 
-struct InvEnt {
-	uint16 keep;
-	AIEntity *ent;
-
-	InvEnt() : keep(0), ent(NULL) {}
-};
-
 struct AIEntLevel2 {
 	uint16 x;
 	uint16 y;
@@ -529,6 +529,30 @@ struct AIEntLevel2 {
 	uint32 stunnedWait;
 
 	AIEntLevel2() : x(0), y(0), draw(NULL), e(NULL), aiDraw(NULL), stunnedWait(0) {}
+};
+
+struct AnimTarget {
+	uint16 x, y;
+	uint16 start, end;
+	int16 vel;
+	uint16 animCycle;
+	uint16 animFrame;
+	bool killAuto; // Keep it alive if its an Auto?
+	bool inMap;
+	Tile *gfxList[kMaxAnimTFrames];
+
+	AnimTarget() : x(0), y(0), start(0), end(0), vel(0), animCycle(0), animFrame(0), killAuto(false), inMap(false) {
+		for (int i = 0; i < kMaxAnimTFrames;i++) {
+			gfxList[i] = new Tile;
+		}
+	}
+};
+
+struct InvEnt {
+	uint16 keep;
+	AIEntity *ent;
+
+	InvEnt() : keep(0), ent(NULL) {}
 };
 
 struct Waypoint {
@@ -881,6 +905,7 @@ private:
 
 	Common::Array<AIEntity *> *_ents;
 	Common::Array<AIEntity *> *_floats;
+	Common::Array<AnimTarget *> *_animTargets;
 	AIEntity *_player;
 
 	// Cinematics Variables
