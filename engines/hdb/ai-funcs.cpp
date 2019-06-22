@@ -512,6 +512,23 @@ AIEntity *AI::locateEntity(const char *luaName) {
 	return NULL;
 }
 
+AIEntity *AI::findEntity(int x, int y) {
+	for (Common::Array<AIEntity *>::iterator it = _ents->begin(); it != _ents->end(); it++) {
+		if ((*it)->tileX == x && (*it)->tileY == y) {
+			return *it;
+		}
+	}
+
+	for (Common::Array<AIEntity *>::iterator it = _floats->begin(); it != _floats->end(); it++) {
+		if ((*it)->tileX == x && (*it)->tileY == y) {
+			return *it;
+		}
+	}
+
+	warning("STUB: findEntity: Check for Laser");
+	return NULL;
+}
+
 void AI::removeEntity(AIEntity *e) {
 	_ents->erase(&e);
 }

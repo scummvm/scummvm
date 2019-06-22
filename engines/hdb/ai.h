@@ -615,6 +615,7 @@ public:
 	bool cacheEntGfx(AIEntity *e, bool init);
 	void stopEntity(AIEntity *e);
 	AIEntity *locateEntity(const char *luaName);
+	AIEntity *findEntity(int x, int y);
 	void removeEntity(AIEntity *e);
 	void setEntityGoal(AIEntity *e, int x, int y);
 	void initAllEnts();
