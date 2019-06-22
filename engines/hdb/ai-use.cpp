@@ -41,7 +41,7 @@ bool AI::useSwitch2(AIEntity *e, int x, int y, int targetX, int targetY) {
 }
 
 // Colored Keycard Switch
-bool AI::useLockedSwitch(AIEntity *e, int x, int y, int targetX, int targetY, int onTile, AIType item, char *keyerror) {
+bool AI::useLockedSwitch(AIEntity *e, int x, int y, int targetX, int targetY, int onTile, AIType item, const char *keyerror) {
 	warning("STUB: Define useLockedSwitch");
 	return false;
 }
