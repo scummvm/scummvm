@@ -215,7 +215,7 @@ void AI::processCines() {
 				}
 			}
 			for (int k = 0; k < kMaxActions; k++) {
-				if (_actions[k].entityName && Common::matchString(_actions[k].entityName, "door1")) {
+				if (_actions[k].entityName && Common::matchString(_actions[k].entityName, _cine[i]->string)) {
 					checkActionList(&_dummyPlayer, _actions[k].x1, _actions[k].y1, false);
 					checkActionList(&_dummyPlayer, _actions[k].x2, _actions[k].y2, false);
 				}
