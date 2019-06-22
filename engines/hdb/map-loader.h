@@ -92,6 +92,9 @@ public:
 	void setMapXY(int x, int y);
 	void centerMapXY(int x, int y);
 
+	// Check if one of the tiles in a range exists in the map on either layer
+	bool checkOneTileExistInRange(int tileIndex, int count);
+
 	int _mapX, _mapY; // Coordinates of Map
 	int _mapTileX, _mapTileY; // Tile Coordinates of Map
 	int _mapTileXOff, _mapTileYOff; // Tile Coordinates Offset (0-31)
