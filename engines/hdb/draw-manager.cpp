@@ -130,6 +130,15 @@ void DrawMan::updateFade() {
 	debug(9, "STUB: DrawMan::updateFade incomplete");
 }
 
+Picture *DrawMan::loadPic(const char *picName) {
+	Picture *pic = new Picture;
+	Common::SeekableReadStream *stream = g_hdb->_fileMan->findFirstData(picName, TYPE_PIC);
+	if (!stream)
+		return NULL;
+	pic->load(stream);
+	return pic;
+}
+
 Tile *DrawMan::getTile(int index) {
 
 	if (index < 0 || index > _numTiles) {
