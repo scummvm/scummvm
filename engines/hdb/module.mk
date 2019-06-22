@@ -1,11 +1,13 @@
 MODULE := engines/hdb
 
 MODULE_OBJS := \
-	ai-init.o \
-	ai-inventory.o \
 	ai-cinematic.o \
 	ai-funcs.o \
+	ai-init.o \
+	ai-inventory.o \
+	ai-lists.o \
 	ai-player.o \
+	ai-use.o \
 	ai-waypoint.o \
 	console.o \
 	draw-manager.o \
