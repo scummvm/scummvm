@@ -24,6 +24,33 @@
 
 namespace HDB {
 
+void AI::addWaypoint(int px, int py, int x, int y, int level) {
+	if (_numWaypoints >= kMaxWaypoints || (playerOnIce() && _player->goalX))
+		return;
+
+	// Check for duplicates
+	for (int i = 0;i < _numWaypoints;i++)
+		if (_waypoints[i].x == x && _waypoints[i].y == y)
+			return;
+
+	// Check if path is clear
+	int nx = x;
+	int ny = y;
+	if (!_numWaypoints) {
+		warning("STUB: addWaypoint: Setup First Waypoint");
+	} else {
+		warning("STUB: addWaypoint: Setup additional Waypoints");
+	}
+
+	if (_numWaypoints < kMaxWaypoints) {
+		_waypoints[_numWaypoints].x = nx;
+		_waypoints[_numWaypoints].y = ny;
+		_waypoints[_numWaypoints].level = level;
+		_numWaypoints++;
+		warning("STUB: addWaypoint: Play SND_MENU_SLIDER");
+	}
+}
+
 void AI::removeFirstWaypoint() {
 	if (!_numWaypoints)
 		return;
