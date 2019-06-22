@@ -99,9 +99,9 @@ uint CryOmni3DEngine_Versailles::displayOptions() {
 	showMouse(true);
 
 	uint hoveredBox = -1;
-	uint selectedBox;
+	uint selectedBox = -1;
 	int selectedMsg = 0;
-	uint volumeBox;
+	uint volumeBox = -1;
 	bool resetScreen = true;
 	bool forceEvents = true;
 
