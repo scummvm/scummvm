@@ -46,12 +46,12 @@ namespace Alan2 {
 
 /* The Amachine memory */
 Aword *memory;
-//static AcdHdr dummyHeader;    /* Dummy to use until memory allocated */
+//static AcdHdr dummyHeader;    // Dummy to use until memory allocated
 AcdHdr *header;
 
-int memTop;             /* Top of load memory */
+Aaddr memTop;           // Top of load memory
 
-int conjWord;           /* First conjunction in dictonary, for ',' */
+int conjWord;           // First conjunction in dictonary, for ','
 
 
 /* Amachine variables */
@@ -327,20 +327,22 @@ static void space() {
 
 */
 static void sayparam(int p) {
-	int i;
-
-	for (i = 0; i <= p; i++)
+	for (int i = 0; i <= p; i++) {
 		if (params[i].code == EOD)
 			syserr("Nonexistent parameter referenced.");
+	}
 
-	if (params[p].firstWord == EOD) /* Any words he used? */
+	// Any words he used?
+	if (params[p].firstWord == EOD) {
 		say(params[p].code);
-	else              /* Yes, so use them... */
-		for (i = params[p].firstWord; i <= params[p].lastWord; i++) {
+	} else {
+		// Yes, so use them...
+		for (uint i = params[p].firstWord; i <= params[p].lastWord; i++) {
 			just((char *)addrTo(dict[wrds[i]].wrd));
 			if (i < params[p].lastWord)
 				just(" ");
 		}
+	}
 }
 
 
@@ -539,7 +541,7 @@ Boolean exitto(int to, int from) {
 		return (FALSE); /* No exits */
 
 	for (ext = (ExtElem *) addrTo(locs[from - LOCMIN].exts); !endOfTable(ext); ext++)
-		if (ext->next == to)
+		if ((int)ext->next == to)
 			return (TRUE);
 
 	return (FALSE);
@@ -553,13 +555,13 @@ Boolean exitto(int to, int from) {
 
   */
 static int count(int cnt /* IN - the container to count */) {
-	int i, j = 0;
+	int j = 0;
 
-	for (i = OBJMIN; i <= OBJMAX; i++)
+	for (uint i = OBJMIN; i <= OBJMAX; i++)
 		if (in(i, cnt))
 			/* Then it's in this container also */
 			j++;
-	return (j);
+	return j;
 }
 
 
@@ -573,7 +575,7 @@ static int sumatr(
     Aword atr,         /* IN - the attribute to sum over */
     Aword cnt          /* IN - the container to sum */
 ) {
-	int i;
+	uint i;
 	int sum = 0;
 
 	for (i = OBJMIN; i <= OBJMAX; i++)
@@ -614,7 +616,7 @@ Boolean checklim(
 	if (cnts[props - CNTMIN].lims != 0) { /* Any limits at all? */
 		for (lim = (LimElem *) addrTo(cnts[props - CNTMIN].lims); !endOfTable(lim); lim++)
 			if (lim->atr == 0) {
-				if (count(cnt) >= lim->val) {
+				if (count(cnt) >= (int)lim->val) {
 					interpret(lim->stms);
 					return (TRUE);    /* Limit check failed */
 				}
@@ -683,7 +685,7 @@ void go(int dir) {
 	ext = (ExtElem *) addrTo(locs[cur.loc - LOCMIN].exts);
 	if (locs[cur.loc - LOCMIN].exts != 0)
 		while (!endOfTable(ext)) {
-			if (ext->code == dir) {
+			if ((int)ext->code == dir) {
 				ok = TRUE;
 				if (ext->checks != 0) {
 					if (trcflg) {
@@ -743,7 +745,7 @@ static AltElem *findalt(
 		return (NULL);
 
 	for (vrb = (VrbElem *) addrTo(vrbsadr); !endOfTable(vrb); vrb++)
-		if (vrb->code == cur.vrb) {
+		if ((int)vrb->code == cur.vrb) {
 			for (alt = (AltElem *) addrTo(vrb->alts); !endOfTable(alt); alt++)
 				if (alt->param == param || alt->param == 0)
 					return alt;
@@ -1026,7 +1028,7 @@ static char logfnm[256];
   checkvers()
 
  */
-static void checkvers(AcdHdr *header) {
+static void checkvers(AcdHdr *hdr) {
 	char vers[4];
 	char state[2];
 
@@ -1036,34 +1038,34 @@ static void checkvers(AcdHdr *header) {
 
 	/* Check version of .ACD file */
 	if (dbgflg) {
-		state[0] = header->vers[3];
+		state[0] = hdr->vers[3];
 		state[1] = '\0';
 		printf("<Version of '%s' is %d.%d(%d)%s>",
 		       advnam,
-		       (int)(header->vers[0]),
-		       (int)(header->vers[1]),
-		       (int)(header->vers[2]),
-		       (header->vers[3]) == 0 ? "" : state);
+		       (int)(hdr->vers[0]),
+		       (int)(hdr->vers[1]),
+		       (int)(hdr->vers[2]),
+		       (hdr->vers[3]) == 0 ? "" : state);
 		newline();
 	}
 
 	/* Compatible if version and revision match... */
-	if (strncmp(header->vers, vers, 2) != 0) {
+	if (strncmp(hdr->vers, vers, 2) != 0) {
 #ifdef V25COMPATIBLE
-		if (header->vers[0] == 2 && header->vers[1] == 5) /* Check for 2.5 version */
+		if (hdr->vers[0] == 2 && hdr->vers[1] == 5) /* Check for 2.5 version */
 			/* This we can convert later if needed... */;
 		else
 #endif
 #ifdef V27COMPATIBLE
-			if (header->vers[0] == 2 && header->vers[1] == 7) /* Check for 2.7 version */
+			if (hdr->vers[0] == 2 && hdr->vers[1] == 7) /* Check for 2.7 version */
 				/* This we can convert later if needed... */;
 			else
 #endif
 				if (errflg) {
 					char str[80];
 					sprintf(str, "Incompatible version of ACODE program. Game is %ld.%ld, interpreter %ld.%ld.",
-					        (long)(header->vers[0]),
-					        (long)(header->vers[1]),
+					        (long)(hdr->vers[0]),
+					        (long)(hdr->vers[1]),
 					        (long) alan.version.version,
 					        (long) alan.version.revision);
 					syserr(str);
@@ -1081,7 +1083,7 @@ static void checkvers(AcdHdr *header) {
 static void load() {
 	AcdHdr tmphdr;
 	Aword crc = 0;
-	int i;
+	uint i;
 	char err[100];
 
 	Aword *ptr = (Aword *)&tmphdr + 1;
@@ -1106,7 +1108,7 @@ static void load() {
 	memTop = tmphdr.size;
 	header = (AcdHdr *) addrTo(0);
 
-	if ((tmphdr.size * sizeof(Aword)) > codfil->size())
+	if ((int)(tmphdr.size * sizeof(Aword)) > codfil->size())
 		::error("Header size is greater than filesize");
 
 	codfil->seek(0);
@@ -1286,7 +1288,7 @@ static void movactor() {
 	ActElem *act = (ActElem *) &acts[cur.act - ACTMIN];
 
 	cur.loc = where(cur.act);
-	if (cur.act == HERO) {
+	if (cur.act == (int)HERO) {
 		parse();
 		if (g_vm->shouldQuit())
 			return;
@@ -1370,17 +1372,13 @@ static void movactor() {
 
   */
 static void openFiles() {
-	char str[256];
-	char *usr = "";
-	time_t tick;
-
 	{
 		char *s = strrchr(codfnm, '\\');
 		if (!s) s = strrchr(codfnm, '/');
 		g_vm->garglk_set_story_name(s ? s + 1 : codfnm);
 	}
 
-	/* Open Text file */
+	// Open Text file
 	strcpy(txtfnm, advnam);
 	strcat(txtfnm, ".dat");
 
@@ -1427,7 +1425,7 @@ void run() {
 		//    (void) setjmp(jmpbuf);
 
 		// Move all characters
-		for (cur.act = ACTMIN; cur.act <= ACTMAX; cur.act++) {
+		for (cur.act = ACTMIN; cur.act <= (int)ACTMAX; cur.act++) {
 			movactor();
 			if (g_vm->shouldQuit())
 				return;

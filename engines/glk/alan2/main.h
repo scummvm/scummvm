@@ -35,9 +35,9 @@ namespace Alan2 {
 
 #define MEMORYSIZE 1000L
 
-extern int memTop;      /* Top of memory */
+extern Aaddr memTop;        // Top of memory
 
-extern int conjWord;        /* First conjunction in dictionary */
+extern int conjWord;        // First conjunction in dictionary
 
 /* The Amachine memory */
 extern Aword *memory;

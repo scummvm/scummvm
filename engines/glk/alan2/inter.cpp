@@ -156,7 +156,7 @@ void interpret(Aaddr adr) {
 	pc = adr;
 	while (TRUE) {
 		if (stpflg) printf("\n%4x: ", pc);
-		if (pc > memTop)
+		if (pc > (int)memTop)
 			syserr("Interpreting outside program.");
 
 		i = memory[pc++];
@@ -484,11 +484,11 @@ void interpret(Aaddr adr) {
 				break;
 			}
 			case I_SAYSTR: {
-				Aptr adr;
-				adr = pop();
+				Aptr sayAdr;
+				sayAdr = pop();
 				if (stpflg)
-					printf("SAYSTR\t%5ld\t\t\"", adr);
-				saystr((char *)adr);
+					printf("SAYSTR\t%5ld\t\t\"", sayAdr);
+				saystr((char *)sayAdr);
 				if (stpflg)
 					printf("\"");
 				break;

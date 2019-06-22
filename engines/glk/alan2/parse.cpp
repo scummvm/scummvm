@@ -116,23 +116,24 @@ static int lookup(char wrd[]) {
 	return (EOD);
 }
 
-static int number(char token[]      /* IN - The string to convert to a number */) {
+/* IN - The string to convert to a number */
+static int number(char tok[]) {
 	int i;
 
-	sscanf(token, "%d", &i);
+	sscanf(tok, "%d", &i);
 	return i;
 }
 
-static char *gettoken(char *buf) {
+static char *gettoken(char *tokBuf) {
 	static char *marker;
 	static char oldch;
 
-	if (buf == NULL)
+	if (tokBuf == NULL)
 		*marker = oldch;
 	else
-		marker = buf;
+		marker = tokBuf;
 	while (*marker != '\0' && isSpace(*marker) && *marker != '\n') marker++;
-	buf = marker;
+	tokBuf = marker;
 	if (isISOLetter(*marker))
 		while (*marker && (isISOLetter(*marker) || isdigit(*marker) || *marker == '\'')) marker++;
 	else if (isdigit(*marker))
@@ -147,7 +148,7 @@ static char *gettoken(char *buf) {
 		marker++;
 	oldch = *marker;
 	*marker = '\0';
-	return buf;
+	return tokBuf;
 }
 
 static void agetline() {
@@ -263,10 +264,10 @@ static void nonverb() {
 }
 
 static void buildall(ParamElem list[]) {
-	int o, i = 0;
+	int i = 0;
 	Boolean found = FALSE;
 
-	for (o = OBJMIN; o <= OBJMAX; o++)
+	for (uint o = OBJMIN; o <= OBJMAX; o++)
 		if (isHere(o)) {
 			found = TRUE;
 			list[i].code = o;
@@ -508,7 +509,7 @@ static void resolve(ParamElem plst[]) {
 			}
 }
 
-static void tryMatch(ParamElem mlst[] /* OUT - List of params allowed by multiple */) {
+static void tryMatch(ParamElem matchLst[] /* OUT - List of params allowed by multiple */) {
 	ElmElem *elms;        /* Pointer to element list */
 	StxElem *stx;         /* Pointer to syntax list */
 	ClaElem *cla;         /* Pointer to class definitions */
@@ -523,7 +524,7 @@ static void tryMatch(ParamElem mlst[] /* OUT - List of params allowed by multipl
 	}
 
 	for (stx = stxs; !endOfTable(stx); stx++)
-		if (stx->code == vrbcode)
+		if ((int)stx->code == vrbcode)
 			break;
 	if (endOfTable(stx))
 		error(M_WHAT);
@@ -571,7 +572,7 @@ static void tryMatch(ParamElem mlst[] /* OUT - List of params allowed by multipl
 						   actual parameter values later
 						 */
 						params[paramidx++].code = 0;
-						lstcpy(mlst, tlst);
+						lstcpy(matchLst, tlst);
 						anyPlural = TRUE;
 					}
 				} else
@@ -591,8 +592,8 @@ static void tryMatch(ParamElem mlst[] /* OUT - List of params allowed by multipl
 	for (cla = (ClaElem *) addrTo(elms->next); !endOfTable(cla); cla++) {
 		if (params[cla->code - 1].code == 0) {
 			/* This was a multiple parameter, so check all and remove failing */
-			for (i = 0; mlst[i].code != EOD; i++) {
-				params[cla->code - 1] = mlst[i];
+			for (i = 0; matchLst[i].code != EOD; i++) {
+				params[cla->code - 1] = matchLst[i];
 				if (!claCheck(cla)) {
 					/* Multiple could be both an explicit list of params and an ALL */
 					if (allLength == 0) {
@@ -606,7 +607,7 @@ static void tryMatch(ParamElem mlst[] /* OUT - List of params allowed by multipl
 						interpret(cla->stms);
 						para();
 					}
-					mlst[i].code = 0;   /* In any case remove it from the list */
+					matchLst[i].code = 0;   /* In any case remove it from the list */
 				}
 			}
 			params[cla->code - 1].code = 0;
@@ -623,10 +624,10 @@ static void tryMatch(ParamElem mlst[] /* OUT - List of params allowed by multipl
 		if (!checked[p]) {
 			if (params[p].code == 0) {
 				/* This was a multiple parameter, check all and remove failing */
-				for (i = 0; mlst[i].code != EOD; i++)
-					if (mlst[i].code != 0) /* Skip any empty slots */
-						if (!isObj(mlst[i].code))
-							mlst[i].code = 0;
+				for (i = 0; matchLst[i].code != EOD; i++)
+					if (matchLst[i].code != 0) /* Skip any empty slots */
+						if (!isObj(matchLst[i].code))
+							matchLst[i].code = 0;
 			} else if (!isObj(params[p].code))
 				error(M_CANT0);
 		}
@@ -638,21 +639,21 @@ static void tryMatch(ParamElem mlst[] /* OUT - List of params allowed by multipl
 	if (allLength > 0) {
 		for (p = 0; params[p].code != 0; p++); /* Find multiple marker */
 		for (i = 0; i < allLength; i++) {
-			if (mlst[i].code != 0) {  /* Already empty? */
-				params[p] = mlst[i];
+			if (matchLst[i].code != 0) {  /* Already empty? */
+				params[p] = matchLst[i];
 				if (!possible())
-					mlst[i].code = 0; /* Remove this from list */
+					matchLst[i].code = 0; /* Remove this from list */
 			}
 		}
 		params[p].code = 0;     /* Restore multiple marker */
-		compact(mlst);
-		if (lstlen(mlst) == 0) {
+		compact(matchLst);
+		if (lstlen(matchLst) == 0) {
 			params[0].code = EOD;
 			error(M_WHAT_ALL);
 		}
 	} else if (anyPlural) {
-		compact(mlst);
-		if (lstlen(mlst) == 0)
+		compact(matchLst);
+		if (lstlen(matchLst) == 0)
 			/* If there where multiple parameters but non left, exit without a */
 			/* word, assuming we have already said enough */
 			error(MSGMAX);
@@ -660,8 +661,9 @@ static void tryMatch(ParamElem mlst[] /* OUT - List of params allowed by multipl
 	plural = anyPlural;       /* Remember that we found plural objects */
 }
 
-static void match(ParamElem *mlst /* OUT - List of params allowed by multiple */) {
-	tryMatch(mlst);           /* ... to understand what he said */
+/* OUT - List of params allowed by multiple */
+static void match(ParamElem *matchLst) {
+	tryMatch(matchLst);           /* ... to understand what he said */
 	if (wrds[wrdidx] != EOD && !isConj(wrds[wrdidx]))
 		error(M_WHAT);
 	if (wrds[wrdidx] != EOD)  /* More on this line? */

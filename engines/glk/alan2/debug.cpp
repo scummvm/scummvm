@@ -51,7 +51,7 @@ static void showatrs(Aword atradr) {
 
 static void showobjs() {
 	char str[80];
-	int obj;
+	uint obj;
 
 	output("OBJECTS:");
 	for (obj = OBJMIN; obj <= OBJMAX; obj++) {
@@ -103,7 +103,7 @@ static void showobj(int obj) {
 
 static void showcnts() {
 	char str[80];
-	int cnt;
+	uint cnt;
 #define  CNT (cnt-CNTMIN)
 
 	output("CONTAINERS:");
@@ -121,11 +121,11 @@ static void showcnts() {
 
 static void showcnt(int cnt) {
 	char str[80];
-	int i;
+	uint i;
 	Abool found = FALSE;
-#define  CNT (cnt-CNTMIN)
+#define  CNT (int)(cnt - CNTMIN)
 
-	if (cnt < CNTMIN || cnt > CNTMAX) {
+	if (cnt < (int)CNTMIN || cnt >(int)CNTMAX) {
 		sprintf(str, "Container number out of range. Between %ld and %ld, please.", (unsigned long) CNTMIN, (unsigned long) CNTMAX);
 		output(str);
 		return;
@@ -161,7 +161,7 @@ static void showcnt(int cnt) {
 
 static void showlocs() {
 	char str[80];
-	int loc;
+	uint loc;
 
 	output("LOCATIONS:");
 	for (loc = LOCMIN; loc <= LOCMAX; loc++) {
@@ -191,7 +191,7 @@ static void showloc(int loc) {
 
 static void showacts() {
 	char str[80];
-	int act;
+	uint act;
 
 	output("ACTORS:");
 	for (act = ACTMIN; act <= ACTMAX; act++) {
@@ -238,17 +238,17 @@ static void showact(int act) {
 }
 
 static void showevts() {
-	int evt, i;
+	int i;
 	char str[80];
 	Boolean scheduled;
 
 	output("EVENTS:");
-	for (evt = EVTMIN; evt <= EVTMAX; evt++) {
+	for (uint evt = EVTMIN; evt <= EVTMAX; evt++) {
 		sprintf(str, "$i%d (%s):", evt, (char *)addrTo(evts[evt - EVTMIN].stradr));
 		output(str);
 		scheduled = FALSE;
 		for (i = 0; i < etop; i++)
-			if ((scheduled = (eventq[i].event == evt)))
+			if ((scheduled = (eventq[i].event == (int)evt)))
 				break;
 		if (scheduled) {
 			sprintf(str, "Scheduled for +%d, at ", eventq[i].time - cur.tick);

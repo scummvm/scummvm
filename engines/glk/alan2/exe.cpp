@@ -54,14 +54,14 @@ void dscracts();
 
 
 void print(Aword fpos, Aword len) {
-	char str[2 * WIDTH];          /* String buffer */
-	int outlen = 0;               /* Current output length */
-	int ch;
+	char str[2 * WIDTH];              // String buffer
+	int outlen = 0;                   // Current output length
+	int ch = 0;
 	int i;
-	long savfp;                   /* Temporary saved text file position */
-	static Boolean printFlag = FALSE; /* Printing already? */
+	long savfp = 0;                   // Temporary saved text file position
+	static Boolean printFlag = FALSE; // Printing already?
 	Boolean savedPrintFlag = printFlag;
-	void *info;                   /* Saved decoding info */
+	void *info = nullptr;             // Saved decoding info
 
 
 	if (len == 0) return;
@@ -168,7 +168,6 @@ Boolean confirm(MsgKind msgno) {
 
 void quit() {
 	char buf[80];
-	char choices[10];
 
 	para();
 	while (!g_vm->shouldQuit()) {
@@ -203,7 +202,7 @@ void cancl(Aword evt) {
 	int i;
 
 	for (i = etop - 1; i >= 0; i--)
-		if (eventq[i].event == evt) {
+		if (eventq[i].event == (int)evt) {
 			while (i < etop - 1) {
 				eventq[i].event = eventq[i + 1].event;
 				eventq[i].time = eventq[i + 1].time;
@@ -406,12 +405,14 @@ void incr(Aword id, Aword atr, Aword step) {
 void decr(Aword id, Aword atr, Aword step) {
 	char str[80];
 
+	// TODO: Original did explicit negation on an unsigned value. Make sure that the
+	// casts added to ignore the warnings are okay
 	if (isObj(id))
-		incrobj(id, atr, -step);
+		incrobj(id, atr, static_cast<uint>(-(int)step));
 	else if (isLoc(id))
-		incrloc(id, atr, -step);
+		incrloc(id, atr, static_cast<uint>(-(int)step));
 	else if (isAct(id))
-		incract(id, atr, -step);
+		incract(id, atr, static_cast<uint>(-(int)step));
 	else {
 		sprintf(str, "Can't DECR item (%ld).", (unsigned long) id);
 		syserr(str);
@@ -519,9 +520,9 @@ Aint agrmax(Aword atr, Aword whr) {
 
 	for (i = OBJMIN; i <= OBJMAX; i++) {
 		if (isLoc(whr)) {
-			if (where(i) == whr && attribute(i, atr) > max)
+			if (where(i) == whr && (int)attribute(i, atr) > max)
 				max = attribute(i, atr);
-		} else if (objs[i - OBJMIN].loc == whr && attribute(i, atr) > max)
+		} else if (objs[i - OBJMIN].loc == whr && (int)attribute(i, atr) > max)
 			max = attribute(i, atr);
 	}
 	return (max);
@@ -605,7 +606,7 @@ static void locact(Aword act, Aword whr) {
 		cur.act = prevact;
 	}
 
-	if (cur.act != act)
+	if (cur.act != (int)act)
 		cur.loc = prevloc;
 }
 
@@ -634,13 +635,14 @@ static Abool objhere(Aword obj) {
 		if (isObj(objs[obj - OBJMIN].loc) || isAct(objs[obj - OBJMIN].loc))
 			return (isHere(objs[obj - OBJMIN].loc));
 		else /* If the container wasn't anywhere, assume where HERO is! */
-			return (where(HERO) == cur.loc);
-	} else
-		return (objs[obj - OBJMIN].loc == cur.loc);
+			return ((int)where(HERO) == cur.loc);
+	} else {
+		return (int)(objs[obj - OBJMIN].loc) == cur.loc;
+	}
 }
 
 static Aword acthere(Aword act) {
-	return (acts[act - ACTMIN].loc == cur.loc);
+	return (int)(acts[act - ACTMIN].loc) == cur.loc;
 }
 
 Abool isHere(Aword id) {
@@ -879,9 +881,9 @@ void use(Aword act, Aword scr) {
   */
 
 void list(Aword cnt) {
-	int i;
+	uint i;
 	Aword props;
-	Aword prevobj;
+	Aword prevobj = 0;
 	Boolean found = FALSE;
 	Boolean multiple = FALSE;
 
@@ -949,9 +951,7 @@ void list(Aword cnt) {
   */
 
 void empty(Aword cnt, Aword whr) {
-	int i;
-
-	for (i = OBJMIN; i <= OBJMAX; i++)
+	for (uint i = OBJMIN; i <= OBJMAX; i++)
 		if (in(i, cnt))
 			locate(i, whr);
 }
@@ -968,22 +968,21 @@ void empty(Aword cnt, Aword whr) {
 \*----------------------------------------------------------------------*/
 
 void dscrobjs() {
-	int i;
-	int prevobj;
+	uint i;
+	int prevobj = 0;
 	Boolean found = FALSE;
 	Boolean multiple = FALSE;
 
 	/* First describe everything here with its own description */
 	for (i = OBJMIN; i <= OBJMAX; i++)
-		if (objs[i - OBJMIN].loc == cur.loc &&
+		if ((int)objs[i - OBJMIN].loc == cur.loc &&
 		        objs[i - OBJMIN].describe &&
 		        objs[i - OBJMIN].dscr1)
 			describe(i);
 
 	/* Then list everything else here */
 	for (i = OBJMIN; i <= OBJMAX; i++)
-		if (objs[i - OBJMIN].loc == cur.loc &&
-		        objs[i - OBJMIN].describe) {
+		if ((int)objs[i - OBJMIN].loc == cur.loc && objs[i - OBJMIN].describe) {
 			if (!found) {
 				prmsg(M_SEEOBJ1);
 				sayarticle(i);
@@ -1016,11 +1015,10 @@ void dscrobjs() {
 }
 
 void dscracts() {
-	int i;
+	uint i;
 
 	for (i = HERO + 1; i <= ACTMAX; i++)
-		if (acts[i - ACTMIN].loc == cur.loc &&
-		        acts[i - ACTMIN].describe)
+		if ((int)acts[i - ACTMIN].loc == cur.loc && acts[i - ACTMIN].describe)
 			describe(i);
 
 	/* Set describe flag for all actors */
@@ -1029,7 +1027,7 @@ void dscracts() {
 }
 
 void look() {
-	int i;
+	uint i;
 
 	if (looking)
 		syserr("Recursive LOOK.");
