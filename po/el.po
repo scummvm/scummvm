@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-06-22 13:00+0200\n"
+"POT-Creation-Date: 2019-06-23 00:37+0200\n"
 "PO-Revision-Date: 2019-03-06 11:42+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -3260,12 +3260,12 @@ msgstr ""
 msgid "I don't understand.\n"
 msgstr "Δεν καταλαβαίνω την εντολή σου. "
 
-#: engines/glk/alan2/alan2.cpp:76
+#: engines/glk/alan2/alan2.cpp:160
 #, fuzzy
 msgid "This is too short to be a valid Alan2 file."
 msgstr "Αυτό είναι πολύ σύντομο για να είναι έγκυρο αρχείο Glulx."
 
-#: engines/glk/alan2/alan2.cpp:81
+#: engines/glk/alan2/alan2.cpp:165
 #, fuzzy
 msgid "This is not a valid Alan2 file."
 msgstr "Αυτό δεν είναι ένα έγκυρο αρχείο Glulx."
