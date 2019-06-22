@@ -615,6 +615,9 @@ public:
 	void drawEnts(int x, int y, int w, int h);
 	void animGrabbing();
 
+	void addAnimateTarget(int x, int y, int start, int end, AnimSpeed speed, bool killAuto, bool inMap, const char *tileName);
+	void animateTargets();
+
 	// List functions
 	void addToAutoList(int x, int y, const char *luaFuncInt, const char *luaFuncUse);
 	void autoDeactivate(int x, int y);
