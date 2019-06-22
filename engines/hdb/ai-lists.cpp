@@ -24,6 +24,116 @@
 
 namespace HDB {
 
+/*
+	Adds a tile to an animation list
+*/
+void AI::addAnimateTarget(int x, int y, int start, int end, AnimSpeed speed, bool killAuto, bool inMap, const char *tileName) {
+	AnimTarget *at = new AnimTarget;
+
+	at->x = x;
+	at->y = y;
+	at->start = start;
+	at->end = end;
+	at->killAuto = killAuto; // Doesn't actually kill it, deactivates it
+
+	// Set animCycle and animFrame as per speed
+	switch (speed) {
+	case ANIM_SLOW:
+		at->animCycle = 10;
+		at->animFrame = 10;
+		break;
+	case ANIM_NORMAL:
+		at->animCycle = 6;
+		at->animFrame = 6;
+		break;
+	case ANIM_FAST:
+		at->animCycle = 2;
+		at->animFrame = 2;
+		break;
+	}
+
+	// Set +1/-1 for tile anim direction
+	if ((end - start) > 0)
+		at->vel = 1;
+	else
+		at->vel = -1;
+
+	// Set Info if this is not an inMap animation
+	at->inMap = inMap;
+	if (!inMap) {
+
+		char name[32];
+		uint32 size;
+
+		for (int i = start;i <= end;i++) {
+			if (i < 10)
+				snprintf(name, 32, "%s0%d", tileName, i + 1);
+			else
+				snprintf(name, 32, "%s%d", tileName, i + 1);
+			debug("AddAnimateTarget: %s", name);
+			size = g_hdb->_fileMan->getLength(name, TYPE_TILE32);
+			at->gfxList[i] = g_hdb->_drawMan->getTileGfx(name, size);
+		}
+	}
+
+	// Insert in the beginning
+	_animTargets->insert_at(0, at);
+}
+
+/*
+	Animate _animTargets
+	Called every frame
+*/
+void AI::animateTargets() {
+	AnimTarget *at;
+	int mx, my;
+	int layer;
+
+	g_hdb->_map->getMapXY(&mx, &my);
+
+	for (Common::Array<AnimTarget *>::iterator it = _animTargets->begin(); it != _animTargets->end(); it++) {
+
+		at = *it;
+		// Draw Non-Map stuff every frame
+		if (!at->inMap)
+			at->gfxList[at->start]->drawMasked(at->x - mx, at->y - my);
+
+		// Frame Timer
+		if (at->animFrame-- < 1) {
+			at->animFrame = at->animCycle;
+
+			if (at->inMap) {
+				// Animate Map Tiles
+				layer = 0; // BG layer
+				if (!at->start == g_hdb->_map->getMapBGTileIndex(at->x, at->y))
+					layer = 1;
+
+				// Change Tile Anim
+				at->start += at->vel;
+
+				// Set it back in map
+				if (!layer)
+					g_hdb->_map->setMapBGTileIndex(at->x, at->y, at->start);
+				else
+					g_hdb->_map->setMapFGTileIndex(at->x, at->y, at->start);
+			} else {
+				// Animate non-map tiles
+				at->start++;
+			}
+
+			// Animation Finished ?
+			if (at->start == at->end) {
+
+				if (at->killAuto)
+					autoDeactivate(at->x, at->y);
+
+				_animTargets->erase(it);
+				continue;
+			}
+		}
+	}
+}
+
 void AI::addToAutoList(int x, int y, const char *luaFuncInit, const char *luaFuncUse) {
 
 	const char *get;
