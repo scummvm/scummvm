@@ -134,6 +134,94 @@ void AI::animateTargets() {
 	}
 }
 
+// Add an action location to the list of possible actions
+// Each action must be paired with another of the same number
+void AI::addToActionList(int actionIndex, int x, int y, char *luaFuncInt, char *luaFuncUse) {
+
+	if (!_actions[actionIndex].x1) {
+		_actions[actionIndex].x1 = x;
+		_actions[actionIndex].y1 = y;
+		if (luaFuncInt[0] != '*')
+			strcpy(_actions[actionIndex].luaFuncInit, luaFuncInt);
+		if (luaFuncInt[0] != '*')
+			strcpy(_actions[actionIndex].luaFuncUse, luaFuncUse);
+
+		if (_actions[actionIndex].luaFuncInit[0]) {
+			g_hdb->_lua->callFunction(_actions[actionIndex].luaFuncInit, 2);
+			strcpy(_actions[actionIndex].entityName, g_hdb->_lua->getStringOffStack());
+			strcpy(_actions[actionIndex].entityName, g_hdb->_lua->getStringOffStack());
+		}
+		return;
+	}
+
+	if (!_actions[actionIndex].x2) {
+		_actions[actionIndex].x2 = x;
+		_actions[actionIndex].y2 = y;
+		if (luaFuncInt[0] != '*')
+			strcpy(_actions[actionIndex].luaFuncInit, luaFuncInt);
+		if (luaFuncInt[0] != '*')
+			strcpy(_actions[actionIndex].luaFuncUse, luaFuncUse);
+
+		if (_actions[actionIndex].luaFuncInit[0]) {
+			g_hdb->_lua->callFunction(_actions[actionIndex].luaFuncInit, 2);
+			strcpy(_actions[actionIndex].entityName, g_hdb->_lua->getStringOffStack());
+			strcpy(_actions[actionIndex].entityName, g_hdb->_lua->getStringOffStack());
+		}
+		return;
+	}
+
+	warning("Adding a 3rd action to ACTION-%d is illegal", actionIndex);
+}
+
+// Checks if the location passed-in matches an action pair.
+// If so, activate it if possible. Returns TRUE for finding pair.
+bool AI::checkActionList(AIEntity *e, int x, int y, bool lookAndGrab) {
+	for (int i = 0;i < kMaxActions;i++) {
+		if ((_actions[i].x1 == x && _actions[i].y1 == y) || (_actions[i].x2 == x && _actions[i].y2 == y)) {
+			int targetX = _actions[i].x2;
+			int targetY = _actions[i].y2;
+			bool success;
+
+			// Choose target co-ordinates
+			if (x == targetX && y == targetY) {
+				targetX = _actions[i].x1;
+				targetY = _actions[i].y1;
+			}
+
+			// Is this an actual switch?
+			uint32 flags = g_hdb->_map->getMapFGTileFlags(x, y);
+			if (!flags)
+				flags = g_hdb->_map->getMapBGTileFlags(x, y);
+			if (!(flags & kFlagSolid) && (_player->tileX != x && _player->tileY != y))
+				return false;
+			// Closing on something?
+			if (findEntity(targetX, targetY))
+				return false;
+
+			success = activateAction(e, x, y, targetX, targetY);
+
+			// If successful, remove action from list
+			if (success) {
+				_actions[i].x1 = _actions[i].y1 = _actions[i].x2 = _actions[i].y2 = 0;
+
+				// Call Lua Use function if it exists
+				if (_actions[i].luaFuncUse[0])
+					g_hdb->_lua->callFunction(_actions[i].luaFuncUse, 0);
+			} else if (e == _player && !checkForTouchplate(x, y))
+				addWaypoint(e->tileX, e->tileY, x, y, e->level);
+
+			if (lookAndGrab && e == _player) {
+				lookAtXY(x, y);
+				animGrabbing();
+			}
+
+			return true;
+		}
+	}
+
+	return false;
+}
+
 void AI::addToAutoList(int x, int y, const char *luaFuncInit, const char *luaFuncUse) {
 
 	const char *get;
