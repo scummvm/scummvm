@@ -25,6 +25,23 @@
 
 namespace HDB {
 
+struct DialogInfo {
+	char		title[64];				// TITLE string
+	int			tileIndex;					// this is for a character picture
+	char		string[160];			// actual text in the dialog
+
+	bool		active;					// is it drawing or not?
+	int			x, y;					// where to draw dialog
+	int			width, height;			// size of the dialog itself
+	int			titleWidth;
+	Picture		*gfx;					// character tile (picture)
+	int			more;					// whether we want to draw the MORE icon or not
+	int			el, er, et, eb;			// saves the text edges
+	char		luaMore[64];			// the name of the function to call after clicking the MORE button
+
+	DialogInfo() : title(""), tileIndex(0), string(""), active(false), x(0), y(0), width(0), height(0), titleWidth(0), gfx(NULL), more(0), el(0), er(0), et(0), eb(0), luaMore("") {}
+};
+
 class Window {
 public:
 
@@ -41,6 +58,7 @@ public:
 
 private:
 
+	DialogInfo _dialogInfo;
 	uint32 _dialogDelay;	// Used for Cinematics
 
 	// Windows GFX
