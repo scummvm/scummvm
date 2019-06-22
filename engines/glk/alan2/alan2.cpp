@@ -91,6 +91,12 @@ Common::Error Alan2::writeGameData(Common::WriteStream *ws) {
 	return Common::kNoError;
 }
 
+// This works around gcc errors for passing packed structure fields
+void syncVal(Common::Serializer &s, uint32 *fld) {
+	uint32 &v = *fld;
+	s.syncAsUint32LE(v);
+}
+
 void Alan2::synchronizeSave(Common::Serializer &s) {
 	AtrElem *atr;
 	int i;
@@ -100,31 +106,31 @@ void Alan2::synchronizeSave(Common::Serializer &s) {
 
 	// Save actors
 	for (i = ACTMIN; i <= ACTMAX; ++i) {
-		s.syncAsSint32LE(acts[i-ACTMIN].loc);
-		s.syncAsSint32LE(acts[i-ACTMIN].script);
-		s.syncAsSint32LE(acts[i-ACTMIN].step);
-		s.syncAsSint32LE(acts[i-ACTMIN].count);
+		syncVal(s, &acts[i-ACTMIN].loc);
+		syncVal(s, &acts[i-ACTMIN].script);
+		syncVal(s, &acts[i-ACTMIN].step);
+		syncVal(s, &acts[i-ACTMIN].count);
 
 		if (acts[i-ACTMIN].atrs) {
 			for (atr = (AtrElem *)addrTo(acts[i-ACTMIN].atrs); !endOfTable(atr); ++atr)
-				s.syncAsSint32LE(atr->val);
+				syncVal(s, &atr->val);
 		}
 	}
 
 	// Sync locations
 	for (i = LOCMIN; i <= LOCMAX; ++i) {
-		s.syncAsSint32LE(locs[i-LOCMIN].describe);
+		syncVal(s, &locs[i-LOCMIN].describe);
 		if (locs[i-LOCMIN].atrs)
 			for (atr = (AtrElem *)addrTo(locs[i-LOCMIN].atrs); !endOfTable(atr); atr++)
-				s.syncAsSint32LE(atr->val);
+				syncVal(s, &atr->val);
 	}
 
 	// Sync objects
 	for (i = OBJMIN; i <= OBJMAX; ++i) {
-		s.syncAsSint32LE(objs[i-OBJMIN].loc);
+		syncVal(s, &objs[i-OBJMIN].loc);
 		if (objs[i-OBJMIN].atrs)
 			for (atr = (AtrElem *)addrTo(objs[i-OBJMIN].atrs); !endOfTable(atr); atr++)
-				s.syncAsSint32LE(atr->val);
+				syncVal(s, &atr->val);
 	}
 
 	// Sync the event queue
@@ -140,7 +146,7 @@ void Alan2::synchronizeSave(Common::Serializer &s) {
 
 	// Sync scores
 	for (i = 0; scores[i] != EOF; i++)
-		s.syncAsSint32LE(scores[i]);
+		syncVal(s, &scores[i]);
 }
 
 bool Alan2::is_gamefile_valid() {
