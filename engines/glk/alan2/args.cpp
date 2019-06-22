@@ -20,7 +20,6 @@
  *
  */
 
-#include <string>
 #include "glk/alan2/alan2.h"
 #include "glk/alan2/args.h"
 #include "glk/alan2/glkio.h"

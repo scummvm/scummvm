@@ -20,7 +20,6 @@
  *
  */
 
-#include <stdlib.h>
 #include "glk/alan2/main.h"
 #include "glk/alan2/decode.h"
 
