@@ -913,7 +913,7 @@ private:
 	bool useSwitch2(AIEntity *e, int x, int y, int targetX, int targetY);
 
 	// Colored Keycard Switch
-	bool useLockedSwitch(AIEntity *e, int x, int y, int targetX, int targetY, int onTile, AIType item, char *keyerror);
+	bool useLockedSwitch(AIEntity *e, int x, int y, int targetX, int targetY, int onTile, AIType item, const char *keyerror);
 	bool useLockedSwitchOn(AIEntity *e, int x, int y, int targetX, int targetY, int offTile, AIType item);
 
 	// Purple Cell Holder Switch
