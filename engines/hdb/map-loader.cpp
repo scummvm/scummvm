@@ -691,14 +691,20 @@ uint32 Map::getMapBGTileFlags(int x, int y) {
 	if (x < 0 || x >= _width || y < 0 || y >= _height) {
 		return 0;
 	}
-	return g_hdb->_drawMan->getTile(_background[y * _width + x])->_flags;
+	Tile* tile = g_hdb->_drawMan->getTile(_foreground[y * _width + x]);
+	if (tile)
+		return tile->_flags;
+	return 0;
 }
 
 uint32 Map::getMapFGTileFlags(int x, int y) {
 	if (x < 0 || x >= _width || y < 0 || y >= _height) {
 		return 0;
 	}
-	return g_hdb->_drawMan->getTile(_foreground[y * _width + x])->_flags;
+	Tile* tile = g_hdb->_drawMan->getTile(_foreground[y * _width + x]);
+	if (tile)
+		return tile->_flags;
+	return 0;
 }
 
 uint16 Map::getMapBGTileIndex(int x, int y) {
