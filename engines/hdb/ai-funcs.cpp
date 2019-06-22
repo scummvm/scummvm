@@ -1334,19 +1334,19 @@ void AI::lookAtXY(int x, int y) {
 	switch (_player->dir) {
 	case DIR_UP:
 		_player->state = STATE_STANDUP;
-		warning("STUB: Set _player->draw to Player standup_gfx");
+		_player->draw = _getGfx[DIR_UP];
 		break;
 	case DIR_DOWN:
 		_player->state = STATE_STANDDOWN;
-		warning("STUB: Set _player->draw to Player standdown_gfx");
+		_player->draw = _getGfx[DIR_DOWN];
 		break;
 	case DIR_LEFT:
 		_player->state = STATE_STANDLEFT;
-		warning("STUB: Set _player->draw to Player standleft_gfx");
+		_player->draw = _getGfx[DIR_LEFT];
 		break;
 	case DIR_RIGHT:
 		_player->state = STATE_STANDRIGHT;
-		warning("STUB: Set _player->draw to Player standright_gfx");
+		_player->draw = _getGfx[DIR_RIGHT];
 		break;
 	default:
 		warning("AI-FUNCS: lookAtXY: DIR_NONE");
