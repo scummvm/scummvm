@@ -13,7 +13,8 @@ MODULE_OBJS := \
 	file-manager.o \
 	hdb.o \
 	lua-script.o \
-	map-loader.o
+	map-loader.o \
+	window.o
 
 MODULE_DIRS += \
 	engines/hdb
