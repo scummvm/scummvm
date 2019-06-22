@@ -823,6 +823,9 @@ void AI::restartSystem() {
 	memset(_clubLeftGfx, NULL, kMaxAnimFrames * sizeof(Tile *));
 	memset(_clubRightGfx, NULL, kMaxAnimFrames * sizeof(Tile *));
 
+	// Clear the Action list
+	memset(_actions, 0, sizeof(_actions));
+
 	// Clear the Auto-Action list
 	memset(_autoActions, 0, sizeof(_autoActions));
 

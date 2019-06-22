@@ -35,6 +35,7 @@ enum {
 	kMaxInventory = 10,
 	kMaxDeliveries = 5,
 	kMaxWaypoints = 10,
+	kMaxActions = 20,
 	kMaxAutoActions = 30,
 	kPlayerMoveSpeed = 4,
 	kEnemyMoveSpeed = 2,
@@ -561,6 +562,16 @@ struct Waypoint {
 	Waypoint() : x(0), y(0), level(0) {}
 };
 
+struct ActionInfo {
+	uint16 x1, y1;
+	uint16 x2, y2;
+	char luaFuncInit[32];
+	char luaFuncUse[32];
+	char entityName[32];
+
+	ActionInfo() : x1(0), y1(0), x2(0), y2(0), luaFuncInit(""), luaFuncUse(""), entityName("") {}
+};
+
 struct AutoAction {
 	uint16 x, y;
 	bool activated;
@@ -874,6 +885,8 @@ public:
 	Waypoint _waypoints[kMaxWaypoints];
 	int _numWaypoints;
 	Tile *_waypointGfx[4]; // Animating waypoint gfx
+
+	ActionInfo *_actions[kMaxActions];
 
 	AutoAction *_autoActions[kMaxAutoActions];
 
