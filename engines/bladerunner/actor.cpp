@@ -493,9 +493,18 @@ bool Actor::loopWalk(const Vector3 &destination, int proximity, bool interruptib
 		_vm->playerGainsControl();
 	}
 
+#if BLADERUNNER_ORIGINAL_BUGS
 	if (!wasInterrupted && proximity == 0 && !_vm->_playerActorIdle) {
 		setAtXYZ(destination, _facing, true, false, false);
 	}
+#else
+	if (!wasInterrupted && proximity == 0
+	    && (_id == kActorMcCoy && !_vm->_playerActorIdle)
+	    && !isRetired()
+	) {
+		setAtXYZ(destination, _facing, true, false, false);
+	}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 
 	if (_id != kActorMcCoy) {
 		_vm->_mouse->enable();

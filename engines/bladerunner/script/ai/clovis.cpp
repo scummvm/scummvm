@@ -353,8 +353,13 @@ bool AIScriptClovis::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		} else {
 			Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeDie);
 		}
+#if BLADERUNNER_ORIGINAL_BUGS
 		Delay(3000);
 		Actor_Retired_Here(kActorMcCoy, 12, 48, true, kActorClovis);
+#else
+		Actor_Retired_Here(kActorMcCoy, 12, 48, true, kActorClovis);
+		Delay(3000);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		return true;
 
 	case kGoalClovisStartChapter5:

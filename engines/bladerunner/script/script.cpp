@@ -489,15 +489,29 @@ bool ScriptBase::Loop_Actor_Walk_To_Actor(int actorId, int otherActorId, int pro
 		run = true;
 	}
 
+#if BLADERUNNER_ORIGINAL_BUGS
 	_vm->_playerActorIdle = false;
+#else
+	if (actorId == kActorMcCoy) {
+		_vm->_playerActorIdle = false;
+	}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 
 	bool isRunning;
 	bool result = _vm->_actors[actorId]->loopWalkToActor(otherActorId, proximity, interruptible, run, true, &isRunning);
 
+#if BLADERUNNER_ORIGINAL_BUGS
 	if (_vm->_playerActorIdle) {
 		result = true;
 		_vm->_playerActorIdle = false;
 	}
+#else
+	if (actorId == kActorMcCoy && _vm->_playerActorIdle) {
+		result = true;
+		_vm->_playerActorIdle = false;
+	}
+#endif // BLADERUNNER_ORIGINAL_BUGS
+
 	if (isRunning) {
 		_vm->_runningActorId = actorId;
 	}
@@ -514,15 +528,29 @@ bool ScriptBase::Loop_Actor_Walk_To_Item(int actorId, int itemId, int proximity,
 		run = true;
 	}
 
+#if BLADERUNNER_ORIGINAL_BUGS
 	_vm->_playerActorIdle = false;
+#else
+	if (actorId == kActorMcCoy) {
+		_vm->_playerActorIdle = false;
+	}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 
 	bool isRunning;
 	bool result = _vm->_actors[actorId]->loopWalkToItem(itemId, proximity, interruptible, run, true, &isRunning);
 
+#if BLADERUNNER_ORIGINAL_BUGS
 	if (_vm->_playerActorIdle) {
 		result = true;
 		_vm->_playerActorIdle = false;
 	}
+#else
+	if (actorId == kActorMcCoy && _vm->_playerActorIdle) {
+		result = true;
+		_vm->_playerActorIdle = false;
+	}
+#endif // BLADERUNNER_ORIGINAL_BUGS
+
 	if (isRunning) {
 		_vm->_runningActorId = actorId;
 	}
@@ -539,15 +567,29 @@ bool ScriptBase::Loop_Actor_Walk_To_Scene_Object(int actorId, const char *object
 		run = true;
 	}
 
+#if BLADERUNNER_ORIGINAL_BUGS
 	_vm->_playerActorIdle = false;
+#else
+	if (actorId == kActorMcCoy) {
+		_vm->_playerActorIdle = false;
+	}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 
 	bool isRunning;
 	bool result = _vm->_actors[actorId]->loopWalkToSceneObject(objectName, proximity, interruptible, run, true, &isRunning);
 
+#if BLADERUNNER_ORIGINAL_BUGS
 	if (_vm->_playerActorIdle) {
 		result = true;
 		_vm->_playerActorIdle = false;
 	}
+#else
+	if (actorId == kActorMcCoy && _vm->_playerActorIdle) {
+		result = true;
+		_vm->_playerActorIdle = false;
+	}
+#endif // BLADERUNNER_ORIGINAL_BUGS
+
 	if (isRunning) {
 		_vm->_runningActorId = actorId;
 	}
@@ -564,15 +606,29 @@ bool ScriptBase::Loop_Actor_Walk_To_Waypoint(int actorId, int waypointId, int pr
 		run = true;
 	}
 
+#if BLADERUNNER_ORIGINAL_BUGS
 	_vm->_playerActorIdle = false;
+#else
+	if (actorId == kActorMcCoy) {
+		_vm->_playerActorIdle = false;
+	}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 
 	bool isRunning;
 	bool result = _vm->_actors[actorId]->loopWalkToWaypoint(waypointId, proximity, interruptible, run, true, &isRunning);
 
+#if BLADERUNNER_ORIGINAL_BUGS
 	if (_vm->_playerActorIdle) {
 		result = true;
 		_vm->_playerActorIdle = false;
 	}
+#else
+	if (actorId == kActorMcCoy && _vm->_playerActorIdle) {
+		result = true;
+		_vm->_playerActorIdle = false;
+	}
+#endif // BLADERUNNER_ORIGINAL_BUGS
+
 	if (isRunning) {
 		_vm->_runningActorId = actorId;
 	}
@@ -592,15 +648,30 @@ bool ScriptBase::Loop_Actor_Walk_To_XYZ(int actorId, float x, float y, float z, 
 			run = true;
 		}
 	}
+
+#if BLADERUNNER_ORIGINAL_BUGS
 	_vm->_playerActorIdle = false;
+#else
+	if (actorId == kActorMcCoy) {
+		_vm->_playerActorIdle = false;
+	}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 
 	bool isRunning;
 	bool result = _vm->_actors[actorId]->loopWalkToXYZ(Vector3(x, y, z), proximity, interruptible, run, true, &isRunning);
 
+#if BLADERUNNER_ORIGINAL_BUGS
 	if (_vm->_playerActorIdle) {
 		result = true;
 		_vm->_playerActorIdle = false;
 	}
+#else
+	if (actorId == kActorMcCoy && _vm->_playerActorIdle) {
+		result = true;
+		_vm->_playerActorIdle = false;
+	}
+#endif // BLADERUNNER_ORIGINAL_BUGS
+
 	if (isRunning) {
 		_vm->_runningActorId = actorId;
 	}
