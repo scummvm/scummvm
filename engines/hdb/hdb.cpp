@@ -47,6 +47,7 @@ HDBGame::HDBGame(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst
 	_lua = new LuaScript;
 	_map = new Map;
 	_ai = new AI;
+	_window = new Window;
 	_rnd = new Common::RandomSource("hdb");
 
 	DebugMan.addDebugChannel(kDebugExample1, "Example1", "This is just an example to test");
@@ -60,6 +61,7 @@ HDBGame::~HDBGame() {
 	delete _lua;
 	delete _map;
 	delete _ai;
+	delete _window;
 	delete _rnd;
 
 	DebugMan.clearAllDebugChannels();
@@ -83,6 +85,9 @@ bool HDBGame::init() {
 	}
 	if (!_lua->init()) {
 		error("LuaScript::init: Couldn't load the GLOBAL_LUA code.");
+	}
+	if (!_window->init()) {
+		error("Window::init: Couldn't initialize Window");
 	}
 
 	// REMOVE: Putting this here since Menu hasn't been implemented yet.
