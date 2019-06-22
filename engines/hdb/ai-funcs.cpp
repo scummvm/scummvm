@@ -569,7 +569,7 @@ void AI::initAllEnts() {
 	}
 
 	for (int i = 0; i < _numInventory; i++) {
-		AIEntity *temp = _inventory[i]->ent;
+		AIEntity *temp = _inventory[i].ent;
 
 		// Clear out all ptrs in entity before writing
 		for (int j = 0; i < kMaxAnimFrames; i++) {
@@ -1116,11 +1116,11 @@ void AI::drawEnts(int x, int y, int w, int h) {
 		if (e->type == AI_LASER || e->type == AI_DIVERTER) {
 			if (e->aiDraw) {
 				if (e->level == 2 && _numLevel2Ents < kMaxLevel2Ents) {
-					_entsLevel2[_numLevel2Ents]->aiDraw = e->aiDraw;
-					_entsLevel2[_numLevel2Ents]->x = x;
-					_entsLevel2[_numLevel2Ents]->y = y;
-					_entsLevel2[_numLevel2Ents]->e = e;
-					_entsLevel2[_numLevel2Ents]->stunnedWait = 0;
+					_entsLevel2[_numLevel2Ents].aiDraw = e->aiDraw;
+					_entsLevel2[_numLevel2Ents].x = x;
+					_entsLevel2[_numLevel2Ents].y = y;
+					_entsLevel2[_numLevel2Ents].e = e;
+					_entsLevel2[_numLevel2Ents].stunnedWait = 0;
 					_numLevel2Ents++;
 				} else {
 					e->aiDraw(e, x, y);
@@ -1132,12 +1132,12 @@ void AI::drawEnts(int x, int y, int w, int h) {
 			// If extra drawing func is present, call it
 			if (e->aiDraw && e->type != AI_LASER && e->type != AI_DIVERTER) {
 				if (e->level == 2 && _numLevel2Ents < kMaxLevel2Ents) {
-					_entsLevel2[_numLevel2Ents]->aiDraw = e->aiDraw;
-					_entsLevel2[_numLevel2Ents]->draw = e->draw;
-					_entsLevel2[_numLevel2Ents]->x = x;
-					_entsLevel2[_numLevel2Ents]->y = y;
-					_entsLevel2[_numLevel2Ents]->e = e;
-					_entsLevel2[_numLevel2Ents]->stunnedWait = 0;
+					_entsLevel2[_numLevel2Ents].aiDraw = e->aiDraw;
+					_entsLevel2[_numLevel2Ents].draw = e->draw;
+					_entsLevel2[_numLevel2Ents].x = x;
+					_entsLevel2[_numLevel2Ents].y = y;
+					_entsLevel2[_numLevel2Ents].e = e;
+					_entsLevel2[_numLevel2Ents].stunnedWait = 0;
 					_numLevel2Ents++;
 				} else
 					e->aiDraw(e, x, y);
@@ -1153,12 +1153,12 @@ void AI::drawEnts(int x, int y, int w, int h) {
 				break;
 			default:
 				if (e->level == 2 && _numLevel2Ents < kMaxLevel2Ents) {
-					_entsLevel2[_numLevel2Ents]->aiDraw = NULL;
-					_entsLevel2[_numLevel2Ents]->draw = e->draw;
-					_entsLevel2[_numLevel2Ents]->x = e->x - x + e->drawXOff;
-					_entsLevel2[_numLevel2Ents]->y = e->y - y + e->drawYOff;
-					_entsLevel2[_numLevel2Ents]->e = NULL;
-					_entsLevel2[_numLevel2Ents]->stunnedWait = e->stunnedWait;
+					_entsLevel2[_numLevel2Ents].aiDraw = NULL;
+					_entsLevel2[_numLevel2Ents].draw = e->draw;
+					_entsLevel2[_numLevel2Ents].x = e->x - x + e->drawXOff;
+					_entsLevel2[_numLevel2Ents].y = e->y - y + e->drawYOff;
+					_entsLevel2[_numLevel2Ents].e = NULL;
+					_entsLevel2[_numLevel2Ents].stunnedWait = e->stunnedWait;
 					_numLevel2Ents++;
 				} else {
 					if (e->draw)

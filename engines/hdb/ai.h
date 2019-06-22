@@ -876,19 +876,19 @@ public:
 	int			_kcHolderBlackOff;
 	int			_kcHolderBlackOn;
 
-	AIEntLevel2 *_entsLevel2[kMaxLevel2Ents];
+	AIEntLevel2 _entsLevel2[kMaxLevel2Ents];
 	int _numLevel2Ents;
 
-	InvEnt *_inventory[kMaxInventory];
+	InvEnt _inventory[kMaxInventory];
 	int _numInventory;
 
 	Waypoint _waypoints[kMaxWaypoints];
 	int _numWaypoints;
 	Tile *_waypointGfx[4]; // Animating waypoint gfx
 
-	ActionInfo *_actions[kMaxActions];
+	ActionInfo _actions[kMaxActions];
 
-	AutoAction *_autoActions[kMaxAutoActions];
+	AutoAction _autoActions[kMaxAutoActions];
 
 	// Virtual Player
 	AIEntity _dummyPlayer;
