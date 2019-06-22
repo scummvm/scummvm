@@ -578,6 +578,7 @@ public:
 	void animEntFrames(AIEntity *e);
 	void animLuaEntity(const char *initName, AIState st);
 	void drawEnts(int x, int y, int w, int h);
+	void animGrabbing();
 
 	bool checkFloating(int x, int y);
 
