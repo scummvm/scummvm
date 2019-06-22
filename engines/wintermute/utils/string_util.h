@@ -51,13 +51,7 @@ public:
 	static AnsiString toString(int val);
 
 private:
-	static uint32* getCharsetTable(TTextCharset charset);
-	static uint32 _ansiToUTF32[32];
-	static uint32 _cp1250ToUTF32[128];
-	static uint32 _cp1251ToUTF32[128];
-	static uint32 _cp1253ToUTF32[128];
-	static uint32 _cp1255ToUTF32[128];
-	static uint32 _cp1257ToUTF32[128];
+	static Common::CodePage mapCodePage(TTextCharset charset);
 };
 
 } // End of namespace Wintermute
