@@ -1220,6 +1220,13 @@ void AI::animGrabbing() {
 	_player->animFrame = 5;
 }
 
+int AI::checkForTouchplate(int x, int y) {
+	int tileIndex = g_hdb->_map->getMapBGTileIndex(x, y);
+	if (tileIndex == _touchplateOff || tileIndex == _templeTouchpOff)
+		return tileIndex;
+	return 0;
+}
+
 bool AI::checkFloating(int x, int y) {
 	for (Common::Array<AIEntity *>::iterator it = _floats->begin(); it != _floats->end(); it++) {
 		if ((*it)->tileX == x && (*it)->tileY == y)
