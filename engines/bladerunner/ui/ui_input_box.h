@@ -55,7 +55,6 @@ public:
 	void show();
 	void hide();
 
-	void handleKeyUp(const Common::KeyState &kbd) override;
 	void handleKeyDown(const Common::KeyState &kbd) override;
 
 private:

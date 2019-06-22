@@ -1118,7 +1118,10 @@ void BladeRunnerEngine::handleEvents() {
 			break;
 
 		case Common::EVENT_KEYDOWN:
-			handleKeyDown(event);
+			// Process the actual key press only and filter out repeats
+			if (!event.kbdRepeat) {
+				handleKeyDown(event);
+			}
 			break;
 
 		case Common::EVENT_LBUTTONUP:
@@ -1156,13 +1159,6 @@ void BladeRunnerEngine::handleEvents() {
 }
 
 void BladeRunnerEngine::handleKeyUp(Common::Event &event) {
-	if (_actorIsSpeaking && event.kbd.keycode == Common::KEYCODE_RETURN) {
-		_actorSpeakStopIsRequested = true;
-		_actorIsSpeaking = false;
-
-		return;
-	}
-
 	if (!playerHasControl() || _isWalkingInterruptible) {
 		return;
 	}
@@ -1170,44 +1166,6 @@ void BladeRunnerEngine::handleKeyUp(Common::Event &event) {
 	if (_kia->isOpen()) {
 		_kia->handleKeyUp(event.kbd);
 		return;
-	}
-
-	if (_spinner->isOpen()) {
-		return;
-	}
-
-	if (_elevator->isOpen()) {
-		return;
-	}
-
-	if (_esper->isOpen()) {
-		return;
-	}
-
-	if (_vk->isOpen()) {
-		return;
-	}
-
-	if (_dialogueMenu->isOpen()) {
-		return;
-	}
-
-	if (_scores->isOpen()) {
-		return;
-	}
-
-	switch (event.kbd.keycode) {
-		case Common::KEYCODE_TAB:
-			_kia->openLastOpened();
-			break;
-		case Common::KEYCODE_ESCAPE:
-			_kia->open(kKIASectionSettings);
-			break;
-		case Common::KEYCODE_SPACE:
-			_combat->change();
-			break;
-		default:
-			break;
 	}
 }
 
@@ -1218,9 +1176,16 @@ void BladeRunnerEngine::handleKeyDown(Common::Event &event) {
 		return;
 	}
 
-	if (_vqaIsPlaying && !event.kbdRepeat && (event.kbd.keycode == Common::KEYCODE_ESCAPE || event.kbd.keycode == Common::KEYCODE_RETURN)) {
+	if (_vqaIsPlaying && (event.kbd.keycode == Common::KEYCODE_ESCAPE || event.kbd.keycode == Common::KEYCODE_RETURN)) {
 		_vqaStopIsRequested = true;
 		_vqaIsPlaying = false;
+
+		return;
+	}
+
+	if (_actorIsSpeaking && (event.kbd.keycode == Common::KEYCODE_ESCAPE || event.kbd.keycode == Common::KEYCODE_RETURN)) {
+		_actorSpeakStopIsRequested = true;
+		_actorIsSpeaking = false;
 
 		return;
 	}
@@ -1276,6 +1241,15 @@ void BladeRunnerEngine::handleKeyDown(Common::Event &event) {
 			break;
 		case Common::KEYCODE_F10:
 			_kia->open(kKIASectionQuit);
+			break;
+		case Common::KEYCODE_TAB:
+			_kia->openLastOpened();
+			break;
+		case Common::KEYCODE_ESCAPE:
+			_kia->open(kKIASectionSettings);
+			break;
+		case Common::KEYCODE_SPACE:
+			_combat->change();
 			break;
 		default:
 			break;
