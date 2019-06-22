@@ -54,7 +54,7 @@ namespace OpenGL {
 
 OpenGLGraphicsManager::OpenGLGraphicsManager()
     : _currentState(), _oldState(), _transactionMode(kTransactionNone), _screenChangeID(1 << (sizeof(int) * 8 - 2)),
-      _pipeline(nullptr),
+      _pipeline(nullptr), _stretchMode(STRETCH_FIT),
       _defaultFormat(), _defaultFormatAlpha(),
       _gameScreen(nullptr), _gameScreenShakeOffset(0), _overlay(nullptr),
       _cursor(nullptr),
@@ -88,6 +88,7 @@ bool OpenGLGraphicsManager::hasFeature(OSystem::Feature f) const {
 	case OSystem::kFeatureAspectRatioCorrection:
 	case OSystem::kFeatureCursorPalette:
 	case OSystem::kFeatureFilteringMode:
+	case OSystem::kFeatureStretchMode:
 		return true;
 
 	case OSystem::kFeatureOverlaySupportsAlpha:
@@ -233,6 +234,54 @@ Common::List<Graphics::PixelFormat> OpenGLGraphicsManager::getSupportedFormats()
 	return formats;
 }
 #endif
+
+namespace {
+const OSystem::GraphicsMode glStretchModes[] = {
+	{"center", _s("Center"), STRETCH_CENTER},
+	{"pixel-perfect", _s("Pixel-perfect scaling"), STRETCH_INTEGRAL},
+	{"fit", _s("Fit to window"), STRETCH_FIT},
+	{"stretch", _s("Stretch to window"), STRETCH_STRETCH},
+	{nullptr, nullptr, 0}
+};
+
+} // End of anonymous namespace
+
+const OSystem::GraphicsMode *OpenGLGraphicsManager::getSupportedStretchModes() const {
+	return glStretchModes;
+}
+
+int OpenGLGraphicsManager::getDefaultStretchMode() const {
+	return STRETCH_FIT;
+}
+
+bool OpenGLGraphicsManager::setStretchMode(int mode) {
+	assert(getTransactionMode() != kTransactionNone);
+
+	if (mode == _stretchMode)
+		return true;
+
+	// Check this is a valid mode
+	const OSystem::GraphicsMode *sm = getSupportedStretchModes();
+	bool found = false;
+	while (sm->name) {
+		if (sm->id == mode) {
+			found = true;
+			break;
+		}
+		sm++;
+	}
+	if (!found) {
+		warning("unknown stretch mode %d", mode);
+		return false;
+	}
+
+	_stretchMode = mode;
+	return true;
+}
+
+int OpenGLGraphicsManager::getStretchMode() const {
+	return _stretchMode;
+}
 
 void OpenGLGraphicsManager::beginGFXTransaction() {
 	assert(_transactionMode == kTransactionNone);
