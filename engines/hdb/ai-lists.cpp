@@ -105,6 +105,7 @@ void AI::animateTargets() {
 			if (at->inMap) {
 				// Animate Map Tiles
 				layer = 0; // BG layer
+				warning("FIXME: Ambigious animateTargets() code.");
 				if (!at->start == g_hdb->_map->getMapBGTileIndex(at->x, at->y))
 					layer = 1;
 
