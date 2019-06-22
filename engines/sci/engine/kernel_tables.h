@@ -866,6 +866,7 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_DUMMY(PlayBack),        SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
 	{ MAP_DUMMY(DbugStr),         SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
 	// Used in Kawa's SCI11+
+	{ MAP_CALL(KawaDbugStr),      SIG_SCI11, SIGFOR_ALL,    "(.*)",                  NULL,            NULL },
 	{ MAP_CALL(KawaHacks),        SIG_SCI11, SIGFOR_ALL,    "(.*)",                  NULL,            NULL },
 
 	// =======================================================================================================
