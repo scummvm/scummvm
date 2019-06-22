@@ -139,8 +139,7 @@ void AI::addToAutoList(int x, int y, const char *luaFuncInit, const char *luaFun
 	const char *get;
 
 	for (int i = 0;i < kMaxAutoActions;i++) {
-		if (!_autoActions[i]) {
-			_autoActions[i] = new AutoAction;
+		if (!_autoActions[i]->x) {
 			_autoActions[i]->x = x;
 			_autoActions[i]->y = y;
 			_autoActions[i]->activated = false;
