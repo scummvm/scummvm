@@ -224,7 +224,9 @@ enum CodePage {
 	kWindows1250,
 	kWindows1251,
 	kWindows1252,
-	kWindows1255
+	kWindows1253,
+	kWindows1255,
+	kWindows1257
 };
 
 U32String convertToU32String(const char *str, CodePage page = kUtf8);
