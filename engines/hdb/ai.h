@@ -609,6 +609,7 @@ public:
 	bool init();
 	void clearPersistent();
 	void restartSystem();
+	void initAnimInfo();
 
 	// Entity Functions
 	AIEntity *spawn(AIType type, AIDir dir, int x, int y, char *funcInit, char *funcAction, char *funcUse, AIDir dir2, int level, int value1, int value2, int callInit);
