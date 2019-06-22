@@ -215,10 +215,12 @@ void AI::processCines() {
 				}
 			}
 			warning("STUB: PROCESSCINES: USEENTITY: CheckActionList required;");
+#if 0
 			for (int i = 0;i < kMaxAutoActions;i++) {
 				if (Common::matchString(_autoActions[i].entityName, _cine[i]->string) && !_autoActions[i].activated)
 					checkAutoList(&_dummyPlayer, _autoActions[i].x, _autoActions[i].y);
 			}
+#endif
 			complete = true;
 			break;
 		case C_FADEIN:
