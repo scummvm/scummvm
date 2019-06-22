@@ -264,6 +264,7 @@ Common::Error HDBGame::run() {
 	}
 
 	_map->load(mapStream);
+	_ai->initAnimInfo();
 
 #if 0
 	lua->executeFile("test.lua");
