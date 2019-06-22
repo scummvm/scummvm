@@ -77,11 +77,11 @@ bool HDBGame::init() {
 	if (!_fileMan->openMPC(getGameFile())) {
 		error("FileMan::openMPC: Cannot find the hyperspace.mpc data file.");
 	}
-	if (!_ai->init()) {
-		error("AI::init: Couldn't initialize AI");
-	}
 	if (!_drawMan->init()) {
 		error("DrawMan::init: Couldn't initialize DrawMan");
+	}
+	if (!_ai->init()) {
+		error("AI::init: Couldn't initialize AI");
 	}
 	if (!_lua->init()) {
 		error("LuaScript::init: Couldn't load the GLOBAL_LUA code.");
