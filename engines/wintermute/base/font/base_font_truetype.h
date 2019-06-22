@@ -141,6 +141,7 @@ private:
 	bool _isStriked;
 	int32 _fontHeight;
 	char *_fontFile;
+	TTextCharset _charset;
 
 	BaseArray<BaseTTFontLayer *> _layers;
 	void clearCache();
