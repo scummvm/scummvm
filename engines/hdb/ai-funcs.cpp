@@ -1209,7 +1209,7 @@ void AI::animGrabbing() {
 		_player->state == STATE_GRABRIGHT)
 		return;
 
-	AIState s;
+	AIState s = STATE_NONE;
 
 	switch (_player->dir) {
 	case DIR_UP:
