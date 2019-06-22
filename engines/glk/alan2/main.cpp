@@ -22,39 +22,22 @@
 
 #define V27COMPATIBLE
 
-#include "glk/alan2/sysdep.h"
-
-#include "glk/alan2/types.h"
-#include "glk/alan2/main.h"
-
-//#include <time.h>
-#ifdef USE_READLINE
-#include "glk/alan2/readline.h"
-#endif
-
-#ifdef HAVE_SHORT_FILENAMES
-#include "glk/alan2/av.h"
-#else
-#include "glk/alan2/alan_version.h"
-#endif
-
-#include "glk/alan2/args.h"
-#include "glk/alan2/parse.h"
-#include "glk/alan2/inter.h"
-#include "glk/alan2/rules.h"
-#ifdef REVERSED
-#include "glk/alan2/reverse.h"
-#endif
-#include "glk/alan2/debug.h"
-#include "glk/alan2/stack.h"
-#include "glk/alan2/exe.h"
-#include "glk/alan2/term.h"
-
-#ifdef GLK
-#include "common/file.h"
 #include "glk/alan2/alan2.h"
+#include "glk/alan2/alan_version.h"
+#include "glk/alan2/args.h"
+#include "glk/alan2/debug.h"
+#include "glk/alan2/exe.h"
 #include "glk/alan2/glkio.h"
-#endif
+#include "glk/alan2/inter.h"
+#include "glk/alan2/main.h"
+#include "glk/alan2/parse.h"
+#include "glk/alan2/reverse.h"
+#include "glk/alan2/rules.h"
+#include "glk/alan2/stack.h"
+#include "glk/alan2/sysdep.h"
+#include "glk/alan2/types.h"
+#include "glk/alan2/term.h"
+#include "common/file.h"
 
 namespace Glk {
 namespace Alan2 {
@@ -132,45 +115,12 @@ Boolean skipsp = FALSE;
 
  */
 void terminate(int code) {
-#ifdef __amiga__
-#ifdef AZTEC_C
-#include <fcntl.h>
-  extern struct _dev *_devtab;
-  char buf[85];
-  
-  if (con) { /* Running from WB, created a console so kill it */
-    /* Running from WB, so we created a console and
-       hacked the Aztec C device table to use it for all I/O
-       so now we need to make it close it (once!) */
-    _devtab[1].fd = _devtab[2].fd = 0;
-  } else
-#else
-  /* Geek Gadgets GCC */
-#include <workbench/startup.h>
-#include <clib/dos_protos.h>
-#include <clib/intuition_protos.h>
-
-  if (_WBenchMsg != NULL) {
-    Close(window);
-    if (_WBenchMsg->sm_ArgList != NULL)
-      UnLock(CurrentDir(cd));
-  } else
-#endif
-#endif
     newline();
   free(memory);
   if (logflg)
     fclose(logfil);
 
-#ifdef __MWERKS__
-  printf("Command-Q to close window.");
-#endif
-
-#ifdef GLK
   g_vm->glk_exit();
-#else
-  exit(code);
-#endif
 }
 
 /*======================================================================
@@ -182,9 +132,8 @@ void usage() {
   printf("Usage:\n\n");
   printf("    %s [<switches>] <adventure>\n\n", PROGNAME);
   printf("where the possible optional switches are:\n");
-#ifdef GLK
   g_vm->glk_set_style(style_Preformatted);
-#endif
+
   printf("    -v    verbose mode\n");
   printf("    -l    log player commands and game output to a file\n");
   printf("    -i    ignore version and checksum errors\n");
@@ -192,9 +141,7 @@ void usage() {
   printf("    -d    enter debug mode\n");
   printf("    -t    trace game execution\n");
   printf("    -s    single instruction trace\n");
-#ifdef GLK
   g_vm->glk_set_style(style_Normal);
-#endif
 }
 
 
@@ -206,34 +153,7 @@ void usage() {
 
  */
 void syserr(const char *str) {
-#ifdef GLK
 	::error("%s", str);
-#else
-  output("$n$nAs you enter the twilight zone of Adventures, you stumble \
-and fall to your knees. In front of you, you can vaguely see the outlines \
-of an Adventure that never was.$n$nSYSTEM ERROR: ");
-  output(str);
-  output("$n$n");
-
-  if (logflg)
-    fclose(logfil);
-  newline();
-
-#ifdef __amiga__
-#ifdef AZTEC_C
-  {
-    char buf[80];
-
-    if (con) { /* Running from WB, wait for user ack. */
-      printf("press RETURN to quit");
-      gets(buf);
-    }
-  }
-#endif
-#endif
-
-  terminate(0);
-#endif
 }
 
 
@@ -263,7 +183,6 @@ void error(MsgKind msgno /* IN - The error message number */) {
 
   */
 void statusline() {
-#ifdef GLK
   uint glkWidth;
   char line[100];
   int pcol = col;
@@ -295,31 +214,6 @@ needsp = FALSE;
   col = pcol;
 
   g_vm->glk_set_window(glkMainWin);
-#else
-#ifdef HAVE_ANSI
-  char line[100];
-  int i;
-  int pcol = col;
-
-  if (!statusflg) return;
-  /* ansi_position(1,1); ansi_bold_on(); */
-  printf("\x1b[1;1H");
-  printf("\x1b[7m");
-  col = 1;
-  say(where(HERO));
-  if (header->maxscore > 0)
-    sprintf(line, "Score %ld(%ld)/%ld moves", cur.score, (int)header->maxscore, cur.tick);
-  else
-    sprintf(line, "%ld moves", cur.tick);
-  for (i=0; i < pagwidth - col - strlen(line); i++) putchar(' ');
-  printf(line);
-  printf("\x1b[m");
-  printf("\x1b[%d;1H", paglen);
-  needsp = FALSE;
-
-  col = pcol;
-#endif
-#endif
 }
 
 
@@ -345,29 +239,7 @@ void logprint(char str[]) {
 
  */
 void newline() {
-#ifdef GLK
 	g_vm->glk_put_char('\n');
-#else
-  char buf[256];
-  
-  col = 1;
-  if (lin >= paglen - 1) {
-    logprint("\n");
-    needsp = FALSE;
-    prmsg(M_MORE);
-#ifdef USE_READLINE
-    (void) readline(buf);
-#else
-    fgets(buf, 256, stdin);
-#endif
-    getPageSize();
-    lin = 0;
-  } else
-    logprint("\n");
-  
-  lin++;
-  needsp = FALSE;
-#endif
 }
 
 
@@ -393,15 +265,7 @@ void para() {
 
  */
 void clear() {
-#ifdef GLK
 	g_vm->glk_window_clear(glkMainWin);
-#else
-#ifdef HAVE_ANSI
-  if (!statusflg) return;
-  printf("\x1b[2J");
-  printf("\x1b[%d;1H", paglen);
-#endif
-#endif
 }
 
 
@@ -430,37 +294,7 @@ void *allocate(unsigned long len /* IN - Length to allocate */) {
 
  */
 static void just(char str[]) {
-#ifdef GLK
   logprint(str);
-#else
-  int i;
-  char ch;
-  
-  if (col >= pagwidth && !skipsp)
-    newline();
-
-  while (strlen(str) > pagwidth - col) {
-    i = pagwidth - col - 1;
-    while (!isSpace(str[i]) && i > 0) /* First find wrap point */
-      i--;
-    if (i == 0 && col == 1)	/* If it doesn't fit at all */
-      /* Wrap immediately after this word */
-      while (!isSpace(str[i]) && str[i] != '\0')
-	i++;
-    if (i > 0) {		/* If it fits ... */
-      ch = str[i];		/* Save space or NULL */
-      str[i] = '\0';		/* Terminate string */
-      logprint(str);		/* and print it */
-      skipsp = FALSE;		/* If skipping, now we're done */
-      str[i] = ch;		/* Restore character */
-      /* Skip white after printed portion */
-      for (str = &str[i]; isSpace(str[0]) && str[0] != '\0'; str++);
-    }
-    newline();			/* Then start a new line */
-  }
-  logprint(str);			/* Print tail */
-  col = col + strlen(str);	/* Update column */
-#endif
 }
 
 
@@ -710,46 +544,6 @@ Boolean exitto(int to, int from) {
 
   return(FALSE);
 }
-
-
-#ifdef CHECKOBJ
-/*======================================================================
-
-  checkobj()
-
-  Check that the object given is valid, else print an error message
-  or find out what he wanted.
-
-  This routine is not used any longer, kept for sentimental reasons ;-)
-
-  */
-void checkobj(obj)
-     Aword *obj;
-{
-  Aword oldobj;
-  
-  if (*obj != EOF)
-    return;
-  
-  oldobj = EOF;
-  for (cur.obj = OBJMIN; cur.obj <= OBJMAX; cur.obj++) {
-    /* If an object is present and it is possible to perform his action */
-    if (isHere(cur.obj) && possible())
-      if (oldobj == EOF)
-	oldobj = cur.obj;
-      else
-	error(WANT);          /* And we didn't find multiple objects */
-    }
-  
-  if (oldobj == EOF)
-    error(WANT);              /* But we found ONE */
-  
-  *obj = cur.obj = oldobj;    
-  output("($o)");             /* Then he surely meant this object */
-}
-#endif
-
-
 
 
 /*----------------------------------------------------------------------
@@ -1326,9 +1120,6 @@ static void load() {
     crc += (memory[i]>>8)&0xff;
     crc += (memory[i]>>16)&0xff;
     crc += (memory[i]>>24)&0xff;
-#ifdef CRCLOG
-    printf("%6x\t%6lx\t%6lx\n", i, crc, memory[i]);
-#endif
   }
   if (crc != tmphdr.acdcrc) {
     sprintf(err, "Checksum error in .ACD file (0x%lx instead of 0x%lx).",
@@ -1379,13 +1170,6 @@ static void checkdebug() {
     trcflg = FALSE;
     stpflg = FALSE;
   }
-
-#ifndef GLK
-  if (dbgflg)			/* If debugging */
-    srand(0);			/* use no randomization */
-  else
-    srand(time(0));		/* seed random generator */
-#endif
 }
 
 
@@ -1590,26 +1374,11 @@ static void openFiles() {
   char *usr = "";
   time_t tick;
 
-#ifndef GLK
-  /* Open Acode file */
-  strcpy(codfnm, advnam);
-  strcat(codfnm, ".acd");
-
-  if ((codfil = fopen(codfnm, READ_MODE)) == NULL) {
-    strcpy(str, "Can't open adventure code file '");
-    strcat(str, codfnm);
-    strcat(str, "'.");
-    syserr(str);
-  }
-#endif
-
-#ifdef GARGLK
 	{
 		char *s = strrchr(codfnm, '\\');
 		if (!s) s = strrchr(codfnm, '/');
 		g_vm->garglk_set_story_name(s ? s + 1 : codfnm);
 	}
-#endif
 
 	/* Open Text file */
 	strcpy(txtfnm, advnam);
@@ -1650,9 +1419,6 @@ void run() {
 	init();			/* Load, initialise and start the adventure */
 
 	while (TRUE) {
-#ifdef MALLOC
-		if (malloc_verify() == 0) syserr("Error in heap.");
-#endif
 		if (dbgflg)
 			debug();
 

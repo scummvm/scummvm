@@ -22,17 +22,13 @@
 
 #include <string>
 #include "glk/alan2/types.h"
+#include "glk/alan2/exe.h"
+#include "glk/alan2/inter.h"
+#include "glk/alan2/glkio.h"
 #include "glk/alan2/main.h"
 #include "glk/alan2/parse.h"
-#include "glk/alan2/exe.h"
 #include "glk/alan2/stack.h"
 #include "glk/alan2/sysdep.h"
-
-#include "glk/alan2/inter.h"
-
-#ifdef GLK
-#include "glk/alan2/glkio.h"
-#endif
 
 namespace Glk {
 namespace Alan2 {

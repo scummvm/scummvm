@@ -20,20 +20,15 @@
  *
  */
 
-#include "glk/alan2/types.h"
 #include "glk/alan2/alan2.h"
-
-#ifdef USE_READLINE
-#include "glk/alan2/readline.h"
-#endif
-
+#include "glk/alan2/types.h"
+#include "glk/alan2/exe.h"
+#include "glk/alan2/inter.h"
 #include "glk/alan2/main.h"
 #include "glk/alan2/parse.h"
-#include "glk/alan2/inter.h"
+#include "glk/alan2/readline.h"
 #include "glk/alan2/stack.h"
 #include "glk/alan2/decode.h"
-
-#include "glk/alan2/exe.h"
 
 namespace Glk {
 namespace Alan2 {
@@ -97,9 +92,6 @@ void print(Aword fpos, Aword len) {
 	str[i] = ch;
       }
       str[i] = '\0';
-#if ISO == 0
-      fromIso(str, str);
-#endif
       output(str);
     }
     /* And restore */
@@ -168,11 +160,7 @@ Boolean confirm(MsgKind msgno) {
      it could be affirmative, but for now any input is NOT! */
   prmsg(msgno);
 
-#ifdef USE_READLINE
   if (!readline(buf)) return TRUE;
-#else
-  if (gets(buf) == NULL) return TRUE;
-#endif
   col = 1;
 
   return (buf[0] == '\0');
@@ -187,11 +175,8 @@ void quit() {
     col = 1;
     statusline();
     prmsg(M_QUITACTION);
-#ifdef USE_READLINE
     if (!readline(buf)) terminate(0);
-#else
-    if (gets(buf) == NULL) terminate(0);
-#endif
+
 	if (strcmp(buf, "restart") == 0)
 		//longjmp(restart_label, TRUE);
 		::error("TODO: restart");
@@ -1082,95 +1067,10 @@ static char savfnm[256];
 
   */
 
-#ifdef GARGLK
 void save() {
 	g_vm->saveGame();
 }
 
-#else
-
-void save() {
-  int i;
-  char str[256];
-  AtrElem *atr;
-  FILE *savfil;
-
-  /* First save ? */
-  if (savfnm[0] == '\0') {
-    strcpy(savfnm, advnam);
-    strcat(savfnm, ".sav");
-  }
-  prmsg(M_SAVEWHERE);
-  sprintf(str, "(%s) : ", savfnm);
-  output(str);
-
-#ifdef USE_READLINE
-  readline(str);
-#else
-  gets(str);
-#endif
-
-frefid_t fref;
-fref = g_vm->glk_fileref_create_by_prompt(fileusage_SavedGame, filemode_Write, 0);
-if (fref == NULL)
-	error(M_SAVEFAILED);
-strcpy(str, g_vm->garglk_fileref_get_name(fref));
-g_vm->glk_fileref_destroy(fref);
-
-  if (str[0] == '\0')
-    strcpy(str, savfnm);
-  col = 1;
-  if ((savfil = fopen(str, READ_MODE)) != NULL)
-    /* It already existed */
-    if (!confirm(M_SAVEOVERWRITE))
-      error(MSGMAX);            /* Return to player without saying anything */
-  if ((savfil = fopen(str, WRITE_MODE)) == NULL)
-    error(M_SAVEFAILED);
-  strcpy(savfnm, str);
-
-  /* Save version of interpreter and name of game */
-  fwrite((void *)&header->vers, sizeof(Aword), 1, savfil);
-  fwrite((void *)advnam, strlen(advnam)+1, 1, savfil);
-  /* Save current values */
-  fwrite((void *)&cur, sizeof(cur), 1, savfil);
-  /* Save actors */
-  for (i = ACTMIN; i <= ACTMAX; i++) {
-    fwrite((void *)&acts[i-ACTMIN].loc, sizeof(Aword), 1, savfil);
-    fwrite((void *)&acts[i-ACTMIN].script, sizeof(Aword), 1, savfil);
-    fwrite((void *)&acts[i-ACTMIN].step, sizeof(Aword), 1, savfil);
-    fwrite((void *)&acts[i-ACTMIN].count, sizeof(Aword), 1, savfil);
-    if (acts[i-ACTMIN].atrs)
-      for (atr = (AtrElem *) addrTo(acts[i-ACTMIN].atrs); !endOfTable(atr); atr++)
-	fwrite((void *)&atr->val, sizeof(Aword), 1, savfil);
-  }
-
-  /* Save locations */
-  for (i = LOCMIN; i <= LOCMAX; i++) {
-    fwrite((void *)&locs[i-LOCMIN].describe, sizeof(Aword), 1, savfil);
-    if (locs[i-LOCMIN].atrs)
-      for (atr = (AtrElem *) addrTo(locs[i-LOCMIN].atrs); !endOfTable(atr); atr++)
-	fwrite((void *)&atr->val, sizeof(Aword), 1, savfil);
-  }
-
-  /* Save objects */
-  for (i = OBJMIN; i <= OBJMAX; i++) {
-    fwrite((void *)&objs[i-OBJMIN].loc, sizeof(Aword), 1, savfil);
-    if (objs[i-OBJMIN].atrs)
-      for (atr = (AtrElem *) addrTo(objs[i-OBJMIN].atrs); !endOfTable(atr); atr++)
-	fwrite((void *)&atr->val, sizeof(atr->val), 1, savfil);
-  }
-
-  /* Save the event queue */
-  eventq[etop].time = 0;        /* Mark the top */
-  fwrite((void *)&eventq[0], sizeof(eventq[0]), etop+1, savfil);
-
-  /* Save scores */
-  for (i = 0; scores[i] != EOF; i++)
-    fwrite((void *)&scores[i], sizeof(Aword), 1, savfil);
-
-  fclose(savfil);
-}
-#endif
 
 /*----------------------------------------------------------------------
 
@@ -1178,104 +1078,10 @@ g_vm->glk_fileref_destroy(fref);
 
   */
 
-#ifdef GARGLK
 void restore() {
 	g_vm->loadGame();
 }
 
-#else
-
-void restore() {
-  int i,tmp;
-  FILE *savfil;
-  char str[256];
-  AtrElem *atr;
-  char savedVersion[4];
-  char savedName[256];
-
-  /* First save ? */
-  if (savfnm[0] == '\0') {
-    strcpy(savfnm, advnam);
-    strcat(savfnm, ".sav");
-  }
-  prmsg(M_RESTOREFROM);
-  sprintf(str, "(%s) : ", savfnm);
-  output(str);
-#ifdef USE_READLINE
-  readline(str);
-#else
-  gets(str);
-#endif
-
-  if (str[0] == '\0')
-    strcpy(str, savfnm);
-  col = 1;
-  if (str[0] == '\0')
-    strcpy(str, savfnm);        /* Use the name temporarily */
-  if ((savfil = fopen(str, READ_MODE)) == NULL)
-    error(M_SAVEMISSING);
-  strcpy(savfnm, str);          /* Save it for future use */
-
-  tmp = fread((void *)&savedVersion, sizeof(Aword), 1, savfil);
-  /* 4f - save file version check doesn't seem to work on PC's! */
-  if (strncmp(savedVersion, header->vers, 4)) {
-    fclose(savfil);
-    error(M_SAVEVERS);
-    return;
-  }
-  i = 0;
-  while ((savedName[i++] = fgetc(savfil)) != '\0');
-  if (strcmp(savedName, advnam) != 0) {
-    fclose(savfil);
-    error(M_SAVENAME);
-    return;
-  }
-
-  /* Restore current values */
-  tmp = fread((void *)&cur, sizeof(cur), 1, savfil);
-  /* Restore actors */
-  for (i = ACTMIN; i <= ACTMAX; i++) {
-    tmp = fread((void *)&acts[i-ACTMIN].loc, sizeof(Aword), 1, savfil);
-    tmp = fread((void *)&acts[i-ACTMIN].script, sizeof(Aword), 1, savfil);
-    tmp = fread((void *)&acts[i-ACTMIN].step, sizeof(Aword), 1, savfil);
-    tmp = fread((void *)&acts[i-ACTMIN].count, sizeof(Aword), 1, savfil);
-    if (acts[i-ACTMIN].atrs)
-      for (atr = (AtrElem *) addrTo(acts[i-ACTMIN].atrs); !endOfTable(atr); atr++)
-	tmp = fread((void *)&atr->val, sizeof(Aword), 1, savfil);
-  }
-
-  /* Restore locations */
-  for (i = LOCMIN; i <= LOCMAX; i++) {
-    tmp = fread((void *)&locs[i-LOCMIN].describe, sizeof(Aword), 1, savfil);
-    if (locs[i-LOCMIN].atrs)
-      for (atr = (AtrElem *) addrTo(locs[i-LOCMIN].atrs); !endOfTable(atr); atr++)
-	tmp = fread((void *)&atr->val, sizeof(Aword), 1, savfil);
-  }
-
-  /* Restore objects */
-  for (i = OBJMIN; i <= OBJMAX; i++) {
-    tmp = fread((void *)&objs[i-OBJMIN].loc, sizeof(Aword), 1, savfil);
-    if (objs[i-OBJMIN].atrs)
-      for (atr = (AtrElem *) addrTo(objs[i-OBJMIN].atrs); !endOfTable(atr); atr++)
-	tmp = fread((void *)&atr->val, sizeof(atr->val), 1, savfil);
-  }
-
-  /* Restore the eventq */
-  etop = 0;
-  do {
-    tmp = fread((void *)&eventq[etop], sizeof(eventq[0]), 1, savfil);
-    etop++;
-  } while (eventq[etop-1].time != 0);
-  etop--;
-
-  /* Restore scores */
-  for (i = 0; scores[i] != EOF; i++)
-    tmp = fread((void *)&scores[i], sizeof(Aword), 1, savfil);
-
-  fclose(savfil);
-}
-
-#endif
 
 /*----------------------------------------------------------------------
 

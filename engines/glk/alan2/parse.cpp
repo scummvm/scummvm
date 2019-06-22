@@ -22,24 +22,16 @@
 
 #include <string>
 #include "glk/alan2/alan2.h"
-#include "glk/alan2/types.h"
-
-#ifdef USE_READLINE
-#include "glk/alan2/readline.h"
-#endif
-
-#include "glk/alan2/main.h"
-#include "glk/alan2/inter.h"
-#include "glk/alan2/exe.h"
-#include "glk/alan2/term.h"
 #include "glk/alan2/debug.h"
-#include "glk/alan2/params.h"
-
-#include "glk/alan2/parse.h"
-
-#ifdef GLK
+#include "glk/alan2/exe.h"
 #include "glk/alan2/glkio.h"
-#endif
+#include "glk/alan2/inter.h"
+#include "glk/alan2/main.h"
+#include "glk/alan2/params.h"
+#include "glk/alan2/parse.h"
+#include "glk/alan2/readline.h"
+#include "glk/alan2/term.h"
+#include "glk/alan2/types.h"
 
 namespace Glk {
 namespace Alan2 {
@@ -103,9 +95,6 @@ static void unknown(char token[]) {
   str[0] = '\'';
   strcpy(&str[1], token);
   strcat(str, "'?");
-#if ISO == 0
-  fromIso(str, str);
-#endif
   output(str);
   free(str);
   eol = TRUE;
@@ -164,13 +153,12 @@ static char *gettoken(char *buf) {
 static void agetline() {
   para();
   do {
-#if defined(HAVE_ANSI) || defined(GLK)
     statusline();
-#endif
+
     printf("> ");
     if (logflg)
       fprintf(logfil, "> ");
-#ifdef USE_READLINE
+
     if (!readline(buf)) {
 		if (g_vm->shouldQuit())
 			return;
@@ -178,25 +166,13 @@ static void agetline() {
       newline();
       quit();
     }
-#else
-    if (fgets(buf, LISTLEN, stdin) == NULL) {
-      newline();
-      quit();
-    }
-#endif
+
     getPageSize();
     anyOutput = FALSE;
     if (logflg)
-#ifndef __amiga__
       fprintf(logfil, "%s\n", buf);
-#else
-      fprintf(logfil, "%s", buf);
-#endif
-#if ISO == 0
-    toIso(isobuf, buf, NATIVECHARSET);
-#else
     strcpy(isobuf, buf);
-#endif
+
     token = gettoken(isobuf);
     if (token != NULL && strcmp("debug", token) == 0 && header->debug) {
       dbgflg = TRUE;

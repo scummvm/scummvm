@@ -33,13 +33,11 @@ namespace Alan2 {
 
 /* CONSTANTS */
 
-#ifndef __mac__
 #ifndef TRUE
 #define TRUE (0==0)
 #endif
 #ifndef FALSE
 #define FALSE (!TRUE)
-#endif
 #endif
 
 #define ACTMIN (header->actmin)
@@ -77,9 +75,7 @@ namespace Alan2 {
 
 /* TYPES */
 
-#ifndef __mac__
 typedef int Boolean;		/* Boolean values within interpreter */
-#endif
 
 /* Amachine variables */
 struct CurVars {

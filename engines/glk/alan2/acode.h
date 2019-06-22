@@ -36,28 +36,9 @@ typedef uint32 Abool;           /* Type for an ACODE Boolean value */
 typedef int32 Aint;             /* Type for an ACODE Integer value */
 typedef int CodeValue;          /* Definition for the packing process */
 
-#ifdef UNUSED
-#if INT_MAX==0x7fffffff
-typedef unsigned int Aword;     /* Type for an ACODE word */
-typedef unsigned int Aaddr;     /* Type for an ACODE address */
-typedef unsigned int Abool;     /* Type for an ACODE Boolean value */
-typedef signed   int Aint;      /* Type for an ACODE Integer value */
-typedef int CodeValue;          /* Definition for the packing process */
-#elif LONG_MAX==0x7fffffff
-typedef unsigned long Aword;    /* Type for an ACODE word */
-typedef unsigned long Aaddr;    /* Type for an ACODE address */
-typedef unsigned long Abool;    /* Type for an ACODE Boolean value */
-typedef signed   long Aint;     /* Type for an ACODE Integer value */
-typedef long CodeValue;         /* Definition for the packing process */
-#else
-#error "Can't find a 32-bit integer type"
-#endif
-#endif
-
 /* Constants for the Acode file, words/block & bytes/block */
 #define BLOCKLEN 256L
 #define BLOCKSIZE (BLOCKLEN*sizeof(Aword))
-
 
 /* Definitions for the packing process */
 #define VALUEBITS 16

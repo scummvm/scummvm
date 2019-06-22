@@ -21,17 +21,13 @@
  */
 
 #include "glk/alan2/types.h"
-#include "glk/alan2/main.h"
-#include "glk/alan2/inter.h"
 #include "glk/alan2/debug.h"
 #include "glk/alan2/exe.h"
-#include "glk/alan2/stack.h"
-
-#include "glk/alan2/rules.h"
-
-#ifdef GLK
+#include "glk/alan2/inter.h"
 #include "glk/alan2/glkio.h"
-#endif
+#include "glk/alan2/main.h"
+#include "glk/alan2/rules.h"
+#include "glk/alan2/stack.h"
 
 namespace Glk {
 namespace Alan2 {

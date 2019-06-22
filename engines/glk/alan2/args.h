@@ -34,9 +34,7 @@
 namespace Glk {
 namespace Alan2 {
 
-#ifndef PROGNAME
 #define PROGNAME "alan2"
-#endif
 
 extern void args(int argc, char *argv[]);
 

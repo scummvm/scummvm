@@ -21,26 +21,15 @@
  */
 
 #include "glk/alan2/types.h"
-#ifdef HAVE_SHORT_FILENAMES
-#include "glk/alan2/av.h"
-#else
 #include "glk/alan2/alan_version.h"
-#endif
-
-#ifdef USE_READLINE
-#include "glk/alan2/readline.h"
-#endif
-
+#include "glk/alan2/debug.h"
+#include "glk/alan2/exe.h"
+#include "glk/alan2/glkio.h"
 #include "glk/alan2/inter.h"
 #include "glk/alan2/main.h"
 #include "glk/alan2/parse.h"
-#include "glk/alan2/exe.h"
+#include "glk/alan2/readline.h"
 
-#include "glk/alan2/debug.h"
-
-#ifdef GLK
-#include "glk/alan2/glkio.h"
-#endif
 
 namespace Glk {
 namespace Alan2 {
@@ -55,9 +44,6 @@ static void showatrs(Aword atradr) {
   i = 1;
   for (at = (AtrElem *) addrTo(atradr); !endOfTable(at); at++) {
     sprintf(str, "$i%3ld: %ld (%s)", (long) i, (unsigned long) at->val, (char *) addrTo(at->stradr));
-#if ISO == 0
-    fromIso(str, str);
-#endif
     output(str);
     i++;
   }
@@ -258,9 +244,6 @@ static void showevts() {
   output("EVENTS:");
   for (evt = EVTMIN; evt <= EVTMAX; evt++) {
     sprintf(str, "$i%d (%s):", evt, (char *)addrTo(evts[evt-EVTMIN].stradr));
-#if ISO == 0
-    fromIso(str, str);
-#endif
     output(str);
     scheduled = FALSE;
     for (i = 0; i < etop; i++)
@@ -304,11 +287,8 @@ void debug() {
       para();
     do {
       output("ABUG> ");
-#ifdef USE_READLINE
-      (void) readline(buf);
-#else
-      fgets(buf, 255, stdin);
-#endif
+      (void)readline(buf);
+
       lin = 1;
       c = buf[0];
       i = 0;
