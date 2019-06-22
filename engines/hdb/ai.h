@@ -834,6 +834,31 @@ public:
 
 private:
 
+	// Action Functions
+
+	// Black Door Switch
+	bool useSwitch(AIEntity *e, int x, int y, int targetX, int targetY, int onTile);
+	bool useSwitchOn(AIEntity *e, int x, int y, int targetX, int targetY, int offTile);
+	bool useSwitch2(AIEntity *e, int x, int y, int targetX, int targetY);
+
+	// Colored Keycard Switch
+	bool useLockedSwitch(AIEntity *e, int x, int y, int targetX, int targetY, int onTile, AIType item, char *keyerror);
+	bool useLockedSwitchOn(AIEntity *e, int x, int y, int targetX, int targetY, int offTile, AIType item);
+
+	// Purple Cell Holder Switch
+	bool useCellHolder(AIEntity *e, int x, int y, int targetX, int targetY);
+
+	// Touchplate
+	bool useTouchplate(AIEntity *e, int x, int y, int targetX, int targetY, int type);
+	bool useTouchplateOn(AIEntity *e, int x, int y, int targetX, int targetY, int type);
+
+	// Normal Door
+	bool useDoorOpenClose(AIEntity *e, int x, int y);
+	bool useAutoDoorOpenClose(AIEntity *e, int x, int y);
+
+	// Any Type Door
+	bool useDoorOpenCloseBot(AIEntity *e, int x, int y);
+
 	Common::Array<AIEntity *> *_ents;
 	Common::Array<AIEntity *> *_floats;
 	AIEntity *_player;
