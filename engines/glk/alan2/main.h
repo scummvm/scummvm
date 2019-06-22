@@ -27,6 +27,7 @@
 
 #include "common/file.h"
 #include "glk/alan2/types.h"
+#include "glk/alan2/jumps.h"
 
 namespace Glk {
 namespace Alan2 {
@@ -100,7 +101,7 @@ extern Boolean needsp;
 extern void *allocate(unsigned long len);
 extern void terminate(int code);
 extern void usage(void);
-extern void error(MsgKind msg);
+extern void error(CONTEXT, MsgKind msg);
 extern void syserr(const char *msg);
 extern void statusline(void);
 extern void output(const char string[]);
@@ -111,8 +112,8 @@ extern void newline(void);
 extern Boolean checklim(Aword cnt, Aword obj);
 extern Boolean possible(void);
 extern Boolean exitto(int to, int from);
-extern void action(ParamElem *plst);
-extern void go(int dir);
+extern void action(CONTEXT, ParamElem *plst);
+extern void go(CONTEXT, int dir);
 
 extern Boolean eot(Aword *adr);
 extern Boolean isObj(Aword x);

@@ -162,16 +162,15 @@ void syserr(const char *str) {
   error()
 
   Print an error message, force new player input and abort.
-
   */
-void error(MsgKind msgno /* IN - The error message number */) {
+ /* IN - The error message number */
+void error(CONTEXT, MsgKind msgno) {
 	if (msgno != MSGMAX)
 		prmsg(msgno);
 	wrds[wrdidx] = EOD;       /* Force new player input */
 	dscrstkp = 0;         /* Reset describe stack */
 
-	//longjmp(jmpbuf,TRUE);
-	::error("Error occurred");
+	LONG_JUMP
 }
 
 
@@ -677,13 +676,13 @@ static Boolean trycheck(
   Move hero in a direction.
 
   */
-void go(int dir) {
+void go(CONTEXT, int dir) {
 	ExtElem *ext;
 	Boolean ok;
 	Aword oldloc;
 
 	ext = (ExtElem *) addrTo(locs[cur.loc - LOCMIN].exts);
-	if (locs[cur.loc - LOCMIN].exts != 0)
+	if (locs[cur.loc - LOCMIN].exts != 0) {
 		while (!endOfTable(ext)) {
 			if ((int)ext->code == dir) {
 				ok = TRUE;
@@ -722,7 +721,9 @@ void go(int dir) {
 			}
 			ext++;
 		}
-	error(M_NO_WAY);
+	}
+
+	CALL1(error, M_NO_WAY)
 }
 
 
@@ -806,7 +807,7 @@ Boolean possible() {
   Execute the action commanded by hero.
 
   */
-static void do_it() {
+static void do_it(CONTEXT) {
 	AltElem *alt[MAXPARAMS + 2];  /* List of alt-pointers, one for each param */
 	Boolean done[MAXPARAMS + 2];  /* Is it done */
 	int i;            /* Parameter index */
@@ -855,9 +856,10 @@ static void do_it() {
 	for (i = 0; i < 2 || params[i - 2].code != EOD; i++)
 		if (alt[i] != 0 && alt[i]->action != 0)
 			break;
-	if (i >= 2 && params[i - 2].code == EOD)
-		/* Didn't find any code for this verb/object combination */
-		error(M_CANT0);
+	if (i >= 2 && params[i - 2].code == EOD) {
+		// Didn't find any code for this verb/object combination
+		CALL1(error, M_CANT0)
+	}
 
 	/* Perform actions! */
 
@@ -943,7 +945,7 @@ static void do_it() {
   such as THEM or lists of objects.
 
   */
-void action(ParamElem plst[] /* IN - Plural parameter list */) {
+void action(CONTEXT, ParamElem plst[] /* IN - Plural parameter list */) {
 	int i, mpos;
 	char marker[10];
 
@@ -957,13 +959,14 @@ void action(ParamElem plst[] /* IN - Plural parameter list */) {
 		for (i = 0; plst[i].code != EOD; i++) {
 			params[mpos] = plst[i];
 			output(marker);
-			do_it();
+			CALL0(do_it)
 			if (plst[i + 1].code != EOD)
 				para();
 		}
 		params[mpos].code = 0;
-	} else
-		do_it();
+	} else {
+		CALL0(do_it)
+	}
 }
 
 
@@ -1282,14 +1285,14 @@ static void init() {
   Let the current actor move. If player, ask him.
 
  */
-static void movactor() {
+static void movactor(CONTEXT) {
 	ScrElem *scr;
 	StepElem *step;
 	ActElem *act = (ActElem *) &acts[cur.act - ACTMIN];
 
 	cur.loc = where(cur.act);
 	if (cur.act == (int)HERO) {
-		parse();
+		CALL0(parse)
 		if (g_vm->shouldQuit())
 			return;
 		fail = FALSE;           /* fail only aborts one actor */
@@ -1416,17 +1419,23 @@ void run() {
 
 	init();         /* Load, initialise and start the adventure */
 
-	while (TRUE) {
-		if (dbgflg)
-			debug();
+	Context ctx;
+	for (;;) {
+		if (!ctx._break) {
+			if (dbgflg)
+				debug();
 
-		eventchk();
-		cur.tick++;
-		//    (void) setjmp(jmpbuf);
+			eventchk();
+			cur.tick++;
+		}
+
+		// Execution ends up here after calls to the error method
 
 		// Move all characters
-		for (cur.act = ACTMIN; cur.act <= (int)ACTMAX; cur.act++) {
-			movactor();
+		ctx._break = false;
+		for (cur.act = ACTMIN; cur.act <= (int)ACTMAX && !ctx._break; cur.act++) {
+			movactor(ctx);
+
 			if (g_vm->shouldQuit())
 				return;
 		}

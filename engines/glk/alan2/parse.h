@@ -25,6 +25,8 @@
 
 /* Parse data for ALAN interpreter module. */
 
+#include "engines/glk/alan2/jumps.h"
+
 namespace Glk {
 namespace Alan2 {
 
@@ -40,7 +42,7 @@ extern int litCount;
 extern int vrbwrd;
 
 // Parse a new player command
-extern void parse(void);
+extern void parse(CONTEXT);
 
 } // End of namespace Alan2
 } // End of namespace Glk

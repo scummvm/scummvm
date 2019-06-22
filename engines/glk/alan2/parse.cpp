@@ -89,7 +89,7 @@ static char isobuf[LISTLEN + 1]; /* The input buffer in ISO */
 static Boolean eol = TRUE;  /* Looking at End of line? Yes, initially */
 
 
-static void unknown(char token[]) {
+static void unknown(CONTEXT, char token[]) {
 	char *str = (char *)allocate((int)strlen(token) + 4);
 
 	str[0] = '\'';
@@ -98,29 +98,29 @@ static void unknown(char token[]) {
 	output(str);
 	free(str);
 	eol = TRUE;
-	error(M_UNKNOWN_WORD);
+	CALL1(error, M_UNKNOWN_WORD)
 }
 
 
 static char *token;
 
 
-static int lookup(char wrd[]) {
+static int lookup(CONTEXT, char wrd[]) {
 	int i;
 
 	for (i = 0; !endOfTable(&dict[i]); i++) {
 		if (strcmp(wrd, (char *) addrTo(dict[i].wrd)) == 0)
 			return (i);
 	}
-	unknown(wrd);
-	return (EOD);
+	R0CALL1(unknown, wrd)
+	return EOD;
 }
 
 /* IN - The string to convert to a number */
 static int number(char tok[]) {
 	int i;
 
-	sscanf(tok, "%d", &i);
+	(void)sscanf(tok, "%d", &i);
 	return i;
 }
 
@@ -185,7 +185,7 @@ static void agetline() {
 	lin = 1;
 }
 
-static void scan() {
+static void scan(CONTEXT) {
 	int i;
 	int w;
 	char *str;
@@ -203,7 +203,8 @@ static void scan() {
 	do {
 		if (isISOLetter(token[0])) {
 			(void) stringLower(token);
-			w = lookup(token);
+			FUNC1(lookup, w, token);
+
 			if (!isNoise(w))
 				wrds[i++] = w;
 		} else if (isdigit(token[0])) {
@@ -223,8 +224,9 @@ static void scan() {
 			litValues[litCount++].value = (Aptr) str;
 		} else if (token[0] == ',') {
 			wrds[i++] = conjWord;
-		} else
-			unknown(token);
+		} else {
+			CALL1(unknown, token)
+		}
 		wrds[i] = EOD;
 		eol = (token = gettoken(NULL)) == NULL;
 	} while (!eol);
@@ -250,20 +252,22 @@ static void scan() {
 static int allLength;       /* No. of objects matching 'all' */
 
 
-static void nonverb() {
+static void nonverb(CONTEXT) {
 	if (isDir(wrds[wrdidx])) {
 		wrdidx++;
-		if (wrds[wrdidx] != EOD && !isConj(wrds[wrdidx]))
-			error(M_WHAT);
-		else
-			go(dict[wrds[wrdidx - 1]].code);
+		if (wrds[wrdidx] != EOD && !isConj(wrds[wrdidx])) {
+			CALL1(error, M_WHAT)
+		} else {
+			CALL1(go, dict[wrds[wrdidx - 1]].code)
+		}
 		if (wrds[wrdidx] != EOD)
 			wrdidx++;
-	} else
-		error(M_WHAT);
+	} else {
+		CALL1(error, M_WHAT)
+	}
 }
 
-static void buildall(ParamElem list[]) {
+static void buildall(CONTEXT, ParamElem list[]) {
 	int i = 0;
 	Boolean found = FALSE;
 
@@ -273,13 +277,14 @@ static void buildall(ParamElem list[]) {
 			list[i].code = o;
 			list[i++].firstWord = EOD;
 		}
-	if (!found)
-		error(M_WHAT_ALL);
-	else
+	if (!found) {
+		CALL1(error, M_WHAT_ALL)
+	} else {
 		list[i].code = EOD;
+	}
 }
 
-static void unambig(ParamElem plst[]) {
+static void unambig(CONTEXT, ParamElem plst[]) {
 	int i;
 	Boolean found = FALSE;    /* Adjective or noun found ? */
 	static ParamElem *refs;   /* Entities referenced by word */
@@ -305,13 +310,14 @@ static void unambig(ParamElem plst[]) {
 		wrdidx++;
 		/* Use last object in previous command! */
 		for (i = lstlen(pparams) - 1; i >= 0 && (pparams[i].code == 0 || pparams[i].code >= LITMIN); i--);
-		if (i < 0)
-			error(M_WHAT_IT);
+		if (i < 0) {
+			CALL1(error, M_WHAT_IT)
+		}
 		if (!isHere(pparams[i].code)) {
 			params[0].code = pparams[i].code;
 			params[0].firstWord = EOD;
 			params[1].code = EOD;
-			error(M_NO_SUCH);
+			CALL1(error, M_NO_SUCH)
 		}
 		plst[0] = pparams[i];
 		plst[0].firstWord = EOD;    /* No words used! */
@@ -345,7 +351,7 @@ static void unambig(ParamElem plst[]) {
 			}
 			wrdidx++;
 		} else
-			error(M_NOUN);
+			CALL1(error, M_NOUN)
 	} else if (found) {
 		if (isNoun(wrds[wrdidx - 1])) {
 			/* Perhaps the last word was also a noun? */
@@ -355,8 +361,9 @@ static void unambig(ParamElem plst[]) {
 				lstcpy(plst, refs);
 			else
 				isect(plst, refs);
-		} else
-			error(M_NOUN);
+		} else {
+			CALL1(error, M_NOUN)
+		}
 	}
 	lastWord = wrdidx - 1;
 
@@ -373,17 +380,18 @@ static void unambig(ParamElem plst[]) {
 		params[0].firstWord = firstWord; /* Remember words for errors below */
 		params[0].lastWord = lastWord;
 		params[1].code = EOD;   /* But be sure to terminate */
-		if (lstlen(plst) > 1)
-			error(M_WHICH_ONE);
-		else if (found && lstlen(plst) == 0)
-			error(M_NO_SUCH);
+		if (lstlen(plst) > 1) {
+			CALL1(error, M_WHICH_ONE)
+		} else if (found && lstlen(plst) == 0) {
+			CALL1(error, M_NO_SUCH)
+		}
 	} else {
 		plst[0].firstWord = firstWord;
 		plst[0].lastWord = lastWord;
 	}
 }
 
-static void simple(ParamElem olst[]) {
+static void simple(CONTEXT, ParamElem olst[]) {
 	static ParamElem *tlst = NULL;
 	int savidx = wrdidx;
 	Boolean savplur = FALSE;
@@ -400,13 +408,16 @@ static void simple(ParamElem olst[]) {
 				if (!isHere(pmlst[i].code))
 					pmlst[i].code = 0;
 			compact(pmlst);
-			if (lstlen(pmlst) == 0)
-				error(M_WHAT_THEM);
+			if (lstlen(pmlst) == 0) {
+				CALL1(error, M_WHAT_THEM)
+			}
+
 			lstcpy(olst, pmlst);
 			olst[0].firstWord = EOD;  /* No words used */
 			wrdidx++;
 		} else {
-			unambig(olst);        /* Look for unambigous noun phrase */
+			// Look for unambigous noun phrase
+			CALL1(unambig, olst)
 			if (lstlen(olst) == 0) {  /* Failed! */
 				lstcpy(olst, tlst);
 				wrdidx = savidx;
@@ -440,7 +451,7 @@ static void simple(ParamElem olst[]) {
   entity tables. Particularly this goes for literals...
 
 */
-static void complex(ParamElem olst[]) {
+static void complex(CONTEXT, ParamElem olst[]) {
 	static ParamElem *alst = NULL;
 
 	if (alst == NULL)
@@ -448,21 +459,24 @@ static void complex(ParamElem olst[]) {
 
 	if (isAll(wrds[wrdidx])) {
 		plural = TRUE;
-		buildall(alst);     /* Build list of all objects */
+		// Build list of all objects
+		CALL1(buildall, alst)     
 		wrdidx++;
 		if (wrds[wrdidx] != EOD && isBut(wrds[wrdidx])) {
 			wrdidx++;
-			simple(olst);
+			CALL1(simple, olst)
 			if (lstlen(olst) == 0)
-				error(M_AFTER_BUT);
+				CALL1(error, M_AFTER_BUT)
 			sublst(alst, olst);
 			if (lstlen(alst) == 0)
-				error(M_NOT_MUCH);
+				CALL1(error, M_NOT_MUCH)
 		}
 		lstcpy(olst, alst);
 		allLength = lstlen(olst);
-	} else
-		simple(olst);       /* Look for simple noun group */
+	} else {
+		// Look for simple noun group
+		CALL1(simple, olst)
+	}
 }
 
 static Boolean claCheck(ClaElem *cla /* IN - The cla elem to check */) {
@@ -494,7 +508,7 @@ static Boolean claCheck(ClaElem *cla /* IN - The cla elem to check */) {
   access to remote object), we need to remove non-present parameters
 
 */
-static void resolve(ParamElem plst[]) {
+static void resolve(CONTEXT, ParamElem plst[]) {
 	int i;
 
 	if (allLength > 0) return;    /* ALL has already done this */
@@ -505,11 +519,12 @@ static void resolve(ParamElem plst[]) {
 			if (!isHere(plst[i].code)) {
 				params[0] = plst[i];    /* Copy error param as first one for message */
 				params[1].code = EOD;   /* But be sure to terminate */
-				error(M_NO_SUCH);
+				CALL1(error, M_NO_SUCH)
 			}
 }
 
-static void tryMatch(ParamElem matchLst[] /* OUT - List of params allowed by multiple */) {
+/* OUT - List of params allowed by multiple */
+static void tryMatch(CONTEXT, ParamElem matchLst[]) {
 	ElmElem *elms;        /* Pointer to element list */
 	StxElem *stx;         /* Pointer to syntax list */
 	ClaElem *cla;         /* Pointer to class definitions */
@@ -526,8 +541,9 @@ static void tryMatch(ParamElem matchLst[] /* OUT - List of params allowed by mul
 	for (stx = stxs; !endOfTable(stx); stx++)
 		if ((int)stx->code == vrbcode)
 			break;
-	if (endOfTable(stx))
-		error(M_WHAT);
+	if (endOfTable(stx)) {
+		CALL1(error, M_WHAT)
+	}
 
 	elms = (ElmElem *) addrTo(stx->elms);
 
@@ -536,37 +552,43 @@ static void tryMatch(ParamElem matchLst[] /* OUT - List of params allowed by mul
 		if (wrds[wrdidx] == EOD || isConj(wrds[wrdidx])) {
 			while (!endOfTable(elms) && elms->code != EOS)
 				elms++;
-			if (endOfTable(elms))
-				error(M_WHAT);
-			else
+			if (endOfTable(elms)) {
+				CALL1(error, M_WHAT)
+			} else
 				break;
 		} else {
 			/* A preposition? */
 			if (isPrep(wrds[wrdidx])) {
 				while (!endOfTable(elms) && elms->code != dict[wrds[wrdidx]].code)
 					elms++;
-				if (endOfTable(elms))
-					error(M_WHAT);
-				else
+				if (endOfTable(elms)) {
+					CALL1(error, M_WHAT)
+				} else
 					wrdidx++;
 			} else {
 				/* Must be a parameter! */
 				while (!endOfTable(elms) && elms->code != 0)
 					elms++;
-				if (endOfTable(elms))
-					error(M_WHAT);
+				if (endOfTable(elms)) {
+					CALL1(error, M_WHAT)
+				}
 				/* Get it! */
 				plural = FALSE;
-				complex(tlst);
-				if (lstlen(tlst) == 0) /* No object!? */
-					error(M_WHAT);
-				if ((elms->flags & OMNIBIT) == 0) /* Omnipotent parameter? */
+				CALL1(complex, tlst)
+				if (lstlen(tlst) == 0) {
+					/* No object!? */
+					CALL1(error, M_WHAT)
+				}
+				/* Omnipotent parameter? */
+				if ((elms->flags & OMNIBIT) == 0) {
 					/* If its not an omnipotent parameter, resolve by presence */
-					resolve(tlst);
+					CALL1(resolve, tlst)
+				}
 				if (plural) {
-					if ((elms->flags & MULTIPLEBIT) == 0) /* Allowed multiple? */
-						error(M_MULTIPLE);
-					else {
+					/* Allowed multiple? */
+					if ((elms->flags & MULTIPLEBIT) == 0) {
+						CALL1(error, M_MULTIPLE)
+					} else {
 						/*
 						   Mark this as the multiple position in which to insert
 						   actual parameter values later
@@ -584,8 +606,10 @@ static void tryMatch(ParamElem matchLst[] /* OUT - List of params allowed by mul
 	}
 
 	/* Now perform class checks */
-	if (elms->next == 0)  /* No verb code, verb not declared! */
-		error(M_CANT0);
+	if (elms->next == 0) {
+		/* No verb code, verb not declared! */
+		CALL1(error, M_CANT0)
+	}
 
 	for (p = 0; params[p].code != EOD; p++) /* Mark all parameters unchecked */
 		checked[p] = FALSE;
@@ -613,8 +637,9 @@ static void tryMatch(ParamElem matchLst[] /* OUT - List of params allowed by mul
 			params[cla->code - 1].code = 0;
 		} else {
 			if (!claCheck(cla)) {
+				/* Return to player without saying anything */
 				interpret(cla->stms);
-				error(MSGMAX);      /* Return to player without saying anything */
+				CALL1(error, MSGMAX)
 			}
 		}
 		checked[cla->code - 1] = TRUE; /* Remember that it's already checked */
@@ -628,8 +653,9 @@ static void tryMatch(ParamElem matchLst[] /* OUT - List of params allowed by mul
 					if (matchLst[i].code != 0) /* Skip any empty slots */
 						if (!isObj(matchLst[i].code))
 							matchLst[i].code = 0;
-			} else if (!isObj(params[p].code))
-				error(M_CANT0);
+			} else if (!isObj(params[p].code)) {
+				CALL1(error, M_CANT0)
+			}
 		}
 
 	/* Set verb code */
@@ -649,28 +675,30 @@ static void tryMatch(ParamElem matchLst[] /* OUT - List of params allowed by mul
 		compact(matchLst);
 		if (lstlen(matchLst) == 0) {
 			params[0].code = EOD;
-			error(M_WHAT_ALL);
+			CALL1(error, M_WHAT_ALL)
 		}
 	} else if (anyPlural) {
 		compact(matchLst);
 		if (lstlen(matchLst) == 0)
 			/* If there where multiple parameters but non left, exit without a */
 			/* word, assuming we have already said enough */
-			error(MSGMAX);
+			CALL1(error, MSGMAX)
 	}
 	plural = anyPlural;       /* Remember that we found plural objects */
 }
 
 /* OUT - List of params allowed by multiple */
-static void match(ParamElem *matchLst) {
-	tryMatch(matchLst);           /* ... to understand what he said */
-	if (wrds[wrdidx] != EOD && !isConj(wrds[wrdidx]))
-		error(M_WHAT);
+static void match(CONTEXT, ParamElem *matchLst) {
+	/* ... to understand what he said */
+	CALL1(tryMatch, matchLst)
+	if (wrds[wrdidx] != EOD && !isConj(wrds[wrdidx])) {
+		CALL1(error, M_WHAT)
+	}
 	if (wrds[wrdidx] != EOD)  /* More on this line? */
 		wrdidx++;           /* If so skip the AND */
 }
 
-void parse() {
+void parse(CONTEXT) {
 	if (mlst == NULL) {       /* Allocate large enough paramlists */
 		mlst = (ParamElem *) allocate(sizeof(ParamElem) * (MAXENTITY + 1));
 		mlst[0].code = EOD;
@@ -682,7 +710,8 @@ void parse() {
 
 	if (wrds[wrdidx] == EOD) {
 		wrdidx = 0;
-		scan();
+		CALL0(scan)
+
 		if (g_vm->shouldQuit())
 			return;
 	} else if (anyOutput)
@@ -698,12 +727,13 @@ void parse() {
 		vrbwrd = wrds[wrdidx];
 		vrbcode = dict[vrbwrd].code;
 		wrdidx++;
-		match(mlst);
-		action(mlst);       /* mlst contains possible multiple params */
+		CALL1(match, mlst)
+		/* mlst contains possible multiple params */
+		CALL1(action, mlst)
 	} else {
 		params[0].code = EOD;
 		pmlst[0].code = EOD;
-		nonverb();
+		CALL0(nonverb)
 	}
 }
 
