@@ -1386,7 +1386,7 @@ static void openFiles() {
 	if (!f->open(txtfnm)) {
 		delete f;
 		Common::String s = Common::String::format("Can't open adventure text data file '%s'.", txtfnm);
-		::error(s.c_str());
+		::error("%s", s.c_str());
 	}
 
 	// If logging open log file
