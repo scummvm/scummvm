@@ -591,6 +591,13 @@ public:
 	void drawEnts(int x, int y, int w, int h);
 	void animGrabbing();
 
+	// List functions
+	void addToAutoList(int x, int y, const char *luaFuncInt, const char *luaFuncUse);
+	void autoDeactivate(int x, int y);
+	bool activateAction(AIEntity *e, int x, int y, int targetX, int targetY);
+	bool checkAutoList(AIEntity *e, int x, int y);
+	bool autoActive(int x, int y);
+
 	bool checkFloating(int x, int y);
 
 	bool getTableEnt(AIType type);
