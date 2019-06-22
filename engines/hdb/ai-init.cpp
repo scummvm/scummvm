@@ -769,6 +769,7 @@ bool AI::init() {
 	_kcHolderBlackOff	= g_hdb->_drawMan->getTileIndex("anim_t32_kcholder_black_off1");
 	_kcHolderBlackOn	= g_hdb->_drawMan->getTileIndex("t32_kcholder_black_on");
 
+	_dummyPlayer.type = AI_GUY;
 	_playerRunning = false;
 
 	restartSystem();

@@ -876,6 +876,9 @@ public:
 
 	AutoAction *_autoActions[kMaxAutoActions];
 
+	// Virtual Player
+	AIEntity _dummyPlayer;
+
 	// Cinematic Variables
 	Common::Array<CineCommand *> _cine;
 
