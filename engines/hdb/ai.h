@@ -634,7 +634,8 @@ public:
 
 	// Player Functions
 	AIEntity *getPlayer() {
-		warning("STUB: AI::getPlayer: dummyplayer not supported");
+		if (!_player)
+			return &_dummyPlayer;
 		return _player;
 	}
 
