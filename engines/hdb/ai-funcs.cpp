@@ -1185,6 +1185,41 @@ void AI::drawEnts(int x, int y, int w, int h) {
 	}
 }
 
+void AI::animGrabbing() {
+	if (_player->state == STATE_GRABUP ||
+		_player->state == STATE_GRABDOWN ||
+		_player->state == STATE_GRABLEFT ||
+		_player->state == STATE_GRABRIGHT)
+		return;
+
+	AIState s;
+
+	switch (_player->dir) {
+	case DIR_UP:
+		s = STATE_GRABUP;
+		_player->draw = _getGfx[DIR_UP];
+		break;
+	case DIR_DOWN:
+		s = STATE_GRABDOWN;
+		_player->draw = _getGfx[DIR_DOWN];
+		break;
+	case DIR_LEFT:
+		s = STATE_GRABLEFT;
+		_player->draw = _getGfx[DIR_LEFT];
+		break;
+	case DIR_RIGHT:
+		s = STATE_GRABRIGHT;
+		_player->draw = _getGfx[DIR_RIGHT];
+		break;
+	default:
+		warning("AI-FUNCS: animGrabbing: DIR_NONE found");
+		break;
+	}
+
+	_player->state = s;
+	_player->animFrame = 5;
+}
+
 bool AI::checkFloating(int x, int y) {
 	for (Common::Array<AIEntity *>::iterator it = _floats->begin(); it != _floats->end(); it++) {
 		if ((*it)->tileX == x && (*it)->tileY == y)
