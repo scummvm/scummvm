@@ -30,7 +30,7 @@ namespace Alan2 {
 winid_t glkMainWin;
 winid_t glkStatusWin;
 
-void glkio_printf(char *fmt, ...) {
+void glkio_printf(const char *fmt, ...) {
 	va_list argp;
 	va_start(argp, fmt);
 	if (glkMainWin) {
@@ -48,3 +48,4 @@ void glkio_printf(char *fmt, ...) {
 
 } // End of namespace Alan2
 } // End of namespace Glk
+

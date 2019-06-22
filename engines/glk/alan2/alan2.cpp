@@ -99,7 +99,7 @@ void syncVal(Common::Serializer &s, uint32 *fld) {
 
 void Alan2::synchronizeSave(Common::Serializer &s) {
 	AtrElem *atr;
-	int i;
+	Aword i;
 
 	// Sync current values
 	cur.synchronize(s);
@@ -136,7 +136,7 @@ void Alan2::synchronizeSave(Common::Serializer &s) {
 	// Sync the event queue
 	if (s.isSaving()) {
 		eventq[etop].time = 0;        // Mark the top
-		for (i = 0; i <= etop; ++i)
+		for (i = 0; i <= (Aword)etop; ++i)
 			eventq[i].synchronize(s);
 	} else {
 		for (etop = 0; eventq[etop - 1].time; ++etop)
@@ -145,7 +145,7 @@ void Alan2::synchronizeSave(Common::Serializer &s) {
 	}
 
 	// Sync scores
-	for (i = 0; scores[i] != EOF; i++)
+	for (i = 0; (int)scores[i] != EOF; i++)
 		syncVal(s, &scores[i]);
 }
 

@@ -434,7 +434,7 @@ static void prsym(
   recogniced and performed.
 
  */
-void output(char original[]) {
+void output(const char original[]) {
 	char ch;
 	char *str, *copy;
 	char *symptr;

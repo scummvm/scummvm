@@ -37,12 +37,11 @@ namespace Alan2 {
 Aword reversed(Aword w /* IN - The ACODE word to swap bytes of */) {
 	Aword s;                      /* The swapped ACODE word */
 	char *wp, *sp;
-	int i;
 
 	wp = (char *) &w;
 	sp = (char *) &s;
 
-	for (i = 0; i < sizeof(Aword); i++)
+	for (uint i = 0; i < sizeof(Aword); i++)
 		sp[sizeof(Aword) - 1 - i] = wp[i];
 
 	return s;
@@ -346,10 +345,8 @@ static void reverseRuls(Aword adr) {
 
 */
 void reverseHdr(AcdHdr *hdr) {
-	int i;
-
-	/* Reverse all words in the header except the first (version marking) */
-	for (i = 1; i < sizeof(AcdHdr) / sizeof(Aword); i++)
+	// Reverse all words in the header except the first (version marking)
+	for (uint i = 1; i < sizeof(AcdHdr) / sizeof(Aword); i++)
 		reverse(&((Aword *)hdr)[i]);
 }
 

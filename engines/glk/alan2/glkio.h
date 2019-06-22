@@ -39,9 +39,10 @@ extern winid_t glkStatusWin;
 #undef printf
 #define printf glkio_printf
 
-void glkio_printf(char *, ...);
+void glkio_printf(const char *, ...);
 
 } // End of namespace Alan2
 } // End of namespace Glk
 
 #endif
+

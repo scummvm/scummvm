@@ -72,7 +72,13 @@ typedef int WrdKind;
 
 
 /* Syntax element classifications */
-#define EOS (-2)        /* End Of Syntax */
+// End of file
+#ifdef EOF
+#undef EOF
+#endif
+#define EOF ((uint32)-1)
+// End of syntax
+#define EOS ((uint32)-2)
 
 /* Syntax element flag bits */
 #define MULTIPLEBIT 0x1
