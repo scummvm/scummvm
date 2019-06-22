@@ -669,6 +669,7 @@ AIEntTypeInfo aiEntList[] = {
 AI::AI() {
 	_ents = new Common::Array<AIEntity *>;
 	_floats = new Common::Array<AIEntity *>;
+	_animTargets = new Common::Array<AnimTarget *>;
 
 	for (int i = 0; i < kMaxLevel2Ents;i++) {
 		_entsLevel2[i] = new AIEntLevel2;
@@ -681,6 +682,7 @@ AI::AI() {
 AI::~AI() {
 	delete _ents;
 	delete _floats;
+	delete _animTargets;
 	for (int i = 0; i < kMaxLevel2Ents;i++) {
 		delete _entsLevel2[i];
 	}
