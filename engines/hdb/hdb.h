@@ -69,6 +69,7 @@ enum GameState {
 };
 
 enum Flag {
+	kFlagSolid			= 0x3,
 	kFlagPlayerDie		= 0x8,
 	kFlagInvisible		= 0x20,
 	kFlagForeground		= 0x80,
