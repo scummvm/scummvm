@@ -74,6 +74,7 @@ bool Window::init() {
 }
 
 void Window::restartSystem() {
+	_dialogInfo.active = false;
 	_dialogDelay = 0;
 }
 
