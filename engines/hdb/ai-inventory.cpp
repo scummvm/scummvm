@@ -61,7 +61,7 @@ bool AI::addToInventory(AIEntity *e) {
 		return false;
 	}
 
-	_inventory[_numInventory]->ent = e;
+	_inventory[_numInventory].ent = e;
 	_numInventory++;
 
 	// If weapon, ready it
@@ -84,12 +84,14 @@ bool AI::addToInventory(AIEntity *e) {
 void AI::clearInventory() {
 	int keepslot = 0;
 	for (int i = 0; i < _numInventory; i++) {
-		if (!_inventory[i]->keep) {
-			_inventory[i] = NULL;
+		if (!_inventory[i].keep) {
+			memset(&_inventory[i], 0, sizeof(InvEnt));
 		} else {
 			if (i != keepslot) {
 				_inventory[keepslot] = _inventory[i];
-				_inventory[i] = NULL;
+				_inventory[keepslot].ent = _inventory[i].ent;
+				_inventory[keepslot].keep = _inventory[i].keep;
+				memset(&_inventory[i], 0, sizeof(InvEnt));
 			}
 			keepslot++;
 		}

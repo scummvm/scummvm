@@ -139,25 +139,25 @@ void AI::addToAutoList(int x, int y, const char *luaFuncInit, const char *luaFun
 	const char *get;
 
 	for (int i = 0;i < kMaxAutoActions;i++) {
-		if (!_autoActions[i]->x) {
-			_autoActions[i]->x = x;
-			_autoActions[i]->y = y;
-			_autoActions[i]->activated = false;
+		if (!_autoActions[i].x) {
+			_autoActions[i].x = x;
+			_autoActions[i].y = y;
+			_autoActions[i].activated = false;
 			if (luaFuncInit[0] != '*')
-				strcpy(&_autoActions[i]->luaFuncInit[0], luaFuncInit);
+				strcpy(&_autoActions[i].luaFuncInit[0], luaFuncInit);
 			if (luaFuncUse[0] != '*')
-				strcpy(&_autoActions[i]->luaFuncUse[0], luaFuncUse);
+				strcpy(&_autoActions[i].luaFuncUse[0], luaFuncUse);
 
-			if (_autoActions[i]->luaFuncInit[0]) {
-				g_hdb->_lua->callFunction(_autoActions[i]->luaFuncInit, 2);
+			if (_autoActions[i].luaFuncInit[0]) {
+				g_hdb->_lua->callFunction(_autoActions[i].luaFuncInit, 2);
 				get = g_hdb->_lua->getStringOffStack();
 				if (!get)
 					return;
-				strcpy(&_autoActions[i]->entityName[0], get);
+				strcpy(&_autoActions[i].entityName[0], get);
 				get = g_hdb->_lua->getStringOffStack();
 				if (!get)
 					return;
-				strcpy(&_autoActions[i]->entityName[0], get);
+				strcpy(&_autoActions[i].entityName[0], get);
 			}
 			return;
 		}
@@ -166,8 +166,8 @@ void AI::addToAutoList(int x, int y, const char *luaFuncInit, const char *luaFun
 
 void AI::autoDeactivate(int x, int y) {
 	for (int i = 0; i < kMaxAutoActions;i++) {
-		if (_autoActions[i]->x == x && _autoActions[i]->y == y) {
-			_autoActions[i]->activated = false;
+		if (_autoActions[i].x == x && _autoActions[i].y == y) {
+			_autoActions[i].activated = false;
 			return;
 		}
 	}
@@ -299,12 +299,12 @@ bool AI::activateAction(AIEntity *e, int x, int y, int targetX, int targetY) {
 
 bool AI::checkAutoList(AIEntity *e, int x, int y) {
 	for (int i = 0;i < kMaxAutoActions;i++) {
-		if (_autoActions[i]->x == x && _autoActions[i]->y == y && !_autoActions[i]->activated) {
+		if (_autoActions[i].x == x && _autoActions[i].y == y && !_autoActions[i].activated) {
 			bool success = activateAction(e, x, y, 0, 0);
-			_autoActions[i]->activated = true;
+			_autoActions[i].activated = true;
 
-			if (success && _autoActions[i]->luaFuncUse[0])
-				g_hdb->_lua->callFunction(_autoActions[i]->luaFuncUse, 0);
+			if (success && _autoActions[i].luaFuncUse[0])
+				g_hdb->_lua->callFunction(_autoActions[i].luaFuncUse, 0);
 
 			if (e == _player) {
 				lookAtXY(x, y);
@@ -319,8 +319,8 @@ bool AI::checkAutoList(AIEntity *e, int x, int y) {
 
 bool AI::autoActive(int x, int y) {
 	for (int i = 0;i < kMaxAutoActions;i++) {
-		if (_autoActions[i]->x == x && _autoActions[i]->y == y) {
-			if (!_autoActions[i]->activated)
+		if (_autoActions[i].x == x && _autoActions[i].y == y) {
+			if (!_autoActions[i].activated)
 				return false;
 			return true;
 		}

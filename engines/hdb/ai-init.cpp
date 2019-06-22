@@ -671,16 +671,6 @@ AI::AI() {
 	_floats = new Common::Array<AIEntity *>;
 	_animTargets = new Common::Array<AnimTarget *>;
 
-	for (int i = 0; i < kMaxLevel2Ents; i++) {
-		_entsLevel2[i] = new AIEntLevel2;
-	}
-	for (int i = 0; i < kMaxActions; i++) {
-		_actions[i] = new ActionInfo;
-	}
-	for (int i = 0; i < kMaxAutoActions; i++) {
-		_autoActions[i] = new AutoAction;
-	}
-
 	// REMOVE: Remove for final. Used here due to lack of a MENU
 	_numGems = _numGooCups = _numMonkeystones = _numInventory = 0;
 }
@@ -689,9 +679,6 @@ AI::~AI() {
 	delete _ents;
 	delete _floats;
 	delete _animTargets;
-	for (int i = 0; i < kMaxLevel2Ents;i++) {
-		delete _entsLevel2[i];
-	}
 }
 
 bool AI::init() {
