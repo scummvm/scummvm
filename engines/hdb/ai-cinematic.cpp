@@ -210,14 +210,14 @@ void AI::processCines() {
 		}
 		case C_USEENTITY:
 			for (Common::Array<AIEntity *>::iterator it = _ents->begin(); it != _ents->end(); it++) {
-				if (Common::matchString((*it)->entityName, _cine[i]->string)) {
+				if ((*it)->entityName && Common::matchString((*it)->entityName, _cine[i]->string)) {
 					g_hdb->useEntity((*it));
 				}
 			}
 			warning("STUB: PROCESSCINES: USEENTITY: CheckActionList required;");
 #if 0
 			for (int i = 0;i < kMaxAutoActions;i++) {
-				if (Common::matchString(_autoActions[i].entityName, _cine[i]->string) && !_autoActions[i].activated)
+				if (_autoActions[i].entityName && Common::matchString(_autoActions[i].entityName, _cine[i]->string) && !_autoActions[i].activated)
 					checkAutoList(&_dummyPlayer, _autoActions[i].x, _autoActions[i].y);
 			}
 #endif
@@ -335,7 +335,7 @@ void AI::cineWaitUntilDone() {
 
 void AI::cineSetEntity(const char *entName, int x, int y, int level) {
 	CineCommand *cmd = new CineCommand;
-	cmd->string = entName;
+	strcpy(cmd->string, entName);
 	cmd->x = x * kTileWidth;
 	cmd->y = y * kTileHeight;
 	cmd->x2 = level;
@@ -350,14 +350,14 @@ void AI::cineMoveEntity(const char *entName, int x, int y, int level, int speed)
 	cmd->x2 = level;
 	cmd->start = 0;
 	cmd->speed = speed;
-	cmd->title = entName;
+	strcpy(cmd->title, entName);
 	cmd->cmdType = C_MOVEENTITY;
 	_cine.push_back(cmd);
 }
 
 void AI::cineEntityFace(const char *luaName, double dir) {
 	CineCommand *cmd = new CineCommand;
-	cmd->title = luaName;
+	strcpy(cmd->title, luaName);
 	cmd->x = dir;
 	cmd->cmdType = C_ENTITYFACE;
 	_cine.push_back(cmd);
@@ -365,7 +365,7 @@ void AI::cineEntityFace(const char *luaName, double dir) {
 
 void AI::cineUse(const char *entName) {
 	CineCommand *cmd = new CineCommand;
-	cmd->string = entName;
+	strcpy(cmd->string, entName);
 	cmd->cmdType = C_USEENTITY;
 	_cine.push_back(cmd);
 }
