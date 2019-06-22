@@ -79,6 +79,7 @@ public:
 	void turnOffFade() { _fadeInfo.active = _fadeInfo.stayFaded = false; }
 
 	Tile *getTile(int index);
+	void cacheTileSequence(int index, int count);
 	int getTileIndex(const char *name);
 	Picture *getPicture(const char *name);
 

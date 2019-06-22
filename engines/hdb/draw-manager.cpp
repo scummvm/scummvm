@@ -153,6 +153,11 @@ Tile *DrawMan::getTile(int index) {
 	return _tLookupArray[index].tData;
 }
 
+void DrawMan::cacheTileSequence(int tileIndex, int count) {
+	for (int i = tileIndex;i < tileIndex + count;i++)
+		getTile(i);
+}
+
 int DrawMan::getTileIndex(const char *name) {
 	if (!name) {
 		return -1;
