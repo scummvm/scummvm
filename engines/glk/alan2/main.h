@@ -73,8 +73,8 @@ extern Common::SeekableReadStream *codfil;
 #undef fseek
 #undef fclose
 #define ftell(FP) FP->pos()
-#define fgetc(FP) (FP->pos() >= FP->size()) ? EOF : FP->readByte()
-#define getc(FP) (FP->pos() >= FP->size()) ? EOF : FP->readByte()
+#define fgetc(FP) (FP->pos() >= FP->size()) ? EOD : FP->readByte()
+#define getc(FP) (FP->pos() >= FP->size()) ? EOD : FP->readByte()
 #define fseek(FP, OFS, WHENCE) FP->seek(OFS, WHENCE)
 #define fclose(FP) delete FP
 

@@ -30,14 +30,14 @@ namespace Alan2 {
 /* Bit output */
 static int decodeBuffer;    /* Bits to be input */
 static int bitsToGo;        /* Bits still in buffer */
-static int garbageBits;     /* Bits past EOF */
+static int garbageBits;     /* Bits past EOD */
 
 static int inputBit() {
 	int bit;
 
 	if (!bitsToGo) {      /* More bits available ? */
 		decodeBuffer = txtfil->readByte(); /* No, so get more */
-		if (decodeBuffer == EOF) {
+		if (decodeBuffer == EOD) {
 			garbageBits++;
 			if (garbageBits > VALUEBITS - 2)
 				syserr("Error in encoded data file.");

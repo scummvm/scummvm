@@ -72,11 +72,8 @@ typedef int WrdKind;
 
 
 /* Syntax element classifications */
-// End of file
-#ifdef EOF
-#undef EOF
-#endif
-#define EOF ((uint32)-1)
+// End of data
+#define EOD ((uint32)-1)
 // End of syntax
 #define EOS ((uint32)-2)
 

@@ -446,7 +446,7 @@ static Aptr litatr(Aword lit, Aword atr) {
 		sprintf(str, "Unknown attribute for literal (%ld).", (unsigned long) atr);
 		syserr(str);
 	}
-	return (Aptr)EOF;
+	return (Aptr)EOD;
 }
 
 Aptr attribute(Aword id, Aword atr) {
@@ -464,7 +464,7 @@ Aptr attribute(Aword id, Aword atr) {
 		sprintf(str, "Can't ATTRIBUTE item (%ld).", (unsigned long) id);
 		syserr(str);
 	}
-	return (Aptr)EOF;
+	return (Aptr)EOD;
 }
 
 Aptr strattr(Aword id, Aword atr) {
@@ -503,7 +503,7 @@ Aword where(Aword id) {
 		sprintf(str, "Can't WHERE item (%ld).", (unsigned long) id);
 		syserr(str);
 	}
-	return (Aptr)EOF;
+	return (Aptr)EOD;
 }
 
 
@@ -654,7 +654,7 @@ Abool isHere(Aword id) {
 		sprintf(str, "Can't HERE item (%ld).", (unsigned long) id);
 		syserr(str);
 	}
-	return (Abool)EOF;
+	return (Abool)EOD;
 }
 
 /*----------------------------------------------------------------------
@@ -688,7 +688,7 @@ Abool isNear(Aword id) {
 		sprintf(str, "Can't NEAR item (%ld).", (unsigned long) id);
 		syserr(str);
 	}
-	return (Abool)EOF;
+	return (Abool)EOD;
 }
 
 

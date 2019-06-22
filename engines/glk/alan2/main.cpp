@@ -167,7 +167,7 @@ void syserr(const char *str) {
 void error(MsgKind msgno /* IN - The error message number */) {
 	if (msgno != MSGMAX)
 		prmsg(msgno);
-	wrds[wrdidx] = EOF;       /* Force new player input */
+	wrds[wrdidx] = EOD;       /* Force new player input */
 	dscrstkp = 0;         /* Reset describe stack */
 
 	//longjmp(jmpbuf,TRUE);
@@ -330,10 +330,10 @@ static void sayparam(int p) {
 	int i;
 
 	for (i = 0; i <= p; i++)
-		if (params[i].code == EOF)
+		if (params[i].code == EOD)
 			syserr("Nonexistent parameter referenced.");
 
-	if (params[p].firstWord == EOF) /* Any words he used? */
+	if (params[p].firstWord == EOD) /* Any words he used? */
 		say(params[p].code);
 	else              /* Yes, so use them... */
 		for (i = params[p].firstWord; i <= params[p].lastWord; i++) {
@@ -491,7 +491,7 @@ void prmsg(MsgKind msg /* IN - message number */) {
 
 /* How to know we are at end of a table */
 Boolean eot(Aword *adr) {
-	return *adr == EOF;
+	return *adr == EOD;
 }
 
 Boolean isObj(Aword x) {
@@ -778,7 +778,7 @@ Boolean possible() {
 		if (!trycheck(alt[1]->checks, FALSE))
 			return FALSE;
 
-	for (i = 0; params[i].code != EOF; i++) {
+	for (i = 0; params[i].code != EOD; i++) {
 		alt[i + 2] = findalt(objs[params[i].code - OBJMIN].vrbs, i + 1);
 		/* CHECKs in a possible parameter */
 		if (alt[i + 2] != 0 && alt[i + 2]->checks != 0)
@@ -786,10 +786,10 @@ Boolean possible() {
 				return FALSE;
 	}
 
-	for (i = 0; i < 2 || params[i - 2].code != EOF; i++)
+	for (i = 0; i < 2 || params[i - 2].code != EOD; i++)
 		if (alt[i] != 0 && alt[i]->action != 0)
 			break;
-	if (i >= 2 && params[i - 2].code == EOF)
+	if (i >= 2 && params[i - 2].code == EOD)
 		/* Didn't find any code for this verb/object combination */
 		return FALSE;
 	else
@@ -829,7 +829,7 @@ static void do_it() {
 		if (fail) return;
 	}
 
-	for (i = 0; params[i].code != EOF; i++) {
+	for (i = 0; params[i].code != EOD; i++) {
 		if (isLit(params[i].code))
 			alt[i + 2] = 0;
 		else {
@@ -850,10 +850,10 @@ static void do_it() {
 	}
 
 	/* Check for anything to execute... */
-	for (i = 0; i < 2 || params[i - 2].code != EOF; i++)
+	for (i = 0; i < 2 || params[i - 2].code != EOD; i++)
 		if (alt[i] != 0 && alt[i]->action != 0)
 			break;
-	if (i >= 2 && params[i - 2].code == EOF)
+	if (i >= 2 && params[i - 2].code == EOD)
 		/* Didn't find any code for this verb/object combination */
 		error(M_CANT0);
 
@@ -862,7 +862,7 @@ static void do_it() {
 	/* First try any BEFORE or ONLY from outside in */
 	done[0] = FALSE;
 	done[1] = FALSE;
-	for (i = 2; params[i - 2].code != EOF; i++)
+	for (i = 2; params[i - 2].code != EOD; i++)
 		done[i] = FALSE;
 	i--;
 	while (i >= 0) {
@@ -891,7 +891,7 @@ static void do_it() {
 	}
 
 	/* Then execute any not declared as AFTER, i.e. the default */
-	for (i = 0; i < 2 || params[i - 2].code != EOF; i++) {
+	for (i = 0; i < 2 || params[i - 2].code != EOD; i++) {
 		if (alt[i] != 0)
 			if (alt[i]->qual != (Aword)Q_AFTER) {
 				if (!done[i] && alt[i]->action != 0) {
@@ -952,11 +952,11 @@ void action(ParamElem plst[] /* IN - Plural parameter list */) {
 		 */
 		for (mpos = 0; params[mpos].code != 0; mpos++); /* Find multiple position */
 		sprintf(marker, "($%d)", mpos + 1); /* Prepare a printout with $1/2/3 */
-		for (i = 0; plst[i].code != EOF; i++) {
+		for (i = 0; plst[i].code != EOD; i++) {
 			params[mpos] = plst[i];
 			output(marker);
 			do_it();
-			if (plst[i + 1].code != EOF)
+			if (plst[i + 1].code != EOD)
 				para();
 		}
 		params[mpos].code = 0;
