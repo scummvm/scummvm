@@ -832,4 +832,99 @@ void AI::restartSystem() {
 	memset(&_waypoints[0], 0, sizeof(_waypoints));
 	_numWaypoints = 0;
 }
+
+void AI::initAnimInfo() {
+	if (g_hdb->_map->checkOneTileExistInRange(_useSwitchOff, 2))
+		g_hdb->_drawMan->getTile(_useSwitchOn);
+	if (g_hdb->_map->checkOneTileExistInRange(_useSwitch2Off, 2))
+		g_hdb->_drawMan->getTile(_useSwitch2On);
+	if (g_hdb->_map->checkOneTileExistInRange(_useHolderEmpty, 2))
+		g_hdb->_drawMan->getTile(_useHolderFull);
+	if (g_hdb->_map->checkOneTileExistInRange(_useHandswitchOff, 2))
+		g_hdb->_drawMan->getTile(_useHandswitchOn);
+
+	if (g_hdb->_map->checkOneTileExistInRange(_targetDoorN, 4))
+		g_hdb->_drawMan->cacheTileSequence(_targetDoorN, 4);
+	if (g_hdb->_map->checkOneTileExistInRange(_targetDoorP, 4))
+		g_hdb->_drawMan->cacheTileSequence(_targetDoorP, 4);
+	if (g_hdb->_map->checkOneTileExistInRange(_targetDoorS, 4))
+		g_hdb->_drawMan->cacheTileSequence(_targetDoorS, 4);
+	if (g_hdb->_map->checkOneTileExistInRange(_targetDoorNv, 4))
+		g_hdb->_drawMan->cacheTileSequence(_targetDoorNv, 4);
+	if (g_hdb->_map->checkOneTileExistInRange(_targetDoorPv, 4))
+		g_hdb->_drawMan->cacheTileSequence(_targetDoorPv, 4);
+	if (g_hdb->_map->checkOneTileExistInRange(_targetDoorSv, 4))
+		g_hdb->_drawMan->cacheTileSequence(_targetDoorSv, 4);
+
+	if (g_hdb->_map->checkOneTileExistInRange(_targetDoor2N, 4))
+		g_hdb->_drawMan->cacheTileSequence(_targetDoor2N, 4);
+	if (g_hdb->_map->checkOneTileExistInRange(_targetDoor2P, 4))
+		g_hdb->_drawMan->cacheTileSequence(_targetDoor2P, 4);
+	if (g_hdb->_map->checkOneTileExistInRange(_targetDoor2S, 4))
+		g_hdb->_drawMan->cacheTileSequence(_targetDoor2S, 4);
+	if (g_hdb->_map->checkOneTileExistInRange(_targetDoor2Nv, 4))
+		g_hdb->_drawMan->cacheTileSequence(_targetDoor2Nv, 4);
+	if (g_hdb->_map->checkOneTileExistInRange(_targetDoor2Pv, 4))
+		g_hdb->_drawMan->cacheTileSequence(_targetDoor2Pv, 4);
+	if (g_hdb->_map->checkOneTileExistInRange(_targetDoor2Sv, 4))
+		g_hdb->_drawMan->cacheTileSequence(_targetDoor2Sv, 4);
+
+	if (g_hdb->_map->checkOneTileExistInRange(_target2DoorN, 4))
+		g_hdb->_drawMan->cacheTileSequence(_target2DoorN, 4);
+	if (g_hdb->_map->checkOneTileExistInRange(_target2DoorP, 4))
+		g_hdb->_drawMan->cacheTileSequence(_target2DoorP, 4);
+	if (g_hdb->_map->checkOneTileExistInRange(_target2DoorS, 4))
+		g_hdb->_drawMan->cacheTileSequence(_target2DoorS, 4);
+	if (g_hdb->_map->checkOneTileExistInRange(_target2DoorNv, 4))
+		g_hdb->_drawMan->cacheTileSequence(_target2DoorNv, 4);
+	if (g_hdb->_map->checkOneTileExistInRange(_target2DoorPv, 4))
+		g_hdb->_drawMan->cacheTileSequence(_target2DoorPv, 4);
+	if (g_hdb->_map->checkOneTileExistInRange(_target2DoorSv, 4))
+		g_hdb->_drawMan->cacheTileSequence(_target2DoorSv, 4);
+
+	if (g_hdb->_map->checkOneTileExistInRange(_target3DoorN, 4))
+		g_hdb->_drawMan->cacheTileSequence(_target3DoorN, 4);
+	if (g_hdb->_map->checkOneTileExistInRange(_target3DoorP, 4))
+		g_hdb->_drawMan->cacheTileSequence(_target3DoorP, 4);
+	if (g_hdb->_map->checkOneTileExistInRange(_target3DoorS, 4))
+		g_hdb->_drawMan->cacheTileSequence(_target3DoorS, 4);
+	if (g_hdb->_map->checkOneTileExistInRange(_target3DoorNv, 4))
+		g_hdb->_drawMan->cacheTileSequence(_target3DoorNv, 4);
+	if (g_hdb->_map->checkOneTileExistInRange(_target3DoorPv, 4))
+		g_hdb->_drawMan->cacheTileSequence(_target3DoorPv, 4);
+	if (g_hdb->_map->checkOneTileExistInRange(_target3DoorSv, 4))
+		g_hdb->_drawMan->cacheTileSequence(_target3DoorSv, 4);
+
+	if (g_hdb->_map->checkOneTileExistInRange(_targetBridgeU, 3))
+		g_hdb->_drawMan->cacheTileSequence(_targetBridgeU, 3);
+	if (g_hdb->_map->checkOneTileExistInRange(_targetBridgeD, 3))
+		g_hdb->_drawMan->cacheTileSequence(_targetBridgeD, 3);
+	if (g_hdb->_map->checkOneTileExistInRange(_targetBridgeL, 3))
+		g_hdb->_drawMan->cacheTileSequence(_targetBridgeL, 3);
+	if (g_hdb->_map->checkOneTileExistInRange(_targetBridgeR, 3))
+		g_hdb->_drawMan->cacheTileSequence(_targetBridgeR, 3);
+
+	g_hdb->_drawMan->cacheTileSequence(_targetBridgeMidLR, 1);
+	g_hdb->_drawMan->cacheTileSequence(_targetBridgeMidUD, 1);
+
+	if (g_hdb->_map->checkOneTileExistInRange(_touchplateOff, 2))
+		g_hdb->_drawMan->cacheTileSequence(_touchplateOff, 2);
+	if (g_hdb->_map->checkOneTileExistInRange(_templeTouchpOff, 2))
+		g_hdb->_drawMan->cacheTileSequence(_templeTouchpOff, 2);
+	if (g_hdb->_map->checkOneTileExistInRange(_blockpole, 4))
+		g_hdb->_drawMan->cacheTileSequence(_blockpole, 4);
+
+	if (g_hdb->_map->checkOneTileExistInRange(_kcHolderWhiteOff, 2))
+		g_hdb->_drawMan->getTile(_kcHolderWhiteOn);
+	if (g_hdb->_map->checkOneTileExistInRange(_kcHolderBlueOff, 2))
+		g_hdb->_drawMan->getTile(_kcHolderBlueOn);
+	if (g_hdb->_map->checkOneTileExistInRange(_kcHolderRedOff, 2))
+		g_hdb->_drawMan->getTile(_kcHolderRedOn);
+	if (g_hdb->_map->checkOneTileExistInRange(_kcHolderGreenOff, 2))
+		g_hdb->_drawMan->getTile(_kcHolderGreenOn);
+	if (g_hdb->_map->checkOneTileExistInRange(_kcHolderPurpleOff, 2))
+		g_hdb->_drawMan->getTile(_kcHolderPurpleOn);
+	if (g_hdb->_map->checkOneTileExistInRange(_kcHolderBlackOff, 2))
+		g_hdb->_drawMan->getTile(_kcHolderBlackOn);
+}
 } // End of Namespace
