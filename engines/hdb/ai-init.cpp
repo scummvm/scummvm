@@ -763,6 +763,7 @@ bool AI::init() {
 	_kcHolderBlackOn	= g_hdb->_drawMan->getTileIndex("t32_kcholder_black_on");
 
 	_dummyPlayer.type = AI_GUY;
+	strcpy(_dummyPlayer.entityName, "Virtual Player");
 	_playerRunning = false;
 
 	restartSystem();
