@@ -145,7 +145,7 @@ void Alan2::synchronizeSave(Common::Serializer &s) {
 	}
 
 	// Sync scores
-	for (i = 0; (int)scores[i] != EOD; i++)
+	for (i = 0; scores[i] != EOD; i++)
 		syncVal(s, &scores[i]);
 }
 

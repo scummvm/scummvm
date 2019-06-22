@@ -41,8 +41,8 @@ namespace Alan2 {
 
 /* PUBLIC DATA */
 
-int wrds[LISTLEN / 2] = {EOD};  /* List of parsed words */
-int wrdidx;         /* and an index into it */
+Aword wrds[LISTLEN / 2] = {EOD};  // List of parsed words
+int wrdidx;				// and an index into it
 
 Boolean plural = FALSE;
 

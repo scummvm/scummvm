@@ -59,18 +59,18 @@ namespace Alan2 {
 #define addrTo(x) (&memory[x])
 
 /* The word classes are represented as numbers but in the dictonary they are generated as bits */
-#define isVerb(word) (word < dictsize && (dict[word]._class&((Aword)1L<<WRD_VRB))!=0)
-#define isConj(word) (word < dictsize && (dict[word]._class&((Aword)1L<<WRD_CONJ))!=0)
-#define isBut(word) (word < dictsize && (dict[word]._class&((Aword)1L<<WRD_BUT))!=0)
-#define isThem(word) (word < dictsize && (dict[word]._class&((Aword)1L<<WRD_THEM))!=0)
-#define isIt(word) (word < dictsize && (dict[word]._class&((Aword)1L<<WRD_IT))!=0)
-#define isNoun(word) (word < dictsize && (dict[word]._class&((Aword)1L<<WRD_NOUN))!=0)
-#define isAdj(word) (word < dictsize && (dict[word]._class&((Aword)1L<<WRD_ADJ))!=0)
-#define isPrep(word) (word < dictsize && (dict[word]._class&((Aword)1L<<WRD_PREP))!=0)
-#define isAll(word) (word < dictsize && (dict[word]._class&((Aword)1L<<WRD_ALL))!=0)
-#define isDir(word) (word < dictsize && (dict[word]._class&((Aword)1L<<WRD_DIR))!=0)
-#define isNoise(word) (word < dictsize && (dict[word]._class&((Aword)1L<<WRD_NOISE))!=0)
-#define isLiteral(word) (word >= dictsize)
+#define isVerb(word) ((int)word < dictsize && (dict[word]._class&((Aword)1L<<WRD_VRB))!=0)
+#define isConj(word) ((int)word < dictsize && (dict[word]._class&((Aword)1L<<WRD_CONJ))!=0)
+#define isBut(word) ((int)word < dictsize && (dict[word]._class&((Aword)1L<<WRD_BUT))!=0)
+#define isThem(word) ((int)word < dictsize && (dict[word]._class&((Aword)1L<<WRD_THEM))!=0)
+#define isIt(word) ((int)word < dictsize && (dict[word]._class&((Aword)1L<<WRD_IT))!=0)
+#define isNoun(word) ((int)word < dictsize && (dict[word]._class&((Aword)1L<<WRD_NOUN))!=0)
+#define isAdj(word) ((int)word < dictsize && (dict[word]._class&((Aword)1L<<WRD_ADJ))!=0)
+#define isPrep(word) ((int)word < dictsize && (dict[word]._class&((Aword)1L<<WRD_PREP))!=0)
+#define isAll(word) ((int)word < dictsize && (dict[word]._class&((Aword)1L<<WRD_ALL))!=0)
+#define isDir(word) ((int)word < dictsize && (dict[word]._class&((Aword)1L<<WRD_DIR))!=0)
+#define isNoise(word) ((int)word < dictsize && (dict[word]._class&((Aword)1L<<WRD_NOISE))!=0)
+#define isLiteral(word) ((int)word >= dictsize)
 
 
 /* TYPES */

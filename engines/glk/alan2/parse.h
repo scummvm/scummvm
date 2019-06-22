@@ -28,10 +28,10 @@
 namespace Glk {
 namespace Alan2 {
 
-extern int wrds[];      /* List of Parsed Word */
-extern int wrdidx;      /* and an index into it */
+extern Aword wrds[];    // List of Parsed Word 
+extern int wrdidx;      // and an index into it
 
-extern ParamElem *params;   /* List of parameters */
+extern ParamElem *params;   // List of parameters
 extern Boolean plural;
 
 extern LitElem litValues[];
@@ -39,7 +39,7 @@ extern int litCount;
 
 extern int vrbwrd;
 
-/* Parse a new player command */
+// Parse a new player command
 extern void parse(void);
 
 } // End of namespace Alan2

@@ -224,7 +224,7 @@ void statusline() {
   Print some text and log it if logging is on.
 
  */
-void logprint(char str[]) {
+static void logprint(const char str[]) {
 	printf(str);
 	if (logflg)
 		fprintf(logfil, "%s", str);
@@ -293,7 +293,7 @@ void *allocate(unsigned long len /* IN - Length to allocate */) {
   Justify a string so that it wraps at end of screen.
 
  */
-static void just(char str[]) {
+static void just(const char str[]) {
 	logprint(str);
 }
 

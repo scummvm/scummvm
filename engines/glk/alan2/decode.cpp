@@ -37,7 +37,7 @@ static int inputBit() {
 
 	if (!bitsToGo) {      /* More bits available ? */
 		decodeBuffer = txtfil->readByte(); /* No, so get more */
-		if (decodeBuffer == EOD) {
+		if ((uint)decodeBuffer == EOD) {
 			garbageBits++;
 			if (garbageBits > VALUEBITS - 2)
 				syserr("Error in encoded data file.");

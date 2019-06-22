@@ -1057,9 +1057,6 @@ void look() {
 }
 
 
-static char savfnm[256];
-
-
 /*----------------------------------------------------------------------
 
   save()
@@ -1067,7 +1064,7 @@ static char savfnm[256];
   */
 
 void save() {
-	g_vm->saveGame();
+	(void)g_vm->saveGame();
 }
 
 
@@ -1078,7 +1075,7 @@ void save() {
   */
 
 void restore() {
-	g_vm->loadGame();
+	(void)g_vm->loadGame();
 }
 
 
