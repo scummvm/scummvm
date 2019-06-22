@@ -1163,13 +1163,6 @@ void BladeRunnerEngine::handleKeyUp(Common::Event &event) {
 		return;
 	}
 
-	if (_vqaIsPlaying && (event.kbd.keycode == Common::KEYCODE_ESCAPE || (event.kbd.keycode == Common::KEYCODE_RETURN && event.kbd.flags == 0))) {
-		_vqaStopIsRequested = true;
-		_vqaIsPlaying = false;
-
-		return;
-	}
-
 	if (!playerHasControl() || _isWalkingInterruptible) {
 		return;
 	}
@@ -1222,6 +1215,13 @@ void BladeRunnerEngine::handleKeyDown(Common::Event &event) {
 	if ((event.kbd.keycode == Common::KEYCODE_d) && (event.kbd.flags & Common::KBD_CTRL)) {
 		getDebugger()->attach();
 		getDebugger()->onFrame();
+		return;
+	}
+
+	if (_vqaIsPlaying && !event.kbdRepeat && (event.kbd.keycode == Common::KEYCODE_ESCAPE || event.kbd.keycode == Common::KEYCODE_RETURN)) {
+		_vqaStopIsRequested = true;
+		_vqaIsPlaying = false;
+
 		return;
 	}
 
