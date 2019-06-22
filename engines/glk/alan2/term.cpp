@@ -35,8 +35,8 @@ namespace Alan2 {
 
  */
 void getPageSize() {
-  paglen = 0;
-  pagwidth = 0;
+	paglen = 0;
+	pagwidth = 0;
 }
 
 } // End of namespace Alan2

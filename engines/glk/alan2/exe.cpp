@@ -54,55 +54,55 @@ void dscracts();
 
 
 void print(Aword fpos, Aword len) {
-  char str[2*WIDTH];            /* String buffer */
-  int outlen = 0;               /* Current output length */
-  int ch;
-  int i;
-  long savfp;                   /* Temporary saved text file position */
-  static Boolean printFlag = FALSE; /* Printing already? */
-  Boolean savedPrintFlag = printFlag;
-  void *info;                   /* Saved decoding info */
+	char str[2 * WIDTH];          /* String buffer */
+	int outlen = 0;               /* Current output length */
+	int ch;
+	int i;
+	long savfp;                   /* Temporary saved text file position */
+	static Boolean printFlag = FALSE; /* Printing already? */
+	Boolean savedPrintFlag = printFlag;
+	void *info;                   /* Saved decoding info */
 
 
-  if (len == 0) return;
+	if (len == 0) return;
 
-  if (isHere(HERO)) {           /* Check if the player will see it */
-    if (printFlag) {            /* Already printing? */
-      /* Save current text file position and/or decoding info */
-      if (header->pack)
-	info = pushDecode();
-      else
-	savfp = ftell(txtfil);
-    }
-    printFlag = TRUE;           /* We're printing now! */
-    fseek(txtfil, fpos, 0);     /* Position to start of text */
-    if (header->pack)
-      startDecoding();
-    for (outlen = 0; outlen != (int)len; outlen = outlen + strlen(str)) {
-      /* Fill the buffer from the beginning */
-      for (i = 0; i <= WIDTH || (i > WIDTH && ch != ' '); i++) {
-	if (outlen + i == (int)len)  /* No more characters? */
-	  break;
-	if (header->pack)
-	  ch = decodeChar();
-	else
-	  ch = getc(txtfil);
-	if (ch == EOFChar)      /* Or end of text? */
-	  break;
-	str[i] = ch;
-      }
-      str[i] = '\0';
-      output(str);
-    }
-    /* And restore */
-    printFlag = savedPrintFlag;
-    if (printFlag) {
-      if (header->pack)
-	popDecode(info);
-      else
-	fseek(txtfil, savfp, 0);
-    }
-  }
+	if (isHere(HERO)) {           /* Check if the player will see it */
+		if (printFlag) {            /* Already printing? */
+			/* Save current text file position and/or decoding info */
+			if (header->pack)
+				info = pushDecode();
+			else
+				savfp = ftell(txtfil);
+		}
+		printFlag = TRUE;           /* We're printing now! */
+		fseek(txtfil, fpos, 0);     /* Position to start of text */
+		if (header->pack)
+			startDecoding();
+		for (outlen = 0; outlen != (int)len; outlen = outlen + strlen(str)) {
+			/* Fill the buffer from the beginning */
+			for (i = 0; i <= WIDTH || (i > WIDTH && ch != ' '); i++) {
+				if (outlen + i == (int)len)  /* No more characters? */
+					break;
+				if (header->pack)
+					ch = decodeChar();
+				else
+					ch = getc(txtfil);
+				if (ch == EOFChar)      /* Or end of text? */
+					break;
+				str[i] = ch;
+			}
+			str[i] = '\0';
+			output(str);
+		}
+		/* And restore */
+		printFlag = savedPrintFlag;
+		if (printFlag) {
+			if (header->pack)
+				popDecode(info);
+			else
+				fseek(txtfil, savfp, 0);
+		}
+	}
 }
 
 void sys(Aword fpos, Aword len) {
@@ -111,130 +111,131 @@ void sys(Aword fpos, Aword len) {
 #else
 	char *command;
 
-  getstr(fpos, len);            /* Returns address to string on stack */
-  command = (char *)pop();
-  int tmp = system(command);
-  free(command);
+	getstr(fpos, len);            /* Returns address to string on stack */
+	command = (char *)pop();
+	int tmp = system(command);
+	free(command);
 #endif
 }
 
 void getstr(Aword fpos, Aword len) {
-  char *buf = (char *)allocate(len+1);
+	char *buf = (char *)allocate(len + 1);
 
-  push((Aptr) buf);            /* Push the address to the string */
-  fseek(txtfil, fpos, 0);       /* Position to start of text */
-  if (header->pack)
-    startDecoding();
-  while (len--)
-    if (header->pack)
-      *(buf++) = decodeChar();
-    else
-      *(buf++) = getc(txtfil);
-  *buf = '\0';
+	push((Aptr) buf);            /* Push the address to the string */
+	fseek(txtfil, fpos, 0);       /* Position to start of text */
+	if (header->pack)
+		startDecoding();
+	while (len--)
+		if (header->pack)
+			*(buf++) = decodeChar();
+		else
+			*(buf++) = getc(txtfil);
+	*buf = '\0';
 }
 
 void score(Aword sc) {
-  char buf[80];
+	char buf[80];
 
-  if (sc == 0) {
-    prmsg(M_SCORE1);
-    sprintf(buf, "%d", cur.score);
-    output(buf);
-    prmsg(M_SCORE2);
-    sprintf(buf, "%ld.", (unsigned long) header->maxscore);
-    output(buf);
-  } else {
-    cur.score += scores[sc-1];
-    scores[sc-1] = 0;
-  }
+	if (sc == 0) {
+		prmsg(M_SCORE1);
+		sprintf(buf, "%d", cur.score);
+		output(buf);
+		prmsg(M_SCORE2);
+		sprintf(buf, "%ld.", (unsigned long) header->maxscore);
+		output(buf);
+	} else {
+		cur.score += scores[sc - 1];
+		scores[sc - 1] = 0;
+	}
 }
 
 void visits(Aword v) {
-  cur.visits = v;
+	cur.visits = v;
 }
 
 Boolean confirm(MsgKind msgno) {
-  char buf[80];
+	char buf[80];
 
-  /* This is a bit of a hack since we really want to compare the input,
-     it could be affirmative, but for now any input is NOT! */
-  prmsg(msgno);
+	/* This is a bit of a hack since we really want to compare the input,
+	   it could be affirmative, but for now any input is NOT! */
+	prmsg(msgno);
 
-  if (!readline(buf)) return TRUE;
-  col = 1;
+	if (!readline(buf)) return TRUE;
+	col = 1;
 
-  return (buf[0] == '\0');
+	return (buf[0] == '\0');
 }
 
 void quit() {
-  char buf[80];
-  char choices[10];
+	char buf[80];
+	char choices[10];
 
-  para();
-  while (!g_vm->shouldQuit()) {
-    col = 1;
-    statusline();
-    prmsg(M_QUITACTION);
-    if (!readline(buf)) terminate(0);
+	para();
+	while (!g_vm->shouldQuit()) {
+		col = 1;
+		statusline();
+		prmsg(M_QUITACTION);
+		if (!readline(buf)) terminate(0);
 
-	if (strcmp(buf, "restart") == 0)
-		//longjmp(restart_label, TRUE);
-		::error("TODO: restart");
-    else if (strcmp(buf, "restore") == 0) {
-      restore();
-      return;
-    } else if (strcmp(buf, "quit") == 0)
-      terminate(0);
-  }
-  syserr("Fallthrough in QUIT");
+		if (strcmp(buf, "restart") == 0)
+			//longjmp(restart_label, TRUE);
+			::error("TODO: restart");
+		else if (strcmp(buf, "restore") == 0) {
+			restore();
+			return;
+		} else if (strcmp(buf, "quit") == 0)
+			terminate(0);
+	}
+	syserr("Fallthrough in QUIT");
 }
 
 void restart() {
-  para();
-  if (confirm(M_REALLY)) {
-    //longjmp(restart_label, TRUE);
-	  ::error("TODO: restart");
-  } else
-    return;
-  syserr("Fallthrough in RESTART");
+	para();
+	if (confirm(M_REALLY)) {
+		//longjmp(restart_label, TRUE);
+		::error("TODO: restart");
+	} else
+		return;
+	syserr("Fallthrough in RESTART");
 }
 
 void cancl(Aword evt) {
-  int i;
+	int i;
 
-  for(i = etop-1; i>=0; i--)
-    if (eventq[i].event == evt) {
-      while (i < etop-1) {
-	eventq[i].event = eventq[i+1].event;
-	eventq[i].time = eventq[i+1].time;
-	eventq[i].where = eventq[i+1].where;
-	i++;
-      }
-      etop--;
-      return;
-    }
+	for (i = etop - 1; i >= 0; i--)
+		if (eventq[i].event == evt) {
+			while (i < etop - 1) {
+				eventq[i].event = eventq[i + 1].event;
+				eventq[i].time = eventq[i + 1].time;
+				eventq[i].where = eventq[i + 1].where;
+				i++;
+			}
+			etop--;
+			return;
+		}
 }
 
-void schedule(Aword evt, Aword whr, Aword aft) {  int i;
-   int time;
-  
-  cancl(evt);
-  /* Check for overflow */
-  if (etop == N_EVTS) syserr("Out of event space.");
-  
-  time = cur.tick+aft;
-  
-  /* Bubble this event down */
-  for (i = etop; i >= 1 && eventq[i-1].time <= time; i--) {
-    eventq[i].event = eventq[i-1].event;
-    eventq[i].time = eventq[i-1].time;
-    eventq[i].where = eventq[i-1].where;
-  }
-  
-  eventq[i].time = time;
-  eventq[i].where = whr;
-  eventq[i].event = evt;
-  etop++;
+void schedule(Aword evt, Aword whr, Aword aft) {
+	int i;
+	int time;
+
+	cancl(evt);
+	/* Check for overflow */
+	if (etop == N_EVTS) syserr("Out of event space.");
+
+	time = cur.tick + aft;
+
+	/* Bubble this event down */
+	for (i = etop; i >= 1 && eventq[i - 1].time <= time; i--) {
+		eventq[i].event = eventq[i - 1].event;
+		eventq[i].time = eventq[i - 1].time;
+		eventq[i].where = eventq[i - 1].where;
+	}
+
+	eventq[i].time = time;
+	eventq[i].where = whr;
+	eventq[i].event = evt;
+	etop++;
 }
 
 
@@ -246,15 +247,15 @@ void schedule(Aword evt, Aword whr, Aword aft) {  int i;
 
  */
 static Aptr getatr(
-     Aaddr atradr,              /* IN - ACODE address to attribute table */
-     Aaddr atr                  /* IN - The attribute to read */
+    Aaddr atradr,              /* IN - ACODE address to attribute table */
+    Aaddr atr                  /* IN - The attribute to read */
 ) {
-  AtrElem *at;
+	AtrElem *at;
 
-  at = (AtrElem *) addrTo(atradr);
-  return at[atr-1].val;
+	at = (AtrElem *) addrTo(atradr);
+	return at[atr - 1].val;
 }
-  
+
 
 /*----------------------------------------------------------------------
 
@@ -264,14 +265,14 @@ static Aptr getatr(
 
  */
 static void setatr(
-     Aaddr atradr,              /* IN - ACODE address to attribute table */
-     Aword atr,                 /* IN - attribute code */
-     Aword val                  /* IN - new value */
+    Aaddr atradr,              /* IN - ACODE address to attribute table */
+    Aword atr,                 /* IN - attribute code */
+    Aword val                  /* IN - new value */
 ) {
-  AtrElem *at;
-  
-  at = (AtrElem *) addrTo(atradr);
-  at[atr-1].val = val;
+	AtrElem *at;
+
+	at = (AtrElem *) addrTo(atradr);
+	at[atr - 1].val = val;
 }
 
 
@@ -282,30 +283,30 @@ static void setatr(
   */
 
 static void makloc(Aword loc, Aword atr, Aword val) {
-  setatr(locs[loc-LOCMIN].atrs, atr, val);
+	setatr(locs[loc - LOCMIN].atrs, atr, val);
 }
 
 static void makobj(Aword obj, Aword atr, Aword val) {
-  setatr(objs[obj-OBJMIN].atrs, atr, val);
+	setatr(objs[obj - OBJMIN].atrs, atr, val);
 }
 
 static void makact(Aword act, Aword atr, Aword val) {
-  setatr(acts[act-ACTMIN].atrs, atr, val);
+	setatr(acts[act - ACTMIN].atrs, atr, val);
 }
 
 void make(Aword id, Aword atr, Aword val) {
-  char str[80];
+	char str[80];
 
-  if (isObj(id))
-    makobj(id, atr, val);
-  else if (isLoc(id))
-    makloc(id, atr, val);
-  else if (isAct(id))
-    makact(id, atr, val);
-  else {
-    sprintf(str, "Can't MAKE item (%ld).", (unsigned long) id);
-    syserr(str);
-  }
+	if (isObj(id))
+		makobj(id, atr, val);
+	else if (isLoc(id))
+		makloc(id, atr, val);
+	else if (isAct(id))
+		makact(id, atr, val);
+	else {
+		sprintf(str, "Can't MAKE item (%ld).", (unsigned long) id);
+		syserr(str);
+	}
 }
 
 
@@ -316,36 +317,36 @@ void make(Aword id, Aword atr, Aword val) {
  */
 
 static void setloc(Aword loc, Aword atr, Aword val) {
-  setatr(locs[loc-LOCMIN].atrs, atr, val);
-  locs[loc-LOCMIN].describe = 0;
+	setatr(locs[loc - LOCMIN].atrs, atr, val);
+	locs[loc - LOCMIN].describe = 0;
 }
 
 static void setobj(Aword obj, Aword atr, Aword val) {
-  setatr(objs[obj-OBJMIN].atrs, atr, val);
+	setatr(objs[obj - OBJMIN].atrs, atr, val);
 }
 
 static void setact(Aword act, Aword atr, Aword val) {
-  setatr(acts[act-ACTMIN].atrs, atr, val);
+	setatr(acts[act - ACTMIN].atrs, atr, val);
 }
 
 void set(Aword id, Aword atr, Aword val) {
-  char str[80];
+	char str[80];
 
-  if (isObj(id))
-    setobj(id, atr, val);
-  else if (isLoc(id))
-    setloc(id, atr, val);
-  else if (isAct(id))
-    setact(id, atr, val);
-  else {
-    sprintf(str, "Can't SET item (%ld).", (unsigned long) id);
-    syserr(str);
-  }
+	if (isObj(id))
+		setobj(id, atr, val);
+	else if (isLoc(id))
+		setloc(id, atr, val);
+	else if (isAct(id))
+		setact(id, atr, val);
+	else {
+		sprintf(str, "Can't SET item (%ld).", (unsigned long) id);
+		syserr(str);
+	}
 }
 
 void setstr(Aword id, Aword atr, Aword str) {
-  free((char *)attribute(id, atr));
-  set(id, atr, str);
+	free((char *)attribute(id, atr));
+	set(id, atr, str);
 }
 
 
@@ -364,57 +365,57 @@ void setstr(Aword id, Aword atr, Aword str) {
 
  */
 static void incratr(
-	Aaddr atradr,           /* IN - ACODE address to attribute table */
-	Aword atr,              /* IN - attribute code */
-	Aword step              /* IN - step to increment by */
+    Aaddr atradr,           /* IN - ACODE address to attribute table */
+    Aword atr,              /* IN - attribute code */
+    Aword step              /* IN - step to increment by */
 ) {
-  AtrElem *at;
-  
-  at = (AtrElem *) addrTo(atradr);
-  at[atr-1].val += step;
+	AtrElem *at;
+
+	at = (AtrElem *) addrTo(atradr);
+	at[atr - 1].val += step;
 }
 
 static void incrloc(Aword loc, Aword atr, Aword step) {
-  incratr(locs[loc-LOCMIN].atrs, atr, step);
-  locs[loc-LOCMIN].describe = 0;
+	incratr(locs[loc - LOCMIN].atrs, atr, step);
+	locs[loc - LOCMIN].describe = 0;
 }
 
 static void incrobj(Aword obj, Aword atr, Aword step) {
-  incratr(objs[obj-OBJMIN].atrs, atr, step);
+	incratr(objs[obj - OBJMIN].atrs, atr, step);
 }
 
 static void incract(Aword act, Aword atr, Aword step) {
-  incratr(acts[act-ACTMIN].atrs, atr, step);
+	incratr(acts[act - ACTMIN].atrs, atr, step);
 }
 
 void incr(Aword id, Aword atr, Aword step) {
-  char str[80];
+	char str[80];
 
-  if (isObj(id))
-    incrobj(id, atr, step);
-  else if (isLoc(id))
-    incrloc(id, atr, step);
-  else if (isAct(id))
-    incract(id, atr, step);
-  else {
-    sprintf(str, "Can't INCR item (%ld).", (unsigned long) id);
-    syserr(str);
-  }
+	if (isObj(id))
+		incrobj(id, atr, step);
+	else if (isLoc(id))
+		incrloc(id, atr, step);
+	else if (isAct(id))
+		incract(id, atr, step);
+	else {
+		sprintf(str, "Can't INCR item (%ld).", (unsigned long) id);
+		syserr(str);
+	}
 }
 
 void decr(Aword id, Aword atr, Aword step) {
-  char str[80];
+	char str[80];
 
-  if (isObj(id))
-    incrobj(id, atr, -step);
-  else if (isLoc(id))
-    incrloc(id, atr, -step);
-  else if (isAct(id))
-    incract(id, atr, -step);
-  else {
-    sprintf(str, "Can't DECR item (%ld).", (unsigned long) id);
-    syserr(str);
-  }
+	if (isObj(id))
+		incrobj(id, atr, -step);
+	else if (isLoc(id))
+		incrloc(id, atr, -step);
+	else if (isAct(id))
+		incract(id, atr, -step);
+	else {
+		sprintf(str, "Can't DECR item (%ld).", (unsigned long) id);
+		syserr(str);
+	}
 }
 
 
@@ -425,49 +426,49 @@ void decr(Aword id, Aword atr, Aword step) {
   */
 
 static Aptr locatr(Aword loc, Aword atr) {
-  return getatr(locs[loc-LOCMIN].atrs, atr);
+	return getatr(locs[loc - LOCMIN].atrs, atr);
 }
 
 static Aptr objatr(Aword obj, Aword atr) {
-  return getatr(objs[obj-OBJMIN].atrs, atr);
+	return getatr(objs[obj - OBJMIN].atrs, atr);
 }
 
 static Aptr actatr(Aword act, Aword atr) {
-  return getatr(acts[act-ACTMIN].atrs, atr);
+	return getatr(acts[act - ACTMIN].atrs, atr);
 }
 
 static Aptr litatr(Aword lit, Aword atr) {
-  char str[80];
+	char str[80];
 
-  if (atr == 1)
-    return litValues[lit-LITMIN].value;
-  else {
-    sprintf(str, "Unknown attribute for literal (%ld).", (unsigned long) atr);
-    syserr(str);
-  }
-  return (Aptr)EOF;
+	if (atr == 1)
+		return litValues[lit - LITMIN].value;
+	else {
+		sprintf(str, "Unknown attribute for literal (%ld).", (unsigned long) atr);
+		syserr(str);
+	}
+	return (Aptr)EOF;
 }
 
 Aptr attribute(Aword id, Aword atr) {
-  char str[80];
+	char str[80];
 
-  if (isObj(id))
-    return objatr(id, atr);
-  else if (isLoc(id))
-    return locatr(id, atr);
-  else if (isAct(id))
-    return actatr(id, atr);
-  else if (isLit(id))
-    return litatr(id, atr);
-  else {
-    sprintf(str, "Can't ATTRIBUTE item (%ld).", (unsigned long) id);
-    syserr(str);
-  }
-  return (Aptr)EOF;
+	if (isObj(id))
+		return objatr(id, atr);
+	else if (isLoc(id))
+		return locatr(id, atr);
+	else if (isAct(id))
+		return actatr(id, atr);
+	else if (isLit(id))
+		return litatr(id, atr);
+	else {
+		sprintf(str, "Can't ATTRIBUTE item (%ld).", (unsigned long) id);
+		syserr(str);
+	}
+	return (Aptr)EOF;
 }
 
 Aptr strattr(Aword id, Aword atr) {
-  return (Aptr) strdup((char *)attribute(id, atr));
+	return (Aptr) strdup((char *)attribute(id, atr));
 }
 
 
@@ -478,31 +479,31 @@ Aptr strattr(Aword id, Aword atr) {
   */
 
 static Aword objloc(Aword obj) {
-  if (isCnt(objs[obj-OBJMIN].loc)) /* In something ? */
-    if (isObj(objs[obj-OBJMIN].loc) || isAct(objs[obj-OBJMIN].loc))
-      return(where(objs[obj-OBJMIN].loc));
-    else /* Containers not anywhere is where the hero is! */
-      return(where(HERO));
-  else
-    return(objs[obj-OBJMIN].loc);
+	if (isCnt(objs[obj - OBJMIN].loc)) /* In something ? */
+		if (isObj(objs[obj - OBJMIN].loc) || isAct(objs[obj - OBJMIN].loc))
+			return (where(objs[obj - OBJMIN].loc));
+		else /* Containers not anywhere is where the hero is! */
+			return (where(HERO));
+	else
+		return (objs[obj - OBJMIN].loc);
 }
 
 static Aword actloc(Aword act) {
-  return(acts[act-ACTMIN].loc);
+	return (acts[act - ACTMIN].loc);
 }
 
 Aword where(Aword id) {
-  char str[80];
+	char str[80];
 
-  if (isObj(id))
-    return objloc(id);
-  else if (isAct(id))
-    return actloc(id);
-  else {
-    sprintf(str, "Can't WHERE item (%ld).", (unsigned long) id);
-    syserr(str);
-  }
-  return (Aptr)EOF;
+	if (isObj(id))
+		return objloc(id);
+	else if (isAct(id))
+		return actloc(id);
+	else {
+		sprintf(str, "Can't WHERE item (%ld).", (unsigned long) id);
+		syserr(str);
+	}
+	return (Aptr)EOF;
 }
 
 
@@ -513,45 +514,45 @@ Aword where(Aword id) {
   */
 
 Aint agrmax(Aword atr, Aword whr) {
-  Aword i;
-  Aint max = 0;
+	Aword i;
+	Aint max = 0;
 
-  for (i = OBJMIN; i <= OBJMAX; i++) {
-    if (isLoc(whr)) {
-      if (where(i) == whr && attribute(i, atr) > max)
-	max = attribute(i, atr);
-    } else if (objs[i-OBJMIN].loc == whr && attribute(i, atr) > max)
-	max = attribute(i, atr);
-  }
-  return(max);
+	for (i = OBJMIN; i <= OBJMAX; i++) {
+		if (isLoc(whr)) {
+			if (where(i) == whr && attribute(i, atr) > max)
+				max = attribute(i, atr);
+		} else if (objs[i - OBJMIN].loc == whr && attribute(i, atr) > max)
+			max = attribute(i, atr);
+	}
+	return (max);
 }
 
 Aint agrsum(Aword atr, Aword whr) {
-  Aword i;
-  Aint sum = 0;
+	Aword i;
+	Aint sum = 0;
 
-  for (i = OBJMIN; i <= OBJMAX; i++) {
-    if (isLoc(whr)) {
-      if (where(i) == whr)
-	sum += attribute(i, atr);
-    } else if (objs[i-OBJMIN].loc == whr)
-      sum += attribute(i, atr);
-  }
-  return(sum);
+	for (i = OBJMIN; i <= OBJMAX; i++) {
+		if (isLoc(whr)) {
+			if (where(i) == whr)
+				sum += attribute(i, atr);
+		} else if (objs[i - OBJMIN].loc == whr)
+			sum += attribute(i, atr);
+	}
+	return (sum);
 }
 
 Aint agrcount(Aword whr) {
-  Aword i;
-  Aword count = 0;
+	Aword i;
+	Aword count = 0;
 
-  for (i = OBJMIN; i <= OBJMAX; i++) {
-    if (isLoc(whr)) {
-      if (where(i) == whr)
-	count++;
-    } else if (objs[i-OBJMIN].loc == whr)
-	count++;
-  }
-  return(count);
+	for (i = OBJMIN; i <= OBJMAX; i++) {
+		if (isLoc(whr)) {
+			if (where(i) == whr)
+				count++;
+		} else if (objs[i - OBJMIN].loc == whr)
+			count++;
+	}
+	return (count);
 }
 
 
@@ -562,63 +563,63 @@ Aint agrcount(Aword whr) {
   */
 
 static void locobj(Aword obj, Aword whr) {
-  if (isCnt(whr)) { /* Into a container */
-    if (whr == obj)
-      syserr("Locating something inside itself.");
-    if (checklim(whr, obj))
-      return;
-    else
-      objs[obj-OBJMIN].loc = whr;
-  } else {
-    objs[obj-OBJMIN].loc = whr;
-    /* Make sure the location is described since it's changed */
-    locs[whr-LOCMIN].describe = 0;
-  }
+	if (isCnt(whr)) { /* Into a container */
+		if (whr == obj)
+			syserr("Locating something inside itself.");
+		if (checklim(whr, obj))
+			return;
+		else
+			objs[obj - OBJMIN].loc = whr;
+	} else {
+		objs[obj - OBJMIN].loc = whr;
+		/* Make sure the location is described since it's changed */
+		locs[whr - LOCMIN].describe = 0;
+	}
 }
 
 static void locact(Aword act, Aword whr) {
-  Aword prevact = cur.act;
-  Aword prevloc = cur.loc;
+	Aword prevact = cur.act;
+	Aword prevloc = cur.loc;
 
-  cur.loc = whr;
-  acts[act-ACTMIN].loc = whr;
-  if (act == HERO) {
-    if (locs[acts[act-ACTMIN].loc-LOCMIN].describe % (cur.visits+1) == 0)
-      look();
-    else {
-      if (anyOutput)
-	para();
-      say(where(HERO));
-      prmsg(M_AGAIN);
-      newline();
-      dscrobjs();
-      dscracts();
-    }
-    locs[where(HERO)-LOCMIN].describe++;
-    locs[where(HERO)-LOCMIN].describe %= (cur.visits+1);
-  } else
-    locs[whr-LOCMIN].describe = 0;
-  if (locs[cur.loc-LOCMIN].does != 0) {
-    cur.act = act;
-    interpret(locs[cur.loc-LOCMIN].does);
-    cur.act = prevact;
-  }
+	cur.loc = whr;
+	acts[act - ACTMIN].loc = whr;
+	if (act == HERO) {
+		if (locs[acts[act - ACTMIN].loc - LOCMIN].describe % (cur.visits + 1) == 0)
+			look();
+		else {
+			if (anyOutput)
+				para();
+			say(where(HERO));
+			prmsg(M_AGAIN);
+			newline();
+			dscrobjs();
+			dscracts();
+		}
+		locs[where(HERO) - LOCMIN].describe++;
+		locs[where(HERO) - LOCMIN].describe %= (cur.visits + 1);
+	} else
+		locs[whr - LOCMIN].describe = 0;
+	if (locs[cur.loc - LOCMIN].does != 0) {
+		cur.act = act;
+		interpret(locs[cur.loc - LOCMIN].does);
+		cur.act = prevact;
+	}
 
-  if (cur.act != act)
-    cur.loc = prevloc;
+	if (cur.act != act)
+		cur.loc = prevloc;
 }
 
 void locate(Aword id, Aword whr) {
-  char str[80];
+	char str[80];
 
-  if (isObj(id))
-    locobj(id, whr);
-  else if (isAct(id))
-    locact(id, whr);
-  else {
-    sprintf(str, "Can't LOCATE item (%ld).", (unsigned long) id);
-    syserr(str);
-  }
+	if (isObj(id))
+		locobj(id, whr);
+	else if (isAct(id))
+		locact(id, whr);
+	else {
+		sprintf(str, "Can't LOCATE item (%ld).", (unsigned long) id);
+		syserr(str);
+	}
 }
 
 
@@ -629,31 +630,31 @@ void locate(Aword id, Aword whr) {
   */
 
 static Abool objhere(Aword obj) {
-  if (isCnt(objs[obj-OBJMIN].loc)) {    /* In something? */
-    if (isObj(objs[obj-OBJMIN].loc) || isAct(objs[obj-OBJMIN].loc))
-      return(isHere(objs[obj-OBJMIN].loc));
-    else /* If the container wasn't anywhere, assume where HERO is! */
-      return(where(HERO) == cur.loc);
-  } else
-    return(objs[obj-OBJMIN].loc == cur.loc);
+	if (isCnt(objs[obj - OBJMIN].loc)) {  /* In something? */
+		if (isObj(objs[obj - OBJMIN].loc) || isAct(objs[obj - OBJMIN].loc))
+			return (isHere(objs[obj - OBJMIN].loc));
+		else /* If the container wasn't anywhere, assume where HERO is! */
+			return (where(HERO) == cur.loc);
+	} else
+		return (objs[obj - OBJMIN].loc == cur.loc);
 }
 
 static Aword acthere(Aword act) {
-  return(acts[act-ACTMIN].loc == cur.loc);
+	return (acts[act - ACTMIN].loc == cur.loc);
 }
 
 Abool isHere(Aword id) {
-  char str[80];
+	char str[80];
 
-  if (isObj(id))
-    return objhere(id);
-  else if (isAct(id))
-    return acthere(id);
-  else {
-    sprintf(str, "Can't HERE item (%ld).", (unsigned long) id);
-    syserr(str);
-  }
-  return (Abool)EOF;
+	if (isObj(id))
+		return objhere(id);
+	else if (isAct(id))
+		return acthere(id);
+	else {
+		sprintf(str, "Can't HERE item (%ld).", (unsigned long) id);
+		syserr(str);
+	}
+	return (Abool)EOF;
 }
 
 /*----------------------------------------------------------------------
@@ -663,31 +664,31 @@ Abool isHere(Aword id) {
   */
 
 static Aword objnear(Aword obj) {
-  if (isCnt(objs[obj-OBJMIN].loc)) {    /* In something? */
-    if (isObj(objs[obj-OBJMIN].loc) || isAct(objs[obj-OBJMIN].loc))
-      return(isNear(objs[obj-OBJMIN].loc));
-    else  /* If the container wasn't anywhere, assume here, so not nearby! */
-      return(FALSE);
-  } else
-    return(exitto(where(obj), cur.loc));
+	if (isCnt(objs[obj - OBJMIN].loc)) {  /* In something? */
+		if (isObj(objs[obj - OBJMIN].loc) || isAct(objs[obj - OBJMIN].loc))
+			return (isNear(objs[obj - OBJMIN].loc));
+		else  /* If the container wasn't anywhere, assume here, so not nearby! */
+			return (FALSE);
+	} else
+		return (exitto(where(obj), cur.loc));
 }
 
 static Aword actnear(Aword act) {
-  return(exitto(where(act), cur.loc));
+	return (exitto(where(act), cur.loc));
 }
 
 Abool isNear(Aword id) {
-  char str[80];
+	char str[80];
 
-  if (isObj(id))
-    return objnear(id);
-  else if (isAct(id))
-    return actnear(id);
-  else {
-    sprintf(str, "Can't NEAR item (%ld).", (unsigned long) id);
-    syserr(str);
-  }
-  return (Abool)EOF;
+	if (isObj(id))
+		return objnear(id);
+	else if (isAct(id))
+		return actnear(id);
+	else {
+		sprintf(str, "Can't NEAR item (%ld).", (unsigned long) id);
+		syserr(str);
+	}
+	return (Abool)EOF;
 }
 
 
@@ -698,12 +699,12 @@ Abool isNear(Aword id) {
   */
 
 Abool in(Aword obj, Aword cnt) {
-  if (!isObj(obj))
-    return(FALSE);
-  if (!isCnt(cnt))
-    syserr("IN in a non-container.");
+	if (!isObj(obj))
+		return (FALSE);
+	if (!isCnt(cnt))
+		syserr("IN in a non-container.");
 
-  return(objs[obj-OBJMIN].loc == cnt);
+	return (objs[obj - OBJMIN].loc == cnt);
 }
 
 
@@ -714,69 +715,69 @@ Abool in(Aword obj, Aword cnt) {
   */
 
 static void sayloc(Aword loc) {
-  interpret(locs[loc-LOCMIN].nams);
+	interpret(locs[loc - LOCMIN].nams);
 }
 
 static void sayobj(Aword obj) {
-  interpret(objs[obj-OBJMIN].dscr2);
+	interpret(objs[obj - OBJMIN].dscr2);
 }
 
 static void sayact(Aword act) {
-  interpret(acts[act-ACTMIN].nam);
+	interpret(acts[act - ACTMIN].nam);
 }
 
 void sayint(Aword val) {
-  char buf[25];
+	char buf[25];
 
-  if (isHere(HERO)) {
-    sprintf(buf, "%ld", (unsigned long) val);
-    output(buf);
-  }
+	if (isHere(HERO)) {
+		sprintf(buf, "%ld", (unsigned long) val);
+		output(buf);
+	}
 }
 
 void saystr(char *str) {
-  if (isHere(HERO))
-    output(str);
-  free(str);
+	if (isHere(HERO))
+		output(str);
+	free(str);
 }
 
 static void saylit(Aword lit) {
-  char *str;
+	char *str;
 
-  if (isNum(lit))
-    sayint(litValues[lit-LITMIN].value);
-  else {
-    str = (char *)strdup((char *)litValues[lit-LITMIN].value);
-    saystr(str);
-  }    
+	if (isNum(lit))
+		sayint(litValues[lit - LITMIN].value);
+	else {
+		str = (char *)strdup((char *)litValues[lit - LITMIN].value);
+		saystr(str);
+	}
 }
 
 void sayarticle(Aword id) {
-  if (!isObj(id))
-    syserr("Trying to say article of something *not* an object.");
-  if (objs[id-OBJMIN].art != 0)
-    interpret(objs[id-OBJMIN].art);
-  else
-    prmsg(M_ARTICLE);
+	if (!isObj(id))
+		syserr("Trying to say article of something *not* an object.");
+	if (objs[id - OBJMIN].art != 0)
+		interpret(objs[id - OBJMIN].art);
+	else
+		prmsg(M_ARTICLE);
 }
 
 void say(Aword id) {
-  char str[80];
+	char str[80];
 
-  if (isHere(HERO)) {
-    if (isObj(id))
-      sayobj(id);
-    else if (isLoc(id))
-      sayloc(id);
-    else if (isAct(id))
-      sayact(id);
-    else if (isLit(id))
-      saylit(id);
-    else {
-      sprintf(str, "Can't SAY item (%ld).", (unsigned long) id);
-      syserr(str);
-    }
-  }
+	if (isHere(HERO)) {
+		if (isObj(id))
+			sayobj(id);
+		else if (isLoc(id))
+			sayloc(id);
+		else if (isAct(id))
+			sayact(id);
+		else if (isLit(id))
+			saylit(id);
+		else {
+			sprintf(str, "Can't SAY item (%ld).", (unsigned long) id);
+			syserr(str);
+		}
+	}
 }
 
 
@@ -787,68 +788,68 @@ void say(Aword id) {
   */
 
 static void dscrloc(Aword loc) {
-  if (locs[loc-LOCMIN].dscr != 0)
-    interpret(locs[loc-LOCMIN].dscr);
+	if (locs[loc - LOCMIN].dscr != 0)
+		interpret(locs[loc - LOCMIN].dscr);
 }
 
 static void dscrobj(Aword obj) {
-  objs[obj-OBJMIN].describe = FALSE;
-  if (objs[obj-OBJMIN].dscr1 != 0)
-    interpret(objs[obj-OBJMIN].dscr1);
-  else {
-    prmsg(M_SEEOBJ1);
-    sayarticle(obj);
-    say(obj);
-    prmsg(M_SEEOBJ4);
-    if (objs[obj-OBJMIN].cont != 0)
-      list(obj);
-  }
+	objs[obj - OBJMIN].describe = FALSE;
+	if (objs[obj - OBJMIN].dscr1 != 0)
+		interpret(objs[obj - OBJMIN].dscr1);
+	else {
+		prmsg(M_SEEOBJ1);
+		sayarticle(obj);
+		say(obj);
+		prmsg(M_SEEOBJ4);
+		if (objs[obj - OBJMIN].cont != 0)
+			list(obj);
+	}
 }
 
 static void dscract(Aword act) {
-  ScrElem *scr = NULL;
+	ScrElem *scr = NULL;
 
-  if (acts[act-ACTMIN].script != 0) {
-    for (scr = (ScrElem *) addrTo(acts[act-ACTMIN].scradr); !endOfTable(scr); scr++)
-      if (scr->code == acts[act-ACTMIN].script)
-	break;
-    if (endOfTable(scr)) scr = NULL;
-  }
-  if (scr != NULL && scr->dscr != 0)
-    interpret(scr->dscr);
-  else if (acts[act-ACTMIN].dscr != 0)
-    interpret(acts[act-ACTMIN].dscr);
-  else {
-    interpret(acts[act-ACTMIN].nam);
-    prmsg(M_SEEACT);
-  }
-  acts[act-ACTMIN].describe = FALSE;
+	if (acts[act - ACTMIN].script != 0) {
+		for (scr = (ScrElem *) addrTo(acts[act - ACTMIN].scradr); !endOfTable(scr); scr++)
+			if (scr->code == acts[act - ACTMIN].script)
+				break;
+		if (endOfTable(scr)) scr = NULL;
+	}
+	if (scr != NULL && scr->dscr != 0)
+		interpret(scr->dscr);
+	else if (acts[act - ACTMIN].dscr != 0)
+		interpret(acts[act - ACTMIN].dscr);
+	else {
+		interpret(acts[act - ACTMIN].nam);
+		prmsg(M_SEEACT);
+	}
+	acts[act - ACTMIN].describe = FALSE;
 }
 
 
 static Aword dscrstk[255];
 
 void describe(Aword id) {
-  int i;
-  char str[80];
+	int i;
+	char str[80];
 
-  for (i = 0; i < dscrstkp; i++)
-    if (dscrstk[i] == id)
-      syserr("Recursive DESCRIBE.");
-  dscrstk[dscrstkp++] = id;
+	for (i = 0; i < dscrstkp; i++)
+		if (dscrstk[i] == id)
+			syserr("Recursive DESCRIBE.");
+	dscrstk[dscrstkp++] = id;
 
-  if (isObj(id))
-    dscrobj(id);
-  else if (isLoc(id))
-    dscrloc(id);
-  else if (isAct(id))
-    dscract(id);
-  else {
-    sprintf(str, "Can't DESCRIBE item (%ld).", (unsigned long) id);
-    syserr(str);
-  }
+	if (isObj(id))
+		dscrobj(id);
+	else if (isLoc(id))
+		dscrloc(id);
+	else if (isAct(id))
+		dscract(id);
+	else {
+		sprintf(str, "Can't DESCRIBE item (%ld).", (unsigned long) id);
+		syserr(str);
+	}
 
-  dscrstkp--;
+	dscrstkp--;
 }
 
 
@@ -859,15 +860,15 @@ void describe(Aword id) {
   */
 
 void use(Aword act, Aword scr) {
-  char str[80];
+	char str[80];
 
-  if (!isAct(act)) {
-    sprintf(str, "Item is not an Actor (%ld).", (unsigned long) act);
-    syserr(str);
-  }
+	if (!isAct(act)) {
+		sprintf(str, "Item is not an Actor (%ld).", (unsigned long) act);
+		syserr(str);
+	}
 
-  acts[act-ACTMIN].script = scr;
-  acts[act-ACTMIN].step = 0;
+	acts[act - ACTMIN].script = scr;
+	acts[act - ACTMIN].step = 0;
 }
 
 
@@ -878,66 +879,66 @@ void use(Aword act, Aword scr) {
   */
 
 void list(Aword cnt) {
-  int i;
-  Aword props;
-  Aword prevobj;
-  Boolean found = FALSE;
-  Boolean multiple = FALSE;
+	int i;
+	Aword props;
+	Aword prevobj;
+	Boolean found = FALSE;
+	Boolean multiple = FALSE;
 
-  /* Find container properties */
-  if (isObj(cnt))
-    props = objs[cnt-OBJMIN].cont;
-  else if (isAct(cnt))
-    props = acts[cnt-ACTMIN].cont;
-  else
-    props = cnt;
+	/* Find container properties */
+	if (isObj(cnt))
+		props = objs[cnt - OBJMIN].cont;
+	else if (isAct(cnt))
+		props = acts[cnt - ACTMIN].cont;
+	else
+		props = cnt;
 
-  for (i = OBJMIN; i <= OBJMAX; i++) {
-    if (in(i, cnt)) { /* Yes, it's in this container */
-      if (!found) {
-	found = TRUE;
-	if (cnts[props-CNTMIN].header != 0)
-	  interpret(cnts[props-CNTMIN].header);
-	else {
-	  prmsg(M_CONTAINS1);
-	  if (cnts[props-CNTMIN].nam != 0) /* It has it's own name */
-	    interpret(cnts[props-CNTMIN].nam);
-	  else
-	    say(cnts[props-CNTMIN].parent); /* It is actually an object or actor */
-	  prmsg(M_CONTAINS2);
+	for (i = OBJMIN; i <= OBJMAX; i++) {
+		if (in(i, cnt)) { /* Yes, it's in this container */
+			if (!found) {
+				found = TRUE;
+				if (cnts[props - CNTMIN].header != 0)
+					interpret(cnts[props - CNTMIN].header);
+				else {
+					prmsg(M_CONTAINS1);
+					if (cnts[props - CNTMIN].nam != 0) /* It has it's own name */
+						interpret(cnts[props - CNTMIN].nam);
+					else
+						say(cnts[props - CNTMIN].parent); /* It is actually an object or actor */
+					prmsg(M_CONTAINS2);
+				}
+			} else {
+				if (multiple) {
+					needsp = FALSE;
+					prmsg(M_CONTAINS3);
+				}
+				multiple = TRUE;
+				sayarticle(prevobj);
+				say(prevobj);
+			}
+			prevobj = i;
+		}
 	}
-      } else {
-	if (multiple) {
-	  needsp = FALSE;
-	  prmsg(M_CONTAINS3);
-	}
-	multiple = TRUE;
-	sayarticle(prevobj);
-	say(prevobj);
-      }
-      prevobj = i;
-    }
-  }
 
-  if (found) {
-    if (multiple)
-      prmsg(M_CONTAINS4);
-    sayarticle(prevobj);
-    say(prevobj);
-    prmsg(M_CONTAINS5);
-  } else {
-    if (cnts[props-CNTMIN].empty != 0)
-      interpret(cnts[props-CNTMIN].empty);
-    else {
-      prmsg(M_EMPTY1);
-      if (cnts[props-CNTMIN].nam != 0) /* It has it's own name */
-	interpret(cnts[props-CNTMIN].nam);
-      else
-	say(cnts[props-CNTMIN].parent);	/* It is actually an actor or object */
-      prmsg(M_EMPTY2);
-    }
-  }
-  needsp = TRUE;
+	if (found) {
+		if (multiple)
+			prmsg(M_CONTAINS4);
+		sayarticle(prevobj);
+		say(prevobj);
+		prmsg(M_CONTAINS5);
+	} else {
+		if (cnts[props - CNTMIN].empty != 0)
+			interpret(cnts[props - CNTMIN].empty);
+		else {
+			prmsg(M_EMPTY1);
+			if (cnts[props - CNTMIN].nam != 0) /* It has it's own name */
+				interpret(cnts[props - CNTMIN].nam);
+			else
+				say(cnts[props - CNTMIN].parent); /* It is actually an actor or object */
+			prmsg(M_EMPTY2);
+		}
+	}
+	needsp = TRUE;
 }
 
 
@@ -948,11 +949,11 @@ void list(Aword cnt) {
   */
 
 void empty(Aword cnt, Aword whr) {
-  int i;
+	int i;
 
-  for (i = OBJMIN; i <= OBJMAX; i++)
-    if (in(i, cnt))
-      locate(i, whr);
+	for (i = OBJMIN; i <= OBJMAX; i++)
+		if (in(i, cnt))
+			locate(i, whr);
 }
 
 
@@ -967,94 +968,94 @@ void empty(Aword cnt, Aword whr) {
 \*----------------------------------------------------------------------*/
 
 void dscrobjs() {
-  int i;
-  int prevobj;
-  Boolean found = FALSE;
-  Boolean multiple = FALSE;
+	int i;
+	int prevobj;
+	Boolean found = FALSE;
+	Boolean multiple = FALSE;
 
-  /* First describe everything here with its own description */
-  for (i = OBJMIN; i <= OBJMAX; i++)
-    if (objs[i-OBJMIN].loc == cur.loc &&
-	objs[i-OBJMIN].describe &&
-	objs[i-OBJMIN].dscr1)
-      describe(i);
+	/* First describe everything here with its own description */
+	for (i = OBJMIN; i <= OBJMAX; i++)
+		if (objs[i - OBJMIN].loc == cur.loc &&
+		        objs[i - OBJMIN].describe &&
+		        objs[i - OBJMIN].dscr1)
+			describe(i);
 
-  /* Then list everything else here */
-  for (i = OBJMIN; i <= OBJMAX; i++)
-    if (objs[i-OBJMIN].loc == cur.loc &&
-	objs[i-OBJMIN].describe) {
-      if (!found) {
-	prmsg(M_SEEOBJ1);
-	sayarticle(i);
-	say(i);
-	found = TRUE;
-      } else {
-	if (multiple) {
-	  needsp = FALSE;
-	  prmsg(M_SEEOBJ2);
-	  sayarticle(prevobj);
-	  say(prevobj);
+	/* Then list everything else here */
+	for (i = OBJMIN; i <= OBJMAX; i++)
+		if (objs[i - OBJMIN].loc == cur.loc &&
+		        objs[i - OBJMIN].describe) {
+			if (!found) {
+				prmsg(M_SEEOBJ1);
+				sayarticle(i);
+				say(i);
+				found = TRUE;
+			} else {
+				if (multiple) {
+					needsp = FALSE;
+					prmsg(M_SEEOBJ2);
+					sayarticle(prevobj);
+					say(prevobj);
+				}
+				multiple = TRUE;
+			}
+			prevobj = i;
+		}
+
+	if (found) {
+		if (multiple) {
+			prmsg(M_SEEOBJ3);
+			sayarticle(prevobj);
+			say(prevobj);
+		}
+		prmsg(M_SEEOBJ4);
 	}
-	multiple = TRUE;
-      }
-      prevobj = i;
-    }
 
-  if (found) {
-    if (multiple) {
-      prmsg(M_SEEOBJ3);
-      sayarticle(prevobj);
-      say(prevobj);
-    }
-    prmsg(M_SEEOBJ4);
-  }
-  
-  /* Set describe flag for all objects */
-  for (i = OBJMIN; i <= OBJMAX; i++)
-    objs[i-OBJMIN].describe = TRUE;
+	/* Set describe flag for all objects */
+	for (i = OBJMIN; i <= OBJMAX; i++)
+		objs[i - OBJMIN].describe = TRUE;
 }
 
 void dscracts() {
-  int i;
-  
-  for (i = HERO+1; i <= ACTMAX; i++)
-    if (acts[i-ACTMIN].loc == cur.loc &&
-	acts[i-ACTMIN].describe)
-      describe(i);
+	int i;
 
-  /* Set describe flag for all actors */
-  for (i = HERO; i <= ACTMAX; i++)
-    acts[i-ACTMIN].describe = TRUE;
+	for (i = HERO + 1; i <= ACTMAX; i++)
+		if (acts[i - ACTMIN].loc == cur.loc &&
+		        acts[i - ACTMIN].describe)
+			describe(i);
+
+	/* Set describe flag for all actors */
+	for (i = HERO; i <= ACTMAX; i++)
+		acts[i - ACTMIN].describe = TRUE;
 }
 
 void look() {
-  int i;
+	int i;
 
-  if (looking)
-    syserr("Recursive LOOK.");
+	if (looking)
+		syserr("Recursive LOOK.");
 
-  looking = TRUE;
-  /* Set describe flag for all objects and actors */
-  for (i = OBJMIN; i <= OBJMAX; i++)
-    objs[i-OBJMIN].describe = TRUE;
-  for (i = ACTMIN; i <= ACTMAX; i++)
-    acts[i-ACTMIN].describe = TRUE;
+	looking = TRUE;
+	/* Set describe flag for all objects and actors */
+	for (i = OBJMIN; i <= OBJMAX; i++)
+		objs[i - OBJMIN].describe = TRUE;
+	for (i = ACTMIN; i <= ACTMAX; i++)
+		acts[i - ACTMIN].describe = TRUE;
 
-  if (anyOutput)
-    para();
+	if (anyOutput)
+		para();
 
-g_vm->glk_set_style(style_Subheader);
-needsp = FALSE;
-  say(cur.loc);
-  needsp = FALSE;
-  output(".");
-g_vm->glk_set_style(style_Normal);
-  newline();
-needsp = FALSE;
-  describe(cur.loc);
-  dscrobjs();
-  dscracts();
-  looking = FALSE;
+	g_vm->glk_set_style(style_Subheader);
+	needsp = FALSE;
+	say(cur.loc);
+	needsp = FALSE;
+	output(".");
+	g_vm->glk_set_style(style_Normal);
+	newline();
+	needsp = FALSE;
+	describe(cur.loc);
+	dscrobjs();
+	dscracts();
+	looking = FALSE;
 }
 
 
@@ -1090,27 +1091,27 @@ void restore() {
   */
 
 Aword rnd(Aword from, Aword to) {
-  if (to == from)
-    return to;
-  else if (to > from)
-    return (rand()/10)%(to-from+1)+from;
-  else
-    return (rand()/10)%(from-to+1)+to;
+	if (to == from)
+		return to;
+	else if (to > from)
+		return (rand() / 10) % (to - from + 1) + from;
+	else
+		return (rand() / 10) % (from - to + 1) + to;
 }
 
 /*----------------------------------------------------------------------
 
   btw()
 
-  BETWEEN 
+  BETWEEN
 
   */
 
 Abool btw(Aint val, Aint low, Aint high) {
-  if (high > low)
-    return low <= val && val <= high;
-  else
-    return high <= val && val <= low;
+	if (high > low)
+		return low <= val && val <= high;
+	else
+		return high <= val && val <= low;
 }
 
 
@@ -1122,17 +1123,17 @@ Abool btw(Aint val, Aint low, Aint high) {
   */
 
 Aword contains(Aptr string, Aptr substring) {
-  Abool found;
+	Abool found;
 
-  strlow((char *)string);
-  strlow((char *)substring);
+	strlow((char *)string);
+	strlow((char *)substring);
 
-  found = (strstr((char *)string, (char *)substring) != 0);
+	found = (strstr((char *)string, (char *)substring) != 0);
 
-  free((char *)string);
-  free((char *)substring);
+	free((char *)string);
+	free((char *)substring);
 
-  return(found);
+	return (found);
 }
 
 
@@ -1144,17 +1145,17 @@ Aword contains(Aptr string, Aptr substring) {
 
   */
 Abool streq(char a[], char b[]) {
-  Boolean eq;
+	Boolean eq;
 
-  strlow(a);
-  strlow(b);
+	strlow(a);
+	strlow(b);
 
-  eq = (strcmp(a, b) == 0);
+	eq = (strcmp(a, b) == 0);
 
-  free(a);
-  free(b);
+	free(a);
+	free(b);
 
-  return(eq);
+	return (eq);
 }
 
 } // End of namespace Alan2

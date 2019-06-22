@@ -34,7 +34,7 @@ void glkio_printf(char *fmt, ...) {
 	va_list argp;
 	va_start(argp, fmt);
 	if (glkMainWin) {
-		char buf[1024];	/* FIXME: buf size should be foolproof */
+		char buf[1024]; /* FIXME: buf size should be foolproof */
 		vsprintf(buf, fmt, argp);
 		g_vm->glk_put_string(buf);
 	} else {

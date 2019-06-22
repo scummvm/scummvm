@@ -32,10 +32,10 @@ namespace Glk {
 namespace Alan2 {
 
 /* The event queue */
-extern EvtqElem eventq[];	/* Event queue */
-extern int etop;		/* Event queue top pointer */
-extern Boolean looking;		/* LOOKING? flag */
-extern int dscrstkp;		/* Point into describe stack */
+extern EvtqElem eventq[];   /* Event queue */
+extern int etop;        /* Event queue top pointer */
+extern Boolean looking;     /* LOOKING? flag */
+extern int dscrstkp;        /* Point into describe stack */
 
 extern void sys(Aword fpos, Aword len);
 extern Boolean confirm(MsgKind msgno);

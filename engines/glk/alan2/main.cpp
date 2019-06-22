@@ -46,30 +46,30 @@ namespace Alan2 {
 
 /* The Amachine memory */
 Aword *memory;
-//static AcdHdr dummyHeader;	/* Dummy to use until memory allocated */
+//static AcdHdr dummyHeader;    /* Dummy to use until memory allocated */
 AcdHdr *header;
 
-int memTop;			    /* Top of load memory */
+int memTop;             /* Top of load memory */
 
-int conjWord;			/* First conjunction in dictonary, for ',' */
+int conjWord;           /* First conjunction in dictonary, for ',' */
 
 
 /* Amachine variables */
 CurVars cur;
 
 /* Amachine structures */
-WrdElem *dict;			/* Dictionary pointer */
-ActElem *acts;			/* Actor table pointer */
-LocElem *locs;			/* Location table pointer */
-VrbElem *vrbs;			/* Verb table pointer */
-StxElem *stxs;			/* Syntax table pointer */
-ObjElem *objs;			/* Object table pointer */
-CntElem *cnts;			/* Container table pointer */
-RulElem *ruls;			/* Rule table pointer */
-EvtElem *evts;			/* Event table pointer */
-MsgElem *msgs;			/* Message table pointer */
-Aword *scores;			/* Score table pointer */
-Aword *freq;			/* Cumulative character frequencies */
+WrdElem *dict;          /* Dictionary pointer */
+ActElem *acts;          /* Actor table pointer */
+LocElem *locs;          /* Location table pointer */
+VrbElem *vrbs;          /* Verb table pointer */
+StxElem *stxs;          /* Syntax table pointer */
+ObjElem *objs;          /* Object table pointer */
+CntElem *cnts;          /* Container table pointer */
+RulElem *ruls;          /* Rule table pointer */
+EvtElem *evts;          /* Event table pointer */
+MsgElem *msgs;          /* Message table pointer */
+Aword *scores;          /* Score table pointer */
+Aword *freq;            /* Cumulative character frequencies */
 
 int dictsize;
 
@@ -102,7 +102,7 @@ Boolean skipsp = FALSE;
 
 
 /* PRIVATE DATA */
-//static jmp_buf jmpbuf;		/* Error return long jump buffer */
+//static jmp_buf jmpbuf;        /* Error return long jump buffer */
 
 
 
@@ -115,12 +115,12 @@ Boolean skipsp = FALSE;
 
  */
 void terminate(int code) {
-    newline();
-  free(memory);
-  if (logflg)
-    fclose(logfil);
+	newline();
+	free(memory);
+	if (logflg)
+		fclose(logfil);
 
-  g_vm->glk_exit();
+	g_vm->glk_exit();
 }
 
 /*======================================================================
@@ -129,19 +129,19 @@ void terminate(int code) {
 
   */
 void usage() {
-  printf("Usage:\n\n");
-  printf("    %s [<switches>] <adventure>\n\n", PROGNAME);
-  printf("where the possible optional switches are:\n");
-  g_vm->glk_set_style(style_Preformatted);
+	printf("Usage:\n\n");
+	printf("    %s [<switches>] <adventure>\n\n", PROGNAME);
+	printf("where the possible optional switches are:\n");
+	g_vm->glk_set_style(style_Preformatted);
 
-  printf("    -v    verbose mode\n");
-  printf("    -l    log player commands and game output to a file\n");
-  printf("    -i    ignore version and checksum errors\n");
-  printf("    -n    no Status Line\n");
-  printf("    -d    enter debug mode\n");
-  printf("    -t    trace game execution\n");
-  printf("    -s    single instruction trace\n");
-  g_vm->glk_set_style(style_Normal);
+	printf("    -v    verbose mode\n");
+	printf("    -l    log player commands and game output to a file\n");
+	printf("    -i    ignore version and checksum errors\n");
+	printf("    -n    no Status Line\n");
+	printf("    -d    enter debug mode\n");
+	printf("    -t    trace game execution\n");
+	printf("    -s    single instruction trace\n");
+	g_vm->glk_set_style(style_Normal);
 }
 
 
@@ -165,13 +165,13 @@ void syserr(const char *str) {
 
   */
 void error(MsgKind msgno /* IN - The error message number */) {
-  if (msgno != MSGMAX)
-    prmsg(msgno);
-  wrds[wrdidx] = EOF;		/* Force new player input */
-  dscrstkp = 0;			/* Reset describe stack */
-  
+	if (msgno != MSGMAX)
+		prmsg(msgno);
+	wrds[wrdidx] = EOF;       /* Force new player input */
+	dscrstkp = 0;         /* Reset describe stack */
+
 	//longjmp(jmpbuf,TRUE);
-  ::error("Error occurred");
+	::error("Error occurred");
 }
 
 
@@ -183,37 +183,37 @@ void error(MsgKind msgno /* IN - The error message number */) {
 
   */
 void statusline() {
-  uint glkWidth;
-  char line[100];
-  int pcol = col;
-  uint i;
+	uint glkWidth;
+	char line[100];
+	int pcol = col;
+	uint i;
 
-  if (NULL == glkStatusWin)
-    return;
+	if (NULL == glkStatusWin)
+		return;
 
-  g_vm->glk_set_window(glkStatusWin);
-  g_vm->glk_window_clear(glkStatusWin);
-  g_vm->glk_window_get_size(glkStatusWin, &glkWidth, NULL);
+	g_vm->glk_set_window(glkStatusWin);
+	g_vm->glk_window_clear(glkStatusWin);
+	g_vm->glk_window_get_size(glkStatusWin, &glkWidth, NULL);
 
-  g_vm->glk_set_style(style_User1);
-  for (i = 0; i < glkWidth; i++)
-	  g_vm->glk_put_char(' ');
+	g_vm->glk_set_style(style_User1);
+	for (i = 0; i < glkWidth; i++)
+		g_vm->glk_put_char(' ');
 
-  col = 1;
-  g_vm->glk_window_move_cursor(glkStatusWin, 1, 0);
-needsp = FALSE;
-  say(where(HERO));
-  if (header->maxscore > 0)
-    sprintf(line, "Score %d(%d)/%d moves", cur.score, (int)header->maxscore, cur.tick);
-  else
-    sprintf(line, "%d moves", cur.tick);
-  g_vm->glk_window_move_cursor(glkStatusWin, glkWidth - col - strlen(line), 0);
-  printf(line);
-  needsp = FALSE;
+	col = 1;
+	g_vm->glk_window_move_cursor(glkStatusWin, 1, 0);
+	needsp = FALSE;
+	say(where(HERO));
+	if (header->maxscore > 0)
+		sprintf(line, "Score %d(%d)/%d moves", cur.score, (int)header->maxscore, cur.tick);
+	else
+		sprintf(line, "%d moves", cur.tick);
+	g_vm->glk_window_move_cursor(glkStatusWin, glkWidth - col - strlen(line), 0);
+	printf(line);
+	needsp = FALSE;
 
-  col = pcol;
+	col = pcol;
 
-  g_vm->glk_set_window(glkMainWin);
+	g_vm->glk_set_window(glkMainWin);
 }
 
 
@@ -225,9 +225,9 @@ needsp = FALSE;
 
  */
 void logprint(char str[]) {
-  printf(str);
-  if (logflg)
-    fprintf(logfil, "%s", str);
+	printf(str);
+	if (logflg)
+		fprintf(logfil, "%s", str);
 }
 
 
@@ -251,9 +251,9 @@ void newline() {
 
  */
 void para() {
-  if (col != 1)
-    newline();
-  newline();
+	if (col != 1)
+		newline();
+	newline();
 }
 
 
@@ -277,12 +277,12 @@ void clear() {
 
 */
 void *allocate(unsigned long len /* IN - Length to allocate */) {
-  void *p = (void *)malloc((size_t)len);
+	void *p = (void *)malloc((size_t)len);
 
-  if (p == NULL)
-    syserr("Out of memory.");
+	if (p == NULL)
+		syserr("Out of memory.");
 
-  return p;
+	return p;
 }
 
 
@@ -294,7 +294,7 @@ void *allocate(unsigned long len /* IN - Length to allocate */) {
 
  */
 static void just(char str[]) {
-  logprint(str);
+	logprint(str);
 }
 
 
@@ -306,15 +306,15 @@ static void just(char str[]) {
 
  */
 static void space() {
-  if (skipsp)
-    skipsp = FALSE;
-  else {
-    if (needsp) {
-      logprint(" ");
-      col++;
-    }
-  }
-  needsp = FALSE;
+	if (skipsp)
+		skipsp = FALSE;
+	else {
+		if (needsp) {
+			logprint(" ");
+			col++;
+		}
+	}
+	needsp = FALSE;
 }
 
 
@@ -327,20 +327,20 @@ static void space() {
 
 */
 static void sayparam(int p) {
-  int i;
+	int i;
 
-  for (i = 0; i <= p; i++)
-    if (params[i].code == EOF)
-      syserr("Nonexistent parameter referenced.");
+	for (i = 0; i <= p; i++)
+		if (params[i].code == EOF)
+			syserr("Nonexistent parameter referenced.");
 
-  if (params[p].firstWord == EOF) /* Any words he used? */
-    say(params[p].code);
-  else				/* Yes, so use them... */
-    for (i = params[p].firstWord; i <= params[p].lastWord; i++) {
-      just((char *)addrTo(dict[wrds[i]].wrd));
-      if (i < params[p].lastWord)
-	just(" ");
-    }
+	if (params[p].firstWord == EOF) /* Any words he used? */
+		say(params[p].code);
+	else              /* Yes, so use them... */
+		for (i = params[p].firstWord; i <= params[p].lastWord; i++) {
+			just((char *)addrTo(dict[wrds[i]].wrd));
+			if (i < params[p].lastWord)
+				just(" ");
+		}
 }
 
 
@@ -361,67 +361,67 @@ static void sayparam(int p) {
   $ = no space needed after this
  */
 static void prsym(
-	char *str	/* IN - The string starting with '$' */
+    char *str   /* IN - The string starting with '$' */
 ) {
-  switch (toLower(str[1])) {
-  case 'n':
-    newline();
-    needsp = FALSE;
-    break;
-  case 'i':
-    newline();
-    logprint("    ");
-    col = 5;
-    needsp = FALSE;
-    break;
-  case 'o':
-    sayparam(0);
-    needsp = TRUE;		/* We did print something non-white */
-    break;
-  case '1':
-  case '2':
-  case '3':
-  case '4':
-  case '5':
-  case '6':
-  case '7':
-  case '8':
-  case '9':
-    sayparam(str[1]-'1');
-    needsp = TRUE;		/* We did print something non-white */
-    break;
-  case 'l':
-    say(cur.loc);
-    needsp = TRUE;		/* We did print something non-white */
-    break;
-  case 'a':
-    say(cur.act);
-    needsp = TRUE;		/* We did print something non-white */
-    break;
-  case 'v':
-    just((char *)addrTo(dict[vrbwrd].wrd));
-    needsp = TRUE;		/* We did print something non-white */
-    break;
-  case 'p':
-    para();
-    needsp = FALSE;
-    break;
-  case 't': {
-    int i;
-    int spaces = 4-(col-1)%4;
-    
-    for (i = 0; i<spaces; i++) logprint(" ");
-    col = col + spaces;
-    needsp = FALSE;
-    break;
-  }
-  case '$':
-    skipsp = TRUE;
-    break;
-  default:
-    logprint("$");
-    break;
-  }
+	switch (toLower(str[1])) {
+	case 'n':
+		newline();
+		needsp = FALSE;
+		break;
+	case 'i':
+		newline();
+		logprint("    ");
+		col = 5;
+		needsp = FALSE;
+		break;
+	case 'o':
+		sayparam(0);
+		needsp = TRUE;      /* We did print something non-white */
+		break;
+	case '1':
+	case '2':
+	case '3':
+	case '4':
+	case '5':
+	case '6':
+	case '7':
+	case '8':
+	case '9':
+		sayparam(str[1] - '1');
+		needsp = TRUE;      /* We did print something non-white */
+		break;
+	case 'l':
+		say(cur.loc);
+		needsp = TRUE;      /* We did print something non-white */
+		break;
+	case 'a':
+		say(cur.act);
+		needsp = TRUE;      /* We did print something non-white */
+		break;
+	case 'v':
+		just((char *)addrTo(dict[vrbwrd].wrd));
+		needsp = TRUE;      /* We did print something non-white */
+		break;
+	case 'p':
+		para();
+		needsp = FALSE;
+		break;
+	case 't': {
+		int i;
+		int spaces = 4 - (col - 1) % 4;
+
+		for (i = 0; i < spaces; i++) logprint(" ");
+		col = col + spaces;
+		needsp = FALSE;
+		break;
+	}
+	case '$':
+		skipsp = TRUE;
+		break;
+	default:
+		logprint("$");
+		break;
+	}
 }
 
 
@@ -435,36 +435,36 @@ static void prsym(
 
  */
 void output(char original[]) {
-  char ch;
-  char *str, *copy;
-  char *symptr;
+	char ch;
+	char *str, *copy;
+	char *symptr;
 
-  copy = strdup(original);
-  str = copy;
+	copy = strdup(original);
+	str = copy;
 
-  if (str[0] != '$' || str[1] != '$')
-    space();			/* Output space if needed (& not inhibited) */
+	if (str[0] != '$' || str[1] != '$')
+		space();            /* Output space if needed (& not inhibited) */
 
-  while ((symptr = strchr(str, '$')) != (char *) NULL) {
-    ch = *symptr;		/* Terminate before symbol */
-    *symptr = '\0';
-    if (strlen(str) > 0) {
-      just(str);		/* Output part before '$' */
-      if (str[strlen(str)-1] == ' ')
-	needsp = FALSE;
-    }
-    *symptr = ch;		/* restore '$' */
-    prsym(symptr);		/* Print the symbolic reference */
-    str = &symptr[2];		/* Advance to after symbol and continue */
-  }
-  if (str[0] != 0) {
-    just(str);			/* Output trailing part */
-    skipsp = FALSE;
-    if (str[strlen(str)-1] != ' ')
-      needsp = TRUE;
-  }
-  anyOutput = TRUE;
-  free(copy);
+	while ((symptr = strchr(str, '$')) != (char *) NULL) {
+		ch = *symptr;       /* Terminate before symbol */
+		*symptr = '\0';
+		if (strlen(str) > 0) {
+			just(str);        /* Output part before '$' */
+			if (str[strlen(str) - 1] == ' ')
+				needsp = FALSE;
+		}
+		*symptr = ch;       /* restore '$' */
+		prsym(symptr);      /* Print the symbolic reference */
+		str = &symptr[2];       /* Advance to after symbol and continue */
+	}
+	if (str[0] != 0) {
+		just(str);          /* Output trailing part */
+		skipsp = FALSE;
+		if (str[strlen(str) - 1] != ' ')
+			needsp = TRUE;
+	}
+	anyOutput = TRUE;
+	free(copy);
 }
 
 
@@ -473,10 +473,10 @@ void output(char original[]) {
   prmsg()
 
   Print a message from the message table.
-  
+
   */
 void prmsg(MsgKind msg /* IN - message number */) {
-  interpret(msgs[msg].stms);
+	interpret(msgs[msg].stms);
 }
 
 
@@ -491,37 +491,37 @@ void prmsg(MsgKind msg /* IN - message number */) {
 
 /* How to know we are at end of a table */
 Boolean eot(Aword *adr) {
-  return *adr == EOF;
+	return *adr == EOF;
 }
 
 Boolean isObj(Aword x) {
-  return x >= OBJMIN && x <= OBJMAX;
+	return x >= OBJMIN && x <= OBJMAX;
 }
 
 Boolean isCnt(Aword x) {
-  return (x >= CNTMIN && x <= CNTMAX) ||
-    (isObj(x) && objs[x-OBJMIN].cont != 0) ||
-    (isAct(x) && acts[x-ACTMIN].cont != 0);
+	return (x >= CNTMIN && x <= CNTMAX) ||
+	       (isObj(x) && objs[x - OBJMIN].cont != 0) ||
+	       (isAct(x) && acts[x - ACTMIN].cont != 0);
 }
 
 Boolean isAct(Aword x) {
-  return x >= ACTMIN && x <= ACTMAX;
+	return x >= ACTMIN && x <= ACTMAX;
 }
 
 Boolean isLoc(Aword x) {
-  return x >= LOCMIN && x <= LOCMAX;
+	return x >= LOCMIN && x <= LOCMAX;
 }
 
 Boolean isNum(Aword x) {
-  return x >= LITMIN && x <= LITMAX && litValues[x-LITMIN].type == TYPNUM;
+	return x >= LITMIN && x <= LITMAX && litValues[x - LITMIN].type == TYPNUM;
 }
 
 Boolean isStr(Aword x) {
-  return x >= LITMIN && x <= LITMAX && litValues[x-LITMIN].type == TYPSTR;
+	return x >= LITMIN && x <= LITMAX && litValues[x - LITMIN].type == TYPSTR;
 }
 
 Boolean isLit(Aword x) {
-  return x >= LITMIN && x <= LITMAX;
+	return x >= LITMIN && x <= LITMAX;
 }
 
 
@@ -533,16 +533,16 @@ Boolean isLit(Aword x) {
 
   */
 Boolean exitto(int to, int from) {
-  ExtElem *ext;
+	ExtElem *ext;
 
-  if (locs[from-LOCMIN].exts == 0)
-    return(FALSE); /* No exits */
+	if (locs[from - LOCMIN].exts == 0)
+		return (FALSE); /* No exits */
 
-  for (ext = (ExtElem *) addrTo(locs[from-LOCMIN].exts); !endOfTable(ext); ext++)
-    if (ext->next == to)
-      return(TRUE);
+	for (ext = (ExtElem *) addrTo(locs[from - LOCMIN].exts); !endOfTable(ext); ext++)
+		if (ext->next == to)
+			return (TRUE);
 
-  return(FALSE);
+	return (FALSE);
 }
 
 
@@ -553,13 +553,13 @@ Boolean exitto(int to, int from) {
 
   */
 static int count(int cnt /* IN - the container to count */) {
-  int i, j = 0;
-  
-  for (i = OBJMIN; i <= OBJMAX; i++)
-    if (in(i, cnt))
-      /* Then it's in this container also */
-      j++;
-  return(j);
+	int i, j = 0;
+
+	for (i = OBJMIN; i <= OBJMAX; i++)
+		if (in(i, cnt))
+			/* Then it's in this container also */
+			j++;
+	return (j);
 }
 
 
@@ -570,19 +570,19 @@ static int count(int cnt /* IN - the container to count */) {
 
   */
 static int sumatr(
-     Aword atr,			/* IN - the attribute to sum over */
-     Aword cnt			/* IN - the container to sum */
+    Aword atr,         /* IN - the attribute to sum over */
+    Aword cnt          /* IN - the container to sum */
 ) {
-  int i;
-  int sum = 0;
+	int i;
+	int sum = 0;
 
-  for (i = OBJMIN; i <= OBJMAX; i++)
-    if (objs[i-OBJMIN].loc == cnt) {	/* Then it's in this container */
-      if (objs[i-OBJMIN].cont != 0)	/* This is also a container! */
-	sum = sum + sumatr(atr, i);
-      sum = sum + attribute(i, atr);
-    }
-  return(sum);
+	for (i = OBJMIN; i <= OBJMAX; i++)
+		if (objs[i - OBJMIN].loc == cnt) {  /* Then it's in this container */
+			if (objs[i - OBJMIN].cont != 0) /* This is also a container! */
+				sum = sum + sumatr(atr, i);
+			sum = sum + attribute(i, atr);
+		}
+	return (sum);
 }
 
 
@@ -593,40 +593,40 @@ static int sumatr(
 
   */
 Boolean checklim(
-     Aword cnt,			/* IN - Container code */
-     Aword obj			/* IN - The object to add */
+    Aword cnt,         /* IN - Container code */
+    Aword obj          /* IN - The object to add */
 ) {
-  LimElem *lim;
-  Aword props;
+	LimElem *lim;
+	Aword props;
 
-  fail = TRUE;
-  if (!isCnt(cnt))
-    syserr("Checking limits for a non-container.");
+	fail = TRUE;
+	if (!isCnt(cnt))
+		syserr("Checking limits for a non-container.");
 
-  /* Find the container properties */
-  if (isObj(cnt))
-      props = objs[cnt-OBJMIN].cont;
-  else if (isAct(cnt))
-      props = acts[cnt-ACTMIN].cont;
-  else
-    props = cnt;
+	/* Find the container properties */
+	if (isObj(cnt))
+		props = objs[cnt - OBJMIN].cont;
+	else if (isAct(cnt))
+		props = acts[cnt - ACTMIN].cont;
+	else
+		props = cnt;
 
-  if (cnts[props-CNTMIN].lims != 0) { /* Any limits at all? */
-    for (lim = (LimElem *) addrTo(cnts[props-CNTMIN].lims); !endOfTable(lim); lim++)
-      if (lim->atr == 0) {
-	if (count(cnt) >= lim->val) {
-	  interpret(lim->stms);
-	  return(TRUE);		/* Limit check failed */
+	if (cnts[props - CNTMIN].lims != 0) { /* Any limits at all? */
+		for (lim = (LimElem *) addrTo(cnts[props - CNTMIN].lims); !endOfTable(lim); lim++)
+			if (lim->atr == 0) {
+				if (count(cnt) >= lim->val) {
+					interpret(lim->stms);
+					return (TRUE);    /* Limit check failed */
+				}
+			} else {
+				if (sumatr(lim->atr, cnt) + attribute(obj, lim->atr) > lim->val) {
+					interpret(lim->stms);
+					return (TRUE);
+				}
+			}
 	}
-      } else {
-	if (sumatr(lim->atr, cnt) + attribute(obj, lim->atr) > lim->val) {
-	  interpret(lim->stms);
-	  return(TRUE);
-	}
-      }
-  }
-  fail = FALSE;
-  return(FALSE);
+	fail = FALSE;
+	return (FALSE);
 }
 
 
@@ -645,27 +645,27 @@ Boolean checklim(
 
   */
 static Boolean trycheck(
-     Aaddr adr,			/* IN - ACODE address to check table */
-     Boolean act		/* IN - Act if it fails ? */
+    Aaddr adr,         /* IN - ACODE address to check table */
+    Boolean act        /* IN - Act if it fails ? */
 ) {
-  ChkElem *chk;
+	ChkElem *chk;
 
-  chk = (ChkElem *) addrTo(adr);
-  if (chk->exp == 0) {
-    interpret(chk->stms);
-    return(FALSE);
-  } else {
-    while (!endOfTable(chk)) {
-      interpret(chk->exp);
-      if (!(Abool)pop()) {
-	if (act)
-	  interpret(chk->stms);
-	return(FALSE);
-      }
-      chk++;
-    }
-    return(TRUE);
-  }
+	chk = (ChkElem *) addrTo(adr);
+	if (chk->exp == 0) {
+		interpret(chk->stms);
+		return (FALSE);
+	} else {
+		while (!endOfTable(chk)) {
+			interpret(chk->exp);
+			if (!(Abool)pop()) {
+				if (act)
+					interpret(chk->stms);
+				return (FALSE);
+			}
+			chk++;
+		}
+		return (TRUE);
+	}
 }
 
 
@@ -676,51 +676,51 @@ static Boolean trycheck(
 
   */
 void go(int dir) {
-  ExtElem *ext;
-  Boolean ok;
-  Aword oldloc;
+	ExtElem *ext;
+	Boolean ok;
+	Aword oldloc;
 
-  ext = (ExtElem *) addrTo(locs[cur.loc-LOCMIN].exts);
-  if (locs[cur.loc-LOCMIN].exts != 0)
-    while (!endOfTable(ext)) {
-      if (ext->code == dir) {
-	ok = TRUE;
-	if (ext->checks != 0) {
-	  if (trcflg) {
-	    printf("\n<EXIT %d (%s) from %d (", dir,
-		   (char *)addrTo(dict[wrds[wrdidx-1]].wrd), cur.loc);
-	    debugsay(cur.loc);
-	    printf("), Checking:>\n");
-	  }
-	  ok = trycheck(ext->checks, TRUE);
-	}
-	if (ok) {
-	  oldloc = cur.loc;
-	  if (ext->action != 0) {
-	    if (trcflg) {
-	      printf("\n<EXIT %d (%s) from %d (", dir, 
-		     (char *)addrTo(dict[wrds[wrdidx-1]].wrd), cur.loc);
-	      debugsay(cur.loc);
-	      printf("), Executing:>\n");
-	    }	    
-	    interpret(ext->action);
-	  }
-	  /* Still at the same place? */
-	  if (where(HERO) == oldloc) {
-	    if (trcflg) {
-	      printf("\n<EXIT %d (%s) from %d (", dir, 
-		     (char *)addrTo(dict[wrds[wrdidx-1]].wrd), cur.loc);
-	      debugsay(cur.loc);
-	      printf("), Moving:>\n");
-	    }
-	    locate(HERO, ext->next);
-	  }
-	}
-	return;
-      }
-      ext++;
-    }
-  error(M_NO_WAY);
+	ext = (ExtElem *) addrTo(locs[cur.loc - LOCMIN].exts);
+	if (locs[cur.loc - LOCMIN].exts != 0)
+		while (!endOfTable(ext)) {
+			if (ext->code == dir) {
+				ok = TRUE;
+				if (ext->checks != 0) {
+					if (trcflg) {
+						printf("\n<EXIT %d (%s) from %d (", dir,
+						       (char *)addrTo(dict[wrds[wrdidx - 1]].wrd), cur.loc);
+						debugsay(cur.loc);
+						printf("), Checking:>\n");
+					}
+					ok = trycheck(ext->checks, TRUE);
+				}
+				if (ok) {
+					oldloc = cur.loc;
+					if (ext->action != 0) {
+						if (trcflg) {
+							printf("\n<EXIT %d (%s) from %d (", dir,
+							       (char *)addrTo(dict[wrds[wrdidx - 1]].wrd), cur.loc);
+							debugsay(cur.loc);
+							printf("), Executing:>\n");
+						}
+						interpret(ext->action);
+					}
+					/* Still at the same place? */
+					if (where(HERO) == oldloc) {
+						if (trcflg) {
+							printf("\n<EXIT %d (%s) from %d (", dir,
+							       (char *)addrTo(dict[wrds[wrdidx - 1]].wrd), cur.loc);
+							debugsay(cur.loc);
+							printf("), Moving:>\n");
+						}
+						locate(HERO, ext->next);
+					}
+				}
+				return;
+			}
+			ext++;
+		}
+	error(M_NO_WAY);
 }
 
 
@@ -733,23 +733,23 @@ void go(int dir) {
 
  */
 static AltElem *findalt(
-     Aword vrbsadr,		/* IN - Address to start of list */
-     Aword param		/* IN - Which parameter to match */
+    Aword vrbsadr,     /* IN - Address to start of list */
+    Aword param        /* IN - Which parameter to match */
 ) {
-  VrbElem *vrb;
-  AltElem *alt;
+	VrbElem *vrb;
+	AltElem *alt;
 
-  if (vrbsadr == 0)
-    return(NULL);
+	if (vrbsadr == 0)
+		return (NULL);
 
-  for (vrb = (VrbElem *) addrTo(vrbsadr); !endOfTable(vrb); vrb++)
-    if (vrb->code == cur.vrb) {
-      for (alt = (AltElem *) addrTo(vrb->alts); !endOfTable(alt); alt++)
-	if (alt->param == param || alt->param == 0)
-	  return alt;
-      return NULL;
-    }
-  return NULL;
+	for (vrb = (VrbElem *) addrTo(vrbsadr); !endOfTable(vrb); vrb++)
+		if (vrb->code == cur.vrb) {
+			for (alt = (AltElem *) addrTo(vrb->alts); !endOfTable(alt); alt++)
+				if (alt->param == param || alt->param == 0)
+					return alt;
+			return NULL;
+		}
+	return NULL;
 }
 
 
@@ -761,39 +761,39 @@ static AltElem *findalt(
 
   */
 Boolean possible() {
-  AltElem *alt[MAXPARAMS+2];	/* List of alt-pointers, one for each param */
-  int i;			/* Parameter index */
-  
-  fail = FALSE;
-  alt[0] = findalt(header->vrbs, 0);
-  /* Perform global checks */
-  if (alt[0] != 0 && alt[0]->checks != 0) {
-    if (!trycheck(alt[0]->checks, FALSE)) return FALSE;
-    if (fail) return FALSE;
-  }
-  
-  /* Now CHECKs in this location */
-  alt[1] = findalt(locs[cur.loc-LOCMIN].vrbs, 0);
-  if (alt[1] != 0 && alt[1]->checks != 0)
-    if (!trycheck(alt[1]->checks, FALSE))
-      return FALSE;
-  
-  for (i = 0; params[i].code != EOF; i++) {
-    alt[i+2] = findalt(objs[params[i].code-OBJMIN].vrbs, i+1);
-    /* CHECKs in a possible parameter */
-    if (alt[i+2] != 0 && alt[i+2]->checks != 0)
-      if (!trycheck(alt[i+2]->checks, FALSE))
-	return FALSE;
-  }
+	AltElem *alt[MAXPARAMS + 2];  /* List of alt-pointers, one for each param */
+	int i;            /* Parameter index */
 
-  for (i = 0; i < 2 || params[i-2].code != EOF; i++)
-    if (alt[i] != 0 && alt[i]->action != 0)
-      break;
-  if (i >= 2 && params[i-2].code == EOF)
-    /* Didn't find any code for this verb/object combination */
-    return FALSE;
-  else
-    return TRUE;
+	fail = FALSE;
+	alt[0] = findalt(header->vrbs, 0);
+	/* Perform global checks */
+	if (alt[0] != 0 && alt[0]->checks != 0) {
+		if (!trycheck(alt[0]->checks, FALSE)) return FALSE;
+		if (fail) return FALSE;
+	}
+
+	/* Now CHECKs in this location */
+	alt[1] = findalt(locs[cur.loc - LOCMIN].vrbs, 0);
+	if (alt[1] != 0 && alt[1]->checks != 0)
+		if (!trycheck(alt[1]->checks, FALSE))
+			return FALSE;
+
+	for (i = 0; params[i].code != EOF; i++) {
+		alt[i + 2] = findalt(objs[params[i].code - OBJMIN].vrbs, i + 1);
+		/* CHECKs in a possible parameter */
+		if (alt[i + 2] != 0 && alt[i + 2]->checks != 0)
+			if (!trycheck(alt[i + 2]->checks, FALSE))
+				return FALSE;
+	}
+
+	for (i = 0; i < 2 || params[i - 2].code != EOF; i++)
+		if (alt[i] != 0 && alt[i]->action != 0)
+			break;
+	if (i >= 2 && params[i - 2].code == EOF)
+		/* Didn't find any code for this verb/object combination */
+		return FALSE;
+	else
+		return TRUE;
 }
 
 
@@ -805,131 +805,131 @@ Boolean possible() {
 
   */
 static void do_it() {
-  AltElem *alt[MAXPARAMS+2];	/* List of alt-pointers, one for each param */
-  Boolean done[MAXPARAMS+2];	/* Is it done */
-  int i;			/* Parameter index */
-  char trace[80];		/* Trace string buffer */
-  
-  fail = FALSE;
-  alt[0] = findalt(header->vrbs, 0);
-  /* Perform global checks */
-  if (alt[0] != 0 && alt[0]->checks != 0) {
-    if (trcflg)
-      printf("\n<VERB %d, CHECK, GLOBAL:>\n", cur.vrb);
-    if (!trycheck(alt[0]->checks, TRUE)) return;
-    if (fail) return;
-  }
-  
-  /* Now CHECKs in this location */
-  alt[1] = findalt(locs[cur.loc-LOCMIN].vrbs, 0);
-  if (alt[1] != 0 && alt[1]->checks != 0) {
-    if (trcflg)
-      printf("\n<VERB %d, CHECK, in LOCATION:>\n", cur.vrb);
-    if (!trycheck(alt[1]->checks, TRUE)) return;
-    if (fail) return;
-  }
-  
-  for (i = 0; params[i].code != EOF; i++) {
-    if (isLit(params[i].code))
-      alt[i+2] = 0;
-    else {
-      if (isObj(params[i].code))
-	alt[i+2] = findalt(objs[params[i].code-OBJMIN].vrbs, i+1);
-      else if (isAct(params[i].code))
-	alt[i+2] = findalt(acts[params[i].code-ACTMIN].vrbs, i+1);
-      else
-	syserr("Illegal parameter type.");
-      /* CHECKs in the parameters */
-      if (alt[i+2] != 0 && alt[i+2]->checks != 0) {
-	if (trcflg)
-	  printf("\n<VERB %d, CHECK, in Parameter #%d:>\n", cur.vrb, i);
-	if (!trycheck(alt[i+2]->checks, TRUE)) return;
-	if (fail) return;
-      }
-    }
-  }
+	AltElem *alt[MAXPARAMS + 2];  /* List of alt-pointers, one for each param */
+	Boolean done[MAXPARAMS + 2];  /* Is it done */
+	int i;            /* Parameter index */
+	char trace[80];       /* Trace string buffer */
 
-  /* Check for anything to execute... */
-  for (i = 0; i < 2 || params[i-2].code != EOF; i++)
-    if (alt[i] != 0 && alt[i]->action != 0)
-      break;
-  if (i >= 2 && params[i-2].code == EOF)
-    /* Didn't find any code for this verb/object combination */
-    error(M_CANT0);
-  
-  /* Perform actions! */
-  
-  /* First try any BEFORE or ONLY from outside in */
-  done[0] = FALSE;
-  done[1] = FALSE;
-  for (i = 2; params[i-2].code != EOF; i++)
-    done[i] = FALSE;
-  i--;
-  while (i >= 0) {
-    if (alt[i] != 0)
-      if (alt[i]->qual == (Aword)Q_BEFORE || alt[i]->qual == (Aword)Q_ONLY) {
-	if (alt[i]->action != 0) {
-	  if (trcflg) {
-	    if (i == 0)
-	      strcpy(trace, "GLOBAL");
-	    else if (i == 1)
-	      strcpy(trace, "in LOCATION");
-	    else
-	      sprintf(trace, "in PARAMETER %d", i-1);
-	    if (alt[i]->qual == (Aword)Q_BEFORE)
-	      printf("\n<VERB %d, %s (BEFORE), Body:>\n", cur.vrb, trace);
-	    else
-	      printf("\n<VERB %d, %s (ONLY), Body:>\n", cur.vrb, trace);
-	  }
-	  interpret(alt[i]->action);
-	  if (fail) return;
-	  if (alt[i]->qual == (Aword)Q_ONLY) return;
+	fail = FALSE;
+	alt[0] = findalt(header->vrbs, 0);
+	/* Perform global checks */
+	if (alt[0] != 0 && alt[0]->checks != 0) {
+		if (trcflg)
+			printf("\n<VERB %d, CHECK, GLOBAL:>\n", cur.vrb);
+		if (!trycheck(alt[0]->checks, TRUE)) return;
+		if (fail) return;
 	}
-	done[i] = TRUE;
-      }
-    i--;
-  }
-  
-  /* Then execute any not declared as AFTER, i.e. the default */
-  for (i = 0; i < 2 || params[i-2].code != EOF; i++) {
-    if (alt[i] != 0)
-      if (alt[i]->qual != (Aword)Q_AFTER) {
-	if (!done[i] && alt[i]->action != 0) {
-	  if (trcflg) {
-	    if (i == 0)
-	      strcpy(trace, "GLOBAL");
-	    else if (i == 1)
-	      strcpy(trace, "in LOCATION");
-	    else
-	      sprintf(trace, "in PARAMETER %d", i-1);
-	    printf("\n<VERB %d, %s, Body:>\n", cur.vrb, trace);
-	  }
-	  interpret(alt[i]->action);
-	  if (fail) return;
-	}
-	done[i] = TRUE;
-      }
-  }
 
-  /* Finally, the ones declared as after */
-  i--;
-  while (i >= 0) {
-    if (alt[i] != 0)
-      if (!done[i] && alt[i]->action != 0) {
-	if (trcflg) {
-	  if (i == 0)
-	    strcpy(trace, "GLOBAL");
-	  else if (i == 1)
-	    strcpy(trace, "in LOCATION");
-	  else
-	    sprintf(trace, "in PARAMETER %d", i-1);
-	  printf("\n<VERB %d, %s (AFTER), Body:>\n", cur.vrb, trace);
+	/* Now CHECKs in this location */
+	alt[1] = findalt(locs[cur.loc - LOCMIN].vrbs, 0);
+	if (alt[1] != 0 && alt[1]->checks != 0) {
+		if (trcflg)
+			printf("\n<VERB %d, CHECK, in LOCATION:>\n", cur.vrb);
+		if (!trycheck(alt[1]->checks, TRUE)) return;
+		if (fail) return;
 	}
-	interpret(alt[i]->action);
-	if (fail) return;
-      }
-    i--;
-  }
+
+	for (i = 0; params[i].code != EOF; i++) {
+		if (isLit(params[i].code))
+			alt[i + 2] = 0;
+		else {
+			if (isObj(params[i].code))
+				alt[i + 2] = findalt(objs[params[i].code - OBJMIN].vrbs, i + 1);
+			else if (isAct(params[i].code))
+				alt[i + 2] = findalt(acts[params[i].code - ACTMIN].vrbs, i + 1);
+			else
+				syserr("Illegal parameter type.");
+			/* CHECKs in the parameters */
+			if (alt[i + 2] != 0 && alt[i + 2]->checks != 0) {
+				if (trcflg)
+					printf("\n<VERB %d, CHECK, in Parameter #%d:>\n", cur.vrb, i);
+				if (!trycheck(alt[i + 2]->checks, TRUE)) return;
+				if (fail) return;
+			}
+		}
+	}
+
+	/* Check for anything to execute... */
+	for (i = 0; i < 2 || params[i - 2].code != EOF; i++)
+		if (alt[i] != 0 && alt[i]->action != 0)
+			break;
+	if (i >= 2 && params[i - 2].code == EOF)
+		/* Didn't find any code for this verb/object combination */
+		error(M_CANT0);
+
+	/* Perform actions! */
+
+	/* First try any BEFORE or ONLY from outside in */
+	done[0] = FALSE;
+	done[1] = FALSE;
+	for (i = 2; params[i - 2].code != EOF; i++)
+		done[i] = FALSE;
+	i--;
+	while (i >= 0) {
+		if (alt[i] != 0)
+			if (alt[i]->qual == (Aword)Q_BEFORE || alt[i]->qual == (Aword)Q_ONLY) {
+				if (alt[i]->action != 0) {
+					if (trcflg) {
+						if (i == 0)
+							strcpy(trace, "GLOBAL");
+						else if (i == 1)
+							strcpy(trace, "in LOCATION");
+						else
+							sprintf(trace, "in PARAMETER %d", i - 1);
+						if (alt[i]->qual == (Aword)Q_BEFORE)
+							printf("\n<VERB %d, %s (BEFORE), Body:>\n", cur.vrb, trace);
+						else
+							printf("\n<VERB %d, %s (ONLY), Body:>\n", cur.vrb, trace);
+					}
+					interpret(alt[i]->action);
+					if (fail) return;
+					if (alt[i]->qual == (Aword)Q_ONLY) return;
+				}
+				done[i] = TRUE;
+			}
+		i--;
+	}
+
+	/* Then execute any not declared as AFTER, i.e. the default */
+	for (i = 0; i < 2 || params[i - 2].code != EOF; i++) {
+		if (alt[i] != 0)
+			if (alt[i]->qual != (Aword)Q_AFTER) {
+				if (!done[i] && alt[i]->action != 0) {
+					if (trcflg) {
+						if (i == 0)
+							strcpy(trace, "GLOBAL");
+						else if (i == 1)
+							strcpy(trace, "in LOCATION");
+						else
+							sprintf(trace, "in PARAMETER %d", i - 1);
+						printf("\n<VERB %d, %s, Body:>\n", cur.vrb, trace);
+					}
+					interpret(alt[i]->action);
+					if (fail) return;
+				}
+				done[i] = TRUE;
+			}
+	}
+
+	/* Finally, the ones declared as after */
+	i--;
+	while (i >= 0) {
+		if (alt[i] != 0)
+			if (!done[i] && alt[i]->action != 0) {
+				if (trcflg) {
+					if (i == 0)
+						strcpy(trace, "GLOBAL");
+					else if (i == 1)
+						strcpy(trace, "in LOCATION");
+					else
+						sprintf(trace, "in PARAMETER %d", i - 1);
+					printf("\n<VERB %d, %s (AFTER), Body:>\n", cur.vrb, trace);
+				}
+				interpret(alt[i]->action);
+				if (fail) return;
+			}
+		i--;
+	}
 }
 
 
@@ -942,26 +942,26 @@ static void do_it() {
 
   */
 void action(ParamElem plst[] /* IN - Plural parameter list */) {
-  int i, mpos;
-  char marker[10];
+	int i, mpos;
+	char marker[10];
 
-  if (plural) {
-    /*
-       The code == 0 means this is a multiple position. We must loop
-       over this position (and replace it by each present in the plst)
-     */
-    for (mpos = 0; params[mpos].code != 0; mpos++); /* Find multiple position */
-    sprintf(marker, "($%d)", mpos+1); /* Prepare a printout with $1/2/3 */
-    for (i = 0; plst[i].code != EOF; i++) {
-      params[mpos] = plst[i];
-      output(marker);
-      do_it();
-      if (plst[i+1].code != EOF)
-        para();
-    }
-    params[mpos].code = 0;
-  } else
-    do_it();
+	if (plural) {
+		/*
+		   The code == 0 means this is a multiple position. We must loop
+		   over this position (and replace it by each present in the plst)
+		 */
+		for (mpos = 0; params[mpos].code != 0; mpos++); /* Find multiple position */
+		sprintf(marker, "($%d)", mpos + 1); /* Prepare a printout with $1/2/3 */
+		for (i = 0; plst[i].code != EOF; i++) {
+			params[mpos] = plst[i];
+			output(marker);
+			do_it();
+			if (plst[i + 1].code != EOF)
+				para();
+		}
+		params[mpos].code = 0;
+	} else
+		do_it();
 }
 
 
@@ -980,19 +980,19 @@ void action(ParamElem plst[] /* IN - Plural parameter list */) {
   Check if any events are pending. If so execute them.
   */
 static void eventchk() {
-  while (etop != 0 && eventq[etop-1].time == cur.tick) {
-    etop--;
-    if (isLoc(eventq[etop].where))
-      cur.loc = eventq[etop].where;
-    else
-      cur.loc = where(eventq[etop].where);
-    if (trcflg) {
-      printf("\n<EVENT %d (at ", eventq[etop].event);
-      debugsay(cur.loc);
-      printf("):>\n");
-    }
-    interpret(evts[eventq[etop].event-EVTMIN].code);
-  }
+	while (etop != 0 && eventq[etop - 1].time == cur.tick) {
+		etop--;
+		if (isLoc(eventq[etop].where))
+			cur.loc = eventq[etop].where;
+		else
+			cur.loc = where(eventq[etop].where);
+		if (trcflg) {
+			printf("\n<EVENT %d (at ", eventq[etop].event);
+			debugsay(cur.loc);
+			printf("):>\n");
+		}
+		interpret(evts[eventq[etop].event - EVTMIN].code);
+	}
 }
 
 
@@ -1027,49 +1027,49 @@ static char logfnm[256];
 
  */
 static void checkvers(AcdHdr *header) {
-  char vers[4];
-  char state[2];
+	char vers[4];
+	char state[2];
 
-  /* Construct our own version */
-  vers[0] = alan.version.version;
-  vers[1] = alan.version.revision;
+	/* Construct our own version */
+	vers[0] = alan.version.version;
+	vers[1] = alan.version.revision;
 
-  /* Check version of .ACD file */
-  if (dbgflg) {
-    state[0] = header->vers[3];
-    state[1] = '\0';
-    printf("<Version of '%s' is %d.%d(%d)%s>",
-	   advnam,
-	   (int)(header->vers[0]),
-	   (int)(header->vers[1]),
-	   (int)(header->vers[2]),
-	   (header->vers[3])==0? "": state);
-    newline();
-  }
+	/* Check version of .ACD file */
+	if (dbgflg) {
+		state[0] = header->vers[3];
+		state[1] = '\0';
+		printf("<Version of '%s' is %d.%d(%d)%s>",
+		       advnam,
+		       (int)(header->vers[0]),
+		       (int)(header->vers[1]),
+		       (int)(header->vers[2]),
+		       (header->vers[3]) == 0 ? "" : state);
+		newline();
+	}
 
-  /* Compatible if version and revision match... */
-  if (strncmp(header->vers, vers, 2) != 0) {
+	/* Compatible if version and revision match... */
+	if (strncmp(header->vers, vers, 2) != 0) {
 #ifdef V25COMPATIBLE
-    if (header->vers[0] == 2 && header->vers[1] == 5) /* Check for 2.5 version */
-      /* This we can convert later if needed... */;
-    else
+		if (header->vers[0] == 2 && header->vers[1] == 5) /* Check for 2.5 version */
+			/* This we can convert later if needed... */;
+		else
 #endif
 #ifdef V27COMPATIBLE
-    if (header->vers[0] == 2 && header->vers[1] == 7) /* Check for 2.7 version */
-      /* This we can convert later if needed... */;
-    else
+			if (header->vers[0] == 2 && header->vers[1] == 7) /* Check for 2.7 version */
+				/* This we can convert later if needed... */;
+			else
 #endif
-      if (errflg) {
-	char str[80];
-	sprintf(str, "Incompatible version of ACODE program. Game is %ld.%ld, interpreter %ld.%ld.",
-		(long) (header->vers[0]),
-		(long) (header->vers[1]),
-		(long) alan.version.version,
-		(long) alan.version.revision);
-	syserr(str);
-      } else
-	output("<WARNING! Incompatible version of ACODE program.>\n");
-  }
+				if (errflg) {
+					char str[80];
+					sprintf(str, "Incompatible version of ACODE program. Game is %ld.%ld, interpreter %ld.%ld.",
+					        (long)(header->vers[0]),
+					        (long)(header->vers[1]),
+					        (long) alan.version.version,
+					        (long) alan.version.revision);
+					syserr(str);
+				} else
+					output("<WARNING! Incompatible version of ACODE program.>\n");
+	}
 }
 
 
@@ -1079,77 +1079,77 @@ static void checkvers(AcdHdr *header) {
 
  */
 static void load() {
-  AcdHdr tmphdr;
-  Aword crc = 0;
-  int i;
-  char err[100];
+	AcdHdr tmphdr;
+	Aword crc = 0;
+	int i;
+	char err[100];
 
-  Aword *ptr = (Aword *)&tmphdr + 1;
-  codfil->seek(0);
-  codfil->read(&tmphdr.vers[0], 4);
-  for (i = 1; i < sizeof(tmphdr) / sizeof(Aword); ++i, ++ptr)
-	  *ptr = codfil->readUint32BE();
-  checkvers(&tmphdr);
+	Aword *ptr = (Aword *)&tmphdr + 1;
+	codfil->seek(0);
+	codfil->read(&tmphdr.vers[0], 4);
+	for (i = 1; i < sizeof(tmphdr) / sizeof(Aword); ++i, ++ptr)
+		*ptr = codfil->readUint32BE();
+	checkvers(&tmphdr);
 
-  /* Allocate and load memory */
+	/* Allocate and load memory */
 
-  /* No memory allocated yet? */
-  if (memory == NULL) {
+	/* No memory allocated yet? */
+	if (memory == NULL) {
 #ifdef V25COMPATIBLE
-    if (tmphdr.vers[0] == 2 && tmphdr.vers[1] == 5)
-      /* We need some more memory to expand 2.5 format*/
-      memory = allocate((tmphdr.size+tmphdr.objmax-tmphdr.objmin+1+2)*sizeof(Aword));
-    else
+		if (tmphdr.vers[0] == 2 && tmphdr.vers[1] == 5)
+			/* We need some more memory to expand 2.5 format*/
+			memory = allocate((tmphdr.size + tmphdr.objmax - tmphdr.objmin + 1 + 2) * sizeof(Aword));
+		else
 #endif
-      memory = (Aword *)allocate(tmphdr.size * sizeof(Aword));
-  }
-  memTop = tmphdr.size;
-  header = (AcdHdr *) addrTo(0);
+			memory = (Aword *)allocate(tmphdr.size * sizeof(Aword));
+	}
+	memTop = tmphdr.size;
+	header = (AcdHdr *) addrTo(0);
 
-  if ((tmphdr.size * sizeof(Aword)) > codfil->size())
-	  ::error("Header size is greater than filesize");
+	if ((tmphdr.size * sizeof(Aword)) > codfil->size())
+		::error("Header size is greater than filesize");
 
-  codfil->seek(0);
-  codfil->read(&header->vers[0], 4);
-  for (i = 1, ptr = memory + 1; i < tmphdr.size; ++i, ++ptr)
-	  *ptr = codfil->readUint32LE();
+	codfil->seek(0);
+	codfil->read(&header->vers[0], 4);
+	for (i = 1, ptr = memory + 1; i < tmphdr.size; ++i, ++ptr)
+		*ptr = codfil->readUint32LE();
 
-  /* Calculate checksum */
-  for (i = sizeof(tmphdr)/sizeof(Aword); i < memTop; i++) {
-    crc += memory[i]&0xff;
-    crc += (memory[i]>>8)&0xff;
-    crc += (memory[i]>>16)&0xff;
-    crc += (memory[i]>>24)&0xff;
-  }
-  if (crc != tmphdr.acdcrc) {
-    sprintf(err, "Checksum error in .ACD file (0x%lx instead of 0x%lx).",
-	    (unsigned long) crc, (unsigned long) tmphdr.acdcrc);
-    if (errflg)
-      syserr(err);
-    else {
-      output("<WARNING! $$");
-      output(err);
-      output("$$ Ignored, proceed at your own risk.>$n");
-    }
-  }
+	/* Calculate checksum */
+	for (i = sizeof(tmphdr) / sizeof(Aword); i < memTop; i++) {
+		crc += memory[i] & 0xff;
+		crc += (memory[i] >> 8) & 0xff;
+		crc += (memory[i] >> 16) & 0xff;
+		crc += (memory[i] >> 24) & 0xff;
+	}
+	if (crc != tmphdr.acdcrc) {
+		sprintf(err, "Checksum error in .ACD file (0x%lx instead of 0x%lx).",
+		        (unsigned long) crc, (unsigned long) tmphdr.acdcrc);
+		if (errflg)
+			syserr(err);
+		else {
+			output("<WARNING! $$");
+			output(err);
+			output("$$ Ignored, proceed at your own risk.>$n");
+		}
+	}
 
 #if defined(SCUMM_LITTLE_ENDIAN)
-  if (dbgflg||trcflg||stpflg)
-    output("<Hmm, this is a little-endian machine, fixing byte ordering....");
-  reverseACD(tmphdr.vers[0] == 2 && tmphdr.vers[1] == 5); /* Reverse all words in the ACD file */
-  if (dbgflg||trcflg||stpflg)
-    output("OK.>$n");
+	if (dbgflg || trcflg || stpflg)
+		output("<Hmm, this is a little-endian machine, fixing byte ordering....");
+	reverseACD(tmphdr.vers[0] == 2 && tmphdr.vers[1] == 5); /* Reverse all words in the ACD file */
+	if (dbgflg || trcflg || stpflg)
+		output("OK.>$n");
 #endif
 
 #ifdef V25COMPATIBLE
-  /* Check for 2.5 version */
-  if (tmphdr.vers[0] == 2 && tmphdr.vers[1] == 5) {
-    if (dbgflg||trcflg||stpflg)
-      output("<Hmm, this is a v2.5 game, please wait while I convert it...");
-    c25to26ACD();
-    if (dbgflg||trcflg||stpflg)
-      output("OK.>$n");
-  }
+	/* Check for 2.5 version */
+	if (tmphdr.vers[0] == 2 && tmphdr.vers[1] == 5) {
+		if (dbgflg || trcflg || stpflg)
+			output("<Hmm, this is a v2.5 game, please wait while I convert it...");
+		c25to26ACD();
+		if (dbgflg || trcflg || stpflg)
+			output("OK.>$n");
+	}
 #endif
 
 }
@@ -1161,15 +1161,15 @@ static void load() {
 
  */
 static void checkdebug() {
-  /* Make sure he can't debug if not allowed! */
-  if (!header->debug) {
-    if (dbgflg|trcflg|stpflg)
-      printf("<Sorry, '%s' is not compiled for debug!>\n", advnam);
-    para();
-    dbgflg = FALSE;
-    trcflg = FALSE;
-    stpflg = FALSE;
-  }
+	/* Make sure he can't debug if not allowed! */
+	if (!header->debug) {
+		if (dbgflg | trcflg | stpflg)
+			printf("<Sorry, '%s' is not compiled for debug!>\n", advnam);
+		para();
+		dbgflg = FALSE;
+		trcflg = FALSE;
+		stpflg = FALSE;
+	}
 }
 
 
@@ -1179,22 +1179,22 @@ static void checkdebug() {
 
  */
 static void initheader() {
-  dict = (WrdElem *) addrTo(header->dict);
-  /* Find out number of entries in dictionary */
-  for (dictsize = 0; !endOfTable(&dict[dictsize]); dictsize++);
-  vrbs = (VrbElem *) addrTo(header->vrbs);
-  stxs = (StxElem *) addrTo(header->stxs);
-  locs = (LocElem *) addrTo(header->locs);
-  acts = (ActElem *) addrTo(header->acts);
-  objs = (ObjElem *) addrTo(header->objs);
-  evts = (EvtElem *) addrTo(header->evts);
-  cnts = (CntElem *) addrTo(header->cnts);
-  ruls = (RulElem *) addrTo(header->ruls);
-  msgs = (MsgElem *) addrTo(header->msgs);
-  scores = (Aword *) addrTo(header->scores);
+	dict = (WrdElem *) addrTo(header->dict);
+	/* Find out number of entries in dictionary */
+	for (dictsize = 0; !endOfTable(&dict[dictsize]); dictsize++);
+	vrbs = (VrbElem *) addrTo(header->vrbs);
+	stxs = (StxElem *) addrTo(header->stxs);
+	locs = (LocElem *) addrTo(header->locs);
+	acts = (ActElem *) addrTo(header->acts);
+	objs = (ObjElem *) addrTo(header->objs);
+	evts = (EvtElem *) addrTo(header->evts);
+	cnts = (CntElem *) addrTo(header->cnts);
+	ruls = (RulElem *) addrTo(header->ruls);
+	msgs = (MsgElem *) addrTo(header->msgs);
+	scores = (Aword *) addrTo(header->scores);
 
-  if (header->pack)
-    freq = (Aword *) addrTo(header->freq);
+	if (header->pack)
+		freq = (Aword *) addrTo(header->freq);
 }
 
 
@@ -1204,12 +1204,12 @@ static void initheader() {
 
   */
 static void initstrings() {
-  IniElem *init;
+	IniElem *init;
 
-  for (init = (IniElem *) addrTo(header->init); !endOfTable(init); init++) {
-    getstr(init->fpos, init->len);
-    memory[init->adr] = pop();
-  }
+	for (init = (IniElem *) addrTo(header->init); !endOfTable(init); init++) {
+		getstr(init->fpos, init->len);
+		memory[init->adr] = pop();
+	}
 }
 
 
@@ -1219,19 +1219,19 @@ static void initstrings() {
 
  */
 static void start() {
-  int startloc;
+	int startloc;
 
-  cur.tick = -1;
-  cur.loc = startloc = where(HERO);
-  cur.act = HERO;
-  cur.score = 0;
-  if (trcflg)
-    printf("\n<START:>\n");
-  interpret(header->start);
-  para();
+	cur.tick = -1;
+	cur.loc = startloc = where(HERO);
+	cur.act = HERO;
+	cur.score = 0;
+	if (trcflg)
+		printf("\n<START:>\n");
+	interpret(header->start);
+	para();
 
-  acts[HERO-ACTMIN].loc = 0;
-  locate(HERO, startloc);
+	acts[HERO - ACTMIN].loc = 0;
+	locate(HERO, startloc);
 }
 
 
@@ -1243,33 +1243,33 @@ static void start() {
 
   */
 static void init() {
-  int i;
+	int i;
 
-  /* Initialise some status */
-  etop = 0;			/* No pending events */
-  looking = FALSE;		/* Not looking now */
-  dscrstkp = 0;			/* No describe in progress */
+	/* Initialise some status */
+	etop = 0;         /* No pending events */
+	looking = FALSE;      /* Not looking now */
+	dscrstkp = 0;         /* No describe in progress */
 
-  load();
+	load();
 
-  initheader();
-  checkdebug();
+	initheader();
+	checkdebug();
 
-  /* Initialise string attributes */
-  initstrings();
+	/* Initialise string attributes */
+	initstrings();
 
-  getPageSize();
+	getPageSize();
 
-  /* Find first conjunction and use that for ',' handling */
-  for (i = 0; i < dictsize; i++)
-    if (isConj(i)) {
-      conjWord = i;
-      break;
-    }
+	/* Find first conjunction and use that for ',' handling */
+	for (i = 0; i < dictsize; i++)
+		if (isConj(i)) {
+			conjWord = i;
+			break;
+		}
 
-  /* Start the adventure */
-  clear();
-  start();
+	/* Start the adventure */
+	clear();
+	start();
 }
 
 
@@ -1281,85 +1281,85 @@ static void init() {
 
  */
 static void movactor() {
-  ScrElem *scr;
-  StepElem *step;
-  ActElem *act = (ActElem *) &acts[cur.act-ACTMIN];
+	ScrElem *scr;
+	StepElem *step;
+	ActElem *act = (ActElem *) &acts[cur.act - ACTMIN];
 
-  cur.loc = where(cur.act);
-  if (cur.act == HERO) {
-    parse();
-	if (g_vm->shouldQuit())
+	cur.loc = where(cur.act);
+	if (cur.act == HERO) {
+		parse();
+		if (g_vm->shouldQuit())
+			return;
+		fail = FALSE;           /* fail only aborts one actor */
+		rules();
+	} else if (act->script != 0) {
+		for (scr = (ScrElem *) addrTo(act->scradr); !endOfTable(scr); scr++)
+			if (scr->code == act->script) {
+				/* Find correct step in the list by indexing */
+				step = (StepElem *) addrTo(scr->steps);
+				step = (StepElem *) &step[act->step];
+				/* Now execute it, maybe. First check wait count */
+				if (step->after > act->count) {
+					/* Wait some more */
+					if (trcflg) {
+						printf("\n<ACTOR %d, ", cur.act);
+						debugsay(cur.act);
+						printf(" (at ");
+						debugsay(cur.loc);
+						printf("), SCRIPT %ld, STEP %ld, Waiting %ld more>\n",
+						       act->script, act->step + 1, step->after - act->count);
+					}
+					act->count++;
+					rules();
+					return;
+				} else
+					act->count = 0;
+				/* Then check possible expression */
+				if (step->exp != 0) {
+					if (trcflg) {
+						printf("\n<ACTOR %d, ", cur.act);
+						debugsay(cur.act);
+						printf(" (at ");
+						debugsay(cur.loc);
+						printf("), SCRIPT %ld, STEP %ld, Evaluating:>\n",
+						       act->script, act->step + 1);
+					}
+					interpret(step->exp);
+					if (!(Abool)pop()) {
+						rules();
+						return; /* Hadn't happened yet */
+					}
+				}
+				/* OK, so finally let him do his thing */
+				act->step++;        /* Increment step number before executing... */
+				if (trcflg) {
+					printf("\n<ACTOR %d, ", cur.act);
+					debugsay(cur.act);
+					printf(" (at ");
+					debugsay(cur.loc);
+					printf("), SCRIPT %ld, STEP %ld, Executing:>\n",
+					       act->script, act->step);
+				}
+				interpret(step->stm);
+				step++;
+				/* ... so that we can see if he is USEing another script now */
+				if (act->step != 0 && endOfTable(step))
+					/* No more steps in this script, so stop him */
+					act->script = 0;
+				fail = FALSE;           /* fail only aborts one actor */
+				rules();
+				return;
+			}
+		syserr("Unknown actor script.");
+	} else if (trcflg) {
+		printf("\n<ACTOR %d, ", cur.act);
+		debugsay(cur.act);
+		printf(" (at ");
+		debugsay(cur.loc);
+		printf("), Idle>\n");
+		rules();
 		return;
-	fail = FALSE;			/* fail only aborts one actor */
-    rules();
-  } else if (act->script != 0) {
-    for (scr = (ScrElem *) addrTo(act->scradr); !endOfTable(scr); scr++)
-      if (scr->code == act->script) {
-	/* Find correct step in the list by indexing */
-	step = (StepElem *) addrTo(scr->steps);
-	step = (StepElem *) &step[act->step];
-	/* Now execute it, maybe. First check wait count */
-	if (step->after > act->count) {
-	  /* Wait some more */
-	  if (trcflg) {
-	    printf("\n<ACTOR %d, ", cur.act);
-	    debugsay(cur.act);
-	    printf(" (at ");
-	    debugsay(cur.loc);
-	    printf("), SCRIPT %ld, STEP %ld, Waiting %ld more>\n",
-		   act->script, act->step+1, step->after-act->count);
-	  }
-	  act->count++;
-	  rules();
-	  return;
-	} else
-	  act->count = 0;
-	/* Then check possible expression */
-	if (step->exp != 0) {
-	  if (trcflg) {
-	    printf("\n<ACTOR %d, ", cur.act);
-	    debugsay(cur.act);
-	    printf(" (at ");
-	    debugsay(cur.loc);
-	    printf("), SCRIPT %ld, STEP %ld, Evaluating:>\n",
-		   act->script, act->step+1);
-	  }
-	  interpret(step->exp);
-	  if (!(Abool)pop()) {
-	    rules();
-	    return; /* Hadn't happened yet */
-	  }
 	}
-	/* OK, so finally let him do his thing */
-	act->step++;		/* Increment step number before executing... */
-	if (trcflg) {
-	  printf("\n<ACTOR %d, ", cur.act);
-	  debugsay(cur.act);
-	  printf(" (at ");
-	  debugsay(cur.loc);
-	  printf("), SCRIPT %ld, STEP %ld, Executing:>\n",
-		 act->script, act->step);
-	}
-	interpret(step->stm);
-	step++;
-	/* ... so that we can see if he is USEing another script now */
-	if (act->step != 0 && endOfTable(step))
-	  /* No more steps in this script, so stop him */
-	  act->script = 0;
-	fail = FALSE;			/* fail only aborts one actor */
-	rules();
-	return;
-      }
-    syserr("Unknown actor script.");
-  } else if (trcflg) {
-    printf("\n<ACTOR %d, ", cur.act);
-    debugsay(cur.act);
-    printf(" (at ");
-    debugsay(cur.loc);
-    printf("), Idle>\n");
-    rules();
-    return;
-  }
 }
 
 /*----------------------------------------------------------------------
@@ -1370,9 +1370,9 @@ static void movactor() {
 
   */
 static void openFiles() {
-  char str[256];
-  char *usr = "";
-  time_t tick;
+	char str[256];
+	char *usr = "";
+	time_t tick;
 
 	{
 		char *s = strrchr(codfnm, '\\');
@@ -1383,7 +1383,7 @@ static void openFiles() {
 	/* Open Text file */
 	strcpy(txtfnm, advnam);
 	strcat(txtfnm, ".dat");
-  
+
 	Common::File *f = new Common::File();
 	if (!f->open(txtfnm)) {
 		delete f;
@@ -1399,7 +1399,7 @@ static void openFiles() {
 		logflg = logfil != nullptr;
 	}
 }
-    
+
 
 /*======================================================================
 
@@ -1414,9 +1414,9 @@ void run() {
 	// Set default line and column
 	col = lin = 1;
 
-	//setjmp(restart_label);	/* Return here if he wanted to restart */
+	//setjmp(restart_label);    /* Return here if he wanted to restart */
 
-	init();			/* Load, initialise and start the adventure */
+	init();         /* Load, initialise and start the adventure */
 
 	while (TRUE) {
 		if (dbgflg)

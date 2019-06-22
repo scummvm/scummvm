@@ -39,7 +39,7 @@ namespace Alan2 {
 Alan2 *g_vm = nullptr;
 
 Alan2::Alan2(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gameDesc),
-		vm_exited_cleanly(false) {
+	vm_exited_cleanly(false) {
 	g_vm = this;
 }
 
@@ -62,7 +62,7 @@ void Alan2::initialize() {
 
 	g_vm->glk_stylehint_set(wintype_TextGrid, style_User1, stylehint_ReverseColor, 1);
 	glkStatusWin = g_vm->glk_window_open(glkMainWin, winmethod_Above |
-		winmethod_Fixed, 1, wintype_TextGrid, 0);
+	                                     winmethod_Fixed, 1, wintype_TextGrid, 0);
 	g_vm->glk_set_window(glkMainWin);
 
 	// Set up the code file to point to the already opened game file
@@ -106,30 +106,30 @@ void Alan2::synchronizeSave(Common::Serializer &s) {
 
 	// Save actors
 	for (i = ACTMIN; i <= ACTMAX; ++i) {
-		syncVal(s, &acts[i-ACTMIN].loc);
-		syncVal(s, &acts[i-ACTMIN].script);
-		syncVal(s, &acts[i-ACTMIN].step);
-		syncVal(s, &acts[i-ACTMIN].count);
+		syncVal(s, &acts[i - ACTMIN].loc);
+		syncVal(s, &acts[i - ACTMIN].script);
+		syncVal(s, &acts[i - ACTMIN].step);
+		syncVal(s, &acts[i - ACTMIN].count);
 
-		if (acts[i-ACTMIN].atrs) {
-			for (atr = (AtrElem *)addrTo(acts[i-ACTMIN].atrs); !endOfTable(atr); ++atr)
+		if (acts[i - ACTMIN].atrs) {
+			for (atr = (AtrElem *)addrTo(acts[i - ACTMIN].atrs); !endOfTable(atr); ++atr)
 				syncVal(s, &atr->val);
 		}
 	}
 
 	// Sync locations
 	for (i = LOCMIN; i <= LOCMAX; ++i) {
-		syncVal(s, &locs[i-LOCMIN].describe);
-		if (locs[i-LOCMIN].atrs)
-			for (atr = (AtrElem *)addrTo(locs[i-LOCMIN].atrs); !endOfTable(atr); atr++)
+		syncVal(s, &locs[i - LOCMIN].describe);
+		if (locs[i - LOCMIN].atrs)
+			for (atr = (AtrElem *)addrTo(locs[i - LOCMIN].atrs); !endOfTable(atr); atr++)
 				syncVal(s, &atr->val);
 	}
 
 	// Sync objects
 	for (i = OBJMIN; i <= OBJMAX; ++i) {
-		syncVal(s, &objs[i-OBJMIN].loc);
-		if (objs[i-OBJMIN].atrs)
-			for (atr = (AtrElem *)addrTo(objs[i-OBJMIN].atrs); !endOfTable(atr); atr++)
+		syncVal(s, &objs[i - OBJMIN].loc);
+		if (objs[i - OBJMIN].atrs)
+			for (atr = (AtrElem *)addrTo(objs[i - OBJMIN].atrs); !endOfTable(atr); atr++)
 				syncVal(s, &atr->val);
 	}
 

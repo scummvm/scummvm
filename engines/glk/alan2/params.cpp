@@ -28,74 +28,74 @@ namespace Glk {
 namespace Alan2 {
 
 void compact(ParamElem a[]) {
-  int i, j;
-  
-  for (i = 0, j = 0; a[j].code != (Aword)EOF; j++)
-    if (a[j].code != 0)
-      a[i++] = a[j];
-  a[i].code = (Aword)EOF;
+	int i, j;
+
+	for (i = 0, j = 0; a[j].code != (Aword)EOF; j++)
+		if (a[j].code != 0)
+			a[i++] = a[j];
+	a[i].code = (Aword)EOF;
 }
 
 int lstlen(ParamElem a[]) {
-  int i = 0;
+	int i = 0;
 
-  while (a[i].code != (Aword)EOF)
-    i++;
-  return (i);
+	while (a[i].code != (Aword)EOF)
+		i++;
+	return (i);
 }
 
 Boolean inlst(ParamElem l[], Aword e) {
-  int i;
+	int i;
 
-  for (i = 0; l[i].code != (Aword)EOF && l[i].code != e; i++);
-  return (l[i].code == e);
+	for (i = 0; l[i].code != (Aword)EOF && l[i].code != e; i++);
+	return (l[i].code == e);
 }
 
 void lstcpy(ParamElem a[], ParamElem b[]) {
-  int i;
+	int i;
 
-  for (i = 0; b[i].code != (Aword)EOF; i++)
-    a[i] = b[i];
-  a[i].code = (Aword)EOF;
+	for (i = 0; b[i].code != (Aword)EOF; i++)
+		a[i] = b[i];
+	a[i].code = (Aword)EOF;
 }
 
 void sublst(ParamElem a[], ParamElem b[]) {
-  int i;
+	int i;
 
-  for (i = 0; a[i].code != (Aword)EOF; i++)
-    if (inlst(b, a[i].code))
-      a[i].code = 0;		/* Mark empty */
-  compact(a);
+	for (i = 0; a[i].code != (Aword)EOF; i++)
+		if (inlst(b, a[i].code))
+			a[i].code = 0;        /* Mark empty */
+	compact(a);
 }
 
 void mrglst(ParamElem a[], ParamElem b[]) {
-  int i,last;
+	int i, last;
 
-  for (last = 0; a[last].code != (Aword)EOF; last++); /* Find end of list */
-  for (i = 0; b[i].code != (Aword)EOF; i++)
-    if (!inlst(a, b[i].code)) {
-      a[last++] = b[i];
-      a[last].code = (Aword)EOF;
-    }
+	for (last = 0; a[last].code != (Aword)EOF; last++); /* Find end of list */
+	for (i = 0; b[i].code != (Aword)EOF; i++)
+		if (!inlst(a, b[i].code)) {
+			a[last++] = b[i];
+			a[last].code = (Aword)EOF;
+		}
 }
 
 void isect(ParamElem a[], ParamElem b[]) {
-  int i, last = 0;
+	int i, last = 0;
 
-  for (i = 0; a[i].code != (Aword)EOF; i++)
-    if (inlst(b, a[i].code))
-      a[last++] = a[i];
-  a[last].code = (Aword)EOF;
+	for (i = 0; a[i].code != (Aword)EOF; i++)
+		if (inlst(b, a[i].code))
+			a[last++] = a[i];
+	a[last].code = (Aword)EOF;
 }
 
 void cpyrefs(ParamElem p[], Aword r[]) {
-  int i;
+	int i;
 
-  for (i = 0; r[i] != (Aword)EOF; i++) {
-    p[i].code = r[i];
-    p[i].firstWord = (Aword)EOF;
-  }
-  p[i].code = (Aword)EOF;
+	for (i = 0; r[i] != (Aword)EOF; i++) {
+		p[i].code = r[i];
+		p[i].firstWord = (Aword)EOF;
+	}
+	p[i].code = (Aword)EOF;
 }
 
 } // End of namespace Alan2

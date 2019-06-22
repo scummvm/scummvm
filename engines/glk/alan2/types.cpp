@@ -27,8 +27,8 @@ namespace Alan2 {
 
 // This works around gcc errors for passing packed structure fields
 static void syncVal(Common::Serializer &s, int *fld) {
-        int &v = *fld;
-        s.syncAsSint32LE(v);
+	int &v = *fld;
+	s.syncAsSint32LE(v);
 }
 
 void CurVars::synchronize(Common::Serializer &s) {

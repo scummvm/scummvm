@@ -67,7 +67,9 @@ public:
 	/**
 	 * Returns the running interpreter type
 	 */
-	virtual InterpreterType getInterpreterType() const override { return INTERPRETER_ALAN2; }
+	virtual InterpreterType getInterpreterType() const override {
+		return INTERPRETER_ALAN2;
+	}
 
 	/**
 	 * Load a savegame from the passed Quetzal file chunk stream

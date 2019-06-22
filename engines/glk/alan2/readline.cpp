@@ -38,25 +38,23 @@ namespace Alan2 {
   */
 
 /* 4f - length of user buffer should be used */
-Boolean readline(char usrbuf[])
-{
-  event_t event;
-  g_vm->glk_request_line_event(glkMainWin, usrbuf, 255, 0);
-  /* FIXME: buffer size should be infallible: all existing calls use 256 or
-     80 character buffers, except parse which uses LISTLEN (currently 100)
-   */
-  do
-  {
-	  g_vm->glk_select(&event);
-    if (evtype_Arrange == event.type)
-      statusline();
-	if (g_vm->shouldQuit())
-		return false;
+Boolean readline(char usrbuf[]) {
+	event_t event;
+	g_vm->glk_request_line_event(glkMainWin, usrbuf, 255, 0);
+	/* FIXME: buffer size should be infallible: all existing calls use 256 or
+	   80 character buffers, except parse which uses LISTLEN (currently 100)
+	 */
+	do {
+		g_vm->glk_select(&event);
+		if (evtype_Arrange == event.type)
+			statusline();
+		if (g_vm->shouldQuit())
+			return false;
 
-  } while (event.type != evtype_LineInput);
+	} while (event.type != evtype_LineInput);
 
-  usrbuf[event.val1] = 0;
-  return TRUE;
+	usrbuf[event.val1] = 0;
+	return TRUE;
 }
 
 } // End of namespace Alan2

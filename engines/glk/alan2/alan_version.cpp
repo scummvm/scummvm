@@ -26,20 +26,20 @@ namespace Glk {
 namespace Alan2 {
 
 Product alan = {
-  "Alan",
-  "Adventure Language System",
-  "Alan 2.8(6)",
-  "Alan 2.8(6) -- Adventure Language System (2001-07-13 14:35)",
-  "2001-07-13",
-  "14:35:07",
-  "Thomas Nilsson",
-  "",
-  "cygwin",
-  {"2.8(6)", 2, 8, 6, 995034907, ""}
+	"Alan",
+	"Adventure Language System",
+	"Alan 2.8(6)",
+	"Alan 2.8(6) -- Adventure Language System (2001-07-13 14:35)",
+	"2001-07-13",
+	"14:35:07",
+	"Thomas Nilsson",
+	"",
+	"cygwin",
+	{"2.8(6)", 2, 8, 6, 995034907, ""}
 };
 
 static char *alanId =
-  "@(#)RELEASE ";
+    "@(#)RELEASE ";
 
 } // End of namespace Alan2
 } // End of namespace Glk

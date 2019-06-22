@@ -37,19 +37,19 @@ static int stackp = 0;
 
 
 void push(Aptr i) {
-  if (stackp == STACKSIZE)
-    syserr("Out of stack space.");
-  stack[stackp++] = i;
+	if (stackp == STACKSIZE)
+		syserr("Out of stack space.");
+	stack[stackp++] = i;
 }
 
 Aptr pop() {
-  if (stackp == 0)
-    syserr("Stack underflow.");
-  return(stack[--stackp]);
+	if (stackp == 0)
+		syserr("Stack underflow.");
+	return (stack[--stackp]);
 }
 
 Aptr top() {
-  return(stack[stackp-1]);
+	return (stack[stackp - 1]);
 }
 
 } // End of namespace Alan2
