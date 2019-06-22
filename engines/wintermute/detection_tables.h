@@ -30,6 +30,7 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"5ma",             "Five Magical Amulets"},
 	{"actualdest",      "Actual Destination"},
 	{"agustin",			"Boredom of Agustin Cordes"},
+	{"basisoctavus",    "Basis Octavus"},
 	{"bickadoodle",     "Bickadoodle"},
 	{"bookofgron",      "Book of Gron Part One"},
 	{"bthreshold",      "Beyond the Threshold"},
@@ -171,6 +172,9 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Actual Destination
 	WME_WINENTRY("actualdest", "",
 		WME_ENTRY1s("data.dcp", "6926f44b26f21ceb1d840eaab9aeb510", 9081740), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+	// Basis Octavus
+	WME_WINENTRY("basisoctavus", "",
+		WME_ENTRY1s("data.dcp", "021ef97f8f49ec33f83beae0d6e38f08", 49336909), Common::CZ_CZE, ADGF_UNSTABLE, LATEST_VERSION),
 	// Boredom of Agustin Cordes
 	WME_WINENTRY("agustin", "",
 		WME_ENTRY1s("data.dcp", "abb79c16c9b92e9b06525a4c7c3f5861", 2461949), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
