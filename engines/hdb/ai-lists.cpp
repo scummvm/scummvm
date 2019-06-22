@@ -388,6 +388,7 @@ bool AI::activateAction(AIEntity *e, int x, int y, int targetX, int targetY) {
 bool AI::checkAutoList(AIEntity *e, int x, int y) {
 	for (int i = 0;i < kMaxAutoActions;i++) {
 		if (_autoActions[i].x == x && _autoActions[i].y == y && !_autoActions[i].activated) {
+			debug(1, "Activating action for Entity: %s, x: %d, y: %d", e->entityName, x, y);
 			bool success = activateAction(e, x, y, 0, 0);
 			_autoActions[i].activated = true;
 
