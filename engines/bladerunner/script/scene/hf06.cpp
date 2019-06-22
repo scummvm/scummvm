@@ -104,7 +104,7 @@ bool SceneScriptHF06::ClickedOn3DObject(const char *objectName, bool a2) {
 		return false;
 	}
 
-	if (Object_Query_Click("BOX13", objectName)) {
+	if (Object_Query_Click("BOX23", objectName)) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 63.0f, 367.93f, 120.0f, 0, true, false, false)) {
 			Actor_Face_Heading(kActorMcCoy, 568, true);
 			Actor_Says(kActorMcCoy, 8522, 0);
