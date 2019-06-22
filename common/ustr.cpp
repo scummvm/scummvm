@@ -461,6 +461,57 @@ U32String convertUtf8ToUtf32(const String &str) {
 	return u32str;
 }
 
+// This is a quick and dirty converter.
+//
+// More comprehensive one lives in wintermute/utils/convert_utf.cpp
+String convertUtf32ToUtf8(const U32String &u32str) {
+	static const uint8 firstByteMark[5] = { 0x00, 0x00, 0xC0, 0xE0, 0xF0 };
+
+	Common::String str;
+	uint i = 0;
+	while (i < u32str.size()) {
+		unsigned short bytesToWrite = 0;
+		const uint32 byteMask = 0xBF;
+		const uint32 byteMark = 0x80;
+
+		uint32 ch = u32str[i++];
+		if (ch < (uint32)0x80) {
+			bytesToWrite = 1;
+		} else if (ch < (uint32)0x800) {
+			bytesToWrite = 2;
+		} else if (ch < (uint32)0x10000) {
+			bytesToWrite = 3;
+		} else if (ch <= 0x0010FFFF) {
+			bytesToWrite = 4;
+		} else {
+			bytesToWrite = 3;
+			ch = 0x0000FFFD;
+		}
+		
+		Common::String buffer;
+
+		switch (bytesToWrite) {
+		case 4:
+			buffer = (char)((ch | byteMark) & byteMask);
+			ch >>= 6;
+			// fallthrough
+		case 3:
+			buffer = (char)((ch | byteMark) & byteMask) + buffer;
+			ch >>= 6;
+			// fallthrough
+		case 2:
+			buffer = (char)((ch | byteMark) & byteMask) + buffer;
+			ch >>= 6;
+			// fallthrough
+		case 1:
+			buffer = (char)(ch | firstByteMark[bytesToWrite]) + buffer;
+		}
+
+		str += buffer;
+	}
+	return str;
+}
+
 static const uint32 g_windows1250ConversionTable[] = {0x20AC, 0x0081, 0x201A, 0x0083, 0x201E, 0x2026, 0x2020, 0x2021,
 										 0x0088, 0x2030, 0x0160, 0x2039, 0x015A, 0x0164, 0x017D, 0x0179,
 										 0x0090, 0x2018, 0x2019, 0x201C, 0x201D, 0x2022, 0x2013, 0x2014,
@@ -602,6 +653,56 @@ U32String convertToU32String(const char *str, CodePage page) {
 		}
 	}
 	return unicodeString;
+}
+
+String convertFromU32String(const U32String &string, CodePage page) {
+	if (page == kUtf8) {
+		return convertUtf32ToUtf8(string);
+	}
+
+	const uint32 *conversionTable = NULL;
+	switch (page) {
+	case kWindows1250:
+		conversionTable = g_windows1250ConversionTable;
+		break;
+	case kWindows1251:
+		conversionTable = g_windows1251ConversionTable;
+		break;
+	case kWindows1252:
+		conversionTable = g_windows1252ConversionTable;
+		break;
+	case kWindows1253:
+		conversionTable = g_windows1253ConversionTable;
+		break;
+	case kWindows1255:
+		conversionTable = g_windows1255ConversionTable;
+		break;
+	case kWindows1257:
+		conversionTable = g_windows1257ConversionTable;
+		break;
+	default:
+		break;
+	}
+
+	String charsetString;
+	for (uint i = 0; i < string.size(); ++i) {
+		if (string[i] <= 0x7F) {
+			charsetString += string[i];
+			continue;
+		}
+		
+		if (!conversionTable) {
+			continue;
+		}
+
+		for (uint j = 0; j < 128; ++j) {
+			if (conversionTable[j] == string[i]) {
+				charsetString += (char)(j + 0x80);
+				break;
+			}
+		}
+	}	
+	return charsetString;
 }
 
 } // End of namespace Common

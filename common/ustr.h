@@ -218,6 +218,7 @@ private:
 };
 
 U32String convertUtf8ToUtf32(const String &str);
+String convertUtf32ToUtf8(const U32String &str);
 
 enum CodePage {
 	kUtf8,
@@ -230,6 +231,7 @@ enum CodePage {
 };
 
 U32String convertToU32String(const char *str, CodePage page = kUtf8);
+String convertFromU32String(const U32String &str, CodePage page = kUtf8);
 
 } // End of namespace Common
 
