@@ -76,9 +76,28 @@ bool DrawMan::init() {
 		}
 	}
 
-	/*
-		TODO: Add Animating Tile Info
-	*/
+
+	// Add Animating Tile Info
+	int found = -1;
+	char search[32];
+	strcpy(search, "anim_");
+	for (index = 0; index < _numTiles; index++) {
+		// IF we have not found a start, look for it
+		// ELSE IF we have found a start and are in the middle of an anim group
+		// ELSE IF we're in an anim group and have just reached the end
+		if (!strncmp(_tLookupArray[index].filename, search, strlen(search)) && found == -1) {
+			found = index;
+			strncpy(search, _tLookupArray[index].filename, strlen(_tLookupArray[index].filename) - 2);
+		} else if (!strncmp(_tLookupArray[index].filename, search, strlen(search)) && found >= 0)
+			_tLookupArray[index - 1].animIndex = index;
+		else if (strncmp(_tLookupArray[index].filename, search, strlen(search)) && found >= 0) {
+			_tLookupArray[index - 1].animIndex = found;
+			strcpy(search, "anim_");
+			found = -1;
+			if (!strncmp(_tLookupArray[index].filename, search, strlen(search)))
+				index--;
+		}
+	}
 
 	// Init Sky Data
 	_currentSky = 0;
