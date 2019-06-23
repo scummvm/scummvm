@@ -85,6 +85,10 @@ void Window::restartSystem() {
 	_infobarDimmed = 0;
 }
 
+void Window::setInfobarDark(int value) {
+	_infobarDimmed = value;
+}
+
 void Window::openDialog(const char *title, int tileIndex, const char *string, int more, const char *luaMore) {
 	if (_dialogInfo.active)
 		return;
