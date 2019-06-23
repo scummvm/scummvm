@@ -395,6 +395,20 @@ int DrawMan::animateTile(int tileIndex) {
 	return _tLookupArray[tileIndex].animIndex;
 }
 
+void DrawMan::setTextEdges(int left, int right, int top, int bottom) {
+	_eLeft = left;
+	_eRight = right;
+	_eTop = top;
+	_eBottom = bottom;
+}
+
+void DrawMan::getTextEdges(int *left, int *right, int *top, int *bottom) {
+	*left = _eLeft;
+	*right = _eRight;
+	*top = _eTop;
+	*bottom = _eBottom;
+}
+
 void DrawMan::setKernLead(int kern, int lead) {
 	_fontHeader.kerning = kern;
 	_fontHeader.leading = lead;
