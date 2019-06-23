@@ -11733,6 +11733,55 @@ static const uint16 qfg4SearchRevenantPatch[] = {
 	PATCH_END
 };
 
+// Attempting to open the monastery door in room 250 while Igor is present
+//  randomly locks up the game. sHectapusDeath stands Igor up, but this can be
+//  interrupted by sIgorCarves animating him at random intervals, leaving
+//  sHectapusDeath stuck in handsOff mode.
+//
+// We fix this by first stopping sIgorCarves as other scripts in this room do.
+//
+// Applies to: All versions
+// Responsible method: sHectapusDeath:changeState(4)
+// Fixes bug: #10994
+static const uint16 qfg4HectapusDeathSignature[] = {
+	0x30, SIG_UINT16(0x0027),           // bnt 0027
+	SIG_ADDTOOFFSET(+13),
+	0x30, SIG_UINT16(0x0017),           // bnt 0017
+	0x38, SIG_MAGICDWORD,               // pushi setLoop
+	      SIG_SELECTOR16(setLoop),
+	0x7a,                               // push2
+	0x7a,                               // push2
+	0x78,                               // push1
+	0x38, SIG_SELECTOR16(setCycle),     // pushi setCycle
+	0x7a,                               // push2
+	0x51, SIG_ADDTOOFFSET(+1),          // class End
+	0x36,                               // push
+	0x7c,                               // pushSelf
+	0x72, SIG_ADDTOOFFSET(+2),          // lofsa igor
+	0x4a, SIG_UINT16(0x0010),           // send 10 [ igor setLoop: 2 1 setCycle: End self ]
+	0x32, SIG_ADDTOOFFSET(+2),          // jmp [ end of method ]
+	0x35, 0x01,                         // ldi 01
+	0x65, SIG_ADDTOOFFSET(+1),          // aTop cycles
+	0x32, SIG_ADDTOOFFSET(+2),          // jmp [ end of method ]
+	SIG_END
+};
+
+static const uint16 qfg4HectapusDeathPatch[] = {
+	0x30, PATCH_UINT16(0x002b),         // bnt 002b
+	PATCH_ADDTOOFFSET(+13),
+	0x30, PATCH_UINT16(0x001b),         // bnt 001b
+	PATCH_ADDTOOFFSET(+17),
+	0x38, PATCH_SELECTOR16(setScript),  // pushi setScript
+	0x78,                               // push1
+	0x76,                               // push0
+	0x4a, PATCH_UINT16(0x0016),         // send 16 [ igor setLoop: 2 1 setCycle: End self setScript: 0 ]
+	0x3a,                               // toss
+	0x48,                               // ret
+	0x78,                               // push1
+	0x69, PATCH_GETORIGINALBYTE(+45),   // sTop cycles
+	PATCH_END
+};
+
 //          script, description,                                     signature                      patch
 static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,     0, "prevent autosave from deleting save games",   1, qfg4AutosaveSignature,         qfg4AutosavePatch },
@@ -11750,6 +11799,7 @@ static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,    41, "fix conditional void calls",                  3, qfg4ConditionalVoidSignature,  qfg4ConditionalVoidPatch },
 	{  true,    50, "fix random revenant kopeks",                  1, qfg4SearchRevenantSignature,   qfg4SearchRevenantPatch },
 	{  true,    83, "fix incorrect array type",                    1, qfg4TrapArrayTypeSignature,    qfg4TrapArrayTypePatch },
+	{  true,   250, "fix hectapus death lockup",                   1, qfg4HectapusDeathSignature,    qfg4HectapusDeathPatch },
 	{  true,   270, "fix town gate after a staff dream",           1, qfg4DreamGateSignature,        qfg4DreamGatePatch },
 	{  true,   270, "fix town gate doormat at night",              1, qfg4TownGateDoormatSignature,  qfg4TownGateDoormatPatch },
 	{  true,   320, "fix pathfinding at the inn",                  1, qfg4InnPathfindingSignature,   qfg4InnPathfindingPatch },
