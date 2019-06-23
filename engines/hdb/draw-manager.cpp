@@ -395,6 +395,61 @@ int DrawMan::animateTile(int tileIndex) {
 	return _tLookupArray[tileIndex].animIndex;
 }
 
+// Calculates pixel width of a string
+void DrawMan::getDimensions(const char *string, int *pixelsWide, int *lines) {
+	if (!string) {
+		*pixelsWide = kFontSpace;
+		*lines = 1;
+		return;
+	}
+
+	int width, maxWidth, height;
+	unsigned char c;
+	maxWidth = 0;
+	width = _eLeft;
+	height = 1;
+
+	for (int i = 0; i < (int)strlen(string); i++) {
+		c = string[i];
+		width += _charInfoBlocks[i]->width + _fontHeader.kerning + kFontIncrement;
+		if (c == ' ')
+			width += kFontSpace;
+
+		if (c == '\n') {
+			height++;
+			if (width > maxWidth)
+				maxWidth = width;
+			width = _eLeft;
+		} else if (width > _eRight) {
+			int oldWidth = width;
+			i--;
+			while (string[i] != ' ' && i > 0) {
+				c = string[i];
+				width -= _charInfoBlocks[c]->width + _fontHeader.kerning + kFontIncrement;
+				i--;
+			}
+			if (!i) {
+				maxWidth = oldWidth;
+				break;
+			}
+			height++;
+			if (width > maxWidth)
+				maxWidth = width;
+			width = _eLeft;
+		}
+	}
+
+	if (width > maxWidth)
+		maxWidth = width;
+
+	// If its one line, add 8 pixels
+	if (height == 1)
+		maxWidth += 8;
+
+	*pixelsWide = maxWidth - _eLeft;
+	*lines = height;
+}
+
 void DrawMan::setTextEdges(int left, int right, int top, int bottom) {
 	_eLeft = left;
 	_eRight = right;
