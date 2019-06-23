@@ -38,6 +38,18 @@ DrawMan::~DrawMan() {
 
 bool DrawMan::init() {
 
+	// Set the default cursor pos & char clipping
+	setCursor(0, 0);
+
+	_eLeft = 0;
+	_eRight = kScreenWidth;
+	_eTop = 0;
+	_eBottom = kScreenHeight;
+
+	// Load Game Font
+	if (!loadFont("normalprop"))
+		return false;
+
 	// Read total number of tiles in game
 	_numTiles = g_hdb->_fileMan->getCount("t32_", TYPE_TILE32);
 	if (!_numTiles) {
