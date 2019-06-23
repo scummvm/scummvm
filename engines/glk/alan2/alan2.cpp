@@ -46,15 +46,18 @@ Alan2::Alan2(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, g
 void Alan2::runGame() {
 	Common::String gameFileName = _gameFile.getName();
 
-	if (!is_gamefile_valid())
+	if (!initialize())
 		return;
-
-	initialize();
 
 	Glk::Alan2::run();
 }
 
-void Alan2::initialize() {
+bool Alan2::initialize() {
+	// Set up adventure name
+	_advName = getFilename();
+	if (_advName.size() > 4 && _advName[_advName.size() - 4] == '.')
+		_advName = Common::String(_advName.c_str(), _advName.size() - 4);
+
 	// first, open a window for error output
 	glkMainWin = g_vm->glk_window_open(0, 0, 0, wintype_TextBuffer, 0);
 	if (glkMainWin == nullptr)
@@ -70,10 +73,25 @@ void Alan2::initialize() {
 	strncpy(codfnm, getFilename().c_str(), 255);
 	codfnm[255] = '\0';
 
+	if (_gameFile.size() < 8) {
+		GUIErrorMessage(_("This is too short to be a valid Alan2 file."));
+		return false;
+	}
+
+	if (_gameFile.readUint32BE() != MKTAG(2, 8, 1, 0)) {
+		GUIErrorMessage(_("This is not a valid Alan2 file."));
+		return false;
+	}
+
 	// Open up the text file
 	txtfil = new Common::File();
-	if (!txtfil->open(Common::String::format("%s.dat", advnam)))
-		::error("Could not open adventure text data file");
+	if (!txtfil->open(Common::String::format("%s.dat", _advName.c_str()))) {
+		GUIErrorMessage("Could not open adventure text data file");
+		delete txtfil;
+		return false;
+	}
+
+	return true;
 }
 
 Common::Error Alan2::readSaveData(Common::SeekableReadStream *rs) {
@@ -147,26 +165,6 @@ void Alan2::synchronizeSave(Common::Serializer &s) {
 	// Sync scores
 	for (i = 0; scores[i] != EOD; i++)
 		syncVal(s, &scores[i]);
-}
-
-bool Alan2::is_gamefile_valid() {
-	// Set up adventure name
-	_advName = getFilename();
-	while (_advName.contains('.'))
-		_advName.deleteLastChar();
-	advnam = _advName.c_str();
-
-	if (_gameFile.size() < 8) {
-		GUIErrorMessage(_("This is too short to be a valid Alan2 file."));
-		return false;
-	}
-
-	if (_gameFile.readUint32BE() != MKTAG(2, 8, 1, 0)) {
-		GUIErrorMessage(_("This is not a valid Alan2 file."));
-		return false;
-	}
-
-	return Common::File::exists(Common::String::format("%s.dat", advnam));
 }
 
 } // End of namespace Alan2

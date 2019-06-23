@@ -1376,23 +1376,6 @@ static void movactor(CONTEXT) {
 
   */
 static void openFiles() {
-	{
-		char *s = strrchr(codfnm, '\\');
-		if (!s) s = strrchr(codfnm, '/');
-		g_vm->garglk_set_story_name(s ? s + 1 : codfnm);
-	}
-
-	// Open Text file
-	strcpy(txtfnm, advnam);
-	strcat(txtfnm, ".dat");
-
-	Common::File *f = new Common::File();
-	if (!f->open(txtfnm)) {
-		delete f;
-		Common::String s = Common::String::format("Can't open adventure text data file '%s'.", txtfnm);
-		::error("%s", s.c_str());
-	}
-
 	// If logging open log file
 	if (logflg) {
 		sprintf(logfnm, "%s.log", advnam);

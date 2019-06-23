@@ -42,14 +42,9 @@ public:
 	Common::String _advName;
 private:
 	/**
-	 * Validates the game file, and if it's invalid, displays an error dialog
-	 */
-	bool is_gamefile_valid();
-
-	/**
 	 * Initialization
 	 */
-	void initialize();
+	bool initialize();
 
 	/**
 	 * Synchronize data to or from a save file
