@@ -399,63 +399,23 @@ void  OSystem_iOS7::handleEvent_keyPressed(Common::Event &event, int keyPressed)
 }
 
 bool OSystem_iOS7::handleEvent_swipe(Common::Event &event, int direction, int touches) {
-	if (touches == 1) {
+	if (touches == 3) {
 		Common::KeyCode keycode = Common::KEYCODE_INVALID;
-		switch (_screenOrientation) {
-		case kScreenOrientationPortrait:
-			switch ((UIViewSwipeDirection)direction) {
-				case kUIViewSwipeUp:
-					keycode = Common::KEYCODE_UP;
-					break;
-				case kUIViewSwipeDown:
-					keycode = Common::KEYCODE_DOWN;
-					break;
-				case kUIViewSwipeLeft:
-					keycode = Common::KEYCODE_LEFT;
-					break;
-				case kUIViewSwipeRight:
-					keycode = Common::KEYCODE_RIGHT;
-					break;
-				default:
-					return false;
-			}
-			break;
-		case kScreenOrientationLandscape:
-			switch ((UIViewSwipeDirection)direction) {
-				case kUIViewSwipeUp:
-					keycode = Common::KEYCODE_LEFT;
-					break;
-				case kUIViewSwipeDown:
-					keycode = Common::KEYCODE_RIGHT;
-					break;
-				case kUIViewSwipeLeft:
-					keycode = Common::KEYCODE_DOWN;
-					break;
-				case kUIViewSwipeRight:
-					keycode = Common::KEYCODE_UP;
-					break;
-				default:
-					return false;
-			}
-			break;
-		case kScreenOrientationFlippedLandscape:
-			switch ((UIViewSwipeDirection)direction) {
-				case kUIViewSwipeUp:
-					keycode = Common::KEYCODE_RIGHT;
-					break;
-				case kUIViewSwipeDown:
-					keycode = Common::KEYCODE_LEFT;
-					break;
-				case kUIViewSwipeLeft:
-					keycode = Common::KEYCODE_UP;
-					break;
-				case kUIViewSwipeRight:
-					keycode = Common::KEYCODE_DOWN;
-					break;
-				default:
-					return false;
-			}
-			break;
+		switch ((UIViewSwipeDirection)direction) {
+			case kUIViewSwipeUp:
+				keycode = Common::KEYCODE_UP;
+				break;
+			case kUIViewSwipeDown:
+				keycode = Common::KEYCODE_DOWN;
+				break;
+			case kUIViewSwipeLeft:
+				keycode = Common::KEYCODE_LEFT;
+				break;
+			case kUIViewSwipeRight:
+				keycode = Common::KEYCODE_RIGHT;
+				break;
+			default:
+				return false;
 		}
 
 		event.kbd.keycode = _queuedInputEvent.kbd.keycode = keycode;
