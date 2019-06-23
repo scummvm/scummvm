@@ -63,16 +63,16 @@ struct GfxCache {
 };
 
 struct FontInfo {
-	uint16		type;		// 0 = mono, 1 = proportional
-	uint16		numChars;	// how many characters in font
-	uint16		height;		// height of entire font
-	uint16		kerning;	// space between chars
-	uint16		leading;	// space between lines
+	int		type;		// 0 = mono, 1 = proportional
+	int		numChars;	// how many characters in font
+	int		height;		// height of entire font
+	int		kerning;	// space between chars
+	int		leading;	// space between lines
 };
 
 struct CharInfo {
-	uint16 width;	// Character width in pixels
-	uint32 offset;	// From the start of the font charInfo chunk
+	int16 width;	// Character width in pixels
+	int32 offset;	// From the start of the font charInfo chunk
 };
 
 class DrawMan {

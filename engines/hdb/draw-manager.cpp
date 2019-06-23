@@ -432,11 +432,11 @@ bool DrawMan::loadFont(const char *string) {
 		return false;
 
 	// Loading _fontHeader
-	_fontHeader.type = stream->readUint16LE();
-	_fontHeader.numChars = stream->readUint16LE();
-	_fontHeader.height = stream->readUint16LE();
-	_fontHeader.kerning = stream->readUint16LE();
-	_fontHeader.leading = stream->readUint16LE();
+	_fontHeader.type = (int)stream->readUint32LE();
+	_fontHeader.numChars = (int)stream->readUint32LE();
+	_fontHeader.height = (int)stream->readUint32LE();
+	_fontHeader.kerning = (int)stream->readUint32LE();
+	_fontHeader.leading = (int)stream->readUint32LE();
 
 	debug(3, "Loaded _fontHeader with following data");
 	debug(3, "type: %d", _fontHeader.type);
@@ -452,8 +452,8 @@ bool DrawMan::loadFont(const char *string) {
 	uint16 *ptr;
 	for (int i = 0; i < _fontHeader.numChars;i++) {
 		cInfo = new CharInfo;
-		cInfo->width = stream->readUint16LE();
-		cInfo->offset = stream->readUint16LE();
+		cInfo->width = (int16)stream->readUint32LE();
+		cInfo->offset = (int32)stream->readUint32LE();
 
 		debug(3, "Loaded _charInfoBlocks[%d]: width: %d, offset: %d", i, cInfo->width, cInfo->offset);
 
@@ -464,9 +464,9 @@ bool DrawMan::loadFont(const char *string) {
 		// Go to character location
 		stream->seek(startPos+cInfo->offset);
 
-		for (uint y = 0; y < _fontHeader.height; y++) {
+		for (int y = 0; y < _fontHeader.height; y++) {
 			ptr = (uint16 *)_fontSurfaces[i].getBasePtr(0, y);
-			for (uint x = 0; x < cInfo->width; x++) {
+			for (int x = 0; x < cInfo->width; x++) {
 				*ptr = TO_LE_16(stream->readUint16LE());
 				ptr++;
 			}
