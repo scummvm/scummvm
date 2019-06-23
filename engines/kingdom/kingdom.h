@@ -111,10 +111,12 @@ namespace Kingdom {
 		Logic *_logic;
 
 		KingArtEntry *_kingartEntries;
+		void displayDebugHotSpots();
 
 	public:
 		Common::RandomSource *_rnd;
 
+		bool _showHotspots;
 		bool _loopFlag;
 		int _gameMode;
 		bool _fstFwd;
@@ -206,6 +208,7 @@ namespace Kingdom {
 		void restoreAS(); // TODO: Rename later as restoreVideoBackground
 		void drawHelpScreen();
 		void drawRect(uint minX, uint minY, uint maxX, uint maxY, int color);
+		void drawEmptyRect(Common::Rect rect, int color);
 		void drawInventory();
 		void playSound(int idx);
 		void eraseCursor();
