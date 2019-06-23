@@ -952,6 +952,8 @@ private:
 
 };
 
+const char *AIType2Str(AIType v);
+
 } // End of Namespace
 
 #endif // !HDB_AI_H

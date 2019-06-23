@@ -1130,6 +1130,8 @@ void AI::drawEnts(int x, int y, int w, int h) {
 
 	for (Common::Array<AIEntity *>::iterator it = _ents->begin(); it != _ents->end(); it++) {
 		AIEntity *e = (*it);
+		debugN(5, "AI::drawEnts: enity %s(%d)...", AIType2Str(e->type), e->type);
+
 		if (e->type == AI_LASER || e->type == AI_DIVERTER) {
 			if (e->aiDraw) {
 				if (e->level == 2 && _numLevel2Ents < kMaxLevel2Ents) {
@@ -1178,8 +1180,15 @@ void AI::drawEnts(int x, int y, int w, int h) {
 					_entsLevel2[_numLevel2Ents].stunnedWait = e->stunnedWait;
 					_numLevel2Ents++;
 				} else {
-					if (e->draw)
+					debugN(5, "trying to draw...");
+
+					if (e->draw) {
+						debugN(5, "at %d %d", e->x, e->y);
+
 						e->draw->drawMasked(e->x - x + e->drawXOff, e->y - y + e->drawYOff);
+					} else {
+						debugN(5, "no draw function");
+					}
 
 					if (e->stunnedWait)
 						g_hdb->_ai->_stunnedGfx[stunAnim]->drawMasked(e->x - x, e->y - y);
@@ -1187,8 +1196,11 @@ void AI::drawEnts(int x, int y, int w, int h) {
 				break;
 			}
 			e->onScreen = 1;
-		} else
+		} else {
 			e->onScreen = 0;
+			debugN(5, "not on screen");
+		}
+		debug(5, ""); // newline
 	}
 
 	if (stunTimer < g_hdb->getTimeSlice()) {
