@@ -23,10 +23,18 @@
 #include "gui/debugger.h"
 
 #include "kingdom/console.h"
+#include "kingdom/kingdom.h"
 
 namespace Kingdom {
 
 Console::Console(Kingdom::KingdomGame *vm) : _vm(vm) {
+	registerCmd("showHotspots",	WRAP_METHOD(Console, Cmd_showHotspots));
+}
+
+bool Console::Cmd_showHotspots(int argc, const char **argv){
+	_vm->_showHotspots ^= true;
+
+	return false;
 }
 
 } // End of namespace Kingdom
