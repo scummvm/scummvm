@@ -256,7 +256,15 @@ static int cineMoveEntity(lua_State *L) {
 }
 
 static int cineAnimEntity(lua_State *L) {
-	warning("STUB: CINE ANIM ENTITY");
+	const char *entName = lua_tostring(L, 1);
+	double state = lua_tonumber(L, 2);
+	double loop = lua_tonumber(L, 2);
+
+	g_hdb->_lua->checkParameters("cineAnimEntity", 3);
+
+	lua_pop(L, 3);
+	int s = (int)state;
+	g_hdb->_ai->cineAnimEntity(entName, (AIState)s, (int)loop);
 	return 0;
 }
 
