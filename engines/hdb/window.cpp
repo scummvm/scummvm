@@ -131,7 +131,7 @@ void Window::drawDialog() {
 
 	if (!_dialogInfo.active)
 		return;
-	bool guyTalking = !_stricmp(_dialogInfo.title, "guy");
+	bool guyTalking = !scumm_stricmp(_dialogInfo.title, "guy");
 
 	int w = _dialogInfo.width;
 	if (_dialogInfo.titleWidth > w)
