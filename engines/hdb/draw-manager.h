@@ -186,9 +186,10 @@ public:
 	void draw(int x, int y);
 	void drawMasked(int x, int y);
 
+	uint _width, _height;
+
 private:
 
-	uint _width, _height;
 	char _name[64];
 
 	Graphics::ManagedSurface _surface;
