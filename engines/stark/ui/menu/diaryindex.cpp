@@ -59,6 +59,7 @@ void DiaryIndexScreen::open() {
 			"SaveGame",
 			CLICK_HANDLER(DiaryIndexScreen, saveHandler),
 			MOVE_HANDLER(DiaryIndexScreen, widgetTextColorHandler)));
+	_widgets.back()->setVisible(g_engine->canSaveGameStateCurrently());
 
 	_widgets.push_back(new StaticLocationWidget(
 			"Continue",
