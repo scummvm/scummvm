@@ -174,6 +174,7 @@ void AI::processCines() {
 					warning("Can't locate '%s' in moveEntity", _cine[i]->title);
 				}
 			} else {
+				debug(3, "C_MOVEENTITY: _cine[%d]->e->goalX: %d", i, _cine[i]->e->goalX);
 				if (!_cine[i]->e->goalX) {
 					complete = true;
 				}
