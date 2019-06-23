@@ -409,6 +409,18 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Oknytt
 	WME_WINENTRY("oknytt", "Version 1.0",
 		WME_ENTRY1s("data.dcp", "6456cf8f429905c83f07509f9da536dd", 109502959), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+	// Oknytt (Version 1.12 English) (These are detected along with d_sounds.dcp to avoid mass-detecting in the languages-subfolder.)
+	WME_WINENTRY("oknytt", "Version 1.12",
+		WME_ENTRY2s("english.dcp", "cea08a6b5c88f40cb9937f77a72dce2e", 293273567,
+					"d_sounds.dcp", "8df683174ef01e6f717e2df926fa0b4a", 154943401), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+	// Oknytt (Version 1.12 German)
+	WME_WINENTRY("oknytt", "Version 1.12",
+		WME_ENTRY2s("german.dcp", "a4f8e76dd6bec15656e83a871e36920c", 304292572,
+					"d_sounds.dcp", "8df683174ef01e6f717e2df926fa0b4a", 154943401), Common::DE_DEU, ADGF_UNSTABLE, LATEST_VERSION),
+	// Oknytt (Version 1.12 Russian)
+	WME_WINENTRY("oknytt", "Version 1.12",
+		WME_ENTRY2s("russian.dcp", "82e0ae002dd6a4106cbd1e4f8db9cfe0", 362681666,
+					"d_sounds.dcp", "8df683174ef01e6f717e2df926fa0b4a", 154943401), Common::RU_RUS, ADGF_UNSTABLE, LATEST_VERSION),
 	// Oknytt (Version 1.13 English) (These are detected along with d_sounds.dcp to avoid mass-detecting in the languages-subfolder.)
 	WME_WINENTRY("oknytt", "Version 1.13",
 		WME_ENTRY2s("english.dcp", "d2afd722c78cfe66b7d4250d11f6ae16", 293274135,
