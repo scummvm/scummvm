@@ -39,7 +39,7 @@ namespace Alan2 {
 Alan2 *g_vm = nullptr;
 
 Alan2::Alan2(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gameDesc),
-	vm_exited_cleanly(false) {
+		vm_exited_cleanly(false), _restartFlag(false) {
 	g_vm = this;
 }
 

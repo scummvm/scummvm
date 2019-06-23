@@ -1415,29 +1415,31 @@ void run() {
 	// Set default line and column
 	col = lin = 1;
 
-	//setjmp(restart_label);    /* Return here if he wanted to restart */
+	while (!g_vm->shouldQuit()) {
+		// Load, initialise and start the adventure
+		g_vm->setRestart(false);
+		init();
 
-	init();         /* Load, initialise and start the adventure */
+		Context ctx;
+		while (!g_vm->shouldQuit()) {
+			if (!ctx._break) {
+				if (dbgflg)
+					debug();
 
-	Context ctx;
-	for (;;) {
-		if (!ctx._break) {
-			if (dbgflg)
-				debug();
+				eventchk();
+				cur.tick++;
+			}
 
-			eventchk();
-			cur.tick++;
-		}
+			// Execution ends up here after calls to the error method
 
-		// Execution ends up here after calls to the error method
+			// Move all characters
+			ctx._break = false;
+			for (cur.act = ACTMIN; cur.act <= (int)ACTMAX && !ctx._break; cur.act++) {
+				movactor(ctx);
 
-		// Move all characters
-		ctx._break = false;
-		for (cur.act = ACTMIN; cur.act <= (int)ACTMAX && !ctx._break; cur.act++) {
-			movactor(ctx);
-
-			if (g_vm->shouldQuit())
-				return;
+				if (g_vm->shouldQuit())
+					return;
+			}
 		}
 	}
 }

@@ -35,6 +35,8 @@ namespace Alan2 {
  * Alan2 game interpreter
  */
 class Alan2 : public GlkAPI {
+private:
+	bool _restartFlag;
 public:
 	bool vm_exited_cleanly;
 	Common::String _advName;
@@ -63,6 +65,16 @@ public:
 	 * Run the game
 	 */
 	void runGame();
+
+	/**
+	 * Flag for the game to restart
+	 */
+	void setRestart(bool flag) { _restartFlag = flag; }
+
+	/**
+	 * Returns whether the game should restart
+	 */
+	bool shouldRestart() const { return _restartFlag; }
 
 	/**
 	 * Returns the running interpreter type
