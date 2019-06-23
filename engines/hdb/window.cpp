@@ -124,6 +124,16 @@ void Window::openDialog(const char *title, int tileIndex, const char *string, in
 	warning("STUB: openDialog: Play SND_MOVE_SELECTION");
 }
 
+void Window::closeDialog() {
+	if (_dialogInfo.active) {
+		warning("STUB: closeDialog: Play SND_SWITCH_USE");
+		_dialogInfo.active = false;
+		_dialogDelay = 0;
+		if (_dialogInfo.luaMore[0] && !g_hdb->_ai->cinematicsActive())
+			g_hdb->_lua->callFunction(_dialogInfo.luaMore, 0);
+	}
+}
+
 void Window::setDialogDelay(int delay) {
 	_dialogDelay = g_system->getMillis() + 1000 * delay;
 }
