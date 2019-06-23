@@ -1,1 +1,2 @@
 engines/bladerunner/bladerunner.cpp
+engines/bladerunner/detection.cpp
