@@ -285,7 +285,25 @@ static int cineMovePic(lua_State *L) {
 }
 
 static int cineMoveMaskedPic(lua_State *L) {
-	warning("STUB: CINE MOVE MASKED PIC");
+	const char *id = lua_tostring(L, 1);
+	const char *pic = lua_tostring(L, 2);
+	double	x1 = lua_tonumber(L, 3);
+	double	y1 = lua_tonumber(L, 4);
+	double	x2 = lua_tonumber(L, 5);
+	double	y2 = lua_tonumber(L, 6);
+	double	speed = lua_tonumber(L, 7);
+
+	g_hdb->_lua->checkParameters("cineMoveMaskedPic", 7);
+
+	x1 += kCameraXOff;
+	y1 += kCameraYOff;
+	x2 += kCameraXOff;
+	y2 += kCameraYOff;
+
+	lua_pop(L, 7);
+
+	g_hdb->_ai->cineMoveMaskedPic(id, pic, (int)x1, (int)y1, (int)x2, (int)y2, (int)speed);
+
 	return 0;
 }
 
