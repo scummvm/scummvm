@@ -80,7 +80,7 @@ Console::~Console() {
 bool Console::Cmd_DumpArchive(int argc, const char **argv) {
 	if (argc != 2) {
 		debugPrintf("Extract all the files from a game archive\n");
-		debugPrintf("The destination folder, named 'dump', must exist in location ResidualVM was launched from\n");
+		debugPrintf("The destination folder, named 'dump', is in the location ResidualVM was launched from\n");
 		debugPrintf("Usage :\n");
 		debugPrintf("dumpArchive [path to archive]\n");
 		return true;
@@ -100,7 +100,7 @@ bool Console::Cmd_DumpArchive(int argc, const char **argv) {
 
 		// Open the output file
 		Common::DumpFile outFile;
-		if (!outFile.open(fileName)) {
+		if (!outFile.open(fileName, true)) {
 			debugPrintf("Unable to open file '%s' for writing\n", fileName.c_str());
 			return true;
 		}
