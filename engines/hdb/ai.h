@@ -628,6 +628,8 @@ public:
 	void drawEnts(int x, int y, int w, int h);
 	void animGrabbing();
 
+	void moveEnts();
+
 	int checkForTouchplate(int x, int y);
 
 	void addAnimateTarget(int x, int y, int start, int end, AnimSpeed speed, bool killAuto, bool inMap, const char *tileName);

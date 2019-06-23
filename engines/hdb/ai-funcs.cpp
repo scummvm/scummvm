@@ -1237,6 +1237,50 @@ void AI::animGrabbing() {
 	_player->animFrame = 5;
 }
 
+void AI::moveEnts() {
+	static int frameDelay = kAnimFrameDelay;
+	AIEntity *e;
+
+	if (frameDelay-- > 0)
+		return;
+
+	// Call aiAction for Floating Entities
+	for (Common::Array<AIEntity *>::iterator it = _floats->begin(); it != _floats->end(); it++) {
+		if ((*it)->aiAction)
+			(*it)->aiAction((*it));
+	}
+
+	// Call aiAction for all other Entities
+	for (Common::Array<AIEntity *>::iterator it = _ents->begin(); it != _ents->end(); it++) {
+		e = (*it);
+		if (e->aiAction) {
+			// NPC Touchplate Counter
+			if (e != _player && e->touchpWait) {
+				e->touchpWait--;
+				if (!e->touchpWait) {
+					if (e->tileX == e->touchpX && e->tileY == e->touchpY && onEvenTile(e->x, e->y))
+						e->touchpWait = 1;
+					else {
+						checkActionList(e, e->touchpX, e->touchpY, false);
+						g_hdb->_map->setMapBGTileIndex(e->touchpX, e->touchpY, e->touchpTile);
+						e->touchpX = e->touchpY = e->touchpTile = 0;
+					}
+				}
+			}
+			// Stunned Entity Timer
+			if (!e->stunnedWait)
+				e->aiAction(e);
+			else {
+				if (e->stunnedWait < g_hdb->getTimeSlice())
+					e->stunnedWait = 0;
+			}
+		}
+	}
+
+	warning("STUB: moveEnts: Laser Rescan");
+	warning("STUB: moveEnts: Laser Looping Sound Channel");
+}
+
 int AI::checkForTouchplate(int x, int y) {
 	int tileIndex = g_hdb->_map->getMapBGTileIndex(x, y);
 	if (tileIndex == _touchplateOff || tileIndex == _templeTouchpOff)
