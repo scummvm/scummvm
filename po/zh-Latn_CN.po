@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-06-23 00:37+0200\n"
+"POT-Creation-Date: 2019-06-24 01:09+0200\n"
 "PO-Revision-Date: 2018-08-06 21:28+0000\n"
 "Last-Translator: monkeymadness <ihave13redsox@hotmail.com>\n"
 "Language-Team: Chinese <https://translations.scummvm.org/projects/scummvm/"
@@ -3155,6 +3155,24 @@ msgstr ""
 
 #: engines/bladerunner/bladerunner.cpp:2043
 msgid "Continue"
+msgstr ""
+
+#: engines/bladerunner/detection.cpp:48
+#, fuzzy
+msgid "Sitcom mode"
+msgstr "Haiqi Moshi"
+
+#: engines/bladerunner/detection.cpp:49
+msgid "Game will add laughter after actor's line or narration"
+msgstr ""
+
+#: engines/bladerunner/detection.cpp:57
+#, fuzzy
+msgid "Shorty mode"
+msgstr "Semang Moshi"
+
+#: engines/bladerunner/detection.cpp:58
+msgid "Game will shrink the actors and make their voices high pitched"
 msgstr ""
 
 #: engines/cge/detection.cpp:105 engines/cge2/detection.cpp:111

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-06-23 00:37+0200\n"
+"POT-Creation-Date: 2019-06-24 01:09+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -3037,6 +3037,22 @@ msgstr ""
 
 #: engines/bladerunner/bladerunner.cpp:2043
 msgid "Continue"
+msgstr ""
+
+#: engines/bladerunner/detection.cpp:48
+msgid "Sitcom mode"
+msgstr ""
+
+#: engines/bladerunner/detection.cpp:49
+msgid "Game will add laughter after actor's line or narration"
+msgstr ""
+
+#: engines/bladerunner/detection.cpp:57
+msgid "Shorty mode"
+msgstr ""
+
+#: engines/bladerunner/detection.cpp:58
+msgid "Game will shrink the actors and make their voices high pitched"
 msgstr ""
 
 #: engines/cge/detection.cpp:105 engines/cge2/detection.cpp:111
