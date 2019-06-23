@@ -474,7 +474,13 @@ bool Map::load(Common::SeekableReadStream *stream) {
 		case INFO_ACTION18:
 		case INFO_ACTION19:
 		case INFO_ACTION20:
-			warning("STUB: Map::load: AddToActionList required");
+			g_hdb->_ai->addToActionList(
+				aiInfo[_iconList[i].icon].type - INFO_ACTION1,
+				_iconList[i].x,
+				_iconList[i].y,
+				_iconList[i].funcInit,
+				_iconList[i].funcUse
+			);
 			break;
 		case INFO_ACTION_AUTO:
 			warning("STUB: Map::load: AddToAutoList required");
