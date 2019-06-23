@@ -184,12 +184,12 @@ void CryOmni3DEngine_Versailles::obj_126() {
 }
 
 void CryOmni3DEngine_Versailles::obj_126hk(Graphics::ManagedSurface &surface) {
-	Graphics::Surface bmpLetters[26];
-	loadBMPs("bomb_%02d.bmp", bmpLetters, 26);
+	Graphics::Surface bmpLetters[28];
+	loadBMPs("bomb_%02d.bmp", bmpLetters, 28);
 
 	drawEpigraphLetters(surface, bmpLetters, kEpigraphPassword);
 
-	for (uint i = 0; i < 26; i++) {
+	for (uint i = 0; i < 28; i++) {
 		bmpLetters[i].free();
 	}
 }
@@ -2340,11 +2340,11 @@ IMG_CB(44161f) {
 
 bool CryOmni3DEngine_Versailles::handleEpigraph(ZonFixedImage *fimg) {
 	bool success = false;
-	Graphics::Surface bmpLetters[26];
+	Graphics::Surface bmpLetters[28];
 	Common::String password;
 	Graphics::ManagedSurface tempSurf;
 
-	loadBMPs("bomb_%02d.bmp", bmpLetters, 26);
+	loadBMPs("bomb_%02d.bmp", bmpLetters, 28);
 
 	fimg->load("EPIL.GIF");
 	const Graphics::Surface *fimgSurface = fimg->surface();
@@ -2397,7 +2397,7 @@ bool CryOmni3DEngine_Versailles::handleEpigraph(ZonFixedImage *fimg) {
 		}
 	}
 
-	for (uint i = 0; i < 26; i++) {
+	for (uint i = 0; i < 28; i++) {
 		bmpLetters[i].free();
 	}
 	return success;
@@ -2407,11 +2407,15 @@ const char *CryOmni3DEngine_Versailles::kEpigraphContent = "FELIXFORTUNADIVINUME
 const char *CryOmni3DEngine_Versailles::kEpigraphPassword = "LELOUPETLATETE";
 
 void CryOmni3DEngine_Versailles::drawEpigraphLetters(Graphics::ManagedSurface &surface,
-        const Graphics::Surface(&bmpLetters)[26], const Common::String &letters) {
+        const Graphics::Surface(&bmpLetters)[28], const Common::String &letters) {
 	for (uint i = 0; i < letters.size() && i < kEpigraphMaxLetters; i++) {
 		uint letterId = 0;
 		if (letters[i] >= 'A' && letters[i] <= 'Z') {
 			letterId = letters[i] - 'A';
+		} else if (letters[i] == ' ') {
+			letterId = 26;
+		} else if (letters[i] == '\'') {
+			letterId = 27;
 		}
 		const Graphics::Surface &letter = bmpLetters[letterId];
 		Common::Point dst(34 * i + 4, 380);
@@ -2925,7 +2929,7 @@ IMG_CB(88003f) {
 bool CryOmni3DEngine_Versailles::handleBomb(ZonFixedImage *fimg) {
 	bool success = false;
 	Common::RandomSource rnd("VersaillesBomb");
-	Graphics::Surface bmpLetters[26];
+	Graphics::Surface bmpLetters[28];
 	unsigned char bombPossibilites[60][5];
 	unsigned char bombCurrentLetters[60];
 	Graphics::ManagedSurface tempSurf;
@@ -2935,7 +2939,7 @@ bool CryOmni3DEngine_Versailles::handleBomb(ZonFixedImage *fimg) {
 		error("Bomb password is too long");
 	}
 
-	loadBMPs("bomb_%02d.bmp", bmpLetters, 26);
+	loadBMPs("bomb_%02d.bmp", bmpLetters, 28);
 	for (uint i = 0; i < kBombPasswordLength; i++) {
 		bombPossibilites[i][0] = toupper(kBombPassword[i]);
 		for (uint j = 1; j < 5; j++) {
@@ -3003,7 +3007,7 @@ bool CryOmni3DEngine_Versailles::handleBomb(ZonFixedImage *fimg) {
 		}
 	}
 
-	for (uint i = 0; i < 26; i++) {
+	for (uint i = 0; i < 28; i++) {
 		bmpLetters[i].free();
 	}
 	return success;
@@ -3118,7 +3122,7 @@ const uint16 CryOmni3DEngine_Versailles::kBombLettersPos[2][kBombPasswordMaxLeng
 };
 
 void CryOmni3DEngine_Versailles::drawBombLetters(Graphics::ManagedSurface &surface,
-        const Graphics::Surface(&bmpLetters)[26], const uint kBombPasswordLength,
+        const Graphics::Surface(&bmpLetters)[28], const uint kBombPasswordLength,
         const unsigned char (&bombPossibilites)[kBombPasswordMaxLength][5],
         const unsigned char (&bombCurrentLetters)[kBombPasswordMaxLength]) {
 	uint table = kBombPasswordLength <= kBombPasswordSmallLength ? 0 : 1;
@@ -3127,6 +3131,10 @@ void CryOmni3DEngine_Versailles::drawBombLetters(Graphics::ManagedSurface &surfa
 		uint letterId = 0;
 		if (letterChar >= 'A' && letterChar <= 'Z') {
 			letterId = letterChar - 'A';
+		} else if (letterChar == ' ') {
+			letterId = 26;
+		} else if (letterChar == '\'') {
+			letterId = 27;
 		}
 		const Graphics::Surface &letter = bmpLetters[letterId];
 		Common::Point dst(kBombLettersPos[table][i][0], kBombLettersPos[table][i][1]);

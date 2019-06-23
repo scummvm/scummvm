@@ -513,7 +513,7 @@ private:
 	static const char *kEpigraphPassword;
 	bool handleEpigraph(ZonFixedImage *fimg);
 	void drawEpigraphLetters(Graphics::ManagedSurface &surface,
-	                         const Graphics::Surface(&bmpLetters)[26], const Common::String &letters);
+	                         const Graphics::Surface(&bmpLetters)[28], const Common::String &letters);
 	IMG_CB(45130);
 	IMG_CB(45270);
 	IMG_CB(45270b);
@@ -536,7 +536,7 @@ private:
 	static const uint16 kBombLettersPos[2][kBombPasswordMaxLength][2];
 	static const char *kBombPassword;
 	bool handleBomb(ZonFixedImage *fimg);
-	void drawBombLetters(Graphics::ManagedSurface &surface, const Graphics::Surface(&bmpLetters)[26],
+	void drawBombLetters(Graphics::ManagedSurface &surface, const Graphics::Surface(&bmpLetters)[28],
 	                     const uint kBombPasswordLength,
 	                     const unsigned char (&bombPossibilites)[kBombPasswordMaxLength][5],
 	                     const unsigned char (&bombCurrentLetters)[kBombPasswordMaxLength]);
