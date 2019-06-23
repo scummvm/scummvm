@@ -47,15 +47,15 @@ bool Window::init() {
 	_gGfxTL = g_hdb->_drawMan->loadPic("g_menu_back_topleft");
 	_gGfxTM = g_hdb->_drawMan->loadPic("g_menu_back_top");
 	_gGfxTR = g_hdb->_drawMan->loadPic("g_menu_back_topright");
-	
+
 	_gGfxL = g_hdb->_drawMan->loadPic("g_menu_back_left");
 	_gGfxM = g_hdb->_drawMan->loadPic("g_menu_back_middle");
 	_gGfxR = g_hdb->_drawMan->loadPic("g_menu_back_right");
-	
+
 	_gGfxBL = g_hdb->_drawMan->loadPic("g_menu_back_btmleft");
 	_gGfxBM = g_hdb->_drawMan->loadPic("g_menu_back_bottom");
 	_gGfxBR = g_hdb->_drawMan->loadPic("g_menu_back_btmright");
-	
+
 	_gGfxTitleL = g_hdb->_drawMan->loadPic("g_menu_title_left");
 	_gGfxTitleM = g_hdb->_drawMan->loadPic("g_menu_title_mid");
 	_gGfxTitleR = g_hdb->_drawMan->loadPic("g_menu_title_right");
