@@ -134,6 +134,31 @@ void Window::closeDialog() {
 	}
 }
 
+bool Window::checkDialogClose(int x, int y) {
+	if (!_dialogInfo.active)
+		return false;
+
+	if (x >= _dialogInfo.x && x < _dialogInfo.x + _dialogInfo.width && y >= _dialogInfo.y && y < _dialogInfo.y + _dialogInfo.height) {
+		closeDialog();
+		return true;
+	}
+
+	// If Cinematics are on, we need to timeout instead of get a click
+	if (g_hdb->_ai->cinematicsActive()) {
+		if (_dialogDelay < g_hdb->getTimeSlice()) {
+			closeDialog();
+			_dialogDelay = 0;
+			return true;
+		}
+	}
+
+	return false;
+}
+
+void Window::drawBorder() {
+
+}
+
 void Window::setDialogDelay(int delay) {
 	_dialogDelay = g_system->getMillis() + 1000 * delay;
 }
