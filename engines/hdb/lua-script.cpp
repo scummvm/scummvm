@@ -258,7 +258,14 @@ static int cineSetAnimFrame(lua_State *L) {
 }
 
 static int cineDialog(lua_State *L) {
-	warning("STUB: CINE DIALOG");
+	const char *title = lua_tostring(L, 1);
+	const char *string = lua_tostring(L, 1);
+	double seconds = lua_tonumber(L, 3);
+
+	g_hdb->_lua->checkParameters("cineDialog", 3);
+
+	lua_pop(L, 3);
+	g_hdb->_ai->cineDialog(title, string, (int)seconds);
 	return 0;
 }
 
