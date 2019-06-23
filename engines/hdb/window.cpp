@@ -68,6 +68,12 @@ bool Window::init() {
 	_gfxInvSelect = g_hdb->_drawMan->loadPic("inventory_normal");
 	_gfxHandright = g_hdb->_drawMan->loadPic("menu_hand_pointright");
 
+	_gfxInfobar = g_hdb->_drawMan->loadPic("pic_infobar");
+	_gfxDarken = g_hdb->_drawMan->loadPic("screen_darken");
+	_gfxPausePlaque = g_hdb->_drawMan->loadPic("pause_plaque");
+
+	_infobarDimmed = 0;
+
 	restartSystem();
 
 	return true;
@@ -76,6 +82,7 @@ bool Window::init() {
 void Window::restartSystem() {
 	_dialogInfo.active = false;
 	_dialogDelay = 0;
+	_infobarDimmed = 0;
 }
 
 void Window::openDialog(const char *title, int tileIndex, const char *string, int more, const char *luaMore) {
