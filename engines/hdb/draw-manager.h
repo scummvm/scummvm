@@ -117,6 +117,7 @@ public:
 
 	// Font Functions
 
+	bool loadFont(const char *string);
 	void getDimensions(const char *string, int *pixelsWide, int *lines);
 	void setTextEdges(int left, int right, int top, int bottom);
 	void getTextEdges(int *left, int *right, int *top, int *bottom);
