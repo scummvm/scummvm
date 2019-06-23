@@ -108,7 +108,7 @@ void Versailles_Documentation::init(const Sprites *sprites, FontManager *fontMan
 	RecordInfo record;
 
 	char *currentPos = allDocs;
-	char *lastRecordName;
+	char *lastRecordName = nullptr;
 	bool first = true;
 
 	while (true) {

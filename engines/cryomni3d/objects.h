@@ -38,10 +38,10 @@ public:
 	Object() : _valid(false), _idCA(-1), _idCl(-1), _idSA(-1), _idSl(-1), _idOBJ(-1),
 		_viewCallback(nullptr) {}
 
-	Object(const Sprites &sprites, uint idCA, uint idOBJ) : _idCA(idCA),
-		_idCl(sprites.calculateSpriteId(idCA, 1)), _idSA(sprites.calculateSpriteId(idCA, 2)),
-		_idSl(sprites.calculateSpriteId(idCA, 3)),
-		_valid(true), _idOBJ(idOBJ), _viewCallback(nullptr) {}
+	Object(const Sprites &sprites, uint id_CA, uint id_OBJ) : _idCA(id_CA),
+		_idCl(sprites.calculateSpriteId(id_CA, 1)), _idSA(sprites.calculateSpriteId(id_CA, 2)),
+		_idSl(sprites.calculateSpriteId(id_CA, 3)),
+		_valid(true), _idOBJ(id_OBJ), _viewCallback(nullptr) {}
 
 	~Object() { delete _viewCallback; }
 

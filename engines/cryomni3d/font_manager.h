@@ -90,7 +90,7 @@ private:
 	};
 
 	struct Font {
-		static const int kCharactersCount = 223;
+		static const uint kCharactersCount = 223;
 
 		uint16 maxHeight;
 		byte comment[32];
