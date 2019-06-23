@@ -143,13 +143,13 @@ void Window::drawDialog() {
 	if (!guyTalking) {
 		_gfxTitleL->drawMasked(_dialogInfo.x, _dialogInfo.y - 10);
 		blocks = _dialogInfo.titleWidth / 16;
-		for (int i = 0; i < blocks;i++)
+		for (int i = 0; i < blocks; i++)
 			_gfxTitleM->drawMasked(_dialogInfo.x + 16 * (i + 1), _dialogInfo.y - 10);
 		_gfxTitleR->drawMasked(_dialogInfo.x + (blocks + 1) * 16, _dialogInfo.y - 10);
 	} else {
 		_gGfxTitleL->drawMasked(_dialogInfo.x, _dialogInfo.y - 10);
 		blocks = _dialogInfo.titleWidth / 16;
-		for (int i = 0; i < blocks;i++)
+		for (int i = 0; i < blocks; i++)
 			_gGfxTitleM->drawMasked(_dialogInfo.x + 16 * (i + 1), _dialogInfo.y - 10);
 		_gGfxTitleR->drawMasked(_dialogInfo.x + (blocks + 1) * 16, _dialogInfo.y - 10);
 	}
@@ -203,8 +203,8 @@ void Window::drawBorder(int x, int y, int width, int height, bool guyTalking) {
 	if (!guyTalking) {
 		wide = (width / 16) + 1;
 		high = height / 16;
-		for(j = 0; j < high; j++)
-			for (i = 0;i < wide;i++) {
+		for (j = 0; j < high; j++)
+			for (i = 0; i < wide; i++) {
 				// Top Line
 				if (!i && !j)
 					_gfxTL->drawMasked(x, y);
@@ -234,7 +234,7 @@ void Window::drawBorder(int x, int y, int width, int height, bool guyTalking) {
 		wide = (width / 16) + 1;
 		high = height / 16;
 		for (j = 0; j < high; j++)
-			for (i = 0;i < wide;i++) {
+			for (i = 0; i < wide; i++) {
 				// Top Line
 				if (!i && !j)
 					_gGfxTL->drawMasked(x, y);
