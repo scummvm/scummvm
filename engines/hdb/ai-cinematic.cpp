@@ -198,6 +198,33 @@ void AI::processCines() {
 				}
 			}
 			break;
+		case C_ANIMENTITY:
+			AIEntity *e;
+			if (!_cine[i]->start) {
+				e = locateEntity(_cine[i]->title);
+				if (e) {
+					_cine[i]->e = e;
+					e->state = (AIState)_cine[i]->speed;
+					_cine[i]->start = 1;
+					if (_cine[i]->end) // Loop ?
+						complete = true;
+					e->animFrame = 0;
+					e->animDelay = e->animCycle;
+					animEntFrames(e);
+				} else {
+					warning("Can't locate '%s' in animEntity", _cine[i]->title);
+					complete = true;
+				}
+			} else {
+				e = _cine[i]->e;
+				if (!e->animFrame && e->animDelay == e->animCycle) {
+					e->state = STATE_STANDDOWN;
+					e->animFrame = 0;
+					e->animDelay = e->animCycle;
+					complete = true;
+				}
+			}
+			break;
 		case C_ENTITYFACE:
 		{
 			AIEntity *e = locateEntity(_cine[i]->title);
