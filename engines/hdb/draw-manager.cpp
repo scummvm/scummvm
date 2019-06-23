@@ -438,6 +438,13 @@ bool DrawMan::loadFont(const char *string) {
 	_fontHeader.kerning = stream->readUint16LE();
 	_fontHeader.leading = stream->readUint16LE();
 
+	debug(3, "Loaded _fontHeader with following data");
+	debug(3, "type: %d", _fontHeader.type);
+	debug(3, "numChars: %d", _fontHeader.numChars);
+	debug(3, "height: %d", _fontHeader.height);
+	debug(3, "kerning: %d", _fontHeader.kerning);
+	debug(3, "leading: %d", _fontHeader.leading);
+
 	// Loading _charInfoBlocks & creating character surfaces
 	CharInfo *cInfo;
 	int startPos = stream->pos();	// Position after _fontHeader
@@ -447,6 +454,9 @@ bool DrawMan::loadFont(const char *string) {
 		cInfo = new CharInfo;
 		cInfo->width = stream->readUint16LE();
 		cInfo->offset = stream->readUint16LE();
+
+		debug(3, "Loaded _charInfoBlocks[%d]: width: %d, offset: %d", i, cInfo->width, cInfo->offset);
+
 		curPos = stream->pos();
 
 		_fontSurfaces[i].create(cInfo->width, _fontHeader.height, g_hdb->_format);
