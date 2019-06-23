@@ -483,7 +483,12 @@ bool Map::load(Common::SeekableReadStream *stream) {
 			);
 			break;
 		case INFO_ACTION_AUTO:
-			warning("STUB: Map::load: AddToAutoList required");
+			g_hdb->_ai->addToAutoList(
+				_iconList[i].x,
+				_iconList[i].y,
+				_iconList[i].funcInit,
+				_iconList[i].funcUse
+			);
 			break;
 
 		case INFO_TELEPORTER1:
