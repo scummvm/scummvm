@@ -953,6 +953,7 @@ private:
 };
 
 const char *AIType2Str(AIType v);
+const char *AIState2Str(AIState v);
 
 } // End of Namespace
 

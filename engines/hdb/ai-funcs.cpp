@@ -1081,7 +1081,7 @@ void AI::animEntFrames(AIEntity *e) {
 		max = e->special1Frames;
 		break;
 	default:
-		warning("AI-FUNCS: animEntFrames: Unintended State");
+		warning("AI-FUNCS: animEntFrames: Unintended State for entity %s", AIType2Str(e->type));
 		break;
 	}
 
@@ -1130,7 +1130,7 @@ void AI::drawEnts(int x, int y, int w, int h) {
 
 	for (Common::Array<AIEntity *>::iterator it = _ents->begin(); it != _ents->end(); it++) {
 		AIEntity *e = (*it);
-		debugN(5, "AI::drawEnts: enity %s(%d)...", AIType2Str(e->type), e->type);
+		debugN(5, "AI::drawEnts: enity %s(%d) state %s(%d)...", AIType2Str(e->type), e->type, AIState2Str(e->state), e->state);
 
 		if (e->type == AI_LASER || e->type == AI_DIVERTER) {
 			if (e->aiDraw) {
