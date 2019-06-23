@@ -40,11 +40,18 @@ private:
 public:
 	bool vm_exited_cleanly;
 	Common::String _advName;
+	int _saveSlot;
+	bool _pendingLook;
 private:
 	/**
 	 * Initialization
 	 */
 	bool initialize();
+
+	/**
+	 * Deinitialization
+	 */
+	void deinitialize();
 
 	/**
 	 * Synchronize data to or from a save file

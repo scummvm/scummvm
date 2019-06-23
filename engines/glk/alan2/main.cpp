@@ -116,9 +116,6 @@ Boolean skipsp = FALSE;
  */
 void terminate(CONTEXT, int code) {
 	newline();
-	free(memory);
-	if (logflg)
-		fclose(logfil);
 
 	g_vm->glk_exit();
 	LONG_JUMP
@@ -1403,6 +1400,13 @@ void run() {
 		// Load, initialise and start the adventure
 		g_vm->setRestart(false);
 		init();
+
+		if (g_vm->_saveSlot != -1) {
+			if (g_vm->loadGameState(g_vm->_saveSlot).getCode() != Common::kNoError)
+				return;
+			g_vm->_saveSlot = -1;
+			g_vm->_pendingLook = true;
+		}
 
 		Context ctx;
 		while (!g_vm->shouldQuit() && !g_vm->shouldRestart()) {

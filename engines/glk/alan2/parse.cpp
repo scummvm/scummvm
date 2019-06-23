@@ -28,7 +28,6 @@
 #include "glk/alan2/main.h"
 #include "glk/alan2/params.h"
 #include "glk/alan2/parse.h"
-#include "glk/alan2/readline.h"
 #include "glk/alan2/term.h"
 #include "glk/alan2/types.h"
 

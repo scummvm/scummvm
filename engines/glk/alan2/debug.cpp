@@ -28,8 +28,6 @@
 #include "glk/alan2/inter.h"
 #include "glk/alan2/main.h"
 #include "glk/alan2/parse.h"
-#include "glk/alan2/readline.h"
-
 
 namespace Glk {
 namespace Alan2 {

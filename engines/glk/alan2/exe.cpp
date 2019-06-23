@@ -23,10 +23,10 @@
 #include "glk/alan2/alan2.h"
 #include "glk/alan2/types.h"
 #include "glk/alan2/exe.h"
+#include "glk/alan2/glkio.h"
 #include "glk/alan2/inter.h"
 #include "glk/alan2/main.h"
 #include "glk/alan2/parse.h"
-#include "glk/alan2/readline.h"
 #include "glk/alan2/stack.h"
 #include "glk/alan2/decode.h"
 

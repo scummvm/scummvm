@@ -39,17 +39,18 @@ namespace Alan2 {
 Alan2 *g_vm = nullptr;
 
 Alan2::Alan2(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gameDesc),
-		vm_exited_cleanly(false), _restartFlag(false) {
+		vm_exited_cleanly(false), _restartFlag(false), _saveSlot(-1), _pendingLook(false) {
 	g_vm = this;
+	txtfil = nullptr;
+	logfil = nullptr;
+	memory = nullptr;
 }
 
 void Alan2::runGame() {
-	Common::String gameFileName = _gameFile.getName();
+	if (initialize())
+		Glk::Alan2::run();
 
-	if (!initialize())
-		return;
-
-	Glk::Alan2::run();
+	deinitialize();
 }
 
 bool Alan2::initialize() {
@@ -91,7 +92,17 @@ bool Alan2::initialize() {
 		return false;
 	}
 
+	// Check for a save being loaded directly from the launcher
+	_saveSlot = ConfMan.hasKey("save_slot") ? ConfMan.getInt("save_slot") : -1;
+
 	return true;
+}
+
+void Alan2::deinitialize() {
+	free(memory);
+
+	delete txtfil;
+	delete logfil;
 }
 
 Common::Error Alan2::readSaveData(Common::SeekableReadStream *rs) {
