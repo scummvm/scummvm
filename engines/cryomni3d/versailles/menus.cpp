@@ -45,17 +45,38 @@ void CryOmni3DEngine_Versailles::drawMenuTitle(Graphics::ManagedSurface *surface
 	int offY;
 
 	int oldFont = _fontManager.getCurrentFont();
+
+	int titleX, titleY, subtitleX, subtitleY;
+	if (getLanguage() == Common::FR_FRA) {
+		titleX = 144;
+		titleY = 160;
+		subtitleX = 305;
+		subtitleY = 160;
+	} else if (getLanguage() == Common::DE_DEU) {
+		titleX = 122;
+		titleY = 80;
+		subtitleX = 283;
+		subtitleY = 80;
+	} else {
+		titleX = 100;
+		titleY = 80;
+		subtitleX = 261;
+		subtitleY = 80;
+	}
+
 	_fontManager.setSurface(surface);
 	_fontManager.setForeColor(color);
 	_fontManager.setCurrentFont(1);
 	offY = _fontManager.getFontMaxHeight();
-	_fontManager.displayStr(144, 160 - offY, _messages[23]);
+	_fontManager.displayStr(titleX, titleY - offY, _messages[23]);
 	_fontManager.setCurrentFont(3);
 	offY = _fontManager.getFontMaxHeight();
-	_fontManager.displayStr(305, 160 - offY, _messages[24]);
+	_fontManager.displayStr(subtitleX, subtitleY - offY, _messages[24]);
 
-	surface->vLine(100, 146, 172, color);
-	surface->hLine(100, 172, 168, color); // minus 1 because hLine draws inclusive
+	if (getLanguage() == Common::FR_FRA) {
+		surface->vLine(100, 146, 172, color);
+		surface->hLine(100, 172, 168, color); // minus 1 because hLine draws inclusive
+	}
 
 	_fontManager.setCurrentFont(oldFont);
 }
@@ -301,7 +322,15 @@ uint CryOmni3DEngine_Versailles::displayOptions() {
 				if (!_isPlaying || _isVisiting) {
 					end = true;
 				} else {
-					end = displayYesNoBox(optionsSurface, Common::Rect(235, 420, 505, 465), 57);
+					Common::Rect rct;
+					if (getLanguage() == Common::DE_DEU) {
+						rct = Common::Rect(286, 433, 555, 475);
+					} else if (getLanguage() == Common::IT_ITA) {
+						rct = Common::Rect(250, 420, 530, 465);
+					} else {
+						rct = Common::Rect(235, 420, 505, 465);
+					}
+					end = displayYesNoBox(optionsSurface, rct, 57);
 				}
 				drawState = 1;
 				if (!end) {
