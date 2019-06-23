@@ -218,13 +218,6 @@ bool BaseFileManager::registerPackages() {
 				searchSignature = true;
 			}
 
-			// HACK: for Reversion1, avoid loading xlanguage_pt.dcp from the main folder:
-			if (_language != Common::PT_BRA && targetName.hasPrefix("reversion1")) {
-				if (fileName == "xlanguage_pt.dcp") {
-					continue;
-				}
-			}
-
 			// Again, make the parent's name all lowercase to avoid any case
 			// issues.
 			Common::String parentName = it->getName();
@@ -232,7 +225,7 @@ bool BaseFileManager::registerPackages() {
 
 			// Avoid registering all the language files
 			// TODO: Select based on the gameDesc.
-			if (_language != Common::UNK_LANG && (parentName == "language" || parentName == "languages")) {
+			if (_language != Common::UNK_LANG && (parentName == "language" || parentName == "languages" || fileName.hasPrefix("xlanguage_"))) {
 				// English
 				if (_language == Common::EN_ANY && (fileName != "english.dcp" && fileName != "xlanguage_en.dcp")) {
 					continue;
