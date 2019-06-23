@@ -745,6 +745,7 @@ public:
 	void cineSetEntity(const char *entName, int x, int y, int level);
 	void cineMoveEntity(const char *entName, int x, int y, int level, int speed);
 	void cineAnimEntity(const char *entName, AIState state, int loop);
+	void cineSetAnimFrame(const char *entName, AIState state, int frame);
 	void cineEntityFace(const char *luaName, double dir);
 	void cineDialog(const char *title, const char *string, int seconds);
 	void cineMoveMaskedPic(const char *id, const char *pic, int x1, int y1, int x2, int y2, int speed);

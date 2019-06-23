@@ -530,6 +530,15 @@ void AI::cineAnimEntity(const char *entName, AIState state, int loop) {
 	_cine.push_back(cmd);
 }
 
+void AI::cineSetAnimFrame(const char *entName, AIState state, int frame) {
+	CineCommand *cmd = new CineCommand;
+	cmd->start = state;
+	strcpy(cmd->title, entName);
+	cmd->end = frame;
+	cmd->cmdType = C_SETANIMFRAME;
+	_cine.push_back(cmd);
+}
+
 void AI::cineEntityFace(const char *luaName, double dir) {
 	CineCommand *cmd = new CineCommand;
 	strcpy(cmd->title, luaName);
