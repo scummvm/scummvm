@@ -90,6 +90,17 @@ void AI::processCines() {
 				g_system->getMillis(), _cine[i]->start, _cine[i]->delay);
 
 		switch (_cine[i]->cmdType) {
+		case C_STOPCINE:
+			char func[64];
+			memset(func, 0, 64);
+
+			if (_cine[i]->title)
+				strcpy(func, _cine[i]->title);
+
+			cineCleanup();
+			if (func[0])
+				g_hdb->_lua->callFunction(func, 0);
+			break;
 		case C_LOCKPLAYER:
 			_playerLock = true;
 			complete = true;
