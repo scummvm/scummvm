@@ -395,6 +395,16 @@ int DrawMan::animateTile(int tileIndex) {
 	return _tLookupArray[tileIndex].animIndex;
 }
 
+void DrawMan::setKernLead(int kern, int lead) {
+	_fontHeader.kerning = kern;
+	_fontHeader.leading = lead;
+}
+
+void DrawMan::getKernLead(int *kern, int *lead) {
+	*kern = _fontHeader.kerning;
+	*lead = _fontHeader.leading;
+}
+
 void DrawMan::setCursor(int x, int y) {
 	_cursorX = x;
 	_cursorY = y;
