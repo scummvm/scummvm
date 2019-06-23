@@ -144,6 +144,23 @@ static const CryOmni3DGameDescription gameDescriptions[] = {
 		GF_VERSAILLES_AUDIOPADDING,
 	},
 
+	// Versailles 1685
+	// Italian DOS
+	// From lePhilousophe
+	{
+		{
+			"versailles",
+			"",
+			AD_ENTRY1s("VERSAILL.PGM", "1c992f034f43418a5da2e8ebd0b92620", 603023),
+			Common::IT_ITA,
+			Common::kPlatformDOS,
+			ADGF_UNSTABLE,
+			GUI_OPTIONS_VERSAILLES
+		},
+		GType_VERSAILLES,
+		GF_VERSAILLES_AUDIOPADDING,
+	},
+
 	{ AD_TABLE_END_MARKER, 0, 0 }
 };
 

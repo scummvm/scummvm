@@ -121,6 +121,8 @@ uint16 DATSeekableStream::translateLanguage(Common::Language lang) {
 		return MKTAG16('e', 'n');
 	case Common::FR_FRA:
 		return MKTAG16('f', 'r');
+	case Common::IT_ITA:
+		return MKTAG16('i', 't');
 	default:
 		// Invalid language
 		return 0;

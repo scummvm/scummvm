@@ -51,10 +51,12 @@ struct Parts {
 
 DEFINE_GAME_PLATFORM_LANG_FUNCS(Versailles, ALL, FR)
 DEFINE_GAME_PLATFORM_LANG_FUNCS(Versailles, ALL, EN)
+DEFINE_GAME_PLATFORM_LANG_FUNCS(Versailles, ALL, IT)
 
 static Parts gamesParts[] = {
 	GAME_PLATFORM_LANG_PART(Versailles, ALL, FR),
 	GAME_PLATFORM_LANG_PART(Versailles, ALL, EN),
+	GAME_PLATFORM_LANG_PART(Versailles, ALL, IT),
 };
 
 #define CRYOMNI3D_DAT_VER 1 // 32-bit integer

@@ -43,14 +43,24 @@ static char const *const versaillesENlocalizedFilenames[] = {
 	"credits.GB",
 	"LEB1_GB.WAV",
 };
+static char const *const versaillesITlocalizedFilenames[] = {
+	"DIALOG1.ITA",
+	"tous_doc.ita",
+	"lien_doc.txt",
+	"credits.ita",
+	"LEB1_IT.WAV",
+};
 
 static char const versaillesFREpilMsg[] = "FELIXFORTUNADIVINUMEXPLORATUMACTUIIT";
 static char const versaillesFREpilPwd[] = "LELOUPETLATETE";
 static char const versaillesENEpilMsg[] = "FELIXFORTUNADIVINUMEXPLORATUMACTUIIT";
 static char const versaillesENEpilPwd[] = "FOXANDCRANE";
+static char const versaillesITEpilMsg[] = "FELIXFORTUNADIVINUMEXPLORATUMACTUIIT";
+static char const versaillesITEpilPwd[] = "LEANATREEILCANE";
 
 static char const versaillesFRBombPwd[] = "JEMENVAISMAISLETATDEMEURERATOUJOURS";
 static char const versaillesENBombPwd[] = "IT IS NOT IN THE POWER OF KINGS TO ATTAIN PERFECTION";
+static char const versaillesITBombPwd[] = "AI SOVRANI NON E DATO RAGGIUNGERE LA PERFEZIONE";
 
 #define VERSAILLES_MESSAGES_COUNT 146
 #define VERSAILLES_PAINTINGS_COUNT 48
@@ -483,6 +493,216 @@ static char const *const versaillesENpaintings[] = {
 	"\"Portrait of the Prince Palatine & his brother Prince "
 	"Robert\"\rVan Dyck",                                                 /* 46: 43157 */
 	"\"Christ being taken down from the cross\"\rCharles Lebrun",         /* 47: 45260 */
+};
+
+static char const *const versaillesITmessages[] = {
+	"Per ora " "\x8f" " vietato aprire questa porta.",                    /*   0 */
+	"Questa porta " "\x8f" " chiusa a chiave.",                           /*   1 */
+	"Questa porta " "\x8f" " chiusa.",                                    /*   2 */
+	"Questo cassetto " "\x8f" " vuoto.",                                  /*   3 */
+	"Non puoi raggiungere il" "\xca" "rivestimento.",                     /*   4 */
+	"Non c" "\xd5\x8f" " niente in questo arancio.",                      /*   5 */
+	"Questo non " "\x8f" " un arancio!",                                  /*   6 */
+	"\xe9" " troppo buio. ",                                              /*   7 */
+	"Lo scrigno " "\x8f" " chiuso. ",                                     /*   8 */
+	"Puoi aprire la porta.",                                              /*   9 */
+	"Avrai bisogno di qualcosa per poter raggiungere la bomba.",          /*  10 */
+	"Questo vaso " "\x8f" " vuoto.",                                      /*  11 */
+	"Ora ci puoi passare.",                                               /*  12 */
+	"Non hai tempo per studiare la Corte!",                               /*  13 */
+	"\xe9" " troppo tardi per guardare i quadri!",                        /*  14 */
+	"Aspetta! Dai al messo i tuoi indizi.",                               /*  15 */
+	"Non puoi raggiungere il foglio.",                                    /*  16 */
+	"Alla farmacia.",                                                     /*  17 */
+	"Attenzione: sarai in grado di raggiungere la fine di questo "
+	"livello, ma non hai eseguito tutte le azioni necessarie per poter "
+	"continuare. Ti consigliamo di SALVARE la partita ora.",              /*  18 */
+	"Attenzione: sarai in grado di raggiungere la fine di questo "
+	"livello, ma potresti non aver eseguito tutte le azioni necessarie "
+	"per poter continuare. Ti consigliamo di SALVARE la partita ora.",    /*  19 */
+	"Non puoi muoverti mentre trasporti una scala!",                      /*  20 */
+	"Non c" "\xd5\x8f" " nient" "\xd5" "altro qui.",                      /*  21 */
+	"Arrivederci...",                                                     /*  22 */
+	"VERSAILLES,",                                                        /*  23 */
+	"Complotto alla Corte del Re Sole",                                   /*  24 */
+	"Consulta lo spazio documentativo",                                   /*  25 */
+	"           Continua questa partita ",                                /*  26 */
+	"           Avvia una nuova partita",                                 /*  27 */
+	"           Carica una partita ",                                     /*  28 */
+	"           Salva questa partita ",                                   /*  29 */
+	"           Mostra sottotitoli: S" "\xea",                            /*  30 */
+	"           Mostra sottotitoli: NO",                                  /*  31 */
+	"           Musica: S" "\xea",                                        /*  32 */
+	"           Musica: NO",                                              /*  33 */
+	"           Un brano musicale sul disco fisso (20 Mb)",               /*  34 */
+	"           Tutta la musica sul disco fisso (92 Mb)",                 /*  35 */
+	"           Nessuna musica sul disco fisso (lettore CD)",             /*  36 */
+	nullptr,                                                              /*  37 */
+	nullptr,                                                              /*  38 */
+	"Volume",                                                             /*  39 */
+	"Esci dal gioco",                                                     /*  40 */
+	"",                                                                   /*  41 */
+	"Visita il castello",                                                 /*  42 */
+	"Riconoscimenti",                                                     /*  43 */
+	"           Continua questa visita ",                                 /*  44 */
+	"           Salva questa visita ",                                    /*  45 */
+	"           Carica una visita ",                                      /*  46 */
+	nullptr,                                                              /*  47 */
+	"           Omni3D: standard",                                        /*  48 */
+	"           Omni3D: lento",                                           /*  49 */
+	"           Omni3D: molto lento",                                     /*  50 */
+	"           Omni3D: veloce",                                          /*  51 */
+	"           Omni3D: molto veloce",                                    /*  52 */
+	"Conferma",                                                           /*  53 */
+	"Annulla",                                                            /*  54 */
+	"libero",                                                             /*  55 */
+	"senza nome ",                                                        /*  56 */
+	"Attenzione: questa partita sta per essere annullata.",               /*  57 */
+	"Ritorno",                                                            /*  58 */
+	"Il Castello",                                                        /*  59 */
+	"Ritorna al Men" "\x9d" " Principale",                                /*  60 */
+	"Sommario dello spazio documentativo",                                /*  61 */
+	"Mappa del Castello e dei giardini",                                  /*  62 */
+	"Cartina interna del castello",                                       /*  63 */
+	"Impossibile scrivere sul disco fisso: disco pieno",                  /*  64 */
+	nullptr,                                                              /*  65 */
+	"Inserisci il CD ",                                                   /*  66 */
+	"Inserisci il CD %d e premi un tasto",                                /*  67 */
+	"Le Arti",                                                            /*  68 */
+	"Il Regno",                                                           /*  69 */
+	"La Corte",                                                           /*  70 */
+	"La vita nel Castello",                                               /*  71 */
+	"Il Castello e i giardini",                                           /*  72 */
+	"Cronologia",                                                         /*  73 */
+	"La fontana di Apollo",                                               /*  74 */
+	"Il castello",                                                        /*  75 */
+	"Il colonnato",                                                       /*  76 */
+	"Il labirinto",                                                       /*  77 */
+	"Latona",                                                             /*  78 */
+	"L" "\xd5" "aranceto",                                                /*  79 */
+	"Parterre d" "\xd5" "acqua",                                          /*  80 */
+	"Tapis vert",                                                         /*  81 */
+	"Grande scuderia",                                                    /*  82 */
+	"Piccola scuderia",                                                   /*  83 */
+	"I giardini",                                                         /*  84 */
+	"Corte esterna",                                                      /*  85 */
+	"Gran Canale",                                                        /*  86 */
+	"Parterre di sud",                                                    /*  87 */
+	"Parterre di nord",                                                   /*  88 */
+	"L" "\xd5" "orto del Re",                                             /*  89 */
+	"La sala da ballo",                                                   /*  90 */
+	"La fontana di Nettuno",                                              /*  91 */
+	"Il lago delle guardie svizzere",                                     /*  92 */
+	"Aiguilles (Inutile!)",                                               /*  93 */
+	"Forbici",                                                            /*  94 */
+	"Documento",                                                          /*  95 */
+	"Libello delle arti",                                                 /*  96 */
+	"Piccola chiave 1",                                                   /*  97 */
+	"Documento trasformato",                                              /*  98 */
+	"Documento macchiato",                                                /*  99 */
+	"Documento dello scrigno",                                            /* 100 */
+	"Libello sulla discendenza reale",                                    /* 101 */
+	"Candela accesa ",                                                    /* 102 */
+	"Candela",                                                            /* 103 */
+	"Chiave ",                                                            /* 104 */
+	"Cartella dei disegni ",                                              /* 105 */
+	"Cartella dei disegni",                                               /* 106 */
+	"Disegno falso",                                                      /* 107 */
+	"Scala",                                                              /* 108 */
+	"Disegno distrutto",                                                  /* 109 */
+	"pennello",                                                           /* 110 */
+	"pennello d" "\xd5" "oro",                                            /* 111 */
+	"pennello rosso",                                                     /* 112 */
+	"Carboncino",                                                         /* 113 */
+	"Carta",                                                              /* 114 */
+	"Libello sull" "\xd5" "architettura",                                 /* 115 */
+	"Piccola chiave 2",                                                   /* 116 */
+	"Archer (inutile!)",                                                  /* 117 */
+	"Partitura",                                                          /* 118 */
+	"Stecca da biliardo",                                                 /* 119 */
+	"Autorizzazione",                                                     /* 120 */
+	"Riproduzione delle medaglie",                                        /* 121 */
+	"Disegnatore con medaglie",                                           /* 122 */
+	"Chiave per la porta di Apollo",                                      /* 123 */
+	"Cibo",                                                               /* 124 */
+	"Libello sulla religione",                                            /* 125 */
+	"Epigrafe",                                                           /* 126 */
+	"Libello sul governo",                                                /* 127 */
+	"Penna d" "\xd5" "oca",                                               /* 128 */
+	"Appunto",                                                            /* 129 */
+	"Telescopio",                                                         /* 130 */
+	"Progetto di Vauban",                                                 /* 131 */
+	"Progetto di Vauban",                                                 /* 132 */
+	"Corda",                                                              /* 133 */
+	"Incisione",                                                          /* 134 */
+	"Piccola chiave 3",                                                   /* 135 */
+	"Piccola chiave 4",                                                   /* 136 */
+	"Memorandum",                                                         /* 137 */
+	"Progetti del castello",                                              /* 138 */
+	"Progetti del castello",                                              /* 139 */
+	"Chiave dell" "\xd5" "attico",                                        /* 140 */
+	"Favole",                                                             /* 141 */
+	"Progetto del labirinto",                                             /* 142 */
+	"Attrezzo",                                                           /* 143 */
+	"Medicina",                                                           /* 144 */
+	"Smoccolatoio",                                                       /* 145 */
+};
+
+static char const *const versaillesITpaintings[] = {
+	"\"Entrata degli animali nell'arca\"\rGerolamo Bassano",              /*  0: 41201 */
+	"\"La cena di Emmaus\"\rJacopo Bassano",                              /*  1: 41202 */
+	"\"La Maddalena ai piedi del Cristo\"",                               /*  2: 41203 */
+	"\"Uscita dall'arca\"\rGerolamo Bassano",                             /*  3: 41204 */
+	"\"Scalfittura della roccia\"\rJacopo Bassano",                       /*  4: 41205 */
+	"\"La battaglia di Arbelles\"\rJoseph Parrocel",                      /*  5: 41301 */
+	"\"Alessandro il Grande, vincitore di Dario nella battaglia "
+	"Arbelles\"\rLe Bourguignon",                                         /*  6: 41302 */
+	"\"Il combattimento di Leuze\"\rJoseph Parrocel",                     /*  7: 42401 */
+	"\"Santa Cecilia con un angelo che tiene una partitura "
+	"musicale\"\rIl Domenichino",                                         /*  8: 42901 */
+	"\"Don Francisco di Moncada\"\rVan Dyck",                             /*  9: 42902 */
+	"\"Il giovane santo Giovanni il Battista\"\rCarracci",                /* 10: 42903 */
+	"\"San Matteo\"\rValentin",                                           /* 11: 42904 */
+	"\"Il rifiuto di Cesare\"\rValentin",                                 /* 12: 42905 */
+	"\"San Luca\"\rValentin",                                             /* 13: 42906 */
+	"\"Il matrimonio mistico di Santa Caterina\"\r Alessandro Turchi",    /* 14: 42907 */
+	"\"Convivio di bevitori\"\rNicolas Tournier",                         /* 15: 42908 */
+	"\"L'indovina\"\rValentin",                                           /* 16: 42909 */
+	"\"Re Davide che suona l'arpa\"\rIl Domenichino",                     /* 17: 42910 */
+	"\"Maria Maddalena\"\rIl Domenichino",                                /* 18: 42911 */
+	"\"Autoritratto\"\rVan Dyck",                                         /* 19: 42912 */
+	"\"San Giovanni l'Evangelista\"\r Valentin",                          /* 20: 42913 */
+	"\"Agar soccorso da un angelo\"\rGiovanni Lanfranco",                 /* 21: 42914 */
+	"\"San Marco\"\rValentin",                                            /* 22: 42915 */
+	"\"Meleagro con la testa del cinghiale di Calidone ai suoi "
+	"piedi\"\r Jacques Rousseau",                                         /* 23: 43090 */
+	"\"Il Re in abito romano\"\rJean Warin",                              /* 24: 43091 */
+	"\"Atalanta\"\rJacques Rousseau",                                     /* 25: 43092 */
+	"\"Enea che porta Anchise\"\rSpada",                                  /* 26: 43100 */
+	"\"Davide e Betsabea\"\rVeronese",                                    /* 27: 43101 */
+	"\"La fuga in Egitto\"\rGuido Reni",                                  /* 28: 43102 */
+	"\"Luigi XIV a cavallo\"\rPierre Mignard",                            /* 29: 43103 */
+	"\"La magnificenza reale e i progressi delle Belle Arti\"\rHouasse",  /* 30: 43104 */
+	"\"Il sacrificio di Ifigenia\"\rCharles de La Fosse",                 /* 31: 43130 */
+	"\"Busto di Luigi XIV\"\rsculpted by Bernini",                        /* 32: 43131 */
+	"\"Diana scopre il pastore Endimione assopito tra le braccia di "
+	"Morfeo\"\rGabriel Blanchard",                                        /* 33: 43132 */
+	"\"San Pietro e la Vergine Maria\"\rIl Guercino",                     /* 34: 43140 */
+	"\"I pellegrini di Emmaus\"\rVeronese",                               /* 35: 43141 */
+	"\"La Sacra Famiglia\"\rVeronese",                                    /* 36: 43142 */
+	"\"La famiglia di Dario ai piedi di Alessandro\"\rCharles LeBrun",    /* 37: 43143 */
+	"\"San Giovanni il Battista\"\rRaphael",                              /* 38: 43144 */
+	"\"Maria de' Medici\"\rVan Dyck",                                     /* 39: 43150 */
+	"\"Ercole in lotta con Achel" "\x98" "o\"\rGuido Reni",               /* 40: 43151 */
+	"\"Il Centauro Nesso che porta Deianira\"\rGuido Reni",               /* 41: 43152 */
+	"\"San Francesco d'Assisi confortato dopo aver ricevuto le "
+	"stimmate\"\rSeghers",                                                /* 42: 43153 */
+	"\"Thomiris che immerge la testa di Ciro nel sangue\"\rRubens",       /* 43: 43154 */
+	"\"Ercole che uccide l'Idra\"\rGuido Reni",                           /* 44: 43155 */
+	"\"Ercole sul rogo " "\xd2" " \rGuido Reni",                          /* 45: 43156 */
+	"\"Ritratto del Principe Palatine e di suo fratello il Principe "
+	"Robert\"\rVan Dyck",                                                 /* 46: 43157 */
+	"\"Cristo calato dalla Croce\"\rCharles Lebrun",                      /* 47: 45260 */
 };
 
 #endif
