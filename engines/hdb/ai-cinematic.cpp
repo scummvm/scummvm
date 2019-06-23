@@ -64,6 +64,7 @@ static const char *cineTypeStr[] = {
 
 void AI::processCines() {
 
+	AIEntity *e;
 	bool complete, bailOut;
 
 	if (!_cineActive) {
@@ -181,7 +182,7 @@ void AI::processCines() {
 			break;
 		case C_MOVEENTITY:
 			if (!_cine[i]->start) {
-				AIEntity *e = locateEntity(_cine[i]->title);
+				e = locateEntity(_cine[i]->title);
 				if (e) {
 					_cine[i]->e = e;
 					_cine[i]->e->moveSpeed = _cine[i]->speed;
@@ -199,7 +200,6 @@ void AI::processCines() {
 			}
 			break;
 		case C_ANIMENTITY:
-			AIEntity *e;
 			if (!_cine[i]->start) {
 				e = locateEntity(_cine[i]->title);
 				if (e) {
@@ -225,9 +225,20 @@ void AI::processCines() {
 				}
 			}
 			break;
+		case C_SETANIMFRAME:
+			e = locateEntity(_cine[i]->title);
+			if (e) {
+				e->state = (AIState)_cine[i]->start;
+				e->animFrame = _cine[i]->end;
+				e->animDelay = e->animCycle;
+				animEntFrames(e);
+				e->state = STATE_NONE;
+				complete = true;
+			}
+			break;
 		case C_ENTITYFACE:
 		{
-			AIEntity *e = locateEntity(_cine[i]->title);
+			e = locateEntity(_cine[i]->title);
 
 			if (e) {
 				int d = (int)_cine[i]->x;
