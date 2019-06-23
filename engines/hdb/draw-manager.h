@@ -117,6 +117,8 @@ public:
 
 	// Font Functions
 
+	void setTextEdges(int left, int right, int top, int bottom);
+	void getTextEdges(int *left, int *right, int *top, int *bottom);
 	void setKernLead(int kern, int lead);
 	void getKernLead(int *kern, int *lead);
 	void setCursor(int x, int y);
