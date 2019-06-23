@@ -32,6 +32,11 @@ struct lua_State;
 
 namespace HDB {
 
+enum {
+	kCameraXOff = (32 * 3 + 24),	// 3.75 Tiles Extra
+	kCameraYOff = (32 * 2 + 16)		// 2.50 Tiles Extra
+};
+
 class LuaScript {
 public:
 	LuaScript();
