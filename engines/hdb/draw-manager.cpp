@@ -517,7 +517,7 @@ void DrawMan::drawText(const char *string) {
 	}
 
 	// Draw the characters
-	for (int j = 0;j < (int)strlen(string);j++) {
+	for (int j = 0; j < (int)strlen(string);j++) {
 		c = string[j];
 		if (c == '\n' || cr[j]) {
 			_cursorX = _eLeft;
@@ -532,8 +532,8 @@ void DrawMan::drawText(const char *string) {
 			width = kFontSpace;
 
 		// Blit the character
-		g_hdb->_drawMan->_globalSurface.transBlitFrom(_fontSurfaces[c], Common::Point(_cursorX, _cursorY));
-		g_system->copyRectToScreen(g_hdb->_drawMan->_globalSurface.getBasePtr(0, 0), g_hdb->_drawMan->_globalSurface.pitch, 0, 0, width, _fontHeader.height);
+		g_hdb->_drawMan->_globalSurface.transBlitFrom(_fontSurfaces[c], Common::Point(_cursorX, _cursorY), 0xf81f);
+		g_system->copyRectToScreen(g_hdb->_drawMan->_globalSurface.getBasePtr(_cursorX, _cursorY), g_hdb->_drawMan->_globalSurface.pitch, _cursorX, _cursorY, width, _fontHeader.height);
 
 		// Advance the cursor
 		_cursorX += width + _fontHeader.kerning * kFontIncrement;
