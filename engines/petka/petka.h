@@ -53,19 +53,20 @@ public:
 	PetkaEngine(OSystem *syst, const ADGameDescription *desc);
 	~PetkaEngine();
 
+	void loadPart(byte part);
+	byte getPart();
+
 	virtual Common::Error run();
 
 	Common::SeekableReadStream *openFile(const Common::String &name, bool addCurrentPath);
 
 	void playVideo(Common::SeekableReadStream *stream);
-
 	QSystem *getQSystem() const;
 	SoundMgr *soundMgr() const;
 	QManager *resMgr() const;
 	VideoSystem *videoSystem() const;
 
 	Common::RandomSource &getRnd();
-
 private:
 	void loadStores();
 

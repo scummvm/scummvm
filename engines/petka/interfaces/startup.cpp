@@ -98,7 +98,7 @@ void InterfaceStartup::onLeftButtonDown(const Common::Point p) {
 		g_vm->getQSystem()->_saveLoadInterface->startSaveLoad(0);
 		break;
 	case kNewGame:
-
+		g_vm->loadPart(1);
 		break;
 	}
 }

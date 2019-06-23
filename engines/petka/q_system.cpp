@@ -134,8 +134,14 @@ bool QSystem::init() {
 	_mainInterface.reset(new InterfaceMain());
 	_startupInterface.reset(new InterfaceStartup());
 	_saveLoadInterface.reset(new InterfaceSaveLoad());
-	_startupInterface->start();
-	_prevInterface = _currInterface = _startupInterface.get();
+	_panelInterface.reset(new InterfacePanel());
+	if (g_vm->getPart() == 0) {
+		_startupInterface->start();
+		_prevInterface = _currInterface = _startupInterface.get();
+	} else {
+		_mainInterface->start();
+		_prevInterface = _currInterface = _mainInterface.get();
+	}
 	return true;
 }
 

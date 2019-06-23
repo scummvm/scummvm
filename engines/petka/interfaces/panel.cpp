@@ -124,6 +124,7 @@ void InterfacePanel::onLeftButtonDown(const Common::Point p) {
 	}
 	switch (i) {
 	case kNewGameButtonIndex:
+		g_vm->loadPart(1);
 		break;
 	case kLoadButtonIndex:
 		g_vm->getQSystem()->_saveLoadInterface->startSaveLoad(0);

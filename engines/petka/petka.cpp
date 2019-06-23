@@ -75,15 +75,10 @@ Common::Error PetkaEngine::run() {
 
 	_console.reset(new Console(this));
 	_fileMgr.reset(new FileMgr());
-	_resMgr.reset(new QManager(*this));
 	_soundMgr.reset(new SoundMgr());
 	_vsys.reset(new VideoSystem());
-	_qsystem.reset(new QSystem());
 
-	loadStores();
-	if (!_resMgr->init())
-		return Common::kNoGameDataFoundError;
-	_qsystem->init();
+	loadPart(0);
 
 	while (!shouldQuit()) {
 		Common::Event event;
@@ -109,6 +104,7 @@ Common::Error PetkaEngine::run() {
 				break;
 			}
 		}
+		_qsystem->update();
 		_vsys->update();
 		_system->delayMillis(20);
 	}
@@ -204,6 +200,22 @@ QManager *PetkaEngine::resMgr() const {
 
 VideoSystem *PetkaEngine::videoSystem() const {
 	return _vsys.get();
+}
+
+byte PetkaEngine::getPart() {
+	return _part;
+}
+
+void PetkaEngine::loadPart(byte part) {
+	_part = part;
+
+	_soundMgr->removeAll();
+	loadStores();
+
+	_resMgr.reset(new QManager(*this));
+	_resMgr->init();
+	_qsystem.reset(new QSystem());
+	_qsystem->init();
 }
 
 } // End of namespace Petka
