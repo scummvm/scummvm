@@ -72,9 +72,10 @@ void AI::processCines() {
 
 	bailOut = complete = false;
 
-	// TODO: Make sure Dialogs are timing out
 
 	// TODO: Make sure Cine Pics are drawing
+	// Make sure Dialogs are timing out
+	g_hdb->_window->checkDialogClose(0, 0);
 
 	// TODO: Check for Game Pause
 
