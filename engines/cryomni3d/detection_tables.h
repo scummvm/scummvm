@@ -26,7 +26,7 @@ namespace CryOmni3D {
 
 static const CryOmni3DGameDescription gameDescriptions[] = {
 	// Versailles 1685
-	// French Windows 95
+	// French Windows 95 from hybrid Win95/DOS CD
 	// From lePhilousophe
 	{
 		{
@@ -39,12 +39,11 @@ static const CryOmni3DGameDescription gameDescriptions[] = {
 			GUI_OPTIONS_VERSAILLES
 		},
 		GType_VERSAILLES,
-		0,
-		0,
+		GF_VERSAILLES_NUMERICFONTS | GF_VERSAILLES_AUDIOPADDING,
 	},
 
 	// Versailles 1685
-	// French Windows 95 compressed
+	// French Windows 95 compressed from hybrid Win95/DOS CD
 	// From lePhilousophe
 	{
 		{
@@ -57,12 +56,11 @@ static const CryOmni3DGameDescription gameDescriptions[] = {
 			GUI_OPTIONS_VERSAILLES
 		},
 		GType_VERSAILLES,
-		0,
-		0,
+		GF_VERSAILLES_NUMERICFONTS | GF_VERSAILLES_AUDIOPADDING,
 	},
 
 	// Versailles 1685
-	// French DOS
+	// French DOS from hybrid Win95/DOS CD
 	// From lePhilousophe
 	{
 		{
@@ -75,8 +73,7 @@ static const CryOmni3DGameDescription gameDescriptions[] = {
 			GUI_OPTIONS_VERSAILLES
 		},
 		GType_VERSAILLES,
-		0,
-		0,
+		GF_VERSAILLES_NUMERICFONTS | GF_VERSAILLES_AUDIOPADDING,
 	},
 
 	// Versailles 1685
@@ -93,11 +90,10 @@ static const CryOmni3DGameDescription gameDescriptions[] = {
 			GUI_OPTIONS_VERSAILLES
 		},
 		GType_VERSAILLES,
-		0,
-		0,
+		GF_VERSAILLES_AUDIOPADDING,
 	},
 
-	{ AD_TABLE_END_MARKER, 0, 0, 0 }
+	{ AD_TABLE_END_MARKER, 0, 0 }
 };
 
 //////////////////////////////
@@ -117,7 +113,6 @@ static const CryOmni3DGameDescription fallbackDescs[] = {
 		},
 		GType_VERSAILLES,
 		0,
-		0
 	},
 };
 

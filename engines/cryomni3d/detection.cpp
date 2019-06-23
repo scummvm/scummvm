@@ -41,7 +41,6 @@ struct CryOmni3DGameDescription {
 
 	uint8 gameType;
 	uint32 features;
-	const char *appName;
 };
 
 const char *CryOmni3DEngine::getGameId() const {
@@ -54,10 +53,6 @@ uint32 CryOmni3DEngine::getFeatures() const {
 
 Common::Platform CryOmni3DEngine::getPlatform() const {
 	return _gameDescription->desc.platform;
-}
-
-const char *CryOmni3DEngine::getAppName() const {
-	return _gameDescription->appName;
 }
 
 uint8 CryOmni3DEngine::getGameType() const {

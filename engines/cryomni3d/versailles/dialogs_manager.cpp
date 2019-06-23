@@ -93,8 +93,10 @@ void Versailles_DialogsManager::playDialog(const Common::String &video, const Co
 	Common::String videoFName(_engine->prepareFileName(video, "hnm"));
 	Common::String soundFName(sound);
 
-	while (soundFName.size() < 8) {
-		soundFName += '_';
+	if (_padAudioFileName) {
+		while (soundFName.size() < 8) {
+			soundFName += '_';
+		}
 	}
 	soundFName = _engine->prepareFileName(soundFName, "wav");
 

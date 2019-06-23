@@ -65,6 +65,11 @@ enum CryOmni3DGameType {
 	GType_VERSAILLES
 };
 
+enum CryOmni3DGameFeatures {
+	GF_VERSAILLES_NUMERICFONTS             = (1 << 0), // Fonts are font01.crf, ...
+	GF_VERSAILLES_AUDIOPADDING             = (1 << 1), // Audio files have underscore padding before extension
+};
+
 struct CryOmni3DGameDescription;
 
 // Engine Debug Flags
@@ -93,7 +98,6 @@ public:
 	const CryOmni3DGameDescription *_gameDescription;
 	const char *getGameId() const;
 	uint32 getFeatures() const;
-	const char *getAppName() const;
 	uint16 getVersion() const;
 	Common::Platform getPlatform() const;
 	uint8 getGameType() const;

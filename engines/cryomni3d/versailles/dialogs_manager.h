@@ -37,7 +37,9 @@ class CryOmni3DEngine_Versailles;
 
 class Versailles_DialogsManager : public DialogsManager {
 public:
-	Versailles_DialogsManager(CryOmni3DEngine_Versailles *engine) : _engine(engine) { }
+	Versailles_DialogsManager(CryOmni3DEngine_Versailles *engine,
+	                          bool padAudioFileName) : _engine(engine),
+		_padAudioFileName(padAudioFileName) { }
 
 	// This overload will hide the base one and this is what we want
 	bool play(const Common::String &sequence);
@@ -56,6 +58,7 @@ protected:
 private:
 	CryOmni3DEngine_Versailles *_engine;
 	Common::HashMap<Common::String, ShowCallback> _shows;
+	bool _padAudioFileName;
 
 	void loadFrame(const Common::String &video);
 
