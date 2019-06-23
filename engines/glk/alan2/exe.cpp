@@ -178,13 +178,13 @@ void quit(CONTEXT) {
 			CALL1(terminate, 0)
 		}
 
-		if (strcmp(buf, "restart") == 0) {
+		if (scumm_stricmp(buf, "restart") == 0) {
 			g_vm->setRestart(true);
 			LONG_JUMP
-		} else if (strcmp(buf, "restore") == 0) {
+		} else if (scumm_stricmp(buf, "restore") == 0) {
 			restore();
 			LONG_JUMP
-		} else if (strcmp(buf, "quit") == 0) {
+		} else if (scumm_stricmp(buf, "quit") == 0) {
 			CALL1(terminate, 0)
 		}
 	}

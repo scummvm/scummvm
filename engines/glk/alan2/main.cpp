@@ -1422,7 +1422,7 @@ void run() {
 		init();
 
 		Context ctx;
-		while (!g_vm->shouldQuit()) {
+		while (!g_vm->shouldQuit() && !g_vm->shouldRestart()) {
 			if (!ctx._break) {
 				if (dbgflg)
 					debug();
