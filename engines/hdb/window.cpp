@@ -223,23 +223,26 @@ void Window::drawBorder(int x, int y, int width, int height, bool guyTalking) {
 					_gfxTR->drawMasked(x + i * 16, y + j * 16);
 				else if (!j)
 					_gfxTM->draw(x + i * 16, y + j * 16);
+				else {
 
-				// Bottom Lines
-				if ((j == high - 1) && !i)
-					_gfxBL->drawMasked(x + i * 16, y + j * 16);
-				else if ((j == high - 1) && (i == wide - 1))
-					_gfxBR->drawMasked(x + i * 16, y + j * 16);
-				else if ((j == high - 1) && i < wide)
-					_gfxBM->draw(x + i * 16, y + j * 16);
-
-				// Middle lines
-				if (!i && j < high)
-					_gfxL->draw(x + i * 16, y + j * 16);
-				else if ((i == wide - 1) && j < high)
-					_gfxR->draw(x + i * 16, y + j * 16);
-
-				// Most drawn = middle block
-				_gfxM->draw(x + i * 16, y + j * 16);
+					// Bottom Lines
+					if ((j == high - 1) && !i)
+						_gfxBL->drawMasked(x + i * 16, y + j * 16);
+					else if ((j == high - 1) && (i == wide - 1))
+						_gfxBR->drawMasked(x + i * 16, y + j * 16);
+					else if ((j == high - 1) && i < wide)
+						_gfxBM->draw(x + i * 16, y + j * 16);
+					else {
+						// Middle lines
+						if (!i && j < high)
+							_gfxL->draw(x + i * 16, y + j * 16);
+						else if ((i == wide - 1) && j < high)
+							_gfxR->draw(x + i * 16, y + j * 16);
+						else
+							// Most drawn = middle block
+							_gfxM->draw(x + i * 16, y + j * 16);
+					}
+				}
 			}
 	} else {
 		wide = (width / 16) + 1;
@@ -253,23 +256,29 @@ void Window::drawBorder(int x, int y, int width, int height, bool guyTalking) {
 					_gGfxTR->drawMasked(x + i * 16, y + j * 16);
 				else if (!j)
 					_gGfxTM->draw(x + i * 16, y + j * 16);
+				else {
 
-				// Bottom Lines
-				if ((j == high - 1) && !i)
-					_gGfxBL->drawMasked(x + i * 16, y + j * 16);
-				else if ((j == high - 1) && (i == wide - 1))
-					_gGfxBR->drawMasked(x + i * 16, y + j * 16);
-				else if ((j == high - 1) && i < wide)
-					_gGfxBM->draw(x + i * 16, y + j * 16);
+					// Bottom Lines
+					if ((j == high - 1) && !i)
+						_gGfxBL->drawMasked(x + i * 16, y + j * 16);
+					else if ((j == high - 1) && (i == wide - 1))
+						_gGfxBR->drawMasked(x + i * 16, y + j * 16);
+					else if ((j == high - 1) && i < wide)
+						_gGfxBM->draw(x + i * 16, y + j * 16);
+					else {
 
-				// Middle lines
-				if (!i && j < high)
-					_gGfxL->draw(x + i * 16, y + j * 16);
-				else if ((i == wide - 1) && j < high)
-					_gGfxR->draw(x + i * 16, y + j * 16);
+						// Middle lines
+						if (!i && j < high)
+							_gGfxL->draw(x + i * 16, y + j * 16);
+						else if ((i == wide - 1) && j < high)
+							_gGfxR->draw(x + i * 16, y + j * 16);
+						else
 
-				// Most drawn = middle block
-				_gGfxM->draw(x + i * 16, y + j * 16);
+							// Most drawn = middle block
+							_gGfxM->draw(x + i * 16, y + j * 16);
+
+					}
+				}
 			}
 	}
 }
