@@ -1381,6 +1381,91 @@ static const WMEGameDescription gameDescriptions[] = {
 					"xlanguage_en.dcp", "0598bf752ce93b42bcaf1094df537c7b", 8533057,
 					"Linux.dcp", "21858bd77dc86b03f701fd47900e2f51", 984535), Common::EN_ANY, Common::kPlatformLinux, ADGF_UNSTABLE, LATEST_VERSION),
 
+	// Reversion: The Meeting (Steam, July 2014) (Spanish)
+	WME_WINENTRY("reversion2", "",
+		WME_ENTRY2s("data.dcp", "706adf37f47db7306b27ad75c35120e5", 256020490,
+					"data.dcp", "706adf37f47db7306b27ad75c35120e5", 256020490), Common::ES_ESP, ADGF_UNSTABLE, LATEST_VERSION),
+
+	// Reversion: The Meeting (Steam, July 2014) (English)
+	WME_WINENTRY("reversion2", "",
+		WME_ENTRY2s("data.dcp", "706adf37f47db7306b27ad75c35120e5", 256020490,
+			"xlanguage_en.dcp", "be5b15b4c591481d72a1bd869d7f1e99", 8533063), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+
+	// Reversion: The Meeting (Steam, July 2014) (Chinese)
+	WME_WINENTRY("reversion2", "",
+		WME_ENTRY2s("data.dcp", "706adf37f47db7306b27ad75c35120e5", 256020490,
+			"xlanguage_nz.dcp", "6aa4147492146055ec60d5a288c5ac60", 8827469), Common::ZH_CNA, ADGF_UNSTABLE, LATEST_VERSION),
+
+	// Reversion: The Meeting (Steam, August 2014) (Spanish)
+	WME_WINENTRY("reversion2", "",
+		WME_ENTRY2s("data.dcp", "2e5d0c90715f8a19ef2f590e9535a907", 256020512,
+					"data.dcp", "2e5d0c90715f8a19ef2f590e9535a907", 256020512), Common::ES_ESP, ADGF_UNSTABLE, LATEST_VERSION),
+
+	// Reversion: The Meeting (Steam, August 2014) (English)
+	WME_WINENTRY("reversion2", "",
+		WME_ENTRY2s("data.dcp", "2e5d0c90715f8a19ef2f590e9535a907", 256020512,
+			"xlanguage_en.dcp", "be5b15b4c591481d72a1bd869d7f1e99", 8533063), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+
+	// Reversion: The Meeting (Steam, August 2014) (Chinese)
+	WME_WINENTRY("reversion2", "",
+		WME_ENTRY2s("data.dcp", "2e5d0c90715f8a19ef2f590e9535a907", 256020512,
+			"xlanguage_nz.dcp", "6aa4147492146055ec60d5a288c5ac60", 8827469), Common::ZH_CNA, ADGF_UNSTABLE, LATEST_VERSION),
+
+	// Reversion: The Meeting (Steam, February 2016) (Spanish)
+	WME_WINENTRY("reversion2", "",
+		WME_ENTRY2s("data.dcp", "6e507ba64db28dcd766a5fe41c95e152", 256017952,
+					"data.dcp", "6e507ba64db28dcd766a5fe41c95e152", 256017952), Common::ES_ESP, ADGF_UNSTABLE, LATEST_VERSION),
+
+	// Reversion: The Meeting (Steam, February 2016) (English)
+	WME_WINENTRY("reversion2", "",
+		WME_ENTRY2s("data.dcp", "6e507ba64db28dcd766a5fe41c95e152", 256017952,
+			"xlanguage_en.dcp", "0542c42dcaacfdfd29f6e7009a061b1f", 8523503), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+
+	// Reversion: The Meeting (Steam, February 2016) (Chinese)
+	WME_WINENTRY("reversion2", "",
+		WME_ENTRY2s("data.dcp", "6e507ba64db28dcd766a5fe41c95e152", 256017952,
+			"xlanguage_nz.dcp", "299aee7eaf5e861da1f993114f11bf3e", 8845182), Common::ZH_CNA, ADGF_UNSTABLE, LATEST_VERSION),
+
+	// Reversion: The Meeting (Steam, February 2016) (Russian)
+	WME_WINENTRY("reversion2", "",
+		WME_ENTRY2s("data.dcp", "6e507ba64db28dcd766a5fe41c95e152", 256017952,
+			"xlanguage_ru.dcp", "15cd8cba2d58413707f03ff3b821e964", 10418988), Common::RU_RUS, ADGF_UNSTABLE, LATEST_VERSION),
+
+	// Reversion: The Meeting (Steam, September 2016) (Italian)
+	WME_WINENTRY("reversion2", "",
+		WME_ENTRY2s("data.dcp", "6e507ba64db28dcd766a5fe41c95e152", 256017952,
+			"xlanguage_it.dcp", "633e4350a0e45dbb40b26404f0a546e9", 11484621), Common::IT_ITA, ADGF_UNSTABLE, LATEST_VERSION),
+
+	// Reversion: The Meeting (Steam, November 2016) (Spanish)
+	WME_WINENTRY("reversion2", "",
+		WME_ENTRY2s("data.dcp", "ff3d33de24036afc5697f901fc7d872d", 256030699,
+					"data.dcp", "ff3d33de24036afc5697f901fc7d872d", 256030699), Common::ES_ESP, ADGF_UNSTABLE, LATEST_VERSION),
+
+	// Reversion: The Meeting (Steam, November 2016) (German)
+	WME_WINENTRY("reversion2", "",
+		WME_ENTRY2s("data.dcp", "ff3d33de24036afc5697f901fc7d872d", 256030699,
+			"xlanguage_de.dcp", "48b1f6185480fb3b64ba5f8996df4bda", 8727399), Common::DE_DEU, ADGF_UNSTABLE, LATEST_VERSION),
+
+	// Reversion: The Meeting (Steam, November 2016) (English)
+	WME_WINENTRY("reversion2", "",
+		WME_ENTRY2s("data.dcp", "ff3d33de24036afc5697f901fc7d872d", 256030699,
+			"xlanguage_en.dcp", "3323ede6bb321aa0e3af6727b105e73a", 8535530), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+
+	// Reversion: The Meeting (Steam, November 2016) (Italian)
+	WME_WINENTRY("reversion2", "",
+		WME_ENTRY2s("data.dcp", "ff3d33de24036afc5697f901fc7d872d", 256030699,
+			"xlanguage_it.dcp", "0e315976351c9508355597a3506d521d", 11498415), Common::IT_ITA, ADGF_UNSTABLE, LATEST_VERSION),
+
+	// Reversion: The Meeting (Steam, November 2016) (Chinese)
+	WME_WINENTRY("reversion2", "",
+		WME_ENTRY2s("data.dcp", "ff3d33de24036afc5697f901fc7d872d", 256030699,
+			"xlanguage_nz.dcp", "45f52816d5ec5f8e0c1bd70a7aa17f7c", 8847936), Common::ZH_CNA, ADGF_UNSTABLE, LATEST_VERSION),
+
+	// Reversion: The Meeting (Steam, November 2016) (Russian)
+	WME_WINENTRY("reversion2", "",
+		WME_ENTRY2s("data.dcp", "ff3d33de24036afc5697f901fc7d872d", 256030699,
+			"xlanguage_ru.dcp", "a5925d2b4bda5b1d38cf83f851d42404", 10431458), Common::RU_RUS, ADGF_UNSTABLE, LATEST_VERSION),
+
 	// Rhiannon: Curse of the four Branches
 	WME_WINENTRY("rhiannon", "",
 		WME_ENTRY1s("data.dcp", "870f348900b735f1cc79c0608ce32b0e", 1046169851), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
