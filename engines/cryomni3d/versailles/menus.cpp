@@ -304,9 +304,7 @@ uint CryOmni3DEngine_Versailles::displayOptions() {
 					end = displayYesNoBox(optionsSurface, Common::Rect(235, 420, 505, 465), 57);
 				}
 				drawState = 1;
-				if (end) {
-					_isPlaying = false;
-				} else {
+				if (!end) {
 					selectedMsg = 0;
 				}
 			}
@@ -332,7 +330,6 @@ uint CryOmni3DEngine_Versailles::displayOptions() {
 					selectedMsg = 0;
 				} else {
 					_loadedSave = saveNumber;
-					_isPlaying = false;
 					end = true;
 				}
 				waitMouseRelease();
@@ -347,7 +344,6 @@ uint CryOmni3DEngine_Versailles::displayOptions() {
 					selectedMsg = 0;
 				} else {
 					_loadedSave = saveNumber;
-					_isPlaying = false;
 					end = true;
 				}
 				waitMouseRelease();
