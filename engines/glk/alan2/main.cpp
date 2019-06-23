@@ -114,13 +114,14 @@ Boolean skipsp = FALSE;
   return buffers...
 
  */
-void terminate(int code) {
+void terminate(CONTEXT, int code) {
 	newline();
 	free(memory);
 	if (logflg)
 		fclose(logfil);
 
 	g_vm->glk_exit();
+	LONG_JUMP
 }
 
 /*======================================================================
@@ -885,7 +886,7 @@ static void do_it(CONTEXT) {
 						else
 							printf("\n<VERB %d, %s (ONLY), Body:>\n", cur.vrb, trace);
 					}
-					interpret(alt[i]->action);
+					CALL1(interpret, alt[i]->action)
 					if (fail) return;
 					if (alt[i]->qual == (Aword)Q_ONLY) return;
 				}
@@ -908,7 +909,7 @@ static void do_it(CONTEXT) {
 							sprintf(trace, "in PARAMETER %d", i - 1);
 						printf("\n<VERB %d, %s, Body:>\n", cur.vrb, trace);
 					}
-					interpret(alt[i]->action);
+					CALL1(interpret, alt[i]->action)
 					if (fail) return;
 				}
 				done[i] = TRUE;
@@ -929,7 +930,7 @@ static void do_it(CONTEXT) {
 						sprintf(trace, "in PARAMETER %d", i - 1);
 					printf("\n<VERB %d, %s (AFTER), Body:>\n", cur.vrb, trace);
 				}
-				interpret(alt[i]->action);
+				CALL1(interpret, alt[i]->action)
 				if (fail) return;
 			}
 		i--;

@@ -146,6 +146,11 @@ static void depcase() {
 }
 
 void interpret(Aaddr adr) {
+	Context ctx;
+	interpret(ctx, adr);
+}
+
+void interpret(CONTEXT, Aaddr adr) {
 	Aaddr oldpc;
 	Aword i;
 
@@ -233,7 +238,7 @@ void interpret(Aaddr adr) {
 			case I_QUIT: {
 				if (stpflg)
 					printf("QUIT");
-				quit();
+				CALL0(quit)
 				break;
 			}
 			case I_LOOK: {

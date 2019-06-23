@@ -150,7 +150,7 @@ static char *gettoken(char *tokBuf) {
 	return tokBuf;
 }
 
-static void agetline() {
+static void agetline(CONTEXT) {
 	para();
 	do {
 		statusline();
@@ -164,7 +164,7 @@ static void agetline() {
 				return;
 
 			newline();
-			quit();
+			CALL0(quit)
 		}
 
 		getPageSize();
@@ -189,7 +189,7 @@ static void scan(CONTEXT) {
 	int w;
 	char *str;
 
-	agetline();
+	CALL0(agetline)
 	if (g_vm->shouldQuit())
 		return;
 

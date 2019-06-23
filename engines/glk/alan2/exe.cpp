@@ -166,7 +166,7 @@ Boolean confirm(MsgKind msgno) {
 	return (buf[0] == '\0');
 }
 
-void quit() {
+void quit(CONTEXT) {
 	char buf[80];
 
 	para();
@@ -174,18 +174,20 @@ void quit() {
 		col = 1;
 		statusline();
 		prmsg(M_QUITACTION);
-		if (!readline(buf)) terminate(0);
+		if (!readline(buf)) {
+			CALL1(terminate, 0)
+		}
 
-		if (strcmp(buf, "restart") == 0)
-			//longjmp(restart_label, TRUE);
-			::error("TODO: restart");
-		else if (strcmp(buf, "restore") == 0) {
+		if (strcmp(buf, "restart") == 0) {
+			g_vm->setRestart(true);
+			LONG_JUMP
+		} else if (strcmp(buf, "restore") == 0) {
 			restore();
-			return;
-		} else if (strcmp(buf, "quit") == 0)
-			terminate(0);
+			LONG_JUMP
+		} else if (strcmp(buf, "quit") == 0) {
+			CALL1(terminate, 0)
+		}
 	}
-	syserr("Fallthrough in QUIT");
 }
 
 void restart() {

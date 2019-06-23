@@ -315,8 +315,11 @@ void debug() {
       $iX -- exit debug mode\
       $iQ -- quit game");
 			break;
-		case 'Q':
-			terminate(0);
+		case 'Q': {
+			Context ctx;
+			terminate(ctx, 0);
+			break;
+		}
 		case 'X':
 			dbgflg = FALSE;       /* Fall through to 'G' */
 		case 'G':
