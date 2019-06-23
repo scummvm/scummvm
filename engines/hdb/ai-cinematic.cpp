@@ -209,6 +209,7 @@ void AI::processCines() {
 			break;
 		}
 		case C_DIALOG:
+			debug("In processCines: C_DIALOG: _cine[i]->start: %d", _cine[i]->start);
 			if (_cine[i]->start) {
 				g_hdb->_window->openDialog(_cine[i]->title, -1, _cine[i]->string, 0, NULL);
 				g_hdb->_window->setDialogDelay(_cine[i]->delay);
@@ -385,6 +386,7 @@ void AI::cineDialog(const char *title, const char *string, int seconds) {
 	if (!title || !string)
 		warning("cineDialog: Missing Title or Text");
 	cmd->cmdType = C_DIALOG;
+	debug("In cineDialog: C_DIALOG created. cmd->start: %d", cmd->start);
 	_cine.push_back(cmd);
 }
 
