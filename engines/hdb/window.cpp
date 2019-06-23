@@ -137,6 +137,20 @@ void Window::openDialog(const char *title, int tileIndex, const char *string, in
 
 void Window::drawDialog() {
 
+#if 0
+	_gfxTL->drawMasked(0, 0);
+	_gfxTM->drawMasked(_gfxTL->_width, 0);
+	_gfxTR->drawMasked(_gfxTL->_width + _gfxTM->_width, 0);
+
+	_gfxL->drawMasked(0, _gfxTL->_height);
+	_gfxM->drawMasked(_gfxL->_width, _gfxTL->_height);
+	_gfxR->drawMasked(_gfxL->_width + _gfxM->_width, _gfxTL->_height);
+
+	_gfxBL->drawMasked(0, _gfxTL->_height + _gfxL->_height);
+	_gfxBM->drawMasked(_gfxBL->_width, _gfxTL->_height + _gfxL->_height);
+	_gfxBR->drawMasked(_gfxBL->_width + _gfxBM->_width, _gfxTL->_height + _gfxL->_height);
+#endif
+
 	if (g_hdb->getActionMode())
 		warning("STUB: drawDialog: Draw Player Weapon");
 
