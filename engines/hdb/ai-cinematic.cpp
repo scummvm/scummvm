@@ -469,6 +469,27 @@ void AI::cineDialog(const char *title, const char *string, int seconds) {
 	_cine.push_back(cmd);
 }
 
+void AI::cineMoveMaskedPic(const char *id, const char *pic, int x1, int y1, int x2, int y2, int speed) {
+	if (!pic || !id) {
+		warning("cineMoveMaskedPic: Missing ID or PIC");
+		return;
+	}
+
+	CineCommand *cmd = new CineCommand;
+	cmd->x = x1;
+	cmd->y = y1;
+	cmd->x2 = x2;
+	cmd->y2 = y2;
+	cmd->speed = speed;
+	cmd->xv = ((double)(x2-x1)) / (double)speed;
+	cmd->yv = ((double)(y2-y1)) / (double)speed;
+	cmd->start = 0;
+	strcpy(cmd->string, pic);
+	strcpy(cmd->id, id);
+	cmd->cmdType = C_MOVEMASKEDPIC;
+	_cine.push_back(cmd);
+}
+
 void AI::cineUse(const char *entName) {
 	CineCommand *cmd = new CineCommand;
 	strcpy(cmd->string, entName);
