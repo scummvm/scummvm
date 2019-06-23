@@ -35,6 +35,7 @@
 - (UITextView *)inputView;
 - (void)setInputDelegate:(id)delegate;
 - (void)handleKeyPress:(unichar)c;
+- (void)handleMainMenuKey;
 
 - (void)showKeyboard;
 - (void)hideKeyboard;
