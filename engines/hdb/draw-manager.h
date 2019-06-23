@@ -33,7 +33,9 @@ enum {
 	kTileWidth = 32,
 	kTileHeight = 32,
 	kMaxSkies = 10,
-	kNum3DStars = 300
+	kNum3DStars = 300,
+	kFontSpace = 5,
+	kFontIncrement = 1
 };
 
 class Tile;
@@ -58,6 +60,19 @@ struct GfxCache {
 	int16 loaded;
 
 	GfxCache() : name(""), tileGfx(NULL), size(0), loaded(0) {}
+};
+
+struct FontInfo {
+	uint16		type;		// 0 = mono, 1 = proportional
+	uint16		numChars;	// how many characters in font
+	uint16		height;		// height of entire font
+	uint16		kerning;	// space between chars
+	uint16		leading;	// space between lines
+};
+
+struct CharInfo {
+	uint16 width;	// Character width in pixels
+	uint32 offset;	// From the start of the font charInfo chunk
 };
 
 class DrawMan {
@@ -133,6 +148,17 @@ private:
 	int _tileSkyClouds; // Index of sky_stars tile
 	Picture *_starField[4];
 	Picture *_skyClouds;
+
+	// Cursor
+	int _cursorX, _cursorY;
+
+	// Font Data
+
+	FontInfo _fontHeader;
+	Common::Array<CharInfo *> _charInfoBlocks;
+	Graphics::Surface _fontSurfaces[256];
+	uint16 _fontGfx;
+	int _eLeft, _eRight, _eTop, _eBottom;
 
 	bool _systemInit;
 
