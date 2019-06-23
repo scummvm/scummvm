@@ -623,7 +623,14 @@ static int gotoMenu(lua_State *L) {
 }
 
 static int setInfobarDark(lua_State *L) {
-	warning("STUB: SET INFOBAR DARK");
+	double	value = lua_tonumber(L, 1);
+
+	g_hdb->_lua->checkParameters("setInfobarDark", 1);
+
+	lua_pop(L, 1);
+
+	g_hdb->_window->setInfobarDark((int)value);
+
 	return 0;
 }
 
