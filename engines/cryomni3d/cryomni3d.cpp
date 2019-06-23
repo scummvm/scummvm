@@ -213,11 +213,11 @@ Image::ImageDecoder *CryOmni3DEngine::loadHLZ(const Common::String &filename) {
 	return imageDecoder;
 }
 
-void CryOmni3DEngine::displayHLZ(const Common::String &filename) {
+bool CryOmni3DEngine::displayHLZ(const Common::String &filename, uint32 timeout) {
 	Image::ImageDecoder *imageDecoder = loadHLZ(filename);
 
 	if (!imageDecoder) {
-		return;
+		return false;
 	}
 
 	if (imageDecoder->hasPalette()) {
@@ -229,10 +229,16 @@ void CryOmni3DEngine::displayHLZ(const Common::String &filename) {
 	g_system->copyRectToScreen(frame->getPixels(), frame->pitch, 0, 0, frame->w, frame->h);
 	g_system->updateScreen();
 
+	uint32 end;
+	if (timeout == uint(-1)) {
+		end = uint(-1);
+	} else {
+		end = g_system->getMillis() + timeout;
+	}
 	bool exitImg = false;
-	while (!shouldAbort() && !exitImg) {
+	while (!shouldAbort() && !exitImg && g_system->getMillis() < end) {
 		if (pollEvents()) {
-			if (checkKeysPressed(1, Common::KEYCODE_ESCAPE) || getCurrentMouseButton() == 1) {
+			if (checkKeysPressed() || getCurrentMouseButton() == 1) {
 				exitImg = true;
 			}
 		}
@@ -241,6 +247,8 @@ void CryOmni3DEngine::displayHLZ(const Common::String &filename) {
 	}
 
 	delete imageDecoder;
+
+	return exitImg || shouldAbort();
 }
 
 void CryOmni3DEngine::setCursor(const Graphics::Cursor &cursor) const {

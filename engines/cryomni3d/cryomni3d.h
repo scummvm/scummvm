@@ -126,7 +126,7 @@ public:
 	void playHNM(const Common::String &filename,
 	             Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType,
 	             HNMCallback beforeDraw = nullptr, HNMCallback afterDraw = nullptr);
-	void displayHLZ(const Common::String &filename);
+	bool displayHLZ(const Common::String &filename, uint32 timeout = uint(-1));
 
 	bool pollEvents();
 	Common::Point getMousePos();
