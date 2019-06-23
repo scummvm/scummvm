@@ -401,6 +401,13 @@ void AI::cineStart(bool abortable, const char *abortFunc) {
 	_cameraLock = false;
 }
 
+void AI::cineStop(const char *funcNext) {
+	CineCommand *cmd = new CineCommand;
+	cmd->cmdType = C_STOPCINE;
+	strcpy(cmd->title, funcNext);
+	_cine.push_back(cmd);
+}
+
 void AI::cineLockPlayer() {
 	CineCommand *cmd = new CineCommand;
 	cmd->cmdType = C_LOCKPLAYER;
