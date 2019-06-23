@@ -124,8 +124,8 @@ void Window::openDialog(const char *title, int tileIndex, const char *string, in
 	warning("STUB: openDialog: Play SND_MOVE_SELECTION");
 }
 
-void Window::setDialogDelay(int seconds) {
-	warning("STUB: Window::setDialogDelay() required");
+void Window::setDialogDelay(int delay) {
+	_dialogDelay = g_system->getMillis() + 1000 * delay;
 }
 
 } // End of Namespace
