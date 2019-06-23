@@ -292,6 +292,9 @@ Common::Error HDBGame::run() {
 		}
 
 		_drawMan->drawSky();
+
+		_ai->moveEnts();
+
 		_map->draw();
 		_ai->processCines();
 		_map->drawEnts();
