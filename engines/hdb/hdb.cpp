@@ -297,6 +297,7 @@ Common::Error HDBGame::run() {
 		_map->drawEnts();
 		_map->drawGratings();
 		_map->drawForegrounds();
+		_ai->animateTargets();
 
 		// Update Timer that's NOT used for in-game Timing
 		_prevTimeSlice = _timeSlice;
