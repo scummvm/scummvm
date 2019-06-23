@@ -30,6 +30,8 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"5ma",             "Five Magical Amulets"},
 	{"actualdest",      "Actual Destination"},
 	{"agustin",			"Boredom of Agustin Cordes"},
+	{"alimardan1",		"Alimardan's Mischief"},
+	{"alimardan2",		"Alimardan Meets Merlin"},
 	{"basisoctavus",    "Basis Octavus"},
 	{"bickadoodle",     "Bickadoodle"},
 	{"bookofgron",      "Book of Gron Part One"},
@@ -172,6 +174,18 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Actual Destination
 	WME_WINENTRY("actualdest", "",
 		WME_ENTRY1s("data.dcp", "6926f44b26f21ceb1d840eaab9aeb510", 9081740), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+	// Alimardan's Mischief (Steam, August 2017)
+	WME_WINENTRY("alimardan1", "",
+		WME_ENTRY2s("language.dcp", "95d5ce5de1bad7cf2db67a934c36f5cb", 660483,
+					"data.dcp", "ef27d8483d6f19d5398fc81ea05e5320", 1258766332), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+	// Alimardan's Mischief (Steam, October 2017)
+	WME_WINENTRY("alimardan1", "",
+		WME_ENTRY2s("language.dcp", "650077b587f2ee42478b3a545a0f55d2", 660483,
+					"data.dcp", "d74f56d9ce3b7442b921393af7fb6167", 1258761838), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+	// Alimardan Meets Merlin
+	WME_WINENTRY("alimardan2", "",
+		WME_ENTRY2s("language.dcp", "0cbb7e1e84a342782c24938af4da1402", 686580,
+					"data.dcp", "e3ffb5d177737a57bb391995d9361055", 413397623), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
 	// Basis Octavus
 	WME_WINENTRY("basisoctavus", "",
 		WME_ENTRY1s("data.dcp", "021ef97f8f49ec33f83beae0d6e38f08", 49336909), Common::CZ_CZE, ADGF_UNSTABLE, LATEST_VERSION),
