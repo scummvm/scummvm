@@ -36,8 +36,15 @@ class InterfaceMain : public Interface {
 public:
 	InterfaceMain();
 
+	void start() override;
+
+	void loadRoom(int id, bool fromSave);
+
+	const BGInfo *findBGInfo(int id) const;
+
 public:
 	Common::Array<BGInfo> _bgs;
+	int _roomId;
 };
 
 } // End of namespace Petka

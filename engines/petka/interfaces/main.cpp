@@ -45,7 +45,7 @@ InterfaceMain::InterfaceMain() {
 		_bgs[i].attachedObjIds.resize(stream->readUint32LE());
 		for (uint j = 0; j < _bgs[i].attachedObjIds.size(); ++j) {
 			_bgs[i].attachedObjIds[j] = stream->readUint16LE();
-			QMessageObject *obj = g_vm->getQSystem()->findObject(_bgs[i].attachedObjIds[i]);
+			QMessageObject *obj = g_vm->getQSystem()->findObject(_bgs[i].attachedObjIds[j]);
 			obj->_x = stream->readSint32LE();
 			obj->_y = stream->readSint32LE();
 			obj->_z = stream->readSint32LE();
@@ -53,6 +53,38 @@ InterfaceMain::InterfaceMain() {
 			obj->_field18 = stream->readSint32LE();
 		}
 	}
+}
+
+void InterfaceMain::start() {
+	g_vm->getQSystem()->update();
+	g_vm->getQSystem()->_field48 = 0;
+
+	loadRoom(g_vm->getQSystem()->findObject("Seq - INTRO0")->_id, false);
+}
+
+void InterfaceMain::loadRoom(int id, bool fromSave) {
+	stop();
+	_roomId = id;
+	const BGInfo *info = findBGInfo(id);
+	QObjectBG *room = (QObjectBG *)g_vm->getQSystem()->findObject(info->objId);
+	g_vm->resMgr()->loadBitmap(room->_resourceId);
+	_objs.push_back(room);
+	for (uint i = 0; i < info->attachedObjIds.size(); ++i) {
+		QMessageObject *obj = g_vm->getQSystem()->findObject(info->attachedObjIds[i]);
+		g_vm->soundMgr()->addSound(g_vm->resMgr()->findSoundName(obj->_resourceId), Audio::Mixer::kSFXSoundType);
+		if (obj->_isShown || obj->_isActive)
+			g_vm->resMgr()->loadFlic(obj->_resourceId);
+	}
+	if (!fromSave)
+		g_vm->getQSystem()->addMessageForAllObjects(kInitBG, 0, 0, 0, 0, room);
+}
+
+const BGInfo *InterfaceMain::findBGInfo(int id) const {
+	for (uint i = 0; i < _bgs.size(); ++i) {
+		if (_bgs[i].objId == id)
+			return &_bgs[i];
+	}
+	return nullptr;
 }
 
 } // End of namespace Petka
