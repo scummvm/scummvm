@@ -161,6 +161,23 @@ static const CryOmni3DGameDescription gameDescriptions[] = {
 		GF_VERSAILLES_AUDIOPADDING,
 	},
 
+	// Versailles 1685
+	// German Macintosh
+	// From lePhilousophe
+	{
+		{
+			"versailles",
+			"",
+			AD_ENTRY1s("Versailles", "f1aa0603e7f71404f936e4189b4c5b2b", 348614),
+			Common::DE_DEU,
+			Common::kPlatformMacintosh,
+			ADGF_UNSTABLE,
+			GUI_OPTIONS_VERSAILLES
+		},
+		GType_VERSAILLES,
+		GF_VERSAILLES_AUDIOPADDING,
+	},
+
 	{ AD_TABLE_END_MARKER, 0, 0 }
 };
 

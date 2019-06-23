@@ -36,6 +36,13 @@ static char const *const versaillesFRlocalizedFilenames[] = {
 	"credits.txt",
 	"LEB001__.WAV",
 };
+static char const *const versaillesDElocalizedFilenames[] = {
+	"DIALOG1.ALM",
+	"tous_doc.ALM",
+	"lien_doc.alm",
+	"credits.ALM",
+	"LEB1_ALM.WAV",
+};
 static char const *const versaillesENlocalizedFilenames[] = {
 	"DIALOG1.GB",
 	"tous_doc.gb",
@@ -53,12 +60,16 @@ static char const *const versaillesITlocalizedFilenames[] = {
 
 static char const versaillesFREpilMsg[] = "FELIXFORTUNADIVINUMEXPLORATUMACTUIIT";
 static char const versaillesFREpilPwd[] = "LELOUPETLATETE";
+static char const versaillesDEEpilMsg[] = "FELIXFORTUNADIVINUMEXPLORATUMACTUIIT";
+static char const versaillesDEEpilPwd[] = "DIEENTENUNDDERPUDEL";
 static char const versaillesENEpilMsg[] = "FELIXFORTUNADIVINUMEXPLORATUMACTUIIT";
 static char const versaillesENEpilPwd[] = "FOXANDCRANE";
 static char const versaillesITEpilMsg[] = "FELIXFORTUNADIVINUMEXPLORATUMACTUIIT";
 static char const versaillesITEpilPwd[] = "LEANATREEILCANE";
 
 static char const versaillesFRBombPwd[] = "JEMENVAISMAISLETATDEMEURERATOUJOURS";
+static char const versaillesDEBombPwd[] =
+    "MONARCHEN IST ES NICHT GEGEBEN VOLLKOMMENHEIT ZU ERREICHEN";
 static char const versaillesENBombPwd[] = "IT IS NOT IN THE POWER OF KINGS TO ATTAIN PERFECTION";
 static char const versaillesITBombPwd[] = "AI SOVRANI NON E DATO RAGGIUNGERE LA PERFEZIONE";
 
@@ -282,6 +293,225 @@ static char const *const versaillesFRpaintings[] = {
 	"\"Portrait du Prince Palatin & de son fr" "\x8f" "re le Prince "
 	"Robert\"\rVan Dyck",                                                 /* 46: 43157 */
 	"\"La descente de Croix \"\rCharles Lebrun",                          /* 47: 45260 */
+};
+
+static char const *const versaillesDEmessages[] = {
+	"Das " "\x85" "ffnen dieser T" "\x9f" "r ist zur Zeit nicht "
+	"gestattet.",                                                         /*   0 */
+	"Diese T" "\x9f" "r ist verschlossen.",                               /*   1 */
+	"Diese T" "\x9f" "r ist zu.",                                         /*   2 */
+	"Diese Schublade ist leer.",                                          /*   3 */
+	"Sie k" "\x9a" "nnen die Plane nicht erreichen.",                     /*   4 */
+	"In diesem Orangenbaum ist nichts zu finden.",                        /*   5 */
+	"Dies hier ist kein Orangenbaum.",                                    /*   6 */
+	"Es ist zu dunkel.",                                                  /*   7 */
+	"Die Kiste ist verschlossen.",                                        /*   8 */
+	"Sie k" "\x9a" "nnen diese T" "\x9f" "r " "\x9a" "ffnen.",            /*   9 */
+	"Sie ben" "\x9a" "tigen etwas, um die Bombe zu erreichen.",           /*  10 */
+	"Diese Vase ist leer.",                                               /*  11 */
+	"Jetzt k" "\x9a" "nnen Sie gehen.",                                   /*  12 */
+	"Sie haben keine Zeit mehr, sich " "\x9f" "ber den Hof zu "
+	"informieren!",                                                       /*  13 */
+	"Es ist zu sp" "\x8a" "t, um sich die Bilder anzusehen.",             /*  14 */
+	"Warten Sie! Geben Sie Ihre Hinweise doch an den Diener weiter.",     /*  15 */
+	"Sie k" "\x9a" "nnen das Papier nicht erreichen.",                    /*  16 */
+	"Zur Apotheke",                                                       /*  17 */
+	"Vorsicht! Sie k" "\x9a" "nnen dieses Level beenden, aber Sie "
+	"haben noch nicht alle notwendigen Informationen, um "
+	"weiterzukommen. Es empfiehlt sich, Ihr Spiel jetzt zu SPEICHERN.",   /*  18 */
+	"Vorsicht! Sie k" "\x9a" "nnen dieses Level beenden, aber Sie "
+	"haben vielleicht noch nicht alle notwendigen Informationen, um "
+	"weiterzukommen. Es empfiehlt sich, Ihr Spiel jetzt zu SPEICHERN.",   /*  19 */
+	"Sie k" "\x9a" "nnen sich nicht von der Stelle bewegen, wenn Sie "
+	"eine Leiter tragen!",                                                /*  20 */
+	"Hier ist nichts mehr zu tun.",                                       /*  21 */
+	"Auf Wiedersehen...",                                                 /*  22 */
+	"VERSAILLES,",                                                        /*  23 */
+	"Verschw" "\x9a" "rung am Hof",                                       /*  24 */
+	"Die Enzyklop" "\x8a" "die",                                          /*  25 */
+	"           Spiel wieder aufnehmen",                                  /*  26 */
+	"           Spiel starten",                                           /*  27 */
+	"           Spiel laden",                                             /*  28 */
+	"           Spiel speichern",                                         /*  29 */
+	"           Anzeige der Untertitel: JA",                              /*  30 */
+	"           Anzeige der Untertitel: NEIN",                            /*  31 */
+	"           Musik: JA",                                               /*  32 */
+	"           Musik: NEIN",                                             /*  33 */
+	"           ein Musikst" "\x9f" "ck auf Festplatte kopieren (20 "
+	"MB)",                                                                /*  34 */
+	"           komplette Musik auf Festplatte kopieren (92 MB)",         /*  35 */
+	"           Musik von CD-ROM spielen",                                /*  36 */
+	nullptr,                                                              /*  37 */
+	nullptr,                                                              /*  38 */
+	"Lautst" "\x8a" "rke",                                                /*  39 */
+	"Programm beenden",                                                   /*  40 */
+	"",                                                                   /*  41 */
+	"Der Rundgang",                                                       /*  42 */
+	"Credits",                                                            /*  43 */
+	"           Besichtigung wieder aufnehmen",                           /*  44 */
+	"           Rundgang speichern",                                      /*  45 */
+	"           Rundgang laden",                                          /*  46 */
+	nullptr,                                                              /*  47 */
+	"           Omni3D: normal",                                          /*  48 */
+	"           Omni3D: langsam",                                         /*  49 */
+	"           Omni3D: sehr langsam",                                    /*  50 */
+	"           Omni3D: schnell",                                         /*  51 */
+	"           Omni3D: sehr schnell",                                    /*  52 */
+	"Best" "\x8a" "tigen",                                                /*  53 */
+	"Abbrechen",                                                          /*  54 */
+	"Frei",                                                               /*  55 */
+	"Ohne Namen",                                                         /*  56 */
+	"Vorsicht! Das begonnene Spiel wird beendet.",                        /*  57 */
+	"Zur" "\x9f" "ck",                                                    /*  58 */
+	"Das Schloss",                                                        /*  59 */
+	"Zur" "\x9f" "ck zum Hauptmen" "\x9f",                                /*  60 */
+	"Gesamt" "\x9f" "bersicht Enzyklop" "\x8a" "die",                     /*  61 */
+	"Pl" "\x8a" "ne von Schloss und G" "\x8a" "rten",                     /*  62 */
+	"Pl" "\x8a" "ne der Innenr" "\x8a" "ume des Schlosses",               /*  63 */
+	"Problem beim Schreiben auf Festplatte: Nicht genug Speicherplatz",   /*  64 */
+	nullptr,                                                              /*  65 */
+	"Legen Sie die CD-ROM %d ein",                                        /*  66 */
+	"Legen Sie die CD-ROM %d und dr" "\x9f" "cken Sie eine Taste",        /*  67 */
+	"Die K" "\x9f" "nste",                                                /*  68 */
+	"Die Regierung",                                                      /*  69 */
+	"Der Hof",                                                            /*  70 */
+	"Leben bei Hofe",                                                     /*  71 */
+	"Das Schloss und die G" "\x8a" "rten",                                /*  72 */
+	"Chronologie",                                                        /*  73 */
+	"Apollobecken",                                                       /*  74 */
+	"Das Schloss",                                                        /*  75 */
+	"S" "\x8a" "ulengang",                                                /*  76 */
+	"Labyrinth",                                                          /*  77 */
+	"Latone",                                                             /*  78 */
+	"Orangerie",                                                          /*  79 */
+	"Wasserterrasse",                                                     /*  80 */
+	"Gr" "\x9f" "ner Teppich",                                            /*  81 */
+	"Gro" "\xa7" "e Reitst" "\x8a" "lle",                                 /*  82 */
+	"Kleine Reitst" "\x8a" "lle",                                         /*  83 */
+	"Die G" "\x8a" "rten",                                                /*  84 */
+	"Vorhof",                                                             /*  85 */
+	"Gro" "\xa7" "er Kanal",                                              /*  86 */
+	"S" "\x9f" "dterrasse",                                               /*  87 */
+	"Nordterrasse",                                                       /*  88 */
+	"K" "\x9a" "niglicher Gem" "\x9f" "segarten",                         /*  89 */
+	"Ballsaal",                                                           /*  90 */
+	"Neptunbecken",                                                       /*  91 */
+	"Wasserraum der Schweizer",                                           /*  92 */
+	"Nadeln (Unn" "\x9a" "tig!)",                                         /*  93 */
+	"Schere",                                                             /*  94 */
+	"Papier",                                                             /*  95 */
+	"Schm" "\x8a" "hschrift " "\x9f" "ber die K" "\x9f" "nste",           /*  96 */
+	"Kleiner Schl" "\x9f" "ssel 1",                                       /*  97 */
+	"Aufgedecktes Papier",                                                /*  98 */
+	"Beflecktes Papier",                                                  /*  99 */
+	"Papier aus der Kiste",                                               /* 100 */
+	"Schm" "\x8a" "hschrift " "\x9f" "ber die k" "\x9a" "nigliche "
+	"Ahnenreihe",                                                         /* 101 */
+	"Brennende Kerze",                                                    /* 102 */
+	"Kerze",                                                              /* 103 */
+	"Schl" "\x9f" "ssel",                                                 /* 104 */
+	"Zeichenkarton",                                                      /* 105 */
+	"Zeichenkarton",                                                      /* 106 */
+	"Falsche Skizze",                                                     /* 107 */
+	"Leiter",                                                             /* 108 */
+	"Zerst" "\x9a" "rte Skizze",                                          /* 109 */
+	"Pinsel",                                                             /* 110 */
+	"Goldpinsel",                                                         /* 111 */
+	"Rotpinsel",                                                          /* 112 */
+	"Zeichenkohle",                                                       /* 113 */
+	"Papier",                                                             /* 114 */
+	"Schm" "\x8a" "hschrift " "\x9f" "ber die Architektur",               /* 115 */
+	"Kleiner Schl" "\x9f" "ssel 2",                                       /* 116 */
+	"Bogensch" "\x9f" "tze (unn" "\x9a" "tig!)",                          /* 117 */
+	"Partitur",                                                           /* 118 */
+	"Billardstock",                                                       /* 119 */
+	"Genehmigung",                                                        /* 120 */
+	"Reproduktion der Medaillen",                                         /* 121 */
+	"Medaillen-Schublade",                                                /* 122 */
+	"Schl" "\x9f" "ssel zur kleinen Apollo-T" "\x9f" "r",                 /* 123 */
+	"Nahrungsmittel",                                                     /* 124 */
+	"Schm" "\x8a" "hschrift " "\x9f" "ber die Religion",                  /* 125 */
+	"Inschrift",                                                          /* 126 */
+	"Schm" "\x8a" "hschrift " "\x9f" "ber die Regierung",                 /* 127 */
+	"Feder",                                                              /* 128 */
+	"Merkzeichen",                                                        /* 129 */
+	"Fernrohr",                                                           /* 130 */
+	"Vaubanplan",                                                         /* 131 */
+	"Plan Vauban",                                                        /* 132 */
+	"Schnur",                                                             /* 133 */
+	"Schnitt",                                                            /* 134 */
+	"Kleiner Schl" "\x9f" "ssel 3",                                       /* 135 */
+	"Kleiner Schl" "\x9f" "ssel 4",                                       /* 136 */
+	"Memorandum",                                                         /* 137 */
+	"Schlosspl" "\x8a" "ne",                                              /* 138 */
+	"Schlosspl" "\x8a" "ne",                                              /* 139 */
+	"Schl" "\x9f" "ssel zum Dachstuhl",                                   /* 140 */
+	"Fabeln",                                                             /* 141 */
+	"Plan zum Labyrinth",                                                 /* 142 */
+	"Werkzeug",                                                           /* 143 */
+	"Medikament",                                                         /* 144 */
+	"Trichter",                                                           /* 145 */
+};
+
+static char const *const versaillesDEpaintings[] = {
+	"\"Einzug der Tiere in die Arche\"\rGerolamo Bassano",                /*  0: 41201 */
+	"\"Das Mahl von Emmaus\"\rJacopo Bassano",                            /*  1: 41202 */
+	"\"Magdalena zu F" "\x9f\xa7" "en Jesu Christi\"\rSustris",           /*  2: 41203 */
+	"\"Auszug aus der Arche\"\rGerolamo Bassano",                         /*  3: 41204 */
+	"\"Schlag gegen den Felsen\"\rJacopo Bassano",                        /*  4: 41205 */
+	"\"Die Schlacht von Arbil\"\rJoseph Parrocel",                        /*  5: 41301 */
+	"\"Alexander der Gro" "\xa7" "e als Sieger " "\x9f" "ber Darius in "
+	"der Schlacht von Arbil\"\rLe Bourguignon",                           /*  6: 41302 */
+	"\"Der Kampf des Leukippos\"\rJoseph Parrocel",                       /*  7: 42401 */
+	"\"Die heilige C" "\x8a" "cilia mit einem Engel, der ein "
+	"Notenblatt h" "\x8a" "lt\"\rDominiquin",                             /*  8: 42901 */
+	"\"Don Francisco du Moncada\"\rVan Dyck",                             /*  9: 42902 */
+	"\"Der kleine Johannes der T" "\x8a" "ufer\"\rLe Carrache",           /* 10: 42903 */
+	"\"Der heilige Matth" "\x8a" "us\"\rValentin",                        /* 11: 42904 */
+	"\"Der Denar des C" "\x8a" "sar\"\rValentin",                         /* 12: 42905 */
+	"\"Der heilige Lukas\"\rValentin",                                    /* 13: 42906 */
+	"\"Die geheimnisvolle Hochzeit der heiligen "
+	"Katharina\"\rAlessandro Turchi",                                     /* 14: 42907 */
+	"\"Zusammenkunft der Trinker\"\rNicolas Tournier",                    /* 15: 42908 */
+	"\"Die Wahrsagerin\"\rValentin",                                      /* 16: 42909 */
+	"\"Der K" "\x9a" "nig David beim Harfenspiel\"\rDominiquin",          /* 17: 42910 */
+	"\"Die heilige Magdalena\"\rDominiquin",                              /* 18: 42911 */
+	"\"Selbstportr" "\x8a" "t\"\rVan Dyck",                               /* 19: 42912 */
+	"\"Der heilige Johannes Evangelist\"\rValentin",                      /* 20: 42913 */
+	"\"Agar, dem ein Engel Beistand leistet\"\rGiovanni Lanfranco",       /* 21: 42914 */
+	"\"Der heilige Markus\"\rValentin",                                   /* 22: 42915 */
+	"\"Meleagros mit dem kalydonischen Eberkopf zu seinen F" "\x9f"
+	"\xa7" "en\"\rJacques Rousseau",                                      /* 23: 43090 */
+	"\"Der K" "\x9a" "nig in r" "\x9a" "mischem Gewand\"\rJean Warin",    /* 24: 43091 */ /* BUG: Switched */
+	"\"Attalante\"\rJacques Rousseau",                                    /* 25: 43092 */
+	"\"\x80" "neas tr" "\x8a" "gt Anchises\"\rSpada",                     /* 26: 43100 */
+	"\"David und Bethsabee\"\rV" "\x8e" "ron" "\x8f" "se",                /* 27: 43101 */
+	"\"Die Flucht nach " "\x80" "gypten\"\rGuido R" "\x8e" "ni",          /* 28: 43102 */
+	"\"Ludwig XIV. zu Pferd\"\rPierre Mignard",                           /* 29: 43103 */
+	"\"Die k" "\x9a" "nigliche Pracht und der Fortschritt der sch"
+	"\x9a" "nen K" "\x9f" "nste\"\rHouasse",                              /* 30: 43104 */
+	"\"Das Opfer der Iphigenie\"\rCharles de la fosse",                   /* 31: 43130 */
+	"\"B" "\x9f" "ste Ludwigs XIV.\"\rSkulptur von Bernini",              /* 32: 43131 */
+	"\"Diana entdeckt ihren Hirten Endymion, der in Morpheus' Armen "
+	"eingeschlafen ist\"\rGabriel Blanchard",                             /* 33: 43132 */
+	"\"Die Jungfrau und der heilige Petrus\"\rGuerchin",                  /* 34: 43140 */
+	"\"Die Emmaus-Pilger\"\rV" "\x8e" "ron" "\x8f" "se",                  /* 35: 43141 */
+	"\"Die heilige Familie\"\rV" "\x8e" "ron" "\x8f" "se",                /* 36: 43142 */
+	"\"Die Familie des Darius zu F" "\x9f\xa7" "en "
+	"Alexanders\"\rCharles Le Brun",                                      /* 37: 43143 */
+	"\"Der heilige Johannes der T" "\x8a" "ufer\"\rRapha" "\x91" "l",     /* 38: 43144 */
+	"\"Maria von Medici\"\rVan Dyck",                                     /* 39: 43150 */
+	"\"Herkules k" "\x8a" "mpft gegen Acheloos\"\rGuido R" "\x8e" "ni",   /* 40: 43151 */
+	"\"Der Zentaur Nessus tr" "\x8a" "gt Deianeira\"\rGuido R" "\x8e"
+	"ni",                                                                 /* 41: 43152 */
+	"\"Der heilige Franz von Assisi, nach seiner Stigmatisierung gest"
+	"\x8a" "rkt\"\rSeghers",                                              /* 42: 43153 */
+	"\"Thomiris taucht den Kopf des Cyrus in Blut\"\rRubens",             /* 43: 43154 */
+	"\"Herkules t" "\x9a" "tet Hydra\"\rGuido R" "\x8e" "ni",             /* 44: 43155 */
+	"\"Herkules auf dem Scheiterhaufen\"\rGuido R" "\x8e" "ni",           /* 45: 43156 */
+	"\"Portr" "\x8a" "t des pf" "\x8a" "lzischen Prinzen und seines "
+	"Bruders, Prinz Robert\"\rVan Dyck",                                  /* 46: 43157 */
+	"\"Die Kreuzabnahme\"\rCharles Le Brun",                              /* 47: 45260 */
 };
 
 static char const *const versaillesENmessages[] = {

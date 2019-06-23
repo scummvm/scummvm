@@ -117,6 +117,8 @@ void DATSeekableStream::readString16Array16(Common::StringArray &array) {
 
 uint16 DATSeekableStream::translateLanguage(Common::Language lang) {
 	switch (lang) {
+	case Common::DE_DEU:
+		return MKTAG16('d', 'e');
 	case Common::EN_ANY:
 		return MKTAG16('e', 'n');
 	case Common::FR_FRA:

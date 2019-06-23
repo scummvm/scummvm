@@ -635,6 +635,24 @@ void CryOmni3DEngine_Versailles::playTransitionEndLevel(int level) {
 	// In original game the HNM player just doesn't render the cursor
 	bool cursorWasVisible = showMouse(false);
 
+	if (level == -2) {
+		if (getLanguage() == Common::DE_DEU) {
+			// Display one more copyright
+			if (displayHLZ("RAVENSBG", 5000)) {
+				clearKeys();
+				fadeOutPalette();
+				if (shouldAbort()) {
+					return;
+				}
+				// Display back cursor there once the palette has been zeroed
+				showMouse(cursorWasVisible);
+
+				fillSurface(0);
+				return;
+			}
+		}
+	}
+
 	// Videos are like music because if you mute music in game it will mute videos soundtracks
 	playHNM(video, Audio::Mixer::kMusicSoundType);
 

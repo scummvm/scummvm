@@ -50,11 +50,13 @@ struct Parts {
     write ## game ## _ ## platform ## _ ## lang ## Data, 0, 0 }
 
 DEFINE_GAME_PLATFORM_LANG_FUNCS(Versailles, ALL, FR)
+DEFINE_GAME_PLATFORM_LANG_FUNCS(Versailles, ALL, DE)
 DEFINE_GAME_PLATFORM_LANG_FUNCS(Versailles, ALL, EN)
 DEFINE_GAME_PLATFORM_LANG_FUNCS(Versailles, ALL, IT)
 
 static Parts gamesParts[] = {
 	GAME_PLATFORM_LANG_PART(Versailles, ALL, FR),
+	GAME_PLATFORM_LANG_PART(Versailles, ALL, DE),
 	GAME_PLATFORM_LANG_PART(Versailles, ALL, EN),
 	GAME_PLATFORM_LANG_PART(Versailles, ALL, IT),
 };
