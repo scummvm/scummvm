@@ -366,6 +366,18 @@ void AI::cineEntityFace(const char *luaName, double dir) {
 	_cine.push_back(cmd);
 }
 
+void AI::cineDialog(const char *title, const char *string, int seconds) {
+	CineCommand *cmd = new CineCommand;
+	strcpy(cmd->title, title);
+	strcpy(cmd->string, string);
+	cmd->delay = seconds;
+	cmd->start = 1;
+	if (!title || !string)
+		warning("cineDialog: Missing Title or Text");
+	cmd->cmdType = C_DIALOG;
+	_cine.push_back(cmd);
+}
+
 void AI::cineUse(const char *entName) {
 	CineCommand *cmd = new CineCommand;
 	strcpy(cmd->string, entName);
