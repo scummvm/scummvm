@@ -956,8 +956,9 @@ void CryOmni3DEngine_Versailles::displayCredits() {
 	_fontManager.setSurface(&creditsSurface);
 
 	Common::File creditsFile;
-	if (!creditsFile.open("credits.txt")) {
-		warning("Failed to open credits file: %s", "credits.txt");
+	if (!creditsFile.open(_localizedFilenames[LocalizedFilenames::kCredits])) {
+		warning("Failed to open credits file: %s",
+		        _localizedFilenames[LocalizedFilenames::kCredits].c_str());
 		delete imageDecoder;
 		return;
 	}

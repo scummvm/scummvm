@@ -35,8 +35,6 @@
 namespace CryOmni3D {
 namespace Versailles {
 
-const char *Versailles_Documentation::kAllDocsFile = "tous_doc.txt";
-const char *Versailles_Documentation::kLinksDocsFile = "lien_doc.txt";
 const Versailles_Documentation::TimelineEntry Versailles_Documentation::kTimelineEntries[] = {
 	{ "1638", 340,  15 },
 	{ "1643", 470,  30 },
@@ -84,17 +82,20 @@ const Versailles_Documentation::TimelineEntry Versailles_Documentation::kTimelin
 };
 
 void Versailles_Documentation::init(const Sprites *sprites, FontManager *fontManager,
-                                    const Common::StringArray *messages, CryOmni3DEngine *engine) {
+                                    const Common::StringArray *messages, CryOmni3DEngine *engine,
+                                    const Common::String &allDocsFileName, const Common::String &linksDocsFileName) {
 	_sprites = sprites;
 	_fontManager = fontManager;
 	_messages = messages;
 	_engine = engine;
+	_allDocsFileName = allDocsFileName;
+	_linksDocsFileName = linksDocsFileName;
 
 	// Build list of records
 	Common::File allDocsFile;
 
-	if (!allDocsFile.open(kAllDocsFile)) {
-		error("Can't open %s", kAllDocsFile);
+	if (!allDocsFile.open(_allDocsFileName)) {
+		error("Can't open %s", _allDocsFileName.c_str());
 	}
 
 	uint allDocsSize = allDocsFile.size();
@@ -1940,8 +1941,8 @@ Common::String Versailles_Documentation::getRecordTitle(const Common::String &re
 	const RecordInfo &recordInfo = it->_value;
 	Common::File allDocsFile;
 
-	if (!allDocsFile.open(kAllDocsFile)) {
-		error("Can't open %s", kAllDocsFile);
+	if (!allDocsFile.open(_allDocsFileName)) {
+		error("Can't open %s", _allDocsFileName.c_str());
 	}
 	allDocsFile.seek(recordInfo.position);
 
@@ -1969,8 +1970,8 @@ Common::String Versailles_Documentation::getRecordData(const Common::String &rec
 	const RecordInfo &recordInfo = it->_value;
 	Common::File allDocsFile;
 
-	if (!allDocsFile.open(kAllDocsFile)) {
-		error("Can't open %s", kAllDocsFile);
+	if (!allDocsFile.open(_allDocsFileName)) {
+		error("Can't open %s", _allDocsFileName.c_str());
 	}
 	allDocsFile.seek(recordInfo.position);
 
@@ -2014,8 +2015,8 @@ void Versailles_Documentation::loadLinksFile() {
 	}
 
 	Common::File linksFile;
-	if (!linksFile.open(kLinksDocsFile)) {
-		error("Can't open links file: %s", kLinksDocsFile);
+	if (!linksFile.open(_linksDocsFileName)) {
+		error("Can't open links file: %s", _linksDocsFileName.c_str());
 	}
 
 	_linksSize = linksFile.size();

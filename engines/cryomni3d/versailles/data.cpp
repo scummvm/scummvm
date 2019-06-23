@@ -20,6 +20,8 @@
  *
  */
 
+#include "cryomni3d/datstream.h"
+
 #include "cryomni3d/versailles/engine.h"
 
 namespace CryOmni3D {
@@ -69,224 +71,27 @@ const FakeTransitionActionPlace CryOmni3DEngine_Versailles::kFakeTransitions[] =
 	{0, 0} // Must be the last one
 };
 
-void CryOmni3DEngine_Versailles::setupMessages() {
-	_messages.resize(146);
-#define SET_MESSAGE(id, str) _messages[id] = str
-	SET_MESSAGE(0, "Il est interdit d'ouvrir cette porte pour l'instant.");
-	SET_MESSAGE(1, "Cette porte est ferm" "\x8e" "e " "\x88" " clef.");
-	SET_MESSAGE(2, "Cette porte est ferm" "\x8e" "e.");
-	SET_MESSAGE(3, "Ce tiroir est vide.");
-	SET_MESSAGE(4, "Vous ne pouvez pas atteindre la b" "\x89" "che.");
-	SET_MESSAGE(5, "Il n'y a rien dans cet oranger");
-	SET_MESSAGE(6, "Ceci n'est pas un oranger!");
-	SET_MESSAGE(7, "Il fait trop sombre. ");
-	SET_MESSAGE(8, "Le coffre est ferm" "\x8e" ". ");
-	SET_MESSAGE(9, "Vous pouvez ouvrir la porte");
-	SET_MESSAGE(10, "Il faudrait quelque chose pour atteindre la bombe.");
-	SET_MESSAGE(11, "Ce vase est vide.");
-	SET_MESSAGE(12, "Maintenant, vous pouvez y aller.");
-	SET_MESSAGE(13, "Vous n" "\xd5" "avez plus le temps de vous renseigner sur la Cour!");
-	SET_MESSAGE(14, "Il est trop tard pour regarder les tableaux!");
-	SET_MESSAGE(16, "Vous ne pouvez pas atteindre le papier.");
-	SET_MESSAGE(15, "Attendez ! Transmettez donc vos indices " "\x88" " l'huissier.");
-	SET_MESSAGE(17, "Vers l'apothicairerie");
-	SET_MESSAGE(
-	    18,
-	    "Attention : Vous allez pouvoir terminer ce niveau, mais vous n'avez pas effectu" "\x8e"
-	    " toutes les actions necessaires pour la suite. "
-	    "Il est conseill" "\x8e" " de SAUVEGARDER votre partie maintenant.");
-	SET_MESSAGE(
-	    19,
-	    "Attention : Vous allez pouvoir terminer ce niveau, mais vous n'avez peut-" "\x90" "tre"
-	    " pas effectu" "\x8e" " toutes les actions necessaires pour la suite. "
-	    "Il est conseill" "\x8e" " de SAUVEGARDER votre partie maintenant.");
-	SET_MESSAGE(20, "Vous ne pouvez pas vous d" "\x8e" "placer en portant une " "\x8e" "chelle!");
-	SET_MESSAGE(21, "Il n'y a plus rien ici");
-	SET_MESSAGE(22, "Au revoir ...");
-	SET_MESSAGE(23, "VERSAILLES,");
-	SET_MESSAGE(24, "Complot " "\x88" " la Cour du Roi Soleil");
-	SET_MESSAGE(27, "           Commencer une nouvelle partie");
-	SET_MESSAGE(26, "           Reprendre la partie en cours");
-	SET_MESSAGE(44, "           Reprendre la visite en cours");
-	SET_MESSAGE(28, "           Charger une partie");
-	SET_MESSAGE(46, "           Charger une visite");
-	SET_MESSAGE(29, "           Sauver la partie");
-	SET_MESSAGE(45, "           Sauver la visite");
-	SET_MESSAGE(25, "Consulter l'espace documentaire");
-	SET_MESSAGE(42, "Visiter le ch" "\x89" "teau");
-	SET_MESSAGE(48, "           Omni3D : normal");
-	SET_MESSAGE(51, "           Omni3D : rapide");
-	SET_MESSAGE(52, "           Omni3D : tr" "\x8f" "s rapide");
-	SET_MESSAGE(49, "           Omni3D : lent");
-	SET_MESSAGE(50, "           Omni3D : tr" "\x8f" "s lent");
-	SET_MESSAGE(30, "           Afficher les sous-titres : OUI");
-	SET_MESSAGE(31, "           Afficher les sous-titres : NON");
-	SET_MESSAGE(32, "           Musique : OUI");
-	SET_MESSAGE(33, "           Musique : NON");
-	SET_MESSAGE(35, "           Toutes les musiques sur disque dur (92 Mo)");
-	SET_MESSAGE(34, "           Une seule musique sur disque dur (20 Mo)");
-	SET_MESSAGE(36, "           Aucune musique sur disque dur (lecture CD)");
-	SET_MESSAGE(43, "Cr" "\x8e" "dits");
-	SET_MESSAGE(39, "Volume");
-	SET_MESSAGE(41, "");
-	SET_MESSAGE(40, "Quitter le jeu");
-	SET_MESSAGE(53, "Confirmer");
-	SET_MESSAGE(54, "Annuler");
-	SET_MESSAGE(55, "libre");
-	SET_MESSAGE(56, "sans nom");
-	SET_MESSAGE(57, "Attention : la partie en cours va " "\x90" "tre abandonn" "\x8e" "e.");
-	SET_MESSAGE(58, "Retour");
-	SET_MESSAGE(59, "Le chateau");
-	SET_MESSAGE(60, "Retour Menu Principal");
-	SET_MESSAGE(61, "Sommaire Espace documentaire");
-	SET_MESSAGE(62, "Plan du ch" "\x89" "teau et des jardins");
-	SET_MESSAGE(63, "Plan des int" "\x8e" "rieurs du ch" "\x89" "teau");
-	SET_MESSAGE(64, "Probl" "\x8f" "me d'" "\x8e" "criture sur dique dur : disque plein ");
-	SET_MESSAGE(66, "Veuillez ins" "\x8e" "rer le CD ");
-	SET_MESSAGE(67, "Veuillez ins" "\x8e" "rer le CD %d et presser une touche");
-	SET_MESSAGE(68, "Les arts");
-	SET_MESSAGE(69, "Le r" "\x8f" "gne");
-	SET_MESSAGE(70, "La Cour");
-	SET_MESSAGE(71, "Vie de Ch" "\x89" "teau");
-	SET_MESSAGE(72, "Le ch" "\x89" "teau et les jardins");
-	SET_MESSAGE(73, "Chronologie");
-	SET_MESSAGE(74, "Bassin d'Apollon");
-	SET_MESSAGE(75, "Le Ch" "\x89" "teau");
-	SET_MESSAGE(76, "Colonnade");
-	SET_MESSAGE(77, "Labyrinthe");
-	SET_MESSAGE(78, "Latone");
-	SET_MESSAGE(79, "Orangerie");
-	SET_MESSAGE(80, "Parterre d'eau");
-	SET_MESSAGE(81, "Tapis vert");
-	SET_MESSAGE(86, "Grand Canal");
-	SET_MESSAGE(87, "Parterre du Midi");
-	SET_MESSAGE(88, "Parterre du nord");
-	SET_MESSAGE(89, "Potager du Roi");
-	SET_MESSAGE(90, "Salle de bal");
-	SET_MESSAGE(91, "Bassin de Neptune");
-	SET_MESSAGE(92, "Pi" "\x8f" "ce d'eau des suisses");
-	SET_MESSAGE(82, "Grandes Ecuries");
-	SET_MESSAGE(83, "Petites Ecuries");
-	SET_MESSAGE(84, "Les jardins");
-	SET_MESSAGE(85, "Avant cour");
-	SET_MESSAGE(93, "Aiguilles (Inutile!)");
-	SET_MESSAGE(94, "Ciseaux");
-	SET_MESSAGE(95, "Papier");
-	SET_MESSAGE(96, "Pamphlet sur les arts");
-	SET_MESSAGE(97, "Petite clef 1");
-	SET_MESSAGE(98, "Papier r" "\x8e" "v" "\x8e" "l" "\x8e" "");
-	SET_MESSAGE(99, "Papier t" "\x89" "ch" "\x8e" "");
-	SET_MESSAGE(100, "Papier du coffre");
-	SET_MESSAGE(101, "Pamphlet sur la lign" "\x8e" "e royale");
-	SET_MESSAGE(102, "Bougie allum" "\x8e" "e");
-	SET_MESSAGE(103, "Bougie");
-	SET_MESSAGE(104, "Clef ");
-	SET_MESSAGE(105, "Carton " "\x88" " dessin");
-	SET_MESSAGE(106, "Carton " "\x88" " dessin");
-	SET_MESSAGE(107, "Fausse esquisse");
-	SET_MESSAGE(108, "Echelle");
-	SET_MESSAGE(109, "Esquisse d" "\x8e" "truite");
-	SET_MESSAGE(110, "pinceau");
-	SET_MESSAGE(111, "pinceau Or");
-	SET_MESSAGE(112, "pinceau Rouge");
-	SET_MESSAGE(113, "Fusain");
-	SET_MESSAGE(114, "Papier");
-	SET_MESSAGE(115, "Pamphlet sur l" "\xd5" "architecture");
-	SET_MESSAGE(116, "Petite clef 2");
-	SET_MESSAGE(117, "Archer(inutile!)");
-	SET_MESSAGE(118, "Partition");
-	SET_MESSAGE(119, "Queue de billard");
-	SET_MESSAGE(120, "Autorisation");
-	SET_MESSAGE(121, "Reproduction des m" "\x8e" "dailles");
-	SET_MESSAGE(122, "Tiroir " "\x88" " m" "\x8e" "dailles");
-	SET_MESSAGE(123, "Clef de la petite porte d" "\xd5" "Apollon");
-	SET_MESSAGE(124, "Nourriture");
-	SET_MESSAGE(125, "Pamphlet sur la religion");
-	SET_MESSAGE(126, "Epigraphe");
-	SET_MESSAGE(127, "Pamphlet sur le gouvernement");
-	SET_MESSAGE(128, "Plume");
-	SET_MESSAGE(129, "Pense-b" "\x90" "te");
-	SET_MESSAGE(130, "Lunette");
-	SET_MESSAGE(131, "Plan Vauban");
-	SET_MESSAGE(132, "Plan Vauban");
-	SET_MESSAGE(133, "Cordon");
-	SET_MESSAGE(134, "Gravure");
-	SET_MESSAGE(135, "Petite clef 3");
-	SET_MESSAGE(136, "Petite clef 4");
-	SET_MESSAGE(137, "M" "\x8e" "morandum");
-	SET_MESSAGE(138, "Plans du chateau");
-	SET_MESSAGE(139, "Plans du chateau");
-	SET_MESSAGE(140, "Clef des combles");
-	SET_MESSAGE(141, "Fables");
-	SET_MESSAGE(142, "Plan du Labyrinthe");
-	SET_MESSAGE(143, "Outil");
-	SET_MESSAGE(144, "M" "\x8e" "dicament");
-	SET_MESSAGE(145, "Eteignoir");
-#undef SET_MESSAGE
-}
+void CryOmni3DEngine_Versailles::loadStaticData() {
+	// This should match data in devtools/create_cryomni3d_dat
+	DATSeekableStream *data = getStaticData(MKTAG('V', 'R', 'S', 'L'), 1);
 
-void CryOmni3DEngine_Versailles::setupPaintingsTitles() {
-	_paintingsTitles.reserve(48);
-#define SET_PAINTING_TITLE(str) _paintingsTitles.push_back(str)
-	SET_PAINTING_TITLE("\"Entr" "\x8e" "e des animaux dans l'arche\"\rGerolamo Bassano"); // 0: 41201
-	SET_PAINTING_TITLE("\"Le repas d'Emma" "\x9f" "s\"\rJacopo Bassano"); // 1: 41202
-	SET_PAINTING_TITLE("\"La Madeleine aux pieds de J" "\x8e" "sus Christ\"\rSustris"); // 2: 41203
-	SET_PAINTING_TITLE("\"La sortie de l'arche\"\rGerolamo Bassano"); // 3: 41204
-	SET_PAINTING_TITLE("\"Le frappement du rocher\"\rJacopo Bassano"); // 4: 41205
-	SET_PAINTING_TITLE("\"La Bataille d'Arbelles\"\rJoseph Parrocel"); // 5: 41301
-	SET_PAINTING_TITLE("\"Alexandre Le Grand vainqueur de Darius " "\x88"
-	                   " la bataille d'Arbelles\"\rLe Bourguignon"); // 6: 41302
-	SET_PAINTING_TITLE("\"Le Combat de Leuze\"\rJoseph Parrocel"); // 7: 42401
-	SET_PAINTING_TITLE("\"Sainte C" "\x8e"
-	                   "cile avec un ange tenant une partition musicale\"\rDominiquin"); // 8: 42901
-	SET_PAINTING_TITLE("\"Don Francisco du Moncada \"\rVan Dyck"); // 9: 42902
-	SET_PAINTING_TITLE("\"Le Petit Saint Jean Baptiste\"\rLe Carrache"); // 10: 42903
-	SET_PAINTING_TITLE("\"Saint Mathieu\"\rValentin"); // 11: 42904
-	SET_PAINTING_TITLE("\"Le Denier de C" "\x8e" "sar \"\rValentin"); // 12: 42905
-	SET_PAINTING_TITLE("\"Saint Luc\"\rValentin"); // 13: 42906
-	SET_PAINTING_TITLE("\"Le mariage mystique de Sainte Catherine\"\r Alessandro Turchi"); // 14: 42907
-	SET_PAINTING_TITLE("\"R" "\x8e" "union de buveurs\"\rNicolas Tournier"); // 15: 42908
-	SET_PAINTING_TITLE("\"La diseuse de Bonne aventure \"\rValentin"); // 16: 42909
-	SET_PAINTING_TITLE("\"le roi David jouant de la harpe \"\rDominiquin"); // 17: 42910
-	SET_PAINTING_TITLE("\"Sainte Madeleine\"\rDominiquin"); // 18: 42911
-	SET_PAINTING_TITLE("\"Autoportrait \"\rVan Dyck"); // 19: 42912
-	SET_PAINTING_TITLE("\"Saint Jean l'" "\x8e" "vang" "\x8e" "liste\"\r Valentin"); // 20: 42913
-	SET_PAINTING_TITLE("\"Agar secouru par un ange \"\rGiovanni Lanfranco"); // 21: 42914
-	SET_PAINTING_TITLE("\"Saint Marc \"\rValentin"); // 22: 42915
-	SET_PAINTING_TITLE("\"M" "\x8e" "l" "\x8e" "agre ayant " "\x88"
-	                   " ses pieds la hure du sanglier de Calydon\"\r Jacques Rousseau"); // 23: 43090
-	SET_PAINTING_TITLE("\"Le Roi en costume romain\"\rJean Warin"); // 24: 43091
-	SET_PAINTING_TITLE("\"attalante\"\rJacques Rousseau"); // 25: 43092
-	SET_PAINTING_TITLE("\"En" "\x8e" "e portant Anchise\"\rSpada"); // 26: 43100
-	SET_PAINTING_TITLE("\"David et Bethsab" "\x8e" "e\"\rV" "\x8e" "ron" "\x8f" "se"); // 27: 43101
-	SET_PAINTING_TITLE("\"La fuite en Egypte\"\rGuido R" "\x8e" "ni "); // 28: 43102
-	SET_PAINTING_TITLE("\"Louis XIV " "\x88" " cheval\"\rPierre Mignard"); // 29: 43103
-	SET_PAINTING_TITLE("\"La magnificience royale & le progr" "\x8f"
-	                   "s des beaux arts\"\rHouasse"); // 30: 43104
-	SET_PAINTING_TITLE("\"Le Sacrifice d'Iphig" "\x8e" "nie\"\rCharles de la Fosse"); // 31: 43130
-	SET_PAINTING_TITLE("\"Buste de Louis XIV\"\rsculpt" "\x8e"
-	                   " par le Chevalier Bernin "); // 32: 43131
-	SET_PAINTING_TITLE("\"Diane d" "\x8e" "couvrant son berger Endymion endormi dans les bras de Morph"
-	                   "\x8e" "e\"\rGabriel Blanchard"); // 33: 43132
-	SET_PAINTING_TITLE("\"La vierge & Saint Pierre\"\rGuerchin"); // 34: 43140
-	SET_PAINTING_TITLE("\"Les P" "\x8e" "lerins d'Emma" "\x9f" "s\"\rV" "\x8e" "ron" "\x8f"
-	                   "se"); // 35: 43141
-	SET_PAINTING_TITLE("\"La sainte Famille\"\rV" "\x8e" "ron" "\x8f" "se"); // 36: 43142
-	SET_PAINTING_TITLE("\"La famille de Darius aux pieds d'Alexandre\"\rCharles LeBrun"); // 37: 43143
-	SET_PAINTING_TITLE("\"Saint Jean-Baptiste\"\rRapha" "\x91" "l"); // 38: 43144
-	SET_PAINTING_TITLE("\"Marie de m" "\x8e" "dicis\"\rVan Dyck"); // 39: 43150
-	SET_PAINTING_TITLE("\"Hercule luttant contre Achelous\"\rGuido R" "\x8e" "ni"); // 40: 43151
-	SET_PAINTING_TITLE("\"Le Centaure Nessus porte Dejanire\"\rGuido R" "\x8e" "ni"); // 41: 43152
-	SET_PAINTING_TITLE("\"Saint Fran" "\x8d" "ois d'Assise r" "\x8e" "confort" "\x8e" " apr" "\x8f"
-	                   "s sa stigmatisation\"\rSeghers"); // 42: 43153
-	SET_PAINTING_TITLE("\"Thomiris faisant tremper la t" "\x90"
-	                   "te de Cyrus dans le sang\"\rRubens"); // 43: 43154
-	SET_PAINTING_TITLE("\"Hercule tuant l'Hydre\"\rGuido R" "\x8e" "ni"); // 44: 43155
-	SET_PAINTING_TITLE("\"Hercule sur le b" "\x9e" "cher\"\rGuido R" "\x8e" "ni"); // 45: 43156
-	SET_PAINTING_TITLE("\"Portrait du Prince Palatin & de son fr" "\x8f"
-	                   "re le Prince Robert\"\rVan Dyck"); // 46: 43157
-	SET_PAINTING_TITLE("\"La descente de Croix \"\rCharles Lebrun"); // 47: 45260
-#undef SET_PAINTING_TITLE
+	// In the dat file we have
+	// file names
+	data->readString16Array16(_localizedFilenames);
+	assert(_localizedFilenames.size() == LocalizedFilenames::kMax);
+
+	// epigraph settings, bomb password
+	_epigraphContent = data->readString16();
+	_epigraphPassword = data->readString16();
+	_bombPassword = data->readString16();
+
+	// messages, paintings titles
+	data->readString16Array16(_messages);
+	assert(_messages.size() == 146);
+	data->readString16Array16(_paintingsTitles);
+	assert(_paintingsTitles.size() == 48);
+
+	delete data;
 }
 
 struct VideoSubSetting {

@@ -61,6 +61,8 @@ class ImageDecoder;
  */
 namespace CryOmni3D {
 
+class DATSeekableStream;
+
 enum CryOmni3DGameType {
 	GType_VERSAILLES
 };
@@ -155,6 +157,8 @@ public:
 	virtual void setupPalette(const byte *colors, uint start, uint num) = 0;
 
 protected:
+	DATSeekableStream *getStaticData(uint32 gameId, uint16 version) const;
+
 	void copySubPalette(byte *dst, const byte *src, uint start, uint num);
 	void setPalette(const byte *colors, uint start, uint num);
 	void lockPalette(uint startRW, uint endRW) { _lockPaletteStartRW = startRW; _lockPaletteEndRW = endRW; }

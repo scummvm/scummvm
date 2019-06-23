@@ -122,17 +122,18 @@ Common::Error CryOmni3DEngine_Versailles::run() {
 
 	SearchMan.add("__fallbackFiles", fallbackFiles);
 
-	setupMessages();
+	// First thing, load all data that was originally in the executable
+	// We don't need anything prepared for that
+	loadStaticData();
 
 	_dialogsMan.init(138, _messages[22]);
 	_gameVariables.resize(GameVariables::kMax);
 	_omni3dMan.init(75. / 180. * M_PI);
 
-	_dialogsMan.loadGTO("DIALOG1.GTO");
+	_dialogsMan.loadGTO(_localizedFilenames[LocalizedFilenames::kDialogs]);
 	setupDialogVariables();
 	setupDialogShows();
 
-	setupPaintingsTitles();
 	setupImgScripts();
 
 	_mainPalette = new byte[3 * 256];
@@ -162,7 +163,9 @@ Common::Error CryOmni3DEngine_Versailles::run() {
 
 	// Documentation is needed by noone at init time, let's do it last
 	initDocPeopleRecord();
-	_docManager.init(&_sprites, &_fontManager, &_messages, this);
+	_docManager.init(&_sprites, &_fontManager, &_messages, this,
+	                 _localizedFilenames[LocalizedFilenames::kAllDocs],
+	                 _localizedFilenames[LocalizedFilenames::kLinksDocs]);
 
 	_countdownSurface.create(40, 15, Graphics::PixelFormat::createFormatCLUT8());
 

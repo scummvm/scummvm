@@ -49,6 +49,7 @@ install: build
 	install -m0644 backends/vkeybd/packs/vkeybd_small.zip debian/scummvm/opt/scummvm/share
 # for optified version we can also add engine datafiles
 	install -m0644 dists/engine-data/access.dat debian/scummvm/opt/scummvm/share
+	install -m0644 dists/engine-data/cryomni3d.dat debian/scummvm/opt/scummvm/share
 	install -m0644 dists/engine-data/drascula.dat debian/scummvm/opt/scummvm/share
 	install -m0644 dists/engine-data/fonts.dat debian/scummvm/opt/scummvm/share
 	install -m0644 dists/engine-data/hugo.dat debian/scummvm/opt/scummvm/share

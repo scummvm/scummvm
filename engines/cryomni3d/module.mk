@@ -5,6 +5,7 @@ MODULE_OBJS = \
 	image/hlz.o \
 	video/hnm_decoder.o \
 	cryomni3d.o \
+	datstream.o \
 	detection.o \
 	dialogs_manager.o \
 	fixed_image.o \

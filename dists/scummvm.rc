@@ -36,6 +36,9 @@ access.dat           FILE    "dists/engine-data/access.dat"
 #if PLUGIN_ENABLED_STATIC(CRYO)
 cryo.dat               FILE    "dists/engine-data/cryo.dat"
 #endif
+#if PLUGIN_ENABLED_STATIC(CRYOMNI3D)
+cryomni3d.dat               FILE    "dists/engine-data/cryomni3d.dat"
+#endif
 #if PLUGIN_ENABLED_STATIC(DRASCULA)
 drascula.dat           FILE    "dists/engine-data/drascula.dat"
 #endif

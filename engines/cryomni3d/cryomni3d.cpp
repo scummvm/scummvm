@@ -34,6 +34,7 @@
 #include "graphics/palette.h"
 
 #include "cryomni3d/cryomni3d.h"
+#include "cryomni3d/datstream.h"
 
 #include "cryomni3d/image/hlz.h"
 #include "cryomni3d/video/hnm_decoder.h"
@@ -77,6 +78,26 @@ void CryOmni3DEngine::pauseEngineIntern(bool pause) {
 	    _system->updateScreen();
 	}
 	*/
+}
+
+DATSeekableStream *CryOmni3DEngine::getStaticData(uint32 gameId, uint16 version) const {
+	Common::File *datFile = new Common::File();
+
+	if (!datFile->open("cryomni3d.dat")) {
+		delete datFile;
+		error("Failed to open cryomni3d.dat file");
+		return nullptr;
+	}
+
+	DATSeekableStream *gameStream = DATSeekableStream::getGame(datFile, gameId, version, getLanguage(),
+	                                getPlatform());
+	if (!gameStream) {
+		delete datFile;
+		error("Failed to find game in cryomni3d.dat file");
+		return nullptr;
+	}
+
+	return gameStream;
 }
 
 Common::String CryOmni3DEngine::prepareFileName(const Common::String &baseName,
