@@ -222,7 +222,7 @@ void Window::drawBorder(int x, int y, int width, int height, bool guyTalking) {
 				else if ((i == wide - 1) && !j)
 					_gfxTR->drawMasked(x + i * 16, y + j * 16);
 				else if (!j)
-					_gfxTM->draw(x + i * 16, y + j * 16);
+					_gfxTM->drawMasked(x + i * 16, y + j * 16);
 				else {
 
 					// Bottom Lines
@@ -231,16 +231,16 @@ void Window::drawBorder(int x, int y, int width, int height, bool guyTalking) {
 					else if ((j == high - 1) && (i == wide - 1))
 						_gfxBR->drawMasked(x + i * 16, y + j * 16);
 					else if ((j == high - 1) && i < wide)
-						_gfxBM->draw(x + i * 16, y + j * 16);
+						_gfxBM->drawMasked(x + i * 16, y + j * 16);
 					else {
 						// Middle lines
 						if (!i && j < high)
-							_gfxL->draw(x + i * 16, y + j * 16);
+							_gfxL->drawMasked(x + i * 16, y + j * 16);
 						else if ((i == wide - 1) && j < high)
-							_gfxR->draw(x + i * 16, y + j * 16);
+							_gfxR->drawMasked(x + i * 16, y + j * 16);
 						else
 							// Most drawn = middle block
-							_gfxM->draw(x + i * 16, y + j * 16);
+							_gfxM->drawMasked(x + i * 16, y + j * 16);
 					}
 				}
 			}
