@@ -82,7 +82,15 @@ static int cineStart(lua_State *L) {
 }
 
 static int cineStop(lua_State *L) {
-	warning("STUB: STOP CINE");
+	const char *funcNext = NULL;
+
+	int stackTop = lua_gettop(L);
+	if (stackTop) {
+		funcNext = lua_tostring(L, 1);
+		lua_pop(L, 1);
+	}
+
+	g_hdb->_ai->cineStop(funcNext);
 	return 0;
 }
 
