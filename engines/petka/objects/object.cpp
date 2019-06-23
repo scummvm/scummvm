@@ -81,6 +81,11 @@ void QMessageObject::processMessage(const QMessage &msg) {
 	}
 
 	switch (msg.opcode) {
+	case kAvi: {
+		Common::String videoName = g_vm->resMgr()->findResourceName((uint16)msg.arg1);
+		g_vm->playVideo(g_vm->openFile(videoName, false));
+		break;
+	}
 	case kSet:
 	case kPlay:
 		if (dynamic_cast<QObjectBG *>(this)) {
