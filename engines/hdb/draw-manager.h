@@ -115,6 +115,11 @@ public:
 
 	int animateTile(int tileIndex);
 
+	// Font Functions
+
+	void setCursor(int x, int y);
+	void getCursor(int *x, int *y);
+
 private:
 	int _numTiles;
 	TileLookup *_tLookupArray;

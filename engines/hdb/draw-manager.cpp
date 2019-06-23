@@ -395,6 +395,16 @@ int DrawMan::animateTile(int tileIndex) {
 	return _tLookupArray[tileIndex].animIndex;
 }
 
+void DrawMan::setCursor(int x, int y) {
+	_cursorX = x;
+	_cursorY = y;
+}
+
+void DrawMan::getCursor(int *x, int *y) {
+	*x = _cursorX;
+	*y = _cursorY;
+}
+
 Picture::Picture() : _width(0), _height(0), _name("") {
 	_surface.create(_width, _height, g_hdb->_format);
 }
