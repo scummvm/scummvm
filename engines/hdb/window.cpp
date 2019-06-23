@@ -79,7 +79,49 @@ void Window::restartSystem() {
 }
 
 void Window::openDialog(const char *title, int tileIndex, const char *string, int more, const char *luaMore) {
-	warning("STUB: Window::openDialog() required");
+	if (_dialogInfo.active)
+		return;
+
+	_dialogInfo.tileIndex = tileIndex;
+	strcpy(_dialogInfo.title, title);
+	_dialogInfo.active = true;
+
+	int e1, e2, e3, e4;
+	int width, height;
+	int titleWidth, titleHeight;
+	int w;
+
+	if (strlen(string) > sizeof(_dialogInfo.string))
+		strncpy(_dialogInfo.string, string, sizeof(_dialogInfo.string) - 1);
+	else
+		strcpy(_dialogInfo.string, string);
+	g_hdb->_drawMan->getTextEdges(&e1, &e2, &e3, &e4);
+	g_hdb->_drawMan->setTextEdges(kDialogTextLeft, kDialogTextRight, 0, 480);
+	g_hdb->_drawMan->getDimensions(string, &width, &height);
+	g_hdb->_drawMan->getDimensions(title, &titleWidth, &titleHeight);
+	g_hdb->_drawMan->setTextEdges(e1, e2, e3, e4);
+	_dialogInfo.height = (height + 2) * 16;
+	w = _dialogInfo.width = width + 32;
+	_dialogInfo.titleWidth = titleWidth;
+	if (titleWidth > w)
+		w = titleWidth;
+
+	_dialogInfo.x = (480 >> 1) - (w >> 1);
+
+	int px, py;
+	g_hdb->_ai->getPlayerXY(&px, &py);
+	if (py < (kScreenHeight >> 1) - 16)
+		_dialogInfo.y = (kScreenHeight >> 1) + 16;
+	else
+		_dialogInfo.y = (kScreenHeight >> 1) - (_dialogInfo.height + 64);
+
+	if (_dialogInfo.y < 16)
+		_dialogInfo.y = 16;
+
+	_dialogInfo.more = more;
+	if (luaMore)
+		strcpy(_dialogInfo.luaMore, luaMore);
+	warning("STUB: openDialog: Play SND_MOVE_SELECTION");
 }
 
 void Window::setDialogDelay(int seconds) {
