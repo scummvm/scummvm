@@ -106,6 +106,12 @@ bool OSystem_iOS7::pollEvent(Common::Event &event) {
 				return false;
 			break;
 
+		case kInputMainMenu:
+			event.type = Common::EVENT_MAINMENU;
+			_queuedInputEvent.type = Common::EVENT_INVALID;
+			_queuedEventTime = getMillis() + kQueuedInputEventDelay;
+			break;
+
 		default:
 			break;
 		}

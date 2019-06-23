@@ -40,7 +40,8 @@ enum InputEvent {
 	kInputApplicationSuspended,
 	kInputApplicationResumed,
 	kInputSwipe,
-	kInputTap
+	kInputTap,
+	kInputMainMenu
 };
 
 enum ScreenOrientation {

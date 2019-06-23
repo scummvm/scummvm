@@ -1066,6 +1066,10 @@ uint getSizeNextPOT(uint size) {
 	}
 }
 
+- (void)handleMainMenuKey {
+	[self addEvent:InternalEvent(kInputMainMenu, 0, 0)];
+}
+
 - (void)applicationSuspend {
 	[self addEvent:InternalEvent(kInputApplicationSuspended, 0, 0)];
 }
