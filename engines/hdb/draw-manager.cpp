@@ -442,6 +442,69 @@ bool DrawMan::loadFont(const char *string) {
 	return true;
 }
 
+void DrawMan::drawText(const char *string) {
+	if (!_systemInit)
+		return;
+
+	if (_cursorX < _eLeft)
+		_cursorX = _eLeft;
+	if (_cursorY < _eTop)
+		_cursorY = _eTop;
+
+	// Word Wrapping
+	int width = _eLeft;
+	unsigned char c;
+	char cr[256];	// Carriage Return Array
+
+	for (int i = 0; i < (int)strlen(string);i++) {
+		c = string[i];
+		width += _charInfoBlocks[c]->width + _fontHeader.kerning + kFontIncrement;
+		if (c == ' ')
+			width += kFontSpace;
+
+		cr[i] = 0;
+		if (c == '\n') {
+			cr[i] = 1;
+			width = _eLeft;
+		} else if (width > _eRight) {
+			i--;
+			while (string[i] != ' ' && i > 0)
+				i--;
+			cr[i] = 1;
+			width = _eLeft;
+		}
+	}
+
+	// Draw the characters
+	for (int j = 0;j < (int)strlen(string);j++) {
+		c = string[j];
+		if (c == '\n' || cr[j]) {
+			_cursorX = _eLeft;
+			_cursorY += _fontHeader.height + _fontHeader.leading;
+			if (_cursorY + _fontHeader.height > _eBottom)
+				_cursorY = _eTop;
+			continue;
+		}
+
+		width = _charInfoBlocks[c]->width;
+		if (c == ' ')
+			width = kFontSpace;
+
+		// Blit the character
+		g_hdb->_drawMan->_globalSurface.transBlitFrom(_fontSurfaces[c], Common::Point(_cursorX, _cursorY));
+		g_system->copyRectToScreen(g_hdb->_drawMan->_globalSurface.getBasePtr(0, 0), g_hdb->_drawMan->_globalSurface.pitch, 0, 0, width, _fontHeader.height);
+
+		// Advance the cursor
+		_cursorX += width + _fontHeader.kerning * kFontIncrement;
+		if (_cursorX > kScreenWidth) {
+			_cursorX = 0;
+			_cursorY += _fontHeader.height + _fontHeader.leading;
+			if (_cursorY + _fontHeader.height > kScreenHeight)
+				_cursorY = 0;
+		}
+	}
+}
+
 // Calculates pixel width of a string
 void DrawMan::getDimensions(const char *string, int *pixelsWide, int *lines) {
 	if (!string) {
