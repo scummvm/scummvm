@@ -725,6 +725,8 @@ public:
 		return _cineActive;
 	}
 	void processCines();
+	void cineCleanup();
+	void cineAbort();
 	void cineAddToBlitList(const char *id, Picture *pic, int x, int y, bool masked);
 	Picture *cineFindInBlitList(const char *name);
 	void cineRemoveFromBlitList(const char *name);

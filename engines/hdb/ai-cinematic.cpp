@@ -288,6 +288,36 @@ void AI::processCines() {
 	}
 }
 
+void AI::cineCleanup() {
+	cineFreeGfx();
+	_cineActive = false;
+	// If aborted and abort function specified, call it
+	if (_cineAborted && _cineAbortFunc)
+		g_hdb->_lua->callFunction(_cineAbortFunc, 0);
+
+	_cameraLock = false;
+	_playerLock = false;
+	g_hdb->_window->setInfobarDark(0);
+	warning("STUB: DrawMan:: Set Pointer State");
+
+	int px, py;
+	getPlayerXY(&px, &py);
+	g_hdb->_map->centerMapXY(px + 16, py + 16);
+}
+
+void AI::cineAbort() {
+	for (Common::Array<CineCommand *>::iterator it = _cine.begin(); it != _cine.end(); it++) {
+		if ((*it)->cmdType == C_STARTMAP || (*it)->cmdType == C_STOPCINE)
+			_cine[0] = *it;
+		if (it != _cine.begin())
+			_cine.erase(it);
+	}
+	warning("STUB: Window: closeAll() required");
+	if (_player)
+		stopEntity(_player);
+	_cineAborted = true;
+}
+
 void AI::cineAddToBlitList(const char *id, Picture *pic, int x, int y, bool masked) {
 	_cineBlitList[_numCineBlitList] = new CineBlit;
 	_cineBlitList[_numCineBlitList]->id = id;
