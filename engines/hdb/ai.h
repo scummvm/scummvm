@@ -720,6 +720,7 @@ public:
 	void cineSetEntity(const char *entName, int x, int y, int level);
 	void cineMoveEntity(const char *entName, int x, int y, int level, int speed);
 	void cineEntityFace(const char *luaName, double dir);
+	void cineDialog(const char *title, const char *string, int seconds);
 	void cineUse(const char *entName);
 	void cineFadeIn(bool isBlack, int steps);
 	void cineFadeOut(bool isBlack, int steps);
