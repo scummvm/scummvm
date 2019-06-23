@@ -318,6 +318,22 @@ void AI::cineRemoveFromBlitList(const char *name) {
 	}
 }
 
+void AI::cineAddToFreeList(Picture *pic) {
+	if (_numCineFreeList >= kMaxCineGfx) {
+		warning("cineAddToFreeList: Too many gfx in Cinematic!");
+		return;
+	}
+	_cineFreeList[_numCineFreeList] = pic;
+	_numCineFreeList++;
+}
+
+void AI::cineFreeGfx() {
+	for (int i = 0;i < _numCineFreeList;i++) {
+		delete _cineFreeList[i];
+	}
+	_numCineFreeList = 0;
+}
+
 void AI::cineStart(bool abortable, const char *abortFunc) {
 	_cineAbortable = abortable;
 	_cineAborted = false;
