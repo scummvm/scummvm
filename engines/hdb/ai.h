@@ -708,6 +708,9 @@ public:
 	}
 
 	// Cinematic Functions
+	bool cinematicsActive() {
+		return _cineActive;
+	}
 	void processCines();
 	void cineStart(bool abortable, const char *abortFunc);
 	void cineLockPlayer();
