@@ -220,6 +220,25 @@ void AI::processCines() {
 					complete = true;
 			}
 			break;
+		case C_MOVEMASKEDPIC:
+			if (!_cine[i]->start) {
+				Picture *pic = cineFindInBlitList(_cine[i]->id);
+				if (!pic) {
+					pic = g_hdb->_drawMan->loadPic(_cine[i]->string);
+					cineAddToFreeList(pic);
+				} else
+					cineRemoveFromBlitList(_cine[i]->id);
+				_cine[i]->pic = pic;
+				_cine[i]->start = 1;
+			}
+
+			cineRemoveFromBlitList(_cine[i]->id);
+			_cine[i]->x += _cine[i]->xv;
+			_cine[i]->y += _cine[i]->yv;
+			cineAddToBlitList(_cine[i]->id, _cine[i]->pic, (int)_cine[i]->x, (int)_cine[i]->y, true);
+			if (abs((int)(_cine[i]->x - _cine[i]->x2)) <= 1 && abs((int)(_cine[i]->y - _cine[i]->y2)) <= 1)
+				complete = true;
+			break;
 		case C_USEENTITY:
 			for (Common::Array<AIEntity *>::iterator it = _ents->begin(); it != _ents->end(); it++) {
 				if ((*it)->entityName && Common::matchString((*it)->entityName, _cine[i]->string)) {
