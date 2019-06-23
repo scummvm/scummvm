@@ -78,6 +78,7 @@
 #include "scumm/verbs.h"
 #include "scumm/imuse/pcspk.h"
 #include "scumm/imuse/mac_m68k.h"
+#include "scumm/imuse/drivers/amiga.h"
 
 #include "backends/audiocd/audiocd.h"
 
@@ -1837,6 +1838,9 @@ void ScummEngine::setupMusic(int midi) {
 	case MT_NULL:
 		_sound->_musicType = MDT_NONE;
 		break;
+	case MT_AMIGA:
+		_sound->_musicType = MDT_AMIGA;
+		break;
 	case MT_PCSPK:
 		_sound->_musicType = MDT_PCSPK;
 		break;
@@ -1984,6 +1988,10 @@ void ScummEngine::setupMusic(int midi) {
 			// The Mac driver is never MT-32.
 			_native_mt32 = false;
 			// Ignore non-native drivers. This also ignores the multi MIDI setting.
+			useOnlyNative = true;
+		} else if (_sound->_musicType == MDT_AMIGA) {
+			nativeMidiDriver = new IMuseDriver_Amiga(_mixer);
+			_native_mt32 = false;
 			useOnlyNative = true;
 		} else if (_sound->_musicType != MDT_ADLIB && _sound->_musicType != MDT_TOWNS && _sound->_musicType != MDT_PCSPK) {
 			nativeMidiDriver = MidiDriver::createMidi(dev);

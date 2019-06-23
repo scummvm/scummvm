@@ -201,8 +201,8 @@ bool IMuseInternal::isMIDI(int sound) {
 	case MKTAG('S', 'P', 'K', ' '):
 		return false;
 
-	case MKTAG('A', 'M', 'I', ' '): // Amiga
-		return false;
+	case MKTAG('A', 'M', 'I', ' '): // Amiga (return true, since the driver is initalized as native midi)
+		return true;
 
 	case MKTAG('R', 'O', 'L', ' '):
 		return true;
