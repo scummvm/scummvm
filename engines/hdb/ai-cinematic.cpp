@@ -288,6 +288,36 @@ void AI::processCines() {
 	}
 }
 
+void AI::cineAddToBlitList(const char *id, Picture *pic, int x, int y, bool masked) {
+	_cineBlitList[_numCineBlitList] = new CineBlit;
+	_cineBlitList[_numCineBlitList]->id = id;
+	_cineBlitList[_numCineBlitList]->pic = pic;
+	_cineBlitList[_numCineBlitList]->x = x;
+	_cineBlitList[_numCineBlitList]->y = y;
+	_cineBlitList[_numCineBlitList]->masked = masked;
+	_numCineBlitList++;
+}
+
+Picture *AI::cineFindInBlitList(const char *name) {
+	for (int i = 0; i < _numCineBlitList;i++) {
+		if (Common::matchString(_cineBlitList[i]->id, name))
+			return _cineBlitList[i]->pic;
+	}
+	return NULL;
+}
+
+void AI::cineRemoveFromBlitList(const char *name) {
+	for (int i = 0; i < _numCineBlitList;i++) {
+		if (Common::matchString(_cineBlitList[i]->id, name))
+			delete _cineBlitList[i];
+			for (; i < _numCineBlitList - 1; i++)
+				_cineBlitList[i] = _cineBlitList[i + 1];
+			_numCineBlitList--;
+			_cineBlitList[_numCineBlitList] = NULL;
+			return;
+	}
+}
+
 void AI::cineStart(bool abortable, const char *abortFunc) {
 	_cineAbortable = abortable;
 	_cineAborted = false;
