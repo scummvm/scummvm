@@ -39,7 +39,8 @@ enum {
 	kMaxAutoActions = 30,
 	kPlayerMoveSpeed = 4,
 	kEnemyMoveSpeed = 2,
-	kPushMoveSpeed = (kPlayerMoveSpeed >> 1)
+	kPushMoveSpeed = (kPlayerMoveSpeed >> 1),
+	kMaxCineGfx = 10
 };
 
 enum AIType {
@@ -596,7 +597,17 @@ struct CineCommand {
 	AIEntity *e;
 
 	CineCommand() : cmdType(C_NO_COMMAND), x(0.0), y(0.0), x2(0.0), y2(0.0), xv(0.0), yv(0.0),
-				start(0), end(0), delay(0), speed(0), title(""), string(""), id(NULL), e(NULL) {}
+				start(0), end(0), delay(0), speed(0), title(""), string(""), id(NULL), e(NULL), pic(NULL) {}
+};
+
+struct CineBlit {
+	double x, y;
+	Picture *pic;
+	const char *name;
+	const char *id;
+	bool masked;
+
+	CineBlit() : x(0), y(0), pic(NULL), name(""), id(""), masked(false) {}
 };
 
 #define onEvenTile(x, y)	( !(x & 31) && !(y & 31) )
@@ -908,6 +919,12 @@ public:
 
 	// Cinematic Variables
 	Common::Array<CineCommand *> _cine;
+
+	Picture *_cineFreeList[kMaxCineGfx];
+	int _numCineFreeList;
+
+	CineBlit *_cineBlitList[kMaxCineGfx];
+	int _numCineBlitList;
 
 private:
 

@@ -292,6 +292,8 @@ void AI::cineStart(bool abortable, const char *abortFunc) {
 	_cineAbortable = abortable;
 	_cineAborted = false;
 	_cineAbortFunc = abortFunc;
+	_numCineBlitList = 0;
+	_numCineFreeList = 0;
 	_cineActive = true;
 	_playerLock = false;
 	_cameraLock = false;
