@@ -11708,6 +11708,37 @@ static const uint16 qfg4FighterSpearPatch[] = {
 	PATCH_END
 };
 
+// The NRS fan-patch for wraiths has a bug which locks up the game. This occurs
+//  when a wraith initializes while game time is greater than $7fff. The patch
+//  throttles wraith:doit to execute no more than once per game tick, which it
+//  does by storing the previous game time in a new local variable whose initial
+//  value is zero. This technique is used in several patches but this one is
+//  missing a call to Abs that the others have. Once game time reaches $8000 or
+//  greater, the signed less-than test will always pass when the local variable
+//  is zero, and wraith:doit won't execute.
+//
+// We fix this by changing the signed less-than comparison to unsigned.
+//
+// Applies to: English CD with NRS patches 53.HEP/SCR
+// Responsible method: wraith:doit
+// Fixes bug: #10711
+static const uint16 qfg4WraithLockupNrsSignature[] = {
+	SIG_MAGICDWORD,
+	0x89, 0x58,                         // lsg 58
+	0x83, 0x04,                         // lal 04
+	0x04,                               // sub
+	0x36,                               // push
+	0x35, 0x01,                         // ldi 01
+	0x22,                               // lt? [ (gameTime - prevGameTime) < 1 ]
+	SIG_END
+};
+
+static const uint16 qfg4WraithLockupNrsPatch[] = {
+	PATCH_ADDTOOFFSET(+8),
+	0x2a,                               // ult?
+	PATCH_END
+};
+
 // The script that determines how much money a revenant has is missing the first
 //  parameter to kRandom, which should be zero as it is with other monsters.
 //  Instead of awarding the intended 15 to 40 kopeks, it always awards 15 and
@@ -11798,6 +11829,7 @@ static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,    31, "fix setScaler calls",                         1, qfg4SetScalerSignature,        qfg4SetScalerPatch },
 	{  true,    41, "fix conditional void calls",                  3, qfg4ConditionalVoidSignature,  qfg4ConditionalVoidPatch },
 	{  true,    50, "fix random revenant kopeks",                  1, qfg4SearchRevenantSignature,   qfg4SearchRevenantPatch },
+	{  true,    53, "NRS: fix wraith lockup",                      1, qfg4WraithLockupNrsSignature,  qfg4WraithLockupNrsPatch },
 	{  true,    83, "fix incorrect array type",                    1, qfg4TrapArrayTypeSignature,    qfg4TrapArrayTypePatch },
 	{  true,   250, "fix hectapus death lockup",                   1, qfg4HectapusDeathSignature,    qfg4HectapusDeathPatch },
 	{  true,   270, "fix town gate after a staff dream",           1, qfg4DreamGateSignature,        qfg4DreamGatePatch },
