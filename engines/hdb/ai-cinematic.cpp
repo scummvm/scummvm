@@ -415,7 +415,8 @@ void AI::cineStart(bool abortable, const char *abortFunc) {
 void AI::cineStop(const char *funcNext) {
 	CineCommand *cmd = new CineCommand;
 	cmd->cmdType = C_STOPCINE;
-	strcpy(cmd->title, funcNext);
+	if (funcNext)
+		strcpy(cmd->title, funcNext);
 	_cine.push_back(cmd);
 }
 
