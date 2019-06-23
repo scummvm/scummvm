@@ -52,6 +52,7 @@ public:
 
 	bool init();
 	void restartSystem();
+	void setInfobarDark(int value);
 
 	// Dialog Functions
 
