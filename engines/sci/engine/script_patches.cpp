@@ -10055,6 +10055,36 @@ static const uint16 qfg4DreamGatePatch[] = {
 	PATCH_END
 };
 
+// When approaching the town gate at night in room 270, dismissing the menu
+//  often doesn't work and instead repeats the gate message and menu. Upon
+//  entering the gate's doormat, sTo290Night moves hero up by 6 pixels, assuming
+//  that this places him outside the doormat. That assumption is usually wrong
+//  since it depends on hero's start position, walk/run mode, and game speed.
+//
+// We fix this by moving hero one pixel above the doormat instead.
+//
+// Applies to: All versions
+// Responsible method: sTo290Night:changeState(1)
+// Fixes bug: #10995
+static const uint16 qfg4TownGateDoormatSignature[] = {
+	0x7a,                               // push2 [ y ]
+	0x76,                               // push0
+	0x81, 0x00,                         // lag 00
+	0x4a, SIG_UINT16(0x0004),           // send 04 [ hero:y? ]
+	SIG_MAGICDWORD,
+	0x36,                               // push
+	0x35, 0x06,                         // ldi 06
+	0x04,                               // sub
+	0x36,                               // push [ hero:y - 6 ]
+	SIG_END
+};
+
+static const uint16 qfg4TownGateDoormatPatch[] = {
+	0x38, PATCH_UINT16(0x00b4),         // pushi 180d [ 1 pixel above doormat ]
+	0x33, 0x07,                         // jmp 07
+	PATCH_END
+};
+
 // Some inventory item properties leak across restarts. Most conspicuously, the
 // torch icon appears pre-lit after a restart, if it had been lit before.
 //
@@ -11721,6 +11751,7 @@ static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,    50, "fix random revenant kopeks",                  1, qfg4SearchRevenantSignature,   qfg4SearchRevenantPatch },
 	{  true,    83, "fix incorrect array type",                    1, qfg4TrapArrayTypeSignature,    qfg4TrapArrayTypePatch },
 	{  true,   270, "fix town gate after a staff dream",           1, qfg4DreamGateSignature,        qfg4DreamGatePatch },
+	{  true,   270, "fix town gate doormat at night",              1, qfg4TownGateDoormatSignature,  qfg4TownGateDoormatPatch },
 	{  true,   320, "fix pathfinding at the inn",                  1, qfg4InnPathfindingSignature,   qfg4InnPathfindingPatch },
 	{  true,   320, "fix talking to absent innkeeper",             1, qfg4AbsentInnkeeperSignature,  qfg4AbsentInnkeeperPatch },
 	{  true,   320, "CD: fix domovoi never appearing",             1, qfg4DomovoiInnSignature,       qfg4DomovoiInnPatch },
