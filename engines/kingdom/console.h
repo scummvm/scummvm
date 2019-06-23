@@ -38,6 +38,8 @@ public:
 
 	explicit Console(Kingdom::KingdomGame *vm);
 	virtual ~Console(void) {}
+
+	bool Cmd_showHotspots(int argc, const char **argv);
 };
 }
 
