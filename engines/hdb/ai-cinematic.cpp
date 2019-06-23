@@ -208,6 +208,16 @@ void AI::processCines() {
 			complete = true;
 			break;
 		}
+		case C_DIALOG:
+			if (_cine[i]->start) {
+				g_hdb->_window->openDialog(_cine[i]->title, -1, _cine[i]->string, 0, NULL);
+				g_hdb->_window->setDialogDelay(_cine[i]->delay);
+				_cine[i]->start = 0;
+			} else {
+				if (g_hdb->_window->getDialogDelay() < g_hdb->getTimeSlice())
+					complete = true;
+			}
+			break;
 		case C_USEENTITY:
 			for (Common::Array<AIEntity *>::iterator it = _ents->begin(); it != _ents->end(); it++) {
 				if ((*it)->entityName && Common::matchString((*it)->entityName, _cine[i]->string)) {
