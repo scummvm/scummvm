@@ -83,8 +83,11 @@ private:
 	Picture *_gfxIndent, *_gfxArrowTo, *_gfxHandright;
 	Picture *_gfxTry, *_gfxAgain, *_gfxInvSelect;
 	Tile *_gfxMonkeystone;
-	Picture *_gfxLevelRestart, *_gfxPuasePlaque;
+	Picture *_gfxLevelRestart, *_gfxPausePlaque;
 
+	// Info Bar
+	Picture *_gfxInfobar, *_gfxDarken;
+	int _infobarDimmed;
 };
 
 } // End of Namespace
