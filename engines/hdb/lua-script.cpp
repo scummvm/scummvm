@@ -269,7 +269,15 @@ static int cineAnimEntity(lua_State *L) {
 }
 
 static int cineSetAnimFrame(lua_State *L) {
-	warning("STUB: CINE SET ANIM FRAME");
+	const char *entName = lua_tostring(L, 1);
+	double state = lua_tonumber(L, 2);
+	double frame = lua_tonumber(L, 2);
+
+	g_hdb->_lua->checkParameters("cineSetAnimFrame", 3);
+
+	lua_pop(L, 3);
+	int s = (int)state;
+	g_hdb->_ai->cineSetAnimFrame(entName, (AIState)s, (int)frame);
 	return 0;
 }
 
