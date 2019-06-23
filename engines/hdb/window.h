@@ -56,6 +56,7 @@ public:
 	// Dialog Functions
 
 	void openDialog(const char *title, int tileIndex, const char *string, int more, const char *luaMore);
+	void drawDialog();
 	void closeDialog();
 	bool checkDialogClose(int x, int y);
 	void drawBorder(int x, int y, int width, int height, bool guyTalking);

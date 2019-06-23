@@ -124,6 +124,49 @@ void Window::openDialog(const char *title, int tileIndex, const char *string, in
 	warning("STUB: openDialog: Play SND_MOVE_SELECTION");
 }
 
+void Window::drawDialog() {
+
+	if (g_hdb->getActionMode())
+		warning("STUB: drawDialog: Draw Player Weapon");
+
+	if (!_dialogInfo.active)
+		return;
+	bool guyTalking = !_stricmp(_dialogInfo.title, "guy");
+
+	int w = _dialogInfo.width;
+	if (_dialogInfo.titleWidth > w)
+		w = _dialogInfo.titleWidth;
+
+	drawBorder(_dialogInfo.x, _dialogInfo.y, w, _dialogInfo.height, guyTalking);
+
+	int blocks;
+	if (!guyTalking) {
+		_gfxTitleL->drawMasked(_dialogInfo.x, _dialogInfo.y - 10);
+		blocks = _dialogInfo.titleWidth / 16;
+		for (int i = 0; i < blocks;i++)
+			_gfxTitleM->drawMasked(_dialogInfo.x + 16 * (i + 1), _dialogInfo.y - 10);
+		_gfxTitleR->drawMasked(_dialogInfo.x + (blocks + 1) * 16, _dialogInfo.y - 10);
+	} else {
+		_gGfxTitleL->drawMasked(_dialogInfo.x, _dialogInfo.y - 10);
+		blocks = _dialogInfo.titleWidth / 16;
+		for (int i = 0; i < blocks;i++)
+			_gGfxTitleM->drawMasked(_dialogInfo.x + 16 * (i + 1), _dialogInfo.y - 10);
+		_gGfxTitleR->drawMasked(_dialogInfo.x + (blocks + 1) * 16, _dialogInfo.y - 10);
+	}
+
+	int e1, e2, e3, e4;
+	g_hdb->_drawMan->getTextEdges(&e1, &e2, &e3, &e4);
+	g_hdb->_drawMan->setTextEdges(_dialogInfo.x + 10, 480, 0, kScreenHeight);
+	g_hdb->_drawMan->setCursor(0, _dialogInfo.y - 7);
+	if (_dialogInfo.title)
+		g_hdb->_drawMan->drawText(_dialogInfo.title);
+	g_hdb->_drawMan->setTextEdges(_dialogInfo.x + 16, _dialogInfo.x + _dialogInfo.width - 16, 0, kScreenHeight);
+	g_hdb->_drawMan->setCursor(0, _dialogInfo.y + 16);
+	if (_dialogInfo.string)
+		g_hdb->_drawMan->drawText(_dialogInfo.string);
+	g_hdb->_drawMan->setTextEdges(e1, e2, e3, e4);
+}
+
 void Window::closeDialog() {
 	if (_dialogInfo.active) {
 		warning("STUB: closeDialog: Play SND_SWITCH_USE");
