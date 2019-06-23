@@ -25,6 +25,11 @@
 
 namespace HDB {
 
+enum {
+	kDialogTextLeft = 64,
+	kDialogTextRight = (kDialogTextLeft + kTileWidth * 9)
+};
+
 struct DialogInfo {
 	char		title[64];				// TITLE string
 	int			tileIndex;					// this is for a character picture
