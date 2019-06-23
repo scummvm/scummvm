@@ -58,6 +58,7 @@ public:
 	void openDialog(const char *title, int tileIndex, const char *string, int more, const char *luaMore);
 	void closeDialog();
 	bool checkDialogClose(int x, int y);
+	void drawBorder(int x, int y, int width, int height, bool guyTalking);
 	void setDialogDelay(int delay);
 	uint32 getDialogDelay() {
 		return _dialogDelay;

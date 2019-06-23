@@ -155,8 +155,69 @@ bool Window::checkDialogClose(int x, int y) {
 	return false;
 }
 
-void Window::drawBorder() {
+void Window::drawBorder(int x, int y, int width, int height, bool guyTalking) {
+	int wide, high, i, j;
+	if (!guyTalking) {
+		wide = (width / 16) + 1;
+		high = height / 16;
+		for(j = 0; j < high; j++)
+			for (i = 0;i < wide;i++) {
+				// Top Line
+				if (!i && !j)
+					_gfxTL->drawMasked(x, y);
+				else if ((i == wide - 1) && !j)
+					_gfxTR->drawMasked(x + i * 16, y + j * 16);
+				else if (!j)
+					_gfxTM->draw(x + i * 16, y + j * 16);
 
+				// Bottom Lines
+				if ((j == high - 1) && !i)
+					_gfxBL->drawMasked(x + i * 16, y + j * 16);
+				else if ((j == high - 1) && (i == wide - 1))
+					_gfxBR->drawMasked(x + i * 16, y + j * 16);
+				else if ((j == high - 1) && i < wide)
+					_gfxBM->draw(x + i * 16, y + j * 16);
+
+				// Middle lines
+				if (!i && j < high)
+					_gfxL->draw(x + i * 16, y + j * 16);
+				else if ((i == wide - 1) && j < high)
+					_gfxR->draw(x + i * 16, y + j * 16);
+
+				// Most drawn = middle block
+				_gfxM->draw(x + i * 16, y + j * 16);
+			}
+	} else {
+		wide = (width / 16) + 1;
+		high = height / 16;
+		for (j = 0; j < high; j++)
+			for (i = 0;i < wide;i++) {
+				// Top Line
+				if (!i && !j)
+					_gGfxTL->drawMasked(x, y);
+				else if ((i == wide - 1) && !j)
+					_gGfxTR->drawMasked(x + i * 16, y + j * 16);
+				else if (!j)
+					_gGfxTM->draw(x + i * 16, y + j * 16);
+
+				// Bottom Lines
+				if ((j == high - 1) && !i)
+					_gGfxBL->drawMasked(x + i * 16, y + j * 16);
+				else if ((j == high - 1) && (i == wide - 1))
+					_gGfxBR->drawMasked(x + i * 16, y + j * 16);
+				else if ((j == high - 1) && i < wide)
+					_gGfxBM->draw(x + i * 16, y + j * 16);
+
+				// Middle lines
+				if (!i && j < high)
+					_gGfxL->draw(x + i * 16, y + j * 16);
+				else if ((i == wide - 1) && j < high)
+					_gGfxR->draw(x + i * 16, y + j * 16);
+
+				// Most drawn = middle block
+				_gGfxM->draw(x + i * 16, y + j * 16);
+			}
+	}
 }
 
 void Window::setDialogDelay(int delay) {
