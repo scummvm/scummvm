@@ -36,11 +36,21 @@ static char const *const versaillesFRlocalizedFilenames[] = {
 	"credits.txt",
 	"LEB001__.WAV",
 };
+static char const *const versaillesENlocalizedFilenames[] = {
+	"DIALOG1.GB",
+	"tous_doc.gb",
+	"lien_doc.txt",
+	"credits.GB",
+	"LEB1_GB.WAV",
+};
 
 static char const versaillesFREpilMsg[] = "FELIXFORTUNADIVINUMEXPLORATUMACTUIIT";
 static char const versaillesFREpilPwd[] = "LELOUPETLATETE";
+static char const versaillesENEpilMsg[] = "FELIXFORTUNADIVINUMEXPLORATUMACTUIIT";
+static char const versaillesENEpilPwd[] = "FOXANDCRANE";
 
 static char const versaillesFRBombPwd[] = "JEMENVAISMAISLETATDEMEURERATOUJOURS";
+static char const versaillesENBombPwd[] = "IT IS NOT IN THE POWER OF KINGS TO ATTAIN PERFECTION";
 
 #define VERSAILLES_MESSAGES_COUNT 146
 #define VERSAILLES_PAINTINGS_COUNT 48
@@ -262,6 +272,217 @@ static char const *const versaillesFRpaintings[] = {
 	"\"Portrait du Prince Palatin & de son fr" "\x8f" "re le Prince "
 	"Robert\"\rVan Dyck",                                                 /* 46: 43157 */
 	"\"La descente de Croix \"\rCharles Lebrun",                          /* 47: 45260 */
+};
+
+static char const *const versaillesENmessages[] = {
+	"For the moment it is forbidden to open this door.",                  /*   0 */
+	"This door is locked.",                                               /*   1 */
+	"This door is locked.",                                               /*   2 */
+	"This drawer is empty.",                                              /*   3 */
+	"You cannot reach the covering.",                                     /*   4 */
+	"There is nothing in this orange tree.",                              /*   5 */
+	"This is not an orange tree!",                                        /*   6 */
+	"It is too dark. ",                                                   /*   7 */
+	"The casket is locked. ",                                             /*   8 */
+	"You can open the door.",                                             /*   9 */
+	"You will need something to be able to reach the bomb.",              /*  10 */
+	"This vase is empty.",                                                /*  11 */
+	"Now you can go through.",                                            /*  12 */
+	"You have no time to learn about the Court!",                         /*  13 */
+	"It is too late for looking at pictures!",                            /*  14 */
+	"Wait! Give your clues to the usher.",                                /*  15 */
+	"You cannot reach the paper.",                                        /*  16 */
+	"To the apothecary's.",                                               /*  17 */
+	"Warning: You will be able to come to the end of this level, but "
+	"you have not performed all the actions necessary in order to be "
+	"able to continue. You are advised to SAVE this game now.",           /*  18 */
+	"Warning: You will be able to come to the end of this level, but "
+	"you may not have performed all the actions necessary in order to "
+	"be able to continue. You are advised to SAVE this game now.",        /*  19 */
+	"You cannot move about while carrying a ladder!",                     /*  20 */
+	"There is nothing else here.",                                        /*  21 */
+	"Goodbye ...",                                                        /*  22 */
+	"VERSAILLES,",                                                        /*  23 */
+	"A Game of Intrigue at the Court of Louis XIV",                       /*  24 */
+	"Consult the documentation zone",                                     /*  25 */
+	"           Continue this game",                                      /*  26 */
+	"           Start a new game",                                        /*  27 */
+	"           Load a game",                                             /*  28 */
+	"           Save this game",                                          /*  29 */
+	"           Display subtitles: YES",                                  /*  30 */
+	"           Display subtitles: NO",                                   /*  31 */
+	"           Music: YES",                                              /*  32 */
+	"           Music: NO",                                               /*  33 */
+	"           One piece of music to hard disk (20 Mo)",                 /*  34 */
+	"           All music to hard disk (92 Mo)",                          /*  35 */
+	"           No music to hard disk (CD read)",                         /*  36 */
+	nullptr,                                                              /*  37 */
+	nullptr,                                                              /*  38 */
+	"Volume",                                                             /*  39 */
+	"Quit game",                                                          /*  40 */
+	"",                                                                   /*  41 */
+	"Visit the chateau",                                                  /*  42 */
+	"Credits",                                                            /*  43 */
+	"           Continue this visit",                                     /*  44 */
+	"           Save this visit",                                         /*  45 */
+	"           Load a visit",                                            /*  46 */
+	nullptr,                                                              /*  47 */
+	"           Omni3D: standard",                                        /*  48 */
+	"           Omni3D: slow",                                            /*  49 */
+	"           Omni3D: very slow",                                       /*  50 */
+	"           Omni3D: fast",                                            /*  51 */
+	"           Omni3D: very fast",                                       /*  52 */
+	"Confirm",                                                            /*  53 */
+	"Cancel",                                                             /*  54 */
+	"free",                                                               /*  55 */
+	"nameless ",                                                          /*  56 */
+	"Warning: this game is about to be aborted.",                         /*  57 */
+	"Return",                                                             /*  58 */
+	"The Chateau",                                                        /*  59 */
+	"Return to Main Menu",                                                /*  60 */
+	"Summary of Documentation Zone",                                      /*  61 */
+	"Map of Chateau and gardens",                                         /*  62 */
+	"Interior plan of chateau",                                           /*  63 */
+	"Impossible to write to hard disk: disk full",                        /*  64 */
+	nullptr,                                                              /*  65 */
+	"Insert the CD ",                                                     /*  66 */
+	"Insert the %d CD and press any key",                                 /*  67 */
+	"The Arts",                                                           /*  68 */
+	"The Reign",                                                          /*  69 */
+	"The Court",                                                          /*  70 */
+	"Life in the Chateau",                                                /*  71 */
+	"The Chateau and gardens",                                            /*  72 */
+	"Chronology",                                                         /*  73 */
+	"The Apollo Fountain",                                                /*  74 */
+	"The Chateau",                                                        /*  75 */
+	"Colonnade",                                                          /*  76 */
+	"Maze",                                                               /*  77 */
+	"Latona",                                                             /*  78 */
+	"Orangery",                                                           /*  79 */
+	"Water Parterre",                                                     /*  80 */
+	"Tapis vert",                                                         /*  81 */
+	"Grand Stables",                                                      /*  82 */
+	"Small Stables",                                                      /*  83 */
+	"The gardens",                                                        /*  84 */
+	"Forecourt",                                                          /*  85 */
+	"Grand Canal",                                                        /*  86 */
+	"South Parterre",                                                     /*  87 */
+	"North Parterre",                                                     /*  88 */
+	"The King's vegetable garden",                                        /*  89 */
+	"Ballroom",                                                           /*  90 */
+	"The Neptune Fountain",                                               /*  91 */
+	"The Lake of the Swiss Guards",                                       /*  92 */
+	"Aiguilles (Useless!)",                                               /*  93 */
+	"Scissors",                                                           /*  94 */
+	"Paper",                                                              /*  95 */
+	"Pamphlet on the arts",                                               /*  96 */
+	"Small key 1",                                                        /*  97 */
+	"Transformed paper",                                                  /*  98 */
+	"Stained paper",                                                      /*  99 */
+	"Paper from casket",                                                  /* 100 */
+	"Pamphlet on royal lineage",                                          /* 101 */
+	"Lighted candle ",                                                    /* 102 */
+	"Candle",                                                             /* 103 */
+	"Key ",                                                               /* 104 */
+	"Sketch folder",                                                      /* 105 */
+	"Sketch folder",                                                      /* 106 */
+	"Fake sketch",                                                        /* 107 */
+	"Ladder",                                                             /* 108 */
+	"Destroyed sketch",                                                   /* 109 */
+	"brush",                                                              /* 110 */
+	"golden brush",                                                       /* 111 */
+	"red brush",                                                          /* 112 */
+	"Charcoal pencil",                                                    /* 113 */
+	"Paper",                                                              /* 114 */
+	"Pamphlet on architecture",                                           /* 115 */
+	"Small key 2",                                                        /* 116 */
+	"Archer(useless!)",                                                   /* 117 */
+	"Musical score",                                                      /* 118 */
+	"Billiard cue",                                                       /* 119 */
+	"Authorisation",                                                      /* 120 */
+	"Reproduction of medals",                                             /* 121 */
+	"Drawer with medals",                                                 /* 122 */
+	"Key to small Apollo door",                                           /* 123 */
+	"Food",                                                               /* 124 */
+	"Pamphlet on religion",                                               /* 125 */
+	"Epigraph",                                                           /* 126 */
+	"Pamphlet on government",                                             /* 127 */
+	"Quill",                                                              /* 128 */
+	"Memo",                                                               /* 129 */
+	"Telescope",                                                          /* 130 */
+	"Vauban Plan",                                                        /* 131 */
+	"Vauban Plan",                                                        /* 132 */
+	"Cord",                                                               /* 133 */
+	"Engraving",                                                          /* 134 */
+	"Small key 3",                                                        /* 135 */
+	"Small key 4",                                                        /* 136 */
+	"Memorandum",                                                         /* 137 */
+	"Plans of Chateau",                                                   /* 138 */
+	"Plans of Chateau",                                                   /* 139 */
+	"Key to attic",                                                       /* 140 */
+	"Fables",                                                             /* 141 */
+	"Plan of Maze",                                                       /* 142 */
+	"Tool",                                                               /* 143 */
+	"Medicine",                                                           /* 144 */
+	"Candle snuffer",                                                     /* 145 */
+};
+
+static char const *const versaillesENpaintings[] = {
+	"\"The Animals entering the Ark\"\rGerolamo Bassano",                 /*  0: 41201 */
+	"\"The Supper at Emmaus\"\rJacopo Bassano",                           /*  1: 41202 */
+	"\"Mary Magdalen at the feet of the Christ",                          /*  2: 41203 */
+	"\"Leaving the Ark\"\rGerolamo Bassano",                              /*  3: 41204 */
+	"\"Striking the Rock\"\rJacopo Bassano",                              /*  4: 41205 */
+	"\"The Battle of Arbelles\"\rJoseph Parrocel",                        /*  5: 41301 */
+	"\"Alexander the Great, Vanquisher of Darisu at the battle of "
+	"Arbelles\"\rLe Bourguignon",                                         /*  6: 41302 */
+	"\"The Combat of Leuze\"\rJoseph Parrocel",                           /*  7: 42401 */
+	"\"Saint Cecilia with an angel holding musical notation\"\rIl "
+	"Domenichino",                                                        /*  8: 42901 */
+	"\"Don Francisco of Moncada\"\rVan Dyck",                             /*  9: 42902 */
+	"\"The young John the Baptist\"\rCarracci",                           /* 10: 42903 */
+	"\"Saint Matthew\"\rValentin",                                        /* 11: 42904 */
+	"\"Render unto Caesar\"\rValentin",                                   /* 12: 42905 */
+	"\"Saint Luke\"\rValentin",                                           /* 13: 42906 */
+	"\"The Mystical Marriage of Saint Catherine\"\r Alessandro Turchi",   /* 14: 42907 */
+	"\"The Meeting of the Drinkers\"\rNicolas Tournier",                  /* 15: 42908 */
+	"\"The Fortune-teller\"\rValentin",                                   /* 16: 42909 */
+	"\"King David playing the Harp\"\rIl Domenichino",                    /* 17: 42910 */
+	"\"Mary Magdalen\"\rIl Domenichino",                                  /* 18: 42911 */
+	"\"Self-portrait\"\rVan Dyck",                                        /* 19: 42912 */
+	"\"Saint John the Evangelist\"\r Valentin",                           /* 20: 42913 */
+	"\"Hagar being helped by an angel\"\rGiovanni Lanfranco",             /* 21: 42914 */
+	"\"Saint Mark\"\rValentin",                                           /* 22: 42915 */
+	"\"Meleager with the head of the boar of Calydon at his "
+	"feet\"\rJacques Rousseau",                                           /* 23: 43090 */ /* BUG: Switched */
+	"\"The King in Roman dress\"\rJean Warin",                            /* 24: 43091 */
+	"\"Atalanta\"\rJacques Rousseau",                                     /* 25: 43092 */
+	"\"Aeneas carrying Anchises\"\rSpada",                                /* 26: 43100 */
+	"\"David and Bethsheba\"\rVeronese",                                  /* 27: 43101 */
+	"\"The Flight into Egypt\"\rGuido Reni",                              /* 28: 43102 */
+	"\"Louis XIV on horseback\"\rPierre Mignard",                         /* 29: 43103 */
+	"\"Royal Magnificence and the Progress of the Beaux "
+	"Arts\"\rHouasse",                                                    /* 30: 43104 */
+	"\"The Sacrifice of Iphigeneia\"\rCharles de La Fosse",               /* 31: 43130 */
+	"\"Bust of Louis XIV\"\rsculpted by Bernini",                         /* 32: 43131 */
+	"\"Diana  discovers Endymion in the arms of Morpheus\"\rGabriel "
+	"Blanchard",                                                          /* 33: 43132 */
+	"\"Saint Peter and the Virgin Mary\"\rIl Guercino",                   /* 34: 43140 */
+	"\"The Disciples at Emmaus\"\rVeronese",                              /* 35: 43141 */
+	"\"The Holy Family\"\rVeronese",                                      /* 36: 43142 */
+	"\"Darius' family at the feet of Alexander\"\rCharles LeBrun",        /* 37: 43143 */
+	"\"Saint John the Baptist\"\rRaphael",                                /* 38: 43144 */
+	"\"Marie de Medici\"\rVan Dyck",                                      /* 39: 43150 */
+	"\"Hercules struggling with Achelous\"\rGuido Reni",                  /* 40: 43151 */
+	"\"The Centaur Nessus carrying away Deianeira\"\rGuido Reni",         /* 41: 43152 */
+	"\"Saint Francis of Assissi comforted after receiving the "
+	"stigmata\"\rSeghers",                                                /* 42: 43153 */
+	"\"Thomiris plunging Cyrus' head in blood\"\rRubens",                 /* 43: 43154 */
+	"\"Hercules Slaying the Hydra\"\rGuido Reni",                         /* 44: 43155 */
+	"\"Hercules in flames \"\rGuido Reni",                                /* 45: 43156 */
+	"\"Portrait of the Prince Palatine & his brother Prince "
+	"Robert\"\rVan Dyck",                                                 /* 46: 43157 */
+	"\"Christ being taken down from the cross\"\rCharles Lebrun",         /* 47: 45260 */
 };
 
 #endif

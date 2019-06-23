@@ -38,6 +38,7 @@ size_t writeGameHeader(FILE *f, uint32 gameId, uint16 version, uint16 lang, uint
 #define PLATFORM_SATURN               0x10
 #define PLATFORM_ALL            0xffffffff
 
+#define LANG_EN                       MKTAG16('e', 'n')
 #define LANG_FR                       MKTAG16('f', 'r')
 
 #endif

@@ -93,6 +93,57 @@ static const CryOmni3DGameDescription gameDescriptions[] = {
 		GF_VERSAILLES_AUDIOPADDING,
 	},
 
+	// Versailles 1685
+	// English Windows from Mac/Win hybrid CD
+	// From lePhilousophe
+	{
+		{
+			"versailles",
+			"",
+			AD_ENTRY1s("Versaill.exe", "5c3c10ec821b8d96016041ab649af8c7", 377856),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSTABLE,
+			GUI_OPTIONS_VERSAILLES
+		},
+		GType_VERSAILLES,
+		GF_VERSAILLES_NUMERICFONTS,
+	},
+
+	// Versailles 1685
+	// English Macintosh from Mac/Win hybrid CD
+	// From lePhilousophe
+	{
+		{
+			"versailles",
+			"",
+			AD_ENTRY1s("Versailles", "7fa3cb6a3c18f6b4ba6be85dcd433cff", 366199),
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_UNSTABLE,
+			GUI_OPTIONS_VERSAILLES
+		},
+		GType_VERSAILLES,
+		GF_VERSAILLES_NUMERICFONTS,
+	},
+
+	// Versailles 1685
+	// English DOS
+	// From lePhilousophe
+	{
+		{
+			"versailles",
+			"",
+			AD_ENTRY1s("VERSAILL.PGM", "1c992f034f43418a5da2e8ebd0b92620", 598639),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_UNSTABLE,
+			GUI_OPTIONS_VERSAILLES
+		},
+		GType_VERSAILLES,
+		GF_VERSAILLES_AUDIOPADDING,
+	},
+
 	{ AD_TABLE_END_MARKER, 0, 0 }
 };
 
