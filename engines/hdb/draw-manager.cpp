@@ -395,6 +395,53 @@ int DrawMan::animateTile(int tileIndex) {
 	return _tLookupArray[tileIndex].animIndex;
 }
 
+bool DrawMan::loadFont(const char *string) {
+	Common::SeekableReadStream *stream = g_hdb->_fileMan->findFirstData(string, TYPE_FONT);
+	if (!stream)
+		return false;
+
+	// Loading _fontHeader
+	_fontHeader.type = stream->readUint16LE();
+	_fontHeader.numChars = stream->readUint16LE();
+	_fontHeader.height = stream->readUint16LE();
+	_fontHeader.kerning = stream->readUint16LE();
+	_fontHeader.leading = stream->readUint16LE();
+
+	// Loading _charInfoBlocks & creating character surfaces
+	CharInfo *cInfo;
+	int startPos = stream->pos();	// Position after _fontHeader
+	int curPos;						// Position after reading cInfo
+	uint16 *ptr;
+	for (int i = 0; i < _fontHeader.numChars;i++) {
+		cInfo = new CharInfo;
+		cInfo->width = stream->readUint16LE();
+		cInfo->offset = stream->readUint16LE();
+		curPos = stream->pos();
+
+		_fontSurfaces[i].create(cInfo->width, _fontHeader.height, g_hdb->_format);
+
+		// Go to character location
+		stream->seek(startPos+cInfo->offset);
+
+		for (uint y = 0; y < _fontHeader.height; y++) {
+			ptr = (uint16 *)_fontSurfaces[i].getBasePtr(0, y);
+			for (uint x = 0; x < cInfo->width; x++) {
+				*ptr = TO_LE_16(stream->readUint16LE());
+				ptr++;
+			}
+		}
+
+		stream->seek(curPos);
+
+		_charInfoBlocks.push_back(cInfo);
+	}
+
+	// Loading _fontGfx
+	_fontGfx = stream->readUint16LE();
+
+	return true;
+}
+
 // Calculates pixel width of a string
 void DrawMan::getDimensions(const char *string, int *pixelsWide, int *lines) {
 	if (!string) {
