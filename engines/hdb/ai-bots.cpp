@@ -206,7 +206,6 @@ void aiTurnBotChoose(AIEntity *e) {
 	}
 }
 
-
 void aiTurnBotAction(AIEntity *e) {
 	if (e->goalX)
 		g_hdb->_ai->animateEntity(e);
@@ -289,6 +288,183 @@ void aiShockBotShock(AIEntity *e, int mx, int my) {
 				}
 			}
 		}
+	}
+}
+
+void aiRightBotInit(AIEntity *e) {
+	e->moveSpeed = kPlayerMoveSpeed;
+	if (!g_hdb->getActionMode())
+		e->moveSpeed >>= 1;
+	e->aiAction = aiRightBotAction;
+}
+
+void aiRightBotInit2(AIEntity *e) {
+	switch (e->dir) {
+	case DIR_UP:
+		e->draw = e->moveupGfx[0];
+		e->state = STATE_MOVEUP;
+		break;
+	case DIR_DOWN:
+		e->draw = e->movedownGfx[0];
+		e->state = STATE_MOVEDOWN;
+		break;
+	case DIR_LEFT:
+		e->draw = e->moveleftGfx[0];
+		e->state = STATE_MOVELEFT;
+		break;
+	case DIR_RIGHT:
+		e->draw = e->moverightGfx[0];
+		e->state = STATE_MOVERIGHT;
+		break;
+	case DIR_NONE:
+		warning("aiRightBotInit2: DIR_NONE found");
+		break;
+	}
+}
+
+void aiRightBotFindGoal(AIEntity *e) {
+	int	xv, yv, xv2, yv2, xv3, yv3;
+	int	bg, bg2, bg3;
+	AIEntity *e1, *e2, *e3, *p;
+	int	hit, sx, sy, rotate;
+
+	int		xvAhead[5]	= { 9, 0, 0,-1, 1 }, yvAhead[5]	= { 9,-1, 1, 0, 0 };
+	int		xvAToR[5]	= { 9, 1,-1,-1, 1 }, yvAToR[5]	= { 9,-1, 1,-1, 1 };
+	int		xvToR[5]	= { 9, 1,-1, 0, 0 }, yvToR[5]	= { 9, 0, 0,-1, 1 };
+	int		xvToL[5]	= { 9,-1, 1, 0, 0 }, yvToL[5]	= { 9, 0, 0, 1,-1 };
+
+	p = g_hdb->_ai->getPlayer();
+	rotate = 0;
+
+	do {
+		xv = xvAhead[e->dir];	// Search Ahead
+		yv = yvAhead[e->dir];
+		xv2 = xvAToR[e->dir];	// Search Ahead and to the Right
+		yv2 = yvAToR[e->dir];
+		xv3 = xvToR[e->dir];	// Search to the Right
+		yv3 = yvToR[e->dir];
+
+		// Search until we hit a wall...or empty space to our right (and forward)
+		hit = 0;
+		sx = e->tileX;
+		sy = e->tileY;
+
+		while (!hit) {
+			bg = g_hdb->_map->getMapBGTileFlags(sx + xv, sy + yv) & (kFlagSolid | kFlagWater | kFlagSlime | kFlagSpecial);
+			e1 = g_hdb->_ai->findEntity(sx + xv, sy + yv);
+			if (e1 && e1 == p)
+				e1 = NULL;
+			bg2 = g_hdb->_map->getMapBGTileFlags(sx + xv2, sy + yv2) & (kFlagSolid | kFlagWater | kFlagSlime | kFlagSpecial);
+			e2 = g_hdb->_ai->findEntity(sx + xv2, sy + yv2);
+			if (e2 && e2 == p)
+				e2 = NULL;
+			bg3 = g_hdb->_map->getMapBGTileFlags(sx + xv3, sy + yv3) & (kFlagSolid | kFlagWater | kFlagSlime | kFlagSpecial);
+			e3 = g_hdb->_ai->findEntity(sx + xv3, sy + yv3);
+			if (e3 && e3 == p)
+				e3 = NULL;
+
+			// Okay to move forward?
+			if ((!bg && !e1) && (bg2 || e2 || bg3 || e3)) {
+				sx += xv;
+				sy += yv;
+				rotate = 0;
+			} else
+				hit = 1;
+		}
+
+		// Are we stuck in a corner?
+		if (sx == e->tileX && sy == e->tileY) {
+			sx = e->tileX;
+			sy = e->tileY;
+			rotate += 1;
+
+			// Need to check for turning RIGHT when we're in a corner
+			xv = xvToL[e->dir];
+			yv = yvToL[e->dir];
+
+			// Check Tile flags to our left and right
+			bg = g_hdb->_map->getMapBGTileFlags(sx + xv, sy + yv) & (kFlagSolid | kFlagWater | kFlagSlime | kFlagSpecial);
+			e1 = g_hdb->_ai->findEntity(sx + xv, sy + yv);
+			bg2 = g_hdb->_map->getMapBGTileFlags(sx + xv3, sy + yv3) & (kFlagSolid | kFlagWater | kFlagSlime | kFlagSpecial);
+			e2 = g_hdb->_ai->findEntity(sx + xv3, sy + yv3);
+			if (e1 && e1->type == AI_GUY)
+				e1 = NULL;
+			if (e2 && e2->type == AI_GUY)
+				e2 = NULL;
+
+			// Is tile to the right clear?
+			// Is tile to the left clear?
+			// If neither, go backwards
+			if (!bg2 && !e2) {
+				switch (e->dir) {
+				case DIR_UP: e->dir = DIR_RIGHT; break;
+				case DIR_DOWN: e->dir = DIR_LEFT; break;
+				case DIR_LEFT: e->dir = DIR_UP; break;
+				case DIR_RIGHT: e->dir = DIR_DOWN; break;
+				case DIR_NONE:
+					warning("aiRightBotFindGoal: DIR_NONE found");
+				}
+			} else if (!bg && !e1) {
+				switch (e->dir) {
+				case DIR_UP: e->dir = DIR_LEFT; break;
+				case DIR_DOWN: e->dir = DIR_RIGHT; break;
+				case DIR_LEFT: e->dir = DIR_DOWN; break;
+				case DIR_RIGHT: e->dir = DIR_UP; break;
+				case DIR_NONE:
+					warning("aiRightBotFindGoal: DIR_NONE found");
+				}
+			} else {
+				switch (e->dir) {
+				case DIR_UP: e->dir = DIR_DOWN; yv = 1; xv = 0; break;
+				case DIR_DOWN: e->dir = DIR_UP; yv = -1; xv = 0; break;
+				case DIR_LEFT: e->dir = DIR_RIGHT; yv = 0; xv = 1; break;
+				case DIR_RIGHT: e->dir = DIR_LEFT; yv = 0; xv = -1; break;
+				case DIR_NONE:
+					warning("aiRightBotFindGoal: DIR_NONE found");
+				}
+				sx += xv;
+				sy += yv;
+				rotate = 4;
+			}
+		}
+	} while (rotate >= 1 && rotate < 4);
+
+	switch (e->dir) {
+	case DIR_UP:
+		e->state = STATE_MOVEUP;
+		break;
+	case DIR_DOWN:
+		e->state = STATE_MOVEDOWN;
+		break;
+	case DIR_LEFT:
+		e->state = STATE_MOVELEFT;
+		break;
+	case DIR_RIGHT:
+		e->state = STATE_MOVERIGHT;
+		break;
+	case DIR_NONE:
+		warning("aiRightBotFindGoal: DIR_NONE found");
+		break;
+	}
+
+	e->goalX = sx;
+	e->goalY = sy;
+	e->xVel = xv * e->moveSpeed;
+	e->yVel = yv * e->moveSpeed;
+	if (e->onScreen)
+		warning("STUB: aiRightBotFindGoal: Play SND_RIGHTBOT_TURN");
+}
+
+void aiRightBotAction(AIEntity *e) {
+	AIEntity *p = g_hdb->_ai->getPlayer();
+
+	if (e->goalX) {
+		if (e->onScreen && g_hdb->_ai->checkPlayerCollision(e->x, e->y, 0) && p->state != STATE_DEAD && p->level == e->level && !g_hdb->_ai->playerDead())
+			g_hdb->_ai->killPlayer(DEATH_NORMAL);
+		g_hdb->_ai->animateEntity(e);
+	} else {
+		aiRightBotFindGoal(e);
+		g_hdb->_ai->animEntFrames(e);
 	}
 }
 
