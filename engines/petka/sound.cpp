@@ -39,6 +39,8 @@ Sound::~Sound() {
 }
 
 void Sound::play(bool isLoop) {
+	if (!_stream)
+		return;
 	stop();
 
 	Audio::AudioStream *audioStream;

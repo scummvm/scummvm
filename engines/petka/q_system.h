@@ -72,6 +72,8 @@ public:
 	Interface *_prevInterface;
 
 	int _field48;
+	int _fxId;
+	int _musicId;
 };
 
 } // End of namespace Petka
