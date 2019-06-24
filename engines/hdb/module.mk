@@ -1,6 +1,7 @@
 MODULE := engines/hdb
 
 MODULE_OBJS := \
+	ai-bots.o \
 	ai-cinematic.o \
 	ai-funcs.o \
 	ai-init.o \
