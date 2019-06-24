@@ -459,7 +459,7 @@ enum Flags {
 	kFlagPS12toPS11 = 17, // is never checked
 	kFlagPS12toPS13 = 18,
 	kFlagPS13toPS12 = 19,
-	// 20 is never used
+	kFlagRC02RunciterVKChosen = 20, // re-purposed - original: 20 is never used
 	kFlagPS13toPS05 = 21,
 	kFlagPS02toPS05 = 22,
 	kFlagPS06toPS05 = 23,
@@ -489,7 +489,7 @@ enum Flags {
 	kFlagDektoraIsReplicant = 47,
 	kFlagSadikIsReplicant = 48,
 	kFlagPS09GrigorianTalk1 = 49,
-	// 50 is never used
+	kFlagPS09GrigorianVKChosen = 50, // re-purposed, original is never used
 	kFlagGrigorianDislikeMcCoy = 51,
 	// 52 is never used
 	kFlagPS09GrigorianDialogue = 53,

@@ -143,6 +143,23 @@ bool DialogueMenu::addToList(int answer, bool done, int priorityPolite, int prio
 	return true;
 }
 
+/**
+* Aux funtion - used in cut content mode to re-use some NeverRepeatOnceSelected dialogue options for different characters
+*/
+bool DialogueMenu::clearNeverRepeatWasSelectedFlag(int answer) {
+	int foundIndex = -1;
+	for (int i = 0; i != _neverRepeatListSize; ++i) {
+		if (answer == _neverRepeatValues[i]) {
+			foundIndex = i;
+			break;
+		}
+	}
+
+	if (foundIndex >= 0 && _neverRepeatWasSelected[foundIndex]) {
+		_neverRepeatWasSelected[foundIndex] = false;
+	}
+}
+
 bool DialogueMenu::addToListNeverRepeatOnceSelected(int answer, int priorityPolite, int priorityNormal, int prioritySurly) {
 	int foundIndex = -1;
 	for (int i = 0; i != _neverRepeatListSize; ++i) {
