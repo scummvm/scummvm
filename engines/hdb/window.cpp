@@ -152,7 +152,7 @@ void Window::drawDialog() {
 #endif
 
 	if (g_hdb->getActionMode())
-		warning("STUB: drawDialog: Draw Player Weapon");
+		debug(9, "STUB: drawDialog: Draw Player Weapon");
 
 	if (!_dialogInfo.active)
 		return;
