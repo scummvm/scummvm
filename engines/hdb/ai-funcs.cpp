@@ -1225,7 +1225,34 @@ void AI::drawEnts(int x, int y, int w, int h) {
 }
 
 void AI::drawLevel2Ents() {
-	debug(9, "STUB: AI::drawLevel2Ents()");
+	int debug = 0; //game.GetDebug(); // FIXME
+
+	for (int i = 0; i < _numLevel2Ents; i++) {
+		// call custom drawing code?
+		if (_entsLevel2[i].aiDraw)
+			_entsLevel2[i].aiDraw(_entsLevel2[i].e, _entsLevel2[i].x, _entsLevel2[i].y);
+		else if (_entsLevel2[i].draw)
+			_entsLevel2[i].draw->drawMasked(_entsLevel2[i].x, _entsLevel2[i].y);
+		else if (debug)
+			_debugQMark->drawMasked(_entsLevel2[i].x, _entsLevel2[i].y );
+
+		if (_entsLevel2[i].stunnedWait)
+			 g_hdb->_ai->_stunnedGfx[_stunAnim]->drawMasked(_entsLevel2[i].x , _entsLevel2[i].y);
+	}
+
+	// always draw the player last
+	if (_player && _player->level == 2 && !_playerInvisible) {
+		int x, y;
+		g_hdb->_map->getMapXY(&x, &y);
+
+		if (_player->draw)
+			_player->draw->drawMasked((_player->x - x) + _player->drawXOff, (_player->y - y) + _player->drawYOff);
+	}
+
+	if (_stunTimer < g_system->getMillis()) {
+		_stunAnim = (_stunAnim + 1) & 3;
+		_stunTimer = g_system->getMillis() + 100;
+	}
 }
 
 void AI::animGrabbing() {
