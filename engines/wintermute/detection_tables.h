@@ -1381,6 +1381,21 @@ static const WMEGameDescription gameDescriptions[] = {
 					"xlanguage_en.dcp", "0598bf752ce93b42bcaf1094df537c7b", 8533057,
 					"Linux.dcp", "21858bd77dc86b03f701fd47900e2f51", 984535), Common::EN_ANY, Common::kPlatformLinux, ADGF_UNSTABLE, LATEST_VERSION),
 
+	// Reversion: The Meeting (Desura, before April 2014) (Spanish)
+	WME_WINENTRY("reversion2", "",
+		WME_ENTRY2s("data.dcp", "c4aa6295bc6cef6995430232298fdd5f", 255654527,
+					"data.dcp", "c4aa6295bc6cef6995430232298fdd5f", 255654527), Common::ES_ESP, ADGF_UNSTABLE, LATEST_VERSION),
+	
+	// Reversion: The Meeting (Desura, before April 2014) (English)
+	WME_WINENTRY("reversion2", "",
+		WME_ENTRY2s("data.dcp", "c4aa6295bc6cef6995430232298fdd5f", 255654527,
+			"xlanguage_en.dcp", "74f3c75dc4f62e784682016b37990122", 8440487), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+	
+	// Reversion: The Meeting (Desura, before April 2014) (Chinese)
+	WME_WINENTRY("reversion2", "",
+		WME_ENTRY2s("data.dcp", "c4aa6295bc6cef6995430232298fdd5f", 255654527,
+			"xlanguage_nz.dcp", "42f775cb68f7718d0751758a66816b98", 8734800), Common::ZH_CNA, ADGF_UNSTABLE, LATEST_VERSION),
+
 	// Reversion: The Meeting (Steam, July 2014) (Spanish)
 	WME_WINENTRY("reversion2", "",
 		WME_ENTRY2s("data.dcp", "706adf37f47db7306b27ad75c35120e5", 256020490,
