@@ -475,6 +475,7 @@ void SupernovaEngine::showHelpScreen1() {
 	_gm->getKeyInput();
 
 	paletteFadeOut();
+
 	_gm->loadTime();
 	_gm->animationOn();
 }
@@ -500,6 +501,7 @@ void SupernovaEngine::showHelpScreen2() {
 	_gm->getKeyInput();
 
 	paletteFadeOut();
+
 	_gm->loadTime();
 	_gm->animationOn();
 }
