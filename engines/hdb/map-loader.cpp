@@ -942,6 +942,14 @@ void Map::centerMapXY(int x, int y) {
 	setMapXY(x, y);
 }
 
+bool Map::checkEntOnScreen(AIEntity *e) {
+	return ((e->x > _mapX - 32) && (e->x < _mapX + kScreenXTiles * kTileWidth) && (e->y > _mapY - 32) && (e->y < kScreenYTiles * kTileHeight));
+}
+
+bool Map::checkXYOnScreen(int x, int y) {
+	return ((x > _mapX - 32) && (x < _mapX + kScreenXTiles * kTileWidth) && (y > _mapY - 32) && (y < kScreenYTiles * kTileHeight));
+}
+
 bool Map::checkOneTileExistInRange(int tileIndex, int count) {
 	for (int i = 0; i < _width*_height; i++) {
 		if (_background[i] >= tileIndex && _background[i] < tileIndex + count)
