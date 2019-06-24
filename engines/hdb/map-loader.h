@@ -77,6 +77,16 @@ public:
 	void drawGratings();
 	void drawForegrounds();
 
+	bool isLoaded() {
+		return _mapLoaded;
+	}
+
+	bool onScreen(int x, int y) {
+		if ((x >= _mapX / kTileWidth) && (x < (_mapX / kTileWidth) + kScreenXTiles) && (y >= _mapY / kTileHeight) && (y < (_mapY / kTileHeight) + kScreenYTiles))
+			return true;
+		return false;
+	}
+
 	uint32 getMapBGTileFlags(int x, int y);
 	uint32 getMapFGTileFlags(int x, int y);
 	uint16 getMapBGTileIndex(int x, int y);
@@ -95,6 +105,7 @@ public:
 	// Check if one of the tiles in a range exists in the map on either layer
 	bool checkOneTileExistInRange(int tileIndex, int count);
 
+	uint16 _width, _height;
 	int _mapX, _mapY; // Coordinates of Map
 	int _mapTileX, _mapTileY; // Tile Coordinates of Map
 	int _mapTileXOff, _mapTileYOff; // Tile Coordinates Offset (0-31)
@@ -112,8 +123,6 @@ public:
 
 private:
 	char _name[32];
-	uint16 _width;
-	uint16 _height;
 	uint32 _backgroundOffset;
 	uint32 _foregroundOffset;
 	uint16 _iconNum;
