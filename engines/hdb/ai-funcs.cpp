@@ -1375,6 +1375,83 @@ int AI::checkForTouchplate(int x, int y) {
 	return 0;
 }
 
+AIEntity *AI::legalMove(int tileX, int tileY, int level, int *result) {
+	uint32 bgFlags = g_hdb->_map->getMapBGTileFlags(tileX, tileY);
+	uint32 fgFlags = g_hdb->_map->getMapFGTileFlags(tileX, tileY);
+	AIEntity *hit = findEntity(tileX, tileY);
+
+	if (hit && hit->state != STATE_FLOATING)
+		// If player and entity are not at the same level, are they on stairs?
+		if (hit->level != level)
+			if (level == 1 && !(bgFlags & kFlagStairTop))
+				hit = NULL;
+			else if (level == 1 && !(bgFlags & kFlagStairBot))
+				hit = NULL;
+
+	if (level == 1) {
+		if (bgFlags & kFlagSolid) {
+			*result = 0;
+			return hit;
+		}
+
+		if (bgFlags & (kFlagWater | kFlagSlime)) {
+			if (hit && hit->state == STATE_FLOATING) {
+				*result = 1;
+				return NULL;
+			} else
+				*result = 0;
+			return hit;
+		} else
+			*result = 1;
+	} else {
+		if (fgFlags & kFlagSolid) {
+			*result = 0;
+			return hit;
+		} else if (fgFlags & kFlagGrating) {
+			*result = 1;
+			return hit;
+		} else if (fgFlags & kFlagSolid) {
+			*result = 0;
+			return hit;
+		}
+
+		if (bgFlags & (kFlagWater | kFlagSlime | kFlagPlummet)) {
+			if (hit && hit->state == STATE_FLOATING) {
+				*result = 1;
+				return NULL;
+			} else
+				*result = 0;
+			return hit;
+		} else
+			*result = 1;
+	}
+	return hit;
+}
+
+AIEntity *AI::legalMoveOverWater(int tileX, int tileY, int level, int *result) {
+	uint32 bgFlags = g_hdb->_map->getMapBGTileFlags(tileX, tileY);
+	uint32 fgFlags = g_hdb->_map->getMapFGTileFlags(tileX, tileY);
+	AIEntity *hit = findEntity(tileX, tileY);
+
+	if (level == 1 ? (bgFlags & kFlagMonsterBlock) : (!(fgFlags &kFlagGrating) && ((fgFlags & kFlagSolid) || (bgFlags & kFlagMonsterBlock))))
+		*result = 0;
+	else
+		*result = 1;
+	return hit;
+}
+
+AIEntity *AI::legalMoveOverWaterIgnore(int tileX, int tileY, int level, int *result, AIEntity *ignore) {
+	uint32 bgFlags = g_hdb->_map->getMapBGTileFlags(tileX, tileY);
+	uint32 fgFlags = g_hdb->_map->getMapFGTileFlags(tileX, tileY);
+	AIEntity *hit = findEntityIgnore(tileX, tileY, ignore);
+
+	if (level == 1 ? (bgFlags & kFlagMonsterBlock) : (!(fgFlags &kFlagGrating) && ((fgFlags & kFlagSolid) || (bgFlags & kFlagMonsterBlock))))
+		*result = 0;
+	else
+		*result = 1;
+	return hit;
+}
+
 bool AI::checkFloating(int x, int y) {
 	for (Common::Array<AIEntity *>::iterator it = _floats->begin(); it != _floats->end(); it++) {
 		if ((*it)->tileX == x && (*it)->tileY == y)

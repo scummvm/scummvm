@@ -646,7 +646,9 @@ public:
 	void moveEnts();
 
 	int checkForTouchplate(int x, int y);
-
+	AIEntity *legalMove(int tileX, int tileY, int level, int *result);
+	AIEntity *legalMoveOverWater(int tileX, int tileY, int level, int *result);
+	AIEntity *legalMoveOverWaterIgnore(int tileX, int tileY, int level, int *result, AIEntity *ignore);
 	void addAnimateTarget(int x, int y, int start, int end, AnimSpeed speed, bool killAuto, bool inMap, const char *tileName);
 	void animateTargets();
 
