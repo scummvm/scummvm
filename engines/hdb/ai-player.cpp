@@ -460,10 +460,6 @@ void aiSlugSlingerInit2(AIEntity *e) {
 	warning("STUB: AI: aiSlugSlingerInit2 required");
 }
 
-void aiTurnBotAction(AIEntity *e) {
-	warning("STUB: AI: aiTurnBotAction required");
-}
-
 void aiPushBotAction(AIEntity *e) {
 	warning("STUB: AI: aiPushBotAction required");
 }
@@ -550,14 +546,6 @@ void aiDragonAction(AIEntity *e) {
 
 void aiDragonDraw(AIEntity *e, int mx, int my) {
 	warning("STUB: AI: aiDragonDraw required");
-}
-
-void aiTurnBotInit(AIEntity *e) {
-	warning("STUB: AI: aiTurnBotInit required");
-}
-
-void aiTurnBotInit2(AIEntity *e) {
-	warning("STUB: AI: aiTurnBotInit2 required");
 }
 
 void aiListenBotInit(AIEntity *e) {
