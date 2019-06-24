@@ -445,13 +445,28 @@ bool Map::load(Common::SeekableReadStream *stream) {
 			);
 			break;
 		case INFO_ARROW_4WAY:
-			warning("STUB: Map::load: AddToPathList required");
+			g_hdb->_ai->addToPathList(
+				_iconList[i].x,
+				_iconList[i].y,
+				2,
+				aiInfo[_iconList[i].icon].dir
+			);
 			break;
 		case INFO_ARROW_TURN:
-			warning("STUB: Map::load: AddToPathList required");
+			g_hdb->_ai->addToPathList(
+				_iconList[i].x,
+				_iconList[i].y,
+				1,
+				aiInfo[_iconList[i].icon].dir
+			);
 			break;
 		case INFO_ARROW_STOP:
-			warning("STUB: Map::load: AddToPathList required");
+			g_hdb->_ai->addToPathList(
+				_iconList[i].x,
+				_iconList[i].y,
+				0,
+				aiInfo[_iconList[i].icon].dir
+			);
 			break;
 
 		case INFO_ACTION1:
