@@ -480,14 +480,6 @@ void aiPushBotAction(AIEntity *e) {
 	warning("STUB: AI: aiPushBotAction required");
 }
 
-void aiOmniBotAction(AIEntity *e) {
-	warning("STUB: AI: aiOmniBotAction required");
-}
-
-void aiOmniBotMove(AIEntity *e) {
-	warning("STUB: AI: aiOmniBotMove required");
-}
-
 void aiLaserAction(AIEntity *e) {
 	warning("STUB: AI: aiLaserAction required");
 }
@@ -586,14 +578,6 @@ void aiListenBotInit(AIEntity *e) {
 
 void aiListenBotInit2(AIEntity *e) {
 	warning("STUB: AI: aiListenBotInit2 required");
-}
-
-void aiOmniBotInit(AIEntity *e) {
-	warning("STUB: AI: aiOmniBotInit required");
-}
-
-void aiOmniBotInit2(AIEntity *e) {
-	warning("STUB: AI: aiOmniBotInit2 required");
 }
 
 void aiLaserInit(AIEntity *e) {
