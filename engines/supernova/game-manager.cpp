@@ -225,15 +225,24 @@ void GameManager::processInput(Common::KeyState &state) {
 	switch (state.keycode) {
 	case Common::KEYCODE_F1:
 		// help
-		_vm->showHelpScreen();
+		if (_vm->_MSPart == 1)
+			_vm->showHelpScreen1();
+		else if (_vm->_MSPart == 2)
+			_vm->showHelpScreen2();
 		break;
 	case Common::KEYCODE_F2:
 		// show game manual
-		_vm->showTextReader("msn.doc");
+		if (_vm->_MSPart == 1)
+			_vm->showTextReader("msn.doc");
+		else if (_vm->_MSPart == 2)
+			_vm->showTextReader("ms2.doc");
 		break;
 	case Common::KEYCODE_F3:
 		// show game info
-		_vm->showTextReader("msn.inf");
+		if (_vm->_MSPart == 1)
+			_vm->showTextReader("msn.inf");
+		else if (_vm->_MSPart == 2)
+			_vm->showTextReader("ms2.inf");
 		break;
 	case Common::KEYCODE_F4:
 		_vm->setTextSpeed();

@@ -64,6 +64,17 @@ const char *gameText[] = {
 	"Es ist nichts Besonderes daran.",       // kStringDefaultDescription
 	"|", // kStringDialogSeparator
 	"Gespr\204ch beenden", // kStringConversationEnd
+	"F1    Hilfe",  // kStringHelpOverview1
+	"F2    Anleitung",  // kStringHelpOverview2
+	"F3    Programminformationen",  //kStringHelpOverview3
+	"F4    Textgeschwindigkeit",    //kStringHelpOverview4
+	"F5    Laden / Speichern",  // kStringHelpOverview5
+	"ESC   Vorspann \201berspringen",   // kStringHelpOverview6
+	"Alt-X Programm abbrechen",     // kStringHelpOverview7
+	"Textgeschwindigkeit:", // kStringTextSpeed
+	"Spiel abbrechen?", // kStringLeaveGame
+	"Ja", // kStringYes
+	"Nein", // kStringNo
 	// 20
 	"V2.02",            // kStringTitleVersion
 	"Teil 1:",          // kStringTitle1
@@ -786,7 +797,6 @@ const char *gameText[] = {
 	"Und jetzt raus mit Ihnen!", // kStringSupernova7
 	"Zehn Minuten sp\204ter ...", // kStringSupernova8
 	// 625
-	"Textgeschwindigkeit:", // kStringTextSpeed
 	"Was war das f\201r ein Ger\204usch?", // kStringGuardNoticed1
 	"Ich werde mal nachsehen.", // kStringGuardNoticed2
 	"Guten Tag, hier ist Horst Hummel.", // kStringTelomat1
@@ -816,17 +826,6 @@ const char *gameText[] = {
 	"Passwort:", // kStringTelomat21
 	"Deine Armbanduhr piepst,|die Alarmzeit ist erreicht.", // kStringAlarm
 	// 650
-	"Spiel abbrechen?", // kStringLeaveGame
-	"Ja", // kStringYes
-	"Nein", // kStringNo
-	"F1    Hilfe",  // kStringHelpOverview1
-	"F2    Anleitung",  // kStringHelpOverview2
-	// 655
-	"F3    Programminformationen",  //kStringHelpOverview3
-	"F4    Textgeschwindigkeit",    //kStringHelpOverview4
-	"F5    Laden / Speichern",  // kStringHelpOverview5
-	"ESC   Vorspann \201berspringen",   // kStringHelpOverview6
-	"Alt-X Programm abbrechen",     // kStringHelpOverview7
 	// 660
 	NULL
 };

@@ -455,7 +455,7 @@ void SupernovaEngine::setTextSpeed() {
 	_gm->animationOn();
 }
 
-void SupernovaEngine::showHelpScreen() {
+void SupernovaEngine::showHelpScreen1() {
 	if (_screen->isMessageShown())
 		_screen->removeMessage();
 	_gm->animationOff();
@@ -471,6 +471,31 @@ void SupernovaEngine::showHelpScreen() {
 	renderText(kStringHelpOverview5, 105, 145, kColorWhite99);
 	renderText(kStringHelpOverview6, 105, 155, kColorWhite99);
 	renderText(kStringHelpOverview7, 105, 165, kColorWhite99);
+	paletteFadeIn();
+	_gm->getKeyInput();
+
+	paletteFadeOut();
+	_gm->loadTime();
+	_gm->animationOn();
+}
+
+void SupernovaEngine::showHelpScreen2() {
+	if (_screen->isMessageShown())
+		_screen->removeMessage();
+	_gm->animationOff();
+	_gm->saveTime();
+
+	paletteFadeOut();
+	setCurrentImage(27);
+	renderImage(0);
+	renderBox(10, 70, 192, 100, kColorWhite35);
+	renderText(kStringHelpOverview1, 15, 80, kColorWhite99);
+	renderText(kStringHelpOverview2, 15, 92, kColorWhite99);
+	renderText(kStringHelpOverview3, 15, 104, kColorWhite99);
+	renderText(kStringHelpOverview4, 15, 116, kColorWhite99);
+	renderText(kStringHelpOverview5, 15, 128, kColorWhite99);
+	renderText(kStringHelpOverview6, 15, 140, kColorWhite99);
+	renderText(kStringHelpOverview7, 15, 152, kColorWhite99);
 	paletteFadeIn();
 	_gm->getKeyInput();
 

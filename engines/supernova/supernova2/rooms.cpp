@@ -973,8 +973,8 @@ bool Checkout::interact(Action verb, Object &obj1, Object &obj2) {
 		kStringCheckout3
 	};
 	static int dialCheckout2[2] = {
-		kStringYes,
-		kStringNo
+		kStringYes2,
+		kStringNo2
 	};
 	static int dialStage1[3] = {
 		kStringCheckout4,
@@ -1116,7 +1116,7 @@ bool Checkout::interact(Action verb, Object &obj1, Object &obj2) {
 				switch (_gm->dialog(3, _gm->_dials, dialCheckout1, 1)) {
 				case 0:
 					_gm->reply(kStringCheckout40, 1, 1 + 128);
-					_gm->say(kStringNo);
+					_gm->say(kStringNo2);
 					_gm->reply(kStringCheckout41, 1, 1 + 128);
 					_gm->say(kStringCheckout42);
 					break;
@@ -1128,7 +1128,7 @@ bool Checkout::interact(Action verb, Object &obj1, Object &obj2) {
 								*_gm->_rooms[CULTURE_PALACE]->getObject(4),
 								*_gm->_rooms[CHECKOUT]->getObject(2));
 					} else {
-						_gm->say(kStringNo);
+						_gm->say(kStringNo2);
 						_gm->reply(kStringCheckout45, 1, 1 + 128);
 						_gm->say(kStringCheckout46);
 					}
@@ -1624,7 +1624,7 @@ bool Elevator2::interact(Action verb, Object &obj1, Object &obj2) {
 				_vm->renderImage(0);
 				_vm->paletteFadeIn();
 				_gm->reply(kStringElevator15, 1, 1 + 128);
-				_gm->say(kStringYes);
+				_gm->say(kStringYes2);
 				_gm->reply(kStringElevator16, 1, 1 + 128);
 				_gm->reply(kStringElevator17, 1, 1 + 128);
 				if (_gm->dialog(2, _gm->_dials, dialBoss1, 0)) {

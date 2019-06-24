@@ -27,6 +27,7 @@
 #include "supernova/screen.h"
 #include "supernova/supernova.h"
 #include "supernova/supernova1/state.h"
+#include "supernova/supernova1/stringid.h"
 
 namespace Supernova {
 

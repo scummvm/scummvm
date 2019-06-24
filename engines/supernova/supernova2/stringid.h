@@ -28,9 +28,9 @@
 namespace Supernova {
 
 enum StringId2 {
-kString23 = 25, kString24,
-kString25, kString26, kString27, kStringTextSpeed, kStringLeaveGame,
-kString30, kString31, kStringGenericInteract1, kStringGenericInteract2, kStringGenericInteract3,
+kString23 = 36, kString24,
+kString25, kString26, kString27,
+kStringGenericInteract1, kStringGenericInteract2, kStringGenericInteract3,
 kStringGenericInteract4, kStringGenericInteract5, kStringGenericInteract6, kStringGenericInteract7, kStringGenericInteract8,
 kStringGenericInteract9, kStringGenericInteract10, kStringGenericInteract11, kStringGenericInteract12, kStringGenericInteract13,
 kStringIntro1, kStringIntro2, kStringIntro3, kStringIntro4, kStringIntro5,
@@ -97,7 +97,7 @@ kStringWhatYouWant, kStringWhoAreYou, kStringHorstHummel2, kStringNeverHeard, kS
 kStringImOnTV, kStringIDontKnow, kStringFunny, kStringAha, kStringICan,
 kStringFromWhom, kStringCost, kStringAsYouSay, kStringGetCard, kStringOnlyParticipation,
 kStringWhatForIt, kStringMakeOffer, kStringGoodOffer, kStringGiveCard, kStringIdiot,
-kStringCheckout1, kStringCheckout2, kStringCheckout3, kStringYes, kStringNo,
+kStringCheckout1, kStringCheckout2, kStringCheckout3, kStringYes2, kStringNo2,
 kStringCheckout4, kStringCheckout5, kStringCheckout6, kStringCheckout7, kStringCheckout8,
 kStringCheckout9, kStringCheckout10, kStringCheckout11, kStringCheckout12, kStringCheckout13,
 kStringCheckout14, kStringCheckout15, kStringCheckout16, kStringCheckout17, kStringCheckout18,

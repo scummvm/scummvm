@@ -28,7 +28,7 @@
 namespace Supernova {
 
 enum StringId1 {
-	kStringTitleVersion = 25, kStringTitle1, kStringTitle2, kStringTitle3, kStringIntro1,
+	kStringTitleVersion = 36, kStringTitle1, kStringTitle2, kStringTitle3, kStringIntro1,
 	kStringIntro2, kStringIntro3, kStringIntro4, kStringIntro5, kStringIntro6,
 	kStringIntro7, kStringIntro8, kStringIntro9, kStringIntro10, kStringIntro11,
 	kStringIntro12, kStringIntro13, kStringBroken, kStringTakeMessage,
@@ -169,15 +169,12 @@ enum StringId1 {
 	kStringGenericInteract_43, kStringSupernova1, kStringSupernova2, kStringSupernova3,
 	kStringSupernova4, kStringSupernova5, kStringSupernova6, kStringSupernova7, kStringSupernova8,
 	// 625
-	kStringTextSpeed, kStringGuardNoticed1, kStringGuardNoticed2, kStringTelomat1, kStringTelomat2,
+	kStringGuardNoticed1, kStringGuardNoticed2, kStringTelomat1, kStringTelomat2,
 	kStringTelomat3, kStringTelomat4, kStringTelomat5, kStringTelomat6, kStringTelomat7,
 	kStringTelomat8, kStringTelomat9, kStringTelomat10, kStringTelomat11, kStringTelomat12,
 	kStringTelomat13, kStringTelomat14, kStringTelomat15, kStringTelomat16, kStringTelomat17,
 	kStringTelomat18, kStringTelomat19, kStringTelomat20, kStringTelomat21, kStringAlarm,
 	// 650
-	kStringLeaveGame, kStringYes, kStringNo, kStringHelpOverview1, kStringHelpOverview2,
-	kStringHelpOverview3, kStringHelpOverview4, kStringHelpOverview5, kStringHelpOverview6, kStringHelpOverview7,
-
 	// Add two placeholder strings at the end for variable text
 	kStringPlaceholder1, kStringPlaceholder2,
 
