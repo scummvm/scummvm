@@ -552,12 +552,12 @@ void AI::setEntityGoal(AIEntity *e, int x, int y) {
 	yv = y - e->tileY;
 	if (yv < 0) {
 		e->yVel = -e->moveSpeed;
-		e->state = STATE_MOVELEFT;
-		e->dir = DIR_LEFT;
+		e->state = STATE_MOVEUP;
+		e->dir = DIR_UP;
 	} else if (yv > 0) {
 		e->yVel = e->moveSpeed;
-		e->state = STATE_MOVERIGHT;
-		e->dir = DIR_RIGHT;
+		e->state = STATE_MOVEDOWN;
+		e->dir = DIR_DOWN;
 	}
 
 	if (e->type == AI_GUY && _playerRunning) {
