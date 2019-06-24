@@ -26,7 +26,6 @@
 #include "common/str.h"
 
 #include "supernova/msn_def.h"
-#include "supernova/supernova1/stringid.h"
 #include "supernova/room.h"
 
 namespace Common {

@@ -102,7 +102,8 @@ public:
 	void setTextSpeed();
 	const Common::String &getGameString(int idx) const;
 	void setGameString(int idx, const Common::String &string);
-	void showHelpScreen();
+	void showHelpScreen1();
+	void showHelpScreen2();
 	Common::Error showTextReader(const char *filename);
 
 	// forwarding calls

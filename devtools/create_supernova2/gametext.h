@@ -65,17 +65,24 @@ const char *gameText[] = {
 "Es ist nichts Besonderes daran.",    //There's nothing special about it.
 "|", //Dialog separator
 "Gespr\204ch beenden",    //End of conversation
+"   F1 Hilfe",  // kStringHelpOverview1
+"   F2 Anleitung",  // kStringHelpOverview2
+"   F3 Programminformationen",  //kStringHelpOverview3
+"   F4 Textgeschwindigkeit",    //kStringHelpOverview4
+"   F5 Laden/Speichern",  // kStringHelpOverview5
+"  ESC Vorspann \201berspringen",   // kStringHelpOverview6
+"Alt X Spiel beenden",     // kStringHelpOverview7
+"Textgeschwindigkeit:",    //Text speed:
+"Spiel abbrechen?",    //Leave game?
+"Ja",    //Yes
+"Nein",    //No
 "Laden",    //Load
 "Speichern",    //Save
 // 25
 "Zur\201ck",    //Back
 "Neustart",    //Restart
 "Schreibfehler",    //write error
-"Textgeschwindigkeit:",    //Text speed:
-"Spiel abbrechen?",    //Leave game?
 // 30
-"Ja",    //Yes
-"Nein",    //No
 "Das tr\204gst du doch bei dir.",    //You already carry this.
 "Du bist doch schon da.",    //You are already there.
 "Das ist geschlossen.",    //This is closed.
