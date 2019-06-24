@@ -670,6 +670,7 @@ AI::AI() {
 	_ents = new Common::Array<AIEntity *>;
 	_floats = new Common::Array<AIEntity *>;
 	_animTargets = new Common::Array<AnimTarget *>;
+	_arrowPaths = new Common::Array<ArrowPath *>;
 
 	// REMOVE: Remove for final. Used here due to lack of a MENU
 	_numGems = _numGooCups = _numMonkeystones = _numInventory = 0;
@@ -682,6 +683,7 @@ AI::~AI() {
 	delete _ents;
 	delete _floats;
 	delete _animTargets;
+	delete _arrowPaths;
 }
 
 bool AI::init() {
@@ -831,6 +833,12 @@ void AI::restartSystem() {
 
 	// Clear the Entity List
 	_ents->clear();
+
+	// Clear Anim Targets List
+	_animTargets->clear();
+
+	// Clear ArrowPath List
+	_arrowPaths->clear();
 
 	// Clear Cinematic System
 	_cineActive = _cameraLock = _playerLock = _cineAborted = false;

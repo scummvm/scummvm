@@ -583,6 +583,14 @@ struct AutoAction {
 	AutoAction() : x(0), y(0), activated(false), luaFuncInit(""), luaFuncUse(""), entityName("") {}
 };
 
+struct ArrowPath {
+	uint16 type;
+	AIDir dir;
+	uint16 tileX, tileY;
+
+	ArrowPath() : type(0), dir(DIR_NONE), tileX(0), tileY(0) {}
+};
+
 struct CineCommand {
 	CineType cmdType;
 	double x, y;
@@ -936,6 +944,8 @@ public:
 	ActionInfo _actions[kMaxActions];
 
 	AutoAction _autoActions[kMaxAutoActions];
+
+	Common::Array<ArrowPath *> *_arrowPaths;
 
 	// Virtual Player
 	AIEntity _dummyPlayer;
