@@ -638,6 +638,7 @@ public:
 	void animEntFrames(AIEntity *e);
 	void animLuaEntity(const char *initName, AIState st);
 	void drawEnts(int x, int y, int w, int h);
+	void drawLevel2Ents();
 	void animGrabbing();
 
 	void moveEnts();
@@ -762,6 +763,7 @@ public:
 	void removeFirstWaypoint();
 	void clearWaypoints();
 	Tile *getStandFrameDir(AIEntity *e);
+	void drawWayPoints();
 
 	// Inventory Functions
 	bool addToInventory(AIEntity *e);

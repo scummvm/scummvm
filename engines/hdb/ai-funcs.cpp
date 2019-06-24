@@ -1224,6 +1224,10 @@ void AI::drawEnts(int x, int y, int w, int h) {
 	}
 }
 
+void AI::drawLevel2Ents() {
+	debug(9, "STUB: AI::drawLevel2Ents()");
+}
+
 void AI::animGrabbing() {
 	if (_player->state == STATE_GRABUP ||
 		_player->state == STATE_GRABDOWN ||

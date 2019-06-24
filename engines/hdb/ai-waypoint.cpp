@@ -104,4 +104,8 @@ Tile *AI::getStandFrameDir(AIEntity *e) {
 	return e->standdownGfx[0];
 }
 
+void AI::drawWayPoints() {
+	debug(9, "STUB: AI::drawWayPoints()");
+}
+
 } // End of Namespace
