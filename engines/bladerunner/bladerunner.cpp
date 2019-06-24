@@ -1211,6 +1211,10 @@ void BladeRunnerEngine::handleKeyDown(Common::Event &event) {
 		return;
 	}
 
+	if (_vk->isOpen()) {
+		return;
+	}
+
 	if (_dialogueMenu->isOpen()) {
 		return;
 	}
