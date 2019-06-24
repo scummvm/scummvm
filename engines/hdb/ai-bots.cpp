@@ -135,7 +135,7 @@ void aiOmniBotMissileInit(AIEntity *e) {
 }
 
 void aiOmniBotMissileInit2(AIEntity *e) {
-	for (int i = 0; i < e->movedownFrames;i++)
+	for (int i = 0; i < e->movedownFrames; i++)
 		e->moveleftGfx[i] = e->moverightGfx[i] = e->moveupGfx[i] = e->movedownGfx[i];
 
 	e->moveleftFrames = e->moverightFrames = e->moveupFrames = e->movedownFrames;
