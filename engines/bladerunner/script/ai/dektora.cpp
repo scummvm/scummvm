@@ -83,10 +83,17 @@ bool AIScriptDektora::Update() {
 				break;
 
 			case kGoalDektoraNR11BurningGoToMcCoy:
+#if BLADERUNNER_ORIGINAL_BUGS
 				if (Actor_Query_Inch_Distance_From_Actor(kActorDektora, kActorMcCoy) <= 48) {
 					Actor_Set_Goal_Number(kActorDektora, kGoalDektoraNR11BurningFallToNR10);
 					break;
 				}
+#else
+				if (Actor_Query_Inch_Distance_From_Actor(kActorDektora, kActorMcCoy) <= 54) {
+					Actor_Set_Goal_Number(kActorDektora, kGoalDektoraNR11BurningFallToNR10);
+					break;
+				}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 
 				if (comp_distance(kActorMcCoy, _x, _y, _z) > 12.0f) {
 					Actor_Query_XYZ(kActorMcCoy, &_x, &_y, &_z);
@@ -511,7 +518,9 @@ bool AIScriptDektora::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		break;
 
 	case kGoalDektoraNR11PrepareBurning:
+		// fall through
 	case kGoalDektoraNR11BurningGoToMcCoy:
+		// fall through
 	case kGoalDektoraGone:
 		break; // return true
 
