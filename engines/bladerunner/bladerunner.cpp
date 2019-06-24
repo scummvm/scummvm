@@ -2043,11 +2043,11 @@ bool BladeRunnerEngine::loadGame(Common::SeekableReadStream &stream) {
 		GUI::MessageDialog dialog(warningMsg, _("Continue"), 0);
 		dialog.runModal();
 		_cutContent = !_cutContent;
-		// force a Key Up event, since we need it to remove the KIA
+		// force a Key Down event, since we need it to remove the KIA
 		// but it's lost due to the modal dialogue
 		Common::EventManager *eventMan = _system->getEventManager();
 		Common::Event event;
-		event.type = Common::EVENT_KEYUP;
+		event.type = Common::EVENT_KEYDOWN;
 		eventMan->pushEvent(event);
 	}
 
