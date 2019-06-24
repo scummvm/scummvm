@@ -593,6 +593,11 @@ static const WMEGameDescription gameDescriptions[] = {
 		WME_ENTRY2s("portugues.dcp", "8772501afa2c630a7c697eb99e9c7bda", 5053303,
 					"data.dcp", "cb9865dc7e1db2990a8cf4bc13cf4999", 257643032), Common::PT_BRA, ADGF_UNSTABLE, LATEST_VERSION),
 
+	// Reversion: The Escape Version 1.3 (Spanish)
+	WME_WINENTRY("reversion1", "Version 1.3",
+		WME_ENTRY2s("data.dcp", "9ebb12f6fd7c038d079f81beb3bd96d5", 254185907,
+					"data.dcp", "9ebb12f6fd7c038d079f81beb3bd96d5", 254185907), Common::ES_ESP, ADGF_UNSTABLE, LATEST_VERSION),
+
 	// Reversion: The Escape Version 1.3 (Chinese)
 	WME_WINENTRY("reversion1", "Version 1.3",
 		WME_ENTRY2s("xlanguage_nz.dcp", "92c4065156e464211685bf799b3279fd", 5130600,
@@ -622,6 +627,11 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("reversion1", "Version 1.3",
 		WME_ENTRY2s("xlanguage_pt.dcp", "3d653debd37e56756a79401e1004c4d2", 4149165,
 					"data.dcp", "9ebb12f6fd7c038d079f81beb3bd96d5", 254185907), Common::PT_BRA, ADGF_UNSTABLE, LATEST_VERSION),
+
+	// Reversion: The Escape Version 1.3.2369 (Spanish)
+	WME_WINENTRY("reversion1", "Version 1.3.2369",
+		WME_ENTRY2s("data.dcp", "aecb5deeea7b0baa871fbd0cef35a648", 254219204,
+					"data.dcp", "aecb5deeea7b0baa871fbd0cef35a648", 254219204), Common::ES_ESP, ADGF_UNSTABLE, LATEST_VERSION),
 
 	// Reversion: The Escape Version 1.3.2369 (Chinese)
 	WME_WINENTRY("reversion1", "Version 1.3.2369",
@@ -1367,7 +1377,14 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Reversion: The Meeting (Spanish)
 	WME_WINENTRY("reversion2", "",
-		WME_ENTRY1s("data.dcp", "f7938cbfdc48f07934550245a3286921", 255672016), Common::ES_ESP, ADGF_UNSTABLE, LATEST_VERSION),
+		WME_ENTRY2s("data.dcp", "f7938cbfdc48f07934550245a3286921", 255672016,
+					"data.dcp", "f7938cbfdc48f07934550245a3286921", 255672016), Common::ES_ESP, ADGF_UNSTABLE, LATEST_VERSION),
+
+	// Reversion: The Meeting Version 2.0.2412 (Spanish)
+	WME_PLATENTRY("reversion2", "Version 2.0.2412",
+		WME_ENTRY3s("data.dcp", "f4ffc4df24b7bebad56a24930f33a2bc", 255766600,
+					"data.dcp", "f4ffc4df24b7bebad56a24930f33a2bc", 255766600,
+					"Linux.dcp", "21858bd77dc86b03f701fd47900e2f51", 984535), Common::ES_ESP, Common::kPlatformLinux, ADGF_UNSTABLE, LATEST_VERSION),
 
 	// Reversion: The Meeting Version 2.0.2412 (Chinese)
 	WME_PLATENTRY("reversion2", "Version 2.0.2412",
