@@ -652,6 +652,10 @@ public:
 	void addAnimateTarget(int x, int y, int start, int end, AnimSpeed speed, bool killAuto, bool inMap, const char *tileName);
 	void animateTargets();
 
+	AIEntity *playerCollision(int topBorder, int bottomBorder, int leftBorder, int rightBorder);
+	bool checkPlayerTileCollision(int x, int y);
+	bool checkPlayerCollision(int x, int y, int border);
+
 	// List functions
 	void addToActionList(int actionIndex, int x, int y, char *funcLuaInit, char *funcLuaUse);
 	bool checkActionList(AIEntity *e, int x, int y, bool lookAndGrab);
