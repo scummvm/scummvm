@@ -56,7 +56,6 @@ public:
 	Audio::AudioStream *getSoundStream(MusicId index);
 	Audio::AudioStream *getSirenStream();
 	MSNImage *getImage(int filenumber);
-	const byte *getImage(CursorId id) const;
 	const byte *getCursor(CursorId id) const;
 	int getAudioRate();
 

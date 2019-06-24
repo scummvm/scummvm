@@ -320,17 +320,6 @@ MSNImage *ResourceManager::getImage(int filenumber) {
 	}
 }
 
-const byte *ResourceManager::getImage(CursorId id) const {
-	switch (id) {
-	case kCursorNormal:
-		return _cursorNormal;
-	case kCursorWait:
-		return _cursorWait;
-	default:
-		return nullptr;
-	}
-}
-
 // Generate a tone which minimal length is the length and ends at the end
 // of sine period
 // NOTE: Size of the SineTable has to be the same as audioRate and a multiple of 4
@@ -562,7 +551,6 @@ int ResourceManager::getAudioRate() {
 	return _audioRate;
 }
 
-//TODO: leave only one function for getting Cursor image
 const byte *ResourceManager::getCursor(CursorId id) const {
 	switch (id) {
 	case kCursorNormal:
