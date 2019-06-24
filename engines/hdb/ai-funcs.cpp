@@ -529,6 +529,40 @@ AIEntity *AI::findEntity(int x, int y) {
 	return NULL;
 }
 
+AIEntity *AI::findEntityIgnore(int x, int y, AIEntity *ignore) {
+	for (Common::Array<AIEntity *>::iterator it = _ents->begin(); it != _ents->end(); it++) {
+		if ((*it)->tileX == x && (*it)->tileY == y && (*it) != ignore) {
+			return *it;
+		}
+	}
+
+	for (Common::Array<AIEntity *>::iterator it = _floats->begin(); it != _floats->end(); it++) {
+		if ((*it)->tileX == x && (*it)->tileY == y && (*it) != ignore) {
+			return *it;
+		}
+	}
+
+	warning("STUB: findEntityIgnore: Check for Laser");
+	return NULL;
+}
+
+AIEntity *AI::findEntityType(AIType type, int x, int y) {
+	for (Common::Array<AIEntity *>::iterator it = _ents->begin(); it != _ents->end(); it++) {
+		if ((*it)->tileX == x && (*it)->tileY == y && (*it)->type == type) {
+			return *it;
+		}
+	}
+
+	for (Common::Array<AIEntity *>::iterator it = _floats->begin(); it != _floats->end(); it++) {
+		if ((*it)->tileX == x && (*it)->tileY == y && (*it)->type == type) {
+			return *it;
+		}
+	}
+
+	warning("STUB: findEntityType: Check for Laser");
+	return NULL;
+}
+
 void AI::removeEntity(AIEntity *e) {
 	_ents->erase(&e);
 }
