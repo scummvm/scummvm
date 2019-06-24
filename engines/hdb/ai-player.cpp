@@ -380,18 +380,6 @@ void aiRailRiderOnAction(AIEntity *e) {
 	warning("STUB: AI: aiRailRiderOnAction required");
 }
 
-void aiOmniBotMissileAction(AIEntity *e) {
-	warning("STUB: AI: aiOmniBotMissileAction required");
-}
-
-void aiOmniBotMissileInit(AIEntity *e) {
-	warning("STUB: AI: aiOmniBotMissileInit required");
-}
-
-void aiOmniBotMissileInit2(AIEntity *e) {
-	warning("STUB: AI: aiOmniBotMissileInit2 required");
-}
-
 void aiSlugAttackAction(AIEntity *e) {
 	warning("STUB: AI: aiSlugAttackAction required");
 }
