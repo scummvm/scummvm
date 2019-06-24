@@ -114,6 +114,13 @@ public:
 		_mapExplosions[y * _width + x] = value;
 	}
 
+	bool boomBarrelExist(int x, int y) {
+		return _mapExpBarrels[y * _width + x];
+	}
+	void setBoomBarrel(int x, int y, int value) {
+		_mapExpBarrels[y * _width + x] = value;
+	}
+
 	bool laserBeamExist(int x, int y) {
 		return _mapLaserBeams[y * _width + x];
 	}
