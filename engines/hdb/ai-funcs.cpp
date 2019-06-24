@@ -1145,8 +1145,10 @@ void AI::drawEnts(int x, int y, int w, int h) {
 					_entsLevel2[_numLevel2Ents].e = e;
 					_entsLevel2[_numLevel2Ents].stunnedWait = 0;
 					_numLevel2Ents++;
+					debugN(5, "not drawing1...");
 				} else {
 					e->aiDraw(e, x, y);
+					debugN(5, "drawing1...");
 				}
 			}
 		}
@@ -1162,8 +1164,11 @@ void AI::drawEnts(int x, int y, int w, int h) {
 					_entsLevel2[_numLevel2Ents].e = e;
 					_entsLevel2[_numLevel2Ents].stunnedWait = 0;
 					_numLevel2Ents++;
-				} else
+					debugN(5, "not drawing2...");
+				} else {
 					e->aiDraw(e, x, y);
+					debugN(5, "drawing2...");
+				}
 			}
 
 			switch (e->type) {
@@ -1183,6 +1188,7 @@ void AI::drawEnts(int x, int y, int w, int h) {
 					_entsLevel2[_numLevel2Ents].e = NULL;
 					_entsLevel2[_numLevel2Ents].stunnedWait = e->stunnedWait;
 					_numLevel2Ents++;
+					debugN(5, "not trying to draw...");
 				} else {
 					debugN(5, "trying to draw...");
 
@@ -1293,8 +1299,8 @@ void AI::moveEnts() {
 		}
 	}
 
-	warning("STUB: moveEnts: Laser Rescan");
-	warning("STUB: moveEnts: Laser Looping Sound Channel");
+	debug(9, "STUB: moveEnts: Laser Rescan");
+	debug(9, "STUB: moveEnts: Laser Looping Sound Channel");
 }
 
 int AI::checkForTouchplate(int x, int y) {
