@@ -129,4 +129,44 @@ void aiOmniBotAction(AIEntity *e) {
 		e->sequence--;
 }
 
+void aiOmniBotMissileInit(AIEntity *e) {
+	e->state = STATE_MOVEDOWN;
+	e->aiAction = aiOmniBotMissileAction;
+}
+
+void aiOmniBotMissileInit2(AIEntity *e) {
+	for (int i = 0; i < e->movedownFrames;i++)
+		e->moveleftGfx[i] = e->moverightGfx[i] = e->moveupGfx[i] = e->movedownGfx[i];
+
+	e->moveleftFrames = e->moverightFrames = e->moveupFrames = e->movedownFrames;
+	e->draw = e->movedownGfx[0];
+}
+
+void aiOmniBotMissileAction(AIEntity *e) {
+	AIEntity *p = g_hdb->_ai->getPlayer();
+
+	g_hdb->_ai->animEntFrames(e);
+	e->x += e->xVel;
+	e->y += e->yVel;
+	e->tileX = e->x / kTileWidth;
+	e->tileY = e->y / kTileHeight;
+
+	// Did we hit a solid wall?
+	int result;
+	AIEntity *hit = g_hdb->_ai->legalMoveOverWaterIgnore(e->tileX, e->tileY, e->level, &result, e);
+
+	if (hit || !result) {
+		g_hdb->_ai->addAnimateTarget(e->x, e->y, 0, 3, ANIM_FAST, false, false, "steam_puff_sit");
+		g_hdb->_ai->removeEntity(e);
+	}
+
+	// On Even tiles, check for hitting player
+	if (onEvenTile(e->x, e->y))
+		if (e->onScreen && (p->level == e->level) && g_hdb->_ai->checkPlayerCollision(e->x, e->y, 4) && !g_hdb->_ai->playerDead()) {
+			g_hdb->_ai->killPlayer(DEATH_NORMAL);
+			g_hdb->_ai->addAnimateTarget(e->x, e->y, 0, 3, ANIM_FAST, false, false, "steam_puff_sit");
+			g_hdb->_ai->removeEntity(e);
+		}
+}
+
 } // End of Namespace
