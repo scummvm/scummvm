@@ -107,6 +107,13 @@ public:
 	// Check if one of the tiles in a range exists in the map on either layer
 	bool checkOneTileExistInRange(int tileIndex, int count);
 
+	bool explosionExist(int x, int y) {
+		return _mapExplosions[y * _width + x];
+	}
+	void setExplosion(int x, int y, int value) {
+		_mapExplosions[y * _width + x] = value;
+	}
+
 	uint16 _width, _height;
 	int _mapX, _mapY; // Coordinates of Map
 	int _mapTileX, _mapTileY; // Tile Coordinates of Map
