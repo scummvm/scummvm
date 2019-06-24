@@ -418,4 +418,23 @@ bool AI::autoActive(int x, int y) {
 	return false;
 }
 
+void AI::addToPathList(int x, int y, int type, AIDir dir) {
+	ArrowPath *arrowPath = new ArrowPath;
+
+	arrowPath->type = type;
+	arrowPath->tileX = x;
+	arrowPath->tileX = y;
+	arrowPath->dir = dir;
+
+	_arrowPaths->push_back(arrowPath);
+}
+
+ArrowPath *AI::findArrowPath(int x, int y) {
+	for (Common::Array<ArrowPath *>::iterator it = _arrowPaths->begin(); it != _arrowPaths->end(); it++) {
+		if ((*it)->tileX == x && (*it)->tileY == y)
+			return *it;
+	}
+	return NULL;
+}
+
 } // End of Namespace
