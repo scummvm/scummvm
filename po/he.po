@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-06-24 01:09+0200\n"
+"POT-Creation-Date: 2019-06-24 19:41+0200\n"
 "PO-Revision-Date: 2018-12-18 21:54+0000\n"
 "Last-Translator: Matan Bareket <mataniko@gmail.com>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -2257,56 +2257,56 @@ msgstr ""
 msgid "Swipe three fingers to the right to toggle."
 msgstr ""
 
-#: backends/graphics/opengl/opengl-graphics.cpp:151
+#: backends/graphics/opengl/opengl-graphics.cpp:152
 msgid "OpenGL"
 msgstr ""
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:272
+#: backends/graphics/opengl/opengl-graphics.cpp:240
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:75
 msgid "Center"
 msgstr ""
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:273
+#: backends/graphics/opengl/opengl-graphics.cpp:241
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:76
 msgid "Pixel-perfect scaling"
 msgstr ""
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:274
+#: backends/graphics/opengl/opengl-graphics.cpp:242
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:77
 msgid "Fit to window"
 msgstr ""
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:275
+#: backends/graphics/opengl/opengl-graphics.cpp:243
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:78
 msgid "Stretch to window"
 msgstr ""
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:652
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:603
 #, c-format
 msgid "Resolution: %dx%d"
 msgstr ""
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:673
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:624
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2511
 msgid "Enabled aspect ratio correction"
 msgstr ""
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:675
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:626
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2517
 msgid "Disabled aspect ratio correction"
 msgstr ""
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:695
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:646
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2534
 msgid "Filtering enabled"
 msgstr ""
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:697
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:648
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2536
 msgid "Filtering disabled"
 msgstr ""
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:724
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:676
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2565
 msgid "Stretch mode"
 msgstr ""
@@ -3147,11 +3147,11 @@ msgstr ""
 msgid "I don't understand.\n"
 msgstr ""
 
-#: engines/glk/alan2/alan2.cpp:160
+#: engines/glk/alan2/alan2.cpp:78
 msgid "This is too short to be a valid Alan2 file."
 msgstr ""
 
-#: engines/glk/alan2/alan2.cpp:165
+#: engines/glk/alan2/alan2.cpp:83
 msgid "This is not a valid Alan2 file."
 msgstr ""
 
