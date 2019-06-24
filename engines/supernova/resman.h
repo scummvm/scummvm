@@ -70,14 +70,12 @@ private:
 	byte *generateTone(byte *buffer, int frequency, int length, int audioRate, Common::SineTable &table);
 
 private:
-	Common::ScopedPtr<Audio::SeekableAudioStream> _soundSamples[kAudioNumSamples1];
+	Common::ScopedPtr<Audio::SeekableAudioStream> *_soundSamples;
 	Common::ScopedPtr<Common::MemoryReadStream> _musicIntroBuffer;
 	Common::ScopedPtr<Common::MemoryReadStream> _musicOutroBuffer;
-	Common::ScopedPtr<Common::MemoryReadStream> _musicMadMonkeysBuffer;
 	Common::ScopedPtr<Audio::AudioStream> _musicIntro;
 	Common::ScopedPtr<Audio::AudioStream> _musicOutro;
 	Common::ScopedPtr<Audio::AudioStream> _sirenStream;
-	Common::ScopedPtr<Audio::AudioStream> _musicMadMonkeys;
 	int _MSPart;
 	int _audioRate;
 	MSNImage *_images[kNumImageFiles];

@@ -44,8 +44,7 @@ struct AudioInfo {
 
 static Common::MemoryReadStream *convertToMod(const char *filename, int version = 1);
 
-static const AudioInfo audioInfo[] = {
-	// Supernova 1
+static const AudioInfo audioInfo1[] = {
 	{44,     0,    -1},
 	{45,     0,    -1},
 	{46,     0,  2510},
@@ -66,9 +65,9 @@ static const AudioInfo audioInfo[] = {
 	{54, 24020, 30030},
 	{54, 30030, 31040},
 	{54, 31040,    -1},
+};
 
-	{0 ,     0,     0},
-	// Supernova 2
+static const AudioInfo audioInfo2[] = {
 	{55,     18230,    -1},
 	{47,     0,     16010},
 	{47,     16010, 17020},
@@ -134,6 +133,7 @@ ResourceManager::~ResourceManager() {
 		for (int i = 0; i < 47; i++)
 			delete _images[i];
 	}
+	delete[] _soundSamples;
 }
 
 void ResourceManager::initSoundFiles1() {
@@ -143,24 +143,25 @@ void ResourceManager::initSoundFiles1() {
 	//     where SS SS (LE uint16) is the size of the sound sample + 2
 	//   - samples end with a footer of 4 bytes: 00 00
 	// Skip those in the buffer
+	_soundSamples = new Common::ScopedPtr<Audio::SeekableAudioStream>[kAudioNumSamples1];
 	Common::File file;
 
 	for (int i = 0; i < kAudioNumSamples1; ++i) {
-		if (!file.open(Common::String::format("msn_data.%03d", audioInfo[i]._filenumber))) {
+		if (!file.open(Common::String::format("msn_data.%03d", audioInfo1[i]._filenumber))) {
 			error("File %s could not be read!", file.getName());
 		}
 
 		int length = 0;
 		byte *buffer = nullptr;
 
-		if (audioInfo[i]._offsetEnd == -1) {
+		if (audioInfo1[i]._offsetEnd == -1) {
 			file.seek(0, SEEK_END);
-			length = file.pos() - audioInfo[i]._offsetStart - 10;
+			length = file.pos() - audioInfo1[i]._offsetStart - 10;
 		} else {
-			length = audioInfo[i]._offsetEnd - audioInfo[i]._offsetStart - 10;
+			length = audioInfo1[i]._offsetEnd - audioInfo1[i]._offsetStart - 10;
 		}
 		buffer = new byte[length];
-		file.seek(audioInfo[i]._offsetStart + 6);
+		file.seek(audioInfo1[i]._offsetStart + 6);
 		file.read(buffer, length);
 		file.close();
 
@@ -180,24 +181,25 @@ void ResourceManager::initSoundFiles2() {
 	//     where SS SS (LE uint16) is the size of the sound sample + 2
 	//   - samples end with a footer of 4 bytes: 00 00
 	// Skip those in the buffer
+	_soundSamples = new Common::ScopedPtr<Audio::SeekableAudioStream>[kAudioNumSamples2];
 	Common::File file;
 
-	for (int i = 0; i < kAudioNumSamples2 - kAudioNumSamples1 - 1; ++i) {
-		if (!file.open(Common::String::format("ms2_data.%03d", audioInfo[i + kAudioNumSamples1 + 1]._filenumber))) {
+	for (int i = 0; i < kAudioNumSamples2; ++i) {
+		if (!file.open(Common::String::format("ms2_data.%03d", audioInfo2[i]._filenumber))) {
 			error("File %s could not be read!", file.getName());
 		}
 
 		int length = 0;
 		byte *buffer = nullptr;
 
-		if (audioInfo[i + kAudioNumSamples1 + 1]._offsetEnd == -1) {
+		if (audioInfo2[i]._offsetEnd == -1) {
 			file.seek(0, SEEK_END);
-			length = file.pos() - audioInfo[i + kAudioNumSamples1 + 1]._offsetStart - 10;
+			length = file.pos() - audioInfo2[i]._offsetStart - 10;
 		} else {
-			length = audioInfo[i + kAudioNumSamples1 + 1]._offsetEnd - audioInfo[i + kAudioNumSamples1 + 1]._offsetStart - 10;
+			length = audioInfo2[i]._offsetEnd - audioInfo2[i]._offsetStart - 10;
 		}
 		buffer = new byte[length];
-		file.seek(audioInfo[i + kAudioNumSamples1 + 1]._offsetStart + 6);
+		file.seek(audioInfo2[i]._offsetStart + 6);
 		file.read(buffer, length);
 		file.close();
 
@@ -208,7 +210,7 @@ void ResourceManager::initSoundFiles2() {
 	initSiren();
 
 	_musicIntroBuffer.reset(convertToMod("ms2_data.052", 2));
-	_musicMadMonkeysBuffer.reset(convertToMod("ms2_data.056", 2));
+	_musicOutroBuffer.reset(convertToMod("ms2_data.056", 2));
 }
 
 void ResourceManager::initGraphics() {
@@ -262,10 +264,7 @@ void ResourceManager::initImages2() {
 
 Audio::SeekableAudioStream *ResourceManager::getSoundStream(AudioId index) {
 	Audio::SeekableAudioStream *stream;
-	if (_MSPart == 1)
-		stream = _soundSamples[index].get();
-	else if (_MSPart == 2)
-		stream = _soundSamples[index - kAudioNumSamples1 - 1].get();
+	stream = _soundSamples[index].get();
 	stream->rewind();
 
 	return stream;
@@ -277,8 +276,7 @@ Audio::AudioStream *ResourceManager::getSoundStream(MusicId index) {
 		_musicIntro.reset(Audio::makeProtrackerStream(_musicIntroBuffer.get()));
 		return _musicIntro.get();
 	case kMusicMadMonkeys:
-		_musicMadMonkeys.reset(Audio::makeProtrackerStream(_musicMadMonkeysBuffer.get()));
-		return _musicMadMonkeys.get();
+		// fall through
 	case kMusicOutro:
 		_musicOutro.reset(Audio::makeProtrackerStream(_musicOutroBuffer.get()));
 		return _musicOutro.get();

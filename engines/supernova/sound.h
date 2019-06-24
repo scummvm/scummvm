@@ -55,7 +55,7 @@ enum AudioId {
 	kAudioNumSamples1,
 
 	// Supernova 2
-	kAudioIntroDing,
+	kAudioIntroDing = 0,
 	kAudioSuccess2,
 	kAudioTaxiOpen,
 	kAudioTaxiLeaving,
@@ -78,10 +78,9 @@ enum AudioId {
 };
 
 enum MusicId {
-	kMusicIntro = 49,
-	kMusicIntro2 = 52,
-	kMusicOutro = 52,
-	kMusicMadMonkeys = 51
+	kMusicIntro,
+	kMusicOutro,
+	kMusicMadMonkeys
 };
 
 class Sound {
