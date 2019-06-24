@@ -673,6 +673,9 @@ AI::AI() {
 
 	// REMOVE: Remove for final. Used here due to lack of a MENU
 	_numGems = _numGooCups = _numMonkeystones = _numInventory = 0;
+
+	_stunAnim = 0;
+	_stunTimer = g_system->getMillis();
 }
 
 AI::~AI() {
@@ -683,6 +686,9 @@ AI::~AI() {
 
 bool AI::init() {
 	warning("STUB: AI::init incomplete");
+
+	_debugQMark = new Tile;
+	_debugQMark->load(g_hdb->_fileMan->findFirstData("icon_question_mark", TYPE_ICON32));
 
 	// Clear Waypoint list and load Waypoint graphics
 	_numWaypoints = 0;

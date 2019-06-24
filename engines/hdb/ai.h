@@ -923,6 +923,7 @@ public:
 	Waypoint _waypoints[kMaxWaypoints];
 	int _numWaypoints;
 	Tile *_waypointGfx[4]; // Animating waypoint gfx
+	Tile *_debugQMark;
 
 	ActionInfo _actions[kMaxActions];
 
@@ -939,6 +940,9 @@ public:
 
 	CineBlit *_cineBlitList[kMaxCineGfx];
 	int _numCineBlitList;
+
+	int _stunAnim;
+	uint32 _stunTimer;
 
 private:
 
