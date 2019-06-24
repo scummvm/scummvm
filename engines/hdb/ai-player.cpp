@@ -464,10 +464,6 @@ void aiDiverterDraw(AIEntity *e, int mx, int my) {
 	warning("STUB: AI: aiDiverterDraw required");
 }
 
-void aiRightBotAction(AIEntity *e) {
-	warning("STUB: AI: aiRightBotAction required");
-}
-
 void aiDeadEyeAction(AIEntity *e) {
 	warning("STUB: AI: aiDeadEyeAction required");
 }
@@ -554,14 +550,6 @@ void aiDiverterInit(AIEntity *e) {
 
 void aiDiverterInit2(AIEntity *e) {
 	warning("STUB: AI: aiDiverterInit2 required");
-}
-
-void aiRightBotInit(AIEntity *e) {
-	warning("STUB: AI: aiRightBotInit required");
-}
-
-void aiRightBotInit2(AIEntity *e) {
-	warning("STUB: AI: aiRightBotInit2 required");
 }
 
 void aiPushBotInit(AIEntity *e) {

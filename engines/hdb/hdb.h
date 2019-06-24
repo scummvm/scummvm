@@ -81,6 +81,7 @@ enum Flag {
 	kFlagEnergyFloor	= 0x40000,
 	kFlagPlasmaFloor	= 0x6000D,
 	kFlagRadFloor		= 0x6800D,
+	kFlagSpecial		= 0x100000,
 	kFlagStairBot		= 0x200000,
 	kFlagStairTop		= 0x400000,
 	kFlagAnimSlow		= 0x800000,
