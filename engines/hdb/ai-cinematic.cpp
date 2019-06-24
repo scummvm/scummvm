@@ -193,7 +193,8 @@ void AI::processCines() {
 					warning("Can't locate '%s' in moveEntity", _cine[i]->title);
 				}
 			} else {
-				debug(3, "C_MOVEENTITY: _cine[%d]->e->goalX: %d", i, _cine[i]->e->goalX);
+				debug(3, "C_MOVEENTITY: _cine[%d]->e->tileX: %d, _cine[%d]->e->goalX: %d", i, _cine[i]->e->tileX, i, _cine[i]->e->goalX);
+				debug(3, "C_MOVEENTITY: _cine[%d]->e->tileY: %d, _cine[%d]->e->goalY: %d", i, _cine[i]->e->tileY, i, _cine[i]->e->goalY);
 				if (!_cine[i]->e->goalX) {
 					complete = true;
 				}
