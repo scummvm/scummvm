@@ -29,7 +29,7 @@ void AI::addWaypoint(int px, int py, int x, int y, int level) {
 		return;
 
 	// Check for duplicates
-	for (int i = 0;i < _numWaypoints;i++)
+	for (int i = 0; i < _numWaypoints; i++)
 		if (_waypoints[i].x == x && _waypoints[i].y == y)
 			return;
 
@@ -56,7 +56,7 @@ void AI::removeFirstWaypoint() {
 		return;
 
 	int i;
-	for (i = 0;i < _numWaypoints;i++) {
+	for (i = 0; i < _numWaypoints; i++) {
 		_waypoints[i] = _waypoints[i + 1];
 	}
 

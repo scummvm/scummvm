@@ -544,7 +544,7 @@ struct AnimTarget {
 	Tile *gfxList[kMaxAnimTFrames];
 
 	AnimTarget() : x(0), y(0), start(0), end(0), vel(0), animCycle(0), animFrame(0), killAuto(false), inMap(false) {
-		for (int i = 0; i < kMaxAnimTFrames;i++) {
+		for (int i = 0; i < kMaxAnimTFrames; i++) {
 			gfxList[i] = new Tile;
 		}
 	}

@@ -194,7 +194,7 @@ Tile *DrawMan::getTile(int index) {
 }
 
 void DrawMan::cacheTileSequence(int tileIndex, int count) {
-	for (int i = tileIndex;i < tileIndex + count;i++)
+	for (int i = tileIndex; i < tileIndex + count; i++)
 		getTile(i);
 }
 
@@ -450,7 +450,7 @@ bool DrawMan::loadFont(const char *string) {
 	int startPos = stream->pos();	// Position after _fontHeader
 	int curPos;						// Position after reading cInfo
 	uint16 *ptr;
-	for (int i = 0; i < _fontHeader.numChars;i++) {
+	for (int i = 0; i < _fontHeader.numChars; i++) {
 		cInfo = new CharInfo;
 		cInfo->width = (int16)stream->readUint32LE();
 		cInfo->offset = (int32)stream->readUint32LE();
@@ -497,7 +497,7 @@ void DrawMan::drawText(const char *string) {
 	unsigned char c;
 	char cr[256];	// Carriage Return Array
 
-	for (int i = 0; i < (int)strlen(string);i++) {
+	for (int i = 0; i < (int)strlen(string); i++) {
 		c = string[i];
 		width += _charInfoBlocks[c]->width + _fontHeader.kerning + kFontIncrement;
 		if (c == ' ')
