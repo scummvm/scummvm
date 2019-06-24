@@ -629,6 +629,8 @@ public:
 	void stopEntity(AIEntity *e);
 	AIEntity *locateEntity(const char *luaName);
 	AIEntity *findEntity(int x, int y);
+	AIEntity *findEntityIgnore(int x, int y, AIEntity *ignore);
+	AIEntity *findEntityType(AIType type, int x, int y);
 	void removeEntity(AIEntity *e);
 	void setEntityGoal(AIEntity *e, int x, int y);
 	void initAllEnts();
