@@ -225,6 +225,8 @@ void GameManager::processInput(Common::KeyState &state) {
 	switch (state.keycode) {
 	case Common::KEYCODE_F1:
 		// help
+		if (!_guiEnabled)
+			return;
 		if (_vm->_MSPart == 1)
 			_vm->showHelpScreen1();
 		else if (_vm->_MSPart == 2)
@@ -232,6 +234,8 @@ void GameManager::processInput(Common::KeyState &state) {
 		break;
 	case Common::KEYCODE_F2:
 		// show game manual
+		if (!_guiEnabled)
+			return;
 		if (_vm->_MSPart == 1)
 			_vm->showTextReader("msn.doc");
 		else if (_vm->_MSPart == 2)
@@ -239,12 +243,16 @@ void GameManager::processInput(Common::KeyState &state) {
 		break;
 	case Common::KEYCODE_F3:
 		// show game info
+		if (!_guiEnabled)
+			return;
 		if (_vm->_MSPart == 1)
 			_vm->showTextReader("msn.inf");
 		else if (_vm->_MSPart == 2)
 			_vm->showTextReader("ms2.inf");
 		break;
 	case Common::KEYCODE_F4:
+		if (!_guiEnabled)
+			return;
 		_vm->setTextSpeed();
 		break;
 	case Common::KEYCODE_F5:
@@ -850,6 +858,7 @@ void GameManager::edit(Common::String &input, int x, int y, uint length) {
 			break;
 		}
 	}
+	_guiEnabled = true;
 }
 
 void GameManager::takeMoney(int amount) {
