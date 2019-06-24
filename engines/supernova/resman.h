@@ -45,7 +45,8 @@ public:
 	};
 
 public:
-	static const int kNumImageFiles = 47;
+	static const int kNumImageFiles1 = 45;
+	static const int kNumImageFiles2 = 47;
 
 public:
 	ResourceManager(int MSPart);
@@ -60,12 +61,13 @@ public:
 	int getAudioRate();
 
 private:
-	void initSoundFiles1();
-	void initSoundFiles2();
 	void initGraphics();
 	void initCursorGraphics();
 	void initImages1();
 	void initImages2();
+	void loadImage(int filenumber);
+	void loadSound1(AudioId id);
+	void loadSound2(AudioId id);
 	void initSiren();
 	byte *generateTone(byte *buffer, int frequency, int length, int audioRate, Common::SineTable &table);
 
@@ -78,7 +80,7 @@ private:
 	Common::ScopedPtr<Audio::AudioStream> _sirenStream;
 	int _MSPart;
 	int _audioRate;
-	MSNImage *_images[kNumImageFiles];
+	MSNImage **_images;
 	byte _cursorNormal[256];
 	byte _cursorWait[256];
 };

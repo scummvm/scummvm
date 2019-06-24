@@ -118,9 +118,9 @@ ResourceManager::ResourceManager(int MSPart)
 	: _audioRate(11931)
 	, _MSPart(MSPart) {
 	if (MSPart == 1)
-		initSoundFiles1();
+		_soundSamples = new Common::ScopedPtr<Audio::SeekableAudioStream>[kAudioNumSamples1];
 	else if (MSPart == 2)
-		initSoundFiles2();
+		_soundSamples = new Common::ScopedPtr<Audio::SeekableAudioStream>[kAudioNumSamples2];
 	initGraphics();
 }
 
@@ -134,83 +134,7 @@ ResourceManager::~ResourceManager() {
 			delete _images[i];
 	}
 	delete[] _soundSamples;
-}
-
-void ResourceManager::initSoundFiles1() {
-	// Sound
-	// Note:
-	//   - samples start with a header of 6 bytes: 01 SS SS 00 AD 00
-	//     where SS SS (LE uint16) is the size of the sound sample + 2
-	//   - samples end with a footer of 4 bytes: 00 00
-	// Skip those in the buffer
-	_soundSamples = new Common::ScopedPtr<Audio::SeekableAudioStream>[kAudioNumSamples1];
-	Common::File file;
-
-	for (int i = 0; i < kAudioNumSamples1; ++i) {
-		if (!file.open(Common::String::format("msn_data.%03d", audioInfo1[i]._filenumber))) {
-			error("File %s could not be read!", file.getName());
-		}
-
-		int length = 0;
-		byte *buffer = nullptr;
-
-		if (audioInfo1[i]._offsetEnd == -1) {
-			file.seek(0, SEEK_END);
-			length = file.pos() - audioInfo1[i]._offsetStart - 10;
-		} else {
-			length = audioInfo1[i]._offsetEnd - audioInfo1[i]._offsetStart - 10;
-		}
-		buffer = new byte[length];
-		file.seek(audioInfo1[i]._offsetStart + 6);
-		file.read(buffer, length);
-		file.close();
-
-		byte streamFlag = Audio::FLAG_UNSIGNED | Audio::FLAG_LITTLE_ENDIAN;
-		_soundSamples[i].reset(Audio::makeRawStream(buffer, length, _audioRate,
-													streamFlag, DisposeAfterUse::YES));
-	}
-
-	_musicIntroBuffer.reset(convertToMod("msn_data.052"));
-	_musicOutroBuffer.reset(convertToMod("msn_data.049"));
-}
-
-void ResourceManager::initSoundFiles2() {
-	// Sound
-	// Note:
-	//   - samples start with a header of 6 bytes: 01 SS SS 00 AD 00
-	//     where SS SS (LE uint16) is the size of the sound sample + 2
-	//   - samples end with a footer of 4 bytes: 00 00
-	// Skip those in the buffer
-	_soundSamples = new Common::ScopedPtr<Audio::SeekableAudioStream>[kAudioNumSamples2];
-	Common::File file;
-
-	for (int i = 0; i < kAudioNumSamples2; ++i) {
-		if (!file.open(Common::String::format("ms2_data.%03d", audioInfo2[i]._filenumber))) {
-			error("File %s could not be read!", file.getName());
-		}
-
-		int length = 0;
-		byte *buffer = nullptr;
-
-		if (audioInfo2[i]._offsetEnd == -1) {
-			file.seek(0, SEEK_END);
-			length = file.pos() - audioInfo2[i]._offsetStart - 10;
-		} else {
-			length = audioInfo2[i]._offsetEnd - audioInfo2[i]._offsetStart - 10;
-		}
-		buffer = new byte[length];
-		file.seek(audioInfo2[i]._offsetStart + 6);
-		file.read(buffer, length);
-		file.close();
-
-		byte streamFlag = Audio::FLAG_UNSIGNED | Audio::FLAG_LITTLE_ENDIAN;
-		_soundSamples[i].reset(Audio::makeRawStream(buffer, length, _audioRate,
-													streamFlag, DisposeAfterUse::YES));
-	}
-	initSiren();
-
-	_musicIntroBuffer.reset(convertToMod("ms2_data.052", 2));
-	_musicOutroBuffer.reset(convertToMod("ms2_data.056", 2));
+	delete[] _images;
 }
 
 void ResourceManager::initGraphics() {
@@ -244,25 +168,100 @@ void ResourceManager::initCursorGraphics() {
 }
 
 void ResourceManager::initImages1() {
-	for (int i = 0; i < 44; ++i) {
-		_images[i] = new MSNImage(_MSPart);
-		if (!_images[i]->init(i))
-			error("Failed reading image file msn_data.%03d", i);
+	_images = new MSNImage *[kNumImageFiles1];
+	for (int i = 0; i < kNumImageFiles1; ++i) {
+		_images[i] = nullptr;
 	}
-	_images[44] = new MSNImage(_MSPart);
-	if (!_images[44]->init(55))
-			error("Failed reading image file msn_data.055");
 }
 
 void ResourceManager::initImages2() {
-	for (int i = 0; i < 47; ++i) {
-		_images[i] = new MSNImage(_MSPart);
-		if (!_images[i]->init(i))
-			error("Failed reading image file ms2_data.%03d", i);
+	_images = new MSNImage *[kNumImageFiles2];
+	for (int i = 0; i < kNumImageFiles2; ++i) {
+		_images[i] = nullptr;
+	}
+}
+
+// Sound
+// Note:
+//   - samples start with a header of 6 bytes: 01 SS SS 00 AD 00
+//     where SS SS (LE uint16) is the size of the sound sample + 2
+//   - samples end with a footer of 4 bytes: 00 00
+// Skip those in the buffer
+void ResourceManager::loadSound1(AudioId id) {
+	Common::File file;
+	if (!file.open(Common::String::format("msn_data.%03d", audioInfo1[id]._filenumber))) {
+		error("File %s could not be read!", file.getName());
+	}
+
+	int length = 0;
+	byte *buffer = nullptr;
+
+	if (audioInfo1[id]._offsetEnd == -1) {
+		file.seek(0, SEEK_END);
+		length = file.pos() - audioInfo1[id]._offsetStart - 10;
+	} else {
+		length = audioInfo1[id]._offsetEnd - audioInfo1[id]._offsetStart - 10;
+	}
+	buffer = new byte[length];
+	file.seek(audioInfo1[id]._offsetStart + 6);
+	file.read(buffer, length);
+	file.close();
+
+	byte streamFlag = Audio::FLAG_UNSIGNED | Audio::FLAG_LITTLE_ENDIAN;
+	_soundSamples[id].reset(Audio::makeRawStream(buffer, length, _audioRate,
+												streamFlag, DisposeAfterUse::YES));
+}
+
+void ResourceManager::loadSound2(AudioId id) {
+	Common::File file;
+	if (!file.open(Common::String::format("ms2_data.%03d", audioInfo2[id]._filenumber))) {
+		error("File %s could not be read!", file.getName());
+	}
+
+	int length = 0;
+	byte *buffer = nullptr;
+
+	if (audioInfo2[id]._offsetEnd == -1) {
+		file.seek(0, SEEK_END);
+		length = file.pos() - audioInfo2[id]._offsetStart - 10;
+	} else {
+		length = audioInfo2[id]._offsetEnd - audioInfo2[id]._offsetStart - 10;
+	}
+	buffer = new byte[length];
+	file.seek(audioInfo2[id]._offsetStart + 6);
+	file.read(buffer, length);
+	file.close();
+
+	byte streamFlag = Audio::FLAG_UNSIGNED | Audio::FLAG_LITTLE_ENDIAN;
+	_soundSamples[id].reset(Audio::makeRawStream(buffer, length, _audioRate,
+												streamFlag, DisposeAfterUse::YES));
+}
+
+void ResourceManager::loadImage(int filenumber) {
+	if (_MSPart == 1) {
+		if (filenumber < 44) {
+			_images[filenumber] = new MSNImage(_MSPart);
+			if (!_images[filenumber]->init(filenumber))
+				error("Failed reading image file msn_data.%03d", filenumber);
+		} else {
+			_images[44] = new MSNImage(_MSPart);
+			if (!_images[44]->init(filenumber))
+				error("Failed reading image file msn_data.%03d", filenumber);
+		}
+	} else if (_MSPart == 2) {
+		_images[filenumber] = new MSNImage(_MSPart);
+		if (!_images[filenumber]->init(filenumber))
+			error("Failed reading image file ms2_data.%03d", filenumber);
 	}
 }
 
 Audio::SeekableAudioStream *ResourceManager::getSoundStream(AudioId index) {
+	if (!_soundSamples[index]) {
+		if (_MSPart == 1)
+			loadSound1(index);
+		else if (_MSPart == 2)
+			loadSound2(index);
+	}
 	Audio::SeekableAudioStream *stream;
 	stream = _soundSamples[index].get();
 	stream->rewind();
@@ -273,11 +272,23 @@ Audio::SeekableAudioStream *ResourceManager::getSoundStream(AudioId index) {
 Audio::AudioStream *ResourceManager::getSoundStream(MusicId index) {
 	switch (index) {
 	case kMusicIntro:
+		if (!_musicIntroBuffer) {
+			if (_MSPart == 1)
+				_musicIntroBuffer.reset(convertToMod("msn_data.052", 1));
+			else if (_MSPart == 2)
+				_musicIntroBuffer.reset(convertToMod("ms2_data.052", 2));
+		}
 		_musicIntro.reset(Audio::makeProtrackerStream(_musicIntroBuffer.get()));
 		return _musicIntro.get();
 	case kMusicMadMonkeys:
 		// fall through
 	case kMusicOutro:
+		if (!_musicOutroBuffer) {
+			if (_MSPart == 1)
+				_musicOutroBuffer.reset(convertToMod("msn_data.049", 1));
+			else if (_MSPart == 2)
+				_musicOutroBuffer.reset(convertToMod("ms2_data.056", 2));
+		}
 		_musicOutro.reset(Audio::makeProtrackerStream(_musicOutroBuffer.get()));
 		return _musicOutro.get();
 	default:
@@ -286,24 +297,27 @@ Audio::AudioStream *ResourceManager::getSoundStream(MusicId index) {
 }
 
 Audio::AudioStream *ResourceManager::getSirenStream() {
+	if (!_sirenStream)
+		initSiren();
 	return _sirenStream.get();
 }
 
 MSNImage *ResourceManager::getImage(int filenumber) {
-	if (_MSPart == 1) {
-		if (filenumber < 44)
-			return _images[filenumber];
-		else if (filenumber == 55)
-			return _images[44];
-		else
-			return nullptr;
-	} else if (_MSPart == 2) {
-		if (filenumber < 47)
-			return _images[filenumber];
-		else
-			return nullptr;
+	//check array boundaries
+	if (_MSPart == 1 && filenumber > 43 && filenumber != 55)
+		return nullptr;
+	if (_MSPart == 2 && filenumber > 46)
+		return nullptr;
+
+	if (filenumber == 55) {
+		if (!_images[44])
+			loadImage(filenumber);
+		return _images[44];
+	} else {
+		if (!_images[filenumber])
+			loadImage(filenumber);
+		return _images[filenumber];
 	}
-	else return nullptr;
 }
 
 const byte *ResourceManager::getImage(CursorId id) const {
