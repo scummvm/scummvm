@@ -672,6 +672,8 @@ public:
 	bool activateAction(AIEntity *e, int x, int y, int targetX, int targetY);
 	bool checkAutoList(AIEntity *e, int x, int y);
 	bool autoActive(int x, int y);
+	void addToPathList(int x, int y, int type, AIDir dir);
+	ArrowPath *findArrowPath(int x, int y);
 
 	bool checkFloating(int x, int y);
 
