@@ -1375,6 +1375,60 @@ int AI::checkForTouchplate(int x, int y) {
 	return 0;
 }
 
+bool AI::findPath(AIEntity *e) {
+	int x, y, xv = 0, yv = 0, max;
+	ArrowPath *here;
+
+	// Initial Pointing Direction to search in
+	x = e->tileX;
+	y = e->tileY;
+	here = findArrowPath(x, y);
+	// Only look for GO arrows at this first location
+	if (here && here->type == 1)
+		e->dir = here->dir;
+
+	switch (e->dir) {
+	case DIR_UP:
+		yv = -1;
+		break;
+	case DIR_DOWN:
+		yv = 1;
+		break;
+	case DIR_LEFT:
+		xv = -1;
+		break;
+	case DIR_RIGHT:
+		xv = 1;
+		break;
+	case DIR_NONE:
+		warning("findPath: DIR_NONE found");
+		break;
+	}
+
+	if (xv)
+		max = g_hdb->_map->_width;
+	else
+		max = g_hdb->_map->_height;
+
+	ArrowPath *arrowPath;
+	uint32 flags;
+	while (max--) {
+		arrowPath = findArrowPath(x + xv, y + yv);
+		if (arrowPath) {
+			setEntityGoal(e, arrowPath->tileX, arrowPath->tileY);
+			return true;
+		} else {
+			flags = g_hdb->_map->getMapBGTileFlags(x + xv, y + yv);
+			if (flags & kFlagSolid)
+				return false;
+		}
+		x += xv;
+		y += yv;
+	}
+
+	return false;
+}
+
 AIEntity *AI::legalMove(int tileX, int tileY, int level, int *result) {
 	uint32 bgFlags = g_hdb->_map->getMapBGTileFlags(tileX, tileY);
 	uint32 fgFlags = g_hdb->_map->getMapFGTileFlags(tileX, tileY);

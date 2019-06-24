@@ -70,10 +70,13 @@ enum GameState {
 };
 
 enum Flag {
+	kFlagMonsterBlock	= 0x2,
 	kFlagSolid			= 0x3,
 	kFlagPlayerDie		= 0x8,
 	kFlagInvisible		= 0x20,
 	kFlagForeground		= 0x80,
+	kFlagSlime			= 0x201C,
+	kFlagWater			= 0x401C,
 	kFlagEnergyFloor	= 0x40000,
 	kFlagPlasmaFloor	= 0x6000D,
 	kFlagRadFloor		= 0x6800D,
@@ -81,9 +84,10 @@ enum Flag {
 	kFlagStairTop		= 0x400000,
 	kFlagAnimSlow		= 0x800000,
 	kFlagAnimMedium		= 0x1000000,
+	kFlagMasked			= 0x2000000,
 	kFlagAnimFast		= 0x1800000,
 	kFlagGrating		= 0x4000000,
-	kFlagMasked			= 0x2000000
+	kFlagPlummet		= 0x8000000
 };
 
 enum {
