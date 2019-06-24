@@ -258,31 +258,19 @@ bool MSNImage::loadSections() {
 		Graphics::Surface *surface = new Graphics::Surface;
 		_sectionSurfaces.push_back(surface);
 
-		if (isNewspaper) {
+		if (isNewspaper || isCypheredText) {
+			Color color1 = isNewspaper ? kColorWhite63 : kColorWhite44;
 			surface->create(imageWidth, imageHeight, g_system->getScreenFormat());
 			byte *surfacePixels = static_cast<byte *>(surface->getPixels());
 			for (int i = 0; i < imageWidth * imageHeight / 8; ++i) {
-				*surfacePixels++ = (_encodedImage[i] & 0x80) ? kColorWhite63 : kColorBlack;
-				*surfacePixels++ = (_encodedImage[i] & 0x40) ? kColorWhite63 : kColorBlack;
-				*surfacePixels++ = (_encodedImage[i] & 0x20) ? kColorWhite63 : kColorBlack;
-				*surfacePixels++ = (_encodedImage[i] & 0x10) ? kColorWhite63 : kColorBlack;
-				*surfacePixels++ = (_encodedImage[i] & 0x08) ? kColorWhite63 : kColorBlack;
-				*surfacePixels++ = (_encodedImage[i] & 0x04) ? kColorWhite63 : kColorBlack;
-				*surfacePixels++ = (_encodedImage[i] & 0x02) ? kColorWhite63 : kColorBlack;
-				*surfacePixels++ = (_encodedImage[i] & 0x01) ? kColorWhite63 : kColorBlack;
-			}
-		} else if (isCypheredText) {
-			surface->create(imageWidth, imageHeight, g_system->getScreenFormat());
-			byte *surfacePixels = static_cast<byte *>(surface->getPixels());
-			for (int i = 0; i < imageWidth * imageHeight / 8; ++i) {
-				*surfacePixels++ = (_encodedImage[i] & 0x80) ? kColorWhite44 : kColorBlack;
-				*surfacePixels++ = (_encodedImage[i] & 0x40) ? kColorWhite44 : kColorBlack;
-				*surfacePixels++ = (_encodedImage[i] & 0x20) ? kColorWhite44 : kColorBlack;
-				*surfacePixels++ = (_encodedImage[i] & 0x10) ? kColorWhite44 : kColorBlack;
-				*surfacePixels++ = (_encodedImage[i] & 0x08) ? kColorWhite44 : kColorBlack;
-				*surfacePixels++ = (_encodedImage[i] & 0x04) ? kColorWhite44 : kColorBlack;
-				*surfacePixels++ = (_encodedImage[i] & 0x02) ? kColorWhite44 : kColorBlack;
-				*surfacePixels++ = (_encodedImage[i] & 0x01) ? kColorWhite44 : kColorBlack;
+				*surfacePixels++ = (_encodedImage[i] & 0x80) ? color1 : kColorBlack;
+				*surfacePixels++ = (_encodedImage[i] & 0x40) ? color1 : kColorBlack;
+				*surfacePixels++ = (_encodedImage[i] & 0x20) ? color1 : kColorBlack;
+				*surfacePixels++ = (_encodedImage[i] & 0x10) ? color1 : kColorBlack;
+				*surfacePixels++ = (_encodedImage[i] & 0x08) ? color1 : kColorBlack;
+				*surfacePixels++ = (_encodedImage[i] & 0x04) ? color1 : kColorBlack;
+				*surfacePixels++ = (_encodedImage[i] & 0x02) ? color1 : kColorBlack;
+				*surfacePixels++ = (_encodedImage[i] & 0x01) ? color1 : kColorBlack;
 			}
 		} else {
 			uint32 offset = (_section[section].addressHigh << 16) + _section[section].addressLow;
