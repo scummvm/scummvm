@@ -114,6 +114,16 @@ public:
 		_mapExplosions[y * _width + x] = value;
 	}
 
+	bool laserBeamExist(int x, int y) {
+		return _mapLaserBeams[y * _width + x];
+	}
+	void setLaserBeam(int x, int y, int value) {
+		_mapLaserBeams[y * _width + x] = value;
+	}
+	void clearLaserBeams() {
+		memset(_mapLaserBeams, 0, _width * _height);
+	}
+
 	uint16 _width, _height;
 	int _mapX, _mapY; // Coordinates of Map
 	int _mapTileX, _mapTileY; // Tile Coordinates of Map
