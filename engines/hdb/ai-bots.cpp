@@ -221,5 +221,75 @@ void aiTurnBotAction(AIEntity *e) {
 		g_hdb->_ai->killPlayer(DEATH_NORMAL);
 }
 
+void aiShockBotInit(AIEntity *e) {
+	g_hdb->_ai->findPath(e);
+	e->aiAction = aiShockBotAction;
+	e->animCycle = 0;
+	e->sequence = 0;
+	e->aiDraw = aiShockBotShock;
+}
+
+void aiShockBotInit2(AIEntity *e) {
+	e->standupFrames = e->standdownFrames = e->standleftFrames = e->standrightFrames =
+		e->moveupFrames = e->moverightFrames = e->moveleftFrames = e->movedownFrames;
+
+	for (int i = 0; i < e->movedownFrames; i++)
+		e->standupGfx[i] = e->standleftGfx[i] = e->standrightGfx[i] = e->standdownGfx[i] = e->moveupGfx[i] = e->moveleftGfx[i] = e->moverightGfx[i] = e->movedownGfx[i];
+
+	e->draw = g_hdb->_ai->getStandFrameDir(e);
+}
+
+void aiShockBotAction(AIEntity *e) {
+	if (e->goalX) {
+		if (!e->sequence) {
+			if (e->onScreen && g_hdb->_ai->checkPlayerCollision(e->x, e->y, 4) && !g_hdb->_ai->playerDead())
+				g_hdb->_ai->killPlayer(DEATH_SHOCKED);
+			g_hdb->_ai->animateEntity(e);
+		} else
+			g_hdb->_ai->animEntFrames(e);
+	} else {
+		g_hdb->_ai->findPath(e);
+		e->sequence = 20;
+		g_hdb->_ai->animEntFrames(e);
+		if (e->onScreen)
+			warning("STUB: aiShockBotAction: Play SND_SHOCKBOT_AMBIENT");
+
+	}
+
+	if (e->sequence)
+		e->sequence--;
+}
+
+void aiShockBotShock(AIEntity *e, int mx, int my) {
+	int offX[8] = { -1, 0, 1, 1, 1, 0, -1, -1 };
+	int offY[8] = { -1, -1, -1, 0, 1, 1, 1, 0 };
+
+	// Only on a exact tile boundary do we change the shocked tiles
+	// Start at top left and go around
+	if (g_hdb->_map->getMapBGTileFlags(e->tileX, e->tileY) & kFlagMetal)
+		e->special1Gfx[e->animFrame]->drawMasked(e->tileX * kTileWidth - mx, e->tileY * kTileHeight - my);
+
+	uint32 flags;
+	for (int i = 0; i < 8; i++) {
+		flags = g_hdb->_map->getMapBGTileFlags(e->tileX + offX[i], e->tileY + offY[i]);
+		if (flags & kFlagMetal) {
+			// Is the shocking tile onScreen?
+			if (g_hdb->_map->checkXYOnScreen((e->tileX + offX[i]) * kTileWidth, (e->tileY + offY[i]) * kTileHeight)) {
+				// Draw shocking tile animation
+				e->special1Gfx[e->animFrame]->drawMasked((e->tileX + offX[i])*kTileWidth - mx, (e->tileY + offY[i])*kTileHeight - my);
+				// Did the player get fried?
+				// Check every 4 frames
+				if (e->onScreen && !e->animFrame && g_hdb->_ai->checkPlayerTileCollision(e->tileX + offX[i], e->tileY + offY[i]) && !g_hdb->_ai->playerDead()) {
+					g_hdb->_ai->killPlayer(DEATH_SHOCKED);
+					return;
+				}
+				if (!e->animFrame && g_hdb->_map->boomBarrelExist(e->tileX + offX[i], e->tileY + offY[i])) {
+					AIEntity *e2 = g_hdb->_ai->findEntityType(AI_BOOMBARREL, e->tileX + offX[i], e->tileY + offY[i]);
+					aiBarrelExplode(e2);
+				}
+			}
+		}
+	}
+}
 
 } // End of Namespace

@@ -74,6 +74,7 @@ enum Flag {
 	kFlagSolid			= 0x3,
 	kFlagPlayerDie		= 0x8,
 	kFlagInvisible		= 0x20,
+	kFlagMetal			= 0x40,
 	kFlagForeground		= 0x80,
 	kFlagSlime			= 0x201C,
 	kFlagWater			= 0x401C,

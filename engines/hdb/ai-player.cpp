@@ -320,22 +320,6 @@ void aiMaintBotInitAction(AIEntity *e) {
 	warning("STUB: AI: aiMaintBotInitAction required");
 }
 
-void aiShockBotAction(AIEntity *e) {
-	warning("STUB: AI: aiShockBotAction required");
-}
-
-void aiShockBotShock(AIEntity *e, int mx, int my) {
-	warning("STUB: AI: aiShockBotShock required");
-}
-
-void aiShockBotInit(AIEntity *e) {
-	warning("STUB: AI: aiShockBotInit required");
-}
-
-void aiShockBotInit2(AIEntity *e) {
-	warning("STUB: AI: aiShockBotInit2 required");
-}
-
 void aiScientistInit(AIEntity *e) {
 	warning("STUB: AI: aiScientistInit required");
 }
