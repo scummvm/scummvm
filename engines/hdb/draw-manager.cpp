@@ -517,7 +517,7 @@ void DrawMan::drawText(const char *string) {
 	}
 
 	// Draw the characters
-	for (int j = 0; j < (int)strlen(string);j++) {
+	for (int j = 0; j < (int)strlen(string); j++) {
 		c = string[j];
 		if (c == '\n' || cr[j]) {
 			_cursorX = _eLeft;
