@@ -1452,6 +1452,28 @@ AIEntity *AI::legalMoveOverWaterIgnore(int tileX, int tileY, int level, int *res
 	return hit;
 }
 
+AIEntity *AI::playerCollision(int topBorder, int bottomBorder, int leftBorder, int rightBorder) {
+	AIEntity *e;
+	for (Common::Array<AIEntity *>::iterator it = _ents->begin(); it != _ents->end(); it++) {
+		e = *it;
+		if (e == _player || !e->onScreen)
+			continue;
+		if (e->x > (_player->x - 32 - leftBorder) && e->x < (_player->x + 32 + rightBorder) && e->y >(_player->y - 32 - topBorder) && e->y < (_player->y + 32 + bottomBorder))
+			return e;
+	}
+	return NULL;
+}
+
+bool AI::checkPlayerTileCollision(int x, int y) {
+	debug(9, "STUB: checkPlayerTileCollison: g_hdb->getDebug() required");
+	return (_player->tileX == x && _player->tileY == y);
+}
+
+bool AI::checkPlayerCollision(int x, int y, int border) {
+	debug(9, "STUB: checkPlayerCollison: g_hdb->getDebug() required");
+	return (x > (_player->x - 32 + border) && x < (_player->x - 32 - border) && y >(_player->y - 32 + border) && y < (_player->y - 32 - border));
+}
+
 bool AI::checkFloating(int x, int y) {
 	for (Common::Array<AIEntity *>::iterator it = _floats->begin(); it != _floats->end(); it++) {
 		if ((*it)->tileX == x && (*it)->tileY == y)
