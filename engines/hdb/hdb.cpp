@@ -299,8 +299,20 @@ Common::Error HDBGame::run() {
 
 		_map->draw();
 		_ai->processCines();
+
+		AIEntity *e = _ai->getPlayer();
+
+		if (e && e->level < 2)
+			_ai->drawWayPoints();
+
 		_map->drawEnts();
 		_map->drawGratings();
+
+		if (e && e->level == 2)
+			_ai->drawWayPoints();
+
+		_ai->drawLevel2Ents();
+
 		_map->drawForegrounds();
 		_ai->animateTargets();
 
