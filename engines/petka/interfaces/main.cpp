@@ -63,10 +63,11 @@ void InterfaceMain::start() {
 }
 
 void InterfaceMain::loadRoom(int id, bool fromSave) {
+	QSystem *sys = g_vm->getQSystem();
 	stop();
 	_roomId = id;
 	const BGInfo *info = findBGInfo(id);
-	QObjectBG *room = (QObjectBG *)g_vm->getQSystem()->findObject(info->objId);
+	QObjectBG *room = (QObjectBG *)sys->findObject(info->objId);
 	g_vm->resMgr()->loadBitmap(room->_resourceId);
 	_objs.push_back(room);
 	for (uint i = 0; i < info->attachedObjIds.size(); ++i) {
@@ -74,6 +75,16 @@ void InterfaceMain::loadRoom(int id, bool fromSave) {
 		g_vm->soundMgr()->addSound(g_vm->resMgr()->findSoundName(obj->_resourceId), Audio::Mixer::kSFXSoundType);
 		if (obj->_isShown || obj->_isActive)
 			g_vm->resMgr()->loadFlic(obj->_resourceId);
+	}
+	if (sys->_musicId != room->_musicId) {
+		g_vm->soundMgr()->removeSound(g_vm->resMgr()->findSoundName(sys->_musicId));
+		g_vm->soundMgr()->addSound(g_vm->resMgr()->findSoundName(room->_musicId), Audio::Mixer::kMusicSoundType)->play(true);
+		sys->_musicId = room->_musicId;
+	}
+	if (sys->_fxId != room->_fxId) {
+		g_vm->soundMgr()->removeSound(g_vm->resMgr()->findSoundName(sys->_fxId));
+		g_vm->soundMgr()->addSound(g_vm->resMgr()->findSoundName(room->_fxId), Audio::Mixer::kSFXSoundType)->play(true);
+		sys->_fxId = room->_fxId;
 	}
 	if (!fromSave)
 		g_vm->getQSystem()->addMessageForAllObjects(kInitBG, 0, 0, 0, 0, room);
