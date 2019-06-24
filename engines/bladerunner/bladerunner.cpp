@@ -2163,14 +2163,18 @@ void BladeRunnerEngine::blitToScreen(const Graphics::Surface &src) const {
 
 Graphics::Surface BladeRunnerEngine::generateThumbnail() const {
 	Graphics::Surface thumbnail;
-	thumbnail.create(640 / 8, 480 / 8, _surfaceFront.format);
+	thumbnail.create(640 / 8, 480 / 8, gameDataPixelFormat());
 
 	for (int y = 0; y < thumbnail.h; ++y) {
 		for (int x = 0; x < thumbnail.w; ++x) {
-			uint16       *dstPixel = (uint16 *)thumbnail.getBasePtr(x, y);
-			const uint16 *srcPixel = (const uint16 *)_surfaceFront.getBasePtr(x * 8, y * 8);
+			uint8 r, g, b;
 
-			*dstPixel = *srcPixel;
+			uint16  srcPixel = *(uint16 *)_surfaceFront.getBasePtr(x * 8, y * 8);
+			uint16 *dstPixel = (uint16 *)thumbnail.getBasePtr(x, y);
+
+			// Throw away alpha channel as it is not needed
+			_surfaceFront.format.colorToRGB(srcPixel, r, g, b);
+			*dstPixel = thumbnail.format.RGBToColor(r, g, b);
 		}
 	}
 
