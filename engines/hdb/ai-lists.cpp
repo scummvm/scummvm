@@ -65,7 +65,7 @@ void AI::addAnimateTarget(int x, int y, int start, int end, AnimSpeed speed, boo
 		char name[32];
 		uint32 size;
 
-		for (int i = start;i <= end;i++) {
+		for (int i = start; i <= end; i++) {
 			if (i < 10)
 				snprintf(name, 32, "%s0%d", tileName, i + 1);
 			else
@@ -177,7 +177,7 @@ void AI::addToActionList(int actionIndex, int x, int y, char *luaFuncInt, char *
 // Checks if the location passed-in matches an action pair.
 // If so, activate it if possible. Returns TRUE for finding pair.
 bool AI::checkActionList(AIEntity *e, int x, int y, bool lookAndGrab) {
-	for (int i = 0;i < kMaxActions;i++) {
+	for (int i = 0; i < kMaxActions; i++) {
 		if ((_actions[i].x1 == x && _actions[i].y1 == y) || (_actions[i].x2 == x && _actions[i].y2 == y)) {
 			int targetX = _actions[i].x2;
 			int targetY = _actions[i].y2;
@@ -227,7 +227,7 @@ void AI::addToAutoList(int x, int y, const char *luaFuncInit, const char *luaFun
 
 	const char *get;
 
-	for (int i = 0;i < kMaxAutoActions;i++) {
+	for (int i = 0; i < kMaxAutoActions; i++) {
 		if (!_autoActions[i].x) {
 			_autoActions[i].x = x;
 			_autoActions[i].y = y;
@@ -254,7 +254,7 @@ void AI::addToAutoList(int x, int y, const char *luaFuncInit, const char *luaFun
 }
 
 void AI::autoDeactivate(int x, int y) {
-	for (int i = 0; i < kMaxAutoActions;i++) {
+	for (int i = 0; i < kMaxAutoActions; i++) {
 		if (_autoActions[i].x == x && _autoActions[i].y == y) {
 			_autoActions[i].activated = false;
 			return;
@@ -387,7 +387,7 @@ bool AI::activateAction(AIEntity *e, int x, int y, int targetX, int targetY) {
 }
 
 bool AI::checkAutoList(AIEntity *e, int x, int y) {
-	for (int i = 0;i < kMaxAutoActions;i++) {
+	for (int i = 0; i < kMaxAutoActions; i++) {
 		if (_autoActions[i].x == x && _autoActions[i].y == y && !_autoActions[i].activated) {
 			debug(1, "Activating action for Entity: %s, x: %d, y: %d", e->entityName, x, y);
 			bool success = activateAction(e, x, y, 0, 0);
@@ -408,7 +408,7 @@ bool AI::checkAutoList(AIEntity *e, int x, int y) {
 }
 
 bool AI::autoActive(int x, int y) {
-	for (int i = 0;i < kMaxAutoActions;i++) {
+	for (int i = 0; i < kMaxAutoActions; i++) {
 		if (_autoActions[i].x == x && _autoActions[i].y == y) {
 			if (!_autoActions[i].activated)
 				return false;

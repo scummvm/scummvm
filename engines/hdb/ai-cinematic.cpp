@@ -77,7 +77,7 @@ void AI::processCines() {
 	g_hdb->_window->checkDialogClose(0, 0);
 
 	// Make sure Cine Pics are drawing
-	for (int i = 0;i < _numCineBlitList;i++) {
+	for (int i = 0; i < _numCineBlitList; i++) {
 		if (_cineBlitList[i]->masked == false)
 			_cineBlitList[i]->pic->draw(_cine[i]->x, _cine[i]->y);
 		else
@@ -86,7 +86,7 @@ void AI::processCines() {
 
 	// TODO: Check for Game Pause
 
-	for (uint i = 0; i < _cine.size();i++) {
+	for (uint i = 0; i < _cine.size(); i++) {
 		debug(3, "processCines: [%d] %s now: %d  start: %d delay: %d", i, cineTypeStr[_cine[i]->cmdType],
 				g_system->getMillis(), _cine[i]->start, _cine[i]->delay);
 
@@ -405,7 +405,7 @@ void AI::cineAddToBlitList(const char *id, Picture *pic, int x, int y, bool mask
 }
 
 Picture *AI::cineFindInBlitList(const char *name) {
-	for (int i = 0; i < _numCineBlitList;i++) {
+	for (int i = 0; i < _numCineBlitList; i++) {
 		if (Common::matchString(_cineBlitList[i]->id, name))
 			return _cineBlitList[i]->pic;
 	}
@@ -413,7 +413,7 @@ Picture *AI::cineFindInBlitList(const char *name) {
 }
 
 void AI::cineRemoveFromBlitList(const char *name) {
-	for (int i = 0; i < _numCineBlitList;i++) {
+	for (int i = 0; i < _numCineBlitList; i++) {
 		if (Common::matchString(_cineBlitList[i]->id, name))
 			delete _cineBlitList[i];
 			for (; i < _numCineBlitList - 1; i++)
@@ -434,7 +434,7 @@ void AI::cineAddToFreeList(Picture *pic) {
 }
 
 void AI::cineFreeGfx() {
-	for (int i = 0;i < _numCineFreeList;i++) {
+	for (int i = 0; i < _numCineFreeList; i++) {
 		delete _cineFreeList[i];
 	}
 	_numCineFreeList = 0;

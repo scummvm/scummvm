@@ -27,21 +27,21 @@ namespace HDB {
 Map::Map() {
 	_mapLoaded = false;
 
-	for (int i = 0; i < kMaxGratings;i++) {
+	for (int i = 0; i < kMaxGratings; i++) {
 		_gratings[i] = new Foreground;
 	}
 
-	for (int i = 0; i < kMaxForegrounds;i++) {
+	for (int i = 0; i < kMaxForegrounds; i++) {
 		_foregrounds[i] = new Foreground;
 	}
 }
 
 Map::~Map() {
-	for (int i = 0; i < kMaxGratings;i++) {
+	for (int i = 0; i < kMaxGratings; i++) {
 		delete _gratings[i];
 	}
 
-	for (int i = 0; i < kMaxForegrounds;i++) {
+	for (int i = 0; i < kMaxForegrounds; i++) {
 		delete _foregrounds[i];
 	}
 }
@@ -145,7 +145,7 @@ bool Map::load(Common::SeekableReadStream *stream) {
 	_mapX = _mapY = 0;
 
 	// Setup animating Tile lists
-	for (int i = 0; i < _width*_height;i++) {
+	for (int i = 0; i < _width*_height; i++) {
 		addBGTileAnimation(i % _width, i / _width);
 		addFGTileAnimation(i % _width, i / _width);
 	}
@@ -408,7 +408,7 @@ bool Map::load(Common::SeekableReadStream *stream) {
 
 	// Scan all icons and init all Entities
 	warning("STUB: Map::load: SetupProgressBar");
-	for (int i = 0; i < _iconNum;i++) {
+	for (int i = 0; i < _iconNum; i++) {
 		// Don't spawn Action Mode Entities in Puzzle Mode
 		if (!g_hdb->getActionMode()) {
 			switch (aiInfo[_iconList[i].icon].type) {
@@ -683,7 +683,7 @@ void Map::drawEnts() {
 }
 
 void Map::drawGratings() {
-	for (int i = 0; i < kMaxGratings;i++) {
+	for (int i = 0; i < kMaxGratings; i++) {
 		g_hdb->_drawMan->getTile(_gratings[i]->tile)->drawMasked(_gratings[i]->x, _gratings[i]->y);
 	}
 
@@ -691,7 +691,7 @@ void Map::drawGratings() {
 }
 
 void Map::drawForegrounds() {
-	for (int i = 0; i < kMaxForegrounds;i++) {
+	for (int i = 0; i < kMaxForegrounds; i++) {
 		g_hdb->_drawMan->getTile(_foregrounds[i]->tile)->drawMasked(_foregrounds[i]->x, _foregrounds[i]->y);
 	}
 
@@ -928,7 +928,7 @@ void Map::centerMapXY(int x, int y) {
 }
 
 bool Map::checkOneTileExistInRange(int tileIndex, int count) {
-	for (int i = 0; i < _width*_height;i++) {
+	for (int i = 0; i < _width*_height; i++) {
 		if (_background[i] >= tileIndex && _background[i] < tileIndex + count)
 			return true;
 		if (_foreground[i] >= tileIndex && _foreground[i] < tileIndex + count)
