@@ -101,6 +101,8 @@ public:
 	void getMapXY(int *x, int *y);
 	void setMapXY(int x, int y);
 	void centerMapXY(int x, int y);
+	bool checkEntOnScreen(AIEntity *);
+	bool checkXYOnScreen(int x, int y);
 
 	// Check if one of the tiles in a range exists in the map on either layer
 	bool checkOneTileExistInRange(int tileIndex, int count);
