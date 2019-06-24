@@ -770,22 +770,21 @@ void GameManager::edit(Common::String &input, int x, int y, uint length) {
 	uint cursorIndex = input.size();
 	// NOTE: Pixels for char needed = kFontWidth + 2px left and right side bearing
 	int overdrawWidth;
+	Color background = kColorBlack;
 
-	if (_vm->_MSPart == 1)
+	if (_vm->_MSPart == 1) {
 		overdrawWidth = ((int)((length + 1) * (kFontWidth + 2)) > (kScreenWidth - x)) ?
 						kScreenWidth - x : (length + 1) * (kFontWidth + 2);
-	else if (_vm->_MSPart == 2)
+		background = kColorDarkBlue;
+	} else if (_vm->_MSPart == 2) {
 		overdrawWidth = ((int)((length + 1) * (kFontWidth2 + 2)) > (kScreenWidth - x)) 
 			? kScreenWidth - x : (length + 1) * (kFontWidth2 + 2);
+		background = kColorWhite35;
+	}
 	_guiEnabled = false;
 	while (isEditing) {
 		_vm->_screen->setTextCursorPos(x, y);
 		_vm->_screen->setTextCursorColor(kColorWhite99);
-		Color background = kColorBlack;
-		if (_vm->_MSPart == 1)
-			background = kColorDarkBlue;
-		else if (_vm->_MSPart == 2)
-			background = kColorWhite35;
 		_vm->renderBox(x, y - 1, overdrawWidth, 9, background);
 		for (uint i = 0; i < input.size(); ++i) {
 			// Draw char highlight depending on cursor position
