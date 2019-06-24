@@ -169,4 +169,57 @@ void aiOmniBotMissileAction(AIEntity *e) {
 		}
 }
 
+void aiTurnBotInit(AIEntity *e) {
+	e->aiAction = aiTurnBotAction;
+}
+
+void aiTurnBotInit2(AIEntity *e) {
+	e->draw = g_hdb->_ai->getStandFrameDir(e);
+}
+
+void aiTurnBotChoose(AIEntity *e) {
+	int xvAhead[5] = { 9, 0, 0, -1, 1 }, yvAhead[5] = { 9, -1, 1, 0, 0 };
+	AIDir turnRight[5] = { DIR_NONE, DIR_RIGHT, DIR_LEFT, DIR_UP, DIR_DOWN };
+	AIState dirState[5] = { STATE_NONE, STATE_MOVEUP, STATE_MOVEDOWN, STATE_MOVELEFT, STATE_MOVERIGHT };
+	int xv, yv;
+
+	xv = xvAhead[e->dir];
+	yv = yvAhead[e->dir];
+	if (g_hdb->_map->getMapBGTileFlags(e->tileX + xv, e->tileY + yv) & (kFlagSolid | kFlagWater)) {
+		e->xVel = e->yVel = 0;
+		e->animFrame = 0;
+		e->animDelay = e->animCycle;
+		e->dir = turnRight[e->dir];
+		e->state = dirState[e->dir];
+	} else {
+		e->xVel = xv * kPlayerMoveSpeed;
+		e->yVel = yv * kPlayerMoveSpeed;
+		if (!g_hdb->getActionMode()) {
+			e->xVel >>= 1;
+			e->yVel >>= 1;
+		}
+		e->goalX = e->tileX + xv;
+		e->goalY = e->tileY + yv;
+		e->state = dirState[e->dir];
+		if (e->dir == DIR_DOWN)
+			e->animFrame = 3;
+	}
+}
+
+
+void aiTurnBotAction(AIEntity *e) {
+	if (e->goalX)
+		g_hdb->_ai->animateEntity(e);
+	else {
+		aiTurnBotChoose(e);
+		g_hdb->_ai->animateEntity(e);
+		if (e->onScreen)
+			warning("STUB: aiTurnBotAction: Play SND_TURNBOT_TURN");
+	}
+
+	if (e->onScreen && onEvenTile(e->x, e->y) && g_hdb->_ai->checkPlayerCollision(e->x, e->y, 0) && !g_hdb->_ai->playerDead())
+		g_hdb->_ai->killPlayer(DEATH_NORMAL);
+}
+
+
 } // End of Namespace
