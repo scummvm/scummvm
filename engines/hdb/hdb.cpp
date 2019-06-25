@@ -317,6 +317,7 @@ Common::Error HDBGame::run() {
 		_ai->animateTargets();
 
 		_window->drawDialog();
+		_window->drawInventory();
 
 		// Update Timer that's NOT used for in-game Timing
 		_prevTimeSlice = _timeSlice;
