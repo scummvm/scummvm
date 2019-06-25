@@ -835,6 +835,8 @@ public:
 		_numGems = amt;
 	}
 
+	AIEntity *getInvItem(int which);
+
 	// Player Variables
 	bool _playerDead;
 	bool _playerInvisible;	// While on RailRider for example

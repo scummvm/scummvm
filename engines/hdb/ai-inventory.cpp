@@ -98,4 +98,10 @@ void AI::clearInventory() {
 	}
 	_numInventory = keepslot;
 }
+
+AIEntity *AI::getInvItem(int which) {
+	if (which >= _numInventory)
+		return NULL;
+	return _inventory[which].ent;
+}
 } // End of Namespace
