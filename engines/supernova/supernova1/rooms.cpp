@@ -3108,8 +3108,9 @@ void AxacussCorridor3::onEntrance() {
 
 void AxacussCorridor4::onEntrance() {
 	_gm->great(4);
-	_gm->corridorOnEntrance();
-	if (_gm->_rooms[GUARD]->isSectionVisible(1))
+	if (_gm->_state._corridorSearch)
+		_gm->busted(0);
+	else if (_gm->_rooms[GUARD]->isSectionVisible(1))
 		_gm->busted(0);
 }
 
@@ -3459,8 +3460,9 @@ AxacussBcorridor::AxacussBcorridor(SupernovaEngine *vm, GameManager1 *gm) {
 }
 
 void AxacussBcorridor::onEntrance() {
-	_gm->corridorOnEntrance();
-	if (isSectionVisible(7))
+	if (_gm->_state._corridorSearch)
+		_gm->busted(0);
+	else if (isSectionVisible(7))
 		_gm->busted(-1);
 }
 
