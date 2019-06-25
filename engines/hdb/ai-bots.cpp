@@ -561,4 +561,241 @@ void aiPushBotAction(AIEntity *e) {
 	}
 }
 
+void aiRailRiderInit(AIEntity *e) {
+	if (e->type == AI_RAILRIDER_ON) {
+		// On the tracks already - spawn RED arrow
+		g_hdb->_ai->addToPathList(e->tileX, e->tileY, 0, e->dir);
+		e->state = STATE_STANDUP;
+		e->aiAction = aiRailRiderOnAction;
+		e->aiUse = aiRailRiderOnUse;
+	} else {
+		e->state = STATE_STANDDOWN;
+		e->sequence = 0;
+		e->aiAction = aiRailRiderAction;
+		e->aiUse = aiRailRiderUse;
+	}
+	e->moveSpeed = kPlayerMoveSpeed;
+}
+
+void aiRailRiderInit2(AIEntity *e) {
+	e->draw = e->standdownGfx[0];
+}
+
+// Talking to RailRider off track
+void aiRailRiderUse(AIEntity *e) {
+	e->sequence = 1;
+}
+
+void aiRailRiderAction(AIEntity *e) {
+	switch (e->sequence) {
+		// Waiting for Dialog to goaway
+	case 1:
+		// Dialog gone?
+		if (!g_hdb->_window->dialogActive()) {
+			e->sequence = 2;
+			switch (e->dir) {
+			case DIR_UP:	e->xVel = 0;	e->yVel = -1;	break;
+			case DIR_DOWN:	e->xVel = 0;	e->yVel = 1;	break;
+			case DIR_LEFT:	e->xVel = -1;	e->yVel = 0;	break;
+			case DIR_RIGHT:	e->xVel = 1;	e->yVel = 0;	break;
+			case DIR_NONE:
+				warning("aiRailRiderAction: DIR_NONE found");
+				break;
+			}
+		}
+		break;
+		// Walking over to track
+	case 2:
+		e->x += e->xVel;
+		e->y += e->yVel;
+		if (onEvenTile(e->x, e->y)) {
+			ArrowPath *arrowPath;
+			e->tileX = e->x / kTileWidth;
+			e->tileY = e->y / kTileHeight;
+			e->sequence = 3;	// Wait for use
+			e->type = AI_RAILRIDER_ON;
+			e->state = STATE_STANDUP;
+			e->aiAction = aiRailRiderOnAction;
+			e->aiUse = aiRailRiderOnUse;
+			arrowPath = g_hdb->_ai->findArrowPath(e->tileX, e->tileY);
+			e->dir = arrowPath->dir;
+			e->value1 = 0;	// Not in a tunnel
+		}
+		break;
+	}
+
+	// Cycle through animation frames
+	if (e->animDelay-- > 0)
+		return;
+	e->animDelay = e->animCycle;
+	e->animFrame++;
+	if (e->animFrame == e->standdownFrames)
+		e->animFrame = 0;
+
+	e->draw = e->standdownGfx[e->animFrame];
+}
+
+// Talking to RailRider on track
+void aiRailRiderOnUse(AIEntity *e) {
+	AIEntity *p = g_hdb->_ai->getPlayer();
+
+	if (p->tileX == e->tileX) {
+		if (p->tileY > e->tileY)
+			g_hdb->_ai->setEntityGoal(p, p->tileX, p->tileY - 1);
+		else
+			g_hdb->_ai->setEntityGoal(p, p->tileX, p->tileY + 1);
+	} else {
+		if (p->tileX > e->tileX)
+			g_hdb->_ai->setEntityGoal(p, p->tileX - 1, p->tileY);
+		else
+			g_hdb->_ai->setEntityGoal(p, p->tileX + 1, p->tileY);
+	}
+
+	e->sequence = -1;	// Waiting for player to board
+}
+
+void aiRailRiderOnAction(AIEntity *e) {
+	int	xv[5] = { 9, 0, 0, -1, 1 }, yv[5] = { 9, -1, 1, 0, 0 };
+	AIEntity*p = g_hdb->_ai->getPlayer();
+	SingleTele t;
+
+	switch (e->sequence) {
+	// Player is boarding
+	case -1:
+		if (!p->goalX)
+			e->sequence = 1; // Boarded yet?
+	// Cycle Animation Frames
+	case 3:
+		if (e->animDelay-- > 0)
+			return;
+		e->animDelay = e->animCycle;
+		e->animFrame++;
+		if (e->animFrame == e->standupFrames)
+			e->animFrame = 0;
+
+		e->draw = e->standupGfx[e->animFrame];
+		break;
+	// Player is in - lock him
+	case 1:
+		g_hdb->_ai->setPlayerInvisible(true);
+		g_hdb->_ai->setPlayerLock(true);
+		g_hdb->_ai->setEntityGoal(e, e->tileX + xv[e->dir], e->tileY + yv[e->dir]);
+		warning("STUB: aiRailRiderOnAction: Play SND_RAILRIDER_TASTE");
+		e->sequence = 2;
+		e->value1 = 0;
+
+	// New RailRider gfx
+	// Move the RailRider
+	case 2:
+		// Done moving to next spot?
+		if (!e->goalX) {
+			ArrowPath *arrowPath = g_hdb->_ai->findArrowPath(e->tileX, e->tileY);
+			if (arrowPath) {
+				// Stop Arrow?
+				if (!arrowPath->type) {
+					HereT *h;
+					e->sequence = 4;	// Get Player off RailRider - RIGHT SIDE ONLY
+					p->tileX = e->tileX;
+					p->tileY = e->tileY;
+					p->x = e->x;
+					p->y = e->y;
+					// Try to find a HERE icon to either side of the track and go there
+					switch (e->dir) {
+					case DIR_UP:
+						h = g_hdb->_ai->findHere(e->tileX - 1, e->tileY);
+						if (h)
+							g_hdb->_ai->setEntityGoal(p, e->tileX - 1, e->tileY);
+						else
+							g_hdb->_ai->setEntityGoal(p, e->tileX + 1, e->tileY);
+						break;
+					case DIR_DOWN:
+						h = g_hdb->_ai->findHere(e->tileX + 1, e->tileY);
+						if (h)
+							g_hdb->_ai->setEntityGoal(p, e->tileX + 1, e->tileY);
+						else
+							g_hdb->_ai->setEntityGoal(p, e->tileX - 1, e->tileY);
+						break;
+					case DIR_LEFT:
+						h = g_hdb->_ai->findHere(e->tileX, e->tileY + 1);
+						if (h)
+							g_hdb->_ai->setEntityGoal(p, e->tileX, e->tileY + 1);
+						else
+							g_hdb->_ai->setEntityGoal(p, e->tileX, e->tileY - 1);
+						break;
+					case DIR_RIGHT:
+						h = g_hdb->_ai->findHere(e->tileX, e->tileY - 1);
+						if (h)
+							g_hdb->_ai->setEntityGoal(p, e->tileX, e->tileY - 1);
+						else
+							g_hdb->_ai->setEntityGoal(p, e->tileX, e->tileY + 1);
+						break;
+					case DIR_NONE:
+						warning("aiRailRiderOnAction: DIR_NOW found");
+						break;
+					}
+					g_hdb->_ai->setPlayerInvisible(false);
+					warning("STUB: aiRailRiderOnAction: Play SND_RAILRIDER_EXIT");
+				} else if (arrowPath->type == 1) {
+					e->dir = arrowPath->dir;
+					g_hdb->_ai->setEntityGoal(e, e->tileX + xv[e->dir], e->tileY + yv[e->dir]);
+				}
+			} else
+				g_hdb->_ai->setEntityGoal(e, e->tileX + xv[e->dir], e->tileY + yv[e->dir]);
+
+			warning("STUB: aiRailRiderOnAction: Play SND_RAILRIDER_ONTRACK");
+		}
+
+		p->tileX = e->tileX;
+		p->tileY = e->tileY;
+		p->x = e->x;
+		p->y = e->y;
+		g_hdb->_ai->animateEntity(e);
+		switch (e->dir) {
+		case DIR_UP:	e->draw = e->moveupGfx[0]; break;
+		case DIR_DOWN:	e->draw = e->movedownGfx[0]; break;
+		case DIR_LEFT:	e->draw = e->moveleftGfx[0]; break;
+		case DIR_RIGHT: e->draw = e->moverightGfx[0]; break;
+		}
+		g_hdb->_map->centerMapXY(e->x + 16, e->y + 16);
+
+		// Did we hit a tunnel entrance?
+		if (onEvenTile(e->x, e->y) && g_hdb->_ai->findTeleporterDest(e->tileX, e->tileY, &t) && !e->value1 && !e->dir2) {
+			// Set tunnel destination
+			e->value1 = t.x;
+			e->value2 = t.y;
+			e->dir2 = (AIDir)(t.x + t.y);	// Flag for coming out of tunnel
+		}
+
+		// Are we going through a tunnel?
+		if (e->value1) {
+			// Reach the End?
+			// If not, don't draw RailRider
+			if (onEvenTile(e->x, e->y) && e->tileX == e->value1 && e->tileY == e->value2)
+				e->value1 = 0;
+			else
+				e->draw = NULL;
+		} else if (e->dir2 && e->dir2 != (AIDir)(e->tileX + e->tileY))
+			e->dir2 = DIR_NONE;
+		break;
+	// Waiting for Player to move to Dest
+	case 4:
+		if (!p->goalX) {
+			g_hdb->_ai->setPlayerLock(false);
+			e->sequence = 3;	// Wait for Use
+		}
+
+		// Cycle Animation frames
+		if (e->animDelay-- > 0)
+			return;
+
+		e->animDelay = e->animCycle;
+		e->animFrame++;
+		if (e->animFrame == e->standupFrames)
+			e->animFrame = 0;
+
+		e->draw = e->standupGfx[e->animFrame];
+		break;
+	}
+}
+
 } // End of Namespace
