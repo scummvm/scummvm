@@ -1067,15 +1067,12 @@ void GameManager1::shock() {
 }
 
 void GameManager1::drawMapExits() {
-// TODO: Preload _exitList on room entry instead on every call
 	_vm->renderBox(281, 161, 39, 39, kColorWhite25);
 
-	for (int i = 0; i < 25; i++)
-		_exitList[i] = -1;
-	for (int i = 0; i < kMaxObject; i++) {
-		if (_currentRoom->getObject(i)->hasProperty(EXIT)) {
-			byte r = _currentRoom->getObject(i)->_direction;
-			_exitList[r] = i;
+	int idx;
+	for (int i = 0; i < 25; i++) {
+		if ((idx = _exitList[i]) != -1) {
+			byte r = _currentRoom->getObject(idx)->_direction;
 			int x = 284 + 7 * (r % 5);
 			int y = 164 + 7 * (r / 5);
 			_vm->renderBox(x, y, 5, 5, kColorDarkRed);

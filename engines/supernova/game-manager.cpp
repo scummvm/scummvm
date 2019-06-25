@@ -689,6 +689,15 @@ void GameManager::roomBrightness() {
 void GameManager::changeRoom(RoomId id) {
 	_currentRoom = _rooms[id];
 	_newRoom = true;
+
+	for (int i = 0; i < 25; i++)
+		_exitList[i] = -1;
+	for (int i = 0; i < kMaxObject; i++) {
+		if (_currentRoom->getObject(i)->hasProperty(EXIT)) {
+			byte r = _currentRoom->getObject(i)->_direction;
+			_exitList[r] = i;
+		}
+	}
 }
 
 void GameManager::wait(int ticks) {
