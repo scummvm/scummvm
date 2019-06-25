@@ -152,9 +152,20 @@ static const PlainGameDescriptor wintermuteGames[] = {
  */
 
 static const WMEGameDescription gameDescriptions[] = {
-	// Five Lethal Demons
+	// Five Lethal Demons (Czech)
 	WME_WINENTRY("5ld", "",
-		WME_ENTRY1s("data.dcp", "1037a77cbd001e0644898addc022322c", 15407750), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+		WME_ENTRY2s("czech.dcp", "9021b7a1e154d6764228116f894b213b", 186,
+					"data.dcp", "1037a77cbd001e0644898addc022322c", 15407750), Common::CZ_CZE, ADGF_UNSTABLE, LATEST_VERSION),
+
+	// Five Lethal Demons (English)
+	WME_WINENTRY("5ld", "",
+		WME_ENTRY2s("english.dcp", "7eab045218855c9c4454c7ada7d70ef4", 170340,
+					"data.dcp", "1037a77cbd001e0644898addc022322c", 15407750), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+
+	// Five Lethal Demons (Polish)
+	WME_WINENTRY("5ld", "",
+		WME_ENTRY2s("polish.dcp", "726e279fe3c2dc81a9241408d3585c81", 173792,
+					"data.dcp", "1037a77cbd001e0644898addc022322c", 15407750), Common::PL_POL, ADGF_UNSTABLE, LATEST_VERSION),
 
 	// Five Magical Amulets (Czech)
 	WME_WINENTRY("5ma", "",
