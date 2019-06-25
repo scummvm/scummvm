@@ -114,6 +114,8 @@ void QMessageObject::processMessage(const QMessage &msg) {
 	case kHide:
 		break;
 	case kZBuffer:
+		_updateZ = msg.arg1;
+		_z = (msg.arg2 != -1) ? msg.arg2 : _z;
 		break;
 	case kPassive:
 		break;
