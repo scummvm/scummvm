@@ -653,6 +653,7 @@ void GameManager1::busted(int i) {
 			wait(3);
 			_vm->renderImage(i + 2);
 			shot(0, 0);
+			return;
 		} else if (_currentRoom->getId() == BCORRIDOR)
 			_vm->renderImage(21);
 		else if (_currentRoom->isSectionVisible(4))
