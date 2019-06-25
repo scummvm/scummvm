@@ -186,8 +186,12 @@ enum StringId {
 	kStringCommandGo = 0, kStringCommandLook, kStringCommandTake, kStringCommandOpen, kStringCommandClose,
 	kStringCommandPress, kStringCommandPull, kStringCommandUse, kStringCommandTalk, kStringCommandGive,
 	kStringStatusCommandGo, kStringStatusCommandLook, kStringStatusCommandTake, kStringStatusCommandOpen, kStringStatusCommandClose,
-	kStringStatusCommandPress, kStringStatusCommandPull, kStringStatusCommandUse, kStringStatusCommandTalk, kStringStatusCommandGive, kPhrasalVerbParticleGiveTo, kPhrasalVerbParticleUseWith, kStringDefaultDescription, kStringDialogSeparator, kStringConversationEnd, kStringHelpOverview1, kStringHelpOverview2,
-	kStringHelpOverview3, kStringHelpOverview4, kStringHelpOverview5, kStringHelpOverview6, kStringHelpOverview7, kStringTextSpeed, kStringLeaveGame, kStringYes, kStringNo
+	kStringStatusCommandPress, kStringStatusCommandPull, kStringStatusCommandUse, kStringStatusCommandTalk, kStringStatusCommandGive,
+	kPhrasalVerbParticleGiveTo, kPhrasalVerbParticleUseWith, kStringDefaultDescription, kStringDialogSeparator, kStringConversationEnd,
+	// 25
+	kStringHelpOverview1, kStringHelpOverview2, kStringHelpOverview3, kStringHelpOverview4, kStringHelpOverview5,
+	kStringHelpOverview6, kStringHelpOverview7, kStringTextSpeed, kStringLeaveGame, kStringYes,
+	kStringNo
 };
 
 ObjectType operator|(ObjectType a, ObjectType b);
