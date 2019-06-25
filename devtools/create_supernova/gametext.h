@@ -349,7 +349,7 @@ const char *gameText[] = {
 	"Affenstark!",                           // kStringGenericDescription7
 	// 260
 	"Komisches Ding",                        // kStringStrangeThing
-	"Wundersam",                             // kStringGenericDescription8
+	"Wundersam!",                             // kStringGenericDescription8
 	"Es ist ein Axacussanerkopf auf dem Bild.", // kStringImageDescription3
 	"Pflanze",                               // kStringPlant
 	"Figur",                                 // kStringStatue
