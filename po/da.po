@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2019-06-24 19:41+0200\n"
-"PO-Revision-Date: 2019-06-19 14:46+0000\n"
+"PO-Revision-Date: 2019-07-01 07:15+0000\n"
 "Last-Translator: scootergrisen <scootergrisen@gmail.com>\n"
 "Language-Team: Danish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/da/>\n"
@@ -3128,6 +3128,9 @@ msgid ""
 "playing in Original Content mode. The mode will be adjusted to Restored Cut "
 "Content for this session until you completely Quit the game."
 msgstr ""
+"ADVARSEL: Spillet blev gemt i Restored Cut Content-tilstand, men du spiller "
+"i Original Content-tilstand. Tilstanden justeres til Restored Cut Content-"
+"tilstand i denne session, indtil du afslutter spillet helt."
 
 #: engines/bladerunner/bladerunner.cpp:2041
 msgid ""
@@ -3135,28 +3138,29 @@ msgid ""
 "in Restored Cut Content mode. The mode will be adjusted to Original Content "
 "mode for this session until you completely Quit the game."
 msgstr ""
+"ADVARSEL: Spillet blev gemt i Original Content-tilstand, men du spiller i "
+"Restored Cut Content-tilstand. Tilstanden justeres til Original Content-"
+"tilstand i denne session, indtil du afslutter spillet helt."
 
 #: engines/bladerunner/bladerunner.cpp:2043
 msgid "Continue"
 msgstr "Fortsæt"
 
 #: engines/bladerunner/detection.cpp:48
-#, fuzzy
 msgid "Sitcom mode"
-msgstr "Stræktilstand"
+msgstr "Sitcom-tilstand"
 
 #: engines/bladerunner/detection.cpp:49
 msgid "Game will add laughter after actor's line or narration"
-msgstr ""
+msgstr "Spillet tilføjer latter efter skuespillerens linje eller fortælling"
 
 #: engines/bladerunner/detection.cpp:57
-#, fuzzy
 msgid "Shorty mode"
-msgstr "Stræktilstand"
+msgstr "Lav-tilstand"
 
 #: engines/bladerunner/detection.cpp:58
 msgid "Game will shrink the actors and make their voices high pitched"
-msgstr ""
+msgstr "Spillet gør skuespillerne lavere og gør deres stemmer lysere"
 
 #: engines/cge/detection.cpp:105 engines/cge2/detection.cpp:111
 msgid "Color Blind Mode"
@@ -3194,60 +3198,52 @@ msgstr "Vis grafik ved hjælp af spillets lyse palet"
 
 #: engines/glk/glk_api.cpp:63
 msgid "[ press any key to exit ]"
-msgstr ""
+msgstr "[ tryk på en tast for at fortsætte ]"
 
 #: engines/glk/quetzal.cpp:115 engines/glk/quetzal.cpp:124
-#, fuzzy
 msgid "Untitled Savegame"
-msgstr "Unavngivet gemt spil"
+msgstr "Unavngivet savegame"
 
 #: engines/glk/advsys/advsys.cpp:35
-#, fuzzy
 msgid "Could not start AdvSys game"
-msgstr "Kunne ikke skifte til videotilstand: '"
+msgstr "Kunne ikke starte AdvSys-spil"
 
 #: engines/glk/advsys/advsys.cpp:48 engines/glk/advsys/vm.cpp:319
 msgid "Sorry, the savegame couldn't be restored"
-msgstr ""
+msgstr "Beklager, savegame kunne ikke genskabes"
 
 #: engines/glk/advsys/vm.cpp:314
-#, fuzzy
 msgid "Sorry, the savegame couldn't be created"
-msgstr "videotilstanden kunne ikke ændres"
+msgstr "Beklager, savegame kunne ikke oprettes"
 
 #: engines/glk/advsys/vm.cpp:560
 msgid "Speak up! I can't hear you!\n"
-msgstr ""
+msgstr "Højere! Jeg kan ikke høre dig!\n"
 
 #: engines/glk/advsys/vm.cpp:596
 #, c-format
 msgid "I don't know the word \"%s\".\n"
-msgstr ""
+msgstr "Jeg kender ikke til ordet \"%s\".\n"
 
 #: engines/glk/advsys/vm.cpp:682
-#, fuzzy
 msgid "I don't understand.\n"
-msgstr "Jeg forstår ikke din kommando. "
+msgstr "Det forstår jeg ikke.\n"
 
 #: engines/glk/alan2/alan2.cpp:78
-#, fuzzy
 msgid "This is too short to be a valid Alan2 file."
-msgstr "Det er for kort til at være en gyldig Glulx-fil."
+msgstr "Det er for kort til at være en gyldig Alan2-fil."
 
 #: engines/glk/alan2/alan2.cpp:83
-#, fuzzy
 msgid "This is not a valid Alan2 file."
-msgstr "Det er ikke en gyldig Glulx-fil."
+msgstr "Det er ikke en gyldig Alan2-fil."
 
 #: engines/glk/frotz/frotz.cpp:126
-#, fuzzy
 msgid "Error reading save file"
-msgstr "Fejl ved kørsel af spil:"
+msgstr "Fejl ved læsning af gemt fil"
 
 #: engines/glk/frotz/frotz.cpp:144
-#, fuzzy
 msgid "Error writing save file\n"
-msgstr "Fejl ved kørsel af spil:"
+msgstr "Fejl ved skrivning af gemt fil\n"
 
 #: engines/glk/glulxe/glulxe.cpp:79 engines/glk/magnetic/magnetic.cpp:73
 msgid "This is too short to be a valid Glulx file."
@@ -3734,6 +3730,16 @@ msgid ""
 "should be located in the AmigaDOS system 'Fonts/' folder.\n"
 "Please copy them into the EOB game data directory.\n"
 msgstr ""
+"Denne AMIGA-version kræver følgende skrifttypefiler:\n"
+"\n"
+"EOBF6.FONT\n"
+"EOBF6/6\n"
+"EOBF8.FONT\n"
+"EOBF8/8\n"
+"\n"
+"Hvis du bruger det originale installationsprogram til at installere,\n"
+"så bør filerne være i AmigaDOS-systemets 'Fonts/'-mappe.\n"
+"Kopiér dem venligst til EOB-spildatamappen.\n"
 
 #: engines/kyra/graphics/screen_eob.cpp:2262
 msgid ""
@@ -3756,6 +3762,23 @@ msgid ""
 "Please copy the correct font files into your EOB II game data directory.\n"
 "\n"
 msgstr ""
+"Denne AMIGA-version kræver følgende skrifttypefiler:\n"
+"\n"
+"EOBF6.FONT\n"
+"EOBF6/6\n"
+"EOBF8.FONT\n"
+"EOBF8/8\n"
+"\n"
+"Dette er en lokaliseret version af EOB II (ikke engelsk) som bruger "
+"sprogspecifikke\n"
+"tegn som kun findes i de specifikke skrifttypefiler som kom med dit spil. Du "
+"kan ikke bruger\n"
+"skrifttypefilerne fra den engelske version eller fra et EOB I-spil, hvilket "
+"det ser ud til at du har gjort.\n"
+"\n"
+"Spillet fortsætter, men sprogspecifikke tegn vises ikke.\n"
+"Kopiér venligst de korrekte skrifttypefiler ind i din EOB II-spildatamappe.\n"
+"\n"
 
 #: engines/kyra/sound/sound_midi.cpp:72
 msgid ""
@@ -5059,9 +5082,9 @@ msgid "Unable to locate the text for %s language in '%s' engine data file."
 msgstr "Kan ikke finde teksten til %s sproget i '%s'-motorens datafil."
 
 #: engines/supernova/supernova.cpp:441
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to find '%s' in game folder."
-msgstr "Kan ikke finde '%s'-motorens datafil."
+msgstr "Kan ikke finde '%s' i spilmappen."
 
 #: engines/sword1/animation.cpp:524
 #, c-format
@@ -5198,12 +5221,14 @@ msgstr "Anvend bilinær filtrering til individuelle sprites"
 
 #: engines/wintermute/wintermute.cpp:153
 msgid "This game requires PNG, JPEG and Vorbis support."
-msgstr ""
+msgstr "Spillet kræver understøttelse af PNG, JPEG og Vorbis."
 
 #: engines/wintermute/wintermute.cpp:164
 msgid ""
 "This game requires 3D characters support, which is out of ScummVM's scope."
 msgstr ""
+"Spillet kræver understøttelse af 3D-karakterer, hvilket er udenfor ScummVMs "
+"område."
 
 #: engines/xeen/detection.cpp:89
 msgid "Show item costs in standard inventory mode"
