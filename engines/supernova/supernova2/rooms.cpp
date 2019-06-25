@@ -2064,7 +2064,6 @@ bool Ship::interact(Action verb, Object &obj1, Object &obj2) {
 		}
 		_vm->renderImage(12);
 		_gm->wait(18);
-		// TODO some palette stuff
 		outro();
 	} else
 		return false;
@@ -2111,7 +2110,6 @@ void Ship::outro() {
 		g_system->updateScreen();
 		g_system->delayMillis(_vm->_delay);
 	}
-	// TODO: End with some end of music
 	int volume;
 	do {
 		volume = _vm->_sound->getVolume() - 10;
