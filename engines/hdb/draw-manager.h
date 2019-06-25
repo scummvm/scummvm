@@ -94,6 +94,7 @@ public:
 	void turnOffFade() { _fadeInfo.active = _fadeInfo.stayFaded = false; }
 
 	Picture *loadPic(const char *picName);
+	Tile *loadTile(const char *tileName);
 
 	Tile *getTile(int index);
 	void cacheTileSequence(int index, int count);
@@ -120,6 +121,7 @@ public:
 	bool loadFont(const char *string);
 	void drawText(const char *string);
 	void getDimensions(const char *string, int *pixelsWide, int *lines);
+	int stringLength(const char *string);
 	void setTextEdges(int left, int right, int top, int bottom);
 	void getTextEdges(int *left, int *right, int *top, int *bottom);
 	void setKernLead(int kern, int lead);

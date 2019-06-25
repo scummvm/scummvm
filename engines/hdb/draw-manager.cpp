@@ -170,6 +170,15 @@ Picture *DrawMan::loadPic(const char *picName) {
 	return pic;
 }
 
+Tile *DrawMan::loadTile(const char *tileName) {
+	Tile *tile = new Tile;
+	Common::SeekableReadStream *stream = g_hdb->_fileMan->findFirstData(tileName, TYPE_TILE32);
+	if (!stream)
+		return NULL;
+	tile->load(stream);
+	return tile;
+}
+
 Tile *DrawMan::getTile(int index) {
 
 	if (index < 0 || index > _numTiles) {
@@ -599,6 +608,12 @@ void DrawMan::getDimensions(const char *string, int *pixelsWide, int *lines) {
 
 	*pixelsWide = maxWidth - _eLeft;
 	*lines = height;
+}
+
+int DrawMan::stringLength(const char *string) {
+	int w, h;
+	getDimensions(string, &w, &h);
+	return w;
 }
 
 void DrawMan::setTextEdges(int left, int right, int top, int bottom) {
