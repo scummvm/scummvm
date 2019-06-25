@@ -319,10 +319,8 @@ static const WMEGameDescription gameDescriptions[] = {
 		WME_ENTRY1s("data.dcp", "eeeb63910f6fc6ad1fe9c06db0b0ea2c", 643363346), Common::EN_ANY, ADGF_NO_FLAGS, LATEST_VERSION),
 
 	// Dead City (Czech)
-	// The Czech data are in data.dcp, so in this case we'll have to
-	// just detect the english version twice, to give the user a choice.
 	WME_WINENTRY("deadcity", "",
-		WME_ENTRY2s("english.dcp", "c591046d6de7e381d76f70e0787b2b1f", 415935,
+		WME_ENTRY2s("data.dcp", "7ebfd50d1a22370ed7b079bcaa631d62", 9070205,
 					"data.dcp", "7ebfd50d1a22370ed7b079bcaa631d62", 9070205), Common::CZ_CZE, ADGF_UNSTABLE, LATEST_VERSION),
 
 	// Dead City (English)
