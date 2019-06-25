@@ -223,6 +223,22 @@ bool AI::checkActionList(AIEntity *e, int x, int y, bool lookAndGrab) {
 	return false;
 }
 
+void AI::addToHereList(const char *entName, int x, int y) {
+	HereT *h = new HereT;
+	strcpy(h->entName, entName);
+	h->x = x;
+	h->y = y;
+	_hereList->push_back(h);
+}
+
+HereT *AI::findHere(int x, int y) {
+	for (Common::Array<HereT *>::iterator it = _hereList->begin(); it != _hereList->end(); it++) {
+		if ((*it)->x == x && (*it)->y == y)
+			return *it;
+	}
+	return NULL;
+}
+
 void AI::addToAutoList(int x, int y, const char *luaFuncInit, const char *luaFuncUse) {
 
 	const char *get;
