@@ -36,6 +36,7 @@ enum {
 	kMaxDeliveries = 5,
 	kMaxWaypoints = 10,
 	kMaxActions = 20,
+	kMaxTeleporters = 20,
 	kMaxAutoActions = 30,
 	kPlayerMoveSpeed = 4,
 	kEnemyMoveSpeed = 2,
@@ -573,6 +574,27 @@ struct ActionInfo {
 	ActionInfo() : x1(0), y1(0), x2(0), y2(0), luaFuncInit(""), luaFuncUse(""), entityName("") {}
 };
 
+struct TeleInfo {
+	uint16 x1, y1;
+	uint16 x2, y2;
+	AIDir dir1;
+	AIDir dir2;
+	uint16 level1, level2;
+	uint16 usable1, usable2;
+	uint16 anim1, anim2;
+	char luaFuncUse1[32];
+	char luaFuncUse2[32];
+
+	TeleInfo() : x1(0), y1(0), x2(0), y2(0), dir1(DIR_NONE), dir2(DIR_NONE), level1(0), level2(0), usable1(0), usable2(0), anim1(0), anim2(0), luaFuncUse1(""), luaFuncUse2("") {}
+};
+
+struct SingleTele {
+	uint16 x, y, level, usable, anim;
+	AIDir dir;
+
+	SingleTele() : x(0), y(0), level(0), usable(0), anim(0), dir(DIR_NONE) {}
+};
+
 struct AutoAction {
 	uint16 x, y;
 	bool activated;
@@ -952,6 +974,9 @@ public:
 	Tile *_debugQMark;
 
 	ActionInfo _actions[kMaxActions];
+
+	TeleInfo _teleporters[kMaxTeleporters];
+	int _numTeleporters;
 
 	AutoAction _autoActions[kMaxAutoActions];
 
