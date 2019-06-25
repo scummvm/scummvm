@@ -11764,6 +11764,34 @@ static const uint16 qfg4SearchRevenantPatch[] = {
 	PATCH_END
 };
 
+// During combat, if a rabbit is all the way to the right and attacks then it
+//  won't make any more moves, forcing the player to run away to end the fight.
+//  This is due to rabbitCombat failing to pass a caller to the rabbitAttack
+//  script and so it gets stuck. We pass the missing "self" parameter.
+//
+// Applies to: All versions
+// Responsible method: rabbitCombat:changeState(1)
+// Fixes bug: #11000
+static const uint16 qfg4RabbitCombatSignature[] = {
+	0x38, SIG_SELECTOR16(setScript),    // pushi setScript
+	0x78,                               // push1
+	0x72, SIG_ADDTOOFFSET(+2),          // lofsa rabbitAttack
+	0X36,                               // push
+	SIG_MAGICDWORD,
+	0x54, SIG_UINT16(0x0006),           // self 06 [ self setScript: rabbitAttack ]
+	0x32, SIG_UINT16(0x014b),           // jmp 014b
+	SIG_END
+};
+
+static const uint16 qfg4RabbitCombatPatch[] = {
+	PATCH_ADDTOOFFSET(+3),
+	0x7a,                               // push2
+	0x74, PATCH_ADDTOOFFSET(+2),        // lofss rabbitAttack
+	0x7c,                               // pushSelf
+	0x54, PATCH_UINT16(0x0008),         // self 08 [ self setScript: rabbitAttack self ]
+	PATCH_END
+};
+
 // Attempting to open the monastery door in room 250 while Igor is present
 //  randomly locks up the game. sHectapusDeath stands Igor up, but this can be
 //  interrupted by sIgorCarves animating him at random intervals, leaving
@@ -11888,6 +11916,7 @@ static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,   801, "fix runes puzzle (1/2)",                      1, qfg4RunesPuzzleSignature1,     qfg4RunesPuzzlePatch1 },
 	{  true,   801, "fix runes puzzle (2/2)",                      1, qfg4RunesPuzzleSignature2,     qfg4RunesPuzzlePatch2 },
 	{  true,   803, "fix sliding down slope",                      1, qfg4SlidingDownSlopeSignature, qfg4SlidingDownSlopePatch },
+	{  true,   820, "fix rabbit combat",                           1, qfg4RabbitCombatSignature,     qfg4RabbitCombatPatch },
 	{  true,   810, "fix conditional void calls",                  1, qfg4ConditionalVoidSignature,  qfg4ConditionalVoidPatch },
 	{  true,   830, "fix conditional void calls",                  2, qfg4ConditionalVoidSignature,  qfg4ConditionalVoidPatch },
 	{  true,   835, "fix conditional void calls",                  3, qfg4ConditionalVoidSignature,  qfg4ConditionalVoidPatch },
