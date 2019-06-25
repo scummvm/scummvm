@@ -133,8 +133,6 @@ bool GameManager2::deserialize(Common::ReadStream *in, int version) {
 	for (int i = 0; i < NUMROOMS2; ++i) {
 		_rooms[i]->deserialize(in, version);
 	}
-	delete _rooms[BST_DOOR];
-	_rooms[BST_DOOR] = new BstDoor(_vm, this);
 	_lastRoom = _rooms[lastRoomId];
 	changeRoom(curRoomId);
 
