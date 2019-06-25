@@ -340,30 +340,6 @@ void aiFourFirerAction(AIEntity *e) {
 	warning("STUB: AI: aiFourFirerAction required");
 }
 
-void aiRailRiderInit(AIEntity *e) {
-	warning("STUB: AI: aiRailRiderInit required");
-}
-
-void aiRailRiderInit2(AIEntity *e) {
-	warning("STUB: AI: aiRailRiderInit2 required");
-}
-
-void aiRailRiderAction(AIEntity *e) {
-	warning("STUB: AI: aiRailRiderAction required");
-}
-
-void aiRailRiderUse(AIEntity *e) {
-	warning("STUB: AI: aiRailRiderUse required");
-}
-
-void aiRailRiderOnUse(AIEntity *e) {
-	warning("STUB: AI: aiRailRiderOnUse required");
-}
-
-void aiRailRiderOnAction(AIEntity *e) {
-	warning("STUB: AI: aiRailRiderOnAction required");
-}
-
 void aiSlugAttackAction(AIEntity *e) {
 	warning("STUB: AI: aiSlugAttackAction required");
 }
