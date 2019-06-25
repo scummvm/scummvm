@@ -127,7 +127,10 @@ RoomId Room::getId() const {
 }
 
 void Room::setSectionVisible(uint section, bool visible) {
-	_shown[section] = visible ? kShownTrue : kShownFalse;
+	if (section < kMaxSection)
+		_shown[section] = visible ? kShownTrue : kShownFalse;
+	else
+		_shown[section - 128] = visible ? kShownFalse : kShownTrue;
 }
 
 bool Room::isSectionVisible(uint index) const {
