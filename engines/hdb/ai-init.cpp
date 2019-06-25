@@ -671,6 +671,7 @@ AI::AI() {
 	_floats = new Common::Array<AIEntity *>;
 	_animTargets = new Common::Array<AnimTarget *>;
 	_arrowPaths = new Common::Array<ArrowPath *>;
+	_hereList = new Common::Array<HereT *>;
 
 	// REMOVE: Remove for final. Used here due to lack of a MENU
 	_numGems = _numGooCups = _numMonkeystones = _numInventory = 0;
@@ -684,6 +685,7 @@ AI::~AI() {
 	delete _floats;
 	delete _animTargets;
 	delete _arrowPaths;
+	delete _hereList;
 }
 
 bool AI::init() {
@@ -828,6 +830,10 @@ void AI::restartSystem() {
 	// Clear the Action list
 	memset(_actions, 0, sizeof(_actions));
 
+	// Clear Teleporter list
+	memset(_teleporters, 0, sizeof(_teleporters));
+	_numTeleporters = 0;
+
 	// Clear the Auto-Action list
 	memset(_autoActions, 0, sizeof(_autoActions));
 
@@ -839,6 +845,9 @@ void AI::restartSystem() {
 
 	// Clear ArrowPath List
 	_arrowPaths->clear();
+
+	// Clear Here List
+	_hereList->clear();
 
 	// Clear Cinematic System
 	_cineActive = _cameraLock = _playerLock = _cineAborted = false;
