@@ -65,6 +65,9 @@ public:
 	uint32 getDialogDelay() {
 		return _dialogDelay;
 	}
+	bool dialogActive() {
+		return _dialogInfo.active;
+	}
 
 private:
 
