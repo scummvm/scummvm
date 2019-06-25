@@ -591,6 +591,11 @@ struct ArrowPath {
 	ArrowPath() : type(0), dir(DIR_NONE), tileX(0), tileY(0) {}
 };
 
+struct HereT {
+	uint16 x, y;
+	char entName[32];
+};
+
 struct CineCommand {
 	CineType cmdType;
 	double x, y;
@@ -949,6 +954,7 @@ public:
 	AutoAction _autoActions[kMaxAutoActions];
 
 	Common::Array<ArrowPath *> *_arrowPaths;
+	Common::Array<HereT *> *_hereList;
 
 	// Virtual Player
 	AIEntity _dummyPlayer;
