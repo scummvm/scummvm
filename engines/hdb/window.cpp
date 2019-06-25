@@ -303,4 +303,82 @@ void Window::setDialogDelay(int delay) {
 	_dialogDelay = g_system->getMillis() + 1000 * delay;
 }
 
+void Window::drawInventory() {
+	int baseX, drawX, drawY;
+	static uint32 timer = g_hdb->getTimeSlice() + 300;
+	AIEntity *e, *sel;
+	char string[8];
+	int gems, mstones;
+
+	// INFOBAR blit - only once per frame
+	// note: if 2, don't draw ANY info at all
+	if (_infobarDimmed > 1)
+		return;
+
+	_gfxInfobar->draw(kScreenWidth - _gfxInfobar->_width, 0);
+
+	baseX = drawX = _invWinInfo.x;
+	drawY = _invWinInfo.y;
+
+	// Draw Inv Items
+	sel = NULL;
+	if (_invWinInfo.selection >= g_hdb->_ai->getInvAmount())
+		_invWinInfo.selection = g_hdb->_ai->getInvAmount();
+
+	for (int inv = 0; inv < g_hdb->_ai->getInvAmount(); inv++) {
+		e = g_hdb->_ai->getInvItem(inv);
+		if (inv == _invWinInfo.selection)
+			sel = e;
+
+		e->standdownGfx[0]->drawMasked(drawX, drawY);
+
+		drawX += kInvItemSpaceX;
+		if (drawX >= baseX + (kInvItemSpaceX * kInvItemPerLine)) {
+			drawX = baseX;
+			drawY += kInvItemSpaceY;
+		}
+	}
+
+	// Draw the Gem
+	drawY = _invWinInfo.y + kInvItemSpaceY * 4 - 8;
+	drawX = baseX - 8;
+	_gemGfx->drawMasked(drawX, drawY);
+
+	// Draw the Gem Amount
+	gems = g_hdb->_ai->getGemAmount();
+	sprintf(string, "%d", gems);
+	g_hdb->_drawMan->setCursor(drawX + 32, drawY + 8);
+	g_hdb->_drawMan->drawText(string);
+
+	// Draw the mini monkeystone
+	mstones = g_hdb->_ai->getMonkeystoneAmount();
+	if (mstones) {
+		drawX = baseX + kInvItemSpaceX * 2 - 8;
+		_mstoneGfx->drawMasked(drawX, drawY + 8);
+
+		// Draw the monkeystone amount
+		sprintf(string, "%d", mstones);
+		g_hdb->_drawMan->setCursor(drawX + 28, drawY + 8);
+		g_hdb->_drawMan->drawText(string);
+	}
+
+	// If you have an inventory, draw the selection cursor
+	if (g_hdb->_ai->getInvAmount()) {
+		if (_invWinInfo.selection < 0)
+			_invWinInfo.selection = 0;
+
+		// Draw the Inventory Select Cursor
+		drawX = baseX + (_invWinInfo.selection % kInvItemPerLine) * kInvItemSpaceX;
+		drawY = _invWinInfo.y + (_invWinInfo.selection / kInvItemPerLine) * kInvItemSpaceY;
+		_gfxInvSelect->drawMasked(drawX, drawY);
+
+		if (sel) {
+			int centerX = baseX - 4 + (kScreenWidth - baseX) / 2;
+			drawY = _invWinInfo.y + (kInvItemSpaceY * 4) + 16;
+			g_hdb->_drawMan->setCursor(centerX - g_hdb->_drawMan->stringLength(sel->printedName) / 2, drawY);
+			g_hdb->_drawMan->drawText(sel->printedName);
+		}
+	}
+}
+
 } // End of Namespace
