@@ -81,6 +81,15 @@ public:
 		return _dialogInfo.active;
 	}
 
+	// Inventory Functions
+	void drawInventory();
+	void setInvSelect(int status) {
+		_invWinInfo.selection = status;
+	}
+	int getInvSelect() {
+		return _invWinInfo.selection;
+	}
+
 private:
 
 	DialogInfo _dialogInfo;
