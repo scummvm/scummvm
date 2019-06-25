@@ -88,7 +88,7 @@ public:
 	bool show();
 	bool hide();
 	bool addToList(int answer, bool done, int priorityPolite, int priorityNormal, int prioritySurly);
-	bool clearNeverRepeatWasSelectedFlag(int answer); // aux funtion - used in cut content mode to re-use some dialogue options for different characters
+	bool clearNeverRepeatWasSelectedFlag(int answer); // aux function - used in cut content mode to re-use some dialogue options for different characters
 	bool addToListNeverRepeatOnceSelected(int answer, int priorityPolite, int priorityNormal, int prioritySurly);
 	bool removeFromList(int answer);
 	bool clearList();
