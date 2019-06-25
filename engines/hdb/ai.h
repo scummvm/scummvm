@@ -819,6 +819,21 @@ public:
 	// Inventory Functions
 	bool addToInventory(AIEntity *e);
 	void clearInventory();
+	int getInvAmount() {
+		return _numInventory;
+	}
+	int getGemAmount() {
+		return _numGems;
+	}
+	int getMonkeystoneAmount() {
+		return _numMonkeystones;
+	}
+	int getGooCupAmount() {
+		return _numGooCups;
+	}
+	void setGemAmount(int amt) {
+		_numGems = amt;
+	}
 
 	// Player Variables
 	bool _playerDead;
