@@ -1211,6 +1211,10 @@ void BladeRunnerEngine::handleKeyDown(Common::Event &event) {
 		return;
 	}
 
+	if (_vk->isOpen()) {
+		return;
+	}
+
 	if (_dialogueMenu->isOpen()) {
 		return;
 	}
@@ -2043,11 +2047,11 @@ bool BladeRunnerEngine::loadGame(Common::SeekableReadStream &stream) {
 		GUI::MessageDialog dialog(warningMsg, _("Continue"), 0);
 		dialog.runModal();
 		_cutContent = !_cutContent;
-		// force a Key Up event, since we need it to remove the KIA
+		// force a Key Down event, since we need it to remove the KIA
 		// but it's lost due to the modal dialogue
 		Common::EventManager *eventMan = _system->getEventManager();
 		Common::Event event;
-		event.type = Common::EVENT_KEYUP;
+		event.type = Common::EVENT_KEYDOWN;
 		eventMan->pushEvent(event);
 	}
 
@@ -2163,14 +2167,18 @@ void BladeRunnerEngine::blitToScreen(const Graphics::Surface &src) const {
 
 Graphics::Surface BladeRunnerEngine::generateThumbnail() const {
 	Graphics::Surface thumbnail;
-	thumbnail.create(640 / 8, 480 / 8, _surfaceFront.format);
+	thumbnail.create(640 / 8, 480 / 8, gameDataPixelFormat());
 
 	for (int y = 0; y < thumbnail.h; ++y) {
 		for (int x = 0; x < thumbnail.w; ++x) {
-			uint16       *dstPixel = (uint16 *)thumbnail.getBasePtr(x, y);
-			const uint16 *srcPixel = (const uint16 *)_surfaceFront.getBasePtr(x * 8, y * 8);
+			uint8 r, g, b;
 
-			*dstPixel = *srcPixel;
+			uint16  srcPixel = *(uint16 *)_surfaceFront.getBasePtr(x * 8, y * 8);
+			uint16 *dstPixel = (uint16 *)thumbnail.getBasePtr(x, y);
+
+			// Throw away alpha channel as it is not needed
+			_surfaceFront.format.colorToRGB(srcPixel, r, g, b);
+			*dstPixel = thumbnail.format.RGBToColor(r, g, b);
 		}
 	}
 

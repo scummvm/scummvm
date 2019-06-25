@@ -38,8 +38,5 @@ Product alan = {
 	{"2.8(6)", 2, 8, 6, 995034907, ""}
 };
 
-static char *alanId =
-    "@(#)RELEASE ";
-
 } // End of namespace Alan2
 } // End of namespace Glk

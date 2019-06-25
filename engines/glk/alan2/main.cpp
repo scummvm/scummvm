@@ -114,13 +114,11 @@ Boolean skipsp = FALSE;
   return buffers...
 
  */
-void terminate(int code) {
+void terminate(CONTEXT, int code) {
 	newline();
-	free(memory);
-	if (logflg)
-		fclose(logfil);
 
 	g_vm->glk_exit();
+	LONG_JUMP
 }
 
 /*======================================================================
@@ -885,7 +883,7 @@ static void do_it(CONTEXT) {
 						else
 							printf("\n<VERB %d, %s (ONLY), Body:>\n", cur.vrb, trace);
 					}
-					interpret(alt[i]->action);
+					CALL1(interpret, alt[i]->action)
 					if (fail) return;
 					if (alt[i]->qual == (Aword)Q_ONLY) return;
 				}
@@ -908,7 +906,7 @@ static void do_it(CONTEXT) {
 							sprintf(trace, "in PARAMETER %d", i - 1);
 						printf("\n<VERB %d, %s, Body:>\n", cur.vrb, trace);
 					}
-					interpret(alt[i]->action);
+					CALL1(interpret, alt[i]->action)
 					if (fail) return;
 				}
 				done[i] = TRUE;
@@ -929,7 +927,7 @@ static void do_it(CONTEXT) {
 						sprintf(trace, "in PARAMETER %d", i - 1);
 					printf("\n<VERB %d, %s (AFTER), Body:>\n", cur.vrb, trace);
 				}
-				interpret(alt[i]->action);
+				CALL1(interpret, alt[i]->action)
 				if (fail) return;
 			}
 		i--;
@@ -1375,23 +1373,6 @@ static void movactor(CONTEXT) {
 
   */
 static void openFiles() {
-	{
-		char *s = strrchr(codfnm, '\\');
-		if (!s) s = strrchr(codfnm, '/');
-		g_vm->garglk_set_story_name(s ? s + 1 : codfnm);
-	}
-
-	// Open Text file
-	strcpy(txtfnm, advnam);
-	strcat(txtfnm, ".dat");
-
-	Common::File *f = new Common::File();
-	if (!f->open(txtfnm)) {
-		delete f;
-		Common::String s = Common::String::format("Can't open adventure text data file '%s'.", txtfnm);
-		::error("%s", s.c_str());
-	}
-
 	// If logging open log file
 	if (logflg) {
 		sprintf(logfnm, "%s.log", advnam);
@@ -1415,29 +1396,38 @@ void run() {
 	// Set default line and column
 	col = lin = 1;
 
-	//setjmp(restart_label);    /* Return here if he wanted to restart */
+	while (!g_vm->shouldQuit()) {
+		// Load, initialise and start the adventure
+		g_vm->setRestart(false);
+		init();
 
-	init();         /* Load, initialise and start the adventure */
-
-	Context ctx;
-	for (;;) {
-		if (!ctx._break) {
-			if (dbgflg)
-				debug();
-
-			eventchk();
-			cur.tick++;
+		if (g_vm->_saveSlot != -1) {
+			if (g_vm->loadGameState(g_vm->_saveSlot).getCode() != Common::kNoError)
+				return;
+			g_vm->_saveSlot = -1;
+			g_vm->_pendingLook = true;
 		}
 
-		// Execution ends up here after calls to the error method
+		Context ctx;
+		while (!g_vm->shouldQuit() && !g_vm->shouldRestart()) {
+			if (!ctx._break) {
+				if (dbgflg)
+					debug();
 
-		// Move all characters
-		ctx._break = false;
-		for (cur.act = ACTMIN; cur.act <= (int)ACTMAX && !ctx._break; cur.act++) {
-			movactor(ctx);
+				eventchk();
+				cur.tick++;
+			}
 
-			if (g_vm->shouldQuit())
-				return;
+			// Execution ends up here after calls to the error method
+
+			// Move all characters
+			ctx._break = false;
+			for (cur.act = ACTMIN; cur.act <= (int)ACTMAX && !ctx._break; cur.act++) {
+				movactor(ctx);
+
+				if (g_vm->shouldQuit())
+					return;
+			}
 		}
 	}
 }

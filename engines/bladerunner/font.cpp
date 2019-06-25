@@ -199,6 +199,7 @@ void Font::drawCharacter(const uint8 character, Graphics::Surface &surface, int 
 			gameDataPixelFormat().colorToARGB(*srcPtr, a, r, g, b);
 			if (!a) {
 				if (_color == _defaultColor) {
+					// Ignore the alpha in the output as it is inversed in the input
 					*dstPtr = surface.format.RGBToColor(r, g, b);
 				} else {
 					*dstPtr = _color;

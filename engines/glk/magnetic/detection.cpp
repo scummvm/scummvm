@@ -81,13 +81,15 @@ bool MagneticMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames
 
 		DetectedGame gd;
 		if (!p->_gameId) {
-			if (gDebugLevel > 0) {
-				// Print an entry suitable for putting into the detection_tables.h
-				debug("ENTRY0(\"%s\", \"%s\", %u),", filename.c_str(), md5.c_str(), (uint)filesize);
-			}
-
 			const PlainGameDescriptor &desc = MAGNETIC_GAME_LIST[0];
 			gd = DetectedGame(desc.gameId, desc.description, Common::UNK_LANG, Common::kPlatformUnknown);
+			gd.canBeAdded = true;
+			gd.hasUnknownFiles = true;
+			FileProperties fp;
+			fp.md5 = md5;
+			fp.size = filesize;
+			gd.matchedFiles[filename] = fp;
+
 		} else {
 			PlainGameDescriptor gameDesc = findGame(p->_gameId);
 			gd = DetectedGame(p->_gameId, gameDesc.description, p->_language, Common::kPlatformUnknown, p->_extra);

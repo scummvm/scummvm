@@ -27,6 +27,7 @@
  */
 
 #include "glk/alan2/types.h"
+#include "glk/alan2/jumps.h"
 
 namespace Glk {
 namespace Alan2 {
@@ -61,7 +62,7 @@ extern void score(Aword sc);
 extern void visits(Aword v);
 extern void schedule(Aword evt, Aword whr, Aword aft);
 extern void cancl(Aword evt);
-extern void quit(void);
+extern void quit(CONTEXT);
 extern void restart(void);
 extern void save(void);
 extern void restore(void);

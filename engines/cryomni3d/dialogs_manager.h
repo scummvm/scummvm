@@ -48,7 +48,7 @@ public:
 		_ignoreNoEndOfConversation(false) { }
 	virtual ~DialogsManager();
 
-	void init(uint size, const Common::String &endOfConversationText) { _dialogsVariables.resize(size); _endOfConversationText = endOfConversationText; }
+	void init(uint arraySize, const Common::String &endOfConversationText) { _dialogsVariables.resize(arraySize); _endOfConversationText = endOfConversationText; }
 	void loadGTO(const Common::String &gtoFile);
 
 	void setupVariable(uint id, const Common::String &variable) { _dialogsVariables[id] = DialogVariable(variable, 'N'); }

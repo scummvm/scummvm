@@ -35,9 +35,12 @@ void SceneScriptNR10::InitializeScene() {
 
 	Scene_Exit_Add_2D_Exit(0, 144, 163, 194, 318, 3);
 	Scene_Exit_Add_2D_Exit(1, 475,  95, 568, 230, 0);
-	if (_vm->_cutContent && !Game_Flag_Query(kFlagMcCoyCommentsOnOldProjector)) {
-		Scene_2D_Region_Add(0, 323,  86, 473, 320);// projector area 1
-		Scene_2D_Region_Add(1, 280, 180, 323, 212);  // projector area 2
+	if (_vm->_cutContent
+	    && !Game_Flag_Query(kFlagMcCoyCommentsOnOldProjector)
+	    && !Actor_Query_Is_In_Current_Set(kActorDektora)
+	) {
+		Scene_2D_Region_Add(0, 323,  86, 473, 320); // projector area 1
+		Scene_2D_Region_Add(1, 280, 180, 323, 212); // projector area 2
 	}
 
 	Ambient_Sounds_Add_Looping_Sound(kSfxCTDRONE1, 22, 0, 1);
@@ -84,6 +87,11 @@ bool SceneScriptNR10::ClickedOn3DObject(const char *objectName, bool combatMode)
 		Scene_Loop_Start_Special(kSceneLoopModeOnce, 0, true);
 		Un_Combat_Target_Object("BOX18");
 		Scene_Exits_Enable();
+		if (_vm->_cutContent && !Game_Flag_Query(kFlagMcCoyCommentsOnOldProjector)) {
+			// restore regions if McCoy has not commented on projector, when Dektora leaves
+			Scene_2D_Region_Add(0, 323,  86, 473, 320); // projector area 1
+			Scene_2D_Region_Add(1, 280, 180, 323, 212); // projector area 2
+		}
 		return true;
 	}
 	return false;
@@ -119,8 +127,8 @@ bool SceneScriptNR10::ClickedOnExit(int exitId) {
 }
 
 bool SceneScriptNR10::ClickedOn2DRegion(int region) {
-if (_vm->_cutContent) {
-		if (!Game_Flag_Query(kFlagMcCoyCommentsOnOldProjector) && (region == 0 || region == 1) ) {
+	if (_vm->_cutContent) {
+		if (!Game_Flag_Query(kFlagMcCoyCommentsOnOldProjector) && (region == 0 || region == 1)) {
 			Game_Flag_Set(kFlagMcCoyCommentsOnOldProjector);
 			Actor_Face_XYZ(kActorMcCoy, -28.90f, 55.00f, -133.81f, true);
 			Actor_Voice_Over(1750, kActorVoiceOver);

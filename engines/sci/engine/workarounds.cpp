@@ -1261,6 +1261,8 @@ static const SciMessageWorkaroundEntry audio36Workarounds[] = {
 	{ GID_QFG4,          SCI_MEDIA_CD,     K_LANG_NONE,     -1,  510,  23,   1,   0,  1, { MSG_WORKAROUND_REMAP,    510, 199,   1,   0,  1,  0,   0,   0, NULL } },
 	// Clicking flowers on Rusalka - bug #10849 (see message workarounds above)
 	{ GID_QFG4,          SCI_MEDIA_CD,     K_LANG_NONE,     -1,  520,   2,  59,   0,  2, { MSG_WORKAROUND_REMAP,    520,   2,  59,   0,  3,  0,   0,   0, NULL } },
+	// Casting glide spell in room 593 when standing on water
+	{ GID_QFG4,          SCI_MEDIA_CD,     K_LANG_NONE,     -1,  593,   5,   6,   7,  1, { MSG_WORKAROUND_REMAP,    570,   2,   6,  14,  1,  0,   0,   0, NULL } },
 	SCI_MESSAGEWORKAROUNDENTRY_TERMINATOR
 };
 

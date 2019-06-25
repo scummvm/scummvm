@@ -35,19 +35,23 @@ namespace Alan2 {
  * Alan2 game interpreter
  */
 class Alan2 : public GlkAPI {
+private:
+	bool _restartFlag;
 public:
 	bool vm_exited_cleanly;
 	Common::String _advName;
+	int _saveSlot;
+	bool _pendingLook;
 private:
-	/**
-	 * Validates the game file, and if it's invalid, displays an error dialog
-	 */
-	bool is_gamefile_valid();
-
 	/**
 	 * Initialization
 	 */
-	void initialize();
+	bool initialize();
+
+	/**
+	 * Deinitialization
+	 */
+	void deinitialize();
 
 	/**
 	 * Synchronize data to or from a save file
@@ -63,6 +67,16 @@ public:
 	 * Run the game
 	 */
 	void runGame();
+
+	/**
+	 * Flag for the game to restart
+	 */
+	void setRestart(bool flag) { _restartFlag = flag; }
+
+	/**
+	 * Returns whether the game should restart
+	 */
+	bool shouldRestart() const { return _restartFlag; }
 
 	/**
 	 * Returns the running interpreter type

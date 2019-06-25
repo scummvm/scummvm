@@ -121,6 +121,8 @@ void Toolbar::updateZones() {
 		_inventoryOffset = 0;
 		_zones[10].secondary = true;
 		_zones[11].secondary = true;
+		inventoryIt = _inventory->end();
+		inventorySelectedIt = _inventory->end();
 	} else {
 		_inventoryMaxOffset = 0;
 		// Find an object in inventory after the 8 first

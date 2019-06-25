@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-06-23 00:37+0200\n"
-"PO-Revision-Date: 2019-06-19 20:16+0000\n"
+"POT-Creation-Date: 2019-06-24 19:41+0200\n"
+"PO-Revision-Date: 2019-06-23 23:15+0000\n"
 "Last-Translator: Lothar Serra Mari <serra@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -757,7 +757,7 @@ msgstr "Spiel auswählen:"
 
 #: gui/launcher.cpp:722
 msgid "Mass Add..."
-msgstr "Viele hinzufügen..."
+msgstr "Durchsuchen..."
 
 #: gui/launcher.cpp:724
 msgid "Record..."
@@ -2341,56 +2341,56 @@ msgstr "Automatisches Ziehen ist jetzt"
 msgid "Swipe three fingers to the right to toggle."
 msgstr "Zum Umschalten mit drei Fingern nach rechts wischen."
 
-#: backends/graphics/opengl/opengl-graphics.cpp:151
+#: backends/graphics/opengl/opengl-graphics.cpp:152
 msgid "OpenGL"
 msgstr "OpenGL"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:272
+#: backends/graphics/opengl/opengl-graphics.cpp:240
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:75
 msgid "Center"
 msgstr "Zentriert"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:273
+#: backends/graphics/opengl/opengl-graphics.cpp:241
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:76
 msgid "Pixel-perfect scaling"
 msgstr "Pixelgenaue Skalierung"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:274
+#: backends/graphics/opengl/opengl-graphics.cpp:242
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:77
 msgid "Fit to window"
 msgstr "An Fenster anpassen"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:275
+#: backends/graphics/opengl/opengl-graphics.cpp:243
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:78
 msgid "Stretch to window"
 msgstr "Auf Fenstergröße strecken"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:652
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:603
 #, c-format
 msgid "Resolution: %dx%d"
 msgstr "Auflösung: %dx%d"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:673
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:624
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2511
 msgid "Enabled aspect ratio correction"
 msgstr "Seitenverhältniskorrektur an"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:675
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:626
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2517
 msgid "Disabled aspect ratio correction"
 msgstr "Seitenverhältniskorrektur aus"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:695
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:646
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2534
 msgid "Filtering enabled"
 msgstr "Bilineare Filterung aktiviert"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:697
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:648
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2536
 msgid "Filtering disabled"
 msgstr "Bilineare Filterung deaktiviert"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:724
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:676
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2565
 msgid "Stretch mode"
 msgstr "Skaliermodus"
@@ -3185,6 +3185,25 @@ msgstr ""
 msgid "Continue"
 msgstr "Fortsetzen"
 
+#: engines/bladerunner/detection.cpp:48
+msgid "Sitcom mode"
+msgstr "Sitcom-Modus"
+
+#: engines/bladerunner/detection.cpp:49
+msgid "Game will add laughter after actor's line or narration"
+msgstr ""
+"Das Spiel wird Gelächter am Ende eines Dialogs oder einer Erzählung "
+"hinzufügen"
+
+#: engines/bladerunner/detection.cpp:57
+msgid "Shorty mode"
+msgstr "Shorty-Modus"
+
+#: engines/bladerunner/detection.cpp:58
+msgid "Game will shrink the actors and make their voices high pitched"
+msgstr ""
+"Das Spiel wird die Akteure schrumpfen und ihre Stimmen höher klingen lassen"
+
 #: engines/cge/detection.cpp:105 engines/cge2/detection.cpp:111
 msgid "Color Blind Mode"
 msgstr "Modus für Farbenblinde"
@@ -3253,11 +3272,11 @@ msgstr "Ich kenne das Wort \"%s\" nicht.\n"
 msgid "I don't understand.\n"
 msgstr "Ich verstehe nicht.\n"
 
-#: engines/glk/alan2/alan2.cpp:160
+#: engines/glk/alan2/alan2.cpp:78
 msgid "This is too short to be a valid Alan2 file."
 msgstr "Das ist zu kurz, um eine gültige Alan2-Datei zu sein."
 
-#: engines/glk/alan2/alan2.cpp:165
+#: engines/glk/alan2/alan2.cpp:83
 msgid "This is not a valid Alan2 file."
 msgstr "Dies ist keine gültige Alan2-Datei."
 

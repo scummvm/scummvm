@@ -41,37 +41,43 @@ void AIScriptFishDealer::Initialize() {
 }
 
 bool AIScriptFishDealer::Update() {
-	if (Global_Variable_Query(kVariableChapter) == 5 && Actor_Query_Goal_Number(kActorFishDealer) < 400) {
-		Actor_Set_Goal_Number(kActorFishDealer, 400);
-
-		return true;
-	}
 #if BLADERUNNER_ORIGINAL_BUGS
-	else if (Player_Query_Current_Scene()
-			 || Actor_Query_Goal_Number(kActorFishDealer) == 2
-	         || Actor_Query_Goal_Number(kActorFishDealer) == 1
-	         || Actor_Query_Goal_Number(kActorFishDealer) == 400) {
-		return false;
-	} else {
-		Actor_Set_Goal_Number(kActorFishDealer, 1);
+	if (Global_Variable_Query(kVariableChapter) == 5
+	 && Actor_Query_Goal_Number(kActorFishDealer) < 400
+	) {
+		Actor_Set_Goal_Number(kActorFishDealer, 400);
+		return true;
 
+	} else if (Player_Query_Current_Scene() == kSceneAR01
+	        && Actor_Query_Goal_Number(kActorFishDealer) != 1
+	        && Actor_Query_Goal_Number(kActorFishDealer) != 2
+	        && Actor_Query_Goal_Number(kActorFishDealer) != 400
+	) {
+		Actor_Set_Goal_Number(kActorFishDealer, 1);
 		return true;
 	}
+	return false;
 #else
-	// prevent Fish Dealer from blinking out while McCoy is flying out from Animoid
-	else if (Actor_Query_Goal_Number(kActorFishDealer) == 400
-	         || ( Player_Query_Current_Scene() != kSceneAR01 )) {
-		return false;
-	}
-	else {
+	if (Global_Variable_Query(kVariableChapter) < 5) {
+		// prevent Fish Dealer from blinking out while McCoy is flying out from Animoid
 		if (Player_Query_Current_Scene() == kSceneAR01
-		    && Actor_Query_Goal_Number(kActorFishDealer) == 3) {
+		 && Actor_Query_Goal_Number(kActorFishDealer) == 3
+		) {
 			Actor_Set_Goal_Number(kActorFishDealer, 1);
+			return true;
+		}
+	} else {
+		if (Actor_Query_Goal_Number(kActorFishDealer) < 400) {
+			Actor_Set_Goal_Number(kActorFishDealer, 400);
+		} else if (Actor_Query_In_Set(kActorFishDealer, kSetAR01_AR02)) {
+			// Remove the fish dealer from AR01 if she is still there in chapter 5,
+			// this can happen only with older save games.
+			GoalChanged(400, 400);
 		}
 		return true;
 	}
+	return false;
 #endif // BLADERUNNER_ORIGINAL_BUGS
-
 }
 
 void AIScriptFishDealer::TimerExpired(int timer) {
@@ -168,6 +174,11 @@ bool AIScriptFishDealer::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		return true;
 
 	case 400:
+#if !BLADERUNNER_ORIGINAL_BUGS
+		// Movement truck is not reset and she might end-up showing up in AR01 after all.
+		// This will lead to a issue with CDFRAMES in chapter 5
+		AI_Movement_Track_Flush(kActorFishDealer);
+#endif
 		Actor_Put_In_Set(kActorFishDealer, kSetFreeSlotH);
 		Actor_Set_At_Waypoint(kActorFishDealer, 40, 0);
 		return true;

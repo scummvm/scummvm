@@ -99,7 +99,7 @@ extern Boolean needsp;
 #define endOfTable(x) eot((Aword *) x)
 
 extern void *allocate(unsigned long len);
-extern void terminate(int code);
+extern void terminate(CONTEXT, int code);
 extern void usage(void);
 extern void error(CONTEXT, MsgKind msg);
 extern void syserr(const char *msg);

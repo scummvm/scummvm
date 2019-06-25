@@ -43,7 +43,6 @@ MODULE_OBJS := \
 	alan2/main.o \
 	alan2/params.o \
 	alan2/parse.o \
-	alan2/readline.o \
 	alan2/reverse.o \
 	alan2/rules.o \
 	alan2/stack.o \

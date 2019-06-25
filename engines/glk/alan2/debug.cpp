@@ -28,8 +28,6 @@
 #include "glk/alan2/inter.h"
 #include "glk/alan2/main.h"
 #include "glk/alan2/parse.h"
-#include "glk/alan2/readline.h"
-
 
 namespace Glk {
 namespace Alan2 {
@@ -315,8 +313,11 @@ void debug() {
       $iX -- exit debug mode\
       $iQ -- quit game");
 			break;
-		case 'Q':
-			terminate(0);
+		case 'Q': {
+			Context ctx;
+			terminate(ctx, 0);
+			break;
+		}
 		case 'X':
 			dbgflg = FALSE;       /* Fall through to 'G' */
 		case 'G':

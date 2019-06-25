@@ -43,11 +43,6 @@ public:
 	virtual void setFeatureState(OSystem::Feature f, bool enable) override;
 	virtual bool getFeatureState(OSystem::Feature f) const override;
 
-	virtual const OSystem::GraphicsMode *getSupportedStretchModes() const override;
-	virtual int getDefaultStretchMode() const override;
-	virtual bool setStretchMode(int mode) override;
-	virtual int getStretchMode() const override;
-
 	virtual void initSize(uint w, uint h, const Graphics::PixelFormat *format) override;
 	virtual void updateScreen() override;
 
@@ -84,7 +79,6 @@ private:
 	uint _lastRequestedWidth;
 	uint _lastRequestedHeight;
 	uint _graphicsScale;
-	int _stretchMode;
 	bool _ignoreLoadVideoMode;
 	bool _gotResize;
 

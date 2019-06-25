@@ -27,6 +27,7 @@
  */
 
 #include "glk/windows.h"
+#include "glk/alan2/types.h"
 
 namespace Glk {
 namespace Alan2 {
@@ -40,6 +41,11 @@ extern winid_t glkStatusWin;
 #define printf glkio_printf
 
 void glkio_printf(const char *, ...);
+
+#define LINELENGTH 80
+#define HISTORYLENGTH 20
+
+extern Boolean readline(char usrbuf[]);
 
 } // End of namespace Alan2
 } // End of namespace Glk

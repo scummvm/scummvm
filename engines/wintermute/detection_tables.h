@@ -90,6 +90,8 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"spaceinvaders",   "Space Invaders"},
 	{"spacemadness",    "Space Madness"},
 	{"sofiasdebt",      "Sofia's Debt"},
+	{"tanya1",          "Tanya Grotter and the Magical Double Bass"},
+	{"tanya2",          "Tanya Grotter and the Disappearing Floor"},
 	{"theancientmark1", "The Ancient Mark - Episode 1"},
 	{"thebox",          "The Box"},
 	{"thekite",         "The Kite"},
@@ -1763,6 +1765,14 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Space Madness
 	WME_WINENTRY("spacemadness", "1.0.2",
 		WME_ENTRY1s("data.dcp",  "b9b83135dc7a9e1b4b5f50195dbeb630", 39546622), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+
+	// Tanya Grotter and the Magical Double Bass
+	WME_WINENTRY("tanya1", "",
+		WME_ENTRY1s("data.dcp", "035bbdaff078cc4053ecf4b518c0d0fd", 1007507786), Common::RU_RUS, ADGF_UNSTABLE, LATEST_VERSION),
+
+  // Tanya Grotter and the Disappearing Floor
+	WME_WINENTRY("tanya2", "",
+		WME_ENTRY1s("data.dcp", "9c15f14990f630177e063da885d03e6d", 936959767), Common::RU_RUS, ADGF_UNSTABLE, LATEST_VERSION),
 
 	// The Ancient Mark - Episode 1
 	WME_WINENTRY("theancientmark1", "",

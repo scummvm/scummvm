@@ -433,7 +433,15 @@ int ScEngine::getNumScripts(int *running, int *waiting, int *persistent) {
 			numPersistent++;
 			break;
 		default:
-			warning("ScEngine::GetNumScripts - unhandled enum");
+			// Those states were not handled in original WME as well:
+			// * SCRIPT_FINISHED,
+			// * SCRIPT_ERROR,
+			// * SCRIPT_WAITING_SCRIPT,
+			// * SCRIPT_THREAD_FINISHED		
+			debugN("ScEngine::GetNumScripts - unhandled enum: %d\n", _scripts[i]->_state);
+
+			// This method calculates thread counts to be shown at debug screen only
+			// Extend BaseGame::displayDebugInfo() if you want to handle those states
 			break;
 		}
 		numTotal++;

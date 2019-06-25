@@ -133,8 +133,6 @@ APP_SHORT_DESC = "Make a Text Resource file for spoken in-game quotes and pack T
 
 WINDOWS_1252_ENCODING = 'windows-1252'
 
-SUBTITLES_DEFAULT_VERSION_NUMBER = '3'
-
 # TODO- maybe the '_E' part is not needed
 SUBTITLES_FONT_NAME_CATEGORY = 'SUBTLS_E'
 DEFAULT_SUBTITLES_FONT_NAME = SUBTITLES_FONT_NAME_CATEGORY + '.FON'
@@ -858,6 +856,10 @@ def inputXLS(pathtoInputExcelFilename):
 			tmpStartFrame = 0			# for VQA sheets
 			tmpEndFrame = 0				# for VQA sheets
 			mode = 0					# init to unknown
+			# Decide vqaSheetFormatVersion
+			# 0: old version - Col order: "Start (YT)", "End (YT)", "Subtitle", "By Actor", "StartTime", "Time Diff-SF", "TimeDiff-SF(ms)", "TimeDiff-EF", "TimeDiff-EF(ms)", "Frame Start", "Frame End", "Notes"
+			# 1: new version - Col order: "Frame Start", "Frame End", "Subtitle", "Time Start", "Time End", "By Actor", "Notes"
+			vqaSheetFormatVersion = 0
 
 			if xl_sheet.name in supportedInGameQuotesSheetsList:
 				if gTraceModeEnabled:
@@ -867,6 +869,10 @@ def inputXLS(pathtoInputExcelFilename):
 				if gTraceModeEnabled:
 					print '[Debug] VQA SCENE DIALOGUE'
 				mode = 2 #VQA
+				# check if the VQA sheets are of the old format or the new format
+				cell_obj = xl_sheet.cell(1, 0)
+				if cell_obj is not None and cell_obj.value.lower() == 'frame start':
+					vqaSheetFormatVersion = 1
 			elif xl_sheet.name in supportedTranslatedTrxFilenamesList:
 				if gTraceModeEnabled:
 					print '[Debug] TRANSLATED TEXT RESOURCE'
@@ -925,7 +931,9 @@ def inputXLS(pathtoInputExcelFilename):
 								quoteNumAboveThreshold += 1
 								#print ('[Debug] row_idx: %d. tag %s: quoteId [%d], length: %d: %s' % (row_idx, twoTokensfirstColSplitAtDotXLS[0], tmpQuoteID, len(newQuoteReplaceSpecialsAscii), newQuoteReplaceSpecialsAscii))
 					#
-					# FOR VQAs -- Iterate through columns starting from col 2. We need cols: 2, 9, 10
+					# FOR VQAs -- Iterate through columns
+					# Earlier versions (up to Jun 23): We need columns: 2, 9, 10
+					# New version (post Jun 23): We need columns: 1, 2, 3
 					#
 					elif mode == 2:
 						if (col_idx == 2): # subtitle text
@@ -933,13 +941,16 @@ def inputXLS(pathtoInputExcelFilename):
 							#print ('[Debug] length: %d: %s' % (len(newQuoteReplaceSpecialsAscii), newQuoteReplaceSpecialsAscii))
 							#print ':'.join(x.encode('hex') for x in newQuoteReplaceSpecialsAscii)	# seems to work.  new chars are non-printable but exist in string
 							# don't append to gTableOfStringEntries yet
-						elif (col_idx == 9): # startFrame
+						elif (vqaSheetFormatVersion == 1 and col_idx == 0) or (vqaSheetFormatVersion == 0 and col_idx == 9):
+							# startFrame
 							#print "[Debug] cell: %s" % (cell_obj.value)
 							tmpStartFrame = parseIntCellValue(cell_obj.value, row_idx, col_idx, xl_sheet.name, xl_sheet.nrows, xl_sheet.ncols)
-						elif (col_idx == 10): # endFrame
+						elif (vqaSheetFormatVersion == 1 and col_idx == 1) or (vqaSheetFormatVersion == 0 and col_idx == 10):
+							# endFrame
 							tmpEndFrame = parseIntCellValue(cell_obj.value, row_idx, col_idx, xl_sheet.name, xl_sheet.nrows, xl_sheet.ncols)
+						if (vqaSheetFormatVersion == 1 and col_idx == 2) or (vqaSheetFormatVersion == 0 and col_idx == 10):
+							# do the final processing when you reached the final meaningful column
 							tmpQuoteID = tmpStartFrame | (tmpEndFrame << 16) # top 16 bits are end frame (up to 65536 frames which is enough) and low 16 bits are startFrame
-
 							gTableOfStringIds.append(tmpQuoteID)
 							gTableOfStringEntries.append(newQuoteReplaceSpecialsAscii)
 							gTableOfStringOffsets.append(curStrStartOffset)

@@ -23,10 +23,13 @@
 #ifndef GLK_ALAN2_INTER
 #define GLK_ALAN2_INTER
 
+#include "glk/alan2/jumps.h"
+
 namespace Glk {
 namespace Alan2 {
 
 extern void interpret(Aaddr adr);
+extern void interpret(CONTEXT, Aaddr adr);
 
 } // End of namespace Alan2
 } // End of namespace Glk

@@ -81,21 +81,15 @@ bool GlulxeMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &
 
 		DetectedGame gd;
 		if (!p->_gameId) {
-			if (gDebugLevel > 0) {
-				// Print an entry suitable for putting into the detection_tables.h, using the
-				// name of the parent folder the game is in as the presumed game Id
-				Common::String folderName = file->getParent().getName();
-				if (folderName.hasSuffix("\\"))
-					folderName.deleteLastChar();
-				Common::String fname = filename;
-				const char *dot = strchr(fname.c_str(), '.');
-				if (dot)
-					fname = Common::String(fname.c_str(), dot);
-
-				debug("ENTRY0(\"%s\", \"%s\", %u),", fname.c_str(), md5.c_str(), (uint)filesize);
-			}
 			const PlainGameDescriptor &desc = GLULXE_GAME_LIST[0];
 			gd = DetectedGame(desc.gameId, desc.description, Common::UNK_LANG, Common::kPlatformUnknown);
+			gd.canBeAdded = true;
+			gd.hasUnknownFiles = true;
+			FileProperties fp;
+			fp.md5 = md5;
+			fp.size = filesize;
+			gd.matchedFiles[filename] = fp;
+
 		} else {
 			PlainGameDescriptor gameDesc = findGame(p->_gameId);
 			gd = DetectedGame(p->_gameId, gameDesc.description, p->_language, Common::kPlatformUnknown, p->_extra);

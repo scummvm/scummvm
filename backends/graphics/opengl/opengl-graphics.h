@@ -75,6 +75,11 @@ public:
 	virtual Common::List<Graphics::PixelFormat> getSupportedFormats() const override;
 #endif
 
+	virtual const OSystem::GraphicsMode *getSupportedStretchModes() const override;
+	virtual int getDefaultStretchMode() const override;
+	virtual bool setStretchMode(int mode) override;
+	virtual int getStretchMode() const override;
+
 	virtual void beginGFXTransaction() override;
 	virtual OSystem::TransactionError endGFXTransaction() override;
 
@@ -228,6 +233,11 @@ private:
 	 * The current screen change ID.
 	 */
 	int _screenChangeID;
+
+	/**
+	 * The current stretch mode.
+	 */
+	int _stretchMode;
 
 protected:
 	/**

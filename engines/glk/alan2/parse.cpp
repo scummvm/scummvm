@@ -28,7 +28,6 @@
 #include "glk/alan2/main.h"
 #include "glk/alan2/params.h"
 #include "glk/alan2/parse.h"
-#include "glk/alan2/readline.h"
 #include "glk/alan2/term.h"
 #include "glk/alan2/types.h"
 
@@ -150,7 +149,7 @@ static char *gettoken(char *tokBuf) {
 	return tokBuf;
 }
 
-static void agetline() {
+static void agetline(CONTEXT) {
 	para();
 	do {
 		statusline();
@@ -164,7 +163,7 @@ static void agetline() {
 				return;
 
 			newline();
-			quit();
+			CALL0(quit)
 		}
 
 		getPageSize();
@@ -189,7 +188,7 @@ static void scan(CONTEXT) {
 	int w;
 	char *str;
 
-	agetline();
+	CALL0(agetline)
 	if (g_vm->shouldQuit())
 		return;
 

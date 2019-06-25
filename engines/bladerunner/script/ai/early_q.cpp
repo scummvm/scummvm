@@ -395,7 +395,7 @@ bool AIScriptEarlyQ::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 
 	case kGoalEarlyQNR04HandDrink:
 		if (Actor_Query_Inch_Distance_From_Actor(kActorMcCoy, kActorEarlyQ) > 36) {
-			Loop_Actor_Walk_To_Actor(kActorEarlyQ, kActorMcCoy, 36, kActorMcCoy, kActorMcCoy);
+			Loop_Actor_Walk_To_Actor(kActorEarlyQ, kActorMcCoy, 36, false, false);
 		}
 		Actor_Face_Actor(kActorMcCoy, kActorEarlyQ, true);
 		Actor_Face_Actor(kActorEarlyQ, kActorMcCoy, true);
