@@ -444,10 +444,6 @@ void aiSlugSlingerInit2(AIEntity *e) {
 	warning("STUB: AI: aiSlugSlingerInit2 required");
 }
 
-void aiPushBotAction(AIEntity *e) {
-	warning("STUB: AI: aiPushBotAction required");
-}
-
 void aiLaserAction(AIEntity *e) {
 	warning("STUB: AI: aiLaserAction required");
 }
@@ -550,14 +546,6 @@ void aiDiverterInit(AIEntity *e) {
 
 void aiDiverterInit2(AIEntity *e) {
 	warning("STUB: AI: aiDiverterInit2 required");
-}
-
-void aiPushBotInit(AIEntity *e) {
-	warning("STUB: AI: aiPushBotInit required");
-}
-
-void aiPushBotInit2(AIEntity *e) {
-	warning("STUB: AI: aiPushBotInit2 required");
 }
 
 void aiDeadEyeInit(AIEntity *e) {

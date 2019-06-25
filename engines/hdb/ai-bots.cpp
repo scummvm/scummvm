@@ -468,4 +468,97 @@ void aiRightBotAction(AIEntity *e) {
 	}
 }
 
+void aiPushBotInit(AIEntity *e) {
+	if (e->value1 != 1)
+		e->aiAction = aiPushBotAction;
+}
+
+void aiPushBotInit2(AIEntity *e) {
+	e->draw = g_hdb->_ai->getStandFrameDir(e);
+}
+
+void aiPushBotAction(AIEntity *e) {
+	AIState moveState[5] = { STATE_NONE, STATE_MOVEUP, STATE_MOVEDOWN, STATE_MOVELEFT, STATE_MOVERIGHT };
+	int	xvAhead[5] = { 9, 0, 0,-1, 1 }, yvAhead[5] = { 9,-1, 1, 0, 0 };
+	AIDir oneEighty[5] = { DIR_NONE, DIR_DOWN, DIR_UP, DIR_RIGHT, DIR_LEFT };
+
+	uint32 bgFlags, fgFlags;
+	int nx, ny, nx2, ny2, result;
+	AIEntity *e1 = NULL, *e2;
+
+	if (e->goalX) {
+		g_hdb->_ai->animateEntity(e);
+		if (e->onScreen && g_hdb->_ai->checkPlayerCollision(e->x, e->y, 4) && !g_hdb->_ai->playerDead())
+			g_hdb->_ai->killPlayer(DEATH_NORMAL);
+	} else {
+		if (e->onScreen && g_hdb->_ai->checkPlayerCollision(e->x, e->y, 4) && !g_hdb->_ai->playerDead())
+			g_hdb->_ai->killPlayer(DEATH_NORMAL);
+
+		// Where to go next
+		nx = e->tileX + xvAhead[e->dir];
+		ny = e->tileY + yvAhead[e->dir];
+
+		e1 = g_hdb->_ai->legalMove(nx, ny, e->level, &result);
+
+		// Push something
+		// Turn Around
+		// Move Forward
+		if (e1 && onEvenTile(e1->x, e1->y) && (e1->type == AI_LIGHTBARREL || e1->type == AI_HEAVYBARREL || e1->type == AI_BOOMBARREL || e1->type == AI_CRATE)) {
+			// Actually going over a floating crate?
+			if (e1 && (e1->state == STATE_FLOATING || e1->state == STATE_MELTED)) {
+				e->state = moveState[e->dir];
+				g_hdb->_ai->setEntityGoal(e, nx, ny);
+				g_hdb->_ai->animateEntity(e);
+				return;
+			}
+
+			nx2 = nx + xvAhead[e->dir];
+			ny2 = ny + yvAhead[e->dir];
+
+			bgFlags = g_hdb->_map->getMapBGTileFlags(nx2, ny2);
+			fgFlags = g_hdb->_map->getMapFGTileFlags(nx2, ny2);
+			e2 = g_hdb->_ai->findEntity(nx2, ny2);
+			result = (e->level == 1) ? (bgFlags & kFlagSolid) : !(fgFlags & kFlagGrating) && (bgFlags & kFlagSolid);
+
+			// If we're going to push something onto a floating thing, that's ok
+			if (e2 && (e2->state == STATE_FLOATING || e2->state == STATE_MELTED))
+				e2 = NULL;
+
+			// If no walls in front & no entities
+			if (!result && !e2 && e1->state != STATE_EXPLODING) {
+				e->state = moveState[e->dir];
+				g_hdb->_ai->setEntityGoal(e, nx, ny);
+
+				e1->dir = e->dir;
+				e1->state = e->state;
+				e1->moveSpeed = e->moveSpeed;
+				g_hdb->_ai->setEntityGoal(e1, nx2, ny2);
+				warning("STUB: aiPushBotAction: Switch Case for Sound");
+			} else {
+				if (e->onScreen)
+					warning("STUB: aiPushBotAction: Play SND_PUSHBOT_STRAIN");
+				e->dir = oneEighty[e->dir];
+				e->state = moveState[e->dir];
+				nx = e->tileX + xvAhead[e->dir];
+				ny = e->tileY + yvAhead[e->dir];
+				e1 = g_hdb->_ai->legalMove(nx, ny, e->level, &result);
+				if (!e1 && result)
+					g_hdb->_ai->setEntityGoal(e, nx, ny);
+			}
+		} else if (!result || (e1 && !onEvenTile(e1->x, e1->y))) {
+			e->dir = oneEighty[e->dir];
+			e->state = moveState[e->dir];
+			nx = e->tileX + xvAhead[e->dir];
+			ny = e->tileY + yvAhead[e->dir];
+			e1 = g_hdb->_ai->legalMove(nx, ny, e->level, &result);
+			if (!e1 && result)
+				g_hdb->_ai->setEntityGoal(e, nx, ny);
+		} else {
+			e->state = moveState[e->dir];
+			g_hdb->_ai->setEntityGoal(e, nx, ny);
+		}
+		g_hdb->_ai->animateEntity(e);
+	}
+}
+
 } // End of Namespace
