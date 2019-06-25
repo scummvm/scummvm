@@ -33,7 +33,8 @@
 #include "petka/video.h"
 #include "petka/q_system.h"
 #include "petka/q_manager.h"
-#include "petka/objects/object.h"
+#include "petka/objects/object_star.h"
+#include "petka/objects/object_cursor.h"
 
 namespace Petka {
 
@@ -111,6 +112,9 @@ void QMessageObject::processMessage(const QMessage &msg) {
 		_isActive = false;
 		show(false);
 		break;
+	case kStop:
+		g_vm->getQSystem()->_cursor.get()->show(msg.arg1);
+		g_vm->getQSystem()->_star.get()->_isActive = msg.arg1;
 	case kHide:
 		break;
 	case kZBuffer:
