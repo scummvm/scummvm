@@ -59,7 +59,7 @@ public:
 	int32 _field28;
 	int32 _isShown;
 	int32 _animate;
-	int _field_34;
+	int _updateZ;
 	int _field_38;
 	int _isActive;
 	int _startSound;
