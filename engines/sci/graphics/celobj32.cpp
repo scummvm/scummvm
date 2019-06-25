@@ -168,7 +168,7 @@ struct SCALER_Scale {
 	_row(nullptr),
 #ifndef NDEBUG
 	_minX(targetRect.left),
-	_maxX(targetRect.right - 1),
+	_maxX(targetRect.right),
 #endif
 	// The maximum width of the scaled object may not be as wide as the source
 	// data it requires if downscaling, so just always make the reader
