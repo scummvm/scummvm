@@ -34,6 +34,7 @@ public:
 
 	virtual void draw() {};
 	virtual void update() {};
+	virtual void show(bool v) {};
 	virtual bool isInPoint(int x, int y) { return false; }
 
 public:

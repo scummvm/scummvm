@@ -103,6 +103,14 @@ void QMessageObject::processMessage(const QMessage &msg) {
 	case kStatus:
 		_status = (int8) msg.arg1;
 		break;
+	case kOn:
+		_isActive = true;
+		show(true);
+		break;
+	case kOff:
+		_isActive = false;
+		show(false);
+		break;
 	case kHide:
 		break;
 	case kZBuffer:
