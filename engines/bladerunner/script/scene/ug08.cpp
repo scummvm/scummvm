@@ -62,6 +62,28 @@ void SceneScriptUG08::InitializeScene() {
 		Game_Flag_Set(kFlagUG08Entered);
 	}
 
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+	// if there's no elevator here (because it's in UG13 and the player took the long way round,
+	// McCoy is unable to call it up (there's no call button)
+	// Additionally, since the elevator exit is added regardless, McCoy will walk up to
+	// the elevator and then the elevator will blink in (BUG)
+	// Solution here is to:
+	// In easy mode: Have the elevator always be here.
+	// In normal/hard mode: If the elevator is missing, then:
+	//		by ~33% probability the elevator will be up again,
+	//		and by ~66% it won't be up, so we remove the elevator exit, and force McCoy to go the long way round again (or retry the room)
+	if (!Game_Flag_Query(kFlagUG08ElevatorUp)) {
+		if (Query_Difficulty_Level() == kGameDifficultyEasy
+		    || Random_Query(1, 3) == 1
+		) {
+			Game_Flag_Set(kFlagUG08ElevatorUp);
+		} else {
+			Scene_Exit_Remove(1);
+		}
+	}
+#endif // BLADERUNNER_ORIGINAL_BUGS
+
 	if (Game_Flag_Query(kFlagUG13toUG08)) {
 		Scene_Loop_Start_Special(kSceneLoopModeLoseControl, kUG08LoopElevatorComingUp, false);
 		Scene_Loop_Set_Default(kUG08LoopMainLoopElevator);
