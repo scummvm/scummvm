@@ -419,10 +419,20 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("hamlet", "",
 		WME_ENTRY1s("data.dcp", "74130d3c13f4a8caa2aafb9ee23f2639", 88184289), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
 
+	// Helga Deep In Trouble (Czech)
+	WME_WINENTRY("helga", "",
+		WME_ENTRY2s("data.dcp", "25cb955a60b58326f2eeda1ce288fb37", 183251259,
+					"data.dcp", "25cb955a60b58326f2eeda1ce288fb37", 183251259), Common::CZ_CZE, ADGF_UNSTABLE, LATEST_VERSION),
+
 	// Helga Deep In Trouble (English)
 	WME_WINENTRY("helga", "",
 		WME_ENTRY2s("english.dcp", "bfa136b21bdbc7d8691c0770a6d40bc3", 135931,
 					"data.dcp", "25cb955a60b58326f2eeda1ce288fb37", 183251259), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+
+	// Helga Deep In Trouble (Demo) (Czech)
+	WME_WINENTRY("helga", "Demo",
+		WME_ENTRY2s("data.dcp", "45134ed93bc391edf148b79cdcbf2a09", 154266028,
+					"data.dcp", "45134ed93bc391edf148b79cdcbf2a09", 154266028), Common::CZ_CZE, ADGF_UNSTABLE | ADGF_DEMO, LATEST_VERSION),
 
 	// Helga Deep In Trouble (Demo) (English)
 	WME_WINENTRY("helga", "Demo",
