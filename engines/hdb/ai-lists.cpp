@@ -434,6 +434,176 @@ bool AI::autoActive(int x, int y) {
 	return false;
 }
 
+void AI::addToTeleportList(int teleIndex, int x, int y, int dir, int level, int anim, int usable, const char *luaFuncUse) {
+	if (!level)
+		level = 1;
+
+	if (!_teleporters[teleIndex].x1) {
+		_teleporters[teleIndex].x1 = x;
+		_teleporters[teleIndex].y1 = y;
+		_teleporters[teleIndex].dir1 = (AIDir)dir;
+		_teleporters[teleIndex].level1 = level;
+		_teleporters[teleIndex].anim1 = anim;
+		_teleporters[teleIndex].usable1 = usable;
+		strcpy(_teleporters[teleIndex].luaFuncUse1, luaFuncUse);
+		if (_teleporters[teleIndex].luaFuncUse1[0] == '*')
+			_teleporters[teleIndex].luaFuncUse1[0] = 0;
+		_numTeleporters++;
+		return;
+	}
+	if (!_teleporters[teleIndex].x2) {
+		_teleporters[teleIndex].x2 = x;
+		_teleporters[teleIndex].y2 = y;
+		_teleporters[teleIndex].dir2 = (AIDir)dir;
+		_teleporters[teleIndex].level2 = level;
+		_teleporters[teleIndex].anim2 = anim;
+		_teleporters[teleIndex].usable2 = usable;
+		strcpy(_teleporters[teleIndex].luaFuncUse2, luaFuncUse);
+		if (_teleporters[teleIndex].luaFuncUse2[0] == '*')
+			_teleporters[teleIndex].luaFuncUse2[0] = 0;
+		_numTeleporters++;
+		return;
+	}
+
+	warning("addToTeleporterList: Adding a 3rd teleporter is illegal");
+}
+
+bool AI::findTeleporterDest(int tileX, int tileY, SingleTele *info) {
+	for (int i = 0;i < _numTeleporters; i++) {
+		if ((_teleporters[i].x1 == tileX) && (_teleporters[i].x1 == tileY)) {
+			info->anim = _teleporters[i].anim2;
+			info->x = _teleporters[i].x2;
+			info->y = _teleporters[i].y2;
+			info->dir = _teleporters[i].dir2;
+			info->level = _teleporters[i].level2;
+			info->usable = _teleporters[i].usable2;
+			return true;
+		}
+		if ((_teleporters[i].x1 == tileX) && (_teleporters[i].x1 == tileY)) {
+			info->anim = _teleporters[i].anim1;
+			info->x = _teleporters[i].x1;
+			info->y = _teleporters[i].y1;
+			info->dir = _teleporters[i].dir1;
+			info->level = _teleporters[i].level1;
+			info->usable = _teleporters[i].usable1;
+			return true;
+		}
+	}
+	return false;
+}
+
+bool AI::checkTeleportList(AIEntity *e, int x, int y) {
+	for (int i = 0; i < kMaxTeleporters; i++) {
+		if ((_teleporters[i].x1 == x && _teleporters[i].y1 == y) || (_teleporters[i].x2 == x && _teleporters[i].y2 == y)) {
+			int targetX = _teleporters[i].x1;
+			int targetY = _teleporters[i].y1;
+			int targetX2 = _teleporters[i].x2;
+			int targetY2 = _teleporters[i].y2;
+			AIDir dir1 = _teleporters[i].dir1;
+			AIDir dir2 = _teleporters[i].dir2;
+			int level1 = _teleporters[i].level1;
+			int level2 = _teleporters[i].level2;
+			int usable1 = _teleporters[i].usable1;
+			int usable2 = _teleporters[i].usable2;
+			int anim1 = _teleporters[i].anim1;
+			int anim2 = _teleporters[i].anim2;
+			const char *luaFuncUse1 = _teleporters[i].luaFuncUse1;
+			const char *luaFuncUse2 = _teleporters[i].luaFuncUse2;
+
+			// Choose which set of co-ordinates is the target
+			if (x != targetX || y != targetY) {
+				targetX = _teleporters[i].x2;
+				targetY = _teleporters[i].y2;
+				targetX2 = _teleporters[i].x1;
+				targetY2 = _teleporters[i].y1;
+				dir1 = _teleporters[i].dir2;
+				dir2 = _teleporters[i].dir1;
+				level1 = _teleporters[i].level2;
+				level2 = _teleporters[i].level1;
+				usable1 = _teleporters[i].usable2;
+				usable2 = _teleporters[i].usable1;
+				anim1 = _teleporters[i].anim2;
+				anim2 = _teleporters[i].anim1;
+				luaFuncUse1 = _teleporters[i].luaFuncUse2;
+				luaFuncUse2 = _teleporters[i].luaFuncUse1;
+			}
+
+			// We must be exactly on the teleporter
+			if (abs(targetX*kTileWidth - e->x) > 2 || abs(targetY*kTileHeight - e->y) > 2)
+				return false;
+
+			// Can this teleporter be used?
+			if (usable1)
+				return false;
+
+			// Move Entity to new Spot, then walk forward one tile
+			e->tileX = targetX2;
+			e->tileY = targetY2;
+			e->x = targetX2 * kTileWidth;
+			e->y = targetY2 * kTileHeight;
+			e->xVel = e->yVel = 0;
+			e->goalX = e->goalY = 0;
+			e->animFrame = 0;
+			e->drawXOff = e->drawYOff = 0;
+			e->dir = dir2;
+			e->level = level2;
+
+			if (luaFuncUse2[0])
+				g_hdb->_lua->callFunction(luaFuncUse2, 0);
+
+			e->draw = e->standdownGfx[0];
+			if (e == _player) {
+				memset(&_waypoints[0], 0, sizeof(_waypoints));
+				_numWaypoints = 0;
+			}
+
+			switch (e->dir) {
+			case DIR_UP:
+				setEntityGoal(e, e->tileX, e->tileY - 1);
+				break;
+			case DIR_DOWN:
+				setEntityGoal(e, e->tileX, e->tileY + 1);
+				break;
+			case DIR_LEFT:
+				setEntityGoal(e, e->tileX - 1, e->tileY);
+				break;
+			case DIR_RIGHT:
+				setEntityGoal(e, e->tileX + 1, e->tileY);
+				break;
+			case DIR_NONE:
+				warning("checkTeleporterList: DIR_NONE found");
+				break;
+			}
+
+			g_hdb->_map->centerMapXY(e->x + 16, e->y + 16);
+
+			// Start up Teleport flash animation only if value1 is set to 1
+			if (anim1 == 1 || anim2 == 2) {
+				addAnimateTarget(e->x, e->y, 0, 7, ANIM_NORMAL, false, false, "teleporter_flash_sit");
+				warning("STUB: checkTeleporterList: Play SND_TELEPORT");
+			}
+
+			// PANIC ZONE Teleports?
+			warning("STUB: checkTeleporterList: Toggle Panic Zone");
+
+			// Is there an attack gem still floating around?
+			for (Common::Array<AIEntity *>::iterator it = _ents->begin(); it != _ents->end(); it++) {
+				if ((*it)->type == AI_GEM_ATTACK) {
+					int amt = getGemAmount();
+					setGemAmount(amt + 1);
+					removeEntity(*it);
+					break;
+				}
+			}
+
+			_playerEmerging = true;
+			return true;
+		}
+	}
+
+	return false;
+}
+
 void AI::addToPathList(int x, int y, int type, AIDir dir) {
 	ArrowPath *arrowPath = new ArrowPath;
 
