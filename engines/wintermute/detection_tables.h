@@ -483,6 +483,11 @@ static const WMEGameDescription gameDescriptions[] = {
 		WME_ENTRY2s("german.dcp", "606c048426dfbe94442b59fd34a5c76e", 14339496,
 					"data.dcp", "7074bcd7bc7ad7eb04c271aafb964c32", 13815660), Common::DE_DEU, ADGF_UNSTABLE | ADGF_DEMO, LATEST_VERSION),
 
+	// Looky (English)
+	WME_WINENTRY("looky", "",
+		WME_ENTRY2s("english.dcp", "71ed521b7a1d1a23c3805c26f16de2b9", 245968038,
+					"data.dcp",  "d0f2bb73425db45fcff6690637c430dd", 1342439), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+
 	// Looky (German)
 	WME_WINENTRY("looky", "",
 		WME_ENTRY2s("german.dcp", "bf4c2b8c26342342441a6d64934ab832", 107027865,
