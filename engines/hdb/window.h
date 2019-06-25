@@ -27,7 +27,12 @@ namespace HDB {
 
 enum {
 	kDialogTextLeft = 64,
-	kDialogTextRight = (kDialogTextLeft + kTileWidth * 9)
+	kDialogTextRight = (kDialogTextLeft + kTileWidth * 9),
+	kWeaponX = (480 - 34),
+	kWeaponY = 2,
+	kInvItemSpaceX = 48,
+	kInvItemSpaceY = 40,
+	kInvItemPerLine = 3
 };
 
 struct DialogInfo {
@@ -45,6 +50,13 @@ struct DialogInfo {
 	char		luaMore[64];			// the name of the function to call after clicking the MORE button
 
 	DialogInfo() : title(""), tileIndex(0), string(""), active(false), x(0), y(0), width(0), height(0), titleWidth(0), gfx(NULL), more(0), el(0), er(0), et(0), eb(0), luaMore("") {}
+};
+
+struct InvWinInfo {
+	int x, y;
+	int width, height;
+	int selection;
+	bool active;
 };
 
 class Window {
@@ -74,6 +86,8 @@ private:
 	DialogInfo _dialogInfo;
 	uint32 _dialogDelay;	// Used for Cinematics
 
+	InvWinInfo _invWinInfo;
+
 	// Windows GFX
 	Picture *_gfxTL, *_gfxTM, *_gfxTR;
 	Picture *_gfxL, *_gfxM, *_gfxR;
@@ -88,6 +102,8 @@ private:
 	Picture *_gfxTry, *_gfxAgain, *_gfxInvSelect;
 	Tile *_gfxMonkeystone;
 	Picture *_gfxLevelRestart, *_gfxPausePlaque;
+	Tile *_gemGfx;
+	Picture *_mstoneGfx;
 
 	// Info Bar
 	Picture *_gfxInfobar, *_gfxDarken;
