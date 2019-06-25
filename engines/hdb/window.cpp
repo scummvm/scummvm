@@ -81,7 +81,9 @@ bool Window::init() {
 
 void Window::restartSystem() {
 	_dialogInfo.active = false;
-	_dialogDelay = 0;
+	_invWinInfo.active = false;
+	_dialogDelay = _invWinInfo.selection = 0;
+	_gemGfx = g_hdb->_drawMan->loadTile("ent_gem_white_sit01");
 	_infobarDimmed = 0;
 }
 
