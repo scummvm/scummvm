@@ -673,6 +673,8 @@ public:
 	// List functions
 	void addToActionList(int actionIndex, int x, int y, char *funcLuaInit, char *funcLuaUse);
 	bool checkActionList(AIEntity *e, int x, int y, bool lookAndGrab);
+	void addToHereList(const char *entName, int x, int y);
+	HereT *findHere(int x, int y);
 	void addToAutoList(int x, int y, const char *luaFuncInt, const char *luaFuncUse);
 	void autoDeactivate(int x, int y);
 	bool activateAction(AIEntity *e, int x, int y, int targetX, int targetY);
