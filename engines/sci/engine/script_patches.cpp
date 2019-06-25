@@ -11708,6 +11708,129 @@ static const uint16 qfg4FighterSpearPatch[] = {
 	PATCH_END
 };
 
+// Clicking Do on the inn door in room 260 from certain coordinates crashes the
+//  CD version. This is one of several related crashes where the Grooper or
+//  Grycler classes send a selector to a non-object in only the CD version.
+//
+// The inn door script isn't buggy, and neither are Grooper or Grycler. Instead,
+//  Sierra "upgraded" the core Cycle classes in the CD version with drastically
+//  different behavior after the game was already written for the first ones.
+//  It's unclear what they were attempting to accomplish, but the conspicuous
+//  regressions include hero stuttering when walking on every screen, the runes
+//  dial refusing to spin a full rotation, random crashes at the inn door and
+//  on the slippery path in room 800, and probably other problems. Meanwhile
+//  GK1, a relatively stable SCI32 game released at the same time, used the same
+//  Cycle classes in all its versions as QFG4 floppy without motion problems.
+//
+// The crashes result from complex motion edge cases but involve hero ending up
+//  without a cycler at the wrong moment. These can be avoided by adding a call
+//  to hero:normalize to reset a lot of state and set hero:cycler to StopWalk
+//  and hero:looper to stopGroop. This is a bit of a kitchen-sink solution but
+//  it does the job without side effects and only requires 4 bytes.
+//
+// We prevent the inn door crash by calling hero:normalize in sInInnDoor.
+//
+// Applies to: English CD
+// Responsible method: sInInnDoor:changeState(1)
+// Fixes bug: #10760
+static const uint16 qfg4InnDoorCDSignature[] = {
+	0x30, SIG_MAGICDWORD,               // bnt 000e [ state 2 ]
+	      SIG_UINT16(0x000e),
+	0x38, SIG_UINT16(0x0111),           // pushi setHeading [ hard-coded for CD ]
+	0x7a,                               // push2
+	0x76,                               // push0
+	0x7c,                               // pushSelf
+	0x81, 0x00,                         // lag 00
+	0x4a, SIG_UINT16(0x0008),           // send 08  [ hero setHeading: 0 self ]
+	0x32, SIG_UINT16(0x00c3),           // jmp 00c3 [ end of method ]
+	SIG_END,
+};
+
+static const uint16 qfg4InnDoorCDPatch[] = {
+	0x31, 0x0f,                         // bnt 0f [ state 2 ]
+	0x38, PATCH_SELECTOR16(normalize),  // pushi normalize
+	0x76,                               // push0
+	0x38, PATCH_UINT16(0x0111),         // pushi setHeading [ hard-coded for CD ]
+	0x7a,                               // push2
+	0x76,                               // push0
+	0x7c,                               // pushSelf
+	0x81, 0x00,                         // lag 00
+	0x4a, PATCH_UINT16(0x000c),         // send 0c [ hero normalize: setHeading: 0 self ]
+	PATCH_END
+};
+
+// Walking around the base of the slippery slope in room 800 can crash the CD
+//  version in either the Grooper or Grycler classes. See the inn door patch
+//  above for details on these regressions and their solution.
+//
+// The script sSlippery runs when walking up the slope and sWalksDown runs when
+//  walking down. Both are vulnerable to Grooper/Grycler crashes and both can be
+//  fixed by adding hero:normalize calls.
+//
+// We also include a version of the sWalksDown patch for the instruction sizes
+//  in the NRS patch, which is important as that ships with the GOG version.
+//
+// Applies to: English CD
+// Responsible methods: sSlippery:changeState(0), sWalksDown:changeState(0)
+// Fixes bug: #10747
+static const uint16 qfg4WalkUpSlopeCDSignature[] = {
+	SIG_MAGICDWORD,
+	0x38, SIG_UINT16(0x0142),           // pushi setMotion [ hard-coded for CD ]
+	0x78,                               // push1
+	0x76,                               // push0
+	SIG_ADDTOOFFSET(+8),
+	0x4a, SIG_UINT16(0x000e),           // send 0e [ hero setMotion: 0 ... ]
+	SIG_END,
+};
+
+static const uint16 qfg4WalkUpSlopeCDPatch[] = {
+	0x38, PATCH_SELECTOR16(normalize),  // pushi normalize
+	0x39, 0x00,                         // pushi 00
+	PATCH_ADDTOOFFSET(+8),
+	0x4a, PATCH_UINT16(0x000c),         // send 0c [ hero normalize: ... ]
+	PATCH_END
+};
+
+static const uint16 qfg4WalkDownSlopeCDSignature[] = {
+	0x3c,                               // dup
+	0x35, SIG_MAGICDWORD, 0x00,         // ldi 00
+	0x1a,                               // eq?
+	0x31, 0x1e,                         // bnt 1e [ state 1 ]
+	0x38, SIG_UINT16(0x0218),           // pushi handsOff [ hard-coded for CD ]
+	SIG_ADDTOOFFSET(+15),
+	0x4a, SIG_UINT16(0x0008),           // send 08 [ hero setStep: ... ]
+	SIG_END,
+};
+
+static const uint16 qfg4WalkDownSlopeCDPatch[] = {
+	0x2f, 0x22,                         // bt 22 [ state 1 ]
+	0x38, PATCH_SELECTOR16(normalize),  // pushi normalize
+	0x76,                               // push0
+	PATCH_ADDTOOFFSET(+18),
+	0x4a, PATCH_UINT16(0x000c),         // send 0c [ hero normalize: setStep: ... ]
+	PATCH_END
+};
+
+static const uint16 qfg4WalkDownSlopeNrsSignature[] = {
+	0x3c,                               // dup
+	0x35, SIG_MAGICDWORD, 0x00,         // ldi 00
+	0x1a,                               // eq?
+	0x30, SIG_UINT16(0x001f),           // bnt 001f [ state 1 ]
+	0x38, SIG_UINT16(0x0218),           // pushi handsOff [ hard-coded for CD ]
+	SIG_ADDTOOFFSET(+15),
+	0x4a, SIG_UINT16(0x0008),           // send 08 [ hero setStep: ... ]
+	SIG_END,
+};
+
+static const uint16 qfg4WalkDownSlopeNrsPatch[] = {
+	0x2e, PATCH_UINT16(0x0023),         // bt 0023 [ state 1 ]
+	0x38, PATCH_SELECTOR16(normalize),  // pushi normalize
+	0x76,                               // push0
+	PATCH_ADDTOOFFSET(+18),
+	0x4a, PATCH_UINT16(0x000c),         // send 0c [ hero normalize: setStep: ... ]
+	PATCH_END
+};
+
 // The NRS fan-patch for wraiths has a bug which locks up the game. This occurs
 //  when a wraith initializes while game time is greater than $7fff. The patch
 //  throttles wraith:doit to execute no more than once per game tick, which it
@@ -11860,6 +11983,7 @@ static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,    53, "NRS: fix wraith lockup",                      1, qfg4WraithLockupNrsSignature,  qfg4WraithLockupNrsPatch },
 	{  true,    83, "fix incorrect array type",                    1, qfg4TrapArrayTypeSignature,    qfg4TrapArrayTypePatch },
 	{  true,   250, "fix hectapus death lockup",                   1, qfg4HectapusDeathSignature,    qfg4HectapusDeathPatch },
+	{  true,   260, "CD: fix inn door crash",                      1, qfg4InnDoorCDSignature,        qfg4InnDoorCDPatch },
 	{  true,   270, "fix town gate after a staff dream",           1, qfg4DreamGateSignature,        qfg4DreamGatePatch },
 	{  true,   270, "fix town gate doormat at night",              1, qfg4TownGateDoormatSignature,  qfg4TownGateDoormatPatch },
 	{  true,   320, "fix pathfinding at the inn",                  1, qfg4InnPathfindingSignature,   qfg4InnPathfindingPatch },
@@ -11916,6 +12040,9 @@ static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,   801, "fix runes puzzle (1/2)",                      1, qfg4RunesPuzzleSignature1,     qfg4RunesPuzzlePatch1 },
 	{  true,   801, "fix runes puzzle (2/2)",                      1, qfg4RunesPuzzleSignature2,     qfg4RunesPuzzlePatch2 },
 	{  true,   803, "fix sliding down slope",                      1, qfg4SlidingDownSlopeSignature, qfg4SlidingDownSlopePatch },
+	{  true,   803, "CD: fix walking up slippery slope",           1, qfg4WalkUpSlopeCDSignature,    qfg4WalkUpSlopeCDPatch },
+	{  true,   803, "CD: fix walking down slippery slope",         1, qfg4WalkDownSlopeCDSignature,  qfg4WalkDownSlopeCDPatch },
+	{  true,   803, "NRS: fix walking down slippery slope",        1, qfg4WalkDownSlopeNrsSignature, qfg4WalkDownSlopeNrsPatch },
 	{  true,   820, "fix rabbit combat",                           1, qfg4RabbitCombatSignature,     qfg4RabbitCombatPatch },
 	{  true,   810, "fix conditional void calls",                  1, qfg4ConditionalVoidSignature,  qfg4ConditionalVoidPatch },
 	{  true,   830, "fix conditional void calls",                  2, qfg4ConditionalVoidSignature,  qfg4ConditionalVoidPatch },
