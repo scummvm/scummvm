@@ -571,7 +571,7 @@ void DrawMan::getDimensions(const char *string, int *pixelsWide, int *lines) {
 
 	for (int i = 0; i < (int)strlen(string); i++) {
 		c = string[i];
-		width += _charInfoBlocks[i]->width + _fontHeader.kerning + kFontIncrement;
+		width += _charInfoBlocks[c]->width + _fontHeader.kerning + kFontIncrement;
 		if (c == ' ')
 			width += kFontSpace;
 
