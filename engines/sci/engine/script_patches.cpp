@@ -11841,6 +11841,37 @@ static const uint16 qfg4HectapusDeathPatch[] = {
 	PATCH_END
 };
 
+// Floppy 1.0 locks up when Ad Avis captures you with a Necrotaur in room 552,
+//  and possibly other rooms. sBlackOut:changeState has one too many states
+//  and doesn't increment the state number and cue enough in all scenarios.
+//
+// We fix this by removing the empty state 3 as later floppy versions do.
+//
+// Applies to: English Floppy 1.0
+// Responsible method: sBlackOut:changeState
+// Fixes bug: #11001
+static const uint16 qfg4AdAvisCaptureSignature[] = {
+	0x31, 0x05,                         // bnt 05 [ state 3 ]
+	SIG_ADDTOOFFSET(+6),
+	0x35, SIG_MAGICDWORD, 0x03,         // ldi 03
+	0x1a,                               // eq?
+	0x31, 0x05,                         // bnt 05 [ state 4 ]
+	SIG_ADDTOOFFSET(+6),
+	0x35, 0x04,                         // ldi 04
+	SIG_ADDTOOFFSET(+83),
+	0x35, 0x05,                         // ldi 05
+	SIG_END
+};
+
+static const uint16 qfg4AdAvisCapturePatch[] = {
+	0x31, 0x10,                         // bnt 10 [ new state 3 ]
+	PATCH_ADDTOOFFSET(+17),
+	0x35, 0x03,                         // ldi 03 [ state 4 is now state 3 ]
+	PATCH_ADDTOOFFSET(+83),
+	0x35, 0x04,                         // ldi 04 [ state 5 is now state 4 ]
+	PATCH_END
+};
+
 //          script, description,                                     signature                      patch
 static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,     0, "prevent autosave from deleting save games",   1, qfg4AutosaveSignature,         qfg4AutosavePatch },
@@ -11857,6 +11888,7 @@ static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,    31, "fix setScaler calls",                         1, qfg4SetScalerSignature,        qfg4SetScalerPatch },
 	{  true,    41, "fix conditional void calls",                  3, qfg4ConditionalVoidSignature,  qfg4ConditionalVoidPatch },
 	{  true,    50, "fix random revenant kopeks",                  1, qfg4SearchRevenantSignature,   qfg4SearchRevenantPatch },
+	{  true,    51, "Floppy: fix ad avis capture lockup",          1, qfg4AdAvisCaptureSignature,    qfg4AdAvisCapturePatch },
 	{  true,    53, "NRS: fix wraith lockup",                      1, qfg4WraithLockupNrsSignature,  qfg4WraithLockupNrsPatch },
 	{  true,    83, "fix incorrect array type",                    1, qfg4TrapArrayTypeSignature,    qfg4TrapArrayTypePatch },
 	{  true,   250, "fix hectapus death lockup",                   1, qfg4HectapusDeathSignature,    qfg4HectapusDeathPatch },
