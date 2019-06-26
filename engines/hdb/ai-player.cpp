@@ -308,18 +308,6 @@ void aiBarrelBlowup(AIEntity *e, int x, int y) {
 	warning("STUB: AI: aiBarrelBlowup required");
 }
 
-void aiMaintBotInit(AIEntity *e) {
-	warning("STUB: AI: aiMaintBotInit required");
-}
-
-void aiMaintBotInit2(AIEntity *e) {
-	warning("STUB: AI: aiMaintBotInit2 required");
-}
-
-void aiMaintBotInitAction(AIEntity *e) {
-	warning("STUB: AI: aiMaintBotInitAction required");
-}
-
 void aiScientistInit(AIEntity *e) {
 	warning("STUB: AI: aiScientistInit required");
 }
