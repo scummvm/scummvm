@@ -683,7 +683,7 @@ Graphics::Surface Picture::load(Common::SeekableReadStream *stream) {
 }
 
 void Picture::draw(int x, int y) {
-	g_hdb->_drawMan->_globalSurface.transBlitFrom(_surface, Common::Point(x, y));
+	g_hdb->_drawMan->_globalSurface.blitFrom(_surface, Common::Point(x, y));
 
 	Common::Rect clip(_surface.getBounds());
 	clip.moveTo(x, y);
@@ -733,7 +733,7 @@ Graphics::Surface Tile::load(Common::SeekableReadStream *stream) {
 }
 
 void Tile::draw(int x, int y) {
-	g_hdb->_drawMan->_globalSurface.transBlitFrom(_surface, Common::Point(x, y));
+	g_hdb->_drawMan->_globalSurface.blitFrom(_surface, Common::Point(x, y));
 
 	Common::Rect clip(_surface.getBounds());
 	clip.moveTo(x, y);
