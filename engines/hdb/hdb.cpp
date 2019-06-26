@@ -271,7 +271,7 @@ Common::Error HDBGame::run() {
 	_map->load(mapStream);
 	_ai->initAnimInfo();
 
-	//_window->openDialog("Title", 0, "abababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababab", 0, NULL);
+	//_window->openDialog("Sgt. Filibuster", 0, "You address me as 'sarge' or 'sergeant' or get your snappin' teeth kicked in! Got me?", 0, NULL);
 
 #if 0
 	lua->executeFile("test.lua");
