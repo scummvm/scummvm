@@ -15,6 +15,7 @@ MODULE_OBJS := \
 	detection.o \
 	file-manager.o \
 	hdb.o \
+	input.o \
 	lua-script.o \
 	map-loader.o \
 	window.o
