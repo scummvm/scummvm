@@ -545,7 +545,7 @@ void DrawMan::drawText(const char *string) {
 		g_system->copyRectToScreen(g_hdb->_drawMan->_globalSurface.getBasePtr(_cursorX, _cursorY), g_hdb->_drawMan->_globalSurface.pitch, _cursorX, _cursorY, width, _fontHeader.height);
 
 		// Advance the cursor
-		_cursorX += width + _fontHeader.kerning * kFontIncrement;
+		_cursorX += width + _fontHeader.kerning + kFontIncrement;
 		if (_cursorX > kScreenWidth) {
 			_cursorX = 0;
 			_cursorY += _fontHeader.height + _fontHeader.leading;
