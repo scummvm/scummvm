@@ -50,7 +50,9 @@ const Color SaveDataWidget::_outlineColor = Color(0x1E, 0x1E, 0x96);
 const Color SaveDataWidget::_textColor    = Color(0x5C, 0x48, 0x3D);
 
 SaveLoadMenuScreen::SaveLoadMenuScreen(Gfx::Driver *gfx, Cursor *cursor, Screen::Name screenName) :
-		StaticLocationScreen(gfx, cursor, "LoadSaveLocation", screenName) {
+		StaticLocationScreen(gfx, cursor, "LoadSaveLocation", screenName),
+		_page(0),
+		_maxPage(10) {
 }
 
 SaveLoadMenuScreen::~SaveLoadMenuScreen() {
@@ -59,7 +61,12 @@ SaveLoadMenuScreen::~SaveLoadMenuScreen() {
 void SaveLoadMenuScreen::open() {
 	StaticLocationScreen::open();
 
+	_maxPage = computeMaxPage();
+
 	_page = StarkSettings->getIntSetting(Settings::kSaveLoadPage);
+	if (_page > _maxPage) {
+		_page = _maxPage;
+	}
 
 	_widgets.push_back(new StaticLocationWidget(
 			"loadsavebg",
@@ -102,7 +109,7 @@ void SaveLoadMenuScreen::open() {
 			nullptr));
 	_widgets.back()->setupSounds(0, 1);
 	_widgets.back()->setTextColor(Color(0, 0, 0));
-	_widgets.back()->setVisible(_page < 10);
+	_widgets.back()->setVisible(_page < _maxPage);
 
 	loadSaveData(_page);
 }
@@ -110,6 +117,28 @@ void SaveLoadMenuScreen::open() {
 void SaveLoadMenuScreen::close() {
 	ConfMan.flushToDisk();
 	StaticLocationScreen::close();
+}
+
+int SaveLoadMenuScreen::computeMaxPage() {
+	const char *target = ConfMan.getActiveDomainName().c_str();
+
+	int maxSlot = 0;
+	Common::StringArray saves = StarkEngine::listSaveNames(target);
+	for (Common::StringArray::const_iterator filename = saves.begin(); filename != saves.end(); filename++) {
+		int slot = StarkEngine::getSaveNameSlot(target, *filename);
+
+		if (slot > maxSlot) {
+			maxSlot = slot;
+		}
+	}
+
+	// Allow using one more page than the last page with saves
+	int maxPage = CLIP((maxSlot / _slotPerPage) + 1, 0, 110);
+	if (maxPage < 10) {
+		maxPage = 10;
+	}
+
+	return maxPage;
 }
 
 void SaveLoadMenuScreen::backHandler() {

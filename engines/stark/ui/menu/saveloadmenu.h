@@ -72,9 +72,8 @@ protected:
 
 private:
 	// Start from zero
-	static const int _maxPage = 10;
-
 	int _page;
+	int _maxPage;
 
 	void backHandler();
 	
@@ -84,6 +83,7 @@ private:
 	void removeSaveDataWidgets();
 	void loadSaveData(int page);
 	void changePage(int page);
+	int computeMaxPage();
 };
 
 /**

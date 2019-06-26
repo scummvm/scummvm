@@ -392,19 +392,11 @@ public:
 	}
 
 	SaveStateList listSaves(const char *target) const override {
-		Common::String pattern = Common::String::format("%s-###.tlj", target);
-		Common::StringArray filenames = g_system->getSavefileManager()->listSavefiles(pattern);
-
-		int targetLen = strlen(target);
+		Common::StringArray filenames = StarkEngine::listSaveNames(target);
 
 		SaveStateList saveList;
 		for (Common::StringArray::const_iterator filename = filenames.begin(); filename != filenames.end(); ++filename) {
-			// Extract the slot number from the filename
-			char slot[4];
-			slot[0] = (*filename)[targetLen + 1];
-			slot[1] = (*filename)[targetLen + 2];
-			slot[2] = (*filename)[targetLen + 3];
-			slot[3] = '\0';
+			int slot = StarkEngine::getSaveNameSlot(target, *filename);
 
 			// Read the description from the save
 			Common::String description;
@@ -414,7 +406,7 @@ public:
 				description = stream.readString();
 			}
 
-			saveList.push_back(SaveStateDescriptor(atoi(slot), description));
+			saveList.push_back(SaveStateDescriptor(slot, description));
 		}
 
 		Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());

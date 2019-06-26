@@ -25,6 +25,7 @@
 
 #include "engines/engine.h"
 #include "common/events.h"
+#include "common/str-array.h"
 
 struct ADGameDescription;
 
@@ -62,6 +63,12 @@ public:
 
 	/** Build a save file name for the specified target and slot */
 	static Common::String formatSaveName(const char *target, int slot);
+
+	/** List all the save file names for the specified target */
+	static Common::StringArray listSaveNames(const char *target);
+
+	/** Extract the save slot number from the provided save file name */
+	static int getSaveNameSlot(const char *target, const Common::String &saveName);
 
 protected:
 	// Engine APIs

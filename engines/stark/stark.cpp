@@ -465,6 +465,23 @@ Common::String StarkEngine::formatSaveName(const char *target, int slot) {
 	return Common::String::format("%s-%03d.tlj", target, slot);
 }
 
+Common::StringArray StarkEngine::listSaveNames(const char *target) {
+	Common::String pattern = Common::String::format("%s-###.tlj", target);
+	return g_system->getSavefileManager()->listSavefiles(pattern);
+}
+
+int StarkEngine::getSaveNameSlot(const char *target, const Common::String &saveName) {
+	int targetLen = strlen(target);
+
+	char slot[4];
+	slot[0] = saveName[targetLen + 1];
+	slot[1] = saveName[targetLen + 2];
+	slot[2] = saveName[targetLen + 3];
+	slot[3] = '\0';
+
+	return atoi(slot);
+}
+
 void StarkEngine::tryAutoSaving() {
 	if (!canSaveGameStateCurrently()) {
 		return; // Can't save right now, try again on the next frame
