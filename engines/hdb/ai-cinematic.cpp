@@ -266,7 +266,6 @@ void AI::processCines() {
 			break;
 		}
 		case C_DIALOG:
-			debug("In processCines: C_DIALOG: _cine[i]->start: %d", _cine[i]->start);
 			if (_cine[i]->start) {
 				g_hdb->_window->openDialog(_cine[i]->title, -1, _cine[i]->string, 0, NULL);
 				g_hdb->_window->setDialogDelay(_cine[i]->delay);
