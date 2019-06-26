@@ -47,6 +47,7 @@ HDBGame::HDBGame(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst
 	_lua = new LuaScript;
 	_map = new Map;
 	_ai = new AI;
+	_input = new Input;
 	_window = new Window;
 	_rnd = new Common::RandomSource("hdb");
 
@@ -61,6 +62,7 @@ HDBGame::~HDBGame() {
 	delete _lua;
 	delete _map;
 	delete _ai;
+	delete _input;
 	delete _window;
 	delete _rnd;
 
@@ -79,6 +81,9 @@ bool HDBGame::init() {
 	}
 	if (!_drawMan->init()) {
 		error("DrawMan::init: Couldn't initialize DrawMan");
+	}
+	if (!_input->init()) {
+		error("Input::init: Couldn't initialize Input");
 	}
 	if (!_ai->init()) {
 		error("AI::init: Couldn't initialize AI");

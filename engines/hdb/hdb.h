@@ -41,6 +41,7 @@
 #include "hdb/ai.h"
 #include "hdb/ai-player.h"
 #include "hdb/file-manager.h"
+#include "hdb/input.h"
 #include "hdb/lua-script.h"
 #include "hdb/map-loader.h"
 #include "hdb/window.h"
@@ -126,6 +127,7 @@ public:
 	LuaScript *_lua;
 	Map *_map;
 	AI *_ai;
+	Input *_input;
 	Window *_window;
 
 	// Random Source
