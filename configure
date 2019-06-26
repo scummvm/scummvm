@@ -2925,6 +2925,7 @@ case $_host_os in
 		;;
 	switch)
 		_pkgconfig="$DEVKITPRO/portlibs/switch/bin/aarch64-none-elf-pkg-config"
+		_libcurlpath="$DEVKITPRO/portlibs/switch/bin"
 		_sdlpath="$DEVKITPRO/portlibs/switch/bin"
 		append_var DEFINES "-DSWITCH -D__SWITCH__ -DNINTENDO_SWITCH"
 		append_var CXXFLAGS "-march=armv8-a -mtune=cortex-a57 -mtp=soft -fPIE -ftls-model=local-exec"
@@ -3437,8 +3438,6 @@ if test -n "$_host"; then
 			# This might be related to a known crash on OpenGL de-init due
 			# to the OpenGL implementation on this platform.
 			_opengl_mode=gles2
-			# Libcurl for Switch is incomplete (missing curl-config script)
-			_libcurl=no
 			_vkeybd=yes
 			_port_mk="backends/platform/sdl/switch/switch.mk"
 			;;
