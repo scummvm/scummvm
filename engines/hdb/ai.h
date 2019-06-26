@@ -647,6 +647,7 @@ struct CineBlit {
 };
 
 #define onEvenTile(x, y)	( !(x & 31) && !(y & 31) )
+#define hitPlayer(x, y)		( e->onScreen && g_hdb->_ai->checkPlayerCollision( x, y, 4 ) && !g_hdb->_ai->playerDead() )
 
 class AI {
 public:
