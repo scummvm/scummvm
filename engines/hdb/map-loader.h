@@ -156,8 +156,8 @@ private:
 	uint16 _infoNum;
 	uint32 _infoListOffset;
 
-	uint16 *_background;
-	uint16 *_foreground;
+	int16 *_background;
+	int16 *_foreground;
 	MSMIcon *_iconList;
 
 	byte *_mapExplosions;

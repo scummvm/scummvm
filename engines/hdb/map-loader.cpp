@@ -89,7 +89,7 @@ bool Map::load(Common::SeekableReadStream *stream) {
 			_iconListOffset, _infoNum, _infoNum, _infoListOffset);
 
 	// Reading Background
-	_background = new uint16[_width * _height];
+	_background = new int16[_width * _height];
 	stream->seek(_backgroundOffset);
 	for (int i = 0; i < _width * _height; i++) {
 		_background[i] = stream->readUint16LE();
@@ -100,7 +100,7 @@ bool Map::load(Common::SeekableReadStream *stream) {
 	}
 
 	// Reading Foreground
-	_foreground = new uint16[_width * _height];
+	_foreground = new int16[_width * _height];
 	stream->seek(_foregroundOffset);
 	for (int i = 0; i < _width * _height; i++) {
 		_foreground[i] = stream->readUint16LE();
@@ -611,7 +611,7 @@ void Map::draw() {
 		for (int i = 0; i < maxTileX; i++) {
 
 			// Draw Background Tile
-			uint16 tileIndex = _background[matrixY + _mapTileX + i];
+			int16 tileIndex = _background[matrixY + _mapTileX + i];
 			if (tileIndex < 0) {
 				tileIndex = 0;
 			}
