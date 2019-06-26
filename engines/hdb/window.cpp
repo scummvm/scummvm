@@ -289,10 +289,8 @@ void Window::drawBorder(int x, int y, int width, int height, bool guyTalking) {
 						else if ((i == wide - 1) && j < high)
 							_gGfxR->draw(x + i * 16, y + j * 16);
 						else
-
 							// Most drawn = middle block
 							_gGfxM->draw(x + i * 16, y + j * 16);
-
 					}
 				}
 			}
