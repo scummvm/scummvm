@@ -453,8 +453,7 @@ void AI::cineStart(bool abortable, const char *abortFunc) {
 void AI::cineStop(const char *funcNext) {
 	CineCommand *cmd = new CineCommand;
 	cmd->cmdType = C_STOPCINE;
-	if (funcNext)
-		strcpy(cmd->title, funcNext);
+	cmd->title = funcNext;
 	_cine.push_back(cmd);
 }
 
@@ -511,7 +510,7 @@ void AI::cineWaitUntilDone() {
 
 void AI::cineSetEntity(const char *entName, int x, int y, int level) {
 	CineCommand *cmd = new CineCommand;
-	strcpy(cmd->string, entName);
+	cmd->string = entName;
 	cmd->x = x * kTileWidth;
 	cmd->y = y * kTileHeight;
 	cmd->x2 = level;
@@ -526,7 +525,7 @@ void AI::cineMoveEntity(const char *entName, int x, int y, int level, int speed)
 	cmd->x2 = level;
 	cmd->start = 0;
 	cmd->speed = speed;
-	strcpy(cmd->title, entName);
+	cmd->title = entName;
 	cmd->cmdType = C_MOVEENTITY;
 	_cine.push_back(cmd);
 }
@@ -534,7 +533,7 @@ void AI::cineMoveEntity(const char *entName, int x, int y, int level, int speed)
 void AI::cineAnimEntity(const char *entName, AIState state, int loop) {
 	CineCommand *cmd = new CineCommand;
 	cmd->start = 0;
-	strcpy(cmd->title, entName);
+	cmd->title = entName;
 	cmd->speed = state;
 	cmd->end = loop;
 	cmd->cmdType = C_ANIMENTITY;
@@ -544,7 +543,7 @@ void AI::cineAnimEntity(const char *entName, AIState state, int loop) {
 void AI::cineSetAnimFrame(const char *entName, AIState state, int frame) {
 	CineCommand *cmd = new CineCommand;
 	cmd->start = state;
-	strcpy(cmd->title, entName);
+	cmd->title = entName;
 	cmd->end = frame;
 	cmd->cmdType = C_SETANIMFRAME;
 	_cine.push_back(cmd);
@@ -552,7 +551,7 @@ void AI::cineSetAnimFrame(const char *entName, AIState state, int frame) {
 
 void AI::cineEntityFace(const char *luaName, double dir) {
 	CineCommand *cmd = new CineCommand;
-	strcpy(cmd->title, luaName);
+	cmd->title = luaName;
 	cmd->x = dir;
 	cmd->cmdType = C_ENTITYFACE;
 	_cine.push_back(cmd);
@@ -560,8 +559,8 @@ void AI::cineEntityFace(const char *luaName, double dir) {
 
 void AI::cineDialog(const char *title, const char *string, int seconds) {
 	CineCommand *cmd = new CineCommand;
-	strcpy(cmd->title, title);
-	strcpy(cmd->string, string);
+	cmd->title = title;
+	cmd->string = string;
 	cmd->delay = seconds;
 	cmd->start = 1;
 	if (!title || !string)
@@ -586,15 +585,15 @@ void AI::cineMoveMaskedPic(const char *id, const char *pic, int x1, int y1, int 
 	cmd->xv = ((double)(x2-x1)) / (double)speed;
 	cmd->yv = ((double)(y2-y1)) / (double)speed;
 	cmd->start = 0;
-	strcpy(cmd->string, pic);
-	strcpy(cmd->id, id);
+	cmd->string = pic;
+	cmd->id = id;
 	cmd->cmdType = C_MOVEMASKEDPIC;
 	_cine.push_back(cmd);
 }
 
 void AI::cineUse(const char *entName) {
 	CineCommand *cmd = new CineCommand;
-	strcpy(cmd->string, entName);
+	cmd->string = entName;
 	cmd->cmdType = C_USEENTITY;
 	_cine.push_back(cmd);
 }
