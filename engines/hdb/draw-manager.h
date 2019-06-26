@@ -190,6 +190,8 @@ public:
 
 	uint _width, _height;
 
+	char *getName() { return _name; }
+
 private:
 
 	char _name[64];
@@ -210,6 +212,7 @@ public:
 
 	uint32 _flags;
 
+	char *getName() { return _name; }
 private:
 	char _name[64];
 

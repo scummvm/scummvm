@@ -128,7 +128,7 @@ void aiPlayerInit2(AIEntity *e) {
 }
 
 void aiPlayerAction(AIEntity *e) {
-	warning("STUB: AI: aiPlayerAction required");
+	debug(9, "STUB: AI: aiPlayerAction required");
 }
 
 void aiPlayerDraw(AIEntity *e, int mx, int my) {
@@ -226,7 +226,7 @@ void aiSergeantInit2(AIEntity *e) {
 
 void aiSergeantAction(AIEntity *e) {
 	if (e->goalX) {
-		warning("AI-PLAYER: aiSergeantAction: Play SND_FOOTSTEPS sounds");
+		debug(9, "STUB: AI-PLAYER: aiSergeantAction: Play SND_FOOTSTEPS sounds");
 		g_hdb->_ai->animateEntity(e);
 	} else
 		g_hdb->_ai->animEntFrames(e);
