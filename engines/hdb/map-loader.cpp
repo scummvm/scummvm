@@ -702,7 +702,7 @@ void Map::drawGratings() {
 		g_hdb->_drawMan->getTile(_gratings[i]->tile)->drawMasked(_gratings[i]->x, _gratings[i]->y);
 	}
 
-	debug(1, "Gratings Count: %d", _numGratings);
+	debug(8, "Gratings Count: %d", _numGratings);
 }
 
 void Map::drawForegrounds() {
@@ -710,7 +710,7 @@ void Map::drawForegrounds() {
 		g_hdb->_drawMan->getTile(_foregrounds[i]->tile)->drawMasked(_foregrounds[i]->x, _foregrounds[i]->y);
 	}
 
-	debug(1, "Foregrounds Count: %d", _numForegrounds);
+	debug(8, "Foregrounds Count: %d", _numForegrounds);
 }
 
 uint32 Map::getMapBGTileFlags(int x, int y) {

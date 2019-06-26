@@ -1209,7 +1209,7 @@ void AI::drawEnts(int x, int y, int w, int h) {
 			case AI_VORTEXIAN:
 				if (e->draw)
 					e->draw->drawMasked(e->x - x + e->drawXOff, e->y - y + e->drawYOff);
-				debug(1, "STUB: AI::drawEnts: Replace Masked Blitting with Alpha Masked Blitting");
+				debug(9, "STUB: AI::drawEnts: Replace Masked Blitting with Alpha Masked Blitting");
 				break;
 			case AI_GUY: // Draw Player Last
 				break;
@@ -1259,16 +1259,21 @@ void AI::drawEnts(int x, int y, int w, int h) {
 }
 
 void AI::drawLevel2Ents() {
-	int debug = 0; //game.GetDebug(); // FIXME
+	int debugging = 0; //game.GetDebug(); // FIXME
 
 	for (int i = 0; i < _numLevel2Ents; i++) {
 		// call custom drawing code?
-		if (_entsLevel2[i].aiDraw)
+		if (_entsLevel2[i].aiDraw) {
+			debug(5, "AI::drawLevel2Ents: entity %s(%d) at %d,%d", AIType2Str(_entsLevel2[i].e->type), _entsLevel2[i].e->type, _entsLevel2[i].x, _entsLevel2[i].y);
+
 			_entsLevel2[i].aiDraw(_entsLevel2[i].e, _entsLevel2[i].x, _entsLevel2[i].y);
-		else if (_entsLevel2[i].draw)
+		} else if (_entsLevel2[i].draw) {
+			debug(5, "AI::drawLevel2Ents: tile '%s' at %d,%d", _entsLevel2[i].draw->getName(), _entsLevel2[i].x, _entsLevel2[i].y);
+
 			_entsLevel2[i].draw->drawMasked(_entsLevel2[i].x, _entsLevel2[i].y);
-		else if (debug)
+		} else if (debugging) {
 			_debugQMark->drawMasked(_entsLevel2[i].x, _entsLevel2[i].y );
+		}
 
 		if (_entsLevel2[i].stunnedWait)
 			 g_hdb->_ai->_stunnedGfx[_stunAnim]->drawMasked(_entsLevel2[i].x , _entsLevel2[i].y);
@@ -1436,11 +1441,13 @@ AIEntity *AI::legalMove(int tileX, int tileY, int level, int *result) {
 
 	if (hit && hit->state != STATE_FLOATING)
 		// If player and entity are not at the same level, are they on stairs?
-		if (hit->level != level)
-			if (level == 1 && !(bgFlags & kFlagStairTop))
+		if (hit->level != level) {
+			if (level == 1 && !(bgFlags & kFlagStairTop)) {
 				hit = NULL;
-			else if (level == 1 && !(bgFlags & kFlagStairBot))
+			} else if (level == 1 && !(bgFlags & kFlagStairBot)) {
 				hit = NULL;
+			}
+		}
 
 	if (level == 1) {
 		if (bgFlags & kFlagSolid) {
