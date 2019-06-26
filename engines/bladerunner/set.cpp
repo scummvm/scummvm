@@ -452,6 +452,12 @@ void Set::overrideSceneObjectInfo(int objectId) const {
 			_objects[objectId].bbox.setXYZ(-75.17f, -1239.29f, 108340.13f, -56.32f, -1221.16f, 108365.65f);
 		}
 		break;
+	case kSceneCT04:
+		// prevent McCoy or transient from blending/glitching with the right wall
+		if (objectId == 6 && _objects[objectId].name == "BOX04") {
+			_objects[objectId].bbox.setXYZ(-251.80f, -636.49f, 414.38f, -206.66f, -445.84f, 900.44f);
+		}
+		break;
 	case kSceneBB06:
 		// Sebastian's room with doll
 		if (objectId == 3 && _objects[objectId].name == "BOX31") {
