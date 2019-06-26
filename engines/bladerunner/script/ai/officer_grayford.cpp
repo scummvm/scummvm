@@ -760,8 +760,9 @@ bool AIScriptOfficerGrayford::GoalChanged(int currentGoalNumber, int newGoalNumb
 				break;
 
 			case 5:
+#if BLADERUNNER_ORIGINAL_BUGS
 				// kSetUG06 -> kSetFreeSlotC
-//				debug("gray 8-5 kSetUG06 -> kSetFreeSlotC");
+				// debug("gray 8-5 kSetUG06 -> kSetFreeSlotC");
 				AI_Movement_Track_Append(kActorOfficerGrayford, 413, 10);
 				AI_Movement_Track_Append(kActorOfficerGrayford, 414, 0);
 				AI_Movement_Track_Append_With_Facing(kActorOfficerGrayford, 431, 0, 1017);
@@ -769,6 +770,22 @@ bool AIScriptOfficerGrayford::GoalChanged(int currentGoalNumber, int newGoalNumb
 				AI_Movement_Track_Append(kActorOfficerGrayford, 35, 30); // kSetFreeSlotC
 				AI_Movement_Track_Repeat(kActorOfficerGrayford);
 				break;
+#else
+				// Don't allow police officers to shoot McCoy while he is
+				// disabled reciting his monologue at start of Act 4
+				if (Game_Flag_Query(kFlagUG06Chapter4Started)) {
+					// kSetUG06 -> kSetFreeSlotC
+					// debug("gray 8-5 kSetUG06 -> kSetFreeSlotC");
+					AI_Movement_Track_Append(kActorOfficerGrayford, 413, 10);
+					AI_Movement_Track_Append(kActorOfficerGrayford, 414, 0);
+					AI_Movement_Track_Append_With_Facing(kActorOfficerGrayford, 431, 0, 1017);
+					AI_Movement_Track_Append(kActorOfficerGrayford, 432, 10);
+					AI_Movement_Track_Append(kActorOfficerGrayford, 35, 30); // kSetFreeSlotC
+					AI_Movement_Track_Repeat(kActorOfficerGrayford);
+					break;
+				}
+#endif // BLADERUNNER_ORIGINAL_BUGS
+				// fall through
 
 			case 6:
 				// kSetUG07 -> kSetFreeSlotC

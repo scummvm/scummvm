@@ -64,12 +64,9 @@ void SceneScriptUG04::InitializeScene() {
 	Ambient_Sounds_Add_Sound(kSfxBBGRN2,   5,  50, 17, 37, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfxBBGRN3,   5,  50, 17, 37, -100, 100, -101, -101, 0, 0);
 
-	if ((Global_Variable_Query(kVariableChapter) == 3)
-		|| (Global_Variable_Query(kVariableChapter) > 3 && Random_Query(1, 5) == 1)
-	){
-		// enhancement: don't always play the bikers after chapter 3
-		Scene_Loop_Start_Special(kSceneLoopModeLoseControl, kUG04LoopTrainLoop, false);
-	}
+#if BLADERUNNER_ORIGINAL_BUGS
+	Scene_Loop_Start_Special(kSceneLoopModeLoseControl, kUG04LoopTrainLoop, false);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 	Scene_Loop_Set_Default(kUG04LoopMainLoop);
 }
 
@@ -83,6 +80,21 @@ void SceneScriptUG04::SceneLoaded() {
 	Unobstacle_Object("FLOOR DEBRIS WADS", true);
 	Unobstacle_Object("FLOOR DEBRIS WADS01", true);
 	Unobstacle_Object("FLOOR DEBRIS WADS02", true);
+
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+	if ((Global_Variable_Query(kVariableChapter) == 3)
+	    || (Global_Variable_Query(kVariableChapter) > 3 && Random_Query(1, 4) == 1)
+	){
+		// Enhancement: don't always play the overground train after chapter 3
+		// Bug fix: don't remove control from player. There is no chance to glitch into the scenery
+		// while the video is playing and rats may attack!
+		// Moved in SceneLoaded because the same code in InitializeScene
+		// resulted in a infinite loop of the special loop, when mode is set to kSceneLoopModeOnce instead of kSceneLoopModeLoseControl
+		Scene_Loop_Set_Default(kUG04LoopMainLoop);
+		Scene_Loop_Start_Special(kSceneLoopModeOnce, kUG04LoopTrainLoop, false);
+	}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 }
 
 bool SceneScriptUG04::MouseClick(int x, int y) {
@@ -143,7 +155,11 @@ void SceneScriptUG04::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 
 void SceneScriptUG04::PlayerWalkedIn() {
 	if (Game_Flag_Query(kFlagUG06toUG04)) {
+#if BLADERUNNER_ORIGINAL_BUGS
 		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 60.0f, -1.74f, -976.0f, 6, false, false, false);
+#else
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 60.0f, -1.74f, -976.0f, 6, true, false, false);
+#endif
 		Game_Flag_Reset(kFlagUG06toUG04);
 	}
 }
