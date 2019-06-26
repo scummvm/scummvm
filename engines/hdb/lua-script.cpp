@@ -258,7 +258,7 @@ static int cineMoveEntity(lua_State *L) {
 static int cineAnimEntity(lua_State *L) {
 	const char *entName = lua_tostring(L, 1);
 	double state = lua_tonumber(L, 2);
-	double loop = lua_tonumber(L, 2);
+	double loop = lua_tonumber(L, 3);
 
 	g_hdb->_lua->checkParameters("cineAnimEntity", 3);
 
@@ -271,7 +271,7 @@ static int cineAnimEntity(lua_State *L) {
 static int cineSetAnimFrame(lua_State *L) {
 	const char *entName = lua_tostring(L, 1);
 	double state = lua_tonumber(L, 2);
-	double frame = lua_tonumber(L, 2);
+	double frame = lua_tonumber(L, 3);
 
 	g_hdb->_lua->checkParameters("cineSetAnimFrame", 3);
 
@@ -338,7 +338,7 @@ static int cineSpawnEntity(lua_State *L) {
 
 static int cineClearForeground(lua_State *L) {
 	double x = lua_tonumber(L, 1);
-	double y = lua_tonumber(L, 1);
+	double y = lua_tonumber(L, 2);
 
 	g_hdb->_lua->checkParameters("cineClearForeground", 2);
 
@@ -349,7 +349,7 @@ static int cineClearForeground(lua_State *L) {
 
 static int cineSetForeground(lua_State *L) {
 	double x = lua_tonumber(L, 1);
-	double y = lua_tonumber(L, 1);
+	double y = lua_tonumber(L, 2);
 	const char *tileName = lua_tostring(L, 3);
 
 	g_hdb->_lua->checkParameters("cineSetForeground", 3);
@@ -363,7 +363,7 @@ static int cineSetForeground(lua_State *L) {
 
 static int cineSetBackground(lua_State *L) {
 	double x = lua_tonumber(L, 1);
-	double y = lua_tonumber(L, 1);
+	double y = lua_tonumber(L, 2);
 	const char *tileName = lua_tostring(L, 3);
 
 	g_hdb->_lua->checkParameters("cineSetBackground", 3);
