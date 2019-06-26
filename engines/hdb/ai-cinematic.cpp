@@ -567,7 +567,7 @@ void AI::cineDialog(const char *title, const char *string, int seconds) {
 	if (!title || !string)
 		warning("cineDialog: Missing Title or Text");
 	cmd->cmdType = C_DIALOG;
-	debug("In cineDialog: C_DIALOG created. cmd->start: %d", cmd->start);
+	debug("In cineDialog: C_DIALOG created. cmd->start: %d, cmd->title: %s", cmd->start, cmd->title);
 	_cine.push_back(cmd);
 }
 
