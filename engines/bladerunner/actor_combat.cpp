@@ -574,20 +574,20 @@ int ActorCombat::getCoefficientRangedAttack() const {
 }
 
 int ActorCombat::getDamageCloseAttack(int min, int max) const {
-	if (_enemyId == kActorMcCoy && _vm->_settings->getDifficulty() == 0) {
+	if (_enemyId == kActorMcCoy && _vm->_settings->getDifficulty() == kGameDifficultyEasy) {
 		return _damage / 2;
 	}
-	if (_enemyId == kActorMcCoy && _vm->_settings->getDifficulty() == 2) {
+	if (_enemyId == kActorMcCoy && _vm->_settings->getDifficulty() == kGameDifficultyHard) {
 		return _damage;
 	}
 	return ((MIN(max - min, 30) * 100.0f / 60.0f) + 50) * _damage / 100;
 }
 
 int ActorCombat::getDamageRangedAttack(int min, int max) const {
-	if (_enemyId == kActorMcCoy && _vm->_settings->getDifficulty() == 0) {
+	if (_enemyId == kActorMcCoy && _vm->_settings->getDifficulty() == kGameDifficultyEasy) {
 		return _damage / 2;
 	}
-	if (_enemyId == kActorMcCoy && _vm->_settings->getDifficulty() == 2) {
+	if (_enemyId == kActorMcCoy && _vm->_settings->getDifficulty() == kGameDifficultyHard) {
 		return _damage;
 	}
 	return ((MIN(max - min, 30) * 100.0f / 60.0f) + 50) * _damage / 100;

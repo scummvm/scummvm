@@ -169,19 +169,19 @@ void Mouse::getXY(int *x, int *y) const {
 
 void Mouse::setMouseJitterUp() {
 	switch (_vm->_settings->getDifficulty()) {
-	case 0:
+	case kGameDifficultyEasy:
 		_randomCountdownX = 2;
 		_randomX = _vm->_rnd.getRandomNumberRng(0, 6) - 3;
 		_randomY = _vm->_rnd.getRandomNumberRng(0, 10) - 20;
 		break;
 
-	case 1:
+	case kGameDifficultyMedium:
 		_randomCountdownX = 3;
 		_randomX = _vm->_rnd.getRandomNumberRng(0, 8) - 4;
 		_randomY = _vm->_rnd.getRandomNumberRng(0, 10) - 25;
 		break;
 
-	case 2:
+	case kGameDifficultyHard:
 		_randomCountdownX = 4;
 		_randomX = _vm->_rnd.getRandomNumberRng(0, 10) - 5;
 		_randomY = _vm->_rnd.getRandomNumberRng(0, 10) - 30;
@@ -191,19 +191,19 @@ void Mouse::setMouseJitterUp() {
 
 void Mouse::setMouseJitterDown() {
 	switch (_vm->_settings->getDifficulty()) {
-	case 0:
+	case kGameDifficultyEasy:
 		_randomCountdownY = 2;
 		_randomX = _vm->_rnd.getRandomNumberRng(0, 6) - 3;
 		_randomY = _vm->_rnd.getRandomNumberRng(10, 20);
 		break;
 
-	case 1:
+	case kGameDifficultyMedium:
 		_randomCountdownY = 3;
 		_randomX = _vm->_rnd.getRandomNumberRng(0, 8) - 4;
 		_randomY = _vm->_rnd.getRandomNumberRng(15, 25);
 		break;
 
-	case 2:
+	case kGameDifficultyHard:
 		_randomCountdownY = 4;
 		_randomX = _vm->_rnd.getRandomNumberRng(0, 10) - 5;
 		_randomY = _vm->_rnd.getRandomNumberRng(20, 30);

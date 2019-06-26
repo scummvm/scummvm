@@ -32,6 +32,7 @@
 #include "bladerunner/time.h"
 #include "bladerunner/subtitles.h"
 #include "bladerunner/debugger.h"
+#include "bladerunner/settings.h"
 // ----------------------
 // Maze point system info
 // ----------------------
@@ -259,6 +260,13 @@ bool PoliceMazeTargetTrack::tick() {
 	_timeLeftUpdate -= timeDiff;
 
 	if (_timeLeftUpdate > 0) {
+#if !BLADERUNNER_ORIGINAL_BUGS
+		// this fix makes the targets appear according to their wait time
+		// but it might be too fast for easy or normal mode, so only do this for normal and hard modes
+		if (_vm->_settings->getDifficulty() > kGameDifficultyEasy) {
+			_time = oldTime;
+		}
+#endif // !BLADERUNNER_ORIGINAL_BUGS
 		return false;
 	}
 
@@ -270,7 +278,6 @@ bool PoliceMazeTargetTrack::tick() {
 
 	if (_isWaiting) {
 		_timeLeftWait -= timeDiff;
-
 		if (_timeLeftWait > 0) {
 			return true;
 		}
@@ -589,6 +596,9 @@ bool PoliceMazeTargetTrack::tick() {
 				debug("ItemId: %3i, Wait random, Min: %i, Max: %i", _itemId, randomMin, randomMax);
 #endif
 				_timeLeftWait = Random_Query(randomMin, randomMax);
+#if BLADERUNNER_DEBUG_CONSOLE
+				debug("ItemId: %3i, Wait for = %i", _itemId, _timeLeftWait);
+#endif
 				_isWaiting = true;
 
 				cont = false;
