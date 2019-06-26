@@ -101,7 +101,7 @@ Common::SeekableReadStream *FileMan::findFirstData(const char *string, DataType 
 	// Find MPC Entry
 	for (MPCIterator it = _dir.begin(); it != _dir.end(); it++) {
 		fileString = (*it)->filename;
-		if (fileString.contains(string)) {
+		if (fileString.equals(string)) {
 			if ((*it)->type == type) {
 				file = *it;
 				break;
