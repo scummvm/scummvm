@@ -233,12 +233,12 @@ uint Glulxe::perform_restoreundo() {
 }
 
 Common::Error Glulxe::writeGameData(Common::WriteStream *ws) {
+#ifdef TODO
 	dest_t dest;
 	int ix;
 	uint res = 0, lx, val;
 	uint memstart = 0, memlen = 0, stackstart = 0, stacklen = 0;
 	uint heapstart = 0, heaplen = 0, filestart = 0, filelen = 0;
-#ifdef TODO
 	stream_get_iosys(&val, &lx);
 	if (val != 2) {
 		/* Not using the Glk I/O system, so bail. This function only
@@ -357,11 +357,13 @@ Common::Error Glulxe::writeGameData(Common::WriteStream *ws) {
 	}
 
 	/* All done. */
-#endif
 	return res ? Common::kUnknownError : Common::kNoError;
+#endif
+	return Common::kUnknownError;
 }
 
 Common::Error Glulxe::readSaveData(Common::SeekableReadStream *rs) {
+#ifdef TODO
 	dest_t dest;
 	int ix;
 	uint lx = 0, res, val;
@@ -369,7 +371,6 @@ Common::Error Glulxe::readSaveData(Common::SeekableReadStream *rs) {
 	uint heapsumlen = 0;
 	uint *heapsumarr = nullptr;
 	bool fromshell = false;
-#ifdef TODO
 	/* If profiling is enabled and active then fail. */
 #if VM_PROFILING
 	if (profile_profiling_active())

@@ -975,10 +975,10 @@ void interpret(Aaddr adr)
                 break;
             }
             case I_SAYSTR: {
-                Aptr adr = pop(stack);
+                Aptr sayAddr = pop(stack);
                 if (traceInstructionOption)
-                    printf("SAYSTR\t%7ld\t\ty\t", (long)adr);
-                sayString((char *)fromAptr(adr));
+                    printf("SAYSTR\t%7ld\t\ty\t", (long)sayAddr);
+                sayString((char *)fromAptr(sayAddr));
                 if (traceInstructionOption)
                     printf("\n\t\t\t\t\t\t");
                 break;

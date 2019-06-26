@@ -93,7 +93,7 @@ bool isALocation(int instance)
 
 bool isLiteral(int instance)
 {
-  return instance > header->instanceMax;
+  return instance > (int)header->instanceMax;
 }
 
 bool isANumeric(int instance)
@@ -118,7 +118,7 @@ void setInstanceAttribute(int instance, int attribute, Aptr value)
 {
     char str[80];
 
-    if (instance > 0 && instance <= header->instanceMax) {
+    if (instance > 0 && instance <= (int)header->instanceMax) {
         setAttribute(admin[instance].attributes, attribute, value);
         if (isALocation(instance) && attribute != VISITSATTRIBUTE)
             /* If it wasn't the VISITSATTRIBUTE the location may have
@@ -173,7 +173,7 @@ Aptr getInstanceAttribute(int instance, int attribute)
     if (isLiteral(instance))
         return literalAttribute(instance, attribute);
     else {
-        if (instance > 0 && instance <= header->instanceMax) {
+        if (instance > 0 && instance <= (int)header->instanceMax) {
             if (attribute == -1)
                 return locationOf(instance);
             else
@@ -208,7 +208,7 @@ static void verifyInstance(int instance, char *action) {
     if (instance == 0) {
         sprintf(message, "Can't %s instance (%d).", action, instance);
         syserr(message);
-    } else if (instance > header->instanceMax) {
+    } else if (instance > (int)header->instanceMax) {
         sprintf(message, "Can't %s instance (%d > instanceMax).", action, instance);
         syserr(message);
     }
@@ -290,20 +290,20 @@ bool isAt(int instance, int other, ATrans trans)
     if (isALocation(instance)) {
         /* Nested locations */
         /* TODO - What if the other is not a location? */
-        int current = admin[instance].location;
+        int curr = admin[instance].location;
         switch (trans) {
         case DIRECT:
             return admin[instance].location == other;
         case INDIRECT:
-            if (current == other)
+            if (curr == other)
                 return FALSE;
-            current = admin[current].location;
+            curr = admin[curr].location;
         case TRANSITIVE:
-            while (current != 0) {
-                if (current == other)
+            while (curr != 0) {
+                if (curr == other)
                     return TRUE;
                 else
-                    current = admin[current].location;
+                    curr = admin[curr].location;
             }
             return FALSE;
         }
@@ -321,12 +321,12 @@ bool isAt(int instance, int other, ATrans trans)
         }
         case TRANSITIVE: {
             int location = locationOf(instance);
-            int current = other;
-            while (current != 0) {
-                if (current == location)
+            int curr = other;
+            while (curr != 0) {
+                if (curr == location)
                     return TRUE;
                 else
-                    current = admin[current].location;
+                    curr = admin[curr].location;
             }
             return FALSE;
         }
@@ -340,28 +340,28 @@ bool isAt(int instance, int other, ATrans trans)
             return positionOf(instance) == admin[other].location;
         case INDIRECT: {
             int location = locationOf(instance);
-            int current = other;
-            if (location == current)
+            int curr = other;
+            if (location == curr)
                 return FALSE;
             else
-                current = admin[current].location;
-            while (current != 0) {
-                if (current == location)
+                curr = admin[curr].location;
+            while (curr != 0) {
+                if (curr == location)
                     return TRUE;
                 else
-                    current = admin[current].location;
+                    curr = admin[curr].location;
             }
             return FALSE;
         }
         case TRANSITIVE: {
             int location = locationOf(other);
-            int current = locationOf(instance);
+            int curr = locationOf(instance);
             bool ok = FALSE;
-            while (current != 0 && !ok) {
-                if (current == location)
+            while (curr != 0 && !ok) {
+                if (curr == location)
                     ok = TRUE;
                 else
-                    current = admin[current].location;
+                    curr = admin[curr].location;
             }
             return ok;
         }
@@ -530,7 +530,7 @@ static char *wordWithCode(int classBit, int code) {
     char str[50];
 
     for (w = 0; w < dictionarySize; w++)
-        if (dictionary[w].code == code && ((classBit&dictionary[w].classBits) != 0))
+        if (dictionary[w].code == (Aword)code && ((classBit&dictionary[w].classBits) != 0))
             return (char *)pointerTo(dictionary[w].string);
     sprintf(str, "Could not find word of class %d with code %d.", classBit, code);
     syserr(str);
@@ -804,7 +804,7 @@ static bool descriptionCheck(int instance)
 /*======================================================================*/
 void describeInstances(void)
 {
-    int i;
+    uint i;
     int lastInstanceFound = 0;
     int found = 0;
 
@@ -899,7 +899,7 @@ static void locateLocation(Aword loc, Aword whr)
 
     /* Ensure this does not create a recursive location chain */
     while (l != 0) {
-        if (admin[l].location == loc)
+        if (admin[l].location == (int)loc)
             apperr("Locating a location that would create a recursive loop of locations containing each other.");
         else
             l = admin[l].location;
@@ -1011,7 +1011,7 @@ static void locateActor(Aint movingActor, Aint whr)
 
     /* Before leaving, remember that we visited the location */
     if (!isPreBeta5(header->version))
-        if (movingActor == HERO)
+        if (movingActor == (int)HERO)
             incrementVisits(where(HERO, DIRECT));
 
     /* TODO Actors locating into containers is dubious, anyway as it
@@ -1035,7 +1035,7 @@ static void locateActor(Aint movingActor, Aint whr)
     current.instance = previousInstance;
     current.actor = previousActor;
 
-    if (movingActor == HERO) {
+    if (movingActor == (int)HERO) {
         if (shouldBeDescribed())
             look();
         else

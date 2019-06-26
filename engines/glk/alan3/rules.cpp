@@ -52,9 +52,9 @@ static int ruleCount;
 static RulesAdmin *rulesAdmin; /* Table for administration of the rules */
 
 /*----------------------------------------------------------------------*/
-static void clearRulesAdmin(int ruleCount) {
+static void clearRulesAdmin(int numRules) {
     int r;
-    for (r = 0; r < ruleCount; r++) {
+    for (r = 0; r < numRules; r++) {
         rulesAdmin[r].lastEval = FALSE;
         rulesAdmin[r].alreadyRun = FALSE;
     }
@@ -62,11 +62,11 @@ static void clearRulesAdmin(int ruleCount) {
 
 
 /*----------------------------------------------------------------------*/
-static void initRulesAdmin(int ruleCount) {
+static void initRulesAdmin(int numRules) {
     int r;
 
-    rulesAdmin = (RulesAdmin *)allocate(ruleCount*sizeof(RulesAdmin)+sizeof(EOF));
-    for (r = 0; r < ruleCount; r++)
+    rulesAdmin = (RulesAdmin *)allocate(numRules*sizeof(RulesAdmin)+sizeof(EOF));
+    for (r = 0; r < numRules; r++)
         ;
     setEndOfArray(&rulesAdmin[r]);
 }
@@ -167,33 +167,6 @@ static void evaluateRulesPreBeta2(void)
 
 
 /*----------------------------------------------------------------------*/
-static void evaluateRulesBeta2New(void) {
-    int i;
-
-    for (i = 1; !isEndOfArray(&rules[i-1]); i++)
-        rules[i-1].alreadyRun = FALSE;
-
-    current.location = NOWHERE;
-    current.actor = 0;
-
-    anyRuleRun = FALSE;
-
-    for (i = 1; !isEndOfArray(&rules[i-1]); i++) {
-        bool evaluated_value = evaluate(rules[i-1].exp);
-        traceRuleEvaluation(i);
-        rules[i-1].alreadyRun = evaluated_value;
-    }
-    for (i = 1; !isEndOfArray(&rules[i-1]); i++) {
-        if (rules[i-1].alreadyRun) {
-            traceRuleExecution(i);
-            interpret(rules[i-1].stms);
-            anyRuleRun = TRUE;
-        }
-    }
-}
-
-
-/*----------------------------------------------------------------------*/
 /* This is how beta2 thought rules should be evaluated:
  */
 static void evaluateRulesBeta2(void)
@@ -241,7 +214,7 @@ void resetRules() {
 
 
 /*======================================================================*/
-void evaluateRules(RuleEntry rules[]) {
+void evaluateRules(RuleEntry ruleList[]) {
     bool change = TRUE;
     int rule;
 
@@ -250,15 +223,15 @@ void evaluateRules(RuleEntry rules[]) {
 
     while (change) {
         change = FALSE;
-        for (rule = 1; !isEndOfArray(&rules[rule-1]); rule++) {
+        for (rule = 1; !isEndOfArray(&ruleList[rule-1]); rule++) {
             traceRuleEvaluation(rule);
-            bool evaluated_value = evaluate(rules[rule-1].exp);
+            bool evaluated_value = evaluate(ruleList[rule-1].exp);
             traceRuleResult(rule, evaluated_value);
             if (evaluated_value == true && rulesAdmin[rule-1].lastEval == false
                 && !rulesAdmin[rule-1].alreadyRun) {
                 change = TRUE;
                 traceRuleExecution(rule);
-                interpret(rules[rule-1].stms);
+                interpret(ruleList[rule-1].stms);
                 rulesAdmin[rule-1].alreadyRun = TRUE;
                 anyRuleRun = TRUE;
             } else {
@@ -272,14 +245,14 @@ void evaluateRules(RuleEntry rules[]) {
 
 
 /*=======================================================================*/
-void resetAndEvaluateRules(RuleEntry rules[], char *version) {
+void resetAndEvaluateRules(RuleEntry ruleList[], char *version) {
     if (isPreBeta2(version))
         evaluateRulesPreBeta2();
     else if (isPreBeta3(version))
         evaluateRulesBeta2();
     else {
         resetRules();
-        evaluateRules(rules);
+        evaluateRules(ruleList);
     }
 }
 

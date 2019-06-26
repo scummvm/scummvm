@@ -207,7 +207,7 @@ void addParameterToParameterArray(ParameterArray theArray, Parameter *theParamet
 {
     if (theArray == NULL) syserr("Adding to null parameter array");
 
-    int i;
+    uint i;
 
     for (i = 0; !isEndOfArray(&theArray[i]) && i < MAXINSTANCE; i++)
         ;

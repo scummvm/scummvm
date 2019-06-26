@@ -99,42 +99,42 @@ static int countSets(void) {
 
 
 /*----------------------------------------------------------------------*/
-static void deallocateSets(GameState *gameState) {
+static void deallocateSets(GameState *gState) {
     int count = countSets();
     int i;
 
     for (i = 0; i < count; i++)
-        freeSet(gameState->sets[i]);
-    deallocate(gameState->sets);
+        freeSet(gState->sets[i]);
+    deallocate(gState->sets);
 }
 
 /*======================================================================*/
-void deallocateGameState(GameState *gameState) {
+void deallocateGameState(GameState *gState) {
 
-    deallocate(gameState->admin);
-    deallocate(gameState->attributes);
+    deallocate(gState->admin);
+    deallocate(gState->attributes);
 
-    if (gameState->eventQueueTop > 0) {
-        deallocate(gameState->eventQueue);
-        gameState->eventQueue = NULL;
+    if (gState->eventQueueTop > 0) {
+        deallocate(gState->eventQueue);
+        gState->eventQueue = NULL;
     }
-    if (gameState->scores)
-        deallocate(gameState->scores);
+    if (gState->scores)
+        deallocate(gState->scores);
 
-    deallocateStrings(gameState);
-    deallocateSets(gameState);
+    deallocateStrings(gState);
+    deallocateSets(gState);
 
-    memset(gameState, 0, sizeof(GameState));
+    memset(gState, 0, sizeof(GameState));
 }
 
 
 /*======================================================================*/
 void forgetGameState(void) {
-    char *playerCommand;
-    popGameState(stateStack, &gameState, &playerCommand);
+    char *playerCmd;
+    popGameState(stateStack, &gameState, &playerCmd);
     deallocateGameState(&gameState);
-    if (playerCommand != NULL)
-        deallocate(playerCommand);
+    if (playerCmd != NULL)
+        deallocate(playerCmd);
 }
 
 

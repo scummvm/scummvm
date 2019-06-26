@@ -71,7 +71,7 @@ static int sumAttributeInContainer(
 /*----------------------------------------------------------------------*/
 static bool containerIsEmpty(int container)
 {
-    int i;
+    uint i;
 
     for (i = 1; i <= header->instanceMax; i++)
         if (isDescribable(i) && isIn(i, container, TRANSITIVE))
@@ -102,7 +102,7 @@ bool passesContainerLimits(Aint theContainer, Aint theAddedInstance) {
     if (containers[props].limits != 0) { /* Any limits at all? */
         for (limit = (LimitEntry *) pointerTo(containers[props].limits); !isEndOfArray(limit); limit++)
             if (limit->atr == 1-I_COUNT) { /* TODO This is actually some encoding of the attribute number, right? */
-                if (countInContainer(theContainer) >= limit->val) {
+                if (countInContainer(theContainer) >= (int)limit->val) {
                     interpret(limit->stms);
                     return(FALSE);
                 }
@@ -119,7 +119,7 @@ bool passesContainerLimits(Aint theContainer, Aint theAddedInstance) {
 
 /*======================================================================*/
 int containerSize(int container, ATrans trans) {
-    Aint i;
+    Aword i;
     Aint count = 0;
 
     for (i = 1; i <= header->instanceMax; i++) {
@@ -132,7 +132,7 @@ int containerSize(int container, ATrans trans) {
 /*======================================================================*/
 void list(int container)
 {
-    int i;
+    uint i;
     Aword props;
     Aword foundInstance[2] = {0,0};
     int found = 0;

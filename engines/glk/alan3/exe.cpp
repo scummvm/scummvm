@@ -67,9 +67,6 @@ Common::SeekableReadStream *textFile;
 #define WIDTH 80
 
 
-/*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-static char logFileName[256] = "";
-
 /*======================================================================*/
 void setStyle(int style)
 {
@@ -88,7 +85,7 @@ void setStyle(int style)
 void print(Aword fpos, Aword len)
 {
     char str[2*WIDTH];            /* String buffer */
-    int outlen = 0;               /* Current output length */
+    uint outlen = 0;              /* Current output length */
     int ch = 0;
     int i;
     long savfp = 0;     /* Temporary saved text file position */
@@ -282,15 +279,15 @@ void quitGame(void)
 /*======================================================================*/
 void restartGame(void)
 {
-    Aint previousLocation = current.location;
 #ifdef TODO
-    current.location = where(HERO, DIRECT);
+	Aint previousLocation = current.location;
+	current.location = where(HERO, DIRECT);
     para();
     if (confirm(M_REALLY)) {
         longjmp(restartLabel, TRUE);
     }
     current.location = previousLocation;
-#lse
+#else
 	::error("TODO: restartGame");
 #endif
 }
@@ -303,7 +300,7 @@ void cancelEvent(Aword theEvent)
     int i;
 
     for (i = eventQueueTop-1; i>=0; i--)
-        if (eventQueue[i].event == theEvent) {
+        if (eventQueue[i].event == (int)theEvent) {
             while (i < eventQueueTop-1) {
                 eventQueue[i].event = eventQueue[i+1].event;
                 eventQueue[i].after = eventQueue[i+1].after;
@@ -337,7 +334,7 @@ static void moveEvent(int to, int from) {
 /*======================================================================*/
 void schedule(Aword event, Aword where, Aword after)
 {
-    int i;
+    uint i;
 
     if (event == 0) syserr("NULL event");
 
@@ -347,7 +344,7 @@ void schedule(Aword event, Aword where, Aword after)
         increaseEventQueue();
 
     /* Bubble this event down */
-    for (i = eventQueueTop; i >= 1 && eventQueue[i-1].after <= after; i--) {
+    for (i = eventQueueTop; i >= 1 && eventQueue[i-1].after <= (int)after; i--) {
         moveEvent(i, i-1);
     }
 
@@ -378,7 +375,7 @@ static char *stripCharsFromStringForwards(int count, char *initialString, char *
     char *strippedString;
     char *rest;
 
-    if (count > strlen(initialString))
+    if (count > (int)strlen(initialString))
         stripPosition = strlen(initialString);
     else
         stripPosition = count;
@@ -395,7 +392,7 @@ static char *stripCharsFromStringBackwards(Aint count, char *initialString, char
     char *strippedString;
     char *rest;
 
-    if (count > strlen(initialString))
+    if (count > (int)strlen(initialString))
         stripPosition = 0;
     else
         stripPosition = strlen(initialString)-count;
@@ -419,7 +416,7 @@ static int skipWordForwards(char *string, int position)
 {
     char separators[] = " .,?";
 
-    int i;
+    uint i;
 
     for (i = position; i<=strlen(string) && strchr(separators, string[i]) == NULL; i++)
         ;
@@ -469,7 +466,7 @@ static int countTrailingBlanks(char *string, int position) {
     int skippedChars, i;
     skippedChars = 0;
 
-    if (position > strlen(string)-1)
+    if (position > (int)strlen(string)-1)
         syserr("position > length in countTrailingBlanks");
     for (i = position; i >= 0 && string[i] == ' '; i--)
         skippedChars++;
@@ -536,7 +533,7 @@ Aptr strip(bool stripFromBeginningNotEnd, int count, bool stripWordsNotChars, in
 
 /*======================================================================*/
 int getContainerMember(int container, int index, bool directly) {
-    Aint i;
+    uint i;
     Aint count = 0;
 
     for (i = 1; i <= header->instanceMax; i++) {
@@ -599,7 +596,7 @@ void playSound(int sound)
 /*======================================================================*/
 void empty(int cnt, int whr)
 {
-    int i;
+    uint i;
 
     for (i = 1; i <= header->instanceMax; i++)
         if (isIn(i, cnt, DIRECT))
@@ -716,15 +713,13 @@ bool streq(char a[], char b[])
 
 /*======================================================================*/
 void startTranscript(void) {
-    time_t tick;
-
     if (logFile != NULL)
         return;
 
-	Common::String target = g_vm->getTargetName() + ".log";
+	Common::String filename = g_vm->getTargetName() + ".log";
 
 	uint fileUsage = transcriptOption ? fileusage_Transcript : fileusage_InputRecord;
-	frefid_t logFileRef = g_vm->glk_fileref_create_by_name(fileUsage, logFileName, 0);
+	frefid_t logFileRef = g_vm->glk_fileref_create_by_name(fileUsage, filename.c_str(), 0);
 	logFile = g_vm->glk_stream_open_file(logFileRef, filemode_Write, 0);
 
 	if (logFile == NULL) {

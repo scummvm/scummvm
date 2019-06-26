@@ -107,7 +107,7 @@ void reverse(Aword *w)          /* IN - The ACODE word to reverse bytes in */
 static void reverseTable(Aword adr, int elementSize)
 {
   Aword *e = &memory[adr];
-  int i;
+  uint i;
 
   if (elementSize < sizeof(Aword) || elementSize % sizeof(Aword) != 0)
       syserr("***Wrong size in 'reverseTable()' ***");
@@ -531,30 +531,30 @@ static void reversePreAlpha5Header(Pre3_0alpha5Header *hdr)
 /*----------------------------------------------------------------------*/
 static void reversePreAlpha5() {
     /* NOTE that the reversePreXXX() have different header definitions */
-    Pre3_0alpha5Header *header = (Pre3_0alpha5Header *)memory;
+    Pre3_0alpha5Header *hdr = (Pre3_0alpha5Header *)memory;
 
-    reversePreAlpha5Header(header);
-    memorySize = header->size;
+    reversePreAlpha5Header(hdr);
+    memorySize = hdr->size;
 
-    reverseDictionary(header->dictionary);
-    reverseSyntaxTable(header->syntaxTableAddress, header->version);
-    reverseParameterTable(header->parameterMapAddress);
-    reverseVerbs(header->verbTableAddress);
-    reverseClasses(header->classTableAddress);
-    reverseInstances(header->instanceTableAddress);
-    reverseScrs(header->scriptTableAddress);
-    reverseContainers(header->containerTableAddress);
-    reverseEvts(header->eventTableAddress);
-    reverseRuls(header->ruleTableAddress);
-    reverseTable(header->stringInitTable, sizeof(StringInitEntry));
-    reverseSetInitTable(header->setInitTable);
-    reverseTable(header->sourceFileTable, sizeof(SourceFileEntry));
-    reverseTable(header->sourceLineTable, sizeof(SourceLineEntry));
-    reverseStms(header->start);
-    reverseMsgs(header->messageTableAddress);
+    reverseDictionary(hdr->dictionary);
+    reverseSyntaxTable(hdr->syntaxTableAddress, hdr->version);
+    reverseParameterTable(hdr->parameterMapAddress);
+    reverseVerbs(hdr->verbTableAddress);
+    reverseClasses(hdr->classTableAddress);
+    reverseInstances(hdr->instanceTableAddress);
+    reverseScrs(hdr->scriptTableAddress);
+    reverseContainers(hdr->containerTableAddress);
+    reverseEvts(hdr->eventTableAddress);
+    reverseRuls(hdr->ruleTableAddress);
+    reverseTable(hdr->stringInitTable, sizeof(StringInitEntry));
+    reverseSetInitTable(hdr->setInitTable);
+    reverseTable(hdr->sourceFileTable, sizeof(SourceFileEntry));
+    reverseTable(hdr->sourceLineTable, sizeof(SourceLineEntry));
+    reverseStms(hdr->start);
+    reverseMsgs(hdr->messageTableAddress);
 
-    reverseTable(header->scores, sizeof(Aword));
-    reverseTable(header->freq, sizeof(Aword));
+    reverseTable(hdr->scores, sizeof(Aword));
+    reverseTable(hdr->freq, sizeof(Aword));
 }
 
 
@@ -572,30 +572,30 @@ static void reversePreBeta2Header(Pre3_0beta2Header *hdr)
 /*----------------------------------------------------------------------*/
 static void reversePreBeta2() {
     /* NOTE that the reversePreXXX() have different header definitions */
-    Pre3_0beta2Header *header = (Pre3_0beta2Header *)memory;
+    Pre3_0beta2Header *hdr = (Pre3_0beta2Header *)memory;
 
-    reversePreBeta2Header(header);
-    memorySize = header->size;
+    reversePreBeta2Header(hdr);
+    memorySize = hdr->size;
 
-    reverseDictionary(header->dictionary);
-    reverseSyntaxTable(header->syntaxTableAddress, header->version);
-    reverseParameterTable(header->parameterMapAddress);
-    reverseVerbs(header->verbTableAddress);
-    reverseClasses(header->classTableAddress);
-    reverseInstances(header->instanceTableAddress);
-    reverseScrs(header->scriptTableAddress);
-    reverseContainers(header->containerTableAddress);
-    reverseEvts(header->eventTableAddress);
-    reverseRuls(header->ruleTableAddress);
-    reverseTable(header->stringInitTable, sizeof(StringInitEntry));
-    reverseSetInitTable(header->setInitTable);
-    reverseTable(header->sourceFileTable, sizeof(SourceFileEntry));
-    reverseTable(header->sourceLineTable, sizeof(SourceLineEntry));
-    reverseStms(header->start);
-    reverseMsgs(header->messageTableAddress);
+    reverseDictionary(hdr->dictionary);
+    reverseSyntaxTable(hdr->syntaxTableAddress, hdr->version);
+    reverseParameterTable(hdr->parameterMapAddress);
+    reverseVerbs(hdr->verbTableAddress);
+    reverseClasses(hdr->classTableAddress);
+    reverseInstances(hdr->instanceTableAddress);
+    reverseScrs(hdr->scriptTableAddress);
+    reverseContainers(hdr->containerTableAddress);
+    reverseEvts(hdr->eventTableAddress);
+    reverseRuls(hdr->ruleTableAddress);
+    reverseTable(hdr->stringInitTable, sizeof(StringInitEntry));
+    reverseSetInitTable(hdr->setInitTable);
+    reverseTable(hdr->sourceFileTable, sizeof(SourceFileEntry));
+    reverseTable(hdr->sourceLineTable, sizeof(SourceLineEntry));
+    reverseStms(hdr->start);
+    reverseMsgs(hdr->messageTableAddress);
 
-    reverseTable(header->scores, sizeof(Aword));
-    reverseTable(header->freq, sizeof(Aword));
+    reverseTable(hdr->scores, sizeof(Aword));
+    reverseTable(hdr->freq, sizeof(Aword));
 }
 
 
@@ -611,43 +611,43 @@ void reverseHdr(ACodeHeader *hdr)
 
 
 /*----------------------------------------------------------------------*/
-static void reverseInstanceIdTable(ACodeHeader *header) {
-    reverseTable(header->instanceTableAddress+header->instanceMax*sizeof(InstanceEntry)/sizeof(Aword)+1, sizeof(Aword));
+static void reverseInstanceIdTable(ACodeHeader *hdr) {
+    reverseTable(hdr->instanceTableAddress+hdr->instanceMax*sizeof(InstanceEntry)/sizeof(Aword)+1, sizeof(Aword));
 }
 
 
 /*----------------------------------------------------------------------*/
 static void reverseNative() {
-    /* NOTE that the reversePreXXX() have different header definitions */
-    ACodeHeader *header = (ACodeHeader *)memory;
+    /* NOTE that the reversePreXXX() have different hdr definitions */
+    ACodeHeader *hdr = (ACodeHeader *)memory;
 
-    reverseHdr(header);
-    memorySize = header->size;
+    reverseHdr(hdr);
+    memorySize = hdr->size;
 
-    reverseDictionary(header->dictionary);
-    reverseSyntaxTable(header->syntaxTableAddress, header->version);
-    if (header->debug && !isPreBeta3(header->version))
-        reverseParameterNames(header->parameterMapAddress);
-    reverseParameterTable(header->parameterMapAddress);
-    reverseVerbs(header->verbTableAddress);
-    reverseClasses(header->classTableAddress);
-    reverseInstances(header->instanceTableAddress);
-    if (header->debug && !isPreBeta3(header->version))
-        reverseInstanceIdTable(header);
-    reverseScrs(header->scriptTableAddress);
-    reverseContainers(header->containerTableAddress);
-    reverseEvts(header->eventTableAddress);
-    reverseRuls(header->ruleTableAddress);
-    reverseTable(header->stringInitTable, sizeof(StringInitEntry));
-    reverseSetInitTable(header->setInitTable);
-    reverseTable(header->sourceFileTable, sizeof(SourceFileEntry));
-    reverseTable(header->sourceLineTable, sizeof(SourceLineEntry));
-    reverseStms(header->prompt);
-    reverseStms(header->start);
-    reverseMsgs(header->messageTableAddress);
+    reverseDictionary(hdr->dictionary);
+    reverseSyntaxTable(hdr->syntaxTableAddress, hdr->version);
+    if (hdr->debug && !isPreBeta3(hdr->version))
+        reverseParameterNames(hdr->parameterMapAddress);
+    reverseParameterTable(hdr->parameterMapAddress);
+    reverseVerbs(hdr->verbTableAddress);
+    reverseClasses(hdr->classTableAddress);
+    reverseInstances(hdr->instanceTableAddress);
+    if (hdr->debug && !isPreBeta3(hdr->version))
+        reverseInstanceIdTable(hdr);
+    reverseScrs(hdr->scriptTableAddress);
+    reverseContainers(hdr->containerTableAddress);
+    reverseEvts(hdr->eventTableAddress);
+    reverseRuls(hdr->ruleTableAddress);
+    reverseTable(hdr->stringInitTable, sizeof(StringInitEntry));
+    reverseSetInitTable(hdr->setInitTable);
+    reverseTable(hdr->sourceFileTable, sizeof(SourceFileEntry));
+    reverseTable(hdr->sourceLineTable, sizeof(SourceLineEntry));
+    reverseStms(hdr->prompt);
+    reverseStms(hdr->start);
+    reverseMsgs(hdr->messageTableAddress);
 
-    reverseTable(header->scores, sizeof(Aword));
-    reverseTable(header->freq, sizeof(Aword));
+    reverseTable(hdr->scores, sizeof(Aword));
+    reverseTable(hdr->freq, sizeof(Aword));
 }
 
 
@@ -662,13 +662,13 @@ static void reverseNative() {
   */
 void reverseACD(void)
 {
-  ACodeHeader *header = (ACodeHeader *)memory;
+  ACodeHeader *hdr = (ACodeHeader *)memory;
   char version[4];
   int i;
 
   /* Make a copy of the version marking to reverse */
   for (i = 0; i <= 3; i++)
-      version[i] = header->version[i];
+      version[i] = hdr->version[i];
   reverseWord((Aword*)&version);
 
   if (isPreAlpha5(version))

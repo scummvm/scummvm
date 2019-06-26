@@ -217,17 +217,17 @@ static void setupHeader(ACodeHeader tmphdr) {
 
 /*----------------------------------------------------------------------*/
 static void loadAndCheckMemory(ACodeHeader tmphdr, Aword crc, char err[]) {
-    int i;
+	int i;
     /* No memory allocated yet? */
     if (memory == NULL) {
         memory = (Aword *)allocate(tmphdr.size * sizeof(Aword));
     }
 
 	memTop = tmphdr.size;
-	if (sizeof(Aword) * tmphdr.size > codfil->size())
+	if ((int)(sizeof(Aword) * tmphdr.size) > codfil->size())
 		syserr("Could not read all ACD code.");
 
-	for (Aword i = 0; i < tmphdr.size; ++i)
+	for (i = 0; i < (int)tmphdr.size; ++i)
 		memory[i] = codfil->readUint32LE();
 
     /* Calculate checksum */
@@ -280,13 +280,13 @@ char *decodedGameVersion(char version[]) {
 }
 
 /*----------------------------------------------------------------------*/
-static void incompatibleDevelopmentVersion(ACodeHeader *header) {
+static void incompatibleDevelopmentVersion(ACodeHeader *hdr) {
     char str[80];
     sprintf(str, "Incompatible version of ACODE program. Development versions always require exact match. Game is %ld.%ld%s%ld, interpreter %ld.%ld%s%ld!",
-            (long)(header->version[0]),
-            (long)(header->version[1]),
-            decodeState(header->version[3]),
-            (long)(header->version[2]),
+            (long)(hdr->version[0]),
+            (long)(hdr->version[1]),
+            decodeState(hdr->version[3]),
+            (long)(hdr->version[2]),
             (long)alan.version.version,
             (long)alan.version.revision,
             alan.version.state,
@@ -296,11 +296,11 @@ static void incompatibleDevelopmentVersion(ACodeHeader *header) {
 
 
 /*----------------------------------------------------------------------*/
-static void incompatibleVersion(ACodeHeader *header) {
+static void incompatibleVersion(ACodeHeader *hdr) {
     char str[80];
     sprintf(str, "Incompatible version of ACODE program. Game is %ld.%ld, interpreter %ld.%ld.",
-            (long)(header->version[0]),
-            (long)(header->version[1]),
+            (long)(hdr->version[0]),
+            (long)(hdr->version[1]),
             (long)alan.version.version,
             (long)alan.version.revision);
     apperr(str);
@@ -332,7 +332,7 @@ static void nonDevelopmentRunningDevelopmentStateGame(char version[]) {
 
 
 /*======================================================================*/
-void checkVersion(ACodeHeader *header)
+void checkVersion(ACodeHeader *hdr)
 {
     /* Strategy for version matching is:
        1) Development interpreters/games require exact match
@@ -351,7 +351,7 @@ void checkVersion(ACodeHeader *header)
     bool developmentVersion;
     bool alphaVersion;
     int compareLength;
-    char gameState = header->version[3];
+    char gameState = hdr->version[3];
 
     /* Construct our own version */
     interpreterVersion[0] = alan.version.version;
@@ -363,10 +363,10 @@ void checkVersion(ACodeHeader *header)
     if (debugOption && !regressionTestOption) {
         printf("<Version of '%s' is %d.%d%s%d!>\n",
                adventureFileName,
-               (int)header->version[0],
-               (int)header->version[1],
-               decodeState(header->version[3]),
-               (int)header->version[2]);
+               (int)hdr->version[0],
+               (int)hdr->version[1],
+               decodeState(hdr->version[3]),
+               (int)hdr->version[2]);
         newline();
     }
 
@@ -377,21 +377,21 @@ void checkVersion(ACodeHeader *header)
 
     if (gameState == 'd' && !developmentVersion)
         /* Development state game requires development state interpreter... */
-        nonDevelopmentRunningDevelopmentStateGame(header->version);
+        nonDevelopmentRunningDevelopmentStateGame(hdr->version);
     else {
         /* Compatible if version, revision (and correction if dev state) match... */
-        if (memcmp(header->version, interpreterVersion, compareLength) != 0) {
+        if (memcmp(hdr->version, interpreterVersion, compareLength) != 0) {
             /* Mismatch! */
             if (!ignoreErrorOption) {
                 if (developmentVersion)
-                    incompatibleDevelopmentVersion(header);
+                    incompatibleDevelopmentVersion(hdr);
                 else
-                    incompatibleVersion(header);
+                    incompatibleVersion(hdr);
             } else
                 output("<WARNING! Incompatible version of ACODE program.>\n");
         } else if (developmentVersion && gameState != 'd')
             /* ... unless interpreter is development and game not */
-            incompatibleDevelopmentVersion(header);
+            incompatibleDevelopmentVersion(hdr);
         else if (alphaVersion && gameState != 'a') {
             /* If interpreter is alpha version and the game is later, warn! */
             alphaRunningLaterGame(gameState);
@@ -517,7 +517,7 @@ static void initStrings(void)
 /*----------------------------------------------------------------------*/
 static Aint sizeOfAttributeData(void)
 {
-    int i;
+    uint i;
     int size = 0;
 
     for (i=1; i<=header->instanceMax; i++) {
@@ -541,7 +541,7 @@ static AttributeEntry *initializeAttributes(int awordSize)
 {
     Aword *attributeArea = (Aword *)allocate(awordSize*sizeof(Aword));
     Aword *currentAttributeArea = attributeArea;
-    int i;
+    uint i;
 
     for (i=1; i<=header->instanceMax; i++) {
         AttributeHeaderEntry *originalAttribute = (AttributeHeaderEntry *)pointerTo(instances[i].initialAttributes);
@@ -566,7 +566,7 @@ static AttributeEntry *initializeAttributes(int awordSize)
 /*----------------------------------------------------------------------*/
 static void initDynamicData(void)
 {
-    int instanceId;
+    uint instanceId;
 
     /* Allocate for administrative table */
     admin = (AdminEntry *)allocate((header->instanceMax+1)*sizeof(AdminEntry));
@@ -603,7 +603,7 @@ static void runInitialize(Aint theInstance) {
 
 /*----------------------------------------------------------------------*/
 static void initializeInstances() {
-    int instanceId;
+    uint instanceId;
 
     /* Set initial locations */
     for (instanceId = 1; instanceId <= header->instanceMax; instanceId++) {
@@ -642,28 +642,6 @@ static void start(void)
 /*----------------------------------------------------------------------*/
 static void openFiles(void)
 {
-    char str[256];
-
-    /* 
-	Open Acode file
-    strcpy(codfnm, adventureFileName);
-    if ((codfil = fopen(codfnm, READ_MODE)) == NULL) {
-        strcpy(str, "Can't open adventure code file '");
-        strcat(str, codfnm);
-        strcat(str, "'.");
-        playererr(str);
-    }
-
-    // Open Text file
-    strcpy(txtfnm, adventureFileName);
-    if ((textFile = fopen(txtfnm, READ_MODE)) == NULL) {
-        strcpy(str, "Can't open adventure text data file '");
-        strcat(str, txtfnm);
-        strcat(str, "'.");
-        apperr(str);
-    }
-	*/
-
     /* If logging open log file */
     if (transcriptOption || logOption) {
         startTranscript();
@@ -744,7 +722,7 @@ static void moveActor(int theActor)
     current.actor = theActor;
     current.instance = theActor;
     current.location = where(theActor, TRANSITIVE);
-    if (theActor == HERO) {
+    if (theActor == (int)HERO) {
 #ifdef TODO
 		/* Ask him! */
         if (setjmp(forfeitLabel) == 0) {
@@ -815,9 +793,7 @@ static void moveActor(int theActor)
 #define ERROR_RETURNED (setjmp(returnLabel) != NO_JUMP_RETURN)
 
 /*======================================================================*/
-void run(void)
-{
-    int i;
+void run(void) {
     static Stack theStack = NULL; /* Needs to survive longjmp() */
 
     openFiles();
@@ -879,7 +855,7 @@ void run(void)
             resetAndEvaluateRules(rules, header->version);
 
             /* Then all the other actors... */
-            for (i = 1; i <= header->instanceMax; i++)
+            for (uint i = 1; i <= header->instanceMax; i++)
                 if (i != header->theHero && isAActor(i)) {
                     moveActor(i);
                     resetAndEvaluateRules(rules, header->version);

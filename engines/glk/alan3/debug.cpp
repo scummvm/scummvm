@@ -54,17 +54,17 @@ Breakpoint breakpoint[BREAKPOINTMAX];
 #define debugPrefix "adbg: "
 
 /*----------------------------------------------------------------------*/
-static void showAttributes(AttributeEntry *attributes)
+static void showAttributes(AttributeEntry *attrib)
 {
     AttributeEntry *at;
     int i;
     char str[80];
 
-    if (attributes == 0)
+    if (attrib == 0)
         return;
 
     i = 1;
-    for (at = attributes; !isEndOfArray(at); at++) {
+    for (at = attrib; !isEndOfArray(at); at++) {
         sprintf(str, "$i$t%s[%d] = %d", (char *) pointerTo(at->id), at->code, (int)at->value);
 #if ISO == 0
         fromIso(str, str);
@@ -78,7 +78,7 @@ static void showAttributes(AttributeEntry *attributes)
 /*----------------------------------------------------------------------*/
 static void showContents(int cnt)
 {
-    int i;
+    uint i;
     char str[80];
     Abool found = FALSE;
 
@@ -152,7 +152,7 @@ static void listInstance(int ins) {
 /*----------------------------------------------------------------------*/
 static void listInstances(char *pattern)
 {
-    int ins;
+    uint ins;
     bool found = FALSE;
 
     for (ins = 1; ins <= header->instanceMax; ins++) {
@@ -173,7 +173,7 @@ static void showInstance(int ins)
 {
     char str[80];
 
-    if (ins > header->instanceMax || ins < 1) {
+    if (ins > (int)header->instanceMax || ins < 1) {
         sprintf(str, "Instance index %d is out of range.", ins);
         output(str);
         return;
@@ -213,7 +213,7 @@ static void showInstance(int ins)
 /*----------------------------------------------------------------------*/
 static void listObjects(void)
 {
-    int obj;
+    uint obj;
 
     output("Objects:");
     for (obj = 1; obj <= header->instanceMax; obj++)
@@ -350,7 +350,7 @@ static void listClass(int c)
 static void showClassHierarchy(int thisItem, int depth)
 {
     int i;
-    int child;
+    uint child;
 
     output("$i");
     for (i=0; i < depth; i++)
@@ -368,7 +368,7 @@ static void showClassHierarchy(int thisItem, int depth)
 /*----------------------------------------------------------------------*/
 static void listLocations(void)
 {
-    int loc;
+    uint loc;
 
     output("Locations:");
     for (loc = 1; loc <= header->instanceMax; loc++)
@@ -402,7 +402,7 @@ static void showLocation(int loc)
 /*----------------------------------------------------------------------*/
 static void listActors(void)
 {
-    int act;
+    uint act;
 
     output("Actors:");
     for (act = 1; act <= header->instanceMax; act++)
@@ -429,7 +429,8 @@ static void showActor(int act)
 /*----------------------------------------------------------------------*/
 static void showEvents(void)
 {
-    int event, i;
+	uint event;
+	int i;
     char str[80];
     bool scheduled;
 
@@ -442,7 +443,7 @@ static void showEvents(void)
         output(str);
         scheduled = FALSE;
         for (i = 0; i < eventQueueTop; i++)
-            if ((scheduled = (eventQueue[i].event == event)))
+            if ((scheduled = (eventQueue[i].event == (int)event)))
                 break;
         if (scheduled) {
             sprintf(str, "Scheduled for +%d, at ", eventQueue[i].after);
@@ -525,14 +526,6 @@ static void listFiles() {
         printf("  %2d : %s\n", i, sourceFileName(i));
         i++;
     }
-}
-
-
-/*----------------------------------------------------------------------*/
-static void listLines() {
-    SourceLineEntry *entry;
-    for (entry = (SourceLineEntry *)pointerTo(header->sourceLineTable); *((Aword*)entry) != EOF; entry++)
-        printf("  %s:%d\n", sourceFileName(entry->file), entry->line);
 }
 
 
@@ -754,7 +747,7 @@ static void handleHelpCommand() {
 
     int maxLength = 0;
     for (entry = commandEntries; entry->command != NULL; entry++) {
-        if (strlen(entry->command)+strlen(entry->parameter) > maxLength)
+        if (strlen(entry->command)+strlen(entry->parameter) > (uint)maxLength)
             maxLength = strlen(entry->command)+strlen(entry->parameter);
     }
 
@@ -1018,7 +1011,7 @@ static void handleObjectsCommand() {
 /*----------------------------------------------------------------------*/
 static void handleInstancesCommand() {
     char *parameter = strtok(NULL, "");
-    int i;
+    uint i;
 
     if (parameter == NULL || strchr(parameter, '*') != 0)
         listInstances(parameter);

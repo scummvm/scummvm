@@ -63,9 +63,6 @@ size_t strftime (
 
 #endif
 
-
-#ifdef HAVE_GLK
-
 /* Note to Glk maintainers: 'native' characters are used for output, in this
    case, Glk's Latin-1.  ISO characters are Alan's internal representation,
    stored in the .A3C file, and must be converted to native before printing.
@@ -74,7 +71,7 @@ size_t strftime (
    move to Unicode).
  */
 
-static char spaceCharacters[] =
+static const byte spaceCharacters[] =
 {
   0x0A, /* linefeed */
   0x20, /* space */
@@ -82,7 +79,7 @@ static char spaceCharacters[] =
   0x00
 };
 
-static char lowerCaseCharacters[] =
+static const byte lowerCaseCharacters[] =
 {
   0x61, /* a */  0x62, /* b */  0x63, /* c */  0x64, /* d */
   0x65, /* e */  0x66, /* f */  0x67, /* g */  0x68, /* h */
@@ -113,7 +110,7 @@ static char lowerCaseCharacters[] =
    Are they really considered LC?
  */
 
-static char upperCaseCharacters[] =
+static const byte upperCaseCharacters[] =
 {
   0x41, /* A */  0x42, /* B */  0x43, /* C */  0x44, /* D */
   0x45, /* E */  0x46, /* F */  0x47, /* G */  0x48, /* H */
@@ -140,18 +137,6 @@ static char upperCaseCharacters[] =
   0x00
 };
 
-#else
-
-/* Theses work on native character sets */
-
-static unsigned char spaceCharacters[] = " \t\n";
-
-/* Use native characters */
-static const char lowerCaseCharacters[] = "abcdefghijklmnopqrstuvwxyzàáâãäåæçéêëìíîïðñòóôõöøùúûüýþÿ";
-
-static const char upperCaseCharacters[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZÀÁÂÃÄÅÆÇÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÛÝÞß";
-
-#endif
 
 int isSpace(unsigned int c)              /* IN - Native character to test */
 {
@@ -161,13 +146,13 @@ int isSpace(unsigned int c)              /* IN - Native character to test */
 
 int isLower(unsigned int c)              /* IN - Native character to test */
 {
-    return (c != '\0' && strchr((char *)lowerCaseCharacters, c) != 0);
+    return (c != '\0' && strchr((const char *)lowerCaseCharacters, c) != 0);
 }
 
 
 int isUpper(unsigned int c)              /* IN - Native character to test */
 {
-    return (c != '\0' && strchr((char *)upperCaseCharacters, c) != 0);
+    return (c != '\0' && strchr((const char *)upperCaseCharacters, c) != 0);
 }
 
 int isLetter(unsigned int c)             /* IN - Native character to test */
@@ -203,7 +188,8 @@ int toLower(unsigned int c)              /* IN - Native character to convert */
 #endif
 }
 
-int toUpper(unsigned int c)              /* IN - Native character to convert */
+/* IN - Native character to convert */
+int toUpper(unsigned int c)
 {
 #ifdef HAVE_GLK
   return g_vm->glk_char_to_upper(c);
@@ -254,9 +240,8 @@ char *strupp(char str[])        /* INOUT - Native string to convert */
 
 int isLowerCase(unsigned int c)          /* IN - ISO character to test */
 {
-  static char lowerCaseCharacters[] = "abcdefghijklmnopqrstuvwxyz\340\341\342\343\344\345\346\347\351\352\353\354\355\356\357\360\361\362\363\364\365\366\370\371\372\373\374\375\376\377";
-  int i;
-  for (i = 0; i < strlen(lowerCaseCharacters); i++)
+  uint i;
+  for (i = 0; i < strlen((const char *)lowerCaseCharacters); i++)
     if (((unsigned int)lowerCaseCharacters[i]) == c) return 1;
   return 0;
 }
@@ -264,9 +249,8 @@ int isLowerCase(unsigned int c)          /* IN - ISO character to test */
 
 int isUpperCase(unsigned int c)          /* IN - ISO character to test */
 {
-    //static char upperCaseCharacters[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ\300\301\302\303\304\305\306\307\310\311\312\313\314\315\316\317\320\321\322\323\324\325\326\327\330\331\332\333\334\335\336\337";
-  int i;
-  for (i = 0; i < strlen(upperCaseCharacters); i++)
+  uint i;
+  for (i = 0; i < strlen((const char *)upperCaseCharacters); i++)
     if (upperCaseCharacters[i] == c) return 1;
   return 0;
 }
@@ -337,7 +321,7 @@ void toIso(char copy[], /* OUT - Mapped  string */
 	   char original[],	/* IN - string to convert */
 	   int charset)		/* IN - the current character set */
 {
-static unsigned char macMap[256]
+static const unsigned char macMap[256]
 = {
 0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0A,0x0B,0x0C,0x0A,0x0E,0x0F,
 0x10,0x11,0x12,0x13,0x14,0x15,0x16,0x17,0x18,0x19,0x1A,0x1B,0x1C,0x1D,0x1E,0x1F,
@@ -356,7 +340,7 @@ static unsigned char macMap[256]
 0x80,0x81,0x82,0x83,0x84,0x85,0x86,0x87,0x88,0x89,0x8A,0x8B,0x8C,0x8D,0x8E,0x8F,
 0x90,0x91,0x92,0x93,0x94,0x95,0x96,0x97,0x98,0x99,0x9A,0x9B,0x9C,0x9D,0x9E,0x9F};
 
-static unsigned char dosMap[256]
+static const unsigned char dosMap[256]
 = {
 0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0A,0x0B,0x0C,0x0A,0x0E,0x0F,
 0x10,0x11,0x12,0x13,0x14,0x15,0x16,0x17,0x18,0x19,0x1A,0x1B,0x1C,0x1D,0x1E,0x1F,
@@ -407,7 +391,7 @@ void fromIso(char copy[],       /* OUT - Mapped string */
 	     char original[])   /* IN - string to convert */
 {
 #if ISO == 0
-  static unsigned char map[256]
+  static const unsigned char map[256]
 #if defined __mac__
     = {
       0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0D,0x0B,0x0C,0x0D,0x0E,0x0F,

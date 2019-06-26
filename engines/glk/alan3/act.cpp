@@ -89,16 +89,18 @@ static void executeCommand(int verb, Parameter parameters[])
 */
 void action(int verb, Parameter parameters[], Parameter multipleMatches[])
 {
-    int i, multiplePosition;
-    char marker[10];
-        
+    int multiplePosition;
+#ifdef TODO
+	char marker[10];
+#endif
+
     multiplePosition = findMultiplePosition(parameters);
     if (multiplePosition != -1) {
-#ifdef TODO        
+#ifdef TODO
 		jmp_buf savedReturnLabel;
         memcpy(savedReturnLabel, returnLabel, sizeof(returnLabel));
         sprintf(marker, "($%d)", multiplePosition+1); /* Prepare a printout with $1/2/3 */
-        for (i = 0; !isEndOfArray(&multipleMatches[i]); i++) {
+        for (int i = 0; !isEndOfArray(&multipleMatches[i]); i++) {
             copyParameter(&parameters[multiplePosition], &multipleMatches[i]);
             setGlobalParameters(parameters); /* Need to do this here since the marker use them */
             output(marker);

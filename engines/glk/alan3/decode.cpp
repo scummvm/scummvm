@@ -93,7 +93,7 @@ int decodeChar(void)
   f = (((long)(value-low)+1)*freq[0]-1)/range;
 
   /* Find the symbol */
-  for (symbol = 1; freq[symbol] > f; symbol++);
+  for (symbol = 1; (int)freq[symbol] > f; ++symbol) {}
 
   high = low + range*freq[symbol-1]/freq[0]-1;
   low = low + range*freq[symbol]/freq[0];

@@ -58,7 +58,7 @@ void go(int location, int dir)
     theExit = (ExitEntry *) pointerTo(instances[location].exits);
     if (instances[location].exits != 0)
         while (!isEndOfArray(theExit)) {
-            if (theExit->code == dir) {
+            if (theExit->code == (uint)dir) {
                 ok = TRUE;
                 if (theExit->checks != 0) {
                     if (traceSectionOption)
@@ -73,7 +73,7 @@ void go(int location, int dir)
                         interpret(theExit->action);
                     }
                     /* Still at the same place? */
-                    if (where(HERO, TRANSITIVE) == oldloc) {
+                    if (where(HERO, TRANSITIVE) == (int)oldloc) {
                         if (traceSectionOption)
                             traceExit(location, dir, "Moving");
                         locate(HERO, theExit->target);
@@ -97,7 +97,7 @@ bool exitto(int to, int from)
         return FALSE; /* No exits */
     
     for (theExit = (ExitEntry *) pointerTo(instances[from].exits); !isEndOfArray(theExit); theExit++)
-        if (theExit->target == to)
+        if (theExit->target == (uint)to)
             return TRUE;
     
     return FALSE;
@@ -107,7 +107,7 @@ bool exitto(int to, int from)
 /*======================================================================*/
 void look(void)
 {
-    int i;
+    uint i;
 
     /* Set describe flag for all objects and actors */
     for (i = 1; i <= header->instanceMax; i++)

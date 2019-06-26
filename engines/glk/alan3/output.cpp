@@ -143,7 +143,7 @@ void clear(void)
 
 /*----------------------------------------------------------------------*/
 static void capitalizeFirst(char *str) {
-    int i = 0;
+    uint i = 0;
 
     /* Skip over space... */
     while (i < strlen(str) && isSpace(str[i])) i++;
@@ -167,10 +167,10 @@ void printAndLog(const char *string)
     if (!onStatusLine && transcriptOption) {
 #ifdef HAVE_GLK
         // TODO Is this assuming only 70-char wide windows for GLK?
-        if (strlen(string) > 70-column) {
+        if ((int)strlen(string) > 70-column) {
             stringCopy = strdup(string);  /* Make sure we can write NULLs */
             stringPart = stringCopy;
-            while (strlen(stringPart) > 70-column) {
+            while ((int)strlen(stringPart) > 70-column) {
                 int p;
                 for (p = 70-column; p>0 && !isspace((int)stringPart[p]); p--);
                 stringPart[p] = '\0';
