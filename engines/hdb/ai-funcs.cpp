@@ -730,7 +730,7 @@ void AI::animateEntity(AIEntity *e) {
 
 	// For non-players, check for trigger being hit
 	if (onEvenTile(e->x, e->y)) {
-		warning("STUB: animateEntity: Check for Triggers being hit");
+		debug(9, "STUB: animateEntity: Check for Triggers being hit");
 	}
 
 	// If player, then scroll the screen with the player
@@ -1125,7 +1125,7 @@ void AI::animEntFrames(AIEntity *e) {
 		max = e->special1Frames;
 		break;
 	default:
-		warning("AI-FUNCS: animEntFrames: Unintended State for entity %s", AIType2Str(e->type));
+		debug(9, "AI-FUNCS: animEntFrames: Unintended State for entity %s", AIType2Str(e->type));
 		break;
 	}
 

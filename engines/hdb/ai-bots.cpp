@@ -817,7 +817,7 @@ void aiMaintBotAction(AIEntity *e) {
 	int	xvAhead[5] = {9, 0, 0,-1, 1}, yvAhead[5] = {9,-1, 1, 0, 0};
 	AIEntity *it;
 	int nx, ny;
-	warning("STUB: aiMaintBotAction: Add sounds");
+	debug(9, "STUB: aiMaintBotAction: Add sounds");
 
 	// Waiting at an arrow (or hit by player)?
 	if (e->sequence) {
