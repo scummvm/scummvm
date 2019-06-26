@@ -821,6 +821,11 @@ void AI::animateEntity(AIEntity *e) {
 		// If entity not player, stop it here
 		// If entity is player and no waypoints are left, stop it here
 		if (e != _player || (!_numWaypoints && e == _player)) {
+			e->tileX = e->goalX;
+			e->tileY = e->goalY;
+
+			stopEntity(e);
+
 			warning("STUB: animateEntity: Stop entity");
 		} else if (onEvenTile(e->x, e->y))
 			setEntityGoal(e, _waypoints[0].x, _waypoints[0].y);
