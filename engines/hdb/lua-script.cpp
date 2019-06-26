@@ -701,9 +701,14 @@ struct VarInit {
 // For AI States, to be implemented
 struct NumberInit {
 	int value;
-	char *luaName;
+	const char *luaName;
 } luaGlobalValues[] = {
-	{NULL, NULL}
+	{ DIR_NONE,			"DIR_NONE"	},
+	{ DIR_DOWN,			"DIR_DOWN"	},
+	{ DIR_UP,			"DIR_UP"	},
+	{ DIR_LEFT,			"DIR_LEFT"	},
+	{ DIR_RIGHT,		"DIR_RIGHT"	},
+	{ NULL, NULL }
 };
 
 struct FuncInit {
