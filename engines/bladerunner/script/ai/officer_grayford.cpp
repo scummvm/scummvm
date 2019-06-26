@@ -788,8 +788,9 @@ bool AIScriptOfficerGrayford::GoalChanged(int currentGoalNumber, int newGoalNumb
 				// fall through
 
 			case 6:
+#if BLADERUNNER_ORIGINAL_BUGS
 				// kSetUG07 -> kSetFreeSlotC
-//				debug("gray 8-6 kSetUG07 -> kSetFreeSlotC");
+				// debug("gray 8-6 kSetUG07 -> kSetFreeSlotC");
 				AI_Movement_Track_Append(kActorOfficerGrayford, 415, 0);
 				AI_Movement_Track_Append_With_Facing(kActorOfficerGrayford, 416, 0, 620);
 				AI_Movement_Track_Append(kActorOfficerGrayford, 417, 0);
@@ -797,6 +798,22 @@ bool AIScriptOfficerGrayford::GoalChanged(int currentGoalNumber, int newGoalNumb
 				AI_Movement_Track_Append(kActorOfficerGrayford, 35, 30); // kSetFreeSlotC
 				AI_Movement_Track_Repeat(kActorOfficerGrayford);
 				break;
+#else
+				// Don't put police in UG07 after the UG18 Guzza scene
+				// since Clovis may be there too and that does not work well
+				if (!Game_Flag_Query(kFlagUG18GuzzaScene)) {
+					// kSetUG07 -> kSetFreeSlotC
+					// debug("gray 8-6 kSetUG07 -> kSetFreeSlotC");
+					AI_Movement_Track_Append(kActorOfficerGrayford, 415, 0);
+					AI_Movement_Track_Append_With_Facing(kActorOfficerGrayford, 416, 0, 620);
+					AI_Movement_Track_Append(kActorOfficerGrayford, 417, 0);
+					AI_Movement_Track_Append(kActorOfficerGrayford, 418, 0);
+					AI_Movement_Track_Append(kActorOfficerGrayford, 35, 30); // kSetFreeSlotC
+					AI_Movement_Track_Repeat(kActorOfficerGrayford);
+					break;
+				}
+#endif // BLADERUNNER_ORIGINAL_BUGS
+				// fall through
 
 			case 7:
 				// kSetUG01 -> kSetFreeSlotC
