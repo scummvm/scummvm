@@ -25,8 +25,8 @@
 namespace BladeRunner {
 
 enum kRC03Loops {
-	kRC03LoopInshot   = 0,
-	kRC03LoopMainLoop = 1
+	kRC03LoopInshot   = 0, // frames:  0 -  59
+	kRC03LoopMainLoop = 1  // frames: 60 - 120
 };
 
 void SceneScriptRC03::InitializeScene() {
@@ -90,6 +90,15 @@ void SceneScriptRC03::InitializeScene() {
 		if (Random_Query(1, 3) == 1) {
 			// enhancement: don't always play this scene when exiting Hawker's Circle
 			Scene_Loop_Start_Special(kSceneLoopModeLoseControl, kRC03LoopInshot, false);
+			// Pause generic walkers while special loop is playing
+			// to prevent glitching over background (walkers coming from Hawker's Circle)
+			// This is done is a similar way to CT01
+#if !BLADERUNNER_ORIGINAL_BUGS
+			Actor_Set_Goal_Number(kActorGenwalkerA, kGoalGenwalkerDefault);
+			Actor_Set_Goal_Number(kActorGenwalkerB, kGoalGenwalkerDefault);
+			Actor_Set_Goal_Number(kActorGenwalkerC, kGoalGenwalkerDefault);
+			Global_Variable_Set(kVariableGenericWalkerConfig, -1);
+#endif // !BLADERUNNER_ORIGINAL_BUGS
 		}
 	}
 	Scene_Loop_Set_Default(kRC03LoopMainLoop);
@@ -253,6 +262,15 @@ void SceneScriptRC03::SceneFrameAdvanced(int frame) {
 	if (frame == 15) {
 		Sound_Play(kSfxCHEVBY1,  Random_Query(50, 50), -100, 100, 50);
 	}
+#if !BLADERUNNER_ORIGINAL_BUGS
+	if (frame == 59) {
+		// end of special loop
+		// Resume walkers
+		if (Global_Variable_Query(kVariableGenericWalkerConfig) < 0 ) {
+			Global_Variable_Set(kVariableGenericWalkerConfig, 2);
+		}
+	}
+#endif // BLADERUNNER_ORIGINAL
 }
 
 void SceneScriptRC03::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bool currentSet) {
