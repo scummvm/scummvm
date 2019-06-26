@@ -271,7 +271,7 @@ Common::Error HDBGame::run() {
 	_map->load(mapStream);
 	_ai->initAnimInfo();
 
-	_window->openDialog("Title", 0, "String", 0, NULL);
+	//_window->openDialog("Title", 0, "abababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababab", 0, NULL);
 
 #if 0
 	lua->executeFile("test.lua");
@@ -299,6 +299,7 @@ Common::Error HDBGame::run() {
 
 		_map->draw();
 		_ai->processCines();
+		//_window->drawDialog();
 
 		AIEntity *e = _ai->getPlayer();
 
