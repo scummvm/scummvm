@@ -949,4 +949,74 @@ void aiMaintBotAction(AIEntity *e) {
 	}
 }
 
+void aiFourFirerInit(AIEntity *e) {
+	e->value1 = 0;
+	e->aiAction = aiFourFirerAction;
+}
+
+void aiFourFirerInit2(AIEntity *e) {
+	e->draw = g_hdb->_ai->getStandFrameDir(e);
+}
+
+void aiFourFirerAction(AIEntity *e) {
+	AIEntity *p = g_hdb->_ai->getPlayer(), *fire, *hit;
+	AIState state[5] = {STATE_NONE, STATE_STANDUP, STATE_STANDDOWN, STATE_STANDLEFT, STATE_STANDRIGHT};
+	AIDir turn[5] = {DIR_NONE, DIR_RIGHT, DIR_LEFT, DIR_UP, DIR_DOWN};
+	int	shoot, xv, yv, result;
+
+	// Time to turn right?
+	if (!e->value1) {
+		e->dir = turn[e->dir];
+		e->state = state[e->dir];
+		e->value1 = 16;
+		if (e->onScreen)
+			warning("STUB: aiFourFirerAction: Play SND_FOURFIRE_TURN");
+	}
+	e->value1--;
+
+	// Waiting before firing again?
+	if (e->sequence) {
+		e->sequence--;
+		return;
+	}
+
+	g_hdb->_ai->animEntFrames(e);
+
+	// Can we see the player on the same level?
+	if ((e->level != p->level) || g_hdb->_ai->playerDead() || !e->onScreen)
+		return;
+
+	// Check player direction
+	shoot = xv = yv = 0;
+	switch (e->dir) {
+	case DIR_UP:	if (p->x == e->x && p->y < e->y) { shoot = 1; yv = -1; } break;
+	case DIR_DOWN:	if (p->x == e->x && p->y > e->y) { shoot = 1; yv = 1; } break;
+	case DIR_LEFT:	if (p->y == e->y && p->x < e->x) { shoot = 1; xv = -1; } break;
+	case DIR_RIGHT:	if (p->y == e->y && p->x > e->x) { shoot = 1; xv = 1; } break;
+	case DIR_NONE: warning("aiFourFirerAction: DIR_NONE found"); break;
+	}
+
+	// Shoot if needed
+	// Make sure not shooting into solid tile
+	// Make sure if shooting at entity it is the player
+	hit = g_hdb->_ai->legalMoveOverWater(e->tileX + xv, e->tileY + yv, e->level, &result);
+	if (hit && hit->type == AI_GUY)
+		hit = NULL;
+
+	if (shoot && !hit && result) {
+		fire = g_hdb->_ai->spawn(AI_OMNIBOT_MISSILE, e->dir, e->tileX + xv, e->tileY + yv, NULL, NULL, NULL, DIR_NONE, e->level, 0, 0, 1);
+		if (g_hdb->_map->onScreen(e->tileX, e->tileY))
+			warning("STUB: aiFourFirerAction: Play SND_FOUR_FIRE");
+		fire->xVel = xv * kPlayerMoveSpeed * 2;
+		fire->yVel = yv * kPlayerMoveSpeed * 2;
+		if (!g_hdb->getActionMode()) {
+			fire->xVel >>= 1;
+			fire->yVel >>= 1;
+		}
+		e->sequence = 16;
+		if (hitPlayer(fire->tileX*kTileWidth, fire->tileY*kTileHeight))
+			g_hdb->_ai->killPlayer(DEATH_FRIED);
+	}
+}
+
 } // End of Namespace

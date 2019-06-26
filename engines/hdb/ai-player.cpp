@@ -316,18 +316,6 @@ void aiScientistInit2(AIEntity *e) {
 	warning("STUB: AI: aiScientistInit2 required");
 }
 
-void aiFourFirerInit(AIEntity *e) {
-	warning("STUB: AI: aiFourFirerInit required");
-}
-
-void aiFourFirerInit2(AIEntity *e) {
-	warning("STUB: AI: aiFourFirerInit2 required");
-}
-
-void aiFourFirerAction(AIEntity *e) {
-	warning("STUB: AI: aiFourFirerAction required");
-}
-
 void aiSlugAttackAction(AIEntity *e) {
 	warning("STUB: AI: aiSlugAttackAction required");
 }
