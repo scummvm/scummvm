@@ -798,4 +798,155 @@ void aiRailRiderOnAction(AIEntity *e) {
 	}
 }
 
+void aiMaintBotInit(AIEntity *e) {
+	// value1 field determines whether the "MMM!" sound plays
+	// 1 means NO
+	e->int1 = e->value1;
+	e->aiAction = aiMaintBotAction;
+	e->value1 = 0;
+	g_hdb->_ai->findPath(e);
+}
+
+void aiMaintBotInit2(AIEntity *e) {
+	e->draw = g_hdb->_ai->getStandFrameDir(e);
+}
+
+void aiMaintBotAction(AIEntity *e) {
+	AIState useState[5] = {STATE_NONE, STATE_USEUP, STATE_USEDOWN, STATE_USELEFT, STATE_USERIGHT};
+	AIState standState[5] = {STATE_NONE, STATE_STANDUP, STATE_STANDDOWN, STATE_STANDLEFT, STATE_STANDRIGHT};
+	int	xvAhead[5] = {9, 0, 0,-1, 1}, yvAhead[5] = {9,-1, 1, 0, 0};
+	AIEntity *it;
+	int nx, ny;
+	warning("STUB: aiMaintBotAction: Add sounds");
+
+	// Waiting at an arrow (or hit by player)?
+	if (e->sequence) {
+		e->sequence--;
+		g_hdb->_ai->animEntFrames(e);
+
+		// Use Something here
+		if (!e->value2)
+			switch (e->sequence) {
+			case 50:
+				if (e->onScreen && !e->int1) {
+					warning("STUB: aiMaintBotAction: Play SND_MBOT_HMMM or SND_MBOT_HMMM2");
+				}
+				break;
+			// Need to USE the object
+			case 30:
+				e->state = useState[e->dir];
+				nx = e->tileX + xvAhead[e->dir];
+				ny = e->tileY + yvAhead[e->dir];
+				it = g_hdb->_ai->findEntity(nx, ny);
+				if (it) {
+					if (e->onScreen)
+						e->value1 = 1;
+					g_hdb->useEntity(it);
+					break;
+				}
+				// Did the MaintBot use an Action Tile?
+				if (g_hdb->_ai->checkActionList(e, nx, ny, true)) {
+					if (e->onScreen)
+						e->value1 = 1;
+					break;
+				}
+				// Did the MaintBot use an AutoAction Tile?
+				if (g_hdb->_ai->checkAutoList(e, nx, ny)) {
+					if (e->onScreen)
+						e->value1 = 1;
+					break;
+				}
+				// Did the MaintBot use a LUA Tile?
+				warning("STUB: aiMaintBotAction: Check in LUA List");
+				break;
+			// Play a sound if we used something
+			case 25:
+				e->value1 = 0;
+				break;
+			// Change to Standing frames
+			case 20:
+				e->state = standState[e->dir];
+				break;
+			// All done - find a new path
+			case 0:
+				e->dir = e->dir2;
+				g_hdb->_ai->findPath(e);
+				g_hdb->_ai->animateEntity(e);
+				break;
+			}
+		// Deciding where to go at 4-way
+		else {
+			AIDir lookRight[5] = {DIR_NONE, DIR_RIGHT, DIR_LEFT, DIR_UP, DIR_DOWN};
+			AIDir lookLeft[5] = {DIR_NONE, DIR_LEFT, DIR_RIGHT, DIR_DOWN, DIR_UP};
+			AIDir dirList[5] = {DIR_NONE, DIR_UP, DIR_DOWN, DIR_LEFT, DIR_RIGHT};
+			switch (e->sequence) {
+			// HMM
+			case 50:
+				if (e->onScreen && !e->int1)
+					warning("STUB: aiMaintBotAction: Play SND_MBOT_HMMM");
+				break;
+			// Look Right
+			case 40:
+				e->dir = lookRight[e->dir2];
+				e->state = standState[e->dir];
+				break;
+			// Look Left
+			case 30:
+				e->dir = lookLeft[e->dir];
+				e->state = standState[e->dir];
+				break;
+			// HMM2
+			case 25:
+				if (e->onScreen && !e->int1)
+					warning("STUB: aiMaintBotAction: Play SND_MBOT_HMM2");
+				break;
+			// Decide direction and GO
+			case 0:
+				int dir = (g_hdb->_rnd->getRandomNumber(4)) + 1;
+				e->dir = dirList[dir];
+				g_hdb->_ai->findPath(e);
+				if (e->onScreen)
+					warning("STUB: aiMaintBotAction: Play whistle");
+				break;
+			}
+		}
+		return;
+	}
+
+	// Moving already, keep going
+	if (e->goalX) {
+		g_hdb->_ai->animateEntity(e);
+		if (e->onScreen && g_hdb->_ai->checkPlayerCollision(e->x, e->y, 4) && !g_hdb->_ai->playerDead()) {
+			g_hdb->_ai->killPlayer(DEATH_GRABBED);
+			warning("STUB: aiMaintBotAction: Play SND_MBOT_DEATH");
+		}
+	} else {
+		// Check if there's an arrow UNDER the bot, and if its RED
+		// If so, turn in that direction and use something
+		ArrowPath *ar = g_hdb->_ai->findArrowPath(e->tileX, e->tileY);
+		if (ar) {
+			// STOP		Arrow
+			// GO		Arrow
+			// 4-way	Arrow
+			if (!ar->type) {
+				e->dir2 = e->dir; // dir2 holds the last direction we were travelling in
+				e->dir = ar->dir;
+				e->sequence = 64; // sequence is the timer of events
+				e->state = standState[e->dir];
+				e->value2 = 0;
+				return;
+			} else if (ar->type == 1) {
+				g_hdb->_ai->findPath(e);
+				warning("STUB: aiMaintBotAction: Play whistle");
+			} else {
+				e->sequence = 64;
+				e->dir2 = e->dir;
+				e->value2 = 1;
+				return;
+			}
+		}
+		g_hdb->_ai->animateEntity(e);
+	}
+}
+
 } // End of Namespace
