@@ -53,7 +53,7 @@ void aiOmniBotAction(AIEntity *e) {
 		if (!e->sequence) {
 			g_hdb->_ai->animateEntity(e);
 			// Is the Player collding?
-			if (e->onScreen && (p->level = e->level) && g_hdb->_ai->checkPlayerCollision(e->x, e->y, 4) && !g_hdb->_ai->playerDead()) {
+			if (hitPlayer(e->x, e->y) && (p->level == e->level)) {
 				g_hdb->_ai->killPlayer(DEATH_FRIED);
 				return;
 			}
@@ -162,7 +162,7 @@ void aiOmniBotMissileAction(AIEntity *e) {
 
 	// On Even tiles, check for hitting player
 	if (onEvenTile(e->x, e->y))
-		if (e->onScreen && (p->level == e->level) && g_hdb->_ai->checkPlayerCollision(e->x, e->y, 4) && !g_hdb->_ai->playerDead()) {
+		if (hitPlayer(e->x, e->y) && (p->level == e->level)) {
 			g_hdb->_ai->killPlayer(DEATH_NORMAL);
 			g_hdb->_ai->addAnimateTarget(e->x, e->y, 0, 3, ANIM_FAST, false, false, "steam_puff_sit");
 			g_hdb->_ai->removeEntity(e);
@@ -241,7 +241,7 @@ void aiShockBotInit2(AIEntity *e) {
 void aiShockBotAction(AIEntity *e) {
 	if (e->goalX) {
 		if (!e->sequence) {
-			if (e->onScreen && g_hdb->_ai->checkPlayerCollision(e->x, e->y, 4) && !g_hdb->_ai->playerDead())
+			if (hitPlayer(e->x, e->y))
 				g_hdb->_ai->killPlayer(DEATH_SHOCKED);
 			g_hdb->_ai->animateEntity(e);
 		} else
@@ -488,10 +488,10 @@ void aiPushBotAction(AIEntity *e) {
 
 	if (e->goalX) {
 		g_hdb->_ai->animateEntity(e);
-		if (e->onScreen && g_hdb->_ai->checkPlayerCollision(e->x, e->y, 4) && !g_hdb->_ai->playerDead())
+		if (hitPlayer(e->x, e->y))
 			g_hdb->_ai->killPlayer(DEATH_NORMAL);
 	} else {
-		if (e->onScreen && g_hdb->_ai->checkPlayerCollision(e->x, e->y, 4) && !g_hdb->_ai->playerDead())
+		if (hitPlayer(e->x, e->y))
 			g_hdb->_ai->killPlayer(DEATH_NORMAL);
 
 		// Where to go next
@@ -916,7 +916,7 @@ void aiMaintBotAction(AIEntity *e) {
 	// Moving already, keep going
 	if (e->goalX) {
 		g_hdb->_ai->animateEntity(e);
-		if (e->onScreen && g_hdb->_ai->checkPlayerCollision(e->x, e->y, 4) && !g_hdb->_ai->playerDead()) {
+		if (hitPlayer(e->x, e->y)) {
 			g_hdb->_ai->killPlayer(DEATH_GRABBED);
 			warning("STUB: aiMaintBotAction: Play SND_MBOT_DEATH");
 		}
