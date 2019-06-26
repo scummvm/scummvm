@@ -412,10 +412,6 @@ void aiDiverterDraw(AIEntity *e, int mx, int my) {
 	warning("STUB: AI: aiDiverterDraw required");
 }
 
-void aiDeadEyeAction(AIEntity *e) {
-	warning("STUB: AI: aiDeadEyeAction required");
-}
-
 void aiMeerkatDraw(AIEntity *e, int mx, int my) {
 	warning("STUB: AI: aiMeerkatDraw required");
 }
@@ -426,10 +422,6 @@ void aiMeerkatAction(AIEntity *e) {
 
 void aiMeerkatLookAround(AIEntity *e) {
 	warning("STUB: AI: aiMeerkatLookAround required");
-}
-
-void aiDeadEyeWalkInPlace(AIEntity *e) {
-	warning("STUB: AI: aiDeadEyeWalkInPlace required");
 }
 
 void aiFatFrogAction(AIEntity *e) {
@@ -498,14 +490,6 @@ void aiDiverterInit(AIEntity *e) {
 
 void aiDiverterInit2(AIEntity *e) {
 	warning("STUB: AI: aiDiverterInit2 required");
-}
-
-void aiDeadEyeInit(AIEntity *e) {
-	warning("STUB: AI: aiDeadEyeInit required");
-}
-
-void aiDeadEyeInit2(AIEntity *e) {
-	warning("STUB: AI: aiDeadEyeInit2 required");
 }
 
 void aiMeerkatInit(AIEntity *e) {

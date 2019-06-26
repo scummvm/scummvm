@@ -1019,4 +1019,193 @@ void aiFourFirerAction(AIEntity *e) {
 	}
 }
 
+void aiDeadEyeInit(AIEntity *e) {
+	e->sequence = 64;
+	e->blinkFrames = e->goalX = 0;
+	if (e->value1 == 1)
+		e->aiAction = aiDeadEyeWalkInPlace;
+	else
+		e->aiAction = aiDeadEyeAction;
+}
+
+void aiDeadEyeInit2(AIEntity *e) {
+	e->draw = g_hdb->_ai->getStandFrameDir(e);
+}
+
+void aiDeadEyeWalkInPlace(AIEntity *e) {
+	AIState state[5] = {STATE_NONE, STATE_MOVEUP, STATE_MOVEDOWN, STATE_MOVELEFT, STATE_MOVERIGHT};
+	AIDir dir;
+	AIState s;
+
+	e->sequence--;
+
+	switch (e->sequence) {
+	case 50:
+	case 40:
+	case 30:
+	case 20:
+	case 10:
+		dir = (AIDir)(g_hdb->_rnd->getRandomNumber(4) + 1);
+		s = state[dir];
+		e->dir = dir;
+		e->state = s;
+		if (e->onScreen)
+			if (e->sequence == 50)
+				warning("STUB: aiDeadEyeWalkInPlace: Play SND_DEADEYE_AMB01");
+			else if (e->sequence == 10)
+				warning("STUB: aiDeadEyeWalkInPlace: Play SND_DEADEYE_AMB02");
+		break;
+	case 0:
+		e->sequence = 64;
+	}
+	g_hdb->_ai->animEntFrames(e);
+}
+
+void aiDeadEyeAction(AIEntity *e) {
+	AIState state[5] = {STATE_NONE, STATE_MOVEUP, STATE_MOVEDOWN, STATE_MOVELEFT, STATE_MOVERIGHT};
+	int xvAhead[5] = {9, 0, 0, -1, 1}, yvAhead[5] = {9, -1, 1, 0, 0};
+	int result;
+	AIEntity *hit;
+	AIDir dir;
+	AIState s;
+
+	if (e->sequence) {
+		e->sequence--;
+
+		if (e->blinkFrames)	// Between attacks timer
+			e->blinkFrames--;
+
+		// Is player visible to us?
+		AIEntity *p = g_hdb->_ai->getPlayer();
+		if (e->onScreen && p->level == e->level && !e->blinkFrames) {
+			int nuts = 0;
+			switch (e->dir) {
+			case DIR_UP:	if (p->tileX == e->tileX && p->tileY < e->tileY) nuts = 1; break;
+			case DIR_DOWN:	if (p->tileX == e->tileX && p->tileY > e->tileY) nuts = 1; break;
+			case DIR_LEFT:	if (p->tileY == e->tileY && p->tileX < e->tileX) nuts = 1; break;
+			case DIR_RIGHT: if (p->tileY == e->tileY && p->tileX > e->tileX) nuts = 1; break;
+			case DIR_NONE:	warning("aiDeadEyeAction: DIR_NONE found"); break;
+			}
+
+			// Did we see the player (and we're done moving)?
+			if (nuts && e->aiAction != aiDeadEyeWalkInPlace) {
+				int newX, newY, xv, yv, done, okToMove;
+
+				e->sequence = 0;
+				e->blinkFrames = 20;
+
+				xv = xvAhead[e->dir];
+				yv = yvAhead[e->dir];
+				newX = e->tileX + xv;
+				newY = e->tileY + yv;
+
+				okToMove = done = 0;
+				do {
+					hit = g_hdb->_ai->legalMove(newX, newY, e->level, &result);
+					if (hit && hit->type == AI_GUY)
+						hit = NULL;
+					if (result && !hit) {
+						okToMove = 1;
+						newX += xv;
+						newY += yv;
+						if (newX == p->tileX && newY == p->tileY)
+							done = 1;
+					} else {
+						newX -= xv;
+						newY -= yv;
+						done = 1;
+					}
+				} while (!done);
+
+				// If we can move in the direction of the player, set our goal at him
+				if (okToMove) {
+					e->moveSpeed = kPlayerMoveSpeed << 1;
+					g_hdb->_ai->setEntityGoal(e, newX, newY);
+					p->tileX & 1 ? warning("STUB: aiDeadEyeAction: Play SND_DEADEYE_ATTACK01") : warning("STUB: aiDeadEyeAction: Play SND_DEADEYE_ATTACK02");
+				}
+				g_hdb->_ai->animateEntity(e);
+				return;
+			}
+		}
+
+		switch (e->sequence) {
+		// Look around
+		case 50:
+		case 40:
+		case 30:
+		case 20:
+		case 10:
+			dir = (AIDir)(g_hdb->_rnd->getRandomNumber(4)+1);
+			s = state[dir];
+			e->dir = dir;
+			e->state = s;
+
+			if (e->onScreen)
+				if (e->sequence == 50)
+					warning("STUB: aiDeadEyeAction: Play SND_DEADEYE_AMB01");
+				else if (e->sequence == 10)
+					warning("STUB: aiDeadEyeAction: Play SND_DEADEYE_AMB01");
+			break;
+		case 0:
+			// Pick a random direction and random number of tiles in that direction
+			dir = (AIDir)(g_hdb->_rnd->getRandomNumber(4) + 1);
+			int walk = g_hdb->_rnd->getRandomNumber(5) + 1;
+			int xv, yv;
+
+			e->dir = dir;
+			e->state = state[dir];
+
+			xv = xvAhead[dir] * walk;
+			if (e->tileX + xv < 1)
+				xv = 1 - e->tileX;
+			if (e->tileX + xv > g_hdb->_map->_width)
+				xv = g_hdb->_map->_width - e->tileX - 1;
+
+			yv = yvAhead[dir] * walk;
+			if (e->tileY + yv < 1)
+				yv = 1 - e->tileY;
+			if (e->tileY + yv > g_hdb->_map->_height)
+				yv = g_hdb->_map->_height - e->tileY - 1;
+
+			e->value1 = xvAhead[dir];
+			e->value2 = yvAhead[dir];
+			e->moveSpeed = kPlayerMoveSpeed;
+			hit = g_hdb->_ai->legalMove(e->tileX + xvAhead[e->dir], e->tileY + yvAhead[e->dir], e->level, &result);
+			if (hit && hit->type == AI_GUY)
+				hit = NULL;
+
+			if (!hit && result)
+				g_hdb->_ai->setEntityGoal(e, e->tileX + xv, e->tileY + yv);
+			break;
+		}
+		g_hdb->_ai->animEntFrames(e);
+		return;
+	}
+
+	// In the process of moving around
+	if (e->goalX) {
+		// Hit the player
+		if (hitPlayer(e->x, e->y)) {
+			g_hdb->_ai->killPlayer(DEATH_GRABBED);
+			return;
+		}
+		// Did we run into a wall, entity, water, slime etc?
+		// If so, Pick new direction
+		if (onEvenTile(e->x, e->y)) {
+			hit = g_hdb->_ai->legalMove(e->tileX + e->value1, e->tileY + e->value2, e->level, &result);
+			if (hit && hit->type == AI_GUY)
+				hit = NULL;
+			if (!result || hit) {
+				g_hdb->_ai->stopEntity(e);
+				e->state = STATE_MOVEDOWN;
+				e->sequence = 64;
+				return;
+			}
+		}
+		g_hdb->_ai->animateEntity(e);
+	} else
+		// If not, start looking around
+		e->sequence = 64;
+}
+
 } // End of Namespace
