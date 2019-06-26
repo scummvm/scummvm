@@ -260,24 +260,31 @@ bool PoliceMazeTargetTrack::tick() {
 	_timeLeftUpdate -= timeDiff;
 
 	if (_timeLeftUpdate > 0) {
-#if !BLADERUNNER_ORIGINAL_BUGS
-		// this fix makes the targets appear according to their wait time
-		// but it might be too fast for easy or normal mode, so only do this for normal and hard modes
-		if (_vm->_settings->getDifficulty() > kGameDifficultyEasy) {
-			_time = oldTime;
-		}
-#endif // !BLADERUNNER_ORIGINAL_BUGS
 		return false;
 	}
 
-	_timeLeftUpdate = 66;
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+	if (_vm->_settings->getDifficulty() > kGameDifficultyEasy) {
+		timeDiff = 0 - _timeLeftUpdate;
+	}
+#endif // BLADERUNNER_ORIGINAL_BUGS
+	_timeLeftUpdate = 66; // update the target track 15 times per second
 
 	if (_isPaused) {
 		return false;
 	}
 
 	if (_isWaiting) {
+#if BLADERUNNER_ORIGINAL_BUGS
 		_timeLeftWait -= timeDiff;
+#else
+		if (_vm->_settings->getDifficulty() == kGameDifficultyEasy) {
+			_timeLeftWait -= timeDiff; // original behavior
+		} else {
+			_timeLeftWait -= (timeDiff + _timeLeftUpdate); // this deducts an amount >= 66
+		}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		if (_timeLeftWait > 0) {
 			return true;
 		}
