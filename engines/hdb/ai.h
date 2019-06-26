@@ -626,14 +626,14 @@ struct CineCommand {
 	int start, end;
 	uint32	delay;
 	int	speed;
-	char title[32];
-	char string[32];
-	char *id;
+	const char *title;
+	const char *string;
+	const char *id;
 	AIEntity *e;
 	Picture *pic;
 
 	CineCommand() : cmdType(C_NO_COMMAND), x(0.0), y(0.0), x2(0.0), y2(0.0), xv(0.0), yv(0.0),
-				start(0), end(0), delay(0), speed(0), title(""), string(""), id(NULL), e(NULL), pic(NULL) {}
+				start(0), end(0), delay(0), speed(0), title(NULL), string(NULL), id(NULL), e(NULL), pic(NULL) {}
 };
 
 struct CineBlit {
