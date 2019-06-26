@@ -10543,6 +10543,9 @@ static const uint16 qfg4TentacleWrigglePatch[] = {
 //
 // Crossing from the left (crossByHandLeft) doesn't require fixing.
 //
+// This patch doesn't apply to the NRS version which ships with the GOG release
+//  as it throttles the frequency of crossByHand:doit which fixes the bug.
+//
 // Applies to at least: English CD, English floppy, German floppy
 // Responsible method: crossByHand::changeState(3) in script 710
 // Fixes bug: #10615
@@ -10616,6 +10619,9 @@ static const uint16 qfg4PitRopeFighterPatch[] = {
 // state 5 code thought 0/1 meant move right/left. Whereas state 4 decides 0/1
 // means abort/cross, only ever moving left. The rightward MoveTo never runs.
 //
+// We also include a version of this for the instruction sizes in the NRS patch,
+//  which is important as that ships with the GOG version.
+//
 // Applies to at least: English CD, English floppy, German floppy
 // Responsible method: sLevitateOverPit::changeState(5) in script 710
 // Fixes bug: #10615
@@ -10647,13 +10653,50 @@ static const uint16 qfg4PitRopeMagePatch1[] = {
 	0x81, 0x00,                         // lag global[0] (hero)
 	0x4a, PATCH_UINT16(0x0004),         // send 4d
 	0xa3, 0x02,                         // sal local[2] (cache again)
-                                        //
+	                                    //
 	0x38, PATCH_SELECTOR16(setSpeed),   // pushi setSpeed
 	0x78,                               // push1
 	0x39, 0x08,                         // pushi 8d (set our fixed speed)
 	0x81, 0x00,                         // lag global[0] (hero)
 	0x4a, PATCH_UINT16(0x0006),         // send 6d
 	0x5c,                               // selfID (erase 1 byte to keep disasm aligned)
+	PATCH_END
+};
+
+static const uint16 qfg4PitRopeMageNrsSignature1[] = {
+	0x30, SIG_UINT16(0x0016),           // bnt 22d [if register == 0 (never), move right]
+	SIG_ADDTOOFFSET(+19),               // ... (move left)
+	0x32, SIG_ADDTOOFFSET(+2),          // jmp ?? [end the switch]
+
+	0x38, SIG_SELECTOR16(setMotion),    // pushi setMotion (move right)
+	0x39, 0x04,                         // pushi 4d
+	0x51, SIG_ADDTOOFFSET(+1),          // class MoveTo
+	0x36,                               // push
+	SIG_MAGICDWORD,
+	0x38, SIG_UINT16(0x00da),           // pushi 218d
+	0x39, 0x30,                         // pushi 48d
+	0x7c,                               // pushSelf
+	0x81, 0x00,                         // lag global[0] (hero)
+	0x4a, SIG_UINT16(0x000c),           // send 12d
+	0x32, SIG_ADDTOOFFSET(+2),          // jmp ?? [end the switch]
+	SIG_END
+};
+
+static const uint16 qfg4PitRopeMageNrsPatch1[] = {
+	0x34, PATCH_UINT16(0x0000),         // ldi 0 (erase the branch)
+	PATCH_ADDTOOFFSET(+19),             // ...
+
+	0x38, PATCH_SELECTOR16(cycleSpeed), // pushi cycleSpeed
+	0x76,                               // push0
+	0x81, 0x00,                         // lag global[0] (hero)
+	0x4a, PATCH_UINT16(0x0004),         // send 4d
+	0xa3, 0x02,                         // sal local[2] (cache again)
+	                                    //
+	0x38, PATCH_SELECTOR16(setSpeed),   // pushi setSpeed
+	0x78,                               // push1
+	0x39, 0x08,                         // pushi 8d (set our fixed speed)
+	0x81, 0x00,                         // lag global[0] (hero)
+	0x4a, PATCH_UINT16(0x0006),         // send 6d
 	PATCH_END
 };
 
@@ -12058,6 +12101,7 @@ static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,   710, "fix tentacle wriggle cycler",                 1, qfg4TentacleWriggleSignature,  qfg4TentacleWrigglePatch },
 	{  true,   710, "fix tentacle retraction for fighter",         1, qfg4PitRopeFighterSignature,   qfg4PitRopeFighterPatch },
 	{  true,   710, "fix tentacle retraction for mage (1/2)",      1, qfg4PitRopeMageSignature1,     qfg4PitRopeMagePatch1 },
+	{  true,   710, "NRS: fix tentacle retraction for mage (1/2)", 1, qfg4PitRopeMageNrsSignature1,  qfg4PitRopeMageNrsPatch1 },
 	{  true,   710, "fix tentacle retraction for mage (2/2)",      1, qfg4PitRopeMageSignature2,     qfg4PitRopeMagePatch2 },
 	{  true,   730, "fix ad avis timeout",                         1, qfg4AdAvisTimeoutSignature,    qfg4AdAvisTimeoutPatch },
 	{  true,   730, "Floppy: fix casting spells at ad avis",       1, qfg4AdAvisSpellsFloppySignature, qfg4AdAvisSpellsFloppyPatch },
