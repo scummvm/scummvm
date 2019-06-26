@@ -33,6 +33,7 @@
 #include "petka/video.h"
 #include "petka/q_system.h"
 #include "petka/q_manager.h"
+#include "petka/interfaces/main.h"
 #include "petka/objects/object_bg.h"
 
 namespace Petka {
@@ -55,6 +56,8 @@ void QObjectBG::processMessage(const QMessage &msg) {
 		_showMap = 0;
 		break;
 	case kGoTo:
+		g_vm->getQSystem()->_mainInterface->loadRoom(_id, false);
+		g_vm->videoSystem()->addDirtyRect(Common::Rect(640, 480));
 		break;
 	case kSetSeq:
 		break;
