@@ -49,6 +49,56 @@ MODULE_OBJS := \
 	alan2/sysdep.o \
 	alan2/term.o \
 	alan2/types.o \
+	alan3/act.o \
+	alan3/actor.o \
+	alan3/alan3.o \
+	alan3/alan_version.o \
+	alan3/alt_info.o \
+	alan3/args.o \
+	alan3/attribute.o \
+	alan3/checkentry.o \
+	alan3/class.o \
+	alan3/compatibility.o \
+	alan3/container.o \
+	alan3/current.o \
+	alan3/debug.o \
+	alan3/decode.o \
+	alan3/dictionary.o \
+	alan3/event.o \
+	alan3/exe.o \
+	alan3/fnmatch.o \
+	alan3/glkio.o \
+	alan3/glkstart.o \
+	alan3/instance.o \
+	alan3/inter.o \
+	alan3/lists.o \
+	alan3/literal.o \
+	alan3/location.o \
+	alan3/main.o \
+	alan3/memory.o \
+	alan3/msg.o \
+	alan3/options.o \
+	alan3/output.o \
+	alan3/parameter_position.o \
+	alan3/params.o \
+	alan3/parse.o \
+	alan3/readline.o \
+	alan3/reverse.o \
+	alan3/rules.o \
+	alan3/save.o \
+	alan3/scan.o \
+	alan3/score.o \
+	alan3/set.o \
+	alan3/stack.o \
+	alan3/state.o \
+	alan3/state_stack.o \
+	alan3/syntax.o \
+	alan3/sysdep.o \
+	alan3/syserr.o \
+	alan3/term.o \
+	alan3/types.o \
+	alan3/utils.o \
+	alan3/word.o \
 	frotz/bitmap_font.o \
 	frotz/config.o \
 	frotz/detection.o \
