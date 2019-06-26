@@ -458,6 +458,7 @@ void AI::stopEntity(AIEntity *e) {
 	e->goalX = e->tileX;
 	e->goalY = e->tileY;
 	e->drawXOff = e->drawYOff = 0;
+	e->goalX = e->goalY = e->xVel = e->yVel = 0;
 
 	// Don't change the state of Diverters or Floating entities
 	switch (e->state) {
