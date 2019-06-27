@@ -671,6 +671,7 @@ AI::AI() {
 	_floats = new Common::Array<AIEntity *>;
 	_animTargets = new Common::Array<AnimTarget *>;
 	_arrowPaths = new Common::Array<ArrowPath *>;
+	_triggerList = new Common::Array<Trigger *>;
 	_hereList = new Common::Array<HereT *>;
 
 	// REMOVE: Remove for final. Used here due to lack of a MENU
@@ -685,6 +686,7 @@ AI::~AI() {
 	delete _floats;
 	delete _animTargets;
 	delete _arrowPaths;
+	delete _triggerList;
 	delete _hereList;
 }
 
@@ -846,6 +848,9 @@ void AI::restartSystem() {
 
 	// Clear ArrowPath List
 	_arrowPaths->clear();
+
+	// Clear Trigger List
+	_triggerList->clear();
 
 	// Clear Here List
 	_hereList->clear();
