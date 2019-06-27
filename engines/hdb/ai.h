@@ -718,6 +718,9 @@ public:
 	bool findTeleporterDest(int tileX, int tileY, SingleTele *info);
 	void addToPathList(int x, int y, int type, AIDir dir);
 	ArrowPath *findArrowPath(int x, int y);
+	void addToTriggerList(char *luaFuncInit, char *luaFuncUse, int x, int y, int value1, int value2, char *id);
+	bool checkTriggerList(char *entName, int x, int y);
+	void killTrigger(char *id);
 
 	void floatEntity(AIEntity *e, AIState state);
 	bool checkFloating(int x, int y);

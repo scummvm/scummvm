@@ -623,4 +623,59 @@ ArrowPath *AI::findArrowPath(int x, int y) {
 	return NULL;
 }
 
+void AI::addToTriggerList(char *luaFuncInit, char *luaFuncUse, int x, int y, int value1, int value2, char *id) {
+	Trigger *t = new Trigger;
+
+	strcpy(t->id, id);
+	t->x = x;
+	t->y = y;
+	t->value1 = value1;
+	t->value2 = value2;
+	if (luaFuncInit[0] != '*')
+		strcpy(t->luaFuncInit, luaFuncInit);
+	if (luaFuncUse[0] != '*')
+		strcpy(t->luaFuncUse, luaFuncUse);
+
+	if (!t->luaFuncUse[0])
+		warning("STUB: addToTriggerList: Open MessageBar");
+
+	if (t->luaFuncInit[0]) {
+		g_hdb->_lua->pushFunction(t->luaFuncInit);
+		g_hdb->_lua->pushInt(x);
+		g_hdb->_lua->pushInt(y);
+		g_hdb->_lua->pushInt(value1);
+		g_hdb->_lua->pushInt(value2);
+		g_hdb->_lua->call(4, 0);
+	}
+}
+
+bool AI::checkTriggerList(char *entName, int x, int y) {
+	Trigger *t;
+
+	for (Common::Array<Trigger *>::iterator it = _triggerList->begin(); it != _triggerList->end(); it++) {
+		if (t->x == x && t->y == y) {
+			if (!t->luaFuncUse[0])
+				return false;
+
+			g_hdb->_lua->pushFunction(t->luaFuncUse);
+			g_hdb->_lua->pushString(entName);
+			g_hdb->_lua->pushInt(t->x);
+			g_hdb->_lua->pushInt(t->y);
+			g_hdb->_lua->pushInt(t->value1);
+			g_hdb->_lua->pushInt(t->value2);
+			g_hdb->_lua->call(5, 0);
+			return true;
+		}
+	}
+
+	return false;
+}
+
+void AI::killTrigger(char *id) {
+	for (Common::Array<Trigger *>::iterator it = _triggerList->begin(); it != _triggerList->end(); it++) {
+		if (!scumm_stricmp(id, (*it)->id))
+			_triggerList->erase(it);
+	}
+}
+
 } // End of Namespace
