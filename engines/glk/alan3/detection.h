@@ -20,34 +20,44 @@
  *
  */
 
-#include "glk/alan3/alan3.h"
-#include "glk/alan3/glkio.h"
+#ifndef GLK_ALAN3_DETECTION
+#define GLK_ALAN3_DETECTION
+
+#include "common/fs.h"
+#include "common/hash-str.h"
+#include "engines/game.h"
+#include "glk/detection.h"
 
 namespace Glk {
 namespace Alan3 {
 
-winid_t glkMainWin;
-winid_t glkStatusWin;
+/**
+ * Meta engine for Alan3 interpreter
+ */
+class Alan3MetaEngine {
+public:
+	/**
+	 * Get a list of supported games
+	 */
+	static void getSupportedGames(PlainGameList &games);
 
-void glkio_printf(const char *fmt, ...) {
-	// If there's a savegame being loaded from the launcher, ignore any text out
-	if (g_vm->_saveSlot != -1)
-		return;
+	/**
+	 * Returns a game description for the given game Id, if it's supported
+	 */
+	static GameDescriptor findGame(const char *gameId);
 
-	va_list argp;
-	va_start(argp, fmt);
-	if (glkMainWin) {
-		char buf[1024]; /* FIXME: buf size should be foolproof */
-		vsprintf(buf, fmt, argp);
-		g_vm->glk_put_string(buf);
-	} else {
-		// assume stdio is available in this case only
-		Common::String str = Common::String::vformat(fmt, argp);
-		warning(fmt, argp);
-	}
+	/**
+	 * Detect supported games
+	 */
+	static bool detectGames(const Common::FSList &fslist, DetectedGames &gameList);
 
-	va_end(argp);
-}
+	/**
+	 * Check for game Id clashes with other sub-engines
+	 */
+	static void detectClashes(Common::StringMap &map);
+};
 
 } // End of namespace Alan3
 } // End of namespace Glk
+
+#endif

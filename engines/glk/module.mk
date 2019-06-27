@@ -63,6 +63,7 @@ MODULE_OBJS := \
 	alan3/current.o \
 	alan3/debug.o \
 	alan3/decode.o \
+	alan3/detection.o \
 	alan3/dictionary.o \
 	alan3/event.o \
 	alan3/exe.o \

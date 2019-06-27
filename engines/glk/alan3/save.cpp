@@ -20,6 +20,9 @@
  *
  */
 
+namespace Glk {
+namespace Alan3 {
+
 #ifdef TODO
 
 /*----------------------------------------------------------------------*/
@@ -352,5 +355,10 @@ void restore(void) {
 
 	fclose(saveFile);
 }
-
+#else
+void save() {}
+void restore() {}
 #endif
+
+} // End of namespace Alan3
+} // End of namespace Glk
