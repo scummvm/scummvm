@@ -161,7 +161,7 @@ static Aptr literalAttribute(int literal, int attribute)
         else
             return getAttribute(admin[header->instanceMax].attributes, attribute);
     }
-    return(EOF);
+    return(EOD);
 }
 
 
@@ -183,7 +183,7 @@ Aptr getInstanceAttribute(int instance, int attribute)
             syserr(str);
         }
     }
-    return(EOF);
+    return(EOD);
 }
 
 
@@ -462,10 +462,10 @@ void sayInstance(int instance)
 
     /* Find the id in the parameters... */
     if (params != NULL)
-        for (p = 0; params[p].code != EOF; p++)
+        for (p = 0; params[p].code != EOD; p++)
             if (params[p].code == instance) {
                 /* Found it so.. */
-                if (params[p].firstWord == EOF) /* Any words he used? */
+                if (params[p].firstWord == EOD) /* Any words he used? */
                     break;      /* No... */
                 else {              /* Yes, so use them... */
                     char *capitalized;

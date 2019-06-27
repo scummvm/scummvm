@@ -285,7 +285,7 @@ static VerbEntry *findVerbEntry(int verbCode, VerbEntry *entries) {
     VerbEntry *verbEntry;
     for (verbEntry = entries; !isEndOfArray(verbEntry); verbEntry++) {
         if (verbEntry->code < 0) {
-            /* Verb codes are negative for Meta verbs, if so they are also 1 off to avoid EOF */
+            /* Verb codes are negative for Meta verbs, if so they are also 1 off to avoid EOD */
             if (abs(verbEntry->code)-1 == verbCode)
                 return verbEntry;
         } else {

@@ -30,16 +30,16 @@ void initArray(void *array) {
 	implementationOfSetEndOfArray((Aword *)array);
 }
 
-/* How to know we are at end of a table or array, first Aword == EOF */
+/* How to know we are at end of a table or array, first Aword == EOD */
 void implementationOfSetEndOfArray(Aword *adr)
 {
-	*adr = EOF;
+	*adr = EOD;
 }
 
 
 bool implementationOfIsEndOfList(Aword *adr)
 {
-	return *adr == EOF;
+	return *adr == EOD;
 }
 
 int lengthOfArrayImplementation(void *array_of_any_type, int element_size_in_bytes) {

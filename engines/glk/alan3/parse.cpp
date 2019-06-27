@@ -214,7 +214,7 @@ static void errorButAfterAll(int butWordIndex) {
 /*----------------------------------------------------------------------*/
 static Aint findInstanceForNoun(int wordIndex) {
     DictionaryEntry *d = &dictionary[wordIndex];
-    if (d->nounRefs == 0 || d->nounRefs == EOF)
+    if (d->nounRefs == 0 || d->nounRefs == EOD)
         syserr("No references for noun");
     return *(Aint*) pointerTo(d->nounRefs);
 }
@@ -1351,7 +1351,7 @@ static int pronounWordForInstance(int instance) {
     for (w = 0; w < dictionarySize; w++)
         if (isPronoun(w)) {
             Aword *reference = (Aword *)pointerTo(dictionary[w].pronounRefs);
-            while (*reference != EOF) {
+            while (*reference != EOD) {
                 if (*reference == (Aword)instance)
                     return dictionary[w].code;
                 reference++;

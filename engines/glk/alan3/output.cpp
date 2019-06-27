@@ -271,7 +271,7 @@ static void sayParameter(int p, int form)
             apperr("Nonexistent parameter referenced.");
 
 #ifdef ALWAYS_SAY_PARAMETERS_USING_PLAYER_WORDS
-    if (params[p].firstWord != EOF) /* Any words he used? */
+    if (params[p].firstWord != EOD) /* Any words he used? */
         /* Yes, so use them... */
         sayPlayerWordsForParameter(p);
     else

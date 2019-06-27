@@ -37,7 +37,7 @@ Aword *freq;            /* Cumulative character frequencies */
 /* Bit output */
 static int decodeBuffer;	/* Bits to be input */
 static int bitsToGo;		/* Bits still in buffer */
-static int garbageBits;		/* Bits past EOF */
+static int garbageBits;		/* Bits past EOD */
 
 
 static int inputBit(void)
@@ -47,8 +47,8 @@ static int inputBit(void)
   /* More bits available ? */
   if (!bitsToGo) {
 	/* No, so get more */
-	 decodeBuffer = (textFile->pos() >= textFile->size()) ? EOF : textFile->readByte();
-    if (decodeBuffer == EOF) {
+	 decodeBuffer = (textFile->pos() >= textFile->size()) ? EOD : textFile->readByte();
+    if (decodeBuffer == EOD) {
       garbageBits++;
       if (garbageBits > VALUEBITS-2)
 	syserr("Error in encoded data file.");

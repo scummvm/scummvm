@@ -70,7 +70,7 @@ static int countStrings(void) {
     int count = 0;
 
     if (header->stringInitTable != 0)
-        for (entry = (StringInitEntry *)pointerTo(header->stringInitTable); *(Aword *)entry != EOF; entry++)
+        for (entry = (StringInitEntry *)pointerTo(header->stringInitTable); *(Aword *)entry != EOD; entry++)
             count++;
     return(count);
 }
@@ -92,7 +92,7 @@ static int countSets(void) {
     int count = 0;
 
     if (header->setInitTable != 0)
-        for (entry = (SetInitEntry *)pointerTo(header->setInitTable); *(Aword *)entry != EOF; entry++)
+        for (entry = (SetInitEntry *)pointerTo(header->setInitTable); *(Aword *)entry != EOD; entry++)
             count++;
     return(count);
 }
@@ -251,7 +251,7 @@ static void freeCurrentSetAttributes(void) {
     SetInitEntry *entry;
 
     if (header->setInitTable == 0) return;
-    for (entry = (SetInitEntry *)pointerTo(header->setInitTable); *(Aword *)entry != EOF; entry++) {
+    for (entry = (SetInitEntry *)pointerTo(header->setInitTable); *(Aword *)entry != EOD; entry++) {
         Aptr attributeValue = getAttribute(admin[entry->instanceCode].attributes, entry->attributeCode);
         freeSet((Set*)fromAptr(attributeValue));
     }
@@ -279,7 +279,7 @@ static void freeCurrentStringAttributes(void) {
     StringInitEntry *entry;
 
     if (header->stringInitTable == 0) return;
-    for (entry = (StringInitEntry *)pointerTo(header->stringInitTable); *(Aword *)entry != EOF; entry++) {
+    for (entry = (StringInitEntry *)pointerTo(header->stringInitTable); *(Aword *)entry != EOD; entry++) {
         Aptr attributeValue = getAttribute(admin[entry->instanceCode].attributes, entry->attributeCode);
         deallocate(fromAptr(attributeValue));
     }

@@ -284,7 +284,7 @@ static int sourceFileNumber(char *fileName) {
     SourceFileEntry *entries = (SourceFileEntry *)pointerTo(header->sourceFileTable);
     int n;
 
-    for (n = 0; *(Aword*)&entries[n] != EOF; n++) {
+    for (n = 0; *(Aword*)&entries[n] != EOD; n++) {
         char *entryName;
         entryName = getStringFromFile(entries[n].fpos, entries[n].len);
         if (strcmp(entryName, fileName) == 0) return n;
@@ -522,7 +522,7 @@ void showSourceLine(int fileNumber, int line) {
 static void listFiles() {
     SourceFileEntry *entry;
     int i = 0;
-    for (entry = (SourceFileEntry *)pointerTo(header->sourceFileTable); *((Aword*)entry) != EOF; entry++) {
+    for (entry = (SourceFileEntry *)pointerTo(header->sourceFileTable); *((Aword*)entry) != EOD; entry++) {
         printf("  %2d : %s\n", i, sourceFileName(i));
         i++;
     }
@@ -598,7 +598,7 @@ static void setBreakpoint(int file, int line) {
             int lineIndex = findSourceLineIndex((SourceLineEntry *)pointerTo(header->sourceLineTable), file, line);
             SourceLineEntry *entry = (SourceLineEntry *)pointerTo(header->sourceLineTable);
             char leadingText[100] = "Breakpoint";
-            if (entry[lineIndex].file == EOF) {
+            if (entry[lineIndex].file == EOD) {
                 printf("Line %d not available\n", line);
             } else {
                 if (entry[lineIndex].line != line)

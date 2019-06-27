@@ -82,20 +82,20 @@ VerbEntry *vrbs;		/* Verb table pointer */
 void checkobj(Aword *obj) {
     Aword oldobj;
 
-    if (*obj != EOF)
+    if (*obj != EOD)
         return;
 
-    oldobj = EOF;
+    oldobj = EOD;
     for (cur.obj = OBJMIN; cur.obj <= OBJMAX; cur.obj++) {
         /* If an object is present and it is possible to perform his action */
         if (isHere(cur.obj) && possible())
-            if (oldobj == EOF)
+            if (oldobj == EOD)
                 oldobj = cur.obj;
             else
                 error(WANT);          /* And we didn't find multiple objects */
     }
 
-    if (oldobj == EOF)
+    if (oldobj == EOD)
         error(WANT);              /* But we found ONE */
 
     *obj = cur.obj = oldobj;
@@ -526,7 +526,7 @@ static Aint sizeOfAttributeData(void)
             size += AwordSizeOf(AttributeEntry);
             attribute++;
         }
-        size += 1;			/* For EOF */
+        size += 1;			/* For EOD */
     }
 
     if (size != header->attributesAreaSize
@@ -553,7 +553,7 @@ static AttributeEntry *initializeAttributes(int awordSize)
             currentAttributeArea += AwordSizeOf(AttributeEntry);
             originalAttribute++;
         }
-        *((Aword*)currentAttributeArea) = EOF;
+        *((Aword*)currentAttributeArea) = EOD;
         currentAttributeArea += 1;
     }
 

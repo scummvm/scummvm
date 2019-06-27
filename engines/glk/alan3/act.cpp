@@ -107,7 +107,7 @@ void action(int verb, Parameter parameters[], Parameter multipleMatches[])
             // TODO: if execution for one parameter aborts we should return here, not to top level
             if (setjmp(returnLabel) == NO_JUMP_RETURN)
                 executeCommand(verb, parameters);
-            if (multipleMatches[i+1].instance != EOF)
+            if (multipleMatches[i+1].instance != EOD)
                 para();
         }
         memcpy(returnLabel, savedReturnLabel, sizeof(returnLabel));

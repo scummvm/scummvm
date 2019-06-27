@@ -118,7 +118,10 @@ typedef int WordKind;
 
 
 /* Syntax element classifications */
-#define EOS (-2)		/* End Of Syntax */
+// End of file/data
+#define EOD (uint32)-1
+// End Of Syntax
+#define EOS (uint32)-2
 
 /* Syntax element flag bits */
 #define MULTIPLEBIT 0x1

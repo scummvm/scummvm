@@ -65,7 +65,7 @@ static void clearRulesAdmin(int numRules) {
 static void initRulesAdmin(int numRules) {
     int r;
 
-    rulesAdmin = (RulesAdmin *)allocate(numRules*sizeof(RulesAdmin)+sizeof(EOF));
+    rulesAdmin = (RulesAdmin *)allocate(numRules*sizeof(RulesAdmin)+sizeof(EOD));
     for (r = 0; r < numRules; r++)
         ;
     setEndOfArray(&rulesAdmin[r]);

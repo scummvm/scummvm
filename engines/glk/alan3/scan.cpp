@@ -93,7 +93,7 @@ static int lookup(char wrd[]) {
         }
     }
     unknown(wrd);
-    return (EOF);
+    return (int)EOD;
 }
 
 

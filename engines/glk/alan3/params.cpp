@@ -280,7 +280,7 @@ void copyReferencesToParameterArray(Aint references[], Parameter parameterArray[
 
     for (i = 0; !isEndOfArray(&references[i]); i++) {
         parameterArray[i].instance = references[i];
-        parameterArray[i].firstWord = EOF; /* Ensure that there is no word that can be used */
+        parameterArray[i].firstWord = EOD; /* Ensure that there is no word that can be used */
     }
     setEndOfArray(&parameterArray[i]);
 }
