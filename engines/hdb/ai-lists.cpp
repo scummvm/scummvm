@@ -91,10 +91,14 @@ void AI::animateTargets() {
 
 	g_hdb->_map->getMapXY(&mx, &my);
 	debug("animateTargets: Size of _animTargets: %d", _animTargets->size());
+	debug("_animTargets:");
 
 	for (Common::Array<AnimTarget *>::iterator it = _animTargets->begin(); it != _animTargets->end(); it++) {
 		at = *it;
+		debug("it - _animTargets->begin(): %d", it - _animTargets->begin());
+		debug("at: at->x: %d, at->y: %d, at->start: %d, at->end: %d, at->vel: %d", at->x, at->y, at->start, at->end, at->vel);
 		// Draw Non-Map stuff every frame
+
 		if (!at->inMap)
 			// FIXME: Out of bounds reference to gfxList
 			at->gfxList[at->start]->drawMasked(at->x - mx, at->y - my);
