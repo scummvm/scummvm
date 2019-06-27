@@ -57,6 +57,8 @@ struct InvWinInfo {
 	int width, height;
 	int selection;
 	bool active;
+
+	InvWinInfo() : x(0), y(0), width(0), height(0), selection(0), active(false) {}
 };
 
 class Window {
