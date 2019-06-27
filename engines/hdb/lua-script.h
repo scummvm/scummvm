@@ -50,6 +50,7 @@ public:
 	void pushFunction(char *func);
 	void call(int args, int returns);
 	bool callFunction(const char *name, int returns);
+	void invokeLuaFunction(char *luaFunc, int x, int y, int value1, int value2);
 
 	bool executeMPC(Common::SeekableReadStream *stream, const char *name, const char *scriptName, int32 length);
 	bool executeFile(const Common::String &filename);
