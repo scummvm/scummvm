@@ -814,7 +814,6 @@ void debugHook(lua_State *L, lua_Debug *ar) {
 }
 }
 
-
 bool LuaScript::initScript(Common::SeekableReadStream *stream, const char *scriptName, int32 length) {
 
 	if (_systemInit) {
@@ -938,6 +937,33 @@ bool LuaScript::initScript(Common::SeekableReadStream *stream, const char *scrip
 	lua_pop(_state, 1);
 
 	return true;
+}
+
+void LuaScript::pushInt(int value) {
+	if (!_systemInit)
+		return;
+	lua_pushnumber(_state, (double)value);
+}
+
+void LuaScript::pushString(char *string) {
+	if (!_systemInit)
+		return;
+	lua_pushstring(_state, string);
+}
+
+void LuaScript::pushFunction(char *func) {
+	if (!_systemInit)
+		return;
+
+	lua_getglobal(_state, func);
+	warning("STUB: pushFunction: Open Dialog if Cheating_On");
+}
+
+void LuaScript::call(int args, int returns) {
+	if (!_systemInit)
+		return;
+
+	lua_call(_state, args, returns);
 }
 
 bool LuaScript::callFunction(const char *name, int returns) {
