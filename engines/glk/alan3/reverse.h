@@ -32,7 +32,6 @@ namespace Alan3 {
 
 /* Functions: */
 
-extern void reverseHdr(ACodeHeader *hdr);
 extern void reverseACD(void);
 extern void reverse(Aword *word);
 extern Aword reversed(Aword word);

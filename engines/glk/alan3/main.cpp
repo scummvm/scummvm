@@ -135,8 +135,12 @@ static int crcStart(char version[4]) {
 /*----------------------------------------------------------------------*/
 static void readTemporaryHeader(ACodeHeader *tmphdr) {
 	codfil->seek(0);
-	codfil->read(tmphdr, sizeof(*tmphdr));
-	codfil->seek(0);
+	codfil->read(&tmphdr->tag[0], 4);
+
+	Aword *ptr = (Aword *)tmphdr + 1;
+	uint i;
+	for (i = 1; i < sizeof(ACodeHeader) / sizeof(Aword); ++i, ++ptr)
+		*ptr = codfil->readUint32BE();
 
 	if (strncmp((char *)tmphdr, "ALAN", 4) != 0)
 		playererr("Not an Alan game file, does not start with \"ALAN\"");
@@ -365,10 +369,6 @@ static void load(void) {
 	checkVersion(&tmphdr);
 
 	/* Allocate and load memory */
-
-	if (littleEndian())
-		reverseHdr(&tmphdr);
-
 	if (tmphdr.size <= sizeof(ACodeHeader) / sizeof(Aword))
 		syserr("Malformed game file. Too small.");
 

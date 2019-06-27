@@ -573,7 +573,7 @@ static void reversePreBeta2() {
 
 
 /*======================================================================*/
-void reverseHdr(ACodeHeader *hdr) {
+static void reverseHdr(ACodeHeader *hdr) {
 	uint i;
 
 	/* Reverse all words in the header except the tag and the version marking */
