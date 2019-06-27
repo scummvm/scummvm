@@ -39,8 +39,11 @@ class GameManager1;
 class SupernovaEngine;
 
 class Room1: public Room {
+	public:
+		Room1();
 	protected:
 		GameManager1 *_gm;
+	int _dialogsX[6];
 };
 
 // Room 0
@@ -306,10 +309,6 @@ private:
 	int _dialog2[2];
 	int _dialog3[4];
 	int _dialog4[3];
-
-	// FIXME: Remove following unused bool variables?
-	//bool _found;
-	//bool _flug;
 };
 
 class ArsanoMeetup3 : public Room1 {
@@ -321,9 +320,6 @@ public:
 private:
 	int _dialog2[4];
 	int _dialog3[2];
-
-	// TODO: Hack, to be move away and renamed when the other uses are found
-	int _dialogsX[6];
 };
 
 
@@ -451,9 +447,6 @@ public:
 	AxacussIntersection(SupernovaEngine *vm, GameManager1 *gm);
 
 	virtual bool interact(Action verb, Object &obj1, Object &obj2);
-
-private:
-	int _dialogsX[6];
 };
 
 class AxacussExit : public Room1 {
@@ -461,9 +454,6 @@ public:
 	AxacussExit(SupernovaEngine *vm, GameManager1 *gm);
 
 	virtual bool interact(Action verb, Object &obj1, Object &obj2);
-
-private:
-	int _dialogsX[6];
 };
 
 class AxacussOffice1 : public Room1 {

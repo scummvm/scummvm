@@ -31,6 +31,12 @@
 
 namespace Supernova {
 
+Room1::Room1() {
+	_dialogsX[0] = kStringDialogX1;
+	_dialogsX[1] = kStringDialogX2;
+	_dialogsX[2] = kStringDialogX3;
+}
+
 Intro::Intro(SupernovaEngine *vm, GameManager1 *gm) {
 	_vm = vm;
 	_gm = gm;
@@ -2720,10 +2726,6 @@ ArsanoMeetup3::ArsanoMeetup3(SupernovaEngine *vm, GameManager1 *gm) {
 	_dialog2[3] = kStringDialogArsanoMeetup3_3;
 	_dialog3[0] = kStringDialogArsanoMeetup3_4;
 	_dialog3[1] = kStringDialogArsanoMeetup3_5;
-
-	_dialogsX[0] = kStringDialogX1;
-	_dialogsX[1] = kStringDialogX2;
-	_dialogsX[2] = kStringDialogX3;
 }
 
 bool ArsanoMeetup3::interact(Action verb, Object &obj1, Object &obj2) {
@@ -3557,10 +3559,6 @@ AxacussIntersection::AxacussIntersection(SupernovaEngine *vm, GameManager1 *gm) 
 	_objectState[3] = Object(_id, kStringAxacussan, kStringAxacussanDescription, GUARDIAN, TALK, 0, 0, 0);
 	_objectState[4] = Object(_id, kStringImage, kStringImageDescription2, NULLOBJECT, NULLTYPE, 2, 2, 0);
 	_objectState[5] = Object(_id, kStringMastercard, kStringMastercardDescription, MASTERKEYCARD, TAKE | COMBINABLE, 255, 255, 1);
-
-	_dialogsX[0] = kStringDialogX1;
-	_dialogsX[1] = kStringDialogX2;
-	_dialogsX[2] = kStringDialogX3;
 }
 
 bool AxacussIntersection::interact(Action verb, Object &obj1, Object &obj2) {
@@ -3608,10 +3606,6 @@ AxacussExit::AxacussExit(SupernovaEngine *vm, GameManager1 *gm) {
 	_objectState[4] = Object(_id, kStringLamp2,kStringDefaultDescription,LAMP,COMBINABLE,3,3,0);
 	_objectState[5] = Object(_id, kStringAxacussan,kStringDefaultDescription,GUARDIAN,TALK,5,5,0);
 	_objectState[6] = Object(_id, kStringImage,kStringGenericDescription5,NULLOBJECT,NULLTYPE,4,4,0);
-
-	_dialogsX[0] = kStringDialogX1;
-	_dialogsX[1] = kStringDialogX2;
-	_dialogsX[2] = kStringDialogX3;
 }
 
 bool AxacussExit::interact(Action verb, Object &obj1, Object &obj2) {
