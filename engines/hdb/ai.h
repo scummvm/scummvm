@@ -709,6 +709,7 @@ public:
 	void addToPathList(int x, int y, int type, AIDir dir);
 	ArrowPath *findArrowPath(int x, int y);
 
+	void floatEntity(AIEntity *e, AIState state);
 	bool checkFloating(int x, int y);
 
 	bool getTableEnt(AIType type);
