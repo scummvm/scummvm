@@ -133,7 +133,9 @@ void AI::animateTargets() {
 				if (at->killAuto)
 					autoDeactivate(at->x, at->y);
 
+				AnimTarget **jt = it;
 				_animTargets->erase(it);
+				it = jt-1;
 				continue;
 			}
 		}
