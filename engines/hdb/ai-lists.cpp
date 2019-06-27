@@ -434,6 +434,35 @@ bool AI::autoActive(int x, int y) {
 	return false;
 }
 
+CallbackDef allCallbacks[] = {
+	{NO_FUNCTION,	NULL},
+	{AI_BARREL_EXPLOSION_END,		aiBarrelExplosionEnd},
+	{CALLBACK_DOOR_OPEN_CLOSE,		callbackDoorOpenClose},
+	{CALLBACK_AUTODOOR_OPEN_CLOSE,	callbackAutoDoorOpenClose},
+	{CALLBACK_END,					NULL}
+};
+
+void AI::addCallback(CallbackType type, int x, int y, int delay) {
+	for(int i= kMaxCallbacks; i >= 0; i--)
+		if (_callbacks[i].type == NO_FUNCTION) {
+			_callbacks[i].type = type;
+			_callbacks[i].x = x;
+			_callbacks[i].y = y;
+			_callbacks[i].delay = delay;
+			return;
+		}
+}
+
+void AI::processCallbackList() {
+	for (int i = 0; i < kMaxCallbacks; i++)
+		if (_callbacks[i].type != NO_FUNCTION) {
+			allCallbacks[_callbacks[i].type].function(_callbacks[i].x, _callbacks[i].y);
+			_callbacks[i].type = NO_FUNCTION;
+			_callbacks[i].x = _callbacks[i].y = 0;
+			return;
+		}
+}
+
 void AI::addToLuaList(int x, int y, int value1, int value2, char *luaFuncInit, char *luaFuncAction, char *luaFuncUse) {
 	for (int i = 0; i < kMaxLuaEnts; i++) {
 		if (!_luaList[i].luaFuncInit[0] && !_luaList[i].luaFuncAction[0] && !_luaList[i].luaFuncUse[0]) {
