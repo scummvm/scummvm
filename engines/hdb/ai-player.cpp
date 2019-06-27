@@ -128,7 +128,312 @@ void aiPlayerInit2(AIEntity *e) {
 }
 
 void aiPlayerAction(AIEntity *e) {
-	debug(9, "STUB: AI: aiPlayerAction required");
+	AIState stand[5] = {STATE_NONE, STATE_STANDUP, STATE_STANDDOWN, STATE_STANDLEFT, STATE_STANDRIGHT};
+	int xvAhead[5] = {9, 0, 0, -1, 1}, yvAhead[5] = {9, -1, 1, 0, 0};
+	AIEntity *hit;
+
+	// Draw the STUN lightning if it exists
+	if (e->sequence) {
+		e->aiDraw = aiPlayerDraw;
+		warning("STUB: Play SND_STUNNER_FIRE");
+		hit = g_hdb->_ai->findEntity(e->tileX + xvAhead[e->dir], e->tileY + yvAhead[e->dir]);
+		if (hit)
+			switch (hit->type) {
+			case AI_MEERKAT:
+				if (hit->sequence > 2)
+					g_hdb->_ai->stunEnemy(hit, 8);
+				break;
+			case AI_ICEPUFF:
+				if (hit->state == STATE_ICEP_APPEAR || hit->state == STATE_ICEP_THROWDOWN || hit->state == STATE_ICEP_THROWLEFT || hit->state == STATE_ICEP_THROWRIGHT) {
+					g_hdb->_ai->addAnimateTarget(hit->x, hit->y, 0, 3, ANIM_NORMAL, false, false, GROUP_STEAM_PUFF_SIT);
+					g_hdb->_ai->stunEnemy(hit, 8);
+				}
+				break;
+			case AI_BADFAIRY:
+			case AI_GOODFAIRY:
+			case AI_CHICKEN:
+			case AI_OMNIBOT:
+			case AI_TURNBOT:
+			case AI_PUSHBOT:
+			case AI_DEADEYE:
+			case AI_FATFROG:
+			case AI_BUZZFLY:
+			case AI_MAINTBOT:
+			case AI_RIGHTBOT:
+			case AI_GATEPUDDLE:
+				g_hdb->_ai->stunEnemy(hit, 8);
+				break;
+			default:
+				warning("aiPlayerAction: Unintended State");
+				break;
+			}
+
+		hit = g_hdb->_ai->findEntity(e->tileX + (xvAhead[e->dir] << 1), e->tileY + (yvAhead[e->dir] << 1));
+		if (hit)
+			switch (hit->type) {
+			case AI_MEERKAT:
+				if (hit->sequence > 2)
+					g_hdb->_ai->stunEnemy(hit, 8);
+				break;
+			case AI_ICEPUFF:
+				if (hit->state == STATE_ICEP_APPEAR || hit->state == STATE_ICEP_THROWDOWN || hit->state == STATE_ICEP_THROWLEFT || hit->state == STATE_ICEP_THROWRIGHT) {
+					g_hdb->_ai->addAnimateTarget(hit->x, hit->y, 0, 3, ANIM_NORMAL, false, false, GROUP_STEAM_PUFF_SIT);
+					g_hdb->_ai->stunEnemy(hit, 8);
+				}
+				break;
+			case AI_BADFAIRY:
+			case AI_GOODFAIRY:
+			case AI_CHICKEN:
+			case AI_OMNIBOT:
+			case AI_TURNBOT:
+			case AI_PUSHBOT:
+			case AI_DEADEYE:
+			case AI_FATFROG:
+			case AI_BUZZFLY:
+			case AI_MAINTBOT:
+			case AI_RIGHTBOT:
+			case AI_GATEPUDDLE:
+				g_hdb->_ai->stunEnemy(hit, 8);
+				break;
+			default:
+				warning("aiPlayerAction: Unintended State");
+				break;
+			}
+	}
+
+	int xOff[] = {0, 0, -8,-16};
+	int yOff[] = {-8,-24,-16,-16};
+	// If the player is supposed to animate for abit, check for it here
+	switch (e->state) {
+	case STATE_GRABUP:
+	case STATE_GRABDOWN:
+	case STATE_GRABLEFT:
+	case STATE_GRABRIGHT:
+		if (!e->animFrame--) {
+			// Done with the Grabbing Animation, switch to standing
+			switch (e->state) {
+			case STATE_GRABUP:		e->draw = e->standupGfx[0];	e->state = STATE_STANDUP; break;
+			case STATE_GRABDOWN:	e->draw = e->standdownGfx[0];	e->state = STATE_STANDDOWN; break;
+			case STATE_GRABLEFT:	e->draw = e->standleftGfx[0];	e->state = STATE_STANDLEFT; break;
+			case STATE_GRABRIGHT:	e->draw = e->standrightGfx[0];	e->state = STATE_STANDRIGHT; break;
+			default:
+				warning("aiPlayerAction: Unintended State");
+				break;
+			}
+			e->animDelay = 1;
+			e->animCycle = 1;
+		}
+		break;
+	case STATE_ATK_CLUB_UP:
+	case STATE_ATK_CLUB_DOWN:
+	case STATE_ATK_CLUB_LEFT:
+	case STATE_ATK_CLUB_RIGHT:
+		g_hdb->_ai->setPlayerInvisible(true);
+		e->aiDraw = aiPlayerDraw;
+		e->drawXOff = xOff[e->state - STATE_ATK_CLUB_UP];
+		e->drawYOff = yOff[e->state - STATE_ATK_CLUB_UP];
+		switch (e->state) {
+		case STATE_ATK_CLUB_UP:		cycleFrames(e, g_hdb->_ai->_clubUpFrames); break;
+		case STATE_ATK_CLUB_DOWN:	cycleFrames(e, g_hdb->_ai->_clubDownFrames); break;
+		case STATE_ATK_CLUB_LEFT:	cycleFrames(e, g_hdb->_ai->_clubLeftFrames); break;
+		case STATE_ATK_CLUB_RIGHT:	cycleFrames(e, g_hdb->_ai->_clubRightFrames); break;
+		default:
+			warning("aiPlayerAction: Unintended State");
+			break;
+		}
+		// Whack!
+		if ((e->animFrame >= 1) && (e->animDelay == e->animCycle)) {
+			switch (e->dir) {
+			case DIR_UP:	hit = g_hdb->_ai->playerCollision(32, 0, 16, 16); break;
+			case DIR_DOWN:	hit = g_hdb->_ai->playerCollision(0, 32, 16, 16); break;
+			case DIR_LEFT:	hit = g_hdb->_ai->playerCollision(16, 16, 32, 0); break;
+			case DIR_RIGHT:	hit = g_hdb->_ai->playerCollision(16, 16, 0, 32); break;
+			default:
+				warning("aiPlayerAction: DIR_NONE found");
+				break;
+			}
+
+			if (hit && hit->level == e->level && !hit->stunnedWait) {
+				switch (hit->type) {
+				case AI_MEERKAT:
+					if (hit->sequence > 2)		// out of the ground?
+						g_hdb->_ai->stunEnemy(hit, 2);
+					break;
+				case AI_ICEPUFF:
+					if (hit->state == STATE_ICEP_APPEAR ||
+						hit->state == STATE_ICEP_THROWDOWN ||
+						hit->state == STATE_ICEP_THROWLEFT ||
+						hit->state == STATE_ICEP_THROWRIGHT)
+						g_hdb->_ai->stunEnemy(hit, 2);
+					break;
+				case AI_CHICKEN:
+					g_hdb->_ai->addAnimateTarget(hit->x, hit->y, 0, 3, ANIM_NORMAL, false, false, GROUP_STEAM_PUFF_SIT);
+					g_hdb->_ai->removeEntity(hit);
+					break;
+				case AI_BADFAIRY:
+				case AI_GOODFAIRY:
+				case AI_OMNIBOT:
+				case AI_TURNBOT:
+				case AI_PUSHBOT:
+				case AI_DEADEYE:
+				case AI_FATFROG:
+				case AI_BUZZFLY:
+				case AI_MAINTBOT:
+				case AI_RIGHTBOT:
+				case AI_SHOCKBOT:
+				case AI_GATEPUDDLE:
+					g_hdb->_ai->stunEnemy(hit, 2);
+					warning("STUB: Play MetalorFlesh SND");
+					break;
+				default:
+					warning("aiPlayerAction: DIR_NONE found");
+					break;
+				}
+			}
+		}
+		if ((!e->animFrame) && (e->animDelay == e->animCycle)) {
+			e->state = stand[e->dir];
+			e->aiDraw = NULL;
+			switch (e->state) {
+			case STATE_ATK_CLUB_UP:		e->draw = e->standupGfx[0]; break;
+			case STATE_ATK_CLUB_DOWN:	e->draw = e->standdownGfx[0]; break;
+			case STATE_ATK_CLUB_LEFT:	e->draw = e->standleftGfx[0]; break;
+			case STATE_ATK_CLUB_RIGHT:	e->draw = e->standrightGfx[0]; break;
+			default:
+				warning("aiPlayerAction: Unintended State");
+				break;
+			}
+			g_hdb->_ai->setPlayerInvisible(false);
+			e->drawXOff = e->drawYOff = 0;
+		}
+		return;
+	case STATE_ATK_STUN_UP:
+		e->draw = g_hdb->_ai->_stunUpGfx[e->animFrame];
+		cycleFrames(e, g_hdb->_ai->_stunUpFrames);
+		if (!e->animFrame && e->animDelay == e->animCycle) {
+			e->state = stand[e->dir];
+			e->aiDraw = NULL;
+			e->sequence = 0;
+		}
+		return;
+	case STATE_ATK_STUN_DOWN:
+		e->draw = g_hdb->_ai->_stunDownGfx[e->animFrame];
+		cycleFrames(e, g_hdb->_ai->_stunDownFrames);
+		if (!e->animFrame && e->animDelay == e->animCycle) {
+			e->state = stand[e->dir];
+			e->aiDraw = NULL;
+			e->sequence = 0;
+		}
+		return;
+	case STATE_ATK_STUN_LEFT:
+		e->draw = g_hdb->_ai->_stunLeftGfx[e->animFrame];
+		cycleFrames(e, g_hdb->_ai->_stunLeftFrames);
+		if (!e->animFrame && e->animDelay == e->animCycle) {
+			e->state = stand[e->dir];
+			e->aiDraw = NULL;
+			e->sequence = 0;
+		}
+		return;
+	case STATE_ATK_STUN_RIGHT:
+		e->draw = g_hdb->_ai->_stunRightGfx[e->animFrame];
+		cycleFrames(e, g_hdb->_ai->_stunRightFrames);
+		if (!e->animFrame && e->animDelay == e->animCycle) {
+			e->state = stand[e->dir];
+			e->aiDraw = NULL;
+			e->sequence = 0;
+		}
+		return;
+	case STATE_ATK_SLUG_UP:
+		e->draw = g_hdb->_ai->_slugUpGfx[e->animFrame];
+		cycleFrames(e, g_hdb->_ai->_slugUpFrames);
+		if (!e->animFrame && e->animDelay == e->animCycle) {
+			e->state = stand[e->dir];
+			e->sequence = 0;
+		}
+		return;
+	case STATE_ATK_SLUG_DOWN:
+		e->draw = g_hdb->_ai->_slugDownGfx[e->animFrame];
+		cycleFrames(e, g_hdb->_ai->_slugDownFrames);
+		if (!e->animFrame && e->animDelay == e->animCycle) {
+			e->state = stand[e->dir];
+			e->sequence = 0;
+		}
+		return;
+	case STATE_ATK_SLUG_LEFT:
+		e->draw = g_hdb->_ai->_slugLeftGfx[e->animFrame];
+		cycleFrames(e, g_hdb->_ai->_slugLeftFrames);
+		if (!e->animFrame && e->animDelay == e->animCycle) {
+			e->state = stand[e->dir];
+			e->sequence = 0;
+		}
+		return;
+	case STATE_ATK_SLUG_RIGHT:
+		e->draw = g_hdb->_ai->_slugRightGfx[e->animFrame];
+		cycleFrames(e, g_hdb->_ai->_slugRightFrames);
+		if (!e->animFrame && e->animDelay == e->animCycle) {
+			e->state = stand[e->dir];
+			e->sequence = 0;
+		}
+		return;
+	default:
+		warning("aiPlayerAction: Unintended State");
+		break;
+	}
+
+	// If the touchplate wait is on, keep it timing
+	if (e->touchpWait) {
+		e->touchpWait--;
+		if (!e->touchpWait)
+			e->touchpTile = -e->touchpTile;
+	} else if (e->touchpTile < 0 && (e->touchpX != e->tileX || e->touchpY != e->tileY)) {
+		g_hdb->_ai->checkActionList(e, e->touchpX, e->touchpY, false);
+		g_hdb->_map->setMapBGTileIndex(e->touchpX, e->touchpY, -e->touchpTile);
+		e->touchpX = e->touchpY = e->touchpTile = 0;
+	}
+
+	// If the player is moving somewhere, animate him
+	int bgFlags, fgFlags;
+	if (e->goalX) {
+		if (onEvenTile(e->x, e->y)) {
+			g_hdb->_ai->playerOnIce() ? warning("STUB: Play SND_STEPS_ICE") : warning("STUB: Play SND_FOOTSTEPS");
+
+			// Did we just fall down a PLUMMET?
+			bgFlags = g_hdb->_map->getMapBGTileFlags(e->tileX, e->tileY);
+			fgFlags = g_hdb->_map->getMapFGTileFlags(e->tileX, e->tileY);
+			if ((bgFlags & kFlagPlummet) && !(fgFlags & kFlagGrating) && !g_hdb->_ai->playerDead()) {
+				g_hdb->_ai->killPlayer(DEATH_PLUMMET);
+				g_hdb->_ai->animEntFrames(e);
+				return;
+			}
+		}
+		g_hdb->_ai->animateEntity(e);
+	} else {
+		// Sometimes the fading stays black
+		if (!g_hdb->_ai->cinematicsActive() && g_hdb->_drawMan->isFadeStaying())
+			g_hdb->_drawMan->turnOffFade();
+
+		// Did we just fall down a PLUMMET?
+		bgFlags = g_hdb->_map->getMapBGTileFlags(e->tileX, e->tileY);
+		fgFlags = g_hdb->_map->getMapFGTileFlags(e->tileX, e->tileY);
+		if ((bgFlags & kFlagPlummet) && !(fgFlags & kFlagGrating) && !g_hdb->_ai->playerDead()) {
+			g_hdb->_ai->killPlayer(DEATH_PLUMMET);
+			g_hdb->_ai->animEntFrames(e);
+			return;
+		}
+
+		// Standing on a TouchPlate will activate something WHILE standing on it
+		int bgTile = g_hdb->_ai->checkForTouchplate(e->tileX, e->tileY);
+		if (bgTile && !e->touchpWait && !e->touchpTile) {
+			if (g_hdb->_ai->checkActionList(e, e->tileX, e->tileY, false)) {
+				e->touchpTile = bgTile;
+				e->touchpX = e->tileX;
+				e->touchpY = e->tileY;
+				e->touchpWait = kPlayerTouchPWait;
+				g_hdb->_ai->stopEntity(e);
+			}
+		}
+		g_hdb->_ai->animEntFrames(e);
+	}
 }
 
 void aiPlayerDraw(AIEntity *e, int mx, int my) {
