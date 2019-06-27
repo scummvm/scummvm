@@ -911,7 +911,7 @@ void AI::animateEntity(AIEntity *e) {
 			g_hdb->_map->centerMapXY(e->x + 16, e->y + 16);
 
 		// Check if player walked into teleporter
-		warning("STUB: animateEntity: Check Teleporter List");
+		checkTeleportList(e, e->tileX, e->tileY);
 
 		// Check for bad tiles (DEATH)
 		int cx = (e->x + 16) / kTileWidth;
