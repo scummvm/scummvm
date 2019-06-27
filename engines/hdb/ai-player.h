@@ -62,6 +62,7 @@ void aiBarrelExplodeInit(AIEntity *e);
 void aiBarrelExplodeInit2(AIEntity *e);
 void aiBarrelExplodeAction(AIEntity *e);
 void aiBarrelExplodeSpread(AIEntity *e);
+void aiBarrelExplosionEnd(int x, int y);
 void aiBarrelBlowup(AIEntity *e, int x, int y);
 
 void aiMaintBotInit(AIEntity *e);

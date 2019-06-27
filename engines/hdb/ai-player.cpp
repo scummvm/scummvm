@@ -304,6 +304,10 @@ void aiBarrelExplodeSpread(AIEntity *e) {
 	warning("STUB: AI: aiBarrelExplodeSpread required");
 }
 
+void aiBarrelExplosionEnd(int x, int y) {
+	warning("STUB: AI: aiBarrelExplosionEnd(int, int) required");
+}
+
 void aiBarrelBlowup(AIEntity *e, int x, int y) {
 	warning("STUB: AI: aiBarrelBlowup required");
 }
