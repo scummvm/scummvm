@@ -988,6 +988,25 @@ bool LuaScript::callFunction(const char *name, int returns) {
 	return true;
 }
 
+void LuaScript::invokeLuaFunction(char *luaFunc, int x, int y, int value1, int value2) {
+	int type;
+
+	if (!_systemInit)
+		return;
+
+	lua_getglobal(_state, luaFunc);
+	type = lua_type(_state, 1);
+	if (type != LUA_TFUNCTION) {
+		warning("Function '%s' doesn't exist", luaFunc);
+	} else {
+		lua_pushnumber(_state, x);
+		lua_pushnumber(_state, y);
+		lua_pushnumber(_state, value1);
+		lua_pushnumber(_state, value2);
+		lua_call(_state, 4, 0);
+	}
+}
+
 bool LuaScript::executeMPC(Common::SeekableReadStream *stream, const char *name, const char *scriptName, int32 length) {
 
 	if (!_systemInit) {
