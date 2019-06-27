@@ -42,6 +42,7 @@ enum {
 	kPlayerMoveSpeed = 4,
 	kEnemyMoveSpeed = 2,
 	kPushMoveSpeed = (kPlayerMoveSpeed >> 1),
+	kPlayerTouchPWait = 16,
 	kMaxCineGfx = 10
 };
 

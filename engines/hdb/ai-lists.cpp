@@ -709,6 +709,7 @@ bool AI::checkTriggerList(char *entName, int x, int y) {
 	Trigger *t;
 
 	for (Common::Array<Trigger *>::iterator it = _triggerList->begin(); it != _triggerList->end(); it++) {
+		t = *it;
 		if (t->x == x && t->y == y) {
 			if (!t->luaFuncUse[0])
 				return false;
