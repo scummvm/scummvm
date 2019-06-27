@@ -755,6 +755,7 @@ void aiRailRiderOnAction(AIEntity *e) {
 		case DIR_DOWN:	e->draw = e->movedownGfx[0]; break;
 		case DIR_LEFT:	e->draw = e->moveleftGfx[0]; break;
 		case DIR_RIGHT: e->draw = e->moverightGfx[0]; break;
+		default: break; // DIR_NONE
 		}
 		g_hdb->_map->centerMapXY(e->x + 16, e->y + 16);
 

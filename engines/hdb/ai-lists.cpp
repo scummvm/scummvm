@@ -95,7 +95,7 @@ void AI::animateTargets() {
 
 	for (Common::Array<AnimTarget *>::iterator it = _animTargets->begin(); it != _animTargets->end(); it++) {
 		at = *it;
-		debug(9, "it - _animTargets->begin(): %d", it - _animTargets->begin());
+		debug(9, "it - _animTargets->begin(): %ld", it - _animTargets->begin());
 		debug(9, "at: at->x: %d, at->y: %d, at->start: %d, at->end: %d, at->vel: %d", at->x, at->y, at->start, at->end, at->vel);
 		// Draw Non-Map stuff every frame
 

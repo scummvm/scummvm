@@ -112,7 +112,7 @@ enum Flag {
 
 enum {
 	kScreenWidth = 640,
-	kScreenHeight = 480,
+	kScreenHeight = 480
 };
 
 class HDBGame : public Engine {

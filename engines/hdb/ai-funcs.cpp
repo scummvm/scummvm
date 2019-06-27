@@ -947,7 +947,7 @@ void AI::animateEntity(AIEntity *e) {
 
 			uint16 buttons = g_hdb->_input->getButtons();
 
-			if (e == _player && (buttons & (kButtonUp || kButtonDown || kButtonLeft || kButtonRight))) {
+			if (e == _player && (buttons & (kButtonUp | kButtonDown | kButtonLeft | kButtonRight))) {
 				int xva[] = {9, 0, 0, -1, 1}, yva[] = {9, -1, 1, 0, 0};
 				int nx, ny, result2;
 
