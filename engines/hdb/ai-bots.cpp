@@ -857,7 +857,11 @@ void aiMaintBotAction(AIEntity *e) {
 					break;
 				}
 				// Did the MaintBot use a LUA Tile?
-				warning("STUB: aiMaintBotAction: Check in LUA List");
+				if (g_hdb->_ai->checkLuaList(e, nx, ny)) {
+					if (e->onScreen)
+						e->value1 = 1;
+					break;
+				}
 				break;
 			// Play a sound if we used something
 			case 25:
