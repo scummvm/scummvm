@@ -840,6 +840,9 @@ void AI::restartSystem() {
 	// Clear the Auto-Action list
 	memset(_autoActions, 0, sizeof(_autoActions));
 
+	// Clear the Callback List
+	memset(_callbacks, 0, sizeof(_callbacks));
+
 	// Clear the Entity List
 	_ents->clear();
 
