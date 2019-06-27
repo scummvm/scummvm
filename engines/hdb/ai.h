@@ -38,6 +38,7 @@ enum {
 	kMaxActions = 20,
 	kMaxTeleporters = 20,
 	kMaxAutoActions = 30,
+	kMaxLuaEnts = 50,
 	kPlayerMoveSpeed = 4,
 	kEnemyMoveSpeed = 2,
 	kPushMoveSpeed = (kPlayerMoveSpeed >> 1),
@@ -564,6 +565,16 @@ struct Waypoint {
 	Waypoint() : x(0), y(0), level(0) {}
 };
 
+struct LuaT {
+	uint16 x, y;
+	uint16 value1, value2;
+	char luaFuncInit[32];
+	char luaFuncAction[32];
+	char luaFuncUse[32];
+
+	LuaT() : x(0), y(0), value1(0), value2(0), luaFuncInit(""), luaFuncAction(""), luaFuncUse("") {}
+};
+
 struct ActionInfo {
 	uint16 x1, y1;
 	uint16 x2, y2;
@@ -1008,6 +1019,9 @@ public:
 	int _numWaypoints;
 	Tile *_waypointGfx[4]; // Animating waypoint gfx
 	Tile *_debugQMark;
+
+	LuaT _luaList[kMaxLuaEnts];
+	int _numLuaList;
 
 	ActionInfo _actions[kMaxActions];
 

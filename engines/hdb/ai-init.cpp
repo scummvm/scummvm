@@ -843,6 +843,13 @@ void AI::restartSystem() {
 	// Clear the Entity List
 	_ents->clear();
 
+	// Clear the Floats List
+	_floats->clear();
+
+	// Clear the Lua List
+	memset(_luaList, 0, sizeof(_luaList));
+	_numLuaList = 0;
+
 	// Clear Anim Targets List
 	_animTargets->clear();
 
