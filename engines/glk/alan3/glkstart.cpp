@@ -42,7 +42,7 @@
 namespace Glk {
 namespace Alan3 {
 
-glkunix_argumentlist_t glkunix_arguments[] = {
+const glkunix_argumentlist_t glkunix_arguments[] = {
     { "-l", glkunix_arg_NoValue, "-l: log player command and game output" },
     { "-c", glkunix_arg_NoValue, "-c: log player commands to a file" },
     { "-n", glkunix_arg_NoValue, "-n: no status line" },

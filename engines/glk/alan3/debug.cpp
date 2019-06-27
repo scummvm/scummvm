@@ -118,7 +118,7 @@ static void sayInstanceNumberAndName(int ins) {
 
 
 /*----------------------------------------------------------------------*/
-static void sayLocationOfInstance(int ins, char *prefix) {
+static void sayLocationOfInstance(int ins, const char *prefix) {
     if (admin[ins].location == 0)
         return;
     else {
@@ -598,7 +598,7 @@ static void setBreakpoint(int file, int line) {
             int lineIndex = findSourceLineIndex((SourceLineEntry *)pointerTo(header->sourceLineTable), file, line);
             SourceLineEntry *entry = (SourceLineEntry *)pointerTo(header->sourceLineTable);
             char leadingText[100] = "Breakpoint";
-            if (entry[lineIndex].file == EOD) {
+            if (entry[lineIndex].file == (Aint)EOD) {
                 printf("Line %d not available\n", line);
             } else {
                 if (entry[lineIndex].line != line)
@@ -684,13 +684,13 @@ void restoreInfo(void)
 #define TRACE_STACK_COMMAND 't'
 
 typedef struct DebugParseEntry {
-    char *command;
-    char *parameter;
+    const char *command;
+	const char *parameter;
     char code;
-    char *helpText;
+	const char *helpText;
 } DebugParseEntry;
 
-static DebugParseEntry commandEntries[] = {
+static const DebugParseEntry commandEntries[] = {
     {"help", "", HELP_COMMAND, "this help"},
     {"?", "", HELP_COMMAND, "d:o"},
     {"break", "[[file:]n]", BREAK_COMMAND, "set breakpoint at source line [n] (optionally in [file])"},
@@ -708,16 +708,16 @@ static DebugParseEntry commandEntries[] = {
     {"exit", "", EXIT_COMMAND, "exit to game, enter 'debug' to get back"},
     {"x", "", EXIT_COMMAND, "d:o"},
     {"quit", "", QUIT_COMMAND, "quit game"},
-    {NULL, NULL}
+    {NULL, NULL, '\0', NULL}
 };
 
-static DebugParseEntry traceSubcommand[] = {
+static const DebugParseEntry traceSubcommand[] = {
     {"source", "", TRACE_SOURCE_COMMAND, ""},
     {"section", "", TRACE_SECTION_COMMAND, ""},
     {"instructions", "", TRACE_INSTRUCTION_COMMAND, ""},
     {"pushs", "", TRACE_PUSH_COMMAND, ""},
     {"stacks", "", TRACE_STACK_COMMAND, ""},
-    {NULL, NULL}
+    {NULL, NULL, '\0', NULL}
 };
 
 
@@ -733,7 +733,7 @@ static char *spaces(int length) {
 
 
 /*----------------------------------------------------------------------*/
-static char *padding(DebugParseEntry *entry, int maxLength) {
+static char *padding(const DebugParseEntry *entry, int maxLength) {
     return spaces(maxLength-strlen(entry->command)-strlen(entry->parameter));
 }
 
@@ -743,7 +743,7 @@ static void handleHelpCommand() {
     if (!regressionTestOption)
         output(alan.longHeader);
 
-    DebugParseEntry *entry = commandEntries;
+    const DebugParseEntry *entry = commandEntries;
 
     int maxLength = 0;
     for (entry = commandEntries; entry->command != NULL; entry++) {
@@ -761,7 +761,7 @@ static void handleHelpCommand() {
 
 
 /*----------------------------------------------------------------------*/
-static DebugParseEntry *findEntry(char *command, DebugParseEntry *entry) {
+static const DebugParseEntry *findEntry(char *command, const DebugParseEntry *entry) {
     while (entry->command != NULL) {
         if (strncasecmp(command, entry->command, strlen(command)) == 0)
             return entry;
@@ -773,7 +773,7 @@ static DebugParseEntry *findEntry(char *command, DebugParseEntry *entry) {
 
 /*----------------------------------------------------------------------*/
 static char parseDebugCommand(char *command) {
-    DebugParseEntry *entry = findEntry(command, commandEntries);
+    const DebugParseEntry *entry = findEntry(command, commandEntries);
     if (entry != NULL) {
         if (strlen(command) < strlen(entry->command)) {
             /* See if there are any more partial matches */
@@ -812,7 +812,7 @@ static void readCommand(char buf[]) {
 
 /*----------------------------------------------------------------------*/
 static void displaySourceLocation(int line, int fileNumber) {
-    char *cause;
+    const char *cause;
     if (anyOutput) newline();
     if (breakpointIndex(fileNumber, line) != -1)
         cause = "Breakpoint hit at";
@@ -871,7 +871,7 @@ static void toggleStackTrace() {
 /*----------------------------------------------------------------------*/
 static int parseTraceCommand() {
     char *subcommand = strtok(NULL, "");
-    DebugParseEntry *entry;
+    const DebugParseEntry *entry;
     if (subcommand == 0)
         return UNKNOWN_COMMAND;
     else {
@@ -889,7 +889,7 @@ static int parseTraceCommand() {
 
 
 /*----------------------------------------------------------------------*/
-static char *printTraceState(bool state) {
+static const char *printTraceState(bool state) {
     if (state)
         return "on  - Traces";
     else

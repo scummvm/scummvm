@@ -78,7 +78,7 @@ Aword reversed(Aword w) /* IN - The ACODE word to swap bytes of */
 #else
   Aword s;                      /* The swapped ACODE word */
   char *wp, *sp;
-  int i;
+  uint i;
 
   wp = (char *) &w;
   sp = (char *) &s;
@@ -109,7 +109,7 @@ static void reverseTable(Aword adr, int elementSize)
   Aword *e = &memory[adr];
   uint i;
 
-  if (elementSize < sizeof(Aword) || elementSize % sizeof(Aword) != 0)
+  if (elementSize < (int)sizeof(Aword) || elementSize % (int)sizeof(Aword) != 0)
       syserr("***Wrong size in 'reverseTable()' ***");
 
   if (adr == 0) return;
@@ -351,7 +351,7 @@ static void reverseElms(Aword adr)
   if (!isEndOfArray(e)) {
     reverseTable(adr, sizeof(ElementEntry));
     while (!isEndOfArray(e)) {
-      if (e->code == EOS) reverseRestrictions(e->next);
+      if ((uint)e->code == EOS) reverseRestrictions(e->next);
       else reverseElms(e->next);
       e++;
     }
@@ -520,7 +520,7 @@ static void reverseSetInitTable(Aaddr adr)
 /*----------------------------------------------------------------------*/
 static void reversePreAlpha5Header(Pre3_0alpha5Header *hdr)
 {
-  int i;
+  uint i;
 
   /* Reverse all words in the header except the tag */
   for (i = 1; i < sizeof(*hdr)/sizeof(Aword); i++)
@@ -561,7 +561,7 @@ static void reversePreAlpha5() {
 /*----------------------------------------------------------------------*/
 static void reversePreBeta2Header(Pre3_0beta2Header *hdr)
 {
-  int i;
+  uint i;
 
   /* Reverse all words in the header except the tag */
   for (i = 1; i < sizeof(*hdr)/sizeof(Aword); i++)
@@ -602,7 +602,7 @@ static void reversePreBeta2() {
 /*======================================================================*/
 void reverseHdr(ACodeHeader *hdr)
 {
-  int i;
+  uint i;
 
   /* Reverse all words in the header except the tag and the version marking */
   for (i = 1; i < sizeof(*hdr)/sizeof(Aword); i++)

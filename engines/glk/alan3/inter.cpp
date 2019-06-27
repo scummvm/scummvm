@@ -71,7 +71,7 @@ void setInterpreterStack(Stack theStack)
 
 
 /*----------------------------------------------------------------------*/
-static void traceInstruction(char *str, ...) {
+static void traceInstruction(const char *str, ...) {
     va_list args;
 
     if (traceInstructionOption) {
@@ -236,7 +236,7 @@ static void depexec(Aword v)
 {
     int lev = 1;
     Aword i;
-    char *instructionString = "DEPELSE";
+    const char *instructionString = "DEPELSE";
 
     if (!v) {
         /* The expression was not true, skip to next CASE on the same
@@ -306,13 +306,13 @@ static void depcase(void)
 
 
 /*----------------------------------------------------------------------*/
-static char *booleanValue(Abool value) {
+static const char *booleanValue(Abool value) {
     if (value) return "   TRUE";
     else return "  FALSE";
 }
 
 /*----------------------------------------------------------------------*/
-static char *stringValue(Aptr address) {
+static const char *stringValue(Aptr address) {
     static char string[1000];
 
     sprintf(string, "0x%lx (\"%s\")\t\t", (unsigned long) address, (char *)fromAptr(address));
@@ -320,7 +320,7 @@ static char *stringValue(Aptr address) {
 }
 
 /*----------------------------------------------------------------------*/
-static char *pointerValue(Aptr address) {
+static const char *pointerValue(Aptr address) {
     static char string[100];
 
     sprintf(string, "@%6lx",(unsigned long) address);
@@ -365,7 +365,7 @@ static void traceInstanceTopValue() {
 }
 
 /*----------------------------------------------------------------------*/
-static char *transitivityFlag(ATrans value) {
+static const char *transitivityFlag(ATrans value) {
     switch (value) {
     case TRANSITIVE:
         return "Transitive";
@@ -379,7 +379,7 @@ static char *transitivityFlag(ATrans value) {
 }
 
 /*----------------------------------------------------------------------*/
-static char *printForm(SayForm form) {
+static const char *printForm(SayForm form) {
     switch (form) {
     case SAY_SIMPLE: return "-";
     case SAY_INDEFINITE: return "An";

@@ -101,7 +101,7 @@ bool passesContainerLimits(Aint theContainer, Aint theAddedInstance) {
 
     if (containers[props].limits != 0) { /* Any limits at all? */
         for (limit = (LimitEntry *) pointerTo(containers[props].limits); !isEndOfArray(limit); limit++)
-            if (limit->atr == 1-I_COUNT) { /* TODO This is actually some encoding of the attribute number, right? */
+            if ((int)limit->atr == 1-I_COUNT) { /* TODO This is actually some encoding of the attribute number, right? */
                 if (countInContainer(theContainer) >= (int)limit->val) {
                     interpret(limit->stms);
                     return(FALSE);

@@ -48,7 +48,7 @@ static int inputBit(void)
   if (!bitsToGo) {
 	/* No, so get more */
 	 decodeBuffer = (textFile->pos() >= textFile->size()) ? EOD : textFile->readByte();
-    if (decodeBuffer == EOD) {
+    if (decodeBuffer == (int)EOD) {
       garbageBits++;
       if (garbageBits > VALUEBITS-2)
 	syserr("Error in encoded data file.");

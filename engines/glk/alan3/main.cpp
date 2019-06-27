@@ -153,11 +153,7 @@ static void runPendingEvents(void)
 
 \*----------------------------------------------------------------------*/
 
-
 Common::SeekableReadStream *codfil;
-static char codfnm[256] = "";
-static char txtfnm[256] = "";
-
 
 /*----------------------------------------------------------------------
   Calculate where to start calculating the CRC. Is different for
@@ -255,7 +251,7 @@ static void loadAndCheckMemory(ACodeHeader tmphdr, Aword crc, char err[]) {
 
 
 /*----------------------------------------------------------------------*/
-static char *decodeState(int c) {
+static const char *decodeState(int c) {
     static char state[3] = "\0\0";
     switch (c) {
     case 0: return ".";

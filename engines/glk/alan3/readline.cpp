@@ -147,7 +147,9 @@ bool readline(char buffer[])
                     }
                     break;
 #endif
-                }
+				default:
+					break;
+				}
             } while (event.type != evtype_LineInput);
         if (buffer[0] == '@') {
             buffer[event.val1] = 0;

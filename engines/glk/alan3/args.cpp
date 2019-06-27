@@ -37,7 +37,7 @@ char *adventureName;        /* The name of the game */
 char *adventureFileName;
 
 /*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-
+#if 0
 /*======================================================================*/
 char *gameName(char *fullPathName) {
     char *foundGameName = "";
@@ -148,7 +148,7 @@ static void switches(int argc, char *argv[])
         }
     }
 }
-
+#endif
 
 /*----------------------------------------------------------------------*/
 bool differentInterpreterName(char *string) {

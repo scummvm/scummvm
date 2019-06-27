@@ -60,9 +60,9 @@ namespace Alan3 {
 #define glkunix_arg_NumberValue (4)
 
 struct glkunix_argumentlist_t {
-    char *name;
+    const char *name;
     int argtype;
-    char *desc;
+	const char *desc;
 };
 
 struct glkunix_startup_t {
@@ -71,7 +71,7 @@ struct glkunix_startup_t {
 };
 
 /* The list of command-line arguments; this should be defined in your code. */
-extern glkunix_argumentlist_t glkunix_arguments[];
+extern const glkunix_argumentlist_t glkunix_arguments[];
 
 /* The external function; this should be defined in your code. */
 extern int glkunix_startup_code(glkunix_startup_t *data);

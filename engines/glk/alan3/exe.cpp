@@ -340,8 +340,10 @@ void schedule(Aword event, Aword where, Aword after)
 
     cancelEvent(event);
     /* Check for overflow */
-    if (eventQueue == NULL || eventQueueTop == eventQueueSize)
+    if (eventQueue == nullptr || eventQueueTop == eventQueueSize) {
         increaseEventQueue();
+		assert(eventQueue);
+	}
 
     /* Bubble this event down */
     for (i = eventQueueTop; i >= 1 && eventQueue[i-1].after <= (int)after; i--) {
@@ -713,35 +715,33 @@ bool streq(char a[], char b[])
 
 /*======================================================================*/
 void startTranscript(void) {
-    if (logFile != NULL)
-        return;
+    if (logFile == NULL) {
+		Common::String filename = g_vm->getTargetName() + ".log";
 
-	Common::String filename = g_vm->getTargetName() + ".log";
+		uint fileUsage = transcriptOption ? fileusage_Transcript : fileusage_InputRecord;
+		frefid_t logFileRef = g_vm->glk_fileref_create_by_name(fileUsage, filename.c_str(), 0);
+		logFile = g_vm->glk_stream_open_file(logFileRef, filemode_Write, 0);
 
-	uint fileUsage = transcriptOption ? fileusage_Transcript : fileusage_InputRecord;
-	frefid_t logFileRef = g_vm->glk_fileref_create_by_name(fileUsage, filename.c_str(), 0);
-	logFile = g_vm->glk_stream_open_file(logFileRef, filemode_Write, 0);
-
-	if (logFile == NULL) {
-        transcriptOption = FALSE;
-        logOption = FALSE;
-	} else {
-		transcriptOption = TRUE;
+		if (logFile == NULL) {
+			transcriptOption = FALSE;
+			logOption = FALSE;
+		} else {
+			transcriptOption = TRUE;
+		}
 	}
 }
 
 
 /*======================================================================*/
 void stopTranscript(void) {
-    if (logFile == NULL)
-        return;
+	if (logFile != NULL) {
+		if (transcriptOption|| logOption)
+			delete logFile;
 
-	if (transcriptOption|| logOption)
-		delete logFile;
-
-    logFile = NULL;
-    transcriptOption = FALSE;
-    logOption = FALSE;
+		logFile = NULL;
+		transcriptOption = FALSE;
+		logOption = FALSE;
+	}
 }
 
 } // End of namespace Alan3

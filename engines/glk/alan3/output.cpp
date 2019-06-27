@@ -142,14 +142,15 @@ void clear(void)
 
 
 /*----------------------------------------------------------------------*/
-static void capitalizeFirst(char *str) {
+static void capitalizeFirst(Common::String &str) {
     uint i = 0;
 
-    /* Skip over space... */
-    while (i < strlen(str) && isSpace(str[i])) i++;
-    if (i < strlen(str)) {
-        str[i] = toUpper(str[i]);
-        capitalize = FALSE;
+    // Skip over space...
+    while (i < str.size() && isSpace(str[i])) i++;
+
+	if (i < str.size()) {
+		str.setChar(toUpper(str[i]), i);
+        capitalize = false;
     }
 }
 
@@ -194,13 +195,14 @@ void printAndLog(const char *string)
 
 
 /*----------------------------------------------------------------------*/
-static void justify(char str[])
-{
+static void justify(const char *str) {
+	Common::String tempStr(str);
+
     if (capitalize)
-        capitalizeFirst(str);
+        capitalizeFirst(tempStr);
 
 #ifdef HAVE_GLK
-    printAndLog(str);
+    printAndLog(tempStr.c_str());
 #else
     int i;
     char ch;
@@ -230,7 +232,7 @@ static void justify(char str[])
     }
     printAndLog(str);     /* Print tail */
 #endif
-    col = col + strlen(str);  /* Update column */
+    col = col + tempStr.size();  // Update column
 }
 
 
@@ -370,7 +372,7 @@ static char *printSymbol(char str[]) /* IN - The string starting with '$' */
             break;
         case 'v':
             space();
-            justify((char *)pointerTo(dictionary[verbWord].string));
+            justify((const char *)pointerTo(dictionary[verbWord].string));
             needSpace = TRUE;       /* We did print something non-white */
             break;
         case 'p':

@@ -32,9 +32,9 @@ namespace Alan3 {
 
 /* FUNCTIONS: */
 extern void terminate(int code);
-extern void usage(char *programName);
+extern void usage(const char *programName);
 extern void printVersion(int buildNumber);
-extern bool match(char *pattern, char *input);
+extern bool match(const char *pattern, char *input);
 
 } // End of namespace Alan3
 } // End of namespace Glk

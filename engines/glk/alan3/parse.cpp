@@ -224,7 +224,7 @@ static void errorNoSuch(Parameter parameter) {
 
     /* If there was no instance, assume the last word used is the noun,
      * then find any instance with the noun he used */
-    if (parameter.instance == -1)
+    if (parameter.instance == (Aid)-1)
         parameter.instance = 0;
     if (parameter.instance == 0)
         parameter.instance = findInstanceForNoun(playerWords[parameter.lastWord].code);
@@ -745,7 +745,7 @@ static ElementEntry *elementForParameter(ElementEntry *elms) {
 
 /*----------------------------------------------------------------------*/
 static ElementEntry *elementForEndOfSyntax(ElementEntry *elms) {
-    while (!isEndOfArray(elms) && elms->code != EOS)
+    while (!isEndOfArray(elms) && (Aword)elms->code != EOS)
         elms++;
     if (isEndOfArray(elms)) /* No match for EOS! */
         return NULL;

@@ -202,7 +202,7 @@ Set *getInstanceSetAttribute(int instance, int attribute)
 
 
 /*----------------------------------------------------------------------*/
-static void verifyInstance(int instance, char *action) {
+static void verifyInstance(int instance, const char *action) {
     char message[200];
 
     if (instance == 0) {
@@ -1053,7 +1053,7 @@ static void locateActor(Aint movingActor, Aint whr)
 
 
 /*----------------------------------------------------------------------*/
-static void traceExtract(int instance, int containerId, char *what) {
+static void traceExtract(int instance, int containerId, const char *what) {
     if (traceSectionOption) {
         printf("\n<EXTRACT from ");
         traceSay(instance);

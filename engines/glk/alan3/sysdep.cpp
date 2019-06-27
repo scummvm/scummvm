@@ -140,7 +140,7 @@ static const byte upperCaseCharacters[] =
 
 int isSpace(unsigned int c)              /* IN - Native character to test */
 {
-    return (c != '\0' && strchr((char *)spaceCharacters, c) != 0);
+    return (c != '\0' && strchr((const char *)spaceCharacters, c) != 0);
 }
 
 
@@ -471,7 +471,7 @@ int littleEndian() {
 
 /*======================================================================*/
 char *baseNameStart(char *fullPathName) {
-  static char *delimiters = "\\>]/:";
+  const char *delimiters = "\\>]/:";
   int i;
 
   for (i = strlen(fullPathName)-1; i > 0; i--)

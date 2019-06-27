@@ -69,7 +69,7 @@ void printVersion(int buildNumber) {
 
 
 /*======================================================================*/
-void usage(char *programName)
+void usage(const char *programName)
 {
 #if (BUILD+0) != 0
     printVersion(BUILD);
@@ -100,7 +100,7 @@ void usage(char *programName)
 #define FNM_CASEFOLD 0
 #endif
 /*======================================================================*/
-bool match(char *pattern, char *input) {
+bool match(const char *pattern, char *input) {
     return fnmatch(pattern, input, FNM_CASEFOLD) == 0;
 }
 

@@ -78,7 +78,7 @@ static void unknown(char tok[]) {
 static int number(char tok[]) {
     int i;
 	
-    sscanf(tok, "%d", &i);
+    (void)sscanf(tok, "%d", &i);
     return i;
 }
 
