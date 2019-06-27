@@ -117,6 +117,8 @@ void RenderTicket::drawToSurface(Graphics::Surface *_targetSurface) const {
 	if (_owner) {
 		if (_transform._alphaDisable) {
 			src.setAlphaMode(Graphics::ALPHA_OPAQUE);
+		} else if (_transform._angle) {
+			src.setAlphaMode(Graphics::ALPHA_FULL);
 		} else {
 			src.setAlphaMode(_owner->getAlphaType());
 		}
@@ -149,6 +151,8 @@ void RenderTicket::drawToSurface(Graphics::Surface *_targetSurface, Common::Rect
 	if (_owner) {
 		if (_transform._alphaDisable) {
 			src.setAlphaMode(Graphics::ALPHA_OPAQUE);
+		} else if (_transform._angle) {
+			src.setAlphaMode(Graphics::ALPHA_FULL);
 		} else {
 			src.setAlphaMode(_owner->getAlphaType());
 		}
