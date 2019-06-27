@@ -1053,11 +1053,12 @@ void aiDeadEyeWalkInPlace(AIEntity *e) {
 		s = state[dir];
 		e->dir = dir;
 		e->state = s;
-		if (e->onScreen)
+		if (e->onScreen) {
 			if (e->sequence == 50)
 				warning("STUB: aiDeadEyeWalkInPlace: Play SND_DEADEYE_AMB01");
 			else if (e->sequence == 10)
 				warning("STUB: aiDeadEyeWalkInPlace: Play SND_DEADEYE_AMB02");
+		}
 		break;
 	case 0:
 		e->sequence = 64;
@@ -1144,11 +1145,12 @@ void aiDeadEyeAction(AIEntity *e) {
 			e->dir = dir;
 			e->state = s;
 
-			if (e->onScreen)
+			if (e->onScreen) {
 				if (e->sequence == 50)
 					warning("STUB: aiDeadEyeAction: Play SND_DEADEYE_AMB01");
 				else if (e->sequence == 10)
 					warning("STUB: aiDeadEyeAction: Play SND_DEADEYE_AMB01");
+			}
 			break;
 		case 0:
 			// Pick a random direction and random number of tiles in that direction
