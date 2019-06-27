@@ -319,10 +319,12 @@ enum ATrans {
 
 #define AwordSizeOf(x) (sizeof(x)/sizeof(Aword))
 
+#include "common/pack-start.h"  // START STRUCT PACKING
+
 struct ArticleEntry {
 	Aaddr address;      /* Address of article code */
 	Abool isForm;       /* Is the article a complete form? */
-};
+} PACKED_STRUCT;
 
 struct ClassEntry { /* CLASS TABLE */
 	Aword code;             /* Own code */
@@ -339,7 +341,7 @@ struct ClassEntry { /* CLASS TABLE */
 	Aaddr mentioned;        /* Address of code for Mentioned clause */
 	Aaddr verbs;            /* Address of verb table */
 	Aaddr entered;          /* Address of code for Entered clause */
-};
+} PACKED_STRUCT;
 
 struct InstanceEntry {  /* INSTANCE TABLE */
 	Aint code;                  /* Own code */
@@ -360,7 +362,7 @@ struct InstanceEntry {  /* INSTANCE TABLE */
 	Aaddr verbs;                /* Address of local verb list */
 	Aaddr entered;              /* Address of entered code (location only) */
 	Aaddr exits;                /* Address of exit list */
-};
+} PACKED_STRUCT;
 
 struct AttributeEntry {         /* ATTRIBUTE LIST */
 	Aint code;                  /* Its code */
@@ -368,7 +370,7 @@ struct AttributeEntry {         /* ATTRIBUTE LIST */
                                    string pointer, a set has a pointer
                                    to a dynamically allocated set */
 	Aaddr id;                   /* Address to the name */
-};
+} PACKED_STRUCT;
 
 struct AttributeHeaderEntry {   /* ATTRIBUTE LIST in header */
 	Aint code;                          /* Its code */
@@ -376,21 +378,21 @@ struct AttributeHeaderEntry {   /* ATTRIBUTE LIST in header */
                                    string pointer, a set has a pointer
                                    to a dynamically allocated set */
 	Aaddr id;                   /* Address to the name */
-};
+} PACKED_STRUCT;
 
 struct ExitEntry {  /* EXIT TABLE structure */
 	Aword code;             /* Direction code */
 	Aaddr checks;           /* Address of check table */
 	Aaddr action;           /* Address of action code */
 	Aword target;           /* Id for the target location */
-};
+} PACKED_STRUCT;
 
 
 struct RuleEntry {      /* RULE TABLE */
 	Abool alreadyRun;
 	Aaddr exp;                    /* Address to expression code */
 	Aaddr stms;                   /* Address to run */
-};
+} PACKED_STRUCT;
 
 
 #define RESTRICTIONCLASS_CONTAINER (-2)
@@ -401,7 +403,7 @@ struct RestrictionEntry {         /* PARAMETER RESTRICTION TABLE */
 	Aint parameterNumber;         /* Parameter number */
 	Aint _class;                  /* Parameter class code */
 	Aaddr stms;                   /* Exception statements */
-};
+} PACKED_STRUCT;
 
 struct ContainerEntry { /* CONTAINER TABLE */
 	Aword owner;                /* Owner instance index */
@@ -411,7 +413,7 @@ struct ContainerEntry { /* CONTAINER TABLE */
 	Aaddr empty;                /* Address to code for header when empty */
 	Aaddr extractChecks;        /* Address to check before extracting */
 	Aaddr extractStatements;    /* Address to execute when extracting */
-};
+} PACKED_STRUCT;
 
 
 struct ElementEntry {   /* SYNTAX ELEMENT TABLES */
@@ -419,73 +421,73 @@ struct ElementEntry {   /* SYNTAX ELEMENT TABLES */
 	Aword flags;                /* Flags for multiple/omni (if parameter), syntax number/verb of EOS */
 	Aaddr next;                 /* Address to next element table ... */
 	/* ... or restrictions if code == EOS */
-};
+} PACKED_STRUCT;
 
 struct SyntaxEntryPreBeta2 {    /* SYNTAX TABLE */
 	Aint code;                          /* Code for verb word */
 	Aaddr elms;                         /* Address to element tables */
-};
+} PACKED_STRUCT;
 
 struct SyntaxEntry {     /* SYNTAX TABLE */
 	Aint code;                   /* Code for verb word, or 0 if starting with parameter */
 	Aaddr elms;                  /* Address to element tables */
 	Aaddr parameterNameTable;    /* Address to a table of id-addresses giving the names of the parameters */
-};
+} PACKED_STRUCT;
 
 struct ParameterMapEntry {  /* PARAMETER MAPPING TABLE */
 	Aint syntaxNumber;
 	Aaddr parameterMapping;
 	Aint verbCode;
-};
+} PACKED_STRUCT;
 
 struct EventEntry { /* EVENT TABLE */
 	Aaddr id;                   /* Address to name string */
 	Aaddr code;
-};
+} PACKED_STRUCT;
 
 struct ScriptEntry {    /* SCRIPT TABLE */
 	Aaddr id;                   /* Address to name string */
 	Aint code;          /* Script number */
 	Aaddr description;      /* Optional description statements */
 	Aaddr steps;        /* Address to steps */
-};
+} PACKED_STRUCT;
 
 struct StepEntry {  /* STEP TABLE */
 	Aaddr after;        /* Expression to say after how many ticks? */
 	Aaddr exp;          /* Expression to condition saying when */
 	Aaddr stms;         /* Address to the actual code */
-};
+} PACKED_STRUCT;
 
 struct AltEntry {   /* VERB ALTERNATIVE TABLE */
 	Aword qual;         /* Verb execution qualifier */
 	Aint param;         /* Parameter number */
 	Aaddr checks;       /* Address of the check table */
 	Aaddr action;       /* Address of the action code */
-};
+} PACKED_STRUCT;
 
 struct SourceFileEntry { /* SOURCE FILE NAME TABLE */
 	Aint fpos;
 	Aint len;
-};
+} PACKED_STRUCT;
 
 struct SourceLineEntry { /* SOURCE LINE TABLE */
 	Aint file;
 	Aint line;
-};
+} PACKED_STRUCT;
 
 struct StringInitEntry { /* STRING INITIALISATION TABLE */
 	Aword fpos;                  /* File position */
 	Aword len;                   /* Length */
 	Aint instanceCode;           /* Where to store it */
 	Aint attributeCode;
-};
+} PACKED_STRUCT;
 
 struct SetInitEntry {   /* SET INITIALISATION TABLE */
 	Aint size;                  /* Size of the initial set */
 	Aword setAddress;           /* Address to the initial set */
 	Aint instanceCode;          /* Where to store it */
 	Aint attributeCode;
-};
+} PACKED_STRUCT;
 
 struct DictionaryEntry { /* Dictionary */
 	Aaddr string;                /* ACODE address to string */
@@ -494,7 +496,7 @@ struct DictionaryEntry { /* Dictionary */
 	Aaddr adjectiveRefs;        /* Address to reference list */
 	Aaddr nounRefs;             /* Address to reference list */
 	Aaddr pronounRefs;          /* Address to reference list */
-};
+} PACKED_STRUCT;
 
 
 
@@ -555,7 +557,7 @@ struct ACodeHeader {
 	Aword txtcrc;       /* Checksum for text data file */
 	Aaddr ifids;        /* Address to IFIDS */
 	Aaddr prompt;
-};
+} PACKED_STRUCT;
 
 struct Pre3_0beta2Header {
 	/* Important info */
@@ -611,7 +613,7 @@ struct Pre3_0beta2Header {
 	Aword acdcrc;       /* Checksum for acd code (excl. hdr) */
 	Aword txtcrc;       /* Checksum for text data file */
 	Aaddr ifids;        /* Address to IFIDS */
-};
+} PACKED_STRUCT;
 
 struct Pre3_0alpha5Header {
 	/* Important info */
@@ -666,7 +668,9 @@ struct Pre3_0alpha5Header {
 	Aaddr freq;         /* Address to Char freq's for coding */
 	Aword acdcrc;       /* Checksum for acd code (excl. hdr) */
 	Aword txtcrc;       /* Checksum for text data file */
-};
+} PACKED_STRUCT;
+
+#include "common/pack-end.h"    // END STRUCT PACKING
 
 /* Error message numbers */
 enum MsgKind {

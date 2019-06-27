@@ -738,6 +738,7 @@ void run(void) {
 	Context ctx;
 
 	do {
+		ctx.clear();
 		openFiles();
 		load();			// Load program
 
@@ -753,16 +754,7 @@ void run(void) {
 		init();
 
 		while (!g_vm->shouldQuit()) {
-			if (!ctx._break) {
-				if (debugOption)
-					debug(FALSE, 0, 0);
-
-				if (stackDepth(theStack) != 0)
-					syserr("Stack is not empty in main loop");
-
-				if (!current.meta)
-					runPendingEvents();
-			} else {
+			if (ctx._break) {
 				#ifdef TODO
 				// Return here if error during execution
 				switch (setjmp(returnLabel)) {
@@ -779,6 +771,16 @@ void run(void) {
 					syserr("Unexpected longjmp() return value");
 				}
 				#endif
+				ctx.clear();
+			} else {
+				if (debugOption)
+					debug(FALSE, 0, 0);
+
+				if (stackDepth(theStack) != 0)
+					syserr("Stack is not empty in main loop");
+
+				if (!current.meta)
+					runPendingEvents();
 			}
 
 			recursionDepth = 0;
