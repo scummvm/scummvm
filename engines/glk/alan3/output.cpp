@@ -56,7 +56,6 @@ strid_t logFile;
 /*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
 
-#if defined(HAVE_GLK) || defined(RUNNING_UNITTESTS)
 /*----------------------------------------------------------------------*/
 static int updateColumn(int currentColumn, const char *string) {
     const char *newlinePosition = strrchr(string, '\n');
@@ -65,46 +64,22 @@ static int updateColumn(int currentColumn, const char *string) {
     else
         return currentColumn + strlen(string);
 }
-#endif
 
 
 /*======================================================================*/
 void setSubHeaderStyle(void) {
-#ifdef HAVE_GLK
     g_vm->glk_set_style(style_Subheader);
-#endif
 }
 
 
 /*======================================================================*/
 void setNormalStyle(void) {
-#ifdef HAVE_GLK
 	g_vm->glk_set_style(style_Normal);
-#endif
 }
 
 /*======================================================================*/
 void newline(void) {
-#ifndef HAVE_GLK
-    char buf[256];
-
-    if (!regressionTestOption && lin == pageLength - 1) {
-		printAndLog("\n");
-        needSpace = FALSE;
-        col = 0;
-        lin = 0;
-        printMessage(M_MORE);
-        statusline();
-        fflush(stdout);
-        fgets(buf, 256, stdin);
-        getPageSize();
-    } else
-        printAndLog("\n");
-
-    lin++;
-#else
     printAndLog("\n");
-#endif
     col = 1;
     needSpace = FALSE;
 }
@@ -114,11 +89,9 @@ void newline(void) {
 void para(void)
 {
     /* Make a new paragraph, i.e one empty line (one or two newlines). */
-
-#ifdef HAVE_GLK
     if (g_vm->glk_gestalt(gestalt_Graphics, 0) == 1)
 		g_vm->glk_window_flow_break(glkMainWin);
-#endif
+
     if (col != 1)
         newline();
     newline();
@@ -127,17 +100,8 @@ void para(void)
 
 
 /*======================================================================*/
-void clear(void)
-{
-#ifdef HAVE_GLK
+void clear(void) {
 	g_vm->glk_window_clear(glkMainWin);
-#else
-#ifdef HAVE_ANSI
-    if (!statusLineOption) return;
-    printf("\x1b[2J");
-    printf("\x1b[%d;1H", pageLength);
-#endif
-#endif
 }
 
 
@@ -156,17 +120,13 @@ static void capitalizeFirst(Common::String &str) {
 
 
 /*======================================================================*/
-void printAndLog(const char *string)
-{
-#ifdef HAVE_GLK
+void printAndLog(const char *string) {
     static int column = 0;
     char *stringCopy;
     char *stringPart;
-#endif
 
     printf("%s", string);
     if (!onStatusLine && transcriptOption) {
-#ifdef HAVE_GLK
         // TODO Is this assuming only 70-char wide windows for GLK?
         if ((int)strlen(string) > 70-column) {
             stringCopy = strdup(string);  /* Make sure we can write NULLs */
@@ -187,9 +147,6 @@ void printAndLog(const char *string)
 			g_vm->glk_put_string_stream(logFile, string);
             column = updateColumn(column, string);
         }
-#else
-        fprintf(logFile, "%s", string);
-#endif
     }
 }
 
@@ -201,37 +158,7 @@ static void justify(const char *str) {
     if (capitalize)
         capitalizeFirst(tempStr);
 
-#ifdef HAVE_GLK
     printAndLog(tempStr.c_str());
-#else
-    int i;
-    char ch;
-
-    if (col >= pageWidth && !skipSpace)
-        newline();
-
-    while (strlen(str) > pageWidth - col) {
-        i = pageWidth - col - 1;
-        while (!isSpace(str[i]) && i > 0) /* First find wrap point */
-            i--;
-        if (i == 0 && col == 1) /* If it doesn't fit at all */
-            /* Wrap immediately after this word */
-            while (!isSpace(str[i]) && str[i] != '\0')
-                i++;
-        if (i > 0) {        /* If it fits ... */
-            ch = str[i];      /* Save space or NULL */
-            str[i] = '\0';        /* Terminate string */
-            printAndLog(str);     /* and print it */
-            skipSpace = FALSE;        /* If skipping, now we're done */
-            str[i] = ch;      /* Restore character */
-            /* Skip white after printed portion */
-            for (str = &str[i]; isSpace(str[0]) && str[0] != '\0'; str++);
-        }
-        newline();          /* Then start a new line */
-        while(isSpace(str[0])) str++; /* Skip any leading space on next part */
-    }
-    printAndLog(str);     /* Print tail */
-#endif
     col = col + tempStr.size();  // Update column
 }
 
@@ -496,11 +423,8 @@ bool confirm(MsgKind msgno)
        it could be affirmative, but for now any input is NOT! */
     printMessage(msgno);
 
-#ifdef USE_READLINE
-    if (!readline(buf)) return TRUE;
-#else
-    if (gets(buf) == NULL) return TRUE;
-#endif
+    if (!readline(buf))
+		return TRUE;
     col = 1;
 
     return (buf[0] == '\0');

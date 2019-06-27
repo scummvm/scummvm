@@ -42,48 +42,13 @@ bool onStatusLine = FALSE; /* To know if where printing the status line or not *
   from the header.
 
  */
-void getPageSize(void)
-{
-#ifdef HAVE_GLK
+void getPageSize(void) {
   pageLength = 0;
   pageWidth = 0;
-
-#else
-#ifdef HAVE_TERMIO
-
-#ifdef __linux__
-extern int ioctl (int __fd, unsigned long int __request, ...) __THROW;
-#else
-extern int ioctl();
-#endif
-  struct winsize win;
-  int ecode;
-
-  ecode = ioctl(1, TIOCGWINSZ, &win);
-
-  if (ecode != 0 || win.ws_row == 0)
-    pageLength = header->pageLength;
-  else
-    pageLength = win.ws_row;
-
-  if (ecode != 0 || win.ws_col == 0)
-    pageWidth = header->pageWidth;
-  else
-    pageWidth = win.ws_col;
-
-#else
-
-  pageLength = header->pageLength;
-  pageWidth = header->pageWidth;
-
-#endif
-#endif
 }
 
 /*======================================================================*/
-void statusline(void)
-{
-#ifdef HAVE_GLK
+void statusline(void) {
   uint32 glkWidth;
   char line[100];
   int pcol = col;
@@ -95,13 +60,6 @@ void statusline(void)
   g_vm->glk_set_window(glkStatusWin);
   g_vm->glk_window_clear(glkStatusWin);
   g_vm->glk_window_get_size(glkStatusWin, &glkWidth, NULL);
-
-#ifdef HAVE_GARGLK
-  int i;
-  glk_set_style(style_User1);
-  for (i = 0; i < glkWidth; i++)
-    glk_put_char(' ');
-#endif
 
   onStatusLine = TRUE;
   col = 1;
@@ -121,37 +79,6 @@ void statusline(void)
   onStatusLine = FALSE;
 
   g_vm->glk_set_window(glkMainWin);
-#else
-#ifdef HAVE_ANSI
-  char line[100];
-  int i;
-  int pcol = col;
-
-  if (!statusLineOption) return;
-  /* ansi_position(1,1); ansi_bold_on(); */
-  printf("\x1b[1;1H");
-  printf("\x1b[7m");
-
-  onStatusLine = TRUE;
-  col = 1;
-  sayInstance(where(HERO, FALSE));
-
-  if (header->maximumScore > 0)
-    sprintf(line, "Score %d(%d)/%d moves", current.score, header->maximumScore, current.tick);
-  else
-    sprintf(line, "%ld moves", (long)current.tick);
-  for (i=0; i < pageWidth - col - strlen(line); i++) putchar(' ');
-  printf(line);
-  printf("\x1b[m");
-  printf("\x1b[%d;1H", pageLength);
-
-  needSpace = FALSE;
-  capitalize = TRUE;
-
-  onStatusLine = FALSE;
-  col = pcol;
-#endif
-#endif
 }
 
 } // End of namespace Alan3

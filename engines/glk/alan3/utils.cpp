@@ -42,8 +42,7 @@ namespace Alan3 {
   return buffers...
 
  */
-void terminate(int code)
-{
+void terminate(int code) {
     newline();
 
     terminateStateStack();
@@ -53,11 +52,7 @@ void terminate(int code)
     if (memory)
         deallocate(memory);
 
-#ifdef HAVE_GLK
     g_vm->glk_exit();
-#else
-    exit(code);
-#endif
 }
 
 /*======================================================================*/
@@ -79,9 +74,8 @@ void usage(const char *programName)
     printf("\n\nUsage:\n\n");
     printf("    %s [<switches>] <adventure>\n\n", programName);
     printf("where the possible optional switches are:\n");
-#ifdef HAVE_GLK
+
     g_vm->glk_set_style(style_Preformatted);
-#endif
     printf("    -v       verbose mode\n");
     printf("    -l       log transcript to a file\n");
     printf("    -c       log player commands to a file\n");
@@ -90,9 +84,7 @@ void usage(const char *programName)
     printf("    -t[<n>]  trace game execution, higher <n> gives more trace\n");
     printf("    -i       ignore version and checksum errors\n");
     printf("    -r       make regression test easier (don't timestamp, page break, randomize...)\n");
-#ifdef HAVE_GLK
     g_vm->glk_set_style(style_Normal);
-#endif
 }
 
 

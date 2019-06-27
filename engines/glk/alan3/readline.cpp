@@ -54,10 +54,6 @@ bool readline(char buffer[])
     static bool readingCommands = FALSE;
     static frefid_t commandFileRef;
     static strid_t commandFile;
-#ifdef HAVE_WINGLK
-    static frefid_t logFileRef;
-    INT_PTR e;
-#endif
 
     if (readingCommands) {
         if (g_vm->glk_get_line_stream(commandFile, buffer, 255) == 0) {
@@ -80,73 +76,7 @@ bool readline(char buffer[])
                 case evtype_Arrange:
                     statusline();
                     break;
-#ifdef HAVE_WINGLK
-                case winglk_evtype_GuiInput:
-                    switch (event.val1) {
-                    case ID_MENU_RESTART:
-                        restartGame();
-                        break;
-                    case ID_MENU_SAVE:
-                        glk_set_style(style_Input);
-                        printf("save\n");
-                        glk_set_style(style_Normal);
-                        save();
-                        para();
-                        printf("> ");
-                        break;
-                    case ID_MENU_RESTORE:
-                        glk_set_style(style_Input);
-                        printf("restore\n");
-                        glk_set_style(style_Normal);
-                        restore();
-                        look();
-                        para();
-                        printf("> ");
-                        break;
-                    case ID_MENU_RECORD:
-                        if (transcriptOption || logOption) {
-                            glk_stream_close(logFile, NULL);
-                            transcriptOption = FALSE;
-                            logOption = FALSE;
-                        }
-                        logFileRef = glk_fileref_create_by_prompt(fileusage_InputRecord+fileusage_TextMode, filemode_Write, 0);
-                        if (logFileRef == NULL) break;
-                        logFile = glk_stream_open_file(logFileRef, filemode_Write, 0);
-                        if (logFile != NULL)
-                            logOption = TRUE;
-                        break;
-                    case ID_MENU_PLAYBACK:
-                        commandFileRef = glk_fileref_create_by_prompt(fileusage_InputRecord+fileusage_TextMode, filemode_Read, 0);
-                        if (commandFileRef == NULL) break;
-                        commandFile = glk_stream_open_file(commandFileRef, filemode_Read, 0);
-                        if (commandFile != NULL)
-                            if (glk_get_line_stream(commandFile, buffer, 255) != 0) {
-                                readingCommands = TRUE;
-                                printf(buffer);
-                                return TRUE;
-                            }
-                        break;
-                    case ID_MENU_TRANSCRIPT:
-                        if (transcriptOption || logOption) {
-                            glk_stream_close(logFile, NULL);
-                            transcriptOption = FALSE;
-                            logOption = FALSE;
-                        }
-                        logFileRef = glk_fileref_create_by_prompt(fileusage_Transcript+fileusage_TextMode, filemode_Write, 0);
-                        if (logFileRef == NULL) break;
-                        logFile = glk_stream_open_file(logFileRef, filemode_Write, 0);
-                        if (logFile != NULL) {
-                            transcriptOption = TRUE;
-                            glk_put_string_stream(logFile, "> ");
-                        }
-                        break;
-                    case ID_MENU_ABOUT:
-                        e = DialogBox(myInstance, MAKEINTRESOURCE(IDD_ABOUT), NULL, &AboutDialogProc);
-                        (void)e;
-                        break;
-                    }
-                    break;
-#endif
+
 				default:
 					break;
 				}

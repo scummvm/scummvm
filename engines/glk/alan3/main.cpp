@@ -66,46 +66,6 @@ VerbEntry *vrbs;		/* Verb table pointer */
 /* PRIVATE DATA */
 #define STACKSIZE 100
 
-
-
-#ifdef CHECKOBJ
-/*======================================================================
-
-  checkobj()
-
-  Check that the object given is valid, else print an error message
-  or find out what he wanted.
-
-  This routine is not used any longer, kept for sentimental reasons ;-)
-
-*/
-void checkobj(Aword *obj) {
-    Aword oldobj;
-
-    if (*obj != EOD)
-        return;
-
-    oldobj = EOD;
-    for (cur.obj = OBJMIN; cur.obj <= OBJMAX; cur.obj++) {
-        /* If an object is present and it is possible to perform his action */
-        if (isHere(cur.obj) && possible())
-            if (oldobj == EOD)
-                oldobj = cur.obj;
-            else
-                error(WANT);          /* And we didn't find multiple objects */
-    }
-
-    if (oldobj == EOD)
-        error(WANT);              /* But we found ONE */
-
-    *obj = cur.obj = oldobj;
-    output("($o)");             /* Then he surely meant this object */
-}
-#endif
-
-
-
-
 /*----------------------------------------------------------------------*
  *
  * Event Handling
@@ -232,9 +192,6 @@ static void loadAndCheckMemory(ACodeHeader tmphdr, Aword crc, char err[]) {
         crc += (memory[i]>>8)&0xff;
         crc += (memory[i]>>16)&0xff;
         crc += (memory[i]>>24)&0xff;
-#ifdef CRCLOG
-        printf("%6x\t%6lx\t%6lx\n", i, crc, memory[i]);
-#endif
     }
     if (crc != tmphdr.acdcrc) {
         sprintf(err, "Checksum error in Acode (.a3c) file (0x%lx instead of 0x%lx).",

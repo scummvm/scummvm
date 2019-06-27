@@ -68,9 +68,7 @@ Common::SeekableReadStream *textFile;
 
 
 /*======================================================================*/
-void setStyle(int style)
-{
-#ifdef HAVE_GLK
+void setStyle(int style) {
     switch (style) {
     case NORMAL_STYLE: g_vm->glk_set_style(style_Normal); break;
     case EMPHASIZED_STYLE: g_vm->glk_set_style(style_Emphasized); break;
@@ -78,7 +76,6 @@ void setStyle(int style)
     case ALERT_STYLE: g_vm->glk_set_style(style_Alert); break;
     case QUOTE_STYLE: g_vm->glk_set_style(style_BlockQuote); break;
     }
-#endif
 }
 
 /*======================================================================*/
@@ -126,9 +123,7 @@ void print(Aword fpos, Aword len)
                     break;
             }
             str[i] = '\0';
-#if ISO == 0
-            fromIso(str, str);
-#endif
+
             output(str);
         }
 
@@ -243,11 +238,8 @@ void quitGame(void)
         col = 1;
         statusline();
         printMessage(M_QUITACTION);
-#ifdef USE_READLINE
+
         if (!readline(buf)) terminate(0);
-#else
-        if (gets(buf) == NULL) terminate(0);
-#endif
         if (strcasecmp(buf, "restart") == 0)
             longjmp(restartLabel, TRUE);
         else if (strcasecmp(buf, "restore") == 0) {
@@ -558,9 +550,7 @@ int getContainerMember(int container, int index, bool directly) {
 
 
 /*======================================================================*/
-void showImage(int image, int align)
-{
-#ifdef HAVE_GLK
+void showImage(int image, int align) {
     uint ecode;
 
     if ((g_vm->glk_gestalt(gestalt_Graphics, 0) == 1) &&
@@ -570,14 +560,12 @@ void showImage(int image, int align)
         ecode = g_vm->glk_image_draw(glkMainWin, image, imagealign_MarginLeft, 0);
         (void)ecode;
     }
-#endif
 }
 
 
 /*======================================================================*/
 void playSound(int sound)
 {
-#ifdef HAVE_GLK
 #ifdef GLK_MODULE_SOUND
     static schanid_t soundChannel = NULL;
 
@@ -590,9 +578,7 @@ void playSound(int sound)
         }
     }
 #endif
-#endif
 }
-
 
 
 /*======================================================================*/

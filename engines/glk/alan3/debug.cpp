@@ -66,9 +66,7 @@ static void showAttributes(AttributeEntry *attrib)
     i = 1;
     for (at = attrib; !isEndOfArray(at); at++) {
         sprintf(str, "$i$t%s[%d] = %d", (char *) pointerTo(at->id), at->code, (int)at->value);
-#if ISO == 0
-        fromIso(str, str);
-#endif
+
         output(str);
         i++;
     }
@@ -238,47 +236,6 @@ static void showObject(int obj)
 
 }
 
-#ifdef UNDEF_WHEN_NEEDED
-/*----------------------------------------------------------------------*/
-static void showcnts(void)
-{
-    char str[80];
-    int cnt;
-
-    output("Containers:");
-    for (cnt = 1; cnt <= header->containerMax; cnt++) {
-        sprintf(str, "$i%3d: ", cnt);
-        output(str);
-        if (containers[cnt].owner != 0)
-            say(containers[cnt].owner);
-    }
-
-}
-
-/*----------------------------------------------------------------------*/
-static void showContainer(int cnt)
-{
-    char str[80];
-
-    if (cnt < 1 || cnt > header->containerMax) {
-        sprintf(str, "Container number out of range. Between 1 and %d, please.", header->containerMax);
-        output(str);
-        return;
-    }
-
-    sprintf(str, "Container %d :", cnt);
-    output(str);
-    if (containers[cnt].owner != 0) {
-        cnt = containers[cnt].owner;
-        say(cnt);
-        sprintf(str, "$iLocation: %d", where(cnt, TRUE));
-        output(str);
-    }
-    showContents(cnt);
-}
-#endif
-
-
 /*----------------------------------------------------------------------*/
 static int sourceFileNumber(char *fileName) {
     SourceFileEntry *entries = (SourceFileEntry *)pointerTo(header->sourceFileTable);
@@ -437,9 +394,7 @@ static void showEvents(void)
     output("Events:");
     for (event = 1; event <= header->eventMax; event++) {
         sprintf(str, "$i%d [%s]:", event, (char *)pointerTo(events[event].id));
-#if ISO == 0
-        fromIso(str, str);
-#endif
+
         output(str);
         scheduled = FALSE;
         for (i = 0; i < eventQueueTop; i++)
@@ -796,11 +751,7 @@ static void readCommand(char buf[]) {
     do {
         output("adbg> ");
 
-#ifdef USE_READLINE
         if (!readline(buf)) {
-#else
-        if (fgets(buf, 255, stdin) == NULL) {
-#endif
             newline();
             quitGame();
         }
@@ -1042,10 +993,7 @@ void debug(bool calledFromBreakpoint, int line, int fileNumber)
     static bool warned = FALSE;
 
     saveInfo();
-
-#ifdef HAVE_GLK
     g_vm->glk_set_style(style_Preformatted);
-#endif
 
     if (calledFromBreakpoint)
         displaySourceLocation(line, fileNumber);
@@ -1090,10 +1038,7 @@ void debug(bool calledFromBreakpoint, int line, int fileNumber)
     }
 
  exit_debug:
-#ifdef HAVE_GLK
 	g_vm->glk_set_style(style_Normal);
-#endif
-    ;
 }
 
 

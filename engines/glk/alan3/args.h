@@ -31,11 +31,7 @@ namespace Glk {
 namespace Alan3 {
 
 #ifndef PROGNAME
-#ifdef HAVE_GARGLK
 #define PROGNAME "alan3"
-#else
-#define PROGNAME "arun"
-#endif
 #endif
 
 /* DATA */

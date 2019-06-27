@@ -21,23 +21,14 @@
  */
 
 #include "glk/alan3/glkstart.h"
+#include "glk/alan3/alan_version.h"
 #include "glk/alan3/alan3.h"
 #include "glk/alan3/args.h"
 #include "glk/alan3/main.h"
 #include "glk/alan3/glkio.h"
 #include "glk/alan3/resources.h"
 #include "glk/alan3/utils.h"
- //#include "glk/alan3/gi_blorb.h"
 #include "glk/streams.h"
-
-#ifdef HAVE_WINGLK
-#include "glk/alan3/WinGlk.h"
-#endif
-
-
-#ifdef HAVE_GARGLK
-#include "glk/alan3/alan_version.h"
-#endif
 
 namespace Glk {
 namespace Alan3 {
@@ -64,9 +55,7 @@ static void openGlkWindows() {
             printf("FATAL ERROR: Cannot open initial window");
 			g_vm->glk_exit();
     }
-#ifdef HAVE_GARGLK
-   glk_stylehint_set (wintype_TextGrid, style_User1, stylehint_ReverseColor, 1);
-#endif
+
     glkStatusWin = g_vm->glk_window_open(glkMainWin, winmethod_Above |
                                    winmethod_Fixed, 1, wintype_TextGrid, 0);
 	g_vm->glk_set_window(glkStatusWin);
@@ -107,23 +96,8 @@ int glkunix_startup_code(glkunix_startup_t *data) {
     /* first, open a window for error output */
     openGlkWindows();
 
-#ifdef HAVE_GARGLK
-#if (BUILD+0) != 0
-    {
-        char name[100];
-        sprintf(name, "%s-%d", alan.shortHeader, BUILD);
-        garglk_set_program_name(name);
-    }
-#else
-	garglk_set_program_name(alan.shortHeader);
-#endif
-	char info[80];
-	sprintf(info, "%s Interpreter by Thomas Nilefalk\n", alan.shortHeader);
-	garglk_set_program_info(info);
-#endif
-
     /* now process the command line arguments */
-    args(data->argc, data->argv);
+    //args(data->argc, data->argv);
 
     if (adventureFileName == NULL || strcmp(adventureFileName, "") == 0) {
         printf("You should supply a game file to play.\n");
@@ -136,74 +110,6 @@ int glkunix_startup_code(glkunix_startup_t *data) {
 
     return TRUE;
 }
-
-
-
-#ifdef HAVE_WINGLK
-static int argCount;
-static char *argumentVector[10];
-
-/*----------------------------------------------------------------------*/
-static void splitArgs(char *commandLine) {
-    unsigned char *cp = (unsigned char *)commandLine;
-
-    while (*cp) {
-        while (*cp && isspace(*cp)) cp++;
-        if (*cp) {
-            argumentVector[argCount++] = (char *)cp;
-            if (*cp == '"') {
-                do {
-                    cp++;
-                } while (*cp != '"');
-                cp++;
-            } else
-                while (*cp && !isspace(*cp))
-                    cp++;
-            if (*cp) {
-                *cp = '\0';
-                cp++;
-            }
-        }
-    }
-}
-
-
-/*======================================================================*/
-int winglk_startup_code(const char* cmdline)
-{
-    char windowTitle[200];
-
-    /* Process the command line arguments */
-    argumentVector[0] = "";
-    argCount = 1;
-
-    splitArgs(strdup(cmdline));
-
-    args(argCount, argumentVector);
-
-
-    if (adventureFileName == NULL || strcmp(adventureFileName, "") == 0) {
-        adventureFileName = (char*)winglk_get_initial_filename(NULL, "Arun : Select an Alan game file",
-                                                               "Alan Game Files (*.a3c)|*.a3c||");
-        if (adventureFileName == NULL) {
-            terminate(0);
-        }
-        adventureName = gameName(adventureFileName);
-    }
-
-    winglk_app_set_name("WinArun");
-    winglk_set_gui(IDR_ARUN);
-
-    sprintf(windowTitle, "WinArun : %s", adventureName);
-    winglk_window_set_title(windowTitle);
-    openGlkWindows();
-
-    /* Open any possible blorb resource file */
-    openResourceFile();
-
-    return TRUE;
-}
-#endif
 
 } // End of namespace Alan3
 } // End of namespace Glk

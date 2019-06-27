@@ -62,10 +62,7 @@ void forceNewPlayerInput() {
 static void unknown(char tok[]) {
     char *str = strdup(tok);
     Parameter *messageParameters = newParameterArray();
-	
-#if ISO == 0
-    fromIso(str, str);
-#endif
+
     addParameterForString(messageParameters, str);
     printMessageWithParameters(M_UNKNOWN_WORD, messageParameters);
 	deallocate(messageParameters);
@@ -150,12 +147,7 @@ static void getLine(void) {
         } else
             printAndLog("> ");
 
-#ifdef USE_READLINE
         if (!readline(buf)) {
-#else
-        fflush(stdout);
-        if (fgets(buf, LISTLEN, stdin) == NULL) {
-#endif
             newline();
             quitGame();
         }
@@ -177,11 +169,7 @@ static void getLine(void) {
 		::error("TODO: empty command");
 #endif
 		
-#if ISO == 0
-        toIso(isobuf, buf, NATIVECHARSET);
-#else
         strcpy(isobuf, buf);
-#endif
         token = gettoken(isobuf);
         if (token != NULL) {
             if (strcmp("debug", token) == 0 && header->debug) {

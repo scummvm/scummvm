@@ -90,71 +90,14 @@ namespace Alan3 {
 #define WRITE_MODE "wb"
 
 
-/****************************/
-/* Allocates cleared bytes? */
-/****************************/
-
-#ifdef __CYGWIN__
-#define NOTCALLOC
-#endif
-
-#ifdef __MINGW32__
-#define NOTCALLOC
-#endif
-
-#ifdef __unix__
-#define NOTCALLOC
-#endif
-
-
-/****************/
-/* Have termio? */
 /****************/
 
-#ifdef HAVE_GLK
-#  undef HAVE_TERMIO   /* don't need TERMIO */
-#else
-#  ifdef __CYGWIN__
-#    define HAVE_TERMIO
-#  endif
-#  ifdef __unix__
-#    define HAVE_TERMIO
-#  endif
-#endif
+/* don't need TERMIO */
+#undef HAVE_TERMIO
+/* don't need ANSI */
+#undef HAVE_ANSI
 
-/*******************************/
-/* Is ANSI control available? */
-/*******************************/
-
-#ifdef HAVE_GLK
-#  undef HAVE_ANSI /* don't need ANSI */
-#else
-#  ifdef __CYGWIN__
-#    define HAVE_ANSI
-#  endif
-#endif
-
-/******************************/
-/* Use the READLINE function? */
-/******************************/
 #define USE_READLINE
-#ifdef SOME_PLATFORM_WHICH_CANT_USE_READLINE
-#  undef USE_READLINE
-#endif
-
-/* Special cases and definition overrides */
-#ifdef __unix__
-#define MULTI
-#endif
-
-
-#ifdef __dos__
-
-/* Return codes */
-#define EXIT_SUCCESS 0
-#define EXIT_FAILURE  1
-
-#endif
 
 
 /* Native character functions */
