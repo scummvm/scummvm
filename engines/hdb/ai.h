@@ -1006,7 +1006,7 @@ public:
 	Common::Array<HereT *> *_hereList;
 
 	// Virtual Player
-	AIEntity _dummyPlayer;
+	AIEntity _dummyPlayer, _dummyLaser;
 
 	// Cinematic Variables
 	Common::Array<CineCommand *> _cine;
