@@ -715,6 +715,8 @@ void AI::animateEntity(AIEntity *e) {
 
 	int bgTileFlags, bgTileIndex;
 	int fgTileFlags, fgTileIndex;
+	bool result;
+	uint64 flags;
 
 	// Move entity if player is not dead
 	debug(3, "Before animateEntity, e->x: %d, e->y: %d", e->x, e->y);
@@ -805,7 +807,6 @@ void AI::animateEntity(AIEntity *e) {
 
 	// Reached goal?
 	// Cinematic require less accuracy for NPCs
-	int result;
 	if (_cineActive && e != _player)
 		result = (abs(e->x - (e->goalX * kTileWidth)) <= abs(e->xVel)) && (abs(e->y - (e->goalY * kTileHeight)) <= abs(e->yVel));
 	else
@@ -825,9 +826,219 @@ void AI::animateEntity(AIEntity *e) {
 			e->tileX = e->goalX;
 			e->tileY = e->goalY;
 
-			stopEntity(e);
+			uint16 buttons = g_hdb->_input->getButtons();
 
-			warning("STUB: animateEntity: Stop entity");
+			if (e == _player && (buttons & (kButtonUp || kButtonDown || kButtonLeft || kButtonRight))) {
+				int xva[] = {9, 0, 0, -1, 1}, yva[] = {9, -1, 1, 0, 0};
+				int nx, ny, result2;
+
+				if (e->state != STATE_PUSHRIGHT && e->state != STATE_PUSHLEFT && e->state != STATE_PUSHUP && e->state != STATE_PUSHDOWN) {
+					if (buttons & kButtonUp)
+						e->dir = DIR_UP;
+					else if (buttons & kButtonDown)
+						e->dir = DIR_DOWN;
+					else if (buttons & kButtonLeft)
+						e->dir = DIR_LEFT;
+					else if (buttons & kButtonRight)
+						e->dir = DIR_RIGHT;
+
+					nx = e->tileX + xva[e->dir];
+					ny = e->tileY + yva[e->dir];
+					AIEntity *hit = legalMove(nx, ny, e->level, &result2);
+					if (!hit && result2) {
+						switch (e->dir) {
+						case DIR_UP:	e->goalY = ny;	e->xVel = 0; e->yVel = -kPlayerMoveSpeed; e->state = STATE_MOVEUP; break;
+						case DIR_DOWN:	e->goalY = ny;  e->xVel = 0; e->yVel =  kPlayerMoveSpeed; e->state = STATE_MOVEDOWN; break;
+						case DIR_LEFT:	e->goalX = nx;  e->yVel = 0; e->xVel = -kPlayerMoveSpeed; e->state = STATE_MOVELEFT; break;
+						case DIR_RIGHT: e->goalX = nx;  e->yVel = 0; e->xVel =  kPlayerMoveSpeed; e->state = STATE_MOVERIGHT; break;
+						case DIR_NONE:	warning("animateEntity: DIR_NONE found"); break;
+						}
+						if (_playerRunning) {
+							e->xVel = e->xVel << 1;
+							e->yVel = e->yVel << 1;
+						}
+					} else
+						stopEntity(e);
+				} else
+					stopEntity(e);
+			} else
+				stopEntity(e);
+
+			// Handle lasers after entity has stopped
+			switch (e->type) {
+			case AI_GUY:
+			case AI_CRATE:
+			case AI_LIGHTBARREL:
+			case AI_HEAVYBARREL:
+			case AI_BOOMBARREL:
+			case AI_MAGIC_EGG:
+			case AI_ICE_BLOCK:
+			case AI_DIVERTER:
+				warning("STUB: animateEntity: Set _laserRescan to true");
+				break;
+			default:
+				warning("animateEntity: Unintended State");
+			}
+
+			// Checking at the Destination
+
+			// Can this entity float and it is over-water
+			if (((flags = g_hdb->_map->getMapBGTileFlags(e->tileX, e->tileY)) & kFlagWater) && (e->type == AI_CRATE || e->type == AI_LIGHTBARREL || e->type == AI_BOOMBARREL || e->type == AI_HEAVYBARREL || e->type == AI_FROGSTATUE || e->type == AI_DIVERTER)) {
+				// On a grating and level2?
+				if ((g_hdb->_map->getMapFGTileFlags(e->tileX, e->tileY) & kFlagGrating) && e->level == 2) {
+					animEntFrames(e);
+					return;
+				}
+
+				// If it fell in slime
+				// If it is a light barrel on a melting floor
+				// If it is supposed to slide across the floor
+				// If it is being pushed on a floating entity, don't float it
+				if (flags & kFlagSlime) {
+					// unless its a Heavy Barrel in which case it floats in slime
+					if ((e->type == AI_CRATE || e->type == AI_HEAVYBARREL) && !checkFloating(e->tileX, e->tileY)) {
+						addAnimateTarget(e->x, e->y, 0, 3, ANIM_NORMAL, false, false, GROUP_SLIME_SPLASH_SIT);
+						floatEntity(e, STATE_FLOATING);
+						warning("STUB: animateEntity: Play SND_SPLASH");
+					} else if (!checkFloating(e->tileX, e->tileY)) {
+						if (e->type == AI_BOOMBARREL) {
+							aiBarrelExplode(e);
+							aiBarrelBlowup(e, e->tileX, e->tileY);
+							return;
+						} else {
+							addAnimateTarget(e->x, e->y, 0, 3, ANIM_NORMAL, false, false, GROUP_STEAM_PUFF_SIT);
+							removeEntity(e);
+							warning("STUB: animateEntity: Play SND_BARREL_MELTING");
+						}
+					}
+				} else if ((flags & kFlagLightMelt) && e->type == AI_LIGHTBARREL) {
+					if (!checkFloating(e->tileX, e->tileY)) {
+						addAnimateTarget(e->x, e->y, 0, 3, ANIM_NORMAL, false, false, GROUP_STEAM_PUFF_SIT);
+						floatEntity(e, STATE_MELTED);
+						warning("STUB: animateEntity: Play SND_BARREL_MELTING");
+					}
+				} else if (flags & kFlagSlide) {
+					int xv = 0, yv = 0;
+					AIEntity *hit;
+
+					switch (e->dir) {
+					case DIR_UP:	yv = -1; break;
+					case DIR_DOWN:	yv = 1; break;
+					case DIR_LEFT:	xv = -1; break;
+					case DIR_RIGHT: xv = 1; break;
+					case DIR_NONE:	warning("animateEntity: DIR_NONE found"); break;
+					}
+
+					hit = findEntityIgnore(e->tileX + xv, e->tileY + yv, &_dummyLaser);
+					if (!hit) {
+						e->state = STATE_SLIDING;
+						if (flags & kFlagAnimFast)
+							e->moveSpeed = kPlayerMoveSpeed << 1;
+						else if (flags & kFlagAnimSlow)
+							e->moveSpeed = kPlayerMoveSpeed >> 1;
+						setEntityGoal(e, e->tileX + xv, e->tileY + yv);
+						warning("STUB: animateEntity: Play SND_LIGHT_SLIDE");
+					}
+
+				} else if (!checkFloating(e->tileX, e->tileY)) {
+					if (e->type == AI_BOOMBARREL || e->type == AI_HEAVYBARREL || e->type == AI_FROGSTATUE || e->type == AI_DIVERTER) {
+						// Make it disappear in the water
+						addAnimateTarget(e->x, e->y, 0, 3, ANIM_NORMAL, false, false, GROUP_WATER_SPLASH_SIT);
+						removeEntity(e);
+						warning("STUB: animateEntity: Play SND_SPLASH");
+						return;
+					} else {
+						// Make it float and splash in water
+						addAnimateTarget(e->x, e->y, 0, 3, ANIM_NORMAL, false, false, GROUP_WATER_SPLASH_SIT);
+						floatEntity(e, STATE_FLOATING);
+						warning("STUB: animateEntity: Play SND_SPLASH");
+						return;
+					}
+
+				// If it is floating downstream, keep moving it
+				if (flags & (kFlagPushRight | kFlagPushLeft | kFlagPushUp | kFlagPushDown)) {
+					int xv = 0, yv = 0;
+					AIState state;
+
+					if (flags & kFlagPushRight) {
+						e->dir = DIR_RIGHT;
+						xv = 1;
+						state = STATE_FLOATRIGHT;
+					} else if (flags & kFlagPushLeft) {
+						e->dir = DIR_LEFT;
+						xv = -1;
+						state = STATE_FLOATLEFT;
+					} else if (flags & kFlagPushUp) {
+						e->dir = DIR_UP;
+						yv = -1;
+						state = STATE_FLOATUP;
+					} else if (flags & kFlagPushDown) {
+						e->dir = DIR_DOWN;
+						yv = 1;
+						state = STATE_FLOATDOWN;
+					}
+
+					if (!checkFloating(e->tileX + xv, e->tileY + yv)) {
+						if (flags & kFlagAnimFast)
+							e->moveSpeed = kPlayerMoveSpeed << 1;
+						else if (flags & kFlagAnimMedium)
+							e->moveSpeed = kPlayerMoveSpeed;
+						else
+							e->moveSpeed = kPushMoveSpeed;
+
+						setEntityGoal(e, e->tileX + xv, e->tileY + yv);
+						e->state = state;
+					} else {
+						// Landed on a floatmove entity. Make it float really slow and then it'll speed up
+						uint32 flags2 = g_hdb->_map->getMapBGTileFlags(e->tileX + xv, e->tileY + yv);
+						if (!(flags2 & (kFlagPushRight | kFlagPushLeft | kFlagPushUp | kFlagPushDown))) {
+							floatEntity(e, STATE_FLOATING);
+							e->value1 = 0x666;	// Don't move me ever again
+							return;
+						}
+
+						if (flags & kFlagPushRight) {
+							e->dir = DIR_RIGHT;
+							xv = 1;
+							state = STATE_FLOATRIGHT;
+						} else if (flags & kFlagPushLeft) {
+							e->dir = DIR_LEFT;
+							xv = -1;
+							state = STATE_FLOATLEFT;
+						} else if (flags & kFlagPushUp) {
+							e->dir = DIR_UP;
+							yv = -1;
+							state = STATE_FLOATUP;
+						} else if (flags & kFlagPushDown) {
+							e->dir = DIR_DOWN;
+							yv = 1;
+							state = STATE_FLOATDOWN;
+						}
+
+						e->moveSpeed = kPushMoveSpeed >> 1;
+						setEntityGoal(e, e->tileX + xv, e->tileY + yv);
+						e->state = state;
+						}
+					}
+				}
+			} else if (((flags = g_hdb->_map->getMapBGTileFlags(e->tileX, e->tileY)) & kFlagWater) && (e->type == AI_MAGIC_EGG || e->type == AI_ICE_BLOCK)) {
+				// And no foreground tile is there
+				if (g_hdb->_map->getMapFGTileIndex(e->tileX, e->tileY) < 0 && !checkFloating(e->tileX, e->tileY)) {
+					if (flags & kFlagSlime) {
+						// Evaporates in Slime
+						addAnimateTarget(e->x, e->y, 0, 3, ANIM_NORMAL, false, false, GROUP_STEAM_PUFF_SIT);
+						removeEntity(e);
+						warning("STUB: animateEntity: Play SND_SPLASH");
+						return;
+					} else {
+						// Drowns in water
+						addAnimateTarget(e->x, e->y, 0, 3, ANIM_NORMAL, false, false, GROUP_WATER_SPLASH_SIT);
+						removeEntity(e);
+						warning("STUB: animateEntity: Play SND_SPLASH");
+						return;
+					}
+				}
+			}
 		} else if (onEvenTile(e->x, e->y))
 			setEntityGoal(e, _waypoints[0].x, _waypoints[0].y);
 	}
