@@ -300,7 +300,7 @@ Common::Error HDBGame::run() {
 
 		_drawMan->drawSky();
 
-		warning("STUB: HDBGame::run: Add check for pause flag");
+		debug(9, "STUB: HDBGame::run: Add check for pause flag");
 
 		_ai->moveEnts();
 		_ai->processCallbackList();
