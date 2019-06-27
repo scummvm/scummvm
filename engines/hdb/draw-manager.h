@@ -35,7 +35,12 @@ enum {
 	kMaxSkies = 10,
 	kNum3DStars = 300,
 	kFontSpace = 5,
-	kFontIncrement = 1
+	kFontIncrement = 1,
+	kGameFPS = 60,
+	kAnimFrameDelay = kGameFPS / 30,
+	kAnimSlowFrames = kAnimFrameDelay * 10,
+	kAnimMediumFrames = kAnimFrameDelay * 6,
+	kAnimFastFrames = kAnimFrameDelay * 2
 };
 
 class Tile;

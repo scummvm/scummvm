@@ -40,6 +40,7 @@ enum {
 	kMaxAutoActions = 30,
 	kMaxLuaEnts = 50,
 	kMaxCallbacks = 20,
+	kDelay5Seconds = 5 * kGameFPS,
 	kPlayerMoveSpeed = 4,
 	kEnemyMoveSpeed = 2,
 	kPushMoveSpeed = (kPlayerMoveSpeed >> 1),

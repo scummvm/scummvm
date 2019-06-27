@@ -113,11 +113,6 @@ enum Flag {
 enum {
 	kScreenWidth = 640,
 	kScreenHeight = 480,
-	kGameFPS = 60,
-	kAnimFrameDelay = kGameFPS / 30,
-	kAnimSlowFrames = kAnimFrameDelay * 10,
-	kAnimMediumFrames = kAnimFrameDelay * 6,
-	kAnimFastFrames = kAnimFrameDelay * 2
 };
 
 class HDBGame : public Engine {
