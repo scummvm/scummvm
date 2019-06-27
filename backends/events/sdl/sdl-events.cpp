@@ -287,8 +287,8 @@ void SdlEventSource::updateKbdMouse() {
 }
 
 bool SdlEventSource::handleKbdMouse(Common::Event &event) {
-	int16 oldKmX = _km.x;
-	int16 oldKmY = _km.y;
+	int32 oldKmX = _km.x;
+	int32 oldKmY = _km.y;
 
 	updateKbdMouse();
 
