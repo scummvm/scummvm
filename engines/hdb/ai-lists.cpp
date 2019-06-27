@@ -90,13 +90,13 @@ void AI::animateTargets() {
 	int layer;
 
 	g_hdb->_map->getMapXY(&mx, &my);
-	debug("animateTargets: Size of _animTargets: %d", _animTargets->size());
-	debug("_animTargets:");
+	debug(9, "animateTargets: Size of _animTargets: %d", _animTargets->size());
+	debug(9, "_animTargets:");
 
 	for (Common::Array<AnimTarget *>::iterator it = _animTargets->begin(); it != _animTargets->end(); it++) {
 		at = *it;
-		debug("it - _animTargets->begin(): %d", it - _animTargets->begin());
-		debug("at: at->x: %d, at->y: %d, at->start: %d, at->end: %d, at->vel: %d", at->x, at->y, at->start, at->end, at->vel);
+		debug(9, "it - _animTargets->begin(): %d", it - _animTargets->begin());
+		debug(9, "at: at->x: %d, at->y: %d, at->start: %d, at->end: %d, at->vel: %d", at->x, at->y, at->start, at->end, at->vel);
 		// Draw Non-Map stuff every frame
 
 		if (!at->inMap)
