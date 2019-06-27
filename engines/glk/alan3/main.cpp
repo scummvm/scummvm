@@ -36,6 +36,7 @@
 #include "glk/alan3/glkio.h"
 #include "glk/alan3/instance.h"
 #include "glk/alan3/inter.h"
+#include "glk/alan3/jumps.h"
 #include "glk/alan3/lists.h"
 #include "glk/alan3/literal.h"
 #include "glk/alan3/location.h"
@@ -731,80 +732,85 @@ static void moveActor(int theActor) {
 	current.instance = previousInstance;
 }
 
-#define RESTARTED (setjmp(restartLabel) != NO_JUMP_RETURN)
-#define ERROR_RETURNED (setjmp(returnLabel) != NO_JUMP_RETURN)
-
 /*======================================================================*/
 void run(void) {
-	static Stack theStack = NULL; /* Needs to survive longjmp() */
+	Stack theStack = NULL;
+	Context ctx;
 
-	openFiles();
-	load();         /* Load program */
-#ifdef TODO
-	if (RESTARTED) {
-		deleteStack(theStack);
-	}
+	do {
+		openFiles();
+		load();			// Load program
 
-	theStack = createStack(STACKSIZE);
-	setInterpreterStack(theStack);
+		if (theStack)
+			deleteStack(theStack);
 
-	initStateStack();
+		theStack = createStack(STACKSIZE);
+		setInterpreterStack(theStack);
 
-	if (!ERROR_RETURNED)      /* Can happen in start section too... */
-		init();               /* Initialise and start the adventure */
+		initStateStack();
 
-	while (TRUE) {
-		if (debugOption)
-			debug(FALSE, 0, 0);
+		// Initialise and start the adventure
+		init();
 
-		if (stackDepth(theStack) != 0)
-			syserr("Stack is not empty in main loop");
+		while (!g_vm->shouldQuit()) {
+			if (!ctx._break) {
+				if (debugOption)
+					debug(FALSE, 0, 0);
 
-		if (!current.meta)
-			runPendingEvents();
+				if (stackDepth(theStack) != 0)
+					syserr("Stack is not empty in main loop");
 
-		/* Return here if error during execution */
-		switch (setjmp(returnLabel)) {
-		case NO_JUMP_RETURN:
-			break;
-		case ERROR_RETURN:
-			forgetGameState();
-			forceNewPlayerInput();
-			break;
-		case UNDO_RETURN:
-			forceNewPlayerInput();
-			break;
-		default:
-			syserr("Unexpected longjmp() return value");
-		}
-
-		recursionDepth = 0;
-
-		/* Move all characters, hero first */
-		rememberGameState();
-		current.meta = FALSE;
-		moveActor(header->theHero);
-
-		if (gameStateChanged)
-			rememberCommands();
-		else
-			forgetGameState();
-
-		if (!current.meta) {
-			current.tick++;
-
-			/* Remove this call? Since Eval is done up there after each event... */
-			resetAndEvaluateRules(rules, header->version);
-
-			/* Then all the other actors... */
-			for (uint i = 1; i <= header->instanceMax; i++)
-				if (i != header->theHero && isAActor(i)) {
-					moveActor(i);
-					resetAndEvaluateRules(rules, header->version);
+				if (!current.meta)
+					runPendingEvents();
+			} else {
+				#ifdef TODO
+				// Return here if error during execution
+				switch (setjmp(returnLabel)) {
+				case NO_JUMP_RETURN:
+					break;
+				case ERROR_RETURN:
+					forgetGameState();
+					forceNewPlayerInput();
+					break;
+				case UNDO_RETURN:
+					forceNewPlayerInput();
+					break;
+				default:
+					syserr("Unexpected longjmp() return value");
 				}
+				#endif
+			}
+
+			recursionDepth = 0;
+
+			// Move all characters, hero first
+			rememberGameState();
+			current.meta = FALSE;
+			moveActor(header->theHero);
+
+			if (gameStateChanged)
+				rememberCommands();
+			else
+				forgetGameState();
+
+			if (!current.meta) {
+				current.tick++;
+
+				// Remove this call? Since Eval is done up there after each event...
+				resetAndEvaluateRules(rules, header->version);
+
+				/* Then all the other actors... */
+				for (uint i = 1; i <= header->instanceMax; i++)
+					if (i != header->theHero && isAActor(i)) {
+						moveActor(i);
+						resetAndEvaluateRules(rules, header->version);
+					}
+			}
+
+			if (ctx._break && ctx._label == "restart")
+				break;
 		}
-	}
-#endif
+	} while (!g_vm->shouldQuit() && ctx._label == "restart");
 }
 
 } // End of namespace Alan3

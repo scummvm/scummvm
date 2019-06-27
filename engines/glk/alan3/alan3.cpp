@@ -41,12 +41,16 @@ namespace Alan3 {
 Alan3 *g_vm = nullptr;
 
 Alan3::Alan3(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gameDesc),
-	vm_exited_cleanly(false), _restartFlag(false), _saveSlot(-1), _pendingLook(false) {
+	vm_exited_cleanly(false), _saveSlot(-1), _pendingLook(false) {
 	g_vm = this;
+
+	// main
+	codfil = nullptr;
 //	txtfil = nullptr;
 //	logfil = nullptr;
 	memory = nullptr;
 
+	// options
 	verboseOption = false;
 	ignoreErrorOption = false;
 	debugOption = false;
@@ -86,33 +90,31 @@ bool Alan3::initialize() {
 	glkStatusWin = g_vm->glk_window_open(glkMainWin, winmethod_Above |
 	                                     winmethod_Fixed, 1, wintype_TextGrid, 0);
 	g_vm->glk_set_window(glkMainWin);
+
+	// Set up the code file to point to the already opened game file
+	codfil = &_gameFile;
 	/*
-	    // Set up the code file to point to the already opened game file
-	    codfil = &_gameFile;
-	    strncpy(codfnm, getFilename().c_str(), 255);
-	    codfnm[255] = '\0';
+	if (_gameFile.size() < 8) {
+	    GUIErrorMessage(_("This is too short to be a valid Alan3 file."));
+	    return false;
+	}
 
-	    if (_gameFile.size() < 8) {
-	        GUIErrorMessage(_("This is too short to be a valid Alan3 file."));
-	        return false;
-	    }
+	if (_gameFile.readUint32BE() != MKTAG(2, 8, 1, 0)) {
+	    GUIErrorMessage(_("This is not a valid Alan3 file."));
+	    return false;
+	}
 
-	    if (_gameFile.readUint32BE() != MKTAG(2, 8, 1, 0)) {
-	        GUIErrorMessage(_("This is not a valid Alan3 file."));
-	        return false;
-	    }
-
-	    // Open up the text file
-	    txtfil = new Common::File();
-	    if (!txtfil->open(Common::String::format("%s.dat", _advName.c_str()))) {
-	        GUIErrorMessage("Could not open adventure text data file");
-	        delete txtfil;
-	        return false;
-	    }
-
-	    // Check for a save being loaded directly from the launcher
-	    _saveSlot = ConfMan.hasKey("save_slot") ? ConfMan.getInt("save_slot") : -1;
+	// Open up the text file
+	txtfil = new Common::File();
+	if (!txtfil->open(Common::String::format("%s.dat", _advName.c_str()))) {
+	    GUIErrorMessage("Could not open adventure text data file");
+	    delete txtfil;
+	    return false;
+	}
 	*/
+	// Check for a save being loaded directly from the launcher
+	_saveSlot = ConfMan.hasKey("save_slot") ? ConfMan.getInt("save_slot") : -1;
+
 	return true;
 }
 
