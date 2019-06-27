@@ -656,8 +656,9 @@ struct CineBlit {
 	CineBlit() : x(0), y(0), pic(NULL), name(""), id(""), masked(false) {}
 };
 
-#define onEvenTile(x, y)	( !(x & 31) && !(y & 31) )
-#define hitPlayer(x, y)		( e->onScreen && g_hdb->_ai->checkPlayerCollision( x, y, 4 ) && !g_hdb->_ai->playerDead() )
+#define onEvenTile(x, y)		( !(x & 31) && !(y & 31) )
+#define hitPlayer(x, y)			( e->onScreen && g_hdb->_ai->checkPlayerCollision( x, y, 4 ) && !g_hdb->_ai->playerDead() )
+#define spawnBlocking(x, y, level)	g_hdb->_ai->spawn(AI_NONE, DIR_NONE, x, y, NULL, NULL, NULL, DIR_NONE, level, 0, 0, 0)
 
 class AI {
 public:
