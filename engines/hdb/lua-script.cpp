@@ -952,11 +952,16 @@ void LuaScript::pushString(char *string) {
 }
 
 void LuaScript::pushFunction(char *func) {
+	int type;
+
 	if (!_systemInit)
 		return;
 
 	lua_getglobal(_state, func);
-	warning("STUB: pushFunction: Open Dialog if Cheating_On");
+	type = lua_type(_state, 1);
+	if (type != LUA_TFUNCTION && type != LUA_TNUMBER) {
+		warning("pushFunction: Function '%s' doesn't exists", func);
+	}
 }
 
 void LuaScript::call(int args, int returns) {
