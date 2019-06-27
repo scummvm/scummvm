@@ -1541,6 +1541,18 @@ bool AI::checkPlayerCollision(int x, int y, int border) {
 	return (x > (_player->x - 32 + border) && x < (_player->x - 32 - border) && y >(_player->y - 32 + border) && y < (_player->y - 32 - border));
 }
 
+void AI::floatEntity(AIEntity *e, AIState state) {
+	for (Common::Array<AIEntity *>::iterator it = _ents->begin(); it != _ents->end(); it++) {
+		if (e == *it) {
+			_floats->push_back(*it);
+			_ents->erase(it);
+			break;
+		}
+	}
+	e->state = state;
+	e->level = 1;
+}
+
 bool AI::checkFloating(int x, int y) {
 	for (Common::Array<AIEntity *>::iterator it = _floats->begin(); it != _floats->end(); it++) {
 		if ((*it)->tileX == x && (*it)->tileY == y)
