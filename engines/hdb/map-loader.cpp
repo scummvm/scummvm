@@ -733,14 +733,14 @@ uint32 Map::getMapFGTileFlags(int x, int y) {
 	return 0;
 }
 
-uint16 Map::getMapBGTileIndex(int x, int y) {
+int16 Map::getMapBGTileIndex(int x, int y) {
 	if (x < 0 || x >= _width || y < 0 || y >= _height) {
 		return 0;
 	}
 	return _background[y * _width + x];
 }
 
-uint16 Map::getMapFGTileIndex(int x, int y) {
+int16 Map::getMapFGTileIndex(int x, int y) {
 	if (x < 0 || x >= _width || y < 0 || y >= _height) {
 		return 0;
 	}

@@ -89,8 +89,8 @@ public:
 
 	uint32 getMapBGTileFlags(int x, int y);
 	uint32 getMapFGTileFlags(int x, int y);
-	uint16 getMapBGTileIndex(int x, int y);
-	uint16 getMapFGTileIndex(int x, int y);
+	int16 getMapBGTileIndex(int x, int y);
+	int16 getMapFGTileIndex(int x, int y);
 	void setMapBGTileIndex(int x, int y, int index);
 	void setMapFGTileIndex(int x, int y, int index);
 	void addBGTileAnimation(int x, int y);
