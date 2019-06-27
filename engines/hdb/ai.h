@@ -39,6 +39,7 @@ enum {
 	kMaxTeleporters = 20,
 	kMaxAutoActions = 30,
 	kMaxLuaEnts = 50,
+	kMaxCallbacks = 20,
 	kPlayerMoveSpeed = 4,
 	kEnemyMoveSpeed = 2,
 	kPushMoveSpeed = (kPlayerMoveSpeed >> 1),
@@ -354,6 +355,15 @@ enum CineType {
 	C_ENDLIST
 };
 
+enum CallbackType {
+	NO_FUNCTION,
+	AI_BARREL_EXPLOSION_END,
+	CALLBACK_DOOR_OPEN_CLOSE,
+	CALLBACK_AUTODOOR_OPEN_CLOSE,
+
+	CALLBACK_END
+};
+
 struct AIStateDef {
 	AIState state;
 	const char name[64];
@@ -638,6 +648,22 @@ struct Trigger {
 	char luaFuncUse[32];
 
 	Trigger() : id(""), x(0), y(0), value1(0), value2(0), luaFuncInit(""), luaFuncUse("") {}
+};
+
+struct CallbackDef {
+	CallbackType type;
+	void(*function)(int x, int y);
+
+	CallbackDef() : type(NO_FUNCTION), function(NULL) {}
+	CallbackDef(CallbackType type, void(*function)(int, int)) : type(type), function(function) {}
+};
+
+struct Callback {
+	CallbackType type;
+	uint16 x, y;
+	uint16 delay;
+
+	Callback() : type(NO_FUNCTION), x(0), y(0), delay(0) {}
 };
 
 struct CineCommand {
@@ -1033,6 +1059,8 @@ public:
 	int _numTeleporters;
 
 	AutoAction _autoActions[kMaxAutoActions];
+
+	Callback _callbacks[kMaxCallbacks];
 
 	Common::Array<ArrowPath *> *_arrowPaths;
 	Common::Array<HereT *> *_hereList;
