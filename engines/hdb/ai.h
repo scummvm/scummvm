@@ -618,6 +618,16 @@ struct HereT {
 	char entName[32];
 };
 
+struct Trigger {
+	char id[32];
+	uint16 x, y;
+	uint16 value1, value2;
+	char luaFuncInit[32];
+	char luaFuncUse[32];
+
+	Trigger() : id(""), x(0), y(0), value1(0), value2(0), luaFuncInit(""), luaFuncUse("") {}
+};
+
 struct CineCommand {
 	CineType cmdType;
 	double x, y;
@@ -1004,6 +1014,7 @@ public:
 
 	Common::Array<ArrowPath *> *_arrowPaths;
 	Common::Array<HereT *> *_hereList;
+	Common::Array<Trigger *> *_triggerList;
 
 	// Virtual Player
 	AIEntity _dummyPlayer, _dummyLaser;
