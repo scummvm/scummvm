@@ -718,6 +718,7 @@ public:
 	void setEntityGoal(AIEntity *e, int x, int y);
 	void initAllEnts();
 	void killPlayer(Death method);
+	void stunEnemy(AIEntity *e, int time);
 
 	void animateEntity(AIEntity *e);
 	void animEntFrames(AIEntity *e);

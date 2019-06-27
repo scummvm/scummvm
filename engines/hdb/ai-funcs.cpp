@@ -705,6 +705,57 @@ void AI::killPlayer(Death method) {
 	warning("STUB: killPlayer: Stop Music");
 }
 
+void AI::stunEnemy(AIEntity *e, int time) {
+	int ns = 0;
+
+	if (e->stunnedWait)
+		ns = 1;
+
+	e->stunnedWait = g_hdb->getTimeSlice() + 1000 * time;
+
+	// Already stunned? If not, play sound
+	if (!ns)
+		switch (e->type) {
+		case AI_BUZZFLY:
+			warning("STUB: stunEnemy: Play sound");
+			break;
+		case AI_PUSHBOT:
+			warning("STUB: stunEnemy: Play sound");
+			break;
+		case AI_MEERKAT:
+			warning("STUB: stunEnemy: Play sound");
+			break;
+		case AI_FATFROG:
+			warning("STUB: stunEnemy: Play sound");
+			break;
+		case AI_OMNIBOT:
+		case AI_SHOCKBOT:
+		case AI_LISTENBOT:
+			warning("STUB: stunEnemy: Play sound");
+			break;
+		case AI_GOODFAIRY:
+			warning("STUB: stunEnemy: Play sound");
+			break;
+		case AI_BADFAIRY:
+			warning("STUB: stunEnemy: Play sound");
+			break;
+		case AI_ICEPUFF:
+			warning("STUB: stunEnemy: Play sound");
+			break;
+		case AI_RIGHTBOT:
+			warning("STUB: stunEnemy: Play sound");
+			break;
+		case AI_BOOMBARREL:
+			warning("STUB: stunEnemy: Play sound");
+			break;
+		case AI_CHICKEN:	// Fall through
+			warning("STUB: stunEnemy: Play sound");
+		default:
+			warning("STUB: stunEnemy: Play sound");
+			break;
+		}
+}
+
 /*
 	Note from original:
 	Moves the entity along toward its goal, sets current frame to draw
