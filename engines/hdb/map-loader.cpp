@@ -808,7 +808,7 @@ void Map::removeBGTileAnimation(int x, int y) {
 	uint32 flags = tile->_flags;
 
 	if (flags & kFlagAnimFast) {
-		for(Common::Array<uint32>::iterator it = _listBGAnimFast.begin(); it!=_listBGAnimFast.end(); it++)
+		for (Common::Array<uint32>::iterator it = _listBGAnimFast.begin(); it!=_listBGAnimFast.end(); it++)
 			if ((uint)i == (*it)) {
 				_listBGAnimFast.erase(it);
 				break;
@@ -837,7 +837,7 @@ void Map::removeFGTileAnimation(int x, int y) {
 	uint32 flags = tile->_flags;
 
 	if (flags & kFlagAnimFast) {
-		for(Common::Array<uint32>::iterator it = _listFGAnimFast.begin(); it!=_listFGAnimFast.end(); it++)
+		for (Common::Array<uint32>::iterator it = _listFGAnimFast.begin(); it!=_listFGAnimFast.end(); it++)
 			if ((uint)i == (*it)) {
 				_listFGAnimFast.erase(it);
 				break;

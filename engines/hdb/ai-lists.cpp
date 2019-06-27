@@ -441,11 +441,11 @@ bool AI::autoActive(int x, int y) {
 }
 
 CallbackDef allCallbacks[] = {
-	{NO_FUNCTION,	NULL},
-	{AI_BARREL_EXPLOSION_END,		aiBarrelExplosionEnd},
-	{CALLBACK_DOOR_OPEN_CLOSE,		callbackDoorOpenClose},
-	{CALLBACK_AUTODOOR_OPEN_CLOSE,	callbackAutoDoorOpenClose},
-	{CALLBACK_END,					NULL}
+	{NO_FUNCTION, NULL},
+	{AI_BARREL_EXPLOSION_END, aiBarrelExplosionEnd},
+	{CALLBACK_DOOR_OPEN_CLOSE, callbackDoorOpenClose},
+	{CALLBACK_AUTODOOR_OPEN_CLOSE, callbackAutoDoorOpenClose},
+	{CALLBACK_END, NULL}
 };
 
 void AI::addCallback(CallbackType type, int x, int y, int delay) {
@@ -499,7 +499,7 @@ void AI::addToLuaList(int x, int y, int value1, int value2, char *luaFuncInit, c
 }
 
 bool AI::checkLuaList(AIEntity *e, int x, int y) {
-	for (int i = 0;i < _numLuaList; i++) {
+	for (int i = 0; i < _numLuaList; i++) {
 		if (_luaList[i].x == x && _luaList[i].y == y && _luaList[i].luaFuncUse[0]) {
 			if (e == _player) {
 				lookAtXY(x, y);
@@ -516,7 +516,7 @@ bool AI::checkLuaList(AIEntity *e, int x, int y) {
 }
 
 bool AI::luaExistAtXY(int x, int y) {
-	for (int i = 0;i < _numLuaList; i++) {
+	for (int i = 0; i < _numLuaList; i++) {
 		if (_luaList[i].x == x && _luaList[i].y == y && _luaList[i].luaFuncUse[0]) {
 			return true;
 		}
@@ -560,7 +560,7 @@ void AI::addToTeleportList(int teleIndex, int x, int y, int dir, int level, int 
 }
 
 bool AI::findTeleporterDest(int tileX, int tileY, SingleTele *info) {
-	for (int i = 0;i < _numTeleporters; i++) {
+	for (int i = 0; i < _numTeleporters; i++) {
 		if ((_teleporters[i].x1 == tileX) && (_teleporters[i].x1 == tileY)) {
 			info->anim = _teleporters[i].anim2;
 			info->x = _teleporters[i].x2;
