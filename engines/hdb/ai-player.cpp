@@ -130,7 +130,7 @@ void aiPlayerInit2(AIEntity *e) {
 void aiPlayerAction(AIEntity *e) {
 	AIState stand[5] = {STATE_NONE, STATE_STANDUP, STATE_STANDDOWN, STATE_STANDLEFT, STATE_STANDRIGHT};
 	int xvAhead[5] = {9, 0, 0, -1, 1}, yvAhead[5] = {9, -1, 1, 0, 0};
-	AIEntity *hit;
+	AIEntity *hit = NULL;
 
 	// Draw the STUN lightning if it exists
 	if (e->sequence) {
