@@ -37,6 +37,7 @@
 #include "engines/util.h"
 #include "console.h"
 
+#include "hdb/mpc.h"
 #include "hdb/draw-manager.h"
 #include "hdb/ai.h"
 #include "hdb/ai-player.h"
