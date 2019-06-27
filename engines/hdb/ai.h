@@ -1110,7 +1110,7 @@ private:
 
 	Common::Array<AIEntity *> *_ents;
 	Common::Array<AIEntity *> *_floats;
-	Common::Array<AnimTarget *> *_animTargets;
+	Common::Array<AnimTarget *> _animTargets;
 	AIEntity *_player;
 
 	// Cinematics Variables

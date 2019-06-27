@@ -669,7 +669,6 @@ AIEntTypeInfo aiEntList[] = {
 AI::AI() {
 	_ents = new Common::Array<AIEntity *>;
 	_floats = new Common::Array<AIEntity *>;
-	_animTargets = new Common::Array<AnimTarget *>;
 	_arrowPaths = new Common::Array<ArrowPath *>;
 	_triggerList = new Common::Array<Trigger *>;
 	_hereList = new Common::Array<HereT *>;
@@ -684,7 +683,6 @@ AI::AI() {
 AI::~AI() {
 	delete _ents;
 	delete _floats;
-	delete _animTargets;
 	delete _arrowPaths;
 	delete _triggerList;
 	delete _hereList;
@@ -854,7 +852,7 @@ void AI::restartSystem() {
 	_numLuaList = 0;
 
 	// Clear Anim Targets List
-	_animTargets->clear();
+	_animTargets.clear();
 
 	// Clear ArrowPath List
 	_arrowPaths->clear();

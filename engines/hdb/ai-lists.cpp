@@ -77,7 +77,7 @@ void AI::addAnimateTarget(int x, int y, int start, int end, AnimSpeed speed, boo
 	}
 
 	// Insert in the beginning
-	_animTargets->insert_at(0, at);
+	_animTargets.insert_at(0, at);
 }
 
 /*
@@ -90,15 +90,15 @@ void AI::animateTargets() {
 	int layer;
 
 	g_hdb->_map->getMapXY(&mx, &my);
-	debug(9, "animateTargets: Size of _animTargets: %d", _animTargets->size());
+	debug(9, "animateTargets: Size of _animTargets: %d", _animTargets.size());
 	debug(9, "_animTargets:");
 
-	for (Common::Array<AnimTarget *>::iterator it = _animTargets->begin(); it != _animTargets->end(); it++) {
-		at = *it;
-		debug(9, "it - _animTargets->begin(): %ld", it - _animTargets->begin());
+	for (uint i = 0; i < _animTargets.size(); i++) {
+		at = _animTargets[i];
+		debug(9, "i: %d", i);
 		debug(9, "at: at->x: %d, at->y: %d, at->start: %d, at->end: %d, at->vel: %d", at->x, at->y, at->start, at->end, at->vel);
-		// Draw Non-Map stuff every frame
 
+		// Draw Non-map stuff every frame
 		if (!at->inMap)
 			// FIXME: Out of bounds reference to gfxList
 			at->gfxList[at->start]->drawMasked(at->x - mx, at->y - my);
@@ -133,9 +133,8 @@ void AI::animateTargets() {
 				if (at->killAuto)
 					autoDeactivate(at->x, at->y);
 
-				AnimTarget **jt = it;
-				_animTargets->erase(it);
-				it = jt-1;
+				_animTargets.remove_at(i);
+				i--;
 				continue;
 			}
 		}
