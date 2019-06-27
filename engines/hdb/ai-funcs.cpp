@@ -714,7 +714,7 @@ void AI::killPlayer(Death method) {
 void AI::animateEntity(AIEntity *e) {
 
 	int bgTileFlags, bgTileIndex;
-	int fgTileFlags, fgTileIndex;
+	int fgTileFlags;
 	bool result;
 	uint64 flags;
 
@@ -732,7 +732,126 @@ void AI::animateEntity(AIEntity *e) {
 
 	// For non-players, check for trigger being hit
 	if (onEvenTile(e->x, e->y)) {
-		debug(9, "STUB: animateEntity: Check for Triggers being hit");
+		// Check if a trigger is hit
+		checkTriggerList(e->entityName, e->tileX, e->tileY);
+
+		/*
+			For Non-Players only
+			are we on a touchplate?
+			Barrels, Crates, Magic Egg & Ice Block ONLY
+			standing on a Touchplate will activate
+			something WHILE standing on it
+		*/
+		int bgtile;
+		switch (e->type) {
+		case AI_CRATE:
+		case AI_BOOMBARREL:
+		case AI_HEAVYBARREL:
+		case AI_LIGHTBARREL:
+		case AI_MAGIC_EGG:
+		case AI_ICE_BLOCK:
+		case AI_FROGSTATUE:
+			bgtile = g_hdb->_ai->checkForTouchplate(e->tileX, e->tileY);
+			if (bgtile && !e->touchpWait && e->touchpX != e->tileX && e->touchpY != e->tileY) {
+				if (g_hdb->_ai->checkActionList(e, e->tileX, e->tileY, false)) {
+					e->touchpTile = bgtile;
+					e->touchpX = e->tileX;
+					e->touchpY = e->tileY;
+					e->touchpWait = kPlayerTouchPWait;
+				}
+			}
+			warning("STUB: animateEntity: Set laser_rescan to true");
+			break;
+		default:
+			debug(9, "animateEntity: Unintended Type");
+			break;
+		}
+
+		// Are we on ice?
+		bgTileFlags = g_hdb->_map->getMapBGTileFlags(e->tileX, e->tileY);
+		fgTileFlags = g_hdb->_map->getMapFGTileFlags(e->tileX, e->tileY);
+
+		if (e->level == 1 ? (bgTileFlags & kFlagIce) : ((bgTileFlags & kFlagIce) && !(fgTileFlags & kFlagGrating))) {
+			int xva[] = {9, 0, 0, -1, 1}, yva[] = {9, -1, 1, 0, 0};
+			int nx, ny, moveOK = 0;
+			AIEntity *hit;
+
+			// Types allowed to slide on ice...
+			switch (e->type) {
+			case AI_GUY:
+			case AI_CHICKEN:
+			case AI_TURNBOT:
+			case AI_RIGHTBOT:
+			case AI_PUSHBOT:
+			case AI_CRATE:
+			case AI_LIGHTBARREL:
+			case AI_HEAVYBARREL:
+			case AI_BOOMBARREL:
+			case AI_MAGIC_EGG:
+			case AI_ICE_BLOCK:
+			case AI_DIVERTER:
+				e->moveSpeed = kPlayerMoveSpeed << 1;
+				nx = e->tileX + xva[e->dir];
+				ny = e->tileY + yva[e->dir];
+				hit = legalMove(nx, ny, e->level, &moveOK);
+				bgTileFlags = g_hdb->_map->getMapBGTileFlags(nx, ny);
+				if (hit)
+					switch (hit->type) {
+					case ITEM_GEM_WHITE:
+					case ITEM_GEM_BLUE:
+					case ITEM_GEM_GREEN:
+					case ITEM_GEM_RED:
+					case AI_GOODFAIRY:
+					case AI_BADFAIRY:
+						hit = NULL;
+						break;
+					default:
+						debug(9, "animateEntity: Unintended type");
+						break;
+					}
+				if ((!hit && moveOK) || (bgTileFlags & kFlagPlayerDie))
+					setEntityGoal(e, nx, ny);
+
+				if (e == _player) {
+					_playerOnIce = true;
+					clearWaypoints();
+				}
+				break;
+			default:
+				debug(9, "animateEntity: Unintended type");
+				break;
+			}
+		} else if (e == _player)
+			_playerOnIce = false;
+
+		/*
+			Player only
+			are we trying to walk into a solid tile?
+			first, let's make sure we're perfectly aligned on
+			a tile boundary before the check so we don't snap
+			the player back into position...
+
+			if we're on a waypoint, nevermind!
+		*/
+		if (e == _player) {
+			warning("FIXME: Ambiguous animateEntity() code");
+			result = e->x == (e->goalX * kTileWidth) && e->y == (e->goalY * kTileWidth);
+			if (!result) {
+				int xv = 0, yv = 0;
+				switch (e->dir) {
+				case DIR_UP:	yv = -1;	break;
+				case DIR_DOWN:	yv = 1;		break;
+				case DIR_LEFT:	xv = -1;	break;
+				case DIR_RIGHT: xv = 1;		break;
+				case DIR_NONE:	warning("animateEntity: DIR_NONE found"); break;
+				}
+
+				bgTileFlags = g_hdb->_map->getMapBGTileFlags(e->tileX + xv, e->tileY + yv);
+				fgTileFlags = g_hdb->_map->getMapFGTileFlags(e->tileX + xv, e->tileY + yv);
+				if ((bgTileFlags & kFlagSolid) && !(fgTileFlags & kFlagGrating))
+					stopEntity(e);
+			}
+		}
 	}
 
 	// If player, then scroll the screen with the player
@@ -877,7 +996,7 @@ void AI::animateEntity(AIEntity *e) {
 				warning("STUB: animateEntity: Set _laserRescan to true");
 				break;
 			default:
-				warning("animateEntity: Unintended State");
+				debug(9, "animateEntity: Unintended State");
 			}
 
 			// Checking at the Destination
