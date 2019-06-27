@@ -952,10 +952,6 @@ void callbackDoorOpenClose(int x, int y) {
 	warning("STUB: AI: callbackDoorOpenClose required");
 }
 
-void callbackAutoDoorOpenClose(int x, int y) {
-	warning("STUB: AI: callbackAutoDoorOpenClose required");
-}
-
 // Utility Functions
 void aiAnimateStanddown(AIEntity *e, int speed) {
 	warning("STUB: AI: aiAnimateStanddown required");

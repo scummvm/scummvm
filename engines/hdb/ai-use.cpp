@@ -72,8 +72,32 @@ bool AI::useDoorOpenClose(AIEntity *e, int x, int y) {
 	warning("STUB: Define useDoorOpenClose");
 	return false;
 }
+
+void callbackAutoDoorOpenClose(int x, int y) {
+	int tileIndex = g_hdb->_map->getMapBGTileIndex(x, y);
+
+	// Is the door going to close on something?
+	if (g_hdb->_ai->findEntity(x, y)) {
+		g_hdb->_ai->addCallback(CALLBACK_AUTODOOR_OPEN_CLOSE, x, y, kDelay5Seconds);
+		return;
+	}
+
+	g_hdb->_ai->addAnimateTarget(x, y, tileIndex, tileIndex + 3, ANIM_SLOW, true, true, NULL);
+	if (g_hdb->_map->onScreen(x, y))
+		warning("STUB: callbackAutoDoorOpenClose: Play SND_DOOR_OPEN_CLOSE");
+	return;
+}
+
 bool AI::useAutoDoorOpenClose(AIEntity *e, int x, int y) {
-	warning("STUB: Define useAutoDoorOpenClose");
+	int tileIndex = g_hdb->_map->getMapBGTileIndex(x, y);
+
+	if (autoActive(x, y))
+		return false;
+
+	addAnimateTarget(x, y, tileIndex, tileIndex - 3, ANIM_SLOW, false, true, NULL);
+	addCallback(CALLBACK_AUTODOOR_OPEN_CLOSE, x, y, kDelay5Seconds);
+	if (g_hdb->_map->onScreen(x, y))
+		warning("useAutoDoorOpenClose: Play SND_DOOR_OPEN_CLOSE");
 	return false;
 }
 
