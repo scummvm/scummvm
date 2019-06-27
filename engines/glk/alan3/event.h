@@ -31,9 +31,9 @@ namespace Alan3 {
 
 /* TYPES */
 typedef struct EventQueueEntry { /* EVENT QUEUE ENTRIES */
-  int after;
-  int event;
-  int where;
+	int after;
+	int event;
+	int where;
 } EventQueueEntry;
 
 

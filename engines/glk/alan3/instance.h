@@ -32,13 +32,13 @@ namespace Alan3 {
 
 /* Types: */
 struct AdminEntry { /* Administrative data about instances */
-  Aint location;
-  AttributeEntry *attributes;
-  Abool alreadyDescribed;
-  Aint visitsCount;
-  Aint script;
-  Aint step;
-  Aint waitCount;
+	Aint location;
+	AttributeEntry *attributes;
+	Abool alreadyDescribed;
+	Aint visitsCount;
+	Aint script;
+	Aint step;
+	Aint waitCount;
 };
 
 

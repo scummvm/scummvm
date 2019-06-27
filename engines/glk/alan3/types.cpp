@@ -28,10 +28,10 @@ namespace Alan3 {
 
 /*======================================================================*/
 Aaddr addressAfterTable(Aaddr adr, int size) {
-    while (!isEndOfArray(&memory[adr])) {
-        adr += size/sizeof(Aword);
-    }
-    return adr+1;
+	while (!isEndOfArray(&memory[adr])) {
+		adr += size / sizeof(Aword);
+	}
+	return adr + 1;
 }
 
 } // End of namespace Alan3

@@ -31,7 +31,7 @@ namespace Glk {
 namespace Alan3 {
 
 struct StackStructure {
-	Aword *stack;			// Array that can take Awords
+	Aword *stack;           // Array that can take Awords
 	int stackSize;
 	int stackp;
 	int framePointer;

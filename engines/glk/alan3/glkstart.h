@@ -33,7 +33,7 @@
     with the various Unix Glk libraries -- at least, the three I wrote.
     (I encourage anyone writing a Unix Glk library to use this interface,
     but it's not part of the Glk spec.)
-    
+
     Because Glk is *almost* perfectly portable, this interface *almost*
     doesn't have to exist. In practice, it's small.
 */
@@ -60,14 +60,14 @@ namespace Alan3 {
 #define glkunix_arg_NumberValue (4)
 
 struct glkunix_argumentlist_t {
-    const char *name;
-    int argtype;
+	const char *name;
+	int argtype;
 	const char *desc;
 };
 
 struct glkunix_startup_t {
-    int argc;
-    char **argv;
+	int argc;
+	char **argv;
 };
 
 /* The list of command-line arguments; this should be defined in your code. */

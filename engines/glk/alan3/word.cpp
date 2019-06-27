@@ -51,31 +51,31 @@ int verbWordCode; /* The code for that verb */
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
 void ensureSpaceForPlayerWords(int size) {
-  int newLength = playerWordsLength+PLAYER_WORDS_EXTENT;
+	int newLength = playerWordsLength + PLAYER_WORDS_EXTENT;
 
-  if (playerWordsLength < size+1) {
-    playerWords = (Word *)realloc(playerWords, newLength*sizeof(Word));
-    if (playerWords == NULL)
-      syserr("Out of memory in 'ensureSpaceForPlayerWords()'");
-    playerWordsLength = newLength;
-  }
+	if (playerWordsLength < size + 1) {
+		playerWords = (Word *)realloc(playerWords, newLength * sizeof(Word));
+		if (playerWords == NULL)
+			syserr("Out of memory in 'ensureSpaceForPlayerWords()'");
+		playerWordsLength = newLength;
+	}
 }
 
 
 /*======================================================================*/
 char *playerWordsAsCommandString(void) {
-    char *commandString;
-    int size = playerWords[lastWord].end - playerWords[firstWord].start;
-    commandString = (char *)allocate(size + 1);
-    strncpy(commandString, playerWords[firstWord].start, size);
-    commandString[size] = '\0';
-    return commandString;
+	char *commandString;
+	int size = playerWords[lastWord].end - playerWords[firstWord].start;
+	commandString = (char *)allocate(size + 1);
+	strncpy(commandString, playerWords[firstWord].start, size);
+	commandString[size] = '\0';
+	return commandString;
 }
 
 
 /*======================================================================*/
 void clearWordList(Word list[]) {
-    implementationOfSetEndOfArray((Aword *)list);
+	implementationOfSetEndOfArray((Aword *)list);
 }
 
 } // End of namespace Alan3

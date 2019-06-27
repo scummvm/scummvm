@@ -33,8 +33,8 @@ namespace Alan3 {
 /* Types: */
 
 struct Breakpoint {
-  int line;
-  int file;
+	int line;
+	int file;
 };
 
 

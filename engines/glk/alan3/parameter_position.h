@@ -52,14 +52,14 @@ namespace Alan3 {
 
 /* Types: */
 struct ParameterPosition {
-    bool endOfList;
-    bool explicitMultiple;
-    bool all;
-    bool them;
-    bool checked;
-    Aword flags;
-    Parameter *parameters;
-    Parameter *exceptions;
+	bool endOfList;
+	bool explicitMultiple;
+	bool all;
+	bool them;
+	bool checked;
+	Aword flags;
+	Parameter *parameters;
+	Parameter *exceptions;
 };
 
 /* Functions: */

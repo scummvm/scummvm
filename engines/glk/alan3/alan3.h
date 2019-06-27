@@ -68,12 +68,16 @@ public:
 	/**
 	 * Flag for the game to restart
 	 */
-	void setRestart(bool flag) { _restartFlag = flag; }
+	void setRestart(bool flag) {
+		_restartFlag = flag;
+	}
 
 	/**
 	 * Returns whether the game should restart
 	 */
-	bool shouldRestart() const { return _restartFlag; }
+	bool shouldRestart() const {
+		return _restartFlag;
+	}
 
 	/**
 	 * Returns the running interpreter type

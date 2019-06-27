@@ -30,13 +30,13 @@ namespace Alan3 {
 
 /* TYPES */
 enum LiteralType {
-  NO_LITERAL, NUMERIC_LITERAL, STRING_LITERAL
+	NO_LITERAL, NUMERIC_LITERAL, STRING_LITERAL
 };
 
 struct LiteralEntry {   /* LITERAL */
-  Aint _class;          /* Class id of the literal type */
-  LiteralType type;
-  Aptr value;
+	Aint _class;          /* Class id of the literal type */
+	LiteralType type;
+	Aptr value;
 };
 
 

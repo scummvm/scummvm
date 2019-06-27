@@ -30,17 +30,17 @@ namespace Alan3 {
 
 /* TYPES */
 struct CurVars {
-    int syntax,
-        verb,
-        location,
-        actor,
-        instance,
-        tick,
-        score,
-        visits,
-        sourceLine,
-        sourceFile;
-    bool meta;
+	int syntax,
+	    verb,
+	    location,
+	    actor,
+	    instance,
+	    tick,
+	    score,
+	    visits,
+	    sourceLine,
+	    sourceFile;
+	bool meta;
 };
 
 /* DATA */

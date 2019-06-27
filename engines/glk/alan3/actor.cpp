@@ -33,49 +33,48 @@ namespace Alan3 {
 
 /*======================================================================*/
 ScriptEntry *scriptOf(int actor) {
-    ScriptEntry *scr;
+	ScriptEntry *scr;
 
-    if (admin[actor].script != 0) {
-        for (scr = (ScriptEntry *) pointerTo(header->scriptTableAddress); !isEndOfArray(scr); scr++)
-            if (scr->code == admin[actor].script)
-                break;
-        if (!isEndOfArray(scr))
-            return scr;
-    }
-    return NULL;
+	if (admin[actor].script != 0) {
+		for (scr = (ScriptEntry *) pointerTo(header->scriptTableAddress); !isEndOfArray(scr); scr++)
+			if (scr->code == admin[actor].script)
+				break;
+		if (!isEndOfArray(scr))
+			return scr;
+	}
+	return NULL;
 }
 
 
 /*======================================================================*/
 StepEntry *stepOf(int actor) {
-    StepEntry *step;
-    ScriptEntry *scr = scriptOf(actor);
+	StepEntry *step;
+	ScriptEntry *scr = scriptOf(actor);
 
-    if (scr == NULL) return NULL;
+	if (scr == NULL) return NULL;
 
-    step = (StepEntry*)pointerTo(scr->steps);
-    step = &step[admin[actor].step];
+	step = (StepEntry *)pointerTo(scr->steps);
+	step = &step[admin[actor].step];
 
-    return step;
+	return step;
 }
 
 
 /*======================================================================*/
-void describeActor(int actor)
-{
-    ScriptEntry *script = scriptOf(actor);
+void describeActor(int actor) {
+	ScriptEntry *script = scriptOf(actor);
 
-    if (script != NULL && script->description != 0)
-        interpret(script->description);
-    else if (hasDescription(actor))
-        describeAnything(actor);
-    else {
-        printMessageWithInstanceParameter(M_SEE_START, actor);
-        printMessage(M_SEE_END);
-        if (instances[actor].container != 0)
-            describeContainer(actor);
-    }
-    admin[actor].alreadyDescribed = TRUE;
+	if (script != NULL && script->description != 0)
+		interpret(script->description);
+	else if (hasDescription(actor))
+		describeAnything(actor);
+	else {
+		printMessageWithInstanceParameter(M_SEE_START, actor);
+		printMessage(M_SEE_END);
+		if (instances[actor].container != 0)
+			describeContainer(actor);
+	}
+	admin[actor].alreadyDescribed = TRUE;
 }
 
 } // End of namespace Alan3

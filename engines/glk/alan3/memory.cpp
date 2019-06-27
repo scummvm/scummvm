@@ -36,36 +36,34 @@ int memTop = 0;         /* Top of load memory */
 
 
 /*======================================================================*/
-void *allocate(unsigned long lengthInBytes)
-{
-    void *p = (void *)calloc((size_t)lengthInBytes, 1);
+void *allocate(unsigned long lengthInBytes) {
+	void *p = (void *)calloc((size_t)lengthInBytes, 1);
 
-    if (p == NULL)
-        syserr("Out of memory.");
+	if (p == NULL)
+		syserr("Out of memory.");
 
-    return p;
+	return p;
 }
 
 
 /*======================================================================*/
 void deallocate(void *ptr) {
-    free(ptr);
+	free(ptr);
 }
 
 
 /*======================================================================*/
-void *duplicate(void *original, unsigned long len)
-{
-  void *p = allocate(len+1);
+void *duplicate(void *original, unsigned long len) {
+	void *p = allocate(len + 1);
 
-  memcpy(p, original, len);
-  return p;
+	memcpy(p, original, len);
+	return p;
 }
 
 
 typedef struct {
-    Aptr aptr;
-    void *voidp;
+	Aptr aptr;
+	void *voidp;
 } PointerMapEntry;
 
 static PointerMapEntry *pointerMap = NULL;
@@ -74,44 +72,44 @@ static int nextAptr = 1;
 
 /*======================================================================*/
 void resetPointerMap(void) {
-    if (pointerMap != NULL) free(pointerMap);
-    pointerMap = NULL;
-    pointerMapSize = 0;
+	if (pointerMap != NULL) free(pointerMap);
+	pointerMap = NULL;
+	pointerMapSize = 0;
 }
 
 /*======================================================================*/
 void *fromAptr(Aptr aptr) {
-    int index;
+	int index;
 
-    for (index=0; index < pointerMapSize && pointerMap[index].aptr != aptr; index++)
-        ;
+	for (index = 0; index < pointerMapSize && pointerMap[index].aptr != aptr; index++)
+		;
 
-    if (index == pointerMapSize)
-        syserr("No pointerMap entry for Aptr");
+	if (index == pointerMapSize)
+		syserr("No pointerMap entry for Aptr");
 
-    return pointerMap[index].voidp;
+	return pointerMap[index].voidp;
 }
 
 
 /*======================================================================*/
 Aptr toAptr(void *ptr) {
-    int index;
+	int index;
 
-    if (pointerMap == NULL) {
-        pointerMap = (PointerMapEntry *)allocate(sizeof(PointerMapEntry));
-        pointerMapSize = 1;
-    }
+	if (pointerMap == NULL) {
+		pointerMap = (PointerMapEntry *)allocate(sizeof(PointerMapEntry));
+		pointerMapSize = 1;
+	}
 
-    for (index=0; index < pointerMapSize && pointerMap[index].voidp != NULL; index++)
-        ;
-    if (index == pointerMapSize) {
-        pointerMap = (PointerMapEntry *)realloc(pointerMap, (index+1)*sizeof(PointerMapEntry));
-        pointerMapSize++;
-    }
+	for (index = 0; index < pointerMapSize && pointerMap[index].voidp != NULL; index++)
+		;
+	if (index == pointerMapSize) {
+		pointerMap = (PointerMapEntry *)realloc(pointerMap, (index + 1) * sizeof(PointerMapEntry));
+		pointerMapSize++;
+	}
 
-    pointerMap[index].voidp = ptr;
-    pointerMap[index].aptr = nextAptr++;
-    return pointerMap[index].aptr;
+	pointerMap[index].voidp = ptr;
+	pointerMap[index].aptr = nextAptr++;
+	return pointerMap[index].aptr;
 }
 
 } // End of namespace Alan3

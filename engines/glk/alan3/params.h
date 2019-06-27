@@ -32,14 +32,14 @@ namespace Alan3 {
 
 /* TYPES */
 struct Parameter {        /* PARAMETER */
-    Aid instance;                  /* Instance code for the parameter (0=multiple) */
-    bool isLiteral;
-    bool isPronoun;
-    bool isThem;
-    bool useWords;                 /* Indicate to use words instead of instance code when saying */
-    int firstWord;                 /* Index to first word used by player */
-    int lastWord;                  /* d:o to last */
-    struct Parameter *candidates; /* Array of instances possibly matching this parameter depending on player input */
+	Aid instance;                  /* Instance code for the parameter (0=multiple) */
+	bool isLiteral;
+	bool isPronoun;
+	bool isThem;
+	bool useWords;                 /* Indicate to use words instead of instance code when saying */
+	int firstWord;                 /* Index to first word used by player */
+	int lastWord;                  /* d:o to last */
+	struct Parameter *candidates; /* Array of instances possibly matching this parameter depending on player input */
 };
 
 typedef Parameter *ParameterArray;

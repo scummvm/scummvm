@@ -32,7 +32,7 @@ namespace Alan3 {
 
 /* TYPES */
 typedef struct MessageEntry {   /* MESSAGE TABLE */
-  Aaddr stms;           /* Address to statements*/
+	Aaddr stms;           /* Address to statements*/
 } MessageEntry;
 
 

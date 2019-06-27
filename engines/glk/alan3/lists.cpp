@@ -31,34 +31,32 @@ void initArray(void *array) {
 }
 
 /* How to know we are at end of a table or array, first Aword == EOD */
-void implementationOfSetEndOfArray(Aword *adr)
-{
+void implementationOfSetEndOfArray(Aword *adr) {
 	*adr = EOD;
 }
 
 
-bool implementationOfIsEndOfList(Aword *adr)
-{
+bool implementationOfIsEndOfList(Aword *adr) {
 	return *adr == EOD;
 }
 
 int lengthOfArrayImplementation(void *array_of_any_type, int element_size_in_bytes) {
-    int length;
-    int element_size = element_size_in_bytes/sizeof(Aword);
-    Aword *array = (Aword *)array_of_any_type;
-    if (array == NULL)
-      syserr("Taking length of NULL array");
-    for (length = 0; !isEndOfArray(&array[length*element_size]); length++)
-        ;
-    return length;
+	int length;
+	int element_size = element_size_in_bytes / sizeof(Aword);
+	Aword *array = (Aword *)array_of_any_type;
+	if (array == NULL)
+		syserr("Taking length of NULL array");
+	for (length = 0; !isEndOfArray(&array[length * element_size]); length++)
+		;
+	return length;
 }
 
 void addElementImplementation(void *array_of_any_type, void *element, int element_size_in_bytes) {
 	Aword *array = (Aword *)array_of_any_type;
 	int length = lengthOfArray(array);
-	int element_size_in_words = element_size_in_bytes/sizeof(Aword);
-	memcpy(&array[length*element_size_in_words], element, element_size_in_bytes);
-	setEndOfArray(&array[(length+1)*element_size_in_words]);
+	int element_size_in_words = element_size_in_bytes / sizeof(Aword);
+	memcpy(&array[length * element_size_in_words], element, element_size_in_bytes);
+	setEndOfArray(&array[(length + 1)*element_size_in_words]);
 }
 
 } // End of namespace Alan3

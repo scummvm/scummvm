@@ -38,8 +38,8 @@ namespace Alan3 {
 
 /* TYPES */
 struct CheckEntry { /* CHECK TABLE */
-  Aaddr exp;            /* ACODE address to expression code */
-  Aaddr stms;           /* ACODE address to statement code */
+	Aaddr exp;            /* ACODE address to expression code */
+	Aaddr stms;           /* ACODE address to statement code */
 };
 
 

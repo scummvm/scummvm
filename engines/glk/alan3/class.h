@@ -29,7 +29,7 @@ namespace Glk {
 namespace Alan3 {
 
 /* DATA */
-extern ClassEntry *classes;		/* Class table pointer */
+extern ClassEntry *classes;     /* Class table pointer */
 
 /* FUNCTIONS */
 extern char *idOfClass(int theClass);

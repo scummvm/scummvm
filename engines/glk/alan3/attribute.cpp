@@ -29,34 +29,31 @@ namespace Glk {
 namespace Alan3 {
 
 /*----------------------------------------------------------------------*/
-static AttributeEntry *findAttribute(AttributeEntry *attributeTable, int attributeCode)
-{
-  AttributeEntry *attribute = attributeTable;
-  while (attribute->code != attributeCode) {
-    attribute++;
-    if (isEndOfArray(attribute))
-      syserr("Attribute not found.");
-  }
-  return attribute;
+static AttributeEntry *findAttribute(AttributeEntry *attributeTable, int attributeCode) {
+	AttributeEntry *attribute = attributeTable;
+	while (attribute->code != attributeCode) {
+		attribute++;
+		if (isEndOfArray(attribute))
+			syserr("Attribute not found.");
+	}
+	return attribute;
 }
 
 
 /*======================================================================*/
-Aptr getAttribute(AttributeEntry *attributeTable, int attributeCode)
-{
-  AttributeEntry *attribute = findAttribute(attributeTable, attributeCode);
+Aptr getAttribute(AttributeEntry *attributeTable, int attributeCode) {
+	AttributeEntry *attribute = findAttribute(attributeTable, attributeCode);
 
-  return attribute->value;
+	return attribute->value;
 }
 
 
 /*======================================================================*/
-void setAttribute(AttributeEntry *attributeTable, int attributeCode, Aptr newValue)
-{
-  AttributeEntry *attribute = findAttribute(attributeTable, attributeCode);
+void setAttribute(AttributeEntry *attributeTable, int attributeCode, Aptr newValue) {
+	AttributeEntry *attribute = findAttribute(attributeTable, attributeCode);
 
-  attribute->value = newValue;
-  gameStateChanged = TRUE;
+	attribute->value = newValue;
+	gameStateChanged = TRUE;
 }
 
 } // End of namespace Alan3

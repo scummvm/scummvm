@@ -40,119 +40,122 @@ char *adventureFileName;
 #if 0
 /*======================================================================*/
 char *gameName(char *fullPathName) {
-    char *foundGameName = "";
+	char *foundGameName = "";
 
-    if (fullPathName != NULL) {
-        foundGameName = strdup(baseNameStart(fullPathName));
-        foundGameName[strlen(foundGameName)-4] = '\0'; /* Strip off .A3C */
-    }
+	if (fullPathName != NULL) {
+		foundGameName = strdup(baseNameStart(fullPathName));
+		foundGameName[strlen(foundGameName) - 4] = '\0'; /* Strip off .A3C */
+	}
 
-    if (foundGameName[0] == '.' && foundGameName[1] == '/')
-        strcpy(foundGameName, &foundGameName[2]);
+	if (foundGameName[0] == '.' && foundGameName[1] == '/')
+		strcpy(foundGameName, &foundGameName[2]);
 
-    return foundGameName;
+	return foundGameName;
 }
 
 
 /*----------------------------------------------------------------------*/
 static char *removeQuotes(char *argument) {
-    char *str = strdup(&argument[1]);
-    str[strlen(str)-1] = '\0';
-    return str;
+	char *str = strdup(&argument[1]);
+	str[strlen(str) - 1] = '\0';
+	return str;
 }
 
 
 /*----------------------------------------------------------------------*/
 static bool isQuoted(char *argument) {
-    return argument[0] == '"' && strlen(argument) > 2;
+	return argument[0] == '"' && strlen(argument) > 2;
 }
 
 
 /*----------------------------------------------------------------------*/
 static char *addAcodeExtension(char *advFilename) {
-    if (strlen(advFilename) < strlen(ACODEEXTENSION)
-        || compareStrings(&advFilename[strlen(advFilename)-4], ACODEEXTENSION) != 0) {
-        advFilename = (char *)realloc(advFilename, strlen(advFilename)+strlen(ACODEEXTENSION)+1);
-        strcat(advFilename, ACODEEXTENSION);
-    }
-    return advFilename;
+	if (strlen(advFilename) < strlen(ACODEEXTENSION)
+	        || compareStrings(&advFilename[strlen(advFilename) - 4], ACODEEXTENSION) != 0) {
+		advFilename = (char *)realloc(advFilename, strlen(advFilename) + strlen(ACODEEXTENSION) + 1);
+		strcat(advFilename, ACODEEXTENSION);
+	}
+	return advFilename;
 }
 
 
 
 /*----------------------------------------------------------------------*/
-static void switches(int argc, char *argv[])
-{
-    int i;
+static void switches(int argc, char *argv[]) {
+	int i;
 
-    for (i = 1; i < argc; i++) {
-        char *argument = argv[i];
+	for (i = 1; i < argc; i++) {
+		char *argument = argv[i];
 
-        if (argument[0] == '-') {
-            switch (toLower(argument[1]))
-                {
-                case 'i':
-                    ignoreErrorOption = TRUE;
-                    break;
-                case 't':
-                    traceSectionOption = TRUE;
-                    switch (argument[2]) {
-                    case '9':
-                    case '8':
-                    case '7':
-                    case '6':
-                    case '5' : traceStackOption = TRUE;
-                    case '4' : tracePushOption = TRUE;
-                    case '3' : traceInstructionOption = TRUE;
-                    case '2' : traceSourceOption = TRUE;
-                    case '\0':
-                    case '1': traceSectionOption = TRUE;
-                    }
-                    break;
-                case 'd':
-                    debugOption = TRUE;
-                    break;
-                case 'l':
-                    transcriptOption = TRUE;
-                    logOption = FALSE;
-                    break;
-                case 'v':
-                    verboseOption = TRUE;
-                    break;
-                case 'n':
-                    statusLineOption = FALSE;
-                    break;
-                case 'c':
-                    logOption = TRUE;
-                    transcriptOption = FALSE;
-                    break;
-                case 'r':
-                    regressionTestOption = TRUE;
-                    break;
-                default:
-                    printf("Unrecognized switch, -%c\n", argument[1]);
-                    usage(argv[0]);
-                    terminate(0);
-                }
-        } else {
+		if (argument[0] == '-') {
+			switch (toLower(argument[1])) {
+			case 'i':
+				ignoreErrorOption = TRUE;
+				break;
+			case 't':
+				traceSectionOption = TRUE;
+				switch (argument[2]) {
+				case '9':
+				case '8':
+				case '7':
+				case '6':
+				case '5' :
+					traceStackOption = TRUE;
+				case '4' :
+					tracePushOption = TRUE;
+				case '3' :
+					traceInstructionOption = TRUE;
+				case '2' :
+					traceSourceOption = TRUE;
+				case '\0':
+				case '1':
+					traceSectionOption = TRUE;
+				}
+				break;
+			case 'd':
+				debugOption = TRUE;
+				break;
+			case 'l':
+				transcriptOption = TRUE;
+				logOption = FALSE;
+				break;
+			case 'v':
+				verboseOption = TRUE;
+				break;
+			case 'n':
+				statusLineOption = FALSE;
+				break;
+			case 'c':
+				logOption = TRUE;
+				transcriptOption = FALSE;
+				break;
+			case 'r':
+				regressionTestOption = TRUE;
+				break;
+			default:
+				printf("Unrecognized switch, -%c\n", argument[1]);
+				usage(argv[0]);
+				terminate(0);
+			}
+		} else {
 
-            if (isQuoted(argument))
-                adventureFileName = removeQuotes(argument);
-            else
-                adventureFileName = strdup(argument);
+			if (isQuoted(argument))
+				adventureFileName = removeQuotes(argument);
+			else
+				adventureFileName = strdup(argument);
 
-            adventureFileName = addAcodeExtension(adventureFileName);
+			adventureFileName = addAcodeExtension(adventureFileName);
 
-            adventureName = gameName(adventureFileName);
+			adventureName = gameName(adventureFileName);
 
-        }
-    }
+		}
+	}
 }
 #endif
 
 /*----------------------------------------------------------------------*/
 bool differentInterpreterName(char *string) {
-    return strcasecmp(string, PROGNAME) != 0;
+	return strcasecmp(string, PROGNAME) != 0;
 }
 
 } // End of namespace Alan3

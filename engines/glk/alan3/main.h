@@ -31,7 +31,7 @@
 namespace Glk {
 namespace Alan3 {
 
-extern VerbEntry *vrbs;		// Verb table pointer
+extern VerbEntry *vrbs;     // Verb table pointer
 
 extern void run();
 extern void usage();

@@ -43,8 +43,8 @@ bool anyRuleRun;
 
 /* PRIVATE TYPES: */
 typedef struct RulesAdmin {
-    bool lastEval;
-    bool alreadyRun;
+	bool lastEval;
+	bool alreadyRun;
 } RulesAdmin;
 
 /* PRIVATE DATA: */
@@ -53,207 +53,205 @@ static RulesAdmin *rulesAdmin; /* Table for administration of the rules */
 
 /*----------------------------------------------------------------------*/
 static void clearRulesAdmin(int numRules) {
-    int r;
-    for (r = 0; r < numRules; r++) {
-        rulesAdmin[r].lastEval = FALSE;
-        rulesAdmin[r].alreadyRun = FALSE;
-    }
+	int r;
+	for (r = 0; r < numRules; r++) {
+		rulesAdmin[r].lastEval = FALSE;
+		rulesAdmin[r].alreadyRun = FALSE;
+	}
 }
 
 
 /*----------------------------------------------------------------------*/
 static void initRulesAdmin(int numRules) {
-    int r;
+	int r;
 
-    rulesAdmin = (RulesAdmin *)allocate(numRules*sizeof(RulesAdmin)+sizeof(EOD));
-    for (r = 0; r < numRules; r++)
-        ;
-    setEndOfArray(&rulesAdmin[r]);
+	rulesAdmin = (RulesAdmin *)allocate(numRules * sizeof(RulesAdmin) + sizeof(EOD));
+	for (r = 0; r < numRules; r++)
+		;
+	setEndOfArray(&rulesAdmin[r]);
 }
 
 
 /*======================================================================*/
 void initRules(Aaddr ruleTableAddress) {
 
-    rules = (RuleEntry *) pointerTo(ruleTableAddress);
+	rules = (RuleEntry *) pointerTo(ruleTableAddress);
 
-    if (ruleCount == 0) {       /* Not initiated */
-        for (ruleCount = 0; !isEndOfArray(&rules[ruleCount]); ruleCount++)
-            ;
-        initRulesAdmin(ruleCount);
-    }
-    clearRulesAdmin(ruleCount);
+	if (ruleCount == 0) {       /* Not initiated */
+		for (ruleCount = 0; !isEndOfArray(&rules[ruleCount]); ruleCount++)
+			;
+		initRulesAdmin(ruleCount);
+	}
+	clearRulesAdmin(ruleCount);
 }
 
 
 /*----------------------------------------------------------------------*/
 static void traceRuleStart(int rule, char *what) {
-    printf("\n<RULE %d", rule);
-    if (current.location != 0) {
-        printf(" (at ");
-        traceSay(current.location);
-    } else
-        printf(" (nowhere");
-    printf("[%d]), %s", current.location, what);
+	printf("\n<RULE %d", rule);
+	if (current.location != 0) {
+		printf(" (at ");
+		traceSay(current.location);
+	} else
+		printf(" (nowhere");
+	printf("[%d]), %s", current.location, what);
 }
 
 static bool detailedTraceOn() {
-    return traceInstructionOption || traceSourceOption || tracePushOption || traceStackOption;
+	return traceInstructionOption || traceSourceOption || tracePushOption || traceStackOption;
 }
 
 
 /*----------------------------------------------------------------------*/
 static void traceRuleEvaluation(int rule) {
-    if (traceSectionOption) {
-        if (detailedTraceOn()) {
-            traceRuleStart(rule, "Evaluating:>");
-            if (!traceInstructionOption)
-                printf("\n");
-        } else {
-            traceRuleStart(rule, "Evaluating to ");
-        }
-    }
+	if (traceSectionOption) {
+		if (detailedTraceOn()) {
+			traceRuleStart(rule, "Evaluating:>");
+			if (!traceInstructionOption)
+				printf("\n");
+		} else {
+			traceRuleStart(rule, "Evaluating to ");
+		}
+	}
 }
 
 /*----------------------------------------------------------------------*/
 static void traceRuleResult(int rule, bool result) {
-    if (traceSectionOption) {
-        if (detailedTraceOn())
-            printf("<RULE %d %s%s", rule, "Evaluated to ", result?": true>\n":": false>\n");
-        else
-            printf(result?"true":"false");
-    }
+	if (traceSectionOption) {
+		if (detailedTraceOn())
+			printf("<RULE %d %s%s", rule, "Evaluated to ", result ? ": true>\n" : ": false>\n");
+		else
+			printf(result ? "true" : "false");
+	}
 }
 
 /*----------------------------------------------------------------------*/
 static void traceRuleExecution(int rule) {
-    if (traceSectionOption) {
-        if (!traceInstructionOption && !traceSourceOption)
-            printf(", Executing:>\n");
-        else {
-            traceRuleStart(rule, "Executing:>");
-            if (!traceInstructionOption)
-                printf("\n");
-        }
-    }
+	if (traceSectionOption) {
+		if (!traceInstructionOption && !traceSourceOption)
+			printf(", Executing:>\n");
+		else {
+			traceRuleStart(rule, "Executing:>");
+			if (!traceInstructionOption)
+				printf("\n");
+		}
+	}
 }
 
 
 
 /*----------------------------------------------------------------------*/
-static void evaluateRulesPreBeta2(void)
-{
-    bool change = TRUE;
-    int i;
+static void evaluateRulesPreBeta2(void) {
+	bool change = TRUE;
+	int i;
 
-    for (i = 1; !isEndOfArray(&rules[i-1]); i++)
-        rules[i-1].alreadyRun = FALSE;
+	for (i = 1; !isEndOfArray(&rules[i - 1]); i++)
+		rules[i - 1].alreadyRun = FALSE;
 
-    while (change) {
-        change = FALSE;
-        for (i = 1; !isEndOfArray(&rules[i-1]); i++)
-            if (!rules[i-1].alreadyRun) {
-                traceRuleEvaluation(i);
-                if (evaluate(rules[i-1].exp)) {
-                    change = TRUE;
-                    rules[i-1].alreadyRun = TRUE;
-                    traceRuleExecution(i);
-                    interpret(rules[i-1].stms);
-                } else if (traceSectionOption && !traceInstructionOption)
-                    printf(":>\n");
-            }
-    }
+	while (change) {
+		change = FALSE;
+		for (i = 1; !isEndOfArray(&rules[i - 1]); i++)
+			if (!rules[i - 1].alreadyRun) {
+				traceRuleEvaluation(i);
+				if (evaluate(rules[i - 1].exp)) {
+					change = TRUE;
+					rules[i - 1].alreadyRun = TRUE;
+					traceRuleExecution(i);
+					interpret(rules[i - 1].stms);
+				} else if (traceSectionOption && !traceInstructionOption)
+					printf(":>\n");
+			}
+	}
 }
 
 
 /*----------------------------------------------------------------------*/
 /* This is how beta2 thought rules should be evaluated:
  */
-static void evaluateRulesBeta2(void)
-{
-    bool change = TRUE;
-    int i;
+static void evaluateRulesBeta2(void) {
+	bool change = TRUE;
+	int i;
 
-    for (i = 1; !isEndOfArray(&rules[i-1]); i++)
-        rules[i-1].alreadyRun = FALSE;
+	for (i = 1; !isEndOfArray(&rules[i - 1]); i++)
+		rules[i - 1].alreadyRun = FALSE;
 
-    current.location = NOWHERE;
-    current.actor = 0;
+	current.location = NOWHERE;
+	current.actor = 0;
 
-    while (change) {
-        change = FALSE;
-        for (i = 1; !isEndOfArray(&rules[i-1]); i++)
-            if (!rules[i-1].alreadyRun) {
-                traceRuleEvaluation(i);
-                bool triggered = evaluate(rules[i-1].exp);
-                if (triggered) {
-                    if (rulesAdmin[i-1].lastEval == false) {
-                        change = TRUE;
-                        rules[i-1].alreadyRun = TRUE;
-                        traceRuleExecution(i);
-                        interpret(rules[i-1].stms);
-                    }
-                    rulesAdmin[i-1].lastEval = triggered;
-                } else {
-                    rulesAdmin[i-1].lastEval = false;
-                    if (traceSectionOption && !traceInstructionOption)
-                        printf(":>\n");
-                }
-        }
-    }
+	while (change) {
+		change = FALSE;
+		for (i = 1; !isEndOfArray(&rules[i - 1]); i++)
+			if (!rules[i - 1].alreadyRun) {
+				traceRuleEvaluation(i);
+				bool triggered = evaluate(rules[i - 1].exp);
+				if (triggered) {
+					if (rulesAdmin[i - 1].lastEval == false) {
+						change = TRUE;
+						rules[i - 1].alreadyRun = TRUE;
+						traceRuleExecution(i);
+						interpret(rules[i - 1].stms);
+					}
+					rulesAdmin[i - 1].lastEval = triggered;
+				} else {
+					rulesAdmin[i - 1].lastEval = false;
+					if (traceSectionOption && !traceInstructionOption)
+						printf(":>\n");
+				}
+			}
+	}
 }
 
 
 /*======================================================================*/
 void resetRules() {
-    int i;
-    for (i = 1; !isEndOfArray(&rules[i-1]); i++) {
-        rulesAdmin[i-1].alreadyRun = FALSE;
-    }
+	int i;
+	for (i = 1; !isEndOfArray(&rules[i - 1]); i++) {
+		rulesAdmin[i - 1].alreadyRun = FALSE;
+	}
 }
 
 
 /*======================================================================*/
 void evaluateRules(RuleEntry ruleList[]) {
-    bool change = TRUE;
-    int rule;
+	bool change = TRUE;
+	int rule;
 
-    current.location = NOWHERE;
-    current.actor = 0;
+	current.location = NOWHERE;
+	current.actor = 0;
 
-    while (change) {
-        change = FALSE;
-        for (rule = 1; !isEndOfArray(&ruleList[rule-1]); rule++) {
-            traceRuleEvaluation(rule);
-            bool evaluated_value = evaluate(ruleList[rule-1].exp);
-            traceRuleResult(rule, evaluated_value);
-            if (evaluated_value == true && rulesAdmin[rule-1].lastEval == false
-                && !rulesAdmin[rule-1].alreadyRun) {
-                change = TRUE;
-                traceRuleExecution(rule);
-                interpret(ruleList[rule-1].stms);
-                rulesAdmin[rule-1].alreadyRun = TRUE;
-                anyRuleRun = TRUE;
-            } else {
-                if (traceSectionOption && !(traceInstructionOption || traceSourceOption))
-                    printf(":>\n");
-            }
-            rulesAdmin[rule-1].lastEval = evaluated_value;
-        }
-    }
+	while (change) {
+		change = FALSE;
+		for (rule = 1; !isEndOfArray(&ruleList[rule - 1]); rule++) {
+			traceRuleEvaluation(rule);
+			bool evaluated_value = evaluate(ruleList[rule - 1].exp);
+			traceRuleResult(rule, evaluated_value);
+			if (evaluated_value == true && rulesAdmin[rule - 1].lastEval == false
+			        && !rulesAdmin[rule - 1].alreadyRun) {
+				change = TRUE;
+				traceRuleExecution(rule);
+				interpret(ruleList[rule - 1].stms);
+				rulesAdmin[rule - 1].alreadyRun = TRUE;
+				anyRuleRun = TRUE;
+			} else {
+				if (traceSectionOption && !(traceInstructionOption || traceSourceOption))
+					printf(":>\n");
+			}
+			rulesAdmin[rule - 1].lastEval = evaluated_value;
+		}
+	}
 }
 
 
 /*=======================================================================*/
 void resetAndEvaluateRules(RuleEntry ruleList[], char *version) {
-    if (isPreBeta2(version))
-        evaluateRulesPreBeta2();
-    else if (isPreBeta3(version))
-        evaluateRulesBeta2();
-    else {
-        resetRules();
-        evaluateRules(ruleList);
-    }
+	if (isPreBeta2(version))
+		evaluateRulesPreBeta2();
+	else if (isPreBeta3(version))
+		evaluateRulesBeta2();
+	else {
+		resetRules();
+		evaluateRules(ruleList);
+	}
 }
 
 } // End of namespace Alan3

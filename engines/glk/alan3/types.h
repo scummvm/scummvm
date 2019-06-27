@@ -56,15 +56,15 @@ namespace Alan3 {
 #define ASIZE(x) (sizeof(x)/sizeof(Aword))
 
 /* The various tables */
-struct VerbEntry {	/* VERB TABLE */
-  Aint code;			/* Code for the verb */
-  Aaddr alts;			/* Address to alternatives */
+struct VerbEntry {  /* VERB TABLE */
+	Aint code;            /* Code for the verb */
+	Aaddr alts;           /* Address to alternatives */
 };
 
-struct LimitEntry {	/* LIMIT Type */
-  Aword atr;			/* Attribute that limits */
-  Aword val;			/* And the limiting value */
-  Aaddr stms;			/* Statements if fail */
+struct LimitEntry { /* LIMIT Type */
+	Aword atr;            /* Attribute that limits */
+	Aword val;            /* And the limiting value */
+	Aaddr stms;           /* Statements if fail */
 };
 
 /* Functions: */

@@ -43,42 +43,42 @@ bool onStatusLine = FALSE; /* To know if where printing the status line or not *
 
  */
 void getPageSize(void) {
-  pageLength = 0;
-  pageWidth = 0;
+	pageLength = 0;
+	pageWidth = 0;
 }
 
 /*======================================================================*/
 void statusline(void) {
-  uint32 glkWidth;
-  char line[100];
-  int pcol = col;
+	uint32 glkWidth;
+	char line[100];
+	int pcol = col;
 
-  if (!statusLineOption) return;
-  if (glkStatusWin == NULL)
-    return;
+	if (!statusLineOption) return;
+	if (glkStatusWin == NULL)
+		return;
 
-  g_vm->glk_set_window(glkStatusWin);
-  g_vm->glk_window_clear(glkStatusWin);
-  g_vm->glk_window_get_size(glkStatusWin, &glkWidth, NULL);
+	g_vm->glk_set_window(glkStatusWin);
+	g_vm->glk_window_clear(glkStatusWin);
+	g_vm->glk_window_get_size(glkStatusWin, &glkWidth, NULL);
 
-  onStatusLine = TRUE;
-  col = 1;
-  g_vm->glk_window_move_cursor(glkStatusWin, 1, 0);
-  sayInstance(where(HERO, /*TRUE*/ TRANSITIVE));
+	onStatusLine = TRUE;
+	col = 1;
+	g_vm->glk_window_move_cursor(glkStatusWin, 1, 0);
+	sayInstance(where(HERO, /*TRUE*/ TRANSITIVE));
 
-  // TODO Add status message1  & 2 as author customizable messages
-  if (header->maximumScore > 0)
-    sprintf(line, "Score %d(%d)/%d moves", current.score, (int)header->maximumScore, current.tick);
-  else
-    sprintf(line, "%d moves", current.tick);
-  g_vm->glk_window_move_cursor(glkStatusWin, glkWidth-strlen(line)-1, 0);
-  g_vm->glk_put_string(line);
-  needSpace = FALSE;
+	// TODO Add status message1  & 2 as author customizable messages
+	if (header->maximumScore > 0)
+		sprintf(line, "Score %d(%d)/%d moves", current.score, (int)header->maximumScore, current.tick);
+	else
+		sprintf(line, "%d moves", current.tick);
+	g_vm->glk_window_move_cursor(glkStatusWin, glkWidth - strlen(line) - 1, 0);
+	g_vm->glk_put_string(line);
+	needSpace = FALSE;
 
-  col = pcol;
-  onStatusLine = FALSE;
+	col = pcol;
+	onStatusLine = FALSE;
 
-  g_vm->glk_set_window(glkMainWin);
+	g_vm->glk_set_window(glkMainWin);
 }
 
 } // End of namespace Alan3

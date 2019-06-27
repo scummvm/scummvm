@@ -31,7 +31,7 @@ ClassEntry *classes; /* Class table pointer */
 
 /*======================================================================*/
 char *idOfClass(int theClass) {
-    return (char *)pointerTo(classes[theClass].id);
+	return (char *)pointerTo(classes[theClass].id);
 }
 
 } // End of namespace Alan3

@@ -32,7 +32,7 @@ namespace Alan3 {
 
 /* DATA */
 extern RuleEntry *rules;      /* Rule table pointer */
-extern bool anyRuleRun;		  /* Did any rule run? */
+extern bool anyRuleRun;       /* Did any rule run? */
 
 /* FUNCTIONS */
 extern void initRules(Aaddr rulesTableAddress);
