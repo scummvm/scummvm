@@ -164,7 +164,7 @@ void aiPlayerAction(AIEntity *e) {
 				g_hdb->_ai->stunEnemy(hit, 8);
 				break;
 			default:
-				warning("aiPlayerAction: Unintended State");
+				debug(9, "STUB: stunEnemy: Play sound");
 				break;
 			}
 
@@ -196,7 +196,7 @@ void aiPlayerAction(AIEntity *e) {
 				g_hdb->_ai->stunEnemy(hit, 8);
 				break;
 			default:
-				warning("aiPlayerAction: Unintended State");
+				debug(9, "STUB: stunEnemy: Play sound");
 				break;
 			}
 	}
@@ -217,7 +217,7 @@ void aiPlayerAction(AIEntity *e) {
 			case STATE_GRABLEFT:	e->draw = e->standleftGfx[0];	e->state = STATE_STANDLEFT; break;
 			case STATE_GRABRIGHT:	e->draw = e->standrightGfx[0];	e->state = STATE_STANDRIGHT; break;
 			default:
-				warning("aiPlayerAction: Unintended State");
+				debug(9, "STUB: stunEnemy: Play sound");
 				break;
 			}
 			e->animDelay = 1;
@@ -238,7 +238,7 @@ void aiPlayerAction(AIEntity *e) {
 		case STATE_ATK_CLUB_LEFT:	cycleFrames(e, g_hdb->_ai->_clubLeftFrames); break;
 		case STATE_ATK_CLUB_RIGHT:	cycleFrames(e, g_hdb->_ai->_clubRightFrames); break;
 		default:
-			warning("aiPlayerAction: Unintended State");
+			debug(9, "STUB: stunEnemy: Play sound");
 			break;
 		}
 		// Whack!
@@ -300,7 +300,7 @@ void aiPlayerAction(AIEntity *e) {
 			case STATE_ATK_CLUB_LEFT:	e->draw = e->standleftGfx[0]; break;
 			case STATE_ATK_CLUB_RIGHT:	e->draw = e->standrightGfx[0]; break;
 			default:
-				warning("aiPlayerAction: Unintended State");
+				debug(9, "STUB: stunEnemy: Play sound");
 				break;
 			}
 			g_hdb->_ai->setPlayerInvisible(false);
@@ -376,7 +376,7 @@ void aiPlayerAction(AIEntity *e) {
 		}
 		return;
 	default:
-		warning("aiPlayerAction: Unintended State");
+		debug(9, "STUB: stunEnemy: Play sound");
 		break;
 	}
 
