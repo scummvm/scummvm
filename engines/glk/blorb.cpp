@@ -215,7 +215,39 @@ bool Blorb::isBlorb(const Common::String &filename, uint32 type) {
 
 bool Blorb::hasBlorbExt(const Common::String &filename) {
 	return filename.hasSuffixIgnoreCase(".blorb") || filename.hasSuffixIgnoreCase(".zblorb")
-		|| filename.hasSuffixIgnoreCase(".gblorb") || filename.hasSuffixIgnoreCase(".blb");
+		|| filename.hasSuffixIgnoreCase(".gblorb") || filename.hasSuffixIgnoreCase(".blb")
+		|| filename.hasSuffixIgnoreCase(".a3r");
+}
+
+void Blorb::getBlorbFilenames(const Common::String &srcFilename, Common::StringArray &filenames,
+		InterpreterType interpType) {
+	// Strip off the source filename extension
+	Common::String filename = srcFilename;
+	if (!filename.contains('.')) {
+		filename += '.';
+	} else {
+		while (filename[filename.size() - 1] != '.')
+			filename.deleteLastChar();
+	}
+
+	// Add in the different possible filenames
+	filenames.clear();
+	filenames.push_back(filename + "blorb");
+	filenames.push_back(filename + "blb");
+
+	switch (interpType) {
+	case INTERPRETER_ALAN3:
+		filenames.push_back(filename + "a3r");
+		break;
+	case INTERPRETER_FROTZ:
+		filenames.push_back(filename + "zblorb");
+		break;
+	case INTERPRETER_GLULXE:
+		filenames.push_back(filename + "gblorb");
+		break;
+	default:
+		break;
+	}
 }
 
 } // End of namespace Glk

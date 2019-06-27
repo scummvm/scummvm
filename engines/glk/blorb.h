@@ -146,6 +146,12 @@ public:
 	 * Returns true if a given filename has a Blorb file extension
 	 */
 	static bool hasBlorbExt(const Common::String &filename);
+
+	/**
+	 * Return a list of possible filenames for blorb files
+	 */
+	static void getBlorbFilenames(const Common::String &srcFilename, Common::StringArray &filenames,
+		InterpreterType interpType);
 };
 
 } // End of namespace Glk

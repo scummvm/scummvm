@@ -126,16 +126,15 @@ Common::Error GlkEngine::run() {
 			return Common::kNoGameDataFoundError;
 	} else {
 		// Check for a secondary blorb file with the same filename
-		Common::String baseName = filename;
-		while (baseName.contains('.'))
-			baseName.deleteLastChar();
+		Common::StringArray blorbFilenames;
+		Blorb::getBlorbFilenames(filename, blorbFilenames, getInterpreterType());
 
-		if (Common::File::exists(baseName + ".blorb")) {
-			_blorb = new Blorb(baseName + ".blorb", getInterpreterType());
-			SearchMan.add("blorb", _blorb, 99, false);
-		} else if (Common::File::exists(baseName + ".blb")) {
-			_blorb = new Blorb(baseName + ".blb", getInterpreterType());
-			SearchMan.add("blorb", _blorb, 99, false);
+		for (uint idx = 0; idx < blorbFilenames.size(); ++idx) {
+			if (Common::File::exists(blorbFilenames[idx])) {
+				_blorb = new Blorb(blorbFilenames[idx], getInterpreterType());
+				SearchMan.add("blorb", _blorb, 99, false);
+				break;
+			}
 		}
 
 		// Open up the game file
