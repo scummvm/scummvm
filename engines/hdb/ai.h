@@ -725,6 +725,9 @@ public:
 	bool activateAction(AIEntity *e, int x, int y, int targetX, int targetY);
 	bool checkAutoList(AIEntity *e, int x, int y);
 	bool autoActive(int x, int y);
+	void addToLuaList(int x, int y, int value1, int value2, char *luaFuncInit, char *luaFuncAction, char *luaFuncUse);
+	bool checkLuaList(AIEntity *e, int x, int y);
+	bool luaExistAtXY(int x, int y);
 	void addToTeleportList(int teleIndex, int x, int y, int dir, int level, int anim, int usable, const char *luaFuncUse);
 	bool checkTeleportList(AIEntity *e, int x, int y);
 	bool findTeleporterDest(int tileX, int tileY, SingleTele *info);
