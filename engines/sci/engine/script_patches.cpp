@@ -12038,6 +12038,60 @@ static const uint16 qfg4AdAvisCapturePatch[] = {
 	PATCH_END
 };
 
+// The character selection screen in room 140 can select the wrong character.
+//  The showOff script brings each through their door and sets showOff:register
+//  as they animate so that myChar:doVerb knows which animating character was
+//  clicked. showOff:register is supposed to be 1 - 3 but showOff sets the wrong
+//  fighter value and sets the rest at the wrong times.
+//
+// showOff state 0 sets register to 30 instead of 1 and so clicking the fighter
+//  door during the first four seconds doesn't select any character. Instead it
+//  proceeds to the skill screen without updating the character type global.
+//  This global's initial value is zero, which happens to be the fighter value,
+//  and so this appears to work unless a different character was first selected
+//  and cancel was clicked. The magic user and thief register values are correct
+//  but they're set one state too late, creating 2 - 4 second windows where
+//  clicking their doors selects the previously animated character.
+//
+// We fix this by setting showOff:register to the correct fighter value and
+//  setting the magic user and thief values one state earlier.
+//
+// Applies to: All versions
+// Responsible method: showOff:changeState
+// Fixes bug: #11002
+static const uint16 qfg4CharacterSelectSignature[] = {
+	// state 0
+	0x35, 0x1e,                         // ldi 1e
+	0x65, SIG_ADDTOOFFSET(+1),          // aTop register
+	SIG_ADDTOOFFSET(+461),
+	// state 5
+	SIG_MAGICDWORD,
+	0x32, SIG_UINT16(0x031e),           // jmp 031e [ end of method ]
+	0x3c,                               // dup
+	SIG_ADDTOOFFSET(+219),
+	// state 9
+	0x35, 0x02,                         // ldi 02
+	0x65, SIG_ADDTOOFFSET(+1),          // aTop seconds
+	0x32, SIG_UINT16(0x023b),           // jmp 023b [ end of method ]
+	SIG_END
+};
+
+static const uint16 qfg4CharacterSelectPatch[] = {
+	// state 0
+	0x35, 0x01,                         // ldi 01
+	PATCH_ADDTOOFFSET(+463),
+	// state 5
+	0x7a,                               // push2
+	0x69, PATCH_GETORIGINALBYTE(+3),    // sTop register
+	PATCH_ADDTOOFFSET(+220),
+	// state 9
+	0x7a,                               // push2
+	0x69, PATCH_GETORIGINALBYTE(+691),  // sTop seconds
+	0x39, 0x03,                         // pushi 03
+	0x69, PATCH_GETORIGINALBYTE(+3),    // sTop register
+	PATCH_END
+};
+
 //          script, description,                                     signature                      patch
 static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,     0, "prevent autosave from deleting save games",   1, qfg4AutosaveSignature,         qfg4AutosavePatch },
@@ -12057,6 +12111,7 @@ static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,    51, "Floppy: fix ad avis capture lockup",          1, qfg4AdAvisCaptureSignature,    qfg4AdAvisCapturePatch },
 	{  true,    53, "NRS: fix wraith lockup",                      1, qfg4WraithLockupNrsSignature,  qfg4WraithLockupNrsPatch },
 	{  true,    83, "fix incorrect array type",                    1, qfg4TrapArrayTypeSignature,    qfg4TrapArrayTypePatch },
+	{  true,   140, "fix character selection",                     1, qfg4CharacterSelectSignature,  qfg4CharacterSelectPatch },
 	{  true,   250, "fix hectapus death lockup",                   1, qfg4HectapusDeathSignature,    qfg4HectapusDeathPatch },
 	{  true,   260, "CD: fix inn door crash",                      1, qfg4InnDoorCDSignature,        qfg4InnDoorCDPatch },
 	{  true,   270, "fix town gate after a staff dream",           1, qfg4DreamGateSignature,        qfg4DreamGatePatch },
