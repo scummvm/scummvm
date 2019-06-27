@@ -74,6 +74,11 @@ bool Window::init() {
 
 	_infobarDimmed = 0;
 
+	_invWinInfo.width = kInvItemSpaceX * 3;
+	_invWinInfo.height = kInvItemSpaceY * 4;
+	_invWinInfo.x = kScreenWidth - _gfxInfobar->_width + 16;
+	_invWinInfo.y = 40;
+
 	restartSystem();
 
 	return true;
