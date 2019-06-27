@@ -449,7 +449,7 @@ CallbackDef allCallbacks[] = {
 };
 
 void AI::addCallback(CallbackType type, int x, int y, int delay) {
-	for(int i= kMaxCallbacks; i >= 0; i--)
+	for (int i = kMaxCallbacks - 1; i >= 0; i--)
 		if (_callbacks[i].type == NO_FUNCTION) {
 			_callbacks[i].type = type;
 			_callbacks[i].x = x;
