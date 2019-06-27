@@ -1768,9 +1768,14 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("rhiannon", "Demo: Chapter 5",
 		WME_ENTRY1s("data.dcp", "88be3fa1389889b2079e54d780803a75", 88644508), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, LATEST_VERSION),
 
-	// 1 1/2 Ritter: Auf der Suche nach der hinreissenden Herzelinde
+	// 1 1/2 Ritter: Auf der Suche nach der hinreissenden Herzelinde (German)
 	WME_WINENTRY("ritter", "",
 		WME_ENTRY1s("data.dcp", "5ac416cee605d3a30f4d59687b1cdab2", 364260278), Common::DE_DEU, ADGF_UNSTABLE, LATEST_VERSION),
+
+	// 1 1/2 Ritter: Auf der Suche nach der hinreissenden Herzelinde (Russian)
+	WME_WINENTRY("ritter", "",
+		WME_ENTRY2s("data.dcp", "5ac416cee605d3a30f4d59687b1cdab2", 364260278,
+				"string3.tab", "e9d0e6341e8994be5fa6d70d39ac630b", 813982), Common::RU_RUS, ADGF_UNSTABLE, LATEST_VERSION),
 
 	// Satan and Son
 	WME_WINENTRY("satanandson", "",
