@@ -39,7 +39,7 @@ namespace Glk {
 namespace Alan3 {
 
 /*----------------------------------------------------------------------*/
-static void traceExit(int location, int dir, char *what) {
+static void traceExit(int location, int dir, const char *what) {
 	printf("\n<EXIT %s[%d] from ",
 	       (char *)pointerTo(dictionary[playerWords[currentWordIndex - 1].code].string), dir);
 	traceSay(location);

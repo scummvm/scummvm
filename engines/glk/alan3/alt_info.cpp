@@ -312,9 +312,9 @@ static AltEntry *findAlternative(Aaddr verbTableAddress, int verbCode, int param
 
 /*----------------------------------------------------------------------*/
 static AltEntry *alternativeFinder(int verb, int parameterNumber, int theInstance, int theClass) {
-	if (theClass != NO_CLASS)
+	if ((Aword)theClass != NO_CLASS)
 		return findAlternative(classes[theClass].verbs, verb, parameterNumber);
-	else if (theInstance != NO_INSTANCE)
+	else if ((Aword)theInstance != NO_INSTANCE)
 		return findAlternative(instances[theInstance].verbs, verb, parameterNumber);
 	else
 		return findAlternative(header->verbTableAddress, verb, parameterNumber);

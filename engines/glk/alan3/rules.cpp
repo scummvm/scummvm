@@ -87,7 +87,7 @@ void initRules(Aaddr ruleTableAddress) {
 
 
 /*----------------------------------------------------------------------*/
-static void traceRuleStart(int rule, char *what) {
+static void traceRuleStart(int rule, const char *what) {
 	printf("\n<RULE %d", rule);
 	if (current.location != 0) {
 		printf(" (at ");
