@@ -499,25 +499,25 @@ static const uint16 torinLarry7NumSavesPatch[] = {
 // Responsible method: fawaz::handleEvent
 // Fixes bug: #6402
 static const uint16 camelotSignaturePeepingTom[] = {
-	0x72, SIG_MAGICDWORD, SIG_UINT16(0x077e), // lofsa fawaz <-- start of proper initializion code
-	0xa1, 0xb9,                      // sag global[b9h]
+	OP_0x72_LOFSA, SIG_MAGICDWORD, SIG_UINT16(0x077e), // lofsa fawaz <-- start of proper initializion code
+	OP_0xa1_SAG,   0xb9,                 // sag global[b9h]
 	SIG_ADDTOOFFSET(+571),           // ...
-	0x39, 0x7a,                      // pushi 7a <-- initialization code when walking automatically
-	0x78,                            // push1
-	0x7a,                            // push2
-	0x38, SIG_UINT16(0x00a9),        // pushi 00a9 - script 169
-	0x78,                            // push1
-	0x43, 0x02, 0x04,                // callk ScriptID
-	0x36,                            // push
-	0x81, 0x00,                      // lag global[0]
-	0x4a, 0x06,                      // send 06
-	0x32, SIG_UINT16(0x0520),        // jmp [end of fawaz::handleEvent]
+	OP_0x39_PUSHI, 0x7a,                 // pushi 7a <-- initialization code when walking automatically
+	OP_0x78_PUSH1,                       // push1
+	OP_0x7a_PUSH2,                       // push2
+	OP_0x38_PUSHI, SIG_UINT16(0x00a9),   // pushi 00a9 - script 169
+	OP_0x78_PUSH1,                       // push1
+	OP_0x43_CALLK, 0x02, 0x04,           // callk ScriptID
+	OP_0x36_PUSH,                        // push
+	OP_0x81_LAG,   0x00,                 // lag global[0]
+	OP_0x4a_SEND,  0x06,                 // send 06
+	OP_0x32_JMP,   SIG_UINT16(0x0520),   // jmp [end of fawaz::handleEvent]
 	SIG_END
 };
 
 static const uint16 camelotPatchPeepingTom[] = {
 	PATCH_ADDTOOFFSET(+576),
-	0x32, PATCH_UINT16(0xfdbd),      // jmp [to fawaz::doit] (properly init peepingTom code)
+	OP_0x32_JMP, PATCH_UINT16(0xfdbd),   // jmp [to fawaz::doit] (properly init peepingTom code)
 	PATCH_END
 };
 
