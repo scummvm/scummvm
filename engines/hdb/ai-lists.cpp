@@ -434,6 +434,62 @@ bool AI::autoActive(int x, int y) {
 	return false;
 }
 
+void AI::addToLuaList(int x, int y, int value1, int value2, char *luaFuncInit, char *luaFuncAction, char *luaFuncUse) {
+	for (int i = 0; i < kMaxLuaEnts; i++) {
+		if (!_luaList[i].luaFuncInit[0] && !_luaList[i].luaFuncAction[0] && !_luaList[i].luaFuncUse[0]) {
+			_luaList[i].x = x;
+			_luaList[i].y = y;
+			_luaList[i].value1 = value1;
+			_luaList[i].value2 = value2;
+
+			strcpy(_luaList[i].luaFuncInit, luaFuncInit);
+			if (luaFuncInit[0] == '*')
+				_luaList[i].luaFuncInit[0] = 0;
+			strcpy(_luaList[i].luaFuncAction, luaFuncAction);
+			if (luaFuncAction[0] == '*')
+				_luaList[i].luaFuncAction[0] = 0;
+			strcpy(_luaList[i].luaFuncUse, luaFuncUse);
+			if (luaFuncUse[0] == '*')
+				_luaList[i].luaFuncUse[0] = 0;
+
+			_numLuaList++;
+			if (_luaList[i].luaFuncInit[0])
+				g_hdb->_lua->invokeLuaFunction(luaFuncInit, x, y, value1, value2);
+
+			spawnBlocking(x, y, 1);
+
+			return;
+		}
+	}
+}
+
+bool AI::checkLuaList(AIEntity *e, int x, int y) {
+	for (int i = 0;i < _numLuaList; i++) {
+		if (_luaList[i].x == x && _luaList[i].y == y && _luaList[i].luaFuncUse[0]) {
+			if (e == _player) {
+				lookAtXY(x, y);
+				animGrabbing();
+			}
+
+			g_hdb->_lua->invokeLuaFunction(_luaList[i].luaFuncUse, _luaList[i].x, _luaList[i].y, _luaList[i].value1, _luaList[i].value2);
+
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool AI::luaExistAtXY(int x, int y) {
+	for (int i = 0;i < _numLuaList; i++) {
+		if (_luaList[i].x == x && _luaList[i].y == y && _luaList[i].luaFuncUse[0]) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
 void AI::addToTeleportList(int teleIndex, int x, int y, int dir, int level, int anim, int usable, const char *luaFuncUse) {
 	if (!level)
 		level = 1;
