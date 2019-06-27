@@ -752,6 +752,8 @@ public:
 	bool activateAction(AIEntity *e, int x, int y, int targetX, int targetY);
 	bool checkAutoList(AIEntity *e, int x, int y);
 	bool autoActive(int x, int y);
+	void addCallback(CallbackType type, int x, int y, int delay);
+	void processCallbackList();
 	void addToLuaList(int x, int y, int value1, int value2, char *luaFuncInit, char *luaFuncAction, char *luaFuncUse);
 	bool checkLuaList(AIEntity *e, int x, int y);
 	bool luaExistAtXY(int x, int y);
