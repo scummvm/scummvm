@@ -654,9 +654,6 @@ struct Trigger {
 struct CallbackDef {
 	CallbackType type;
 	void(*function)(int x, int y);
-
-	CallbackDef() : type(NO_FUNCTION), function(NULL) {}
-	CallbackDef(CallbackType type, void(*function)(int, int)) : type(type), function(function) {}
 };
 
 struct Callback {
