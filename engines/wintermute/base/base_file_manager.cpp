@@ -218,13 +218,6 @@ bool BaseFileManager::registerPackages() {
 				searchSignature = true;
 			}
 
-			// HACK: for Reversion1, avoid loading xlanguage_pt.dcp from the main folder:
-			if (_language != Common::PT_BRA && targetName.hasPrefix("reversion1")) {
-				if (fileName == "xlanguage_pt.dcp") {
-					continue;
-				}
-			}
-
 			// Again, make the parent's name all lowercase to avoid any case
 			// issues.
 			Common::String parentName = it->getName();
@@ -232,38 +225,43 @@ bool BaseFileManager::registerPackages() {
 
 			// Avoid registering all the language files
 			// TODO: Select based on the gameDesc.
-			if (_language != Common::UNK_LANG && (parentName == "language" || parentName == "languages")) {
+			if (_language != Common::UNK_LANG) {
 				// English
-				if (_language == Common::EN_ANY && (fileName != "english.dcp" && fileName != "xlanguage_en.dcp")) {
+				if (_language != Common::EN_ANY && (fileName == "english.dcp" || fileName == "xlanguage_en.dcp")) {
 					continue;
 				// Chinese
-				} else if (_language == Common::ZH_CNA && (fileName != "chinese.dcp" && fileName != "xlanguage_nz.dcp")) {
+				} else if (_language != Common::ZH_CNA && (fileName == "chinese.dcp" || fileName == "xlanguage_nz.dcp")) {
 					continue;
 				// Czech
-				} else if (_language == Common::CZ_CZE && (fileName != "czech.dcp" && fileName != "xlanguage_cz.dcp")) {
+				} else if (_language != Common::CZ_CZE && (fileName == "czech.dcp" || fileName == "xlanguage_cz.dcp")) {
 					continue;
 				// French
-				} else if (_language == Common::FR_FRA && (fileName != "french.dcp" && fileName != "xlanguage_fr.dcp")) {
+				} else if (_language != Common::FR_FRA && (fileName == "french.dcp" || fileName == "xlanguage_fr.dcp")) {
 					continue;
 				// German
-				} else if (_language == Common::DE_DEU && (fileName != "german.dcp" && fileName != "xlanguage_de.dcp")) {
+				} else if (_language != Common::DE_DEU && (fileName == "german.dcp" || fileName == "xlanguage_de.dcp")) {
 					continue;
 				// Italian
-				} else if (_language == Common::IT_ITA && (fileName != "italian.dcp" && fileName != "xlanguage_it.dcp")) {
+				} else if (_language != Common::IT_ITA && (fileName == "italian.dcp" || fileName == "xlanguage_it.dcp")) {
 					continue;
 				// Latvian
-				} else if (_language == Common::LV_LAT && (fileName != "latvian.dcp" && fileName != "xlanguage_lv.dcp")) {
-					// TODO: 'latvian.dcp' is just guesswork. Is there any
-					// game using Latvian and using this filename?
+				} else if (_language != Common::LV_LAT && (fileName == "latvian.dcp" || fileName == "xlanguage_lv.dcp")) {
 					continue;
 				// Polish
-				} else if (_language == Common::PL_POL && (fileName != "polish.dcp" && fileName != "xlanguage_pl.dcp")) {
+				} else if (_language != Common::PL_POL && (fileName == "polish.dcp" || fileName == "xlanguage_pl.dcp")) {
 					continue;
 				// Portuguese
-				} else if (_language == Common::PT_BRA && (fileName != "portuguese.dcp" && fileName != "xlanguage_pt.dcp")) {
+				} else if (_language != Common::PT_BRA && (fileName == "portuguese.dcp" || fileName == "xlanguage_pt.dcp")) {
 					continue;
 				// Russian
-				} else if (_language == Common::RU_RUS && (fileName != "russian.dcp" && fileName != "xlanguage_ru.dcp")) {
+				} else if (_language != Common::RU_RUS && (fileName == "russian.dcp" || fileName == "xlanguage_ru.dcp")) {
+					continue;
+				// Spanish
+				} else if (_language != Common::ES_ESP && (fileName == "spanish.dcp" || fileName == "xlanguage_es.dcp")) {
+					continue;
+				// generic
+				} else if (fileName.hasPrefix("xlanguage_")) {
+					warning("Unknown language package: %s", fileName.c_str());
 					continue;
 				}
 			}

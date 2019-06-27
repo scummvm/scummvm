@@ -23,64 +23,10 @@
 #ifndef GLK_ALAN2_UTIL
 #define GLK_ALAN2_UTIL
 
-#include "glk/alan2/acode.h"
-#include "glk/alan2/alan2.h"
 #include "glk/alan2/types.h"
 
 namespace Glk {
 namespace Alan2 {
-
-// TODO: Move these
-extern LitElem *litValues;
-extern uint32 litCount;	// for LITMAX - defined in parse.cpp
-extern ActElem *acts;	// Actor table pointer
-extern ObjElem *objs;	// Object table pointer
-
-// Type checks 
-inline bool isObj(Aword x) {
-	return x >= OBJMIN && x <= OBJMAX;
-}
-
-inline bool isAct(Aword x) {
-	return x >= ACTMIN && x <= ACTMAX;
-}
-
-inline bool isCnt(Aword x) {
-	return (x >= CNTMIN && x <= CNTMAX) ||
-		(isObj(x) && objs[x - OBJMIN].cont != 0) ||
-		(isAct(x) && acts[x - ACTMIN].cont != 0);
-}
-
-inline bool isLoc(Aword x) {
-	return x >= LOCMIN && x <= LOCMAX;
-}
-
-inline bool isNum(Aword x) {
-	return x >= LITMIN && x <= LITMAX && litValues[x - LITMIN].type == TYPNUM;
-}
-
-inline bool isStr(Aword x) {
-	return x >= LITMIN && x <= LITMAX && litValues[x - LITMIN].type == TYPSTR;
-}
-
-inline bool isLit(Aword x) {
-	return x >= LITMIN && x <= LITMAX;
-}
-
-inline bool endOfTable(LimElem *addr) {
-	Aword *x = (Aword *)addr;
-	return *x == (Aword)EOF;
-}
-
-inline bool endOfTable(ScrElem *addr) {
-	Aword *x = (Aword *)addr;
-	return *x == (Aword)EOF;
-}
-
-inline bool endOfTable(ExtElem *addr) {
-	Aword *x = (Aword *)addr;
-	return *x == (Aword)EOF;
-}
 
 } // End of namespace Alan2
 } // End of namespace Glk

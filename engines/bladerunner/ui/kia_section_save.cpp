@@ -225,6 +225,15 @@ void KIASectionSave::draw(Graphics::Surface &surface){
 void KIASectionSave::handleKeyUp(const Common::KeyState &kbd) {
 	if (_state == kStateNormal) {
 		_uiContainer->handleKeyUp(kbd);
+	}
+}
+
+void KIASectionSave::handleKeyDown(const Common::KeyState &kbd) {
+	if (_state == kStateNormal) {
+		if (kbd.keycode == Common::KEYCODE_DELETE && _selectedLineId != _newSaveLineId) {
+			changeState(kStateDelete);
+		}
+		_uiContainer->handleKeyDown(kbd);
 	} else if (_state == kStateOverwrite) {
 		if (kbd.keycode == Common::KEYCODE_RETURN) {
 			save();
@@ -235,16 +244,6 @@ void KIASectionSave::handleKeyUp(const Common::KeyState &kbd) {
 			deleteSave();
 			changeState(kStateNormal);
 		}
-	}
-}
-
-void KIASectionSave::handleKeyDown(const Common::KeyState &kbd) {
-	if (_state == kStateNormal) {
-		if (kbd.keycode == Common::KEYCODE_DELETE && _selectedLineId != _newSaveLineId) {
-			changeState(kStateDelete);
-		}
-
-		_uiContainer->handleKeyDown(kbd);
 	}
 }
 

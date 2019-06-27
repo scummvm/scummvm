@@ -229,7 +229,7 @@ void KIASectionSettings::draw(Graphics::Surface &surface) {
 	_playerAgendaSelector->drawTooltip(surface, _mouseX, _mouseY);
 }
 
-void KIASectionSettings::handleKeyUp(const Common::KeyState &kbd) {
+void KIASectionSettings::handleKeyDown(const Common::KeyState &kbd) {
 	if (toupper(kbd.ascii) != kLeary[_learyPos]) {
 		_learyPos = 0;
 	}

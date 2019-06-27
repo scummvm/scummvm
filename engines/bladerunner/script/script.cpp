@@ -1295,6 +1295,11 @@ bool ScriptBase::DM_Add_To_List_Never_Repeat_Once_Selected(int answer, int prior
 	return _vm->_dialogueMenu->addToListNeverRepeatOnceSelected(answer, priorityPolite, priorityNormal, prioritySurly);
 }
 
+bool ScriptBase::Dialogue_Menu_Clear_Never_Repeat_Was_Selected_Flag(int answer) {
+	debugC(kDebugScript, "Dialogue_Menu_Clear_Never_Repeat_Was_Selected_Flag(%d)", answer);
+	return _vm->_dialogueMenu->clearNeverRepeatWasSelectedFlag(answer);
+}
+
 bool ScriptBase::Dialogue_Menu_Remove_From_List(int answer) {
 	debugC(kDebugScript, "Dialogue_Menu_Remove_From_List(%d)", answer);
 	return _vm->_dialogueMenu->removeFromList(answer);

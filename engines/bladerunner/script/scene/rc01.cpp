@@ -439,9 +439,17 @@ void SceneScriptRC01::walkToCenter() {
 
 bool SceneScriptRC01::ClickedOnExit(int exitId) {
 	if (exitId == kRC01ExitRC02) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -174.77f, 5.55f, 25.95f, 12, true, false, false)) {
+		bool walkToRC02ExitResult = true;
+#if BLADERUNNER_ORIGINAL_BUGS
+		walkToRC02ExitResult = Loop_Actor_Walk_To_XYZ(kActorMcCoy, -174.77f, 5.55f, 25.95f, 12, true, false, false);
+#else
+		// fixes clipping into the closed door of the shop when McCoy says locked or goes in
+		// This was reproducible mainly by entering from Bullet Bob's  (RC03) and clicking on the door immediately
+		walkToRC02ExitResult = Loop_Actor_Walk_To_XYZ(kActorMcCoy, -170.38f, 5.55f, 35.00f, 12, true, false, false);
+#endif // BLADERUNNER_ORIGINAL_BUGS
+		if (!walkToRC02ExitResult) {
 			if (Game_Flag_Query(kFlagRC02RunciterTalkWithGun)) {
-				Actor_Says(kActorMcCoy, 8522, 14);
+				Actor_Says(kActorMcCoy, 8522, 14); // Locked
 			} else {
 				switch (Global_Variable_Query(kVariableChapter)) {
 				case 1:

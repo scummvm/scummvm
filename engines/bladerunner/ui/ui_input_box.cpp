@@ -83,24 +83,16 @@ void UIInputBox::hide() {
 	_isVisible = false;
 }
 
-void UIInputBox::handleKeyUp(const Common::KeyState &kbd) {
-	if (_isVisible) {
-		// Check for "Enter" in keyUp instead of in keyDown as keyDown is repeating characters
-		// and that can screw up UX (which is not great in the original game either).
-		if (kbd.keycode == Common::KEYCODE_RETURN && !_text.empty()) {
-			if (_valueChangedCallback) {
-				_valueChangedCallback(_callbackData, this);
-			}
-		}
-	}
-}
-
 void UIInputBox::handleKeyDown(const Common::KeyState &kbd) {
 	if (_isVisible) {
 		if (charIsValid(kbd) && _text.size() < _maxLength) {
 			_text += kbd.ascii;
 		} else if (kbd.keycode == Common::KEYCODE_BACKSPACE) {
 			_text.deleteLastChar();
+		} else if (kbd.keycode == Common::KEYCODE_RETURN && !_text.empty()) {
+			if (_valueChangedCallback) {
+				_valueChangedCallback(_callbackData, this);
+			}
 		}
 	}
 }

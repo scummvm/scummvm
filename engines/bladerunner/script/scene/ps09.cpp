@@ -298,7 +298,16 @@ void SceneScriptPS09::dialogueWithGrigorian() {
 	) {
 		DM_Add_To_List_Never_Repeat_Once_Selected(170,  5, 5, 3); // PROTEST
 		DM_Add_To_List_Never_Repeat_Once_Selected(180, -1, 5, 5); // CARS
-		DM_Add_To_List_Never_Repeat_Once_Selected(200, -1, 3, 6); // VOIGT-KAMPFF
+		if ((_vm->_cutContent
+		     && (!Game_Flag_Query(kFlagPS09GrigorianVKChosen)
+		         && (!Actor_Clue_Query(kActorMcCoy, kClueVKGrigorianHuman) && !Actor_Clue_Query(kActorMcCoy, kClueVKGrigorianReplicant))))
+		    || !_vm->_cutContent
+		) {
+			if (_vm->_cutContent) {
+				Dialogue_Menu_Clear_Never_Repeat_Was_Selected_Flag(200);
+			}
+			DM_Add_To_List_Never_Repeat_Once_Selected(200, -1, 3, 6); // VOIGT-KAMPFF
+		}
 	}
 	if (Actor_Clue_Query(kActorMcCoy, kClueGrigoriansNote) // cut feature? it is impossible to obtain this clue
 	 && (Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewA)
@@ -424,6 +433,9 @@ void SceneScriptPS09::dialogueWithGrigorian() {
 		break;
 
 	case 200: // VOIGT-KAMPFF
+		if (_vm->_cutContent) {
+			Game_Flag_Set(kFlagPS09GrigorianVKChosen);
+		}
 		Actor_Says(kActorMcCoy, 4265, 14);
 		Actor_Says(kActorGrigorian, 400, 13);
 		Actor_Says(kActorMcCoy, 4400, 13);

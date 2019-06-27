@@ -163,7 +163,9 @@ bool AIScriptOfficerLeary::Update() {
 			}
 			break;
 		case kSetUG04:
+			// fall through
 		case kSetUG05:
+			// fall through
 		case kSetUG06:
 			if (Actor_Query_Which_Set_In(kActorOfficerLeary) == Player_Query_Current_Set()) {
 				Actor_Set_Goal_Number(kActorOfficerLeary, kGoalOfficerLearyAttackMcCoyAct4);
@@ -509,6 +511,7 @@ bool AIScriptOfficerLeary::GoalChanged(int currentGoalNumber, int newGoalNumber)
 				AI_Movement_Track_Repeat(kActorOfficerLeary);
 				break;
 			case 5:
+#if BLADERUNNER_ORIGINAL_BUGS
 				// kSetUG06 -> kSetFreeSlotC
 //				debug("leary 8-5 kSetUG06 -> kSetFreeSlotC");
 				AI_Movement_Track_Append(kActorOfficerLeary, 413, 10);
@@ -518,9 +521,27 @@ bool AIScriptOfficerLeary::GoalChanged(int currentGoalNumber, int newGoalNumber)
 				AI_Movement_Track_Append(kActorOfficerLeary, 35, 30); // kSetFreeSlotC
 				AI_Movement_Track_Repeat(kActorOfficerLeary);
 				break;
+#else
+				// Don't allow police officers to shoot McCoy while he is
+				// disabled reciting his monologue at start of Act 4
+				if (Game_Flag_Query(kFlagUG06Chapter4Started)) {
+					// kSetUG06 -> kSetFreeSlotC
+					// debug("leary 8-5 kSetUG06 -> kSetFreeSlotC");
+					AI_Movement_Track_Append(kActorOfficerLeary, 413, 10);
+					AI_Movement_Track_Append(kActorOfficerLeary, 414, 0);
+					AI_Movement_Track_Append_With_Facing(kActorOfficerLeary, 431, 0, 1017);
+					AI_Movement_Track_Append(kActorOfficerLeary, 432, 10);
+					AI_Movement_Track_Append(kActorOfficerLeary, 35, 30); // kSetFreeSlotC
+					AI_Movement_Track_Repeat(kActorOfficerLeary);
+					break;
+				}
+#endif // BLADERUNNER_ORIGINAL_BUGS
+				// fall through
+
 			case 6:
+#if BLADERUNNER_ORIGINAL_BUGS
 				// kSetUG07 -> kSetFreeSlotC
-//				debug("leary 8-6 kSetUG07 -> kSetFreeSlotC");
+				// debug("leary 8-6 kSetUG07 -> kSetFreeSlotC");
 				AI_Movement_Track_Append(kActorOfficerLeary, 415, 0);
 				AI_Movement_Track_Append_With_Facing(kActorOfficerLeary, 416, 0, 620);
 				AI_Movement_Track_Append(kActorOfficerLeary, 417, 0);
@@ -528,6 +549,23 @@ bool AIScriptOfficerLeary::GoalChanged(int currentGoalNumber, int newGoalNumber)
 				AI_Movement_Track_Append(kActorOfficerLeary, 35, 30); // kSetFreeSlotC
 				AI_Movement_Track_Repeat(kActorOfficerLeary);
 				break;
+#else
+				// Don't put police in UG07 after the UG18 Guzza scene
+				// since Clovis may be there too and that does not work well
+				if (!Game_Flag_Query(kFlagUG18GuzzaScene)) {
+					// kSetUG07 -> kSetFreeSlotC
+					// debug("leary 8-6 kSetUG07 -> kSetFreeSlotC");
+					AI_Movement_Track_Append(kActorOfficerLeary, 415, 0);
+					AI_Movement_Track_Append_With_Facing(kActorOfficerLeary, 416, 0, 620);
+					AI_Movement_Track_Append(kActorOfficerLeary, 417, 0);
+					AI_Movement_Track_Append(kActorOfficerLeary, 418, 0);
+					AI_Movement_Track_Append(kActorOfficerLeary, 35, 30); // kSetFreeSlotC
+					AI_Movement_Track_Repeat(kActorOfficerLeary);
+					break;
+				}
+#endif // BLADERUNNER_ORIGINAL_BUGS
+				// fall through
+
 			case 7:
 				// kSetUG01 -> kSetFreeSlotC
 //				debug("leary 8-7 kSetUG01 -> kSetFreeSlotC");

@@ -835,7 +835,8 @@ void VQADecoder::VQAVideoTrack::VPTRWriteBlock(Graphics::Surface *surface, unsig
 
 				uint8 a, r, g, b;
 				gameDataPixelFormat().colorToARGB(vqaColor, a, r, g, b);
-				uint16 outColor = (uint16)surface->format.ARGBToColor(a, r, g, b);
+				// Ignore the alpha in the output as it is inversed in the input
+				uint16 outColor = (uint16)surface->format.RGBToColor(r, g, b);
 
 				if (!(alpha && a)) {
 					*(uint16 *)(surface->getBasePtr(dst_x + x, dst_y + y)) = outColor;

@@ -73,10 +73,6 @@ void KIASectionHelp::draw(Graphics::Surface &surface){
 	_uiContainer->draw(surface);
 }
 
-void KIASectionHelp::handleKeyUp(const Common::KeyState &kbd) {
-	_uiContainer->handleKeyUp(kbd);
-}
-
 void KIASectionHelp::handleMouseMove(int mouseX, int mouseY) {
 	_uiContainer->handleMouseMove(mouseX, mouseY);
 }

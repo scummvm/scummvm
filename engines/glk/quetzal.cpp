@@ -203,7 +203,7 @@ void QuetzalWriter::addCommonChunks(const Common::String &saveName) {
 		ws.write(saveName.c_str(), saveName.size());
 		ws.writeByte(0);
 	}
-	Common::Language l;
+
 	// Write 'SCVM' chunk with game version & gameplay statistics
 	{
 		Common::WriteStream &ws = add(ID_SCVM);

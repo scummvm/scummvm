@@ -10055,6 +10055,36 @@ static const uint16 qfg4DreamGatePatch[] = {
 	PATCH_END
 };
 
+// When approaching the town gate at night in room 270, dismissing the menu
+//  often doesn't work and instead repeats the gate message and menu. Upon
+//  entering the gate's doormat, sTo290Night moves hero up by 6 pixels, assuming
+//  that this places him outside the doormat. That assumption is usually wrong
+//  since it depends on hero's start position, walk/run mode, and game speed.
+//
+// We fix this by moving hero one pixel above the doormat instead.
+//
+// Applies to: All versions
+// Responsible method: sTo290Night:changeState(1)
+// Fixes bug: #10995
+static const uint16 qfg4TownGateDoormatSignature[] = {
+	0x7a,                               // push2 [ y ]
+	0x76,                               // push0
+	0x81, 0x00,                         // lag 00
+	0x4a, SIG_UINT16(0x0004),           // send 04 [ hero:y? ]
+	SIG_MAGICDWORD,
+	0x36,                               // push
+	0x35, 0x06,                         // ldi 06
+	0x04,                               // sub
+	0x36,                               // push [ hero:y - 6 ]
+	SIG_END
+};
+
+static const uint16 qfg4TownGateDoormatPatch[] = {
+	0x38, PATCH_UINT16(0x00b4),         // pushi 180d [ 1 pixel above doormat ]
+	0x33, 0x07,                         // jmp 07
+	PATCH_END
+};
+
 // Some inventory item properties leak across restarts. Most conspicuously, the
 // torch icon appears pre-lit after a restart, if it had been lit before.
 //
@@ -10513,6 +10543,9 @@ static const uint16 qfg4TentacleWrigglePatch[] = {
 //
 // Crossing from the left (crossByHandLeft) doesn't require fixing.
 //
+// This patch doesn't apply to the NRS version which ships with the GOG release
+//  as it throttles the frequency of crossByHand:doit which fixes the bug.
+//
 // Applies to at least: English CD, English floppy, German floppy
 // Responsible method: crossByHand::changeState(3) in script 710
 // Fixes bug: #10615
@@ -10586,6 +10619,9 @@ static const uint16 qfg4PitRopeFighterPatch[] = {
 // state 5 code thought 0/1 meant move right/left. Whereas state 4 decides 0/1
 // means abort/cross, only ever moving left. The rightward MoveTo never runs.
 //
+// We also include a version of this for the instruction sizes in the NRS patch,
+//  which is important as that ships with the GOG version.
+//
 // Applies to at least: English CD, English floppy, German floppy
 // Responsible method: sLevitateOverPit::changeState(5) in script 710
 // Fixes bug: #10615
@@ -10617,13 +10653,50 @@ static const uint16 qfg4PitRopeMagePatch1[] = {
 	0x81, 0x00,                         // lag global[0] (hero)
 	0x4a, PATCH_UINT16(0x0004),         // send 4d
 	0xa3, 0x02,                         // sal local[2] (cache again)
-                                        //
+	                                    //
 	0x38, PATCH_SELECTOR16(setSpeed),   // pushi setSpeed
 	0x78,                               // push1
 	0x39, 0x08,                         // pushi 8d (set our fixed speed)
 	0x81, 0x00,                         // lag global[0] (hero)
 	0x4a, PATCH_UINT16(0x0006),         // send 6d
 	0x5c,                               // selfID (erase 1 byte to keep disasm aligned)
+	PATCH_END
+};
+
+static const uint16 qfg4PitRopeMageNrsSignature1[] = {
+	0x30, SIG_UINT16(0x0016),           // bnt 22d [if register == 0 (never), move right]
+	SIG_ADDTOOFFSET(+19),               // ... (move left)
+	0x32, SIG_ADDTOOFFSET(+2),          // jmp ?? [end the switch]
+
+	0x38, SIG_SELECTOR16(setMotion),    // pushi setMotion (move right)
+	0x39, 0x04,                         // pushi 4d
+	0x51, SIG_ADDTOOFFSET(+1),          // class MoveTo
+	0x36,                               // push
+	SIG_MAGICDWORD,
+	0x38, SIG_UINT16(0x00da),           // pushi 218d
+	0x39, 0x30,                         // pushi 48d
+	0x7c,                               // pushSelf
+	0x81, 0x00,                         // lag global[0] (hero)
+	0x4a, SIG_UINT16(0x000c),           // send 12d
+	0x32, SIG_ADDTOOFFSET(+2),          // jmp ?? [end the switch]
+	SIG_END
+};
+
+static const uint16 qfg4PitRopeMageNrsPatch1[] = {
+	0x34, PATCH_UINT16(0x0000),         // ldi 0 (erase the branch)
+	PATCH_ADDTOOFFSET(+19),             // ...
+
+	0x38, PATCH_SELECTOR16(cycleSpeed), // pushi cycleSpeed
+	0x76,                               // push0
+	0x81, 0x00,                         // lag global[0] (hero)
+	0x4a, PATCH_UINT16(0x0004),         // send 4d
+	0xa3, 0x02,                         // sal local[2] (cache again)
+	                                    //
+	0x38, PATCH_SELECTOR16(setSpeed),   // pushi setSpeed
+	0x78,                               // push1
+	0x39, 0x08,                         // pushi 8d (set our fixed speed)
+	0x81, 0x00,                         // lag global[0] (hero)
+	0x4a, PATCH_UINT16(0x0006),         // send 6d
 	PATCH_END
 };
 
@@ -11678,6 +11751,160 @@ static const uint16 qfg4FighterSpearPatch[] = {
 	PATCH_END
 };
 
+// Clicking Do on the inn door in room 260 from certain coordinates crashes the
+//  CD version. This is one of several related crashes where the Grooper or
+//  Grycler classes send a selector to a non-object in only the CD version.
+//
+// The inn door script isn't buggy, and neither are Grooper or Grycler. Instead,
+//  Sierra "upgraded" the core Cycle classes in the CD version with drastically
+//  different behavior after the game was already written for the first ones.
+//  It's unclear what they were attempting to accomplish, but the conspicuous
+//  regressions include hero stuttering when walking on every screen, the runes
+//  dial refusing to spin a full rotation, random crashes at the inn door and
+//  on the slippery path in room 800, and probably other problems. Meanwhile
+//  GK1, a relatively stable SCI32 game released at the same time, used the same
+//  Cycle classes in all its versions as QFG4 floppy without motion problems.
+//
+// The crashes result from complex motion edge cases but involve hero ending up
+//  without a cycler at the wrong moment. These can be avoided by adding a call
+//  to hero:normalize to reset a lot of state and set hero:cycler to StopWalk
+//  and hero:looper to stopGroop. This is a bit of a kitchen-sink solution but
+//  it does the job without side effects and only requires 4 bytes.
+//
+// We prevent the inn door crash by calling hero:normalize in sInInnDoor.
+//
+// Applies to: English CD
+// Responsible method: sInInnDoor:changeState(1)
+// Fixes bug: #10760
+static const uint16 qfg4InnDoorCDSignature[] = {
+	0x30, SIG_MAGICDWORD,               // bnt 000e [ state 2 ]
+	      SIG_UINT16(0x000e),
+	0x38, SIG_UINT16(0x0111),           // pushi setHeading [ hard-coded for CD ]
+	0x7a,                               // push2
+	0x76,                               // push0
+	0x7c,                               // pushSelf
+	0x81, 0x00,                         // lag 00
+	0x4a, SIG_UINT16(0x0008),           // send 08  [ hero setHeading: 0 self ]
+	0x32, SIG_UINT16(0x00c3),           // jmp 00c3 [ end of method ]
+	SIG_END,
+};
+
+static const uint16 qfg4InnDoorCDPatch[] = {
+	0x31, 0x0f,                         // bnt 0f [ state 2 ]
+	0x38, PATCH_SELECTOR16(normalize),  // pushi normalize
+	0x76,                               // push0
+	0x38, PATCH_UINT16(0x0111),         // pushi setHeading [ hard-coded for CD ]
+	0x7a,                               // push2
+	0x76,                               // push0
+	0x7c,                               // pushSelf
+	0x81, 0x00,                         // lag 00
+	0x4a, PATCH_UINT16(0x000c),         // send 0c [ hero normalize: setHeading: 0 self ]
+	PATCH_END
+};
+
+// Walking around the base of the slippery slope in room 800 can crash the CD
+//  version in either the Grooper or Grycler classes. See the inn door patch
+//  above for details on these regressions and their solution.
+//
+// The script sSlippery runs when walking up the slope and sWalksDown runs when
+//  walking down. Both are vulnerable to Grooper/Grycler crashes and both can be
+//  fixed by adding hero:normalize calls.
+//
+// We also include a version of the sWalksDown patch for the instruction sizes
+//  in the NRS patch, which is important as that ships with the GOG version.
+//
+// Applies to: English CD
+// Responsible methods: sSlippery:changeState(0), sWalksDown:changeState(0)
+// Fixes bug: #10747
+static const uint16 qfg4WalkUpSlopeCDSignature[] = {
+	SIG_MAGICDWORD,
+	0x38, SIG_UINT16(0x0142),           // pushi setMotion [ hard-coded for CD ]
+	0x78,                               // push1
+	0x76,                               // push0
+	SIG_ADDTOOFFSET(+8),
+	0x4a, SIG_UINT16(0x000e),           // send 0e [ hero setMotion: 0 ... ]
+	SIG_END,
+};
+
+static const uint16 qfg4WalkUpSlopeCDPatch[] = {
+	0x38, PATCH_SELECTOR16(normalize),  // pushi normalize
+	0x39, 0x00,                         // pushi 00
+	PATCH_ADDTOOFFSET(+8),
+	0x4a, PATCH_UINT16(0x000c),         // send 0c [ hero normalize: ... ]
+	PATCH_END
+};
+
+static const uint16 qfg4WalkDownSlopeCDSignature[] = {
+	0x3c,                               // dup
+	0x35, SIG_MAGICDWORD, 0x00,         // ldi 00
+	0x1a,                               // eq?
+	0x31, 0x1e,                         // bnt 1e [ state 1 ]
+	0x38, SIG_UINT16(0x0218),           // pushi handsOff [ hard-coded for CD ]
+	SIG_ADDTOOFFSET(+15),
+	0x4a, SIG_UINT16(0x0008),           // send 08 [ hero setStep: ... ]
+	SIG_END,
+};
+
+static const uint16 qfg4WalkDownSlopeCDPatch[] = {
+	0x2f, 0x22,                         // bt 22 [ state 1 ]
+	0x38, PATCH_SELECTOR16(normalize),  // pushi normalize
+	0x76,                               // push0
+	PATCH_ADDTOOFFSET(+18),
+	0x4a, PATCH_UINT16(0x000c),         // send 0c [ hero normalize: setStep: ... ]
+	PATCH_END
+};
+
+static const uint16 qfg4WalkDownSlopeNrsSignature[] = {
+	0x3c,                               // dup
+	0x35, SIG_MAGICDWORD, 0x00,         // ldi 00
+	0x1a,                               // eq?
+	0x30, SIG_UINT16(0x001f),           // bnt 001f [ state 1 ]
+	0x38, SIG_UINT16(0x0218),           // pushi handsOff [ hard-coded for CD ]
+	SIG_ADDTOOFFSET(+15),
+	0x4a, SIG_UINT16(0x0008),           // send 08 [ hero setStep: ... ]
+	SIG_END,
+};
+
+static const uint16 qfg4WalkDownSlopeNrsPatch[] = {
+	0x2e, PATCH_UINT16(0x0023),         // bt 0023 [ state 1 ]
+	0x38, PATCH_SELECTOR16(normalize),  // pushi normalize
+	0x76,                               // push0
+	PATCH_ADDTOOFFSET(+18),
+	0x4a, PATCH_UINT16(0x000c),         // send 0c [ hero normalize: setStep: ... ]
+	PATCH_END
+};
+
+// The NRS fan-patch for wraiths has a bug which locks up the game. This occurs
+//  when a wraith initializes while game time is greater than $7fff. The patch
+//  throttles wraith:doit to execute no more than once per game tick, which it
+//  does by storing the previous game time in a new local variable whose initial
+//  value is zero. This technique is used in several patches but this one is
+//  missing a call to Abs that the others have. Once game time reaches $8000 or
+//  greater, the signed less-than test will always pass when the local variable
+//  is zero, and wraith:doit won't execute.
+//
+// We fix this by changing the signed less-than comparison to unsigned.
+//
+// Applies to: English CD with NRS patches 53.HEP/SCR
+// Responsible method: wraith:doit
+// Fixes bug: #10711
+static const uint16 qfg4WraithLockupNrsSignature[] = {
+	SIG_MAGICDWORD,
+	0x89, 0x58,                         // lsg 58
+	0x83, 0x04,                         // lal 04
+	0x04,                               // sub
+	0x36,                               // push
+	0x35, 0x01,                         // ldi 01
+	0x22,                               // lt? [ (gameTime - prevGameTime) < 1 ]
+	SIG_END
+};
+
+static const uint16 qfg4WraithLockupNrsPatch[] = {
+	PATCH_ADDTOOFFSET(+8),
+	0x2a,                               // ult?
+	PATCH_END
+};
+
 // The script that determines how much money a revenant has is missing the first
 //  parameter to kRandom, which should be zero as it is with other monsters.
 //  Instead of awarding the intended 15 to 40 kopeks, it always awards 15 and
@@ -11703,6 +11930,114 @@ static const uint16 qfg4SearchRevenantPatch[] = {
 	PATCH_END
 };
 
+// During combat, if a rabbit is all the way to the right and attacks then it
+//  won't make any more moves, forcing the player to run away to end the fight.
+//  This is due to rabbitCombat failing to pass a caller to the rabbitAttack
+//  script and so it gets stuck. We pass the missing "self" parameter.
+//
+// Applies to: All versions
+// Responsible method: rabbitCombat:changeState(1)
+// Fixes bug: #11000
+static const uint16 qfg4RabbitCombatSignature[] = {
+	0x38, SIG_SELECTOR16(setScript),    // pushi setScript
+	0x78,                               // push1
+	0x72, SIG_ADDTOOFFSET(+2),          // lofsa rabbitAttack
+	0X36,                               // push
+	SIG_MAGICDWORD,
+	0x54, SIG_UINT16(0x0006),           // self 06 [ self setScript: rabbitAttack ]
+	0x32, SIG_UINT16(0x014b),           // jmp 014b
+	SIG_END
+};
+
+static const uint16 qfg4RabbitCombatPatch[] = {
+	PATCH_ADDTOOFFSET(+3),
+	0x7a,                               // push2
+	0x74, PATCH_ADDTOOFFSET(+2),        // lofss rabbitAttack
+	0x7c,                               // pushSelf
+	0x54, PATCH_UINT16(0x0008),         // self 08 [ self setScript: rabbitAttack self ]
+	PATCH_END
+};
+
+// Attempting to open the monastery door in room 250 while Igor is present
+//  randomly locks up the game. sHectapusDeath stands Igor up, but this can be
+//  interrupted by sIgorCarves animating him at random intervals, leaving
+//  sHectapusDeath stuck in handsOff mode.
+//
+// We fix this by first stopping sIgorCarves as other scripts in this room do.
+//
+// Applies to: All versions
+// Responsible method: sHectapusDeath:changeState(4)
+// Fixes bug: #10994
+static const uint16 qfg4HectapusDeathSignature[] = {
+	0x30, SIG_UINT16(0x0027),           // bnt 0027
+	SIG_ADDTOOFFSET(+13),
+	0x30, SIG_UINT16(0x0017),           // bnt 0017
+	0x38, SIG_MAGICDWORD,               // pushi setLoop
+	      SIG_SELECTOR16(setLoop),
+	0x7a,                               // push2
+	0x7a,                               // push2
+	0x78,                               // push1
+	0x38, SIG_SELECTOR16(setCycle),     // pushi setCycle
+	0x7a,                               // push2
+	0x51, SIG_ADDTOOFFSET(+1),          // class End
+	0x36,                               // push
+	0x7c,                               // pushSelf
+	0x72, SIG_ADDTOOFFSET(+2),          // lofsa igor
+	0x4a, SIG_UINT16(0x0010),           // send 10 [ igor setLoop: 2 1 setCycle: End self ]
+	0x32, SIG_ADDTOOFFSET(+2),          // jmp [ end of method ]
+	0x35, 0x01,                         // ldi 01
+	0x65, SIG_ADDTOOFFSET(+1),          // aTop cycles
+	0x32, SIG_ADDTOOFFSET(+2),          // jmp [ end of method ]
+	SIG_END
+};
+
+static const uint16 qfg4HectapusDeathPatch[] = {
+	0x30, PATCH_UINT16(0x002b),         // bnt 002b
+	PATCH_ADDTOOFFSET(+13),
+	0x30, PATCH_UINT16(0x001b),         // bnt 001b
+	PATCH_ADDTOOFFSET(+17),
+	0x38, PATCH_SELECTOR16(setScript),  // pushi setScript
+	0x78,                               // push1
+	0x76,                               // push0
+	0x4a, PATCH_UINT16(0x0016),         // send 16 [ igor setLoop: 2 1 setCycle: End self setScript: 0 ]
+	0x3a,                               // toss
+	0x48,                               // ret
+	0x78,                               // push1
+	0x69, PATCH_GETORIGINALBYTE(+45),   // sTop cycles
+	PATCH_END
+};
+
+// Floppy 1.0 locks up when Ad Avis captures you with a Necrotaur in room 552,
+//  and possibly other rooms. sBlackOut:changeState has one too many states
+//  and doesn't increment the state number and cue enough in all scenarios.
+//
+// We fix this by removing the empty state 3 as later floppy versions do.
+//
+// Applies to: English Floppy 1.0
+// Responsible method: sBlackOut:changeState
+// Fixes bug: #11001
+static const uint16 qfg4AdAvisCaptureSignature[] = {
+	0x31, 0x05,                         // bnt 05 [ state 3 ]
+	SIG_ADDTOOFFSET(+6),
+	0x35, SIG_MAGICDWORD, 0x03,         // ldi 03
+	0x1a,                               // eq?
+	0x31, 0x05,                         // bnt 05 [ state 4 ]
+	SIG_ADDTOOFFSET(+6),
+	0x35, 0x04,                         // ldi 04
+	SIG_ADDTOOFFSET(+83),
+	0x35, 0x05,                         // ldi 05
+	SIG_END
+};
+
+static const uint16 qfg4AdAvisCapturePatch[] = {
+	0x31, 0x10,                         // bnt 10 [ new state 3 ]
+	PATCH_ADDTOOFFSET(+17),
+	0x35, 0x03,                         // ldi 03 [ state 4 is now state 3 ]
+	PATCH_ADDTOOFFSET(+83),
+	0x35, 0x04,                         // ldi 04 [ state 5 is now state 4 ]
+	PATCH_END
+};
+
 //          script, description,                                     signature                      patch
 static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,     0, "prevent autosave from deleting save games",   1, qfg4AutosaveSignature,         qfg4AutosavePatch },
@@ -11719,8 +12054,13 @@ static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,    31, "fix setScaler calls",                         1, qfg4SetScalerSignature,        qfg4SetScalerPatch },
 	{  true,    41, "fix conditional void calls",                  3, qfg4ConditionalVoidSignature,  qfg4ConditionalVoidPatch },
 	{  true,    50, "fix random revenant kopeks",                  1, qfg4SearchRevenantSignature,   qfg4SearchRevenantPatch },
+	{  true,    51, "Floppy: fix ad avis capture lockup",          1, qfg4AdAvisCaptureSignature,    qfg4AdAvisCapturePatch },
+	{  true,    53, "NRS: fix wraith lockup",                      1, qfg4WraithLockupNrsSignature,  qfg4WraithLockupNrsPatch },
 	{  true,    83, "fix incorrect array type",                    1, qfg4TrapArrayTypeSignature,    qfg4TrapArrayTypePatch },
+	{  true,   250, "fix hectapus death lockup",                   1, qfg4HectapusDeathSignature,    qfg4HectapusDeathPatch },
+	{  true,   260, "CD: fix inn door crash",                      1, qfg4InnDoorCDSignature,        qfg4InnDoorCDPatch },
 	{  true,   270, "fix town gate after a staff dream",           1, qfg4DreamGateSignature,        qfg4DreamGatePatch },
+	{  true,   270, "fix town gate doormat at night",              1, qfg4TownGateDoormatSignature,  qfg4TownGateDoormatPatch },
 	{  true,   320, "fix pathfinding at the inn",                  1, qfg4InnPathfindingSignature,   qfg4InnPathfindingPatch },
 	{  true,   320, "fix talking to absent innkeeper",             1, qfg4AbsentInnkeeperSignature,  qfg4AbsentInnkeeperPatch },
 	{  true,   320, "CD: fix domovoi never appearing",             1, qfg4DomovoiInnSignature,       qfg4DomovoiInnPatch },
@@ -11761,6 +12101,7 @@ static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,   710, "fix tentacle wriggle cycler",                 1, qfg4TentacleWriggleSignature,  qfg4TentacleWrigglePatch },
 	{  true,   710, "fix tentacle retraction for fighter",         1, qfg4PitRopeFighterSignature,   qfg4PitRopeFighterPatch },
 	{  true,   710, "fix tentacle retraction for mage (1/2)",      1, qfg4PitRopeMageSignature1,     qfg4PitRopeMagePatch1 },
+	{  true,   710, "NRS: fix tentacle retraction for mage (1/2)", 1, qfg4PitRopeMageNrsSignature1,  qfg4PitRopeMageNrsPatch1 },
 	{  true,   710, "fix tentacle retraction for mage (2/2)",      1, qfg4PitRopeMageSignature2,     qfg4PitRopeMagePatch2 },
 	{  true,   730, "fix ad avis timeout",                         1, qfg4AdAvisTimeoutSignature,    qfg4AdAvisTimeoutPatch },
 	{  true,   730, "Floppy: fix casting spells at ad avis",       1, qfg4AdAvisSpellsFloppySignature, qfg4AdAvisSpellsFloppyPatch },
@@ -11775,6 +12116,10 @@ static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,   801, "fix runes puzzle (1/2)",                      1, qfg4RunesPuzzleSignature1,     qfg4RunesPuzzlePatch1 },
 	{  true,   801, "fix runes puzzle (2/2)",                      1, qfg4RunesPuzzleSignature2,     qfg4RunesPuzzlePatch2 },
 	{  true,   803, "fix sliding down slope",                      1, qfg4SlidingDownSlopeSignature, qfg4SlidingDownSlopePatch },
+	{  true,   803, "CD: fix walking up slippery slope",           1, qfg4WalkUpSlopeCDSignature,    qfg4WalkUpSlopeCDPatch },
+	{  true,   803, "CD: fix walking down slippery slope",         1, qfg4WalkDownSlopeCDSignature,  qfg4WalkDownSlopeCDPatch },
+	{  true,   803, "NRS: fix walking down slippery slope",        1, qfg4WalkDownSlopeNrsSignature, qfg4WalkDownSlopeNrsPatch },
+	{  true,   820, "fix rabbit combat",                           1, qfg4RabbitCombatSignature,     qfg4RabbitCombatPatch },
 	{  true,   810, "fix conditional void calls",                  1, qfg4ConditionalVoidSignature,  qfg4ConditionalVoidPatch },
 	{  true,   830, "fix conditional void calls",                  2, qfg4ConditionalVoidSignature,  qfg4ConditionalVoidPatch },
 	{  true,   835, "fix conditional void calls",                  3, qfg4ConditionalVoidSignature,  qfg4ConditionalVoidPatch },

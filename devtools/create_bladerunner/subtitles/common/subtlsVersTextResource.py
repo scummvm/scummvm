@@ -8,7 +8,7 @@ my_module_name = "subtlsVersTextResource"
 # Template for SBTLVERS.TRE sheet's values ((row 2 and below)
 SBTLVERS_TEXT_RESOURCE_TUPLE_LIST = [
 	(0, "ScummVM Team", "Credits"),
-	(1, "2", "Version (an incremental number)"),
+	(1, "3", "Version (an incremental number)"),
 	(2, "##:##:## ##/##/####", "Placeholder – Date of compilation (HH:mm:ss dd/mm/yyyy)"),
 	(3, "EFIGS", "Placeholder – Language mode")
  ]

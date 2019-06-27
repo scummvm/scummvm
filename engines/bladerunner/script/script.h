@@ -201,6 +201,7 @@ protected:
 	bool Dialogue_Menu_Add_To_List_Never_Repeat_Once_Selected(int answer);
 	bool DM_Add_To_List(int answer, int priorityPolite, int priorityNormal, int prioritySurly);
 	bool DM_Add_To_List_Never_Repeat_Once_Selected(int answer, int priorityPolite, int priorityNormal, int prioritySurly);
+	bool Dialogue_Menu_Clear_Never_Repeat_Was_Selected_Flag(int answer);
 	bool Dialogue_Menu_Remove_From_List(int answer);
 	int Dialogue_Menu_Query_Input();
 	int Dialogue_Menu_Query_List_Size();

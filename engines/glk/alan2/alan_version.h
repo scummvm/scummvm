@@ -20,38 +20,15 @@
  *
  */
 
-#ifndef GLK_ALAN2_INTERPRETER
-#define GLK_ALAN2_INTERPRETER
+#ifndef GLK_ALAN2_ALAN_VERSION
+#define GLK_ALAN2_ALAN_VERSION
 
-#include "glk/alan2/acode.h"
-#include "glk/alan2/alan2.h"
+#include "glk/alan2/version.h"
 
 namespace Glk {
 namespace Alan2 {
 
-class Execute;
-class SaveLoad;
-
-class Interpreter {
-public:
-	Interpreter(Execute *execute, SaveLoad *saveLoad, Alan2Stack *stack) : _execute(execute), _saveLoad(saveLoad), _stack(stack) {}
-	void interpret(Aaddr adr);
-
-private:
-	void if_(Aword v);
-	void else_();
-	void depstart();
-	void swap();
-	void depexec(Aword v);
-	void depcase();
-	void curVar(Aword i);
-	void stMop(Aword i, Aaddr oldpc);
-	void adaptOldOpcodes(Aword i);
-
-	Execute *_execute;
-	SaveLoad *_saveLoad;
-	Alan2Stack *_stack;
-};
+extern Product alan;
 
 } // End of namespace Alan2
 } // End of namespace Glk

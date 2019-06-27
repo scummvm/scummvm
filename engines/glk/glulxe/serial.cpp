@@ -364,7 +364,7 @@ Common::Error Glulxe::writeGameData(Common::WriteStream *ws) {
 Common::Error Glulxe::readSaveData(Common::SeekableReadStream *rs) {
 	dest_t dest;
 	int ix;
-	uint lx, res, val;
+	uint lx = 0, res, val;
 	uint filestart, filelen = 0;
 	uint heapsumlen = 0;
 	uint *heapsumarr = nullptr;

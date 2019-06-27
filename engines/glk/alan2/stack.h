@@ -20,34 +20,19 @@
  *
  */
 
-#ifndef GLK_ALAN2_SAVELOAD
-#define GLK_ALAN2_SAVELOAD
+#ifndef GLK_ALAN2_STACK
+#define GLK_ALAN2_STACK
 
-#include "common/scummsys.h"
-#include "glk/alan2/types.h"
+/* Header file for stack handler in Alan interpreter */
 
 namespace Glk {
 namespace Alan2 {
 
-class SaveLoad {
-public:
-	SaveLoad(Common::String &gameName, ActElem *actors, LocElem *locations, ObjElem *objects, EvtqElem *events, int *eventTop) : 
-	_gameName(gameName), _actors(actors), _locations(locations), _objects(objects), _events(events), _eventTop(eventTop) {}
-	void save();
-	void restore();
-private:
-	bool endOfTable(AtrElem *addr);
-	
-	Common::String _prevSaveName;
+/* TYPES */
 
-	// Save state related variables
-	Common::String _gameName;
-	ActElem *_actors;
-	LocElem *_locations;
-	ObjElem *_objects;
-	EvtqElem *_events;
-	int *_eventTop;
-};
+extern Aptr pop(void);
+extern void push(Aptr item);
+extern Aptr top(void);
 
 } // End of namespace Alan2
 } // End of namespace Glk

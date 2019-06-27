@@ -309,7 +309,7 @@ void KIA::tick() {
 		_shapes->get(41)->draw(_vm->_surfaceFront, 211, 447);
 	}
 	if (_currentSectionId != kKIASectionQuit && _transitionId != 14) {
-		if (_vm->_settings->getDifficulty() > 0) {
+		if (_vm->_settings->getDifficulty() > kGameDifficultyEasy) {
 			_vm->_mainFont->drawColor(Common::String::format("%04d", _vm->_gameVars[kVariableChinyen]), _vm->_surfaceFront, 580, 341, _vm->_surfaceFront.format.RGBToColor(80, 96, 136));
 		} else {
 			_shapes->get(39)->draw(_vm->_surfaceFront, 583, 342);
@@ -448,6 +448,16 @@ void KIA::handleKeyUp(const Common::KeyState &kbd) {
 		return;
 	}
 
+	if (_currentSection) {
+		_currentSection->handleKeyUp(kbd);
+	}
+}
+
+void KIA::handleKeyDown(const Common::KeyState &kbd) {
+	if (!isOpen()) {
+		return;
+	}
+
 	if (toupper(kbd.ascii) != kPogo[_pogoPos]) {
 		_pogoPos = 0;
 	}
@@ -460,28 +470,18 @@ void KIA::handleKeyUp(const Common::KeyState &kbd) {
 			}
 		}
 	}
-	if (kbd.keycode == Common::KEYCODE_ESCAPE) {
+
+	switch (kbd.keycode) {
+	case Common::KEYCODE_ESCAPE:
 		if (!_forceOpen) {
 			open(kKIASectionNone);
 		}
-	} else {
-		if (_currentSection) {
-			_currentSection->handleKeyUp(kbd);
-		}
-	}
-	if (_currentSection && _currentSection->_scheduledSwitch) {
-		open(kKIASectionNone);
-	}
-}
+		break;
 
-void KIA::handleKeyDown(const Common::KeyState &kbd) {
-	if (!isOpen()) {
-		return;
-	}
-	switch (kbd.keycode) {
 	case Common::KEYCODE_F1:
 		open(kKIASectionHelp);
 		break;
+
 	case Common::KEYCODE_F2:
 		if (!_forceOpen) {
 			open(kKIASectionSave);
@@ -490,9 +490,11 @@ void KIA::handleKeyDown(const Common::KeyState &kbd) {
 	case Common::KEYCODE_F3:
 		open(kKIASectionLoad);
 		break;
+
 	case Common::KEYCODE_F10:
 		open(kKIASectionQuit);
 		break;
+
 	case Common::KEYCODE_F4:
 		if (_currentSectionId != kKIASectionCrimes) {
 			if (!_forceOpen) {
@@ -502,6 +504,7 @@ void KIA::handleKeyDown(const Common::KeyState &kbd) {
 			}
 		}
 		break;
+
 	case Common::KEYCODE_F5:
 		if (_currentSectionId != kKIASectionSuspects) {
 			if (!_forceOpen) {
@@ -511,6 +514,7 @@ void KIA::handleKeyDown(const Common::KeyState &kbd) {
 			}
 		}
 		break;
+
 	case Common::KEYCODE_F6:
 		if (_currentSectionId != kKIASectionClues) {
 			if (!_forceOpen) {
@@ -520,12 +524,14 @@ void KIA::handleKeyDown(const Common::KeyState &kbd) {
 			}
 		}
 		break;
+
 	default:
 		if (_currentSection) {
 			_currentSection->handleKeyDown(kbd);
 		}
 		break;
 	}
+
 	if (_currentSection && _currentSection->_scheduledSwitch) {
 		open(kKIASectionNone);
 	}
@@ -867,7 +873,7 @@ void KIA::createButtons(int sectionId) {
 		}
 		Common::String tooltip;
 		if (_vm->_settings->getAmmo(1) > 0) {
-			if (_vm->_settings->getDifficulty() > 0) {
+			if (_vm->_settings->getDifficulty() > kGameDifficultyEasy) {
 				tooltip = Common::String::format("%d", _vm->_settings->getAmmo(1));
 			} else {
 				tooltip = _vm->_textKIA->getText(50);
@@ -875,7 +881,7 @@ void KIA::createButtons(int sectionId) {
 			_buttons->defineImage(17, kiaButton17, nullptr, nullptr, nullptr, tooltip.c_str());
 		}
 		if (_vm->_settings->getAmmo(2) > 0) {
-			if (_vm->_settings->getDifficulty() > 0) {
+			if (_vm->_settings->getDifficulty() > kGameDifficultyEasy) {
 				tooltip = Common::String::format("%d", _vm->_settings->getAmmo(2));
 			} else {
 				tooltip = _vm->_textKIA->getText(50);

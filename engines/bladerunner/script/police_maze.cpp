@@ -32,6 +32,7 @@
 #include "bladerunner/time.h"
 #include "bladerunner/subtitles.h"
 #include "bladerunner/debugger.h"
+#include "bladerunner/settings.h"
 // ----------------------
 // Maze point system info
 // ----------------------
@@ -262,15 +263,28 @@ bool PoliceMazeTargetTrack::tick() {
 		return false;
 	}
 
-	_timeLeftUpdate = 66;
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+	if (_vm->_settings->getDifficulty() > kGameDifficultyEasy) {
+		timeDiff = 0 - _timeLeftUpdate;
+	}
+#endif // BLADERUNNER_ORIGINAL_BUGS
+	_timeLeftUpdate = 66; // update the target track 15 times per second
 
 	if (_isPaused) {
 		return false;
 	}
 
 	if (_isWaiting) {
+#if BLADERUNNER_ORIGINAL_BUGS
 		_timeLeftWait -= timeDiff;
-
+#else
+		if (_vm->_settings->getDifficulty() == kGameDifficultyEasy) {
+			_timeLeftWait -= timeDiff; // original behavior
+		} else {
+			_timeLeftWait -= (timeDiff + _timeLeftUpdate); // this deducts an amount >= 66
+		}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		if (_timeLeftWait > 0) {
 			return true;
 		}
@@ -589,6 +603,9 @@ bool PoliceMazeTargetTrack::tick() {
 				debug("ItemId: %3i, Wait random, Min: %i, Max: %i", _itemId, randomMin, randomMax);
 #endif
 				_timeLeftWait = Random_Query(randomMin, randomMax);
+#if BLADERUNNER_DEBUG_CONSOLE
+				debug("ItemId: %3i, Wait for = %i", _itemId, _timeLeftWait);
+#endif
 				_isWaiting = true;
 
 				cont = false;

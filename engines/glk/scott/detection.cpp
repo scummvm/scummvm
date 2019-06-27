@@ -77,14 +77,28 @@ bool ScottMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &g
 		while (p->_md5 && p->_filesize != filesize && md5 != p->_md5)
 			++p;
 
-		if (p->_filesize) {
+		DetectedGame gd;
+		if (!p->_gameId) {
+			if (!isBlorb && filename.hasSuffixIgnoreCase(".dat"))
+				continue;
+
+			const PlainGameDescriptor &desc = SCOTT_GAME_LIST[0];
+			gd = DetectedGame(desc.gameId, desc.description, Common::UNK_LANG, Common::kPlatformUnknown);
+			gd.canBeAdded = true;
+			gd.hasUnknownFiles = true;
+			FileProperties fp;
+			fp.md5 = md5;
+			fp.size = filesize;
+			gd.matchedFiles[filename] = fp;
+
+		} else {
 			// Found a match
 			PlainGameDescriptor gameDesc = findGame(p->_gameId);
 			DetectedGame gd(p->_gameId, gameDesc.description, Common::EN_ANY, Common::kPlatformUnknown);
 			gd.addExtraEntry("filename", file->getName());
-
-			gameList.push_back(gd);
 		}
+
+		gameList.push_back(gd);
 	}
 
 	return !gameList.empty();

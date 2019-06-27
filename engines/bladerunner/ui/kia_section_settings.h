@@ -65,7 +65,7 @@ public:
 
 	void draw(Graphics::Surface &surface) override;
 
-	void handleKeyUp(const Common::KeyState &kbd) override;
+	void handleKeyDown(const Common::KeyState &kbd) override;
 	void handleMouseMove(int mouseX, int mouseY) override;
 	void handleMouseDown(bool mainButton) override;
 	void handleMouseUp(bool mainButton) override;

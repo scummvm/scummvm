@@ -69,6 +69,7 @@ from treFileLib import *
 from pogoTextResource import *
 from devCommentaryText import *
 from subtlsVersTextResource import *
+from vqasTextResource import *
 
 # encoding=utf8
 #reload(sys)
@@ -112,32 +113,32 @@ SUPPORTED_MIX_INPUT_FOR_TRX_EXPORT_FILES = ['STARTUP.MIX']
 # 15 TRx files
 SUPPORTED_EXPORTED_TRx_FILES = ['CLUES.TR','ACTORS.TR','CRIMES.TR','CLUETYPE.TR','KIA.TR','SPINDEST.TR','VK.TR','OPTIONS.TR','DLGMENU.TR','ENDCRED.TR','HELP.TR','SCORERS.TR','KIACRED.TR','ERRORMSG.TR','AUTOSAVE.TR']
 SUPPORTED_PLACEHOLDER_VQA_ENGLISH_FILES = [
-	('WSTLGO_', 'Westwood Studios Partnership Intro'),
-	('BRLOGO_', 'Blade Runner Logo')]
+	('WSTLGO_', 'Westwood Studios Partnership Intro', '19400 ms, 291 frames'),
+	('BRLOGO_', 'Blade Runner Logo', '6000 ms, 90 frames')]
 SUPPORTED_PLACEHOLDER_VQA_LOCALIZED_FILES = [
-	('INTRO_', 'Intro cutscene - Prologue'),
-	('MW_A_', 'Eisenduller murder scene'),
-	('MW_B01_', 'Act 3 intro part - Start part'),
-	('MW_B02_', 'Act 3 intro part - Lucy is Replicant'),
-	('MW_B03_', 'Act 3 intro part - Dektora is Replicant'),
-	('MW_B04_', 'Act 3 intro part - Lucy and Dektora are human'),
-	('MW_B05_', 'Act 3 intro part - End part '),
-	('INTRGT_', 'Interrogation scene - Baker, Holloway, McCoy'),
-	('MW_C01_', 'Clovis and Sadik pay a visit to the Twins - Start Part'),
-	('MW_C02_', 'Clovis and Sadik pay a visit to the Twins - Clovis has an INCEPT PHOTO'),
-	('MW_C03_', 'Clovis and Sadik pay a visit to the Twins - Clovis DOES NOT have an INCEPT PHOTO'),
-	('MW_D_', 'Tyrell, Kolvig and Clovis meet-up at Tyrell Corp'),
-	('END01A_', 'Underground getaway - Lucy Human'),
-	('END01B_', 'Underground getaway - Lucy with DNA'),
-	('END01C_', 'Underground getaway - Lucy not enough DNA'),
-	('END01D_', 'Underground getaway - Dektora Human'),
-	('END01E_', 'Underground getaway - Dektora with DNA'),
-	('END01F_', 'Underground getaway - Dektora, not enough DNA'),
-	('END03_', 'Underground getaway - McCoy alone'),
-	('END04A_', 'Finale - McCoy on Moonbus'),
-	('END04B_', 'Finale - McCoy with Lucy on Moonbus'),
-	('END04C_', 'Finale - McCoy with Dektora on Moonbus'),
-	('END06_', 'Underground getaway - Steele Ending')
+	('INTRO_',  'Act 1 Intro - Prologue', '373267 ms, 5599 frames'),
+	('MW_A_',   'Act 2 Intro', '133134 ms, 1997 frames'),
+	('MW_B01_', 'Act 3 Intro - Start', '6733.367 ms, 101 frames'),
+	('MW_B02_', 'Act 3 Intro - Lucy is Replicant', '16000.080 ms, 240 frames'),
+	('MW_B03_', 'Act 3 Intro - Dektora is Replicant', '11000.055 ms, 165 frames'),
+	('MW_B04_', 'Act 3 Intro - Lucy and Dektora are Human', '18000.090 ms, 270 frames'),
+	('MW_B05_', 'Act 3 Intro - End', '107133.869 ms, 1607 frames'),
+	('INTRGT_', 'Interrogation scene - Baker, Holloway, McCoy', '158600 ms, 2379 frames'),
+	('MW_C01_', 'Act 4 Intro - Start', '121533.333 ms, 1823 frames'),
+	('MW_C02_', 'Act 4 Intro - Clovis with Incept Photo', '22066.667 ms, 331 frames'),
+	('MW_C03_', 'Act 4 Intro - Clovis without Incept Photo', '22066.667 ms, 331 frames'),
+	('MW_D_',   'Act 5 Intro', '160000 ms, 2400 frames'),
+	('END01A_', 'Underground Ending - Lucy Human', '31466.667 ms, 472 frames'),
+	('END01B_', 'Underground Ending - Lucy with DNA', '31466.667 ms, 472 frames'),
+	('END01C_', 'Underground Ending - Lucy not enough DNA', '31466.667 ms, 472 frames'),
+	('END01D_', 'Underground Ending - Dektora Human', '31466.667 ms, 472 frames'),
+	('END01E_', 'Underground Ending - Dektora with DNA', '31466.667 ms, 472 frames'),
+	('END01F_', 'Underground Ending - Dektora, not enough DNA', '31466.667 ms, 472 frames'),
+	('END03_',  'Underground Ending - McCoy alone', '26466.667 ms, 397 frames'),
+	('END04A_', 'Moonbus Ending - Start', '7933.333 ms, 119 frames'),
+	('END04B_', 'Moonbus Ending - With Lucy', '6533.333 ms, 98 frames'),
+	('END04C_', 'Moonbus Ending - With Dektora', '7733.333 ms, 116 frames'),
+	('END06_',  'Kipple Ending - With Steele', '36400 ms, 546 frames')
 	]
 SUPPORTED_SPECIAL_POGO_FILE = 'POGO.TR'
 SUPPORTED_DIALOGUE_VERSION_SHEET = 'SBTLVERS.TRE'
@@ -450,7 +451,7 @@ def appendVQAPlaceHolderSheets(excelOutBook = None):
 				sh = excelOutBook.add_sheet(currVQAFileNameLclzd)
 				# First Row
 				n = 0 # keeps track of rows
-				col_names = ['VQA File: %s' % (currVQAFileNameLclzd), '22050 audio sampling rate', currVQAFileNameDesc[1] ]
+				col_names = ['%s' % (currVQAFileNameLclzd), currVQAFileNameDesc[2], currVQAFileNameDesc[1], '22050 audio sampling rate', 'at 15 fps']
 				colIdx = 0
 				for colNameIt in col_names:
 					sh.write(n, colIdx, colNameIt)
@@ -458,13 +459,28 @@ def appendVQAPlaceHolderSheets(excelOutBook = None):
 
 				# Second Row
 				n = 1
-
-				col_names = ['Start (YT)', 'End (YT)', 'Subtitle', 'By Actor', 'StartTime', 'Time Diff-SF', 'TimeDiff-SF(ms)', 'TimeDiff-EF', 'TimeDiff-EF(ms)', 'Frame Start', 'Frame End', 'Notes']
+#				col_names = ['Start (YT)', 'End (YT)', 'Subtitle', 'By Actor', 'StartTime', 'Time Diff-SF', 'TimeDiff-SF(ms)', 'TimeDiff-EF', 'TimeDiff-EF(ms)', 'Frame Start', 'Frame End', 'Notes']
+				col_names = ['Frame Start', 'Frame End', 'Subtitle', 'Time Start', 'Time End', 'By Actor', 'Notes']
 				colIdx = 0
 				for colNameIt in col_names:
 					sh.write(n, colIdx, colNameIt)
 					colIdx+=1
-				#n+=1
+				# Fill in with placeholder content
+				n+=1
+				vqaTRInstance = vqasTextResource(gTraceModeEnabled)
+				
+				objUTF8Unicode = None
+				for m, e1 in enumerate(vqaTRInstance.getVqaEntriesList(currVQAFileNameDesc[0]), n):
+					sh.write(m, 0, e1[0]) # start frame
+					sh.write(m, 1, e1[1]) # end frame
+					for i1 in range(2,6):
+						objStr = e1[i1]
+						try:
+							objUTF8Unicode = unicode(objStr, 'utf-8')
+						except Exception as e:
+							print '[Error] Failed to create unicode string: ' + str(e)
+							objUTF8Unicode = unicode("???", 'utf-8')
+						sh.write(m, i1, objUTF8Unicode)
 	return
 
 def appendPOGOTextSheet(excelOutBook = None):

@@ -21,57 +21,59 @@
  */
 
 #include "glk/alan2/alan2.h"
-#include "glk/alan2/decode.h"
-#include "glk/alan2/execute.h"
-#include "glk/alan2/interpreter.h"
-#include "glk/alan2/saveload.h"
+#include "glk/alan2/exe.h"
+#include "glk/alan2/main.h"
+#include "glk/alan2/glkio.h"
+#include "common/system.h"
 #include "common/config-manager.h"
 #include "common/translation.h"
 #include "common/error.h"
 #include "common/scummsys.h"
-#include "common/system.h"
+#include "common/serializer.h"
 #include "glk/glk.h"
 #include "glk/streams.h"
 
 namespace Glk {
 namespace Alan2 {
 
-Alan2 *_vm = nullptr;
+Alan2 *g_vm = nullptr;
 
 Alan2::Alan2(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gameDesc),
-		vm_exited_cleanly(false) {
-	_vm = this;
-	looking = false;
-	dscrstkp = 0;
+		vm_exited_cleanly(false), _restartFlag(false), _saveSlot(-1), _pendingLook(false) {
+	g_vm = this;
+	txtfil = nullptr;
+	logfil = nullptr;
+	memory = nullptr;
 }
 
 void Alan2::runGame() {
-	Common::String gameFileName = _gameFile.getName();
+	if (initialize())
+		Glk::Alan2::run();
 
-	// TODO: Initialize these properly
-	int tmp = 0;
-	_decode = new Decode(nullptr, nullptr);
-	_execute = new Execute();
-	_saveLoad = new SaveLoad(gameFileName, nullptr, nullptr, nullptr, nullptr, &tmp);
-	_interpreter = new Interpreter(_execute, _saveLoad, _stack);
-
-	if (!is_gamefile_valid())
-		return;
-
-	// TODO
+	deinitialize();
 }
 
-Common::Error Alan2::readSaveData(Common::SeekableReadStream *rs) {
-	// TODO
-	return Common::kReadingFailed;
-}
+bool Alan2::initialize() {
+	// Set up adventure name
+	_advName = getFilename();
+	if (_advName.size() > 4 && _advName[_advName.size() - 4] == '.')
+		_advName = Common::String(_advName.c_str(), _advName.size() - 4);
 
-Common::Error Alan2::writeGameData(Common::WriteStream *ws) {
-	// TODO
-	return Common::kWritingFailed;
-}
+	// first, open a window for error output
+	glkMainWin = g_vm->glk_window_open(0, 0, 0, wintype_TextBuffer, 0);
+	if (glkMainWin == nullptr)
+		::error("FATAL ERROR: Cannot open initial window");
 
-bool Alan2::is_gamefile_valid() {
+	g_vm->glk_stylehint_set(wintype_TextGrid, style_User1, stylehint_ReverseColor, 1);
+	glkStatusWin = g_vm->glk_window_open(glkMainWin, winmethod_Above |
+	                                     winmethod_Fixed, 1, wintype_TextGrid, 0);
+	g_vm->glk_set_window(glkMainWin);
+
+	// Set up the code file to point to the already opened game file
+	codfil = &_gameFile;
+	strncpy(codfnm, getFilename().c_str(), 255);
+	codfnm[255] = '\0';
+
 	if (_gameFile.size() < 8) {
 		GUIErrorMessage(_("This is too short to be a valid Alan2 file."));
 		return false;
@@ -82,29 +84,98 @@ bool Alan2::is_gamefile_valid() {
 		return false;
 	}
 
+	// Open up the text file
+	txtfil = new Common::File();
+	if (!txtfil->open(Common::String::format("%s.dat", _advName.c_str()))) {
+		GUIErrorMessage("Could not open adventure text data file");
+		delete txtfil;
+		return false;
+	}
+
+	// Check for a save being loaded directly from the launcher
+	_saveSlot = ConfMan.hasKey("save_slot") ? ConfMan.getInt("save_slot") : -1;
+
 	return true;
 }
 
-void Alan2::output(const Common::String str) {
-	// TODO
+void Alan2::deinitialize() {
+	free(memory);
+
+	delete txtfil;
+	delete logfil;
 }
 
-void Alan2::printMessage(MsgKind msg) {
-	// TODO
+Common::Error Alan2::readSaveData(Common::SeekableReadStream *rs) {
+	Common::Serializer s(rs, nullptr);
+	synchronizeSave(s);
+
+	return Common::kNoError;
 }
 
-void Alan2::printError(MsgKind msg) {
-	// TODO
+Common::Error Alan2::writeGameData(Common::WriteStream *ws) {
+	Common::Serializer s(nullptr, ws);
+	synchronizeSave(s);
+
+	ws->flush();
+	return Common::kNoError;
 }
 
-void Alan2::paragraph() {
-	if (col != 1)
-		newLine();
-	newLine();
+// This works around gcc errors for passing packed structure fields
+void syncVal(Common::Serializer &s, uint32 *fld) {
+	uint32 &v = *fld;
+	s.syncAsUint32LE(v);
 }
 
-void Alan2::newLine() {
-	// TODO
+void Alan2::synchronizeSave(Common::Serializer &s) {
+	AtrElem *atr;
+	Aword i;
+
+	// Sync current values
+	cur.synchronize(s);
+
+	// Save actors
+	for (i = ACTMIN; i <= ACTMAX; ++i) {
+		syncVal(s, &acts[i - ACTMIN].loc);
+		syncVal(s, &acts[i - ACTMIN].script);
+		syncVal(s, &acts[i - ACTMIN].step);
+		syncVal(s, &acts[i - ACTMIN].count);
+
+		if (acts[i - ACTMIN].atrs) {
+			for (atr = (AtrElem *)addrTo(acts[i - ACTMIN].atrs); !endOfTable(atr); ++atr)
+				syncVal(s, &atr->val);
+		}
+	}
+
+	// Sync locations
+	for (i = LOCMIN; i <= LOCMAX; ++i) {
+		syncVal(s, &locs[i - LOCMIN].describe);
+		if (locs[i - LOCMIN].atrs)
+			for (atr = (AtrElem *)addrTo(locs[i - LOCMIN].atrs); !endOfTable(atr); atr++)
+				syncVal(s, &atr->val);
+	}
+
+	// Sync objects
+	for (i = OBJMIN; i <= OBJMAX; ++i) {
+		syncVal(s, &objs[i - OBJMIN].loc);
+		if (objs[i - OBJMIN].atrs)
+			for (atr = (AtrElem *)addrTo(objs[i - OBJMIN].atrs); !endOfTable(atr); atr++)
+				syncVal(s, &atr->val);
+	}
+
+	// Sync the event queue
+	if (s.isSaving()) {
+		eventq[etop].time = 0;        // Mark the top
+		for (i = 0; i <= (Aword)etop; ++i)
+			eventq[i].synchronize(s);
+	} else {
+		for (etop = 0; eventq[etop - 1].time; ++etop)
+			eventq[etop].synchronize(s);
+		--etop;
+	}
+
+	// Sync scores
+	for (i = 0; scores[i] != EOD; i++)
+		syncVal(s, &scores[i]);
 }
 
 } // End of namespace Alan2

@@ -81,20 +81,37 @@ bool BaseKeyboardState::scCallMethod(ScScript *script, ScStack *stack, ScStack *
 	if (strcmp(name, "IsKeyDown") == 0) {
 		stack->correctParams(1);
 		ScValue *val = stack->pop();
-		int vKey;
+		uint32 vKeyCode;
 
 		if (val->_type == VAL_STRING && strlen(val->getString()) > 0) {
+			// IsKeyDown(strings) checks if a key with given ASCII code is pressed
+			// Only 1st character of given string is used for the check
+
+			// This check must be case insensitive, which means that 
+			// IsKeyDown("a") & IsKeyDown("A") are either both true or both false 
 			const char *str = val->getString();
 			char temp = str[0];
 			if (temp >= 'A' && temp <= 'Z') {
 				temp += ('a' - 'A');
 			}
-			vKey = (int)temp;
+
+			// Common::KeyCode is equal to ASCII code for any lowercase ASCII character
+			if (temp >= ' ' && temp <= '~') {
+				vKeyCode = (int)temp;
+			} else {
+				warning("Unhandled IsKeyDown(string): check for non-ASCII character");
+				vKeyCode = 0;
+			}
 		} else {
-			vKey = val->getInt();
+			// IsKeyDown(int) checks if a key with given keycode is pressed
+			// For letters, single keycode is used for upper and lower case
+			// This mean that IsKeyDown(65) is true for both 'a' and Shift+'a'
+
+			// See "MSDN: Virtual-Key Codes" for more details on original WME keycodes
+			vKeyCode = vKeyToKeyCode(val->getInt());
 		}
 
-		bool isDown = _keyStates[vKeyToKeyCode(vKey)];
+		bool isDown = _keyStates[vKeyCode];
 
 		stack->pushBool(isDown);
 		return STATUS_OK;
@@ -318,6 +335,50 @@ enum VKeyCodes {
 	kVkInsert     = 45,
 	kVkDelete     = 46,
 
+	kVkA          = 65, //printable
+	kVkB          = 66, //printable
+	kVkC          = 67, //printable
+	kVkD          = 68, //printable
+	kVkE          = 69, //printable
+	kVkF          = 70, //printable
+	kVkG          = 71, //printable
+	kVkH          = 72, //printable
+	kVkI          = 73, //printable
+	kVkJ          = 74, //printable
+	kVkK          = 75, //printable
+	kVkL          = 76, //printable
+	kVkM          = 77, //printable
+	kVkN          = 78, //printable
+	kVkO          = 79, //printable
+	kVkP          = 80, //printable
+	kVkQ          = 81, //printable
+	kVkR          = 82, //printable
+	kVkS          = 83, //printable
+	kVkT          = 84, //printable
+	kVkU          = 85, //printable
+	kVkV          = 86, //printable
+	kVkW          = 87, //printable
+	kVkX          = 88, //printable
+	kVkY          = 89, //printable
+	kVkZ          = 90, //printable
+
+	kVkNumpad0    = 96, //printable
+	kVkNumpad1    = 97, //printable
+	kVkNumpad2    = 98, //printable
+	kVkNumpad3    = 99, //printable
+	kVkNumpad4    = 100, //printable
+	kVkNumpad5    = 101, //printable
+	kVkNumpad6    = 102, //printable
+	kVkNumpad7    = 103, //printable
+	kVkNumpad8    = 104, //printable
+	kVkNumpad9    = 105, //printable
+	kVkMultiply   = 106, //printable
+	kVkAdd        = 107, //printable
+	kVkSeparator  = 108, //printable
+	kVkSubtract   = 109, //printable
+	kVkDecimal    = 110, //printable
+	kVkDivide     = 111, //printable
+
 	kVkF1         = 112,
 	kVkF2         = 113,
 	kVkF3         = 114,
@@ -471,6 +532,90 @@ Common::KeyCode BaseKeyboardState::vKeyToKeyCode(uint32 vkey) {
 		return Common::KEYCODE_INSERT;
 	case kVkDelete:
 		return Common::KEYCODE_DELETE;
+	case kVkA:
+		return Common::KEYCODE_a;
+	case kVkB:
+		return Common::KEYCODE_b;
+	case kVkC:
+		return Common::KEYCODE_c;
+	case kVkD:
+		return Common::KEYCODE_d;
+	case kVkE:
+		return Common::KEYCODE_e;
+	case kVkF:
+		return Common::KEYCODE_f;
+	case kVkG:
+		return Common::KEYCODE_g;
+	case kVkH:
+		return Common::KEYCODE_h;
+	case kVkI:
+		return Common::KEYCODE_i;
+	case kVkJ:
+		return Common::KEYCODE_j;
+	case kVkK:
+		return Common::KEYCODE_k;
+	case kVkL:
+		return Common::KEYCODE_l;
+	case kVkM:
+		return Common::KEYCODE_m;
+	case kVkN:
+		return Common::KEYCODE_n;
+	case kVkO:
+		return Common::KEYCODE_o;
+	case kVkP:
+		return Common::KEYCODE_p;
+	case kVkQ:
+		return Common::KEYCODE_q;
+	case kVkR:
+		return Common::KEYCODE_r;
+	case kVkS:
+		return Common::KEYCODE_s;
+	case kVkT:
+		return Common::KEYCODE_t;
+	case kVkU:
+		return Common::KEYCODE_u;
+	case kVkV:
+		return Common::KEYCODE_v;
+	case kVkW:
+		return Common::KEYCODE_w;
+	case kVkX:
+		return Common::KEYCODE_x;
+	case kVkY:
+		return Common::KEYCODE_y;
+	case kVkZ:
+		return Common::KEYCODE_z;
+	case kVkNumpad0:
+		return Common::KEYCODE_KP0;
+	case kVkNumpad1:
+		return Common::KEYCODE_KP1;
+	case kVkNumpad2:
+		return Common::KEYCODE_KP2;
+	case kVkNumpad3:
+		return Common::KEYCODE_KP3;
+	case kVkNumpad4:
+		return Common::KEYCODE_KP4;
+	case kVkNumpad5:
+		return Common::KEYCODE_KP5;
+	case kVkNumpad6:
+		return Common::KEYCODE_KP6;
+	case kVkNumpad7:
+		return Common::KEYCODE_KP7;
+	case kVkNumpad8:
+		return Common::KEYCODE_KP8;
+	case kVkNumpad9:
+		return Common::KEYCODE_KP9;
+	case kVkMultiply:
+		return Common::KEYCODE_KP_MULTIPLY;
+	case kVkAdd:
+		return Common::KEYCODE_KP_PLUS;
+	case kVkSeparator:
+		return Common::KEYCODE_KP_EQUALS;
+	case kVkSubtract:
+		return Common::KEYCODE_KP_MINUS;
+	case kVkDecimal:
+		return Common::KEYCODE_KP_PERIOD;
+	case kVkDivide:
+		return Common::KEYCODE_KP_DIVIDE;
 	case kVkF1:
 		return Common::KEYCODE_F1;
 	case kVkF2:

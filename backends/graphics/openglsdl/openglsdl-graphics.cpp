@@ -39,7 +39,7 @@ OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager(uint desktopWidth, uint deskt
 #else
       _lastVideoModeLoad(0),
 #endif
-      _graphicsScale(2), _stretchMode(STRETCH_FIT), _ignoreLoadVideoMode(false), _gotResize(false), _wantsFullScreen(false), _ignoreResizeEvents(0),
+      _graphicsScale(2), _ignoreLoadVideoMode(false), _gotResize(false), _wantsFullScreen(false), _ignoreResizeEvents(0),
       _desiredFullscreenWidth(0), _desiredFullscreenHeight(0) {
 	// Setup OpenGL attributes for SDL
 	SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
@@ -218,7 +218,6 @@ void OpenGLSdlGraphicsManager::deactivateManager() {
 bool OpenGLSdlGraphicsManager::hasFeature(OSystem::Feature f) const {
 	switch (f) {
 	case OSystem::kFeatureFullscreenMode:
-	case OSystem::kFeatureStretchMode:
 	case OSystem::kFeatureIconifyWindow:
 		return true;
 
@@ -265,54 +264,6 @@ bool OpenGLSdlGraphicsManager::getFeatureState(OSystem::Feature f) const {
 	default:
 		return OpenGLGraphicsManager::getFeatureState(f);
 	}
-}
-
-namespace {
-const OSystem::GraphicsMode sdlGlStretchModes[] = {
-	{"center", _s("Center"), STRETCH_CENTER},
-	{"pixel-perfect", _s("Pixel-perfect scaling"), STRETCH_INTEGRAL},
-	{"fit", _s("Fit to window"), STRETCH_FIT},
-	{"stretch", _s("Stretch to window"), STRETCH_STRETCH},
-	{nullptr, nullptr, 0}
-};
-
-} // End of anonymous namespace
-
-const OSystem::GraphicsMode *OpenGLSdlGraphicsManager::getSupportedStretchModes() const {
-	return sdlGlStretchModes;
-}
-
-int OpenGLSdlGraphicsManager::getDefaultStretchMode() const {
-	return STRETCH_FIT;
-}
-
-bool OpenGLSdlGraphicsManager::setStretchMode(int mode) {
-	assert(getTransactionMode() != kTransactionNone);
-
-	if (mode == _stretchMode)
-		return true;
-
-	// Check this is a valid mode
-	const OSystem::GraphicsMode *sm = sdlGlStretchModes;
-	bool found = false;
-	while (sm->name) {
-		if (sm->id == mode) {
-			found = true;
-			break;
-		}
-		sm++;
-	}
-	if (!found) {
-		warning("unknown stretch mode %d", mode);
-		return false;
-	}
-
-	_stretchMode = mode;
-	return true;
-}
-
-int OpenGLSdlGraphicsManager::getStretchMode() const {
-	return _stretchMode;
 }
 
 void OpenGLSdlGraphicsManager::initSize(uint w, uint h, const Graphics::PixelFormat *format) {
@@ -705,24 +656,25 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 
 				// Ctrl+Alt+s cycles through stretch mode
 				int index = 0;
-				const OSystem::GraphicsMode *sm = sdlGlStretchModes;
+				const OSystem::GraphicsMode *stretchModes = getSupportedStretchModes();
+				const OSystem::GraphicsMode *sm = stretchModes;
 				while (sm->name) {
-					if (sm->id == _stretchMode)
+					if (sm->id == getStretchMode())
 						break;
 					sm++;
 					index++;
 				}
 				index++;
-				if (!sdlGlStretchModes[index].name)
+				if (!stretchModes[index].name)
 					index = 0;
 				beginGFXTransaction();
-				setStretchMode(sdlGlStretchModes[index].id);
+				setStretchMode(stretchModes[index].id);
 				endGFXTransaction();
 
 #ifdef USE_OSD
 				Common::String message = Common::String::format("%s: %s",
 					_("Stretch mode"),
-					_(sdlGlStretchModes[index].description)
+					_(stretchModes[index].description)
 					);
 				displayMessageOnOSD(message.c_str());
 #endif

@@ -30,6 +30,7 @@
 #include "sci/engine/kernel.h"
 #include "sci/engine/gc.h"
 #include "sci/graphics/cursor.h"
+#include "sci/graphics/palette.h"
 #ifdef ENABLE_SCI32
 #include "sci/graphics/cursor32.h"
 #endif
@@ -731,16 +732,32 @@ reg_t kKawaHacks(EngineState *s, int argc, reg_t *argv) {
 		showScummVMDialog(s->_segMan->getString(argv[1]));
 		return NULL_REG;
 	}
-	case 1: // ZaWarudo
-		// Unused, would invert the color palette for the specified range.
-		return NULL_REG;
-	case 2: // SetTitleColors
+	case 1: { // ZaWarudo
+		// Invert the color palette for the specified range.
+		uint16 from = argv[1].toUint16();
+		uint16 to = argv[2].toUint16();
+		Palette pal = g_sci->_gfxPalette16->_sysPalette;
+		for (uint16 i = from; i <= to; i++)
+		{
+			pal.colors[i].r = 255 - pal.colors[i].r;
+			pal.colors[i].g = 255 - pal.colors[i].g;
+			pal.colors[i].b = 255 - pal.colors[i].b;
+		}
+		g_sci->_gfxPalette16->set(&pal, true);
+ 		return NULL_REG;
+	}
+ 	case 2: // SetTitleColors
 		// Unused, would change the colors for plain windows' title bars.
 		return NULL_REG;
 	case 3: // IsDebug
-		// Should return 1 if running with an internal debugger, 2 if we have AddMenu support, 3 if both.
-		return TRUE_REG;
+ 		// Return 1 if running with an internal debugger, 2 if we have AddMenu support, 3 if both.
+		return make_reg(0, 3);
 	}
+	return NULL_REG;
+}
+reg_t kKawaDbugStr(EngineState *s, int argc, reg_t *argv)
+{
+	debug(Common::String::format(s->_segMan->getString(argv[0]).c_str(), argc - 1, argv + 1).c_str());
 	return NULL_REG;
 }
 
