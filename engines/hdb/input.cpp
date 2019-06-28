@@ -31,8 +31,6 @@ bool Input::init() {
 
 	_mouseX = kScreenWidth / 2;
 	_mouseY = kScreenHeight / 2;
-	_lastMouseX = _mouseX;
-	_lastMouseY = _mouseY;
 
 	return true;
 }
@@ -153,8 +151,6 @@ void Input::stylusMove(int x, int y) {
 }
 
 void Input::updateMouse(int newX, int newY) {
-	_lastMouseX = _mouseX;
-	_lastMouseY = _mouseY;
 	_mouseX = newX;
 	_mouseY = newY;
 
@@ -169,7 +165,7 @@ void Input::updateMouse(int newX, int newY) {
 		_mouseY = kScreenHeight - 1;
 
 	// Turn Cursor back on?
-	if ((_lastMouseX != _mouseX || _lastMouseY != _mouseY) && !g_hdb->_drawMan->getPointer()) {
+	if (!g_hdb->_drawMan->getPointer()) {
 		g_hdb->_drawMan->showPointer(true);
 	}
 
