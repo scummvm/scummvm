@@ -172,6 +172,9 @@ private:
 
 	// Cursor
 	int _cursorX, _cursorY;
+	Picture *_mousePointer[8];	// Gfx for screen pointer (4 Animations)
+	int _pointerDisplayable;
+	bool _showCursor;
 
 	// Font Data
 
