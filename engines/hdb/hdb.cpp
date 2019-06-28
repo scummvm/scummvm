@@ -99,6 +99,7 @@ bool HDBGame::init() {
 	// Defaults the game into Action Mode
 	setActionMode(1);
 
+	start();
 	_gameShutdown = false;
 	_systemInit = true;
 
@@ -106,7 +107,8 @@ bool HDBGame::init() {
 }
 
 void HDBGame::start() {
-	_gameState = GAME_TITLE;
+	warning("REMOVE: _gameState initialized to GAME_PLAY");
+	_gameState = GAME_PLAY;
 }
 
 /*
@@ -237,7 +239,7 @@ Common::Error HDBGame::run() {
 	initGraphics(kScreenWidth, kScreenHeight, &_format);
 	_console = new Console();
 
-
+#if 0
 	Common::SeekableReadStream *titleStream = _fileMan->findFirstData("monkeylogoscreen", TYPE_PIC);
 	if (titleStream == NULL) {
 		debug("The TitleScreen MPC entry can't be found.");
@@ -255,6 +257,7 @@ Common::Error HDBGame::run() {
 
 	Tile *tile = new Tile;
 	tile->load(tileStream);
+#endif
 
 	Common::SeekableReadStream *luaStream = _fileMan->findFirstData("MAP00_LUA", TYPE_BINARY);
 	int32 luaLength = _fileMan->getLength("MAP00_LUA", TYPE_BINARY);
@@ -298,36 +301,38 @@ Common::Error HDBGame::run() {
 			}
 		}
 
-		_drawMan->drawSky();
+		if (_gameState == GAME_PLAY) {
+			_drawMan->drawSky();
 
-		debug(9, "STUB: HDBGame::run: Add check for pause flag");
+			debug(9, "STUB: HDBGame::run: Add check for pause flag");
 
-		_ai->moveEnts();
-		_ai->processCallbackList();
+			_ai->moveEnts();
+			_ai->processCallbackList();
 
-		_map->draw();
-		_ai->processCines();
-		//_window->drawDialog();
+			_map->draw();
+			_ai->processCines();
+			//_window->drawDialog();
 
-		AIEntity *e = _ai->getPlayer();
+			AIEntity *e = _ai->getPlayer();
 
-		if (e && e->level < 2)
-			_ai->drawWayPoints();
+			if (e && e->level < 2)
+				_ai->drawWayPoints();
 
-		_map->drawEnts();
-		_map->drawGratings();
+			_map->drawEnts();
+			_map->drawGratings();
 
-		if (e && e->level == 2)
-			_ai->drawWayPoints();
+			if (e && e->level == 2)
+				_ai->drawWayPoints();
 
-		_ai->drawLevel2Ents();
+			_ai->drawLevel2Ents();
 
-		_map->drawForegrounds();
-		_ai->animateTargets();
+			_map->drawForegrounds();
+			_ai->animateTargets();
 
-		_window->drawDialog();
-		_window->drawInventory();
-		_window->drawTextOut();
+			_window->drawDialog();
+			_window->drawInventory();
+			_window->drawTextOut();
+		}
 
 		// Update Timer that's NOT used for in-game Timing
 		_prevTimeSlice = _timeSlice;
