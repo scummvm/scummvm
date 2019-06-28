@@ -110,11 +110,6 @@ enum Flag {
 	kFlagPlummet		= 0x8000000
 };
 
-enum {
-	kScreenWidth = 640,
-	kScreenHeight = 480
-};
-
 class HDBGame : public Engine {
 public:
 	HDBGame(OSystem *syst, const ADGameDescription *gameDesc);
