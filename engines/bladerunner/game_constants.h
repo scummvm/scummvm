@@ -1197,7 +1197,7 @@ enum Variables {
 	kVariableGenericWalkerAModel = 32,
 	kVariableGenericWalkerBModel = 33,
 	kVariableGenericWalkerCModel = 34,
-	kVariableGenericWalkerConfig = 35, // Re-purposed in restored cut content version - original: has no real use
+	kVariableGenericWalkerConfig = 35, // Re-purposed in ScummVM version - original: has no real use
 	kVariableBB10ShelvesAvailable = 36,
 	kVariableWalkLoopActor = 37,
 	kVariableWalkLoopRun = 38,

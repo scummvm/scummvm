@@ -271,6 +271,13 @@ void SceneScriptCT12::PlayerWalkedIn() {
 	 && !Game_Flag_Query(kFlagGaffApproachedMcCoyAboutZuben)
 	 &&  Actor_Query_Goal_Number(kActorGaff) == kGoalGaffCT12WaitForMcCoy
 	) {
+#if !BLADERUNNER_ORIGINAL_BUGS
+		// Disable NPC walkers until Gaff goes to his spinner
+		Actor_Set_Goal_Number(kActorGenwalkerA, kGoalGenwalkerDefault);
+		Actor_Set_Goal_Number(kActorGenwalkerB, kGoalGenwalkerDefault);
+		Actor_Set_Goal_Number(kActorGenwalkerC, kGoalGenwalkerDefault);
+		Global_Variable_Set(kVariableGenericWalkerConfig, -1);
+#endif // !BLADERUNNER_ORIGINAL_BUGS
 		Player_Loses_Control();
 		Loop_Actor_Walk_To_Actor(kActorGaff, kActorMcCoy, 48, false, false);
 		Actor_Face_Actor(kActorGaff, kActorMcCoy, true);
@@ -308,6 +315,18 @@ void SceneScriptCT12::PlayerWalkedIn() {
 			Actor_Clue_Acquire(kActorGaff, kClueMcCoyLetZubenEscape, true, -1);
 		}
 
+#if !BLADERUNNER_ORIGINAL_BUGS
+		// unpause generic walkers here, less chance to collide with Gaff
+		// while he walks to his spinner
+		// This happens when Gaff starts walking towards his spinner rather than
+		// when he's reached his spinner, in order to keep this NPC code in one place
+		// and because the walkers won't have time to interfere with his path even if
+		// they're enabled early.
+		if (Global_Variable_Query(kVariableGenericWalkerConfig) < 0
+		) {
+			Global_Variable_Set(kVariableGenericWalkerConfig, 2);
+		}
+#endif
 		Actor_Set_Goal_Number(kActorGaff, kGoalGaffCT12GoToSpinner);
 	}
 
