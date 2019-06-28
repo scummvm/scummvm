@@ -2066,4 +2066,193 @@ void AI::lookAtXY(int x, int y) {
 		warning("AI-FUNCS: lookAtXY: DIR_NONE");
 	}
 }
+
+void AI::movePlayer(uint16 buttons) {
+	AIState stateList[] = {STATE_ATK_CLUB_UP,	STATE_ATK_CLUB_DOWN, STATE_ATK_CLUB_LEFT, STATE_ATK_CLUB_RIGHT,
+							STATE_ATK_STUN_UP,	STATE_ATK_STUN_DOWN, STATE_ATK_STUN_LEFT, STATE_ATK_STUN_RIGHT,
+							STATE_ATK_SLUG_UP,	STATE_ATK_SLUG_DOWN, STATE_ATK_SLUG_LEFT, STATE_ATK_SLUG_RIGHT,
+							STATE_PUSHUP,		STATE_PUSHDOWN,		 STATE_PUSHLEFT,	  STATE_PUSHRIGHT,
+							STATE_GRABUP,		STATE_GRABDOWN,		 STATE_GRABLEFT,	  STATE_GRABRIGHT};
+	int	xva[5] = {9, 0, 0,-1, 1};
+	int	yva[5] = {9,-1, 1, 0, 0};
+	AIEntity *hit;
+	int	xv = 0, yv = 0, nx, ny;
+	int	attackable;
+
+	if (!_player)
+		return;
+
+	// If we're already attacking, don't do anything else
+	for (int i = 0; i < 20; i++) {
+		if (_player->state == stateList[i])
+			return;
+	}
+
+	// Just trying to put away a dialog?
+	if (buttons & kButtonB) {
+		if (g_hdb->_window->dialogActive()) {
+			g_hdb->_window->closeDialog();
+			return;
+		}
+		warning("STUB: movePlayer: Add DialogChoice Check");
+		warning("STUB: movePlayer: Add MessageBar Check");
+
+		if (cinematicsActive() || _playerLock)
+			return;
+
+		// Are we trying to use something? An ACTION, AUTO, LUA?
+		nx = _player->tileX + xva[_player->dir];
+		ny = _player->tileY + yva[_player->dir];
+		hit = findEntity(nx, ny);
+
+		// the reason to check for no entity or an AI_NONE is because
+		// there's a possibility that an actual entity and a LUA entity
+		// can share the same spot, so we need to be able to deal with
+		// the real entity first, then the LUA entity.
+		if (!hit || (hit && hit->type == AI_NONE)) {
+			switch (_player->state) {
+			case STATE_STANDUP:
+			case STATE_STANDDOWN:
+			case STATE_STANDLEFT:
+			case STATE_STANDRIGHT:
+				if (checkForTouchplate(nx, ny))
+					break;
+				if (checkActionList(_player, nx, ny, true))
+					return;
+				if (checkAutoList(_player, nx, ny))
+					return;
+				if (checkLuaList(_player, nx, ny))
+					return;
+			default:
+				break;
+			}
+		}
+
+		// Attackable Entity? (we're right up on it)
+		int amt = getGemAmount();
+		attackable = 0;
+		if (hit)
+			switch (hit->type) {
+			case AI_OMNIBOT:
+			case AI_TURNBOT:
+			case AI_SHOCKBOT:
+			case AI_RIGHTBOT:
+			case AI_PUSHBOT:
+			case AI_LISTENBOT:
+			case AI_MAINTBOT:
+			case AI_DEADEYE:
+			case AI_MEERKAT:
+			case AI_FATFROG:
+			case AI_GOODFAIRY:
+			case AI_BADFAIRY:
+			case AI_ICEPUFF:
+			case AI_BUZZFLY:
+			case AI_DRAGON:
+			case AI_NONE:
+				attackable = 1;
+				break;
+			default:
+				break;
+			}
+
+		if (g_hdb->getActionMode() && ((hit && attackable) || !hit)) {
+			// Attack
+			warning("STUB: movePlayer: Attack!");
+			return;
+		}
+
+		// Puzzle Mode - throw a gem
+		// If this is the last gem, throw it and signal that it should come back
+
+		if (amt && (attackable || !hit)) {
+			xv = xva[_player->dir];
+			yv = yva[_player->dir];
+			nx = _player->tileX + xv;
+			ny = _player->tileY + yv;
+
+			spawn(AI_GEM_ATTACK, _player->dir, nx, ny, NULL, NULL, NULL, DIR_NONE, _player->level, amt == 1, 0, 1);
+			setGemAmount(amt - 1);
+			animGrabbing();
+			return;
+		}
+
+		// Are we trying to use this entity?
+		if (hit) {
+			g_hdb->useEntity(hit);
+			return;
+		}
+	}	// if kButtonB
+
+	if (!onEvenTile(_player->x, _player->y))
+		return;
+
+	// Is the player dead or move-locked?
+	if (_player->state == STATE_DEAD || _playerLock || _playerEmerging)
+		return;
+
+	// Are we on a touchplate and trying to move within the waiting period
+	if (_player->touchpWait > kPlayerTouchPWait / 4)
+		return;
+
+	// Is a dialog active?
+	if (g_hdb->_window->dialogActive())
+		if (!cinematicsActive())
+			return;
+
+	warning("STUB: movePlayer: Add Choice Dialog");
+
+	// In a cinematic?
+	if (_playerLock || _numWaypoints)
+		return;
+
+	if (buttons & kButtonUp)
+		yv = -1;
+	else if (buttons & kButtonDown)
+		yv = 1;
+	else if (buttons & kButtonLeft)
+		xv = -1;
+	else if (buttons & kButtonUp)
+		xv = 1;
+	else if (buttons & kButtonB) {
+		playerUse();
+		return;
+	}
+
+	// Check if we can move there
+	nx = _player->tileX + xv;
+	if (!nx)	// Don't allow moving to X-cooridinate 0
+		return;
+	ny = _player->tileY + yv;
+
+	int moveOK;
+	hit = legalMove(nx, ny, _player->level, &moveOK);
+	if (hit && walkThroughEnt(hit->type))
+		hit = NULL;
+
+	if (hit || !moveOK) {
+		lookAtXY(nx, ny);
+		stopEntity(_player);
+		return;
+	}
+
+	// Walk into Lua Entity?
+	if (checkLuaList(_player, nx, ny))
+		return;
+
+	if (buttons & (kButtonUp | kButtonDown | kButtonLeft | kButtonRight)) {
+		int temp = _player->animFrame;
+		if (_player->state != STATE_MOVELEFT && _player->state != STATE_MOVERIGHT && _player->state != STATE_MOVEUP && _player->state != STATE_MOVEDOWN)
+			temp = 0;
+		setEntityGoal(_player, nx, ny);
+		_player->animFrame = temp;
+	} else
+		setEntityGoal(_player, nx, ny);
+}
+
+void AI::playerUse() {
+	int	xv[5] = {9, 0, 0,-1, 1};
+	int	yv[5] = {9,-1, 1, 0, 0};
+
+	g_hdb->setTargetXY(kTileWidth * (_player->tileX + xv[_player->dir]), kTileWidth * (_player->tileY + yv[_player->dir]));
+}
 } // End of Namespace
