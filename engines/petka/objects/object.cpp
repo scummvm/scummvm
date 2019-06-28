@@ -127,6 +127,10 @@ void QMessageObject::processMessage(const QMessage &msg) {
 
 }
 
+void QMessageObject::show(bool v) {
+	_isShown = v;
+}
+
 bool QObject::isInPoint(int x, int y) {
 	if (_isActive)
 		return false;
