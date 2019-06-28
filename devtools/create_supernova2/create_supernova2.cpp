@@ -19,6 +19,49 @@ const char *lang[] = {
 	"en",
 	NULL
 };
+void writeDatafile(File& outputFile, int fileNumber, const char* language) {
+	File dataFile;
+	char fileName[20];
+	sprintf(fileName, "ms2_data.%03d-%s", fileNumber, language);
+	if (!dataFile.open(fileName, kFileReadMode)) {
+		printf("Cannot find dataFile 'ms2_data.%3d' for language '%s'. This file will be skipped.\n", fileNumber, language);
+		return;
+	}
+
+	// Write block header in output file (4 bytes).
+	// M(fileNumber) for example M015
+	char number[4];
+	sprintf(number, "%03d", fileNumber);
+	outputFile.writeByte('M');
+	for (int i = 0 ; i < 3 ; ++i) {
+			outputFile.writeByte(number[i]);
+	}
+	// And write the language code on 4 bytes as well (padded with 0 if needed).
+	int languageLength = strlen(language);
+	for (int i = 0 ; i < 4 ; ++i) {
+		if (i < languageLength)
+			outputFile.writeByte(language[i]);
+		else
+			outputFile.writeByte(0);
+	}
+
+	// Write block size
+	
+	dataFile.seek(0, SEEK_END);
+	int length = dataFile.pos();
+	dataFile.seek(0, SEEK_SET);
+	outputFile.writeLong(length);
+
+	// Write all the bytes. We should have w * h / 8 bytes
+	// However we need to invert the bits has the engine expects 1 for the background and 0 for the text (black)
+	// but pbm uses 0 for white and 1 for black.
+	for (int i = 0 ; i < length; ++i) {
+		byte b = dataFile.readByte();
+		outputFile.writeByte(b);
+	}
+
+	dataFile.close();
+}
 
 void writeImage(File& outputFile, const char *name, const char* language) {
 	File imgFile;
@@ -240,6 +283,7 @@ int main(int argc, char *argv[]) {
 	// Other languages
 	const char **l = &lang[0];
 	while(*l) {
+		writeDatafile(outputFile, 15, *l);
 		writeImage(outputFile, "img1", *l);
 	//	writeImage(outputFile, "img2", *l);
 		writeStrings(outputFile, *l);
