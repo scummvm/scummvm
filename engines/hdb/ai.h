@@ -788,6 +788,10 @@ public:
 	void lookAtEntity(AIEntity *e);
 
 	// Player Functions
+
+	void movePlayer(uint16 buttons);
+	void playerUse();
+
 	AIEntity *getPlayer() {
 		if (!_player)
 			return &_dummyPlayer;
