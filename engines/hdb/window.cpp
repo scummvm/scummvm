@@ -384,6 +384,22 @@ void Window::drawInventory() {
 	}
 }
 
+void Window::checkInvSelect(int x, int y) {
+	if (x >= _invWinInfo.x && x < _invWinInfo.x + _invWinInfo.width && y >= _invWinInfo.y && y < _invWinInfo.y + _invWinInfo.height) {
+		int xc = (x - _invWinInfo.x) / kInvItemSpaceX;
+		int yc = (y - _invWinInfo.y) / kInvItemSpaceY;
+		if (yc * kInvItemPerLine + xc > g_hdb->_ai->getInvAmount())
+			return;
+
+		_invWinInfo.selection = yc * kInvItemPerLine + xc;
+
+		// If this is a weapon, choose it
+		warning("STUB: checkInvSelect: ChooseWeapon() required");
+
+		warning("STUB: checkInvSelect: Play SND_POP");
+	}
+}
+
 void Window::textOut(const char *text, int x, int y, int timer) {
 	TOut *t = new TOut;
 

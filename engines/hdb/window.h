@@ -100,6 +100,7 @@ public:
 	int getInvSelect() {
 		return _invWinInfo.selection;
 	}
+	void checkInvSelect(int x, int y);
 
 	// TextOut functions
 	void textOut(const char *text, int x, int y, int timer);
