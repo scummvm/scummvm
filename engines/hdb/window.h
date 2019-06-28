@@ -101,6 +101,14 @@ public:
 		return _invWinInfo.selection;
 	}
 
+	// TextOut functions
+	void textOut(const char *text, int x, int y, int timer);
+	void centerTextOut(const char *text, int y, int timer);
+	void drawTextOut();
+	int textOutActive() {
+		return (_textOutList.size());
+	}
+	void closeTextOut();
 private:
 
 	DialogInfo _dialogInfo;
