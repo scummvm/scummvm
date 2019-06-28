@@ -316,18 +316,18 @@ void AI::processCines() {
 			break;
 		case C_USEENTITY:
 			for (Common::Array<AIEntity *>::iterator it = _ents->begin(); it != _ents->end(); it++) {
-				if ((*it)->entityName && Common::matchString((*it)->entityName, _cine[i]->string)) {
+				if ((*it)->entityName && Common::matchString((*it)->entityName, _cine[i]->string, true)) {
 					g_hdb->useEntity((*it));
 				}
 			}
 			for (int k = 0; k < kMaxActions; k++) {
-				if (_actions[k].entityName && Common::matchString(_actions[k].entityName, _cine[i]->string)) {
+				if (_actions[k].entityName && Common::matchString(_actions[k].entityName, _cine[i]->string, true)) {
 					checkActionList(&_dummyPlayer, _actions[k].x1, _actions[k].y1, false);
 					checkActionList(&_dummyPlayer, _actions[k].x2, _actions[k].y2, false);
 				}
 			}
 			for (int j = 0; j < kMaxAutoActions; j++) {
-				if (_autoActions[j].entityName && Common::matchString(_autoActions[j].entityName, _cine[i]->string) && !_autoActions[j].activated)
+				if (_autoActions[j].entityName && Common::matchString(_autoActions[j].entityName, _cine[i]->string, true) && !_autoActions[j].activated)
 					checkAutoList(&_dummyPlayer, _autoActions[j].x, _autoActions[j].y);
 			}
 			complete = true;
@@ -424,7 +424,7 @@ void AI::cineAddToBlitList(const char *id, Picture *pic, int x, int y, bool mask
 
 Picture *AI::cineFindInBlitList(const char *name) {
 	for (int i = 0; i < _numCineBlitList; i++) {
-		if (Common::matchString(_cineBlitList[i]->id, name))
+		if (Common::matchString(_cineBlitList[i]->id, name, true))
 			return _cineBlitList[i]->pic;
 	}
 	return NULL;
@@ -432,7 +432,7 @@ Picture *AI::cineFindInBlitList(const char *name) {
 
 void AI::cineRemoveFromBlitList(const char *name) {
 	for (int i = 0; i < _numCineBlitList; i++) {
-		if (Common::matchString(_cineBlitList[i]->id, name))
+		if (Common::matchString(_cineBlitList[i]->id, name, true))
 			delete _cineBlitList[i];
 			for (; i < _numCineBlitList - 1; i++)
 				_cineBlitList[i] = _cineBlitList[i + 1];
