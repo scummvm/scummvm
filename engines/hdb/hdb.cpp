@@ -219,7 +219,7 @@ void HDBGame::useEntity(AIEntity *e) {
 
 	// Grab animation
 	if (added) {
-		warning("STUB: HDBGame::useEntity show Grab Animation");
+		_ai->animGrabbing();
 	}
 
 	// Can't push it - make a sound
