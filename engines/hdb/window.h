@@ -33,7 +33,8 @@ enum {
 	kInvItemSpaceX = 48,
 	kInvItemSpaceY = 40,
 	kInvItemPerLine = 3,
-	kTextOutCenterX = ((kScreenWidth - kTileWidth * 5) / 2)
+	kTextOutCenterX = ((kScreenWidth - kTileWidth * 5) / 2),
+	kPauseY = (kScreenHeight / 2 - 64)
 };
 
 struct DialogInfo {
@@ -76,6 +77,10 @@ public:
 	bool init();
 	void restartSystem();
 	void setInfobarDark(int value);
+
+	// Pause Functions
+	void drawPause();
+	void checkPause(uint x, uint y);
 
 	// Dialog Functions
 
