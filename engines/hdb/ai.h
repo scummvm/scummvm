@@ -868,6 +868,8 @@ public:
 	void cineSetAnimFrame(const char *entName, AIState state, int frame);
 	void cineEntityFace(const char *luaName, double dir);
 	void cineDialog(const char *title, const char *string, int seconds);
+	void cineTextOut(const char *text, int x, int y, int timer);
+	void cineCenterTextOut(const char *text, int y, int timer);
 	void cineMoveMaskedPic(const char *id, const char *pic, int x1, int y1, int x2, int y2, int speed);
 	void cineUse(const char *entName);
 	void cineFadeIn(bool isBlack, int steps);
