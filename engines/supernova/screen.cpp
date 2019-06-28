@@ -375,8 +375,7 @@ void Screen::renderImageSection(const MSNImage *image, int section, bool invert)
 	if (_vm->_MSPart == 1)
 		bigImage = image->_filenumber == 1 || image->_filenumber == 2;
 	else if (_vm->_MSPart == 2)
-		bigImage = image->_filenumber == 38 ||
-						(image->_filenumber == 28 && ConfMan.get("language") == "en");
+		bigImage = image->_filenumber == 38;
 	if (bigImage) {
 		sectionRect.setWidth(640);
 		sectionRect.setHeight(480);

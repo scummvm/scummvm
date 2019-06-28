@@ -284,8 +284,7 @@ int main(int argc, char *argv[]) {
 	const char **l = &lang[0];
 	while(*l) {
 		writeDatafile(outputFile, 15, *l);
-		writeImage(outputFile, "img1", *l);
-	//	writeImage(outputFile, "img2", *l);
+		writeDatafile(outputFile, 28, *l);
 		writeStrings(outputFile, *l);
 		++l;
 	}
