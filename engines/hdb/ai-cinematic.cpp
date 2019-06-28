@@ -275,6 +275,24 @@ void AI::processCines() {
 					complete = true;
 			}
 			break;
+		case C_TEXTOUT:
+			if (!_cine[i]->start) {
+				g_hdb->_window->textOut(_cine[i]->title, _cine[i]->x, _cine[i]->y, _cine[i]->end);
+				_cine[i]->start = 1;
+			} else {
+				if (!g_hdb->_window->textOutActive())
+					complete = true;
+			}
+			break;
+		case C_CENTERTEXTOUT:
+			if (!_cine[i]->start) {
+				g_hdb->_window->centerTextOut(_cine[i]->title, _cine[i]->y, _cine[i]->end);
+				_cine[i]->start = 1;
+			} else {
+				if (!g_hdb->_window->textOutActive())
+					complete = true;
+			}
+			break;
 		case C_MOVEMASKEDPIC:
 			if (!_cine[i]->start) {
 				Picture *pic = cineFindInBlitList(_cine[i]->id);
