@@ -53,6 +53,13 @@ public:
 	void stylusUp(int x, int y);
 	void stylusMove(int x, int y);
 
+	int getMouseX() {
+		return _mouseX;
+	}
+	int getMouseY() {
+		return _mouseY;
+	}
+
 private:
 
 	uint16 _buttons;	// Flags for buttons
