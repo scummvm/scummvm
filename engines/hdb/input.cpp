@@ -171,7 +171,45 @@ void Input::updateMouse(int newX, int newY) {
 		g_hdb->_drawMan->showPointer(true);
 	}
 
-	warning("STUB: updateMouse: Update Mouse buttons");
+	// Check if LButton is being dragged
+	if (_mouseLButton) {
+		stylusMove(_mouseX, _mouseY);
+	}
+}
+
+void Input::updateMouseButtons(int l, int m, int r) {
+	_mouseLButton += l;
+	_mouseMButton += m;
+	_mouseRButton += r;
+
+	// Check if LButton has been pressed
+	// Check if LButton has been lifted
+	if (_mouseLButton) {
+		if (_mouseX > (kScreenWidth - 32 * 5) && _mouseY < 240) {
+			g_hdb->_window->checkInvSelect(_mouseX, _mouseY);
+		} else if (_mouseX > (kScreenWidth - 32 * 5) && _mouseY >= 240) {
+			warning("STUB: updateMouseButtons: checkDeliveriesSelect() required");
+		} else {
+			warning("STUB: updateMouseButtons: Add pause check");
+			stylusDown(_mouseX, _mouseY);
+		}
+	} else if (!_mouseLButton) {
+		stylusUp(_mouseX, _mouseY);
+	}
+
+	// Check if MButton has been pressed
+	if (_mouseMButton) {
+		warning("STUB: updateMouseButtons: Add pause check");
+		g_hdb->_ai->clearWaypoints();
+		warning("STUB: Play SND_POP");
+	}
+
+	// Check if RButton has been pressed
+	if (_mouseRButton) {
+		warning("STUB: updateMouseButtons: Add pause check");
+		uint16 buttons = getButtons() | kButtonB;
+		setButtons(buttons);
+	}
 }
 
 } // End of Namespace

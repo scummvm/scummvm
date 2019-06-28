@@ -454,6 +454,24 @@ Common::Error HDBGame::run() {
 			case Common::EVENT_MOUSEMOVE:
 				_input->updateMouse(event.mouse.x, event.mouse.y);
 				break;
+			case Common::EVENT_LBUTTONDOWN:
+				_input->updateMouseButtons(1, 0, 0);
+				break;
+			case Common::EVENT_LBUTTONUP:
+				_input->updateMouseButtons(-1, 0, 0);
+				break;
+			case Common::EVENT_MBUTTONDOWN:
+				_input->updateMouseButtons(0, 1, 0);
+				break;
+			case Common::EVENT_MBUTTONUP:
+				_input->updateMouseButtons(0, -1, 0);
+				break;
+			case Common::EVENT_RBUTTONDOWN:
+				_input->updateMouseButtons(0, 0, 1);
+				break;
+			case Common::EVENT_RBUTTONUP:
+				_input->updateMouseButtons(0, 0, -1);
+				break;
 			case Common::EVENT_KEYDOWN:
 				debug("Key was pressed.");
 				break;
