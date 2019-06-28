@@ -27,7 +27,15 @@ namespace HDB {
 bool Input::init() {
 	_stylusDown = false;
 
-	warning("STUB: Input::init: Set the default key values");
+	_keyUp = Common::KEYCODE_UP;
+	_keyDown = Common::KEYCODE_DOWN;
+	_keyLeft = Common::KEYCODE_LEFT;
+	_keyRight = Common::KEYCODE_RIGHT;
+	_keyMenu = Common::KEYCODE_ESCAPE;
+	_keyUse = Common::KEYCODE_RETURN;
+	_keyInv = Common::KEYCODE_SPACE;
+	_keyDebug = Common::KEYCODE_F1;
+	_keyQuit = Common::KEYCODE_F10;
 
 	_mouseX = kScreenWidth / 2;
 	_mouseY = kScreenHeight / 2;
@@ -217,6 +225,75 @@ void Input::updateMouseButtons(int l, int m, int r) {
 		uint16 buttons = getButtons() | kButtonB;
 		setButtons(buttons);
 	}
+}
+
+void Input::updateKeys(Common::Event event, bool keyDown) {
+
+	warning("STUB: updateKeys: Check for Quit key");
+	warning("STUB: updateKeys: Check for Pause key");
+
+	uint16 buttons = getButtons();
+
+	if (!g_hdb->getPause()) {
+		if (event.kbd.keycode == _keyUp) {
+			if (keyDown) {
+				buttons |= kButtonUp;
+				if (g_hdb->_drawMan->getPointer())
+					g_hdb->_drawMan->showPointer(false);
+			} else {
+				buttons &= ~kButtonUp;
+			}
+		} else if (event.kbd.keycode == _keyDown) {
+			if (keyDown) {
+				buttons |= kButtonDown;
+				if (g_hdb->_drawMan->getPointer())
+					g_hdb->_drawMan->showPointer(false);
+			} else {
+				buttons &= ~kButtonDown;
+			}
+		} else if (event.kbd.keycode == _keyLeft) {
+			if (keyDown) {
+				buttons |= kButtonLeft;
+				if (g_hdb->_drawMan->getPointer())
+					g_hdb->_drawMan->showPointer(false);
+			} else {
+				buttons &= ~kButtonLeft;
+			}
+		} else if (event.kbd.keycode == _keyRight) {
+			if (keyDown) {
+				buttons |= kButtonRight;
+				if (g_hdb->_drawMan->getPointer())
+					g_hdb->_drawMan->showPointer(false);
+			} else {
+				buttons &= ~kButtonRight;
+			}
+		} else if (event.kbd.keycode == _keyUse) {
+			if (keyDown) {
+				buttons |= kButtonB;
+				if (g_hdb->_drawMan->getPointer())
+					g_hdb->_drawMan->showPointer(false);
+			} else {
+				buttons &= ~kButtonB;
+			}
+		}
+	}
+
+	if (event.kbd.keycode == _keyMenu) {
+		if (keyDown) {
+			buttons |= kButtonA;
+			g_hdb->_drawMan->showPointer(true);
+		} else {
+			buttons &= ~kButtonA;
+		}
+	} else if (event.kbd.keycode == _keyDebug) {
+		if (keyDown) {
+			buttons |= kButtonExit;
+		} else {
+			buttons &= ~kButtonExit;
+		}
+	}
+
+	setButtons(buttons);
 }
 
 } // End of Namespace
