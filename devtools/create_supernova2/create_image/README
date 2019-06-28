@@ -1,0 +1,87 @@
+This tool can be used to generate Mission Supernova 2 datafiles containing images
+and might be able to do the same even for Mission Supernova 1.
+
+The tool is not foolproof and a lot of checks are missing (since it's just a tool),
+so it could easily generate nonsense without any warning if for example command line
+arguments aren't as expected.
+
+To use this tool create a folder named as the number of the datafile you want to
+create, it should be 3 characters long, add required numbers of zeros to the begining
+of the name (015 for ms2_data.015).
+
+Inside this folder should be:
+
+--clickfield_info, this contains info about clickfields. On the first row should be a
+number saying how many clickfields there are and on the following rows are
+descripitons of individual clickfields in this order (x1, x2, y1, y2, next),
+for example:
+	2
+
+	123
+	134
+	49
+	63
+	0
+
+	135
+	146
+	49
+	63
+	0
+
+This would be the contents of a file describing 2 clickfields.
+
+--section_info similar to the clickfield_info. Contains info about sections. On the
+first row should be a number saying how many sections there are and on the following
+rows are descripitons of individual sections in this order
+(x1, x2, y1, y2, next, addressLow, addressHigh), for example:
+	2
+
+	0
+	319
+	0
+	137
+	0
+	0
+	0
+
+	123
+	134
+	49
+	62
+	0
+	44160
+	0
+
+This would be the contents of a file describing 2 sections
+
+--palette Contains info about palette. On the first row should be a number saying
+how many colors there are and on the following rows are the individual RGB values of
+colors (don't forget, that the engine shifts each color by 2 places to the left
+(brightening the image), so the palette basicaly has to be shifted by 2 to the right
+to get the right colors). For example:
+3
+50 50 50
+0 0 0
+28 25 20
+
+This would be the contents of a file containing palette with 3 colors.
+
+--image#.bmp For each section, there has to be image#.bmp, replace the '#' by the
+number of section this image belongs to. The image has to use indexes to the palette
+for storing the color of each pixel (Image -> Mode -> Indexed... in gimp).
+
+
+Running the tool
+The tool needs 3 comand line arguments when running it:
+-- Prefix of the file to be created (use "ms2_data" to create "ms2_data.###")
+-- Number of the file to be created and also the number of a folder to read all the 
+files from (use "15" to create prefix.015)
+-- Number of bytes to skip in each .bmp file. At the begining of each .bmp file is
+a header with information about the file and after that is stored the palette. This
+tool doesn't need these, so this number says how many bytes to skip to get to the pixel
+data. For example: use 1146 to generate ms2_data.015 from the files included.
+
+Be aware, this tool does only basic checks of comandline arguments and no checks of
+the input files (only their presence).
+
