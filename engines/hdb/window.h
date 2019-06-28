@@ -32,7 +32,8 @@ enum {
 	kWeaponY = 2,
 	kInvItemSpaceX = 48,
 	kInvItemSpaceY = 40,
-	kInvItemPerLine = 3
+	kInvItemPerLine = 3,
+	kTextOutCenterX = ((kScreenWidth - kTileWidth * 5) / 2)
 };
 
 struct DialogInfo {
@@ -59,6 +60,14 @@ struct InvWinInfo {
 	bool active;
 
 	InvWinInfo() : x(0), y(0), width(0), height(0), selection(0), active(false) {}
+};
+
+struct TOut {
+	char text[128];
+	int x, y;
+	uint32 timer;
+
+	TOut() : text(""), x(0), y(0), timer(0) {}
 };
 
 class Window {
@@ -98,6 +107,7 @@ private:
 	uint32 _dialogDelay;	// Used for Cinematics
 
 	InvWinInfo _invWinInfo;
+	Common::Array<TOut *> _textOutList;
 
 	// Windows GFX
 	Picture *_gfxTL, *_gfxTM, *_gfxTR;
