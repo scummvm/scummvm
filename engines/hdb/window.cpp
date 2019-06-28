@@ -96,6 +96,18 @@ void Window::setInfobarDark(int value) {
 	_infobarDimmed = value;
 }
 
+void Window::drawPause() {
+	if (g_hdb->getPause())
+		_gfxPausePlaque->drawMasked(480 / 2 - _gfxPausePlaque->_width / 2, kPauseY);
+}
+
+void Window::checkPause(uint x, uint y) {
+	if (x >= 480 / 2 - _gfxPausePlaque->_width / 2 && 480 / 2 + _gfxPausePlaque->_width / 2 > x && y >= kPauseY && y < kPauseY + _gfxPausePlaque->_height) {
+		g_hdb->togglePause();
+		warning("STUB: checkPause: Play SND_POP");
+	}
+}
+
 void Window::openDialog(const char *title, int tileIndex, const char *string, int more, const char *luaMore) {
 	if (_dialogInfo.active)
 		return;
