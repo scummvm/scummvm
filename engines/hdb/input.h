@@ -36,10 +36,7 @@ enum Button {
 	kButtonB		= 2 << 5,
 	kButtonC		= 2 << 6,
 	kButtonD		= 2 << 7,
-	kButtonMouseL	= 2 << 8,
-	kButtonMouseM	= 2 << 9,
-	kButtonMouseR	= 2 << 10,
-	kButtonExit		= 2 << 11
+	kButtonExit		= 2 << 8
 };
 
 class Input {
@@ -68,6 +65,7 @@ private:
 	bool _stylusDown;
 	int _stylusDownX, _stylusDownY;
 	int _mouseX, _mouseY;
+	int _mouseLButton, _mouseMButton, _mouseRButton;
 
 	// Definable Keys
 	int _keyUp, _keyDown, _keyLeft, _keyRight;

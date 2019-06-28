@@ -32,6 +32,8 @@ bool Input::init() {
 	_mouseX = kScreenWidth / 2;
 	_mouseY = kScreenHeight / 2;
 
+	_mouseLButton = _mouseMButton = _mouseRButton = 0;
+
 	return true;
 }
 
