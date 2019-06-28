@@ -397,6 +397,8 @@ void Window::textOut(const char *text, int x, int y, int timer) {
 		g_hdb->_drawMan->getDimensions(t->text, &pw, &lines);
 		t->x = kTextOutCenterX - pw / 2;
 	}
+
+	_textOutList.push_back(t);
 }
 
 void Window::centerTextOut(const char *text, int y, int timer) {
