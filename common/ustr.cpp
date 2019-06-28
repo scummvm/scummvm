@@ -428,7 +428,13 @@ void U32String::initWithCStr(const char *str, uint32 len) {
 	_str[len] = 0;
 }
 
-// This is a quick and dirty converter.
+// //TODO: This is a quick and dirty converter. Refactoring needed:
+// 1. This version is unsafe! There are no checks for end of buffer
+//    near i++ operations.
+// 2. Original version has an option for performing strict / nonstrict
+//    conversion for the 0xD800...0xDFFF interval
+// 3. Original version returns a result code. This version does NOT
+//    insert 'FFFD' on errors & does not inform caller on any errors
 //
 // More comprehensive one lives in wintermute/utils/convert_utf.cpp
 U32String convertUtf8ToUtf32(const String &str) {
@@ -461,7 +467,14 @@ U32String convertUtf8ToUtf32(const String &str) {
 	return u32str;
 }
 
-// This is a quick and dirty converter.
+// //TODO: This is a quick and dirty converter. Refactoring needed:
+// 1. Original version is more effective.
+//    This version features buffer = (char)(...) + buffer; pattern that causes
+//    unnecessary copying and reallocations, original code works with raw bytes
+// 2. Original version has an option for performing strict / nonstrict
+//    conversion for the 0xD800...0xDFFF interval
+// 3. Original version returns a result code. This version inserts '0xFFFD' if
+//    character does not fit in 4 bytes & does not inform caller on any errors
 //
 // More comprehensive one lives in wintermute/utils/convert_utf.cpp
 String convertUtf32ToUtf8(const U32String &u32str) {
