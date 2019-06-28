@@ -81,6 +81,7 @@ public:
 private:
 	int _MSPart;
 	bool loadFromEngineDataFile();
+	bool loadPbmFromEngineDataFile();
 	bool loadSections();
 };
 
