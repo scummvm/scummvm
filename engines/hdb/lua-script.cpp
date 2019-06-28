@@ -392,12 +392,32 @@ static int cineEntityFace(lua_State *L) {
 }
 
 static int cineTextOut(lua_State *L) {
-	warning("STUB: CINE TEXT OUT");
+	const char *string = lua_tostring(L, 1);
+	double x = lua_tonumber(L, 2);
+	double y = lua_tonumber(L, 3);
+	double timer = lua_tonumber(L, 4);
+
+	g_hdb->_lua->checkParameters("cineTextOut", 4);
+
+	x += kCameraXOff;
+	y += kCameraYOff;
+
+	lua_pop(L, 4);
+	g_hdb->_ai->cineTextOut(string, (int)x, (int)y, (int)timer);
 	return 0;
 }
 
 static int cineCenterTextOut(lua_State *L) {
-	warning("STUB: CINE CENTER TEXT OUT");
+	const char *string = lua_tostring(L, 1);
+	double y = lua_tonumber(L, 2);
+	double timer = lua_tonumber(L, 3);
+
+	g_hdb->_lua->checkParameters("cineCenterTextOut", 3);
+
+	y += kCameraYOff;
+
+	lua_pop(L, 3);
+	g_hdb->_ai->cineCenterTextOut(string, (int)y, (int)timer);
 	return 0;
 }
 
