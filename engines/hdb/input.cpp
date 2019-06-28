@@ -130,12 +130,26 @@ void Input::stylusDown(int x, int y) {
 	}
 }
 
-void stylusUp(int x, int y) {
-	warning("STUB: Input: stylusUp required");
+void Input::stylusUp(int x, int y) {
+	_stylusDown = false;
 }
 
-void stylusMove(int x, int y) {
-	warning("STUB: Input: stylusMove required");
+void Input::stylusMove(int x, int y) {
+	// In a cinematic?
+	if (g_hdb->_ai->playerLocked() || g_hdb->_ai->playerDead())
+		return;
+
+	switch (g_hdb->getGameState()) {
+	case GAME_PLAY:
+		warning("STUB: stylusMove: Add GetDebug() check");
+		break;
+	case GAME_MENU:
+		warning("STUB: stylusMove: Menu::processInput() required");
+		break;
+	default:
+		debug(9, "stylusMove: Unintended GameState");
+		break;
+	}
 }
 
 } // End of Namespace
