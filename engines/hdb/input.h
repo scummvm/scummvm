@@ -68,7 +68,6 @@ private:
 	bool _stylusDown;
 	int _stylusDownX, _stylusDownY;
 	int _mouseX, _mouseY;
-	int _lastMouseX, _lastMouseY;
 
 	// Definable Keys
 	int _keyUp, _keyDown, _keyLeft, _keyRight;
