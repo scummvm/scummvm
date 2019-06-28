@@ -46,12 +46,11 @@ bool Input::init() {
 }
 
 void Input::setButtons(uint16 b) {
-	warning("STUB: Input: setButtons required");
+	_buttons = b;
 }
 
 uint16 Input::getButtons() {
-	warning("STUB: Input: getButtons required");
-	return 0;
+	return _buttons;
 }
 
 void Input::stylusDown(int x, int y) {
