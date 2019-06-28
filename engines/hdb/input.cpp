@@ -190,7 +190,10 @@ void Input::updateMouseButtons(int l, int m, int r) {
 		} else if (_mouseX > (kScreenWidth - 32 * 5) && _mouseY >= 240) {
 			warning("STUB: updateMouseButtons: checkDeliveriesSelect() required");
 		} else {
-			warning("STUB: updateMouseButtons: Add pause check");
+			if (g_hdb->getPause() && g_hdb->getGameState() == GAME_PLAY) {
+				g_hdb->_window->checkPause(_mouseX, _mouseY);
+				return;
+			}
 			stylusDown(_mouseX, _mouseY);
 		}
 	} else if (!_mouseLButton) {
@@ -199,14 +202,18 @@ void Input::updateMouseButtons(int l, int m, int r) {
 
 	// Check if MButton has been pressed
 	if (_mouseMButton) {
-		warning("STUB: updateMouseButtons: Add pause check");
+		if (g_hdb->getPause() && g_hdb->getGameState() == GAME_PLAY)
+			return;
+
 		g_hdb->_ai->clearWaypoints();
 		warning("STUB: Play SND_POP");
 	}
 
 	// Check if RButton has been pressed
 	if (_mouseRButton) {
-		warning("STUB: updateMouseButtons: Add pause check");
+		if (g_hdb->getPause() && g_hdb->getGameState() == GAME_PLAY)
+			return;
+
 		uint16 buttons = getButtons() | kButtonB;
 		setButtons(buttons);
 	}
