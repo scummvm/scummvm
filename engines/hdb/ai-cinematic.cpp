@@ -84,7 +84,9 @@ void AI::processCines() {
 			_cineBlitList[i]->pic->drawMasked(_cine[i]->x, _cine[i]->y);
 	}
 
-	// TODO: Check for Game Pause
+	// Check for Game Pause
+	if (g_hdb->getPause())
+		return;
 
 	for (uint i = 0; i < _cine.size(); i++) {
 		debug(3, "processCines: [%d] %s now: %d  start: %d delay: %d", i, cineTypeStr[_cine[i]->cmdType],
