@@ -146,7 +146,7 @@ void HDBGame::paint() {
 		warning("STUB: MENU::DrawMenu required");
 		break;
 	case GAME_PLAY:
-		warning("STUB: DrawMan::DrawPointer required");
+		_drawMan->drawPointer();
 		break;
 	case GAME_LOADING:
 		warning("STUB: DrawMan::DrawLoadingScreen required");
