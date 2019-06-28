@@ -109,4 +109,12 @@ void QObjectCursor::setCursorPos(int x, int y, bool center) {
 	g_vm->videoSystem()->addDirtyRect(dirty);
 }
 
+void QObjectCursor::show(bool v) {
+	FlicDecoder *flc = g_vm->resMgr()->loadFlic(_resourceId);
+	Common::Rect rect = flc->getBounds();
+	rect.translate(_x, _y);
+	g_vm->videoSystem()->addDirtyRect(rect);
+	QMessageObject::show(v);
+}
+
 }

@@ -34,6 +34,7 @@ public:
 	void setCursorPos(int x, int y, bool center);
 	void update() override;
 	void draw() override;
+	void show(bool v) override;
 
 private:
 

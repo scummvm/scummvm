@@ -48,6 +48,7 @@ class QMessageObject : public QVisibleObject {
 public:
 	QMessageObject();
 
+	void show(bool v) override;
 	virtual void processMessage(const QMessage &msg);
 
 public:
