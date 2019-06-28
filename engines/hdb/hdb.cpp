@@ -327,6 +327,7 @@ Common::Error HDBGame::run() {
 
 		_window->drawDialog();
 		_window->drawInventory();
+		_window->drawTextOut();
 
 		// Update Timer that's NOT used for in-game Timing
 		_prevTimeSlice = _timeSlice;
