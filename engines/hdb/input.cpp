@@ -152,4 +152,28 @@ void Input::stylusMove(int x, int y) {
 	}
 }
 
+void Input::updateMouse(int newX, int newY) {
+	_lastMouseX = _mouseX;
+	_lastMouseY = _mouseY;
+	_mouseX = newX;
+	_mouseY = newY;
+
+	if (_mouseX < 0)
+		_mouseX = 0;
+	else if (_mouseX >= kScreenWidth)
+		_mouseX = kScreenWidth - 1;
+
+	if (_mouseY < 0)
+		_mouseY = 0;
+	else if (_mouseY >= kScreenHeight)
+		_mouseY = kScreenHeight - 1;
+
+	// Turn Cursor back on?
+	if ((_lastMouseX != _mouseX || _lastMouseY != _mouseY) && !g_hdb->_drawMan->getPointer()) {
+		g_hdb->_drawMan->showPointer(true);
+	}
+
+	warning("STUB: updateMouse: Update Mouse buttons");
+}
+
 } // End of Namespace

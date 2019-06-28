@@ -53,6 +53,8 @@ public:
 	void stylusUp(int x, int y);
 	void stylusMove(int x, int y);
 
+	void updateMouse(int newX, int newY);
+
 	int getMouseX() {
 		return _mouseX;
 	}
