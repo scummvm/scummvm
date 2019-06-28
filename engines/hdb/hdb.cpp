@@ -474,7 +474,10 @@ Common::Error HDBGame::run() {
 				_input->updateMouseButtons(0, 0, -1);
 				break;
 			case Common::EVENT_KEYDOWN:
-				debug("Key was pressed.");
+				_input->updateKeys(event, true);
+				break;
+			case Common::EVENT_KEYUP:
+				_input->updateKeys(event, false);
 				break;
 			default:
 				break;
