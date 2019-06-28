@@ -698,7 +698,7 @@ void Map::drawEnts() {
 }
 
 void Map::drawGratings() {
-	for (int i = 0; i < kMaxGratings; i++) {
+	for (int i = 0; i < _numGratings; i++) {
 		g_hdb->_drawMan->getTile(_gratings[i]->tile)->drawMasked(_gratings[i]->x, _gratings[i]->y);
 	}
 
@@ -706,7 +706,7 @@ void Map::drawGratings() {
 }
 
 void Map::drawForegrounds() {
-	for (int i = 0; i < kMaxForegrounds; i++) {
+	for (int i = 0; i < _numForegrounds; i++) {
 		g_hdb->_drawMan->getTile(_foregrounds[i]->tile)->drawMasked(_foregrounds[i]->x, _foregrounds[i]->y);
 	}
 
