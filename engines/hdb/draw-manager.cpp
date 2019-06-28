@@ -146,6 +146,28 @@ void DrawMan::updateVideo() {
 	debug(9, "STUB: DrawMan::updateVideo incomplete");
 }
 
+void DrawMan::drawPointer() {
+	static int anim = 0;
+	static uint32 animTime = 0;
+
+	if (animTime < g_system->getMillis()) {
+		animTime = g_system->getMillis() + 50;
+		anim = (anim + 1) & 7;
+	}
+
+	// If pointer is not displayable and we are in game, exit
+	if (!_pointerDisplayable && g_hdb->getGameState() == GAME_PLAY)
+		return;
+
+	// If we are in game and the cursor should be displayed, draw it
+	if (_showCursor || g_hdb->getGameState() != GAME_PLAY)
+		_mousePointer[anim]->drawMasked(g_hdb->_input->getMouseX() - 16, g_hdb->_input->getMouseY() - 16);
+}
+
+void DrawMan::setPointerState(int value) {
+	_pointerDisplayable = value;
+}
+
 void DrawMan::setFade(bool fadeIn, bool black, int steps) {
 	_fadeInfo.isFadeIn = fadeIn;
 	_fadeInfo.isBlack = black;
