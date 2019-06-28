@@ -34,9 +34,9 @@
 #include "glk/alan3/output.h"
 #include "glk/alan3/params.h"
 #include "glk/alan3/readline.h"
+#include "glk/alan3/syserr.h"
 #include "glk/alan3/term.h"
 #include "glk/alan3/word.h"
-#include "common/textconsole.h"
 
 namespace Glk {
 namespace Alan3 {
@@ -166,7 +166,7 @@ static void getLine(void) {
 			longjmp(forfeitLabel, 0);
 		}
 #else
-		::error("TODO: empty command");
+		syserr("TODO: empty command");
 #endif
 
 		strcpy(isobuf, buf);

@@ -46,7 +46,6 @@
 #include "glk/alan3/utils.h"
 #include "glk/alan3/word.h"
 #include "common/stream.h"
-#include "common/textconsole.h"
 
 namespace Glk {
 namespace Alan3 {
@@ -150,7 +149,7 @@ void print(Aword fpos, Aword len) {
 
 /*======================================================================*/
 void sys(Aword fpos, Aword len) {
-	::error("sys calls are unsupported");
+	syserr("sys calls are unsupported");
 }
 
 
@@ -226,7 +225,7 @@ void undo(void) {
 #ifdef TODO
 	longjmp(returnLabel, UNDO_RETURN);
 #else
-	::error("TODO: undo longjmp");
+	syserr("TODO: undo longjmp");
 #endif
 }
 
@@ -283,7 +282,7 @@ void restartGame(void) {
 	}
 	current.location = previousLocation;
 #else
-	::error("TODO: restartGame");
+	syserr("TODO: restartGame");
 #endif
 }
 

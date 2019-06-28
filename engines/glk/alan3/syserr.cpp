@@ -62,6 +62,8 @@ void setSyserrHandler(void (*f)(const char *)) {
 /*======================================================================*/
 // TODO Make syserr() use ... as printf()
 void syserr(const char *description) {
+	::error("%s", description);
+#if 0
 	lin = 0;
 	if (handler == NULL) {
 		const char *blurb = "<If you are the creator of this piece of Interactive Fiction, \
@@ -71,6 +73,7 @@ it to support@alanif.se. Thank you!>";
 		runtimeError("SYSTEM ERROR: ", description, blurb);
 	} else
 		handler(description);
+#endif
 }
 
 

@@ -25,6 +25,8 @@
 
 /* Header file for syserr unit of ARUN Alan System interpreter */
 
+#include "common/textconsole.h"
+
 namespace Glk {
 namespace Alan3 {
 

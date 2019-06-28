@@ -20,7 +20,6 @@
  *
  */
 
-#include "common/textconsole.h"
 #include "glk/alan3/main.h"
 #include "glk/alan3/alan_version.h"
 #include "glk/alan3/args.h"
@@ -674,7 +673,7 @@ static void moveActor(int theActor) {
 			fail = FALSE;           /* fail only aborts one actor */
 		}
 #else
-		::error("TODO: moveActor setjmp");
+		syserr("TODO: moveActor setjmp");
 #endif
 	} else if (admin[theActor].script != 0) {
 		for (scr = (ScriptEntry *) pointerTo(header->scriptTableAddress); !isEndOfArray(scr); scr++) {

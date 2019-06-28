@@ -22,11 +22,11 @@
 
 #include "glk/alan3/act.h"
 #include "glk/alan3/alt_info.h"
-#include "glk/alan3/output.h"
-#include "glk/alan3/msg.h"
 #include "glk/alan3/exe.h"
 #include "glk/alan3/lists.h"
-#include "common/textconsole.h"
+#include "glk/alan3/msg.h"
+#include "glk/alan3/output.h"
+#include "glk/alan3/syserr.h"
 
 namespace Glk {
 namespace Alan3 {
@@ -111,7 +111,7 @@ void action(int verb, Parameter parameters[], Parameter multipleMatches[]) {
 		memcpy(returnLabel, savedReturnLabel, sizeof(returnLabel));
 		parameters[multiplePosition].instance = 0;
 #else
-		::error("TODO: action");
+		syserr("TODO: action");
 #endif
 	} else {
 		setGlobalParameters(parameters);

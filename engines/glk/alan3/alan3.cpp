@@ -84,7 +84,7 @@ bool Alan3::initialize() {
 	// first, open a window for error output
 	glkMainWin = g_vm->glk_window_open(0, 0, 0, wintype_TextBuffer, 0);
 	if (glkMainWin == nullptr)
-		::error("FATAL ERROR: Cannot open initial window");
+		syserr("FATAL ERROR: Cannot open initial window");
 
 	g_vm->glk_stylehint_set(wintype_TextGrid, style_User1, stylehint_ReverseColor, 1);
 	glkStatusWin = g_vm->glk_window_open(glkMainWin, winmethod_Above |
