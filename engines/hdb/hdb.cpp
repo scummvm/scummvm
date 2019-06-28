@@ -484,10 +484,10 @@ Common::Error HDBGame::run() {
 		if (_gameState == GAME_PLAY) {
 			_drawMan->drawSky();
 
-			debug(9, "STUB: HDBGame::run: Add check for pause flag");
-
-			_ai->moveEnts();
-			_ai->processCallbackList();
+			if (!_pauseFlag) {
+				_ai->moveEnts();
+				_ai->processCallbackList();
+			}
 
 			_map->draw();
 			_ai->processCines();
@@ -512,6 +512,7 @@ Common::Error HDBGame::run() {
 			_window->drawDialog();
 			_window->drawInventory();
 			_window->drawTextOut();
+			_window->drawPause();
 		}
 
 		// Update Timer that's NOT used for in-game Timing
