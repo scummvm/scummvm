@@ -25,6 +25,7 @@
 #include "common/stream.h"
 #include "common/system.h"
 #include "common/config-manager.h"
+#include "common/memstream.h"
 #include "graphics/palette.h"
 #include "graphics/surface.h"
 
@@ -69,6 +70,7 @@ MSNImage::~MSNImage() {
 
 bool MSNImage::init(int filenumber) {
 	Common::File file;
+	_filenumber = filenumber;
 	if (_MSPart == 1) {
 		if (!file.open(Common::String::format("msn_data.%03d", filenumber))) {
 			warning("Image data file msn_data.%03d could not be read!", filenumber);
@@ -76,19 +78,19 @@ bool MSNImage::init(int filenumber) {
 		}
 	}
 	else if (_MSPart == 2) {
-		if (!file.open(Common::String::format("ms2_data.%03d", filenumber))) {
-			warning("Image data file ms2_data.%03d could not be read!", filenumber);
-			return false;
+		if (!loadFromEngineDataFile()) {
+			if (!file.open(Common::String::format("ms2_data.%03d", filenumber))) {
+				warning("Image data file ms2_data.%03d could not be read!", filenumber);
+				return false;
+			}
+			loadStream(file);
 		}
 	}
-
-	_filenumber = filenumber;
-	loadStream(file);
 
 	return true;
 }
 
-bool MSNImage::loadFromEngineDataFile() {
+bool MSNImage::loadPbmFromEngineDataFile() {
 	Common::String name;
 	Common::File f;
 	char id[5], lang[5];
@@ -142,6 +144,47 @@ bool MSNImage::loadFromEngineDataFile() {
 			break;
 		if (name == id && cur_lang == lang) {
 			return f.read(_encodedImage, size) == size;
+		} else
+			f.skip(size);
+	}
+
+	return false;
+}
+
+bool MSNImage::loadFromEngineDataFile() {
+	Common::String name;
+	Common::File f;
+	char id[5], lang[5];
+	id[4] = lang[4] = '\0';
+	if (_MSPart == 1) {
+		return false;
+	} else if (_MSPart == 2) {
+		if (_filenumber == 15)
+			name = "M015";
+		else
+			return false;
+
+		if (!f.open(SUPERNOVA2_DAT))
+			return false;
+
+		f.read(id, 3);
+		if (strncmp(id, "MS2", 3) != 0)
+			return false;
+		int version = f.readByte();
+		if (version != SUPERNOVA2_DAT_VERSION)
+			return false;
+	}
+
+	Common::String cur_lang = ConfMan.get("language");
+
+	while (!f.eos()) {
+		f.read(id, 4);
+		f.read(lang, 4);
+		uint32 size = f.readUint32LE();
+		if (f.eos())
+			break;
+		if (name == id && cur_lang == lang) {
+			return loadStream(*f.readStream(size));
 		} else
 			f.skip(size);
 	}
@@ -211,7 +254,7 @@ bool MSNImage::loadStream(Common::SeekableReadStream &stream) {
 
 	// Newspaper images may be in the engine data file. So first try to read
 	// it from there.
-	if (!loadFromEngineDataFile()) {
+	if (!loadPbmFromEngineDataFile()) {
 		// Load the image from the stream
 		byte zwCodes[256] = {0};
 		byte numRepeat = stream.readByte();
