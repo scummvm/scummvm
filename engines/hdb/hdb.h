@@ -164,6 +164,13 @@ public:
 		_actionMode = status;
 	}
 
+	void togglePause() {
+		_pauseFlag ^= 1;
+	}
+	int getPause() {
+		return _pauseFlag;
+	}
+
 	void resetTimer() {
 		_timePlayed = _timeSeconds = 0;
 	}
