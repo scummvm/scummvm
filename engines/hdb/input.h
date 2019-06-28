@@ -51,6 +51,7 @@ public:
 	void stylusMove(int x, int y);
 
 	void updateMouse(int newX, int newY);
+	void updateMouseButtons(int l, int m, int r);
 
 	int getMouseX() {
 		return _mouseX;
