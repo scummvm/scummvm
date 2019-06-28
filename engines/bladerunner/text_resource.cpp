@@ -107,7 +107,7 @@ const char *TextResource::getText(uint32 id) const {
 const char *TextResource::getOuttakeTextByFrame(uint32 frame) const {
 	for (uint32 i = 0; i != _count; ++i) {
 		//debug("Checking %d - so within: %d , %d", _ids[i], (0x0000FFFF & _ids[i]), ((_ids[i] >> 16) & 0x0000FFFF ) );
-		if ((frame >= (0x0000FFFF & _ids[i]) )   && (frame <  ((_ids[i] >> 16) & 0x0000FFFF ) )){
+		if ((frame >= (0x0000FFFF & _ids[i]) )   && (frame <  ((_ids[i] >> 16) & 0x0000FFFF ) )) {
 			// we found an id with lower 16bits smaller or equal to our frame key
 			// and with higher 16 bits higher than the frame key
 			return _strings + _offsets[i];

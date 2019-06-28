@@ -610,7 +610,7 @@ void KIA::mouseDownCallback(int buttonId, void *callbackData) {
 	case 13:
 	case 14:
 		self->_vm->_audioPlayer->playAud(self->_vm->_gameInfo->getSfxTrack(kSfxBUTN5P), 70, 0, 0, 50, 0);
-		if (buttonId == 12){
+		if (buttonId == 12) {
 			self->_vm->_audioPlayer->playAud(self->_vm->_gameInfo->getSfxTrack(kSfxSHUTDOWN), 70, 0, 0, 50, 0);
 		}
 		break;

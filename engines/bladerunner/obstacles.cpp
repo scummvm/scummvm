@@ -727,7 +727,7 @@ bool Obstacles::findFarthestAvailablePathVertex(Vector2 *path, int pathSize, Vec
 		}
 
 		// neighboring vertices are always available
-		if (foundVertexNeighbor){
+		if (foundVertexNeighbor) {
 			farthestPathIndex = pathVertexIdx;
 			continue;
 		}

@@ -302,7 +302,7 @@ void Spinner::reset() {
 }
 
 void Spinner::resume() {
-	if(_vqaPlayer == nullptr) {
+	if (_vqaPlayer == nullptr) {
 		return;
 	}
 

@@ -343,7 +343,7 @@ void DialogueMenu::draw(Graphics::Surface &s) {
 
 		if (_items[i].colorIntensity < targetColorIntensity) {
 			_items[i].colorIntensity += 4;
-			if(_items[i].colorIntensity > targetColorIntensity) {
+			if (_items[i].colorIntensity > targetColorIntensity) {
 				_items[i].colorIntensity = targetColorIntensity;
 			}
 		} else if (_items[i].colorIntensity > targetColorIntensity) {

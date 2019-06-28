@@ -1199,7 +1199,7 @@ void  ScriptBase::Ambient_Sounds_Remove_Sound(int sfxId, bool stopPlaying) {
 	_vm->_ambientSounds->removeNonLoopingSound(sfxId,  stopPlaying);
 }
 
-void ScriptBase::Ambient_Sounds_Add_Speech_Sound(int actorId, int sentenceId, int timeMin, int timeMax, int volumeMin, int volumeMax, int panStartMin, int panStartMax, int panEndMin, int panEndMax, int priority, int unk){
+void ScriptBase::Ambient_Sounds_Add_Speech_Sound(int actorId, int sentenceId, int timeMin, int timeMax, int volumeMin, int volumeMax, int panStartMin, int panStartMax, int panEndMin, int panEndMax, int priority, int unk) {
 	debugC(kDebugScript, "Ambient_Sounds_Add_Speech_Sound(%d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d)", actorId, sentenceId, timeMin, timeMax, volumeMin, volumeMax, panStartMin, panStartMax, panEndMin, panEndMax, priority, unk);
 	_vm->_ambientSounds->addSpeech(actorId, sentenceId, timeMin, timeMax, volumeMin, volumeMax, panStartMin, panStartMax, panEndMin, panEndMax, priority, unk);
 }
@@ -1231,7 +1231,7 @@ void ScriptBase::Ambient_Sounds_Adjust_Looping_Sound(int sfxId, int volume, int 
 	_vm->_ambientSounds->adjustLoopingSound(sfxId, volume, pan, delay);
 }
 
-void ScriptBase::Ambient_Sounds_Remove_Looping_Sound(int sfxId, int delay){
+void ScriptBase::Ambient_Sounds_Remove_Looping_Sound(int sfxId, int delay) {
 	debugC(kDebugScript, "Ambient_Sounds_Remove_Looping_Sound(%d, %d)", sfxId, delay);
 	_vm->_ambientSounds->removeLoopingSound(sfxId, delay);
 }
@@ -1507,7 +1507,7 @@ void ScriptBase::ESPER_Flag_To_Activate() {
 	}
 }
 
-void ScriptBase::Voight_Kampff_Activate(int actorId, int calibrationRatio){
+void ScriptBase::Voight_Kampff_Activate(int actorId, int calibrationRatio) {
 	debugC(kDebugScript, "Voight_Kampff_Activate(%d, %d)", actorId, calibrationRatio);
 	_vm->_vk->open(actorId, calibrationRatio);
 	while (_vm->_vk->isOpen() && _vm->_gameIsRunning) {

@@ -96,7 +96,7 @@ void KIASectionLoad::close() {
 	_saveList.clear();
 }
 
-void KIASectionLoad::draw(Graphics::Surface &surface){
+void KIASectionLoad::draw(Graphics::Surface &surface) {
 	_vm->_kia->_shapes->get(69)->draw(surface, 501, 123);
 
 	_uiContainer->draw(surface);

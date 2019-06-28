@@ -200,7 +200,7 @@ void SceneScriptUG05::PlayerWalkedIn() {
 				Actor_Put_In_Set(kActorDektora, kSetUG05);
 				Actor_Set_At_XYZ(kActorDektora, -100.0f, -10.31f, -906.0f, 866);
 				Actor_Force_Stop_Walking(kActorDektora);
-			} else if (affectionTowardsActor == kActorLucy){
+			} else if (affectionTowardsActor == kActorLucy) {
 				Actor_Put_In_Set(kActorLucy, kSetUG05);
 				Actor_Set_At_XYZ(kActorLucy, -100.0f, -10.31f, -906.0f, 866);
 				Actor_Force_Stop_Walking(kActorLucy);

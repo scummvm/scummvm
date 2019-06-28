@@ -490,7 +490,7 @@ bool AIScriptZuben::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 					AI_Movement_Track_Append_With_Facing(kActorZuben, 470, 3, 506);
 					AI_Movement_Track_Append(kActorZuben, 471, 5);
 					AI_Movement_Track_Append(kActorZuben, 472, 0);
-				} else if (rnd2 == 3){
+				} else if (rnd2 == 3) {
 					AI_Movement_Track_Flush(kActorZuben);
 					AI_Movement_Track_Append(kActorZuben, 468, 0);
 					AI_Movement_Track_Append(kActorZuben, 469, 3);

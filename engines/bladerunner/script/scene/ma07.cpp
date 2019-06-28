@@ -54,7 +54,7 @@ void SceneScriptMA07::InitializeScene() {
 
 void SceneScriptMA07::SceneLoaded() {
 	Obstacle_Object("BARRICADE", true);
-	if(_vm->_cutContent) {
+	if (_vm->_cutContent) {
 		if (Actor_Query_Goal_Number(kActorRachael) == kGoalRachaelShouldBeOutsideMcCoysAct3) {
 			Actor_Set_Goal_Number(kActorRachael, kGoalRachaelIsOutsideMcCoysBuildingAct3);
 		}

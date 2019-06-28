@@ -292,7 +292,7 @@ const char *KIASectionSuspects::scrambleSuspectsName(const char *name) {
 	for (int i = 0 ; i < 6; ++i) {
 		if (Common::isAlpha(*namePtr)) {
 			char upper = toupper(*namePtr);
-			if ( upper < 'J' ){
+			if ( upper < 'J' ) {
 				*bufferPtr++ = upper - 16;
 			} else {
 				*bufferPtr++ = upper - 9;
@@ -530,7 +530,7 @@ void KIASectionSuspects::nextSuspect() {
 	if (_suspectsFoundCount >= 2) {
 		while (true) {
 			++_suspectSelected;
-			if (_suspectSelected >= (int)_vm->_gameInfo->getSuspectCount()){
+			if (_suspectSelected >= (int)_vm->_gameInfo->getSuspectCount()) {
 				_suspectSelected = 0;
 			}
 
@@ -546,7 +546,7 @@ void KIASectionSuspects::prevSuspect() {
 	if (_suspectsFoundCount >= 2) {
 		while (true) {
 			--_suspectSelected;
-			if (_suspectSelected < 0){
+			if (_suspectSelected < 0) {
 				_suspectSelected = _vm->_gameInfo->getSuspectCount() - 1;
 			}
 

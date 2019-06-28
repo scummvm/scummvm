@@ -155,7 +155,7 @@ bool SliceAnimations::openFrames(int fileNumber) {
 			) {
 				// For Chapter1 we try both CDFRAMES.DAT and CDFRAMES1.DAT
 				return false;
-			} else if(i != 1 &&
+			} else if (i != 1 &&
 			          !_framesPageFile.open(Common::String::format("CDFRAMES%d.DAT", i), i)
 			) {
 				return false;
@@ -176,7 +176,7 @@ bool SliceAnimations::PageFile::open(const Common::String &name, int8 fileIdx) {
 		return false;
 
 	if (!_sliceAnimations->_vm->_cutContent
-		|| (_pageOffsets.size() < _sliceAnimations->_pageCount) ){
+		|| (_pageOffsets.size() < _sliceAnimations->_pageCount) ) {
 		_pageOffsets.resize(_sliceAnimations->_pageCount);
 		_pageOffsetsFileIdx.resize(_sliceAnimations->_pageCount);
 		for (uint32 i = 0; i != _sliceAnimations->_pageCount; ++i) {

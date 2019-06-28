@@ -266,7 +266,7 @@ const char *Subtitles::getOuttakeSubsText(const Common::String &outtakesName, in
 	// Search in the requested TextResource at the fileIdx index of the _vqaSubsTextResourceEntries table for a quote that corresponds to the specified video frame
 	// debug("Number of resource quotes to search: %d, requested frame: %u", _vqaSubsTextResourceEntries[fileIdx]->getCount(), (uint32)frame );
 	const Common::String &text = _vqaSubsTextResourceEntries[fileIdx]->getOuttakeTextByFrame((uint32)frame);
-	//if(text != "") {
+	//if (text != "") {
 	//    debug("Text = %s", text.c_str());
 	//}
 	if (_currentSubtitleTextFull != Common::String(text)) {

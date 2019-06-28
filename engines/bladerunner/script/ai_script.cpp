@@ -192,7 +192,7 @@ void AIScripts::clickedByPlayer(int actor) {
 	}
 
 
-	if(_vm->_actors[actor]->inCombat()) {
+	if (_vm->_actors[actor]->inCombat()) {
 		return;
 	}
 

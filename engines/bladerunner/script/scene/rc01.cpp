@@ -726,7 +726,7 @@ void SceneScriptRC01::PlayerWalkedOut() {
 	if (!Game_Flag_Query(kFlagRC01toRC02)
 	 && !Game_Flag_Query(kFlagRC01toRC03)
 	) {
-		if(Global_Variable_Query(kVariableChapter) == 1) {
+		if (Global_Variable_Query(kVariableChapter) == 1) {
 			if (_vm->_cutContent) {
 				Outtake_Play(kOuttakeAscent, true, -1);
 			}

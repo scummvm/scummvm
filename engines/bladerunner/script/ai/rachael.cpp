@@ -87,7 +87,7 @@ void AIScriptRachael::ClickedByPlayer() {
 		// the structure is simplified (maintaining the same logic flow)
 		if ((Player_Query_Agenda() == kPlayerAgendaSurly || Player_Query_Agenda() == kPlayerAgendaErratic)
 			|| (Player_Query_Agenda() != kPlayerAgendaPolite && Actor_Query_Friendliness_To_Other(kActorSteele, kActorMcCoy) > Actor_Query_Friendliness_To_Other(kActorClovis, kActorMcCoy))
-		){
+		) {
 			dialogue_agenda2();
 		} else {
 			dialogue_agenda1();
@@ -155,7 +155,7 @@ bool AIScriptRachael::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		// the structure is simplified (maintaining the same logic flow)
 		if ((Player_Query_Agenda() == kPlayerAgendaSurly || Player_Query_Agenda() == kPlayerAgendaErratic)
 			|| (Player_Query_Agenda() != kPlayerAgendaPolite && Actor_Query_Friendliness_To_Other(kActorSteele, kActorMcCoy) > Actor_Query_Friendliness_To_Other(kActorClovis, kActorMcCoy))
-		){
+		) {
 			dialogue_agenda2();
 		} else {
 			dialogue_agenda1();
@@ -392,7 +392,7 @@ void AIScriptRachael::dialogue_start() {
 	if (_vm->_cutContent) {
 			Actor_Face_Actor(kActorRachael, kActorMcCoy, true);
 			Loop_Actor_Walk_To_Actor(kActorRachael, kActorMcCoy, 84, false, false);
-			if(_vm->_cutContent) {
+			if (_vm->_cutContent) {
 				Actor_Says(kActorMcCoy, 2735, 14);              // MetAtYourUnclesOffice
 			}
 			Actor_Says(kActorRachael, 0, 15);                   // RememberYouMisterMcCoy

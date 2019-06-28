@@ -172,7 +172,7 @@ void UIScrollBox::hide() {
 	_isVisible = false;
 }
 
-void UIScrollBox::clearLines(){
+void UIScrollBox::clearLines() {
 	_lineCount = 0;
 	_firstLineVisible = 0;
 

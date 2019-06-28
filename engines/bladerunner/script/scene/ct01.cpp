@@ -73,7 +73,7 @@ void SceneScriptCT01::InitializeScene() {
 			if ( Global_Variable_Query(kVariableChapter) < 4
 			    && Actor_Query_Which_Set_In(kActorGordo) != kSetCT01_CT12
 			    && Random_Query(1, 2) == 1
-			){
+			) {
 				// enhancement: don't always play
 				Scene_Loop_Start_Special(kSceneLoopModeLoseControl, kCT01LoopInshot, false);
 			}
@@ -512,7 +512,7 @@ void SceneScriptCT01::PlayerWalkedIn() {
 		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -330.0f, -6.5f, 221.0f, 0, false, false, false);
 		if (_vm->_cutContent) {
 			// unpause generic walkers here, less chance to collide with McCOy while he enters the scene
-			if( Game_Flag_Query(kFlagArrivedFromSpinner1)
+			if (Game_Flag_Query(kFlagArrivedFromSpinner1)
 				&& Global_Variable_Query(kVariableGenericWalkerConfig) < 0
 			) {
 				Global_Variable_Set(kVariableGenericWalkerConfig, 2);

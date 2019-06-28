@@ -500,7 +500,7 @@ bool AIScriptGordo::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		break;
 
 	case kGoalGordoNR02NextAct:
-		switch(Global_Variable_Query(kVariableGordosJoke)) {
+		switch (Global_Variable_Query(kVariableGordosJoke)) {
 		case 0:
 			Global_Variable_Increment(kVariableGordosJoke, 1);
 			Actor_Set_Goal_Number(kActorGordo, kGoalGordoNR02TellJoke1);
@@ -1634,7 +1634,7 @@ void AIScriptGordo::talkToMcCoyInCity() {
 		Game_Flag_Set(kFlagGordoTalk2);
 		AI_Movement_Track_Unpause(kActorGordo);
 	} else {
-		switch(Random_Query(1, 4)) {
+		switch (Random_Query(1, 4)) {
 			case 1:
 				Actor_Says(kActorMcCoy, 6460, 13);
 				break;

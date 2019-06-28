@@ -265,7 +265,7 @@ void SceneScript::sceneFrameAdvanced(int frame) {
 
 void SceneScript::actorChangedGoal(int actorId, int newGoal, int oldGoal, bool currentSet) {
 	_inScriptCounter++;
-	if(_currentScript)
+	if (_currentScript)
 		_currentScript->ActorChangedGoal(actorId, newGoal, oldGoal, currentSet);
 	_inScriptCounter--;
 }

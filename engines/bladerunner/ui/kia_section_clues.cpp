@@ -386,7 +386,7 @@ void KIASectionClues::populateClues() {
 			int assetType = _vm->_crimesDatabase->getAssetType(i);
 			int crimeId = _vm->_crimesDatabase->getCrime(i);
 			if (assetType != -1 || _debugIntangible) {
-				if(_filters[getLineIdForAssetType(assetType)] && _filters[getLineIdForCrimeId(crimeId)]) {
+				if (_filters[getLineIdForAssetType(assetType)] && _filters[getLineIdForCrimeId(crimeId)]) {
 					int flags = 0x30;
 					if (_clues->isPrivate(i)) {
 						flags = 0x08;

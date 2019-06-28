@@ -230,7 +230,7 @@ bool SceneScriptNR03::ClickedOn2DRegion(int region) {
 	if (region == 0) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 79.2f, -70.19f, -984.0f, 12, true, false, false)) {
 			Actor_Face_Actor(kActorMcCoy, kActorHysteriaPatron1, true);
-			switch(Random_Query(0, 4)) {
+			switch (Random_Query(0, 4)) {
 			case 0:
 				Actor_Says(kActorMcCoy, 1055, kAnimationModeTalk);
 				break;
@@ -248,8 +248,8 @@ bool SceneScriptNR03::ClickedOn2DRegion(int region) {
 				break;
 #else
 			case 4:
-				if(_vm->_cutContent) {
-					switch(Random_Query(1, 10)) {
+				if (_vm->_cutContent) {
+					switch (Random_Query(1, 10)) {
 					case 1:
 						// fall through
 					case 2:

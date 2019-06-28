@@ -438,7 +438,7 @@ void KIASectionCrimes::nextCrime() {
 	if (_crimesFoundCount >= 2) {
 		while (true) {
 			++_crimeSelected;
-			if (_crimeSelected >= (int)_vm->_gameInfo->getCrimeCount()){
+			if (_crimeSelected >= (int)_vm->_gameInfo->getCrimeCount()) {
 				_crimeSelected = 0;
 			}
 
@@ -470,7 +470,7 @@ void KIASectionCrimes::nextSuspect() {
 	if (_suspectsFoundCount >= 2) {
 		while (true) {
 			++_suspectSelected;
-			if (_suspectSelected >= (int)_vm->_gameInfo->getSuspectCount()){
+			if (_suspectSelected >= (int)_vm->_gameInfo->getSuspectCount()) {
 				_suspectSelected = 0;
 			}
 
@@ -486,7 +486,7 @@ void KIASectionCrimes::prevSuspect() {
 	if (_suspectsFoundCount >= 2) {
 		while (true) {
 			--_suspectSelected;
-			if (_suspectSelected < 0){
+			if (_suspectSelected < 0) {
 				_suspectSelected = _vm->_gameInfo->getSuspectCount() - 1;
 			}
 

@@ -323,7 +323,7 @@ void SceneScriptNR05::talkToEarlyQ() {
 	int answer = Dialogue_Menu_Query_Input();
 	Dialogue_Menu_Disappear();
 
-	switch(answer){
+	switch (answer) {
 	case 890: // JEWELRY
 		Actor_Says(kActorMcCoy, 3505, kAnimationModeTalk);
 		Actor_Modify_Friendliness_To_Other(kActorEarlyQ, kActorMcCoy, -1);

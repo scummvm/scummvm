@@ -205,7 +205,7 @@ bool AIScriptGenericWalkerB::UpdateAnimation(int *animation, int *frame) {
 		_animationFrame = 0;
 		break;
 	case kGenericWalkerBStatesWalk:
-		switch (Global_Variable_Query(kVariableGenericWalkerBModel)){
+		switch (Global_Variable_Query(kVariableGenericWalkerBModel)) {
 		case 0:
 			*animation = 424;
 			break;

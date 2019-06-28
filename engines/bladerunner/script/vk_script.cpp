@@ -483,7 +483,7 @@ void VKScript::SCRIPT_VK_DLL_McCoy_Asks_Question(int actorId, int questionId) {
 
 	if ( _vm->_debugger->_playFullVk ) {
 		if (++_questionCounter >= 40) {
-			switch(actorId) {
+			switch (actorId) {
 			case kActorLucy:
 				//debug("Last Lucy Question!");
 				if (Game_Flag_Query(kFlagLucyIsReplicant)) {

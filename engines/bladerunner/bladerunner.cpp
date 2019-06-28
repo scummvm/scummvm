@@ -344,12 +344,12 @@ Common::Error BladeRunnerEngine::run() {
 			// when loading from ScummVM main menu, we should emulate
 			// the Kia pause/resume in order to get a valid "current" time when the game
 			// is actually loaded (assuming delays can be introduced by a popup warning dialogue)
-			if(!_time->isLocked()) {
+			if (!_time->isLocked()) {
 				_time->pause();
 			}
 			loadGameState(ConfMan.getInt("save_slot"));
 			ConfMan.set("save_slot", "-1");
-			if(_time->isLocked()) {
+			if (_time->isLocked()) {
 				_time->resume();
 			}
 		} else if (hasSavegames) {
@@ -1925,7 +1925,7 @@ void BladeRunnerEngine::playerDied() {
 bool BladeRunnerEngine::saveGame(Common::WriteStream &stream, Graphics::Surface &thumbnail) {
 	if ( !_gameIsAutoSaving
 	     && ( !playerHasControl() || _sceneScript->isInsideScript() || _aiScripts->isInsideScript())
-	){
+	) {
 		return false;
 	}
 
@@ -2037,7 +2037,7 @@ bool BladeRunnerEngine::loadGame(Common::SeekableReadStream &stream) {
 
 	if ((_gameFlags->query(kFlagGamePlayedInRestoredContentMode) && !_cutContent)
 	    || (!_gameFlags->query(kFlagGamePlayedInRestoredContentMode) && _cutContent)
-	){
+	) {
 		Common::String warningMsg;
 		if (!_cutContent) {
 			warningMsg = _("WARNING: This game was saved in Restored Cut Content mode, but you are playing in Original Content mode. The mode will be adjusted to Restored Cut Content for this session until you completely Quit the game.");

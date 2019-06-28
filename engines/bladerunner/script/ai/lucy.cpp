@@ -113,7 +113,7 @@ bool AIScriptLucy::Update() {
 void AIScriptLucy::TimerExpired(int timer) {
 	if (timer == kActorTimerAIScriptCustomTask0) { // rephrased this to be more expandable (if required)
 		AI_Countdown_Timer_Reset(kActorLucy, kActorTimerAIScriptCustomTask0);
-		if(Actor_Query_Goal_Number(kActorLucy) == kGoalLucyGoToHF03) {
+		if (Actor_Query_Goal_Number(kActorLucy) == kGoalLucyGoToHF03) {
 			if (Player_Query_Current_Scene() == kSceneHF03) {
 				AI_Countdown_Timer_Start(kActorLucy, kActorTimerAIScriptCustomTask0, 20);
 			} else {

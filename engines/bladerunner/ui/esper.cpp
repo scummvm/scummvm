@@ -823,7 +823,7 @@ void ESPER::drawPhotoSharpening(Graphics::Surface &surface) {
 	surface.hLine(_screen.left,           _photoOpeningHeight - 1, _screen.right  - 1, surface.format.RGBToColor(0, 144, 0));
 	surface.vLine(_photoOpeningWidth - 1, _screen.top,             _screen.bottom - 1, surface.format.RGBToColor(0, 144, 0));
 	if (!needMoreSharpening) {
-		if (_regionSelectedAck && !_regions[_regionSelected].name.empty()){
+		if (_regionSelectedAck && !_regions[_regionSelected].name.empty()) {
 			setStatePhoto(kEsperPhotoStateVideoShow);
 		} else {
 			setStatePhoto(kEsperPhotoStateShow);
@@ -1467,7 +1467,7 @@ int ESPER::findEmptyRegion() {
 
 int ESPER::findRegion(Common::Rect where) {
 	for (int i = 0; i < kRegionCount; ++i) {
-		if (_regions[i].isPresent && _regions[i].rectOuter.contains(where) && where.contains(_regions[i].rectInner)){
+		if (_regions[i].isPresent && _regions[i].rectOuter.contains(where) && where.contains(_regions[i].rectInner)) {
 			return i;
 		}
 	}

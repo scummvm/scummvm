@@ -37,7 +37,7 @@ ScreenEffects::~ScreenEffects() {
 	delete[] _data;
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
-	if(!_skipEntries.empty()) {
+	if (!_skipEntries.empty()) {
 		_skipEntries.clear();
 	}
 #endif // BLADERUNNER_ORIGINAL_BUGS
@@ -65,7 +65,7 @@ void ScreenEffects::toggleEntry(int effectId, bool skip) {
 				}
 			}
 			_skipEntries.insert_at(newSlot, effectId);
-		} else if (!skip && foundAt >= 0 ){
+		} else if (!skip && foundAt >= 0 ) {
 			_skipEntries.remove_at(foundAt);
 		}
 	} else if (effectId == -1 && !skip) {
@@ -155,7 +155,7 @@ void ScreenEffects::readVqa(Common::SeekableReadStream *stream) {
 //			if (entry.width < (width >> 1) + xx) {
 //				if (entry.width + entry.x > xx) {
 //					if (entry.height < (height >> 1) + yy) {
-//						if(entry.height + entry.y > yy) {
+//						if (entry.height + entry.y > yy) {
 //							return true;
 //						}
 //					}

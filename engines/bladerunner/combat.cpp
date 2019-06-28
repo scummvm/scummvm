@@ -61,7 +61,7 @@ void Combat::reset() {
 }
 
 void Combat::activate() {
-	if(_enabled) {
+	if (_enabled) {
 		_vm->_playerActor->combatModeOn(-1, true, -1, -1, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, -1, -1, -1, _vm->_combat->_ammoDamage[_vm->_settings->getAmmoType()], 0, false);
 		_active = true;
 	}

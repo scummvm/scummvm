@@ -115,7 +115,7 @@ void SceneScriptMA06::PlayerWalkedIn() {
 		//
 		if ((Game_Flag_Query(kFlagMA07toMA06) || Game_Flag_Query(kFlagMA01toMA06))
 		     && Actor_Query_Goal_Number(kActorRachael) == kGoalRachaelIsInsideMcCoysElevatorAct3
-		){
+		) {
 			normalElevatorBusiness = false;
 			// Act 3 Deleted scene (can happen within the elevator or outside the building)
 			// Skip floor panel selection - force go to MCCOY 88F
@@ -154,7 +154,7 @@ void SceneScriptMA06::PlayerWalkedIn() {
 			Sound_Play(kSfxELDOORO2, 100, 50, 50, 50);
 		} else if (Game_Flag_Query(kFlagMA02toMA06)
 			&& Actor_Query_Goal_Number(kActorRachael) == kGoalRachaelIsInsideMcCoysElevatorAct4
-		){
+		) {
 			normalElevatorBusiness = false;
 			// Act 4 deleted scene case with Rachael
 			//

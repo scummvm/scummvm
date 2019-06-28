@@ -143,7 +143,7 @@ void KIASectionSave::close() {
 	_saveList.clear();
 }
 
-void KIASectionSave::draw(Graphics::Surface &surface){
+void KIASectionSave::draw(Graphics::Surface &surface) {
 	_vm->_kia->_shapes->get(69)->draw(surface, 501, 123);
 	_buttons->draw(surface);
 

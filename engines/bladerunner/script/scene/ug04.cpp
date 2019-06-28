@@ -85,7 +85,7 @@ void SceneScriptUG04::SceneLoaded() {
 #else
 	if ((Global_Variable_Query(kVariableChapter) == 3)
 	    || (Global_Variable_Query(kVariableChapter) > 3 && Random_Query(1, 4) == 1)
-	){
+	) {
 		// Enhancement: don't always play the overground train after chapter 3
 		// Bug fix: don't remove control from player. There is no chance to glitch into the scenery
 		// while the video is playing and rats may attack!
