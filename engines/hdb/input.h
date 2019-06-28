@@ -52,6 +52,7 @@ public:
 
 	void updateMouse(int newX, int newY);
 	void updateMouseButtons(int l, int m, int r);
+	void updateKeys(Common::Event event, bool keyDown);
 
 	int getMouseX() {
 		return _mouseX;
@@ -69,9 +70,9 @@ private:
 	int _mouseLButton, _mouseMButton, _mouseRButton;
 
 	// Definable Keys
-	int _keyUp, _keyDown, _keyLeft, _keyRight;
-	int _keyInv, _keyUse, _keyMenu, _keyDebug;
-	int _keyQuit;
+	Common::KeyCode _keyUp, _keyDown, _keyLeft, _keyRight;
+	Common::KeyCode _keyInv, _keyUse, _keyMenu, _keyDebug;
+	Common::KeyCode _keyQuit;
 };
 
 } // End of Namespace
