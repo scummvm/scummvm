@@ -45,7 +45,8 @@ enum {
 	kEnemyMoveSpeed = 2,
 	kPushMoveSpeed = (kPlayerMoveSpeed >> 1),
 	kPlayerTouchPWait = 16,
-	kMaxCineGfx = 10
+	kMaxCineGfx = 10,
+	kRunToggleDelay = 2
 };
 
 enum AIType {
@@ -729,6 +730,9 @@ public:
 	void initAllEnts();
 	void killPlayer(Death method);
 	void stunEnemy(AIEntity *e, int time);
+	int tileDistance(AIEntity *e1, AIEntity *e2) {
+		return abs(e1->tileX - e2->tileX) + abs(e1->tileY - e2->tileY);
+	}
 
 	void animateEntity(AIEntity *e);
 	void animEntFrames(AIEntity *e);
@@ -885,6 +889,9 @@ public:
 	void clearWaypoints();
 	Tile *getStandFrameDir(AIEntity *e);
 	void drawWayPoints();
+	int waypointsLeft() {
+		return _numWaypoints;
+	}
 
 	// Inventory Functions
 	bool addToInventory(AIEntity *e);
