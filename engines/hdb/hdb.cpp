@@ -451,6 +451,9 @@ Common::Error HDBGame::run() {
 			case Common::EVENT_QUIT:
 			case Common::EVENT_RTL:
 				break;
+			case Common::EVENT_MOUSEMOVE:
+				_input->updateMouse(event.mouse.x, event.mouse.y);
+				break;
 			case Common::EVENT_KEYDOWN:
 				debug("Key was pressed.");
 				break;
