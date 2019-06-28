@@ -79,9 +79,9 @@ void AI::processCines() {
 	// Make sure Cine Pics are drawing
 	for (int i = 0; i < _numCineBlitList; i++) {
 		if (_cineBlitList[i]->masked == false)
-			_cineBlitList[i]->pic->draw(_cine[i]->x, _cine[i]->y);
+			_cineBlitList[i]->pic->draw(_cineBlitList[i]->x, _cineBlitList[i]->y);
 		else
-			_cineBlitList[i]->pic->drawMasked(_cine[i]->x, _cine[i]->y);
+			_cineBlitList[i]->pic->drawMasked(_cineBlitList[i]->x, _cineBlitList[i]->y);
 	}
 
 	// Check for Game Pause
