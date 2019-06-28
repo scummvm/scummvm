@@ -161,6 +161,8 @@ bool MSNImage::loadFromEngineDataFile() {
 	} else if (_MSPart == 2) {
 		if (_filenumber == 15)
 			name = "M015";
+		else if (_filenumber == 28)
+			name = "M028";
 		else
 			return false;
 
@@ -292,16 +294,15 @@ bool MSNImage::loadStream(Common::SeekableReadStream &stream) {
 bool MSNImage::loadSections() {
 	bool isNewspaper = (_MSPart == 1 && (_filenumber == 1 || _filenumber == 2)) ||
 					   (_MSPart == 2 && _filenumber == 38);
-	bool isCypheredText = _MSPart == 2 && _filenumber == 28 && ConfMan.get("language") == "en";
-	int imageWidth = isNewspaper || isCypheredText ? 640 : 320;
-	int imageHeight = isNewspaper || isCypheredText ? 480 : 200;
+	int imageWidth = isNewspaper ? 640 : 320;
+	int imageHeight = isNewspaper ? 480 : 200;
 	_pitch = imageWidth;
 
 	for (int section = 0; section < _numSections; ++section) {
 		Graphics::Surface *surface = new Graphics::Surface;
 		_sectionSurfaces.push_back(surface);
 
-		if (isNewspaper || isCypheredText) {
+		if (isNewspaper) {
 			Color color1 = isNewspaper ? kColorWhite63 : kColorWhite44;
 			surface->create(imageWidth, imageHeight, g_system->getScreenFormat());
 			byte *surfacePixels = static_cast<byte *>(surface->getPixels());
