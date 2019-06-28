@@ -81,6 +81,7 @@ public:
 	void draw() override;
 	void updateZ() override;
 	bool isInPoint(int x, int y) override;
+	void show(bool v) override;
 };
 
 } // End of namespace Petka

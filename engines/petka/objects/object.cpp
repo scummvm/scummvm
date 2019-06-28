@@ -35,6 +35,7 @@
 #include "petka/q_manager.h"
 #include "petka/objects/object_star.h"
 #include "petka/objects/object_cursor.h"
+#include "petka/interfaces/main.h"
 
 namespace Petka {
 
@@ -186,6 +187,20 @@ void QObject::updateZ() {
 		}
 
 	}
+}
+
+void QObject::show(bool v) {
+	const Common::Array<QVisibleObject*> & objs = g_vm->getQSystem()->_mainInterface->_objs;
+	for (uint i = 0; i < objs.size(); ++i) {
+		if (objs[i]->_resourceId == _resourceId) {
+			FlicDecoder *flc = g_vm->resMgr()->loadFlic(_resourceId);
+			if (flc) {
+				g_vm->videoSystem()->addDirtyRect(Common::Point(_x, _y), *flc);
+			}
+			break;
+		}
+	}
+	QMessageObject::show(v);
 }
 
 }
