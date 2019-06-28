@@ -154,6 +154,7 @@ public:
 	void changeGameState();
 	void paint();
 
+	void setTargetXY(int x, int y);
 	void useEntity(AIEntity *e);
 
 	int getActionMode() {

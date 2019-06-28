@@ -156,6 +156,164 @@ void HDBGame::paint() {
 	_drawMan->updateVideo();
 }
 
+// builds a waypoint list if an entity is not next to player,
+//	or gives info on an entity, or actually uses an entity
+void HDBGame::setTargetXY(int x, int y) {
+	AIEntity *e, *p;
+	int px, py;
+	bool oneTileAway;
+
+	// if ANY button is pressed
+	if (_input->getButtons() || _ai->_playerEmerging)
+		return;
+
+	// Check if an entity is next to us
+	x /= kTileWidth;
+	y /= kTileHeight;
+
+	// Don't ever allow going to X-coord 0
+	if (!x)
+		return;
+
+	e = _ai->findEntity(x, y);
+	p = _ai->getPlayer();
+
+	if (!p)
+		return;
+
+	px = p->x / kTileWidth;
+	py = p->y / kTileHeight;
+
+	// Are we on a touchplate and trying to move within the waiting period?
+	if (p->touchpWait)
+		return;
+
+	// If we're attacking...don't do anything else
+	AIState stateList[] = {
+		STATE_ATK_CLUB_UP,	STATE_ATK_CLUB_DOWN, STATE_ATK_CLUB_LEFT, STATE_ATK_CLUB_RIGHT,
+		STATE_ATK_STUN_UP,	STATE_ATK_STUN_DOWN, STATE_ATK_STUN_LEFT, STATE_ATK_STUN_RIGHT,
+		STATE_ATK_SLUG_UP,	STATE_ATK_SLUG_DOWN, STATE_ATK_SLUG_LEFT, STATE_ATK_SLUG_RIGHT,
+		STATE_PUSHUP,		STATE_PUSHDOWN,		 STATE_PUSHLEFT,	  STATE_PUSHRIGHT};
+
+	for (int i = 0; i < 16; i++) {
+		if (p->state == stateList[i])
+			return;
+	}
+
+	oneTileAway = (abs(px - x) + abs(py - y) < 2);
+
+	// If any entity has been targeted
+	if (e && !_ai->waypointsLeft()) {
+		// Clicking on a gettable item?
+		// First check if an iterm is on top of a BLOCKER entity.
+		// If so, try to find another entity there
+		if (e->type == AI_NONE) {
+			AIEntity *temp = g_hdb->_ai->findEntityIgnore(x, y, e);
+			if (temp)
+				e = temp;
+		}
+
+		if ((p->level == e->level) && _ai->getTableEnt(e->type)) {
+			if (g_hdb->_ai->tileDistance(e, p) < 2) {
+				useEntity(e);
+				return;
+			}
+		}
+
+		// Clicking on a Walkthrough Item?
+		if ((p->level == e->level) && _ai->walkThroughEnt(e->type)) {
+			_ai->addWaypoint(px, py, x, y, p->level);
+			return;
+		}
+
+		// Is this an invisible blocker? If so, it probably has a LUA entity under it
+		if (e->type == AI_NONE && _ai->luaExistAtXY(x, y)) {
+			// Did player click on a LUA tile?
+			if (oneTileAway && _ai->checkLuaList(_ai->getPlayer(), x, y))
+				return;
+		}
+
+		// On the same Level? (Allow pushing on stairs, down only)
+		if ((p->level != e->level && !(_map->getMapBGTileFlags(e->tileX, e->tileY) & kFlagStairBot)) || (p->level == e->level && _ai->walkThroughEnt(e->type))) {
+			_ai->addWaypoint(px, py, x, y, p->level);
+			return;
+		}
+
+		int chx = abs(px - x);
+		int chy = abs(py - y);
+
+		// And its a unit away and the Player's GOALS are done...
+		if (chx <= 1 && chy <= 1 && !p->goalX) {
+			// At a horizontal or vertical direction?
+			if (chx + chy > 1) {
+				AIEntity *e1, *e2;
+				uint32 flag1, flag2;
+
+				e1 = _ai->findEntity(px, y);
+				e2 = _ai->findEntity(x, py);
+				flag1 = _map->getMapBGTileFlags(px, y) & kFlagSolid;
+				flag2 = _map->getMapBGTileFlags(x, py) & kFlagSolid;
+				if ((e1 || flag1) && (e2 || flag2))
+					return;
+			}
+
+			// Check for items that should NOT be picked up or talked to
+			switch (e->type) {
+				// USEing a floating crate or barrel?  Just go there.
+				// Unless it's not floating, in which case you wanna push it.
+			case AI_CRATE:
+			case AI_LIGHTBARREL:
+				// USEing a heavy barrel ONLY means walking on it if it's floating
+				// *** cannot push a heavy barrel
+			case AI_HEAVYBARREL:
+				if (e->state == STATE_FLOATING || e->state == STATE_MELTED)
+					_ai->addWaypoint(px, py, x, y, p->level);
+				else
+					useEntity(e);
+				return;
+			default:
+				useEntity(e);
+				return;
+			}
+		} else {
+			_ai->addWaypoint(px, py, x, y, p->level);
+			return;
+		}
+	}
+
+	// Are we trying to "activate" a touchplate?
+	// Set a waypoint on it
+	if (_ai->checkForTouchplate(x, y)) {
+		_ai->addWaypoint(px, py, x, y, p->level);
+		return;
+	}
+
+	// Did the player click on an action tile?
+	if (oneTileAway && _ai->checkActionList(_ai->getPlayer(), x, y, true))
+		return;
+
+	// Did the player click on an auto-action tile?
+	if (oneTileAway && _ai->checkAutoList(_ai->getPlayer(), x, y))
+		return;
+
+	// we need to add this point to the waypoint list!
+	// the list is tile coord-based
+	//
+	// if the player is not PUSHING anything and has no GOALS,
+	// it's ok to set up a waypoint
+	switch (p->state) {
+	case STATE_PUSHDOWN:
+	case STATE_PUSHUP:
+	case STATE_PUSHLEFT:
+	case STATE_PUSHRIGHT:
+	case STATE_NONE:
+		break;
+	default:
+		_ai->addWaypoint(px, py, x, y, p->level);
+		break;
+	}
+}
+
 // PLAYER is trying to use this entity
 void HDBGame::useEntity(AIEntity *e) {
 	warning("STUB: HDBGame::useEntity incomplete");
