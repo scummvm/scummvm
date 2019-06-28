@@ -185,6 +185,10 @@ bool AIScriptGenericWalkerA::GoalChanged(int currentGoalNumber, int newGoalNumbe
 		return true;
 	} else if (newGoalNumber == kGoalGenwalkerABulletBobsTrackGun) {
 		// Bullet Bob's tracking gun
+#if !BLADERUNNER_ORIGINAL_BUGS
+		// Possible bug fix for disappearing gun - don't allow track complete events to interfere with Gun state
+		AI_Movement_Track_Flush(kActorGenwalkerA);
+#endif
 		Actor_Put_In_Set(kActorGenwalkerA, kSetRC04);
 		Actor_Set_At_XYZ(kActorGenwalkerA, 0.0, 36.0, -172.0, 491);
 		Actor_Change_Animation_Mode(kActorGenwalkerA, kAnimationModeCombatIdle);
