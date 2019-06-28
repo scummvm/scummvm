@@ -101,6 +101,7 @@ bool HDBGame::init() {
 
 	start();
 	_gameShutdown = false;
+	_pauseFlag = 0;
 	_systemInit = true;
 
 	return true;
