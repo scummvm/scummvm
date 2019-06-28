@@ -145,6 +145,12 @@ public:
 	bool init();
 
 	void start();
+	void setGameState(GameState gs) {
+		_gameState = gs;
+	}
+	GameState getGameState() {
+		return _gameState;
+	}
 	void changeGameState();
 	void paint();
 
