@@ -1113,9 +1113,7 @@ static void load() {
 		::error("Header size is greater than filesize");
 
 	codfil->seek(0);
-	codfil->read(&header->vers[0], 4);
-	for (i = 1, ptr = memory + 1; i < tmphdr.size; ++i, ++ptr)
-		*ptr = codfil->readUint32LE();
+	codfil->read(&header->vers[0], sizeof(Aword) * tmphdr.size);
 
 	/* Calculate checksum */
 	for (i = sizeof(tmphdr) / sizeof(Aword); i < memTop; i++) {
