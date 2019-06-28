@@ -169,4 +169,19 @@ void QObject::draw() {
 	delete s;
 }
 
+void QObject::updateZ() {
+	if (!_animate || !_isShown || !_updateZ)
+		return;
+	FlicDecoder *flc = g_vm->resMgr()->loadFlic(_resourceId);
+	if (flc) {
+		_z = 1;
+		const Common::Array<Common::Rect> rects = flc->getMskRects();
+		for (uint i = 0; i < rects.size(); ++i) {
+			if (_y + rects[i].bottom > _z)
+				_z = _y + rects[i].bottom;
+		}
+
+	}
+}
+
 }

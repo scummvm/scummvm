@@ -34,6 +34,7 @@ public:
 
 	virtual void draw() {};
 	virtual void update() {};
+	virtual void updateZ() {};
 	virtual void show(bool v) {};
 	virtual bool isInPoint(int x, int y) { return false; }
 
@@ -77,6 +78,7 @@ public:
 class QObject : public QMessageObject {
 public:
 	void draw() override;
+	void updateZ() override;
 	bool isInPoint(int x, int y) override;
 };
 

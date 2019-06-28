@@ -29,6 +29,7 @@ namespace Petka {
 
 class QObjectBG : public QMessageObject {
 public:
+	QObjectBG();
 	void processMessage(const QMessage &msg) override;
 	void draw() override;
 

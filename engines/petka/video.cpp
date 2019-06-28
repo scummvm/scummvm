@@ -36,12 +36,23 @@ VideoSystem::VideoSystem() :
 	addDirtyRect({0, 0, 640, 480});
 }
 
+static bool objCmp(QVisibleObject *&l, QVisibleObject *&r) {
+	return l->_z < r->_z;
+}
+
 void VideoSystem::update() {
 	Interface *interface = g_vm->getQSystem()->_currInterface;
 	if (interface) {
 		for (uint i = 0; i < interface->_objs.size(); ++i) {
 			interface->_objs[i]->update();
 		}
+
+		for (uint i = 0; i < interface->_objs.size(); ++i) {
+			interface->_objs[i]->updateZ();
+		}
+
+		Common::sort(interface->_objs.begin(), interface->_objs.end(), objCmp);
+
 		for (uint i = 0; i < interface->_objs.size(); ++i) {
 			interface->_objs[i]->draw();
 		}
