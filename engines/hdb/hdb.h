@@ -196,6 +196,7 @@ private:
 	bool _systemInit;
 	GameState _gameState;
 	int _actionMode; // 0 or 1
+	int _pauseFlag;
 
 };
 
