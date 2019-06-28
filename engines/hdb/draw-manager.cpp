@@ -28,6 +28,7 @@ DrawMan::DrawMan() {
 	_tLookupArray = NULL;
 	_gfxCache = new Common::Array<GfxCache *>;
 	_globalSurface.create(kScreenWidth, kScreenHeight, g_hdb->_format);
+	_pointerDisplayable = 1;
 	_systemInit = false;
 }
 
@@ -110,11 +111,18 @@ bool DrawMan::init() {
 		TODO: Setup Gamma Table
 	*/
 
-	/*
-		TODO: Load Mouse Pointer and Display Cursor
-	*/
+	// Load Mouse Pointer and Display Cursor
+	_mousePointer[0] = loadPic(PIC_MOUSE_CURSOR1);
+	_mousePointer[1] = loadPic(PIC_MOUSE_CURSOR2);
+	_mousePointer[2] = loadPic(PIC_MOUSE_CURSOR3);
+	_mousePointer[3] = loadPic(PIC_MOUSE_CURSOR4);
+	_mousePointer[4] = loadPic(PIC_MOUSE_CURSOR5);
+	_mousePointer[5] = loadPic(PIC_MOUSE_CURSOR6);
+	_mousePointer[6] = loadPic(PIC_MOUSE_CURSOR7);
+	_mousePointer[7] = loadPic(PIC_MOUSE_CURSOR8);
+	_showCursor = true;
 
-	//Load all 4 levels of star colors
+	// Load all 4 levels of star colors
 	_starField[0] = getPicture("pic_star64");
 	_starField[1] = getPicture("pic_star128");
 	_starField[2] = getPicture("pic_star192");
