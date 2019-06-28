@@ -38,6 +38,10 @@
 
 namespace Petka {
 
+QObjectBG::QObjectBG() {
+	_z = 0;
+}
+
 void QObjectBG::processMessage(const QMessage &msg) {
 	QMessageObject::processMessage(msg);
 	switch (msg.opcode) {
