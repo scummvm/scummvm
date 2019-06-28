@@ -93,6 +93,14 @@ public:
 	bool init();
 	void fillScreen(uint32 color);
 	void updateVideo();
+	void setPointerState(int value);
+	void drawPointer();
+	void showPointer(bool status) {
+		_showCursor = status;
+	}
+	bool getPointer() {
+		return _showCursor;
+	}
 
 	void setFade(bool fadeIn, bool black, int steps);
 	void updateFade();
