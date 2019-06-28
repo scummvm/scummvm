@@ -384,4 +384,55 @@ void Window::drawInventory() {
 	}
 }
 
+void Window::textOut(const char *text, int x, int y, int timer) {
+	TOut *t = new TOut;
+
+	t->x = x;
+	t->y = y;
+	strcpy(t->text, text);
+	t->timer = g_system->getMillis() + (uint32)(timer << 4);
+
+	if (x < 0) {
+		int pw, lines;
+		g_hdb->_drawMan->getDimensions(t->text, &pw, &lines);
+		t->x = kTextOutCenterX - pw / 2;
+	}
+}
+
+void Window::centerTextOut(const char *text, int y, int timer) {
+	int width, lines;
+	g_hdb->_drawMan->getDimensions(text, &width, &lines);
+	textOut(text, kTextOutCenterX - ((width - 8) >> 1), y, timer);
+}
+
+void Window::drawTextOut() {
+	int e1, e2, e3, e4;
+	uint32 time;
+	TOut *t;
+
+	if (_textOutList.empty())
+		return;
+
+	g_hdb->_drawMan->getTextEdges(&e1, &e2, &e3, &e4);
+	g_hdb->_drawMan->setTextEdges(0, 480, 0, kScreenHeight);
+
+	time = g_system->getMillis();
+	
+	for (uint i = 0; i < _textOutList.size(); i++) {
+		t = _textOutList[i];
+		g_hdb->_drawMan->setCursor(t->x, t->y);
+		g_hdb->_drawMan->drawText(t->text);
+
+		if (t->timer < time) {
+			_textOutList.remove_at(i);
+			i--;
+		}
+	}
+
+	g_hdb->_drawMan->setTextEdges(e1, e2, e3, e4);
+}
+
+void Window::closeTextOut() {
+	_textOutList.clear();
+}
 } // End of Namespace
