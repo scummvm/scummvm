@@ -400,11 +400,9 @@ void AI::cineCleanup() {
 }
 
 void AI::cineAbort() {
-	for (Common::Array<CineCommand *>::iterator it = _cine.begin(); it != _cine.end(); it++) {
-		if ((*it)->cmdType == C_STARTMAP || (*it)->cmdType == C_STOPCINE)
-			_cine[0] = *it;
-		if (it != _cine.begin())
-			_cine.erase(it);
+	for (uint i = 0; i < _cine.size(); i++) {
+		if (_cine[i]->cmdType == C_STARTMAP || _cine[i]->cmdType == C_STOPCINE)
+			_cine[0] = _cine[i];
 	}
 	warning("STUB: Window: closeAll() required");
 	if (_player)
