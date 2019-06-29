@@ -90,8 +90,6 @@ void AI::animateTargets() {
 	int layer;
 
 	g_hdb->_map->getMapXY(&mx, &my);
-	debug(9, "animateTargets: Size of _animTargets: %d", _animTargets.size());
-	debug(9, "_animTargets:");
 
 	for (uint i = 0; i < _animTargets.size(); i++) {
 		at = _animTargets[i];
@@ -110,8 +108,7 @@ void AI::animateTargets() {
 			if (at->inMap) {
 				// Animate Map Tiles
 				layer = 0; // BG layer
-				warning("FIXME: Ambigious animateTargets() code.");
-				if (!at->start == g_hdb->_map->getMapBGTileIndex(at->x, at->y))
+				if (!(at->start == g_hdb->_map->getMapBGTileIndex(at->x, at->y)))
 					layer = 1;
 
 				// Change Tile Anim
