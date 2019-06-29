@@ -26,6 +26,7 @@ namespace HDB {
 
 bool Input::init() {
 	_stylusDown = false;
+	_buttons = 0;
 
 	_keyUp = Common::KEYCODE_UP;
 	_keyDown = Common::KEYCODE_DOWN;
