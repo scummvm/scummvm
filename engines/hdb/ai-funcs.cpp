@@ -953,7 +953,9 @@ void AI::animateEntity(AIEntity *e) {
 				warning("AI-FUNCS: animateEntity: DIR_NONE found");
 				break;
 			}
-			if ((e->tileX+xOff == _waypoints[_numWaypoints-1].x && e->tileY + yOff == _waypoints[_numWaypoints - 1].y) && e->level == _waypoints[_numWaypoints - 1].level) {
+			if ((e->tileX + xOff == _waypoints[_numWaypoints - 1].x &&
+				 e->tileY + yOff == _waypoints[_numWaypoints - 1].y) &&
+				 e->level == _waypoints[_numWaypoints - 1].level) {
 				memset(&_waypoints[0], 0, sizeof(_waypoints));
 				_numWaypoints = 1;
 				_waypoints[0].x = e->tileX + xOff;
