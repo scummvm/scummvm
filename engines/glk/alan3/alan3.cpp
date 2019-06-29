@@ -46,9 +46,12 @@ Alan3::Alan3(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, g
 
 	// main
 	codfil = nullptr;
-//	txtfil = nullptr;
+	textFile = nullptr;
 //	logfil = nullptr;
 	memory = nullptr;
+
+	// exe
+	printFlag = false;
 
 	// options
 	verboseOption = false;
@@ -93,25 +96,21 @@ bool Alan3::initialize() {
 
 	// Set up the code file to point to the already opened game file
 	codfil = &_gameFile;
-	/*
+
 	if (_gameFile.size() < 8) {
 	    GUIErrorMessage(_("This is too short to be a valid Alan3 file."));
 	    return false;
 	}
 
-	if (_gameFile.readUint32BE() != MKTAG(2, 8, 1, 0)) {
-	    GUIErrorMessage(_("This is not a valid Alan3 file."));
+	// In Alan 3, the text data comes from the adventure file itself
+	Common::File *txt = new Common::File();
+	if (!txt->open(getFilename())) {
+	    GUIErrorMessage("Could not open adventure file for text data");
+	    delete txt;
 	    return false;
 	}
+	textFile = txt;
 
-	// Open up the text file
-	txtfil = new Common::File();
-	if (!txtfil->open(Common::String::format("%s.dat", _advName.c_str()))) {
-	    GUIErrorMessage("Could not open adventure text data file");
-	    delete txtfil;
-	    return false;
-	}
-	*/
 	// Check for a save being loaded directly from the launcher
 	_saveSlot = ConfMan.hasKey("save_slot") ? ConfMan.getInt("save_slot") : -1;
 
@@ -120,10 +119,8 @@ bool Alan3::initialize() {
 
 void Alan3::deinitialize() {
 	free(memory);
-	/*
-	    delete txtfil;
-	    delete logfil;
-	*/
+	delete textFile;
+//  delete logfil;
 }
 
 Common::Error Alan3::readSaveData(Common::SeekableReadStream *rs) {

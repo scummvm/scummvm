@@ -50,9 +50,11 @@
 namespace Glk {
 namespace Alan3 {
 
-/* PUBLIC DATA */
-
+// PUBLIC DATA
 Common::SeekableReadStream *textFile;
+
+// PUBLIC DATA - formerly method statics
+bool printFlag;				// Printing already?
 
 /* Long jump buffers */
 // TODO move to longjump.c? or error.c, and abstract them into functions?
@@ -94,7 +96,6 @@ void print(Aword fpos, Aword len) {
 	int ch = 0;
 	int i;
 	long savfp = 0;     /* Temporary saved text file position */
-	static bool printFlag = FALSE; /* Printing already? */
 	bool savedPrintFlag = printFlag;
 	void *info = NULL;      /* Saved decoding info */
 
@@ -126,9 +127,10 @@ void print(Aword fpos, Aword len) {
 				else
 					ch = textFile->readByte();
 
+				if (ch == EOFChar)
+					break;				// Or end of text?
+
 				str[i] = ch;
-				if (textFile->pos() >= textFile->size())      /* Or end of text? */
-					break;
 			}
 			str[i] = '\0';
 

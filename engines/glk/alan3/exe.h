@@ -43,8 +43,8 @@ namespace Alan3 {
 
 /* DATA */
 
-/* The text and message file */
-extern Common::SeekableReadStream *textFile;
+extern Common::SeekableReadStream *textFile;		// The text and message file
+extern bool printFlag;
 
 /* Long jump buffer for restart, errors and undo */
 //extern jmp_buf restartLabel;
