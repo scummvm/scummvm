@@ -148,6 +148,11 @@ static void getLine(CONTEXT) {
 			printAndLog("> ");
 
 		if (!readline(buf)) {
+			if (g_vm->shouldQuit()) {
+				context._break = true;
+				return;
+			}
+
 			newline();
 			quitGame();
 		}

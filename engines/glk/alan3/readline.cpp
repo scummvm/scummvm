@@ -70,6 +70,9 @@ bool readline(char buffer[]) {
 		*/
 		do {
 			g_vm->glk_select(&event);
+			if (g_vm->shouldQuit())
+				return FALSE;
+
 			switch (event.type) {
 			case evtype_Arrange:
 				statusline();
