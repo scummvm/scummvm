@@ -70,7 +70,6 @@ void AI::addAnimateTarget(int x, int y, int start, int end, AnimSpeed speed, boo
 				snprintf(name, 32, "%s0%d", tileName, i + 1);
 			else
 				snprintf(name, 32, "%s%d", tileName, i + 1);
-			debug("AddAnimateTarget: %s", name);
 			size = g_hdb->_fileMan->getLength(name, TYPE_TILE32);
 			at->gfxList[i] = g_hdb->_drawMan->getTileGfx(name, size);
 		}
@@ -93,8 +92,7 @@ void AI::animateTargets() {
 
 	for (uint i = 0; i < _animTargets.size(); i++) {
 		at = _animTargets[i];
-		debug(9, "i: %d", i);
-		debug(9, "at: at->x: %d, at->y: %d, at->start: %d, at->end: %d, at->vel: %d", at->x, at->y, at->start, at->end, at->vel);
+		debug(9, "AnimTarget #%i: at: at->x: %d, at->y: %d, at->start: %d, at->end: %d, at->vel: %d", i, at->x, at->y, at->start, at->end, at->vel);
 
 		// Draw Non-map stuff every frame
 		if (!at->inMap)
