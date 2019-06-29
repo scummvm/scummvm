@@ -2211,7 +2211,7 @@ void AI::movePlayer(uint16 buttons) {
 		yv = 1;
 	else if (buttons & kButtonLeft)
 		xv = -1;
-	else if (buttons & kButtonUp)
+	else if (buttons & kButtonRight)
 		xv = 1;
 	else if (buttons & kButtonB) {
 		playerUse();
