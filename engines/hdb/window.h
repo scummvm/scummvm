@@ -127,6 +127,18 @@ public:
 	}
 	void checkInvSelect(int x, int y);
 
+	// Deliveries Functions
+	void openDeliveries(bool animate);
+	void drawDeliveries();
+	void setSelectedDelivery(int which);
+	int getSelectedDelivery() {
+		return _dlvsInfo.selected;
+	}
+	bool animatingDelivery() {
+		return _dlvsInfo.animate;
+	}
+	void checkDlvSelect(int x, int y);
+
 	// TextOut functions
 	void textOut(const char *text, int x, int y, int timer);
 	void centerTextOut(const char *text, int y, int timer);
