@@ -79,6 +79,11 @@ bool Window::init() {
 	_invWinInfo.x = kScreenWidth - _gfxInfobar->_width + 16;
 	_invWinInfo.y = 40;
 
+	_dlvsInfo.width = kInvItemSpaceX * 3;
+	_dlvsInfo.height = kInvItemSpaceY * 4;
+	_dlvsInfo.x = (kScreenWidth - _gfxInfobar->_width) + 16;
+	_dlvsInfo.y = 272;
+
 	restartSystem();
 
 	return true;
