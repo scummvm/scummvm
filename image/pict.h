@@ -123,6 +123,7 @@ private:
 
 	// Regular-mode Opcodes
 	void setupOpcodesNormal();
+	DECLARE_OPCODE(on_bitsRect);
 	DECLARE_OPCODE(on_packBitsRect);
 	DECLARE_OPCODE(on_directBitsRect);
 	DECLARE_OPCODE(on_compressedQuickTime);

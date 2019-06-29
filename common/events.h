@@ -72,7 +72,7 @@ enum EventType {
 	 * use events to ask for the save game dialog or to pause the engine.
 	 * An associated enumerated type can accomplish this.
 	 **/
-	EVENT_PREDICTIVE_DIALOG = 12
+	EVENT_PREDICTIVE_DIALOG = 12,
 
 #ifdef ENABLE_KEYMAPPER
 	,
@@ -81,17 +81,20 @@ enum EventType {
 	EVENT_CUSTOM_BACKEND_ACTION = 18,
 	EVENT_CUSTOM_BACKEND_HARDWARE = 21,
 	EVENT_GUI_REMAP_COMPLETE_ACTION = 22,
-	EVENT_KEYMAPPER_REMAP = 19
+	EVENT_KEYMAPPER_REMAP = 19,
 #endif
 #ifdef ENABLE_VKEYBD
 	,
-	EVENT_VIRTUAL_KEYBOARD = 20
+	EVENT_VIRTUAL_KEYBOARD = 20,
 #endif
+
+	EVENT_DROP_FILE = 23
+
 /* START of ResidualVM-specific code */
 	,
-	EVENT_JOYAXIS_MOTION = 23,
-	EVENT_JOYBUTTON_DOWN = 24,
-	EVENT_JOYBUTTON_UP = 25
+	EVENT_JOYAXIS_MOTION = 24,
+	EVENT_JOYBUTTON_DOWN = 25,
+	EVENT_JOYBUTTON_UP = 26
 };
 
 const int16 JOYAXIS_MIN = -32768;
@@ -177,6 +180,9 @@ struct Event {
 	// this, please talk to tsoliman and/or LordHoto.
 	CustomEventType customType;
 #endif
+
+	/* The path of the file or directory dragged to the ScummVM window */
+	Common::String path;
 
 	/**
 	 * Mouse movement since the last mouse movement event.

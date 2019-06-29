@@ -223,7 +223,7 @@ Graphics::Surface *DialogBox::loadBackground() {
 		return nullptr;
 	}
 
-	Common::SeekableReadStream *stream = executable.getResource(Common::kPEBitmap, 147);
+	Common::SeekableReadStream *stream = executable.getResource(Common::kWinBitmap, 147);
 	if (!stream) {
 		warning("Unable to find the modal dialog background bitmap in 'game.exe'");
 		return nullptr;

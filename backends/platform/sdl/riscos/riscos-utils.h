@@ -20,17 +20,30 @@
  *
  */
 
-#include "backends/networking/connection/islimited.h"
-#include "common/textconsole.h"
+#ifndef PLATFORM_SDL_RISCOS_UTILS_H
+#define PLATFORM_SDL_RISCOS_UTILS_H
 
-namespace Networking {
-namespace Connection {
+#include "common/str.h"
 
-bool isLimited() {
-	warning("Networking::Connection::isLimited(): not limited by default");
-	return false;
+// Helper functions
+namespace RISCOS_Utils {
+
+/**
+ * Converts a Unix style path to a RISC OS style path.
+ *
+ * @param str Unix style path to convert.
+ * @return RISC OS style path.
+ */
+Common::String toRISCOS(Common::String path);
+
+/**
+ * Converts a RISC OS style path to a Unix style path.
+ *
+ * @param str RISC OS style path to convert.
+ * @return Unix style path.
+ */
+Common::String toUnix(Common::String path);
+
 }
 
-} // End of namespace Connection
-} // End of namespace Networking
-
+#endif

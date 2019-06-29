@@ -32,7 +32,7 @@
 
 #if defined(GP2X)
 #define SAMPLES_PER_SEC 11025
-#elif defined(PLAYSTATION3) || defined(PSP2)
+#elif defined(PLAYSTATION3) || defined(PSP2) || defined(NINTENDO_SWITCH)
 #define SAMPLES_PER_SEC 48000
 #else
 #define SAMPLES_PER_SEC 44100

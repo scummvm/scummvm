@@ -780,6 +780,7 @@ XcodeProvider::ValueList& XcodeProvider::getResourceFiles() const {
 		files.push_back("COPYING.LGPL");
 		files.push_back("COPYING.BSD");
 		files.push_back("COPYING.FREEFONT");
+		files.push_back("COPYING.OFL");
 		files.push_back("NEWS");
 		files.push_back("README.md");
 	}
@@ -1136,7 +1137,9 @@ void XcodeProvider::setupDefines(const BuildSetup &setup) {
 	REMOVE_DEFINE(_defines, "IPHONE_IOS7");
 	REMOVE_DEFINE(_defines, "IPHONE_SANDBOXED");
 	REMOVE_DEFINE(_defines, "SDL_BACKEND");
-	ADD_DEFINE(_defines, "USE_TEXT_CONSOLE_FOR_DEBUGGER");
+	if (!CONTAINS_DEFINE(_defines, "USE_TEXT_CONSOLE_FOR_DEBUGGER")) {
+		ADD_DEFINE(_defines, "USE_TEXT_CONSOLE_FOR_DEBUGGER");
+	}
 	ADD_DEFINE(_defines, "CONFIG_H");
 	ADD_DEFINE(_defines, "UNIX");
 	ADD_DEFINE(_defines, "SCUMMVM");

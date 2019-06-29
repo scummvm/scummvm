@@ -528,6 +528,13 @@ void LauncherDialog::handleKeyUp(Common::KeyState state) {
 	updateButtons();
 }
 
+void LauncherDialog::handleOtherEvent(Common::Event evt) {
+	Dialog::handleOtherEvent(evt);
+	if (evt.type == Common::EVENT_DROP_FILE) {
+		doGameDetection(evt.path);
+	}
+}
+
 bool LauncherDialog::doGameDetection(const Common::String &path) {
 	// Allow user to add a new game to the list.
 	// 2) try to auto detect which game is in the directory, if we cannot
@@ -556,12 +563,9 @@ bool LauncherDialog::doGameDetection(const Common::String &path) {
 	if (detectionResults.foundUnknownGames()) {
 		Common::String report = detectionResults.generateUnknownGameReport(false, 80);
 		g_system->logMessage(LogMessageType::kInfo, report.c_str());
-
-		UnknownGameDialog dialog(detectionResults);
-		dialog.runModal();
 	}
 
-	Common::Array<DetectedGame> candidates = detectionResults.listRecognizedGames();
+	Common::Array<DetectedGame> candidates = detectionResults.listDetectedGames();
 
 	int idx;
 	if (candidates.empty()) {
@@ -576,16 +580,37 @@ bool LauncherDialog::doGameDetection(const Common::String &path) {
 	} else {
 		// Display the candidates to the user and let her/him pick one
 		StringArray list;
-		for (idx = 0; idx < (int)candidates.size(); idx++)
-			list.push_back(candidates[idx].description);
+		for (idx = 0; idx < (int)candidates.size(); idx++) {
+			Common::String description = candidates[idx].description;
+
+			if (candidates[idx].hasUnknownFiles) {
+				description += " - ";
+				description += _("Unknown variant");
+			}
+
+			list.push_back(description);
+		}
 
 		ChooserDialog dialog(_("Pick the game:"));
 		dialog.setList(list);
 		idx = dialog.runModal();
 	}
+
 	if (0 <= idx && idx < (int)candidates.size()) {
 		const DetectedGame &result = candidates[idx];
 
+		if (result.hasUnknownFiles) {
+			UnknownGameDialog dialog(result);
+
+			bool cancel = dialog.runModal() == -1;
+			if (cancel) {
+				idx = -1;
+			}
+		}
+	}
+
+	if (0 <= idx && idx < (int)candidates.size()) {
+		const DetectedGame &result = candidates[idx];
 		Common::String domain = EngineMan.createTargetForGame(result);
 
 		// Display edit dialog for the new entry

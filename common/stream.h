@@ -204,10 +204,66 @@ public:
 	}
 
 	/**
+	 * Write the given 64-bit floating point value stored
+	 * in little endian(LSB first) order into the stream.
+	 */
+	FORCEINLINE void writeDoubleLE(double value) {
+		uint64 n;
+
+		memcpy(&n, &value, 8);
+
+		writeUint64LE(n);
+	}
+
+
+	/**
+	 * Write the given 64-bit floating point value stored
+	 * in big endian order into the stream.
+	 */
+	FORCEINLINE void writeDoubleBE(double value) {
+		uint64 n;
+
+		memcpy(&n, &value, 8);
+
+		writeUint64BE(n);
+	}
+
+	/**
 	 * Write the given string to the stream.
 	 * This writes str.size() characters, but no terminating zero byte.
 	 */
 	void writeString(const String &str);
+};
+
+/**
+ * Derived abstract base class for write streams streams that are seekable
+ */
+class SeekableWriteStream : public WriteStream {
+public:
+	/**
+	 * Sets the stream position indicator for the stream. The new position,
+	 * measured in bytes, is obtained by adding offset bytes to the position
+	 * specified by whence. If whence is set to SEEK_SET, SEEK_CUR, or
+	 * SEEK_END, the offset is relative to the start of the file, the current
+	 * position indicator, or end-of-file, respectively. A successful call
+	 * to the seek() method clears the end-of-file indicator for the stream.
+	 *
+	 * @note The semantics of any implementation of this method are
+	 * supposed to match those of ISO C fseek().
+	 *
+	 * @param offset        the relative offset in bytes
+	 * @param whence        the seek reference: SEEK_SET, SEEK_CUR, or SEEK_END
+	 * @return true on success, false in case of a failure
+	 */
+	virtual bool seek(int32 offset, int whence = SEEK_SET) = 0;
+
+	/**
+	 * Obtains the current size of the stream, measured in bytes.
+	 * If this value is unknown or can not be computed, -1 is returned.
+	 *
+	 * @return the size of the stream, or -1 if an error occurred
+	 */
+	virtual int32 size() const = 0;
 };
 
 /**
@@ -441,6 +497,39 @@ public:
 		memcpy(&f, &n, 4);
 
 		return f;
+	}
+
+
+	/**
+	 * Read a 64-bit floating point value stored in little endian (LSB first)
+	 * order from the stream and return it.
+	 * Performs no error checking. The return value is undefined
+	 * if a read error occurred (for which client code can check by
+	 * calling err() and eos() ).
+	 */
+	FORCEINLINE double readDoubleLE() {
+		uint64 n = readUint64LE();
+		double d;
+
+		memcpy(&d, &n, 8);
+
+		return d;
+	}
+
+	/**
+	 * Read a 64-bit floating point value stored in big endian
+	 * order from the stream and return it.
+	 * Performs no error checking. The return value is undefined
+	 * if a read error occurred (for which client code can check by
+	 * calling err() and eos() ).
+	 */
+	FORCEINLINE double readDoubleBE() {
+		uint64 n = readUint64BE();
+		double d;
+
+		memcpy(&d, &n, 8);
+
+		return d;
 	}
 
 	/**

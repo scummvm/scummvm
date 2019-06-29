@@ -162,8 +162,12 @@ bool DumpFile::open(const String &filename, bool createPath) {
 				subpath.erase(i);
 				if (subpath.empty()) continue;
 				AbstractFSNode *node = g_system->getFilesystemFactory()->makeFileNodePath(subpath);
-				if (node->exists()) continue;
+				if (node->exists()) {
+					delete node;
+					continue;
+				}
 				if (!node->create(true)) warning("DumpFile: unable to create directories from path prefix");
+				delete node;
 			}
 		}
 	}
@@ -218,5 +222,15 @@ bool DumpFile::flush() {
 }
 
 int32 DumpFile::pos() const { return _handle->pos(); }
+
+bool DumpFile::seek(int32 offset, int whence) {
+	SeekableWriteStream *ws = dynamic_cast<SeekableWriteStream *>(_handle);
+	return ws ? ws->seek(offset, whence) : false;
+}
+
+int32 DumpFile::size() const {
+	SeekableWriteStream *ws = dynamic_cast<SeekableWriteStream *>(_handle);
+	return ws ? ws->size() : -1;
+}
 
 } // End of namespace Common

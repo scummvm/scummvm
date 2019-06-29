@@ -20,16 +20,19 @@
  *
  */
 
-#include "backends/networking/connection/islimited.h"
-#include "backends/platform/android/jni.h"
+#if !defined(BACKEND_EVENTS_RISCOS_H) && !defined(DISABLE_DEFAULT_EVENTMANAGER)
+#define BACKEND_EVENTS_RISCOS_H
 
-namespace Networking {
-namespace Connection {
+#include "backends/events/sdl/sdl-events.h"
 
-bool isLimited() {
-	return JNI::isConnectionLimited();
-}
+/**
+ * SDL Events manager for RISC OS.
+ */
+class RISCOSSdlEventSource : public SdlEventSource {
+public:
+	RISCOSSdlEventSource();
+protected:
+	bool handleSysWMEvent(SDL_Event &ev, Common::Event &event) override;
+};
 
-} // End of namespace Connection
-} // End of namespace Networking
-
+#endif /* BACKEND_EVENTS_RISCOS_H */

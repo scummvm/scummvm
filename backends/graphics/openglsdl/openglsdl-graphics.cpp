@@ -37,8 +37,11 @@
 #include "graphics/opengl/system_headers.h"
 #include "graphics/opengl/texture.h"
 #include "graphics/opengl/tiledsurface.h"
+
 #ifdef USE_PNG
 #include "image/png.h"
+#else
+#include "image/bmp.h"
 #endif
 
 OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager(SdlEventSource *sdlEventSource, SdlWindow *window, const Capabilities &capabilities)
@@ -708,39 +711,17 @@ bool OpenGLSdlGraphicsManager::saveScreenshot(const Common::String &file) const 
 		_frameBuffer->attach();
 	}
 
-#ifdef USE_PNG
-	Graphics::PixelFormat format(3, 8, 8, 8, 0, 16, 8, 0, 0);
+#ifdef SCUMM_LITTLE_ENDIAN
+	const Graphics::PixelFormat format(3, 8, 8, 8, 0, 0, 8, 16, 0);
+#else
+	const Graphics::PixelFormat format(3, 8, 8, 8, 0, 16, 8, 0, 0);
+#endif
 	Graphics::Surface data;
 	data.init(width, height, lineSize, &pixels.front(), format);
+#ifdef USE_PNG
 	return Image::writePNG(out, data, true);
 #else
-	for (uint y = height; y-- > 0;) {
-		uint8 *line = &pixels.front() + y * lineSize;
-
-		for (uint x = width; x > 0; --x, line += 3) {
-			SWAP(line[0], line[2]);
-		}
-	}
-
-	out.writeByte('B');
-	out.writeByte('M');
-	out.writeUint32LE(height * lineSize + 54);
-	out.writeUint32LE(0);
-	out.writeUint32LE(54);
-	out.writeUint32LE(40);
-	out.writeUint32LE(width);
-	out.writeUint32LE(height);
-	out.writeUint16LE(1);
-	out.writeUint16LE(24);
-	out.writeUint32LE(0);
-	out.writeUint32LE(0);
-	out.writeUint32LE(0);
-	out.writeUint32LE(0);
-	out.writeUint32LE(0);
-	out.writeUint32LE(0);
-	out.write(&pixels.front(), pixels.size());
-
-	return true;
+	return Image::writeBMP(out, data, true);
 #endif
 }
 

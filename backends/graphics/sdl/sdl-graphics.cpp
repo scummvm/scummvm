@@ -1,6 +1,6 @@
-/* ScummVM - Graphic Adventure Engine
+/* ResidualVM - A 3D game interpreter
  *
- * ScummVM is the legal property of its developers, whose names
+ * ResidualVM is the legal property of its developers, whose names
  * are too numerous to list here. Please refer to the COPYRIGHT
  * file distributed with this source distribution.
  *

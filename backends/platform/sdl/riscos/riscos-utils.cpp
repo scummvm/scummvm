@@ -20,32 +20,51 @@
  *
  */
 
-#ifndef AUDIO_DECODERS_AC3_H
-#define AUDIO_DECODERS_AC3_H
-
 #include "common/scummsys.h"
+#include "backends/platform/sdl/riscos/riscos-utils.h"
 
-#ifdef USE_A52
+#include <unixlib/local.h>
+#include <limits.h>
 
-namespace Common {
-class SeekableReadStream;
-} // End of namespace Common
+namespace RISCOS_Utils {
 
-namespace Audio {
+Common::String toRISCOS(Common::String path) {
+	char start[PATH_MAX];
+	char *end = __riscosify_std(path.c_str(), 0, start, PATH_MAX, 0);
+	return Common::String(start, end);
+}
 
-class PacketizedAudioStream;
+Common::String toUnix(Common::String path) {
+	Common::String out = Common::String(path);
+	uint32 start = 0;
+	if (out.contains("$")) {
+		char *x = strstr(out.c_str(), "$");
+		start = x ? x - out.c_str() : -1;
+	} else if (out.contains(":")) {
+		char *x = strstr(out.c_str(), ":");
+		start = x ? x - out.c_str() : -1;
+	}
 
-/**
- * Create a PacketizedAudioStream that decodes AC-3 sound
- *
- * @param firstPacket  The stream containing the first packet of data
- * @return             A new PacketizedAudioStream, or NULL on error
- */
-PacketizedAudioStream *makeAC3Stream(Common::SeekableReadStream &firstPacket, double decibel = 0.0);
+	for (uint32 ptr = start; ptr < out.size(); ptr += 1) {
+		switch (out.c_str()[ptr]) {
+		case '.':
+			out.setChar('/', ptr);
+			break;
+		case '/':
+			out.setChar('.', ptr);
+			break;
+		case '\xA0':
+			out.setChar(' ', ptr);
+			break;
+		default:
+			break;
+		}
+	}
 
-} // End of namespace Audio
+	if (out.contains("$") || out.contains(":"))
+		out = "/" + out;
 
-#endif
+	return out;
+}
 
-#endif
-
+}

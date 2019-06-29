@@ -54,6 +54,7 @@
 #include "common/config-manager.h"
 
 #include "backends/keymapper/keymapper.h"
+#include "backends/mutex/pthread/pthread-mutex.h"
 #include "backends/saves/default/default-saves.h"
 #include "backends/timer/default/default-timer.h"
 
@@ -133,9 +134,10 @@ OSystem_Android::OSystem_Android(int audio_sample_rate, int audio_buffer_size) :
 	_show_mouse(false),
 	_show_overlay(false),
 	_enable_zoning(false),
+	_mutexManager(0),
 	_mixer(0),
 	_queuedEventTime(0),
-	_event_queue_lock(createMutex()),
+	_event_queue_lock(0),
 	_touch_pt_down(),
 	_touch_pt_scroll(),
 	_touch_pt_dt(),
@@ -175,6 +177,9 @@ OSystem_Android::~OSystem_Android() {
 	_timerManager = 0;
 
 	deleteMutex(_event_queue_lock);
+
+	delete _mutexManager;
+	_mutexManager = 0;
 }
 
 void *OSystem_Android::timerThreadFunc(void *arg) {
@@ -362,7 +367,10 @@ void OSystem_Android::initBackend() {
 	// screen. Passing the savepath in this way makes it stick
 	// (via ConfMan.registerDefault)
 	_savefileManager = new DefaultSaveFileManager(ConfMan.get("savepath"));
+	_mutexManager = new PthreadMutexManager();
 	_timerManager = new DefaultTimerManager();
+
+	_event_queue_lock = createMutex();
 
 	gettimeofday(&_startTime, 0);
 
@@ -469,41 +477,23 @@ void OSystem_Android::delayMillis(uint msecs) {
 }
 
 OSystem::MutexRef OSystem_Android::createMutex() {
-	pthread_mutexattr_t attr;
-
-	pthread_mutexattr_init(&attr);
-	pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
-
-	pthread_mutex_t *mutex = new pthread_mutex_t;
-
-	if (pthread_mutex_init(mutex, &attr) != 0) {
-		warning("pthread_mutex_init() failed");
-
-		delete mutex;
-
-		return 0;
-	}
-
-	return (MutexRef)mutex;
+	assert(_mutexManager);
+	return _mutexManager->createMutex();
 }
 
 void OSystem_Android::lockMutex(MutexRef mutex) {
-	if (pthread_mutex_lock((pthread_mutex_t *)mutex) != 0)
-		warning("pthread_mutex_lock() failed");
+	assert(_mutexManager);
+	_mutexManager->lockMutex(mutex);
 }
 
 void OSystem_Android::unlockMutex(MutexRef mutex) {
-	if (pthread_mutex_unlock((pthread_mutex_t *)mutex) != 0)
-		warning("pthread_mutex_unlock() failed");
+	assert(_mutexManager);
+	_mutexManager->unlockMutex(mutex);
 }
 
 void OSystem_Android::deleteMutex(MutexRef mutex) {
-	pthread_mutex_t *m = (pthread_mutex_t *)mutex;
-
-	if (pthread_mutex_destroy(m) != 0)
-		warning("pthread_mutex_destroy() failed");
-	else
-		delete m;
+	assert(_mutexManager);
+	_mutexManager->deleteMutex(mutex);
 }
 
 void OSystem_Android::quit() {
@@ -610,6 +600,10 @@ Common::String OSystem_Android::getTextFromClipboard() {
 
 bool OSystem_Android::setTextInClipboard(const Common::String &text) {
 	return JNI::setTextInClipboard(text);
+}
+
+bool OSystem_Android::isConnectionLimited() {
+	return JNI::isConnectionLimited();
 }
 
 Common::String OSystem_Android::getSystemProperty(const char *name) const {

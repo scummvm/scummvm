@@ -526,17 +526,25 @@ bool ThemeEngine::addFont(TextData textId, const Common::String &file, const Com
 		_texts[textId]->_fontPtr = loadFont(localized, scalableFile, charset, pointsize, textId == kTextDataDefault);
 
 		if (!_texts[textId]->_fontPtr) {
+			warning("Failed to load localized font '%s'", localized.c_str());
 			// Try standard fonts
 			_texts[textId]->_fontPtr = loadFont(file, scalableFile, Common::String(), pointsize, textId == kTextDataDefault);
 
-			if (!_texts[textId]->_fontPtr)
+			if (!_texts[textId]->_fontPtr) {
 				error("Couldn't load font '%s'/'%s'", file.c_str(), scalableFile.c_str());
-
+#ifdef USE_TRANSLATION
+				TransMan.setLanguage("C");
+#endif
+				return false; // fall-back attempt failed
+			}
+			// Success in fall-back attempt to standard (non-localized) font.
+			// However, still returns false here, probably to avoid ugly / garbage glyphs side-effects
+			// FIXME If we return false anyway why would we attempt the fall-back in the first place?
 #ifdef USE_TRANSLATION
 			TransMan.setLanguage("C");
 #endif
-			warning("Failed to load localized font '%s'.", localized.c_str());
-
+			// Returning true here, would allow falling back to standard fonts for the missing ones,
+			// but that leads to "garbage" glyphs being displayed on screen for non-Latin languages
 			return false;
 		}
 	}

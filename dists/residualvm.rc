@@ -4,6 +4,7 @@
 #include "config.h"
 #endif
 
+#include "base/internal_plugins.h" // for PLUGIN_ENABLED_STATIC
 #include "base/internal_version.h"
 
 #define FILE 256
@@ -15,7 +16,7 @@ IDI_COUNT              ICON    DISCARDABLE     "icons/count.ico"
 
 residualvm-grim-patch.lab        FILE    "dists/engine-data/residualvm-grim-patch.lab"
 residualvm-emi-patch.m4b        FILE    "dists/engine-data/residualvm-emi-patch.m4b"
-#if ENABLE_MYST3 == STATIC_PLUGIN
+#if PLUGIN_ENABLED_STATIC(MYST3)
 myst3.dat                        FILE    "dists/engine-data/myst3.dat"
 #endif
 modern.zip        FILE    "gui/themes/modern.zip"
@@ -24,7 +25,7 @@ translations.dat       FILE    "gui/themes/translations.dat"
 #endif
 
 #ifdef USE_OPENGL_SHADERS
-#if ENABLE_GRIM == STATIC_PLUGIN
+#if PLUGIN_ENABLED_STATIC(GRIM)
 shaders/dim.fragment             FILE    "engines/grim/shaders/dim.fragment"
 shaders/dim.vertex               FILE    "engines/grim/shaders/dim.vertex"
 shaders/emerg.fragment           FILE    "engines/grim/shaders/emerg.fragment"
@@ -48,7 +49,7 @@ shaders/smush.vertex             FILE    "engines/grim/shaders/smush.vertex"
 shaders/text.fragment            FILE    "engines/grim/shaders/text.fragment"
 shaders/text.vertex              FILE    "engines/grim/shaders/text.vertex"
 #endif
-#if ENABLE_MYST3 == STATIC_PLUGIN
+#if PLUGIN_ENABLED_STATIC(MYST3)
 shaders/myst3_box.fragment       FILE    "engines/myst3/shaders/myst3_box.fragment"
 shaders/myst3_box.vertex         FILE    "engines/myst3/shaders/myst3_box.vertex"
 shaders/myst3_cube.fragment      FILE    "engines/myst3/shaders/myst3_cube.fragment"
@@ -56,7 +57,7 @@ shaders/myst3_cube.vertex        FILE    "engines/myst3/shaders/myst3_cube.verte
 shaders/myst3_text.fragment      FILE    "engines/myst3/shaders/myst3_text.fragment"
 shaders/myst3_text.vertex        FILE    "engines/myst3/shaders/myst3_text.vertex"
 #endif
-#if ENABLE_STARK == STATIC_PLUGIN
+#if PLUGIN_ENABLED_STATIC(STARK)
 shaders/stark_actor.fragment     FILE    "engines/stark/shaders/stark_actor.fragment"
 shaders/stark_actor.vertex       FILE    "engines/stark/shaders/stark_actor.vertex"
 shaders/stark_prop.fragment      FILE    "engines/stark/shaders/stark_prop.fragment"

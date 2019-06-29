@@ -74,9 +74,23 @@ void OSystem_Win32::init() {
 	OSystem_SDL::init();
 }
 
+WORD GetCurrentSubsystem() {
+	// HMODULE is the module base address. And the PIMAGE_DOS_HEADER is located at the beginning.
+	PIMAGE_DOS_HEADER EXEHeader = (PIMAGE_DOS_HEADER)GetModuleHandle(NULL);
+	assert(EXEHeader->e_magic == IMAGE_DOS_SIGNATURE);
+	// PIMAGE_NT_HEADERS is bitness dependant.
+	// Conveniently, since it's for our own process, it's always the correct bitness.
+	// IMAGE_NT_HEADERS has to be found using a byte offset from the EXEHeader,
+	// which requires the ugly cast.
+	PIMAGE_NT_HEADERS PEHeader = (PIMAGE_NT_HEADERS)(((char*)EXEHeader) + EXEHeader->e_lfanew);
+	assert(PEHeader->Signature == IMAGE_NT_SIGNATURE);
+	return PEHeader->OptionalHeader.Subsystem;
+}
+
 void OSystem_Win32::initBackend() {
-	// Console window is enabled by default on Windows
-	ConfMan.registerDefault("console", true);
+	// The console window is enabled for the console subsystem,
+	// since Windows already creates the console window for us
+	ConfMan.registerDefault("console", GetCurrentSubsystem() == IMAGE_SUBSYSTEM_WINDOWS_CUI);
 
 	// Enable or disable the window console window
 	if (ConfMan.getBool("console")) {
@@ -122,7 +136,7 @@ bool OSystem_Win32::displayLogFile() {
 
 	// Try opening the log file with the default text editor
 	// log files should be registered as "txtfile" by default and thus open in the default text editor
-	HINSTANCE shellExec = ShellExecute(NULL, NULL, _logFilePath.c_str(), NULL, NULL, SW_SHOWNORMAL);
+	HINSTANCE shellExec = ShellExecute(getHwnd(), NULL, _logFilePath.c_str(), NULL, NULL, SW_SHOWNORMAL);
 	if ((intptr_t)shellExec > 32)
 		return true;
 
@@ -145,17 +159,20 @@ bool OSystem_Win32::displayLogFile() {
 	                            NULL,
 	                            &startupInfo,
 	                            &processInformation);
-	if (result)
+	if (result) {
+		CloseHandle(processInformation.hProcess);
+		CloseHandle(processInformation.hThread);
 		return true;
+	}
 
 	return false;
 }
 
 bool OSystem_Win32::openUrl(const Common::String &url) {
-	const uint64 result = (uint64)ShellExecute(0, 0, /*(wchar_t*)nativeFilePath.utf16()*/url.c_str(), 0, 0, SW_SHOWNORMAL);
+	HINSTANCE result = ShellExecute(getHwnd(), NULL, /*(wchar_t*)nativeFilePath.utf16()*/url.c_str(), NULL, NULL, SW_SHOWNORMAL);
 	// ShellExecute returns a value greater than 32 if successful
-	if (result <= 32) {
-		warning("ShellExecute failed: error = %u", result);
+	if ((intptr_t)result <= 32) {
+		warning("ShellExecute failed: error = %p", (void*)result);
 		return false;
 	}
 	return true;

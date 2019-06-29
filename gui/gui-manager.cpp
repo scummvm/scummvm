@@ -597,9 +597,7 @@ void GuiManager::processEvent(const Common::Event &event, Dialog *const activeDi
 		screenChange();
 		break;
 	default:
-	#ifdef ENABLE_KEYMAPPER
 		activeDialog->handleOtherEvent(event);
-	#endif
 		break;
 	}
 }

@@ -29,12 +29,11 @@
 namespace CreateProjectTool {
 
 //////////////////////////////////////////////////////////////////////////
-// MSBuild Provider (Visual Studio 2010)
+// MSBuild Provider (Visual Studio 2010 and later)
 //////////////////////////////////////////////////////////////////////////
 
-MSBuildProvider::MSBuildProvider(StringList &global_warnings, std::map<std::string, StringList> &project_warnings, const int version)
-	: MSVCProvider(global_warnings, project_warnings, version) {
-
+MSBuildProvider::MSBuildProvider(StringList &global_warnings, std::map<std::string, StringList> &project_warnings, const int version, const MSVCVersion& msvc)
+	: MSVCProvider(global_warnings, project_warnings, version, msvc) {
 }
 
 const char *MSBuildProvider::getProjectExtension() {
@@ -43,32 +42,6 @@ const char *MSBuildProvider::getProjectExtension() {
 
 const char *MSBuildProvider::getPropertiesExtension() {
 	return ".props";
-}
-
-int MSBuildProvider::getVisualStudioVersion() {
-	if (_version == 10)
-		return 2010;
-
-	if (_version == 11)
-		return 2012;
-
-	if (_version == 12)
-		return 2013;
-
-	if (_version == 14)
-		return 14;
-
-	if (_version == 15)
-		return 15;
-
-	error("Unsupported version passed to getVisualStudioVersion");
-}
-
-int MSBuildProvider::getSolutionVersion() {
-	if (_version == 14 || _version == 15)
-		return 14;
-
-	return _version + 1;
 }
 
 namespace {
@@ -80,7 +53,7 @@ inline void outputConfiguration(std::ostream &project, const std::string &config
 	           "\t\t</ProjectConfiguration>\n";
 }
 
-inline void outputConfigurationType(const BuildSetup &setup, std::ostream &project, const std::string &name, const std::string &config, std::string toolset) {
+inline void outputConfigurationType(const BuildSetup &setup, std::ostream &project, const std::string &name, const std::string &config, const std::string &toolset) {
 	project << "\t<PropertyGroup Condition=\"'$(Configuration)|$(Platform)'=='" << config << "'\" Label=\"Configuration\">\n"
 	           "\t\t<ConfigurationType>" << ((name == setup.projectName || setup.devTools || setup.tests) ? "Application" : "StaticLibrary") << "</ConfigurationType>\n"
 	           "\t\t<PlatformToolset>" << toolset << "</PlatformToolset>\n"
@@ -104,7 +77,7 @@ void MSBuildProvider::createProjectFile(const std::string &name, const std::stri
 		error("Could not open \"" + projectFile + "\" for writing");
 
 	project << "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
-	           "<Project DefaultTargets=\"Build\" ToolsVersion=\"" << (_version >= 12 ? _version : 4) << ".0\" xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\">\n"
+	           "<Project DefaultTargets=\"Build\" ToolsVersion=\"" << _msvcVersion.project << "\" xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\">\n"
 	           "\t<ItemGroup Label=\"ProjectConfigurations\">\n";
 
 	outputConfiguration(project, "Debug", "Win32");
@@ -129,17 +102,14 @@ void MSBuildProvider::createProjectFile(const std::string &name, const std::stri
 	// Shared configuration
 	project << "\t<Import Project=\"$(VCTargetsPath)\\Microsoft.Cpp.Default.props\" />\n";
 
-	std::string version = _version == 15 ? "v141" : "v" + toString(_version) + "0";
-	std::string llvm = "LLVM-vs" + toString(getVisualStudioVersion());
-
-	outputConfigurationType(setup, project, name, "Release|Win32", version);
-	outputConfigurationType(setup, project, name, "Analysis|Win32", version);
-	outputConfigurationType(setup, project, name, "LLVM|Win32", llvm);
-	outputConfigurationType(setup, project, name, "Debug|Win32", version);
-	outputConfigurationType(setup, project, name, "Release|x64", version);
-	outputConfigurationType(setup, project, name, "LLVM|x64", llvm);
-	outputConfigurationType(setup, project, name, "Analysis|x64", version);
-	outputConfigurationType(setup, project, name, "Debug|x64", version);
+	outputConfigurationType(setup, project, name, "Release|Win32", _msvcVersion.toolsetMSVC);
+	outputConfigurationType(setup, project, name, "Analysis|Win32", _msvcVersion.toolsetMSVC);
+	outputConfigurationType(setup, project, name, "LLVM|Win32", _msvcVersion.toolsetLLVM);
+	outputConfigurationType(setup, project, name, "Debug|Win32", _msvcVersion.toolsetMSVC);
+	outputConfigurationType(setup, project, name, "Release|x64", _msvcVersion.toolsetMSVC);
+	outputConfigurationType(setup, project, name, "LLVM|x64", _msvcVersion.toolsetLLVM);
+	outputConfigurationType(setup, project, name, "Analysis|x64", _msvcVersion.toolsetMSVC);
+	outputConfigurationType(setup, project, name, "Debug|x64", _msvcVersion.toolsetMSVC);
 
 	project << "\t<Import Project=\"$(VCTargetsPath)\\Microsoft.Cpp.props\" />\n"
 	           "\t<ImportGroup Label=\"ExtensionSettings\">\n"
@@ -234,7 +204,7 @@ void MSBuildProvider::createFiltersFile(const BuildSetup &setup, const std::stri
 		error("Could not open \"" + filtersFile + "\" for writing");
 
 	filters << "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
-	           "<Project ToolsVersion=\"" << (_version >= 12 ? _version : 4) << ".0\" xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\">\n";
+	           "<Project ToolsVersion=\"" << _msvcVersion.project << "\" xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\">\n";
 
 	// Output the list of filters
 	filters << "\t<ItemGroup>\n";
@@ -367,7 +337,7 @@ void MSBuildProvider::outputGlobalPropFile(const BuildSetup &setup, std::ofstrea
 		definesList += REVISION_DEFINE ";";
 
 	properties << "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
-	              "<Project DefaultTargets=\"Build\" ToolsVersion=\"" << (_version >= 12 ? _version : 4) << ".0\" xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\">\n"
+	              "<Project DefaultTargets=\"Build\" ToolsVersion=\"" << _msvcVersion.project << "\" xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\">\n"
 	              "\t<PropertyGroup>\n"
 	              "\t\t<_PropertySheetDisplayName>" << setup.projectDescription << "_Global</_PropertySheetDisplayName>\n"
 	              "\t\t<ExecutablePath>$(" << LIBS_DEFINE << ")\\bin;$(" << LIBS_DEFINE << ")\\bin\\" << (bits == 32 ? "x86" : "x64") << ";$(ExecutablePath)</ExecutablePath>\n"
@@ -421,7 +391,7 @@ void MSBuildProvider::createBuildProp(const BuildSetup &setup, bool isRelease, b
 		error("Could not open \"" + setup.outputDir + '/' + setup.projectDescription + "_" + configuration + (isWin32 ? "" : "64") + getPropertiesExtension() + "\" for writing");
 
 	properties << "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
-	              "<Project DefaultTargets=\"Build\" ToolsVersion=\"" << (_version >= 12 ? _version : 4) << ".0\" xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\">\n"
+	              "<Project DefaultTargets=\"Build\" ToolsVersion=\"" << _msvcVersion.project << "\" xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\">\n"
 	              "\t<ImportGroup Label=\"PropertySheets\">\n"
 	              "\t\t<Import Project=\"" << setup.projectDescription << "_Global" << (isWin32 ? "" : "64") << ".props\" />\n"
 	              "\t</ImportGroup>\n"

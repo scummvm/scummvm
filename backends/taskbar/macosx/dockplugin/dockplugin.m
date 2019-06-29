@@ -55,7 +55,7 @@
 
 - (NSMenu*)dockMenu {
 	// Get the list or recent games
-	CFPreferencesAppSynchronize(CFSTR("org.residualvm.residaulvm"));
+	CFPreferencesAppSynchronize(CFSTR("org.residualvm.residualvm"));
 	NSArray *array = CFPreferencesCopyAppValue(CFSTR("recentGames"), CFSTR("org.residualvm.residualvm"));
 	if (array == nil)
 		return nil;

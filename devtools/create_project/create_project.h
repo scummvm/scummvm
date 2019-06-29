@@ -277,6 +277,45 @@ struct BuildSetup {
 #endif
 void NORETURN_PRE error(const std::string &message) NORETURN_POST;
 
+/**
+ * Structure to describe a Visual Studio version specification.
+ *
+ * This includes various generation details for MSVC projects,
+ * as well as describe the versions supported.
+ */
+struct MSVCVersion {
+	int version;                 ///< Version number passed as parameter.
+	const char *name;            ///< Full program name.
+	const char *solutionFormat;  ///< Format used for solution files.
+	const char *solutionVersion; ///< Version number used in solution files.
+	const char *project;         ///< Version number used in project files.
+	const char *toolsetMSVC;     ///< Toolset version for MSVC compiler.
+	const char *toolsetLLVM;     ///< Toolset version for Clang/LLVM compiler.
+};
+typedef std::list<MSVCVersion> MSVCList;
+
+/**
+ * Creates a list of all supported versions of Visual Studio.
+ *
+ * @return A list including all versions available.
+ */
+MSVCList getAllMSVCVersions();
+
+/**
+ * Returns the definitions for a specific Visual Studio version.
+ *
+ * @param version The requested version.
+ * @return The version information, or NULL if the version isn't supported.
+ */
+const MSVCVersion *getMSVCVersion(int version);
+
+/**
+ * Auto-detects the latest version of Visual Studio installed.
+ *
+ * @return Version number, or 0 if no installations were found.
+ */
+int getInstalledMSVC();
+
 namespace CreateProjectTool {
 
 /**
@@ -542,7 +581,24 @@ protected:
 	 */
 	std::string createUUID() const;
 
+	/**
+	 * Creates a name-based UUID and returns it in string representation.
+	 *
+	 * @param name Unique name to hash.
+	 * @return A new UUID as string.
+	 */
+	std::string createUUID(const std::string &name) const;
+
 private:
+
+	/**
+	 * Returns the string representation of an existing UUID.
+	 *
+	 * @param uuid 128-bit array.
+	 * @return Existing UUID as string.
+	 */
+	std::string UUIDToString(unsigned char *uuid) const;
+
 	/**
 	 * This creates the engines/plugins_table.h file required for building
 	 * ScummVM.

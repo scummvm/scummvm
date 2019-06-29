@@ -142,6 +142,16 @@ bool isAlpha(int c);
 bool isDigit(int c);
 
 /**
+ * Test whether the given character is a hwzadecimal-digit (0-9 or A-F).
+ * If the parameter is outside the range of a signed or unsigned char, then
+ * false is returned.
+ *
+ * @param c		the character to test
+ * @return		true if the character is a hexadecimal-digit, false otherwise.
+ */
+bool isXDigit(int c);
+
+/**
  * Test whether the given character is a lower-case letter (a-z).
  * If the parameter is outside the range of a signed or unsigned char, then
  * false is returned.

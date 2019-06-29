@@ -132,4 +132,63 @@ bool BitmapDecoder::loadStream(Common::SeekableReadStream &stream) {
 	return true;
 }
 
+bool writeBMP(Common::WriteStream &out, const Graphics::Surface &input, const bool bottomUp) {
+#ifdef SCUMM_LITTLE_ENDIAN
+	const Graphics::PixelFormat requiredFormat_3byte(3, 8, 8, 8, 0, 16, 8, 0, 0);
+#else
+	const Graphics::PixelFormat requiredFormat_3byte(3, 8, 8, 8, 0, 0, 8, 16, 0);
+#endif
+
+	Graphics::Surface *tmp = NULL;
+	const Graphics::Surface *surface;
+
+	if (input.format == requiredFormat_3byte) {
+		surface = &input;
+	} else {
+		surface = tmp = input.convertTo(requiredFormat_3byte);
+	}
+
+	int dstPitch = surface->w * 3;
+	int extraDataLength = (dstPitch % 4) ? 4 - (dstPitch % 4) : 0;
+	int padding = 0;
+
+	out.writeByte('B');
+	out.writeByte('M');
+	out.writeUint32LE(surface->h * dstPitch + 54);
+	out.writeUint32LE(0);
+	out.writeUint32LE(54);
+	out.writeUint32LE(40);
+	out.writeUint32LE(surface->w);
+	out.writeUint32LE(surface->h);
+	out.writeUint16LE(1);
+	out.writeUint16LE(24);
+	out.writeUint32LE(0);
+	out.writeUint32LE(0);
+	out.writeUint32LE(0);
+	out.writeUint32LE(0);
+	out.writeUint32LE(0);
+	out.writeUint32LE(0);
+
+
+	if (bottomUp) {
+		for (uint y = 0; y < surface->h; ++y) {
+			out.write((const void *)surface->getBasePtr(0, y), dstPitch);
+			out.write(&padding, extraDataLength);
+		}
+	} else {
+		for (uint y = surface->h; y-- > 0;) {
+			out.write((const void *)surface->getBasePtr(0, y), dstPitch);
+			out.write(&padding, extraDataLength);
+		}
+	}
+
+	// free tmp surface
+	if (tmp) {
+		tmp->free();
+		delete tmp;
+	}
+
+	return true;
+}
+
 } // End of namespace Image

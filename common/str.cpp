@@ -884,6 +884,7 @@ bool matchString(const char *str, const char *pat, bool ignoreCase, bool pathMod
 
 	const char *p = nullptr;
 	const char *q = nullptr;
+	bool escaped = false;
 
 	for (;;) {
 		if (pathMode && *str == '/') {
@@ -893,6 +894,7 @@ bool matchString(const char *str, const char *pat, bool ignoreCase, bool pathMod
 				return false;
 		}
 
+		const char curPat = *pat;
 		switch (*pat) {
 		case '*':
 			if (*str) {
@@ -912,12 +914,23 @@ bool matchString(const char *str, const char *pat, bool ignoreCase, bool pathMod
 				return true;
 			break;
 
+		case '\\':
+			if (!escaped) {
+				pat++;
+				break;
+			}
+			// fallthrough
+
 		case '#':
-			if (!isDigit(*str))
-				return false;
-			pat++;
-			str++;
-			break;
+			// treat # as a wildcard for digits unless escaped
+			if (!escaped) {
+				if (!isDigit(*str))
+					return false;
+				pat++;
+				str++;
+				break;
+			}
+			// fallthrough
 
 		default:
 			if ((!ignoreCase && *pat != *str) ||
@@ -940,6 +953,8 @@ bool matchString(const char *str, const char *pat, bool ignoreCase, bool pathMod
 			pat++;
 			str++;
 		}
+
+		escaped = !escaped && (curPat == '\\');
 	}
 }
 

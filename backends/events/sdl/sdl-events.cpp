@@ -180,8 +180,14 @@ int SdlEventSource::mapKey(SDLKey sdlKey, SDLMod mod, Uint16 unicode) {
 	if (key >= Common::KEYCODE_F1 && key <= Common::KEYCODE_F9) {
 		return key - Common::KEYCODE_F1 + Common::ASCII_F1;
 	} else if (key >= Common::KEYCODE_KP0 && key <= Common::KEYCODE_KP9) {
-		if ((mod & KMOD_NUM) == 0)
-			return 0; // In case Num-Lock is NOT enabled, return 0 for ascii, so that directional keys on numpad work
+		// WORKAROUND:  Disable this change for AmigaOS4 as it is breaking numpad usage ("fighting") on that platform.
+		// This fixes bug #10558.
+		// The actual issue here is that the SCUMM engine uses ASCII codes instead of keycodes for input.
+		// See also the relevant FIXME in SCUMM's input.cpp.
+		#ifndef __amigaos4__
+			if ((mod & KMOD_NUM) == 0)
+				return 0; // In case Num-Lock is NOT enabled, return 0 for ascii, so that directional keys on numpad work
+		#endif
 		return key - Common::KEYCODE_KP0 + '0';
 	} else if (key >= Common::KEYCODE_UP && key <= Common::KEYCODE_PAGEDOWN) {
 		return key;
@@ -574,6 +580,8 @@ bool SdlEventSource::dispatchSDLEvent(SDL_Event &ev, Common::Event &event) {
 		return handleMouseButtonDown(ev, event);
 	case SDL_MOUSEBUTTONUP:
 		return handleMouseButtonUp(ev, event);
+	case SDL_SYSWMEVENT:
+		return handleSysWMEvent(ev, event);
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	case SDL_MOUSEWHEEL: {
@@ -647,6 +655,12 @@ bool SdlEventSource::dispatchSDLEvent(SDL_Event &ev, Common::Event &event) {
 
 	case SDL_JOYDEVICEREMOVED:
 		return handleJoystickRemoved(ev.jdevice);
+
+	case SDL_DROPFILE:
+		event.type = Common::EVENT_DROP_FILE;
+		event.path = Common::String(ev.drop.file);
+		SDL_free(ev.drop.file);
+		return true;
 #else
 	case SDL_VIDEOEXPOSE:
 		if (_graphicsManager)
@@ -859,6 +873,10 @@ bool SdlEventSource::handleMouseButtonUp(SDL_Event &ev, Common::Event &event) {
 	_km.y = ev.button.y * MULTIPLIER;
 
 	return processMouseEvent(event, ev.button.x, ev.button.y);
+}
+
+bool SdlEventSource::handleSysWMEvent(SDL_Event &ev, Common::Event &event) {
+	return false;
 }
 
 void SdlEventSource::openJoystick(int joystickIndex) {

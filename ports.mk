@@ -141,6 +141,7 @@ endif
 	mv $(bundle_name)/Contents/Resources/README.md $(bundle_name)/Contents/Resources/README # ResidualVM
 	cp $(bundle_name)/Contents/Resources/COPYING.LGPL $(bundle_name)/Contents/Resources/COPYING-LGPL
 	cp $(bundle_name)/Contents/Resources/COPYING.FREEFONT $(bundle_name)/Contents/Resources/COPYING-FREEFONT
+	cp $(bundle_name)/Contents/Resources/COPYING.OFL $(bundle_name)/Contents/Resources/COPYING-OFL
 	cp $(bundle_name)/Contents/Resources/COPYING.BSD $(bundle_name)/Contents/Resources/COPYING-BSD
 	chmod 644 $(bundle_name)/Contents/Resources/*
 ifdef USE_OPENGL_SHADERS
@@ -302,6 +303,7 @@ osxsnap: bundle
 	mv ./ResidualVM-snapshot/COPYING ./ResidualVM-snapshot/License\ \(GPL\)
 	mv ./ResidualVM-snapshot/COPYING.LGPL ./ResidualVM-snapshot/License\ \(LGPL\)
 	mv ./ResidualVM-snapshot/COPYING.FREEFONT ./ResidualVM-snapshot/License\ \(FREEFONT\)
+	mv ./ResidualVM-snapshot/COPYING.OFL ./ResidualVM-snapshot/License\ \(OFL\)
 	mv ./ResidualVM-snapshot/COPYING.BSD ./ResidualVM-snapshot/License\ \(BSD\)
 	mv ./ResidualVM-snapshot/COPYING.ISC ./ResidualVM-snapshot/License\ \(ISC\)
 	mv ./ResidualVM-snapshot/COPYING.LUA ./ResidualVM-snapshot/License\ \(Lua\)
@@ -349,18 +351,8 @@ else ifeq "$(CUR_BRANCH)" ""
 endif
 	@echo Creating Code::Blocks project files...
 	@cd $(srcdir)/dists/codeblocks && ../../devtools/create_project/create_project ../.. --codeblocks >/dev/null && git add -f engines/plugins_table.h *.workspace *.cbp
-	@echo Creating MSVC9 project files...
-	@cd $(srcdir)/dists/msvc9 && ../../devtools/create_project/create_project ../.. --msvc --msvc-version 9 >/dev/null && git add -f engines/plugins_table.h *.sln *.vcproj *.vsprops
-	@echo Creating MSVC10 project files...
-	@cd $(srcdir)/dists/msvc10 && ../../devtools/create_project/create_project ../.. --msvc --msvc-version 10 >/dev/null && git add -f engines/plugins_table.h *.sln *.vcxproj *.vcxproj.filters *.props
-	@echo Creating MSVC11 project files...
-	@cd $(srcdir)/dists/msvc11 && ../../devtools/create_project/create_project ../.. --msvc --msvc-version 11 >/dev/null && git add -f engines/plugins_table.h *.sln *.vcxproj *.vcxproj.filters *.props
-	@echo Creating MSVC12 project files...
-	@cd $(srcdir)/dists/msvc12 && ../../devtools/create_project/create_project ../.. --msvc --msvc-version 12 >/dev/null && git add -f engines/plugins_table.h *.sln *.vcxproj *.vcxproj.filters *.props
-	@echo Creating MSVC14 project files...
-	@cd $(srcdir)/dists/msvc14 && ../../devtools/create_project/create_project ../.. --msvc --msvc-version 14 >/dev/null && git add -f engines/plugins_table.h *.sln *.vcxproj *.vcxproj.filters *.props
-	@echo Creating MSVC15 project files...
-	@cd $(srcdir)/dists/msvc15 && ../../devtools/create_project/create_project ../.. --msvc --msvc-version 15 >/dev/null && git add -f engines/plugins_table.h *.sln *.vcxproj *.vcxproj.filters *.props
+	@echo Creating MSVC project files...
+	@cd $(srcdir)/dists/msvc && ../../devtools/create_project/create_project ../.. --msvc >/dev/null && git add -f engines/plugins_table.h *.sln *.vcxproj *.vcxproj.filters *.props
 	@echo
 	@echo All is done.
 	@echo Now run

@@ -98,6 +98,7 @@ extern void checkGlError(const char *expr, const char *file, int line);
 #define GLTHREADCHECK do {  } while (false)
 #endif
 
+class MutexManager;
 class OSystem_Android : public EventsBaseBackend, public PaletteManager, public KeyReceiver {
 private:
 	// passed from the dark side
@@ -150,6 +151,7 @@ private:
 	bool _enable_zoning;
 	bool _virtkeybd_on;
 
+	MutexManager *_mutexManager;
 	Audio::MixerImpl *_mixer;
 	timeval _startTime;
 
@@ -300,6 +302,7 @@ public:
 	virtual bool hasTextInClipboard();
 	virtual Common::String getTextFromClipboard();
 	virtual bool setTextInClipboard(const Common::String &text);
+	virtual bool isConnectionLimited();
 	virtual Common::String getSystemLanguage() const;
 
 	// ResidualVM specific method

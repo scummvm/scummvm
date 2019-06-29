@@ -24,6 +24,7 @@
 #define PLATFORM_SDL_WIN32_H
 
 #include "backends/platform/sdl/sdl.h"
+#include "backends/platform/sdl/win32/win32-window.h"
 
 class OSystem_Win32 : public OSystem_SDL {
 public:
@@ -61,6 +62,8 @@ protected:
 	// Override createAudioCDManager() to get our Mac-specific
 	// version.
 	virtual AudioCDManager *createAudioCDManager();
+	
+	HWND getHwnd() { return ((SdlWindow_Win32*)_window)->getHwnd(); }
 };
 
 #endif

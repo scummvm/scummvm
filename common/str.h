@@ -179,6 +179,7 @@ public:
 	 *      "*": any character, any amount of times.
 	 *      "?": any character, only once.
 	 *      "#": any decimal digit, only once.
+	 *      "\#": #, only once.
 	 *
 	 * Example strings/patterns:
 	 *      String: monkey.s01   Pattern: monkey.s??    => true

@@ -313,6 +313,7 @@ void QuickTimeDecoder::VideoTrackHandler::checkEditListBounds() {
 		EditListEntry &edit = _parent->editList[i];
 
 		if (edit.mediaTime < 0) {
+			offset += edit.trackDuration;
 			continue; // Ignore empty edits
 		}
 

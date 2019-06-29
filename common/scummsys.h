@@ -35,10 +35,6 @@
 	#define GCC_ATLEAST(major, minor) 0
 #endif
 
-#if defined(_WIN32_WCE) && _WIN32_WCE < 300
-	#define NONSTANDARD_PORT
-#endif
-
 #if defined(NONSTANDARD_PORT)
 
 	// Ports which need to perform #includes and #defines visible in
@@ -89,8 +85,6 @@
 		}
 		#endif
 
-		#if !defined(_WIN32_WCE)
-
 		#define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
 		#define NOGDICAPMASKS
 		#define OEMRESOURCE
@@ -114,8 +108,6 @@
 		#define NOWH
 		#define NOSOUND
 		#define NODRAWTEXT
-
-		#endif
 
 	#endif
 

@@ -62,11 +62,22 @@ typedef unsigned long NSUInteger;
 static void openFromBundle(NSString *file) {
 	NSString *path = [[NSBundle mainBundle] pathForResource:file ofType:@"rtf"];
 	if (!path) {
-		path = [[NSBundle mainBundle] pathForResource:file ofType:@""];
+		path = [[NSBundle mainBundle] pathForResource:file ofType:@"html"];
+		if (!path) {
+			path = [[NSBundle mainBundle] pathForResource:file ofType:@""];
+			if (!path)
+				path = [[NSBundle mainBundle] pathForResource:file ofType:@"md"];
+		}
 	}
 
 	if (path) {
-		[[NSWorkspace sharedWorkspace] openFile:path];
+		// RTF and HTML files are widely recognized and we can rely on the default
+		// file association working for those. For the other ones this might not be
+		// the case so we explicitely indicate they should be open with TextEdit.
+		if ([path hasSuffix:@".html"] || [path hasSuffix:@".rtf"])
+			[[NSWorkspace sharedWorkspace] openFile:path];
+		else
+			[[NSWorkspace sharedWorkspace] openFile:path withApplication:@"TextEdit"];
 	}
 }
 
@@ -76,6 +87,7 @@ static void openFromBundle(NSString *file) {
 - (void) openLicenseGPL;
 - (void) openLicenseLGPL;
 - (void) openLicenseFreefont;
+- (void) openLicenseOFL;
 - (void) openLicenseBSD;
 - (void) openNews;
 - (void) openUserManual;
@@ -99,6 +111,10 @@ static void openFromBundle(NSString *file) {
 	openFromBundle(@"COPYING-FREEFONT");
 }
 
+- (void)openLicenseOFL {
+	openFromBundle(@"COPYING-OFL");
+}
+
 - (void)openLicenseBSD {
 	openFromBundle(@"COPYING-BSD");
 }
@@ -108,7 +124,7 @@ static void openFromBundle(NSString *file) {
 }
 
 - (void)openUserManual {
-	[[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"http://www.residualvm.org/documentation"]];
+	[[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"https://www.residualvm.org/documentation"]];
 }
 
 - (void)openCredits {
@@ -205,6 +221,7 @@ void replaceApplicationMenuItems() {
 	addMenuItem(_("GPL License"), stringEncoding, delegate, @selector(openLicenseGPL), @"", helpMenu);
 	addMenuItem(_("LGPL License"), stringEncoding, delegate, @selector(openLicenseLGPL), @"", helpMenu);
 	addMenuItem(_("Freefont License"), stringEncoding, delegate, @selector(openLicenseFreefont), @"", helpMenu);
+	addMenuItem(_("OFL License"), stringEncoding, delegate, @selector(openLicenseOFL), @"", helpMenu);
 	addMenuItem(_("BSD License"), stringEncoding, delegate, @selector(openLicenseBSD), @"", helpMenu);
 
 
