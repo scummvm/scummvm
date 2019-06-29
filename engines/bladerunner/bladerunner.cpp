@@ -2173,7 +2173,7 @@ Graphics::Surface BladeRunnerEngine::generateThumbnail() const {
 		for (int x = 0; x < thumbnail.w; ++x) {
 			uint8 r, g, b;
 
-			uint16  srcPixel = *(uint16 *)_surfaceFront.getBasePtr(x * 8, y * 8);
+			uint16  srcPixel = *(const uint16 *)_surfaceFront.getBasePtr(x * 8, y * 8);
 			uint16 *dstPixel = (uint16 *)thumbnail.getBasePtr(x, y);
 
 			// Throw away alpha channel as it is not needed
