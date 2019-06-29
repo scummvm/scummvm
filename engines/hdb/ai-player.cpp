@@ -512,11 +512,12 @@ void aiChickenInit2(AIEntity *e) {
 }
 
 void aiDollyInit(AIEntity *e) {
-	warning("STUB: AI: aiDollyInit required");
+	e->moveSpeed = kPlayerMoveSpeed >> 1;
+	e->aiAction = aiGenericAction;
 }
 
 void aiDollyInit2(AIEntity *e) {
-	warning("STUB: AI: aiDollyInit2 required");
+	e->draw = e->movedownGfx[0];
 }
 
 void aiSergeantInit(AIEntity *e) {
@@ -538,11 +539,21 @@ void aiSergeantAction(AIEntity *e) {
 }
 
 void aiSpacedudeInit(AIEntity *e) {
-	warning("STUB: AI: aiSpacedudeInit required");
+	e->moveSpeed = kPlayerMoveSpeed >> 1;
+	if (e->value1)
+		e->aiAction = aiGenericAction;
 }
 
 void aiSpacedudeInit2(AIEntity *e) {
-	warning("STUB: AI: aiSpacedudeInit2 required");
+	e->standdownFrames = 1;
+	e->standdownGfx[0] = e->movedownGfx[0];
+	e->standupFrames = 1;
+	e->standupGfx[0] = e->moveupGfx[0];
+	e->standleftFrames = 1;
+	e->standleftGfx[0] = e->moveleftGfx[0];
+	e->standrightFrames = 1;
+	e->standrightGfx[0] = e->moverightGfx[0];
+	e->draw = g_hdb->_ai->getStandFrameDir(e);
 }
 
 void aiCrateAction(AIEntity *e) {
@@ -618,11 +629,15 @@ void aiBarrelBlowup(AIEntity *e, int x, int y) {
 }
 
 void aiScientistInit(AIEntity *e) {
-	warning("STUB: AI: aiScientistInit required");
+	e->moveSpeed = kPlayerMoveSpeed >> 1;
+	if (g_hdb->_ai->findPath(e))
+		e->aiAction = aiGenericAction;
+	else if (e->value1)
+		e->aiAction = aiGenericAction;
 }
 
 void aiScientistInit2(AIEntity *e) {
-	warning("STUB: AI: aiScientistInit2 required");
+	e->draw = g_hdb->_ai->getStandFrameDir(e);
 }
 
 void aiSlugAttackAction(AIEntity *e) {
@@ -642,27 +657,27 @@ void aiSlugAttackInit2(AIEntity *e) {
 }
 
 void aiDeadWorkerInit(AIEntity *e) {
-	warning("STUB: AI: aiDeadWorkerInit required");
 }
 
 void aiDeadWorkerInit2(AIEntity *e) {
-	warning("STUB: AI: aiDeadWorkerInit2 required");
+	e->draw = e->standdownGfx[0];
 }
 
 void aiWorkerInit(AIEntity *e) {
-	warning("STUB: AI: aiWorkerInit required");
+	if (e->value1)
+		e->aiAction = aiGenericAction;
+	e->moveSpeed = kPlayerMoveSpeed >> 1;
 }
 
 void aiWorkerInit2(AIEntity *e) {
-	warning("STUB: AI: aiWorkerInit2 required");
+	e->draw = g_hdb->_ai->getStandFrameDir(e);
 }
 
 void aiAccountantInit(AIEntity *e) {
-	warning("STUB: AI: aiAccountantInit required");
 }
 
 void aiAccountantInit2(AIEntity *e) {
-	warning("STUB: AI: aiAccountantInit2 required");
+	e->draw = g_hdb->_ai->getStandFrameDir(e);
 }
 
 void aiFrogStatueInit(AIEntity *e) {
