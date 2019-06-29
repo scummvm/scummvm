@@ -514,6 +514,7 @@ Common::Error HDBGame::run() {
 
 			_window->drawDialog();
 			_window->drawInventory();
+			_window->drawDeliveries();
 			_window->drawTextOut();
 			_window->drawPause();
 		}
