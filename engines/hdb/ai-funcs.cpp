@@ -1858,7 +1858,7 @@ AIEntity *AI::legalMove(int tileX, int tileY, int level, int *result) {
 		} else if (fgFlags & kFlagGrating) {
 			*result = 1;
 			return hit;
-		} else if (fgFlags & kFlagSolid) {
+		} else if (bgFlags & kFlagSolid) {
 			*result = 0;
 			return hit;
 		}
