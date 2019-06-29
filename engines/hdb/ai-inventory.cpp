@@ -104,4 +104,41 @@ AIEntity *AI::getInvItem(int which) {
 		return NULL;
 	return _inventory[which].ent;
 }
+
+void AI::newDelivery(const char *itemTextName, const char *itemGfxName, const char *destTextName, const char *destGfxName, const char *id) {
+	int i = _numDeliveries;
+
+	if (i == kMaxDeliveries) {
+		g_hdb->_window->openMessageBar("You have too many deliveries already!", 3);
+		return;
+	}
+
+	if (itemTextName)
+		strcpy(_deliveries[i].itemTextName, itemTextName);
+	if (itemGfxName)
+		strcpy(_deliveries[i].itemGfxName, itemGfxName);
+	if (destTextName)
+		strcpy(_deliveries[i].destTextName, destTextName);
+	if (destGfxName)
+		strcpy(_deliveries[i].destGfxName, destGfxName);
+
+	strcpy(_deliveries[i].id, id);
+
+	_numDeliveries++;
+
+	g_hdb->_window->openDeliveries(true);
+}
+
+bool AI::completeDelivery(const char *id) {
+	for (int i = 0; i < _numDeliveries; i++)
+		if (!scumm_stricmp(_deliveries[i].id, id)) {
+			for (; i < _numDeliveries; i++)
+				memcpy(&_deliveries[i], &_deliveries[i + 1], sizeof(_deliveries[0]));
+			_numDeliveries--;
+			warning("STUB: Play Voice: GUY_COMPLETED");
+			return true;
+		}
+	return false;
+}
+
 } // End of Namespace

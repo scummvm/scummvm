@@ -935,6 +935,16 @@ public:
 
 	AIEntity *getInvItem(int which);
 
+	// Delivery Functions
+	void newDelivery(const char *itemTextName, const char *itemGfxName, const char *destTextName, const char *destGfxName, const char *id);
+	int getDeliveriesAmount() {
+		return _numDeliveries;
+	}
+	DlvEnt *getDeliveryItem(int which) {
+		return &_deliveries[which];
+	}
+	bool completeDelivery(const char *id);
+
 	// Player Variables
 	bool _playerDead;
 	bool _playerInvisible;	// While on RailRider for example
