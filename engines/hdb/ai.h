@@ -572,6 +572,20 @@ struct InvEnt {
 	InvEnt() : keep(0), ent(NULL) {}
 };
 
+struct DlvEnt {
+	char itemTextName[32];
+	char itemGfxName[32];
+	Tile *itemGfx;
+
+	char destTextName[32];
+	char destGfxName[32];
+	Tile *destGfx;
+
+	char id[32];
+
+	DlvEnt() : itemTextName(""), itemGfxName(""), itemGfx(NULL), destTextName(""), destGfxName(""), destGfx(NULL) {}
+};
+
 struct Waypoint {
 	int x, y, level;
 
@@ -1071,6 +1085,9 @@ public:
 
 	InvEnt _inventory[kMaxInventory];
 	int _numInventory;
+
+	DlvEnt _deliveries[kMaxDeliveries];
+	int _numDeliveries;
 
 	Waypoint _waypoints[kMaxWaypoints];
 	int _numWaypoints;
