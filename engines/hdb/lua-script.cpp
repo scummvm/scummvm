@@ -443,8 +443,18 @@ static int deliveriesLeft(lua_State *L) {
 }
 
 static int getEntityXY(lua_State *L) {
-	warning("STUB: GET ENTITYXY");
-	return 0;
+	int x, y;
+	const char *initName = lua_tostring(L, 1);
+
+	g_hdb->_lua->checkParameters("getEntityXY", 1);
+
+	lua_pop(L, 1);
+
+	g_hdb->_ai->getEntityXY(initName, &x, &y);
+
+	lua_pushnumber(L, x);
+	lua_pushnumber(L, y);
+	return 2;
 }
 
 static int setEntity(lua_State *L) {
@@ -546,7 +556,22 @@ static int setBackground(lua_State *L) {
 }
 
 static int dialog(lua_State *L) {
-	warning("STUB: DIALOG");
+	const char *title, *string, *more;
+	double tileIndex;
+
+	title = lua_tostring(L, 1);
+	tileIndex = lua_tonumber(L, 2);
+	string = lua_tostring(L, 3);
+	more = lua_tostring(L, 4);
+
+	if (!more || more[0] == '0')
+		more = NULL;
+
+	g_hdb->_lua->checkParameters("dialog", 4);
+
+	lua_pop(L, 4);
+	if (string)
+		g_hdb->_window->openDialog(title, (int)tileIndex, string, (int)more, more);
 	return 0;
 }
 
