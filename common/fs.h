@@ -230,6 +230,15 @@ public:
 	 * @return pointer to the stream object, 0 in case of a failure
 	 */
 	WriteStream *createWriteStream() const;
+
+	/**
+	 * Creates a directory referred by this node. This assumes that this
+	 * node refers to non-existing directory. If this is not the case,
+	 * false is returned.
+	 *
+	 * @return true if the directory was created, false otherwise.
+	 */
+	bool createDirectory() const;
 };
 
 /**
