@@ -33,6 +33,11 @@ enum {
 	kInvItemSpaceX = 48,
 	kInvItemSpaceY = 40,
 	kInvItemPerLine = 3,
+	kDlvItemSpaceX = 48,
+	kDlvItemSpaceY = (kTileHeight * 2 + 16),
+	kDlvItemPerLine = 3,
+	kDlvItemTextY = (kScreenHeight - 30),
+	kNumCrazy = 37,
 	kTextOutCenterX = ((kScreenWidth - kTileWidth * 5) / 2),
 	kPauseY = (kScreenHeight / 2 - 64)
 };
@@ -61,6 +66,18 @@ struct InvWinInfo {
 	bool active;
 
 	InvWinInfo() : x(0), y(0), width(0), height(0), selection(0), active(false) {}
+};
+
+struct DlvsInfo {
+	int x, y;
+	int width, height;
+	bool active;
+	int selected;
+	bool animate;
+	uint32 delay1, delay2, delay3;
+	bool go1, go2, go3;
+
+	DlvsInfo() : x(0), y(0), width(0), height(0), active(false), selected(0), animate(false), delay1(0), delay2(0), delay3(0), go1(false), go2(false), go3(false) {}
 };
 
 struct TOut {
@@ -125,6 +142,7 @@ private:
 
 	InvWinInfo _invWinInfo;
 	Common::Array<TOut *> _textOutList;
+	DlvsInfo _dlvsInfo;
 
 	// Windows GFX
 	Picture *_gfxTL, *_gfxTM, *_gfxTR;
