@@ -457,6 +457,10 @@ void AI::addCallback(CallbackType type, int x, int y, int delay) {
 void AI::processCallbackList() {
 	for (int i = 0; i < kMaxCallbacks; i++)
 		if (_callbacks[i].type != NO_FUNCTION) {
+			if (_callbacks[i].delay) {
+				_callbacks[i].delay--;
+				return;
+			}
 			allCallbacks[_callbacks[i].type].function(_callbacks[i].x, _callbacks[i].y);
 			_callbacks[i].type = NO_FUNCTION;
 			_callbacks[i].x = _callbacks[i].y = 0;
