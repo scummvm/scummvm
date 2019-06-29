@@ -624,7 +624,7 @@ void AI::initAllEnts() {
 		AIEntity *temp = _inventory[i].ent;
 
 		// Clear out all ptrs in entity before writing
-		for (int j = 0; i < kMaxAnimFrames; i++) {
+		for (int j = 0; j < kMaxAnimFrames; j++) {
 			temp->blinkGfx[j] = NULL;
 			temp->movedownGfx[j] = NULL;
 			temp->moveupGfx[j] = NULL;
