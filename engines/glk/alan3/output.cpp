@@ -40,10 +40,10 @@ namespace Glk {
 namespace Alan3 {
 
 /* PUBLIC DATA */
-bool anyOutput = FALSE;
-bool capitalize = FALSE;
-bool needSpace = FALSE;
-bool skipSpace = FALSE;
+bool anyOutput;
+bool capitalize;
+bool needSpace;
+bool skipSpace;
 
 /* Screen formatting info */
 int col, lin;

@@ -25,6 +25,7 @@
 #include "glk/alan3/main.h"
 #include "glk/alan3/glkio.h"
 #include "glk/alan3/options.h"
+#include "glk/alan3/output.h"
 #include "glk/alan3/syserr.h"
 #include "common/system.h"
 #include "common/config-manager.h"
@@ -66,6 +67,12 @@ Alan3::Alan3(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, g
 	logOption = false;
 	statusLineOption = true;
 	regressionTestOption = false;
+
+	// output
+	anyOutput = false;
+	capitalize = false;
+	needSpace = false;
+	skipSpace = false;
 
 	// syserr
 	setSyserrHandler(nullptr);

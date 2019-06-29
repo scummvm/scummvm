@@ -36,6 +36,7 @@ extern int pageLength, pageWidth;
 extern bool anyOutput;
 extern bool needSpace;
 extern bool capitalize;
+extern bool skipSpace;
 
 /* Log file */
 extern strid_t logFile;

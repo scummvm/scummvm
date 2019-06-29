@@ -651,7 +651,7 @@ static char *scriptName(int theActor, int theScript) {
 
 
 /*----------------------------------------------------------------------*/
-static void moveActor(int theActor) {
+static void moveActor(CONTEXT, int theActor) {
 	ScriptEntry *scr;
 	StepEntry *step;
 	Aint previousInstance = current.instance;
@@ -659,17 +659,18 @@ static void moveActor(int theActor) {
 	current.actor = theActor;
 	current.instance = theActor;
 	current.location = where(theActor, TRANSITIVE);
-	if (theActor == (int)HERO) {
-#ifdef TODO
-		/* Ask him! */
-		if (setjmp(forfeitLabel) == 0) {
+	if (context._break || theActor == (int)HERO) {
+		if (context._break) {
+			// Forfeit jump destination
+			assert(context._label == "forfeit");
+			context.clear();
+		} else {
+			// Ask him!
 			parse();
 			capitalize = TRUE;
-			fail = FALSE;           /* fail only aborts one actor */
+			fail = FALSE;           // fail only aborts one actor
 		}
-#else
-		syserr("TODO: moveActor setjmp");
-#endif
+
 	} else if (admin[theActor].script != 0) {
 		for (scr = (ScriptEntry *) pointerTo(header->scriptTableAddress); !isEndOfArray(scr); scr++) {
 			if (scr->code == admin[theActor].script) {
@@ -748,63 +749,73 @@ void run(void) {
 		init();
 
 		while (!g_vm->shouldQuit()) {
-			if (ctx._break) {
-				#ifdef TODO
-				// Return here if error during execution
-				switch (setjmp(returnLabel)) {
-				case NO_JUMP_RETURN:
-					break;
-				case ERROR_RETURN:
-					forgetGameState();
-					forceNewPlayerInput();
-					break;
-				case UNDO_RETURN:
-					forceNewPlayerInput();
-					break;
-				default:
-					syserr("Unexpected longjmp() return value");
-				}
-				#endif
-				ctx.clear();
-			} else {
-				if (debugOption)
-					debug(FALSE, 0, 0);
-
-				if (stackDepth(theStack) != 0)
-					syserr("Stack is not empty in main loop");
-
-				if (!current.meta)
-					runPendingEvents();
-			}
-
-			recursionDepth = 0;
-
-			// Move all characters, hero first
-			rememberGameState();
-			current.meta = FALSE;
-			moveActor(header->theHero);
-
-			if (gameStateChanged)
-				rememberCommands();
-			else
-				forgetGameState();
-
-			if (!current.meta) {
-				current.tick++;
-
-				// Remove this call? Since Eval is done up there after each event...
-				resetAndEvaluateRules(rules, header->version);
-
-				/* Then all the other actors... */
-				for (uint i = 1; i <= header->instanceMax; i++)
-					if (i != header->theHero && isAActor(i)) {
-						moveActor(i);
-						resetAndEvaluateRules(rules, header->version);
+			if (!(ctx._break && ctx._label == "forfeit")) {
+				if (ctx._break) {
+					assert(ctx._label == "return");
+#ifdef TODO
+					// Return here if error during execution
+					switch (setjmp(returnLabel)) {
+					case NO_JUMP_RETURN:
+						break;
+					case ERROR_RETURN:
+						forgetGameState();
+						forceNewPlayerInput();
+						break;
+					case UNDO_RETURN:
+						forceNewPlayerInput();
+						break;
+					default:
+						syserr("Unexpected longjmp() return value");
 					}
+#endif
+					ctx.clear();
+				} else {
+					if (debugOption)
+						debug(FALSE, 0, 0);
+
+					if (stackDepth(theStack) != 0)
+						syserr("Stack is not empty in main loop");
+
+					if (!current.meta)
+						runPendingEvents();
+				}
+
+				recursionDepth = 0;
+
+				// Move all characters, hero first
+				rememberGameState();
+				current.meta = FALSE;
 			}
 
-			if (ctx._break && ctx._label == "restart")
-				break;
+			moveActor(ctx, header->theHero);
+
+			if (!ctx._break) {
+				if (gameStateChanged)
+					rememberCommands();
+				else
+					forgetGameState();
+
+				if (!current.meta) {
+					current.tick++;
+
+					// Remove this call? Since Eval is done up there after each event...
+					resetAndEvaluateRules(rules, header->version);
+
+					/* Then all the other actors... */
+					for (uint i = 1; i <= header->instanceMax; i++) {
+						if (i != header->theHero && isAActor(i)) {
+							moveActor(ctx, i);
+							if (ctx._break)
+								break;
+
+							resetAndEvaluateRules(rules, header->version);
+						}
+					}
+				}
+
+				if (ctx._break && ctx._label == "restart")
+					break;
+			}
 		}
 	} while (!g_vm->shouldQuit() && ctx._label == "restart");
 }
