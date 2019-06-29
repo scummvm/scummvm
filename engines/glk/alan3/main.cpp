@@ -134,27 +134,19 @@ static int crcStart(const byte version[4]) {
 /*----------------------------------------------------------------------*/
 static void readTemporaryHeader(ACodeHeader *tmphdr) {
 	codfil->seek(0);
-	codfil->read(&tmphdr->tag[0], 4);
-
-	Aword *ptr = (Aword *)tmphdr + 1;
-	uint i;
-	for (i = 1; i < sizeof(ACodeHeader) / sizeof(Aword); ++i, ++ptr)
-		*ptr = codfil->readUint32BE();
-
-	if (strncmp((char *)tmphdr, "ALAN", 4) != 0)
+	if (codfil->read(&tmphdr->tag[0], sizeof(ACodeHeader)) != sizeof(ACodeHeader) ||
+			strncmp((char *)tmphdr, "ALAN", 4) != 0)
 		playererr("Not an Alan game file, does not start with \"ALAN\"");
 }
 
 
 /*----------------------------------------------------------------------*/
 static void reverseMemory() {
-	if (littleEndian()) {
-		if (debugOption || traceSectionOption || traceInstructionOption)
-			output("<Hmm, this is a little-endian machine, fixing byte ordering....");
-		reverseACD();           /* Reverse content of the ACD file */
-		if (debugOption || traceSectionOption || traceInstructionOption)
-			output("OK.>$n");
-	}
+	if (debugOption || traceSectionOption || traceInstructionOption)
+		output("<Hmm, this is a little-endian machine, fixing byte ordering....");
+	reverseACD();           /* Reverse content of the ACD file */
+	if (debugOption || traceSectionOption || traceInstructionOption)
+		output("OK.>$n");
 }
 
 
@@ -183,11 +175,9 @@ static void loadAndCheckMemory(ACodeHeader tmphdr, Aword crc, char err[]) {
 	}
 
 	memTop = tmphdr.size;
-	if ((int)(sizeof(Aword) * tmphdr.size) > codfil->size())
+	codfil->seek(0);
+	if (codfil->read(memory, sizeof(Aword) * memTop) != (sizeof(Aword) * memTop))
 		syserr("Could not read all ACD code.");
-
-	for (i = 0; i < (int)tmphdr.size; ++i)
-		memory[i] = codfil->readUint32LE();
 
 	/* Calculate checksum */
 	for (i = crcStart(tmphdr.version); i < memTop; i++) {
@@ -368,14 +358,19 @@ static void load(void) {
 	checkVersion(&tmphdr);
 
 	/* Allocate and load memory */
+#ifdef SCUMM_LITTLE_ENDIAN
+	reverseHdr(&tmphdr);
+#endif
+
 	if (tmphdr.size <= sizeof(ACodeHeader) / sizeof(Aword))
 		syserr("Malformed game file. Too small.");
 
 	loadAndCheckMemory(tmphdr, crc, err);
 
+#ifdef SCUMM_LITTLE_ENDIAN
 	reverseMemory();
+#endif
 	setupHeader(tmphdr);
-
 }
 
 

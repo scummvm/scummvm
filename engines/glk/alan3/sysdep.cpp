@@ -313,13 +313,6 @@ void toNative(char copy[], char original[], int charset) {
 
 
 /*======================================================================*/
-int littleEndian() {
-	int x = 1;
-	return (*(char *)&x == 1);
-}
-
-
-/*======================================================================*/
 char *baseNameStart(char *fullPathName) {
 	const char *delimiters = "\\>]/:";
 	int i;

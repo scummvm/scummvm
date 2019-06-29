@@ -130,8 +130,6 @@ extern void toNative(char copy[], /* OUT - Mapped string */
                      char original[], /* IN - string to convert */
                      int charset); /* IN - current character set */
 
-extern int littleEndian(void);
-
 extern char *baseNameStart(char *fullPathName);
 
 } // End of namespace Alan3
