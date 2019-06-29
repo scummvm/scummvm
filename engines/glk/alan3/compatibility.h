@@ -29,12 +29,12 @@ namespace Glk {
 namespace Alan3 {
 
 /* FUNCTIONS: */
-extern bool isPreAlpha5(char version[4]);
-extern bool isPreBeta2(char version[4]);
-extern bool isPreBeta3(char version[4]);
-extern bool isPreBeta4(char version[4]);
-extern bool isPreBeta5(char version[4]);
-extern char *decodedGameVersion(char version[]);
+extern bool isPreAlpha5(const byte version[4]);
+extern bool isPreBeta2(const byte version[4]);
+extern bool isPreBeta3(const byte version[4]);
+extern bool isPreBeta4(const byte version[4]);
+extern bool isPreBeta5(const byte version[4]);
+extern char *decodedGameVersion(const byte version[]);
 
 } // End of namespace Alan3
 } // End of namespace Glk

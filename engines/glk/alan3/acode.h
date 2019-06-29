@@ -505,7 +505,7 @@ struct DictionaryEntry { /* Dictionary */
 struct ACodeHeader {
 	/* Important info */
 	char tag[4];              /* "ALAN" */
-	char version[4];          /* Version of compiler */
+	byte version[4];          /* Version of compiler */
 	Aword uid;                /* Unique id of the compiled game */
 	Aword size;               /* Size of ACD-file in Awords */
 	/* Options */
@@ -562,7 +562,7 @@ struct ACodeHeader {
 struct Pre3_0beta2Header {
 	/* Important info */
 	char tag[4];        /* "ALAN" */
-	char version[4];        /* Version of compiler */
+	byte version[4];    /* Version of compiler */
 	Aword uid;          /* Unique id of the compiled game */
 	Aword size;         /* Size of ACD-file in Awords */
 	/* Options */
@@ -618,7 +618,7 @@ struct Pre3_0beta2Header {
 struct Pre3_0alpha5Header {
 	/* Important info */
 	char tag[4];        /* "ALAN" */
-	char version[4];        /* Version of compiler */
+	byte version[4];    /* Version of compiler */
 	Aword uid;          /* Unique id of the compiled game */
 	Aword size;         /* Size of ACD-file in Awords */
 	/* Options */

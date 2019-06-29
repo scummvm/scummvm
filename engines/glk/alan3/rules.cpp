@@ -243,7 +243,7 @@ void evaluateRules(RuleEntry ruleList[]) {
 
 
 /*=======================================================================*/
-void resetAndEvaluateRules(RuleEntry ruleList[], char *version) {
+void resetAndEvaluateRules(RuleEntry ruleList[], const byte *version) {
 	if (isPreBeta2(version))
 		evaluateRulesPreBeta2();
 	else if (isPreBeta3(version))

@@ -36,7 +36,7 @@ extern bool anyRuleRun;       /* Did any rule run? */
 
 /* FUNCTIONS */
 extern void initRules(Aaddr rulesTableAddress);
-extern void resetAndEvaluateRules(RuleEntry rules[], char *version);
+extern void resetAndEvaluateRules(RuleEntry rules[], const byte *version);
 extern void resetRules(void);
 extern void evaluateRules(RuleEntry rules[]);
 

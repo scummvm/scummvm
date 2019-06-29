@@ -368,7 +368,7 @@ static void reverseSyntaxTablePreBeta2(Aword adr) {
 }
 
 
-static void reverseSyntaxTable(Aword adr, char version[]) {
+static void reverseSyntaxTable(Aword adr, byte version[]) {
 	if (!adr || alreadyDone(adr)) return;
 
 	if (isPreBeta2(version))
@@ -634,7 +634,7 @@ static void reverseNative() {
   */
 void reverseACD(void) {
 	ACodeHeader *hdr = (ACodeHeader *)memory;
-	char version[4];
+	byte version[4];
 	int i;
 
 	/* Make a copy of the version marking to reverse */

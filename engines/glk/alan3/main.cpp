@@ -120,7 +120,7 @@ Common::SeekableReadStream *codfil;
   be compatible.  If header size changes this should return beta2
   header size for later versions.
 */
-static int crcStart(char version[4]) {
+static int crcStart(const byte version[4]) {
 	/* Some earlier versions had a shorter header */
 	if (isPreAlpha5(version))
 		return sizeof(Pre3_0alpha5Header) / sizeof(Aword);
@@ -229,7 +229,7 @@ static const char *decodeState(int c) {
 }
 
 /*======================================================================*/
-char *decodedGameVersion(char version[]) {
+char *decodedGameVersion(const byte version[]) {
 	static char str[100];
 	sprintf(str, "%d.%d%s%d",
 	        (int)version[3],
@@ -278,7 +278,7 @@ static void alphaRunningLaterGame(char gameState) {
 }
 
 /*----------------------------------------------------------------------*/
-static void nonDevelopmentRunningDevelopmentStateGame(char version[]) {
+static void nonDevelopmentRunningDevelopmentStateGame(const byte version[]) {
 	char errorMessage[200];
 	char versionString[100];
 
