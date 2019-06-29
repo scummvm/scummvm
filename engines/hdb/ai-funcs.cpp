@@ -885,7 +885,6 @@ void AI::animateEntity(AIEntity *e) {
 			if we're on a waypoint, nevermind!
 		*/
 		if (e == _player) {
-			warning("FIXME: Ambiguous animateEntity() code");
 			result = e->x == (e->goalX * kTileWidth) && e->y == (e->goalY * kTileWidth);
 			if (!result) {
 				int xv = 0, yv = 0;
