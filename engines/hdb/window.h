@@ -97,6 +97,9 @@ public:
 		return _dialogInfo.active;
 	}
 
+	// MessageBar Functions
+	void openMessageBar(const char *msg, int count);
+
 	// Inventory Functions
 	void drawInventory();
 	void setInvSelect(int status) {

@@ -318,6 +318,10 @@ void Window::setDialogDelay(int delay) {
 	_dialogDelay = g_system->getMillis() + 1000 * delay;
 }
 
+void Window::openMessageBar(const char *msg, int count) {
+	warning("STUB: Add openMessageBar()");
+}
+
 void Window::drawInventory() {
 	int baseX, drawX, drawY;
 	static uint32 timer = g_hdb->getTimeSlice() + 300;
