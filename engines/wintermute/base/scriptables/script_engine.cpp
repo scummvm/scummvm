@@ -67,6 +67,13 @@ ScEngine::ScEngine(BaseGame *inGame) : BaseClass(inGame) {
 		_globals->setProp("Math", &val);
 	}
 
+	// register 'Directory' as global variable
+	if (!_globals->propExists("Directory")) {
+		ScValue val(_gameRef);
+		val.setNative(_gameRef->_directoryClass, true);
+		_globals->setProp("Directory", &val);
+	}
+
 	// prepare script cache
 	for (int i = 0; i < MAX_CACHED_SCRIPTS; i++) {
 		_cachedScripts[i] = nullptr;

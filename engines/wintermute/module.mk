@@ -35,6 +35,7 @@ MODULE_OBJS := \
 	base/scriptables/script_value.o \
 	base/scriptables/script_ext_array.o \
 	base/scriptables/script_ext_date.o \
+	base/scriptables/script_ext_directory.o \
 	base/scriptables/script_ext_file.o \
 	base/scriptables/script_ext_math.o \
 	base/scriptables/script_ext_object.o \
