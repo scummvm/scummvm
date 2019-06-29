@@ -421,6 +421,168 @@ void Window::checkInvSelect(int x, int y) {
 	}
 }
 
+void Window::openDeliveries(bool animate) {
+	DlvEnt *d;
+
+	// Load Gfx
+	for (int i = 0; i < g_hdb->_ai->getDeliveriesAmount(); i++) {
+		d = g_hdb->_ai->getDeliveryItem(i);
+		if (d->itemGfxName[0])
+			d->itemGfx = g_hdb->_drawMan->loadTile(d->itemGfxName);
+		if (d->destGfxName[0])
+			d->destGfx = g_hdb->_drawMan->loadTile(d->destGfxName);
+	}
+
+	warning("STUB: Play SND_POP");
+	_dlvsInfo.animate = animate;
+	_dlvsInfo.delay1 = g_hdb->getTimeSlice() + 500;
+	_dlvsInfo.go1 = _dlvsInfo.go2 = _dlvsInfo.go3 = false;
+
+	if (animate) {
+		_dlvsInfo.go1 = true;
+		_dlvsInfo.selected = g_hdb->_ai->getDeliveriesAmount() - 1;
+	}
+
+	// Make sure cursor isn't on an empty delivery
+	if (_dlvsInfo.selected >= g_hdb->_ai->getDeliveriesAmount())
+		_dlvsInfo.selected = g_hdb->_ai->getDeliveriesAmount() - 1;
+}
+
+void Window::drawDeliveries() {
+	int baseX, drawX, drawY;
+	DlvEnt *d;
+	static uint32 timer = g_hdb->getTimeSlice() + 300;
+
+	debug(9, "STUB: Add Crazy Sounds");
+
+	if (_infobarDimmed > 1)
+		return;
+
+	baseX = drawX = _dlvsInfo.x;
+	drawY = _dlvsInfo.y;
+
+	if (_dlvsInfo.selected >= g_hdb->_ai->getDeliveriesAmount())
+		_dlvsInfo.selected = g_hdb->_ai->getDeliveriesAmount() - 1;
+
+	// Draw Delivery Items
+	int inv;
+	for (inv = 0; inv < g_hdb->_ai->getDeliveriesAmount(); inv++) {
+		int centerX = baseX + (kScreenWidth - baseX) / 2;
+		d = g_hdb->_ai->getDeliveryItem(inv);
+		if (_dlvsInfo.animate && inv == g_hdb->_ai->getDeliveriesAmount() - 1) {
+			if (_dlvsInfo.go1) {
+				if (_dlvsInfo.delay1 < g_hdb->getTimeSlice()) {
+					// Draw Item
+					_gfxIndent->draw(drawX, drawY);
+					d->itemGfx->drawMasked(drawX, drawY);
+
+					g_hdb->_drawMan->setCursor(centerX - g_hdb->_drawMan->stringLength(d->itemTextName) / 2, kDlvItemTextY);
+					g_hdb->_drawMan->drawText(d->itemTextName);
+					if (!_dlvsInfo.go2) {
+						_dlvsInfo.go2 = true;
+						_dlvsInfo.delay2 = g_hdb->getTimeSlice() + 500;
+						warning("STUB: Play crazy sound");
+					}
+				}
+			}
+			if (_dlvsInfo.go2) {
+				if (_dlvsInfo.delay2 < g_hdb->getTimeSlice()) {
+					// Draw TO
+					_gfxArrowTo->drawMasked(_dlvsInfo.x + kDlvItemSpaceX * _dlvsInfo.selected + 8, drawY + kTileHeight);
+
+					g_hdb->_drawMan->setCursor(centerX - g_hdb->_drawMan->stringLength("to") / 2, kDlvItemTextY + 12);
+					g_hdb->_drawMan->drawText("to");
+					if (!_dlvsInfo.go3) {
+						_dlvsInfo.go3 = true;
+						_dlvsInfo.delay3 = g_hdb->getTimeSlice() + 500;
+						warning("STUB: Play crazy sound");
+					}
+				}
+			}
+			if (_dlvsInfo.go3) {
+				if (_dlvsInfo.delay3 < g_hdb->getTimeSlice()) {
+					// Draw Delivery
+					_gfxIndent->draw(drawX, drawY + kTileHeight + 16);
+					d->destGfx->drawMasked(drawX, drawY + kTileHeight + 16);
+
+					g_hdb->_drawMan->setCursor(centerX - (g_hdb->_drawMan->stringLength(d->destTextName) + g_hdb->_drawMan->stringLength("to")) / 2, kDlvItemTextY + 12);
+					g_hdb->_drawMan->drawText("to ");
+					g_hdb->_drawMan->drawText(d->destTextName);
+
+					warning("STUB: Play crazy sound");
+					_dlvsInfo.animate = false;
+				}
+			}
+
+		} else {
+			// Draw Item
+			_gfxIndent->draw(drawX, drawY);
+			d->itemGfx->drawMasked(drawX, drawY);
+			// Draw Delivery
+			_gfxIndent->draw(drawX, drawY + kTileHeight + 16);
+			d->destGfx->drawMasked(drawX, drawY + kTileHeight + 16);
+
+			if (!_dlvsInfo.animate && inv == _dlvsInfo.selected) {
+				g_hdb->_drawMan->setCursor(centerX - g_hdb->_drawMan->stringLength(d->itemTextName)/2, kDlvItemTextY);
+				g_hdb->_drawMan->drawText(d->itemTextName);
+				g_hdb->_drawMan->setCursor(centerX - (g_hdb->_drawMan->stringLength(d->destTextName) + g_hdb->_drawMan->stringLength("to ")) / 2, kDlvItemTextY + 12);
+				g_hdb->_drawMan->drawText("to ");
+				g_hdb->_drawMan->drawText(d->destTextName);
+			}
+
+			drawX += kDlvItemSpaceX;
+			if (drawX >= kScreenWidth) {
+				drawX = baseX;
+				drawY += kDlvItemSpaceY + 8;
+			}
+		}
+	}
+
+	// Draw "No Deliveries" or the arrow that points to the currently selected one
+	if (!inv) {
+		g_hdb->_drawMan->setCursor(baseX + 16, _dlvsInfo.y);
+		g_hdb->_drawMan->drawText("No Deliveries");
+	} else if (!_dlvsInfo.animate) {
+		int dx, dy, rowtwo;
+
+		rowtwo = _dlvsInfo.selected > 2;
+		dx = 8 + _dlvsInfo.x + kDlvItemSpaceX * (_dlvsInfo.selected % 3);
+		dy = _dlvsInfo.y + kTileHeight + (kDlvItemSpaceY + 8) * rowtwo;
+		_gfxArrowTo->drawMasked(dx, dy);
+	}
+
+	// If the infobar is dimmed out, this where we dim the whole thing
+	if (_infobarDimmed) {
+		for (int j = 0; j < kScreenHeight; j += kTileHeight) {
+			for (int i = (kScreenWidth - _gfxInfobar->_width); i < kScreenWidth; i += kTileWidth)
+				_gfxDarken->drawMasked(i, j);
+		}
+	}
+}
+
+void Window::setSelectedDelivery(int which) {
+	_dlvsInfo.selected = which;
+	warning("STUB: Play SND_MENU_SLIDER");
+}
+
+void Window::checkDlvSelect(int x, int y) {
+	int xc, yc;
+
+	if (_dlvsInfo.animate)
+		return;
+
+	int amt = g_hdb->_ai->getDeliveriesAmount();
+
+	// Click on a Delivery to select it for inspection?
+	if (x >= _dlvsInfo.x && x < _dlvsInfo.x + _dlvsInfo.width && y >= _dlvsInfo.y && y < _dlvsInfo.y + _dlvsInfo.height) {
+		xc = (x - _dlvsInfo.x) / kDlvItemSpaceX;
+		yc = (y - _dlvsInfo.y) / kDlvItemSpaceY;
+		int value = yc * kDlvItemPerLine + xc;
+		if (value < amt)
+			setSelectedDelivery(value);
+	}
+}
+
 void Window::textOut(const char *text, int x, int y, int timer) {
 	TOut *t = new TOut;
 
