@@ -37,7 +37,13 @@ struct ScriptPatch {
 	{"GLOBAL_LUA", "for i,npc in npcs do", "for i,npc in pairs(npcs) do"},
 	{"GLOBAL_LUA", "setglobal( npcdef.codename..\"_init\", function() return NPC_Init( %npcdef ) end )", "_G[npcdef.codename .. \"_init\"] = function() return NPC_Init( npcdef ) end"},
 	{"GLOBAL_LUA", "setglobal( npcdef.codename..\"_use\", function(x, y, v1, v2) return NPC_Use( %npcdef, x, y, v1, v2 ) end )", "_G[npcdef.codename .. \"_use\"] = function(x, y, v1, v2) return NPC_Use( npcdef, x, y, v1, v2 ) end"},
+	{"GLOBAL_LUA", "if( dtable.counter < getn(dtable) ) then", "if( dtable.counter < #dtable ) then"},
+	{"GLOBAL_LUA", "if( getglobal( \"map\"..tostring(v1)..\"_complete\" ) ) then", "if( _G[\"map\"..tostring(v1)..\"_complete\"] ) then"},
+	{"GLOBAL_LUA", "closefunc = getglobal( npcdef.codename..\"_use\" )", "closefunc = _G[npcdef.codename..\"_use\"]"},
 	{"MAP00_LUA", "tempfunc = function() emptybed_use( %x, %y, %v1, %v2 ) end", "tempfunc = function() emptybed_use(x, y, v1, v2) end"},
+	{"MAP00_LUA", "if( getn( beds ) == 0 ) then", "if( #beds == 0 ) then"},
+	{"MAP01_LUA", "if( covert_index < getn(covert_dialog) ) then", "if( covert_index < #covert_dialog ) then"},
+	{"MAP01_LUA", "if( chiste_index < getn( chiste_dialog ) )then", "if( covert_index < #covert_dialog ) then"},
 	{NULL, NULL, NULL},
 };
 
