@@ -134,7 +134,7 @@ static char *gettoken(char *txtBuf) {
 
 /*----------------------------------------------------------------------*/
 // TODO replace dependency to exe.c with injection of quitGame() and undo()
-static void getLine(void) {
+static void getLine(CONTEXT) {
 	para();
 	do {
 		statusline();
@@ -160,14 +160,10 @@ static void getLine(void) {
 			g_vm->glk_put_char_stream(logFile, '\n');
 		}
 		/* If the player input an empty command he forfeited his command */
-#ifdef TODO
 		if (strlen(buf) == 0) {
 			clearWordList(playerWords);
-			longjmp(forfeitLabel, 0);
+			LONG_JUMP_LABEL("forfeit")
 		}
-#else
-		syserr("TODO: empty command");
-#endif
 
 		strcpy(isobuf, buf);
 		token = gettoken(isobuf);
@@ -190,7 +186,7 @@ static void getLine(void) {
 
 
 /*======================================================================*/
-void scan(void) {
+void scan(CONTEXT) {
 	int i;
 	int w;
 
@@ -198,11 +194,13 @@ void scan(void) {
 		/* Player used '.' to separate commands. Read next */
 		para();
 		token = gettoken(NULL); /* Or did he just finish the command with a full stop? */
-		if (token == NULL)
-			getLine();
+		if (token == NULL) {
+			CALL0(getLine)
+		}
 		continued = FALSE;
-	} else
-		getLine();
+	} else {
+		CALL0(getLine)
+	}
 
 	freeLiterals();
 	playerWords[0].code = 0; // TODO This means what?

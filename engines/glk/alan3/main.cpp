@@ -656,20 +656,23 @@ static void moveActor(CONTEXT, int theActor) {
 	StepEntry *step;
 	Aint previousInstance = current.instance;
 
+	if (context._break) {
+		// forfeit setjmp replacement destination
+		assert(context._label == "forfeit");
+		context.clear();
+		current.instance = previousInstance;
+		return;
+	}
+
 	current.actor = theActor;
 	current.instance = theActor;
 	current.location = where(theActor, TRANSITIVE);
-	if (context._break || theActor == (int)HERO) {
-		if (context._break) {
-			// Forfeit jump destination
-			assert(context._label == "forfeit");
-			context.clear();
-		} else {
-			// Ask him!
-			parse();
-			capitalize = TRUE;
-			fail = FALSE;           // fail only aborts one actor
-		}
+
+	if (theActor == (int)HERO) {
+		// Ask him!
+		CALL0(parse)
+		capitalize = TRUE;
+		fail = FALSE;           // fail only aborts one actor
 
 	} else if (admin[theActor].script != 0) {
 		for (scr = (ScriptEntry *) pointerTo(header->scriptTableAddress); !isEndOfArray(scr); scr++) {

@@ -26,6 +26,7 @@
 /* Player input scanner for ALAN interpreter module. */
 
 #include "glk/alan3/types.h"
+#include "glk/alan3/jumps.h"
 
 namespace Glk {
 namespace Alan3 {
@@ -37,7 +38,7 @@ extern bool continued;
 /* FUNCTIONS */
 
 extern void forceNewPlayerInput();
-extern void scan();
+extern void scan(CONTEXT);
 
 } // End of namespace Alan3
 } // End of namespace Glk

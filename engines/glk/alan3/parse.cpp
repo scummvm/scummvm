@@ -1437,7 +1437,7 @@ static void parseInstanceCommand(Parameter parameters[], Parameter multipleParam
 
 
 /*======================================================================*/
-void parse(void) {
+void parse(CONTEXT) {
 	/* longjmp's ahead so these need to survive to not leak memory */
 	static Parameter *parameters = NULL;
 	static Parameter *multipleParameters = NULL;
@@ -1446,9 +1446,10 @@ void parse(void) {
 
 	if (endOfWords(currentWordIndex)) {
 		currentWordIndex = 0;
-		scan();
-	} else if (anyOutput)
+		CALL0(scan)
+	} else if (anyOutput) {
 		para();
+	}
 
 	capitalize = TRUE;
 

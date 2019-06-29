@@ -27,13 +27,14 @@
 
 #include "glk/alan3/types.h"
 #include "glk/alan3/params.h"
+#include "glk/alan3/jumps.h"
 
 namespace Glk {
 namespace Alan3 {
 
 /* FUNCTIONS */
 
-extern void parse(void);
+extern void parse(CONTEXT);
 extern void initParsing(void);
 
 } // End of namespace Alan3
