@@ -564,6 +564,38 @@ AIEntity *AI::findEntityType(AIType type, int x, int y) {
 	return NULL;
 }
 
+void AI::getEntityXY(const char *entName, int *x, int *y) {
+	AIEntity *e;
+	HereT *h;
+
+	for (Common::Array<AIEntity *>::iterator it = _ents->begin(); it != _ents->end(); it++) {
+		e = *it;
+		if (e->entityName && !scumm_stricmp(entName, e->entityName)) {
+			*x = e->tileX;
+			*y = e->tileY;
+			return;
+		}
+	}
+
+	for (Common::Array<AIEntity *>::iterator jt = _floats->begin(); jt != _floats->end(); jt++) {
+		e = *jt;
+		if (e->entityName && !scumm_stricmp(entName, e->entityName)) {
+			*x = e->tileX;
+			*y = e->tileY;
+			return;
+		}
+	}
+
+	for (Common::Array<HereT *>::iterator kt = _hereList->begin(); kt != _hereList->end(); kt++) {
+		h = *kt;
+		if (!scumm_stricmp(entName, h->entName)) {
+			*x = h->x;
+			*y = h->y;
+			return;
+		}
+	}
+}
+
 void AI::removeEntity(AIEntity *e) {
 	_ents->erase(&e);
 }
