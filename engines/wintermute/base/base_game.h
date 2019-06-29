@@ -60,6 +60,7 @@ class BaseKeyboardState;
 class BaseGameSettings;
 class ScEngine;
 class SXMath;
+class SXDirectory;
 class UIWindow;
 class VideoPlayer;
 class VideoTheoraPlayer;
@@ -158,6 +159,7 @@ public:
 	ScEngine *_scEngine;
 #endif
 	BaseScriptable *_mathClass;
+	BaseScriptable *_directoryClass;
 	BaseSurfaceStorage *_surfaceStorage;
 	BaseFontStorage *_fontStorage;
 	BaseGame(const Common::String &targetName);

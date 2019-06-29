@@ -73,6 +73,7 @@ public:
 BaseScriptable *makeSXArray(BaseGame *inGame, ScStack *stack);
 BaseScriptable *makeSXDate(BaseGame *inGame, ScStack *stack);
 BaseScriptable *makeSXFile(BaseGame *inGame, ScStack *stack);
+BaseScriptable *makeSXDirectory(BaseGame *inGame);
 BaseScriptable *makeSXMath(BaseGame *inGame);
 BaseScriptable *makeSXMemBuffer(BaseGame *inGame, ScStack *stack);
 BaseScriptable *makeSXObject(BaseGame *inGame, ScStack *stack);
