@@ -23,7 +23,7 @@
 #ifndef HDB_MPC_H
 #define HDB_MPC_H
 
-#endif // !HDB_MPC_H
+namespace HDB {
 
 #define		TILE_TELEPORT1					"anim_t32_teleporter1"
 #define		TILE_TOUCHPLATE_OFF				"t32_touchplateoff"
@@ -921,4 +921,6 @@ enum IconList {
 	ICON_WAYPOINT_2
 };
 
+} // End of Namespace
 
+#endif // !HDB_MPC_H
