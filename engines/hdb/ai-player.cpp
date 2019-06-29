@@ -1274,15 +1274,40 @@ void callbackDoorOpenClose(int x, int y) {
 
 // Utility Functions
 void aiAnimateStanddown(AIEntity *e, int speed) {
-	warning("STUB: AI: aiAnimateStanddown required");
+	if (e->value2-- > 0)
+		return;
+	e->value2 = speed;
+
+	if (e->type == AI_GUY && e->animFrame > 0)
+		e->value2 = 0;
+	e->draw = e->standdownGfx[e->animFrame];
+	e->animFrame++;
+	if (e->animFrame >= e->standdownFrames)
+		e->animFrame = 0;
 }
 
 void aiGenericAction(AIEntity *e) {
-	warning("STUB: AI: aiGenericAction required");
+	if (!e->goalX)
+		g_hdb->_ai->findPath(e);
+	else if (onEvenTile(e->x, e->y))
+		debug(9, "STUB: Play SND_FOOTSTEPS");
+	g_hdb->_ai->animateEntity(e);
 }
 
 void aiGetItemAction(AIEntity *e) {
-	warning("STUB: AI: aiGetItemAction required");
+	if (!e->onScreen)
+		return;
+
+	AIEntity *p = g_hdb->_ai->getPlayer();
+	if (abs(p->x - e->x) < 16 && abs(p->y - e->y) < 16 && e->level == p->level) {
+		if (e->aiUse)
+			e->aiUse(e);
+		if (e->luaFuncUse[0])
+			g_hdb->_lua->callFunction(e->luaFuncUse, 0);
+
+		g_hdb->_ai->getItemSound(e->type);
+		g_hdb->_ai->addToInventory(e);
+	}
 }
 
 } // End of Namespace
