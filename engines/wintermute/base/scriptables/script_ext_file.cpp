@@ -346,7 +346,6 @@ bool SXFile::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 			writeLine = Common::String::format("%s", line);
 		}
 		_writeFile->writeString(writeLine);
-		_writeFile->writeByte(0);
 		stack->pushBool(true);
 
 		return STATUS_OK;
