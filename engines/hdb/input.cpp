@@ -46,7 +46,45 @@ bool Input::init() {
 }
 
 void Input::setButtons(uint16 b) {
+	static int changeState = 0;
+	static int drawDlg = 0;
+	static int quit = 0;
+	static int debugOn = 0;
+
 	_buttons = b;
+	if (!b)
+		return;
+
+	// Change Game State
+	if ((_buttons & kButtonA) && !changeState && (g_hdb->getGameState() != GAME_MENU)) {
+		if (g_hdb->_ai->cinematicsActive() && g_hdb->_ai->cineAbortable()) {
+			g_hdb->_ai->cineAbort();
+			warning("STUB: setButtons: Play SND_POP");
+			return;
+		}
+
+		if (g_hdb->getGameState() == GAME_TITLE)
+			warning("STUB: setButtons: changeToMenu() required");
+		warning("STUB: setButtons: Play SND_MENU_BACKOUT");
+		g_hdb->changeGameState();
+	}
+
+	// Debug Mode Cycling
+	warning("STUB: setButtons: Check and set Debug Mode");
+
+	if (g_hdb->getGameState() == GAME_PLAY) {
+		// Is Player Dead? Click on TRY AGAIN
+		if (g_hdb->_ai->playerDead()) {
+			warning("STUB: TRY AGAIN is onscreen");
+			return;
+		}
+
+		warning("STUB: setButtons: Choose from DialogChoice");
+
+		// Try to move the player
+		if (!g_hdb->_ai->playerDead())
+			g_hdb->_ai->movePlayer(_buttons);
+	}
 }
 
 uint16 Input::getButtons() {
