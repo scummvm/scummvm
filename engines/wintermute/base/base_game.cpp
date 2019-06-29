@@ -2297,7 +2297,7 @@ ScValue *BaseGame::scGetProperty(const Common::String &name) {
 	// SaveDirectory (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (name == "SaveDirectory") {
-		AnsiString dataDir = "saves/";	// TODO: This is just to avoid telling the engine actual paths.
+		AnsiString dataDir = "saves"; // See also: SXDirectory::scGetProperty("TempDirectory")
 		_scValue->setString(dataDir.c_str());
 		return _scValue;
 	}
