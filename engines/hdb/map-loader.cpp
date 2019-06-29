@@ -526,7 +526,16 @@ bool Map::load(Common::SeekableReadStream *stream) {
 		case INFO_TELEPORTER18:
 		case INFO_TELEPORTER19:
 		case INFO_TELEPORTER20:
-			warning("STUB: Map::load: AddToTeleporterList required");
+			g_hdb->_ai->addToTeleportList(
+				aiInfo[_iconList[i].icon].type - INFO_TELEPORTER1,
+				_iconList[i].x,
+				_iconList[i].y,
+				_iconList[i].dir,
+				_iconList[i].level,
+				_iconList[i].value1,
+				_iconList[i].value2,
+				_iconList[i].funcUse
+			);
 			break;
 
 		case INFO_SET_MUSIC:
@@ -535,13 +544,33 @@ bool Map::load(Common::SeekableReadStream *stream) {
 			break;
 
 		case INFO_LUA:
-			warning("STUB: Map::load: AddToLUAList required");
+			g_hdb->_ai->addToLuaList(
+				_iconList[i].x,
+				_iconList[i].y,
+				_iconList[i].value1,
+				_iconList[i].value2,
+				_iconList[i].funcInit,
+				_iconList[i].funcAction,
+				_iconList[i].funcUse
+			);
 			break;
 		case INFO_HERE:
-			warning("STUB: Map::load: AddToHereList required");
+			g_hdb->_ai->addToHereList(
+				_iconList[i].funcInit,
+				_iconList[i].x,
+				_iconList[i].y
+			);
 			break;
 		case INFO_TRIGGER:
-			warning("STUB: Map::load: AddToTriggerList required");
+			g_hdb->_ai->addToTriggerList(
+				_iconList[i].funcInit,
+				_iconList[i].funcUse,
+				_iconList[i].x,
+				_iconList[i].y,
+				_iconList[i].value1,
+				_iconList[i].value2,
+				_iconList[i].funcAction
+			);
 			break;
 
 		case INFO_FAIRY_SRC:
