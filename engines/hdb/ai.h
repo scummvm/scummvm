@@ -853,6 +853,9 @@ public:
 	bool cinematicsActive() {
 		return _cineActive;
 	}
+	bool cineAbortable() {
+		return _cineAbortable;
+	}
 	void processCines();
 	void cineCleanup();
 	void cineAbort();
