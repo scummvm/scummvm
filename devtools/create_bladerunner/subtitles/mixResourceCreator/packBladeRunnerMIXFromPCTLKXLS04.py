@@ -125,7 +125,7 @@ from struct import *
 from subtlsVersTextResource import *
 
 COMPANY_EMAIL = "classic.adventures.in.greek@gmail.com"
-APP_VERSION = "1.10"
+APP_VERSION = "1.50"
 APP_NAME = "packBladeRunnerMIXFromPCTLKXLS"
 APP_WRAPPER_NAME = "mixResourceCreator.py"
 APP_NAME_SPACED = "Blade Runner MIX Resource Creator"
@@ -315,15 +315,16 @@ def initOverrideEncoding(pathToConfigureFontsTranslationTxt):
 		sys.exit(1)	# terminate if override Failed (Blade Runner)
 	#
 	#
-	if(len(gListOfFontNamesToOutOfOrderGlyphs) == 0):
-		tmpFontType = DEFAULT_SUBTITLES_FONT_NAME[:-4] # remove the .FON extensionFromTheName
-		print "[Info] Empty list for out of order glyphs. Assuming default out of order glyphs and only for the %s font" % (tmpFontType)
-		tmplistOfOutOfOrderGlyphs = []
-		tmplistOfOutOfOrderGlyphs.append((u'\xed', u'\u0386')) # spanish i (si)
-		tmplistOfOutOfOrderGlyphs.append((u'\xf1', u'\xa5')) # spanish n (senor)
-		tmplistOfOutOfOrderGlyphs.append((u'\xe2', u'\xa6')) # a for (liver) pate
-		tmplistOfOutOfOrderGlyphs.append((u'\xe9', u'\xa7')) # e for (liver) pate
-		gListOfFontNamesToOutOfOrderGlyphs.append( (tmpFontType, tmplistOfOutOfOrderGlyphs))
+	#We no longer assume default out of order list
+	#if(len(gListOfFontNamesToOutOfOrderGlyphs) == 0):
+	#	tmpFontType = DEFAULT_SUBTITLES_FONT_NAME[:-4] # remove the .FON extensionFromTheName
+	#	print "[Info] Empty list for out of order glyphs. Assuming default out of order glyphs and only for the %s font" % (tmpFontType)
+	#	tmplistOfOutOfOrderGlyphs = []
+	#	tmplistOfOutOfOrderGlyphs.append((u'\xed', u'\u0386')) # spanish i (si)
+	#	tmplistOfOutOfOrderGlyphs.append((u'\xf1', u'\xa5')) # spanish n (senor)
+	#	tmplistOfOutOfOrderGlyphs.append((u'\xe2', u'\xa6')) # a for (liver) pate
+	#	tmplistOfOutOfOrderGlyphs.append((u'\xe9', u'\xa7')) # e for (liver) pate
+	#	gListOfFontNamesToOutOfOrderGlyphs.append( (tmpFontType, tmplistOfOutOfOrderGlyphs))
 	if gTraceModeEnabled:
 		print "[Info] Explicit Out Of Order Glyphs List: " , gListOfFontNamesToOutOfOrderGlyphs
 	# arrange list properly:
@@ -331,22 +332,23 @@ def initOverrideEncoding(pathToConfigureFontsTranslationTxt):
 	# if such case then the pair with the key should precede the pair with the value matched,
 	# to avoid replacing instances of a special character (key) with a delegate (value) that will be later replaced again due to the second pair
 	#
-	for (itFontName, itOOOGlyphList) in gListOfFontNamesToOutOfOrderGlyphs:
-		while (True):
-			foundMatchingPairs = False
-			for glyphDelegItA in itOOOGlyphList:
-				for glyphDelegItB in itOOOGlyphList:
-					if (glyphDelegItA[1] == glyphDelegItB[0] and  itOOOGlyphList.index(glyphDelegItA) < itOOOGlyphList.index(glyphDelegItB)):
-						# swap
-						itamA, itamB = itOOOGlyphList.index(glyphDelegItA), itOOOGlyphList.index(glyphDelegItB)
-						itOOOGlyphList[itamB], itOOOGlyphList[itamA] = itOOOGlyphList[itamA], itOOOGlyphList[itamB]
-						foundMatchingPairs = True
+	if(len(gListOfFontNamesToOutOfOrderGlyphs) > 0):
+		for (itFontName, itOOOGlyphList) in gListOfFontNamesToOutOfOrderGlyphs:
+			while (True):
+				foundMatchingPairs = False
+				for glyphDelegItA in itOOOGlyphList:
+					for glyphDelegItB in itOOOGlyphList:
+						if (glyphDelegItA[1] == glyphDelegItB[0] and  itOOOGlyphList.index(glyphDelegItA) < itOOOGlyphList.index(glyphDelegItB)):
+							# swap
+							itamA, itamB = itOOOGlyphList.index(glyphDelegItA), itOOOGlyphList.index(glyphDelegItB)
+							itOOOGlyphList[itamB], itOOOGlyphList[itamA] = itOOOGlyphList[itamA], itOOOGlyphList[itamB]
+							foundMatchingPairs = True
+							break
+					if (foundMatchingPairs == True):
 						break
-				if (foundMatchingPairs == True):
-					break
-			if(foundMatchingPairs == False):
-				break # the whole while loop
-        gArrangedListOfFontNamesToOutOfOrderGlyphs.append( ( itFontName, itOOOGlyphList))
+				if(foundMatchingPairs == False):
+					break # the whole while loop
+			gArrangedListOfFontNamesToOutOfOrderGlyphs.append( ( itFontName, itOOOGlyphList))
 	if gTraceModeEnabled:
 		print "[Debug] Arranged Glyphs Delegates List: " , gArrangedListOfFontNamesToOutOfOrderGlyphs
 	return
@@ -473,8 +475,13 @@ def getSupportedTranslatedTrxFilenamesList():
 		if (gActiveLanguageDescriptionCodeTuple[1] != '#' and tmpActiveLanguageDescriptionCodeTuple[1] == gActiveLanguageDescriptionCodeTuple[1]) \
 			or (gActiveLanguageDescriptionCodeTuple[1] == '#' and tmpActiveLanguageDescriptionCodeTuple[1] != '#' and tmpActiveLanguageDescriptionCodeTuple[0] != 'RU_RUS'):
 			for translatedTRxFileName in [ (x[0] + '%s' % (tmpActiveLanguageDescriptionCodeTuple[1])) for x in SUPPORTED_TRANSLATION_SHEETS] :
-				if translatedTRxFileName[:-1] != SUPPORTED_DIALOGUE_VERSION_SHEET[:-1] or tmpActiveLanguageDescriptionCodeTuple[1] == 'E':
-					listOfSupportedTranslatedTrxFilenames.append(translatedTRxFileName)
+				if translatedTRxFileName[:-1] != SUPPORTED_DIALOGUE_VERSION_SHEET[:-1] \
+					or (gActiveLanguageDescriptionCodeTuple[1] == '#' and tmpActiveLanguageDescriptionCodeTuple[1] == 'E') \
+					or (gActiveLanguageDescriptionCodeTuple[1] != '#'):
+					if translatedTRxFileName[:-1] == SUPPORTED_DIALOGUE_VERSION_SHEET[:-1]:
+						listOfSupportedTranslatedTrxFilenames.append(SUPPORTED_DIALOGUE_VERSION_SHEET)
+					else:
+						listOfSupportedTranslatedTrxFilenames.append(translatedTRxFileName)
 	return listOfSupportedTranslatedTrxFilenames
 #
 def outputMIX():
@@ -641,10 +648,11 @@ def translateQuoteToAsciiProper(cellObj, pSheetName):
 				localTargetEncoding = tmpTargetEnc
 				break
 
-		for (tmpFontName, tmpOOOList) in gListOfFontNamesToOutOfOrderGlyphs:
-			if tmpFontName == DEFAULT_SUBTITLES_FONT_NAME[:-4]:
-				pertinentListOfOutOfOrderGlyphs = tmpOOOList
-				break
+		if(len(gListOfFontNamesToOutOfOrderGlyphs) > 0):
+			for (tmpFontName, tmpOOOList) in gListOfFontNamesToOutOfOrderGlyphs:
+				if tmpFontName == DEFAULT_SUBTITLES_FONT_NAME[:-4]:
+					pertinentListOfOutOfOrderGlyphs = tmpOOOList
+					break
 	elif pSheetName in supportedTranslatedTrxFilenamesList:
 		pertinentFontType = ''
         #[treAndFontTypeTuple for treAndFontTypeTuple in SUPPORTED_TRANSLATION_SHEETS if treAndFontTypeTuple[0] == pSheetName]
@@ -658,10 +666,11 @@ def translateQuoteToAsciiProper(cellObj, pSheetName):
 				localTargetEncoding = tmpTargetEnc
 				break
 
-		for (tmpFontName, tmpOOOList) in gListOfFontNamesToOutOfOrderGlyphs:
-			if tmpFontName ==  pertinentFontType:
-				pertinentListOfOutOfOrderGlyphs = tmpOOOList
-				break
+		if(len(gListOfFontNamesToOutOfOrderGlyphs) > 0):
+			for (tmpFontName, tmpOOOList) in gListOfFontNamesToOutOfOrderGlyphs:
+				if tmpFontName ==  pertinentFontType:
+					pertinentListOfOutOfOrderGlyphs = tmpOOOList
+					break
 
 	#newQuoteReplaceSpecials = newQuoteReplaceSpecials.replace(u"\u0386", u"\u00A3")
 	for repTuple in pertinentListOfOutOfOrderGlyphs:
@@ -772,6 +781,8 @@ def inputXLS(pathtoInputExcelFilename):
 	# Check for a version info sheet and create one if it does not exist
 	xl_sheet = None
 	try:
+		if gTraceModeEnabled:
+			print '[Debug] Checking for existence of sheet: ' + SUPPORTED_DIALOGUE_VERSION_SHEET
 		xl_sheet = xl_workbook.sheet_by_name(SUPPORTED_DIALOGUE_VERSION_SHEET)
 	except Exception as e:
 		if gTraceModeEnabled:
@@ -820,6 +831,8 @@ def inputXLS(pathtoInputExcelFilename):
 		return
 	# end of check for a version info sheet
 
+	if gTraceModeEnabled:
+		print '[Debug] mergedListOfSupportedSubtitleSheetsAndTranslatedTREs: ', mergedListOfSupportedSubtitleSheetsAndTranslatedTREs
 	for sheetDialogueName in mergedListOfSupportedSubtitleSheetsAndTranslatedTREs:
 		xl_sheet = None
 		try:
@@ -882,16 +895,16 @@ def inputXLS(pathtoInputExcelFilename):
 			del gTableOfStringEntries[:]
 			del gTableOfStringOffsets[:]
 			for row_idx in range(2, xl_sheet.nrows):
-				if gTraceModeEnabled:
-					print "[Debug] Line %d" % (row_idx)
+				#if gTraceModeEnabled:
+				#	print "[Debug] Line %d" % (row_idx)
 				for col_idx in range(0, xl_sheet.ncols):
 					cell_obj = xl_sheet.cell(row_idx, col_idx)
 					#
 					# FOR IN-GAME QUOTES -- Iterate through columns starting from col 0. We need cols: 0, 2
 					#
 					if mode == 1:
-						if gTraceModeEnabled:
-							print ('[Debug] Column: [%s] cell_obj: [%s]' % (col_idx, cell_obj))
+						#if gTraceModeEnabled:
+						#	print ('[Debug] Column: [%s] cell_obj: [%s]' % (col_idx, cell_obj))
 						if(col_idx == 0):
 							#switchFlagShowQuote = False
 							twoTokensfirstColSplitAtDotXLS = cell_obj.value.split('.', 1)
