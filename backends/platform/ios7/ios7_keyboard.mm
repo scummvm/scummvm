@@ -64,6 +64,8 @@
 		[[[UIBarButtonItem alloc] initWithTitle:@"\u2630" style:UIBarButtonItemStylePlain target:self action:@selector(mainMenuKey)] autorelease],
 		// Escape key
 		[[[UIBarButtonItem alloc] initWithTitle:@"Esc" style:UIBarButtonItemStylePlain target:self action:@selector(escapeKey)] autorelease],
+		// Tab key
+		[[[UIBarButtonItem alloc] initWithTitle:@"Tab" style:UIBarButtonItemStylePlain target:self action:@selector(tabKey)] autorelease],
 		// Return key
 		[[[UIBarButtonItem alloc] initWithTitle:@"\u23ce" style:UIBarButtonItemStylePlain target:self action:@selector(returnKey)] autorelease],
 		// Function keys
@@ -141,6 +143,10 @@
 
 - (void) escapeKey {
 	[softKeyboard handleKeyPress:Common::KEYCODE_ESCAPE];
+}
+
+- (void) tabKey {
+	[softKeyboard handleKeyPress:Common::KEYCODE_TAB];
 }
 
 - (void) fn1Key {
