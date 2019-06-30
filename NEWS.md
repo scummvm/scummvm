@@ -123,6 +123,10 @@ For a more comprehensive changelog of the latest experimental code, see:
  Windows port:
    - Added option to use the system file browser instead of the ScummVM file browser.
 
+ RISC OS port:
+   - Added a StrongHelp manual.
+   - Added error reporting using !Reporter.
+
 #### 2.0.0 (2017-12-17)
 
  New Games:
