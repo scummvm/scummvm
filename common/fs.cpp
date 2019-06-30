@@ -157,6 +157,11 @@ bool FSNode::createDirectory() const {
 		return false;
 
 	if (_realNode->exists()) {
+		if (_realNode->isDirectory()) {
+			warning("FSNode::createDirectory: '%s' already exists", getName().c_str());
+		} else {
+			warning("FSNode::createDirectory: '%s' is a file", getName().c_str());
+		}
 		return false;
 	}
 
