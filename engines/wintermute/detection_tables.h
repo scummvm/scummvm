@@ -29,9 +29,9 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"5ld",             "Five Lethal Demons"},
 	{"5ma",             "Five Magical Amulets"},
 	{"actualdest",      "Actual Destination"},
-	{"agustin",			"Boredom of Agustin Cordes"},
-	{"alimardan1",		"Alimardan's Mischief"},
-	{"alimardan2",		"Alimardan Meets Merlin"},
+	{"agustin",         "Boredom of Agustin Cordes"},
+	{"alimardan1",      "Alimardan's Mischief"},
+	{"alimardan2",      "Alimardan Meets Merlin"},
 	{"basisoctavus",    "Basis Octavus"},
 	{"bickadoodle",     "Bickadoodle"},
 	{"bookofgron",      "Book of Gron Part One"},
@@ -54,6 +54,7 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"dfafadventure",   "DFAF Adventure"},
 	{"dreamcat",        "Dreamcat"},
 	{"dreaming",        "Des Reves Elastiques Avec Mille Insectes Nommes Georges"},
+	{"driller",         "The Driller Incident"},
 	{"dirtysplit",      "Dirty Split"},
 	{"dreamscape",      "Dreamscape"},
 	{"escapemansion",   "Escape from the Mansion"},
@@ -71,6 +72,7 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"mirage",          "Mirage"},
 	{"nighttrain",      "Night Train"},
 	{"oknytt",          "Oknytt"},
+	{"onehelluvaday",   "One Helluva Day"},
 	{"openquest",       "Open Quest"},
 	{"paintaria",       "Paintaria"},
 	{"pigeons",         "Pigeons in the Park"},
@@ -376,25 +378,33 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("dreaming", "",
 		WME_ENTRY1s("data.dcp", "4af26d97ea063fc1277ce30ae431de90", 8804073), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
 
+	// The Driller Incident (English)
+	WME_WINENTRY("driller", "",
+		WME_ENTRY1s("data.dcp","9cead7a85244263e0a5ff8f69dd7a1fc", 13671792), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+
+	// The Driller Incident (Russian)
+	WME_WINENTRY("driller", "",
+		WME_ENTRY1s("data.dcp","5bec2442339dd1ecf221873fff704617", 13671830), Common::RU_RUS, ADGF_UNSTABLE, LATEST_VERSION),
+
 	// Dreamcat
 	WME_WINENTRY("dreamcat", "",
 		WME_ENTRY1s("data.dcp","189bd4eef29034f4ff4ed30120eaac4e", 7758040), Common::EN_ANY, ADGF_UNSTABLE | GF_LOWSPEC_ASSETS, LATEST_VERSION),
 
 	// Dreamscape
 	WME_WINENTRY("dreamscape", "",
-		WME_ENTRY1s("data.dcp",  "7a5752ed4446c862be9f02d7932acf54", 17034377), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+		WME_ENTRY1s("data.dcp", "7a5752ed4446c862be9f02d7932acf54", 17034377), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
 
 	// Escape from the Mansion
 	WME_WINENTRY("escapemansion", "Beta 1",
-		WME_ENTRY1s("data.dcp",  "d8e348b2312cc36a929cad75f12e0b3a", 21452380), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+		WME_ENTRY1s("data.dcp", "d8e348b2312cc36a929cad75f12e0b3a", 21452380), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
 
 	// Escape from the Mansion
 	WME_WINENTRY("escapemansion", "Beta 2",
-		WME_ENTRY1s("data.dcp",  "ded5fa6c5f2afdaf2cafb53e52cd3dd8", 21455763), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+		WME_ENTRY1s("data.dcp", "ded5fa6c5f2afdaf2cafb53e52cd3dd8", 21455763), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
 
 	// Escape from the Mansion
 	WME_WINENTRY("escapemansion", "1.3",
-		WME_ENTRY1s("data.dcp",  "1e5d231b56c8a228cd15cb690f50253e", 29261972), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+		WME_ENTRY1s("data.dcp", "1e5d231b56c8a228cd15cb690f50253e", 29261972), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
 
 	// Four
 	WME_WINENTRY("four", "",
@@ -402,7 +412,7 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Framed
 	WME_WINENTRY("framed", "",
-		WME_ENTRY1s("data.dcp",  "e7259fb36f2c6f9f28242291e0c3de98", 34690568), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+		WME_ENTRY1s("data.dcp", "e7259fb36f2c6f9f28242291e0c3de98", 34690568), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
 
 	// Ghost in the Sheet
 	WME_WINENTRY("ghostsheet", "",
@@ -498,7 +508,7 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Looky (English)
 	WME_WINENTRY("looky", "",
 		WME_ENTRY2s("english.dcp", "71ed521b7a1d1a23c3805c26f16de2b9", 245968038,
-					"data.dcp",  "d0f2bb73425db45fcff6690637c430dd", 1342439), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+					"data.dcp", "d0f2bb73425db45fcff6690637c430dd", 1342439), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
 
 	// Looky (German)
 	WME_WINENTRY("looky", "",
@@ -548,6 +558,10 @@ static const WMEGameDescription gameDescriptions[] = {
 		WME_ENTRY2s("spanish.dcp", "10c46152cb29581671f3b6b7c229c957", 319406572,
 					"d_sounds.dcp", "7d04dff8ca11174486bd4b7a80fdcabb", 154943401), Common::ES_ESP, ADGF_UNSTABLE, LATEST_VERSION),
 
+	// One Helluva Day (Demo) (multi-language)
+	WME_WINENTRY("onehelluvaday", "",
+		WME_ENTRY1s("data.dcp", "144e23fca7c1c54103dad9c1342de2b6", 229963509), Common::UNK_LANG, ADGF_UNSTABLE | ADGF_DEMO, LATEST_VERSION),
+
 	// Open Quest
 	WME_WINENTRY("openquest", "",
 		WME_ENTRY1s("data.dcp", "16893e3fc15a211a49654ae66f684f28", 82281736), Common::EN_ANY, ADGF_UNSTABLE | GF_LOWSPEC_ASSETS, LATEST_VERSION),
@@ -567,7 +581,7 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Pizza Morgana
 	WME_WINENTRY("pizzamorgana", "",
 		WME_ENTRY2s("english.dcp", "7fa6149bb44574109668ce585d6c41c9", 9282608,
-					"data.dcp",  "a69994c463ff5fcc6fe1800662f5b7d0", 34581370), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_0),
+					"data.dcp", "a69994c463ff5fcc6fe1800662f5b7d0", 34581370), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_0),
 
 	// Project: Doom
 	WME_WINENTRY("projectdoom", "",
@@ -1736,7 +1750,7 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Satan and Son
 	WME_WINENTRY("satanandson", "",
-		WME_ENTRY1s("data.dcp",  "16a6ba8174b697bbba9299619d1e20c4", 67539054), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, LATEST_VERSION),
+		WME_ENTRY1s("data.dcp", "16a6ba8174b697bbba9299619d1e20c4", 67539054), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, LATEST_VERSION),
 
 	// Rosemary
 	WME_WINENTRY("rosemary", "",
@@ -1744,11 +1758,11 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Securanote
 	WME_PLATENTRY("securanote", "",
-		WME_ENTRY1s("data.dcp",  "5213d3e59b9e95b7fbd5c56f7de5341a", 2625554), Common::EN_ANY, Common::kPlatformIOS, ADGF_UNSTABLE, LATEST_VERSION),
+		WME_ENTRY1s("data.dcp", "5213d3e59b9e95b7fbd5c56f7de5341a", 2625554), Common::EN_ANY, Common::kPlatformIOS, ADGF_UNSTABLE, LATEST_VERSION),
 
 	// Shaban
 	WME_WINENTRY("shaban", "",
-		WME_ENTRY1s("data.dcp",  "35f702ca9baabc5c620e0be230195c8a", 755388466), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+		WME_ENTRY1s("data.dcp", "35f702ca9baabc5c620e0be230195c8a", 755388466), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
 
 	// The Shine of a Star
 	WME_WINENTRY("shinestar", "",
@@ -1764,13 +1778,13 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Space Madness
 	WME_WINENTRY("spacemadness", "1.0.2",
-		WME_ENTRY1s("data.dcp",  "b9b83135dc7a9e1b4b5f50195dbeb630", 39546622), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+		WME_ENTRY1s("data.dcp", "b9b83135dc7a9e1b4b5f50195dbeb630", 39546622), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
 
 	// Tanya Grotter and the Magical Double Bass
 	WME_WINENTRY("tanya1", "",
 		WME_ENTRY1s("data.dcp", "035bbdaff078cc4053ecf4b518c0d0fd", 1007507786), Common::RU_RUS, ADGF_UNSTABLE, LATEST_VERSION),
 
-  // Tanya Grotter and the Disappearing Floor
+	// Tanya Grotter and the Disappearing Floor
 	WME_WINENTRY("tanya2", "",
 		WME_ENTRY1s("data.dcp", "9c15f14990f630177e063da885d03e6d", 936959767), Common::RU_RUS, ADGF_UNSTABLE, LATEST_VERSION),
 
@@ -1848,11 +1862,11 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Zilm: A Game of Reflex 1.0
 	WME_WINENTRY("Zilm", "1.0",
-		WME_ENTRY1s("data.dcp",  "098dffaf03d8adbb4cb5633e4733e63c", 351726), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+		WME_ENTRY1s("data.dcp", "098dffaf03d8adbb4cb5633e4733e63c", 351726), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
 
 	// Zbang! The Game
 	WME_WINENTRY("zbang", "0.89",
-		WME_ENTRY1s("data.dcp",  "db9101f08d12ab95c81042d154bb0ea8", 7210044), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_7_0),
+		WME_ENTRY1s("data.dcp", "db9101f08d12ab95c81042d154bb0ea8", 7210044), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_7_0),
 	{
 		AD_TABLE_END_MARKER,
 		LATEST_VERSION

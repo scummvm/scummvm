@@ -32,7 +32,7 @@
 
 //////////////////////////////////////////////////////////////////////////
 #define DCGF_VER_MAJOR 1
-#define DCGF_VER_MINOR 3
+#define DCGF_VER_MINOR 4
 #define DCGF_VER_BUILD 1
 #define DCGF_VER_SUFFIX "ScummVM"
 #define DCGF_VER_BETA true
@@ -42,7 +42,7 @@
 
 // minimal saved game version we support
 #define SAVEGAME_VER_MAJOR 1
-#define SAVEGAME_VER_MINOR 1
+#define SAVEGAME_VER_MINOR 4
 #define SAVEGAME_VER_BUILD 1
 //////////////////////////////////////////////////////////////////////////
 

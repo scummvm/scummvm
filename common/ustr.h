@@ -218,16 +218,20 @@ private:
 };
 
 U32String convertUtf8ToUtf32(const String &str);
+String convertUtf32ToUtf8(const U32String &str);
 
 enum CodePage {
 	kUtf8,
 	kWindows1250,
 	kWindows1251,
 	kWindows1252,
-	kWindows1255
+	kWindows1253,
+	kWindows1255,
+	kWindows1257
 };
 
 U32String convertToU32String(const char *str, CodePage page = kUtf8);
+String convertFromU32String(const U32String &str, CodePage page = kUtf8);
 
 } // End of namespace Common
 

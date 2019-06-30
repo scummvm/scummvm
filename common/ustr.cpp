@@ -428,7 +428,13 @@ void U32String::initWithCStr(const char *str, uint32 len) {
 	_str[len] = 0;
 }
 
-// This is a quick and dirty converter.
+// //TODO: This is a quick and dirty converter. Refactoring needed:
+// 1. This version is unsafe! There are no checks for end of buffer
+//    near i++ operations.
+// 2. Original version has an option for performing strict / nonstrict
+//    conversion for the 0xD800...0xDFFF interval
+// 3. Original version returns a result code. This version does NOT
+//    insert 'FFFD' on errors & does not inform caller on any errors
 //
 // More comprehensive one lives in wintermute/utils/convert_utf.cpp
 U32String convertUtf8ToUtf32(const String &str) {
@@ -459,6 +465,64 @@ U32String convertUtf8ToUtf32(const String &str) {
 		u32str += chr;
 	}
 	return u32str;
+}
+
+// //TODO: This is a quick and dirty converter. Refactoring needed:
+// 1. Original version is more effective.
+//    This version features buffer = (char)(...) + buffer; pattern that causes
+//    unnecessary copying and reallocations, original code works with raw bytes
+// 2. Original version has an option for performing strict / nonstrict
+//    conversion for the 0xD800...0xDFFF interval
+// 3. Original version returns a result code. This version inserts '0xFFFD' if
+//    character does not fit in 4 bytes & does not inform caller on any errors
+//
+// More comprehensive one lives in wintermute/utils/convert_utf.cpp
+String convertUtf32ToUtf8(const U32String &u32str) {
+	static const uint8 firstByteMark[5] = { 0x00, 0x00, 0xC0, 0xE0, 0xF0 };
+
+	Common::String str;
+	uint i = 0;
+	while (i < u32str.size()) {
+		unsigned short bytesToWrite = 0;
+		const uint32 byteMask = 0xBF;
+		const uint32 byteMark = 0x80;
+
+		uint32 ch = u32str[i++];
+		if (ch < (uint32)0x80) {
+			bytesToWrite = 1;
+		} else if (ch < (uint32)0x800) {
+			bytesToWrite = 2;
+		} else if (ch < (uint32)0x10000) {
+			bytesToWrite = 3;
+		} else if (ch <= 0x0010FFFF) {
+			bytesToWrite = 4;
+		} else {
+			bytesToWrite = 3;
+			ch = 0x0000FFFD;
+		}
+		
+		Common::String buffer;
+
+		switch (bytesToWrite) {
+		case 4:
+			buffer = (char)((ch | byteMark) & byteMask);
+			ch >>= 6;
+			// fallthrough
+		case 3:
+			buffer = (char)((ch | byteMark) & byteMask) + buffer;
+			ch >>= 6;
+			// fallthrough
+		case 2:
+			buffer = (char)((ch | byteMark) & byteMask) + buffer;
+			ch >>= 6;
+			// fallthrough
+		case 1:
+			buffer = (char)(ch | firstByteMark[bytesToWrite]) + buffer;
+		}
+
+		str += buffer;
+	}
+	return str;
 }
 
 static const uint32 g_windows1250ConversionTable[] = {0x20AC, 0x0081, 0x201A, 0x0083, 0x201E, 0x2026, 0x2020, 0x2021,
@@ -512,6 +576,23 @@ static const uint32 g_windows1252ConversionTable[] = {0x20AC, 0x0081, 0x201A, 0x
 										 0x00F0, 0x00F1, 0x00F2, 0x00F3, 0x00F4, 0x00F5, 0x00F6, 0x00F7,
 										 0x00F8, 0x00F9, 0x00FA, 0x00FB, 0x00FC, 0x00FD, 0x00FE, 0x00FF};
 
+static const uint32 g_windows1253ConversionTable[] = {0x20AC, 0x0081, 0x201A, 0x0192, 0x201E, 0x2026, 0x2020, 0x2021,
+										 0x0088, 0x2030, 0x008A, 0x2039, 0x008C, 0x008D, 0x008E, 0x008F,
+										 0x0090, 0x2018, 0x2019, 0x201C, 0x201D, 0x2022, 0x2013, 0x2014,
+										 0x0098, 0x2122, 0x009A, 0x203A, 0x009C, 0x009D, 0x009E, 0x009F,
+										 0x00A0, 0x0385, 0x0386, 0x00A3, 0x00A4, 0x00A5, 0x00A6, 0x00A7,
+										 0x00A8, 0x00A9, 0x00AA, 0x00AB, 0x00AC, 0x00AD, 0x00AE, 0x2015,
+										 0x00B0, 0x00B1, 0x00B2, 0x00B3, 0x0384, 0x00B5, 0x00B6, 0x00B7,
+										 0x0388, 0x0389, 0x038A, 0x00BB, 0x038C, 0x00BD, 0x038E, 0x038F,
+										 0x0390, 0x0391, 0x0392, 0x0393, 0x0394, 0x0395, 0x0396, 0x0397,
+										 0x0398, 0x0399, 0x039A, 0x039B, 0x039C, 0x039D, 0x039E, 0x039F,
+										 0x03A0, 0x03A1, 0x00D2, 0x03A3, 0x03A4, 0x03A5, 0x03A6, 0x03A7,
+										 0x03A8, 0x03A9, 0x03AA, 0x03AB, 0x03AC, 0x03AD, 0x03AE, 0x03AF,
+										 0x03B0, 0x03B1, 0x03B2, 0x03B3, 0x03B4, 0x03B5, 0x03B6, 0x03B7,
+										 0x03B8, 0x03B9, 0x03BA, 0x03BB, 0x03BC, 0x03BD, 0x03BE, 0x03BF,
+										 0x03C0, 0x03C1, 0x03C2, 0x03C3, 0x03C4, 0x03C5, 0x03C6, 0x03C7,
+										 0x03C8, 0x03C9, 0x03CA, 0x03CB, 0x03CC, 0x03CD, 0x03CE, 0x00FF};
+
 static const uint32 g_windows1255ConversionTable[] = {0x20AC, 0x0081, 0x201A, 0x0192, 0x201E, 0x2026, 0x2020, 0x2021,
 										 0x02C6, 0x2030, 0x008A, 0x2039, 0x008C, 0x008D, 0x008E, 0x008F,
 										 0x0090, 0x2018, 0x2019, 0x201C, 0x201D, 0x2022, 0x2013, 0x2014,
@@ -528,6 +609,23 @@ static const uint32 g_windows1255ConversionTable[] = {0x20AC, 0x0081, 0x201A, 0x
 										 0x05D8, 0x05D9, 0x05DA, 0x05DB, 0x05DC, 0x05DD, 0x05DE, 0x05DF,
 										 0x05E0, 0x05E1, 0x05E2, 0x05E3, 0x05E4, 0x05E5, 0x05E6, 0x05E7,
 										 0x05E8, 0x05E9, 0x05EA, 0x00FB, 0x00FC, 0x200E, 0x200F, 0x00FF};
+
+static const uint32 g_windows1257ConversionTable[] = {0x20AC, 0x0081, 0x201A, 0x0083, 0x201E, 0x2026, 0x2020, 0x2021,
+										 0x0088, 0x2030, 0x008A, 0x2039, 0x008C, 0x00A8, 0x02C7, 0x00B8,
+										 0x0090, 0x2018, 0x2019, 0x201C, 0x201D, 0x2022, 0x2013, 0x2014,
+										 0x0098, 0x2122, 0x009A, 0x203A, 0x009C, 0x00AF, 0x02DB, 0x009F,
+										 0x00A0, 0x00A1, 0x00A2, 0x00A3, 0x00A4, 0x00A5, 0x00A6, 0x00A7,
+										 0x00D8, 0x00A9, 0x0156, 0x00AB, 0x00AC, 0x00AD, 0x00AE, 0x00C6,
+										 0x00B0, 0x00B1, 0x00B2, 0x00B3, 0x00B4, 0x00B5, 0x00B6, 0x00B7,
+										 0x00F8, 0x00B9, 0x0157, 0x00BB, 0x00BC, 0x00BD, 0x00BE, 0x00E6,
+										 0x0104, 0x012E, 0x0100, 0x0106, 0x00C4, 0x00C5, 0x0118, 0x0112,
+										 0x010C, 0x00C9, 0x0179, 0x0116, 0x0122, 0x0136, 0x012A, 0x013B,
+										 0x0160, 0x0143, 0x0145, 0x00D3, 0x014C, 0x00D5, 0x00D6, 0x00D7,
+										 0x0172, 0x0141, 0x015A, 0x016A, 0x00DC, 0x017B, 0x017D, 0x00DF,
+										 0x0105, 0x012F, 0x0101, 0x0107, 0x00E4, 0x00E5, 0x0119, 0x0113,
+										 0x010D, 0x00E9, 0x017A, 0x0117, 0x0123, 0x0137, 0x012B, 0x013C,
+										 0x0161, 0x0144, 0x0146, 0x00F3, 0x014D, 0x00F5, 0x00F6, 0x00F7,
+										 0x0173, 0x0142, 0x015B, 0x016B, 0x00FC, 0x017C, 0x017E, 0x02D9};
 
 U32String convertToU32String(const char *str, CodePage page) {
 	const String string(str);
@@ -554,14 +652,70 @@ U32String convertToU32String(const char *str, CodePage page) {
 		case kWindows1252:
 			unicodeString += g_windows1252ConversionTable[index];
 			break;
+		case kWindows1253:
+			unicodeString += g_windows1253ConversionTable[index];
+			break;
 		case kWindows1255:
 			unicodeString += g_windows1255ConversionTable[index];
+			break;
+		case kWindows1257:
+			unicodeString += g_windows1257ConversionTable[index];
 			break;
 		default:
 			break;
 		}
 	}
 	return unicodeString;
+}
+
+String convertFromU32String(const U32String &string, CodePage page) {
+	if (page == kUtf8) {
+		return convertUtf32ToUtf8(string);
+	}
+
+	const uint32 *conversionTable = NULL;
+	switch (page) {
+	case kWindows1250:
+		conversionTable = g_windows1250ConversionTable;
+		break;
+	case kWindows1251:
+		conversionTable = g_windows1251ConversionTable;
+		break;
+	case kWindows1252:
+		conversionTable = g_windows1252ConversionTable;
+		break;
+	case kWindows1253:
+		conversionTable = g_windows1253ConversionTable;
+		break;
+	case kWindows1255:
+		conversionTable = g_windows1255ConversionTable;
+		break;
+	case kWindows1257:
+		conversionTable = g_windows1257ConversionTable;
+		break;
+	default:
+		break;
+	}
+
+	String charsetString;
+	for (uint i = 0; i < string.size(); ++i) {
+		if (string[i] <= 0x7F) {
+			charsetString += string[i];
+			continue;
+		}
+		
+		if (!conversionTable) {
+			continue;
+		}
+
+		for (uint j = 0; j < 128; ++j) {
+			if (conversionTable[j] == string[i]) {
+				charsetString += (char)(j + 0x80);
+				break;
+			}
+		}
+	}	
+	return charsetString;
 }
 
 } // End of namespace Common
