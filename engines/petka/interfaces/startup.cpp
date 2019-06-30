@@ -46,7 +46,7 @@ enum {
 
 void InterfaceStartup::start() {
 	g_vm->getQSystem()->update();
-	g_vm->getQSystem()->_field48 = 0;
+	g_vm->getQSystem()->_isIniting = 0;
 
 	QObjectBG *bg = (QObjectBG *)g_vm->getQSystem()->findObject("STARTUP");
 	_objs.push_back(bg);

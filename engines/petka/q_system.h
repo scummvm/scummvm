@@ -71,7 +71,7 @@ public:
 	Interface *_currInterface;
 	Interface *_prevInterface;
 
-	int _field48;
+	int _isIniting;
 	int _fxId;
 	int _musicId;
 };
