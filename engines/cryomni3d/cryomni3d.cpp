@@ -43,7 +43,7 @@ namespace CryOmni3D {
 CryOmni3DEngine::CryOmni3DEngine(OSystem *syst,
                                  const CryOmni3DGameDescription *gamedesc) : Engine(syst), _gameDescription(gamedesc),
 	_canLoadSave(false), _fontManager(), _sprites(), _dragStatus(kDragStatus_NoDrag),
-	_autoRepeatNextEvent(-1u) {
+	_autoRepeatNextEvent(uint(-1)) {
 	if (!_mixer->isReady()) {
 		error("Sound initialization failed");
 	}
@@ -287,7 +287,7 @@ bool CryOmni3DEngine::pollEvents() {
 			if (ABS(delta.x) > 2 || ABS(delta.y) > 2) {
 				// We moved from the start point
 				_dragStatus = kDragStatus_Dragging;
-			} else if (_autoRepeatNextEvent != -1u) {
+			} else if (_autoRepeatNextEvent != uint(-1)) {
 				// Check for auto repeat duration
 				if (_autoRepeatNextEvent < g_system->getMillis()) {
 					_dragStatus = kDragStatus_Pressed;
@@ -297,7 +297,7 @@ bool CryOmni3DEngine::pollEvents() {
 			// We just finished dragging
 			_dragStatus = kDragStatus_Finished;
 			// Cancel auto repeat
-			_autoRepeatNextEvent = -1;
+			_autoRepeatNextEvent = uint(-1);
 		}
 	}
 	// Else we weren't dragging and still aren't

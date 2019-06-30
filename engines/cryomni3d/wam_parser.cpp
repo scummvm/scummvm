@@ -122,7 +122,7 @@ Place *WAMParser::findPlaceById_(uint placeId) {
 }
 
 void Place::setupWarpConstraints(Omni3DManager &omni3d) const {
-	int16 iAlphaMin, iAlphaMax;
+	int16 iAlphaMin = -32768, iAlphaMax = 32767;
 	bool alphaConstraint = false;
 
 	omni3d.clearConstraints();

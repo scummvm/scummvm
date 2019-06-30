@@ -154,7 +154,7 @@ void CryOmni3DEngine_Versailles::saveGame(bool visit, uint saveNum,
 	// Inventory
 	assert(_inventory.size() == 50);
 	for (Inventory::const_iterator it = _inventory.begin(); it != _inventory.end(); it++) {
-		uint objId = -1;
+		uint objId = uint(-1);
 		if (*it != nullptr) {
 			// Inventory contains pointers to objects stored in _objects
 			objId = *it - _objects.begin();
@@ -244,9 +244,9 @@ bool CryOmni3DEngine_Versailles::loadGame(bool visit, uint saveNum) {
 	for (Inventory::iterator it = _inventory.begin(); it != _inventory.end(); it++) {
 		uint objId = in->readUint32BE();
 		if (objId >= _objects.size()) {
-			objId = -1;
+			objId = uint(-1);
 		}
-		if (objId != -1u) {
+		if (objId != uint(-1)) {
 			*it = _objects.begin() + objId;
 		} else {
 			*it = nullptr;

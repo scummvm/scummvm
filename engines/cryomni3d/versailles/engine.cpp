@@ -53,7 +53,7 @@ CryOmni3DEngine_Versailles::CryOmni3DEngine_Versailles(OSystem *syst,
 	_mainPalette(nullptr), _cursorPalette(nullptr), _transparentPaletteMap(nullptr),
 	_currentPlace(nullptr), _currentWarpImage(nullptr), _fixedImage(nullptr),
 	_transitionAnimateWarp(true), _forceRedrawWarp(false), _forcePaletteUpdate(false),
-	_fadedPalette(false), _loadedSave(-1), _dialogsMan(this),
+	_fadedPalette(false), _loadedSave(uint(-1)), _dialogsMan(this),
 	_musicVolumeFactor(1.), _musicCurrentFile(nullptr),
 	_countingDown(false), _countdownNextEvent(0) {
 }
@@ -465,8 +465,8 @@ void CryOmni3DEngine_Versailles::calculateTransparentMapping() {
 		// Find nearest color
 		transparentScore newColorScore = transparentCalculateScore(transparentRed, transparentGreen,
 		                                 transparentBlue);
-		uint distanceMin = -1u;
-		uint nearestId = -1u;
+		uint distanceMin = uint(-1);
+		uint nearestId = uint(-1);
 		for (uint j = _transparentSrcStart; j < _transparentSrcStop; j++) {
 			if (j != i && newColorScore.dScore(proximities[j]) < 15) {
 				uint distance = newColorScore.dRed(proximities[j]) + newColorScore.dGreen(proximities[j]);
@@ -477,9 +477,9 @@ void CryOmni3DEngine_Versailles::calculateTransparentMapping() {
 			}
 		}
 
-		if (nearestId == -1u) {
+		if (nearestId == uint(-1)) {
 			// Couldn't find a good enough color, try to create one
-			if (_transparentNewStart != -1u && newColorsNextId <= _transparentNewStop) {
+			if (_transparentNewStart != uint(-1) && newColorsNextId <= _transparentNewStop) {
 				_mainPalette[3 * newColorsNextId + 0] = transparentRed;
 				_mainPalette[3 * newColorsNextId + 1] = transparentGreen;
 				_mainPalette[3 * newColorsNextId + 2] = transparentBlue;
@@ -490,7 +490,7 @@ void CryOmni3DEngine_Versailles::calculateTransparentMapping() {
 			}
 		}
 
-		if (nearestId == -1u) {
+		if (nearestId == uint(-1)) {
 			// Couldn't allocate a new color, return the original one
 			nearestId = i;
 		}
@@ -675,11 +675,11 @@ void CryOmni3DEngine_Versailles::changeLevel(int level) {
 	_gameVariables[GameVariables::kCurrentTime] = 1;
 
 	// keep back place state for level 2
-	int place8_state_backup;
+	int place8_state_backup = -1;
 	if (level == 2) {
 		place8_state_backup = _placeStates[8].state;
 	}
-	_nextPlaceId = -1;
+	_nextPlaceId = uint(-1);
 	initNewLevel(_currentLevel);
 	// restore place state for level 2
 	if (level == 2) {
@@ -743,7 +743,7 @@ void CryOmni3DEngine_Versailles::setupLevelWarps(int level) {
 
 	const LevelInitialState &initialState = kLevelInitialStates[level - 1];
 
-	if (_nextPlaceId == -1u) {
+	if (_nextPlaceId == uint(-1)) {
 		_nextPlaceId = initialState.placeId;
 	}
 	_omni3dMan.setAlpha(initialState.alpha);
@@ -825,7 +825,7 @@ void CryOmni3DEngine_Versailles::setGameTime(uint newTime, uint level) {
 
 void CryOmni3DEngine_Versailles::gameStep() {
 	while (!_abortCommand) {
-		if (_nextPlaceId != -1u) {
+		if (_nextPlaceId != uint(-1)) {
 			if (_placeStates[_nextPlaceId].initPlace) {
 				(this->*_placeStates[_nextPlaceId].initPlace)();
 			}
@@ -842,7 +842,7 @@ void CryOmni3DEngine_Versailles::gameStep() {
 		// Get selected object there to detect when it has just been deselected
 		Object *selectedObject = _inventory.selectedObject();
 
-		_nextPlaceId = -1;
+		_nextPlaceId = uint(-1);
 		bool doEvent;
 		if (_placeStates[_currentPlaceId].filterEvent && !_isVisiting) {
 			doEvent = (this->*_placeStates[_currentPlaceId].filterEvent)(&actionId);
@@ -866,7 +866,7 @@ void CryOmni3DEngine_Versailles::gameStep() {
 				if (doEvent) {
 					executeSpeakAction(actionId);
 					// Force refresh of place
-					if (_nextPlaceId == -1u) {
+					if (_nextPlaceId == uint(-1)) {
 						_nextPlaceId = _currentPlaceId;
 					}
 				}
@@ -888,7 +888,7 @@ void CryOmni3DEngine_Versailles::gameStep() {
 				// never filtered
 				executeSpeakAction(actionId);
 				// Force refresh of place
-				if (_nextPlaceId == -1u) {
+				if (_nextPlaceId == uint(-1)) {
 					_nextPlaceId = _currentPlaceId;
 				}
 			} else if (actionId == 66666) {
@@ -920,7 +920,7 @@ void CryOmni3DEngine_Versailles::doGameOver() {
 void CryOmni3DEngine_Versailles::doPlaceChange() {
 	const Place *nextPlace = _wam.findPlaceById(_nextPlaceId);
 	uint state = _placeStates[_nextPlaceId].state;
-	if (state == -1u) {
+	if (state == uint(-1)) {
 		state = 0;
 	}
 
@@ -933,7 +933,7 @@ void CryOmni3DEngine_Versailles::doPlaceChange() {
 	if (warpFile.size() > 0) {
 		if (warpFile.hasPrefix("NOT_MOVE")) {
 			// Don't move so do nothing but cancel place change
-			_nextPlaceId = -1;
+			_nextPlaceId = uint(-1);
 		} else {
 			_currentPlace = nextPlace;
 			if (!warpFile.hasPrefix("NOT_STOP")) {
@@ -965,7 +965,7 @@ void CryOmni3DEngine_Versailles::doPlaceChange() {
 				setMousePos(Common::Point(320, 240)); // Center of screen
 
 				_currentPlaceId = _nextPlaceId;
-				_nextPlaceId = -1;
+				_nextPlaceId = uint(-1);
 			}
 		}
 	} else {
@@ -996,7 +996,7 @@ void CryOmni3DEngine_Versailles::executeTransition(uint nextPlaceId) {
 
 	_nextPlaceId = nextPlaceId;
 
-	Common::String animation = animationId == -1u ? "" : transition->animations[animationId];
+	Common::String animation = (animationId == uint(-1)) ? "" : transition->animations[animationId];
 	animation.toUppercase();
 	debug("Transition animation: %s", animation.c_str());
 	if (animation.hasPrefix("NOT_FLI")) {
@@ -1024,7 +1024,7 @@ void CryOmni3DEngine_Versailles::executeTransition(uint nextPlaceId) {
 	_omni3dMan.setBeta(-transition->dstBeta);
 
 	uint nextState = _placeStates[nextPlaceId].state;
-	if (nextState == -1u) {
+	if (nextState == uint(-1)) {
 		nextState = 0;
 	}
 	const Place *nextPlace = _wam.findPlaceById(nextPlaceId);
@@ -1046,7 +1046,7 @@ void CryOmni3DEngine_Versailles::executeTransition(uint nextPlaceId) {
 		uint nextNextPlaceId = nextPlace->transitions[transitionNum].dstId;
 
 		animationId = determineTransitionAnimation(nextPlaceId, nextNextPlaceId, &transition);
-		animation = animationId == -1u ? "" : transition->animations[animationId];
+		animation = (animationId == uint(-1)) ? "" : transition->animations[animationId];
 		animation.toUppercase();
 
 		debug("Transition animation: %s", animation.c_str());
@@ -1107,7 +1107,7 @@ uint CryOmni3DEngine_Versailles::determineTransitionAnimation(uint srcPlaceId,
 	}
 
 	if (animsNum == 0) {
-		return -1;
+		return uint(-1);
 	}
 
 	if (animsNum == 1) {
@@ -1139,12 +1139,12 @@ int CryOmni3DEngine_Versailles::handleWarp() {
 	bool leftButtonPressed = false;
 	bool firstDraw = true;
 	bool moving = true;
-	uint actionId;
+	uint actionId = uint(-1);
 	showMouse(true);
 	_canLoadSave = true;
 	while (!leftButtonPressed && !exit) {
 		int xDelta = 0, yDelta = 0;
-		uint movingCursor = -1;
+		uint movingCursor = uint(-1);
 
 		pollEvents();
 		Common::Point mouse = getMousePos();
@@ -1293,7 +1293,7 @@ bool CryOmni3DEngine_Versailles::handleWarpMouse(uint *actionId,
 		setCursor(145);
 	} else if (*actionId >= 50000 && *actionId < 60000) {
 		setCursor(136);
-	} else if (movingCursor != -1u) {
+	} else if (movingCursor != uint(-1)) {
 		setCursor(movingCursor);
 	} else {
 		setCursor(45);
@@ -1575,7 +1575,7 @@ void CryOmni3DEngine_Versailles::handleFixedImg(const FixedImgCallback &callback
 	// functor is deleted in ZoneFixedImage
 	functor = nullptr;
 
-	if (_nextPlaceId == -1u) {
+	if (_nextPlaceId == uint(-1)) {
 		_forcePaletteUpdate = true;
 	}
 }

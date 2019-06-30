@@ -75,7 +75,7 @@ private:
 		void decodeInterframe(Common::SeekableReadStream *stream, uint32 size);
 		void decodeIntraframe(Common::SeekableReadStream *stream, uint32 size);
 
-		void restart() { _nextFrameDelay = -1; _nextNextFrameDelay = -1; }
+		void restart() { _nextFrameDelay = uint32(-1); _nextNextFrameDelay = uint32(-1); }
 		void setFrameDelay(uint32 frameDelay);
 
 	private:

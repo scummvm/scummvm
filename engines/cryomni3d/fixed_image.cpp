@@ -125,8 +125,8 @@ void ZonFixedImage::loadZones(const Common::String &image) {
 	int32 zonesNumber = zonFile.size() / 26;
 	_zones.reserve(zonesNumber);
 
-	_highLeftId = -1;
-	_highRightId = -1;
+	_highLeftId = Common::Array<CryOmni3D::ZonFixedImage::Zone>::size_type(-1);
+	_highRightId = Common::Array<CryOmni3D::ZonFixedImage::Zone>::size_type(-1);
 
 	int leftSeen = 0x7fffffff; // MAX_INT
 	int rightSeen = 0;
@@ -173,7 +173,7 @@ Common::Point ZonFixedImage::getZoneCenter(uint zoneId) const {
 }
 
 void ZonFixedImage::manage() {
-	_currentZone = -1;
+	_currentZone = uint(-1);
 	_zoneLow = false;
 	_zoneHigh = false;
 	_zoneHighLeft = false;
@@ -242,7 +242,7 @@ void ZonFixedImage::manage() {
 	if (zoneIt != _zones.end()) {
 		_currentZone = zoneIt - _zones.begin();
 	} else {
-		_currentZone = -1;
+		_currentZone = uint(-1);
 	}
 
 	if (_zonesMode == kZonesMode_Standard) {

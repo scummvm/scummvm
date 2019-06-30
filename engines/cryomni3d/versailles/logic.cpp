@@ -745,7 +745,7 @@ IMG_CB(32120) {
 					_gameVariables[GameVariables::kSketchState] = 3;
 					playInGameVideo("23I_11");
 					// Force reload of the place
-					if (_nextPlaceId == -1u) {
+					if (_nextPlaceId == uint(-1)) {
 						_nextPlaceId = _currentPlaceId;
 					}
 					_inventory.removeByIconID(38);
@@ -760,7 +760,7 @@ IMG_CB(32120) {
 					_gameVariables[GameVariables::kSketchState] = 4;
 					playInGameVideo("23I_12");
 					// Force reload of the place
-					if (_nextPlaceId == -1u) {
+					if (_nextPlaceId == uint(-1)) {
 						_nextPlaceId = _currentPlaceId;
 					}
 					_inventory.removeByIconID(38);
@@ -915,7 +915,7 @@ IMG_CB(34132) {
 IMG_CB(34172) {
 	playInGameVideo("43X3_10");
 	// Force reload of the place
-	if (_nextPlaceId == -1u) {
+	if (_nextPlaceId == uint(-1)) {
 		_nextPlaceId = _currentPlaceId;
 	}
 	fimg->_exit = true;
@@ -934,7 +934,7 @@ IMG_CB(34173) {
 			/*
 			playInGameVideo("43X3_21");
 			// Force reload of the place
-			if (_nextPlaceId == -1u) {
+			if (_nextPlaceId == uint(-1)) {
 			    _nextPlaceId = _currentPlaceId;
 			}
 			*/
@@ -1075,7 +1075,7 @@ IMG_CB(34174c) {
 
 	playInGameVideo("cofouv");
 	// Force reload of the place
-	if (_nextPlaceId == -1u) {
+	if (_nextPlaceId == uint(-1)) {
 		_nextPlaceId = _currentPlaceId;
 	}
 
@@ -1212,7 +1212,7 @@ bool CryOmni3DEngine_Versailles::handleSafe(ZonFixedImage *fimg) {
 				// Animate handle
 				playInGameVideo("43x3_poi");
 				// Force reload of the place
-				if (_nextPlaceId == -1u) {
+				if (_nextPlaceId == uint(-1)) {
 					_nextPlaceId = _currentPlaceId;
 				}
 
@@ -1377,7 +1377,7 @@ IMG_CB(41801) {
 					// Animate opening
 					playInGameVideo("12E2_11");
 					// Force reload of the place
-					if (_nextPlaceId == -1u) {
+					if (_nextPlaceId == uint(-1)) {
 						_nextPlaceId = _currentPlaceId;
 					}
 
@@ -1403,7 +1403,7 @@ IMG_CB(41801b) {
 			// Animate closing
 			playInGameVideo("12E2_13");
 			// Force reload of the place
-			if (_nextPlaceId == -1u) {
+			if (_nextPlaceId == uint(-1)) {
 				_nextPlaceId = _currentPlaceId;
 			}
 			fimg->_exit = true;
@@ -1436,7 +1436,7 @@ IMG_CB(41801c) {
 			// Animate closing
 			playInGameVideo("12E2_13");
 			// Force reload of the place
-			if (_nextPlaceId == -1u) {
+			if (_nextPlaceId == uint(-1)) {
 				_nextPlaceId = _currentPlaceId;
 			}
 			fimg->_exit = true;
@@ -1510,7 +1510,7 @@ IMG_CB(41802) {
 			if (objID == 100) {
 				playInGameVideo("12E2_24");
 				// Force reload of the place
-				if (_nextPlaceId == -1u) {
+				if (_nextPlaceId == uint(-1)) {
 					_nextPlaceId = _currentPlaceId;
 				}
 				_inventory.removeByNameID(100);
@@ -1522,7 +1522,7 @@ IMG_CB(41802) {
 				// Lampoon about arts
 				playInGameVideo("PAP-BRUL");
 				// Force reload of the place
-				if (_nextPlaceId == -1u) {
+				if (_nextPlaceId == uint(-1)) {
 					_nextPlaceId = _currentPlaceId;
 				}
 				doGameOver();
@@ -1557,7 +1557,7 @@ IMG_CB(41802b) {
 			if (objID == 100) {
 				playInGameVideo("12E2_24");
 				// Force reload of the place
-				if (_nextPlaceId == -1u) {
+				if (_nextPlaceId == uint(-1)) {
 					_nextPlaceId = _currentPlaceId;
 				}
 				_inventory.removeByNameID(100);
@@ -1569,7 +1569,7 @@ IMG_CB(41802b) {
 				// Lampoon about arts
 				playInGameVideo("PAP-BRUL");
 				// Force reload of the place
-				if (_nextPlaceId == -1u) {
+				if (_nextPlaceId == uint(-1)) {
 					_nextPlaceId = _currentPlaceId;
 				}
 				doGameOver();
@@ -1602,7 +1602,7 @@ IMG_CB(41802c) {
 			if (objID == 100) {
 				playInGameVideo("12E2_24");
 				// Force reload of the place
-				if (_nextPlaceId == -1u) {
+				if (_nextPlaceId == uint(-1)) {
 					_nextPlaceId = _currentPlaceId;
 				}
 				_inventory.removeByNameID(100);
@@ -1614,7 +1614,7 @@ IMG_CB(41802c) {
 				// Lampoon about arts
 				playInGameVideo("PAP-BRUL");
 				// Force reload of the place
-				if (_nextPlaceId == -1u) {
+				if (_nextPlaceId == uint(-1)) {
 					_nextPlaceId = _currentPlaceId;
 				}
 				doGameOver();
@@ -1637,7 +1637,7 @@ IMG_CB(41802d) {
 			if (objID == 100) {
 				playInGameVideo("12E2_24");
 				// Force reload of the place
-				if (_nextPlaceId == -1u) {
+				if (_nextPlaceId == uint(-1)) {
 					_nextPlaceId = _currentPlaceId;
 				}
 				_inventory.removeByNameID(100);
@@ -1649,7 +1649,7 @@ IMG_CB(41802d) {
 				// Lampoon about arts
 				playInGameVideo("PAP-BRUL");
 				// Force reload of the place
-				if (_nextPlaceId == -1u) {
+				if (_nextPlaceId == uint(-1)) {
 					_nextPlaceId = _currentPlaceId;
 				}
 				doGameOver();
@@ -1719,7 +1719,7 @@ IMG_CB(43145) {
 			if (fimg->_currentZone == 0) {
 				playInGameVideo("30L_51");
 				// Force reload of the place
-				if (_nextPlaceId == -1u) {
+				if (_nextPlaceId == uint(-1)) {
 					_nextPlaceId = _currentPlaceId;
 				}
 
@@ -1731,7 +1731,7 @@ IMG_CB(43145) {
 			} else if (fimg->_currentZone == 1) {
 				playInGameVideo("30L_52");
 				// Force reload of the place
-				if (_nextPlaceId == -1u) {
+				if (_nextPlaceId == uint(-1)) {
 					_nextPlaceId = _currentPlaceId;
 				}
 
@@ -1811,7 +1811,7 @@ IMG_CB(43146) {
 			if (fimg->_currentZone == 0) {
 				playInGameVideo("30L_41");
 				// Force reload of the place
-				if (_nextPlaceId == -1u) {
+				if (_nextPlaceId == uint(-1)) {
 					_nextPlaceId = _currentPlaceId;
 				}
 
@@ -1823,7 +1823,7 @@ IMG_CB(43146) {
 			} else if (fimg->_currentZone == 1) {
 				playInGameVideo("30L_42");
 				// Force reload of the place
-				if (_nextPlaceId == -1u) {
+				if (_nextPlaceId == uint(-1)) {
 					_nextPlaceId = _currentPlaceId;
 				}
 
@@ -2009,7 +2009,7 @@ IMG_CB(43190) {
 		if (fimg->_zoneUse) {
 			playInGameVideo("31L1_2A");
 			// Force reload of the place
-			if (_nextPlaceId == -1u) {
+			if (_nextPlaceId == uint(-1)) {
 				_nextPlaceId = _currentPlaceId;
 			}
 			ZonFixedImage::CallbackFunctor *functor =
@@ -2032,7 +2032,7 @@ IMG_CB(43190b) {
 		if (fimg->_zoneUse) {
 			playInGameVideo("31L1_2B");
 			// Force reload of the place
-			if (_nextPlaceId == -1u) {
+			if (_nextPlaceId == uint(-1)) {
 				_nextPlaceId = _currentPlaceId;
 			}
 			ZonFixedImage::CallbackFunctor *functor =
@@ -2055,7 +2055,7 @@ IMG_CB(43190c) {
 		if (fimg->_zoneUse) {
 			playInGameVideo("31L1_2C");
 			// Force reload of the place
-			if (_nextPlaceId == -1u) {
+			if (_nextPlaceId == uint(-1)) {
 				_nextPlaceId = _currentPlaceId;
 			}
 			ZonFixedImage::CallbackFunctor *functor =
@@ -2078,7 +2078,7 @@ IMG_CB(43190d) {
 		if (fimg->_zoneUse) {
 			playInGameVideo("31L1_2D");
 			// Force reload of the place
-			if (_nextPlaceId == -1u) {
+			if (_nextPlaceId == uint(-1)) {
 				_nextPlaceId = _currentPlaceId;
 			}
 			ZonFixedImage::CallbackFunctor *functor =
@@ -2575,7 +2575,7 @@ IMG_CB(88001) {
 
 			playInGameVideo("33P_10");
 			// Force reload of the place
-			if (_nextPlaceId == -1u) {
+			if (_nextPlaceId == uint(-1)) {
 				_nextPlaceId = _currentPlaceId;
 			}
 
@@ -2640,7 +2640,7 @@ IMG_CB(88001c) {
 
 			playInGameVideo("33P_14");
 			// Force reload of the place
-			if (_nextPlaceId == -1u) {
+			if (_nextPlaceId == uint(-1)) {
 				_nextPlaceId = _currentPlaceId;
 			}
 
@@ -2907,7 +2907,7 @@ IMG_CB(88003f) {
 				playInGameVideo("COFFRE");
 				_forcePaletteUpdate = true;
 				// Force reload of the place
-				if (_nextPlaceId == -1u) {
+				if (_nextPlaceId == uint(-1)) {
 					_nextPlaceId = _currentPlaceId;
 				}
 				playTransitionEndLevel(7);
@@ -3156,7 +3156,7 @@ IMG_CB(88004b) {
 	// Open the toilets
 	playInGameVideo("31j32");
 	// Force reload of the place
-	if (_nextPlaceId == -1u) {
+	if (_nextPlaceId == uint(-1)) {
 		_nextPlaceId = _currentPlaceId;
 	}
 	fimg->load("31j32.gif");
@@ -3178,7 +3178,7 @@ IMG_CB(88004b) {
 		// Close the toilets
 		playInGameVideo("31j32b");
 		// Force reload of the place
-		if (_nextPlaceId == -1u) {
+		if (_nextPlaceId == uint(-1)) {
 			_nextPlaceId = _currentPlaceId;
 		}
 	}
@@ -3212,7 +3212,7 @@ FILTER_EVENT(1, 2) {
 		_dialogsMan.play("11E_HUI");
 		_forcePaletteUpdate = true;
 		// Force reload of the place
-		if (_nextPlaceId == -1u) {
+		if (_nextPlaceId == uint(-1)) {
 			_nextPlaceId = _currentPlaceId;
 		}
 		return false;
@@ -3327,7 +3327,7 @@ FILTER_EVENT(1, 14) {
 	playInGameVideo(video);
 
 	// Force reload of the place
-	if (_nextPlaceId == -1u) {
+	if (_nextPlaceId == uint(-1)) {
 		_nextPlaceId = _currentPlaceId;
 	}
 
@@ -3355,7 +3355,7 @@ FILTER_EVENT(2, 1) {
 
 		_forcePaletteUpdate = true;
 		// Force reload of the place
-		if (_nextPlaceId == -1u) {
+		if (_nextPlaceId == uint(-1)) {
 			_nextPlaceId = _currentPlaceId;
 		}
 
@@ -3384,7 +3384,7 @@ FILTER_EVENT(2, 1) {
 			playInGameVideo(video);
 
 			// Force reload of the place
-			if (_nextPlaceId == -1u) {
+			if (_nextPlaceId == uint(-1)) {
 				_nextPlaceId = _currentPlaceId;
 			}
 
@@ -3405,7 +3405,7 @@ FILTER_EVENT(2, 2) {
 	}
 
 	const char *video = nullptr;
-	FixedImgCallback callback;
+	FixedImgCallback callback = nullptr;
 
 	const Object *obj = _inventory.selectedObject();
 	bool deselectObj = false;
@@ -3464,7 +3464,7 @@ FILTER_EVENT(2, 2) {
 	playInGameVideo(video);
 
 	// Force reload of the place
-	if (_nextPlaceId == -1u) {
+	if (_nextPlaceId == uint(-1)) {
 		_nextPlaceId = _currentPlaceId;
 	}
 
@@ -3494,7 +3494,7 @@ FILTER_EVENT(2, 5) {
 
 		_forcePaletteUpdate = true;
 		// Force reload of the place
-		if (_nextPlaceId == -1u) {
+		if (_nextPlaceId == uint(-1)) {
 			_nextPlaceId = _currentPlaceId;
 		}
 
@@ -3523,7 +3523,7 @@ INIT_PLACE(2, 9) {
 
 		_forcePaletteUpdate = true;
 		// Force reload of the place
-		if (_nextPlaceId == -1u) {
+		if (_nextPlaceId == uint(-1)) {
 			_nextPlaceId = _currentPlaceId;
 		}
 
@@ -3548,7 +3548,7 @@ FILTER_EVENT(2, 9) {
 
 		_forcePaletteUpdate = true;
 		// Force reload of the place
-		if (_nextPlaceId == -1u) {
+		if (_nextPlaceId == uint(-1)) {
 			_nextPlaceId = _currentPlaceId;
 		}
 
@@ -3577,7 +3577,7 @@ FILTER_EVENT(2, 11) {
 
 		_forcePaletteUpdate = true;
 		// Force reload of the place
-		if (_nextPlaceId == -1u) {
+		if (_nextPlaceId == uint(-1)) {
 			_nextPlaceId = _currentPlaceId;
 		}
 
@@ -3622,7 +3622,7 @@ FILTER_EVENT(2, 12) {
 
 		_forcePaletteUpdate = true;
 		// Force reload of the place
-		if (_nextPlaceId == -1u) {
+		if (_nextPlaceId == uint(-1)) {
 			_nextPlaceId = _currentPlaceId;
 		}
 
@@ -3660,7 +3660,7 @@ FILTER_EVENT(3, 3) {
 
 		_forcePaletteUpdate = true;
 		// Force reload of the place
-		if (_nextPlaceId == -1u) {
+		if (_nextPlaceId == uint(-1)) {
 			_nextPlaceId = _currentPlaceId;
 		}
 
@@ -3680,7 +3680,7 @@ FILTER_EVENT(3, 10) {
 
 		_forcePaletteUpdate = true;
 		// Force reload of the place
-		if (_nextPlaceId == -1u) {
+		if (_nextPlaceId == uint(-1)) {
 			_nextPlaceId = _currentPlaceId;
 		}
 
@@ -3698,7 +3698,7 @@ FILTER_EVENT(3, 10) {
 			}
 			_forcePaletteUpdate = true;
 			// Force reload of the place
-			if (_nextPlaceId == -1u) {
+			if (_nextPlaceId == uint(-1)) {
 				_nextPlaceId = _currentPlaceId;
 			}
 		}
@@ -3730,7 +3730,7 @@ FILTER_EVENT(3, 13) {
 
 		_forcePaletteUpdate = true;
 		// Force reload of the place
-		if (_nextPlaceId == -1u) {
+		if (_nextPlaceId == uint(-1)) {
 			_nextPlaceId = _currentPlaceId;
 		}
 
@@ -3798,7 +3798,7 @@ FILTER_EVENT(3, 18) {
 
 	_forcePaletteUpdate = true;
 	// Force reload of the place
-	if (_nextPlaceId == -1u) {
+	if (_nextPlaceId == uint(-1)) {
 		_nextPlaceId = _currentPlaceId;
 	}
 	return true;
@@ -3831,7 +3831,7 @@ FILTER_EVENT(3_5, 20) {
 	playInGameVideo("31j31");
 
 	// Force reload of the place
-	if (_nextPlaceId == -1u) {
+	if (_nextPlaceId == uint(-1)) {
 		_nextPlaceId = _currentPlaceId;
 	}
 
@@ -3869,7 +3869,7 @@ FILTER_EVENT(3, 22) {
 
 		_forcePaletteUpdate = true;
 		// Force reload of the place
-		if (_nextPlaceId == -1u) {
+		if (_nextPlaceId == uint(-1)) {
 			_nextPlaceId = _currentPlaceId;
 		}
 
@@ -3920,7 +3920,7 @@ bool CryOmni3DEngine_Versailles::filterEventLevel3Obj23151() {
 
 	_forcePaletteUpdate = true;
 	// Force reload of the place
-	if (_nextPlaceId == -1u) {
+	if (_nextPlaceId == uint(-1)) {
 		_nextPlaceId = _currentPlaceId;
 	}
 
@@ -3947,7 +3947,7 @@ INIT_PLACE(4, 9) {
 		_dialogsMan.play("4_MAI");
 		_forcePaletteUpdate = true;
 		// Force reload of the place
-		if (_nextPlaceId == -1u) {
+		if (_nextPlaceId == uint(-1)) {
 			_nextPlaceId = _currentPlaceId;
 		}
 	}
@@ -3960,7 +3960,7 @@ FILTER_EVENT(4, 10) {
 
 		_forcePaletteUpdate = true;
 		// Force reload of the place
-		if (_nextPlaceId == -1u) {
+		if (_nextPlaceId == uint(-1)) {
 			_nextPlaceId = _currentPlaceId;
 		}
 
@@ -3981,7 +3981,7 @@ FILTER_EVENT(4, 10) {
 
 		_forcePaletteUpdate = true;
 		// Force reload of the place
-		if (_nextPlaceId == -1u) {
+		if (_nextPlaceId == uint(-1)) {
 			_nextPlaceId = _currentPlaceId;
 		}
 
@@ -4029,7 +4029,7 @@ FILTER_EVENT(4, 12_13_14) {
 	playInGameVideo(video);
 
 	// Force reload of the place
-	if (_nextPlaceId == -1u) {
+	if (_nextPlaceId == uint(-1)) {
 		_nextPlaceId = _currentPlaceId;
 	}
 
@@ -4062,7 +4062,7 @@ FILTER_EVENT(4, 16) {
 
 		_forcePaletteUpdate = true;
 		// Force reload of the place
-		if (_nextPlaceId == -1u) {
+		if (_nextPlaceId == uint(-1)) {
 			_nextPlaceId = _currentPlaceId;
 		}
 
@@ -4134,7 +4134,7 @@ FILTER_EVENT(5, 9) {
 
 			_forcePaletteUpdate = true;
 			// Force reload of the place
-			if (_nextPlaceId == -1u) {
+			if (_nextPlaceId == uint(-1)) {
 				_nextPlaceId = _currentPlaceId;
 			}
 
@@ -4165,7 +4165,7 @@ FILTER_EVENT(5, 9) {
 
 			_forcePaletteUpdate = true;
 			// Force reload of the place
-			if (_nextPlaceId == -1u) {
+			if (_nextPlaceId == uint(-1)) {
 				_nextPlaceId = _currentPlaceId;
 			}
 
@@ -4192,7 +4192,7 @@ FILTER_EVENT(5, 14) {
 
 		_forcePaletteUpdate = true;
 		// Force reload of the place
-		if (_nextPlaceId == -1u) {
+		if (_nextPlaceId == uint(-1)) {
 			_nextPlaceId = _currentPlaceId;
 		}
 
@@ -4361,7 +4361,7 @@ FILTER_EVENT(5, 27) {
 
 			_forcePaletteUpdate = true;
 			// Force reload of the place
-			if (_nextPlaceId == -1u) {
+			if (_nextPlaceId == uint(-1)) {
 				_nextPlaceId = _currentPlaceId;
 			}
 
@@ -4441,7 +4441,7 @@ FILTER_EVENT(5, 34) {
 
 		_forcePaletteUpdate = true;
 		// Force reload of the place
-		if (_nextPlaceId == -1u) {
+		if (_nextPlaceId == uint(-1)) {
 			_nextPlaceId = _currentPlaceId;
 		}
 		// Handled here
@@ -4521,7 +4521,7 @@ FILTER_EVENT(6, 19) {
 
 		_forcePaletteUpdate = true;
 		// Force reload of the place
-		if (_nextPlaceId == -1u) {
+		if (_nextPlaceId == uint(-1)) {
 			_nextPlaceId = _currentPlaceId;
 		}
 
@@ -4638,7 +4638,7 @@ FILTER_EVENT(7, 20) {
 
 		_forcePaletteUpdate = true;
 		// Force reload of the place
-		if (_nextPlaceId == -1u) {
+		if (_nextPlaceId == uint(-1)) {
 			_nextPlaceId = _currentPlaceId;
 		}
 		// Handled here

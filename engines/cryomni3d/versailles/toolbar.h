@@ -42,7 +42,7 @@ class Toolbar {
 public:
 	Toolbar() : _sprites(nullptr), _fontManager(nullptr), _inventory(nullptr),
 		_messages(nullptr), _inventoryOffset(0), _engine(nullptr),
-		_inventoryHovered(-1), _inventorySelected(-1), _inventoryEnabled(true),
+		_inventoryHovered(uint(-1)), _inventorySelected(uint(-1)), _inventoryEnabled(true),
 		_position(60) { }
 	~Toolbar();
 

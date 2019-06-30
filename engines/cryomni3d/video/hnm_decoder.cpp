@@ -188,9 +188,9 @@ HNMDecoder::HNM4VideoTrack::~HNM4VideoTrack() {
 }
 
 void HNMDecoder::HNM4VideoTrack::setFrameDelay(uint32 frameDelay) {
-	if (_nextFrameDelay == -1u) {
+	if (_nextFrameDelay == uint32(-1)) {
 		_nextFrameDelay = frameDelay;
-	} else if (_nextNextFrameDelay == -1u) {
+	} else if (_nextNextFrameDelay == uint32(-1)) {
 		_nextNextFrameDelay = frameDelay;
 	} else {
 		_nextNextFrameDelay += frameDelay;
@@ -325,9 +325,9 @@ void HNMDecoder::HNM4VideoTrack::decodeInterframe(Common::SeekableReadStream *st
 	_surface.setPixels(_frameBufferC);
 
 	_curFrame++;
-	_nextFrameStartTime += _nextFrameDelay != -1u ? _nextFrameDelay : _regularFrameDelay;
+	_nextFrameStartTime += _nextFrameDelay != uint32(-1) ? _nextFrameDelay : _regularFrameDelay;
 	_nextFrameDelay = _nextNextFrameDelay;
-	_nextNextFrameDelay = -1u;
+	_nextNextFrameDelay = uint32(-1);
 
 	if (size > 0) {
 		stream->skip(size);
@@ -340,9 +340,9 @@ void HNMDecoder::HNM4VideoTrack::decodeIntraframe(Common::SeekableReadStream *st
 	_surface.setPixels(_frameBufferC);
 
 	_curFrame++;
-	_nextFrameStartTime += _nextFrameDelay != -1u ? _nextFrameDelay : _regularFrameDelay;
+	_nextFrameStartTime += _nextFrameDelay != uint32(-1) ? _nextFrameDelay : _regularFrameDelay;
 	_nextFrameDelay = _nextNextFrameDelay;
-	_nextNextFrameDelay = -1u;
+	_nextNextFrameDelay = uint32(-1);
 }
 
 HNMDecoder::DPCMAudioTrack::DPCMAudioTrack(uint16 channels, uint16 bits, uint sampleRate,

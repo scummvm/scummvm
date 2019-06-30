@@ -62,10 +62,10 @@ void Toolbar::init(const Sprites *sprites, FontManager *fontManager,
 	addZone(225, 225, optPos, &Toolbar::callbackOptions);
 
 	// Previous or next
-	addZone(183, -1, Common::Point(190, 18), &Toolbar::callbackInventoryPrev);
-	addZone(240, -1, Common::Point(574, 18), &Toolbar::callbackInventoryNext);
+	addZone(183, uint16(-1), Common::Point(190, 18), &Toolbar::callbackInventoryPrev);
+	addZone(240, uint16(-1), Common::Point(574, 18), &Toolbar::callbackInventoryNext);
 	// View
-	addZone(142, -1, Common::Point(158, 12), &Toolbar::callbackViewObject);
+	addZone(142, uint16(-1), Common::Point(158, 12), &Toolbar::callbackViewObject);
 }
 
 Toolbar::~Toolbar() {
@@ -74,7 +74,7 @@ Toolbar::~Toolbar() {
 }
 
 void Toolbar::inventoryChanged(uint newPosition) {
-	if (newPosition != -1u && newPosition > _inventoryOffset) {
+	if (newPosition != uint(-1) && newPosition > _inventoryOffset) {
 		_inventoryOffset = newPosition - 7;
 	}
 	// Refresh
@@ -244,7 +244,7 @@ uint Toolbar::callbackViewObject(uint dragStatus) {
 
 	_mouse_in_view_object = true;
 
-	if (_inventorySelected == -1u) {
+	if (_inventorySelected == uint(-1)) {
 		// Nothing selected in toolbar
 		return 0;
 	}
@@ -371,7 +371,7 @@ void Toolbar::drawToolbar(const Graphics::Surface *original) {
 	}
 
 	// And now draw the object description if needed
-	if (_inventoryEnabled && _inventoryHovered != -1u) {
+	if (_inventoryEnabled && _inventoryHovered != uint(-1)) {
 		Object *obj = (*_inventory)[_inventoryHovered];
 
 		uint zoneId = _inventoryHovered - _inventoryOffset;
@@ -413,8 +413,8 @@ bool Toolbar::displayToolbar(const Graphics::Surface *original) {
 	_engine->makeTranslucent(_bgSurface, subset);
 
 	// WORKAROUND: Reset the inventory status at init to let sprites highlighted until toolbar is hidden
-	_inventorySelected = -1;
-	_inventoryHovered = -1;
+	_inventorySelected = uint(-1);
+	_inventoryHovered = uint(-1);
 	_zones[12].secondary = true;
 
 	updateZones();
@@ -473,8 +473,8 @@ void Toolbar::handleToolbarEvents(const Graphics::Surface *original) {
 	bool redrawToolbar;
 
 	// Don't have anything hovered for now
-	_inventoryHovered = -1;
-	_inventorySelected = -1;
+	_inventoryHovered = uint(-1);
+	_inventorySelected = uint(-1);
 	_inventory->setSelectedObject(nullptr);
 	_backup_selected_object = nullptr;
 
@@ -519,7 +519,7 @@ void Toolbar::handleToolbarEvents(const Graphics::Surface *original) {
 			redrawToolbar = true;
 		} else if (_engine->getDragStatus() == kDragStatus_Pressed) {
 			// A click happened and wasn't handled, deselect object
-			_inventorySelected = -1;
+			_inventorySelected = uint(-1);
 			_inventory->setSelectedObject(nullptr);
 			_engine->setCursor(181);
 			// Reset view object
@@ -565,10 +565,10 @@ void Toolbar::handleToolbarEvents(const Graphics::Surface *original) {
 					redrawToolbar = true;
 				}
 			}
-			if (!shouldHover && _inventoryHovered != -1u && !_mouse_in_view_object)  {
+			if (!shouldHover && _inventoryHovered != uint(-1) && !_mouse_in_view_object)  {
 				// Remove hovering
-				_inventoryHovered = -1;
-				_inventorySelected = -1;
+				_inventoryHovered = uint(-1);
+				_inventorySelected = uint(-1);
 				updateZones();
 				if (!_inventory->selectedObject()) {
 					// Reset back the cursor if nothing is selected

@@ -35,7 +35,7 @@ class Object {
 public:
 	typedef Common::Functor0<void> *ViewCallback;
 
-	Object() : _valid(false), _idCA(-1), _idCl(-1), _idSA(-1), _idSl(-1), _idOBJ(-1),
+	Object() : _valid(false), _idCA(uint(-1)), _idCl(uint(-1)), _idSA(uint(-1)), _idSl(uint(-1)), _idOBJ(uint(-1)),
 		_viewCallback(nullptr) {}
 
 	Object(const Sprites &sprites, uint id_CA, uint id_OBJ) : _idCA(id_CA),

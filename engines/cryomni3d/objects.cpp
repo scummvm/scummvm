@@ -62,7 +62,7 @@ void Inventory::add(Object *obj) {
 
 void Inventory::remove(uint position) {
 	(*this)[position] = nullptr;
-	(*_changeCallback)(-1u);
+	(*_changeCallback)(uint(-1));
 }
 
 void Inventory::removeByIconID(uint iconID) {

@@ -47,7 +47,7 @@ const Graphics::Surface *HLZDecoder::decodeFrame(Common::SeekableReadStream &str
 	_surface->create(_width, _height, Graphics::PixelFormat::createFormatCLUT8());
 
 	byte *dst = (byte *)_surface->getPixels();
-	decodeFrameInPlace(stream, -1, dst);
+	decodeFrameInPlace(stream, uint32(-1), dst);
 
 	return _surface;
 }
@@ -56,7 +56,7 @@ Graphics::PixelFormat HLZDecoder::getPixelFormat() const {
 	return Graphics::PixelFormat::createFormatCLUT8();
 }
 
-static inline bool getReg(Common::SeekableReadStream &stream, uint32 *size, uint32 *reg,
+static inline uint getReg(Common::SeekableReadStream &stream, uint32 *size, uint32 *reg,
                           int *regBits) {
 	if (*regBits == 0) {
 		if (*size < 4) {
@@ -66,7 +66,7 @@ static inline bool getReg(Common::SeekableReadStream &stream, uint32 *size, uint
 		*size -= 4;
 		*regBits = 32;
 	}
-	bool ret = (*reg >> 31) != 0;
+	uint ret = (*reg >> 31) & 0x1;
 	*reg <<= 1;
 	(*regBits)--;
 	return ret;
