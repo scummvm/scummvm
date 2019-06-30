@@ -43,6 +43,10 @@ typedef void (VectorRenderer::*DrawingFunctionCallback)(const Common::Rect &, co
 
 
 struct DrawStep {
+	DrawingFunctionCallback drawingCall; /**< Pointer to drawing function */
+	Graphics::Surface* blitSrc;
+	Graphics::TransparentSurface* blitAlphaSrc;
+
 	struct Color {
 		uint8 r, g, b;
 		bool set;
@@ -81,10 +85,6 @@ struct DrawStep {
 	uint32 scale; /**< scale of all the coordinates in FIXED POINT with 16 bits mantissa */
 
 	GUI::ThemeEngine::AutoScaleMode autoscale; /**< scale alphaimage if present */
-
-	DrawingFunctionCallback drawingCall; /**< Pointer to drawing function */
-	Graphics::Surface *blitSrc;
-	Graphics::TransparentSurface *blitAlphaSrc;
 };
 
 VectorRenderer *createRenderer(int mode);
