@@ -1724,6 +1724,8 @@ void AI::moveEnts() {
 	if (frameDelay-- > 0)
 		return;
 
+	frameDelay = kAnimFrameDelay;
+
 	// Call aiAction for Floating Entities
 	for (Common::Array<AIEntity *>::iterator it = _floats->begin(); it != _floats->end(); it++) {
 		if ((*it)->aiAction)
