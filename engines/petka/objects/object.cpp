@@ -29,6 +29,7 @@
 #include "graphics/surface.h"
 
 #include "petka/flc.h"
+#include "petka/sound.h"
 #include "petka/petka.h"
 #include "petka/video.h"
 #include "petka/q_system.h"
@@ -43,7 +44,7 @@ QVisibleObject::QVisibleObject()
 	: _resourceId(-1), _z(240) {}
 
 QMessageObject::QMessageObject()
-	: _id(-1), _dialogColor(-1), _time(0) {}
+	: _id(-1), _dialogColor(-1), _time(0), _sound(nullptr) {}
 
 void QMessageObject::processMessage(const QMessage &msg) {
 	for (uint i = 0; i < _reactions.size(); ++i) {
@@ -103,7 +104,7 @@ void QMessageObject::processMessage(const QMessage &msg) {
 
 		break;
 	case kStatus:
-		_status = (int8) msg.arg1;
+		_status = (int8)msg.arg1;
 		break;
 	case kOn:
 		_isActive = true;
@@ -150,6 +151,13 @@ void QObject::draw() {
 	if (!flc) {
 		return;
 	}
+	if (_animate && _startSound) {
+		if (_sound) {
+			_sound->play(!_notLoopedSound);
+			_startSound = false;
+		}
+	}
+
 	Common::Rect screen(640, 480);
 	Common::Rect dest(flc->getBounds());
 	//flcRect.translate(_x, _y);
@@ -201,6 +209,33 @@ void QObject::show(bool v) {
 		}
 	}
 	QMessageObject::show(v);
+}
+
+void QObject::update(int time) {
+	if (!_animate || !_isShown)
+		return;
+	_time += time;
+	FlicDecoder *flc = g_vm->resMgr()->loadFlic(_resourceId);
+	if (flc) {
+		while (_time > flc->getDelay()) {
+			if (_sound && _hasSound && flc->getCurFrame() == 0) {
+				_startSound = true;
+				_hasSound = false;
+			}
+			g_vm->videoSystem()->addDirtyRect(Common::Point(_x, _y), *flc);
+			flc->setFrame(-1);
+			if (flc->getCurFrame() == flc->getFrameCount() - 1) {
+				if (_notLoopedSound) {
+					_hasSound = _sound != nullptr;
+				}
+				g_vm->getQSystem()->addMessage(_id, kEnd, _resourceId, 0, 0, 0, 0);
+			}
+			if (flc->getCurFrame() + 1 == flc->getFrameCount() / 2) {
+				g_vm->getQSystem()->addMessage(_id, kHalf, _resourceId, 0, 0, 0, 0);
+			}
+			_time -= flc->getDelay();
+		}
+	}
 }
 
 }

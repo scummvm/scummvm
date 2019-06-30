@@ -43,6 +43,7 @@ public:
 	int32 _z;
 };
 
+class Sound;
 
 class QMessageObject : public QVisibleObject {
 public:
@@ -66,8 +67,9 @@ public:
 	int _field_38;
 	int _isActive;
 	int _startSound;
-	int _field_44;
+	int _hasSound;
 	int _notLoopedSound;
+	Sound *_sound;
 	int8 _status;
 	uint16 _id;
 	Common::String _name;
@@ -80,6 +82,7 @@ public:
 class QObject : public QMessageObject {
 public:
 	void draw() override;
+	void update(int time) override;
 	void updateZ() override;
 	bool isInPoint(int x, int y) override;
 	void show(bool v) override;
