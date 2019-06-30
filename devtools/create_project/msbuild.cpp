@@ -366,6 +366,7 @@ void MSBuildProvider::outputGlobalPropFile(const BuildSetup &setup, std::ofstrea
 	              "\t\t\t<MultiProcessorCompilation>true</MultiProcessorCompilation>\n"
 	              "\t\t</ClCompile>\n"
 	              "\t\t<Link>\n"
+	              "\t\t\t<AdditionalDependencies>ws2_32.lib;wldap32.lib;crypt32.lib;normaliz.lib;%(AdditionalDependencies)</AdditionalDependencies>\n"
 	              "\t\t\t<IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>\n"
 	              "\t\t\t<SubSystem>Console</SubSystem>\n";
 
