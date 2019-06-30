@@ -4085,7 +4085,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.map", 0, "685bdb1ed47bbbb0e5e25db392da83ce", 9301},
 		{"resource.000", 0, "f64fd6aa3977939a86ff30783dd677e1", 11004993},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformDOS, ADGF_UNSTABLE, GUIO_QFG4_FLOPPY },
+		Common::EN_ANY, Common::kPlatformDOS, ADGF_TESTING, GUIO_QFG4_FLOPPY },
 
 	// Quest for Glory 4 1.1 Floppy - English DOS (supplied by abevi in bug report #2612718)
 	// SCI interpreter version 2.000.000
@@ -4093,7 +4093,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.map", 0, "d10a4cc177d2091d744e2ad8c049b0ae", 9295},
 		{"resource.000", 0, "f64fd6aa3977939a86ff30783dd677e1", 11003589},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformDOS, ADGF_UNSTABLE, GUIO_QFG4_FLOPPY },
+		Common::EN_ANY, Common::kPlatformDOS, ADGF_TESTING, GUIO_QFG4_FLOPPY },
 
 	// Quest for Glory 4 1.1 Floppy - German DOS (supplied by markcool in bug report #2723850)
 	// Executable scanning reports "2.000.000", VERSION file reports "1.1"
@@ -4101,7 +4101,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.map", 0, "9e0abba8746f40565bc7eb5720522ecd", 9301},
 		{"resource.000", 0, "57f22cdc54eeb35fce1f26b31b5c3ee1", 11076197},
 		AD_LISTEND},
-		Common::DE_DEU, Common::kPlatformDOS, ADGF_UNSTABLE, GUIO_QFG4_FLOPPY },
+		Common::DE_DEU, Common::kPlatformDOS, ADGF_TESTING, GUIO_QFG4_FLOPPY },
 
 	// Quest for Glory 4 CD - English DOS/Windows (from jvprat)
 	// Executable scanning reports "2.100.002", VERSION file reports "1.0"
@@ -4109,7 +4109,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.map", 0, "aba367f2102e81782d961b14fbe3d630", 10246},
 		{"resource.000", 0, "263dce4aa34c49d3ad29bec889007b1c", 11571394},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformDOS, ADGF_CD | ADGF_UNSTABLE, GUIO_QFG4_CD	},
+		Common::EN_ANY, Common::kPlatformDOS, ADGF_CD | ADGF_TESTING, GUIO_QFG4_CD	},
 
 	// Quest for Glory 4 CD - English DOS/Windows (from jvprat)
 	// Executable scanning reports "2.100.002", VERSION file reports "1.0"
@@ -4117,7 +4117,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.map", 0, "aba367f2102e81782d961b14fbe3d630", 10246},
 		{"resource.000", 0, "263dce4aa34c49d3ad29bec889007b1c", 11571394},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformWindows, ADGF_CD | ADGF_UNSTABLE, GUIO_QFG4_CD	},
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_CD | ADGF_TESTING, GUIO_QFG4_CD	},
 
 #undef GUIO_QFG4_FLOPPY
 #undef GUIO_QFG4_CD
