@@ -77,7 +77,7 @@ void InterfaceStartup::start() {
 
 
 	QObjectCursor *cursor = g_vm->getQSystem()->_cursor.get();
-	cursor->_resourceId = 5007;
+	cursor->_resourceId = 4901;
 	cursor->_isShown = true;
 	cursor->_animate = false;
 	_objs.push_back(g_vm->getQSystem()->_cursor.get());
@@ -119,9 +119,7 @@ void InterfaceStartup::onMouseMove(const Common::Point p) {
 					_objUnderCursor = obj;
 				}
 				obj->_isShown = clicked;
-				if (flc->getCurFrame() == -1) {
-					flc->decodeNextFrame();
-				}
+				flc->setFrame(1);
 				Common::Rect dirty(flc->getBounds());
 				dirty.translate(obj->_x, obj->_y);
 				g_vm->videoSystem()->addDirtyRect(dirty);

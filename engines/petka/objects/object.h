@@ -33,7 +33,7 @@ public:
 	virtual ~QVisibleObject() {};
 
 	virtual void draw() {};
-	virtual void update() {};
+	virtual void update(int time) {};
 	virtual void updateZ() {};
 	virtual void show(bool v) {};
 	virtual bool isInPoint(int x, int y) { return false; }
@@ -56,6 +56,7 @@ public:
 	int32 _y;
 	int32 _field14;
 	int32 _field18;
+	int32 _time;
 	int32 _field20;
 	int32 _field24;
 	int32 _field28;

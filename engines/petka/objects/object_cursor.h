@@ -32,7 +32,7 @@ public:
 	QObjectCursor();
 
 	void setCursorPos(int x, int y, bool center);
-	void update() override;
+	void update(int time) override;
 	void draw() override;
 	void show(bool v) override;
 

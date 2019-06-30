@@ -33,6 +33,7 @@ public:
 
 	void setFrame(int frame);
 
+	uint getDelay() const;
 	const Common::Rect &getBounds() const;
 	const Common::Array<Common::Rect> &getMskRects() const;
 	const Graphics::Surface *getCurrentFrame() const;
@@ -45,6 +46,7 @@ protected:
 
 		bool loadMsk(Common::SeekableReadStream &stream);
 
+		uint getDelay() const;
 		const Common::Rect &getBounds() const;
 		const Common::Array<Common::Rect> &getMskRects() const;
 		const Graphics::Surface *getSurface() const;

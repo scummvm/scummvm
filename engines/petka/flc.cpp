@@ -80,7 +80,7 @@ const Common::Array<Common::Rect> &FlicDecoder::getMskRects() const {
 uint32 FlicDecoder::getTransColor(const Graphics::PixelFormat &fmt) const {
 	const Track *track = getTrack(0);
 	if (track) {
-		const FlicVideoTrack *flc = ((FlicVideoTrack *) track);
+		const FlicVideoTrack *flc = ((FlicVideoTrack *)track);
 		byte r = flc->getPalette()[0];
 		byte g = flc->getPalette()[1];
 		byte b = flc->getPalette()[2];
@@ -90,14 +90,29 @@ uint32 FlicDecoder::getTransColor(const Graphics::PixelFormat &fmt) const {
 }
 
 void FlicDecoder::setFrame(int frame) {
-	FlicVideoTrack *flc = ((FlicVideoTrack *) getTrack(0));
+	FlicVideoTrack *flc = ((FlicVideoTrack *)getTrack(0));
 	if (!flc || flc->getCurFrame() + 1 == frame)
 		return;
+
+	if (frame == -1) {
+		if (flc->getCurFrame() + 1 == flc->getFrameCount()) {
+			flc->rewind();
+		}
+		flc->decodeNextFrame();
+		return;
+	}
 
 	flc->rewind();
 	do {
 		flc->decodeNextFrame();
 	} while (flc->getCurFrame() + 1 != frame);
+}
+
+uint FlicDecoder::getDelay() const {
+	FlicVideoTrack *flc = ((FlicVideoTrack *)getTrack(0));
+	if (flc)
+		return flc->getDelay();
+	return 0;
 }
 
 FlicDecoder::FlicVideoTrack::FlicVideoTrack(Common::SeekableReadStream *stream, uint16 frameCount, uint16 width, uint16 height, bool skipHeader)
@@ -153,6 +168,10 @@ const Graphics::Surface *FlicDecoder::FlicVideoTrack::getSurface() const {
 const Common::Array<Common::Rect> &FlicDecoder::FlicVideoTrack::getMskRects() const {
 	assert(_curFrame >= 0);
 	return _msk[_curFrame];
+}
+
+uint FlicDecoder::FlicVideoTrack::getDelay() const {
+	return _frameDelay;
 }
 
 } // End of namespace Petka
