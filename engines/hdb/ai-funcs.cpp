@@ -1307,8 +1307,8 @@ void AI::animEntFrames(AIEntity *e) {
 			warning("STUB: Play SND_SHOCKBOT_SHOCK");
 			click = 0;
 		}
+		break;
 	}
-	break;
 	case STATE_HORRIBLE3:
 	{
 		static int		click = 0;
@@ -1319,8 +1319,8 @@ void AI::animEntFrames(AIEntity *e) {
 			warning("STUB: Play SND_GUY_GRABBED");
 			click = 0;
 		}
+		break;
 	}
-	break;
 	case STATE_HORRIBLE4:
 		e->draw = _horrible4Gfx[e->animFrame];
 		max = _horrible4Frames;
