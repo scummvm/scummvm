@@ -31,9 +31,12 @@
 
 @interface TextInputHandler : UITextView {
 	SoftKeyboard *softKeyboard;
+	UIToolbar *toolbar;
+	UIScrollView *scrollView;
 }
 
 - (id)initWithKeyboard:(SoftKeyboard *)keyboard;
+- (void)updateToolbarSize;
 
 @end
 
@@ -51,67 +54,61 @@
 	//item.leadingBarButtonGroups = @[];
 	//item.trailingBarButtonGroups = @[];
 
-	UIToolbar *toolbar = [[[UIToolbar alloc] initWithFrame:CGRectMake(0.0f, 0.0f, 0.0f, 0.0f)] autorelease];
+	toolbar = [[[UIToolbar alloc] initWithFrame:CGRectMake(0.0f, 0.0f, 0.0f, 0.0f)] autorelease];
 	toolbar.barTintColor = keyboard.backgroundColor;
 	toolbar.tintColor = keyboard.tintColor;
 	toolbar.translucent = NO;
 
-	if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
-		toolbar.items = @[
-			// GMM button
-			[[[UIBarButtonItem alloc] initWithTitle:@"\u2630" style:UIBarButtonItemStylePlain target:self action:@selector(mainMenuKey)] autorelease],
-			// Escape key
-			[[[UIBarButtonItem alloc] initWithTitle:@"Esc" style:UIBarButtonItemStylePlain target:self action:@selector(escapeKey)] autorelease],
-			// Return key
-			[[[UIBarButtonItem alloc] initWithTitle:@"\u23ce" style:UIBarButtonItemStylePlain target:self action:@selector(returnKey)] autorelease],
-			// Function keys
-			[[[UIBarButtonItem alloc] initWithTitle:@"F1" style:UIBarButtonItemStylePlain target:self action:@selector(fn1Key)] autorelease],
-			[[[UIBarButtonItem alloc] initWithTitle:@"F2" style:UIBarButtonItemStylePlain target:self action:@selector(fn2Key)] autorelease],
-			[[[UIBarButtonItem alloc] initWithTitle:@"F3" style:UIBarButtonItemStylePlain target:self action:@selector(fn3Key)] autorelease],
-			[[[UIBarButtonItem alloc] initWithTitle:@"F4" style:UIBarButtonItemStylePlain target:self action:@selector(fn4Key)] autorelease],
-			[[[UIBarButtonItem alloc] initWithTitle:@"F5" style:UIBarButtonItemStylePlain target:self action:@selector(fn5Key)] autorelease],
-			[[[UIBarButtonItem alloc] initWithTitle:@"F6" style:UIBarButtonItemStylePlain target:self action:@selector(fn6Key)] autorelease],
-			[[[UIBarButtonItem alloc] initWithTitle:@"F7" style:UIBarButtonItemStylePlain target:self action:@selector(fn7Key)] autorelease],
-			[[[UIBarButtonItem alloc] initWithTitle:@"F8" style:UIBarButtonItemStylePlain target:self action:@selector(fn8Key)] autorelease],
-			[[[UIBarButtonItem alloc] initWithTitle:@"F9" style:UIBarButtonItemStylePlain target:self action:@selector(fn9Key)] autorelease],
-			[[[UIBarButtonItem alloc] initWithTitle:@"F10" style:UIBarButtonItemStylePlain target:self action:@selector(fn10Key)] autorelease],
-			[[[UIBarButtonItem alloc] initWithTitle:@"F11" style:UIBarButtonItemStylePlain target:self action:@selector(fn11Key)] autorelease],
-			[[[UIBarButtonItem alloc] initWithTitle:@"F12" style:UIBarButtonItemStylePlain target:self action:@selector(fn12Key)] autorelease],
-			// Arrow keys
-			[[[UIBarButtonItem alloc] initWithTitle:@"\u2190" style:UIBarButtonItemStylePlain target:self action:@selector(leftArrowKey)] autorelease],
-			[[[UIBarButtonItem alloc] initWithTitle:@"\u2191" style:UIBarButtonItemStylePlain target:self action:@selector(upArrowKey)] autorelease],
-			[[[UIBarButtonItem alloc] initWithTitle:@"\u2192" style:UIBarButtonItemStylePlain target:self action:@selector(rightArrowKey)] autorelease],
-			[[[UIBarButtonItem alloc] initWithTitle:@"\u2193" style:UIBarButtonItemStylePlain target:self action:@selector(downArrowKey)] autorelease],
-			// Spacer at the end
-			[[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil] autorelease],
-		];
-	} else {
-		// There is less space, so only add buttons for keys for which we do not have getsures
-		toolbar.items = @[
-			// Return key
-			[[[UIBarButtonItem alloc] initWithTitle:@"\u23ce" style:UIBarButtonItemStylePlain target:self action:@selector(returnKey)] autorelease],
-			// Function keys
-			[[[UIBarButtonItem alloc] initWithTitle:@"F1" style:UIBarButtonItemStylePlain target:self action:@selector(fn1Key)] autorelease],
-			[[[UIBarButtonItem alloc] initWithTitle:@"F2" style:UIBarButtonItemStylePlain target:self action:@selector(fn2Key)] autorelease],
-			[[[UIBarButtonItem alloc] initWithTitle:@"F3" style:UIBarButtonItemStylePlain target:self action:@selector(fn3Key)] autorelease],
-			[[[UIBarButtonItem alloc] initWithTitle:@"F4" style:UIBarButtonItemStylePlain target:self action:@selector(fn4Key)] autorelease],
-			[[[UIBarButtonItem alloc] initWithTitle:@"F5" style:UIBarButtonItemStylePlain target:self action:@selector(fn5Key)] autorelease],
-			[[[UIBarButtonItem alloc] initWithTitle:@"F6" style:UIBarButtonItemStylePlain target:self action:@selector(fn6Key)] autorelease],
-			[[[UIBarButtonItem alloc] initWithTitle:@"F7" style:UIBarButtonItemStylePlain target:self action:@selector(fn7Key)] autorelease],
-			[[[UIBarButtonItem alloc] initWithTitle:@"F8" style:UIBarButtonItemStylePlain target:self action:@selector(fn8Key)] autorelease],
-			[[[UIBarButtonItem alloc] initWithTitle:@"F9" style:UIBarButtonItemStylePlain target:self action:@selector(fn9Key)] autorelease],
-			[[[UIBarButtonItem alloc] initWithTitle:@"F10" style:UIBarButtonItemStylePlain target:self action:@selector(fn10Key)] autorelease],
-//			[[[UIBarButtonItem alloc] initWithTitle:@"F11" style:UIBarButtonItemStylePlain target:self action:@selector(fn11Key)] autorelease],
-//			[[[UIBarButtonItem alloc] initWithTitle:@"F12" style:UIBarButtonItemStylePlain target:self action:@selector(fn12Key)] autorelease],
-			// Spacer at the end
-			[[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil] autorelease],
-		];
-	}
+	toolbar.items = @[
+		// GMM button
+		[[[UIBarButtonItem alloc] initWithTitle:@"\u2630" style:UIBarButtonItemStylePlain target:self action:@selector(mainMenuKey)] autorelease],
+		// Escape key
+		[[[UIBarButtonItem alloc] initWithTitle:@"Esc" style:UIBarButtonItemStylePlain target:self action:@selector(escapeKey)] autorelease],
+		// Return key
+		[[[UIBarButtonItem alloc] initWithTitle:@"\u23ce" style:UIBarButtonItemStylePlain target:self action:@selector(returnKey)] autorelease],
+		// Function keys
+		[[[UIBarButtonItem alloc] initWithTitle:@"F1" style:UIBarButtonItemStylePlain target:self action:@selector(fn1Key)] autorelease],
+		[[[UIBarButtonItem alloc] initWithTitle:@"F2" style:UIBarButtonItemStylePlain target:self action:@selector(fn2Key)] autorelease],
+		[[[UIBarButtonItem alloc] initWithTitle:@"F3" style:UIBarButtonItemStylePlain target:self action:@selector(fn3Key)] autorelease],
+		[[[UIBarButtonItem alloc] initWithTitle:@"F4" style:UIBarButtonItemStylePlain target:self action:@selector(fn4Key)] autorelease],
+		[[[UIBarButtonItem alloc] initWithTitle:@"F5" style:UIBarButtonItemStylePlain target:self action:@selector(fn5Key)] autorelease],
+		[[[UIBarButtonItem alloc] initWithTitle:@"F6" style:UIBarButtonItemStylePlain target:self action:@selector(fn6Key)] autorelease],
+		[[[UIBarButtonItem alloc] initWithTitle:@"F7" style:UIBarButtonItemStylePlain target:self action:@selector(fn7Key)] autorelease],
+		[[[UIBarButtonItem alloc] initWithTitle:@"F8" style:UIBarButtonItemStylePlain target:self action:@selector(fn8Key)] autorelease],
+		[[[UIBarButtonItem alloc] initWithTitle:@"F9" style:UIBarButtonItemStylePlain target:self action:@selector(fn9Key)] autorelease],
+		[[[UIBarButtonItem alloc] initWithTitle:@"F10" style:UIBarButtonItemStylePlain target:self action:@selector(fn10Key)] autorelease],
+		[[[UIBarButtonItem alloc] initWithTitle:@"F11" style:UIBarButtonItemStylePlain target:self action:@selector(fn11Key)] autorelease],
+		[[[UIBarButtonItem alloc] initWithTitle:@"F12" style:UIBarButtonItemStylePlain target:self action:@selector(fn12Key)] autorelease],
+		// Arrow keys
+		[[[UIBarButtonItem alloc] initWithTitle:@"\u2190" style:UIBarButtonItemStylePlain target:self action:@selector(leftArrowKey)] autorelease],
+		[[[UIBarButtonItem alloc] initWithTitle:@"\u2191" style:UIBarButtonItemStylePlain target:self action:@selector(upArrowKey)] autorelease],
+		[[[UIBarButtonItem alloc] initWithTitle:@"\u2192" style:UIBarButtonItemStylePlain target:self action:@selector(rightArrowKey)] autorelease],
+		[[[UIBarButtonItem alloc] initWithTitle:@"\u2193" style:UIBarButtonItemStylePlain target:self action:@selector(downArrowKey)] autorelease],
+		// Spacer at the end
+		[[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil] autorelease],
+	];
 
 	self.inputAccessoryView = toolbar;
 	[toolbar sizeToFit];
 
+	scrollView = [[UIScrollView alloc] init];
+	scrollView.frame = toolbar.frame;
+	scrollView.bounds = toolbar.bounds;
+	scrollView.autoresizingMask = toolbar.autoresizingMask;
+	scrollView.showsVerticalScrollIndicator = false;
+	scrollView.showsHorizontalScrollIndicator = false;
+	toolbar.autoresizingMask = UIViewAutoresizingNone;
+	[scrollView addSubview:toolbar];
+	self.inputAccessoryView = scrollView;
+
 	return self;
+}
+
+- (void)updateToolbarSize {
+	// We need at least a width of 768 pt for the toolbar. If we add more buttons this may need to be increased.
+	toolbar.frame = CGRectMake(0, 0, MAX(768, [[UIScreen mainScreen] bounds].size.width), toolbar.frame.size.height);
+	toolbar.bounds = toolbar.frame;
+	scrollView.contentSize = toolbar.frame.size;
 }
 
 - (NSArray *)keyCommands {
@@ -256,6 +253,7 @@
 }
 
 - (void)showKeyboard {
+	[inputView updateToolbarSize];
 	[inputView becomeFirstResponder];
 }
 

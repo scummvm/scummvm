@@ -26,9 +26,11 @@
 #include <UIKit/UIKit.h>
 #include <UIKit/UITextView.h>
 
+@class TextInputHandler;
+
 @interface SoftKeyboard : UIView<UITextViewDelegate> {
 	id inputDelegate;
-	UITextView *inputView;
+	TextInputHandler *inputView;
 }
 
 - (id)initWithFrame:(CGRect)frame;
