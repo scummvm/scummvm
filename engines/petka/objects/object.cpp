@@ -94,14 +94,35 @@ void QMessageObject::processMessage(const QMessage &msg) {
 		if (dynamic_cast<QObjectBG *>(this)) {
 			break;
 		}
-		if (g_vm->getQSystem()->_field48) {
-			debug("SET OPCODE %d = %d", _id, msg.arg1);
+		if (g_vm->getQSystem()->_isIniting) {
 			_resourceId = msg.arg1;
 			_notLoopedSound = msg.arg2 != 5;
 		} else {
-			debug("NOT IMPL");
-		}
+			_sound = g_vm->soundMgr()->addSound(g_vm->resMgr()->findSoundName(_resourceId), Audio::Mixer::kSFXSoundType);
+			_hasSound = _sound != nullptr;
+			_startSound = false;
+			FlicDecoder *flc = g_vm->resMgr()->loadFlic(_resourceId);
+			if (flc) {
+				g_vm->videoSystem()->addDirtyRect(Common::Point(_x, _y), *flc);
+			}
 
+			flc = g_vm->resMgr()->loadFlic(msg.arg1);
+			flc->setFrame(1);
+			_time = 0;
+			if (_notLoopedSound) {
+				g_vm->soundMgr()->removeSound(g_vm->resMgr()->findSoundName(_resourceId));
+			}
+			_resourceId = msg.arg1;
+		}
+		if (msg.arg2 == 1) {
+			FlicDecoder *flc = g_vm->resMgr()->loadFlic(_resourceId);
+			flc->setFrame(1);
+			g_vm->videoSystem()->addDirtyRect(Common::Rect(0, 0, 640, 480));
+			_time = 0;
+		} else if (msg.arg2 == 2) {
+			g_vm->resMgr()->loadFlic(_resourceId);
+		}
+		_notLoopedSound = msg.arg2 != 5;
 		break;
 	case kStatus:
 		_status = (int8)msg.arg1;

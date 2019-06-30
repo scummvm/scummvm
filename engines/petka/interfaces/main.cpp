@@ -57,7 +57,7 @@ InterfaceMain::InterfaceMain() {
 
 void InterfaceMain::start() {
 	g_vm->getQSystem()->update();
-	g_vm->getQSystem()->_field48 = 0;
+	g_vm->getQSystem()->_isIniting = 0;
 
 	loadRoom(g_vm->getQSystem()->findObject("Seq - INTRO0")->_id, false);
 }
