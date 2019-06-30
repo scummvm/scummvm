@@ -526,7 +526,7 @@ Common::Error HDBGame::run() {
 		paint();
 
 		g_system->updateScreen();
-		g_system->delayMillis(10);
+		g_system->delayMillis(1000/60);
 	}
 
 	return Common::kNoError;
