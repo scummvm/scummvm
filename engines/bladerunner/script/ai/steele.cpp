@@ -822,7 +822,9 @@ bool AIScriptSteele::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		// Scene_Exits_Enable() is done in Izo's kGoalIzoGetArrested - CompletedMovementTrack() case
 		Actor_Set_Goal_Number(kActorIzo, kGoalIzoGetArrested);
 		Actor_Set_Goal_Number(kActorSteele, kGoalSteeleLeaveRC03);
+#if BLADERUNNER_ORIGINAL_BUGS
 		Actor_Set_Goal_Number(kActorSteele, kGoalSteeleDefault); // TODO - a bug? why set to default here?
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		return true;
 
 	case kGoalSteeleIzoBlockedByMcCoy:
@@ -2333,9 +2335,9 @@ void AIScriptSteele::SetAnimationState(int animationState, int animationFrame, i
 bool AIScriptSteele::ReachedMovementTrackWaypoint(int waypointId) {
 	if (waypointId == 174
 	 && Actor_Query_Goal_Number(kActorSteele) == kGoalSteeleLeaveRC03
-	)
+	) {
 		Actor_Set_Goal_Number(kActorSteele, kGoalSteeleGoToPoliceStation);
-
+	}
 	return true;
 }
 

@@ -51,7 +51,12 @@ void SceneScriptRC03::InitializeScene() {
 	Scene_Exit_Add_2D_Exit(0, 610, 0, 639, 479, 1);
 	Scene_Exit_Add_2D_Exit(1,   0, 0,  30, 479, 3);
 	if (Game_Flag_Query(kFlagRC03UnlockedToUG01)) {
+#if BLADERUNNER_ORIGINAL_BUGS
 		Scene_Exit_Add_2D_Exit(2, 524, 350, 573, 359, 2);
+#else
+	// prevent Izo's corpse from blocking the exit hot-spot area
+		Scene_Exit_Add_2D_Exit(2, 524, 340, 573, 359, 2);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 	}
 	Scene_Exit_Add_2D_Exit(3,  85, 255, 112, 315, 0);
 	Scene_Exit_Add_2D_Exit(4, 428, 260, 453, 324, 0);
@@ -316,7 +321,19 @@ void SceneScriptRC03::PlayerWalkedIn() {
 			Loop_Actor_Walk_To_XYZ(kActorIzo, 180.0f, -4.0f, 184.0f, 0, false, false, false);
 			Actor_Change_Animation_Mode(kActorIzo, 6);
 			if (!Game_Flag_Query(kFlagIzoIsReplicant)) {
+#if BLADERUNNER_ORIGINAL_BUGS
 				Actor_Set_Goal_Number(kActorSteele, kGoalSteeleApprehendIzo);
+#else
+				if (Actor_Query_Goal_Number(kActorIzo) != kGoalIzoGetArrested
+				    && Actor_Query_Goal_Number(kActorIzo) != kGoalIzoGotArrested
+				    && Actor_Query_Goal_Number(kActorSteele) != kGoalSteeleApprehendIzo
+				    && Actor_Query_Goal_Number(kActorSteele) != kGoalSteeleArrestIzo
+				    && Actor_Query_Goal_Number(kActorSteele) != kGoalSteeleLeaveRC03
+				    && Actor_Query_Goal_Number(kActorSteele) != kGoalSteeleGoToPoliceStation
+				) {
+					Actor_Set_Goal_Number(kActorSteele, kGoalSteeleApprehendIzo);
+				}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 			}
 			Player_Gains_Control();
 		} else {

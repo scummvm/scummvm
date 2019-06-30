@@ -106,6 +106,7 @@ void AIScriptIzo::CompletedMovementTrack() {
 		return; //true;
 
 	case kGoalIzoRC03Walk:
+		// fall through
 	case kGoalIzoRC03Run:
 		Actor_Set_Goal_Number(kActorIzo, kGoalIzoRC03RunAway);
 		Actor_Set_Goal_Number(kActorSteele, kGoalSteeleApprehendIzo);
