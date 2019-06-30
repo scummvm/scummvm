@@ -10,12 +10,16 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Might and Magic - World of Xeen 2 CD Talkie.
    - Might and Magic - Swords of Xeen.
 
+ New ports:
+   - Added Nintendo Switch port.
+
  General:
    - Improved GUI rendering and overall GUI performance.
    - Add stretch mode option to control how the display is stretch to the
      window or screen area.
    - Fixed incorrect cursor movement when it's controlled using the keyboard.
    - Updated the Roland MT-32 emulation code to Munt 2.3.0.
+   - Improved unknown game variants reporting.
 
  Drascula:
    - Fixed loading game from launcher when the game had been saved in chapter 1.
@@ -96,6 +100,14 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed graphical glitch in Zork: Grand Inquisitor.
    - Packaged the required fonts with ScummVM.
 
+ iOS port:
+   - Added three-fingers swipe gestures to simulate arrow keys.
+   - Added pinch in and out gestures to show and hide the keyboard.
+   - Added scrollable accessory bar above the keyboard with keys not present on the keyboard.
+
+ macOS port:
+   - Added option to use the ScummVM file browser instead of the system file browser.
+
  PS Vita port:
    - Implemented front touch and optional rear touch controls.
 
@@ -104,8 +116,12 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Improved smoothness of mouse pointer motion.
    - Added mouse pointer speed and analog nub deadzone settings.
 
- SDL port:
+ SDL ports (including Windows, Linux, macOS):
    - Added support for game controllers.
+   - Added support for adding games via Drag and Drop.
+
+ Windows port:
+   - Added option to use the system file browser instead of the ScummVM file browser.
 
 #### 2.0.0 (2017-12-17)
 
