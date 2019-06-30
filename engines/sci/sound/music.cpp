@@ -95,6 +95,9 @@ void SciMusic::init() {
 			deviceFlags |= MDT_TOWNS;
 	}
 
+	if (g_sci->getPlatform() == Common::kPlatformPC98)
+		deviceFlags |= MDT_PC98;
+
 	uint32 dev = MidiDriver::detectDevice(deviceFlags);
 	_musicType = MidiDriver::getMusicType(dev);
 
@@ -113,7 +116,7 @@ void SciMusic::init() {
 	case MT_ADLIB:
 		// FIXME: There's no Amiga sound option, so we hook it up to AdLib
 		if (g_sci->getPlatform() == Common::kPlatformAmiga || platform == Common::kPlatformMacintosh)
-			_pMidiDrv = MidiPlayer_AmigaMac_create(_soundVersion);
+			_pMidiDrv = MidiPlayer_AmigaMac_create(_soundVersion, platform);
 		else
 			_pMidiDrv = MidiPlayer_AdLib_create(_soundVersion);
 		break;
@@ -128,6 +131,9 @@ void SciMusic::init() {
 		break;
 	case MT_TOWNS:
 		_pMidiDrv = MidiPlayer_FMTowns_create(_soundVersion);
+		break;
+	case MT_PC98:		
+		_pMidiDrv = MidiPlayer_PC9801_create(_soundVersion);
 		break;
 	default:
 		if (ConfMan.getBool("native_fb01"))
@@ -794,8 +800,15 @@ void SciMusic::sendMidiCommand(uint32 cmd) {
 
 void SciMusic::sendMidiCommand(MusicEntry *pSnd, uint32 cmd) {
 	Common::StackLock lock(_mutex);
-	if (!pSnd->pMidiParser)
-		error("tried to cmdSendMidi on non midi slot (%04x:%04x)", PRINT_REG(pSnd->soundObj));
+	if (!pSnd->pMidiParser) {
+		// FPFP calls kDoSound SendMidi to mute and unmute its gameMusic2 sound
+		//  object but some scenes set this to an audio sample. In Act 2, room
+		//  660 sets this to audio of restaurant customers talking. Walking up
+		//  the hotel stairs from room 500 to 235 calls gameMusic2:mute and
+		//  triggers this if gameMusic2 hasn't changed. Bug #10952
+		warning("tried to cmdSendMidi on non midi slot (%04x:%04x)", PRINT_REG(pSnd->soundObj));
+		return;
+	}
 
 	pSnd->pMidiParser->mainThreadBegin();
 	pSnd->pMidiParser->sendFromScriptToDriver(cmd);

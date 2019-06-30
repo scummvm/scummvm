@@ -846,8 +846,14 @@ void CGE2Engine::feedSnail(Sprite *spr, Action snq, Hero *hero) {
 							v = s->labVal(snq, v >> 8);
 						break;
 					}
-					if (v >= 0)
+					if (v >= 0) {
 						s->_actionCtrl[snq]._ptr = v;
+						if (spr->_ref == 1537 && s->_actionCtrl[snq]._ptr == 26)
+						{
+							debug(1, "Carpet Clothes Horse Rehanging Workaround Triggered!");
+							s->_actionCtrl[snq]._ptr = 8;
+						}
+					}
 				}
 
 				if (s == spr)

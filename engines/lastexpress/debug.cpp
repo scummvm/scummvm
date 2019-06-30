@@ -487,10 +487,7 @@ bool Debugger::cmdPlaySeq(int argc, const char **argv) {
 
 					// Handle right-click to interrupt sequence
 					Common::Event ev;
-					if (!_engine->getEventManager()->pollEvent(ev))
-						break;
-
-					if (ev.type == Common::EVENT_RBUTTONUP)
+					if (_engine->getEventManager()->pollEvent(ev) && ev.type == Common::EVENT_RBUTTONUP)
 						break;
 
 					_engine->_system->delayMillis(175);
@@ -543,7 +540,7 @@ bool Debugger::cmdPlaySnd(int argc, const char **argv) {
 
 		_engine->_system->getMixer()->stopAll();
 
-		_soundStream->load(getArchive(name), 16);
+		_soundStream->load(getArchive(name), kVolumeFull, false);
 
 		if (argc == 3)
 			restoreArchive();

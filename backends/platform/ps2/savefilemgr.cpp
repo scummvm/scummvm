@@ -23,6 +23,7 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_printf
 
 #include "common/config-manager.h"
+#include "common/str.h"
 #include "common/zlib.h"
 
 // #include "backends/saves/compressed/compressed-saves.h"
@@ -115,8 +116,8 @@ Common::InSaveFile *Ps2SaveFileManager::openRawFile(const Common::String &filena
 			strcpy(temp, filename.c_str());
 
 			// mcSplit(temp, game, ext);
-			char *game = strdup(strtok(temp, "."));
-			char *ext = strdup(strtok(NULL, "*"));
+			char *game = scumm_strdup(strtok(temp, "."));
+			char *ext = scumm_strdup(strtok(NULL, "*"));
 			sprintf(path, "mc0:ScummVM/%s", game); // per game path
 
 			// mcCheck(path); // needed on load ?
@@ -183,8 +184,8 @@ Common::OutSaveFile *Ps2SaveFileManager::openForSaving(const Common::String &fil
 			strcpy(temp, filename.c_str());
 
 			// mcSplit(temp, game, ext);
-			char *game = strdup(strtok(temp, "."));
-			char *ext = strdup(strtok(NULL, "*"));
+			char *game = scumm_strdup(strtok(temp, "."));
+			char *ext = scumm_strdup(strtok(NULL, "*"));
 			sprintf(path, "mc0:ScummVM/%s", game); // per game path
 			mcCheck(path);
 			sprintf(path, "mc0:ScummVM/%s/%s.sav", game, ext);
@@ -217,8 +218,8 @@ bool Ps2SaveFileManager::removeSavefile(const Common::String &filename) {
 		strcpy(temp, filename.c_str());
 
 		// mcSplit(temp, game, ext);
-		char *game = strdup(strtok(temp, "."));
-		char *ext = strdup(strtok(NULL, "*"));
+		char *game = scumm_strdup(strtok(temp, "."));
+		char *ext = scumm_strdup(strtok(NULL, "*"));
 		sprintf(path, "mc0:ScummVM/%s", game); // per game path
 		mcCheck(path);
 		sprintf(path, "mc0:ScummVM/%s/%s.sav", game, ext);
@@ -254,7 +255,7 @@ Common::StringArray Ps2SaveFileManager::listSavefiles(const Common::String &patt
 		strcpy(temp, pattern.c_str());
 
 		// mcSplit(temp, game, ext);
-		game = strdup(strtok(temp, "."));
+		game = scumm_strdup(strtok(temp, "."));
 		sprintf(path, "mc0:ScummVM/%s", game); // per game path
 		mcCheck(path);
 

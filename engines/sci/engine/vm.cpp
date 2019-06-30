@@ -141,10 +141,15 @@ static reg_t read_var(EngineState *s, int type, int index) {
 			}
 			case VAR_PARAM: {
 				// Out-of-bounds read for a parameter that goes onto stack and hits an uninitialized temp
-				//  We return 0 currently in that case
-				const SciCallOrigin origin = s->getCurrentCallOrigin();
-				warning("Uninitialized read for parameter %d from %s", index, origin.toString().c_str());
-				return NULL_REG;
+				//  We need to find correct replacements for each situation manually
+				SciCallOrigin originReply;
+				SciWorkaroundSolution solution = trackOriginAndFindWorkaround(index, uninitializedReadForParamWorkarounds, &originReply);
+				if (solution.type == WORKAROUND_NONE) {
+					warning("Uninitialized read for parameter %d from %s", index, originReply.toString().c_str());
+					return NULL_REG;
+				} else {
+					return make_reg(0, solution.value);
+				}
 			}
 			default:
 				break;
@@ -287,7 +292,7 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 
 		ExecStackType stackType = EXEC_STACK_TYPE_VARSELECTOR;
 		StackPtr curSP = NULL;
-		reg32_t curFP = make_reg32(0, 0);
+		reg_t curFP = make_reg32(0, 0);
 		if (selectorType == kSelectorMethod) {
 			stackType = EXEC_STACK_TYPE_CALL;
 			curSP = sp;

@@ -23,6 +23,8 @@
 #ifndef _DSMAIN_H
 #define _DSMAIN_H
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+
 #include <nds.h>
 #include "osystem_ds.h"
 

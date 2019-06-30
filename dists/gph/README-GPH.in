@@ -12,13 +12,13 @@ Contents:
 
 Please refer to the:
 
-GPH ScummVM Forum: <http://forums.scummvm.org/viewforum.php?f=14>
+GPH ScummVM Forum: <https://forums.scummvm.org/viewforum.php?f=14>
 
 WiKi: (Select your device)
 
-<http://wiki.scummvm.org/index.php/GP2X>
-<http://wiki.scummvm.org/index.php/GP2XWiz>
-<http://wiki.scummvm.org/index.php/Caanoo>
+<https://wiki.scummvm.org/index.php/GP2X>
+<https://wiki.scummvm.org/index.php/GP2XWiz>
+<https://wiki.scummvm.org/index.php/Caanoo>
 
 for the most current information on the port and any updates to this
 documentation.
@@ -39,7 +39,7 @@ updated SVN builds.
 
 Fully supported official releases of the GPH ScummVM backend are made in
 line with main official releases and are avalalble from the ScummVM
-downloads page <http://www.scummvm.org/downloads.php> for the GP2X, 
+downloads page <https://www.scummvm.org/downloads/> for the GP2X,
 GP2XWiz and Caanoo.
 
 ------------------------------------------------------------------------

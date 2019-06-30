@@ -1559,9 +1559,9 @@ void ToonEngine::loadScene(int32 SceneId, bool forGameLoad) {
 
 	if (state()->_locations[SceneId]._flags & 0x40) {
 		Common::String cutaway = state()->_locations[SceneId]._cutaway;
-		_hotspots->LoadRif(locationName + ".RIC", cutaway + ".RIC");
+		_hotspots->loadRif(locationName + ".RIC", cutaway + ".RIC");
 	} else {
-		_hotspots->LoadRif(locationName + ".RIC", "");
+		_hotspots->loadRif(locationName + ".RIC", "");
 	}
 	restoreRifFlags(_gameState->_currentScene);
 
@@ -1837,10 +1837,10 @@ void ToonEngine::clickEvent() {
 	}
 
 	// find hotspot
-	int32 hot = _hotspots->Find(mouseX + state()->_currentScrollValue , _mouseY);
+	int32 hot = _hotspots->find(mouseX + state()->_currentScrollValue , _mouseY);
 	HotspotData *currentHot = 0;
 	if (hot > -1) {
-		currentHot = _hotspots->Get(hot);
+		currentHot = _hotspots->get(hot);
 	}
 
 	if (_currentHotspotItem == -3) {
@@ -2012,9 +2012,9 @@ void ToonEngine::selectHotspot() {
 		}
 	}
 
-	int32 hot = _hotspots->Find(mouseX + state()->_currentScrollValue, _mouseY);
+	int32 hot = _hotspots->find(mouseX + state()->_currentScrollValue, _mouseY);
 	if (hot != -1) {
-		HotspotData *hotspot = _hotspots->Get(hot);
+		HotspotData *hotspot = _hotspots->get(hot);
 		int32 item = hotspot->getData(14);
 		if (hotspot->getType() == 3)
 			item += 2000;
@@ -2271,8 +2271,8 @@ void ToonEngine::storeRifFlags(int32 location) {
 	}
 
 	for (int32 i = 0; i < _hotspots->getCount(); i++) {
-		_gameState->_locations[location]._rifBoxesFlags[i * 2 + 0] = _hotspots->Get(i)->getData(4);
-		_gameState->_locations[location]._rifBoxesFlags[i * 2 + 1] = _hotspots->Get(i)->getData(7);
+		_gameState->_locations[location]._rifBoxesFlags[i * 2 + 0] = _hotspots->get(i)->getData(4);
+		_gameState->_locations[location]._rifBoxesFlags[i * 2 + 1] = _hotspots->get(i)->getData(7);
 	}
 }
 
@@ -2280,8 +2280,8 @@ void ToonEngine::restoreRifFlags(int32 location) {
 	if (_hotspots) {
 		if (!_gameState->_locations[location]._visited) {
 			for (int32 i = 0; i < _hotspots->getCount(); i++) {
-				_gameState->_locations[location]._rifBoxesFlags[i * 2 + 0] = _hotspots->Get(i)->getData(4);
-				_gameState->_locations[location]._rifBoxesFlags[i * 2 + 1] = _hotspots->Get(i)->getData(7);
+				_gameState->_locations[location]._rifBoxesFlags[i * 2 + 0] = _hotspots->get(i)->getData(4);
+				_gameState->_locations[location]._rifBoxesFlags[i * 2 + 1] = _hotspots->get(i)->getData(7);
 			}
 			_gameState->_locations[location]._numRifBoxes = _hotspots->getCount();
 		} else {
@@ -2289,8 +2289,8 @@ void ToonEngine::restoreRifFlags(int32 location) {
 				return;
 
 			for (int32 i = 0; i < _hotspots->getCount(); i++) {
-				_hotspots->Get(i)->setData(4, _gameState->_locations[location]._rifBoxesFlags[i * 2 + 0]);
-				_hotspots->Get(i)->setData(7, _gameState->_locations[location]._rifBoxesFlags[i * 2 + 1]);
+				_hotspots->get(i)->setData(4, _gameState->_locations[location]._rifBoxesFlags[i * 2 + 0]);
+				_hotspots->get(i)->setData(7, _gameState->_locations[location]._rifBoxesFlags[i * 2 + 1]);
 			}
 		}
 	}
@@ -3378,6 +3378,8 @@ bool ToonEngine::saveGame(int32 slot, const Common::String &saveGameDesc) {
 
 	saveFile->writeUint32BE(saveDate);
 	saveFile->writeUint16BE(saveTime);
+	uint32 playTime = getTotalPlayTime();
+	saveFile->writeUint32BE(playTime);
 
 	// save global state
 	_gameState->save(saveFile);
@@ -3444,7 +3446,7 @@ bool ToonEngine::loadGame(int32 slot) {
 		return false;
 
 	int32 saveGameVersion = loadFile->readSint32BE();
-	if (saveGameVersion != TOON_SAVEGAME_VERSION) {
+	if ( (saveGameVersion < 4) || (saveGameVersion > TOON_SAVEGAME_VERSION) ) {
 		delete loadFile;
 		return false;
 	}
@@ -3455,6 +3457,12 @@ bool ToonEngine::loadGame(int32 slot) {
 	Graphics::skipThumbnail(*loadFile);
 
 	loadFile->skip(6); // date & time skip
+
+	uint32 playTimeMsec = 0;
+	if (saveGameVersion >= 5) {
+		playTimeMsec = loadFile->readUint32BE();
+	}
+	setTotalPlayTime(playTimeMsec);
 
 	if (_gameState->_currentScene != -1) {
 		exitScene();

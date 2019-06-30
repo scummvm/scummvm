@@ -63,11 +63,11 @@ public:
 	}
 
 	virtual const char *getName() const {
-		return "Titanic Engine";
+		return "Starship Titanic";
 	}
 
 	virtual const char *getOriginalCopyright() const {
-		return "Titanic Engine (c) The Digital Village";
+		return "Starship Titanic (C) The Digital Village";
 	}
 
 	virtual bool hasFeature(MetaEngineFeature f) const;
@@ -128,11 +128,6 @@ SaveStateList TitanicMetaEngine::listSaves(const char *target) const {
 				if (Titanic::CProjectItem::readSavegameHeader(&cf, header))
 					saveList.push_back(SaveStateDescriptor(slot, header._saveName));
 
-				if (header._thumbnail) {
-					header._thumbnail->free();
-					delete header._thumbnail;
-				}
-
 				cf.close();
 			}
 		}
@@ -161,7 +156,10 @@ SaveStateDescriptor TitanicMetaEngine::querySaveMetaInfos(const char *target, in
 		file.open(f);
 
 		Titanic::TitanicSavegameHeader header;
-		Titanic::CProjectItem::readSavegameHeader(&file, header);
+		if (!Titanic::CProjectItem::readSavegameHeader(&file, header, false)) {
+			file.close();
+			return SaveStateDescriptor();
+		}
 
 		file.close();
 

@@ -334,11 +334,7 @@ void AdLibSoundDriver::syncSounds() {
 void AdLibSoundDriver::adjustVolume(int channel, int volume) {
 	_channelsVolumeTable[channel].original = volume;
 
-	if (volume > 80) {
-		volume = 80;
-	} else if (volume < 0) {
-		volume = 0;
-	}
+	volume = CLIP(volume, 0, 80);
 	volume += volume / 4;
 	// The higher possible value for volume is 100
 

@@ -23,24 +23,56 @@
 #define SLUDGE_REGION_H
 
 #include "sludge/objtypes.h"
+#include "sludge/freeze.h"
 
 namespace Sludge {
 
 struct ScreenRegion {
 	int x1, y1, x2, y2, sX, sY, di;
 	ObjectType *thisType;
-	ScreenRegion *next;
 };
+typedef Common::List<ScreenRegion *> ScreenRegionList;
 
-bool addScreenRegion(int x1, int y1, int x2, int y2, int, int, int, int objectNum);
-void getOverRegion();
-ScreenRegion *getRegionForObject(int obj);
-void removeScreenRegion(int objectNum);
-void loadRegions(Common::SeekableReadStream *stream);
-void saveRegions(Common::WriteStream *stream);
-void killAllRegions();
+class RegionManager {
+public:
+	RegionManager(SludgeEngine *vm);
+	~RegionManager();
 
-void showBoxes();
+	// Kill
+	void kill();
+
+	// Add & remove region
+	bool addScreenRegion(int x1, int y1, int x2, int y2, int, int, int, int objectNum);
+	void removeScreenRegion(int objectNum);
+
+	// Save & load
+	void loadRegions(Common::SeekableReadStream *stream);
+	void saveRegions(Common::WriteStream *stream);
+
+	// Draw
+	void showBoxes();
+
+	// Setter & getter
+	ScreenRegion *getRegionForObject(int obj);
+	ScreenRegion *getOverRegion() const { return _overRegion; }
+	void setOverRegion(ScreenRegion *newRegion) { _overRegion = newRegion; }
+	void updateOverRegion();
+	bool isRegionChanged() const { return _lastRegion != _overRegion; }
+	void updateLastRegion() { _lastRegion = _overRegion; }
+	void resetOverRegion() { _overRegion = nullptr; }
+	void resetLastRegion() { _lastRegion = nullptr; }
+
+	// Freeze
+	void freeze(FrozenStuffStruct *frozenStuff);
+	void resotre(FrozenStuffStruct *frozenStuff);
+
+private:
+	SludgeEngine *_vm;
+
+	ScreenRegionList *_allScreenRegions;
+	ScreenRegion *_overRegion;
+	ScreenRegion *_lastRegion;
+};
 
 } // End of namespace Sludge
 

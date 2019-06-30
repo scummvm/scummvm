@@ -361,7 +361,7 @@ static void import_strings(const char *textFilename) {
 
 	// Set up a buffer for the output compressed strings
 	uint16 strData[BUFFER_SIZE];
-	memset(strData, 0, BUFFER_SIZE);
+	memset(strData, 0, BUFFER_SIZE*sizeof(uint16));
 	char sLine[BUFFER_SIZE];
 
 	int indis = 0;

@@ -3165,7 +3165,7 @@ bool Scene930::Object4::startAction(CursorType action, Event &event) {
 		if (BF_GLOBALS._bookmark >= bFlashBackTwo) {
 			_lookLineNum = 71;
 			NamedObject::startAction(action, event);
-			scene->ShowSoleInset();
+			scene->showSoleInset();
 			remove();
 		} else
 			NamedObject::startAction(action, event);
@@ -3304,7 +3304,7 @@ void Scene930::Action2::signal() {
 				SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + UI_INTERFACE_Y + 2,
 				SET_FONT, 4, SET_BG_COLOR, 1, SET_FG_COLOR, 19, SET_EXT_BGCOLOR, 9,
 				SET_EXT_FGCOLOR, 13, LIST_END);
-		scene->ShowBoxInset();
+		scene->showBoxInset();
 		BF_GLOBALS._player.enableControl();
 		remove();
 		break;
@@ -3460,7 +3460,7 @@ void Scene930::showBootInset() {
 	_bootsInset.setDetails(930, 69, 70, 93);
 }
 
-void Scene930::ShowBoxInset() {
+void Scene930::showBoxInset() {
 	_boxInset.postInit();
 	_boxInset.setVisage(930);
 	_boxInset.setStrip(1);
@@ -3470,7 +3470,7 @@ void Scene930::ShowBoxInset() {
 	_boxInset.setDetails(930, 73, 74, 75);
 }
 
-void Scene930::ShowSoleInset() {
+void Scene930::showSoleInset() {
 	_soleInset.postInit();
 	_soleInset.setVisage(930);
 	_soleInset.setStrip(3);

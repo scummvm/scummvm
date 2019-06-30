@@ -69,29 +69,29 @@ public:
 
 protected:
 	enum {
-		kBufferSize	= 32768,
+		kBufferSize   = 32768,
 		kCharsPerLine = 128,
 
-		kHistorySize = 20
+		kHistorySize  = 20
 	};
 
 	const Graphics::Font *_font;
 
-	char	_buffer[kBufferSize];
-	int		_linesInBuffer;
+	char _buffer[kBufferSize];
+	int  _linesInBuffer;
 
-	int		_pageWidth;
-	int		_linesPerPage;
+	int _pageWidth;
+	int _linesPerPage;
 
-	int		_currentPos;
-	int		_scrollLine;
-	int		_firstLineInBuffer;
+	int _currentPos;
+	int _scrollLine;
+	int _firstLineInBuffer;
 
-	int		_promptStartPos;
-	int		_promptEndPos;
+	int _promptStartPos;
+	int _promptEndPos;
 
-	bool	_caretVisible;
-	uint32	_caretTime;
+	bool   _caretVisible;
+	uint32 _caretTime;
 
 	enum SlideMode {
 		kNoSlideMode,
@@ -99,8 +99,8 @@ protected:
 		kDownSlideMode
 	};
 
-	SlideMode	_slideMode;
-	uint32	_slideTime;
+	SlideMode _slideMode;
+	uint32    _slideTime;
 
 	ScrollBarWidget *_scrollBar;
 
@@ -120,25 +120,25 @@ protected:
 
 	float _widthPercent, _heightPercent;
 
-	int	_leftPadding;
-	int	_rightPadding;
-	int	_topPadding;
-	int	_bottomPadding;
+	int _leftPadding;
+	int _rightPadding;
+	int _topPadding;
+	int _bottomPadding;
 
 	void slideUpAndClose();
 
 public:
 	ConsoleDialog(float widthPercent, float heightPercent);
 
-	void open();
-	void close();
-	void drawDialog();
+	void open() override;
+	void close() override;
+	void drawDialog(DrawLayer layerToDraw) override;
 
-	void handleTickle();
-	void reflowLayout();
-	void handleMouseWheel(int x, int y, int direction);
-	void handleKeyDown(Common::KeyState state);
-	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
+	void handleTickle() override;
+	void reflowLayout() override;
+	void handleMouseWheel(int x, int y, int direction) override;
+	void handleKeyDown(Common::KeyState state) override;
+	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
 
 	int printFormat(int dummy, const char *format, ...) GCC_PRINTF(3, 4);
 	int vprintFormat(int dummy, const char *format, va_list argptr);
@@ -167,18 +167,19 @@ protected:
 
 	int pos2line(int pos) { return (pos - (_scrollLine - _linesPerPage + 1) * kCharsPerLine) / kCharsPerLine; }
 
-	void drawLine(int line, bool restoreBg = true);
+	void drawLine(int line);
 	void drawCaret(bool erase);
 	void printCharIntern(int c);
 	void insertIntoPrompt(const char *str);
 	void print(const char *str);
 	void updateScrollBuffer();
 	void scrollToCurrent();
+	Common::String getUserInput();
 
 	void defaultKeyDownHandler(Common::KeyState &state);
 
 	// Line editing
-	void specialKeys(int keycode);
+	void specialKeys(Common::KeyCode keycode);
 	void nextLine();
 	void killChar();
 	void killLine();

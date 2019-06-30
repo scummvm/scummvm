@@ -55,7 +55,7 @@ namespace ListInternal {
 
 		NodeBase *_node;
 
-		Iterator() : _node(0) {}
+		Iterator() : _node(nullptr) {}
 		explicit Iterator(NodeBase *node) : _node(node) {}
 
 		// Prefix inc
@@ -108,7 +108,7 @@ namespace ListInternal {
 
 		const NodeBase *_node;
 
-		ConstIterator() : _node(0) {}
+		ConstIterator() : _node(nullptr) {}
 		explicit ConstIterator(const NodeBase *node) : _node(node) {}
 		ConstIterator(const Iterator<T> &x) : _node(x._node) {}
 

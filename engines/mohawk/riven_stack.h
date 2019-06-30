@@ -30,7 +30,6 @@
 #include "common/str-array.h"
 
 #include "mohawk/riven_graphics.h"
-#include "mohawk/riven_stack.h"
 
 namespace Mohawk {
 
@@ -63,6 +62,14 @@ public:
 	 * This query is case insensitive.
 	 */
 	int16 getNameId(const Common::String &name) const;
+
+	/**
+	 * Add a name id => name mapping
+	 *
+	 * The implementation of the method is currently limited and
+	 * does not allow retrieving an id from the name.
+	 */
+	void registerName(uint16 nameId, const Common::String &name);
 
 private:
 	void loadResource(MohawkEngine_Riven *vm, uint16 id);
@@ -113,6 +120,9 @@ public:
 	 * The search is case insensitive.
 	 */
 	int16 getIdFromName(RivenNameResource nameResource, const Common::String &name) const;
+
+	/** Add a name id => name mapping in a name list */
+	void registerName(RivenNameResource nameResource, uint16 nameId, const Common::String &name);
 
 	/** Get the id of a card in the card from its global identifier */
 	uint16 getCardStackId(uint32 globalId) const;
@@ -181,8 +191,8 @@ public:
 	// Miscellaneous
 	uint16 getComboDigit(uint32 correctCombo, uint32 digit);
 	void runDemoBoundaryDialog();
-	void runEndGame(uint16 videoCode, uint32 delay);
-	void runCredits(uint16 video, uint32 delay);
+	void runEndGame(uint16 videoCode, uint32 delay, uint32 videoFrameCountOverride);
+	void runCredits(uint16 video, uint32 delay, uint32 videoFrameCountOverride);
 
 	void pageTurn(RivenTransition transition);
 	bool keepTurningPages();

@@ -20,75 +20,100 @@
  *
  */
 
-#include "bladerunner/script/ai.h"
+#include "bladerunner/script/ai_script.h"
 
 namespace BladeRunner {
 
+AIScriptMcCoy::AIScriptMcCoy(BladeRunnerEngine *vm) : AIScriptBase(vm) {
+	_animationLoopCounter = 0;
+	_animationLoopLength = 0;
+	_animationLoopDirection = 0;
+	_animationLoopFrameMin = 0;
+	_animationLoopFrameMax = 0;
+	_animationStateNextSpecial = 0;
+	_animationNextSpecial = 0;
+	_nextSoundId = -1;
+	_NR10SteeleShooting = false;
+	_fallSpeed = 0.0f;
+	_fallHeightCurrent = 0.0f;
+	_fallHeightTarget = 0.0f;
+}
+
 void AIScriptMcCoy::Initialize() {
-	dword_45A0D0_animation_state = 0;
-	dword_45A0D4_animation_frame = 0;
-	dword_45A0D8 = 0;
-	dword_45A0DC = 30;
-	dword_45A0E0 = 1;
-	dword_45A0E4 = 0;
-	off_45A0EC = 0;
-	dword_45A0E8 = 3;
-	dword_45A0F0 = 3;
-	dword_45A0F4 = 20;
-	dword_45A0F8 = -1;
-	dword_45A0FC = 0;
-	off_45A100 = 0;
-	Actor_Set_Goal_Number(kActorMcCoy, 0);
+	_animationState = 0;
+	_animationFrame = 0;
+	_animationLoopCounter = 0;
+	_animationLoopLength = 30;
+	_animationLoopDirection = 1;
+	_animationLoopFrameMin = 0;
+	_animationLoopFrameMax = 3;
+	_animationStateNextSpecial = 3;
+	_animationNextSpecial = kModelAnimationMcCoyProtestingTalk;
+	_nextSoundId = -1;
+	_NR10SteeleShooting = false;
+	_fallSpeed = 0;
+	Actor_Set_Goal_Number(kActorMcCoy, kGoalMcCoyDefault);
 }
 
 bool AIScriptMcCoy::Update() {
-	if (dword_45A0F8 != -1) {
-		Sound_Play(dword_45A0F8, 100, 0, 0, 50);
-		dword_45A0F8 = -1;
+	if (_nextSoundId != -1) {
+		Sound_Play(_nextSoundId, 100, 0, 0, 50);
+		_nextSoundId = -1;
 	}
+
 	switch (Actor_Query_Goal_Number(kActorMcCoy)) {
-	case 101:
-		Actor_Set_Goal_Number(kActorMcCoy, 102);
+	case kGoalMcCoyBB11PrepareToRunAway:
+		Actor_Set_Goal_Number(kActorMcCoy, kGoalMcCoyBB11RunAway);
 		return true;
-	case 102:
-		if (Actor_Query_Inch_Distance_From_Waypoint(kActorMcCoy, 316) < 36 && !Game_Flag_Query(375)) {
-			Actor_Change_Animation_Mode(kActorMcCoy, 21);
-			Game_Flag_Set(375);
+
+	case kGoalMcCoyBB11RunAway:
+		if ( Actor_Query_Inch_Distance_From_Waypoint(kActorMcCoy, 316) < 36
+		 && !Game_Flag_Query(kFlagBB11SadikPunchedMcCoy)
+		) {
+			Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeHit);
+			Game_Flag_Set(kFlagBB11SadikPunchedMcCoy);
 		}
+
 		if (Actor_Query_Inch_Distance_From_Waypoint(kActorMcCoy, 316) < 4) {
-			Actor_Set_Goal_Number(kActorMcCoy, 103);
+			Actor_Set_Goal_Number(kActorMcCoy, kGoalMcCoyBB11GetCaught);
 		}
 		return true;
-	case 201:
-		Actor_Set_Goal_Number(kActorMcCoy, 0);
-		if (Player_Query_Current_Set() == 55) {
-			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -166.0f, -70.19f, -501.0f, 0, 0, false, 0);
+
+	case kGoalMcCoyNRxxStandUp:
+		Actor_Set_Goal_Number(kActorMcCoy, kGoalMcCoyDefault);
+		if (Player_Query_Current_Set() == kSetNR03) {
+			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -166.0f, -70.19f, -501.0f, 0, false, false, false);
 			Actor_Face_Heading(kActorMcCoy, 300, false);
 		} else {
-			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -461.0f, 0.0f, -373.0f, 0, 0, false, 0);
+			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -461.0f, 0.0f, -373.0f, 0, false, false, false);
 		}
 		Player_Gains_Control();
 		return true;
-	case 212:
-		if (Global_Variable_Query(47) >= 13) {
-			Global_Variable_Set(47, 500);
-		} else if (Global_Variable_Query(47) > 0) {
-			Global_Variable_Decrement(47, 1);
+
+	case kGoalMcCoyNR01LayDrugged:
+		if (Global_Variable_Query(kVariableNR01GetUpCounter) >= 13) {
+			Global_Variable_Set(kVariableNR01GetUpCounter, 500);
+		} if (Global_Variable_Query(kVariableNR01GetUpCounter) > 0) {
+			Global_Variable_Decrement(kVariableNR01GetUpCounter, 1);
 		}
 		break;
-	case 221:
-		Actor_Set_Goal_Number(kActorMcCoy, 0);
-		Actor_Set_Goal_Number(kActorEarlyQ, 212);
+
+	case kGoalMcCoyNR04PassOut:
+		Actor_Set_Goal_Number(kActorMcCoy, kGoalMcCoyDefault);
+		Actor_Set_Goal_Number(kActorEarlyQ, kGoalEarlyQNR04TakeDisk);
 		return true;
-	case 309:
-		sub_4053E0();
+
+	case kGoalMcCoyNR10Fall:
+		fallDown();
 		break;
-	case 391:
-		Actor_Retired_Here(kActorMcCoy, 12, 48, 1, -1);
-		Actor_Set_Goal_Number(kActorMcCoy, 599);
+
+	case kGoalMcCoyUG15Fall:
+		fallDown();
 		break;
-	case 231:
-		sub_4053E0();
+
+	case kGoalMcCoyUG15Die:
+		Actor_Retired_Here(kActorMcCoy, 12, 48, true, -1);
+		Actor_Set_Goal_Number(kActorMcCoy, kGoalMcCoyGone);
 		break;
 	}
 	return false;
@@ -102,88 +127,131 @@ void AIScriptMcCoy::CompletedMovementTrack() {
 
 void AIScriptMcCoy::ReceivedClue(int clueId, int fromActorId) {
 	switch (clueId) {
-	case 8:
-	case 9:
-		Spinner_Set_Selectable_Destination_Flag(3, 1);
+	case kClueDispatchHitAndRun: // added case for cut content
+		// fall through
+	case kClueChopstickWrapper:
+		// fall through
+	case kClueSushiMenu:
+		Spinner_Set_Selectable_Destination_Flag(kSpinnerDestinationChinatown, true);
 		break;
-	case 44:
-	case 47:
-		Spinner_Set_Selectable_Destination_Flag(4, 1);
+
+	case kClueDragonflyEarring:
+		// fall through
+	case kClueBombingSuspect:
+		Spinner_Set_Selectable_Destination_Flag(kSpinnerDestinationAnimoidRow, true);
 		break;
-	case 53:
-	case 263:
-		if (Query_Difficulty_Level() == 0) {
-			Spinner_Set_Selectable_Destination_Flag(4, 1);
+
+	case kClueKingstonKitchenBox1:
+		// fall through
+	case kClueKingstonKitchenBox2:
+		if (Query_Difficulty_Level() == kGameDifficultyEasy) {
+			Spinner_Set_Selectable_Destination_Flag(kSpinnerDestinationAnimoidRow, true);
 		}
 		break;
-	case 90:
-		Spinner_Set_Selectable_Destination_Flag(8, 1);
+
+	case kClueDragonflyCollection:
+		Spinner_Set_Selectable_Destination_Flag(kSpinnerDestinationNightclubRow, true);
 		break;
-	case 84:
-	case 113:
-	case 114:
-	case 115:
-	case 118:
-		Spinner_Set_Selectable_Destination_Flag(9, 1);
-		Spinner_Set_Selectable_Destination_Flag(8, 1);
+
+	case kClueHysteriaToken:
+		// fall through
+	case kClueCarRegistration1:
+		// fall through
+	case kClueCarRegistration2:
+		// fall through
+	case kClueCarRegistration3:
+		// fall through
+	case kClueLichenDogWrapper:
+		Spinner_Set_Selectable_Destination_Flag(kSpinnerDestinationHysteriaHall, true);
+		Spinner_Set_Selectable_Destination_Flag(kSpinnerDestinationNightclubRow, true);
 		break;
-	case 66:
-	case 80:
-	case 82:
-	case 83:
-		Global_Variable_Increment(49, 1);
+
+	case kClueWeaponsCache:
+		// fall through
+	case kClueWeaponsOrderForm:
+		// fall through
+	case kClueShippingForm:
+		// fall through
+	case kCluePoliceIssueWeapons:
+		Global_Variable_Increment(kVariableCorruptedGuzzaEvidence, 1);
 		break;
-	case 125:
-		Global_Variable_Increment(49, 5);
+
+	case kClueFolder:
+		Global_Variable_Increment(kVariableCorruptedGuzzaEvidence, 5);
 		break;
-	case 124:
-	case 128:
-		Global_Variable_Increment(49, 3);
+
+	case kClueHomelessManKid:
+		// fall through
+	case kClueOriginalRequisitionForm:
+		Global_Variable_Increment(kVariableCorruptedGuzzaEvidence, 3);
 		break;
-	case 120:
-	case 121:
-		Global_Variable_Increment(49, 2);
+
+	case kClueScaryChair:
+		// fall through
+	case kClueIzosStashRaided:
+		Global_Variable_Increment(kVariableCorruptedGuzzaEvidence, 2);
 		break;
-	case 147:
-	case 148:
-	case 149:
-	case 150:
-	case 151:
-	case 152:
-		Global_Variable_Increment(48, 1);
+
+	case kClueDNATyrell:
+		// fall through
+	case kClueDNASebastian:
+		// fall through
+	case kClueDNAChew:
+		// fall through
+	case kClueDNAMoraji:
+		// fall through
+	case kClueDNALutherLance:
+		// fall through
+	case kClueDNAMarcus:
+		Global_Variable_Increment(kVariableDNAEvidence, 1);
 		break;
 	}
-	if (Global_Variable_Query(49) > 6 && Global_Variable_Query(1) > 3 && !Actor_Clue_Query(kActorMcCoy, kClueGuzzaFramedMcCoy)) {
+
+	if ( Global_Variable_Query(kVariableCorruptedGuzzaEvidence) > 6
+	 &&  Global_Variable_Query(kVariableChapter) > 3
+	 && !Actor_Clue_Query(kActorMcCoy, kClueGuzzaFramedMcCoy)
+	) {
 		Delay(500);
 		Actor_Voice_Over(3320, kActorVoiceOver);
 		switch (clueId) {
-		case 66:
-		case 80:
-		case 82:
-		case 83:
-		case 121:
-		case 128:
+		case kClueWeaponsCache:
+			// fall through
+		case kClueWeaponsOrderForm:
+			// fall through
+		case kClueGuzzasCash:
+			// fall through
+		case kCluePoliceIssueWeapons:
+			// fall through
+		case kClueIzosStashRaided:
+			// fall through
+		case kClueOriginalRequisitionForm:
 			Actor_Voice_Over(3340, kActorVoiceOver);
 			Actor_Voice_Over(3350, kActorVoiceOver);
 			Actor_Voice_Over(3360, kActorVoiceOver);
 			Actor_Voice_Over(3370, kActorVoiceOver);
 			Actor_Voice_Over(3380, kActorVoiceOver);
 			break;
-		case 124:
+
+		case kClueHomelessManKid:
 			Actor_Voice_Over(3330, kActorVoiceOver);
 			break;
-		case 120:
+
+		case kClueScaryChair:
 			Actor_Voice_Over(3390, kActorVoiceOver);
 			Actor_Voice_Over(3400, kActorVoiceOver);
 			Actor_Voice_Over(3420, kActorVoiceOver);
 			break;
 		}
-		Actor_Clue_Acquire(kActorMcCoy, kClueGuzzaFramedMcCoy, 1, -1);
-		if (clueId == 125) {
+
+		Actor_Clue_Acquire(kActorMcCoy, kClueGuzzaFramedMcCoy, true, -1);
+
+		if (clueId == kClueFolder) {
+			// if McCoy just got the folder
 			Actor_Voice_Over(2780, kActorVoiceOver);
 			Actor_Voice_Over(2800, kActorVoiceOver);
 			Actor_Voice_Over(2810, kActorVoiceOver);
 		} else if (Actor_Clue_Query(kActorMcCoy, kClueFolder)) {
+			// if McCoy already had the folder
 			Actor_Voice_Over(3430, kActorVoiceOver);
 			Actor_Voice_Over(3440, kActorVoiceOver);
 			Actor_Voice_Over(3450, kActorVoiceOver);
@@ -193,6 +261,7 @@ void AIScriptMcCoy::ReceivedClue(int clueId, int fromActorId) {
 			Actor_Voice_Over(3490, kActorVoiceOver);
 			Actor_Voice_Over(3500, kActorVoiceOver);
 		} else {
+			// if McCoy never got the folder
 			Actor_Voice_Over(3510, kActorVoiceOver);
 			Actor_Voice_Over(3520, kActorVoiceOver);
 			Actor_Voice_Over(3530, kActorVoiceOver);
@@ -219,28 +288,52 @@ void AIScriptMcCoy::OtherAgentEnteredCombatMode(int otherActorId, int combatMode
 void AIScriptMcCoy::ShotAtAndMissed() {
 }
 
-void AIScriptMcCoy::ShotAtAndHit() {
+bool AIScriptMcCoy::ShotAtAndHit() {
+	return false;
 }
 
 void AIScriptMcCoy::Retired(int byActorId) {
-	if (byActorId == kActorSteele && Actor_Query_In_Set(kActorSteele, 42)) {
-		if (Actor_Query_In_Set(kActorDektora, 42) && Actor_Query_Goal_Number(kActorDektora) != 599) {
-			Non_Player_Actor_Combat_Mode_On(kActorSteele, 3, 1, kActorDektora, 15, 4, 7, 8, 0, 0, 100, 25, 300, 0);
-		} else if (Actor_Query_In_Set(kActorLucy, 42) && Actor_Query_Goal_Number(kActorLucy) != 599) {
-			Non_Player_Actor_Combat_Mode_On(kActorSteele, 3, 1, kActorLucy, 15, 4, 7, 8, 0, 0, 100, 25, 300, 0);
+	if (byActorId == kActorSteele && Actor_Query_In_Set(kActorSteele, kSetHF06)) {
+		if (Actor_Query_In_Set(kActorDektora, kSetHF06)
+		 && Actor_Query_Goal_Number(kActorDektora) != kGoalDektoraGone) {
+			Non_Player_Actor_Combat_Mode_On(kActorSteele, kActorCombatStateUncover, true, kActorDektora, 15, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, 0, 0, 100, 25, 300, false);
+		} else if (Actor_Query_In_Set(kActorLucy, kSetHF06)
+		        && Actor_Query_Goal_Number(kActorLucy) != kGoalLucyGone
+		) {
+			Non_Player_Actor_Combat_Mode_On(kActorSteele, kActorCombatStateUncover, true, kActorLucy, 15, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, 0, 0, 100, 25, 300, false);
 		}
 	}
-	if (Actor_Query_In_Set(kActorMcCoy, 41) && Actor_Query_In_Set(kActorOfficerLeary, 41) && Actor_Query_In_Set(kActorDektora, 41) && Actor_Query_Goal_Number(kActorDektora) != 599) {
-		Non_Player_Actor_Combat_Mode_On(kActorOfficerLeary, 3, 1, kActorDektora, 4, 4, 7, 8, 0, 0, 100, 25, 300, 0);
+
+	if (Actor_Query_In_Set(kActorMcCoy, kSetHF05)
+	 && Actor_Query_In_Set(kActorOfficerLeary, kSetHF05)
+	 && Actor_Query_In_Set(kActorDektora, kSetHF05)
+	 && Actor_Query_Goal_Number(kActorDektora) != kGoalDektoraGone
+	) {
+		Non_Player_Actor_Combat_Mode_On(kActorOfficerLeary, kActorCombatStateUncover, true, kActorDektora, 4, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, 0, 0, 100, 25, 300, false);
 	}
-	if (Actor_Query_In_Set(kActorMcCoy, 41) && Actor_Query_In_Set(kActorOfficerGrayford, 41) && Actor_Query_In_Set(kActorDektora, 41) && Actor_Query_Goal_Number(kActorDektora) != 599) {
-		Non_Player_Actor_Combat_Mode_On(kActorOfficerGrayford, 3, 1, kActorDektora, 4, 4, 7, 8, 0, 0, 100, 25, 300, 0);
+
+	if (Actor_Query_In_Set(kActorMcCoy, kSetHF05)
+	 && Actor_Query_In_Set(kActorOfficerGrayford, kSetHF05)
+	 && Actor_Query_In_Set(kActorDektora, kSetHF05)
+	 && Actor_Query_Goal_Number(kActorDektora) != kGoalDektoraGone
+	) {
+		Non_Player_Actor_Combat_Mode_On(kActorOfficerGrayford, kActorCombatStateUncover, true, kActorDektora, 4, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, 0, 0, 100, 25, 300, false);
 	}
-	if (Actor_Query_In_Set(kActorMcCoy, 41) && Actor_Query_In_Set(kActorOfficerLeary, 41) && Actor_Query_In_Set(kActorLucy, 41) && Actor_Query_Goal_Number(kActorLucy) != 599) {
-		Non_Player_Actor_Combat_Mode_On(kActorOfficerLeary, 3, 1, kActorLucy, 4, 4, 7, 8, 0, 0, 100, 25, 300, 0);
+
+	if (Actor_Query_In_Set(kActorMcCoy, kSetHF05)
+	 && Actor_Query_In_Set(kActorOfficerLeary, kSetHF05)
+	 && Actor_Query_In_Set(kActorLucy, kSetHF05)
+	 && Actor_Query_Goal_Number(kActorLucy) != kGoalLucyGone
+	) {
+		Non_Player_Actor_Combat_Mode_On(kActorOfficerLeary, kActorCombatStateUncover, true, kActorLucy, 4, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, 0, 0, 100, 25, 300, false);
 	}
-	if (Actor_Query_In_Set(kActorMcCoy, 41) && Actor_Query_In_Set(kActorOfficerGrayford, 41) && Actor_Query_In_Set(kActorLucy, 41) && Actor_Query_Goal_Number(kActorLucy) != 599) {
-		Non_Player_Actor_Combat_Mode_On(kActorOfficerGrayford, 3, 1, kActorLucy, 4, 4, 7, 8, 0, 0, 100, 25, 300, 0);
+
+	if (Actor_Query_In_Set(kActorMcCoy, kSetHF05)
+	 && Actor_Query_In_Set(kActorOfficerGrayford, kSetHF05)
+	 && Actor_Query_In_Set(kActorLucy, kSetHF05)
+	 && Actor_Query_Goal_Number(kActorLucy) != kGoalLucyGone
+	) {
+		Non_Player_Actor_Combat_Mode_On(kActorOfficerGrayford, kActorCombatStateUncover, true, kActorLucy, 4, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, 0, 0, 100, 25, 300, false);
 	}
 }
 
@@ -249,61 +342,55 @@ int AIScriptMcCoy::GetFriendlinessModifierIfGetsClue(int otherActorId, int clueI
 }
 
 bool AIScriptMcCoy::GoalChanged(int currentGoalNumber, int newGoalNumber) {
-	unsigned int v5;
-	unsigned int v7;
+	unsigned int affectionTowards;
 
 	switch (newGoalNumber) {
-	case 0:
+	case kGoalMcCoyDefault:
 		return true;
-	case 1:
-		sub_4058B0();
+
+	case kGoalMcCoyDodge:
+		dodge();
 		return true;
+
 	case 2:
-		sub_405920();
+		_animationFrame = 0;
+		_animationState = 47;
 		return true;
-	case 100:
+
+	case kGoalMcCoyBB11GetUp:
 		Actor_Set_At_Waypoint(kActorMcCoy, 315, 263);
-		dword_45A0D0_animation_state = 53;
-		dword_45A0D4_animation_frame = Slice_Animation_Query_Number_Of_Frames(18) - 1;
+		_animationState = 53;
+		_animationFrame = Slice_Animation_Query_Number_Of_Frames(18) - 1;
 		Actor_Set_Invisible(kActorMcCoy, false);
 		return true;
-	case 102:
-		Async_Actor_Walk_To_Waypoint(kActorMcCoy, 316, 0, 1);
+
+	case kGoalMcCoyBB11RunAway:
+		Async_Actor_Walk_To_Waypoint(kActorMcCoy, 316, 0, true);
 		return true;
-	case 103:
+
+	case kGoalMcCoyBB11GetCaught:
 		Actor_Face_Actor(kActorMcCoy, kActorSadik, true);
 		return true;
-	case 231:
-		Player_Set_Combat_Mode(false);
-		Preload(18);
-		Set_Enter(59, 63);
+
+	case kGoalMcCoyNRxxSitAtTable:
 		Player_Loses_Control();
-		Actor_Force_Stop_Walking(kActorMcCoy);
-		Actor_Put_In_Set(kActorMcCoy, 59);
-		Actor_Set_At_XYZ(kActorMcCoy, 14.0f, 110.84f, -300.0f, 926);
-		Actor_Change_Animation_Mode(kActorMcCoy, 48);
-		dword_45A0D0_animation_state = 27;
-		dword_45A0D4_animation_frame = 0;
-		flt_462714 = 2.84f;
-		flt_462710 = 110.84f;
-		off_45A100 = -6.0f;
+		Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeIdle);
 		return true;
-	case 230:
-		dword_45A0FC = Actor_Query_Goal_Number(kActorSteele) == 215;
-		Actor_Change_Animation_Mode(kActorMcCoy, 6);
+
+	case kGoalMcCoyNR01ThrownOut:
+		Actor_Put_In_Set(kActorMcCoy, kSetNR01);
+		Actor_Set_At_XYZ(kActorMcCoy, -204.0f, 24.0f, -817.0f, 256);
+		Actor_Set_Invisible(kActorMcCoy, false);
+		if (Game_Flag_Query(kFlagNR01McCoyIsDrugged)) {
+			Actor_Set_Goal_Number(kActorMcCoy, kGoalMcCoyNR01LayDrugged);
+		} else {
+			_animationState = 53;
+			_animationFrame = Slice_Animation_Query_Number_Of_Frames(18) - 1;
+			Actor_Set_Invisible(kActorMcCoy, false);
+		}
 		return true;
-	case 220:
-		Actor_Change_Animation_Mode(kActorMcCoy, 75);
-		return true;
-	case 212:
-		Global_Variable_Set(47, 0);
-		Player_Set_Combat_Mode_Access(false);
-		Player_Gains_Control();
-		Scene_Exits_Disable();
-		dword_45A0D0_animation_state = 68;
-		dword_45A0D4_animation_frame = Slice_Animation_Query_Number_Of_Frames(18) - 1;
-		return true;
-	case 211:
+
+	case kGoalMcCoyNR01GetUp:
 		Actor_Face_Heading(kActorMcCoy, 512, false);
 		Actor_Face_Heading(kActorMcCoy, 768, true);
 		if (Random_Query(0, 1)) {
@@ -312,44 +399,66 @@ bool AIScriptMcCoy::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 			Actor_Change_Animation_Mode(kActorMcCoy, 16);
 		}
 		Delay(150);
-		Actor_Change_Animation_Mode(kActorMcCoy, 0);
-		Actor_Set_Goal_Number(kActorMcCoy, 0);
+		Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeIdle);
+		Actor_Set_Goal_Number(kActorMcCoy, kGoalMcCoyDefault);
 		Player_Gains_Control();
 		return true;
-	case 210:
-		Actor_Put_In_Set(kActorMcCoy, 54);
-		Actor_Set_At_XYZ(kActorMcCoy, -204.0, 24.0, -817.0, 256);
-		Actor_Set_Invisible(kActorMcCoy, false);
-		if (Game_Flag_Query(627)) {
-			Actor_Set_Goal_Number(kActorMcCoy, 212);
-		} else {
-			dword_45A0D0_animation_state = 53;
-			dword_45A0D4_animation_frame = Slice_Animation_Query_Number_Of_Frames(18) - 1;
-			Actor_Set_Invisible(kActorMcCoy, false);
-		}
+
+	case kGoalMcCoyNR01LayDrugged:
+		Global_Variable_Set(kVariableNR01GetUpCounter, 0);
+		Player_Set_Combat_Mode_Access(false);
+		Player_Gains_Control();
+		Scene_Exits_Disable();
+		_animationState = 68;
+		_animationFrame = Slice_Animation_Query_Number_Of_Frames(18) - 1;
 		return true;
-	case 200:
+
+	case kGoalMcCoyNR04Drink:
+		Actor_Change_Animation_Mode(kActorMcCoy, 75);
+		return true;
+
+	case kGoalMcCoyNR11Shoot:
+		_NR10SteeleShooting = Actor_Query_Goal_Number(kActorSteele) == kGoalSteeleNR11Shoot;
+		Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeCombatAttack);
+		return true;
+
+	case kGoalMcCoyNR10Fall:
+		Player_Set_Combat_Mode(false);
+		Preload(18);
+		Set_Enter(kSetNR10, kSceneNR10);
 		Player_Loses_Control();
-		Actor_Change_Animation_Mode(kActorMcCoy, 0);
+		Actor_Force_Stop_Walking(kActorMcCoy);
+		Actor_Put_In_Set(kActorMcCoy, kSetNR10);
+		Actor_Set_At_XYZ(kActorMcCoy, 14.0f, 110.84f, -300.0f, 926);
+		Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeDie);
+		_animationState = 27;
+		_animationFrame = 0;
+		_fallHeightTarget = 2.84f;
+		_fallHeightCurrent = 110.84f;
+		_fallSpeed = -6.0f;
 		return true;
-	case 301:
-		dword_45A0D0_animation_state = 62;
-		dword_45A0D4_animation_frame = 0;
+
+	case kGoalMcCoyUG07Caught:
+		_animationState = 62;
+		_animationFrame = 0;
 		return true;
-	case 302:
-		dword_45A0D0_animation_state = 64;
-		dword_45A0D4_animation_frame = 0;
+
+	case kGoalMcCoyUG07BrokenFinger:
+		_animationState = 64;
+		_animationFrame = 0;
 		return true;
-	case 303:
-		dword_45A0D0_animation_state = 65;
-		dword_45A0D4_animation_frame = 0;
+
+	case kGoalMcCoyUG07Released:
+		_animationState = 65;
+		_animationFrame = 0;
 		return true;
-	case 350:
-		Sound_Play(123, 50, 0, 0, 50);
+
+	case kGoalMcCoyCallWithGuzza:
+		Sound_Play(kSfxSPNBEEP9, 50, 0, 0, 50);
 		Delay(1000);
-		Sound_Play(403, 30, 0, 0, 50);
+		Sound_Play(kSfxVIDFONE1, 30, 0, 0, 50);
 		Delay(1000);
-		Sound_Play(123, 50, 0, 0, 50);
+		Sound_Play(kSfxSPNBEEP9, 50, 0, 0, 50);
 		Actor_Says(kActorGuzza, 1380, 3);
 		Actor_Says(kActorMcCoy, 6610, 13);
 		Actor_Says(kActorGuzza, 1390, 3);
@@ -379,1282 +488,1371 @@ bool AIScriptMcCoy::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Actor_Says(kActorMcCoy, 6700, 17);
 		Actor_Says(kActorGuzza, 1480, 3);
 		Actor_Says(kActorMcCoy, 6705, 11);
-		Sound_Play(123, 50, 0, 0, 50);
+		Sound_Play(kSfxSPNBEEP9, 50, 0, 0, 50);
 		return true;
-	case 390:
+
+	case kGoalMcCoyUG15Fall:
 		Actor_Force_Stop_Walking(kActorMcCoy);
 		Player_Loses_Control();
-		flt_462710 = 48.07f;
-		off_45A100 = -4.0f;
-		flt_462714 = -20.0f;
-		if (dword_45A0D0_animation_state != 27 && dword_45A0D0_animation_state != 50) {
-			dword_45A0D0_animation_state = 50;
-			dword_45A0D4_animation_frame = Slice_Animation_Query_Number_Of_Frames(18) - 1;
+		_fallHeightCurrent = 48.07f;
+		_fallSpeed = -4.0f;
+		_fallHeightTarget = -20.0f;
+		if (_animationState != 27
+		 && _animationState != 50
+		) {
+			_animationState = 50;
+			_animationFrame = Slice_Animation_Query_Number_Of_Frames(18) - 1;
 		}
 		return true;
+
 	case 400:
 		Actor_Set_Health(kActorMcCoy, 50, 50);
-		Game_Flag_Set(373);
-		v5 = Global_Variable_Query(45);
-		if (v5 == 1) {
+		Game_Flag_Set(kFlagKP02Available);
+		affectionTowards = Global_Variable_Query(kVariableAffectionTowards);
+		if (affectionTowards == kAffectionTowardsSteele) {
 			Actor_Modify_Friendliness_To_Other(kActorSteele, kActorMcCoy, 3);
-		} else if (v5 == 2) {
+		} else if (affectionTowards == kAffectionTowardsDektora) {
 			Actor_Modify_Friendliness_To_Other(kActorSteele, kActorMcCoy, -5);
 			Actor_Modify_Friendliness_To_Other(kActorClovis, kActorMcCoy, 3);
-		} else if (v5 == 3) {
+		} else if (affectionTowards == kAffectionTowardsLucy) {
 			Actor_Modify_Friendliness_To_Other(kActorSteele, kActorMcCoy, -5);
 			Actor_Modify_Friendliness_To_Other(kActorClovis, kActorMcCoy, 5);
 		}
-		if (Game_Flag_Query(666)) {
+
+		if (Game_Flag_Query(kFlagMcCoyFreedOfAccusations)) {
 			Actor_Modify_Friendliness_To_Other(kActorSteele, kActorMcCoy, 3);
 		}
+
 		if (Actor_Query_Friendliness_To_Other(kActorSteele, kActorMcCoy) < Actor_Query_Friendliness_To_Other(kActorClovis, kActorMcCoy)) {
-			Game_Flag_Set(653);
+			Game_Flag_Set(kFlagMcCoyIsHelpingReplicants);
 		}
-		v7 = Global_Variable_Query(45);
-		if (v7 == 1) {
-			if (Game_Flag_Query(653)) {
-				Global_Variable_Set(45, 0);
+
+		affectionTowards = Global_Variable_Query(kVariableAffectionTowards);
+		if (affectionTowards == kAffectionTowardsSteele) {
+			if (Game_Flag_Query(kFlagMcCoyIsHelpingReplicants)) {
+				Global_Variable_Set(kVariableAffectionTowards, kAffectionTowardsNone);
 			}
-		} else if (v7 == 2 || v7 == 3) {
-			if (!Game_Flag_Query(653)) {
-				Global_Variable_Set(45, 0);
+		} else if (affectionTowards == kAffectionTowardsDektora
+		        || affectionTowards == kAffectionTowardsLucy
+		) {
+			if (!Game_Flag_Query(kFlagMcCoyIsHelpingReplicants)) {
+				Global_Variable_Set(kVariableAffectionTowards, kAffectionTowardsNone);
 			}
 		}
-		if (!Game_Flag_Query(653)) {
-			Game_Flag_Set(461);
+
+		if (!Game_Flag_Query(kFlagMcCoyIsHelpingReplicants)) {
+			Game_Flag_Set(kFlagMaggieHasBomb);
 		}
-		Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+
+		Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 		Ambient_Sounds_Remove_All_Looping_Sounds(1);
-		Global_Variable_Set(1, 5);
-		Outtake_Play(10, 0, -1);
-		if (Game_Flag_Query(666)) {
-			Chapter_Enter(5, 53, 53);
+		Global_Variable_Set(kVariableChapter, 5);
+		Outtake_Play(kOuttakeMovieD, false, -1);
+
+		if (Game_Flag_Query(kFlagMcCoyFreedOfAccusations)) {
+			Chapter_Enter(5, kSetMA07, kSceneMA07);
 		} else {
 			Game_Flag_Set(kFlagMA06ToMA02);
-			Chapter_Enter(5, 10, 49);
+			Chapter_Enter(5, kSetMA02_MA04, kSceneMA02);
 		}
 		return true;
-	case 500:
+
+	case kGoalMcCoyArrested:
 		Music_Stop(3);
 		Player_Set_Combat_Mode(false);
-		Actor_Change_Animation_Mode(kActorMcCoy, 0);
-		dword_45A0D0_animation_state = 0;
-		dword_45A0D4_animation_frame = 0;
-		Game_Flag_Set(465);
-		Set_Enter(67, 72);
+		Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeIdle);
+		_animationState = 0;
+		_animationFrame = 0;
+		Game_Flag_Set(kFlagMcCoyArrested);
+		Set_Enter(kSetPS09, kScenePS09);
 		return true;
 	}
 	return false;
 }
 
 bool AIScriptMcCoy::UpdateAnimation(int *animation, int *frame) {
-	int v7, v18, v19, v46;
-	switch (dword_45A0D0_animation_state) {
-	case 71:
-		*animation = 52;
-		dword_45A0D4_animation_frame++;
-		if (dword_45A0D4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(52)) {
-			Actor_Change_Animation_Mode(kActorMcCoy, 0);
-			*animation = 19;
-			dword_45A0D4_animation_frame = 0;
-			dword_45A0D0_animation_state = 0;
-			Player_Gains_Control();
-		}
-		break;
-	case 70:
-		*animation = 51;
-		dword_45A0D4_animation_frame++;
-		if (dword_45A0D4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(51)) {
-			dword_45A0D4_animation_frame = 0;
-		}
-		break;
-	case 69:
-		*animation = 50;
-		dword_45A0D4_animation_frame++;
-		if (dword_45A0D4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(50)) {
-			Actor_Change_Animation_Mode(kActorMcCoy, 53);
-			*animation = 51;
-		}
-		break;
-	case 68:
-		*animation = 18;
-		v7 = Slice_Animation_Query_Number_Of_Frames(*animation) - 1 - Global_Variable_Query(47);
-		if (dword_45A0D4_animation_frame < v7) {
-			dword_45A0D4_animation_frame++;
-		} else if (dword_45A0D4_animation_frame > v7) {
-			dword_45A0D4_animation_frame--;
-		}
-		if (dword_45A0D4_animation_frame <= 0) {
-			Actor_Change_Animation_Mode(kActorMcCoy, 0);
-			*animation = 19;
-			dword_45A0D0_animation_state = 0;
-			dword_45A0D4_animation_frame = 0;
-			Game_Flag_Reset(627);
-			Scene_Exits_Enable();
-			Player_Set_Combat_Mode_Access(true);
-			Actor_Set_Goal_Number(kActorMcCoy, 0);
-		}
-		break;
-	case 67:
-		*animation = 53;
-		dword_45A0D4_animation_frame++;
-		if (dword_45A0D4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(53)) {
-			Actor_Change_Animation_Mode(kActorMcCoy, 0);
-			*animation = 19;
-			dword_45A0D0_animation_state = 0;
-			dword_45A0D4_animation_frame = 0;
-			if (Actor_Query_Goal_Number(kActorMcCoy) == 220) {
-				Actor_Change_Animation_Mode(kActorMcCoy, 48);
+	int v7;
+	switch (_animationState) {
+	case 0:
+		*animation = kModelAnimationMcCoyIdle;
+		if (_animationLoopCounter < _animationLoopLength) {
+			_animationFrame += _animationLoopDirection;
+			if (_animationFrame > _animationLoopFrameMax) {
+				_animationFrame = _animationLoopFrameMax;
+				_animationLoopDirection = -1;
+			} else if (_animationFrame < _animationLoopFrameMin) {
+				_animationFrame = _animationLoopFrameMin;
+				_animationLoopDirection = 1;
+			}
+			_animationLoopCounter++;
+		} else {
+			_animationFrame += _animationLoopDirection;
+			_animationLoopLength = 0;
+			if (_animationFrame == 18 && Random_Query(0, 2)) {
+				_animationLoopDirection = -1;
+				_animationLoopCounter   = 0;
+				_animationLoopFrameMin  = 14;
+				_animationLoopFrameMax  = 18;
+				_animationLoopLength    = Random_Query(0, 30);
+			}
+			if (_animationFrame == 26) {
+				if (Random_Query(0, 2)) {
+					_animationLoopDirection = -1;
+					_animationLoopCounter   = 0;
+					_animationLoopFrameMin  = 23;
+					_animationLoopFrameMax  = 26;
+					_animationLoopLength    = Random_Query(0, 30);
+				}
+			}
+			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
+				_animationFrame = 0;
+				if (Random_Query(0, 2)) {
+					_animationLoopCounter  = 0;
+					_animationLoopFrameMin = 0;
+					_animationLoopFrameMax = 3;
+					_animationLoopLength   = Random_Query(0, 45);
+				}
+			}
+			if (_animationFrame < 0) {
+				_animationFrame = Slice_Animation_Query_Number_Of_Frames(*animation) - 1;
 			}
 		}
 		break;
-	case 66:
-		*animation = 40;
-		dword_45A0D4_animation_frame++;
-		if (dword_45A0D4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(40)) {
-			Actor_Change_Animation_Mode(kActorMcCoy, 0);
-			*animation = 19;
-			dword_45A0D4_animation_frame = 0;
-			dword_45A0D0_animation_state = 0;
-		}
-		break;
-	case 65:
-		*animation = 45;
-		dword_45A0D4_animation_frame++;
-		if (dword_45A0D4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(45)) {
-			dword_45A0D4_animation_frame = 0;
-			dword_45A0D0_animation_state = 14;
-			*animation = 0;
-			Actor_Set_Goal_Number(kActorMcCoy, 0);
-		}
-		break;
-	case 64:
-		*animation = 44;
-		dword_45A0D4_animation_frame++;
-		if (dword_45A0D4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(44)) {
-			dword_45A0D4_animation_frame = 0;
-			dword_45A0D0_animation_state = 63;
-			*animation = 43;
-		}
-		break;
-	case 63:
-		*animation = 43;
-		dword_45A0D4_animation_frame++;
-		if (dword_45A0D4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(43)) {
-			dword_45A0D4_animation_frame = 0;
-		}
-		break;
-	case 62:
-		*animation = 42;
-		dword_45A0D4_animation_frame++;
-		if (dword_45A0D4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(42)) {
-			dword_45A0D4_animation_frame = 0;
-			dword_45A0D0_animation_state = 63;
-			*animation = 43;
-		}
-		break;
-	case 61:
-		*animation = 41;
-		dword_45A0D4_animation_frame--;
-		if (dword_45A0D4_animation_frame <= 0) {
-			*animation = 19;
-			dword_45A0D4_animation_frame = 0;
-			dword_45A0D0_animation_state = 0;
-			if (Actor_Query_Goal_Number(kActorMcCoy) == 200) {
-				Actor_Set_Goal_Number(kActorMcCoy, 201);
+
+	case 3:
+	case 4:
+		if (_animationFrame == 0 && !Game_Flag_Query(kFlagMcCoyAnimation1)) {
+			_animationFrame = 1;
+			_animationState = _animationStateNextSpecial;
+			*animation = _animationNextSpecial;
+			_animationStateNextSpecial = 4;
+			_animationNextSpecial = kModelAnimationMcCoyProtestingTalk;
+		} else if (_animationFrame <= 4 && Game_Flag_Query(kFlagMcCoyAnimation1)) {
+			Game_Flag_Reset(kFlagMcCoyAnimation1);
+			*animation = kModelAnimationMcCoyIdle;
+			_animationFrame = 0;
+			_animationState = 0;
+		} else {
+			*animation = kModelAnimationMcCoyProtestingTalk;
+			_animationFrame++;
+			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
+				_animationFrame = 0;
 			}
 		}
 		break;
-	case 60:
-		*animation = 41;
-		if (dword_45A0D4_animation_frame < Slice_Animation_Query_Number_Of_Frames(41) - 1) {
-			dword_45A0D4_animation_frame++;
-		}
-		return true;
-	case 59:
-		*animation = 48;
-		dword_45A0D4_animation_frame++;
-		if (dword_45A0D4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(48)) {
-			*animation = 19;
-			dword_45A0D4_animation_frame = 0;
-			dword_45A0DC = 0;
-			dword_45A0D0_animation_state = 0;
-			Player_Gains_Control();
-			Item_Add_To_World(109, 982, 6, -110.0, 0.0, -192.0, 0, 48, 32, false, true, false, false);
+
+	case 5:
+		*animation = kModelAnimationMcCoyScratchHeadTalk;
+		_animationFrame++;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
+			_animationFrame = 0;
+			_animationState = 3;
+			*animation = kModelAnimationMcCoyProtestingTalk;
 		}
 		break;
-	case 58:
-		*animation = 47;
-		dword_45A0D4_animation_frame++;
-		if (dword_45A0D4_animation_frame == 6) {
-			v18 = Random_Query(0, 2);
-			v19 = 0;
-			if (v18 == 0) {
-				v19 = 595;
-			} else if (v18 == 1) {
-				v19 = 594;
-			} else if (v18 == 2) {
-				v19 = 593;
+
+	case 6:
+		*animation = kModelAnimationMcCoyScratchEarLongerTalk;
+		_animationFrame++;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
+			_animationFrame = 0;
+			_animationState = 3;
+			*animation = kModelAnimationMcCoyProtestingTalk;
+		}
+		break;
+
+	case 7:
+		*animation = kModelAnimationMcCoyPointingTalk;
+		_animationFrame++;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
+			_animationFrame = 0;
+			_animationState = 3;
+			*animation = kModelAnimationMcCoyProtestingTalk;
+		}
+		break;
+
+	case 8:
+		*animation = kModelAnimationMcCoyUpsetTalk;
+		_animationFrame++;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
+			_animationFrame = 0;
+			_animationState = 3;
+			*animation = kModelAnimationMcCoyProtestingTalk;
+		}
+		break;
+
+	case 9:
+		*animation = kModelAnimationMcCoyDismissiveTalk;
+		_animationFrame++;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
+			_animationFrame = 0;
+			_animationState = 3;
+			*animation = kModelAnimationMcCoyProtestingTalk;
+		}
+		break;
+
+	case 10:
+		*animation = kModelAnimationMcCoyScratchEarTalk;
+		_animationFrame++;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
+			_animationFrame = 0;
+			_animationState = 3;
+			*animation = kModelAnimationMcCoyProtestingTalk;
+		}
+		break;
+
+	case 11:
+		*animation = kModelAnimationMcCoyHandsOnWaistTalk;
+		_animationFrame++;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
+			_animationFrame = 0;
+			_animationState = 3;
+			*animation = kModelAnimationMcCoyProtestingTalk;
+		}
+		break;
+
+	case 12:
+		*animation = kModelAnimationMcCoyScratchEarLongerTalk;
+		_animationFrame++;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
+			_animationFrame = 0;
+			_animationState = 3;
+			*animation = kModelAnimationMcCoyProtestingTalk;
+		}
+		break;
+
+	case 13:
+		*animation = kModelAnimationMcCoyIdle;
+		if (_animationFrame < Slice_Animation_Query_Number_Of_Frames(*animation) / 2) {
+			_animationFrame -= 3;
+			if (_animationFrame <= 0) {
+				_animationFrame = 0;
+				*animation = _animationNext;
+				_animationState = _animationStateNext;
 			}
-			Ambient_Sounds_Play_Sound(v19, 39, 0, 0, 99);
-		}
-		if (dword_45A0D4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(*animation) - 1) { //why -1? 
-			dword_45A0D4_animation_frame = 0;
-		}
-		break;
-	case 57:
-		*animation = 46;
-		dword_45A0D4_animation_frame++;
-		if (dword_45A0D4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(46)) {
-			dword_45A0D4_animation_frame = 0;
-		}
-		if (!Game_Flag_Query(550)) {
-			dword_45A0D4_animation_frame = 0;
-			dword_45A0D0_animation_state = 59;
-			*animation = 48;
-		}
-		break;
-	case 56:
-		*animation = 49;
-		dword_45A0D4_animation_frame++;
-		if (dword_45A0D4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(49)) {
-			dword_45A0D4_animation_frame = 0;
-			if (Actor_Query_Which_Set_In(kActorMcCoy) == 87) {
-				dword_45A0D0_animation_state = 27;
-			} else {
-				*animation = 19;
-				dword_45A0D0_animation_state = 0;
-				Actor_Change_Animation_Mode(kActorMcCoy, 0);
+		} else {
+			_animationFrame += 3;
+			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
+				_animationFrame = 0;
+				*animation = _animationNext;
+				_animationState = _animationStateNext;
 			}
 		}
 		break;
-	case 55:
-		*animation = 32;
-		dword_45A0D4_animation_frame++;
-		if (dword_45A0D4_animation_frame == 7) {
-			Actor_Change_Animation_Mode(kActorMaggie, 52);
-		}
-		if (dword_45A0D4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
-			*animation = 19;
-			dword_45A0D0_animation_state = 0;
+
+	case 14:
+		*animation = kModelAnimationMcCoyWithGunIdle;
+		_animationFrame++;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
+			_animationState = 14;
+			_animationFrame = 0;
 		}
 		break;
-	case 53:
-		*animation = 18;
-		dword_45A0D4_animation_frame--;
-		if (dword_45A0D4_animation_frame <= 0) {
-			Actor_Change_Animation_Mode(kActorMcCoy, 0);
-			*animation = 19;
-			dword_45A0D4_animation_frame = 0;
-			dword_45A0D0_animation_state = 0;
-			if (Actor_Query_Goal_Number(kActorMcCoy) == 100) {
-				Actor_Set_Goal_Number(kActorMcCoy, 101);
+
+	case 15:
+		*animation = kModelAnimationMcCoyWithGunUnholsterGun;
+		_animationFrame++;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
+			_animationFrame = 0;
+			_animationState = 14;
+			*animation = kModelAnimationMcCoyWithGunIdle;
+		}
+		break;
+
+	case 16:
+		*animation = kModelAnimationMcCoyWithGunHolsterGun;
+		_animationFrame++;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
+			*animation = kModelAnimationMcCoyIdle;
+			_animationFrame = 0;
+			_animationState = 0;
+		}
+		break;
+
+	case 17:
+		// this is just frame 0 always, McCoy doesn't animated shoot in this animation State
+		// animation state 21 is for the full shooting animation
+		*animation = kModelAnimationMcCoyWithGunShooting;
+		_animationFrame = 0;
+		// weird, but thats in game code
+		if (Slice_Animation_Query_Number_Of_Frames(*animation) <= 0) {
+			_animationFrame = 0;
+			_animationState = 17;
+		}
+		break;
+
+	case 18:
+		*animation = kModelAnimationMcCoyWithGunAiming;
+		_animationFrame++;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
+			_animationFrame = 0;
+			_animationState = 17;
+			*animation = kModelAnimationMcCoyWithGunShooting;
+		}
+		break;
+
+	case 19:
+		*animation = kModelAnimationMcCoyWithGunStopAimResumeIdle;
+		_animationFrame++;
+		if (_animationFrame >= 12) {
+			_animationFrame = 0;
+			_animationState = 14;
+			*animation = kModelAnimationMcCoyWithGunIdle;
+		}
+		break;
+
+	case 21:
+		*animation = kModelAnimationMcCoyWithGunShooting;
+		_animationFrame++;
+		if (_animationFrame == 1
+		 && Actor_Query_Goal_Number(kActorMcCoy) == kGoalMcCoyNR11Shoot
+		 && _NR10SteeleShooting
+		) {
+			_nextSoundId = kSfxSMCAL3;
+		}
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
+			_animationState = 17;
+			_animationFrame = 0;
+			*animation = kModelAnimationMcCoyWithGunShooting;
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+			// Resume combat idle position even when shot at a target -- if it's no longer a target (dead or moved)
+			ChangeAnimationMode(kAnimationModeCombatIdle);
+#endif // BLADERUNNER_ORIGINAL_BUGS
+
+			if (Actor_Query_Goal_Number(kActorMcCoy) == kGoalMcCoyNR11Shoot) {
+				_animationFrame = 0;
+				_animationState = 21;
+				_NR10SteeleShooting = true;
+				*animation = kModelAnimationMcCoyWithGunShooting;
 			}
-			if (Actor_Query_Goal_Number(kActorMcCoy) == 210) {
-				Actor_Set_Goal_Number(kActorMcCoy, 211);
+		}
+		break;
+
+	case 22:
+		_animationFrame = 0;
+		_animationState = 17;
+		*animation = kModelAnimationMcCoyWithGunShooting;
+		break;
+
+	case 23:
+		*animation = kModelAnimationMcCoyWithGunGotHitRight;
+		_animationFrame++;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
+			_animationFrame = 0;
+			_animationState = 14;
+			*animation = kModelAnimationMcCoyWithGunIdle;
+			Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeCombatIdle);
+		}
+		break;
+
+	case 24:
+		*animation = kModelAnimationMcCoyWithGunGotHitRight;
+		_animationFrame++;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
+			_animationFrame = 0;
+			_animationState = 14;
+			*animation = kModelAnimationMcCoyWithGunIdle;
+			Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeCombatIdle);
+		}
+		break;
+
+	case 25:
+		*animation = kModelAnimationMcCoyGotHitRight;
+		_animationFrame++;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
+			*animation = kModelAnimationMcCoyIdle;
+			_animationFrame = 0;
+			_animationState = 0;
+			Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeIdle);
+		}
+		break;
+
+	case 26:
+		*animation = kModelAnimationMcCoyGotHitRight;
+		_animationFrame++;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
+			*animation = kModelAnimationMcCoyIdle;
+			_animationFrame = 0;
+			_animationState = 0;
+			Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeIdle);
+		}
+		break;
+
+	case 27:
+		*animation = kModelAnimationMcCoyFallsOnHisBack;
+		_animationFrame++;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
+			_animationFrame = Slice_Animation_Query_Number_Of_Frames(*animation) - 1;
+			_animationState = 50;
+			UG15fall();
+			if (Actor_Query_Goal_Number(kActorMcCoy) == kGoalMcCoyNR04Drink) {
+				Actor_Set_Goal_Number(kActorMcCoy, kGoalMcCoyNR04PassOut);
 			}
 		}
 		break;
-	case 52:
-		*animation = 31;
-		dword_45A0D4_animation_frame++;
-		if (dword_45A0D4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(31)) {
-			dword_45A0D4_animation_frame = Slice_Animation_Query_Number_Of_Frames(31) - 1;
-			dword_45A0D0_animation_state = 50;
+
+	case 28:
+		*animation = kModelAnimationMcCoyWithGunShotDead;
+		_animationFrame++;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
+			_animationFrame = Slice_Animation_Query_Number_Of_Frames(*animation) - 1;
+			_animationState = 50;
+			UG15fall();
 		}
 		break;
-	case 51:
-		*animation = 28;
-		dword_45A0D4_animation_frame++;
-		if (dword_45A0D4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(28)) {
-			Player_Set_Combat_Mode(true);
-			sub_405800();
-			Actor_Set_Goal_Number(kActorMcCoy, 0);
-			dword_45A0D4_animation_frame = 0;
-			Player_Gains_Control();
+
+	case 29:
+		*animation = kModelAnimationMcCoyFallsOnHisBack;
+		_animationFrame += _animationLoopDirection;
+		if (_animationFrame < 14) {
+			_animationLoopDirection = 1;
+		}
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
+			Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeDie);
+			*animation = kModelAnimationMcCoyFallsOnHisBack;
+			_animationState = 27;
+			_animationFrame = Slice_Animation_Query_Number_Of_Frames(*animation) - 1;
 		}
 		break;
-	case 50:
-		*animation = 18;
-		dword_45A0D4_animation_frame = Slice_Animation_Query_Number_Of_Frames(18) - 1;
-		break;
-	case 49:
-		*animation = 34;
-		dword_45A0D4_animation_frame++;
-		if (dword_45A0D4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(34)) {
-			Actor_Set_Goal_Number(kActorMcCoy, 0);
-			*animation = 19;
-			dword_45A0D4_animation_frame = 0;
-			sub_405660();
+
+	case 30:
+		*animation = kModelAnimationMcCoyWalking;
+		_animationFrame++;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
+			_animationFrame = 0;
+		}
+		if (_animationFrame == 2) {
+			Sound_Right_Footstep_Walk(kActorMcCoy);
+		} else if (_animationFrame == 10) {
+			Sound_Left_Footstep_Walk(kActorMcCoy);
 		}
 		break;
-	case 48:
-		*animation = 33;
-		dword_45A0D4_animation_frame++;
-		if (dword_45A0D4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(33)) {
-			dword_45A0D4_animation_frame = 0;
-			dword_45A0D0_animation_state = 49;
-			*animation = 34;
+
+	case 31:
+		*animation = kModelAnimationMcCoyRunning;
+		_animationFrame++;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
+			_animationFrame = 0;
+		}
+		if (_animationFrame == 5) {
+			Sound_Left_Footstep_Run(kActorMcCoy);
+		} else if (_animationFrame == 12) {
+			Sound_Right_Footstep_Run(kActorMcCoy);
 		}
 		break;
-	case 47:
-		*animation = 29;
-		dword_45A0D4_animation_frame++;
-		if (dword_45A0D4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(29)) {
-			dword_45A0D4_animation_frame = 0;
-			dword_45A0D0_animation_state = 48;
-			*animation = 33;
+
+	case 32:
+		_animationFrame = 1;
+		_animationState = 30;
+		*animation = kModelAnimationMcCoyWalking;
+		break;
+
+	case 36:
+		*animation = kModelAnimationMcCoyWithGunWalking;
+		_animationFrame++;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
+			_animationFrame = 0;
+		}
+		if (_animationFrame == 15) {
+			Sound_Left_Footstep_Walk(kActorMcCoy);
+		}
+		if (_animationFrame == 6) {
+			Sound_Right_Footstep_Walk(kActorMcCoy);
 		}
 		break;
-	case 46:
-		Actor_Set_Invisible(kActorMcCoy, false);
-		*animation = 36;
-		dword_45A0D4_animation_frame++;
-		if (dword_45A0D4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(36)) {
-			*animation = 19;
-			dword_45A0D4_animation_frame = 0;
-			Player_Gains_Control();
-			sub_405660();
-			Actor_Face_Heading(kActorMcCoy, (Actor_Query_Facing_1024(kActorMcCoy) + 512) & 1023, false);
+
+	case 37:
+		*animation = kModelAnimationMcCoyWithGunRunning;
+		_animationFrame++;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
+			_animationFrame = 0;
+		}
+		if (_animationFrame == 6) {
+			Sound_Left_Footstep_Run(kActorMcCoy);
+		}
+		if (_animationFrame == 0) {
+			Sound_Right_Footstep_Run(kActorMcCoy);
 		}
 		break;
-	case 45:
-		*animation = 35;
-		dword_45A0D4_animation_frame++;
-		if (dword_45A0D4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(35)) {
-			Actor_Set_Invisible(kActorMcCoy, true);
-			*animation = 19;
-			dword_45A0D4_animation_frame = 0;
-			sub_405660();
+
+	case 38:
+		*animation = kModelAnimationMcCoyClimbStairsUp;
+		_animationFrame++;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
+			_animationFrame = 0;
+		}
+		if (_animationFrame == 9) {
+			Sound_Left_Footstep_Walk(kActorMcCoy);
+		} else if (_animationFrame == 4) {
+			Sound_Right_Footstep_Walk(kActorMcCoy);
+		}
+		if (Game_Flag_Query(kFlagHF07toHF05)) {
+			walkStairsLeft(0.5f);
 		}
 		break;
+
+	case 39:
+		*animation = kModelAnimationMcCoyClimbStairsDown;
+		_animationFrame++;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
+			_animationFrame = 0;
+		}
+		if (_animationFrame == 8) {
+			Sound_Left_Footstep_Walk(kActorMcCoy);
+		} else if (_animationFrame == 3) {
+			Sound_Right_Footstep_Walk(kActorMcCoy);
+		}
+		if (Game_Flag_Query(kFlagHF05toHF07)) {
+			walkStairsRight(-0.2f);
+		}
+		break;
+
+	case 40:
+		*animation = kModelAnimationMcCoyWithGunClimbStairsUp;
+		_animationFrame++;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
+			_animationFrame = 0;
+		}
+		if (_animationFrame == 8) {
+			Sound_Left_Footstep_Walk(kActorMcCoy);
+		} else if (_animationFrame == 3) {
+			Sound_Right_Footstep_Walk(kActorMcCoy);
+		}
+		if (Game_Flag_Query(kFlagHF07toHF05)) {
+			walkStairsLeft(0.5f);
+		}
+		break;
+
+	case 41:
+		*animation = kModelAnimationMcCoyWithGunClimbStairsDown;
+		_animationFrame++;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
+			_animationFrame = 0;
+		}
+		if (_animationFrame == 9) {
+			Sound_Left_Footstep_Walk(kActorMcCoy);
+		} else if (_animationFrame == 4) {
+			Sound_Right_Footstep_Walk(kActorMcCoy);
+		}
+		if (Game_Flag_Query(kFlagHF05toHF07)) {
+			walkStairsRight(-0.2f);
+		}
+		break;
+
+	case 42:
+		*animation = kModelAnimationMcCoyClimbsLadderUp;
+		_animationFrame++;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation) - 1) { //why -1?
+			_animationFrame = 0;
+		}
+		switch (_animationFrame) {
+		case 9:
+			Sound_Left_Footstep_Walk(kActorMcCoy);
+			break;
+		case 4:
+			Sound_Right_Footstep_Walk(kActorMcCoy);
+			break;
+		case 1:
+			Sound_Right_Footstep_Walk(kActorMcCoy);
+			break;
+		}
+		break;
+
+	case 43:
+		*animation = kModelAnimationMcCoyClimbsLadderDown;
+		_animationFrame++;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation) - 1) { //why -1?
+			_animationFrame = 0;
+		}
+		switch (_animationFrame) {
+		case 1:
+			Sound_Right_Footstep_Walk(kActorMcCoy);
+			break;
+		case 4:
+			Sound_Right_Footstep_Walk(kActorMcCoy);
+			break;
+		case 9:
+			Sound_Left_Footstep_Walk(kActorMcCoy);
+			break;
+		}
+		break;
+
 	case 44:
-		*animation = 30;
-		if (dword_45A0D4_animation_frame++ == 127) {
-			Game_Flag_Set(325);
+		*animation = kModelAnimationMcCoyThrowsBeggarInTrash;
+		_animationFrame++;
+		if (_animationFrame == 127) {
+			Game_Flag_Set(kFlagCT04BodyDumped);
 		}
-		if (dword_45A0D4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(30)) {
-			*animation = 19;
-			sub_405660();
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
+			*animation = kModelAnimationMcCoyIdle;
+			_animationFrame = 0;
+			ChangeAnimationMode(kAnimationModeIdle);
 			Actor_Set_At_XYZ(kActorMcCoy, -203.41f, -621.3f, 724.57f, 538);
 			Player_Gains_Control();
 		}
 		break;
-	case 43:
-		*animation = 38;
-		dword_45A0D4_animation_frame++;
-		if (dword_45A0D4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(38) - 1) { //why -1? 
-			dword_45A0D4_animation_frame = 0;
-		}
-		switch (dword_45A0D4_animation_frame) {
-		case 9:
-			Sound_Left_Footstep_Walk(kActorMcCoy);
-			break;
-		case 4:
-			Sound_Right_Footstep_Walk(kActorMcCoy);
-			break;
-		case 1:
-			Sound_Right_Footstep_Walk(kActorMcCoy);
-			break;
+
+	case 45:
+		*animation = kModelAnimationMcCoyEntersSpinner;
+		_animationFrame++;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
+			Actor_Set_Invisible(kActorMcCoy, true);
+			*animation = kModelAnimationMcCoyIdle;
+			_animationFrame = 0;
+			ChangeAnimationMode(kAnimationModeIdle);
 		}
 		break;
-	case 42:
-		*animation = 37;
-		dword_45A0D4_animation_frame++;
-		if (dword_45A0D4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(37) - 1) { //why -1? 
-			dword_45A0D4_animation_frame = 0;
-		}
-		switch (dword_45A0D4_animation_frame) {
-		case 9:
-			Sound_Left_Footstep_Walk(kActorMcCoy);
-			break;
-		case 4:
-			Sound_Right_Footstep_Walk(kActorMcCoy);
-			break;
-		case 1:
-			Sound_Right_Footstep_Walk(kActorMcCoy);
-			break;
+
+	case 46:
+		Actor_Set_Invisible(kActorMcCoy, false);
+		*animation = kModelAnimationMcCoyExitsSpinner;
+		_animationFrame++;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
+			*animation = kModelAnimationMcCoyIdle;
+			_animationFrame = 0;
+			Player_Gains_Control();
+			ChangeAnimationMode(kAnimationModeIdle);
+			Actor_Face_Heading(kActorMcCoy, (Actor_Query_Facing_1024(kActorMcCoy) + 512) & 1023, false);
 		}
 		break;
-	case 41:
-		*animation = 7;
-		dword_45A0D4_animation_frame++;
-		if (dword_45A0D4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(7)) {
-			dword_45A0D4_animation_frame = 0;
-			++off_45A0EC;
-		}
-		if (dword_45A0D4_animation_frame == 9) {
-			Sound_Left_Footstep_Walk(kActorMcCoy);
-		} else if (dword_45A0D4_animation_frame == 4) {
-			Sound_Right_Footstep_Walk(kActorMcCoy);
-		}
-		if (Game_Flag_Query(359)) {
-			sub_4059D0(-0.2f);
+
+	case 47:
+		*animation = kModelAnimationMcCoyLeaningOver;
+		_animationFrame++;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
+			_animationFrame = 0;
+			_animationState = 48;
+			*animation = kModelAnimationMcCoyLeaningOverSearching;
 		}
 		break;
-	case 40:
-		*animation = 6;
-		dword_45A0D4_animation_frame++;
-		if (dword_45A0D4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(6)) {
-			dword_45A0D4_animation_frame = 0;
-			++off_45A0EC;
-		}
-		if (dword_45A0D4_animation_frame == 8) {
-			Sound_Left_Footstep_Walk(kActorMcCoy);
-		} else if (dword_45A0D4_animation_frame == 3) {
-			Sound_Right_Footstep_Walk(kActorMcCoy);
-		}
-		if (Game_Flag_Query(358)) {
-			sub_405940(0.5f);
+
+	case 48:
+		*animation = kModelAnimationMcCoyLeaningOverSearching;
+		_animationFrame++;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
+			_animationFrame = 0;
+			_animationState = 49;
+			*animation = kModelAnimationMcCoyLeaningOverResumeIdle;
 		}
 		break;
-	case 39:
-		*animation = 16;
-		dword_45A0D4_animation_frame++;
-		if (dword_45A0D4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(16)) {
-			dword_45A0D4_animation_frame = 0;
-			++off_45A0EC;
-		}
-		if (dword_45A0D4_animation_frame == 8) {
-			Sound_Left_Footstep_Walk(kActorMcCoy);
-		} else if (dword_45A0D4_animation_frame == 3) {
-			Sound_Right_Footstep_Walk(kActorMcCoy);
-		}
-		if (Game_Flag_Query(359)) {
-			sub_4059D0(-0.2f);
+
+	case 49:
+		*animation = kModelAnimationMcCoyLeaningOverResumeIdle;
+		_animationFrame++;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
+			Actor_Set_Goal_Number(kActorMcCoy, kGoalMcCoyDefault);
+			*animation = kModelAnimationMcCoyIdle;
+			_animationFrame = 0;
+			ChangeAnimationMode(kAnimationModeIdle);
 		}
 		break;
-	case 38:
-		*animation = 15;
-		dword_45A0D4_animation_frame++;
-		if (dword_45A0D4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(15)) {
-			dword_45A0D4_animation_frame = 0;
-			++off_45A0EC;
-		}
-		if (dword_45A0D4_animation_frame == 9) {
-			Sound_Left_Footstep_Walk(kActorMcCoy);
-		} else if (dword_45A0D4_animation_frame == 4) {
-			Sound_Right_Footstep_Walk(kActorMcCoy);
-		}
-		if (Game_Flag_Query(358)) {
-			sub_405940(0.5f);
+
+	case 50:
+		*animation = kModelAnimationMcCoyFallsOnHisBack;
+		_animationFrame = Slice_Animation_Query_Number_Of_Frames(*animation) - 1;
+		break;
+
+	case 51:
+		*animation = kModelAnimationMcCoyDodgeAndDrawGun;
+		_animationFrame++;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
+			Player_Set_Combat_Mode(true);
+			ChangeAnimationMode(kAnimationModeCombatIdle);
+			Actor_Set_Goal_Number(kActorMcCoy, kGoalMcCoyDefault);
+			_animationFrame = 0;
+			Player_Gains_Control();
 		}
 		break;
-	case 37:
-		dword_45A0D4_animation_frame++;
-		if (dword_45A0D4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(4)) {
-			dword_45A0D4_animation_frame = 0;
-		}
-		*animation = 4;
-		if (dword_45A0D4_animation_frame == 6) {
-			Sound_Left_Footstep_Run(kActorMcCoy);
-		}
-		if (dword_45A0D4_animation_frame == 0) {
-			Sound_Right_Footstep_Run(kActorMcCoy);
+
+	case 52:
+		*animation = kModelAnimationMcCoyDiesInAgony;
+		_animationFrame++;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
+			_animationFrame = Slice_Animation_Query_Number_Of_Frames(*animation) - 1;
+			_animationState = 50;
 		}
 		break;
-	case 36:
-		dword_45A0D4_animation_frame++;
-		if (dword_45A0D4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(3)) {
-			dword_45A0D4_animation_frame = 0;
-		}
-		*animation = 3;
-		if (dword_45A0D4_animation_frame == 15) {
-			Sound_Left_Footstep_Walk(kActorMcCoy);
-		}
-		if (dword_45A0D4_animation_frame == 6) {
-			Sound_Right_Footstep_Walk(kActorMcCoy);
-		}
-		break;
-	case 32:
-		dword_45A0D4_animation_frame = 1;
-		dword_45A0D0_animation_state = 30;
-		*animation = 13;
-		break;
-	case 31:
-		dword_45A0D4_animation_frame++;
-		if (dword_45A0D4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(14)) {
-			dword_45A0D4_animation_frame = 0;
-		}
-		*animation = 14;
-		if (dword_45A0D4_animation_frame == 5) {
-			Sound_Left_Footstep_Run(kActorMcCoy);
-		} else if (dword_45A0D4_animation_frame == 12) {
-			Sound_Right_Footstep_Run(kActorMcCoy);
-		}
-		break;
-	case 30:
-		*animation = 13;
-		dword_45A0D4_animation_frame++;
-		if (dword_45A0D4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(13)) {
-			dword_45A0D4_animation_frame = 0;
-		}
-		if (dword_45A0D4_animation_frame == 2) {
-			Sound_Right_Footstep_Walk(kActorMcCoy);
-		} else if (dword_45A0D4_animation_frame == 10) {
-			Sound_Left_Footstep_Walk(kActorMcCoy);
-		}
-		break;
-	case 29:
-		v46 = dword_45A0D4_animation_frame + dword_45A0E0;
-		*animation = 18;
-		dword_45A0D4_animation_frame = v46;
-		if (v46 < 14) {
-			dword_45A0E0 = 1;
-		}
-		if (dword_45A0D4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
-			Actor_Change_Animation_Mode(kActorMcCoy, 48);
-			*animation = 18;
-			dword_45A0D0_animation_state = 27;
-			dword_45A0D4_animation_frame = Slice_Animation_Query_Number_Of_Frames(18) - 1;
-		}
-		break;
-	case 28:
-		*animation = 5;
-		dword_45A0D4_animation_frame++;
-		if (dword_45A0D4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(5)) {
-			dword_45A0D4_animation_frame = Slice_Animation_Query_Number_Of_Frames(*animation) - 1;
-			dword_45A0D0_animation_state = 50;
-			sub_4054F0();
-		}
-		break;
-	case 27:
-		*animation = 18;
-		dword_45A0D4_animation_frame++;
-		if (dword_45A0D4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(18)) {
-			dword_45A0D4_animation_frame = Slice_Animation_Query_Number_Of_Frames(*animation) - 1;
-			dword_45A0D0_animation_state = 50;
-			sub_4054F0();
-			if (Actor_Query_Goal_Number(kActorMcCoy) == 220) {
-				Actor_Set_Goal_Number(kActorMcCoy, 221);
+
+	case 53:
+		*animation = kModelAnimationMcCoyFallsOnHisBack;
+		_animationFrame--;
+		if (_animationFrame <= 0) {
+			Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeIdle);
+			*animation = kModelAnimationMcCoyIdle;
+			_animationFrame = 0;
+			_animationState = 0;
+			if (Actor_Query_Goal_Number(kActorMcCoy) == kGoalMcCoyBB11GetUp) {
+				Actor_Set_Goal_Number(kActorMcCoy, kGoalMcCoyBB11PrepareToRunAway);
+			}
+			if (Actor_Query_Goal_Number(kActorMcCoy) == kGoalMcCoyNR01ThrownOut) {
+				Actor_Set_Goal_Number(kActorMcCoy, kGoalMcCoyNR01GetUp);
 			}
 		}
 		break;
-	case 26:
-		*animation = 17;
-		dword_45A0D4_animation_frame++;
-		if (dword_45A0D4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(17)) {
-			*animation = 19;
-			dword_45A0D4_animation_frame = 0;
-			dword_45A0D0_animation_state = 0;
-			Actor_Change_Animation_Mode(kActorMcCoy, 0);
+
+	case 55:
+		*animation = kModelAnimationMcCoyGivesFromPocket;
+		_animationFrame++;
+		if (_animationFrame == 7) {
+			Actor_Change_Animation_Mode(kActorMaggie, kAnimationModeFeeding);
+		}
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
+			*animation = kModelAnimationMcCoyIdle;
+			_animationState = 0;
 		}
 		break;
-	case 25:
-		*animation = 17;
-		dword_45A0D4_animation_frame++;
-		if (dword_45A0D4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(17)) {
-			*animation = 19;
-			dword_45A0D4_animation_frame = 0;
-			dword_45A0D0_animation_state = 0;
-			Actor_Change_Animation_Mode(kActorMcCoy, 0);
-		}
-		break;
-	case 24:
-		*animation = 1;
-		dword_45A0D4_animation_frame++;
-		if (dword_45A0D4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(1)) {
-			dword_45A0D4_animation_frame = 0;
-			dword_45A0D0_animation_state = 14;
-			*animation = 0;
-			Actor_Change_Animation_Mode(kActorMcCoy, 4);
-		}
-		break;
-	case 23:
-		*animation = 1;
-		dword_45A0D4_animation_frame++;
-		if (dword_45A0D4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(1)) {
-			dword_45A0D4_animation_frame = 0;
-			dword_45A0D0_animation_state = 14;
-			*animation = 0;
-			Actor_Change_Animation_Mode(kActorMcCoy, 4);
-		}
-		break;
-	case 22:
-		dword_45A0D4_animation_frame = 0;
-		dword_45A0D0_animation_state = 17;
-		*animation = 12;
-		break;
-	case 21:
-		*animation = 12;
-		dword_45A0D4_animation_frame++;
-		if (dword_45A0D4_animation_frame == 1 && Actor_Query_Goal_Number(kActorMcCoy) == 230 && dword_45A0FC == 1) {
-			dword_45A0F8 = 27;
-		}
-		if (dword_45A0D4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(12)) {
-			dword_45A0D0_animation_state = 17;
-			dword_45A0D4_animation_frame = 0;
-			*animation = 12;
-			if (Actor_Query_Goal_Number(kActorMcCoy) == 230) {
-				dword_45A0D4_animation_frame = 0;
-				dword_45A0D0_animation_state = 21;
-				dword_45A0FC = 1;
-				*animation = 12;
+
+	case 56:
+		*animation = kModelAnimationMcCoyStartled;
+		_animationFrame++;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
+			_animationFrame = 0;
+			if (Actor_Query_Which_Set_In(kActorMcCoy) == kSetUG15) {
+				_animationState = 27;
+			} else {
+				*animation = kModelAnimationMcCoyIdle;
+				_animationState = 0;
+				Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeIdle);
 			}
 		}
 		break;
-	case 19:
-		*animation = 11;
-		dword_45A0D4_animation_frame++;
-		if (dword_45A0D4_animation_frame >= 12) {
-			dword_45A0D4_animation_frame = 0;
-			dword_45A0D0_animation_state = 14;
-			*animation = 0;
+
+	case 57:
+		*animation = kModelAnimationMcCoyTiedInChairIdle;
+		_animationFrame++;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
+			_animationFrame = 0;
+		}
+		if (!Game_Flag_Query(kFlagMcCoyTiedDown)) {
+			_animationFrame = 0;
+			_animationState = 59;
+			*animation = kModelAnimationMcCoyTiedInChairFreed;
 		}
 		break;
-	case 18:
-		*animation = 10;
-		dword_45A0D4_animation_frame++;
-		if (dword_45A0D4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(10)) {
-			dword_45A0D4_animation_frame = 0;
-			dword_45A0D0_animation_state = 17;
-			*animation = 12;
+
+	case 58:
+		*animation = kModelAnimationMcCoyTiedInChairMoving;
+		_animationFrame++;
+		if (_animationFrame == 6) {
+			// Play one of kSfxCHARMTL7, kSfxCHARMTL8, kSfxCHARMTL9
+			Ambient_Sounds_Play_Sound(Random_Query(kSfxCHARMTL7, kSfxCHARMTL9), 39, 0, 0, 99);
+		}
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation) - 1) { //why -1? a bug?
+			_animationFrame = 0;
 		}
 		break;
-	case 17:
-		*animation = 12;
-		dword_45A0D4_animation_frame = 0;
-		// weird, but thats in game code
-		if (Slice_Animation_Query_Number_Of_Frames(12) <= 0) {
-			dword_45A0D4_animation_frame = 0;
-			dword_45A0D0_animation_state = 17;
+
+	case 59:
+		*animation = kModelAnimationMcCoyTiedInChairFreed;
+		_animationFrame++;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
+			*animation = kModelAnimationMcCoyIdle;
+			_animationFrame = 0;
+			_animationLoopLength = 0;
+			_animationState = 0;
+			Player_Gains_Control();
+			Item_Add_To_World(kItemChair, kModelAnimationYukonHotelChair, kSetCT08_CT51_UG12, -110.0, 0.0, -192.0, 0, 48, 32, false, true, false, false);
 		}
 		break;
-	case 16:
-		*animation = 9;
-		dword_45A0D4_animation_frame++;
-		if (dword_45A0D4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(9)) {
-			*animation = 19;
-			dword_45A0D4_animation_frame = 0;
-			dword_45A0D0_animation_state = 0;
+
+	case 60:
+		*animation = kModelAnimationMcCoySittingToUseConsole;
+		if (_animationFrame < Slice_Animation_Query_Number_Of_Frames(*animation) - 1) {
+			_animationFrame++;
 		}
 		break;
-	case 15:
-		*animation = 8;
-		dword_45A0D4_animation_frame++;
-		if (dword_45A0D4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(8)) {
-			dword_45A0D4_animation_frame = 0;
-			dword_45A0D0_animation_state = 14;
-			*animation = 0;
-		}
-		break;
-	case 14:
-		dword_45A0D4_animation_frame++;
-		if (dword_45A0D4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(0)) {
-			dword_45A0D0_animation_state = 14;
-			dword_45A0D4_animation_frame = 0;
-		}
-		*animation = 0;
-		break;
-	case 13:
-		*animation = 19;
-		if (dword_45A0D4_animation_frame < Slice_Animation_Query_Number_Of_Frames(19) / 2) {
-			dword_45A0D4_animation_frame -= 3;
-			if (dword_45A0D4_animation_frame <= 0) {
-				dword_45A0D4_animation_frame = 0;
-				*animation = dword_46271C;
-				dword_45A0D0_animation_state = dword_462718;
-			}
-		} else {
-			dword_45A0D4_animation_frame += 3;
-			if (dword_45A0D4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(19)) {
-				dword_45A0D4_animation_frame = 0;
-				*animation = dword_46271C;
-				dword_45A0D0_animation_state = dword_462718;
+
+	case 61:
+		*animation = kModelAnimationMcCoySittingToUseConsole;
+		_animationFrame--;
+		if (_animationFrame <= 0) {
+			*animation = kModelAnimationMcCoyIdle;
+			_animationFrame = 0;
+			_animationState = 0;
+			if (Actor_Query_Goal_Number(kActorMcCoy) == kGoalMcCoyNRxxSitAtTable) {
+				Actor_Set_Goal_Number(kActorMcCoy, kGoalMcCoyNRxxStandUp);
 			}
 		}
 		break;
-	case 12:
-		*animation = 27;
-		dword_45A0D4_animation_frame++;
-		if (dword_45A0D4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(27)) {
-			dword_45A0D4_animation_frame = 0;
-			dword_45A0D0_animation_state = 3;
-			*animation = 20;
+
+	case 62:
+		*animation = kModelAnimationMcCoyWithGunGrabbedByArm0;
+		_animationFrame++;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
+			_animationFrame = 0;
+			_animationState = 63;
+			*animation = kModelAnimationMcCoyWithGunGrabbedByArm1;
 		}
 		break;
-	case 11:
-		*animation = 26;
-		dword_45A0D4_animation_frame++;
-		if (dword_45A0D4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(26)) {
-			dword_45A0D4_animation_frame = 0;
-			dword_45A0D0_animation_state = 3;
-			*animation = 20;
+
+	case 63:
+		*animation = kModelAnimationMcCoyWithGunGrabbedByArm1;
+		_animationFrame++;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
+			_animationFrame = 0;
 		}
 		break;
-	case 10:
-		*animation = 25;
-		dword_45A0D4_animation_frame++;
-		if (dword_45A0D4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(25)) {
-			dword_45A0D4_animation_frame = 0;
-			dword_45A0D0_animation_state = 3;
-			*animation = 20;
+
+	case 64:
+		*animation = kModelAnimationMcCoyWithGunGrabbedByArmHurt;
+		_animationFrame++;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
+			_animationFrame = 0;
+			_animationState = 63;
+			*animation = kModelAnimationMcCoyWithGunGrabbedByArm1;
 		}
 		break;
-	case 9:
-		*animation = 24;
-		dword_45A0D4_animation_frame++;
-		if (dword_45A0D4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(24)) {
-			dword_45A0D4_animation_frame = 0;
-			dword_45A0D0_animation_state = 3;
-			*animation = 20;
+
+	case 65:
+		*animation = kModelAnimationMcCoyWithGunGrabbedByArmFreed;
+		_animationFrame++;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
+			_animationFrame = 0;
+			_animationState = 14;
+			*animation = kModelAnimationMcCoyWithGunIdle;
+			Actor_Set_Goal_Number(kActorMcCoy, kGoalMcCoyDefault);
 		}
 		break;
-	case 8:
-		*animation = 23;
-		dword_45A0D4_animation_frame++;
-		if (dword_45A0D4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(23)) {
-			dword_45A0D4_animation_frame = 0;
-			dword_45A0D0_animation_state = 3;
-			*animation = 20;
+
+	case 66:
+		*animation = kModelAnimationMcCoyGiveMovement;
+		_animationFrame++;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
+			Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeIdle);
+			*animation = kModelAnimationMcCoyIdle;
+			_animationFrame = 0;
+			_animationState = 0;
 		}
 		break;
-	case 7:
-		*animation = 22;
-		dword_45A0D4_animation_frame++;
-		if (dword_45A0D4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(22)) {
-			dword_45A0D4_animation_frame = 0;
-			dword_45A0D0_animation_state = 3;
-			*animation = 20;
-		}
-		break;
-	case 6:
-		*animation = 27;
-		dword_45A0D4_animation_frame++;
-		if (dword_45A0D4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(27)) {
-			dword_45A0D4_animation_frame = 0;
-			dword_45A0D0_animation_state = 3;
-			*animation = 20;
-		}
-		break;
-	case 5:
-		*animation = 21;
-		dword_45A0D4_animation_frame++;
-		if (dword_45A0D4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(21)) {
-			dword_45A0D4_animation_frame = 0;
-			dword_45A0D0_animation_state = 3;
-			*animation = 20;
-		}
-		break;
-	case 3:
-	case 4:
-		if (dword_45A0D4_animation_frame == 0 && !Game_Flag_Query(236)) {
-			dword_45A0D4_animation_frame = 1;
-			dword_45A0D0_animation_state = dword_45A0F0;
-			*animation = dword_45A0F4;
-			dword_45A0F0 = 4;
-			dword_45A0F4 = 20;
-		} else if (dword_45A0D4_animation_frame <= 4 && Game_Flag_Query(236)) {
-			Game_Flag_Reset(236);
-			*animation = 19;
-			dword_45A0D4_animation_frame = 0;
-			dword_45A0D0_animation_state = 0;
-		} else {
-			*animation = 20;
-			dword_45A0D4_animation_frame++;
-			if (dword_45A0D4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(20)) {
-				dword_45A0D4_animation_frame = 0;
+
+	case 67:
+		*animation = kModelAnimationMcCoyDrinkingBooze;
+		_animationFrame++;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
+			Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeIdle);
+			*animation = kModelAnimationMcCoyIdle;
+			_animationState = 0;
+			_animationFrame = 0;
+			if (Actor_Query_Goal_Number(kActorMcCoy) == kGoalMcCoyNR04Drink) {
+				Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeDie);
 			}
 		}
 		break;
-	case 0:
-		*animation = 19;
-		if (dword_45A0D8 < dword_45A0DC) {
-			//*frame = dword_45A0E8;
-			dword_45A0D4_animation_frame += dword_45A0E0;
-			if (dword_45A0D4_animation_frame > dword_45A0E8) {
-				dword_45A0D4_animation_frame = dword_45A0E8;
-				dword_45A0E0 = -1;
-			} else if (dword_45A0D4_animation_frame < dword_45A0E4) {
-				dword_45A0D4_animation_frame = dword_45A0E4;
-				dword_45A0E0 = 1;
-			}
-			dword_45A0D8++;
-		} else {
-			dword_45A0D4_animation_frame += dword_45A0E0;
-			dword_45A0DC = 0;
-			if (dword_45A0D4_animation_frame == 18 && Random_Query(0, 2)) {
-				dword_45A0E0 = -1;
-				dword_45A0D8 = 0;
-				dword_45A0E4 = 14;
-				dword_45A0E8 = 18;
-				dword_45A0DC = Random_Query(0, 30);
-			}
-			if (dword_45A0D4_animation_frame == 26) {
-				if (Random_Query(0, 2)) {
-					dword_45A0E0 = -1;
-					dword_45A0D8 = 0;
-					dword_45A0E4 = 23;
-					dword_45A0E8 = 26;
-					dword_45A0DC = Random_Query(0, 30);
-				}
-			}
-			if (dword_45A0D4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(19)) {
-				dword_45A0D4_animation_frame = 0;
-				if (Random_Query(0, 2)) {
-					dword_45A0D8 = 0;
-					dword_45A0E4 = 0;
-					dword_45A0E8 = 3;
-					dword_45A0DC = Random_Query(0, 45);
-				}
-			}
-			if (dword_45A0D4_animation_frame < 0) {
-				dword_45A0D4_animation_frame = Slice_Animation_Query_Number_Of_Frames(19) - 1;
-			}
+
+	case 68:
+		*animation = kModelAnimationMcCoyFallsOnHisBack;
+		v7 = Slice_Animation_Query_Number_Of_Frames(*animation) - 1 - Global_Variable_Query(kVariableNR01GetUpCounter);
+		if (_animationFrame < v7) {
+			_animationFrame++;
+		} else if (_animationFrame > v7) {
+			_animationFrame--;
+		}
+		if (_animationFrame <= 0) {
+			Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeIdle);
+			*animation = kModelAnimationMcCoyIdle;
+			_animationState = 0;
+			_animationFrame = 0;
+			Game_Flag_Reset(kFlagNR01McCoyIsDrugged);
+			Scene_Exits_Enable();
+			Player_Set_Combat_Mode_Access(true);
+			Actor_Set_Goal_Number(kActorMcCoy, kGoalMcCoyDefault);
+		}
+		break;
+
+	case 69:
+		*animation = kModelAnimationMcCoyCrouchingDown;
+		_animationFrame++;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
+			Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeSit);
+			*animation = kModelAnimationMcCoyCrouchedIdle;
+		}
+		break;
+
+	case 70:
+		*animation = kModelAnimationMcCoyCrouchedIdle;
+		_animationFrame++;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
+			_animationFrame = 0;
+		}
+		break;
+
+	case 71:
+		*animation = kModelAnimationMcCoyCrouchedGetsUp;
+		_animationFrame++;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
+			Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeIdle);
+			*animation = kModelAnimationMcCoyIdle;
+			_animationFrame = 0;
+			_animationState = 0;
+			Player_Gains_Control();
 		}
 		break;
 	}
-	*frame = dword_45A0D4_animation_frame;
+	*frame = _animationFrame;
 	return true;
 }
 
 bool AIScriptMcCoy::ChangeAnimationMode(int mode) {
-	int v2;
 	switch (mode) {
-	case 85:
-		dword_45A0D4_animation_frame = 0;
-		dword_45A0D0_animation_state = 69;
-		return true;
-	case 75:
-		dword_45A0D0_animation_state = 67;
-		dword_45A0D4_animation_frame = 0;
-		return true;
-	case 68:
-		dword_45A0D0_animation_state = 29;
-		dword_45A0D4_animation_frame = Slice_Animation_Query_Number_Of_Frames(18) - 1;
-		dword_45A0E0 = -1;
-		return true;
-	case 65:
-	case 67:
-		dword_45A0D0_animation_state = 43;
-		dword_45A0D4_animation_frame = 0;
-		return true;
-	case 64:
-	case 66:
-		dword_45A0D0_animation_state = 42;
-		dword_45A0D4_animation_frame = 0;
-		return true;
-	case 53:
-		if (dword_45A0D0_animation_state != 60 && (Player_Query_Current_Set() == 55 || Player_Query_Current_Set() == 13)) {
-			dword_45A0D0_animation_state = 60;
-			dword_45A0D4_animation_frame = 0;
-		} else {
-			dword_45A0D4_animation_frame = 0;
-			dword_45A0D0_animation_state = 70;
+	case kAnimationModeIdle:
+		if (Game_Flag_Query(kFlagMcCoyTiedDown)) {
+			if (_animationFrame <= 6) {
+				// Play one of kSfxCHARMTL7, kSfxCHARMTL8, kSfxCHARMTL9
+				Ambient_Sounds_Play_Sound(Random_Query(kSfxCHARMTL7, kSfxCHARMTL9), 39, 0, 0, 99);
+			}
+			_animationState = 57;
+			_animationFrame = 0;
+			return true;
 		}
-		return true;
-	case 52:
-		dword_45A0D0_animation_state = 55;
-		dword_45A0D4_animation_frame = 0;
-		return true;
-	case 51:
-		dword_45A0D0_animation_state = 27;
-		dword_45A0D4_animation_frame = 0;
-		return true;
-	case 49:
-		dword_45A0D0_animation_state = 28;
-		dword_45A0D4_animation_frame = 0;
-		return true;
-	case 48:
-		switch (dword_45A0D0_animation_state) {
-		case 14:
-			dword_45A0D0_animation_state = 28;
-			dword_45A0D4_animation_frame = 0;
-			break;
-		case 13:
-			dword_45A0D0_animation_state = 22;
-			dword_45A0D4_animation_frame = 0;
-			return true;
-		case 10:
-			dword_45A0D0_animation_state = 18;
-			dword_45A0D4_animation_frame = 8 * (13 - dword_45A0D4_animation_frame) / 13;
-			return true;
+		switch (_animationState) {
+		case 3:
+		case 4:
+		case 5:
+		case 6:
+		case 7:
 		case 8:
 		case 9:
-		case 12:
-			return true;
+		case 10:
 		case 11:
-			dword_45A0D0_animation_state = 18;
-			dword_45A0D4_animation_frame = 0;
-			break;
-		case 7:
-			dword_45A0D0_animation_state = 14;
-			dword_45A0D4_animation_frame = 0;
-			break;
-		case 0:
-		case 1:
-		case 2:
-		case 3:
-		case 4:
-		case 5:
-		case 6:
-			dword_45A0D0_animation_state = 15;
-			dword_45A0D4_animation_frame = 0;
-			break;
-		default:
-			if (dword_45A0D0_animation_state != 50) {
-				dword_45A0D0_animation_state = 27;
-				dword_45A0D4_animation_frame = 0;
-			}
-			break;
-		}
-		return true;
-	case 47:
-		dword_45A0D0_animation_state = 41;
-		dword_45A0D4_animation_frame = 0;
-		return true;
-	case 46:
-		dword_45A0D0_animation_state = 40;
-		dword_45A0D4_animation_frame = 0;
-		return true;
-	case 45:
-		dword_45A0D0_animation_state = 39;
-		dword_45A0D4_animation_frame = 0;
-		return true;
-	case 44:
-		dword_45A0D0_animation_state = 38;
-		dword_45A0D4_animation_frame = 0;
-		return true;
-	case 42:
-		dword_45A0D0_animation_state = 46;
-		dword_45A0D4_animation_frame = 0;
-		Player_Loses_Control();
-		return true;
-	case 41:
-		dword_45A0D0_animation_state = 45;
-		dword_45A0D4_animation_frame = 0;
-		return true;
-	case 40:
-		dword_45A0D0_animation_state = 44;
-		dword_45A0D4_animation_frame = 0;
-		return true;
-	case 39:
-		dword_45A0D4_animation_frame = 0;
-		dword_45A0D0_animation_state = 52;
-		if (Player_Query_Current_Set() == 27) {
-			dword_45A0D4_animation_frame = 23;
-		}
-		return true;
-	case 38:
-		dword_45A0D0_animation_state = 47;
-		dword_45A0D4_animation_frame = 0;
-		return true;
-	case 29:
-		Player_Loses_Control();
-		dword_45A0D4_animation_frame = 0;
-		dword_45A0D0_animation_state = 71;
-		return true;
-	case 23:
-		dword_45A0D0_animation_state = 66;
-		dword_45A0D4_animation_frame = 0;
-		return true;
-	case 22:
-		if (Random_Query(0, 1)) {
-			dword_45A0D0_animation_state = 23;
-		} else {
-			dword_45A0D0_animation_state = 24;
-		}
-		dword_45A0D4_animation_frame = 0;
-		return true;
-	case 21:
-		switch (dword_45A0D0_animation_state) {
-		case 0:
-		case 2:
-		case 3:
-		case 4:
-		case 5:
-		case 6:
-		case 7:
-			dword_45A0D0_animation_state = 28;
-			dword_45A0D4_animation_frame = 0;
-			break;
-		case 1:
-		case 8:
-			dword_45A0D0_animation_state = 27;
-			dword_45A0D4_animation_frame = 0;
-			break;
-		default:
-
-			if (Random_Query(0, 1)) {
-				dword_45A0D0_animation_state = 26;
-			} else {
-				dword_45A0D0_animation_state = 25;
-			}
-			dword_45A0D4_animation_frame = 0;
-			break;
-		}
-		return true;
-	case 20:
-		v2 = Actor_Query_Which_Set_In(kActorMcCoy);
-		if (v2 == 27) {
-			dword_45A0D0_animation_state = 51;
-			dword_45A0D4_animation_frame = 0;
-			Player_Loses_Control();
-			Game_Flag_Set(210);
-		} else if (v2 == 70 || v2 == 87) {
-			dword_45A0D0_animation_state = 56;
-			dword_45A0D4_animation_frame = 0;
-		}
-		return true;
-	case 19:
-		if (dword_45A0D0_animation_state < 3 || dword_45A0D0_animation_state > 12) {
-			dword_45A0D0_animation_state = 13;
-			dword_462718 = 12;
-			dword_46271C = 27;
-		} else {
-			Game_Flag_Reset(236);
-			dword_45A0F0 = 12;
-			dword_45A0F4 = 27;
-		}
-		return true;
-	case 18:
-		if (dword_45A0D0_animation_state < 3 || dword_45A0D0_animation_state > 12) {
-			dword_45A0D0_animation_state = 13;
-			dword_462718 = 11;
-			dword_46271C = 26;
-		} else {
-			Game_Flag_Reset(236);
-			dword_45A0F0 = 11;
-			dword_45A0F4 = 26;
-		}
-		return true;
-	case 17:
-		if (dword_45A0D0_animation_state < 3 || dword_45A0D0_animation_state > 12) {
-			dword_45A0D0_animation_state = 13;
-			dword_462718 = 10;
-			dword_46271C = 25;
-		} else {
-			Game_Flag_Reset(236);
-			dword_45A0F0 = 10;
-			dword_45A0F4 = 25;
-		}
-		return true;
-	case 16:
-		if (dword_45A0D0_animation_state < 3 || dword_45A0D0_animation_state > 12) {
-			dword_45A0D0_animation_state = 13;
-			dword_462718 = 9;
-			dword_46271C = 24;
-		} else {
-			Game_Flag_Reset(236);
-			dword_45A0F0 = 9;
-			dword_45A0F4 = 24;
-		}
-		return true;
-	case 15:
-		if (dword_45A0D0_animation_state < 3 || dword_45A0D0_animation_state > 12) {
-			dword_45A0D0_animation_state = 13;
-			dword_462718 = 8;
-			dword_46271C = 23;
-		} else {
-			Game_Flag_Reset(236);
-			dword_45A0F0 = 8;
-			dword_45A0F4 = 23;
-		}
-		return true;
-	case 11:
-	case 14:
-		if (dword_45A0D0_animation_state < 3 || dword_45A0D0_animation_state > 12) {
-			dword_45A0D0_animation_state = 13;
-			dword_462718 = 7;
-			dword_46271C = 22;
-		} else {
-			Game_Flag_Reset(236);
-			dword_45A0F0 = 7;
-			dword_45A0F4 = 22;
-		}
-		return true;
-	case 10:
-	case 13:
-		if (dword_45A0D0_animation_state < 3 || dword_45A0D0_animation_state > 12) {
-			dword_45A0D0_animation_state = 13;
-			dword_462718 = 6;
-			dword_46271C = 27;
-		} else {
-			Game_Flag_Reset(236);
-			dword_45A0F0 = 6;
-			dword_45A0F4 = 27;
-		}
-		return true;
-	case 9:
-	case 12:
-		if (dword_45A0D0_animation_state < 3 || dword_45A0D0_animation_state > 12) {
-			dword_45A0D0_animation_state = 13;
-			dword_462718 = 5;
-			dword_46271C = 21;
-		} else {
-			Game_Flag_Reset(236);
-			dword_45A0F0 = 5;
-			dword_45A0F4 = 21;
-		}
-		return true;
-	case 8:
-		if (dword_45A0D0_animation_state != 27 && dword_45A0D0_animation_state != 50) {
-			dword_45A0D0_animation_state = 37;
-			dword_45A0D4_animation_frame = 0;
-		}
-		return true;
-	case 7:
-		if (dword_45A0D0_animation_state != 27 && dword_45A0D0_animation_state != 50) {
-			dword_45A0D0_animation_state = 36;
-			dword_45A0D4_animation_frame = 0;
-		}
-		return true;
-	case 6:
-		dword_45A0D0_animation_state = 21;
-		dword_45A0D4_animation_frame = 0;
-		return true;
-	case 5:
-		switch (dword_45A0D0_animation_state) {
-		case 1:
-		case 2:
-		case 5:
-			dword_45A0D0_animation_state = 14;
-			dword_45A0D4_animation_frame = 0;
-			break;
-		case 0:
-		case 3:
-		case 4:
-			dword_45A0D0_animation_state = 15;
-			dword_45A0D4_animation_frame = 0;
-			break;
-		default:
-			dword_45A0D0_animation_state = 18;
-			dword_45A0D4_animation_frame = 0;
-			break;
-		}
-		return true;
-	case 4:
-		switch (dword_45A0D0_animation_state) {
-		case 22:
-			dword_45A0D0_animation_state = 19;
-			dword_45A0D4_animation_frame = 41;
-			break;
-		case 18:
-			dword_45A0D0_animation_state = 19;
-			dword_45A0D4_animation_frame = 13 * ((8 - dword_45A0D4_animation_frame) / 8);
-			break;
+		case 12:
+			Game_Flag_Set(kFlagMcCoyAnimation1);
+			_animationLoopCounter = 0;
+			_animationLoopLength = 30;
+			_animationLoopFrameMin = 0;
+			_animationLoopDirection = 1;
+			_animationLoopFrameMax = 3;
+			return true;
+		case 14:
 		case 17:
 		case 20:
-			dword_45A0D0_animation_state = 19;
-			dword_45A0D4_animation_frame = 0;
-			break;
+		case 21:
+		case 36:
+			_animationState = 16;
+			_animationFrame = 0;
+			return true;
+		case 15:
+			_animationState = 16;
+			_animationFrame = 16 - ((16 * _animationFrame) / 12);
+			return true;
 		case 16:
-			dword_45A0D0_animation_state = 15;
-			dword_45A0D4_animation_frame = 12 - 12 * dword_45A0D4_animation_frame / 16;
-			break;
+		case 25:
+		case 26:
+		case 55:
+			return true;
+		case 60:
+			_animationState = 61;
+			return true;
+		default:
+			_animationState = 0;
+			_animationFrame = 0;
+			_animationLoopLength = 0;
+			return true;
+		}
+		break;
+
+	case kAnimationModeWalk:
+		if (_animationState != 27
+		 && _animationState != 50
+		) {
+			if (Game_Flag_Query(kFlagMcCoyTiedDown)) {
+				_animationState = 58;
+				_animationFrame = 0;
+			} else {
+				_animationState = 32;
+				_animationFrame = 0;
+			}
+		}
+		break;
+
+	case kAnimationModeRun:
+		if (_animationState != 27
+		 && _animationState != 50
+		) {
+			if (Game_Flag_Query(kFlagMcCoyTiedDown)) {
+				_animationState = 58;
+				_animationFrame = 4;
+			} else {
+				_animationState = 31;
+				_animationFrame = 0;
+			}
+		}
+		break;
+
+	case kAnimationModeTalk:
+		if (_animationState < 3 || _animationState > 12) {
+			_animationState = 13;
+			_animationStateNext = 3;
+			_animationNext = kModelAnimationMcCoyProtestingTalk;
+		} else {
+			Game_Flag_Reset(kFlagMcCoyAnimation1);
+			_animationStateNextSpecial = 4;
+			_animationNextSpecial = kModelAnimationMcCoyProtestingTalk;
+		}
+		break;
+
+	case kAnimationModeCombatIdle:
+		switch (_animationState) {
 		case 14:
 		case 15:
 		case 19:
 		case 21:
-		case 2:
-		case 3:
-			return true;
+			break;
+		case 16:
+			_animationState = 15;
+			_animationFrame = 12 - ((12 * _animationFrame) / 16);
+			break;
+		case 17:
+		case 20:
+			_animationState = 19;
+			_animationFrame = 0;
+			break;
+		case 18:
+			_animationState = 19;
+			_animationFrame = 13 * ((8 - _animationFrame) / 8);
+			break;
+		case 22:
+			_animationState = 19;
+			_animationFrame = 41;
+			break;
+		case 36:
+		case 37:
+		case 40:
+		case 41:
+		case 51:
+			_animationState = 14;
+			_animationFrame = 0;
+			break;
 		default:
-			dword_45A0D0_animation_state = 15;
-			dword_45A0D4_animation_frame = 0;
-			break;
-		case 13:
-			dword_45A0D0_animation_state = 16;
-			dword_45A0D4_animation_frame = 0;
-			break;
-		case 0:
-		case 1:
-		case 4:
-		case 5:
-		case 6:
-		case 7:
-		case 8:
-		case 9:
-		case 10:
-		case 11:
-		case 12:
-			dword_45A0D0_animation_state = 0;
-			dword_45A0D4_animation_frame = 0;
-			dword_45A0DC = 0;
+			_animationState = 15;
+			_animationFrame = 0;
 			break;
 		}
-		return true;
-	case 3:
-		if (dword_45A0D0_animation_state >= 3 && dword_45A0D0_animation_state <= 12) {
-			Game_Flag_Reset(236);
-			dword_45A0F0 = 4;
-			dword_45A0F4 = 20;
+		break;
+
+	case kAnimationModeCombatAim:
+		switch (_animationState) {
+		case 17:
+		case 18:
+		case 21:
+			break;
+		case 19:
+			_animationState = 18;
+			_animationFrame = 8 * (13 - _animationFrame) / 13;
+			break;
+		case 22:
+			_animationState = 22;
+			_animationFrame = 0;
+			break;
+		default:
+			_animationState = 18;
+			_animationFrame = 0;
+			break;
+		}
+		break;
+
+	case kAnimationModeCombatAttack:
+		_animationState = 21;
+		_animationFrame = 0;
+		break;
+
+	case kAnimationModeCombatWalk:
+		if (_animationState != 27 && _animationState != 50) {
+			_animationState = 36;
+			_animationFrame = 0;
+		}
+		break;
+
+	case kAnimationModeCombatRun:
+		if (_animationState != 27 && _animationState != 50) {
+			_animationState = 37;
+			_animationFrame = 0;
+		}
+		break;
+
+	case 9:
+	case 12:
+		if (_animationState < 3 || _animationState > 12) {
+			_animationState = 13;
+			_animationStateNext = 5;
+			_animationNext = kModelAnimationMcCoyScratchHeadTalk;
 		} else {
-			dword_45A0D0_animation_state = 13;
-			dword_462718 = 3;
-			dword_46271C = 20;
+			Game_Flag_Reset(kFlagMcCoyAnimation1);
+			_animationStateNextSpecial = 5;
+			_animationNextSpecial = kModelAnimationMcCoyScratchHeadTalk;
 		}
-		return true;
-	case 2:
-		if (dword_45A0D0_animation_state == 27 || dword_45A0D0_animation_state == 50) {
-			return true;
+		break;
+
+	case 10:
+	case 13:
+		if (_animationState < 3 || _animationState > 12) {
+			_animationState = 13;
+			_animationStateNext = 6;
+			_animationNext = kModelAnimationMcCoyScratchEarLongerTalk;
+		} else {
+			Game_Flag_Reset(kFlagMcCoyAnimation1);
+			_animationStateNextSpecial = 6;
+			_animationNextSpecial = kModelAnimationMcCoyScratchEarLongerTalk;
 		}
-		if (!Game_Flag_Query(550)) {
-			dword_45A0D0_animation_state = 31;
-			dword_45A0D4_animation_frame = 0;
-			return true;
+		break;
+
+	case 11:
+	case 14:
+		if (_animationState < 3 || _animationState > 12) {
+			_animationState = 13;
+			_animationStateNext = 7;
+			_animationNext = kModelAnimationMcCoyPointingTalk;
+		} else {
+			Game_Flag_Reset(kFlagMcCoyAnimation1);
+			_animationStateNextSpecial = 7;
+			_animationNextSpecial = kModelAnimationMcCoyPointingTalk;
 		}
-		dword_45A0D0_animation_state = 58;
-		dword_45A0D4_animation_frame = 4;
-		return true;
-	case 1:
-		if (dword_45A0D0_animation_state == 27 || dword_45A0D0_animation_state == 50) {
-			return true;
+		break;
+
+	case 15:
+		if (_animationState < 3 || _animationState > 12) {
+			_animationState = 13;
+			_animationStateNext = 8;
+			_animationNext = kModelAnimationMcCoyUpsetTalk;
+		} else {
+			Game_Flag_Reset(kFlagMcCoyAnimation1);
+			_animationStateNextSpecial = 8;
+			_animationNextSpecial = kModelAnimationMcCoyUpsetTalk;
 		}
-		if (!Game_Flag_Query(550)) {
-			dword_45A0D0_animation_state = 32;
-			dword_45A0D4_animation_frame = 0;
-			return true;
+		break;
+
+	case 16:
+		if (_animationState < 3 || _animationState > 12) {
+			_animationState = 13;
+			_animationStateNext = 9;
+			_animationNext = kModelAnimationMcCoyDismissiveTalk;
+		} else {
+			Game_Flag_Reset(kFlagMcCoyAnimation1);
+			_animationStateNextSpecial = 9;
+			_animationNextSpecial = kModelAnimationMcCoyDismissiveTalk;
 		}
-		dword_45A0D0_animation_state = 58;
-		dword_45A0D4_animation_frame = 0;
-		return true;
-	case 0:
-		if (Game_Flag_Query(550)) {
-			if (dword_45A0D4_animation_frame > 6) {
-				dword_45A0D0_animation_state = 57;
-				dword_45A0D4_animation_frame = 0;
-				return true;
+		break;
+
+	case 17:
+		if (_animationState < 3 || _animationState > 12) {
+			_animationState = 13;
+			_animationStateNext = 10;
+			_animationNext = kModelAnimationMcCoyScratchEarTalk;
+		} else {
+			Game_Flag_Reset(kFlagMcCoyAnimation1);
+			_animationStateNextSpecial = 10;
+			_animationNextSpecial = kModelAnimationMcCoyScratchEarTalk;
+		}
+		break;
+
+	case 18:
+		if (_animationState < 3 || _animationState > 12) {
+			_animationState = 13;
+			_animationStateNext = 11;
+			_animationNext = kModelAnimationMcCoyHandsOnWaistTalk;
+		} else {
+			Game_Flag_Reset(kFlagMcCoyAnimation1);
+			_animationStateNextSpecial = 11;
+			_animationNextSpecial = kModelAnimationMcCoyHandsOnWaistTalk;
+		}
+		break;
+
+	case 19:
+		if (_animationState < 3 || _animationState > 12) {
+			_animationState = 13;
+			_animationStateNext = 12;
+			_animationNext = kModelAnimationMcCoyScratchEarLongerTalk;
+		} else {
+			Game_Flag_Reset(kFlagMcCoyAnimation1);
+			_animationStateNextSpecial = 12;
+			_animationNextSpecial = kModelAnimationMcCoyScratchEarLongerTalk;
+		}
+		break;
+
+	case kAnimationModeDodge:
+		dodge();
+		break;
+
+	case kAnimationModeHit:
+		switch (_animationState) {
+		case 14:
+		case 15:
+		case 17:
+		case 18:
+		case 19:
+		case 20:
+		case 21:
+		case 22:
+			if (Random_Query(0, 1) == 1) {
+				_animationState = 24;
+			} else {
+				_animationState = 23;
 			}
-			int v3 = Random_Query(0, 2);
-			int v4 = 0;
-			if (v3 == 0) {
-				v4 = 595;
-			} else if (v3 == 1) {
-				v4 = 594;
-			} else if (v3 == 2) {
-				v4 = 593;
+			_animationFrame = 0;
+			break;
+		default:
+			if (Random_Query(0, 1) == 1) {
+				_animationState = 26;
+			} else {
+				_animationState = 25;
 			}
-			Ambient_Sounds_Play_Sound(v4, 39, 0, 0, 99);
-			dword_45A0D0_animation_state = 57;
-			dword_45A0D4_animation_frame = 0;
-			return true;
+			_animationFrame = 0;
+			break;
 		}
-		if (dword_45A0D0_animation_state == 60) {
-			dword_45A0D0_animation_state = 61;
-			return true;
+		break;
+
+	case kAnimationModeCombatHit:
+		if (Random_Query(0, 1) == 1) {
+			_animationState = 23;
+		} else {
+			_animationState = 24;
 		}
-		dword_45A0D0_animation_state = 0;
-		dword_45A0D4_animation_frame = 0;
-		dword_45A0DC = 0;
-		return true;
+		_animationFrame = 0;
+		break;
+
+	case 23:
+		_animationState = 66;
+		_animationFrame = 0;
+		break;
+
+	case 29:
+		Player_Loses_Control();
+		_animationFrame = 0;
+		_animationState = 71;
+		break;
+
+	case 38:
+		_animationState = 47;
+		_animationFrame = 0;
+		break;
+
+	case 39:
+		_animationFrame = 0;
+		_animationState = 52;
+		if (Player_Query_Current_Set() == kSetCT02) {
+			_animationFrame = 23;
+		}
+		break;
+
+	case 40:
+		_animationState = 44;
+		_animationFrame = 0;
+		break;
+
+	case kAnimationModeSpinnerGetIn:
+		_animationState = 45;
+		_animationFrame = 0;
+		break;
+
+	case kAnimationModeSpinnerGetOut:
+		_animationState = 46;
+		_animationFrame = 0;
+		Player_Loses_Control();
+		break;
+
+	case kAnimationModeWalkUp:
+		_animationState = 38;
+		_animationFrame = 0;
+		break;
+
+	case kAnimationModeWalkDown:
+		_animationState = 39;
+		_animationFrame = 0;
+		break;
+
+	case kAnimationModeCombatWalkUp:
+		_animationState = 40;
+		_animationFrame = 0;
+		break;
+
+	case kAnimationModeCombatWalkDown:
+		_animationState = 41;
+		_animationFrame = 0;
+		break;
+
+	case kAnimationModeDie:
+		switch (_animationState) {
+		case 14:
+		case 15:
+		case 17:
+		case 18:
+		case 19:
+		case 20:
+		case 21:
+		case 22:
+			_animationState = 28;
+			_animationFrame = 0;
+			break;
+		case 27:
+		case 28:
+		case 50:
+			break;
+		default:
+			_animationState = 27;
+			_animationFrame = 0;
+			break;
+		}
+		break;
+	case kAnimationModeCombatDie:
+		_animationState = 28;
+		_animationFrame = 0;
+		break;
+	case 51:
+		_animationState = 27;
+		_animationFrame = 0;
+		break;
+	case kAnimationModeFeeding:
+		_animationState = 55;
+		_animationFrame = 0;
+		break;
+	case kAnimationModeSit:
+		if (_animationState != 60 && (Player_Query_Current_Set() == kSetNR03 || Player_Query_Current_Set() == kSetNR05_NR08)) {
+			_animationState = 60;
+			_animationFrame = 0;
+		} else {
+			_animationFrame = 0;
+			_animationState = 70;
+		}
+		break;
+	case kAnimationModeClimbUp:
+	case kAnimationModeCombatClimbUp:
+		_animationState = 42;
+		_animationFrame = 0;
+		break;
+	case kAnimationModeClimbDown:
+	case kAnimationModeCombatClimbDown:
+		_animationState = 43;
+		_animationFrame = 0;
+		break;
+	case 68:
+		_animationState = 29;
+		_animationFrame = Slice_Animation_Query_Number_Of_Frames(18) - 1;
+		_animationLoopDirection = -1;
+		break;
+	case 75:
+		_animationState = 67;
+		_animationFrame = 0;
+		break;
+	case 85:
+		_animationFrame = 0;
+		_animationState = 69;
+		break;
 	}
 	return true;
 }
 
-void AIScriptMcCoy::QueryAnimationState(int *animationState, int *a2, int *a3, int *a4) {
-	*animationState = dword_45A0D0_animation_state;
-	*a2 = dword_45A0D4_animation_frame;
-	*a3 = dword_462718;
-	*a4 = dword_46271C;
+void AIScriptMcCoy::QueryAnimationState(int *animationState, int *animationFrame, int *animationStateNext, int *animationNext) {
+	*animationState     = _animationState;
+	*animationFrame     = _animationFrame;
+	*animationStateNext = _animationStateNext;
+	*animationNext      = _animationNext;
 }
 
-void AIScriptMcCoy::SetAnimationState(int animationState, int a2, int a3, int a4) {
-	dword_45A0D0_animation_state = animationState;
-	dword_45A0D4_animation_frame = a2;
-	dword_462718 = a3;
-	dword_46271C = a4;
+void AIScriptMcCoy::SetAnimationState(int animationState, int animationFrame, int animationStateNext, int animationNext) {
+	_animationState     = animationState;
+	_animationFrame     = animationFrame;
+	_animationStateNext = animationStateNext;
+	_animationNext      = animationNext;
 }
 
 bool AIScriptMcCoy::ReachedMovementTrackWaypoint(int waypointId) {
@@ -1663,189 +1861,86 @@ bool AIScriptMcCoy::ReachedMovementTrackWaypoint(int waypointId) {
 
 void AIScriptMcCoy::FledCombat() {}
 
-void AIScriptMcCoy::sub_4053E0() {
+void AIScriptMcCoy::fallDown() {
 	float x, y, z;
 	Actor_Query_XYZ(kActorMcCoy, &x, &y, &z);
-	flt_462710 = flt_462710 + off_45A100;
-	if (flt_462714 < flt_462710) {
-		off_45A100 = off_45A100 - 0.2f;
+	_fallHeightCurrent = _fallHeightCurrent + _fallSpeed;
+	if (_fallHeightTarget < _fallHeightCurrent) {
+		_fallSpeed = _fallSpeed - 0.2f;
 	} else {
-		flt_462710 = flt_462714;
-		Actor_Set_Goal_Number(kActorMcCoy, 0);
-		Actor_Retired_Here(kActorMcCoy, 12, 48, 1, -1);
+		_fallHeightCurrent = _fallHeightTarget;
+		Actor_Set_Goal_Number(kActorMcCoy, kGoalMcCoyDefault);
+		Actor_Retired_Here(kActorMcCoy, 12, 48, true, -1);
 	}
-	return Actor_Set_At_XYZ(kActorMcCoy, x, flt_462710, z, Actor_Query_Facing_1024(kActorMcCoy));
+	return Actor_Set_At_XYZ(kActorMcCoy, x, _fallHeightCurrent, z, Actor_Query_Facing_1024(kActorMcCoy));
 }
 
-void AIScriptMcCoy::sub_4054F0() {
-	if (Actor_Query_Which_Set_In(kActorMcCoy) == 87 && Actor_Query_Goal_Number(kActorMcCoy) != 390 && !Game_Flag_Query(682)) {
+void AIScriptMcCoy::UG15fall() {
+	if ( Actor_Query_Which_Set_In(kActorMcCoy) == kSetUG15
+	 &&  Actor_Query_Goal_Number(kActorMcCoy) != kGoalMcCoyUG15Fall
+	 && !Game_Flag_Query(kFlagUG15BridgeBroken)
+	) {
 		float x, y, z;
 		Actor_Query_XYZ(kActorMcCoy, &x, &y, &z);
-		if ((z < 220.0f) && (-210.0f < x) && (-70.0f > x)) {
-			Game_Flag_Set(682);
-			Scene_Loop_Set_Default(3);
-			Scene_Loop_Start_Special(kSceneLoopMode2, 2, true);
-			Actor_Set_Goal_Number(kActorMcCoy, 390);
+		if ( 220.0f > z
+		 && -210.0f < x
+		 &&  -70.0f > x
+		) {
+			Game_Flag_Set(kFlagUG15BridgeBroken);
+			Scene_Loop_Set_Default(3); // kUG15LoopMainLoopBridgeBroken
+			Scene_Loop_Start_Special(kSceneLoopModeOnce, 2, true); // kUG15LoopBridgeBreaks
+			Actor_Set_Goal_Number(kActorMcCoy, kGoalMcCoyUG15Fall);
 			Actor_Query_XYZ(kActorFreeSlotA, &x, &y, &z);
-			if (-200.0 < x && -62.0f > x) {
-				Actor_Set_Goal_Number(kActorFreeSlotA, 309);
+			if (-200.0 < x
+			 && -62.0f > x
+			) {
+				Actor_Set_Goal_Number(kActorFreeSlotA, kGoalFreeSlotAUG15Fall);
 			}
 		} else {
-			Actor_Set_Goal_Number(kActorMcCoy, 391);
+			Actor_Set_Goal_Number(kActorMcCoy, kGoalMcCoyUG15Die);
 		}
 	}
 }
 
-void AIScriptMcCoy::sub_405660() {
-	if (Game_Flag_Query(550)) {
-		if (dword_45A0D4_animation_frame <= 6) {
-			int v1 = Random_Query(0, 2);
-			int v2 = 0;
-			if (v1 == 0) {
-				v2 = 595;
-			} else if (v1 == 1) {
-				v2 = 594;
-			} else if (v1 == 2) {
-				v2 = 593;
-			}
-			Ambient_Sounds_Play_Sound(v2, 39, 0, 0, 99);
-		}
-		dword_45A0D0_animation_state = 57;
-		dword_45A0D4_animation_frame = 0;
-		return;
-	}
-	switch (dword_45A0D0_animation_state) {
-	case 17:
-	case 20:
-	case 21:
-	case 36:
-		dword_45A0D0_animation_state = 16;
-		dword_45A0D4_animation_frame = 0;
-		break;
-	case 16:
-	case 25:
-	case 26:
-		break;
-	case 15:
-		dword_45A0D0_animation_state = 16;
-		dword_45A0D4_animation_frame = 16 - 16 * dword_45A0D4_animation_frame / 12;
-		break;
-	case 14:
-		dword_45A0D0_animation_state = 16;
-		dword_45A0D4_animation_frame = 0;
-		break;
-	case 3:
-	case 4:
-	case 5:
-	case 6:
-	case 7:
-	case 8:
-	case 9:
-	case 10:
-	case 11:
-	case 12:
-		Game_Flag_Set(236);
-		dword_45A0D8 = 0;
-		dword_45A0DC = 30;
-		dword_45A0E4 = 0;
-		dword_45A0E0 = 1;
-		dword_45A0E8 = 3;
-		break;
-	case 60:
-		dword_45A0D0_animation_state = 61;
-		break;
-	default:
-		dword_45A0D0_animation_state = 0;
-		dword_45A0D4_animation_frame = 0;
-		dword_45A0DC = 0;
-	}
-}
-
-void AIScriptMcCoy::sub_405800() {
-	switch (dword_45A0D0_animation_state) {
-	case 36:
-	case 37:
-	case 40:
-	case 41:
-	case 51:
-		dword_45A0D0_animation_state = 14;
-		dword_45A0D4_animation_frame = 0;
-		break;
-	case 22:
-		dword_45A0D0_animation_state = 19;
-		dword_45A0D4_animation_frame = 41;
-		break;
-	case 18:
-		dword_45A0D0_animation_state = 19;
-		dword_45A0D4_animation_frame = 13 * ((8 - dword_45A0D4_animation_frame) / 8);
-		break;
-	case 17:
-	case 20:
-		dword_45A0D0_animation_state = 19;
-		dword_45A0D4_animation_frame = 0;
-		break;
-	case 16:
-		dword_45A0D4_animation_frame = 12 - 12 * dword_45A0D4_animation_frame / 16;
-		dword_45A0D0_animation_state = 15;
-		break;
-	case 14:
-	case 15:
-	case 19:
-	case 21:
-		break;
-	default:
-		dword_45A0D0_animation_state = 15;
-		dword_45A0D4_animation_frame = 0;
-		break;
-	}
-}
-
-void AIScriptMcCoy::sub_4058B0() {
-	int v0 = Actor_Query_Which_Set_In(kActorMcCoy);
-	if (v0 == 27) {
-		dword_45A0D0_animation_state = 51;
-		dword_45A0D4_animation_frame = 0;
+void AIScriptMcCoy::dodge() {
+	int setId = Actor_Query_Which_Set_In(kActorMcCoy);
+	if (setId == kSetCT02) {
+		_animationState = 51;
+		_animationFrame = 0;
 		Player_Loses_Control();
-		Game_Flag_Set(210);
-	} else if (v0 == 70 || v0 == 87) {
-		dword_45A0D0_animation_state = 56;
-		dword_45A0D4_animation_frame = 0;
+		Game_Flag_Set(kFlagCT02ZubenFled);
+	} else if (setId == kSetRC03 || setId == kSetUG15) {
+		_animationState = 56;
+		_animationFrame = 0;
 	}
 }
 
-void AIScriptMcCoy::sub_405920() {
-	dword_45A0D4_animation_frame = 0;
-	dword_45A0D0_animation_state = 47;
-}
-
-void AIScriptMcCoy::sub_405940(float a1) {
+void AIScriptMcCoy::walkStairsLeft(float stepHeight) {
 	float x, y, z;
 	int currentAngle = Actor_Query_Facing_1024(kActorMcCoy);
 	Actor_Query_XYZ(kActorMcCoy, &x, &y, &z);
 	int angle = currentAngle - 12;
-	y = y + a1;
 	if (angle < 0) {
 		angle = currentAngle + 1012;
 	}
 	if (angle > 1023) {
 		angle -= 1024;
 	}
-	Actor_Set_At_XYZ(kActorMcCoy, x, y, z, angle);
+	Actor_Set_At_XYZ(kActorMcCoy, x, y + stepHeight, z, angle);
 }
 
-void AIScriptMcCoy::sub_4059D0(float a1) {
+void AIScriptMcCoy::walkStairsRight(float stepHeight) {
 	float x, y, z;
 	int currentAngle = Actor_Query_Facing_1024(kActorMcCoy);
 	Actor_Query_XYZ(kActorMcCoy, &x, &y, &z);
 	int angle = currentAngle + 15;
-	y = y + a1;
 	if (angle < 0) {
 		angle = currentAngle + 1039;
 	}
 	if (angle > 1023) {
 		angle -= 1024;
 	}
-	return Actor_Set_At_XYZ(kActorMcCoy, x, y, z, angle);
+	return Actor_Set_At_XYZ(kActorMcCoy, x, y + stepHeight, z, angle);
 }
 
 } // End of namespace BladeRunner

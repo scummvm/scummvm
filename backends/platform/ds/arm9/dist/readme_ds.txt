@@ -6,7 +6,7 @@
                      by Neil Millstone (agentq)
                    http://scummvm.drunkencoders.com
 ------------------------------------------------------------------------
-Visit the main ScummVM website <http://www.scummvm.org>
+Visit the main ScummVM website <https://www.scummvm.org>
 
 
 
@@ -159,7 +159,7 @@ this are the three Revolution Software games.  These are 'Beneath a
 Steel Sky', 'Lure of the Temptress' and 'Flight of the Amazon Queen'.
 Revolution have kindly allowed us to give these games away for free.
 You can download them from the main ScummVM site at
-<http://www.scummvm.org/downloads.php>
+<https://www.scummvm.org/games/>
 
 If you have a modern card reader, like an M3 Real or R4DS, getting
 ScummVM to run on your card is as simple as:
@@ -334,7 +334,7 @@ Temptress have generously been released as freeware by the original
 authors, Revolution Software <http://www.revolution.co.uk/>. This is a
 great thing and we should support Revolution for being so kind to us.
 You can download the game data from the official ScummVM download page
-<http://www.scummvm.org/downloads.php>.
+<https://www.scummvm.org/games/>.
 
 The other games on this list are commercial, and still under copyright,
 which means downloading them without paying for it is illegal. You can
@@ -408,7 +408,7 @@ Future Wars                               D
 
 All Sierra AGI games.
 For a complete list, see this page
-<http://wiki.scummvm.org/index.php/AGI>   D
+<https://wiki.scummvm.org/index.php/AGI>  D
 
 Inherit the Earth                         E
 
@@ -432,7 +432,7 @@ Cruise for a Corpse                       K
 
 Full Throttle and The Dig can run on the DS using an external RAM pack
 plugged into slot-2 (the GBA slot).  To do this, download the special
-build of ScummVM DS from here: http://forums.scummvm.org/viewtopic.php?t=7044
+build of ScummVM DS from here: https://forums.scummvm.org/viewtopic.php?t=7044
 
 There is no support for Windows Humongous Entertainment games, Broken Sword,
 and all other games that run at 640x480 resolution.  The DS cannot cope with
@@ -784,7 +784,7 @@ Opera Expansion Pack to support more games like The Dig and Full
 Throttle? DS Linux has done it, so why can't you?
 *A:* Yes!  The Dig and Full Throttle are playable with some limitations.
 See the forum thread here for a download:
-http://forums.scummvm.org/viewtopic.php?t=7044
+https://forums.scummvm.org/viewtopic.php?t=7044
 
 *Q:* ScummVM DS turns off my DS when I hit 'Quit' in the game or quit
 from the frontend. Why doesn't it return to the menu?
@@ -815,7 +815,7 @@ read the FAQ first. /Please/ don't ask me questions which are answered
 in the FAQ, I get many emails about this program each day, and I can't
 help the people who really need help if I'm answering the same question
 all the time which is already answered on this page. Other than that,
-feel free to post on the ScummVM DS forum <http://forums.scummvm.org>
+feel free to post on the ScummVM DS forum <https://forums.scummvm.org>
 for help. Please do your research first though. There is no way of
 running this on an out-of-the box DS without extra hardware. Most of
 these things are fairly inexpensive though.

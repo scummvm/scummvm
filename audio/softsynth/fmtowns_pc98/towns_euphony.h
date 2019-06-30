@@ -25,6 +25,7 @@
 
 #include "audio/softsynth/fmtowns_pc98/towns_audio.h"
 #include "common/array.h"
+#include "common/func.h"
 
 class EuphonyBaseDriver {
 public:
@@ -154,7 +155,6 @@ private:
 
 	uint8 appendEvent(uint8 evt, uint8 chan);
 
-	typedef bool(EuphonyPlayer::*EuphonyEvent)();
 	bool event_notImpl();
 	bool event_noteOn();
 	bool event_polyphonicAftertouch();
@@ -169,8 +169,8 @@ private:
 	uint8 applyTranspose(uint8 in);
 	uint8 applyVolumeAdjust(uint8 in);
 
-	void sendEvent(uint8 type, uint8 command);
-	void sendNoteEvent(int type, int evt, int note, int velo);
+	void sendByte(uint8 type, uint8 command);
+	void sendPendingEvent(int type, int evt, int note, int velo);
 	void sendControllerReset(int type, int part);
 	void sendAllNotesOff(int type, int part);
 	void sendTempo(int tempo);
@@ -181,17 +181,21 @@ private:
 	int8 *_partConfig_volume;
 	int8 *_partConfig_transpose;
 
-	struct SavedEvent {
-		SavedEvent(int ev, int tp, int nt, int vl, int ln, SavedEvent *chain) : evt(ev), type(tp), note(nt), velo(vl), len(ln), next(chain) {}
+	struct PendingEvent {
+		PendingEvent(int ev, int tp, int nt, int vl, int ln, PendingEvent *chain) : evt(ev), type(tp), note(nt), velo(vl), len(ln), next(chain) {}
 		uint8 evt;
 		uint8 type;
 		uint8 note;
 		uint8 velo;
 		uint16 len;
-		SavedEvent *next;
+		PendingEvent *next;
 	};
 
-	SavedEvent *_savedEventsChain;
+	PendingEvent *_pendingEventsChain;
+
+	typedef Common::Functor0Mem<bool, EuphonyPlayer> EuphonyEvent;
+	typedef Common::Array<const EuphonyEvent*> EuphonyEventsArray;
+	EuphonyEventsArray _euphonyEvents;
 
 	uint8 _defaultBarLength;
 	uint8 _barLength;

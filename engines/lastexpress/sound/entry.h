@@ -26,40 +26,50 @@
 /*
 	Sound entry: 68 bytes (this is what appears in savegames)
 	    uint32 {4}      - status
-	    uint32 {4}      - type
-	    uint32 {4}      - blockCount
-	    uint32 {4}      - time
-	    uint32 {4}      - ??
-	    uint32 {4}      - ??
+	    uint32 {4}      - tag
+	    uint32 {4}      - time left (_blockCount - _time)
+	    uint32 {4}      - time in sound ticks (30Hz timer)
+	    uint32 {4}      - LastExpress_ADPCMStream::_volumeHoldBlocks
+	                      (useless since the target volume is not saved)
+	    uint32 {4}      - ?? [no references except for save/load]
 	    uint32 {4}      - entity
-	    uint32 {4}      - ??
+	    uint32 {4}      - activate delay in sound ticks (30Hz timer)
 	    uint32 {4}      - priority
-	    char {16}       - name 1
-	    char {16}       - name 2
+	    char {16}       - name of linked-after sound
+	                      (always empty because only NIS entries
+	                       have linked-after sounds, and NIS entries are not saved)
+	    char {16}       - name
 
 	Sound queue entry: 120 bytes
-	    uint16 {2}      - status
-	    byte {1}        - type
-	    byte {1}        - ??
-	    uint32 {4}      - ??
-	    uint32 {4}      - currentDataPtr
-	    uint32 {4}      - soundData
-	    uint32 {4}      - currentBufferPtr
-	    uint32 {4}      - blockCount
-	    uint32 {4}      - time
-	    uint32 {4}      - size
-	    uint32 {4}      - ??
+	    uint32 {4}      - status (combination of flags from SoundFlag)
+	    uint32 {4}      - tag (enum SoundTag for special sounds,
+	                           unique value for normal ones)
+	    uint32 {4}      - pointer to the beginning of the buffer for compressed sound data
+	    uint32 {4}      - pointer to the end of the buffer for compressed sound data
+	    uint32 {4}      - decoder pointer inside the buffer
+	    uint32 {4}      - pointer to the sound buffer [always same as the third field]
+	    uint32 {4}      - reader pointer inside the buffer
+	    uint32 {4}      - time left (_blockCount - time)
+	    uint32 {4}      - time in sound ticks (30Hz timer)
+	    uint32 {4}      - buffer size
+	    uint32 {4}      - union:
+	                       if data stream is open: position in the stream
+	                       if data stream is closed: close reason, purely informational
 	    uint32 {4}      - archive structure pointer
-	    uint32 {4}      - ??
-	    uint32 {4}      - ??
-	    uint32 {4}      - ??
-	    uint32 {4}      - ??
-	    uint32 {4}      - ??
+	    uint32 {4}      - _linkAfter, pointer to the entry for linked-after sound
+	                      (xxx.LNK for sound entry corresponding to xxx.NIS)
+	    uint32 {4}      - LastExpress_ADPCMStream::_volumeHoldBlocks
+	                      (used for smooth change of volume)
+	    uint32 {4}      - ?? [no references except for save/load]
+	    uint32 {4}      - target value for smooth change of volume
+	    uint32 {4}      - base volume if NIS is playing
+	                      (the actual volume is reduced in half for non-NIS sounds;
+	                       this is used to restore the volume after NIS ends)
 	    uint32 {4}      - entity
-	    uint32 {4}      - ??
+	    uint32 {4}      - activate time in sound ticks (30Hz timer)
 	    uint32 {4}      - priority
-	    char {16}       - name 1
-	    char {16}       - name 2
+	    char {16}       - name of linked-after sound, used to save/load _linkAfter
+	    char {16}       - name
 	    uint32 {4}      - pointer to next entry in the queue
 	    uint32 {4}      - subtitle data pointer
 */
@@ -76,18 +86,6 @@ namespace LastExpress {
 class LastExpressEngine;
 class SubtitleEntry;
 
-union SoundStatusUnion {
-	uint32 status;
-	byte status1;
-	byte status2;
-	byte status3;
-	byte status4;
-
-	SoundStatusUnion() {
-		status = 0;
-	}
-};
-
 //////////////////////////////////////////////////////////////////////////
 // SoundEntry
 //////////////////////////////////////////////////////////////////////////
@@ -98,32 +96,41 @@ public:
 
 	void open(Common::String name, SoundFlag flag, int priority);
 	void close();
-	void play();
-	void reset();
-	bool isFinished();
-	void update(uint val);
-	bool updateSound();
-	void updateState();
-	void updateEntryFlag(SoundFlag flag);
+	// startTime is measured in sound ticks, 30Hz timer
+	// [used for restoring the entry from savefile]
+	void play(uint32 startTime = 0);
+	void kill() {
+		_entity = kEntityPlayer; // no kActionEndSound notifications
+		close();
+	}
+	void setVolumeSmoothly(SoundFlag newVolume);
+	// setVolumeSmoothly() treats kVolumeNone in a special way;
+	// fade() terminates the stream after the transition
+	void fade() { setVolumeSmoothly(kVolumeNone); }
+	bool update();
+	void adjustVolumeIfNISPlaying();
+	void setVolume(SoundFlag newVolume);
+	// activateDelay is measured in main ticks, 15Hz timer
+	void initDelayedActivate(unsigned activateDelay);
 
 	// Subtitles
-	void showSubtitle(Common::String filename);
+	void setSubtitles(Common::String filename);
 
 	// Serializable
 	void saveLoadWithSerializer(Common::Serializer &ser);
 
 	// Accessors
-	void setStatus(int status)         { _status.status = status; }
-	void setType(SoundType type)       { _type = type; }
 	void setEntity(EntityIndex entity) { _entity = entity; }
-	void setField48(int val)           { _field_48 = val; }
+	bool needSaving() const {
+		return (_name != "NISSND?" && (_status & kSoundTypeMask) != kSoundTypeMenu);
+	}
 
-	SoundStatusUnion getStatus()   { return _status; }
-	SoundType        getType()     { return _type; }
-	uint32           getTime()     { return _time; }
+	uint32           getStatus()   { return _status; }
+	int32            getTag()      { return _tag; }
+	uint32           getTime()     { return _soundStream ? (_soundStream->getTimeMS() * 30 / 1000) + _startTime : 0; }
 	EntityIndex      getEntity()   { return _entity; }
 	uint32           getPriority() { return _priority; }
-	Common::String   getName2()    { return _name2; }
+	const Common::String& getName(){ return _name; }
 
 	// Streams
 	SimpleSound *getSoundStream() { return _soundStream; }
@@ -131,35 +138,40 @@ public:
 private:
 	LastExpressEngine *_engine;
 
-	SoundStatusUnion _status;
-	SoundType _type;    // int
-	//int _data;
-	//int _endOffset;
-	byte * _currentDataPtr;
-	//int _currentBufferPtr;
-	int _blockCount;
-	uint32 _time;
-	//int _size;
-	//int _field_28;
+	// _status field is a combination of bits from SoundFlag; writing
+	// _status = (SoundFlag)(_status | kSoundFlagXxx) instead of _status |= kSoundFlagXxx
+	// is irksome, so let's keep the type as uint32
+	uint32 _status;
+	int32 _tag; // member of SoundTag for special sounds, unique value for normal sounds
+	//byte *_bufferStart, *_bufferEnd, *_decodePointer, *_buffer, *_readPointer;
+	// the original game uses uint32 _blocksLeft, _time instead of _blockCount
+	// we ask the backend for sound time
+	uint32 _blockCount;
+	uint32 _startTime;
+	//uint32 _bufferSize;
+	//union { uint32 _streamPos; enum StreamCloseReason _streamCloseReason; };
 	Common::SeekableReadStream *_stream;    // The file stream
-	//int _archive;
-	int _field_34;
-	int _field_38;
-	int _field_3C;
-	int _variant;
+	//SoundEntry* _linkAfter;
+	//uint32 _volumeHoldBlocks; // the related logic is in LastExpress_ADPCMStream
+	//uint32 _unused;
+	//uint32 _smoothChangeTarget; // the related logic is in LastExpress_ADPCMStream
+	uint32 _volumeWithoutNIS;
 	EntityIndex _entity;
-	int _field_48;
+	// The original game uses one variable _activateTime = _initTime + _activateDelay
+	// and measures everything in sound ticks (30Hz timer).
+	// We use milliseconds and two variables to deal with possible overflow
+	// (probably paranoid, but nothing really complicated).
+	uint32 _initTimeMS, _activateDelayMS;
 	uint32 _priority;
-	Common::String _name1;    //char[16];
-	Common::String _name2;    //char[16];
+	// char _linkAfterName[16];
+	Common::String _name;    //char[16];
 	// original has pointer to the next structure in the list (not used)
 	SubtitleEntry *_subtitle;
 
 	// Sound buffer & stream
-	bool _queued;
 	StreamedSound *_soundStream;    // the filtered sound stream
 
-	void setType(SoundFlag flag);
+	void setupTag(SoundFlag flag);
 	void setupStatus(SoundFlag flag);
 	void loadStream(Common::String name);
 };
@@ -174,19 +186,19 @@ public:
 
 	void load(Common::String filename, SoundEntry *soundEntry);
 	void loadData();
-	void draw();
+	void close();
 	void setupAndDraw();
 	void drawOnScreen();
 
 	// Accessors
-	SoundStatusUnion getStatus() { return _status; }
+	uint32 getStatus() { return _status; }
 	SoundEntry *getSoundEntry()  { return _sound; }
 
 private:
 	LastExpressEngine *_engine;
 
 	Common::String    _filename;
-	SoundStatusUnion  _status;
+	uint32            _status;
 	SoundEntry       *_sound;
 	SubtitleManager  *_data;
 };

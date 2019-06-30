@@ -202,6 +202,23 @@ static const DrasculaGameDescription gameDescriptions[] = {
 		},
 	},
 
+	{
+		// Drascula Russian version (ScummVM repacked files)
+		{
+			"drascula",
+			0,
+			{
+				{"packet.001", 0, "c6a8697396e213a18472542d5f547cb4", 32847563},
+				{"packet.006", 1, "e464b99de7f226391337510d5c328258", 697173},
+				{NULL, 0, NULL, 0}
+			},
+			Common::RU_RUS,
+			Common::kPlatformDOS,
+			GF_PACKED,
+			GUIO1(GUIO_LINKSPEECHTOSFX)
+		},
+	},
+
 	//// Unpacked versions ////////////////////////////////////////////////////
 
 	{
@@ -294,6 +311,18 @@ static const DrasculaGameDescription gameDescriptions[] = {
 			GUIO1(GUIO_LINKSPEECHTOSFX)
 		},
 	},
+	{
+		// Drascula Russian version
+		{
+			"drascula",
+			0,
+			AD_ENTRY1s("14.ald", "4dfab170eae935a2e9889196df427a4a", 1426),
+			Common::RU_RUS,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_LINKSPEECHTOSFX)
+		},
+	},
 
 	{ AD_TABLE_END_MARKER }
 };
@@ -315,11 +344,11 @@ public:
 	}
 
 	virtual const char *getName() const {
-		return "Drascula";
+		return "Drascula: The Vampire Strikes Back";
 	}
 
 	virtual const char *getOriginalCopyright() const {
-		return "Drascula Engine (C) 2000 Alcachofa Soft, (C) 1996 Digital Dreams Multimedia, (C) 1994 Emilio de Paz";
+		return "Drascula: The Vampire Strikes Back (C) 2000 Alcachofa Soft, (C) 1996 Digital Dreams Multimedia, (C) 1994 Emilio de Paz";
 	}
 
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const;
@@ -401,7 +430,11 @@ SaveStateDescriptor DrasculaMetaEngine::querySaveMetaInfos(const char *target, i
 			return SaveStateDescriptor();
 		}
 
-		Graphics::Surface *const thumbnail = Graphics::loadThumbnail(*in);
+		Graphics::Surface *thumbnail;
+		if (!Graphics::loadThumbnail(*in, thumbnail)) {
+			delete in;
+			return SaveStateDescriptor();
+		}
 		desc.setThumbnail(thumbnail);
 
 		delete in;

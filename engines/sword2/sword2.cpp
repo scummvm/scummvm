@@ -85,17 +85,17 @@ static const ExtraGuiOption sword2ExtraGuiOption = {
 class Sword2MetaEngine : public MetaEngine {
 public:
 	virtual const char *getName() const {
-		return "Sword2";
+		return "Broken Sword II: The Smoking Mirror";
 	}
 	virtual const char *getOriginalCopyright() const {
-		return "Broken Sword Games (C) Revolution";
+		return "Broken Sword II: The Smoking Mirror (C) Revolution";
 	}
 
 	virtual bool hasFeature(MetaEngineFeature f) const;
-	virtual GameList getSupportedGames() const;
+	PlainGameList getSupportedGames() const override;
 	virtual const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const;
-	virtual GameDescriptor findGame(const char *gameid) const;
-	virtual GameList detectGames(const Common::FSList &fslist) const;
+	PlainGameDescriptor findGame(const char *gameid) const override;
+	virtual DetectedGames detectGames(const Common::FSList &fslist) const;
 	virtual SaveStateList listSaves(const char *target) const;
 	virtual int getMaximumSaveSlot() const;
 	virtual void removeSaveState(const char *target, int slot) const;
@@ -119,11 +119,11 @@ bool Sword2::Sword2Engine::hasFeature(EngineFeature f) const {
 		(f == kSupportsLoadingDuringRuntime);
 }
 
-GameList Sword2MetaEngine::getSupportedGames() const {
+PlainGameList Sword2MetaEngine::getSupportedGames() const {
 	const Sword2::GameSettings *g = Sword2::sword2_settings;
-	GameList games;
+	PlainGameList games;
 	while (g->gameid) {
-		games.push_back(GameDescriptor(g->gameid, g->description));
+		games.push_back(PlainGameDescriptor::of(g->gameid, g->description));
 		g++;
 	}
 	return games;
@@ -135,20 +135,20 @@ const ExtraGuiOptions Sword2MetaEngine::getExtraGuiOptions(const Common::String 
 	return options;
 }
 
-GameDescriptor Sword2MetaEngine::findGame(const char *gameid) const {
+PlainGameDescriptor Sword2MetaEngine::findGame(const char *gameid) const {
 	const Sword2::GameSettings *g = Sword2::sword2_settings;
 	while (g->gameid) {
 		if (0 == scumm_stricmp(gameid, g->gameid))
 			break;
 		g++;
 	}
-	return GameDescriptor(g->gameid, g->description);
+	return PlainGameDescriptor::of(g->gameid, g->description);
 }
 
 bool isFullGame(const Common::FSList &fslist) {
 	Common::FSList::const_iterator file;
 
-	// We distinguish between the two versions by the presense of paris.clu
+	// We distinguish between the two versions by the presence of paris.clu
 	for (file = fslist.begin(); file != fslist.end(); ++file) {
 		if (!file->isDirectory()) {
 			if (file->getName().equalsIgnoreCase("paris.clu"))
@@ -159,8 +159,8 @@ bool isFullGame(const Common::FSList &fslist) {
 	return false;
 }
 
-GameList detectGamesImpl(const Common::FSList &fslist, bool recursion = false) {
-	GameList detectedGames;
+DetectedGames detectGamesImpl(const Common::FSList &fslist, bool recursion = false) {
+	DetectedGames detectedGames;
 	const Sword2::GameSettings *g;
 	Common::FSList::const_iterator file;
 	bool isFullVersion = isFullGame(fslist);
@@ -192,7 +192,10 @@ GameList detectGamesImpl(const Common::FSList &fslist, bool recursion = false) {
 						continue;
 
 					// Match found, add to list of candidates, then abort inner loop.
-					detectedGames.push_back(GameDescriptor(g->gameid, g->description, Common::UNK_LANG, Common::kPlatformUnknown, GUIO2(GUIO_NOMIDI, GUIO_NOASPECT)));
+					DetectedGame game = DetectedGame(g->gameid, g->description);
+					game.setGUIOptions(GUIO2(GUIO_NOMIDI, GUIO_NOASPECT));
+
+					detectedGames.push_back(game);
 					break;
 				}
 			}
@@ -208,7 +211,7 @@ GameList detectGamesImpl(const Common::FSList &fslist, bool recursion = false) {
 				if (file->getName().equalsIgnoreCase("clusters")) {
 					Common::FSList recList;
 					if (file->getChildren(recList, Common::FSNode::kListAll)) {
-						GameList recGames(detectGamesImpl(recList, true));
+						DetectedGames recGames = detectGamesImpl(recList, true);
 						if (!recGames.empty()) {
 							detectedGames.push_back(recGames);
 							break;
@@ -223,7 +226,7 @@ GameList detectGamesImpl(const Common::FSList &fslist, bool recursion = false) {
 	return detectedGames;
 }
 
-GameList Sword2MetaEngine::detectGames(const Common::FSList &fslist) const {
+DetectedGames Sword2MetaEngine::detectGames(const Common::FSList &fslist) const {
 	return detectGamesImpl(fslist);
 }
 
@@ -278,10 +281,10 @@ Common::Error Sword2MetaEngine::createInstance(OSystem *syst, Engine **engine) c
 
 	// Invoke the detector
 	Common::String gameid = ConfMan.get("gameid");
-	GameList detectedGames = detectGames(fslist);
+	DetectedGames detectedGames = detectGames(fslist);
 
 	for (uint i = 0; i < detectedGames.size(); i++) {
-		if (detectedGames[i].gameid() == gameid) {
+		if (detectedGames[i].gameId == gameid) {
 			*engine = new Sword2::Sword2Engine(syst);
 			return Common::kNoError;
 		}

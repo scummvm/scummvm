@@ -40,12 +40,12 @@ namespace LastExpress {
 	}
 
 Waiter1::Waiter1(LastExpressEngine *engine) : Entity(engine, kEntityWaiter1) {
-	ADD_CALLBACK_FUNCTION(Waiter1, callSavepoint);
-	ADD_CALLBACK_FUNCTION(Waiter1, updateFromTime);
-	ADD_CALLBACK_FUNCTION(Waiter1, draw);
-	ADD_CALLBACK_FUNCTION(Waiter1, updatePosition);
+	ADD_CALLBACK_FUNCTION_SIIS(Waiter1, callSavepoint);
+	ADD_CALLBACK_FUNCTION_I(Waiter1, updateFromTime);
+	ADD_CALLBACK_FUNCTION_S(Waiter1, draw);
+	ADD_CALLBACK_FUNCTION_SII(Waiter1, updatePosition);
 	ADD_CALLBACK_FUNCTION(Waiter1, callbackActionOnDirection);
-	ADD_CALLBACK_FUNCTION(Waiter1, playSound);
+	ADD_CALLBACK_FUNCTION_S(Waiter1, playSound);
 	ADD_CALLBACK_FUNCTION(Waiter1, rebeccaFeedUs);
 	ADD_CALLBACK_FUNCTION(Waiter1, rebeccaClearOurTable);
 	ADD_CALLBACK_FUNCTION(Waiter1, abbotCheckMe);
@@ -296,7 +296,7 @@ IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(18, Waiter1, clearAugust1)
-	serveTable(savepoint, "911", kEntityTables3, "010L", "010H", "913", &ENTITY_PARAM(0, 7));
+	serveTable(savepoint, "911", kEntityTables3, "010L", "010M", "913", &ENTITY_PARAM(0, 7));
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
@@ -325,7 +325,7 @@ IMPLEMENT_FUNCTION(20, Waiter1, servingDinner)
 			}
 		}
 
-		if (!getEntities()->isInKitchen(kEntityWaiter1) && !getEntities()->isSomebodyInsideRestaurantOrSalon())
+		if (!getEntities()->isInKitchen(kEntityWaiter1) || !getEntities()->isSomebodyInsideRestaurantOrSalon())
 			break;
 
 		HANDLE_TABLE(0, 1, 1, setup_annaOrder);
@@ -536,7 +536,7 @@ IMPLEMENT_FUNCTION(28, Waiter1, serving3)
 		break;
 
 	case kActionNone:
-		if (!getEntities()->isInKitchen(kEntityWaiter2) || !getEntities()->isSomebodyInsideRestaurantOrSalon())
+		if (!getEntities()->isInKitchen(kEntityWaiter1) || !getEntities()->isSomebodyInsideRestaurantOrSalon())
 			break;
 
 		if (ENTITY_PARAM(1, 5)) {
@@ -734,12 +734,14 @@ IMPLEMENT_FUNCTION(32, Waiter1, serving4)
 		break;
 
 	case kActionNone:
-		if (Entity::updateParameter(params->param2, getState()->time, 3600)) {
-			ENTITY_PARAM(1, 8) = 1;
-			params->param1 = 0;
+		if (params->param1) {
+			if (Entity::updateParameter(params->param2, getState()->time, 3600)) {
+				ENTITY_PARAM(1, 8) = 1;
+				params->param1 = 0;
+			}
 		}
 
-		if (!getEntities()->isInKitchen(kEntityWaiter2) || !getEntities()->isSomebodyInsideRestaurantOrSalon())
+		if (!getEntities()->isInKitchen(kEntityWaiter1) || !getEntities()->isSomebodyInsideRestaurantOrSalon())
 			break;
 
 		if (ENTITY_PARAM(1, 7)) {
@@ -964,7 +966,7 @@ void Waiter1::handleServer(const SavePoint &savepoint, const char *name, EntityI
 	case kActionCallback:
 		if (getCallback() == 1) {
 			// Prepare or draw sequences depending of value of string
-			if (strcmp(name2, ""))
+			if (!strcmp(name2, ""))
 				getEntities()->clearSequences(kEntityWaiter1);
 			else
 				getEntities()->drawSequenceLeft(kEntityWaiter1, name2);

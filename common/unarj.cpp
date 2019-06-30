@@ -95,8 +95,8 @@ class ArjDecoder {
 public:
 	ArjDecoder(const ArjHeader *hdr) {
 		_compsize = hdr->compSize;
-		_compressed = 0;
-		_outstream = 0;
+		_compressed = nullptr;
+		_outstream = nullptr;
 		_bitbuf = 0;
 		_bytebuf = 0;
 		_bitcount = 0;
@@ -251,16 +251,16 @@ ArjHeader *readHeader(SeekableReadStream &stream) {
 	if (header.id != HEADER_ID) {
 		warning("ArjFile::readHeader(): Bad header ID (%x)", header.id);
 
-		return NULL;
+		return nullptr;
 	}
 
 	header.headerSize = stream.readUint16LE();
 	if (header.headerSize == 0)
-		return NULL;			// end of archive
+		return nullptr;			// end of archive
 	if (header.headerSize > HEADERSIZE_MAX) {
 		warning("ArjFile::readHeader(): Bad header");
 
-		return NULL;
+		return nullptr;
 	}
 
 	int rSize = stream.read(headData, header.headerSize);
@@ -270,7 +270,7 @@ ArjHeader *readHeader(SeekableReadStream &stream) {
 	header.headerCrc = stream.readUint32LE();
 	if (CRC32::checksum(headData, header.headerSize) != header.headerCrc) {
 		warning("ArjFile::readHeader(): Bad header CRC");
-		return NULL;
+		return nullptr;
 	}
 
 	header.firstHdrSize = readS.readByte();
@@ -292,7 +292,7 @@ ArjHeader *readHeader(SeekableReadStream &stream) {
 	// static int check_file_size()
 	if (header.origSize < 0 || header.compSize < 0) {
 		warning("ArjFile::readHeader(): Wrong file size");
-		return NULL;
+		return nullptr;
 	}
 
 	strlcpy(header.filename, (const char *)&headData[header.firstHdrSize], ARJ_FILENAME_MAX);
@@ -723,14 +723,14 @@ ArjArchive::ArjArchive(const String &filename) : _arjFilename(filename) {
 		return;
 	}
 
-	ArjHeader *header = NULL;
+	ArjHeader *header = nullptr;
 
 	arjFile.seek(firstHeaderOffset, SEEK_SET);
-	if ((header = readHeader(arjFile)) == NULL)
+	if ((header = readHeader(arjFile)) == nullptr)
 		return;
 	delete header;
 
-	while ((header = readHeader(arjFile)) != NULL) {
+	while ((header = readHeader(arjFile)) != nullptr) {
 		_headers[header->filename] = header;
 		arjFile.seek(header->compSize, SEEK_CUR);
 	}
@@ -771,7 +771,7 @@ const ArchiveMemberPtr ArjArchive::getMember(const String &name) const {
 
 SeekableReadStream *ArjArchive::createReadStreamForMember(const String &name) const {
 	if (!_headers.contains(name)) {
-		return 0;
+		return nullptr;
 	}
 
 	ArjHeader *hdr = _headers[name];

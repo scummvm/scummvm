@@ -86,6 +86,11 @@ private:
 	int _border;
 	int _xLo, _xHi;
 	int _ycL, _ycH;
+private:
+	/**
+	 * Returns true if the window is covering the entire screen
+	 */
+	bool isFullScreen() const;
 public:
 	bool _enabled;
 public:
@@ -142,6 +147,14 @@ public:
 	 */
 	const char *writeString(const Common::String &s) {
 		return FontSurface::writeString(s, _innerBounds);
+	}
+
+	/**
+	 * Write a charcter to the window
+	 * @param c			Character
+	 */
+	void writeCharacter(char c) {
+		FontSurface::writeCharacter(c, _innerBounds);
 	}
 };
 

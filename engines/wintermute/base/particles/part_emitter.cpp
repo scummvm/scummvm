@@ -214,7 +214,8 @@ bool PartEmitter::initParticle(PartParticle *particle, uint32 currentTime, uint3
 	Vector2 vecVel(0, velocity);
 
 	Matrix4 matRot;
-	matRot.rotationZ(Common::deg2rad(BaseUtils::normalizeAngle(angle - 180)));
+	float radZrot = Common::deg2rad<float>(BaseUtils::normalizeAngle(angle - 180.0));
+	matRot.rotationZ(radZrot);
 	matRot.transformVector2(vecVel);
 
 	if (_alphaTimeBased) {
@@ -433,7 +434,8 @@ bool PartEmitter::addForce(const Common::String &name, PartForce::TForceType typ
 
 	force->_direction = Vector2(0, strength);
 	Matrix4 matRot;
-	matRot.rotationZ(Common::deg2rad(BaseUtils::normalizeAngle(angle - 180)));
+	float radZrot = Common::deg2rad<float>(BaseUtils::normalizeAngle(angle - 180.0));
+	matRot.rotationZ(radZrot);
 	matRot.transformVector2(force->_direction);
 
 	return STATUS_OK;

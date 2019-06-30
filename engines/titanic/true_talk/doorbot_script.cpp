@@ -71,6 +71,8 @@ static const RoomDialogueId ROOM_DIALOGUES2_DE[] = {
 DoorbotScript::DoorbotScript(int val1, const char *charClass, int v2,
 		const char *charName, int v3, int val2, int v4, int v5, int v6, int v7) :
 		TTnpcScript(val1, charClass, v2, charName, v3, val2, v4, v5, v6, v7) {
+	_stateIndex = _doorbotState = 0;
+
 	loadRanges("Ranges/Doorbot");
 	loadResponses("Responses/Doorbot");
 	setupSentences();
@@ -108,7 +110,7 @@ void DoorbotScript::setupSentences() {
 int DoorbotScript::chooseResponse(const TTroomScript *roomScript, const TTsentence *sentence, uint tag) {
 	if (tag == MKTAG('D', 'N', 'A', '1') || tag == MKTAG('H', 'H', 'G', 'Q') ||
 		tag == MKTAG('A', 'N', 'S', 'W') || tag == MKTAG('S', 'U', 'M', 'S')) {
-		if (_stateIndex > 9)
+		if (_stateIndex > 8)
 			_stateIndex = 0;
 		addResponse(TRANSLATE(STATE_ARRAY_EN[_stateIndex], STATE_ARRAY_DE[_stateIndex]));
 		applyResponse();

@@ -31,7 +31,6 @@
 #include "scumm/he/intern_he.h"
 #include "scumm/object.h"
 #include "scumm/he/resource_he.h"
-#include "scumm/saveload.h"
 #include "scumm/scumm.h"
 #include "scumm/scumm_v2.h"
 #include "scumm/scumm_v5.h"

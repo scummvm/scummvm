@@ -32,6 +32,7 @@
 
 #ifdef ENABLE_MYST
 #include "mohawk/myst.h"
+#include "mohawk/myst_scripts.h"
 #endif
 
 #ifdef ENABLE_RIVEN
@@ -92,58 +93,13 @@ enum {
 
 #if defined(ENABLE_MYST) || defined(ENABLE_RIVEN)
 
-MohawkOptionsDialog::MohawkOptionsDialog(MohawkEngine *vm) :
-		GUI::Dialog(0, 0, 360, 200),
-		_vm(vm), _loadSlot(-1) {
-	_loadButton = new GUI::ButtonWidget(this, 245, 25, 100, 25, _("~L~oad"), 0, kLoadCmd);
-	_saveButton = new GUI::ButtonWidget(this, 245, 60, 100, 25, _("~S~ave"), 0, kSaveCmd);
-	new GUI::ButtonWidget(this, 245, 95, 100, 25, _("~Q~uit"), 0, kQuitCmd);
-
-	new GUI::ButtonWidget(this, 95, 160, 120, 25, _("~O~K"), 0, GUI::kOKCmd);
-	new GUI::ButtonWidget(this, 225, 160, 120, 25, _("~C~ancel"), 0, GUI::kCloseCmd);
-
-	_loadDialog = new GUI::SaveLoadChooser(_("Load game:"), _("Load"), false);
-	_saveDialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
+MohawkOptionsDialog::MohawkOptionsDialog() :
+		GUI::Dialog(0, 0, 360, 200) {
+	new GUI::ButtonWidget(this, 95, 160, 120, 25, _("~O~K"), nullptr, GUI::kOKCmd);
+	new GUI::ButtonWidget(this, 225, 160, 120, 25, _("~C~ancel"), nullptr, GUI::kCloseCmd);
 }
 
 MohawkOptionsDialog::~MohawkOptionsDialog() {
-	delete _loadDialog;
-	delete _saveDialog;
-}
-
-void MohawkOptionsDialog::open() {
-	GUI::Dialog::open();
-
-	_loadSlot = -1;
-	_loadButton->setEnabled(_vm->canLoadGameStateCurrently());
-	_saveButton->setEnabled(_vm->canSaveGameStateCurrently());
-}
-
-
-void MohawkOptionsDialog::save() {
-	int slot = _saveDialog->runModalWithCurrentTarget();
-
-	if (slot >= 0) {
-		Common::String result(_saveDialog->getResultString());
-		if (result.empty()) {
-			// If the user was lazy and entered no save name, come up with a default name.
-			result = _saveDialog->createDefaultSaveDescription(slot);
-		}
-
-		_vm->saveGameState(slot, result);
-		close();
-	}
-}
-
-void MohawkOptionsDialog::load() {
-	// Do not load the game state from insite the dialog loop to
-	// avoid mouse cursor glitches (see bug #7164). Instead store
-	// the slot to load and let the code exectuting the dialog do
-	// the load after the dialog finished running.
-	_loadSlot = _loadDialog->runModalWithCurrentTarget();
-
-	if (_loadSlot >= 0)
-		close();
 }
 
 void MohawkOptionsDialog::reflowLayout() {
@@ -160,12 +116,6 @@ void MohawkOptionsDialog::reflowLayout() {
 
 void MohawkOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {
-		case kLoadCmd:
-			load();
-			break;
-		case kSaveCmd:
-			save();
-			break;
 		case GUI::kCloseCmd:
 			close();
 			break;
@@ -178,42 +128,59 @@ void MohawkOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, 
 
 #ifdef ENABLE_MYST
 
-MystOptionsDialog::MystOptionsDialog(MohawkEngine_Myst* vm) : MohawkOptionsDialog(vm), _vm(vm) {
+MystOptionsDialog::MystOptionsDialog(MohawkEngine_Myst* vm) :
+		MohawkOptionsDialog(),
+		_vm(vm),
+		_canDropPage(false),
+		_canShowMap(false),
+		_canReturnToMenu(false),
+		_loadSlot(-1),
+		_saveSlot(-1) {
+
+	_loadButton = new GUI::ButtonWidget(this, 245, 25, 100, 25, _("~L~oad"), nullptr, kLoadCmd);
+	_saveButton = new GUI::ButtonWidget(this, 245, 60, 100, 25, _("~S~ave"), nullptr, kSaveCmd);
+	_quitButton = new GUI::ButtonWidget(this, 245, 95, 100, 25, _("~Q~uit"), nullptr, kQuitCmd);
+
 	// I18N: Option for fast scene switching
-	_zipModeCheckbox = new GUI::CheckboxWidget(this, 15, 10, 220, 15, _("~Z~ip Mode Activated"), 0, kZipCmd);
-	_transitionsCheckbox = new GUI::CheckboxWidget(this, 15, 30, 220, 15, _("~T~ransitions Enabled"), 0, kTransCmd);
+	_zipModeCheckbox = new GUI::CheckboxWidget(this, 15, 10, 220, 15, _("~Z~ip Mode Activated"), nullptr, kZipCmd);
+	_transitionsCheckbox = new GUI::CheckboxWidget(this, 15, 30, 220, 15, _("~T~ransitions Enabled"), nullptr, kTransCmd);
 	// I18N: Drop book page
-	_dropPageButton = new GUI::ButtonWidget(this, 15, 60, 100, 25, _("~D~rop Page"), 0, kDropCmd);
+	_dropPageButton = new GUI::ButtonWidget(this, 15, 60, 100, 25, _("~D~rop Page"), nullptr, kDropCmd);
 
 	// Myst ME only has maps
 	if (_vm->getFeatures() & GF_ME)
-		_showMapButton = new GUI::ButtonWidget(this, 15, 95, 100, 25, _("Show ~M~ap"), 0, kMapCmd);
+		_showMapButton = new GUI::ButtonWidget(this, 15, 95, 100, 25, _("Show ~M~ap"), nullptr, kMapCmd);
 	else
-		_showMapButton = 0;
+		_showMapButton = nullptr;
 
 	// Myst demo only has a menu
 	if (_vm->getFeatures() & GF_DEMO)
-		_returnToMenuButton = new GUI::ButtonWidget(this, 15, 95, 100, 25, _("Main Men~u~"), 0, kMenuCmd);
+		_returnToMenuButton = new GUI::ButtonWidget(this, 15, 95, 100, 25, _("Main Men~u~"), nullptr, kMenuCmd);
 	else
-		_returnToMenuButton = 0;
+		_returnToMenuButton = nullptr;
+
+	_loadDialog = new GUI::SaveLoadChooser(_("Load game:"), _("Load"), false);
+	_saveDialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
 }
 
 MystOptionsDialog::~MystOptionsDialog() {
+	delete _loadDialog;
+	delete _saveDialog;
 }
 
 void MystOptionsDialog::open() {
 	MohawkOptionsDialog::open();
 
-	_dropPageButton->setEnabled(_vm->_gameState->_globals.heldPage != 0);
+	_dropPageButton->setEnabled(_canDropPage);
 
-	if (_showMapButton)
-		_showMapButton->setEnabled(_vm->_scriptParser &&
-				_vm->_scriptParser->getMap());
+	if (_showMapButton) {
+		_showMapButton->setEnabled(_canShowMap);
+	}
 
-	// Return to menu button is not enabled on the menu
-	if (_returnToMenuButton)
-		_returnToMenuButton->setEnabled(_vm->_scriptParser &&
-				_vm->getCurStack() != kDemoStack);
+	if (_returnToMenuButton) {
+		// Return to menu button is not enabled on the menu
+		_returnToMenuButton->setEnabled(_canReturnToMenu);
+	}
 
 	// Zip mode is disabled in the demo
 	if (_vm->getFeatures() & GF_DEMO)
@@ -221,37 +188,74 @@ void MystOptionsDialog::open() {
 
 	_zipModeCheckbox->setState(_vm->_gameState->_globals.zipMode);
 	_transitionsCheckbox->setState(_vm->_gameState->_globals.transitions);
+
+	if (_vm->getFeatures() & GF_25TH) {
+		// The 25th anniversary version has a main menu, no need to show these buttons here
+		_loadButton->setVisible(false);
+		_saveButton->setVisible(false);
+		_quitButton->setVisible(false);
+	}
+
+	_loadSlot = -1;
+	_saveSlot = -1;
+	_loadButton->setEnabled(_vm->canLoadGameStateCurrently());
+	_saveButton->setEnabled(_vm->canSaveGameStateCurrently());
+}
+
+void MystOptionsDialog::save() {
+	_saveSlot = _saveDialog->runModalWithCurrentTarget();
+
+	if (_saveSlot >= 0) {
+		_saveDescription = _saveDialog->getResultString();
+		if (_saveDescription.empty()) {
+			// If the user was lazy and entered no save name, come up with a default name.
+			_saveDescription = _saveDialog->createDefaultSaveDescription(_saveSlot);
+		}
+
+		close();
+	}
+}
+
+void MystOptionsDialog::load() {
+	// Do not load the game state from insite the dialog loop to
+	// avoid mouse cursor glitches (see bug #7164). Instead store
+	// the slot to load and let the code exectuting the dialog do
+	// the load after the dialog finished running.
+	_loadSlot = _loadDialog->runModalWithCurrentTarget();
+
+	if (_loadSlot >= 0)
+		close();
 }
 
 void MystOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {
+	case kLoadCmd:
+		load();
+		break;
+	case kSaveCmd:
+		save();
+		break;
 	case kDropCmd:
-		_vm->_needsPageDrop = true;
+		setResult(kActionDropPage);
 		close();
 		break;
 	case kMapCmd:
-		_vm->_needsShowMap = true;
+		setResult(kActionShowMap);
 		close();
 		break;
 	case kMenuCmd:
-		_vm->_needsShowDemoMenu = true;
+		setResult(kActionGoToMenu);
 		close();
 		break;
 	case kQuitCmd: {
-		if (_vm->getGameType() != GType_MAKINGOF) {
-			_vm->_needsShowCredits = true;
-		} else {
-			Common::Event eventQ;
-			eventQ.type = Common::EVENT_QUIT;
-			g_system->getEventManager()->pushEvent(eventQ);
-		}
+		setResult(kActionShowCredits);
 		close();
 	}
 		break;
 	case GUI::kOKCmd:
 		_vm->_gameState->_globals.zipMode = _zipModeCheckbox->getState();
 		_vm->_gameState->_globals.transitions = _transitionsCheckbox->getState();
-		setResult(1);
+		setResult(kActionNone);
 		close();
 		break;
 	default:
@@ -259,18 +263,30 @@ void MystOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, ui
 	}
 }
 
+void MystOptionsDialog::setCanDropPage(bool canDropPage) {
+	_canDropPage = canDropPage;
+}
+
+void MystOptionsDialog::setCanShowMap(bool canShowMap) {
+	_canShowMap = canShowMap;
+}
+
+void MystOptionsDialog::setCanReturnToMenu(bool canReturnToMenu) {
+	_canReturnToMenu = canReturnToMenu;
+}
+
 #endif
 
 #ifdef ENABLE_RIVEN
 
 RivenOptionsDialog::RivenOptionsDialog(MohawkEngine_Riven* vm) :
-		MohawkOptionsDialog(vm),
+		MohawkOptionsDialog(),
 		_vm(vm) {
-	_zipModeCheckbox = new GUI::CheckboxWidget(this, 15, 10, 220, 15, _("~Z~ip Mode Activated"), 0, kZipCmd);
-	_waterEffectCheckbox = new GUI::CheckboxWidget(this, 15, 30, 220, 15, _("~W~ater Effect Enabled"), 0, kWaterCmd);
+	_zipModeCheckbox = new GUI::CheckboxWidget(this, 15, 10, 220, 15, _("~Z~ip Mode Activated"), nullptr, kZipCmd);
+	_waterEffectCheckbox = new GUI::CheckboxWidget(this, 15, 35, 220, 15, _("~W~ater Effect Enabled"), nullptr, kWaterCmd);
 
-	_transitionModeCaption = new GUI::StaticTextWidget(this, 15, 50, 90, 20, _("Transitions:"), Graphics::kTextAlignRight);
-	_transitionModePopUp = new GUI::PopUpWidget(this, 115, 50, 120, 20);
+	_transitionModeCaption = new GUI::StaticTextWidget(this, 15, 60, 90, 20, _("Transitions:"), Graphics::kTextAlignRight);
+	_transitionModePopUp = new GUI::PopUpWidget(this, 115, 60, 120, 20);
 	_transitionModePopUp->appendEntry(_("Disabled"), kRivenTransitionModeDisabled);
 	_transitionModePopUp->appendEntry(_("Fastest"), kRivenTransitionModeFastest);
 	_transitionModePopUp->appendEntry(_("Normal"), kRivenTransitionModeNormal);
@@ -297,13 +313,6 @@ void RivenOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, u
 		setResult(1);
 		close();
 		break;
-	case kQuitCmd: {
-		Common::Event eventQ;
-		eventQ.type = Common::EVENT_QUIT;
-		g_system->getEventManager()->pushEvent(eventQ);
-		close();
-		break;
-	}
 	default:
 		MohawkOptionsDialog::handleCommand(sender, cmd, data);
 	}

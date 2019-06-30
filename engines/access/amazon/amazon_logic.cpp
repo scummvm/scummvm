@@ -1743,7 +1743,7 @@ void River::plotRiver() {
 	}
 
 	// Draw the text for skipping the river
-	Font &font2 = _vm->_fonts._font2;
+	Font &font2 = *_vm->_fonts._font2;
 	font2.drawString(_vm->_screen, "SKIP", Common::Point(5, 5));
 }
 

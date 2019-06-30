@@ -131,6 +131,19 @@ static const QueenGameDescription gameDescriptions[] = {
 		},
 	},
 
+	// DOS Interview Demo - Russian
+	{
+		{
+			"queen",
+			"Interview",
+			AD_ENTRY1s("queen.1c", "246dd55f475c9ea6524c556227fd0383", 1889658),
+			Common::RU_RUS,
+			Common::kPlatformDOS,
+			ADGF_DEMO,
+			GUIO1(GUIO_NOSPEECH)
+		},
+	},
+
 	// PCGAMES DOS Demo - English
 	{
 		{
@@ -406,6 +419,19 @@ static const QueenGameDescription gameDescriptions[] = {
 		},
 	},
 
+	// DOS CD - Russian (Compressed Freeware Release v1.0)
+	{
+		{
+			"queen",
+			"Talkie",
+			AD_ENTRY1s("queen.1c", "908d04940d40537d32c50a8429cd8631", 51222412),
+			Common::RU_RUS,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO1(GAMEOPTION_ALT_INTRO)
+		},
+	},
+
 	// TODO: Freeware Release for Spanish DOS CD is missing.
 #if 0
 	// DOS CD - Spanish (Compressed Freeware Release v1.0)
@@ -422,6 +448,45 @@ static const QueenGameDescription gameDescriptions[] = {
 	},
 #endif
 
+	// GoG.com Release - German
+	{
+		{
+			"queen",
+			"Talkie",
+			AD_ENTRY1s("queen.1", "28f78dbec7e20f603a10c2f8ea889a5c", 108738717),
+			Common::DE_DEU,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO1(GAMEOPTION_ALT_INTRO)
+		},
+	},
+
+	// GoG.com Release - French
+	{
+		{
+			"queen",
+			"Talkie",
+			AD_ENTRY1s("queen.1", "67e3020f8a35e1df7b1c753b5aaa71e1", 97382620),
+			Common::FR_FRA,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO1(GAMEOPTION_ALT_INTRO)
+		},
+	},
+
+	// GoG.com Release - Italian
+	{
+		{
+			"queen",
+			"Talkie",
+			AD_ENTRY1s("queen.1", "2f72b715ed753cf905a37cdcc7ea611e", 98327801),
+			Common::IT_ITA,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO1(GAMEOPTION_ALT_INTRO)
+		},
+	},
+
 	{ AD_TABLE_END_MARKER }
 };
 
@@ -434,7 +499,7 @@ public:
 	}
 
 	virtual const char *getName() const {
-		return "Queen";
+		return "Flight of the Amazon Queen";
 	}
 
 	virtual const char *getOriginalCopyright() const {
@@ -447,7 +512,7 @@ public:
 	virtual int getMaximumSaveSlot() const { return 99; }
 	virtual void removeSaveState(const char *target, int slot) const;
 
-	const ADGameDescription *fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const;
+	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const override;
 };
 
 bool QueenMetaEngine::hasFeature(MetaEngineFeature f) const {
@@ -457,7 +522,7 @@ bool QueenMetaEngine::hasFeature(MetaEngineFeature f) const {
 		(f == kSupportsDeleteSave);
 }
 
-const ADGameDescription *QueenMetaEngine::fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
+ADDetectedGame QueenMetaEngine::fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
 	static ADGameDescription desc;
 
 	// Iterate over all files in the given directory
@@ -492,11 +557,13 @@ const ADGameDescription *QueenMetaEngine::fallbackDetect(const FileMap &allFiles
 					desc.extra = "Talkie";
 					desc.guiOptions = GAMEOPTION_ALT_INTRO;
 				}
-				return (const ADGameDescription *)&desc;
+
+				return ADDetectedGame(&desc);
 			}
 		}
 	}
-	return 0;
+
+	return ADDetectedGame();
 }
 
 SaveStateList QueenMetaEngine::listSaves(const char *target) const {

@@ -60,11 +60,11 @@ Common::Rect getBoundingBoxImpl(const Font &font, const StringType &str, int x, 
 		const typename StringType::unsigned_type cur = *i;
 		x += font.getKerningOffset(last, cur);
 		last = cur;
-		w = font.getCharWidth(cur);
-		if (x+w > rightX)
+
+		Common::Rect charBox = font.getBoundingBox(cur);
+		if (x + charBox.right > rightX)
 			break;
-		if (x+w >= leftX) {
-			Common::Rect charBox = font.getBoundingBox(cur);
+		if (x + charBox.right >= leftX) {
 			charBox.translate(x, y);
 			if (first) {
 				bbox = charBox;
@@ -73,7 +73,8 @@ Common::Rect getBoundingBoxImpl(const Font &font, const StringType &str, int x, 
 				bbox.extend(charBox);
 			}
 		}
-		x += w;
+
+		x += font.getCharWidth(cur);
 	}
 
 	return bbox;
@@ -113,12 +114,14 @@ void drawStringImpl(const Font &font, Surface *dst, const StringType &str, int x
 		const typename StringType::unsigned_type cur = *i;
 		x += font.getKerningOffset(last, cur);
 		last = cur;
-		w = font.getCharWidth(cur);
-		if (x+w > rightX)
+
+		Common::Rect charBox = font.getBoundingBox(cur);
+		if (x + charBox.right > rightX)
 			break;
-		if (x+w >= leftX)
+		if (x + charBox.right >= leftX)
 			font.drawChar(dst, cur, x, y, color);
-		x += w;
+
+		x += font.getCharWidth(cur);
 	}
 }
 
@@ -174,7 +177,8 @@ int wordWrapTextImpl(const Font &font, const StringType &str, int maxWidth, Comm
 			c = '\n';
 		}
 
-		const int w = font.getCharWidth(c) + font.getKerningOffset(last, c);
+		const int currentCharWidth = font.getCharWidth(c);
+		const int w = currentCharWidth + font.getKerningOffset(last, c);
 		last = c;
 		const bool wouldExceedWidth = (lineWidth + tmpWidth + w > maxWidth);
 
@@ -211,6 +215,15 @@ int wordWrapTextImpl(const Font &font, const StringType &str, int maxWidth, Comm
 					// This is not very fast, but it is the simplest way to
 					// assure we do not mess something up because of kerning.
 					tmpWidth = font.getStringWidth(tmpStr);
+				}
+
+				if (tmpStr.empty()) {
+					// If tmpStr is empty, we might have removed the space before 'c'.
+					// That means we have to recompute the kerning.
+
+					tmpWidth += currentCharWidth + font.getKerningOffset(0, c);
+					tmpStr += c;
+					continue;
 				}
 			} else {
 				wrapper.add(tmpStr, tmpWidth);
@@ -287,8 +300,8 @@ void Font::drawString(Surface *dst, const Common::String &str, int x, int y, int
 	drawStringImpl(*this, dst, renderStr, x, y, w, color, align, deltax);
 }
 
-void Font::drawString(Surface *dst, const Common::U32String &str, int x, int y, int w, uint32 color, TextAlign align) const {
-	drawStringImpl(*this, dst, str, x, y, w, color, align, 0);
+void Font::drawString(Surface *dst, const Common::U32String &str, int x, int y, int w, uint32 color, TextAlign align, int deltax) const {
+	drawStringImpl(*this, dst, str, x, y, w, color, align, deltax);
 }
 
 void Font::drawString(ManagedSurface *dst, const Common::String &str, int x, int y, int w, uint32 color, TextAlign align, int deltax, bool useEllipsis) const {
@@ -298,8 +311,8 @@ void Font::drawString(ManagedSurface *dst, const Common::String &str, int x, int
 	}
 }
 
-void Font::drawString(ManagedSurface *dst, const Common::U32String &str, int x, int y, int w, uint32 color, TextAlign align) const {
-	drawString(&dst->_innerSurface, str, x, y, w, color, align);
+void Font::drawString(ManagedSurface *dst, const Common::U32String &str, int x, int y, int w, uint32 color, TextAlign align, int deltax) const {
+	drawString(&dst->_innerSurface, str, x, y, w, color, align, deltax);
 	if (w != 0) {
 		dst->addDirtyRect(getBoundingBox(str, x, y, w, align));
 	}

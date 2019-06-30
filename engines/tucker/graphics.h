@@ -47,7 +47,7 @@ public:
 
 	static void decodeRLE(uint8 *dst, const uint8 *src, int w, int h);
 	static void decodeRLE_224(uint8 *dst, const uint8 *src, int w, int h);
-	static void decodeRLE_248(uint8 *dst, const uint8 *src, int w, int h, int y1, int y2, bool xflip, bool color248Only = false);
+	static void decodeRLE_248(uint8 *dst, const uint8 *src, int w, int h, int y1, int y2, bool xflip, const int *whitelistReservedColors = nullptr);
 	static void decodeRLE_320(uint8 *dst, const uint8 *src, int w, int h);
 
 	static void copyRect(uint8 *dst, int dstPitch, uint8 *src, int srcPitch, int w, int h);

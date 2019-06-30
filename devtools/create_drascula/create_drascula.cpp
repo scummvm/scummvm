@@ -35,7 +35,7 @@
 #include "create_drascula.h"
 #include "staticdata.h"
 
-#define DRASCULA_DAT_VER 5	// 1 byte
+#define DRASCULA_DAT_VER 6	// 1 byte
 
 static void writeByte(FILE *fp, uint8 b) {
 	fwrite(&b, 1, 1, fp);

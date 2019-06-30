@@ -43,10 +43,10 @@ static const float kTangentFOV = 1.0;
 	(kShuttleWindowMidV - (y) / (z) * (kScreenWidth / (2 * kTangentFOV)))
 
 #define convertScreenHToSpaceX(x, d) \
-	(((2.0 * kTangentFOV) / kScreenWidth) * ((float)(x) - kShuttleWindowMidH) * (d))
+	(((2.0F * kTangentFOV) / kScreenWidth) * ((float)(x) - kShuttleWindowMidH) * (d))
 
 #define convertScreenVToSpaceY(y, d) \
-	(((2.0 * kTangentFOV) / kScreenWidth) *	((float)kShuttleWindowMidV - (y)) * (d))
+	(((2.0F * kTangentFOV) / kScreenWidth) *	((float)kShuttleWindowMidV - (y)) * (d))
 
 struct Point3D {
 	float x, y, z;

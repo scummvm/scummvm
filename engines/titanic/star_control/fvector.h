@@ -27,8 +27,6 @@
 
 namespace Titanic {
 
-const double Rad2Deg = 180.0 / M_PI;
-const double Deg2Rad = 1.0 / Rad2Deg;
 enum Axis { X_AXIS, Y_AXIS, Z_AXIS };
 
 class FPose;

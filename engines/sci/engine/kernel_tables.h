@@ -745,7 +745,7 @@ static SciKernelMapEntry s_kernelMap[] = {
 #ifdef ENABLE_SCI32
 	{ "LocalToGlobal", kLocalToGlobal32, SIG_SCI32, SIGFOR_ALL, "oo",                 NULL,            NULL },
 #endif
-	{ MAP_CALL(Lock),              SIG_EVERYWHERE,           "ii(i)",                 NULL,            NULL },
+	{ MAP_CALL(Lock),              SIG_EVERYWHERE,           "ii(i)",                 NULL,            kLock_workarounds },
 	{ MAP_CALL(MapKeyToDir),       SIG_EVERYWHERE,           "o",                     NULL,            NULL },
 	{ MAP_CALL(Memory),            SIG_EVERYWHERE,           "i(.*)",                 NULL,            kMemory_workarounds }, // subop
 	{ MAP_CALL(MemoryInfo),        SIG_EVERYWHERE,           "i",                     NULL,            NULL },
@@ -780,13 +780,15 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(Random),            SIG_EVERYWHERE,           "(i)(i)",                NULL,            kRandom_workarounds },
 	{ MAP_CALL(ReadNumber),        SIG_EVERYWHERE,           "r",                     NULL,            kReadNumber_workarounds },
 	{ MAP_CALL(RemapColors),       SIG_SCI11, SIGFOR_ALL,    "i(i)(i)(i)(i)",         NULL,            NULL },
+	{ MAP_CALL(RemapColorsKawa),   SIG_SCI11, SIGFOR_ALL,    "i(i)(i)(i)(i)(i)",      NULL,            NULL },
 #ifdef ENABLE_SCI32
 	{ "RemapColors", kRemapColors32, SIG_SCI32, SIGFOR_ALL,  "i(i)(i)(i)(i)(i)",      kRemapColors_subops, NULL },
 #endif
 	{ MAP_CALL(ResCheck),          SIG_EVERYWHERE,           "ii(iiii)",              NULL,            kResCheck_workarounds },
 	{ MAP_CALL(RespondsTo),        SIG_EVERYWHERE,           ".i",                    NULL,            NULL },
-	{ MAP_CALL(RestartGame),       SIG_EVERYWHERE,           "",                      NULL,            NULL },
+	{ "RestartGame", kRestartGame16, SIG_SCI16, SIGFOR_ALL,  "",                      NULL,            NULL },
 #ifdef ENABLE_SCI32
+	{ MAP_EMPTY(RestartGame),      SIG_SCI32, SIGFOR_ALL,    "",                      NULL,            NULL },
 	{ "RestoreGame", kRestoreGame32, SIG_THRU_SCI21EARLY, SIGFOR_ALL, "ri[r0]",       NULL,            NULL },
 #endif
 	{ MAP_CALL(RestoreGame),       SIG_EVERYWHERE,           "[r0]i[r0]",             NULL,            NULL },
@@ -863,6 +865,9 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_DUMMY(Record),          SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
 	{ MAP_DUMMY(PlayBack),        SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
 	{ MAP_DUMMY(DbugStr),         SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+	// Used in Kawa's SCI11+
+	{ MAP_CALL(KawaDbugStr),      SIG_SCI11, SIGFOR_ALL,    "(.*)",                  NULL,            NULL },
+	{ MAP_CALL(KawaHacks),        SIG_SCI11, SIGFOR_ALL,    "(.*)",                  NULL,            NULL },
 
 	// =======================================================================================================
 
@@ -1010,7 +1015,7 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_DUMMY(Table),             SIG_EVERYWHERE,           "(.*)",                 NULL,            NULL },
 	{ MAP_DUMMY(LoadChunk),         SIG_EVERYWHERE,           "(.*)",                 NULL,            NULL },
 	{ MAP_DUMMY(Priority),          SIG_EVERYWHERE,           "(.*)",                 NULL,            NULL },
-	{ MAP_DUMMY(WinDLL),            SIG_EVERYWHERE,           "(.*)",                 NULL,            NULL },
+	{ MAP_CALL(WinDLL),             SIG_SINCE_SCI21MID, SIGFOR_ALL,  "ir(r)",         NULL,            NULL },
 	{ MAP_DUMMY(DeletePic),         SIG_EVERYWHERE,           "(.*)",                 NULL,            NULL },
 	{ MAP_DUMMY(GetSierraProfileString), SIG_EVERYWHERE,      "(.*)",                 NULL,            NULL },
 
@@ -1181,7 +1186,9 @@ static const char *const s_defaultKernelNames[] = {
 	/*0x85*/ "ShowMovie",
 	/*0x86*/ "SetVideoMode",
 	/*0x87*/ "SetQuitStr",
-	/*0x88*/ "DbugStr"          // for debugging
+	/*0x88*/ "DbugStr",         // for debugging
+	/*0x89*/ "Empty",
+	/*0x8a*/ "Empty"
 };
 
 #ifdef ENABLE_SCI32

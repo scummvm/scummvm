@@ -1,0 +1,9 @@
+python2.7 quoteSpreadsheetCreator.py -op /d/BladeRunnerLPBackup/ENG_data/WAV -ip "/d/Westwood/BladeRunnerENG" -ian ../common/actornames.txt -ld EN_ANY -xtre -xwav -xpogo -xdevs --trace
+
+python2.7 quoteSpreadsheetCreator.py -op /D/BladeRunnerLPBackup/DEU_data/WAV -ip "/d/Westwood/BladeRunnerDEU" -ian ../common/actornames.txt -ld DE_DEU  -xtre -xwav -xpogo -xdevs
+
+python2.7 quoteSpreadsheetCreator.py -op /D/BladeRunnerLPBackup/FRA_data/WAV -ip "/d/Westwood/BladeRunnerFRA" -ian ../common/actornames.txt -ld FR_FRA  -xtre -xwav -xpogo -xdevs
+
+python2.7 quoteSpreadsheetCreator.py -op /D/BladeRunnerLPBackup/ITA_data/WAV -ip "/d/Westwood/BladeRunnerIT" -ian ../common/actornames.txt -ld IT_ITA  -xtre -xwav -xpogo -xdevs
+
+python2.7 quoteSpreadsheetCreator.py -op /D/BladeRunnerLPBackup/ESP_data/WAV -ip "/d/Westwood/BladeRunnerESP" -ian ../common/actornames.txt -ld ES_ESP -xtre -xwav -xpogo -xdevs

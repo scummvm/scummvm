@@ -135,7 +135,7 @@ public:
 	 *
 	 * @return true if successful, false otherwise (e.g. when the directory does not exist).
 	 */
-	bool getChildren(FSList &fslist, ListMode mode = kListDirectoriesOnly, bool hidden = false) const;
+	bool getChildren(FSList &fslist, ListMode mode = kListDirectoriesOnly, bool hidden = true) const;
 
 	/**
 	 * Return a human readable string for this node, usable for display (e.g.
@@ -269,7 +269,7 @@ public:
 class FSDirectory : public Archive {
 	FSNode	_node;
 
-	String	_prefix;	// string that is prepended to each cache item key
+	String	_prefix; // string that is prepended to each cache item key
 	void setPrefix(const String &prefix);
 
 	// Caches are case insensitive, clashes are dealt with when creating

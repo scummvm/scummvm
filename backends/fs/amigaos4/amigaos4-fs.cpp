@@ -266,7 +266,7 @@ bool AmigaOSFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, b
 	if (context) {
 		struct ExamineData * pExd = NULL; // NB: No need to free the value after usage, everything will be dealt with by the DirContext release
 
-		AmigaOSFilesystemNode *entry ;
+		AmigaOSFilesystemNode *entry;
 		while ( (pExd = IDOS->ExamineDir(context)) ) {
 			if (     (EXD_IS_FILE(pExd) && ( Common::FSNode::kListFilesOnly == mode ))
 				||  (EXD_IS_DIRECTORY(pExd) && ( Common::FSNode::kListDirectoriesOnly == mode ))

@@ -76,10 +76,10 @@ public:
 	virtual const char *getOriginalCopyright() const;
 
 	virtual bool hasFeature(MetaEngineFeature f) const;
-	virtual GameList getSupportedGames() const;
+	PlainGameList getSupportedGames() const override;
 	virtual const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const;
-	virtual GameDescriptor findGame(const char *gameid) const;
-	virtual GameList detectGames(const Common::FSList &fslist) const;
+	PlainGameDescriptor findGame(const char *gameid) const override;
+	DetectedGames detectGames(const Common::FSList &fslist) const override;
 
 	virtual Common::Error createInstance(OSystem *syst, Engine **engine) const;
 
@@ -89,7 +89,7 @@ public:
 };
 
 const char *SkyMetaEngine::getName() const {
-	return "Sky";
+	return "Beneath a Steel Sky";
 }
 
 const char *SkyMetaEngine::getOriginalCopyright() const {
@@ -110,8 +110,8 @@ bool Sky::SkyEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsSavingDuringRuntime);
 }
 
-GameList SkyMetaEngine::getSupportedGames() const {
-	GameList games;
+PlainGameList SkyMetaEngine::getSupportedGames() const {
+	PlainGameList games;
 	games.push_back(skySetting);
 	return games;
 }
@@ -135,14 +135,14 @@ const ExtraGuiOptions SkyMetaEngine::getExtraGuiOptions(const Common::String &ta
 	return options;
 }
 
-GameDescriptor SkyMetaEngine::findGame(const char *gameid) const {
+PlainGameDescriptor SkyMetaEngine::findGame(const char *gameid) const {
 	if (0 == scumm_stricmp(gameid, skySetting.gameId))
 		return skySetting;
-	return GameDescriptor();
+	return PlainGameDescriptor::empty();
 }
 
-GameList SkyMetaEngine::detectGames(const Common::FSList &fslist) const {
-	GameList detectedGames;
+DetectedGames SkyMetaEngine::detectGames(const Common::FSList &fslist) const {
+	DetectedGames detectedGames;
 	bool hasSkyDsk = false;
 	bool hasSkyDnr = false;
 	int dinnerTableEntries = -1;
@@ -173,18 +173,25 @@ GameList SkyMetaEngine::detectGames(const Common::FSList &fslist) const {
 		// Match found, add to list of candidates, then abort inner loop.
 		// The game detector uses US English by default. We want British
 		// English to match the recorded voices better.
-		GameDescriptor dg(skySetting.gameId, skySetting.description, Common::UNK_LANG, Common::kPlatformUnknown);
 		const SkyVersion *sv = skyVersions;
 		while (sv->dinnerTableEntries) {
 			if (dinnerTableEntries == sv->dinnerTableEntries &&
 				(sv->dataDiskSize == dataDiskSize || sv->dataDiskSize == -1)) {
-				dg.updateDesc(Common::String::format("v0.0%d %s", sv->version, sv->extraDesc).c_str());
-				dg.setGUIOptions(sv->guioptions);
 				break;
 			}
 			++sv;
 		}
-		detectedGames.push_back(dg);
+
+		if (sv->dinnerTableEntries) {
+			Common::String extra = Common::String::format("v0.0%d %s", sv->version, sv->extraDesc);
+
+			DetectedGame game = DetectedGame(skySetting.gameId, skySetting.description, Common::UNK_LANG, Common::kPlatformUnknown, extra);
+			game.setGUIOptions(sv->guioptions);
+
+			detectedGames.push_back(game);
+		} else {
+			detectedGames.push_back(DetectedGame(skySetting.gameId, skySetting.description));
+		}
 	}
 
 	return detectedGames;

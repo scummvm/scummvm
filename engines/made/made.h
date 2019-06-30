@@ -69,8 +69,6 @@ class MusicPlayer;
 class MadeConsole;
 
 class MadeEngine : public ::Engine {
-	int _gameId;
-
 protected:
 
 	// Engine APIs
@@ -84,10 +82,6 @@ public:
 	virtual void syncSoundSettings();
 
 	virtual GUI::Debugger *getDebugger();
-
-	int getGameId() {
-		return _gameId;
-	}
 
 	Common::RandomSource *_rnd;
 	const MadeGameDescription *_gameDescription;

@@ -35,13 +35,65 @@ private:
 	XeenEngine *_vm;
 	int _spellId;
 
+	/**
+	 * Casts a spell
+	 */
 	bool cmdSpell(int argc, const char **argv);
+
+	/**
+	 * Gives all the characters a full spellbook
+	 */
+	bool cmdSpells(int argc, const char **argv);
+
+	/**
+	 * Dumps a resource to a file
+	 */
 	bool cmdDump(int argc, const char **argv);
+
+	/**
+	 * Gives gold to the party or bank
+	 */
 	bool cmdGold(int argc, const char **argv);
+
+	/**
+	 * Gives gems to the party or bank
+	 */
 	bool cmdGems(int argc, const char **argv);
+
+	/**
+	 * Jumps to a given map, and optionally a given position
+	 */
+	bool cmdMap(int argc, const char **argv);
+
+	/**
+	 * Changes the party's position in the current map
+	 */
+	bool cmdPos(int argc, const char **argv);
+
+	/**
+	 * Flags whether to make the party invincible
+	 */
+	bool cmdInvincible(int argc, const char **argv);
+
+	/**
+	 * Flags whether to make the party super-strength attacks
+	 */
+	bool cmdSuperStrength(int argc, const char **argv);
+
+	/**
+	 * Flags whether to make the party invincible
+	 */
+	bool cmdIntangible(int argc, const char **argv);
+public:
+	bool _invincible;
+	bool _intangible;
+	bool _superStrength;
 public:
 	Debugger(XeenEngine *vm);
 
+	/**
+	 * Updates the debugger window if active
+	 */
 	void update();
 };
 

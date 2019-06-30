@@ -34,9 +34,15 @@ namespace Mohawk {
 namespace MystStacks {
 
 Dni::Dni(MohawkEngine_Myst *vm) :
-		MystScriptParser(vm) {
+		MystScriptParser(vm, kDniStack),
+		_notSeenAtrus(true),
+		_atrusRunning(false),
+		_waitForLoop(false),
+		_atrusLeft(false),
+		_atrusLeftTime(0),
+		_loopStart(0),
+		_loopEnd(0) {
 	setupOpcodes();
-	_notSeenAtrus = true;
 }
 
 Dni::~Dni() {
@@ -74,16 +80,16 @@ void Dni::runPersistentScripts() {
 uint16 Dni::getVar(uint16 var) {
 	switch(var) {
 	case 0: // Atrus Gone (from across room)
-		return _globals.ending == 2;
+		return _globals.ending == kAtrusLeaves;
 	case 1: // Myst Book Status
-		if (_globals.ending != 4)
-			return _globals.ending == 3;
+		if (_globals.ending != kBooksDestroyed)
+			return _globals.ending == kForgotPage;
 		else
 			return 2; // Linkable
 	case 2: // Music Type
 		if (_notSeenAtrus) {
 			_notSeenAtrus = false;
-			return _globals.ending != 4 && _globals.heldPage != 13;
+			return _globals.ending != kBooksDestroyed && _globals.heldPage != kWhitePage;
 		} else
 			return 2;
 	default:
@@ -98,9 +104,9 @@ void Dni::o_handPage(uint16 var, const ArgumentsArray &args) {
 	VideoEntryPtr atrus = _vm->findVideo(_video, kDniStack);
 
 	// Good ending and Atrus asked to give page
-	if (_globals.ending == 1 && atrus && atrus->getTime() > (uint)Audio::Timestamp(0, 6801, 600).msecs()) {
-		_globals.ending = 2;
-		_globals.heldPage = 0;
+	if (_globals.ending == kAtrusWantsPage && atrus && atrus->getTime() > (uint)Audio::Timestamp(0, 6801, 600).msecs()) {
+		_globals.ending = kAtrusLeaves;
+		_globals.heldPage = kNoPage;
 		_vm->setMainCursor(kDefaultMystCursor);
 
 		// Play movie end (atrus leaving)
@@ -109,24 +115,25 @@ void Dni::o_handPage(uint16 var, const ArgumentsArray &args) {
 
 		_atrusLeft = true;
 		_waitForLoop = false;
-		_atrusLeftTime = _vm->_system->getMillis();
+		_atrusLeftTime = _vm->getTotalPlayTime();
 	}
 }
 
 void Dni::atrusLeft_run() {
-	if (_vm->_system->getMillis() > _atrusLeftTime + 63333) {
+	if (_vm->getTotalPlayTime() > _atrusLeftTime + 63333) {
 		_video = "atrus2";
 		_videoPos = Common::Point(215, 77);
 		VideoEntryPtr atrus = _vm->playMovie(_video, kDniStack);
 		atrus->moveTo(_videoPos.x, _videoPos.y);
 		atrus->setBounds(Audio::Timestamp(0, 0, 600), Audio::Timestamp(0, 98000, 600));
 
+		_atrusRunning = false;
 		_waitForLoop = true;
 		_loopStart = 73095;
 		_loopEnd = 98000;
 
 		// Good ending
-		_globals.ending = 4;
+		_globals.ending = kBooksDestroyed;
 		_globals.bluePagesInBook = 63;
 		_globals.redPagesInBook = 63;
 
@@ -146,10 +153,10 @@ void Dni::loopVideo_run() {
 }
 
 void Dni::atrus_run() {
-	if (_globals.ending == 2) {
+	if (_globals.ending == kAtrusLeaves) {
 		// Wait for atrus to come back
 		_atrusLeft = true;
-	} else if (_globals.ending == 1) {
+	} else if (_globals.ending == kAtrusWantsPage) {
 		// Atrus asking for page
 		if (!_vm->_video->isVideoPlaying()) {
 			_video = "atr1page";
@@ -159,8 +166,8 @@ void Dni::atrus_run() {
 			atrus->setLooping(true);
 			atrus->setBounds(Audio::Timestamp(0, 7388, 600), Audio::Timestamp(0, 14700, 600));
 		}
-	} else if (_globals.ending != 3 && _globals.ending != 4) {
-		if (_globals.heldPage == 13) {
+	} else if (_globals.ending != kForgotPage && _globals.ending != kBooksDestroyed) {
+		if (_globals.heldPage == kWhitePage) {
 			_video = "atr1page";
 			_videoPos = Common::Point(215, 76);
 			VideoEntryPtr atrus = _vm->playMovie(_video, kDniStack);
@@ -172,7 +179,7 @@ void Dni::atrus_run() {
 			_loopEnd = 14700;
 
 			// Wait for page
-			_globals.ending = 1;
+			_globals.ending = kAtrusWantsPage;
 
 		} else {
 			_video = "atr1nopg";
@@ -181,12 +188,13 @@ void Dni::atrus_run() {
 			atrus->moveTo(_videoPos.x, _videoPos.y);
 			atrus->setBounds(Audio::Timestamp(0, 0, 600), Audio::Timestamp(0, 46175, 600));
 
+			_atrusRunning = false;
 			_waitForLoop = true;
 			_loopStart = 30656;
 			_loopEnd = 46175;
 
 			// Bad ending
-			_globals.ending = 3;
+			_globals.ending = kForgotPage;
 		}
 	} else if (!_vm->_video->isVideoPlaying()) {
 		VideoEntryPtr atrus = _vm->playMovie("atrwrite", kDniStack);

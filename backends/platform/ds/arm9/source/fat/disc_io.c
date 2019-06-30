@@ -367,7 +367,7 @@ bool disc_setDsSlotInterface (void)
 
 	active_interface = DLDI_GetInterface();
 
-	if (stricmp((char *)(&_dldi_driver_name), "Default (No interface)")) {
+	if (strcasecmp((char *)(&_dldi_driver_name), "Default (No interface)")) {
 		char name[48];
 		memcpy(name, &_dldi_driver_name, 48);
 		name[47] = '\0';

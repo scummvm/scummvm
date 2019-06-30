@@ -29,8 +29,6 @@
 
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
-// winnt.h defines ARRAYSIZE, but we want our own one...
-#undef ARRAYSIZE
 
 #include "audio/musicplugin.h"
 #include "audio/mpu401.h"

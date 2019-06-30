@@ -316,6 +316,13 @@ uint32 GfxMgr::getDisplayOffsetToVisualScreenPos(int16 x, int16 y) {
 
 // Attention: uses display screen coordinates!
 void GfxMgr::copyDisplayRectToScreen(int16 x, int16 y, int16 width, int16 height) {
+	// Clamp to sane values to prevent off screen blits causing exceptions in backend
+	// FIXME: Add warnings / debug of clamping?
+	width = CLIP<int16>(width, 0, _displayScreenWidth);
+	height = CLIP<int16>(height, 0, _displayScreenHeight);
+	x = CLIP<int16>(x, 0, _displayScreenWidth-width);
+	y = CLIP<int16>(y, 0, _displayScreenHeight-height);
+
 	g_system->copyRectToScreen(_displayScreen + y * _displayScreenWidth + x, _displayScreenWidth, x, y, width, height);
 }
 void GfxMgr::copyDisplayRectToScreen(int16 x, int16 adjX, int16 y, int16 adjY, int16 width, int16 adjWidth, int16 height, int16 adjHeight) {

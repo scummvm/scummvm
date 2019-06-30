@@ -67,6 +67,7 @@ FullpipeEngine::FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	DebugMan.addDebugChannel(kDebugInventory, "inventory", "Inventory");
 	DebugMan.addDebugChannel(kDebugSceneLogic, "scenelogic", "Scene Logic");
 	DebugMan.addDebugChannel(kDebugInteractions, "interactions", "Interactions");
+	DebugMan.addDebugChannel(kDebugXML, "xml", "XML");
 
 	// Setup mixer
 	if (!_mixer->isReady()) {
@@ -268,6 +269,9 @@ Common::Error FullpipeEngine::run() {
 
 	_isSaveAllowed = false;
 
+	if (debugChannelSet(-1, kDebugXML))
+		loadGameObjH();
+
 	int scene = 0;
 	if (ConfMan.hasKey("boot_param"))
 		scene = convertScene(ConfMan.getInt("boot_param"));
@@ -320,6 +324,7 @@ Common::Error FullpipeEngine::run() {
 		_system->updateScreen();
 	}
 
+	delete _modalObject;
 	freeGameLoader();
 
 	cleanup();

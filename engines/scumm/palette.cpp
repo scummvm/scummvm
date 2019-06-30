@@ -878,9 +878,9 @@ void ScummEngine::setShadowPalette(int redScale, int greenScale, int blueScale, 
 	}
 
 	for (i = start; i < end; i++) {
-		int r = (int) ((pal[0] >> 2) * redScale) >> 8;
-		int g = (int) ((pal[1] >> 2) * greenScale) >> 8;
-		int b = (int) ((pal[2] >> 2) * blueScale) >> 8;
+		int r = (int)((pal[0] >> 2) * redScale) >> 8;
+		int g = (int)((pal[1] >> 2) * greenScale) >> 8;
+		int b = (int)((pal[2] >> 2) * blueScale) >> 8;
 		pal += 3;
 
 		uint8 bestitem = 0;

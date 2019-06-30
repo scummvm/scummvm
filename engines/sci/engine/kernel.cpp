@@ -33,8 +33,12 @@
 
 namespace Sci {
 
-Kernel::Kernel(ResourceManager *resMan, SegManager *segMan)
-	: _resMan(resMan), _segMan(segMan), _invalid("<invalid>") {
+Kernel::Kernel(ResourceManager *resMan, SegManager *segMan)	:
+	_resMan(resMan),
+	_segMan(segMan),
+	_invalid("<invalid>") {
+	loadSelectorNames();
+	mapSelectors();
 }
 
 Kernel::~Kernel() {
@@ -49,11 +53,6 @@ Kernel::~Kernel() {
 		}
 		delete[] it->signature;
 	}
-}
-
-void Kernel::init() {
-	loadSelectorNames();
-	mapSelectors();      // Map a few special selectors for later use
 }
 
 uint Kernel::getSelectorNamesSize() const {
@@ -111,11 +110,6 @@ int Kernel::findSelector(const char *selectorName) const {
 	debugC(kDebugLevelVM, "Could not map '%s' to any selector", selectorName);
 
 	return -1;
-}
-
-// used by Script patcher to figure out, if it's okay to initialize signature/patch-table
-bool Kernel::selectorNamesAvailable() {
-	return !_selectorNames.empty();
 }
 
 void Kernel::loadSelectorNames() {
@@ -781,6 +775,10 @@ void Kernel::loadKernelNames(GameFeatures *features) {
 				_kernelNames[0x84] = "ShowMovie";
 		} else if (g_sci->getGameId() == GID_QFG4DEMO) {
 			_kernelNames[0x7b] = "RemapColors"; // QFG4 Demo has this SCI2 function instead of StrSplit
+		} else if (_resMan->testResource(ResourceId(kResourceTypeVocab, 184))) {
+			_kernelNames[0x7b] = "RemapColorsKawa";
+			_kernelNames[0x88] = "KawaDbugStr";
+			_kernelNames[0x89] = "KawaHacks";
 		}
 
 		_kernelNames[0x71] = "PalVary";
@@ -880,7 +878,20 @@ Common::String Kernel::lookupText(reg_t address, int index) {
 	if (address.getSegment())
 		return _segMan->getString(address);
 
-	Resource *textres = _resMan->findResource(ResourceId(kResourceTypeText, address.getOffset()), false);
+	ResourceId resourceId = ResourceId(kResourceTypeText, address.getOffset());
+	if (g_sci->getGameId() == GID_HOYLE3 && g_sci->getPlatform() == Common::kPlatformAmiga) {
+		// WORKAROUND: In the Amiga version of Hoyle 3, texts are stored as
+		// either text, font or palette types. Seems like the resource type
+		// bits are used as part of the resource numbers. This is the same
+		// as the workaround used in GfxFontFromResource()
+		resourceId = ResourceId(kResourceTypeText, address.getOffset() & 0x7FF);
+		if (!_resMan->testResource(resourceId))
+			resourceId = ResourceId(kResourceTypeFont, address.getOffset() & 0x7FF);
+		if (!_resMan->testResource(resourceId))
+			resourceId = ResourceId(kResourceTypePalette, address.getOffset() & 0x7FF);
+	}
+
+	Resource *textres = _resMan->findResource(resourceId, false);
 
 	if (!textres) {
 		error("text.%03d not found", address.getOffset());
@@ -888,6 +899,22 @@ Common::String Kernel::lookupText(reg_t address, int index) {
 
 	int textlen = textres->size();
 	const char *seeker = (const char *)textres->getUnsafeDataAt(0);
+
+	if (g_sci->getGameId() == GID_LONGBOW && address.getOffset() == 1535 && textlen == 2662) {
+		// WORKAROUND: Longbow 1.0's text resource 1535 is missing 8 texts for
+		//  the pub. It appears that only the 5.25 floppy release was affected.
+		//  This was fixed by Sierra's 1.0 patch.
+		if (index >= 41) {
+			// texts 41+ exist but with incorrect offsets
+			index -= 8;
+		} else if (index >= 33) {
+			// texts 33 through 40 are missing. they comprise two sequences of
+			//  four messages. only one of the two can play, and only once in
+			//  the specific circumstance that the player enters the pub as a
+			//  merchant, changes beards, and re-enters.
+			return "** MISSING MESSAGE **";
+		}
+	}
 
 	int _index = index;
 	while (index--)

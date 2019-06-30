@@ -22,12 +22,18 @@
 
 #include "bladerunner/mouse.h"
 
+#include "bladerunner/actor.h"
 #include "bladerunner/bladerunner.h"
+#include "bladerunner/combat.h"
 #include "bladerunner/dialogue_menu.h"
+#include "bladerunner/game_constants.h"
+#include "bladerunner/items.h"
 #include "bladerunner/regions.h"
 #include "bladerunner/scene.h"
 #include "bladerunner/scene_objects.h"
+#include "bladerunner/settings.h"
 #include "bladerunner/shape.h"
+#include "bladerunner/time.h"
 #include "bladerunner/view.h"
 #include "bladerunner/zbuffer.h"
 
@@ -35,7 +41,8 @@
 
 namespace BladeRunner {
 
-Mouse::Mouse(BladeRunnerEngine *vm) : _vm(vm) {
+Mouse::Mouse(BladeRunnerEngine *vm) {
+	_vm = vm;
 	_cursor = 0;
 	_frame = 3;
 	_hotspotX = 0;
@@ -44,6 +51,12 @@ Mouse::Mouse(BladeRunnerEngine *vm) : _vm(vm) {
 	_y = 0;
 	_disabledCounter = 0;
 	_lastFrameTime = 0;
+	_animCounter = 0;
+
+	_randomCountdownX = 0;
+	_randomCountdownY = 0;
+	_randomX = 0;
+	_randomY = 0;
 }
 
 Mouse::~Mouse() {
@@ -149,28 +162,90 @@ void Mouse::setCursor(int cursor) {
 	}
 }
 
-void Mouse::getXY(int *x, int *y) {
+void Mouse::getXY(int *x, int *y) const {
 	*x = _x;
 	*y = _y;
 }
 
-void Mouse::disable() {
-	++_disabledCounter;
+void Mouse::setMouseJitterUp() {
+	switch (_vm->_settings->getDifficulty()) {
+	case kGameDifficultyEasy:
+		_randomCountdownX = 2;
+		_randomX = _vm->_rnd.getRandomNumberRng(0, 6) - 3;
+		_randomY = _vm->_rnd.getRandomNumberRng(0, 10) - 20;
+		break;
+
+	case kGameDifficultyMedium:
+		_randomCountdownX = 3;
+		_randomX = _vm->_rnd.getRandomNumberRng(0, 8) - 4;
+		_randomY = _vm->_rnd.getRandomNumberRng(0, 10) - 25;
+		break;
+
+	case kGameDifficultyHard:
+		_randomCountdownX = 4;
+		_randomX = _vm->_rnd.getRandomNumberRng(0, 10) - 5;
+		_randomY = _vm->_rnd.getRandomNumberRng(0, 10) - 30;
+		break;
+	}
 }
 
-void Mouse::enable() {
-	if (--_disabledCounter <= 0) {
+void Mouse::setMouseJitterDown() {
+	switch (_vm->_settings->getDifficulty()) {
+	case kGameDifficultyEasy:
+		_randomCountdownY = 2;
+		_randomX = _vm->_rnd.getRandomNumberRng(0, 6) - 3;
+		_randomY = _vm->_rnd.getRandomNumberRng(10, 20);
+		break;
+
+	case kGameDifficultyMedium:
+		_randomCountdownY = 3;
+		_randomX = _vm->_rnd.getRandomNumberRng(0, 8) - 4;
+		_randomY = _vm->_rnd.getRandomNumberRng(15, 25);
+		break;
+
+	case kGameDifficultyHard:
+		_randomCountdownY = 4;
+		_randomX = _vm->_rnd.getRandomNumberRng(0, 10) - 5;
+		_randomY = _vm->_rnd.getRandomNumberRng(20, 30);
+		break;
+	}
+}
+
+void Mouse::disable() {
+	++_disabledCounter;
+
+	_randomCountdownX = 0;
+	_randomCountdownY = 0;
+}
+
+void Mouse::enable(bool force) {
+	if (force || --_disabledCounter <= 0) {
 		_disabledCounter = 0;
 	}
 }
 
-bool Mouse::isDisabled() {
+bool Mouse::isDisabled() const {
 	return _disabledCounter > 0;
 }
 
 void Mouse::draw(Graphics::Surface &surface, int x, int y) {
 	if (_disabledCounter) {
+		_randomCountdownX = 0;
+		_randomCountdownY = 0;
 		return;
+	}
+
+	if (_randomCountdownX > 0) {
+		_randomCountdownX--;
+		x += _randomX;
+		y += _randomY;
+
+		if (!_randomCountdownX)
+			setMouseJitterDown();
+	} else if (_randomCountdownY > 0) {
+		_randomCountdownY--;
+		x += _randomX;
+		y += _randomY;
 	}
 
 	_x = CLIP(x, 0, surface.w - 1);
@@ -188,7 +263,7 @@ void Mouse::draw(Graphics::Surface &surface, int x, int y) {
 }
 
 void Mouse::updateCursorFrame() {
-	uint32 now = _vm->getTotalPlayTime();
+	uint32 now = _vm->_time->current();
 	const int offset[4] = { 0, 6, 12, 6 };
 
 	if (now - _lastFrameTime < 66) {
@@ -265,53 +340,106 @@ void Mouse::tick(int x, int y) {
 		return;
 	}
 
-	Vector3 mousePosition = getXYZ(x, y);
+	Vector3 scenePosition = getXYZ(x, y);
 	int cursorId = 0;
 
-	int isClickable = 0;
-	int isObstacle  = 0;
-	int isTarget    = 0;
+	bool isClickable = false;
+	bool isObstacle  = false;
+	bool isTarget    = false;
 
-	int sceneObjectId = _vm->_sceneObjects->findByXYZ(&isClickable, &isObstacle, &isTarget, mousePosition.x, mousePosition.y, mousePosition.z, 1, 0, 1);
+	int sceneObjectId = _vm->_sceneObjects->findByXYZ(&isClickable, &isObstacle, &isTarget, scenePosition, true, false, true);
 	int exitType = _vm->_scene->_exits->getTypeAtXY(x, y);
 
-	if (sceneObjectId >= 0 && sceneObjectId <= 74) {
+	if (sceneObjectId >= kSceneObjectOffsetActors && sceneObjectId < kSceneObjectOffsetItems) {
 		exitType = -1;
 	}
 
 	if (exitType != -1) {
 		switch (exitType) {
-			case 1:
-				cursorId = 13;
-				break;
-			case 2:
-				cursorId = 14;
-				break;
-			case 3:
-				cursorId = 15;
-				break;
-			default:
-				cursorId = 12;
+		case 0:
+			cursorId = 12;
+			break;
+		case 1:
+			cursorId = 13;
+			break;
+		case 2:
+			cursorId = 14;
+			break;
+		case 3:
+			cursorId = 15;
+			break;
 		}
 		setCursor(cursorId);
 		return;
 	}
 
-	if (true /* not in combat */) {
-		if (sceneObjectId == 0
-		 || (sceneObjectId >= 0 && isClickable)
-		 || _vm->_scene->_regions->getRegionAtXY(x, y) >= 0) {
+	if (!_vm->_combat->isActive()) {
+		if (sceneObjectId == kActorMcCoy + kSceneObjectOffsetActors
+		|| (sceneObjectId > 0 && isClickable)
+		|| _vm->_scene->_regions->getRegionAtXY(x, y) >= 0) {
 			cursorId = 1;
 		}
 		setCursor(cursorId);
 		return;
 	}
 
+	int animationMode = _vm->_playerActor->getAnimationMode();
+	int actorId = Actor::findTargetUnderMouse(_vm, x, y);
+	int itemId = _vm->_items->findTargetUnderMouse(x, y);
+
+	bool isObject = isTarget && sceneObjectId >= kSceneObjectOffsetObjects && sceneObjectId <= (95 + kSceneObjectOffsetObjects);
+
+	if (!_vm->_playerActor->isMoving()) {
+		if (actorId >= 0) {
+			_vm->_playerActor->faceActor(actorId, false);
+		} else if (itemId >= 0) {
+			_vm->_playerActor->faceItem(itemId, false);
+		} else if (isObject) {
+			_vm->_playerActor->faceXYZ(scenePosition, false);
+		}
+	}
+
+	if (actorId >= 0 || itemId >= 0 || isObject) {
+		switch (_vm->_settings->getAmmoType()) {
+		case 0:
+			cursorId = 7;
+			break;
+		case 1:
+			cursorId = 9;
+			break;
+		case 2:
+			cursorId = 11;
+			break;
+		}
+
+		if (!_vm->_playerActor->isMoving() && animationMode != kAnimationModeCombatAim && animationMode != kAnimationModeCombatHit && animationMode != kAnimationModeCombatDie) {
+			_vm->_playerActor->changeAnimationMode(kAnimationModeCombatAim, false);
+		}
+	} else {
+		switch (_vm->_settings->getAmmoType()) {
+		case 0:
+			cursorId = 6;
+			break;
+		case 1:
+			cursorId = 8;
+			break;
+		case 2:
+			cursorId = 10;
+			break;
+		}
+		if (!_vm->_playerActor->isMoving() && animationMode != kAnimationModeCombatIdle && animationMode != kAnimationModeCombatHit && animationMode != kAnimationModeCombatDie) {
+			_vm->_playerActor->changeAnimationMode(kAnimationModeCombatIdle, false);
+		}
+	}
 	setCursor(cursorId);
 }
 
+bool Mouse::isInactive() const {
+	return _cursor == 6 || _cursor == 8 || _cursor == 10;
+}
+
 // TEST: RC01 after intro: [290, 216] -> [-204.589249 51.450668 7.659241]
-Vector3 Mouse::getXYZ(int x, int y) {
+Vector3 Mouse::getXYZ(int x, int y) const {
 	if (_vm->_scene->getSetId() == -1)
 		return Vector3();
 

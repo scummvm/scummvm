@@ -38,9 +38,11 @@ int main(int argc, char *argv[]) {
 // 		res = scummvm_main(argc-2, &argv[2]);
 // 	else
 // 		res = scummvm_main(argc, argv);
-	scummvm_main(0, nullptr);
+//	scummvm_main(0, nullptr);
 
-	delete dynamic_cast<_3DS::OSystem_3DS*>(g_system);
+	int res = scummvm_main(argc, argv);
+
+	g_system->destroy();
 
 	// Turn on both screen backlights before exiting.
 	if (R_SUCCEEDED(gspLcdInit())) {
@@ -50,5 +52,5 @@ int main(int argc, char *argv[]) {
 
 	cfguExit();
 	gfxExit();
-	return 0;
+	return res;
 }

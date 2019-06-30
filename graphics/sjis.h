@@ -91,6 +91,11 @@ public:
 	virtual void setDrawingMode(DrawingMode mode) {}
 
 	/**
+	* Enable fat character drawing if supported by the Font (used in EOB II FM-Towns).
+	*/
+	virtual void toggleFatPrint(bool enable) {}
+
+	/**
 	 * Enable flipped character drawing if supported by the Font (e.g. in the MI1 circus scene after Guybrush gets shot out of the cannon).
 	 */
 	virtual void toggleFlippedMode(bool enable) {}
@@ -147,6 +152,8 @@ public:
 
 	virtual void toggleFlippedMode(bool enable);
 
+	virtual void toggleFatPrint(bool enable);
+
 	virtual uint getFontHeight() const;
 
 	virtual uint getMaxFontWidth() const;
@@ -165,9 +172,11 @@ private:
 	const uint8 *flipCharacter(const uint8 *glyph, const int w) const;
 	mutable uint8 _tempGlyph[32];
 #endif
+	const uint8 *makeFatCharacter(const uint8 *glyph, const int w) const;
+	mutable uint8 _tempGlyph2[32];
 protected:
 	DrawingMode _drawMode;
-	bool _flippedMode;
+	bool _flippedMode, _fatPrint;
 	int _fontWidth, _fontHeight;
 	uint8 _bitPosNewLineMask;
 
@@ -180,7 +189,8 @@ protected:
 		kFeatOutline		= 1 << 1,
 		kFeatShadow			= 1 << 2,
 		kFeatFMTownsShadow	= 1 << 3,
-		kFeatFlipped		= 1 << 4
+		kFeatFlipped		= 1 << 4,
+		kFeatFatPrint		= 1 << 5
 	};
 
 	virtual bool hasFeature(int feat) const = 0;

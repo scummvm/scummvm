@@ -44,14 +44,19 @@ static int strToInt(const char *s) {
 
 /*------------------------------------------------------------------------*/
 
-Debugger::Debugger(XeenEngine *vm) : GUI::Debugger(), _vm(vm) {
+Debugger::Debugger(XeenEngine *vm) : GUI::Debugger(), _vm(vm),
+		_spellId(-1), _invincible(false), _intangible(false), _superStrength(false) {
 	registerCmd("continue", WRAP_METHOD(Debugger, cmdExit));
 	registerCmd("spell", WRAP_METHOD(Debugger, cmdSpell));
+	registerCmd("spells", WRAP_METHOD(Debugger, cmdSpells));
 	registerCmd("dump", WRAP_METHOD(Debugger, cmdDump));
 	registerCmd("gold", WRAP_METHOD(Debugger, cmdGold));
 	registerCmd("gems", WRAP_METHOD(Debugger, cmdGems));
-
-	_spellId = -1;
+	registerCmd("map", WRAP_METHOD(Debugger, cmdMap));
+	registerCmd("pos", WRAP_METHOD(Debugger, cmdPos));
+	registerCmd("invincible", WRAP_METHOD(Debugger, cmdInvincible));
+	registerCmd("strength", WRAP_METHOD(Debugger, cmdSuperStrength));
+	registerCmd("intangible", WRAP_METHOD(Debugger, cmdIntangible));
 }
 
 void Debugger::update() {
@@ -85,6 +90,21 @@ bool Debugger::cmdSpell(int argc, const char **argv) {
 	return true;
 }
 
+bool Debugger::cmdSpells(int argc, const char **argv) {
+	Party &party = *_vm->_party;
+
+	for (uint charIdx = 0; charIdx < party._activeParty.size(); ++charIdx) {
+		Character &c = party._activeParty[charIdx];
+		Common::fill(c._spells, c._spells + SPELLS_PER_CLASS, true);
+		c._currentSp = 9999;
+	}
+
+	party._gems += 1000;
+
+	debugPrintf("Spells given to party.\n");
+	return true;
+}
+
 bool Debugger::cmdDump(int argc, const char **argv) {
 	File f;
 
@@ -93,8 +113,6 @@ bool Debugger::cmdDump(int argc, const char **argv) {
 	} else {
 		if (argc == 2)
 			f.open(argv[1]);
-		else
-			f.open(argv[1], (ArchiveType)strToInt(argv[2]));
 
 		if (f.isOpen()) {
 			Common::DumpFile df;
@@ -138,6 +156,60 @@ bool Debugger::cmdGems(int argc, const char **argv) {
 			party._bankGems = strToInt(argv[2]);
 	}
 
+	return true;
+}
+
+bool Debugger::cmdMap(int argc, const char **argv) {
+	Map &map = *g_vm->_map;
+	Party &party = *g_vm->_party;
+
+	if (argc < 2) {
+		debugPrintf("map mapId [ xp, yp ] [ sideNum ]\n");
+		return true;
+	} else {
+		int mapId = strToInt(argv[1]);
+		int x = argc < 3 ? 8 : strToInt(argv[2]);
+		int y = argc < 4 ? 8 : strToInt(argv[3]);
+
+		if (argc == 5)
+			map._loadCcNum = strToInt(argv[4]);
+		map.load(mapId);
+		party._mazePosition.x = x;
+		party._mazePosition.y = y;
+		party._mazeDirection = DIR_NORTH;
+		return false;
+	}
+}
+
+bool Debugger::cmdPos(int argc, const char **argv) {
+	Party &party = *g_vm->_party;
+
+	if (argc < 3) {
+		debugPrintf("pos xp, yp\n");
+		return true;
+	} else {
+		party._mazePosition.x = strToInt(argv[1]);
+		party._mazePosition.y = strToInt(argv[2]);
+		party._stepped = true;
+		return false;
+	}
+}
+
+bool Debugger::cmdInvincible(int argc, const char **argv) {
+	_invincible = (argc < 2) || strcmp(argv[1], "off");
+	debugPrintf("Invincibility is %s\n", _invincible ? "on" : "off");
+	return true;
+}
+
+bool Debugger::cmdSuperStrength(int argc, const char **argv) {
+	_superStrength = (argc < 2) || strcmp(argv[1], "off");
+	debugPrintf("Super-powered attacks are %s\n", _superStrength ? "on" : "off");
+	return true;
+}
+
+bool Debugger::cmdIntangible(int argc, const char **argv) {
+	_intangible = (argc < 2) || strcmp(argv[1], "off");
+	debugPrintf("Intangibility is %s\n", _intangible ? "on" : "off");
 	return true;
 }
 

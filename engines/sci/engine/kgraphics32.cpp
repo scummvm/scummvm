@@ -155,7 +155,17 @@ reg_t kSetCursor32(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kShakeScreen32(EngineState *s, int argc, reg_t *argv) {
-	g_sci->_gfxFrameout->shakeScreen(argv[0].toSint16(), (ShakeDirection)argv[1].toSint16());
+	int16 shakeCount = argv[0].toSint16();
+
+	// SSCI didn't check the parameter count and assumed a direction parameter
+	//  was always passed. This parameter was optional in SCI16 and at least GK1
+	//  and QFG4 scripts continued to not pass it. This would shake in a random
+	//  direction depending on whatever happened to be in memory, or not at all.
+	//  We treat direction as optional with a a vertical default as in SCI16 as
+	//  that's what the scripts expect.
+	ShakeDirection directions = (argc > 1) ? (ShakeDirection)argv[1].toSint16() : kShakeVertical;
+
+	g_sci->_gfxFrameout->shakeScreen(shakeCount, directions);
 	return s->r_acc;
 }
 

@@ -77,7 +77,7 @@ CMusicRoomInstrument::CMusicRoomInstrument(CProjectItem *project, CSoundManager 
 		_gameObjects[0] = static_cast<CGameObject *>(_project->findByName("Tubular Bells"));
 		_insStartTime = 0.4;
 		break;
-	
+
 	case MV_SNAKE:
 		_gameObjects[0] = static_cast<CGameObject *>(_project->findByName("Snake_Hammer"));
 		_gameObjects[1] = static_cast<CGameObject *>(_project->findByName("Snake_Glass"));

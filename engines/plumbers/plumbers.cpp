@@ -89,7 +89,8 @@ static const byte cursorPalette[] = {
 
 Common::Error PlumbersGame::run() {
 	initGraphics(640, 480);
-	_console = new Console(this);
+	_console = new Console();
+	_image = new Image::BitmapDecoder();
 
 	CursorMan.replaceCursor(MOUSECURSOR_SCI, 11, 16, 0, 0, 0);
 	CursorMan.replaceCursorPalette(cursorPalette, 0, 3);
@@ -178,17 +179,11 @@ Common::Error PlumbersGame::run() {
 void PlumbersGame::loadImage(const Common::String &dirname, const Common::String &filename) {
 	Common::String name = dirname + "/" + filename;
 	debugC(1, kDebugGeneral, "%s : %s", __FUNCTION__, name.c_str());
-	Common::File *file = new Common::File();
-	if (!file->open(name))
+	Common::File file;
+	if (!file.open(name))
 		error("unable to load image %s", name.c_str());
 
-	if (_image)
-		delete _image;
-
-	_image = new Image::BitmapDecoder();
-	_image->loadStream(*file);
-	file->close();
-	delete file;
+	_image->loadStream(file);
 }
 
 void PlumbersGame::drawScreen() {
@@ -362,7 +357,6 @@ void PlumbersGame::readTables(const Common::String &fileName) {
 		file.read(buf, kMaxName);
 		_bitmaps[i]._filename = Common::String(buf);
 	}
-	file.close();
 }
 
 int PlumbersGame::getSceneNumb(int sNo) {

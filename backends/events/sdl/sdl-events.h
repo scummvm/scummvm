@@ -66,7 +66,8 @@ protected:
 	//@{
 
 	struct KbdMouse {
-		int16 x, y, x_vel, y_vel, x_max, y_max, x_down_count, y_down_count, joy_x, joy_y;
+		int32 x, y;
+		int16 x_vel, y_vel, x_max, y_max, x_down_count, y_down_count, joy_x, joy_y;
 		uint32 last_time, delay_time, x_down_time, y_down_time;
 		bool modifier;
 	};
@@ -80,6 +81,11 @@ protected:
 	/** Joystick */
 	SDL_Joystick *_joystick;
 
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	/** Game controller */
+	SDL_GameController *_controller;
+#endif
+
 	/** Last screen id for checking if it was modified */
 	int _lastScreenID;
 
@@ -87,6 +93,26 @@ protected:
 	 * The associated graphics manager.
 	 */
 	SdlGraphicsManager *_graphicsManager;
+
+	/**
+	 * Search for a game controller db file and load it.
+	 */
+	void loadGameControllerMappingFile();
+
+	/**
+	 * Open the SDL joystick with the specified index
+	 *
+	 * After this function completes successfully, SDL sends events for the device.
+	 *
+	 * If the joystick is also a SDL game controller, open it as a controller
+	 * so an extended button mapping can be used.
+	 */
+	void openJoystick(int joystickIndex);
+
+	/**
+	 * Close the currently open joystick if any
+	 */
+	void closeJoystick();
 
 	/**
 	 * Pre process an event before it is dispatched.
@@ -112,12 +138,32 @@ protected:
 	virtual bool handleMouseMotion(SDL_Event &ev, Common::Event &event);
 	virtual bool handleMouseButtonDown(SDL_Event &ev, Common::Event &event);
 	virtual bool handleMouseButtonUp(SDL_Event &ev, Common::Event &event);
+	virtual bool handleSysWMEvent(SDL_Event &ev, Common::Event &event);
 	virtual bool handleJoyButtonDown(SDL_Event &ev, Common::Event &event);
 	virtual bool handleJoyButtonUp(SDL_Event &ev, Common::Event &event);
 	virtual bool handleJoyAxisMotion(SDL_Event &ev, Common::Event &event);
+	virtual void updateKbdMouse();
 	virtual bool handleKbdMouse(Common::Event &event);
 
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	virtual bool handleJoystickAdded(const SDL_JoyDeviceEvent &event);
+	virtual bool handleJoystickRemoved(const SDL_JoyDeviceEvent &device);
+	virtual bool handleControllerButton(const SDL_Event &ev, Common::Event &event, bool buttonUp);
+	virtual bool handleControllerAxisMotion(const SDL_Event &ev, Common::Event &event);
+#endif
+
 	//@}
+
+	/**
+	 * Update the virtual mouse according to a joystick or game controller axis position change
+	 */
+	virtual bool handleAxisToMouseMotion(int16 xAxis, int16 yAxis);
+
+	/**
+	 * Compute the virtual mouse movement speed factor according to the 'kbdmouse_speed' setting.
+	 * The speed factor is scaled with the display size.
+	 */
+	int16 computeJoystickMouseSpeedFactor() const;
 
 	/**
 	 * Assigns the mouse coords to the mouse event. Furthermore notify the

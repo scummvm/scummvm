@@ -42,7 +42,10 @@ void InterfaceMinimap::drawMinimap() {
 		return;
 	if (!party._automapOn && !party._wizardEyeActive) {
 		// Draw the Might & Magic logo
-		res._globalSprites.draw(1, 5, Common::Point(MINIMAP_XSTART - (TILE_WIDTH / 2), 9));
+		if (g_vm->getGameID() == GType_Swords)
+			res._logoSprites.draw(1, 0, Common::Point(MINIMAP_XSTART - (TILE_WIDTH / 2), 9));
+		else
+			res._globalSprites.draw(1, 5, Common::Point(MINIMAP_XSTART - (TILE_WIDTH / 2), 9));
 		return;
 	}
 
@@ -75,9 +78,10 @@ void InterfaceMinimap::drawOutdoorsMinimap() {
 		for (int xp = MINIMAP_XSTART, mazeX = pt.x - MINIMAP_DIFF; mazeX <= (pt.x + MINIMAP_DIFF);
 				xp += TILE_WIDTH, ++mazeX) {
 			v = map.mazeLookup(Common::Point(mazeX, mazeY), 0);
+			assert(v != INVALID_CELL);
 			frame = map.mazeDataCurrent()._surfaceTypes[v];
 
-			if (frame && (map._currentSteppedOn || party._wizardEyeActive)) {
+			if (map._currentSteppedOn || party._wizardEyeActive) {
 				map._tileSprites.draw(1, frame, Common::Point(xp, yp));
 			}
 		}
@@ -88,6 +92,7 @@ void InterfaceMinimap::drawOutdoorsMinimap() {
 		for (int xp = MINIMAP_XSTART, mazeX = pt.x - MINIMAP_DIFF; mazeX <= (pt.x + MINIMAP_DIFF);
 				xp += TILE_WIDTH, ++mazeX) {
 			v = map.mazeLookup(Common::Point(mazeX, mazeY), 4);
+			assert(v != INVALID_CELL);
 			frame = map.mazeData()._wallTypes[v];
 
 			if (frame && (map._currentSteppedOn || party._wizardEyeActive)) {
@@ -136,7 +141,7 @@ void InterfaceMinimap::drawIndoorsMinimap() {
 	}
 
 	// Draw the specific surface type for each cell
-	for (int yp = MINIMAP_YSTART + (TILE_HEIGHT / 2), mazeY = pt.y + MINIMAP_DIFF;
+	for (int yp = MINIMAP_YSTART + (TILE_HEIGHT / 2) + 1, mazeY = pt.y + MINIMAP_DIFF;
 			mazeY >= (pt.y - MINIMAP_DIFF); yp += TILE_HEIGHT, --mazeY) {
 		for (int xp = MINIMAP_XSTART + (TILE_WIDTH / 2), mazeX = pt.x - MINIMAP_DIFF;
 				mazeX <= (pt.x + MINIMAP_DIFF); xp += TILE_WIDTH, ++mazeX) {
@@ -156,13 +161,13 @@ void InterfaceMinimap::drawIndoorsMinimap() {
 		(map._currentSteppedOn || party._wizardEyeActive)) {
 		map._tileSprites.draw(1,
 			map.mazeData()._surfaceTypes[map._currentSurfaceId] + 36,
-			Common::Point(MINIMAP_XSTART - (TILE_WIDTH / 2), 
+			Common::Point(MINIMAP_XSTART - (TILE_WIDTH / 2),
 				MINIMAP_YSTART - (TILE_HEIGHT / 2) + 1));
 	}
 
 	// Handle drawing surface sprites partially clipped at the left edge
-	for (int yp = MINIMAP_YSTART, mazeY = pt.y + MINIMAP_DIFF; mazeY >= (pt.y - MINIMAP_DIFF);
-			yp += TILE_HEIGHT, --mazeY) {
+	for (int yp = MINIMAP_YSTART + (TILE_HEIGHT / 2) + 1, mazeY = pt.y + MINIMAP_DIFF;
+			mazeY >= (pt.y - MINIMAP_DIFF); yp += TILE_HEIGHT, --mazeY) {
 		v = map.mazeLookup(Common::Point(pt.x - MINIMAP_DIFF - 1, mazeY), 0, 0xffff);
 
 		if (v != INVALID_CELL && map._currentSurfaceId &&
@@ -187,7 +192,7 @@ void InterfaceMinimap::drawIndoorsMinimap() {
 	}
 
 	// Handle drawing partially clip top row and left column
-	for (int xp = MINIMAP_XSTART, yp = MINIMAP_YSTART + (MINIMAP_SIZE - 1) * TILE_HEIGHT,		
+	for (int xp = MINIMAP_XSTART, yp = MINIMAP_YSTART + (MINIMAP_SIZE - 1) * TILE_HEIGHT,
 			mazeX = pt.x - MINIMAP_DIFF, mazeY = pt.y + MINIMAP_DIFF;
 			mazeX <= (pt.x - MINIMAP_DIFF);
 			xp += TILE_WIDTH, yp -= TILE_HEIGHT, ++mazeX, --mazeY) {

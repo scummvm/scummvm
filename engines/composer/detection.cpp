@@ -271,6 +271,22 @@ static const ComposerGameDescription gameDescriptions[] = {
 		GType_ComposerV2
 	},
 
+	{ // Provided by msSeven - from bug Trac #10399
+		{
+			"darby",
+			0,
+			{
+				{"page99.rsc", 0, "ca350397f0c009649afc0cb6145921f0", 1286480},
+				AD_LISTEND
+			},
+			Common::FR_FRA,
+			Common::kPlatformMacintosh,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_ComposerV2
+	},
+
 	{ // Provided by Strangerke, "CD-Rom 100% Malin" Pack
 		{
 			"darby",
@@ -470,7 +486,7 @@ public:
 	}
 
 	virtual const char *getName() const {
-		return "Magic Composer Engine";
+		return "Magic Composer";
 	}
 
 	virtual const char *getOriginalCopyright() const {
@@ -511,10 +527,9 @@ SaveStateList ComposerMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::StringArray filenames;
 	Common::String saveDesc;
-	Common::String pattern = Common::String::format("%s.??", target);
+	Common::String pattern = Common::String::format("%s.##", target);
 
 	filenames = saveFileMan->listSavefiles(pattern);
-	sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
 
 	SaveStateList saveList;
 	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
@@ -531,6 +546,7 @@ SaveStateList ComposerMetaEngine::listSaves(const char *target) const {
 		}
 	}
 
+	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
 	return saveList;
 }
 

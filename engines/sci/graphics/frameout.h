@@ -288,6 +288,8 @@ public:
 	 */
 	void shakeScreen(const int16 numShakes, const ShakeDirection direction);
 
+	Plane *getTopVisiblePlane();
+
 private:
 	/**
 	 * The last time the hardware screen was updated.

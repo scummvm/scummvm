@@ -35,6 +35,8 @@
 #include "backends/platform/psp/pspkeyboard.h"
 #include "backends/platform/psp/image_viewer.h"
 
+#include "common/config-manager.h"
+
 #define USE_DISPLAY_CALLBACK	// to use callback for finishing the render
 #include "backends/platform/psp/display_manager.h"
 
@@ -54,8 +56,8 @@ uint32 __attribute__((aligned(16))) MasterGuRenderer::_displayList[2048];
 
 const OSystem::GraphicsMode DisplayManager::_supportedModes[] = {
 	{ "Original Resolution", "Original Resolution", ORIGINAL_RESOLUTION },
-	{ "Keep Aspect Ratio", "Keep Aspect Ratio", KEEP_ASPECT_RATIO },
-	{ "Full Screen", "Full Screen", STRETCHED_FULL_SCREEN },
+	{ "Fit to Screen", "Fit to Screen", FIT_TO_SCREEN },
+	{ "Stretch to Screen", "Stretch to Screen", STRETCH_TO_SCREEN },
 	{0, 0, 0}
 };
 
@@ -115,9 +117,9 @@ void VramAllocator::deallocate(void *address) {
 	// Find the Allocator to deallocate
 	for (i = _allocList.begin(); i != _allocList.end(); ++i) {
 		if ((*i).address == address) {
+			PSP_DEBUG_PRINT("Deallocated address[%p], size[%u]\n", (*i).address, (*i).size);
 			_bytesAllocated -= (*i).size;
 			_allocList.erase(i);
-			PSP_DEBUG_PRINT("Deallocated address[%p], size[%u]\n", (*i).address, (*i).size);
 			return;
 		}
 	}
@@ -330,7 +332,7 @@ bool DisplayManager::setGraphicsMode(const char *name) {
 	int i = 0;
 
 	while (_supportedModes[i].name) {
-		if (!strcmpi(_supportedModes[i].name, name)) {
+		if (!scumm_stricmp(_supportedModes[i].name, name)) {
 			setGraphicsMode(_supportedModes[i].id);
 			return true;
 		}
@@ -358,26 +360,32 @@ void DisplayManager::calculateScaleParams() {
 	switch (_graphicsMode) {
 	case ORIGINAL_RESOLUTION:
 		// check if we can fit the original resolution inside the screen
-		if ((_displayParams.screenSource.width < PSP_SCREEN_WIDTH) &&
-			(_displayParams.screenSource.height < PSP_SCREEN_HEIGHT)) {
+		if ((_displayParams.screenSource.width <= PSP_SCREEN_WIDTH) &&
+			(_displayParams.screenSource.height <= PSP_SCREEN_HEIGHT)) {
 			_displayParams.screenOutput.width =  _displayParams.screenSource.width;
 			_displayParams.screenOutput.height =  _displayParams.screenSource.height;
-		} else { // revert to stretch to fit
-			_displayParams.screenOutput.width = PSP_SCREEN_WIDTH;
-			_displayParams.screenOutput.height = PSP_SCREEN_HEIGHT;
+			break;
 		}
-		break;
-	case KEEP_ASPECT_RATIO:	{ // maximize the height while keeping aspect ratio
-			float aspectRatio = (float)_displayParams.screenSource.width / (float)_displayParams.screenSource.height;
+		// else revert to fit to screen
+	case FIT_TO_SCREEN: { // maximize the height while keeping aspect ratio
+			float aspectRatio;
 
-			_displayParams.screenOutput.height = PSP_SCREEN_HEIGHT;	// always full height
+			if (ConfMan.getBool("aspect_ratio")) {
+				aspectRatio = 4.0f / 3.0f;
+			} else {
+				aspectRatio = (float)_displayParams.screenSource.width / (float)_displayParams.screenSource.height;
+			}
+
+			_displayParams.screenOutput.height = PSP_SCREEN_HEIGHT; // always full height
 			_displayParams.screenOutput.width = (uint32)(PSP_SCREEN_HEIGHT * aspectRatio);
 
-			if (_displayParams.screenOutput.width > PSP_SCREEN_WIDTH) // we can't have wider than the screen
+			if (_displayParams.screenOutput.width > PSP_SCREEN_WIDTH) { // shrink if wider than screen
+				_displayParams.screenOutput.height = (uint32)(((float)PSP_SCREEN_HEIGHT * (float)PSP_SCREEN_WIDTH) / (float)_displayParams.screenOutput.width); 
 				_displayParams.screenOutput.width = PSP_SCREEN_WIDTH;
+			}
 		}
 		break;
-	case STRETCHED_FULL_SCREEN:	// we simply stretch to the whole screen
+	case STRETCH_TO_SCREEN: // we simply stretch to the whole screen
 		_displayParams.screenOutput.width = PSP_SCREEN_WIDTH;
 		_displayParams.screenOutput.height = PSP_SCREEN_HEIGHT;
 		break;
@@ -427,7 +435,7 @@ bool DisplayManager::renderAll() {
 	                _overlay->isDirty() ? "true" : "false",
 	                _cursor->isDirty() ? "true" : "false",
 	                _keyboard->isDirty() ? "true" : "false",
-					_imageViewer->isDirty() ? "true" : "false",
+					_imageViewer->isDirty() ? "true" : "false"
 	               );
 
 	_masterGuRenderer.guPreRender();	// Set up rendering
@@ -458,7 +466,7 @@ bool DisplayManager::renderAll() {
 
 inline bool DisplayManager::isTimeToUpdate() {
 
-#define MAX_FPS 30
+#define MAX_FPS 60 // was 30
 
 	uint32 now = g_system->getMillis();
 	if (now - _lastUpdateTime < (1000 / MAX_FPS))

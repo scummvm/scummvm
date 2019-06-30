@@ -26,6 +26,12 @@
 
 namespace Sludge {
 
+struct FrozenStuffStruct;
+struct LoadedSpriteBank;
+struct ScreenRegion;
+
+class SludgeEngine;
+
 struct AnimFrame {
 	int frameNum, howMany;
 	int noise;
@@ -41,26 +47,41 @@ struct AnimFrame {
 #define EXTRA_RECTANGULAR   64
 
 struct PersonaAnimation {
-	struct LoadedSpriteBank *theSprites;
-	AnimFrame  *frames;
+	LoadedSpriteBank *theSprites;
+	AnimFrame *frames;
 	int numFrames;
+
+	PersonaAnimation();
+	PersonaAnimation(int num, struct VariableStack *&stacky);
+	PersonaAnimation(PersonaAnimation *orig);
+	~PersonaAnimation();
+
+	// Setter & getter
+	int getTotalTime();
+
+	// Save & load
+	bool save(Common::WriteStream *stream);
+	bool load(Common::SeekableReadStream *stream);
 };
 
 struct Persona {
-	PersonaAnimation  **animation;
+	PersonaAnimation **animation;
 	int numDirections;
+
+	// Save & load
+	bool save(Common::WriteStream *stream);
+	bool load(Common::SeekableReadStream *stream);
 };
 
 struct OnScreenPerson {
 	float x, y;
 	int height, floaty, walkSpeed;
 	float scale;
-	OnScreenPerson *next;
 	int walkToX, walkToY, thisStepX, thisStepY, inPoly, walkToPoly;
 	bool walking, spinning;
 	struct LoadedFunction *continueAfterWalking;
-	PersonaAnimation  *myAnim;
-	PersonaAnimation  *lastUsedAnim;
+	PersonaAnimation *myAnim;
+	PersonaAnimation *lastUsedAnim;
 	Persona *myPersona;
 	int frameNum, frameTick, angle, wantAngle, angleOffset;
 	bool show;
@@ -68,64 +89,84 @@ struct OnScreenPerson {
 	struct ObjectType *thisType;
 	int extra, spinSpeed;
 	byte r, g, b, colourmix, transparency;
+
+	void makeTalker();
+	void makeSilent();
+	void setFrames(int a);
 };
 
-// Initialisation and creation
-bool initPeople();
-bool addPerson(int x, int y, int objNum, Persona *p);
+typedef Common::List<OnScreenPerson *> OnScreenPersonList;
 
-// Draw to screen and to backdrop
-void drawPeople();
-void freezePeople(int, int);
+class PeopleManager {
+public:
+	PeopleManager(SludgeEngine *vm);
+	~PeopleManager();
 
-// Removalisationisms
-void killAllPeople();
-void killMostPeople();
-void removeOneCharacter(int i);
+	// Initialisation and creation
+	bool init();
+	bool addPerson(int x, int y, int objNum, Persona *p);
 
-// Things which affect or use all characters
-OnScreenPerson *findPerson(int v);
-void setScale(int16 h, int16 d);
+	// Draw to screen and to backdrop
+	void drawPeople();
+	void freezePeople(int, int);
 
-// Things which affect one character
-void makeTalker(OnScreenPerson &me);
-void makeSilent(OnScreenPerson &me);
-void setShown(bool h, int ob);
-void setDrawMode(int h, int ob);
-void setPersonTransparency(int ob, byte x);
-void setPersonColourise(int ob, byte r, byte g, byte b, byte colourmix);
+	// Removalisationisms
+	void kill();
+	void killMostPeople();
+	void removeOneCharacter(int i);
 
-// Moving 'em
-void movePerson(int x, int y, int objNum);
-bool makeWalkingPerson(int x, int y, int objNum, struct LoadedFunction *func, int di);
-bool forceWalkingPerson(int x, int y, int objNum, struct LoadedFunction *func, int di);
-void jumpPerson(int x, int y, int objNum);
-void walkAllPeople();
-bool turnPersonToFace(int thisNum, int direc);
-bool stopPerson(int o);
-bool floatCharacter(int f, int objNum);
-bool setCharacterWalkSpeed(int f, int objNum);
+	// Things which affect or use all characters
+	OnScreenPerson *findPerson(int v);
+	void setScale(int16 h, int16 d);
 
-// Animating 'em
-void animatePerson(int obj, PersonaAnimation  *);
-void animatePerson(int obj, Persona *per);
-PersonaAnimation  *createPersonaAnim(int num, struct VariableStack *&stacky);
-inline void setBankFile(PersonaAnimation  *newP, LoadedSpriteBank *sB) {
-	newP->theSprites = sB;
-}
-bool setPersonExtra(int f, int newSetting);
-int timeForAnim(PersonaAnimation  *fram);
-PersonaAnimation  *copyAnim(PersonaAnimation  *orig);
-PersonaAnimation  *makeNullAnim();
-void deleteAnim(PersonaAnimation  *orig);
+	// Things which affect one character
+	void setShown(bool h, int ob);
+	void setDrawMode(int h, int ob);
+	void setPersonTransparency(int ob, byte x);
+	void setPersonColourise(int ob, byte r, byte g, byte b, byte colourmix);
 
-// Loading and saving
-bool saveAnim(PersonaAnimation  *p, Common::WriteStream *stream);
-bool loadAnim(PersonaAnimation  *p, Common::SeekableReadStream *stream);
-bool savePeople(Common::WriteStream *stream);
-bool loadPeople(Common::SeekableReadStream *stream);
-bool saveCostume(Persona *cossy, Common::WriteStream *stream);
-bool loadCostume(Persona *cossy, Common::SeekableReadStream *stream);
+	// Moving 'em
+	void movePerson(int x, int y, int objNum);
+	bool makeWalkingPerson(int x, int y, int objNum, struct LoadedFunction *func, int di);
+	bool forceWalkingPerson(int x, int y, int objNum, struct LoadedFunction *func, int di);
+	void jumpPerson(int x, int y, int objNum);
+	void walkAllPeople();
+	bool turnPersonToFace(int thisNum, int direc);
+	bool stopPerson(int o);
+	bool floatCharacter(int f, int objNum);
+	bool setCharacterWalkSpeed(int f, int objNum);
+
+	// Animating 'em
+	void animatePerson(int obj, PersonaAnimation *);
+	void animatePerson(int obj, Persona *per);
+	bool setPersonExtra(int f, int newSetting);
+
+	// Loading and saving
+	bool savePeople(Common::WriteStream *stream);
+	bool loadPeople(Common::SeekableReadStream *stream);
+
+	// Freeze
+	void freeze(FrozenStuffStruct *frozenStuff);
+	void resotre(FrozenStuffStruct *frozenStuff);
+
+private:
+	ScreenRegion *_personRegion;
+	OnScreenPersonList *_allPeople;
+	int16 _scaleHorizon;
+	int16 _scaleDivide;
+
+	SludgeEngine *_vm;
+
+	void shufflePeople();
+
+	// OnScreenPerson manipulation
+	void turnMeAngle(OnScreenPerson *thisPerson, int direc);
+	void spinStep(OnScreenPerson *thisPerson);
+	void rethinkAngle(OnScreenPerson *thisPerson);
+	void moveAndScale(OnScreenPerson &me, float x, float y);
+	void setMyDrawMode(OnScreenPerson *moveMe, int h);
+	bool walkMe(OnScreenPerson *thisPerson, bool move = true);
+};
 
 } // End of namespace Sludge
 

@@ -508,11 +508,11 @@ public:
 	 * Returns the maximum number of bytes that can be stored in the array.
 	 */
 	uint16 byteSize() const {
-		uint16 size = _size;
+		uint16 size1 = _size;
 		if (_type == kArrayTypeID || _type == kArrayTypeInt16) {
-			size *= sizeof(uint16);
+			size1 *= sizeof(uint16);
 		}
-		return size;
+		return size1;
 	}
 
 	/**
@@ -884,6 +884,7 @@ public:
 			type = "string";
 			break;
 		case kArrayTypeInvalid:
+		default:
 			type = "invalid";
 			break;
 		}

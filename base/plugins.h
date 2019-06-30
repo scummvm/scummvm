@@ -28,6 +28,10 @@
 #include "common/str.h"
 #include "backends/plugins/elf/version.h"
 
+#define INCLUDED_FROM_BASE_PLUGINS_H
+#include "base/internal_plugins.h"
+#undef INCLUDED_FROM_BASE_PLUGINS_H
+
 
 /**
  * @page pagePlugins An overview of the ScummVM plugin system
@@ -72,19 +76,6 @@ extern int pluginTypeVersions[PLUGIN_TYPE_MAX];
 
 
 // Plugin linking
-
-#define STATIC_PLUGIN 1
-#define DYNAMIC_PLUGIN 2
-
-#define PLUGIN_ENABLED_STATIC(ID) \
-	(ENABLE_##ID && !PLUGIN_ENABLED_DYNAMIC(ID))
-
-#ifdef DYNAMIC_MODULES
-	#define PLUGIN_ENABLED_DYNAMIC(ID) \
-		(ENABLE_##ID && (ENABLE_##ID == DYNAMIC_PLUGIN))
-#else
-	#define PLUGIN_ENABLED_DYNAMIC(ID) 0
-#endif
 
 // see comments in backends/plugins/elf/elf-provider.cpp
 #if defined(USE_ELF_LOADER) && defined(ELF_LOADER_CXA_ATEXIT)
@@ -179,9 +170,9 @@ public:
 			//unloadPlugin();
 	}
 
-//	virtual bool isLoaded() const = 0;	// TODO
-	virtual bool loadPlugin() = 0;	// TODO: Rename to load() ?
-	virtual void unloadPlugin() = 0;	// TODO: Rename to unload() ?
+//	virtual bool isLoaded() const = 0; // TODO
+	virtual bool loadPlugin() = 0;     // TODO: Rename to load() ?
+	virtual void unloadPlugin() = 0;   // TODO: Rename to unload() ?
 
 	/**
 	 * The following functions query information from the plugin object once
@@ -329,6 +320,7 @@ public:
 
 	// Functions used only by the cached PluginManager
 	virtual void loadAllPlugins();
+	virtual void loadAllPluginsOfType(PluginType type);
 	void unloadAllPlugins();
 
 	void unloadPluginsExcept(PluginType type, const Plugin *plugin, bool deletePlugin = true);
@@ -356,7 +348,8 @@ public:
 	virtual bool loadPluginFromGameId(const Common::String &gameId);
 	virtual void updateConfigWithFileName(const Common::String &gameId);
 
-	virtual void loadAllPlugins() {} 	// we don't allow this
+	virtual void loadAllPlugins() {} 	// we don't allow these
+	virtual void loadAllPluginsOfType(PluginType type) {}
 };
 
 #endif

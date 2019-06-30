@@ -20,37 +20,40 @@
  *
  */
 
-#include "bladerunner/script/scene.h"
+#include "bladerunner/script/scene_script.h"
 
 namespace BladeRunner {
 
 void SceneScriptUG12::InitializeScene() {
-	if (Game_Flag_Query(411)) {
+	if (Game_Flag_Query(kFlagKP02toUG12)) {
 		Setup_Scene_Information(207.0f, -126.21f, -364.0f, 561);
-		Game_Flag_Reset(411);
+		Game_Flag_Reset(kFlagKP02toUG12);
 	} else {
-		Setup_Scene_Information(375.0f, -126.21f, 180.0f, 730);
-		Game_Flag_Reset(345);
+		Setup_Scene_Information(375.0f, -126.21f,  180.0f, 730);
+		Game_Flag_Reset(kFlagUG14toUG12);
 	}
+
 	Scene_Exit_Add_2D_Exit(0, 538, 222, 615, 346, 1);
-	if (Game_Flag_Query(373)) {
+	if (Game_Flag_Query(kFlagKP02Available)) {
 		Scene_Exit_Add_2D_Exit(1, 334, 176, 426, 266, 0);
 	}
-	Ambient_Sounds_Add_Looping_Sound(105, 47, 60, 1);
-	Ambient_Sounds_Add_Looping_Sound(332, 40, 0, 1);
-	Ambient_Sounds_Add_Looping_Sound(333, 40, 0, 1);
-	Ambient_Sounds_Add_Sound(291, 2, 20, 20, 25, -100, 100, -100, 100, 0, 0);
-	Ambient_Sounds_Add_Sound(292, 2, 20, 20, 25, -100, 100, -100, 100, 0, 0);
-	Ambient_Sounds_Add_Sound(368, 2, 120, 11, 12, -100, 100, -100, 100, 0, 0);
-	Ambient_Sounds_Add_Sound(369, 2, 120, 11, 12, -100, 100, -100, 100, 0, 0);
-	Ambient_Sounds_Add_Sound(370, 2, 120, 11, 12, -100, 100, -100, 100, 0, 0);
-	Ambient_Sounds_Add_Sound(293, 2, 20, 20, 25, -100, 100, -100, 100, 0, 0);
-	Ambient_Sounds_Add_Sound(294, 2, 20, 20, 25, -100, 100, -100, 100, 0, 0);
-	Ambient_Sounds_Add_Sound(295, 2, 20, 20, 25, -100, 100, -100, 100, 0, 0);
-	Ambient_Sounds_Add_Sound(303, 5, 50, 17, 37, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(304, 5, 50, 17, 37, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(305, 5, 50, 17, 37, -100, 100, -101, -101, 0, 0);
-	if (Game_Flag_Query(373)) {
+
+	Ambient_Sounds_Add_Looping_Sound(kSfxCTRUNOFF, 47, 60, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxUGBED1,   40,  0, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxUGBED2,   40,  0, 1);
+	Ambient_Sounds_Add_Sound(kSfxBBDRIP1,  2,  20, 20, 25, -100, 100, -100,  100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBDRIP2,  2,  20, 20, 25, -100, 100, -100,  100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxYELL1M1,  2, 120, 11, 12, -100, 100, -100,  100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxGRUNT1M1, 2, 120, 11, 12, -100, 100, -100,  100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxGRUNT2M1, 2, 120, 11, 12, -100, 100, -100,  100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBDRIP3,  2,  20, 20, 25, -100, 100, -100,  100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBDRIP4,  2,  20, 20, 25, -100, 100, -100,  100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBDRIP5,  2,  20, 20, 25, -100, 100, -100,  100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBGRN1,   5,  50, 17, 37, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBGRN2,   5,  50, 17, 37, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBGRN3,   5,  50, 17, 37, -100, 100, -101, -101, 0, 0);
+
+	if (Game_Flag_Query(kFlagKP02Available)) {
 		Scene_Loop_Set_Default(2);
 	} else {
 		Scene_Loop_Set_Default(0);
@@ -80,20 +83,21 @@ bool SceneScriptUG12::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptUG12::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 375.0f, -126.21f, 180.0f, 0, 1, false, 0)) {
-			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 375.0f, -126.21f, 180.0f, 0, true, false, false)) {
+			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
-			Game_Flag_Set(344);
-			Set_Enter(86, 98);
+			Game_Flag_Set(kFlagUG12toUG14);
+			Set_Enter(kSetUG14, kSceneUG14);
 		}
 		return true;
 	}
+
 	if (exitId == 1) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 207.0f, -126.21f, -364.0f, 0, 1, false, 0)) {
-			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 207.0f, -126.21f, -364.0f, 0, true, false, false)) {
+			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
-			Game_Flag_Set(412);
-			Set_Enter(45, 42);
+			Game_Flag_Set(kFlagUG12toKP02);
+			Set_Enter(kSetKP02, kSceneKP02);
 		}
 		return true;
 	}

@@ -22,6 +22,7 @@
 
 
 #include "common/file.h"
+#include "common/str.h"
 #include "scumm/scumm.h"
 #include "scumm/util.h"
 
@@ -226,11 +227,11 @@ void SmushFont::drawStringWrap(const char *str, byte *buffer, int dst_width, int
 	debugC(DEBUG_SMUSH, "SmushFont::drawStringWrap(%s, %d, %d, %d, %d, %d)", str, x, y, left, right, center);
 
 	const int width = right - left;
-	char *s = strdup(str);
+	Common::String s(str);
 	char *words[MAX_WORDS];
 	int word_count = 0;
 
-	char *tmp = s;
+	Common::String::iterator tmp = s.begin();
 	while (tmp) {
 		assert(word_count < MAX_WORDS);
 		words[word_count++] = tmp;
@@ -293,8 +294,6 @@ void SmushFont::drawStringWrap(const char *str, byte *buffer, int dst_width, int
 			y += getStringHeight(substrings[i]);
 		}
 	}
-
-	free(s);
 }
 
 } // End of namespace Scumm

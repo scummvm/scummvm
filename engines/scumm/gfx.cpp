@@ -1460,27 +1460,32 @@ void ScummEngine_v5::drawFlashlight() {
 
 	blit(_flashlight.buffer, vs->pitch, bgbak, vs->pitch, _flashlight.w, _flashlight.h, vs->format.bytesPerPixel);
 
-	// Round the corners. To do so, we simply hard-code a set of nicely
-	// rounded corners.
-	static const int corner_data[] = { 8, 6, 4, 3, 2, 2, 1, 1 };
-	int minrow = 0;
-	int maxcol = (_flashlight.w - 1) * vs->format.bytesPerPixel;
-	int maxrow = (_flashlight.h - 1) * vs->pitch;
+	// C64 does not round the flashlight
+	if (_game.platform != Common::kPlatformC64) {
 
-	for (i = 0; i < 8; i++, minrow += vs->pitch, maxrow -= vs->pitch) {
-		int d = corner_data[i];
+		// Round the corners. To do so, we simply hard-code a set of nicely
+		// rounded corners.
+		static const int corner_data[] = { 8, 6, 4, 3, 2, 2, 1, 1 };
+		int minrow = 0;
+		int maxcol = (_flashlight.w - 1) * vs->format.bytesPerPixel;
+		int maxrow = (_flashlight.h - 1) * vs->pitch;
 
-		for (j = 0; j < d; j++) {
-			if (vs->format.bytesPerPixel == 2) {
-				WRITE_UINT16(&_flashlight.buffer[minrow + 2 * j], 0);
-				WRITE_UINT16(&_flashlight.buffer[minrow + maxcol - 2 * j], 0);
-				WRITE_UINT16(&_flashlight.buffer[maxrow + 2 * j], 0);
-				WRITE_UINT16(&_flashlight.buffer[maxrow + maxcol - 2 * j], 0);
-			} else {
-				_flashlight.buffer[minrow + j] = 0;
-				_flashlight.buffer[minrow + maxcol - j] = 0;
-				_flashlight.buffer[maxrow + j] = 0;
-				_flashlight.buffer[maxrow + maxcol - j] = 0;
+		for (i = 0; i < 8; i++, minrow += vs->pitch, maxrow -= vs->pitch) {
+			int d = corner_data[i];
+
+			for (j = 0; j < d; j++) {
+				if (vs->format.bytesPerPixel == 2) {
+					WRITE_UINT16(&_flashlight.buffer[minrow + 2 * j], 0);
+					WRITE_UINT16(&_flashlight.buffer[minrow + maxcol - 2 * j], 0);
+					WRITE_UINT16(&_flashlight.buffer[maxrow + 2 * j], 0);
+					WRITE_UINT16(&_flashlight.buffer[maxrow + maxcol - 2 * j], 0);
+				}
+				else {
+					_flashlight.buffer[minrow + j] = 0;
+					_flashlight.buffer[minrow + maxcol - j] = 0;
+					_flashlight.buffer[maxrow + j] = 0;
+					_flashlight.buffer[maxrow + maxcol - j] = 0;
+				}
 			}
 		}
 	}
@@ -1808,7 +1813,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, const int y, const 
 	// It was added as a kind of hack to fix some corner cases, but it compares
 	// the room width to the virtual screen width; but the former should always
 	// be bigger than the latter (except for MM NES, maybe)... strange
-	int limit = MAX(_vm->_roomWidth, (int) vs->w) / 8 - x;
+	int limit = MAX(_vm->_roomWidth, (int)vs->w) / 8 - x;
 	if (limit > numstrip)
 		limit = numstrip;
 	if (limit > _numStrips - sx)

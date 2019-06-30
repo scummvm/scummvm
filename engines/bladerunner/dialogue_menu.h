@@ -33,19 +33,26 @@
 namespace BladeRunner {
 
 class BladeRunnerEngine;
+class SaveFileReadStream;
+class SaveFileWriteStream;
 class TextResource;
 
-struct DialogueItem {
-	Common::String text;
-	int  answerValue;
-	int  colorIntensity;
-	int  priorityPolite;
-	int  priorityNormal;
-	int  prioritySurly;
-	int  isDone;
-};
-
 class DialogueMenu {
+	static const int kMaxItems = 10;
+	static const int kMaxRepeatHistory = 100;
+	static const int kLineHeight = 9;
+	static const int kBorderSize = 10;
+
+	struct DialogueItem {
+		Common::String text;
+		int            answerValue;
+		int            colorIntensity;
+		int            priorityPolite;
+		int            priorityNormal;
+		int            prioritySurly;
+		int            isDone;
+	};
+
 	BladeRunnerEngine *_vm;
 
 	TextResource         *_textResource;
@@ -58,15 +65,15 @@ class DialogueMenu {
 	// These track whether a dialogue option
 	// has previously been selected
 	int                   _neverRepeatListSize;
-	int                   _neverRepeatValues[100];
-	bool                  _neverRepeatWasSelected[100];
+	int                   _neverRepeatValues[kMaxRepeatHistory];
+	bool                  _neverRepeatWasSelected[kMaxRepeatHistory];
 
 	int                   _centerX;
 	int                   _centerY;
 	int                   _screenX;
 	int                   _screenY;
 	int                   _maxItemWidth;
-	DialogueItem          _items[10];
+	DialogueItem          _items[kMaxItems];
 
 	int                   _fadeInItemIndex;
 
@@ -74,31 +81,35 @@ public:
 	DialogueMenu(BladeRunnerEngine *vm);
 	~DialogueMenu();
 
-	bool loadText(const char *name);
+	void clear();
+
+	bool loadText(const Common::String &name);
 
 	bool show();
 	bool hide();
 	bool addToList(int answer, bool done, int priorityPolite, int priorityNormal, int prioritySurly);
+	bool clearNeverRepeatWasSelectedFlag(int answer); // aux function - used in cut content mode to re-use some dialogue options for different characters
 	bool addToListNeverRepeatOnceSelected(int answer, int priorityPolite, int priorityNormal, int prioritySurly);
+	bool removeFromList(int answer);
 	bool clearList();
 	int  queryInput();
-	int  listSize();
-	bool isVisible();
-	bool isOpen();
+	int  listSize() const;
+	bool isVisible() const;
+	bool isOpen() const;
 	void tick(int x, int y);
 	void draw(Graphics::Surface &s);
 
 	void mouseUp();
-	bool waitingForInput();
+	bool waitingForInput() const;
+
+	void save(SaveFileWriteStream &f);
+	void load(SaveFileReadStream &f);
 
 private:
 	bool showAt(int x, int y);
-	int  getAnswerIndex(int answer);
-	const char *getText(int id);
+	int  getAnswerIndex(int answer) const;
+	const char *getText(int id) const;
 	void calculatePosition(int unusedX = 0, int unusedY = 0);
-
-
-	void clear();
 	void reset();
 
 	static void darkenRect(Graphics::Surface &s, int x1, int y1, int x2, int y2);

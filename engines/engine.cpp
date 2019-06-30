@@ -26,8 +26,6 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <direct.h>
-// winnt.h defines ARRAYSIZE, but we want our own one...
-#undef ARRAYSIZE
 #endif
 
 #include "engines/engine.h"
@@ -210,6 +208,9 @@ void initCommonGFX() {
 
 		if (gameDomain->contains("filtering"))
 			g_system->setFeatureState(OSystem::kFeatureFilteringMode, ConfMan.getBool("filtering"));
+
+		if (gameDomain->contains("stretch_mode"))
+			g_system->setStretchMode(ConfMan.get("stretch_mode").c_str());
 	}
 }
 
@@ -234,7 +235,7 @@ void splashScreen() {
 	// Fill with orange
 	Graphics::Surface screen;
 	screen.create(g_system->getOverlayWidth(), g_system->getOverlayHeight(), g_system->getOverlayFormat());
-	screen.fillRect(Common::Rect(screen.w, screen.h), screen.format.ARGBToColor(0xff, 0xd4, 0x75, 0x0b));
+	screen.fillRect(Common::Rect(screen.w, screen.h), screen.format.ARGBToColor(0xff, 0xcc, 0x66, 0x00));
 
 	// Load logo
 	Graphics::Surface *logo = bitmap.getSurface()->convertTo(g_system->getOverlayFormat(), bitmap.getPalette());
@@ -259,11 +260,12 @@ void splashScreen() {
 	logo->free();
 	delete logo;
 
+	g_system->updateScreen();
+
 	// Delay 0.6 secs
 	uint time0 = g_system->getMillis();
 	Common::Event event;
 	while (time0 + 600 > g_system->getMillis()) {
-		g_system->updateScreen();
 		(void)g_system->getEventManager()->pollEvent(event);
 		g_system->delayMillis(10);
 	}
@@ -328,6 +330,15 @@ void initGraphics(int width, int height, const Graphics::PixelFormat *format) {
 		dialog.runModal();
 	}
 
+	if (gfxError & OSystem::kTransactionStretchModeSwitchFailed) {
+		Common::String message = _("Could not switch to stretch mode: '");
+		message += ConfMan.get("stretch_mode");
+		message += "'.";
+
+		GUI::MessageDialog dialog(message);
+		dialog.runModal();
+	}
+
 	if (gfxError & OSystem::kTransactionAspectRatioFailed) {
 		GUI::MessageDialog dialog(_("Could not apply aspect ratio setting."));
 		dialog.runModal();
@@ -386,6 +397,17 @@ void GUIErrorMessage(const Common::String &msg) {
 	} else {
 		error("%s", msg.c_str());
 	}
+}
+
+void GUIErrorMessageFormat(const char *fmt, ...) {
+	Common::String msg;
+
+	va_list va;
+	va_start(va, fmt);
+	msg = Common::String::vformat(fmt, va);
+	va_end(va);
+
+	GUIErrorMessage(msg);
 }
 
 void Engine::checkCD() {

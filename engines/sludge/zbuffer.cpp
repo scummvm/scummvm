@@ -25,13 +25,13 @@
 #include "graphics/transparent_surface.h"
 
 #include "sludge/allfiles.h"
-#include "sludge/zbuffer.h"
 #include "sludge/fileset.h"
 #include "sludge/graphics.h"
 #include "sludge/moreio.h"
 #include "sludge/newfatal.h"
 #include "sludge/sludge.h"
 #include "sludge/sprites.h"
+#include "sludge/zbuffer.h"
 
 namespace Sludge {
 
@@ -137,7 +137,7 @@ bool GraphicsManager::setZBuffer(int num) {
 
 	for (uint y = 0; y < _sceneHeight; y++) {
 		for (uint x = 0; x < _sceneWidth; x++) {
-			int n;
+			int n = 0;
 			if (stillToGo == 0) {
 				n = readStream->readByte();
 				stillToGo = n >> 4;

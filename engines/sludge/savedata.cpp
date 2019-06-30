@@ -20,44 +20,45 @@
  *
  */
 
-#include "common/file.h"
+#include "common/savefile.h"
 
 #include "sludge/allfiles.h"
-#include "sludge/variable.h"
-#include "sludge/newfatal.h"
 #include "sludge/moreio.h"
+#include "sludge/newfatal.h"
+#include "sludge/savedata.h"
+#include "sludge/variable.h"
 
 #define LOAD_ERROR "Can't load custom data...\n\n"
 
 namespace Sludge {
 
-const char UTF8_CHECKER[] = {'U', 'N', '\xef', '\xbf', '\xbd', 'L', 'O', '\xef', '\xbf', '\xbd', 'C', 'K', 'E', 'D', '\0'};
-uint16 saveEncoding = false;
-char encode1 = 0;
-char encode2 = 0;
+const char CustomSaveHelper::UTF8_CHECKER[] = {'U', 'N', '\xef', '\xbf', '\xbd', 'L', 'O', '\xef', '\xbf', '\xbd', 'C', 'K', 'E', 'D', '\0'};
+uint16 CustomSaveHelper::_saveEncoding = false;
+char CustomSaveHelper::_encode1 = 0;
+char CustomSaveHelper::_encode2 = 0;
 
-void writeStringEncoded(const Common::String &s, Common::WriteStream *stream) {
-	int len = s.size();
+void CustomSaveHelper::writeStringEncoded(const Common::String checker, Common::WriteStream *stream) {
+	int len = checker.size();
 
 	stream->writeUint16BE(len);
 	for (int a = 0; a < len; a++) {
-		stream->writeByte(s[a] ^ encode1);
-		encode1 += encode2;
+		stream->writeByte(checker[a] ^ _encode1);
+		_encode1 += _encode2;
 	}
 }
 
-Common::String readStringEncoded(Common::File *fp) {
+Common::String CustomSaveHelper::readStringEncoded(Common::SeekableReadStream *fp) {
 	int len = fp->readUint16BE();
 	Common::String res = "";
 
 	for (int a = 0; a < len; a++) {
-		res += (char)(fp->readByte() ^ encode1);
-		encode1 += encode2;
+		res += (char)(fp->readByte() ^ _encode1);
+		_encode1 += _encode2;
 	}
 	return res;
 }
 
-char *readTextPlain(Common::File *fp) {
+char *CustomSaveHelper::readTextPlain(Common::SeekableReadStream *fp) {
 	int32 startPos;
 
 	uint32 stringSize = 0;
@@ -94,86 +95,66 @@ char *readTextPlain(Common::File *fp) {
 	return reply;
 }
 
-bool fileToStack(const Common::String &filename, StackHandler *sH) {
-
+bool CustomSaveHelper::fileToStack(const Common::String &filename, StackHandler *sH) {
 	Variable stringVar;
 	stringVar.varType = SVT_NULL;
-	Common::String checker = saveEncoding ? "[Custom data (encoded)]\r\n" : "[Custom data (ASCII)]\n";
+	Common::String checker = _saveEncoding ? "[Custom data (encoded)]\r\n" : "[Custom data (ASCII)]\n";
 
-	Common::File fd;
+	Common::InSaveFile *fp = g_system->getSavefileManager()->openForLoading(filename);
 
-	if (!fd.open(filename)) {
-#if 0
-		char currentDir[1000];
-		if (!getcwd(currentDir, 998)) {
-			debugOut("Can't get current directory.\n");
-		}
-
-		if (chdir(gamePath)) {
-			debugOut("Error: Failed changing to directory %s\n", gamePath);
-		}
-
-		if (chdir(currentDir)) {
-			debugOut("Error: Failed changing to directory %s\n", currentDir);
-		}
-
-		if (!fd.open(filename)) {
-			return fatal("No such file", filename);
-		}
-#endif
+	if (fp == NULL) {
 		return fatal("No such file", filename); //TODO: false value
 	}
 
-	encode1 = (byte)saveEncoding & 255;
-	encode2 = (byte)(saveEncoding >> 8);
+	_encode1 = (byte)_saveEncoding & 255;
+	_encode2 = (byte)(_saveEncoding >> 8);
 
 	for (uint i = 0; i < checker.size(); ++i) {
-		if (fd.readByte() != checker[i]) {
-			fd.close();
+		if (fp->readByte() != checker[i]) {
+			delete fp;
 			return fatal(LOAD_ERROR "This isn't a SLUDGE custom data file:", filename);
 		}
 	}
 
-	if (saveEncoding) {
-		checker = readStringEncoded(&fd);
-		if (checker == UTF8_CHECKER) {
-			fd.close();
-			return fatal(
-			LOAD_ERROR "The current file encoding setting does not match the encoding setting used when this file was created:", filename);
+	if (_saveEncoding) {
+		checker = readStringEncoded(fp);
+		if (checker != UTF8_CHECKER) {
+			delete fp;
+			return fatal(LOAD_ERROR "The current file encoding setting does not match the encoding setting used when this file was created:", filename);
 		}
 	}
 
 	for (;;) {
-		if (saveEncoding) {
-			char i = fd.readByte() ^ encode1;
+		if (_saveEncoding) {
+			char i = fp->readByte() ^ _encode1;
 
-			if (fd.eos())
+			if (fp->eos())
 				break;
 			switch (i) {
 				case 0: {
-					Common::String g = readStringEncoded(&fd);
-					makeTextVar(stringVar, g);
+					Common::String g = readStringEncoded(fp);
+					stringVar.makeTextVar(g);
 				}
 					break;
 
 				case 1:
-					setVariable(stringVar, SVT_INT, fd.readUint32LE());
+					stringVar.setVariable(SVT_INT, fp->readUint32LE());
 					break;
 
 				case 2:
-					setVariable(stringVar, SVT_INT, fd.readByte());
+					stringVar.setVariable(SVT_INT, fp->readByte());
 					break;
 
 				default:
 					fatal(LOAD_ERROR "Corrupt custom data file:", filename);
-					fd.close();
+					delete fp;
 					return false;
 			}
 		} else {
-			char *line = readTextPlain(&fd);
+			char *line = readTextPlain(fp);
 			if (!line)
 				break;
-			makeTextVar(stringVar, line);
+			stringVar.makeTextVar(line);
 		}
 
 		if (sH->first == NULL) {
@@ -188,63 +169,66 @@ bool fileToStack(const Common::String &filename, StackHandler *sH) {
 			sH->last = sH->last->next;
 		}
 	}
-	fd.close();
+
+	delete fp;
 
 	return true;
 }
 
-bool stackToFile(const Common::String &filename, const Variable &from) {
-#if 0
-	FILE *fp = fopen(filename, saveEncoding ? "wb" : "wt");
-	if (!fp) return fatal("Can't create file", filename);
+bool CustomSaveHelper::stackToFile(const Common::String &filename, const Variable &from) {
+	Common::OutSaveFile *fp = g_system->getSavefileManager()->openForSaving(filename);
+	if (fp == NULL) {
+		return fatal("Can't create file", filename);
+	}
 
 	VariableStack *hereWeAre = from.varData.theStack -> first;
 
-	encode1 = (byte)saveEncoding & 255;
-	encode2 = (byte)(saveEncoding >> 8);
+	_encode1 = (byte)_saveEncoding & 255;
+	_encode2 = (byte)(_saveEncoding >> 8);
 
-	if (saveEncoding) {
-		fprintf(fp, "[Custom data (encoded)]\r\n");
+	if (_saveEncoding) {
+		fp->writeString("[Custom data (encoded)]\r\n");
 		writeStringEncoded(UTF8_CHECKER, fp);
 	} else {
-		fprintf(fp, "[Custom data (ASCII)]\n");
+		fp->writeString("[Custom data (ASCII)]\n");
 	}
 
 	while (hereWeAre) {
-		if (saveEncoding) {
+		if (_saveEncoding) {
 			switch (hereWeAre -> thisVar.varType) {
 				case SVT_STRING:
-				fputc(encode1, fp);
-				writeStringEncoded(hereWeAre -> thisVar.varData.theString, fp);
-				break;
+					fp->writeByte(_encode1);
+					writeStringEncoded(hereWeAre -> thisVar.varData.theString, fp);
+					break;
 
 				case SVT_INT:
-				// Small enough to be stored as a char
-				if (hereWeAre -> thisVar.varData.intValue >= 0 && hereWeAre -> thisVar.varData.intValue < 256) {
-					fputc(2 ^ encode1, fp);
-					fputc(hereWeAre -> thisVar.varData.intValue, fp);
-				} else {
-					fputc(1 ^ encode1, fp);
-					fp->writeUint32LE(hereWeAre -> thisVar.varData.intValue);
-				}
-				break;
+					// Small enough to be stored as a char
+					if (hereWeAre -> thisVar.varData.intValue >= 0 && hereWeAre -> thisVar.varData.intValue < 256) {
+						fp->writeByte(2 ^ _encode1);
+						fp->writeByte(hereWeAre -> thisVar.varData.intValue);
+					} else {
+						fp->writeByte(1 ^ _encode1);
+						fp->writeUint32LE(hereWeAre -> thisVar.varData.intValue);
+					}
+					break;
 
 				default:
-				fatal("Can't create an encoded custom data file containing anything other than numbers and strings", filename);
-				fclose(fp);
-				return false;
+					fatal("Can't create an encoded custom data file containing anything other than numbers and strings", filename);
+					delete fp;
+					return false;
 			}
 		} else {
-			char *makeSureItsText = getTextFromAnyVar(hereWeAre -> thisVar);
-			if (makeSureItsText == NULL) break;
-			fprintf(fp, "%s\n", makeSureItsText);
-			delete makeSureItsText;
+			Common::String makeSureItsText = hereWeAre->thisVar.getTextFromAnyVar();
+			if (makeSureItsText.empty())
+				break;
+			fp->writeString((makeSureItsText + "\n").c_str());
 		}
 
 		hereWeAre = hereWeAre -> next;
 	}
-	fclose(fp);
-#endif
+
+	delete fp;
+
 	return true;
 }
 

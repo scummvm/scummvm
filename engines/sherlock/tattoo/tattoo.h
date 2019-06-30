@@ -103,6 +103,11 @@ public:
 	virtual void saveConfig();
 
 	/**
+	 * Returns true if a savegame can be loaded
+	 */
+	virtual bool canLoadGameStateCurrently();
+
+	/**
 	 * Returns true if the game can be saved
 	 */
 	virtual bool canSaveGameStateCurrently();

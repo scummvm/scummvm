@@ -29,8 +29,8 @@ FRange::FRange() {
 }
 
 void FRange::reset() {
-	_min._x = _min._y = _min._z = 9.9999994e27;
-	_max._x = _max._y = _max._z = -9.9999994e27;
+	_min._x = _min._y = _min._z = 9.9999994e27F;
+	_max._x = _max._y = _max._z = -9.9999994e27F;
 }
 
 void FRange::expand(const FVector &v) {

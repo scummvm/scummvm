@@ -28,6 +28,7 @@
 #include "sci/engine/workarounds.h"
 
 #define SCI_WORKAROUNDENTRY_TERMINATOR { (SciGameId)0, -1, -1, 0, NULL, NULL, NULL, 0, 0, { WORKAROUND_NONE, 0 } }
+#define SCI_MESSAGEWORKAROUNDENTRY_TERMINATOR { (SciGameId)0, (SciMedia)0, (kLanguage)0, -1, -1, 0, 0, 0, 0, { MSG_WORKAROUND_NONE, -1, 0, 0, 0, 0, 0, 0, 0, NULL } }
 
 namespace Sci {
 
@@ -84,10 +85,9 @@ const SciWorkaroundEntry arithmeticWorkarounds[] = {
 	{ GID_MOTHERGOOSE256,  -1,    4,  0,              "rm004", "doit",                            NULL,     0,     0, { WORKAROUND_FAKE,   0 } }, // op_or: when going north and reaching the castle (rooms 4 and 37) - bug #5101
 	{ GID_MOTHERGOOSEHIRES,90,   90,  0,      "newGameButton", "select",                          NULL,     0,     0, { WORKAROUND_FAKE,   0 } }, // op_ge: MUMG Deluxe, when selecting "New Game" in the main menu. It tries to compare an integer with a list. Needs to return false for the game to continue.
 	{ GID_PHANTASMAGORIA, 902,    0,  0,                   "", "export 7",                        NULL,     0,     0, { WORKAROUND_FAKE,   0 } }, // op_shr: when starting a chapter in Phantasmagoria
-	{ GID_QFG1VGA,        301,  928,  0,              "Blink", "init",                            NULL,     0,     0, { WORKAROUND_FAKE,   0 } }, // op_div: when entering the inn, gets called with 1 parameter, but 2nd parameter is used for div which happens to be an object
+	{ GID_QFG1VGA,        301,  928,  0,                 NULL, "init",                            NULL,     0,     0, { WORKAROUND_FAKE,   0 } }, // op_div: when entering the inn, Blink:init called with 1 parameter, but 2nd parameter is used for div which happens to be an object. NULL object name as Mac version has none.
 	{ GID_QFG2,           200,  200,  0,              "astro", "messages",                        NULL,     0,     0, { WORKAROUND_FAKE,   0 } }, // op_lsi: when getting asked for your name by the astrologer - bug #5152
 	{ GID_QFG3,           780,  999,  0,                   "", "export 6",                        NULL,     0,     0, { WORKAROUND_FAKE,   0 } }, // op_add: trying to talk to yourself at the top of the giant tree - bug #6692
-	{ GID_QFG4,           710,64941,  0,          "RandCycle", "doit",                            NULL,     0,     0, { WORKAROUND_FAKE,   1 } }, // op_gt: when the tentacle appears in the third room of the caves
 	{ GID_TORIN,        51400,64928,  0,              "Blink", "init",                            NULL,     0,     0, { WORKAROUND_FAKE,   1 } }, // op_div: when Lycentia knocks Torin out after he removes her collar
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
@@ -130,7 +130,6 @@ static const uint16 sig_uninitread_hoyle4_1[] = {
 //   Subroutine offset: 0x2fb2 (script 300)
 // Applies to at least: English PC demo
 static const uint16 sig_uninitread_hoyle5_1[] = {
-
 	0x7e, SIG_ADDTOOFFSET(2),        // line N
 	0x7d, 0x68, 0x65, 0x61, 0x72,
 	      0x74, 0x73, 0x2e, 0x73,
@@ -139,6 +138,55 @@ static const uint16 sig_uninitread_hoyle5_1[] = {
 	0x7e, SIG_ADDTOOFFSET(2),        // line N
 	0x39, 0x4b,                      // pushi 4bh
 	0x78,                            // push1
+	SIG_END
+};
+
+//                Game: Hoyle 5 (Solitaire)
+//      Calling methods: roomScript::changeState, beleaguered_castle::init, strategy::init
+//   Subroutine offsets: 0x25f4 (script 6001), 0x1d7a (script 6004), 0x239d (script 6002)
+// Applies to at least: English PC
+static const uint16 sig_uninitread_hoyle5_2[] = {
+	0x7e, SIG_ADDTOOFFSET(2),        // line N
+	0x7d, SIG_ADDTOOFFSET(8),
+	      0x2e, 0x73, 0x63, 0x00,    // file "calculat.sc" / "belcastl.sc" / "strategy.sc"
+	0x3f, 0x02,                      // link 02
+	0x7e, SIG_ADDTOOFFSET(2),        // line N
+	0x8d, 0x00,                      // lst temp[0]
+	0x35, 0x00,                      // ldi 00
+	0x1a,                            // eq?
+	SIG_END
+};
+
+//                Game: Hoyle 5 (Solitaire)
+//      Calling method: roomScript::changeState
+//   Subroutine offset: 0x494a (script 6023)
+// Applies to at least: English PC
+static const uint16 sig_uninitread_hoyle5_3[] = {
+	0x7e, SIG_ADDTOOFFSET(2),        // line N
+	0x7d, 0x67, 0x61, 0x70,	0x73,
+	      0x2e, 0x73, 0x63, 0x00,    // file "gaps.sc"
+	0x3f, 0x02,                      // link 02
+	0x7e, SIG_ADDTOOFFSET(2),        // line N
+	0x8d, 0x00,                      // lst temp[0]
+	0x35, 0x00,                      // ldi 00
+	0x1a,                            // eq?
+	SIG_END
+};
+
+//                Game: Hoyle 5 (Solitaire)
+//      Calling method: roomScript::changeState
+//   Subroutine offset: 0x2097 (script 6011)
+// Applies to at least: English PC
+static const uint16 sig_uninitread_hoyle5_4[] = {
+	0x7e, SIG_ADDTOOFFSET(2),        // line N
+	0x7d, 0x6c, 0x61, 0x62, 0x65,
+	      0x6c, 0x6c, 0x65,
+	      0x2e, 0x73, 0x63, 0x00,    // file "labelle.sc"
+	0x3f, 0x02,                      // link 02
+	0x7e, SIG_ADDTOOFFSET(2),        // line N
+	0x8d, 0x00,                      // lst temp[0]
+	0x35, 0x00,                      // ldi 00
+	0x1a,                            // eq?
 	SIG_END
 };
 
@@ -269,6 +317,21 @@ static const uint16 sig_uninitread_sq1_1[] = {
 	SIG_END
 };
 
+// Workarounds for uninitialized reads for parameters
+//    gameID,           room,script,lvl,          object-name, method-name,       local-call-signature, index-range,  workaround
+const SciWorkaroundEntry uninitializedReadForParamWorkarounds[] = {
+	{ GID_GK1,            -1,    12, -1,          "GKIconbar", "showInvItem",                     NULL,     1,     1,{ WORKAROUND_FAKE,   0 } }, // When showing the icon bar containing an inventory item
+	{ GID_HOYLE5,         -1,    15, -1,               "Hand", "add",                             NULL,     1,     1,{ WORKAROUND_FAKE,   0 } }, // When the game adds cards to your hand in any mini-game
+	{ GID_HOYLE5,        700,   730,  0,                 NULL, "runningSuit",                     NULL,     2,     2,{ WORKAROUND_FAKE,   0 } }, // when an opponent is playing in Bridge
+	{ GID_HOYLE5,       1100,    22, -1,           "HandPile", "show",                            NULL,     1,     1,{ WORKAROUND_FAKE,   0 } }, // when showing money piles in Poker
+	{ GID_PHANTASMAGORIA2,-1, 64926,  0,              "Thumb", "action",                          NULL,     1,     1,{ WORKAROUND_FAKE,   0 } }, // When dragging one of the volume sliders and releasing the mouse button over the +/- buttons
+	{ GID_PHANTASMAGORIA2,-1, 63019,  0,     "WynDocTextView", "cue",                             NULL,     2,     2,{ WORKAROUND_FAKE,   0 } }, // When dragging the slider next to an e-mail message
+	{ GID_SHIVERS,        -1, 64918,  0,                "Str", "strip",                           NULL,     1,     1,{ WORKAROUND_FAKE,   0 } }, // When starting a new game and entering a name
+	{ GID_SQ4,            35,   928,  0,           "Narrator", "say",                             NULL,     1,     1,{ WORKAROUND_FAKE,  11 } }, // Clicking smell on sidewalk, fixes message due to missing say parameter in sidewalk1:doVerb(6) - bug #10917
+	SCI_WORKAROUNDENTRY_TERMINATOR
+};
+
+// Workarounds for uninitialized reads for temporary variables
 //    gameID,           room,script,lvl,          object-name, method-name,       local-call-signature, index-range,  workaround
 const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_CAMELOT,        40,    40,  0,               "Rm40", "handleEvent",                     NULL,     0,     0, { WORKAROUND_FAKE,   0 } }, // when looking at the ground at the pool of Siloam - bug #6401
@@ -324,6 +387,20 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_HOYLE5,         -1, 64937, -1,                 NULL, "select",                          NULL,     7,     7, { WORKAROUND_FAKE,   0 } }, // clicking the "control" and "options" buttons in the icon bar
 	{ GID_HOYLE5,         -1, 64937, -1,            "IconBar", "handleEvent",                     NULL,     0,     0, { WORKAROUND_FAKE,   0 } }, // clicking on any button in the icon bar
 	{ GID_HOYLE5,        300,   300,  0,                   "", "export 2",     sig_uninitread_hoyle5_1,     0,     0, { WORKAROUND_FAKE,   0 } }, // after passing around cards in hearts
+	{ GID_HOYLE5,        400,   400,  1,            "GinHand", "calcRuns",                        NULL,     4,     4, { WORKAROUND_FAKE,   0 } }, // when starting Gin
+	{ GID_HOYLE5,        700,   700,  1,         "BridgeHand", "calcQTS",                         NULL,     3,     3, { WORKAROUND_FAKE,   0 } }, // when an opponent is playing in Bridge
+	{ GID_HOYLE5,        700,   747,  0,   "LeadReturn_Trump", "think",                           NULL,    17,    17, { WORKAROUND_FAKE,   0 } }, // when an opponent is playing in Bridge
+	{ GID_HOYLE5,       1100,    18,  0,               "Tray", "init",                            NULL,     0,     0, { WORKAROUND_FAKE,   0 } }, // when playing Poker
+	{ GID_HOYLE5,       1100,  1100,  0,         "anteButton", "handleEvent",                     NULL,     1,     1, { WORKAROUND_FAKE,   0 } }, // when exiting Poker
+	{ GID_HOYLE5,       6029,  6029,  1,        "ControlIcon", "select",                          NULL,     1,     1, { WORKAROUND_FAKE,   0 } }, // Solitaire: when changing any slider in the Card Flip mini-game's options window
+	{ GID_HOYLE5,         -1,  6000,  1,              "sHand", "handleEvent",                     NULL,     4,     4, { WORKAROUND_FAKE,   0 } }, // Solitaire: when clicking on an empty card base in any game
+	{ GID_HOYLE5,       6001,  6001,  0,         "roomScript", "changeState",  sig_uninitread_hoyle5_2,     0,     0, { WORKAROUND_FAKE,   0 } }, // Solitaire: when starting Calculation
+	{ GID_HOYLE5,       6004,  6004,  0,         "roomScript", "changeState",  sig_uninitread_hoyle5_2,     0,     0, { WORKAROUND_FAKE,   0 } }, // Solitaire: when starting Beleaguered Castle
+	{ GID_HOYLE5,       6004,  6004,  0, "beleaguered_castle", "init",         sig_uninitread_hoyle5_2,     0,     0, { WORKAROUND_FAKE,   0 } }, // Solitaire: when starting Beleaguered Castle
+	{ GID_HOYLE5,       6023,  6023,  0,         "roomScript", "changeState",  sig_uninitread_hoyle5_3,     0,     0, { WORKAROUND_FAKE,   0 } }, // Solitaire: when starting Gaps
+	{ GID_HOYLE5,       6011,  6011,  0,         "roomScript", "changeState",  sig_uninitread_hoyle5_4,     0,     0, { WORKAROUND_FAKE,   0 } }, // Solitaire: when starting La Belle Lucie
+	{ GID_HOYLE5,       6002,  6002,  0,         "roomScript", "changeState",  sig_uninitread_hoyle5_2,     0,     0, { WORKAROUND_FAKE,   0 } }, // Solitaire: when starting Strategy
+	{ GID_HOYLE5,       6002,  6002,  0,           "strategy", "init",         sig_uninitread_hoyle5_2,     0,     0, { WORKAROUND_FAKE,   0 } }, // Solitaire: when starting Strategy
 	{ GID_ISLANDBRAIN,   100,   937,  0,            "IconBar", "dispatchEvent",                   NULL,    58,    58, { WORKAROUND_FAKE,   0 } }, // when using ENTER at the startup menu - bug #5241
 	{ GID_ISLANDBRAIN,   140,   140,  0,              "piece", "init",                            NULL,     3,     3, { WORKAROUND_FAKE,   1 } }, // first puzzle right at the start, some initialization variable. bnt is done on it, and it should be non-0
 	{ GID_ISLANDBRAIN,   180,   190,  0,               "word", "dispatchEvent",                   NULL,    14,    15, { WORKAROUND_FAKE,   0 } }, // holding down enter key during the word search puzzle, temps 14 and 15
@@ -342,6 +419,7 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_KQ6,           520,   520,  0,              "rm520", "init",                            NULL,     0,     0, { WORKAROUND_FAKE,   0 } }, // going to boiling water trap on beast isle
 	{ GID_KQ6,            -1,   903,  0,         "controlWin", "open",                            NULL,     4,     4, { WORKAROUND_FAKE,   0 } }, // when opening the controls window (save, load etc)
 	{ GID_KQ6,            -1,   907,  0,             "tomato", "doVerb",                          NULL,     2,     2, { WORKAROUND_FAKE,   0 } }, // when looking at the rotten tomato in the inventory - bug #5331
+	{ GID_KQ6,            -1,   921, -1,              "Print", "addEdit",                         NULL,     1,     1, { WORKAROUND_FAKE,   0 } }, // when displaying the game debugger's teleport dialog
 	{ GID_KQ6,            -1,   928,  0,                 NULL, "startText",                       NULL,     0,     0, { WORKAROUND_FAKE,   0 } }, // gets caused by Text+Audio support (see script patcher)
 	{ GID_KQ7,            -1, 64996,  0,               "User", "handleEvent",                     NULL,     1,     1, { WORKAROUND_FAKE,   0 } }, // called when pushing a keyboard key
 	{ GID_KQ7,          2450,  2450,  0,           "exBridge", "handleEvent",                     NULL,     0,     0, { WORKAROUND_FAKE,   0 } }, // called when walking up to the throne in the cave in chapter 2
@@ -369,6 +447,7 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_LSL6,           -1,   928, -1,           "Narrator", "startText",                       NULL,     0,     0, { WORKAROUND_FAKE,   0 } }, // used by various objects that are even translated in foreign versions, that's why we use the base-class
 	{ GID_LSL6HIRES,      -1,    85,  0,             "LL6Inv", "init",                            NULL,     0,     0, { WORKAROUND_FAKE,   0 } }, // when creating a new game
 	{ GID_LSL6HIRES,      -1,    85,  0,          "washcloth", "doVerb",                          NULL,     0,     0, { WORKAROUND_FAKE,   0 } }, // when interacting with the wet washcloth in the inventory - Trac#9811
+	{ GID_LSL6HIRES,     820,    82,  0,                   "", "export 0",                        NULL,     3,     3, { WORKAROUND_FAKE,   0 } }, // when touching the electric fence - bug #10361
 	{ GID_LSL6HIRES,      -1, 64950,  1,            "Feature", "handleEvent",                     NULL,     0,     0, { WORKAROUND_FAKE,   0 } }, // at least when entering swimming pool area
 	{ GID_LSL6HIRES,      -1, 64964,  0,              "DPath", "init",                            NULL,     1,     1, { WORKAROUND_FAKE,   0 } }, // during the game
 	{ GID_LSL7,           -1, 64029,  0,          "oMessager", "nextMsg",                         NULL,     4,     4, { WORKAROUND_FAKE,   0 } }, // when running the game with subtitles only
@@ -384,7 +463,6 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_PEPPER,         -1,   894,  0,            "Package", "doVerb",                          NULL,     3,     3, { WORKAROUND_FAKE,   0 } }, // using the hand on the book in the inventory - bug #5154
 	{ GID_PEPPER,        150,   928,  0,           "Narrator", "startText",                       NULL,     0,     0, { WORKAROUND_FAKE,   0 } }, // happens during the non-interactive demo of Pepper
 	{ GID_PHANTASMAGORIA, -1, 64921, -1,              "Print", "addEdit",                         NULL,     1,     1, { WORKAROUND_FAKE,   0 } }, // When trying to use the game debugger's flag setting command
-	{ GID_PHANTASMAGORIA2,-1, 64926, -1,              "Thumb", "action",                          NULL,     1,     1, { WORKAROUND_FAKE,   0 } }, // When dragging one of the volume sliders and releasing the mouse button over the +/- buttons
 	{ GID_PQ4,            -1,    25,  0,         "iconToggle", "select",                          NULL,     1,     1, { WORKAROUND_FAKE,   0 } }, // when toggling the icon bar to auto-hide or not
 	{ GID_PQ4,           170,   170, -1,        "hideAndSeek", "handleEvent",                     NULL,     1,     1, { WORKAROUND_FAKE,   0 } }, // when clicking to move right while still moving left during the Emo shootout - bug #9847
 	{ GID_PQ4,           275, 64964, -1,              "DPath", "init",                            NULL,     1,     1, { WORKAROUND_FAKE,   0 } }, // when Sherry walks out of the morgue on day 3
@@ -398,6 +476,9 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_QFG1,           -1,   210,  0,          "Encounter", "init",           sig_uninitread_qfg1_1,     0,     0, { WORKAROUND_FAKE,   0 } }, // qfg1/hq1: going to the brigands hideout
 	{ GID_QFG1VGA,        16,    16,  0,        "lassoFailed", "changeState",                     NULL,    -1,    -1, { WORKAROUND_FAKE,   0 } }, // qfg1vga: casting the "fetch" spell in the screen with the flowers, temps 0 and 1 - bug #5309
 	{ GID_QFG1VGA,        -1,   210,  0,          "Encounter", "init",        sig_uninitread_qfg1vga_1,     0,     0, { WORKAROUND_FAKE,   0 } }, // qfg1vga: going to the brigands hideout - bug #5515
+	{ GID_QFG1VGA,        58,    58,  0,                 NULL, "doVerb",                          NULL,     0,     0, { WORKAROUND_FAKE,  18 } }, // qfg1vga: casting "detect magic" at giant's cave, temp 0 used instead of spell number. object is "rm58" but Mac version has blank names
+	{ GID_QFG1VGA,        96,    96,  0,                 NULL, "changeState",                     NULL,     0,     0, { WORKAROUND_FAKE,   0 } }, // qfg1vga mac: when yorick throws an object
+	{ GID_QFG1VGA,       320,   320,  0,                 NULL, "changeState",                     NULL,     0,     0, { WORKAROUND_FAKE,   0 } }, // qfg1vga mac: first time entering room 320 when centaur offers fruits and vegetables
 	{ GID_QFG2,           -1,    71,  0,        "theInvSheet", "doit",                            NULL,     1,     1, { WORKAROUND_FAKE,   0 } }, // accessing the inventory
 	{ GID_QFG2,           -1,    79,  0,        "TryToMoveTo", "onTarget",                        NULL,     0,     0, { WORKAROUND_FAKE,   0 } }, // when throwing pot at air elemental, happens when client coordinates are the same as airElemental coordinates. happened to me right after room change - bug #6859
 	{ GID_QFG2,           -1,   701, -1,              "Alley", "at",                              NULL,     0,     0, { WORKAROUND_FAKE,   0 } }, // when walking inside the alleys in the town - bug #5019 & #5106
@@ -416,12 +497,14 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_QFG3,          490,   490, -1,      "computersMove", "changeState",    sig_uninitread_qfg3_2,     4,     4, { WORKAROUND_FAKE,   0 } }, // also when finishing awari game
 	{ GID_QFG3,          851,    32, -1,            "ProjObj", "doit",                            NULL,     1,     1, { WORKAROUND_FAKE,   0 } }, // near the end, when throwing the spear of death, bug #5282
 	{ GID_QFG4,           -1,    15, -1,     "charInitScreen", "dispatchEvent",                   NULL,     5,     5, { WORKAROUND_FAKE,   0 } }, // floppy version, when viewing the character screen
+	{ GID_QFG4,           -1,    23, -1,     "tellerControls", "dispatchEvent",                   NULL,     6,     6, { WORKAROUND_FAKE,   0 } }, // floppy version, when using keyboard controls in the conversation interface
+	{ GID_QFG4,           -1,    50, -1,     "sSearchMonster", "changeState",                     NULL,     2,     2, { WORKAROUND_FAKE,   0 } }, // CD version, when searching a chernovy or revenant with speech disabled
 	{ GID_QFG4,           -1, 64917, -1,       "controlPlane", "setBitmap",                       NULL,     3,     3, { WORKAROUND_FAKE,   0 } }, // floppy version, when entering the game menu
 	{ GID_QFG4,           -1, 64917, -1,              "Plane", "setBitmap",                       NULL,     3,     3, { WORKAROUND_FAKE,   0 } }, // floppy version, happens sometimes in fight scenes
 	{ GID_QFG4,          380,    80, -1,           "myButton", "select",                          NULL,     2,     2, { WORKAROUND_FAKE,   1 } }, // CD version, when clicking on a puzzle piece for the keyhole scrambled picture puzzle
-	{ GID_QFG4,          520, 64950,  0,             "fLake2", "handleEvent",                     NULL,     0,     0, { WORKAROUND_FAKE,   0 } }, // CD version, at the lake, when meeting the Rusalka and attempting to leave
-	{ GID_QFG4,          780, 64964,  0,              "DPath", "init",                            NULL,     1,     1, { WORKAROUND_FAKE,   0 } }, // CD version, walking down to the monastery basement
-	{ GID_QFG4,          800, 64950,  0,               "View", "handleEvent",                     NULL,     0,     0, { WORKAROUND_FAKE,   0 } }, // CD version, in the room with the spider pillar, when climbing on the pillar
+	{ GID_QFG4,           -1, 64950, -1,            "Feature", "handleEvent",                     NULL,     0,     0, { WORKAROUND_FAKE,   0 } }, // CD version, at the lake, when meeting the Rusalka and attempting to leave, and after Ad Avis catches you, and finishes his monologue
+	{ GID_QFG4,           -1, 64964,  0,              "DPath", "init",                            NULL,     1,     1, { WORKAROUND_FAKE,   0 } }, // CD version, walking down to the monastery basement or entering the Gypsy Camp
+	{ GID_QFG4,           -1, 64950,  0,               "View", "handleEvent",                     NULL,     0,     0, { WORKAROUND_FAKE,   0 } }, // CD version, in the room with the spider pillar, when climbing on the pillar, or when using the Glide spell in the swamp
 	{ GID_RAMA,           -1, 64950, -1,                 NULL, "handleEvent",                     NULL,     0,     0, { WORKAROUND_FAKE,   0 } }, // When clicking on the main game interface, or the main menu buttons, or mousing over things in the main game window
 	{ GID_RAMA,           -1, 64923, -1,              "Inset", "init",                            NULL,     0,     0, { WORKAROUND_FAKE,   0 } }, // When receiving a message on the pocket computer at the start of the game
 	{ GID_RAMA,          6107, 6107, -1,                 NULL, "doVerb",         sig_uninitread_rama_2,     0,     0, { WORKAROUND_FAKE,   0 } }, // When pressing keys on the final console in the Avian Lair
@@ -629,7 +712,7 @@ const SciWorkaroundEntry kDoSoundFade_workarounds[] = {
 	{ GID_KQ5,           213,   989,  0,       "globalSound3", "fade",                      NULL,     0,     0, { WORKAROUND_STILLCALL, 0 } }, // english floppy: when bandits leave the secret temple, parameter 4 is an object - bug #5078
 	{ GID_KQ6,           105,   989,  0,        "globalSound", "fade",                      NULL,     0,     0, { WORKAROUND_STILLCALL, 0 } }, // floppy: during intro, parameter 4 is an object
 	{ GID_KQ6,           460,   989,  0,       "globalSound2", "fade",                      NULL,     0,     0, { WORKAROUND_STILLCALL, 0 } }, // after pulling the black widow's web on the isle of wonder, parameter 4 is an object - bug #4954
-	{ GID_QFG4,           -1, 64989,  0,           "longSong", "fade",                      NULL,     0,     0, { WORKAROUND_STILLCALL, 0 } }, // CD version: many places, parameter 4 is an object (longSong)
+	{ GID_QFG4,           -1, 64989,  1,          "GlorySong", "fade",                      NULL,     0,     0, { WORKAROUND_STILLCALL, 0 } }, // CD version: many places, parameter 4 is an object (the sound object itself)
 	{ GID_SQ5,           800,   989,  0,          "sq5Music1", "fade",                      NULL,     0,     0, { WORKAROUND_STILLCALL, 0 } }, // when cutting the wrong part of Goliath with the laser - bug #6341
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
@@ -731,19 +814,34 @@ static const uint16 sig_kGraphRedrawBox_sq4_1[] = {
 	SIG_END
 };
 
+//                Game: Space Quest 4
+//      Calling method: shootEgoScript::changeState
+//   Subroutine offset: English/German/French/Russian PC floppy, Japanese PC-9801: 0x0f8c, English PC CD: 0x0c4d (script 703)
+// Applies to at least: English/German/French/Russian PC floppy, English PC CD, Japanese PC-9801
+static const uint16 sig_kGraphRedrawBox_sq4_2[] = {
+	0x3f, 0x03,                      // link 03
+	0x39, SIG_ADDTOOFFSET(+1),       // pushi [ number ]
+	0x78,                            // push1
+	0x39, 0x69,                      // pushi 69h
+	SIG_END
+};
+
 //    gameID,           room,script,lvl,          object-name, method-name,        local-call-signature, index-range,   workaround
 const SciWorkaroundEntry kGraphRedrawBox_workarounds[] = {
 	{ GID_SQ4,           405,   405,  0,       "swimAfterEgo", "changeState",                      NULL,     0,     0, { WORKAROUND_STILLCALL, 0 } }, // skateOrama when "swimming" in the air - accidental additional parameter specified
 	{ GID_SQ4,           405,   405,  0,                   "", "changeState",                      NULL,     0,     0, { WORKAROUND_STILLCALL, 0 } }, // skateOrama when "swimming" in the air... Russian version - bug #5573
-	{ GID_SQ4,           406,   406,  0,        "egoFollowed", "changeState",                      NULL,     0,     0, { WORKAROUND_STILLCALL, 0 } }, // FLOPPY: when getting shot by the police - accidental additional parameter specified
+	{ GID_SQ4,           406,   406,  0,        "egoFollowed", "changeState",                      NULL,     0,     0, { WORKAROUND_STILLCALL, 0 } }, // skateOrama when getting shot by the police - accidental additional parameter specified
 	{ GID_SQ4,            -1,   406,  0,       "swimAndShoot", "changeState",                      NULL,     0,     0, { WORKAROUND_STILLCALL, 0 } }, // skateOrama when "swimming" in the air - accidental additional parameter specified
 	{ GID_SQ4,            -1,   406,  0,                   "", "changeState",                      NULL,     0,     0, { WORKAROUND_STILLCALL, 0 } }, // skateOrama when "swimming" in the air... Russian version - bug #5573 (is for both egoFollowed and swimAndShoot)
 	{ GID_SQ4,           410,   410,  0,       "swimAfterEgo", "changeState",                      NULL,     0,     0, { WORKAROUND_STILLCALL, 0 } }, // skateOrama when "swimming" in the air - accidental additional parameter specified
 	{ GID_SQ4,           410,   410,  0,                   "", "changeState",                      NULL,     0,     0, { WORKAROUND_STILLCALL, 0 } }, // skateOrama when "swimming" in the air... Russian version - bug #5573
+	{ GID_SQ4,           411,   411,  0,        "egoFollowed", "changeState",                      NULL,     0,     0, { WORKAROUND_STILLCALL, 0 } }, // skateOrama when getting shot by the police - accidental additional parameter specified
 	{ GID_SQ4,           411,   411,  0,       "swimAndShoot", "changeState",                      NULL,     0,     0, { WORKAROUND_STILLCALL, 0 } }, // skateOrama when "swimming" in the air - accidental additional parameter specified
 	{ GID_SQ4,           411,   411,  0,                   "", "changeState",                      NULL,     0,     0, { WORKAROUND_STILLCALL, 0 } }, // skateOrama when "swimming" in the air... Russian version - bug #5573
 	{ GID_SQ4,           150,   150,  0,        "laserScript", "changeState", sig_kGraphRedrawBox_sq4_1,     0,     0, { WORKAROUND_STILLCALL, 0 } }, // when visiting the pedestral where Roger Jr. is trapped, before trashing the brain icon in the programming chapter, accidental additional parameter specified - bug #5479, German - bug #5527
 	{ GID_SQ4,           150,   150,  0,                   "", "changeState", sig_kGraphRedrawBox_sq4_1,     0,     0, { WORKAROUND_STILLCALL, 0 } }, // same as above, for the Russian version - bug #5573
+	{ GID_SQ4,            -1,   703,  0,     "shootEgoScript", "changeState", sig_kGraphRedrawBox_sq4_2,     0,     0, { WORKAROUND_STILLCALL, 0 } }, // estros when getting shot by the police - accidental additional parameter specified
+	{ GID_SQ4,            -1,   703,  0,                   "", "changeState", sig_kGraphRedrawBox_sq4_2,     0,     0, { WORKAROUND_STILLCALL, 0 } }, // same as above, for the Russian version
 	{ GID_SQ4,            -1,   704,  0,           "shootEgo", "changeState",                      NULL,     0,     0, { WORKAROUND_STILLCALL, 0 } }, // When shot by Droid in Super Computer Maze (Rooms 500, 505, 510...) - accidental additional parameter specified
 	{ GID_KQ5,            -1,   981,  0,           "myWindow",     "dispose",                      NULL,     0,     0, { WORKAROUND_STILLCALL, 0 } }, // Happens in the floppy version, when closing any dialog box, accidental additional parameter specified - bug #5031
 	{ GID_KQ5,            -1,   995,  0,               "invW",        "doit",                      NULL,     0,     0, { WORKAROUND_STILLCALL, 0 } }, // Happens in the floppy version, when closing the inventory window, accidental additional parameter specified
@@ -773,6 +871,13 @@ const SciWorkaroundEntry kIsObject_workarounds[] = {
 const SciWorkaroundEntry kListAt_workarounds[] = {
 	{ GID_HOYLE5,        100, 64999,  0,           "theHands", "at",                           NULL,     0,     0, { WORKAROUND_FAKE, 0 } }, // After the first hand is dealt in Crazy Eights game in demo, an object is passed instead of a number
 	{ GID_LIGHTHOUSE,     24, 64999,  0,           "LightInv", "at",                           NULL,     0,     0, { WORKAROUND_FAKE, 0 } }, // When taking the car keys from the table at the start of the game
+	SCI_WORKAROUNDENTRY_TERMINATOR
+};
+
+//    gameID,           room,script,lvl,          object-name, method-name, local-call-signature, index-range,   workaround
+const SciWorkaroundEntry kLock_workarounds[] = {
+	{ GID_PQSWAT,       6400,  6400,  0,      "rookerTrains3", "changeState",                  NULL,     0,     0, { WORKAROUND_STILLCALL,    0 } }, // After completing Small Arms Training, at the end of the Tactics Training
+	{ GID_PQSWAT,       6400,  6400,  0,      "rookerTrains5", "changeState",                  NULL,     0,     0, { WORKAROUND_STILLCALL,    0 } }, // After completing Small Arms Training, at the end of the Tactics Training
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
@@ -1030,6 +1135,211 @@ SciWorkaroundSolution trackOriginAndFindWorkaround(int index, const SciWorkaroun
 	noneFound.type = WORKAROUND_NONE;
 	noneFound.value = 0;
 	return noneFound;
+}
+
+// Workarounds for known broken messages
+//
+// The most common message bug is a script passing the wrong tuple or a message
+//  having the wrong tuple. This results in a "missing message" message. These
+//  requests just need to be remapped to the right message. In some cases the
+//  message text is incorrect, or missing, in which case it can be extracted
+//  from another record or faked with a hard-coded response.
+//
+// Workarounds can be optionally scoped to media (floppy vs cd), language, and
+//  room number. If a message is remapped, this will also remap any audio36 and
+//  sync36 resources with the same tuple, unless those resources have their own
+//  remapping workarounds due to their tuples being out of sync with their
+//  already broken messages, which we've seen twice.
+//
+// The one kind of broken message that we don't handle yet is when the audio is
+//  completely missing from the game. QFG4 has most of those. In speech-only
+//  mode this means no audio or text and in dual mode the text disappears
+//  quickly as most games use audio length for the message delay. That logic is
+//  in each game's Messager/Narrator/Talker scripts.
+static const SciMessageWorkaroundEntry messageWorkarounds[] = {
+	// game              media             language       room   mod    n    v    c   s    workaround-type          mod    n    v    c   s tlk  idx  len  text
+	// FPFP CD has several message sequences where audio and text were left out of sync - bug #10964
+	//  Some of the texts just say "Dummy Msg" and the real values are concatenated in the first record.
+	// Lever Brothers' intro
+	{ GID_FREDDYPHARKAS, SCI_MEDIA_CD,     K_LANG_ENGLISH,  -1,  220,  24,   0,   0,  1, { MSG_WORKAROUND_EXTRACT,  220,  24,   0,   0,  1, 99,   0,  25, NULL } },
+	{ GID_FREDDYPHARKAS, SCI_MEDIA_CD,     K_LANG_ENGLISH,  -1,  220,  24,   0,   0,  2, { MSG_WORKAROUND_EXTRACT,  220,  24,   0,   0,  1, 99,  26,  20, NULL } },
+	{ GID_FREDDYPHARKAS, SCI_MEDIA_CD,     K_LANG_ENGLISH,  -1,  220,  24,   0,   0,  3, { MSG_WORKAROUND_EXTRACT,  220,  24,   0,   0,  1, 99,  47,  58, NULL } },
+	{ GID_FREDDYPHARKAS, SCI_MEDIA_CD,     K_LANG_ENGLISH,  -1,  220,  24,   0,   0,  4, { MSG_WORKAROUND_EXTRACT,  220,  24,   0,   0,  1, 99, 106,  34, NULL } },
+	{ GID_FREDDYPHARKAS, SCI_MEDIA_CD,     K_LANG_ENGLISH,  -1,  220,  24,   0,   0,  5, { MSG_WORKAROUND_EXTRACT,  220,  24,   0,   0,  1, 99, 141,  27, NULL } },
+	{ GID_FREDDYPHARKAS, SCI_MEDIA_CD,     K_LANG_ENGLISH,  -1,  220,  24,   0,   0,  6, { MSG_WORKAROUND_EXTRACT,  220,  24,   0,   0,  1, 99, 169,  29, NULL } },
+	{ GID_FREDDYPHARKAS, SCI_MEDIA_CD,     K_LANG_ENGLISH,  -1,  220,  24,   0,   0,  7, { MSG_WORKAROUND_EXTRACT,  220,  24,   0,   0,  1, 99, 199,  52, NULL } },
+	{ GID_FREDDYPHARKAS, SCI_MEDIA_CD,     K_LANG_ENGLISH,  -1,  220,  24,   0,   0,  8, { MSG_WORKAROUND_EXTRACT,  220,  24,   0,   0,  1, 99, 252,  37, NULL } },
+	// Kenny's intro
+	{ GID_FREDDYPHARKAS, SCI_MEDIA_CD,     K_LANG_ENGLISH,  -1,  220,  30,   0,   0,  3, { MSG_WORKAROUND_EXTRACT,  220,  30,   0,   0,  3, 99,   0,  14, NULL } },
+	{ GID_FREDDYPHARKAS, SCI_MEDIA_CD,     K_LANG_ENGLISH,  -1,  220,  30,   0,   0,  4, { MSG_WORKAROUND_EXTRACT,  220,  30,   0,   0,  3, 99,  15, 245, NULL } },
+	{ GID_FREDDYPHARKAS, SCI_MEDIA_CD,     K_LANG_ENGLISH,  -1,  220,  30,   0,   0,  5, { MSG_WORKAROUND_EXTRACT,  220,  30,   0,   0,  4, 99,   0,   0, NULL } },
+	// Helen swatting flies
+	{ GID_FREDDYPHARKAS, SCI_MEDIA_CD,     K_LANG_ENGLISH,  -1,  660,  35,   0,   0,  1, { MSG_WORKAROUND_EXTRACT,  660,  35,   0,   0,  1, 53,   0,  42, NULL } },
+	{ GID_FREDDYPHARKAS, SCI_MEDIA_CD,     K_LANG_ENGLISH,  -1,  660,  35,   0,   0,  2, { MSG_WORKAROUND_EXTRACT,  660,  35,   0,   0,  1, 53,  43,  93, NULL } },
+	{ GID_FREDDYPHARKAS, SCI_MEDIA_CD,     K_LANG_ENGLISH,  -1,  660,  35,   0,   0,  3, { MSG_WORKAROUND_EXTRACT,  660,  35,   0,   0,  1, 53, 137,  72, NULL } },
+	{ GID_FREDDYPHARKAS, SCI_MEDIA_CD,     K_LANG_ENGLISH,  -1,  660,  35,   0,   0,  4, { MSG_WORKAROUND_EXTRACT,  660,  35,   0,   0,  2, 53,   0,   0, NULL } },
+	{ GID_FREDDYPHARKAS, SCI_MEDIA_CD,     K_LANG_ENGLISH,  -1,  660,  35,   0,   0,  5, { MSG_WORKAROUND_EXTRACT,  660,  35,   0,   0,  1, 53, 210,  57, NULL } },
+	{ GID_FREDDYPHARKAS, SCI_MEDIA_CD,     K_LANG_ENGLISH,  -1,  660,  35,   0,   0,  6, { MSG_WORKAROUND_EXTRACT,  660,  35,   0,   0,  3, 12,   0,   0, NULL } },
+	// Wrong talker when clicking guns on Srini in room 300
+	{ GID_FREDDYPHARKAS, SCI_MEDIA_FLOPPY, K_LANG_NONE,     -1,  300,  17,  47,   0,  1, { MSG_WORKAROUND_EXTRACT,  300,  17,  47,   0,  1, 40,   0,   0, NULL } },
+	// Missing message when clicking full bottles of water on spigot in room 320
+	{ GID_FREDDYPHARKAS, SCI_MEDIA_FLOPPY, K_LANG_NONE,     -1,  320,  16,  34,   7,  1, { MSG_WORKAROUND_REMAP,    320,  37,  34,   7,  1,  0,   0,   0, NULL } },
+	// Missing message when clicking flashlight and other items on Magentia in room 290, floppy 1.0 - bug #10782
+	{ GID_GK1,           SCI_MEDIA_FLOPPY, K_LANG_NONE,     -1,  290,   8,   0,  35,  1, { MSG_WORKAROUND_REMAP,    290,   8,   0,   0,  1,  0,   0,   0, NULL } },
+	// Missing message when clicking photocopy of the veve on the artist after giving sketch and original veve in room 410 - bug #10818
+	{ GID_GK1,           SCI_MEDIA_ALL,    K_LANG_NONE,     -1,  410,   3,  48,  31,  1, { MSG_WORKAROUND_REMAP,    410,   3,  24,  31,  1,  0,   0,   0, NULL } },
+	// Missing message when clicking operate on Loreli's right chair in room 420, floppy 1.0 - bug #10820
+	{ GID_GK1,           SCI_MEDIA_FLOPPY, K_LANG_NONE,     -1,  420,   4,   8,   3,  1, { MSG_WORKAROUND_REMAP,    420,   4,   8,   7,  1,  0,   0,   0, NULL } },
+	// Clicking money on Loreli when sitting or dancing in room 420 - bug #10819
+	//  The script transposes sitting vs dancing responses, passes an invalid cond for one of them, and the
+	//  audio36 for the the other has the wrong tuple, which we fix in the audio36 workarounds.
+	{ GID_GK1,           SCI_MEDIA_ALL,    K_LANG_NONE,     -1,  420,   2,  32,   3,  1, { MSG_WORKAROUND_REMAP,    420,   2,  32,   0,  1,  0,   0,   0, NULL } },
+	{ GID_GK1,           SCI_MEDIA_ALL,    K_LANG_NONE,     -1,  420,   2,  32,   0,  1, { MSG_WORKAROUND_REMAP,    420,   2,  32,   2,  1,  0,   0,   0, NULL } },
+	// Asking Yvette about Tut in act 2 party in floppy version - bug #10723
+	//  The last two sequences in this five part message reveal a murder that hasn't occurred yet.
+	//  We skip these as to not spoil the plot, but only in the act 2 rooms, as the message is used
+	//  in later acts where all five parts are appropriate. Sierra fixed this in the CD version by
+	//  creating a new three-sequence message for act 2 to accomplish the same thing.
+	{ GID_LAURABOW2,     SCI_MEDIA_FLOPPY, K_LANG_NONE,    350, 1885,   1,   6,  16,  4, { MSG_WORKAROUND_REMAP,   1885,   1,   6,  16,  6,  0,   0,   0, NULL } },
+	{ GID_LAURABOW2,     SCI_MEDIA_FLOPPY, K_LANG_NONE,    360, 1885,   1,   6,  16,  4, { MSG_WORKAROUND_REMAP,   1885,   1,   6,  16,  6,  0,   0,   0, NULL } },
+	{ GID_LAURABOW2,     SCI_MEDIA_FLOPPY, K_LANG_NONE,    370, 1885,   1,   6,  16,  4, { MSG_WORKAROUND_REMAP,   1885,   1,   6,  16,  6,  0,   0,   0, NULL } },
+	// Missing message when clicking carbon paper on desk lamp in room 550, floppy 1.0 - bug #10706
+	{ GID_LAURABOW2,     SCI_MEDIA_FLOPPY, K_LANG_NONE,     -1,  550,   5,  39,   6,  1, { MSG_WORKAROUND_REMAP,    550,  45,  39,   6,  1,  0,   0,   0, NULL } },
+	// Using the hand icon on Keith in the Blue Room (missing message) - bug #6253
+	{ GID_PQ1,           SCI_MEDIA_ALL,    K_LANG_NONE,     -1,   38,  10,   4,   8,  1, { MSG_WORKAROUND_REMAP,     38,  10,   4,   9,  1,  0,   0,   0, NULL } },
+	// Using the eye icon on Keith in the Blue Room (no message and wrong talker) - bug #6253
+	{ GID_PQ1,           SCI_MEDIA_ALL,    K_LANG_NONE,     -1,   38,  10,   1,   0,  1, { MSG_WORKAROUND_EXTRACT,   38,  10,   1,  13,  1, 99,   0,   0, NULL } },
+	// Talking to Kaspar the shopkeeper - bug #6250
+	{ GID_QFG1VGA,       SCI_MEDIA_ALL,    K_LANG_NONE,     -1,  322,  14,   1,  19,  1, { MSG_WORKAROUND_REMAP,    322,  14,   2,  19,  1,  0,   0,   0, NULL } },
+	// Talking with the Leshy and telling him about "bush in goo" - bug #10137
+	{ GID_QFG4,          SCI_MEDIA_ALL,    K_LANG_NONE,     -1,  579,   0,   0,   0,  1, { MSG_WORKAROUND_REMAP,    579,   0,   1,   0,  1,  0,   0,   0, NULL } },
+	// Examining the statue inventory item from the monastery - bug #10770
+	// The description says "squid-like monster", yet the icon is
+	// clearly an insect. It turned Chief into "an enormous beetle". We
+	// change the phrase to "monstrous insect". This message is text-only.
+	// Note: The German string contains accented characters.
+	//  0x84 "a with diaeresis"
+	//  0x94 "o with diaeresis"
+	{ GID_QFG4,          SCI_MEDIA_ALL,    K_LANG_ENGLISH,  -1,   16,  49,   1,   0,  2, { MSG_WORKAROUND_FAKE,      16,  49,   1,   0,  2, 99,   0,   0, "Carefully wrapped in a shopping bag is the grotesque sculpture of a horrible, monstrous insect." } },
+	{ GID_QFG4,          SCI_MEDIA_ALL,    K_LANG_GERMAN,   -1,   16,  49,   1,   0,  2, { MSG_WORKAROUND_FAKE,      16,  49,   1,   0,  2, 99,   0,   0, "Die groteske Skulptur eines schrecklichen, monstr\x94sen insekts ist sorgf\x84ltig in die Einkaufstasche eingewickelt." } },
+	// The CD edition mangled the Rusalka flowers dialogue. - bug #10849
+	// In the floppy edition, there are 3 lines, the first from
+	// the narrator, then two from Rusalka. The CD edition omits
+	// narration and only has the 3rd text, with the 2nd audio! The
+	// 3rd audio is orphaned but available.
+	// We only restore Rusalka's lines, providing the correct text
+	// for seq:1 to match the audio. We respond to seq:2 requests
+	// with Rusalka's last text. The orphaned audio (seq:3) has its
+	// tuple remapped to seq:2 in an audio workaround below.
+	{ GID_QFG4,          SCI_MEDIA_CD,     K_LANG_ENGLISH,  -1,  520,   2,  59,   0,  1, { MSG_WORKAROUND_FAKE,     520,   2,  59,   0,  1, 28,   0,   0, "Thank you for the beautiful flowers.  No one has been so nice to me since I can remember." } },
+	{ GID_QFG4,          SCI_MEDIA_CD,     K_LANG_ENGLISH,  -1,  520,   2,  59,   0,  2, { MSG_WORKAROUND_EXTRACT,  520,   2,  59,   0,  1, 28,   0,   0, NULL } },
+	// This fixes the error message shown when speech and subtitles are
+	// enabled simultaneously in SQ4 - the (very) long dialog when Roger
+	// is talking with the aliens is missing - bug #6067.
+	// The missing text is just too big to fit in one speech bubble, and
+	// if it's added here manually and drawn on screen, it's painted over
+	// the entrance in the back where the Sequel Police enters, so it
+	// looks very ugly. Perhaps this is why this particular text is missing,
+	// as the text shown in this screen is very short (one-liners).
+	// Just output an empty string here instead of showing an error.
+	{ GID_SQ4,           SCI_MEDIA_CD,     K_LANG_NONE,     -1,   16,   7,   0,   3,  1, { MSG_WORKAROUND_FAKE,      16,   7,   0,   3,  1,  7,   0,   0, "" } },
+	// Missing message when clicking talk in room 520 - bug #10915
+	{ GID_SQ4,           SCI_MEDIA_CD,     K_LANG_NONE,     -1,  510,  99,   0,   3,  1, { MSG_WORKAROUND_REMAP,    500,  99,   0,   3,  1,  0,   0,   0, NULL } },
+	SCI_MESSAGEWORKAROUNDENTRY_TERMINATOR
+};
+
+// Audio36 workarounds are for when an audio36 resource's tuple is out of sync
+//  with its corresponding message, in which case it can be remapped. Any sync36
+//  resource with the same tuple will also be remapped. Remapping is the only
+//  workaround type available to this table. If a tuple is remapped both here
+//  and in message workarounds, this remapping is used.
+static const SciMessageWorkaroundEntry audio36Workarounds[] = {
+	// game              media             language       room   mod    n    v    c   s    workaround-type          mod    n    v    c   s tlk  idx  len  text
+	// Clicking money on Lorelei when dancing - bug #10819 (see message workarounds above)
+	{ GID_GK1,           SCI_MEDIA_CD,     K_LANG_NONE,     -1,  420,   2,  32,   0,  1, { MSG_WORKAROUND_REMAP,    420,   2,  32,   3,  1,  0,   0,   0, NULL } },
+	// Clicking Look on floor grate in room 510 - bug #10848
+	{ GID_QFG4,          SCI_MEDIA_CD,     K_LANG_NONE,     -1,  510,  23,   1,   0,  1, { MSG_WORKAROUND_REMAP,    510, 199,   1,   0,  1,  0,   0,   0, NULL } },
+	// Clicking flowers on Rusalka - bug #10849 (see message workarounds above)
+	{ GID_QFG4,          SCI_MEDIA_CD,     K_LANG_NONE,     -1,  520,   2,  59,   0,  2, { MSG_WORKAROUND_REMAP,    520,   2,  59,   0,  3,  0,   0,   0, NULL } },
+	// Casting glide spell in room 593 when standing on water
+	{ GID_QFG4,          SCI_MEDIA_CD,     K_LANG_NONE,     -1,  593,   5,   6,   7,  1, { MSG_WORKAROUND_REMAP,    570,   2,   6,  14,  1,  0,   0,   0, NULL } },
+	SCI_MESSAGEWORKAROUNDENTRY_TERMINATOR
+};
+
+// Sync36 workarounds are for when a sync36 resource's tuple is out of sync with
+//  its corresponding message, in which case it can be remapped. This hasn't
+//  been encountered yet, but remapping solves a similar LB2 sync bug.
+static const SciMessageWorkaroundEntry sync36Workarounds[] = {
+	// game              media             language       room   mod    n    v    c   s    workaround-type          mod    n    v    c   s tlk  idx  len  text
+	// Asking yvette about tut in act 2 is missing a sync resource but a duplicate message has a sync resource - bug #9956
+	{ GID_LAURABOW2,     SCI_MEDIA_CD,     K_LANG_NONE,     -1, 1885,   1,   6,  30,  2, { MSG_WORKAROUND_REMAP,   1885,   1,   6,  10,  2,  0,   0,   0, NULL } },
+	SCI_MESSAGEWORKAROUNDENTRY_TERMINATOR
+};
+
+static SciMessageWorkaroundSolution findMessageWorkaround(int module, byte noun, byte verb, byte cond, byte seq, const SciMessageWorkaroundEntry *workaroundList) {
+	const SciMessageWorkaroundEntry *workaround = workaroundList;
+	while (workaround->solution.type != MSG_WORKAROUND_NONE) {
+		if (workaround->gameId == g_sci->getGameId() &&
+			(workaround->media == SCI_MEDIA_ALL ||
+			(workaround->media == SCI_MEDIA_FLOPPY && !g_sci->isCD()) ||
+			(workaround->media == SCI_MEDIA_CD && g_sci->isCD())) &&
+			(workaround->language == K_LANG_NONE ||
+			workaround->language == g_sci->getSciLanguage()) &&
+			(workaround->roomNumber == -1 ||
+			workaround->roomNumber == g_sci->getEngineState()->currentRoomNumber()) &&
+			workaround->module == module &&
+			workaround->noun == noun &&
+			workaround->verb == verb &&
+			workaround->cond == cond &&
+			workaround->seq == seq) {
+			break;
+		}
+		workaround++;
+	}
+	return workaround->solution;
+}
+
+SciMessageWorkaroundSolution findMessageWorkaround(int module, byte noun, byte verb, byte cond, byte seq) {
+	return findMessageWorkaround(module, noun, verb, cond, seq, messageWorkarounds);
+}
+
+ResourceId remapAudio36ResourceId(const ResourceId &resourceId) {
+	int module = resourceId.getNumber();
+	byte noun = resourceId.getTuple() >> 24;
+	byte verb = (resourceId.getTuple() >> 16) & 0xff;
+	byte cond = (resourceId.getTuple() >> 8) & 0xff;
+	byte seq = resourceId.getTuple() & 0xff;
+
+	SciMessageWorkaroundSolution workaround = findMessageWorkaround(module, noun, verb, cond, seq, audio36Workarounds);
+	if (workaround.type != MSG_WORKAROUND_REMAP) {
+		workaround = findMessageWorkaround(module, noun, verb, cond, seq, messageWorkarounds);
+	}
+
+	if (workaround.type == MSG_WORKAROUND_REMAP) {
+		return ResourceId(resourceId.getType(), workaround.module, workaround.noun, workaround.verb, workaround.cond, workaround.seq);
+	}
+	return resourceId;
+}
+
+ResourceId remapSync36ResourceId(const ResourceId &resourceId) {
+	int module = resourceId.getNumber();
+	byte noun = resourceId.getTuple() >> 24;
+	byte verb = (resourceId.getTuple() >> 16) & 0xff;
+	byte cond = (resourceId.getTuple() >> 8) & 0xff;
+	byte seq = resourceId.getTuple() & 0xff;
+
+	SciMessageWorkaroundSolution workaround = findMessageWorkaround(module, noun, verb, cond, seq, sync36Workarounds);
+	if (workaround.type != MSG_WORKAROUND_REMAP) {
+		workaround = findMessageWorkaround(module, noun, verb, cond, seq, audio36Workarounds);
+	}
+	if (workaround.type != MSG_WORKAROUND_REMAP) {
+		workaround = findMessageWorkaround(module, noun, verb, cond, seq, messageWorkarounds);
+	}
+
+	if (workaround.type == MSG_WORKAROUND_REMAP) {
+		return ResourceId(resourceId.getType(), workaround.module, workaround.noun, workaround.verb, workaround.cond, workaround.seq);
+	}
+	return resourceId;
 }
 
 } // End of namespace Sci

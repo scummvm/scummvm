@@ -40,6 +40,15 @@ class StringTestSuite : public CxxTest::TestSuite
 		TS_ASSERT_EQUALS(str2.lastChar(), 'r');
 	}
 
+	void test_firstChar() {
+		Common::String str;
+		TS_ASSERT_EQUALS(str.firstChar(), '\0');
+		str = "first_test";
+		TS_ASSERT_EQUALS(str.firstChar(), 'f');
+		Common::String str2("bar");
+		TS_ASSERT_EQUALS(str2.firstChar(), 'b');
+	}
+
 	void test_concat1() {
 		Common::String str("foo");
 		Common::String str2("bar");
@@ -335,6 +344,10 @@ class StringTestSuite : public CxxTest::TestSuite
 		TS_ASSERT(Common::matchString("monkey.s01",  "monkey.s##"));
 		TS_ASSERT(!Common::matchString("monkey.s01", "monkey.###"));
 
+		TS_ASSERT(Common::matchString("monkey.s0#", "monkey.s0\\#"));
+		TS_ASSERT(!Common::matchString("monkey.s0#", "monkey.s0#"));
+		TS_ASSERT(!Common::matchString("monkey.s01", "monkey.s0\\#"));
+
 		TS_ASSERT(!Common::String("").matchString("*_"));
 		TS_ASSERT(Common::String("a").matchString("a***"));
 	}
@@ -537,5 +550,21 @@ class StringTestSuite : public CxxTest::TestSuite
 		s3.replace(0, 32, "");
 		TS_ASSERT_EQUALS(s3, "TestTestTest");
 		TS_ASSERT_EQUALS(s4, "TestTestTestTestTestTestTestTestTestTestTest");
+	}
+
+	void test_setChar() {
+		Common::String testString("123456");
+		testString.setChar('2', 0);
+		TS_ASSERT(testString == "223456");
+		testString.setChar('0', 5);
+		TS_ASSERT(testString == "223450");
+	}
+
+	void test_insertChar() {
+		Common::String testString("123456");
+		testString.insertChar('2', 0);
+		TS_ASSERT(testString == "2123456");
+		testString.insertChar('0', 5);
+		TS_ASSERT(testString == "21234056");
 	}
 };

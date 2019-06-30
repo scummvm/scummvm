@@ -733,9 +733,9 @@ Spell *MenuMan::getSpellFromSymbols(byte *symbols) {
 	if (*(symbols + 1)) {
 		int16 bitShiftCount = 24;
 		int32 curSymbols = 0;
-		do
+		do {
 			curSymbols |= (long)*symbols++ << bitShiftCount;
-		while (*symbols && ((bitShiftCount -= 8) >= 0));
+		} while (*symbols && ((bitShiftCount -= 8) >= 0));
 		Spell *curSpell = SpellsArray;
 		int16 spellIndex = 25;
 		while (spellIndex--) {
@@ -1136,6 +1136,7 @@ bool MenuMan::isActionPerformed(uint16 champIndex, int16 actionIndex) {
 			_vm->_sound->requestPlay(kDMSoundIndexWoodenThudAttackTrolinAntmanStoneGolem, dungeon._partyMapX, dungeon._partyMapY, kDMSoundModePlayOneTickLater);
 			break;
 		}
+		// fall through
 	case kDMActionDisrupt:
 	case kDMActionJab:
 	case kDMActionParry:

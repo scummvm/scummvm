@@ -31,6 +31,8 @@
 
 #include <bautils.h>
 
+#define JOY_DEADZONE 3200
+
 SymbianSdlEventSource::zoneDesc SymbianSdlEventSource::_zones[TOTAL_ZONES] = {
         { 0, 0, 320, 145 },
         { 0, 145, 150, 55 },
@@ -122,7 +124,7 @@ bool SymbianSdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 				if (ev.type == SDL_KEYDOWN) {
 					for (int i = 0; i < TOTAL_ZONES; i++)
 						if ( (_km.x / MULTIPLIER) >= _zones[i].x && (_km.y / MULTIPLIER) >= _zones[i].y &&
-							(_km.x / MULTIPLIER) <= _zones[i].x + _zones[i].width && (_km.y / MULTIPLIER <= _zones[i].y + _zones[i].height
+							(_km.x / MULTIPLIER) <= _zones[i].x + _zones[i].width && (_km.y / MULTIPLIER <= _zones[i].y + _zones[i].height)
 							) {
 							_mouseXZone[i] = _km.x / MULTIPLIER;
 							_mouseYZone[i] = _km.y / MULTIPLIER;
@@ -167,8 +169,7 @@ bool SymbianSdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 					ev.key.keysym.mod = (SDLMod) key.flags();
 
 					// Translate from SDL keymod event to Scummvm Key Mod Common::Event.
-					// This codes is also present in GP32 backend and in SDL backend as a static function
-					// Perhaps it should be shared.
+					// TODO: Make use of SdlEventSource::SDLModToOSystemKeyFlags?
 					if (key.flags() != 0) {
 						event.kbd.flags = 0;
 
@@ -195,6 +196,40 @@ bool SymbianSdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 				}
 			}
 		}
+	}
+
+	return false;
+}
+
+bool SymbianSdlEventSource::handleAxisToMouseMotion(int16 xAxis, int16 yAxis) {
+	// Symbian wants dialog joystick i.e cursor for movement/selection
+
+	if (xAxis > JOY_DEADZONE) {
+		xAxis -= JOY_DEADZONE;
+	} else if (xAxis < -JOY_DEADZONE) {
+		xAxis += JOY_DEADZONE;
+	} else
+		xAxis = 0;
+	if (yAxis > JOY_DEADZONE) {
+		yAxis -= JOY_DEADZONE;
+	} else if (yAxis < -JOY_DEADZONE) {
+		yAxis += JOY_DEADZONE;
+	} else
+		yAxis = 0;
+
+	if (xAxis != 0) {
+		_km.x_vel = (xAxis > 0) ? 1 * MULTIPLIER:-1 * MULTIPLIER;
+		_km.x_down_count = 1;
+	} else {
+		_km.x_vel = 0;
+		_km.x_down_count = 0;
+	}
+	if (yAxis != 0) {
+		_km.y_vel = (yAxis > 0) ? 1 * MULTIPLIER: -1 * MULTIPLIER;
+		_km.y_down_count = 1;
+	} else {
+		_km.y_vel = 0;
+		_km.y_down_count = 0;
 	}
 
 	return false;

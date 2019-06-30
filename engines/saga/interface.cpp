@@ -2804,8 +2804,8 @@ void Interface::mapPanelDrawCrossHair() {
 
 	if (screen.contains(mapPosition)) {
 		_vm->_sprite->draw(_vm->_sprite->_mainSprites,
-						   _mapPanelCrossHairState? RID_ITE_SPR_CROSSHAIR : RID_ITE_SPR_CROSSHAIR + 1,
-						   mapPosition, 256);
+		                   _mapPanelCrossHairState ? RID_ITE_SPR_CROSSHAIR : RID_ITE_SPR_CROSSHAIR + 1,
+		                   mapPosition, 256);
 	}
 }
 

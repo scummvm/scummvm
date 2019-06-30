@@ -22,13 +22,13 @@
 
 #include "gui/downloaddialog.h"
 #include "backends/cloud/cloudmanager.h"
-#include "backends/networking/connection/islimited.h"
 #include "common/config-manager.h"
 #include "common/translation.h"
 #include "engines/metaengine.h"
 #include "gui/browser.h"
 #include "gui/chooser.h"
 #include "gui/editgamedialog.h"
+#include "gui/gui-manager.h"
 #include "gui/launcher.h"
 #include "gui/message.h"
 #include "gui/remotebrowser.h"
@@ -81,7 +81,7 @@ void DownloadDialog::open() {
 		if (!selectDirectories())
 			close();
 	reflowLayout();
-	draw();
+	g_gui.scheduleTopDialogRedraw();
 }
 
 void DownloadDialog::close() {
@@ -101,7 +101,7 @@ void DownloadDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 	case kDownloadProgressCmd:
 		if (!_close) {
 			refreshWidgets();
-			draw();
+			g_gui.scheduleTopDialogRedraw();
 		}
 		break;
 	case kDownloadEndedCmd:
@@ -113,7 +113,7 @@ void DownloadDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 }
 
 bool DownloadDialog::selectDirectories() {
-	if (Networking::Connection::isLimited()) {
+	if (g_system->isConnectionLimited()) {
 		MessageDialog alert(_("It looks like your connection is limited. "
 			"Do you really want to download files with it?"), _("Yes"), _("No"));
 		if (alert.runModal() != GUI::kMessageOK)
@@ -196,7 +196,7 @@ void DownloadDialog::handleTickle() {
 	int32 progress = (int32)(100 * CloudMan.getDownloadingProgress());
 	if (_progressBar->getValue() != progress) {
 		refreshWidgets();
-		draw();
+		g_gui.scheduleTopDialogRedraw();
 	}
 
 	Dialog::handleTickle();

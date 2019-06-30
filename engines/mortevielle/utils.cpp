@@ -2491,7 +2491,7 @@ int MortevielleEngine::getAnimOffset(int frameNum, int animNum) {
  */
 void MortevielleEngine::displayTextInDescriptionBar(int x, int y, int nb, int mesgId) {
 	Common::String tmpStr = getString(mesgId);
-	if ((y == 182) && ((int) tmpStr.size() > nb))
+	if ((y == 182) && ((int)tmpStr.size() > nb))
 		y = 176;
 	_text->displayStr(tmpStr, x, y, nb, 20, _textColor);
 }
@@ -2504,7 +2504,7 @@ void MortevielleEngine::handleDescriptionText(int f, int mesgId) {
 	if ((mesgId > 499) && (mesgId < 563)) {
 		Common::String tmpStr = getString(mesgId - 501 + kInventoryStringIndex);
 
-		if ((int) tmpStr.size() > ((58 + (kResolutionScaler - 1) * 37) << 1))
+		if ((int)tmpStr.size() > ((58 + (kResolutionScaler - 1) * 37) << 1))
 			_largestClearScreen = true;
 		else
 			_largestClearScreen = false;

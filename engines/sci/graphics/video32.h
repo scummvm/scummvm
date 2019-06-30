@@ -70,7 +70,7 @@ public:
 	VideoPlayer(EventManager *eventMan, Video::VideoDecoder *decoder = nullptr) :
 		_eventMan(eventMan),
 		_decoder(decoder)
-#ifdef USE_RGB_MODE
+#ifdef USE_RGB_COLOR
 		,
 		_hqVideoMode(false)
 #endif
@@ -319,7 +319,7 @@ public:
 	 * Initializes the VMD rendering parameters for the current VMD. This must
 	 * be called after `open`.
 	 */
-	void init(const int16 x, const int16 y, const PlayFlags flags, const int16 boostPercent, const int16 boostStartColor, const int16 boostEndColor);
+	void init(int16 x, int16 y, const PlayFlags flags, const int16 boostPercent, const int16 boostStartColor, const int16 boostEndColor);
 
 	/**
 	 * Stops playback and closes the currently open VMD stream.

@@ -30,13 +30,10 @@ namespace Plumbers {
 class PlumbersGame;
 
 class Console : public GUI::Debugger {
-private:
-	PlumbersGame *_vm;
-
 public:
 	bool _allowSkip;
 
-	explicit Console(Plumbers::PlumbersGame *vm);
+	explicit Console();
 	virtual ~Console(void) {}
 
 	bool Cmd_allowSkip(int argc, const char** argv);

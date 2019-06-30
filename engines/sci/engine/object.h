@@ -233,10 +233,7 @@ public:
 	 * @returns A pointer to the code for the method at the given index.
 	 */
 	reg_t getFunction(const uint16 index) const {
-		reg_t addr;
-		addr.setSegment(_pos.getSegment());
-		addr.setOffset(_baseMethod[index * 2 + 1]);
-		return addr;
+		return make_reg32(_pos.getSegment(), _baseMethod[index * 2 + 1]);
 	}
 
 	/**

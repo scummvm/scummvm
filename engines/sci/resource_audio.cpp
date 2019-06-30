@@ -73,6 +73,7 @@ AudioVolumeResourceSource::AudioVolumeResourceSource(ResourceManager *resMan, co
 		}
 
 		lastEntry->size = fileStream->size() - lastEntry->offset;
+		break;
 	}
 
 	resMan->disposeVolumeFileStream(fileStream, this);
@@ -448,7 +449,7 @@ int ResourceManager::readAudioMapSCI11(IntMapResourceSource *map) {
 			// works
 			if ((n & kEndOfMapFlag) == kEndOfMapFlag) {
 				const uint32 bytesLeft = mapRes->cend() - ptr;
-				if (bytesLeft >= entrySize) {
+				if (bytesLeft >= entrySize && entrySize > 0) {
 					warning("End of %s reached, but %u entries remain", mapResId.toString().c_str(), bytesLeft / entrySize);
 				}
 				break;
@@ -736,6 +737,8 @@ SoundResource::SoundResource(uint32 resourceNr, ResourceManager *resMan, SciVers
 		// Digital sample data included? -> Add an additional channel
 		if (resource->getUint8At(0) == 2)
 			_tracks->channelCount++;
+		// header information that can be passed to the SCI0 sound driver
+		_tracks->header = resource->subspan(0, _soundVersion == SCI_VERSION_0_EARLY ? 0x11 : 0x21);
 		_tracks->channels = new Channel[_tracks->channelCount];
 		channel = &_tracks->channels[0];
 		channel->flags |= 2; // don't remap (SCI0 doesn't have remapping)

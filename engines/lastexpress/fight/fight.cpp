@@ -90,7 +90,7 @@ void Fight::eventMouse(const Common::Event &ev) {
 
 		// Handle right button click
 		if (ev.type == Common::EVENT_RBUTTONUP) {
-			getSoundQueue()->removeFromQueue(kEntityTables0);
+			getSoundQueue()->stop(kEntityTables0);
 			setStopped();
 
 			getGlobalTimer() ? _state = 0 : ++_state;
@@ -137,7 +137,7 @@ void Fight::eventMouse(const Common::Event &ev) {
 		// Stop fight if clicked
 		if (ev.type == Common::EVENT_LBUTTONUP) {
 			_handleTimer = false;
-			getSoundQueue()->removeFromQueue(kEntityTables0);
+			getSoundQueue()->stop(kEntityTables0);
 			bailout(kFightEndExit);
 		}
 
@@ -145,7 +145,7 @@ void Fight::eventMouse(const Common::Event &ev) {
 		if (ev.type == Common::EVENT_RBUTTONUP) {
 			if (getGlobalTimer()) {
 				if (getSoundQueue()->isBuffered("TIMER"))
-					getSoundQueue()->removeFromQueue("TIMER");
+					getSoundQueue()->stop("TIMER");
 
 				setGlobalTimer(900);
 			}

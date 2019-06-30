@@ -26,6 +26,8 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_unistd_h
 #define FORBIDDEN_SYMBOL_EXCEPTION_time_h	//On IRIX, sys/stat.h includes sys/time.h
 #define FORBIDDEN_SYMBOL_EXCEPTION_system
+#define FORBIDDEN_SYMBOL_EXCEPTION_random
+#define FORBIDDEN_SYMBOL_EXCEPTION_srandom
 
 #include "common/scummsys.h"
 
@@ -48,6 +50,11 @@
 #include <sys/stat.h>
 #include <sys/wait.h>
 #include <unistd.h>
+
+#ifdef HAS_POSIX_SPAWN
+#include <spawn.h>
+#endif
+extern char **environ;
 
 OSystem_POSIX::OSystem_POSIX(Common::String baseConfigName)
 	:
@@ -82,8 +89,12 @@ void OSystem_POSIX::initBackend() {
 }
 
 bool OSystem_POSIX::hasFeature(Feature f) {
-	if (f == kFeatureDisplayLogFile || f == kFeatureOpenUrl)
+	if (f == kFeatureDisplayLogFile)
 		return true;
+#ifdef HAS_POSIX_SPAWN
+	if (f == kFeatureOpenUrl)
+		return true;
+#endif
 	return OSystem_SDL::hasFeature(f);
 }
 
@@ -143,6 +154,101 @@ Common::String OSystem_POSIX::getDefaultConfigFileName() {
 	}
 
 	return configFile;
+}
+
+Common::String OSystem_POSIX::getXdgUserDir(const char *name) {
+	// The xdg-user-dirs configuration path is stored in the XDG config
+	// home directory. We start by retrieving this value.
+	Common::String configHome = getenv("XDG_CONFIG_HOME");
+	if (configHome.empty()) {
+		const char *home = getenv("HOME");
+		if (!home) {
+			return "";
+		}
+
+		configHome = Common::String::format("%s/.config", home);
+	}
+
+	// Find the requested directory line in the xdg-user-dirs configuration file
+	//   Example line value: XDG_PICTURES_DIR="$HOME/Pictures"
+	Common::FSNode userDirsFile(configHome + "/user-dirs.dirs");
+	if (!userDirsFile.exists() || !userDirsFile.isReadable() || userDirsFile.isDirectory()) {
+		return "";
+	}
+
+	Common::SeekableReadStream *userDirsStream = userDirsFile.createReadStream();
+	if (!userDirsStream) {
+		return "";
+	}
+
+	Common::String dirLinePrefix = Common::String::format("XDG_%s_DIR=", name);
+
+	Common::String directoryValue;
+	while (!userDirsStream->eos() && !userDirsStream->err()) {
+		Common::String userDirsLine = userDirsStream->readLine();
+		userDirsLine.trim();
+
+		if (userDirsLine.hasPrefix(dirLinePrefix)) {
+			directoryValue = Common::String(userDirsLine.c_str() + dirLinePrefix.size());
+			break;
+		}
+	}
+
+	delete userDirsStream;
+
+	// Extract the path from the value
+	//   Example value: "$HOME/Pictures"
+	if (directoryValue.empty() || directoryValue[0] != '"') {
+		return "";
+	}
+
+	if (directoryValue[directoryValue.size() - 1] != '"') {
+		return "";
+	}
+
+	// According to the spec the value is shell-escaped, and would need to be
+	// unescaped to be used, but neither the GTK+ nor the Qt implementation seem to
+	// properly perform that step, it's probably fine if we don't do it either.
+	Common::String directoryPath(directoryValue.c_str() + 1, directoryValue.size() - 2);
+
+	if (directoryPath.hasPrefix("$HOME/")) {
+		const char *home = getenv("HOME");
+		directoryPath = Common::String::format("%s%s", home, directoryPath.c_str() + 5);
+	}
+
+	// At this point, the path must be absolute
+	if (directoryPath.empty() || directoryPath[0] != '/') {
+		return "";
+	}
+
+	return directoryPath;
+}
+
+Common::String OSystem_POSIX::getScreenshotsPath() {
+	// If the user has configured a screenshots path, use it
+	const Common::String path = OSystem_SDL::getScreenshotsPath();
+	if (!path.empty()) {
+		return path;
+	}
+
+	// Otherwise, the default screenshots path is the "ScummVM Screenshots"
+	// directory in the XDG "Pictures" user directory, as defined in the
+	// xdg-user-dirs spec: https://www.freedesktop.org/wiki/Software/xdg-user-dirs/
+	Common::String picturesPath = getXdgUserDir("PICTURES");
+	if (picturesPath.empty()) {
+		return "";
+	}
+
+	if (!picturesPath.hasSuffix("/")) {
+		picturesPath += "/";
+	}
+
+	static const char *SCREENSHOTS_DIR_NAME = "ScummVM Screenshots";
+	if (!Posix::assureDirectoryExists(SCREENSHOTS_DIR_NAME, picturesPath.c_str())) {
+		return "";
+	}
+
+	return picturesPath + SCREENSHOTS_DIR_NAME + "/";
 }
 
 void OSystem_POSIX::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {
@@ -266,6 +372,7 @@ bool OSystem_POSIX::displayLogFile() {
 }
 
 bool OSystem_POSIX::openUrl(const Common::String &url) {
+#ifdef HAS_POSIX_SPAWN
 	// inspired by Qt's "qdesktopservices_x11.cpp"
 
 	// try "standards"
@@ -279,7 +386,7 @@ bool OSystem_POSIX::openUrl(const Common::String &url) {
 	// try desktop environment specific tools
 	if (launchBrowser("gnome-open", url)) // gnome
 		return true;
-	if (launchBrowser("kfmclient openURL", url)) // kde
+	if (launchBrowser("kfmclient", url)) // kde
 		return true;
 	if (launchBrowser("exo-open", url)) // xfce
 		return true;
@@ -300,16 +407,32 @@ bool OSystem_POSIX::openUrl(const Common::String &url) {
 
 	warning("openUrl() (POSIX) failed to open URL");
 	return false;
+#else
+	return false;
+#endif
 }
 
-bool OSystem_POSIX::launchBrowser(const Common::String& client, const Common::String &url) {
-	// FIXME: system's input must be heavily escaped
-	// well, when url's specified by user
-	// it's OK now (urls are hardcoded somewhere in GUI)
-	Common::String cmd = client + " " + url;
-	return (system(cmd.c_str()) != -1);
+bool OSystem_POSIX::launchBrowser(const Common::String &client, const Common::String &url) {
+#ifdef HAS_POSIX_SPAWN
+	pid_t pid;
+	const char *argv[] = {
+		client.c_str(),
+		url.c_str(),
+		NULL,
+		NULL
+	};
+	if (client == "kfmclient") {
+		argv[2] = argv[1];
+		argv[1] = "openURL";
+	}
+	if (posix_spawnp(&pid, client.c_str(), NULL, NULL, const_cast<char **>(argv), environ) != 0) {
+		return false;
+	}
+	return (waitpid(pid, NULL, WNOHANG) != -1);
+#else
+	return false;
+#endif
 }
-
 
 AudioCDManager *OSystem_POSIX::createAudioCDManager() {
 #ifdef USE_LINUXCD

@@ -30,25 +30,51 @@
 
 namespace BladeRunner {
 
+class SaveFileReadStream;
+class SaveFileWriteStream;
+
 class Items {
 	BladeRunnerEngine *_vm;
 
-	Common::Array<Item*> _items;
+	Common::Array<Item *> _items;
 
 public:
 	Items(BladeRunnerEngine *vm);
 	~Items();
 
-	void getXYZ(int itemId, float *x, float *y, float *z);
-	void getWidthHeight(int itemId, int *width, int *height);
+	void reset();
+
+	void getXYZ(int itemId, float *x, float *y, float *z) const;
+	void setXYZ(int itemId, Vector3 position);
+	void getWidthHeight(int itemId, int *width, int *height) const;
+	void getAnimationId(int itemId, int *animationId) const;
 
 	void tick();
-	bool addToWorld(int itemId, int animationId, int setId, Vector3 position, int facing, int height, int width, bool isTargetableFlag, bool isVisibleFlag, bool isPoliceMazeEnemyFlag, bool addToSetFlag);
+	bool addToWorld(int itemId, int animationId, int setId, Vector3 position, int facing, int height, int width, bool isTargetFlag, bool isVisibleFlag, bool isPoliceMazeEnemyFlag, bool addToSetFlag);
 	bool addToSet(int itemId);
 	bool remove(int itemId);
 
+	void setIsTarget(int itemId, bool val);
+	bool isTarget(int itemId) const;
+	bool isSpinning(int itemId) const;
+	bool isPoliceMazeEnemy(int itemId) const;
+	void setPoliceMazeEnemy(int itemId, bool val);
+	void setIsObstacle(int itemId, bool val);
+	bool isVisible(int itemId) const;
+	int findTargetUnderMouse(int mouseX, int mouseY) const;
+
+	const BoundingBox &getBoundingBox(int itemId);
+	const Common::Rect &getScreenRectangle(int itemId);
+	int getFacing(int itemId) const;
+	void setFacing(int itemId, int facing);
+
+	void spinInWorld(int itemId);
+
+	void save(SaveFileWriteStream &f);
+	void load(SaveFileReadStream &f);
+
 private:
-	int findItem(int itemId);
+	int findItem(int itemId) const;
 };
 
 } // End of namespace BladeRunner

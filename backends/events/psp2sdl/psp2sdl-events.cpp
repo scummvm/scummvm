@@ -25,6 +25,7 @@
 #if defined(PSP2)
 
 #include <psp2/kernel/processmgr.h>
+#include <psp2/touch.h>
 #include "backends/platform/sdl/psp2/psp2.h"
 #include "backends/events/psp2sdl/psp2sdl-events.h"
 #include "backends/platform/sdl/sdl.h"
@@ -36,288 +37,432 @@
 
 #include "math.h"
 
-#define JOY_DEADZONE 2000
-#define JOY_ANALOG
-#define JOY_XAXIS 0
-#define JOY_YAXIS 1
-#define JOY_XAXISR 2
-#define JOY_YAXISR 3
-
-enum {
-	BTN_LEFT		= 7,
-	BTN_DOWN		= 6,
-	BTN_RIGHT		= 9,
-	BTN_UP			= 8,
-
-	BTN_START		= 11,
-	BTN_SELECT		= 10,
-
-	BTN_SQUARE		= 3,
-	BTN_CROSS		= 2,
-	BTN_CIRCLE		= 1,
-	BTN_TRIANGLE	= 0,
-
-	BTN_R1			= 5,
-	BTN_L1			= 4
-};
-
-bool PSP2EventSource::handleJoyButtonDown(SDL_Event &ev, Common::Event &event) {
-
-	event.kbd.flags = 0;
-
-	switch (ev.jbutton.button) {
-// Dpad
-	case BTN_LEFT: // Left (+R_trigger: Up+Left)
-		if (!_km.modifier) {
-			event.type = Common::EVENT_KEYDOWN;
-			event.kbd.keycode = Common::KEYCODE_KP4;
-			event.kbd.ascii = mapKey(SDLK_KP4, (SDLMod) ev.key.keysym.mod, 0);
-		} else {
-			event.type = Common::EVENT_KEYDOWN;
-			event.kbd.keycode = Common::KEYCODE_KP7;
-			event.kbd.ascii = mapKey(SDLK_KP7, (SDLMod) ev.key.keysym.mod, 0);
+PSP2EventSource::PSP2EventSource() {
+	for (int port = 0; port < SCE_TOUCH_PORT_MAX_NUM; port++) {
+		for (int i = 0; i < MAX_NUM_FINGERS; i++) {
+			_finger[port][i].id = -1;
 		}
-		break;
-	case BTN_RIGHT: // Right (+R_trigger: Down+Right)
-		if (!_km.modifier) {
-			event.type = Common::EVENT_KEYDOWN;
-			event.kbd.keycode = Common::KEYCODE_KP6;
-			event.kbd.ascii = mapKey(SDLK_KP6, (SDLMod) ev.key.keysym.mod, 0);
-		} else {
-			event.type = Common::EVENT_KEYDOWN;
-			event.kbd.keycode = Common::KEYCODE_KP3;
-			event.kbd.ascii = mapKey(SDLK_KP3, (SDLMod) ev.key.keysym.mod, 0);
-		}
-		break;
-	case BTN_UP: // Up (+R_trigger: Up+Right)
-		if (!_km.modifier) {
-			event.type = Common::EVENT_KEYDOWN;
-			event.kbd.keycode = Common::KEYCODE_KP8;
-			event.kbd.ascii = mapKey(SDLK_KP8, (SDLMod) ev.key.keysym.mod, 0);
-		} else {
-			event.type = Common::EVENT_KEYDOWN;
-			event.kbd.keycode = Common::KEYCODE_KP9;
-			event.kbd.ascii = mapKey(SDLK_KP9, (SDLMod) ev.key.keysym.mod, 0);
-		}
-		break;
-	case BTN_DOWN: // Down (+R_trigger: Down+Left)
-		if (!_km.modifier) {
-			event.type = Common::EVENT_KEYDOWN;
-			event.kbd.keycode = Common::KEYCODE_KP2;
-			event.kbd.ascii = mapKey(SDLK_KP2, (SDLMod) ev.key.keysym.mod, 0);
-		} else {
-			event.type = Common::EVENT_KEYDOWN;
-			event.kbd.keycode = Common::KEYCODE_KP1;
-			event.kbd.ascii = mapKey(SDLK_KP1, (SDLMod) ev.key.keysym.mod, 0);
-		}
-		break;
-// Buttons
-	case BTN_CROSS: // Left mouse button
-		event.type = Common::EVENT_LBUTTONDOWN;
-		processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
-		break;
-	case BTN_CIRCLE: // Right mouse button
-		event.type = Common::EVENT_RBUTTONDOWN;
-		processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
-		break;
-	case BTN_TRIANGLE: // Escape (+R_trigger: Return)
-		if (!_km.modifier) {
-			event.type = Common::EVENT_KEYDOWN;
-			event.kbd.keycode = Common::KEYCODE_ESCAPE;
-			event.kbd.ascii = mapKey(SDLK_ESCAPE, (SDLMod) ev.key.keysym.mod, 0);
-		} else {
-			event.type = Common::EVENT_KEYDOWN;
-			event.kbd.keycode = Common::KEYCODE_RETURN;
-			event.kbd.ascii = mapKey(SDLK_RETURN, (SDLMod) ev.key.keysym.mod, 0);
-		}
-		break;
-	case BTN_SQUARE: // Period (+R_trigger: Space)
-		if (!_km.modifier) {
-			event.type = Common::EVENT_KEYDOWN;
-			event.kbd.keycode = Common::KEYCODE_PERIOD;
-			event.kbd.ascii = mapKey(SDLK_PERIOD, (SDLMod) ev.key.keysym.mod, 0);
-		} else {
-			event.type = Common::EVENT_KEYDOWN;
-			event.kbd.keycode = Common::KEYCODE_SPACE;
-			event.kbd.ascii = mapKey(SDLK_SPACE, (SDLMod) ev.key.keysym.mod, 0);
-		}
-		break;
-	case BTN_L1: // Game menu
-		event.type = Common::EVENT_KEYDOWN;
-		event.kbd.keycode = Common::KEYCODE_F5;
-		event.kbd.ascii = mapKey(SDLK_F5, (SDLMod) ev.key.keysym.mod, 0);
-		break;
-	case BTN_R1: // Modifier + Shift
-		_km.modifier=true; // slow mouse
-		event.type = Common::EVENT_KEYDOWN;
-		event.kbd.keycode = Common::KEYCODE_INVALID;
-		event.kbd.ascii = 0;
-		event.kbd.flags = Common::KBD_SHIFT;
-		break;
-	case BTN_START: // ScummVM in game menu
-		event.type = Common::EVENT_MAINMENU;
-		break;
-	case BTN_SELECT: // Virtual keyboard (+R_trigger: Predictive Input Dialog)
-		if (!_km.modifier) {
-#ifdef ENABLE_VKEYBD
-			event.type = Common::EVENT_VIRTUAL_KEYBOARD;
-#endif
-		} else {
-			event.type = Common::EVENT_PREDICTIVE_DIALOG;
-		}
-		break;
+		_multiFingerDragging[port] = DRAG_NONE;
 	}
-	return true;
+
+	for (int port = 0; port < SCE_TOUCH_PORT_MAX_NUM; port++) {
+		for (int i = 0; i < 2; i++) {
+			_simulatedClickStartTime[port][i] = 0;
+		}
+	}
+
+	_hiresDX = 0;
+	_hiresDY = 0;
 }
 
-bool PSP2EventSource::handleJoyButtonUp(SDL_Event &ev, Common::Event &event) {
-
-	event.kbd.flags = 0;
-
-	switch (ev.jbutton.button) {
-// Dpad
-	case BTN_LEFT: // Left (+R_trigger: Up+Left)
-		if (!_km.modifier) {
-			event.type = Common::EVENT_KEYUP;
-			event.kbd.keycode = Common::KEYCODE_KP4;
-			event.kbd.ascii = mapKey(SDLK_KP4, (SDLMod) ev.key.keysym.mod, 0);
-		} else {
-			event.type = Common::EVENT_KEYUP;
-			event.kbd.keycode = Common::KEYCODE_KP7;
-			event.kbd.ascii = mapKey(SDLK_KP7, (SDLMod) ev.key.keysym.mod, 0);
-		}
-		break;
-	case BTN_RIGHT: // Right (+R_trigger: Down+Right)
-		if (!_km.modifier) {
-			event.type = Common::EVENT_KEYUP;
-			event.kbd.keycode = Common::KEYCODE_KP6;
-			event.kbd.ascii = mapKey(SDLK_KP6, (SDLMod) ev.key.keysym.mod, 0);
-		} else {
-			event.type = Common::EVENT_KEYUP;
-			event.kbd.keycode = Common::KEYCODE_KP3;
-			event.kbd.ascii = mapKey(SDLK_KP3, (SDLMod) ev.key.keysym.mod, 0);
-		}
-		break;
-	case BTN_UP: // Up (+R_trigger: Up+Right)
-		if (!_km.modifier) {
-			event.type = Common::EVENT_KEYUP;
-			event.kbd.keycode = Common::KEYCODE_KP8;
-			event.kbd.ascii = mapKey(SDLK_KP8, (SDLMod) ev.key.keysym.mod, 0);
-		} else {
-			event.type = Common::EVENT_KEYUP;
-			event.kbd.keycode = Common::KEYCODE_KP9;
-			event.kbd.ascii = mapKey(SDLK_KP9, (SDLMod) ev.key.keysym.mod, 0);
-		}
-		break;
-	case BTN_DOWN: // Down (+R_trigger: Down+Left)
-		if (!_km.modifier) {
-			event.type = Common::EVENT_KEYUP;
-			event.kbd.keycode = Common::KEYCODE_KP2;
-			event.kbd.ascii = mapKey(SDLK_KP2, (SDLMod) ev.key.keysym.mod, 0);
-		} else {
-			event.type = Common::EVENT_KEYUP;
-			event.kbd.keycode = Common::KEYCODE_KP1;
-			event.kbd.ascii = mapKey(SDLK_KP1, (SDLMod) ev.key.keysym.mod, 0);
-		}
-		break;
-// Buttons
-	case BTN_CROSS: // Left mouse button
-		event.type = Common::EVENT_LBUTTONUP;
-		processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
-		break;
-	case BTN_CIRCLE: // Right mouse button
-		event.type = Common::EVENT_RBUTTONUP;
-		processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
-		break;
-	case BTN_TRIANGLE: // Escape (+R_trigger: Return)
-		if (!_km.modifier) {
-			event.type = Common::EVENT_KEYUP;
-			event.kbd.keycode = Common::KEYCODE_ESCAPE;
-			event.kbd.ascii = mapKey(SDLK_ESCAPE, (SDLMod) ev.key.keysym.mod, 0);
-		} else {
-			event.type = Common::EVENT_KEYUP;
-			event.kbd.keycode = Common::KEYCODE_RETURN;
-			event.kbd.ascii = mapKey(SDLK_RETURN, (SDLMod) ev.key.keysym.mod, 0);
-		}
-		break;
-	case BTN_SQUARE: // Period (+R_trigger: Space)
-		if (!_km.modifier) {
-			event.type = Common::EVENT_KEYUP;
-			event.kbd.keycode = Common::KEYCODE_PERIOD;
-			event.kbd.ascii = mapKey(SDLK_PERIOD, (SDLMod) ev.key.keysym.mod, 0);
-		} else {
-			event.type = Common::EVENT_KEYUP;
-			event.kbd.keycode = Common::KEYCODE_SPACE;
-			event.kbd.ascii = mapKey(SDLK_SPACE, (SDLMod) ev.key.keysym.mod, 0);
-		}
-		break;
-	case BTN_L1: // Game menu
-		event.type = Common::EVENT_KEYUP;
-		event.kbd.keycode = Common::KEYCODE_F5;
-		event.kbd.ascii = mapKey(SDLK_F5, (SDLMod) ev.key.keysym.mod, 0);
-		break;
-	case BTN_R1: // Modifier + SHIFT Key
-		_km.modifier = false; // slow mouse
-		event.type = Common::EVENT_KEYUP;
-		event.kbd.keycode = Common::KEYCODE_INVALID;
-		event.kbd.ascii = 0;
-		event.kbd.flags = 0;
-		break;
-	case BTN_START: // ScummVM in game menu
-		// Handled in key down
-		break;
-	case BTN_SELECT: // Virtual keyboard (+R_trigger: Predictive Input Dialog)
-		// Handled in key down
-		break;
-	}
-	return true;
-}
-
-bool PSP2EventSource::handleJoyAxisMotion(SDL_Event &ev, Common::Event &event) {
-
-	int axis = ev.jaxis.value;
-	
-	// conversion factor between keyboard mouse and joy axis value
-	int vel_to_axis = (1500 / MULTIPLIER);
-
-	if (ev.jaxis.axis == JOY_XAXIS) {
-		_km.joy_x = axis;
-	} else if (ev.jaxis.axis == JOY_YAXIS) {
-		axis = -axis;
-		_km.joy_y = -axis;
-	}
-	
-	// radial and scaled deadzone
-
-	float analogX = (float)_km.joy_x;
-	float analogY = (float)_km.joy_y;
-	float deadZone = (float)JOY_DEADZONE;
-	if (g_system->hasFeature(OSystem::kFeatureJoystickDeadzone))
-		deadZone = (float)ConfMan.getInt("joystick_deadzone") * 1000.0f;
-	float scalingFactor = 1.0f;
-	float magnitude = 0.0f;
-
-	magnitude = sqrt(analogX * analogX + analogY * analogY);
-
-	if (magnitude >= deadZone) {
-		_km.x_down_count = 0;
-		_km.y_down_count = 0;
-		scalingFactor = 1.0f / magnitude * (magnitude - deadZone) / (32769.0f - deadZone);
-		_km.x_vel = (int16)(analogX * scalingFactor * 32768.0f / (float) vel_to_axis);
-		_km.y_vel = (int16)(analogY * scalingFactor * 32768.0f / (float) vel_to_axis);
-	} else {
-		_km.x_vel = 0;
-		_km.y_vel = 0;
-	}
-
-	return false;
+bool PSP2EventSource::pollEvent(Common::Event &event) {
+	finishSimulatedMouseClicks();
+	return SdlEventSource::pollEvent(event);
 }
 
 void PSP2EventSource::preprocessEvents(SDL_Event *event) {
 
-	// prevent suspend (scummvm games contains a lot of cutscenes..)
+	// prevent suspend (scummvm games contain a lot of cutscenes..)
 	sceKernelPowerTick(SCE_KERNEL_POWER_TICK_DISABLE_AUTO_SUSPEND);
 	sceKernelPowerTick(SCE_KERNEL_POWER_TICK_DISABLE_OLED_OFF);
+
+	// Supported touch gestures:
+	// left mouse click: single finger short tap
+	// right mouse click: second finger short tap while first finger is still down
+	// pointer motion: single finger drag
+	if (event->type == SDL_FINGERDOWN || event->type == SDL_FINGERUP || event->type == SDL_FINGERMOTION) {
+		// front (0) or back (1) panel
+		SDL_TouchID port = event->tfinger.touchId;
+		if (port < SCE_TOUCH_PORT_MAX_NUM && port >= 0) {
+			// touchpad_mouse_mode off: use only front panel for direct touch control of pointer
+			// touchpad_mouse_mode on: also enable rear touch with indirect touch control
+			// where the finger can be somewhere else than the pointer and still move it
+			if (port == 0 || ConfMan.getBool("touchpad_mouse_mode")) {
+				switch (event->type) {
+				case SDL_FINGERDOWN:
+					preprocessFingerDown(event);
+					break;
+				case SDL_FINGERUP:
+					preprocessFingerUp(event);
+					break;
+				case SDL_FINGERMOTION:
+					preprocessFingerMotion(event);
+					break;
+				}
+			}
+		}
+	}
 }
 
+void PSP2EventSource::preprocessFingerDown(SDL_Event *event) {
+	// front (0) or back (1) panel
+	SDL_TouchID port = event->tfinger.touchId;
+	// id (for multitouch)
+	SDL_FingerID id = event->tfinger.fingerId;
+
+	int x = _km.x / MULTIPLIER;
+	int y = _km.y / MULTIPLIER;
+
+	if (port == 0 && !ConfMan.getBool("frontpanel_touchpad_mode")) {
+		convertTouchXYToGameXY(event->tfinger.x, event->tfinger.y, &x, &y);
+	}
+
+	// make sure each finger is not reported down multiple times
+	for (int i = 0; i < MAX_NUM_FINGERS; i++) {
+		if (_finger[port][i].id == id) {
+			_finger[port][i].id = -1;
+		}
+	}
+
+	// we need the timestamps to decide later if the user performed a short tap (click)
+	// or a long tap (drag)
+	// we also need the last coordinates for each finger to keep track of dragging
+	for (int i = 0; i < MAX_NUM_FINGERS; i++) {
+		if (_finger[port][i].id == -1) {
+			_finger[port][i].id = id;
+			_finger[port][i].timeLastDown = event->tfinger.timestamp;
+			_finger[port][i].lastDownX = event->tfinger.x;
+			_finger[port][i].lastDownY = event->tfinger.y;
+			_finger[port][i].lastX = x;
+			_finger[port][i].lastY = y;
+			break;
+		}
+	}
+}
+
+void PSP2EventSource::preprocessFingerUp(SDL_Event *event) {
+	// front (0) or back (1) panel
+	SDL_TouchID port = event->tfinger.touchId;
+	// id (for multitouch)
+	SDL_FingerID id = event->tfinger.fingerId;
+
+	// find out how many fingers were down before this event
+	int numFingersDown = 0;
+	for (int i = 0; i < MAX_NUM_FINGERS; i++) {
+		if (_finger[port][i].id >= 0) {
+			numFingersDown++;
+		}
+	}
+
+	int x = _km.x / MULTIPLIER;
+	int y = _km.y / MULTIPLIER;
+
+	for (int i = 0; i < MAX_NUM_FINGERS; i++) {
+		if (_finger[port][i].id == id) {
+			_finger[port][i].id = -1;
+			if (!_multiFingerDragging[port]) {
+				if ((event->tfinger.timestamp - _finger[port][i].timeLastDown) <= MAX_TAP_TIME) {
+					// short (<MAX_TAP_TIME ms) tap is interpreted as right/left mouse click depending on # fingers already down
+					// but only if the finger hasn't moved since it was pressed down by more than MAX_TAP_MOTION_DISTANCE pixels
+					float xrel = ((event->tfinger.x * 960.0) - (_finger[port][i].lastDownX * 960.0));
+					float yrel = ((event->tfinger.y * 544.0) - (_finger[port][i].lastDownY * 544.0));
+					float maxRSquared = (float) (MAX_TAP_MOTION_DISTANCE * MAX_TAP_MOTION_DISTANCE);
+					if ((xrel * xrel + yrel * yrel) < maxRSquared) {
+						if (numFingersDown == 2 || numFingersDown == 1) {
+							Uint8 simulatedButton = 0;
+							if (numFingersDown == 2) {
+								simulatedButton = SDL_BUTTON_RIGHT;
+								// need to raise the button later
+								_simulatedClickStartTime[port][1] = event->tfinger.timestamp;
+							} else if (numFingersDown == 1) {
+								simulatedButton = SDL_BUTTON_LEFT;
+								// need to raise the button later
+								_simulatedClickStartTime[port][0] = event->tfinger.timestamp;
+								if (port == 0 && !ConfMan.getBool("frontpanel_touchpad_mode")) {
+									convertTouchXYToGameXY(event->tfinger.x, event->tfinger.y, &x, &y);
+								}
+							}
+
+							event->type = SDL_MOUSEBUTTONDOWN;
+							event->button.button = simulatedButton;
+							event->button.x = x;
+							event->button.y = y;
+						}
+					}
+				}
+			} else if (numFingersDown == 1) {
+				// when dragging, and the last finger is lifted, the drag is over
+				if (port == 0 && !ConfMan.getBool("frontpanel_touchpad_mode")) {
+					convertTouchXYToGameXY(event->tfinger.x, event->tfinger.y, &x, &y);
+				}
+				Uint8 simulatedButton = 0;
+				if (_multiFingerDragging[port] == DRAG_THREE_FINGER)
+					simulatedButton = SDL_BUTTON_RIGHT;
+				else {
+					simulatedButton = SDL_BUTTON_LEFT;
+				}
+				event->type = SDL_MOUSEBUTTONUP;
+				event->button.button = simulatedButton;
+				event->button.x = x;
+				event->button.y = y;
+				_multiFingerDragging[port] = DRAG_NONE;
+			}
+		}
+	}
+}
+
+void PSP2EventSource::preprocessFingerMotion(SDL_Event *event) {
+	// front (0) or back (1) panel
+	SDL_TouchID port = event->tfinger.touchId;
+	// id (for multitouch)
+	SDL_FingerID id = event->tfinger.fingerId;
+
+	// find out how many fingers were down before this event
+	int numFingersDown = 0;
+	for (int i = 0; i < MAX_NUM_FINGERS; i++) {
+		if (_finger[port][i].id >= 0) {
+			numFingersDown++;
+		}
+	}
+
+	if (numFingersDown >= 1) {
+		int x = _km.x / MULTIPLIER;
+		int y = _km.y / MULTIPLIER;
+
+		if (port == 0 && !ConfMan.getBool("frontpanel_touchpad_mode")) {
+			convertTouchXYToGameXY(event->tfinger.x, event->tfinger.y, &x, &y);
+		}	else {
+			// for relative mode, use the pointer speed setting
+			float speedFactor = 1.0;
+
+			switch (ConfMan.getInt("kbdmouse_speed")) {
+			// 0.25 keyboard pointer speed
+			case 0:
+				speedFactor = 0.25;
+				break;
+			// 0.5 speed
+			case 1:
+				speedFactor = 0.5;
+				break;
+			// 0.75 speed
+			case 2:
+				speedFactor = 0.75;
+				break;
+			// 1.0 speed
+			case 3:
+				speedFactor = 1.0;
+				break;
+			// 1.25 speed
+			case 4:
+				speedFactor = 1.25;
+				break;
+			// 1.5 speed
+			case 5:
+				speedFactor = 1.5;
+				break;
+			// 1.75 speed
+			case 6:
+				speedFactor = 1.75;
+				break;
+			// 2.0 speed
+			case 7:
+				speedFactor = 2.0;
+				break;
+			default:
+				speedFactor = 1.0;
+			}
+
+			// convert touch events to relative mouse pointer events
+			// track sub-pixel relative finger motion using the MULTIPLIER
+			_hiresDX += (event->tfinger.dx * 1.25 * speedFactor * _km.x_max * MULTIPLIER);
+			_hiresDY += (event->tfinger.dy * 1.25 * speedFactor * _km.y_max * MULTIPLIER);
+			int xRel = _hiresDX / MULTIPLIER;
+			int yRel = _hiresDY / MULTIPLIER;
+			x = (_km.x / MULTIPLIER) + xRel;
+			y = (_km.y / MULTIPLIER) + yRel;
+			_hiresDX %= MULTIPLIER;
+			_hiresDY %= MULTIPLIER;
+		}
+
+		if (x > _km.x_max) {
+			x = _km.x_max;
+		} else if (x < 0) {
+			x = 0;
+		}
+		if (y > _km.y_max) {
+			y = _km.y_max;
+		} else if (y < 0) {
+			y = 0;
+		}
+
+		// update the current finger's coordinates so we can track it later
+		for (int i = 0; i < MAX_NUM_FINGERS; i++) {
+			if (_finger[port][i].id == id) {
+				_finger[port][i].lastX = x;
+				_finger[port][i].lastY = y;
+			}
+		}
+
+		// If we are starting a multi-finger drag, start holding down the mouse button
+		if (numFingersDown >= 2) {
+			if (!_multiFingerDragging[port]) {
+				// only start a multi-finger drag if at least two fingers have been down long enough
+				int numFingersDownLong = 0;
+				for (int i = 0; i < MAX_NUM_FINGERS; i++) {
+					if (_finger[port][i].id >= 0) {
+						if (event->tfinger.timestamp - _finger[port][i].timeLastDown > MAX_TAP_TIME) {
+							numFingersDownLong++;
+						}
+					}
+				}
+				if (numFingersDownLong >= 2) {
+					// starting drag, so push mouse down at current location (back) 
+					// or location of "oldest" finger (front)
+					int mouseDownX = _km.x / MULTIPLIER;
+					int mouseDownY = _km.y / MULTIPLIER;
+					if (port == 0 && !ConfMan.getBool("frontpanel_touchpad_mode")) {
+						for (int i = 0; i < MAX_NUM_FINGERS; i++) {
+							if (_finger[port][i].id == id) {
+								Uint32 earliestTime = _finger[port][i].timeLastDown;
+								for (int j = 0; j < MAX_NUM_FINGERS; j++) {
+									if (_finger[port][j].id >= 0 && (i != j) ) {
+										if (_finger[port][j].timeLastDown < earliestTime) {
+											mouseDownX = _finger[port][j].lastX;
+											mouseDownY = _finger[port][j].lastY;
+											earliestTime = _finger[port][j].timeLastDown;
+										}
+									}
+								}
+								break;
+							}
+						}
+					}
+					Uint8 simulatedButton = 0;
+					if (numFingersDownLong == 2) {
+						simulatedButton = SDL_BUTTON_LEFT;
+						_multiFingerDragging[port] = DRAG_TWO_FINGER;
+					} else {
+						simulatedButton = SDL_BUTTON_RIGHT;
+						_multiFingerDragging[port] = DRAG_THREE_FINGER;
+					}
+					SDL_Event ev;
+					ev.type = SDL_MOUSEBUTTONDOWN;
+					ev.button.button = simulatedButton;
+					ev.button.x = mouseDownX;
+					ev.button.y = mouseDownY;
+					SDL_PushEvent(&ev);
+				}
+			}
+		}
+
+		//check if this is the "oldest" finger down (or the only finger down), otherwise it will not affect mouse motion
+		bool updatePointer = true;
+		if (numFingersDown > 1) {
+			for (int i = 0; i < MAX_NUM_FINGERS; i++) {
+				if (_finger[port][i].id == id) {
+					for (int j = 0; j < MAX_NUM_FINGERS; j++) {
+						if (_finger[port][j].id >= 0 && (i != j) ) {
+							if (_finger[port][j].timeLastDown < _finger[port][i].timeLastDown) {
+								updatePointer = false;
+							}
+						}
+					}
+				}
+			}
+		}
+		if (updatePointer) {
+			event->type = SDL_MOUSEMOTION;
+			event->motion.x = x;
+			event->motion.y = y;
+		}
+	}
+}
+
+void PSP2EventSource::convertTouchXYToGameXY(float touchX, float touchY, int *gameX, int *gameY) {
+	int screenH = _km.y_max;
+	int screenW = _km.x_max;
+
+	int windowH = g_system->getHeight();
+	int windowW = g_system->getWidth();
+
+	bool fullscreen = ConfMan.getBool("fullscreen");
+	bool aspectRatioCorrection = ConfMan.getBool("aspect_ratio");
+
+	const int dispW = 960;
+	const int dispH = 544;
+
+	int x, y, w, h;
+	float sx, sy;
+	float ratio = (float)screenW / (float)screenH;
+
+	if (aspectRatioCorrection && (windowH == 200 || windowH == 400)) {
+		ratio = 4.0 / 3.0;
+	}
+
+	if (fullscreen || screenH >= dispH) {
+		h = dispH;
+		if (aspectRatioCorrection && (windowH == 200 || windowH == 400)) {
+			ratio = ratio * 1.1;
+		}
+		w = h * ratio;
+	} else {
+		if (screenH <= dispH / 2 && screenW <= dispW / 2) {
+			// Use Vita hardware 2x scaling if the picture is really small
+			// this uses the current shader and filtering mode
+			h = screenH * 2;
+			w = screenW * 2;
+		} else {
+			h = screenH;
+			w = screenW;
+		}
+		if (aspectRatioCorrection && (windowH == 200 || windowH == 400)) {
+			// stretch the height only if it fits, otherwise make the width smaller
+			if (((float)w * (1.0 / ratio)) <= (float)dispH) {
+				h = w * (1.0 / ratio);
+			} else {
+				w = h * ratio;
+			}
+		}
+	}
+
+	x = (dispW - w) / 2;
+	y = (dispH - h) / 2;
+
+	sy = (float)h / (float)screenH;
+	sx = (float)w / (float)screenW;
+
+	// Find touch coordinates in terms of Vita screen pixels
+	float dispTouchX = (touchX * (float)dispW);
+	float dispTouchY = (touchY * (float)dispH);
+
+	*gameX = (dispTouchX - x) / sx;
+	*gameY = (dispTouchY - y) / sy;
+
+	if (*gameX < 0) {
+		*gameX = 0;
+	} else if (*gameX > _km.x_max) {
+		*gameX = _km.x_max;
+	}
+	if (*gameY < 0) {
+		*gameY = 0;
+	} else if (*gameY > _km.y_max) {
+		*gameY = _km.y_max;
+	}
+}
+
+void PSP2EventSource::finishSimulatedMouseClicks() {
+	for (int port = 0; port < SCE_TOUCH_PORT_MAX_NUM; port++) {
+		for (int i = 0; i < 2; i++) {
+			if (_simulatedClickStartTime[port][i] != 0) {
+				Uint32 currentTime = SDL_GetTicks();
+				if (currentTime - _simulatedClickStartTime[port][i] >= SIMULATED_CLICK_DURATION) {
+					int simulatedButton;
+					if (i == 0) {
+						simulatedButton = SDL_BUTTON_LEFT;
+					} else {
+						simulatedButton = SDL_BUTTON_RIGHT;
+					}
+					SDL_Event ev;
+					ev.type = SDL_MOUSEBUTTONUP;
+					ev.button.button = simulatedButton;
+					ev.button.x = _km.x / MULTIPLIER;
+					ev.button.y = _km.y / MULTIPLIER;
+					SDL_PushEvent(&ev);
+
+					_simulatedClickStartTime[port][i] = 0;
+				}
+			}
+		}
+	}
+}
 #endif

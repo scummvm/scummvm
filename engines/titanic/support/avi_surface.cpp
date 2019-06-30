@@ -489,7 +489,7 @@ Graphics::ManagedSurface *AVISurface::duplicateTransparency() const {
 bool AVISurface::playCutscene(const Rect &r, uint startFrame, uint endFrame) {
 	if (g_vm->shouldQuit())
 		return false;
-	
+
 	// TODO: Fixes slight "jumping back" when rotating in place in Top Of Well
 	// balcony between two elevators. Need a more generalized fix at some point
 	if (_movieName == "z48.avi")

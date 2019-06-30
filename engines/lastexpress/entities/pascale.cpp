@@ -36,13 +36,13 @@
 namespace LastExpress {
 
 Pascale::Pascale(LastExpressEngine *engine) : Entity(engine, kEntityPascale) {
-	ADD_CALLBACK_FUNCTION(Pascale, draw);
+	ADD_CALLBACK_FUNCTION_S(Pascale, draw);
 	ADD_CALLBACK_FUNCTION(Pascale, callbackActionRestaurantOrSalon);
 	ADD_CALLBACK_FUNCTION(Pascale, callbackActionOnDirection);
-	ADD_CALLBACK_FUNCTION(Pascale, updateFromTime);
-	ADD_CALLBACK_FUNCTION(Pascale, updatePosition);
-	ADD_CALLBACK_FUNCTION(Pascale, playSound);
-	ADD_CALLBACK_FUNCTION(Pascale, draw2);
+	ADD_CALLBACK_FUNCTION_I(Pascale, updateFromTime);
+	ADD_CALLBACK_FUNCTION_SII(Pascale, updatePosition);
+	ADD_CALLBACK_FUNCTION_S(Pascale, playSound);
+	ADD_CALLBACK_FUNCTION_SSI(Pascale, draw2);
 	ADD_CALLBACK_FUNCTION(Pascale, welcomeSophieAndRebecca);
 	ADD_CALLBACK_FUNCTION(Pascale, sitSophieAndRebecca);
 	ADD_CALLBACK_FUNCTION(Pascale, welcomeCath);
@@ -142,15 +142,15 @@ IMPLEMENT_FUNCTION(8, Pascale, welcomeSophieAndRebecca)
 				break;
 
 			case kChapter1:
-				getSound()->playSound(kEntityPascale, "REB1198", kFlagInvalid, 30);
+				getSound()->playSound(kEntityPascale, "REB1198", kSoundVolumeEntityDefault, 30);
 				break;
 
 			case kChapter3:
-				getSound()->playSound(kEntityPascale, "REB3001", kFlagInvalid, 30);
+				getSound()->playSound(kEntityPascale, "REB3001", kSoundVolumeEntityDefault, 30);
 				break;
 
 			case kChapter4:
-				getSound()->playSound(kEntityPascale, "REB4001", kFlagInvalid, 30);
+				getSound()->playSound(kEntityPascale, "REB4001", kSoundVolumeEntityDefault, 30);
 				break;
 			}
 
@@ -188,9 +188,9 @@ IMPLEMENT_FUNCTION(9, Pascale, sitSophieAndRebecca)
 		break;
 
 	case kActionDefault:
-		getEntities()->drawSequenceLeft(kEntityPascale, "012C1");
-		getEntities()->drawSequenceLeft(kEntityRebecca, "012C2");
-		getEntities()->drawSequenceLeft(kEntityTables3, "012C3");
+		getEntities()->drawSequenceRight(kEntityPascale, "012C1");
+		getEntities()->drawSequenceRight(kEntityRebecca, "012C2");
+		getEntities()->drawSequenceRight(kEntityTables3, "012C3");
 		break;
 	}
 IMPLEMENT_FUNCTION_END
@@ -353,7 +353,7 @@ IMPLEMENT_FUNCTION(13, Pascale, greetAugust)
 			break;
 
 		case 2:
-			getEntities()->drawSequenceLeft(kEntityPascale, "010B");
+			getEntities()->drawSequenceLeft(kEntityAugust, "010B");
 
 			setCallback(3);
 			setup_draw("905");
@@ -464,9 +464,9 @@ IMPLEMENT_FUNCTION(16, Pascale, greetTatiana)
 			getEntities()->updatePositionEnter(kEntityPascale, kCarRestaurant, 67);
 
 			if (getSoundQueue()->isBuffered("TAT1069A"))
-				getSoundQueue()->processEntry("TAT1069A");
+				getSoundQueue()->fade("TAT1069A");
 			else if (getSoundQueue()->isBuffered("TAT1069B"))
-				getSoundQueue()->processEntry("TAT1069B");
+				getSoundQueue()->fade("TAT1069B");
 
 			setCallback(2);
 			setup_playSound("TAT1066");
@@ -739,7 +739,7 @@ IMPLEMENT_FUNCTION(24, Pascale, welcomeAbbot)
 	default:
 		break;
 
-	case kActionNone:
+	case kActionEndSound:
 		if (!params->param1) {
 			getSound()->playSound(kEntityPascale, "ABB3015A");
 			params->param1 = 1;
@@ -755,7 +755,7 @@ IMPLEMENT_FUNCTION(24, Pascale, welcomeAbbot)
 		break;
 
 	case kActionDefault:
-		getSound()->playSound(kEntityPascale, "ABB3015", kFlagInvalid, 105);
+		getSound()->playSound(kEntityPascale, "ABB3015", kSoundVolumeEntityDefault, 105);
 		getEntities()->drawSequenceRight(kEntityPascale, "029A1");
 		getEntities()->drawSequenceRight(kEntityAbbot, "029A2");
 		break;
@@ -1132,7 +1132,7 @@ label_callback1:
 				break;
 
 			params->param1 = 0;
-			params->param2 = 2;
+			params->param2 = 1;
 
 			getObjects()->update(kObjectCompartmentG, kEntityPascale, kObjectLocation1, kCursorNormal, kCursorNormal);
 		}
@@ -1192,7 +1192,7 @@ label_callback1:
 			if (params->param3 == 1 || params->param3 == 2) {
 				getObjects()->update(kObjectCompartmentG, kEntityPascale, kObjectLocation1, kCursorNormal, kCursorNormal);
 				setCallback(params->param3 == 1 ? 5 : 6);
-				setup_playSound(params->param3 == 1 ? "Wat5001" : "Wat5002");
+				setup_playSound(params->param3 == 1 ? "Wat5001" : "Wat5001A");
 			}
 			break;
 

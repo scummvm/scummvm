@@ -158,8 +158,10 @@ static inline void interpolate5Line(uint16 *dst, const uint16 *srcA, const uint1
 }
 #endif
 
-void makeRectStretchable(int &x, int &y, int &w, int &h) {
+void makeRectStretchable(int &x, int &y, int &w, int &h, bool interpolate) {
 #if ASPECT_MODE != kSuperFastAndUglyAspectMode
+	if (!interpolate)
+		return;
 	int m = real2Aspect(y) % 6;
 
 	// Ensure that the rect will start on a line that won't have its
@@ -203,8 +205,9 @@ void makeRectStretchable(int &x, int &y, int &w, int &h) {
  * srcY + height - 1, and it should be stretched to Y coordinates srcY
  * through real2Aspect(srcY + height - 1).
  */
+ 
 template<typename ColorMask>
-int stretch200To240(uint8 *buf, uint32 pitch, int width, int height, int srcX, int srcY, int origSrcY) {
+int stretch200To240Nearest(uint8 *buf, uint32 pitch, int width, int height, int srcX, int srcY, int origSrcY) {
 	int maxDstY = real2Aspect(origSrcY + height - 1);
 	int y;
 	const uint8 *startSrcPtr = buf + srcX * 2 + (srcY - origSrcY) * pitch;
@@ -212,13 +215,25 @@ int stretch200To240(uint8 *buf, uint32 pitch, int width, int height, int srcX, i
 
 	for (y = maxDstY; y >= srcY; y--) {
 		const uint8 *srcPtr = startSrcPtr + aspect2Real(y) * pitch;
-
-#if ASPECT_MODE == kSuperFastAndUglyAspectMode
 		if (srcPtr == dstPtr)
 			break;
 		memcpy(dstPtr, srcPtr, sizeof(uint16) * width);
-#else
-		// Bilinear filter
+		dstPtr -= pitch;
+	}
+
+	return 1 + maxDstY - srcY;
+}
+
+ 
+template<typename ColorMask>
+int stretch200To240Interpolated(uint8 *buf, uint32 pitch, int width, int height, int srcX, int srcY, int origSrcY) {
+	int maxDstY = real2Aspect(origSrcY + height - 1);
+	int y;
+	const uint8 *startSrcPtr = buf + srcX * 2 + (srcY - origSrcY) * pitch;
+	uint8 *dstPtr = buf + srcX * 2 + maxDstY * pitch;
+
+	for (y = maxDstY; y >= srcY; y--) {
+		const uint8 *srcPtr = startSrcPtr + aspect2Real(y) * pitch;
 		switch (y % 6) {
 		case 0:
 		case 5:
@@ -238,21 +253,30 @@ int stretch200To240(uint8 *buf, uint32 pitch, int width, int height, int srcX, i
 			interpolate5Line<ColorMask, 1>((uint16 *)dstPtr, (const uint16 *)srcPtr, (const uint16 *)(srcPtr - pitch), width);
 			break;
 		}
-#endif
 		dstPtr -= pitch;
 	}
 
 	return 1 + maxDstY - srcY;
 }
 
-int stretch200To240(uint8 *buf, uint32 pitch, int width, int height, int srcX, int srcY, int origSrcY) {
+int stretch200To240(uint8 *buf, uint32 pitch, int width, int height, int srcX, int srcY, int origSrcY, bool interpolate) {
 	extern int gBitFormat;
-	if (gBitFormat == 565)
-		return stretch200To240<Graphics::ColorMasks<565> >(buf, pitch, width, height, srcX, srcY, origSrcY);
-	else // gBitFormat == 555
-		return stretch200To240<Graphics::ColorMasks<555> >(buf, pitch, width, height, srcX, srcY, origSrcY);
+#if ASPECT_MODE != kSuperFastAndUglyAspectMode
+	if (interpolate) {
+		if (gBitFormat == 565)
+			return stretch200To240Interpolated<Graphics::ColorMasks<565> >(buf, pitch, width, height, srcX, srcY, origSrcY);
+		else // gBitFormat == 555
+			return stretch200To240Interpolated<Graphics::ColorMasks<555> >(buf, pitch, width, height, srcX, srcY, origSrcY);
+	} else {
+#endif
+		if (gBitFormat == 565)
+			return stretch200To240Nearest<Graphics::ColorMasks<565> >(buf, pitch, width, height, srcX, srcY, origSrcY);
+		else // gBitFormat == 555
+			return stretch200To240Nearest<Graphics::ColorMasks<555> >(buf, pitch, width, height, srcX, srcY, origSrcY);
+#if ASPECT_MODE != kSuperFastAndUglyAspectMode
+	}
+#endif
 }
-
 
 template<typename ColorMask>
 void Normal1xAspectTemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {

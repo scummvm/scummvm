@@ -474,7 +474,7 @@ void GfxAnimate::drawCels() {
 			writeSelector(_s->_segMan, it->object, SELECTOR(underBits), bitsHandle);
 
 			// draw corresponding cel
-			_paint16->drawCel(it->viewId, it->loopNo, it->celNo, it->celRect, it->priority, it->paletteNo, it->scaleX, it->scaleY);
+			_paint16->drawCel(it->viewId, it->loopNo, it->celNo, it->celRect, it->priority, it->paletteNo, it->scaleX, it->scaleY, it->scaleSignal);
 			it->showBitsFlag = true;
 
 			if (it->signal & kSignalRemoveView)
@@ -650,6 +650,11 @@ void GfxAnimate::animateShowPic() {
 }
 
 void GfxAnimate::kernelAnimate(reg_t listReference, bool cycle, int argc, reg_t *argv) {
+	// If necessary, delay this kAnimate for a running PalVary.
+	// See delayForPalVaryWorkaround() for details.
+	if (_screen->_picNotValid)
+		_palette->delayForPalVaryWorkaround();
+
 	byte old_picNotValid = _screen->_picNotValid;
 
 	if (getSciVersion() >= SCI_VERSION_1_1)

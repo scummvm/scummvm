@@ -83,7 +83,22 @@ void PSpit::catherineIdleTimer() {
 void PSpit::xpisland990_elevcombo(const ArgumentArray &args) {
 	// Play button sound based on args[0]
 	_vm->_sound->playSound(args[0] + 5);
+	_vm->_cursor->hideCursor();
 	_vm->delay(500);
+	_vm->_cursor->showCursor();
+
+	// If the user released the mouse button during the wait time, the mouse up event
+	// is not forwarded to the game script handler. The button appears to be down
+	// until the user moves the mouse outside of the button hotspot.
+	// This happens with the original engine as well.
+	// To work around this issue we run the mouse up script if the mouse is not
+	// pressed anymore at this point.
+	if (!mouseIsDown()) {
+		Common::String buttonName = Common::String::format("combo%d", args[0]);
+		RivenHotspot *button = _vm->getCard()->getHotspotByName(buttonName);
+		RivenScriptPtr mouseUpScript = button->getScript(kMouseUpScript);
+		_vm->_scriptMan->runScript(mouseUpScript, false);
+	}
 
 	// It is impossible to get here if Gehn is not trapped. However,
 	// the original also disallows brute forcing the ending if you have

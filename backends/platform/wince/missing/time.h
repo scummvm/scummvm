@@ -5,7 +5,9 @@
 
 #include <stdlib.h>
 
-#ifndef __MINGW32CE__
+#ifdef __MINGW32CE__
+#include_next <time.h>
+#else
 struct tm {
 	short tm_year;
 	short tm_mon;

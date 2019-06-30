@@ -24,12 +24,12 @@
 
 #include "sludge/allfiles.h"
 #include "sludge/backdrop.h"
-#include "sludge/sprites.h"
 #include "sludge/fonttext.h"
 #include "sludge/graphics.h"
 #include "sludge/moreio.h"
 #include "sludge/newfatal.h"
 #include "sludge/sludge.h"
+#include "sludge/sprites.h"
 #include "sludge/statusba.h"
 
 namespace Sludge {
@@ -37,8 +37,8 @@ namespace Sludge {
 SpritePalette verbLinePalette;
 SpritePalette litVerbLinePalette;
 
-StatusStuff  mainStatus;
-StatusStuff  *nowStatus = & mainStatus;
+StatusStuff mainStatus;
+StatusStuff *nowStatus = & mainStatus;
 
 void setLitStatus(int i) {
 	nowStatus->litStatus = i;
@@ -114,14 +114,14 @@ void drawStatusBar() {
 }
 
 void statusBarColour(byte r, byte g, byte b) {
-	setFontColour(verbLinePalette, r, g, b);
+	verbLinePalette.setColor(r, g, b);
 	nowStatus->statusR = r;
 	nowStatus->statusG = g;
 	nowStatus->statusB = b;
 }
 
 void statusBarLitColour(byte r, byte g, byte b) {
-	setFontColour(litVerbLinePalette, r, g, b);
+	litVerbLinePalette.setColor(r, g, b);
 	nowStatus->statusLR = r;
 	nowStatus->statusLG = g;
 	nowStatus->statusLB = b;
@@ -144,7 +144,7 @@ StatusStuff *copyStatusBarStuff(StatusStuff  *here) {
 	here->litStatus = -1;
 	here->firstStatusBar = NULL;
 
-	StatusStuff  *old = nowStatus;
+	StatusStuff *old = nowStatus;
 	nowStatus = here;
 
 	return old;
@@ -152,8 +152,8 @@ StatusStuff *copyStatusBarStuff(StatusStuff  *here) {
 
 void restoreBarStuff(StatusStuff *here) {
 	delete nowStatus;
-	setFontColour(verbLinePalette, here->statusR, here->statusG, here->statusB);
-	setFontColour(litVerbLinePalette, here->statusLR, here->statusLG, here->statusLB);
+	verbLinePalette.setColor((byte)here->statusR, (byte)here->statusG, (byte)here->statusB);
+	litVerbLinePalette.setColor((byte)here->statusLR, (byte)here->statusLG, (byte)here->statusLB);
 	nowStatus = here;
 }
 
@@ -215,8 +215,8 @@ bool loadStatusBars(Common::SeekableReadStream *stream) {
 	nowStatus->statusLG = stream->readByte();
 	nowStatus->statusLB = stream->readByte();
 
-	setFontColour(verbLinePalette, nowStatus->statusR, nowStatus->statusG, nowStatus->statusB);
-	setFontColour(litVerbLinePalette, nowStatus->statusLR, nowStatus->statusLG, nowStatus->statusLB);
+	verbLinePalette.setColor((byte)nowStatus->statusR, (byte)nowStatus->statusG, (byte)nowStatus->statusB);
+	litVerbLinePalette.setColor((byte)nowStatus->statusLR, (byte)nowStatus->statusLG, (byte)nowStatus->statusLB);
 	// Read what's being said
 	StatusBar **viewLine = & (nowStatus->firstStatusBar);
 	StatusBar *newOne;

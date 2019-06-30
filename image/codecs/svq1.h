@@ -27,6 +27,7 @@
 #include "image/codecs/codec.h"
 
 namespace Common {
+template <class BITSTREAM>
 class Huffman;
 struct Point;
 }
@@ -53,12 +54,14 @@ private:
 
 	byte *_last[3];
 
-	Common::Huffman *_blockType;
-	Common::Huffman *_intraMultistage[6];
-	Common::Huffman *_interMultistage[6];
-	Common::Huffman *_intraMean;
-	Common::Huffman *_interMean;
-	Common::Huffman *_motionComponent;
+	typedef Common::Huffman<Common::BitStream32BEMSB> HuffmanDecoder;
+
+	HuffmanDecoder *_blockType;
+	HuffmanDecoder *_intraMultistage[6];
+	HuffmanDecoder *_interMultistage[6];
+	HuffmanDecoder *_intraMean;
+	HuffmanDecoder *_interMean;
+	HuffmanDecoder *_motionComponent;
 
 	bool svq1DecodeBlockIntra(Common::BitStream32BEMSB *s, byte *pixels, int pitch);
 	bool svq1DecodeBlockNonIntra(Common::BitStream32BEMSB *s, byte *pixels, int pitch);

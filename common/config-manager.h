@@ -171,7 +171,7 @@ public:
 	DomainMap::iterator beginGameDomains() { return _gameDomains.begin(); }
 	DomainMap::iterator endGameDomains() { return _gameDomains.end(); }
 
-	static void			defragment();	// move in memory to reduce fragmentation
+	static void			defragment(); // move in memory to reduce fragmentation
 	void 				copyFrom(ConfigManager &source);
 
 private:
@@ -185,7 +185,7 @@ private:
 
 	Domain			_transientDomain;
 	DomainMap		_gameDomains;
-	DomainMap		_miscDomains;		// Any other domains
+	DomainMap		_miscDomains; // Any other domains
 	Domain			_appDomain;
 	Domain			_defaultsDomain;
 

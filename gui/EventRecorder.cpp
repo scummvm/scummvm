@@ -557,17 +557,19 @@ Common::SaveFileManager *EventRecorder::getSaveManager(Common::SaveFileManager *
 }
 
 void EventRecorder::preDrawOverlayGui() {
-    if ((_initialized) || (_needRedraw)) {
+	if ((_initialized) || (_needRedraw)) {
 		RecordMode oldMode = _recordMode;
 		_recordMode = kPassthrough;
 		g_system->showOverlay();
 		g_gui.theme()->clearAll();
-		g_gui.theme()->openDialog(true, GUI::ThemeEngine::kShadingNone);
-		_controlPanel->drawDialog();
-		g_gui.theme()->finishBuffering();
+		g_gui.theme()->drawToBackbuffer();
+		_controlPanel->drawDialog(kDrawLayerBackground);
+		g_gui.theme()->drawToScreen();
+		g_gui.theme()->copyBackBufferToScreen();
+		_controlPanel->drawDialog(kDrawLayerForeground);
 		g_gui.theme()->updateScreen();
 		_recordMode = oldMode;
-   }
+	}
 }
 
 void EventRecorder::postDrawOverlayGui() {
@@ -598,13 +600,13 @@ void EventRecorder::setFileHeader() {
 		return;
 	}
 	TimeDate t;
-	GameDescriptor desc = EngineMan.findGame(ConfMan.getActiveDomainName());
+	PlainGameDescriptor desc = EngineMan.findGame(ConfMan.getActiveDomainName());
 	g_system->getTimeAndDate(t);
 	if (_author.empty()) {
 		setAuthor("Unknown Author");
 	}
 	if (_name.empty()) {
-		g_eventRec.setName(Common::String::format("%.2d.%.2d.%.4d ", t.tm_mday, t.tm_mon, 1900 + t.tm_year) + desc.description());
+		g_eventRec.setName(Common::String::format("%.2d.%.2d.%.4d ", t.tm_mday, t.tm_mon, 1900 + t.tm_year) + desc.description);
 	}
 	_playbackFile->getHeader().author = _author;
 	_playbackFile->getHeader().notes = _desc;

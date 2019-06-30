@@ -30,9 +30,17 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
-#include <e32def.h>
 
+#if (__GNUC__ && __cplusplus)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wreturn-local-addr"
+#endif
+#include <e32def.h>
 #include <e32std.h>
+#if (__GNUC__ && __cplusplus)
+#pragma GCC diagnostic pop
+#endif
+
 #include <libc\math.h>
 
 /* define pi */
@@ -53,6 +61,17 @@ typedef unsigned short int uint16;
 typedef signed short int int16;
 typedef unsigned long int uint32;
 typedef signed long int int32;
+typedef signed long long int64;
+typedef unsigned long long uint64;
+
+#ifdef __cplusplus
+namespace std
+	{
+
+	using ::size_t;
+
+	} // namespace std
+#endif
 
 // Define SCUMMVM_DONT_DEFINE_TYPES to prevent scummsys.h from trying to
 // re-define those data types.
@@ -70,10 +89,6 @@ typedef signed long int int32;
 
 #define DISABLE_COMMAND_LINE
 #define USE_RGB_COLOR
-
-#if defined(USE_TREMOR) && !defined(USE_VORBIS)
-#define USE_VORBIS // make sure this one is defined together with USE_TREMOR!
-#endif
 
 // hack in some tricks to work around not having these fcns for Symbian
 // and we _really_ don't wanna link with any other windows LIBC library!

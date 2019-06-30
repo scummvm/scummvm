@@ -40,10 +40,10 @@ struct Point {
 
 	Point() : x(0), y(0) {}
 	Point(int16 x1, int16 y1) : x(x1), y(y1) {}
-	bool operator==(const Point &p) const { return x == p.x && y == p.y; }
-	bool operator!=(const Point &p) const { return x != p.x || y != p.y; }
-	Point operator+(const Point &delta) const {	return Point(x + delta.x, y + delta.y);	}
-	Point operator-(const Point &delta) const {	return Point(x - delta.x, y - delta.y);	}
+	bool  operator==(const Point &p)    const { return x == p.x && y == p.y; }
+	bool  operator!=(const Point &p)    const { return x != p.x || y != p.y; }
+	Point operator+(const Point &delta) const { return Point(x + delta.x, y + delta.y); }
+	Point operator-(const Point &delta) const { return Point(x - delta.x, y - delta.y); }
 
 	void operator+=(const Point &delta) {
 		x += delta.x;

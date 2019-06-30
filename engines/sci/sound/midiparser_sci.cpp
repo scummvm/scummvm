@@ -392,15 +392,11 @@ void MidiParser_SCI::sendInitCommands() {
 	// Set initial voice count
 	if (_pSnd) {
 		if (_soundVersion <= SCI_VERSION_0_LATE) {
-			static_cast<MidiPlayer *>(_driver)->onNewSound();
-
-			for (int i = 0; i < 15; ++i) {
-				byte voiceCount = 0;
-				if (_channelUsed[i]) {
-					voiceCount = _pSnd->soundRes->getInitialVoiceCount(i);
-					sendToDriver(0xB0 | i, 0x4B, voiceCount);
-				}
-			}
+			// Send header data to SCI0 sound drivers. The driver function which parses the header (opcode 3)
+			// seems to be implemented at least in all SCI0_LATE drivers. The things that the individual drivers
+			// do in that init function varies.
+			if (_track->header.byteSize())
+				static_cast<MidiPlayer *>(_driver)->initTrack(_track->header);
 		} else {
 			for (int i = 0; i < _track->channelCount; ++i) {
 				byte voiceCount = _track->channels[i].poly;
@@ -720,7 +716,7 @@ bool MidiParser_SCI::processEvent(const EventInfo &info, bool fireEvents) {
 		break;
 	case 0xB:
 		// Reference for some events:
-		// http://wiki.scummvm.org/index.php/SCI/Specifications/Sound/SCI0_Resource_Format#Status_Reference
+		// https://wiki.scummvm.org/index.php/SCI/Specifications/Sound/SCI0_Resource_Format#Status_Reference
 		// Handle common special events
 		switch (info.basic.param1) {
 		case kSetReverb:

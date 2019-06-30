@@ -23,6 +23,7 @@
 #include "common/config-manager.h"
 #include "common/memstream.h"
 #include "common/savefile.h"
+#include "common/serializer.h"
 #include "common/system.h"
 #include "common/zlib.h"
 
@@ -34,7 +35,6 @@
 #include "scumm/he/intern_he.h"
 #include "scumm/object.h"
 #include "scumm/resource.h"
-#include "scumm/saveload.h"
 #include "scumm/scumm_v0.h"
 #include "scumm/scumm_v7.h"
 #include "scumm/sound.h"
@@ -68,6 +68,7 @@ struct SaveInfoSection {
 
 #define SaveInfoSectionSize (4+4+4 + 4+4 + 4+2)
 
+#define CURRENT_VER 99
 #define INFOSECTION_VERSION 2
 
 #pragma mark -
@@ -185,8 +186,9 @@ bool ScummEngine::saveState(Common::WriteStream *out, bool writeHeader) {
 #endif
 	saveInfos(out);
 
-	Serializer ser(0, out, CURRENT_VER);
-	saveOrLoad(&ser);
+	Common::Serializer ser(0, out);
+	ser.setVersion(CURRENT_VER);
+	saveLoadWithSerializer(ser);
 	return true;
 }
 
@@ -442,8 +444,9 @@ bool ScummEngine::loadState(int slot, bool compat, Common::String &filename) {
 	//
 	// Now do the actual loading
 	//
-	Serializer ser(in, 0, hdr.ver);
-	saveOrLoad(&ser);
+	Common::Serializer ser(in, 0);
+	ser.setVersion(hdr.ver);
+	saveLoadWithSerializer(ser);
 	delete in;
 
 	// Update volume settings
@@ -703,7 +706,9 @@ bool ScummEngine::querySaveMetaInfos(const char *target, int slot, int heversion
 
 	if (hdr.ver > VER(52)) {
 		if (Graphics::checkThumbnailHeader(*in)) {
-			thumbnail = Graphics::loadThumbnail(*in);
+			if (!Graphics::loadThumbnail(*in, thumbnail)) {
+				return false;
+			}
 		}
 
 		if (hdr.ver > VER(57)) {
@@ -793,334 +798,337 @@ void ScummEngine::saveInfos(Common::WriteStream *file) {
 	file->writeUint16BE(section.time);
 }
 
-void ScummEngine::saveOrLoad(Serializer *s) {
-	const SaveLoadEntry objectEntries[] = {
-		MKLINE(ObjectData, OBIMoffset, sleUint32, VER(8)),
-		MKLINE(ObjectData, OBCDoffset, sleUint32, VER(8)),
-		MKLINE(ObjectData, walk_x, sleUint16, VER(8)),
-		MKLINE(ObjectData, walk_y, sleUint16, VER(8)),
-		MKLINE(ObjectData, obj_nr, sleUint16, VER(8)),
-		MKLINE(ObjectData, x_pos, sleInt16, VER(8)),
-		MKLINE(ObjectData, y_pos, sleInt16, VER(8)),
-		MKLINE(ObjectData, width, sleUint16, VER(8)),
-		MKLINE(ObjectData, height, sleUint16, VER(8)),
-		MKLINE(ObjectData, actordir, sleByte, VER(8)),
-		MKLINE(ObjectData, parentstate, sleByte, VER(8)),
-		MKLINE(ObjectData, parent, sleByte, VER(8)),
-		MKLINE(ObjectData, state, sleByte, VER(8)),
-		MKLINE(ObjectData, fl_object_index, sleByte, VER(8)),
-		MKLINE(ObjectData, flags, sleByte, VER(46)),
-		MKEND()
-	};
+static void syncWithSerializer(Common::Serializer &s, ObjectData &od) {
+	s.syncAsUint32LE(od.OBIMoffset, VER(8));
+	s.syncAsUint32LE(od.OBCDoffset, VER(8));
+	s.syncAsUint16LE(od.walk_x, VER(8));
+	s.syncAsUint16LE(od.walk_y, VER(8));
+	s.syncAsUint16LE(od.obj_nr, VER(8));
+	s.syncAsSint16LE(od.x_pos, VER(8));
+	s.syncAsSint16LE(od.y_pos, VER(8));
+	s.syncAsUint16LE(od.width, VER(8));
+	s.syncAsUint16LE(od.height, VER(8));
+	s.syncAsByte(od.actordir, VER(8));
+	s.syncAsByte(od.parentstate, VER(8));
+	s.syncAsByte(od.parent, VER(8));
+	s.syncAsByte(od.state, VER(8));
+	s.syncAsByte(od.fl_object_index, VER(8));
+	s.syncAsByte(od.flags, VER(46));
+}
 
-	const SaveLoadEntry verbEntries[] = {
-		MKLINE(VerbSlot, curRect.left, sleInt16, VER(8)),
-		MKLINE(VerbSlot, curRect.top, sleInt16, VER(8)),
-		MKLINE(VerbSlot, curRect.right, sleInt16, VER(8)),
-		MKLINE(VerbSlot, curRect.bottom, sleInt16, VER(8)),
-		MKLINE(VerbSlot, oldRect.left, sleInt16, VER(8)),
-		MKLINE(VerbSlot, oldRect.top, sleInt16, VER(8)),
-		MKLINE(VerbSlot, oldRect.right, sleInt16, VER(8)),
-		MKLINE(VerbSlot, oldRect.bottom, sleInt16, VER(8)),
+static void syncWithSerializer(Common::Serializer &s, VerbSlot &vs) {
+	s.syncAsSint16LE(vs.curRect.left, VER(8));
+	s.syncAsSint16LE(vs.curRect.top, VER(8));
+	s.syncAsSint16LE(vs.curRect.right, VER(8));
+	s.syncAsSint16LE(vs.curRect.bottom, VER(8));
+	s.syncAsSint16LE(vs.oldRect.left, VER(8));
+	s.syncAsSint16LE(vs.oldRect.top, VER(8));
+	s.syncAsSint16LE(vs.oldRect.right, VER(8));
+	s.syncAsSint16LE(vs.oldRect.bottom, VER(8));
+	s.syncAsByte(vs.verbid, VER(8), VER(11));
+	s.syncAsSint16LE(vs.verbid, VER(12));
+	s.syncAsByte(vs.color, VER(8));
+	s.syncAsByte(vs.hicolor, VER(8));
+	s.syncAsByte(vs.dimcolor, VER(8));
+	s.syncAsByte(vs.bkcolor, VER(8));
+	s.syncAsByte(vs.type, VER(8));
+	s.syncAsByte(vs.charset_nr, VER(8));
+	s.syncAsByte(vs.curmode, VER(8));
+	s.syncAsByte(vs.saveid, VER(8));
+	s.syncAsByte(vs.key, VER(8));
+	s.syncAsByte(vs.center, VER(8));
+	s.syncAsByte(vs.prep, VER(8));
+	s.syncAsUint16LE(vs.imgindex, VER(8));
+}
 
-		MKLINE_OLD(VerbSlot, verbid, sleByte, VER(8), VER(11)),
-		MKLINE(VerbSlot, verbid, sleInt16, VER(12)),
+static void syncWithSerializer(Common::Serializer &s, ScriptSlot &ss) {
+	s.syncAsUint32LE(ss.offs, VER(8));
+	s.syncAsSint32LE(ss.delay, VER(8));
+	s.syncAsUint16LE(ss.number, VER(8));
+	s.syncAsUint16LE(ss.delayFrameCount, VER(8));
+	s.syncAsByte(ss.status, VER(8));
+	s.syncAsByte(ss.where, VER(8));
+	s.syncAsByte(ss.freezeResistant, VER(8));
+	s.syncAsByte(ss.recursive, VER(8));
+	s.syncAsByte(ss.freezeCount, VER(8));
+	s.syncAsByte(ss.didexec, VER(8));
+	s.syncAsByte(ss.cutsceneOverride, VER(8));
+	s.syncAsByte(ss.cycle, VER(46));
+	s.skip(1, VER(8), VER(10)); // unk5
+}
 
-		MKLINE(VerbSlot, color, sleByte, VER(8)),
-		MKLINE(VerbSlot, hicolor, sleByte, VER(8)),
-		MKLINE(VerbSlot, dimcolor, sleByte, VER(8)),
-		MKLINE(VerbSlot, bkcolor, sleByte, VER(8)),
-		MKLINE(VerbSlot, type, sleByte, VER(8)),
-		MKLINE(VerbSlot, charset_nr, sleByte, VER(8)),
-		MKLINE(VerbSlot, curmode, sleByte, VER(8)),
-		MKLINE(VerbSlot, saveid, sleByte, VER(8)),
-		MKLINE(VerbSlot, key, sleByte, VER(8)),
-		MKLINE(VerbSlot, center, sleByte, VER(8)),
-		MKLINE(VerbSlot, prep, sleByte, VER(8)),
-		MKLINE(VerbSlot, imgindex, sleUint16, VER(8)),
-		MKEND()
-	};
+static void syncWithSerializer(Common::Serializer &s, NestedScript &ns) {
+	s.syncAsUint16LE(ns.number, VER(8));
+	s.syncAsByte(ns.where, VER(8));
+	s.syncAsByte(ns.slot, VER(8));
+}
 
-	const SaveLoadEntry mainEntries[] = {
-		MKARRAY(ScummEngine, _gameMD5[0], sleUint8, 16, VER(39)),
-		MK_OBSOLETE(ScummEngine, _roomWidth, sleUint16, VER(8), VER(50)),
-		MK_OBSOLETE(ScummEngine, _roomHeight, sleUint16, VER(8), VER(50)),
-		MK_OBSOLETE(ScummEngine, _ENCD_offs, sleUint32, VER(8), VER(50)),
-		MK_OBSOLETE(ScummEngine, _EXCD_offs, sleUint32, VER(8), VER(50)),
-		MK_OBSOLETE(ScummEngine, _IM00_offs, sleUint32, VER(8), VER(50)),
-		MK_OBSOLETE(ScummEngine, _CLUT_offs, sleUint32, VER(8), VER(50)),
-		MK_OBSOLETE(ScummEngine, _EPAL_offs, sleUint32, VER(8), VER(9)),
-		MK_OBSOLETE(ScummEngine, _PALS_offs, sleUint32, VER(8), VER(50)),
-		MKLINE(ScummEngine, _curPalIndex, sleByte, VER(8)),
-		MKLINE(ScummEngine, _currentRoom, sleByte, VER(8)),
-		MKLINE(ScummEngine, _roomResource, sleByte, VER(8)),
-		MKLINE(ScummEngine, _numObjectsInRoom, sleByte, VER(8)),
-		MKLINE(ScummEngine, _currentScript, sleByte, VER(8)),
-		MK_OBSOLETE_ARRAY(ScummEngine, _localScriptOffsets[0], sleUint32, _numLocalScripts, VER(8), VER(50)),
+static void syncWithSerializer(Common::Serializer &s, SentenceTab &st) {
+	s.syncAsByte(st.verb, VER(8));
+	s.syncAsByte(st.preposition, VER(8));
+	s.syncAsUint16LE(st.objectA, VER(8));
+	s.syncAsUint16LE(st.objectB, VER(8));
+	s.syncAsByte(st.freezeCount, VER(8));
+}
 
+static void syncWithSerializer(Common::Serializer &s, StringTab &st) {
+	s.syncAsSint16LE(st.xpos, VER(8));
+	s.syncAsSint16LE(st._default.xpos, VER(8));
+	s.syncAsSint16LE(st.ypos, VER(8));
+	s.syncAsSint16LE(st._default.ypos, VER(8));
+	s.syncAsSint16LE(st.right, VER(8));
+	s.syncAsSint16LE(st._default.right, VER(8));
+	s.syncAsSByte(st.color, VER(8));
+	s.syncAsSByte(st._default.color, VER(8));
+	s.syncAsSByte(st.charset, VER(8));
+	s.syncAsSByte(st._default.charset, VER(8));
+	s.syncAsByte(st.center, VER(8));
+	s.syncAsByte(st._default.center, VER(8));
+	s.syncAsByte(st.overhead, VER(8));
+	s.syncAsByte(st._default.overhead, VER(8));
+	s.syncAsByte(st.no_talk_anim, VER(8));
+	s.syncAsByte(st._default.no_talk_anim, VER(8));
+	s.syncAsByte(st.wrapping, VER(71));
+	s.syncAsByte(st._default.wrapping, VER(71));
+}
 
-		// vm.localvar grew from 25 to 40 script entries and then from
-		// 16 to 32 bit variables (but that wasn't reflect here)... and
-		// THEN from 16 to 25 variables.
-		MKARRAY2_OLD(ScummEngine, vm.localvar[0][0], sleUint16, 17, 25, (byte *)vm.localvar[1] - (byte *)vm.localvar[0], VER(8), VER(8)),
-		MKARRAY2_OLD(ScummEngine, vm.localvar[0][0], sleUint16, 17, 40, (byte *)vm.localvar[1] - (byte *)vm.localvar[0], VER(9), VER(14)),
+static void syncWithSerializer(Common::Serializer &s, ColorCycle &cc) {
+	s.syncAsUint16LE(cc.delay, VER(8));
+	s.syncAsUint16LE(cc.counter, VER(8));
+	s.syncAsUint16LE(cc.flags, VER(8));
+	s.syncAsByte(cc.start, VER(8));
+	s.syncAsByte(cc.end, VER(8));
+}
 
-		// We used to save 25 * 40 = 1000 blocks; but actually, each 'row consisted of 26 entry,
-		// i.e. 26 * 40 = 1040. Thus the last 40 blocks of localvar where not saved at all. To be
-		// able to load this screwed format, we use a trick: We load 26 * 38 = 988 blocks.
-		// Then, we mark the followin 12 blocks (24 bytes) as obsolete.
-		MKARRAY2_OLD(ScummEngine, vm.localvar[0][0], sleUint16, 26, 38, (byte *)vm.localvar[1] - (byte *)vm.localvar[0], VER(15), VER(17)),
-		MK_OBSOLETE_ARRAY(ScummEngine, vm.localvar[39][0], sleUint16, 12, VER(15), VER(17)),
+void syncWithSerializer(Common::Serializer &s, ScummEngine::ScaleSlot &ss) {
+	s.syncAsUint16LE(ss.x1, VER(13));
+	s.syncAsUint16LE(ss.y1, VER(13));
+	s.syncAsUint16LE(ss.scale1, VER(13));
+	s.syncAsUint16LE(ss.x2, VER(13));
+	s.syncAsUint16LE(ss.y2, VER(13));
+	s.syncAsUint16LE(ss.scale2, VER(13));
+}
 
-		// This was the first proper multi dimensional version of the localvars, with 32 bit values
-		MKARRAY2_OLD(ScummEngine, vm.localvar[0][0], sleUint32, 26, 40, (byte *)vm.localvar[1] - (byte *)vm.localvar[0], VER(18), VER(19)),
+static void syncWithSerializer(Common::Serializer &s, AudioCDManager::Status &as) {
+	s.syncAsUint32LE(as.playing, VER(24));
+	s.syncAsSint32LE(as.track, VER(24));
+	s.syncAsUint32LE(as.start, VER(24));
+	s.syncAsUint32LE(as.duration, VER(24));
+	s.syncAsSint32LE(as.numLoops, VER(24));
+}
 
-		// Then we doubled the script slots again, from 40 to 80
-		MKARRAY2(ScummEngine, vm.localvar[0][0], sleUint32, 26, NUM_SCRIPT_SLOT, (byte *)vm.localvar[1] - (byte *)vm.localvar[0], VER(20)),
+static void syncWithSerializer(Common::Serializer &s, Common::Rect &rect) {
+	s.syncAsSint16LE(rect.left);
+	s.syncAsSint16LE(rect.top);
+	s.syncAsSint16LE(rect.right);
+	s.syncAsSint16LE(rect.bottom);
+}
 
+template <typename T, size_t N, size_t M>
+static void sync2DArray(Common::Serializer &s, T (&array)[N][M], const size_t dim1, const size_t dim2, void (*serializer)(Common::Serializer &, T &), Common::Serializer::Version minVersion = 0, Common::Serializer::Version maxVersion = Common::Serializer::kLastVersion) {
 
-		MKARRAY(ScummEngine, _resourceMapper[0], sleByte, 128, VER(8)),
-		MKARRAY(ScummEngine, _charsetColorMap[0], sleByte, 16, VER(8)),
+	if (s.getVersion() < minVersion || s.getVersion() > maxVersion) {
+		return;
+	}
 
-		// _charsetData grew from 10*16, to 15*16, to 23*16 bytes
-		MKARRAY_OLD(ScummEngine, _charsetData[0][0], sleByte, 10 * 16, VER(8), VER(9)),
-		MKARRAY_OLD(ScummEngine, _charsetData[0][0], sleByte, 15 * 16, VER(10), VER(66)),
-		MKARRAY(ScummEngine, _charsetData[0][0], sleByte, 23 * 16, VER(67)),
+	assert(dim1 <= N);
+	assert(dim2 <= M);
+	for (size_t i = 0; i < dim1; ++i) {
+		for (size_t j = 0; j < dim2; ++j) {
+			serializer(s, array[i][j]);
+		}
+	}
+}
 
-		MK_OBSOLETE(ScummEngine, _curExecScript, sleUint16, VER(8), VER(62)),
-
-		MKLINE(ScummEngine, camera._dest.x, sleInt16, VER(8)),
-		MKLINE(ScummEngine, camera._dest.y, sleInt16, VER(8)),
-		MKLINE(ScummEngine, camera._cur.x, sleInt16, VER(8)),
-		MKLINE(ScummEngine, camera._cur.y, sleInt16, VER(8)),
-		MKLINE(ScummEngine, camera._last.x, sleInt16, VER(8)),
-		MKLINE(ScummEngine, camera._last.y, sleInt16, VER(8)),
-		MKLINE(ScummEngine, camera._accel.x, sleInt16, VER(8)),
-		MKLINE(ScummEngine, camera._accel.y, sleInt16, VER(8)),
-		MKLINE(ScummEngine, _screenStartStrip, sleInt16, VER(8)),
-		MKLINE(ScummEngine, _screenEndStrip, sleInt16, VER(8)),
-		MKLINE(ScummEngine, camera._mode, sleByte, VER(8)),
-		MKLINE(ScummEngine, camera._follows, sleByte, VER(8)),
-		MKLINE(ScummEngine, camera._leftTrigger, sleInt16, VER(8)),
-		MKLINE(ScummEngine, camera._rightTrigger, sleInt16, VER(8)),
-		MKLINE(ScummEngine, camera._movingToActor, sleUint16, VER(8)),
-
-		MKLINE(ScummEngine, _actorToPrintStrFor, sleByte, VER(8)),
-		MKLINE(ScummEngine, _charsetColor, sleByte, VER(8)),
-
-		// _charsetBufPos was changed from byte to int
-		MKLINE_OLD(ScummEngine, _charsetBufPos, sleByte, VER(8), VER(9)),
-		MKLINE(ScummEngine, _charsetBufPos, sleInt16, VER(10)),
-
-		MKLINE(ScummEngine, _haveMsg, sleByte, VER(8)),
-		MKLINE(ScummEngine, _haveActorSpeechMsg, sleByte, VER(61)),
-		MKLINE(ScummEngine, _useTalkAnims, sleByte, VER(8)),
-
-		MKLINE(ScummEngine, _talkDelay, sleInt16, VER(8)),
-		MKLINE(ScummEngine, _defaultTalkDelay, sleInt16, VER(8)),
-		MK_OBSOLETE(ScummEngine, _numInMsgStack, sleInt16, VER(8), VER(27)),
-		MKLINE(ScummEngine, _sentenceNum, sleByte, VER(8)),
-
-		MKLINE(ScummEngine, vm.cutSceneStackPointer, sleByte, VER(8)),
-		MKARRAY(ScummEngine, vm.cutScenePtr[0], sleUint32, 5, VER(8)),
-		MKARRAY(ScummEngine, vm.cutSceneScript[0], sleByte, 5, VER(8)),
-		MKARRAY(ScummEngine, vm.cutSceneData[0], sleInt16, 5, VER(8)),
-		MKLINE(ScummEngine, vm.cutSceneScriptIndex, sleInt16, VER(8)),
-
-		MKLINE(ScummEngine, vm.numNestedScripts, sleByte, VER(8)),
-		MKLINE(ScummEngine, _userPut, sleByte, VER(8)),
-		MKLINE(ScummEngine, _userState, sleUint16, VER(17)),
-		MKLINE(ScummEngine, _cursor.state, sleByte, VER(8)),
-		MK_OBSOLETE(ScummEngine, _gdi->_cursorActive, sleByte, VER(8), VER(20)),
-		MKLINE(ScummEngine, _currentCursor, sleByte, VER(8)),
-		MKARRAY(ScummEngine, _grabbedCursor[0], sleByte, 8192, VER(20)),
-		MKLINE(ScummEngine, _cursor.width, sleInt16, VER(20)),
-		MKLINE(ScummEngine, _cursor.height, sleInt16, VER(20)),
-		MKLINE(ScummEngine, _cursor.hotspotX, sleInt16, VER(20)),
-		MKLINE(ScummEngine, _cursor.hotspotY, sleInt16, VER(20)),
-		MKLINE(ScummEngine, _cursor.animate, sleByte, VER(20)),
-		MKLINE(ScummEngine, _cursor.animateIndex, sleByte, VER(20)),
-		MKLINE(ScummEngine, _mouse.x, sleInt16, VER(20)),
-		MKLINE(ScummEngine, _mouse.y, sleInt16, VER(20)),
-
-		MKARRAY(ScummEngine, _colorUsedByCycle[0], sleByte, 256, VER(60)),
-		MKLINE(ScummEngine, _doEffect, sleByte, VER(8)),
-		MKLINE(ScummEngine, _switchRoomEffect, sleByte, VER(8)),
-		MKLINE(ScummEngine, _newEffect, sleByte, VER(8)),
-		MKLINE(ScummEngine, _switchRoomEffect2, sleByte, VER(8)),
-		MKLINE(ScummEngine, _bgNeedsRedraw, sleByte, VER(8)),
-
-		// The state of palManipulate is stored only since V10
-		MKLINE(ScummEngine, _palManipStart, sleByte, VER(10)),
-		MKLINE(ScummEngine, _palManipEnd, sleByte, VER(10)),
-		MKLINE(ScummEngine, _palManipCounter, sleUint16, VER(10)),
-
-		// gfxUsageBits grew from 200 to 410 entries. Then 3 * 410 entries:
-		MKARRAY_OLD(ScummEngine, gfxUsageBits[0], sleUint32, 200, VER(8), VER(9)),
-		MKARRAY_OLD(ScummEngine, gfxUsageBits[0], sleUint32, 410, VER(10), VER(13)),
-		MKARRAY(ScummEngine, gfxUsageBits[0], sleUint32, 3 * 410, VER(14)),
-
-		MK_OBSOLETE(ScummEngine, _gdi->_transparentColor, sleByte, VER(8), VER(50)),
-		MKARRAY(ScummEngine, _currentPalette[0], sleByte, 768, VER(8)),
-		MKARRAY(ScummEngine, _darkenPalette[0], sleByte, 768, VER(53)),
-
-		// Sam & Max specific palette replaced by _shadowPalette now.
-		MK_OBSOLETE_ARRAY(ScummEngine, _proc_special_palette[0], sleByte, 256, VER(8), VER(33)),
-
-		MKARRAY(ScummEngine, _charsetBuffer[0], sleByte, 256, VER(8)),
-
-		MKLINE(ScummEngine, _egoPositioned, sleByte, VER(8)),
-
-		// _gdi->_imgBufOffs grew from 4 to 5 entries. Then one day we realized
-		// that we don't have to store it since initBGBuffers() recomputes it.
-		MK_OBSOLETE_ARRAY(ScummEngine, _gdi->_imgBufOffs[0], sleUint16, 4, VER(8), VER(9)),
-		MK_OBSOLETE_ARRAY(ScummEngine, _gdi->_imgBufOffs[0], sleUint16, 5, VER(10), VER(26)),
-
-		// See _imgBufOffs: _numZBuffer is recomputed by initBGBuffers().
-		MK_OBSOLETE(ScummEngine, _gdi->_numZBuffer, sleByte, VER(8), VER(26)),
-
-		MKLINE(ScummEngine, _screenEffectFlag, sleByte, VER(8)),
-
-		MK_OBSOLETE(ScummEngine, _randSeed1, sleUint32, VER(8), VER(9)),
-		MK_OBSOLETE(ScummEngine, _randSeed2, sleUint32, VER(8), VER(9)),
-
-		// Converted _shakeEnabled to boolean and added a _shakeFrame field.
-		MKLINE_OLD(ScummEngine, _shakeEnabled, sleInt16, VER(8), VER(9)),
-		MKLINE(ScummEngine, _shakeEnabled, sleByte, VER(10)),
-		MKLINE(ScummEngine, _shakeFrame, sleUint32, VER(10)),
-
-		MKLINE(ScummEngine, _keepText, sleByte, VER(8)),
-
-		MKLINE(ScummEngine, _screenB, sleUint16, VER(8)),
-		MKLINE(ScummEngine, _screenH, sleUint16, VER(8)),
-
-		MKLINE(ScummEngine, _NESCostumeSet, sleUint16, VER(47)),
-
-		MK_OBSOLETE(ScummEngine, _cd_track, sleInt16, VER(9), VER(9)),
-		MK_OBSOLETE(ScummEngine, _cd_loops, sleInt16, VER(9), VER(9)),
-		MK_OBSOLETE(ScummEngine, _cd_frame, sleInt16, VER(9), VER(9)),
-		MK_OBSOLETE(ScummEngine, _cd_end, sleInt16, VER(9), VER(9)),
-
-		MKEND()
-	};
-
-	const SaveLoadEntry scriptSlotEntries[] = {
-		MKLINE(ScriptSlot, offs, sleUint32, VER(8)),
-		MKLINE(ScriptSlot, delay, sleInt32, VER(8)),
-		MKLINE(ScriptSlot, number, sleUint16, VER(8)),
-		MKLINE(ScriptSlot, delayFrameCount, sleUint16, VER(8)),
-		MKLINE(ScriptSlot, status, sleByte, VER(8)),
-		MKLINE(ScriptSlot, where, sleByte, VER(8)),
-		MKLINE(ScriptSlot, freezeResistant, sleByte, VER(8)),
-		MKLINE(ScriptSlot, recursive, sleByte, VER(8)),
-		MKLINE(ScriptSlot, freezeCount, sleByte, VER(8)),
-		MKLINE(ScriptSlot, didexec, sleByte, VER(8)),
-		MKLINE(ScriptSlot, cutsceneOverride, sleByte, VER(8)),
-		MKLINE(ScriptSlot, cycle, sleByte, VER(46)),
-		MK_OBSOLETE(ScriptSlot, unk5, sleByte, VER(8), VER(10)),
-		MKEND()
-	};
-
-	const SaveLoadEntry nestedScriptEntries[] = {
-		MKLINE(NestedScript, number, sleUint16, VER(8)),
-		MKLINE(NestedScript, where, sleByte, VER(8)),
-		MKLINE(NestedScript, slot, sleByte, VER(8)),
-		MKEND()
-	};
-
-	const SaveLoadEntry sentenceTabEntries[] = {
-		MKLINE(SentenceTab, verb, sleUint8, VER(8)),
-		MKLINE(SentenceTab, preposition, sleUint8, VER(8)),
-		MKLINE(SentenceTab, objectA, sleUint16, VER(8)),
-		MKLINE(SentenceTab, objectB, sleUint16, VER(8)),
-		MKLINE(SentenceTab, freezeCount, sleUint8, VER(8)),
-		MKEND()
-	};
-
-	const SaveLoadEntry stringTabEntries[] = {
-		// Then _default/restore of a StringTab entry becomes a one liner.
-		MKLINE(StringTab, xpos, sleInt16, VER(8)),
-		MKLINE(StringTab, _default.xpos, sleInt16, VER(8)),
-		MKLINE(StringTab, ypos, sleInt16, VER(8)),
-		MKLINE(StringTab, _default.ypos, sleInt16, VER(8)),
-		MKLINE(StringTab, right, sleInt16, VER(8)),
-		MKLINE(StringTab, _default.right, sleInt16, VER(8)),
-		MKLINE(StringTab, color, sleInt8, VER(8)),
-		MKLINE(StringTab, _default.color, sleInt8, VER(8)),
-		MKLINE(StringTab, charset, sleInt8, VER(8)),
-		MKLINE(StringTab, _default.charset, sleInt8, VER(8)),
-		MKLINE(StringTab, center, sleByte, VER(8)),
-		MKLINE(StringTab, _default.center, sleByte, VER(8)),
-		MKLINE(StringTab, overhead, sleByte, VER(8)),
-		MKLINE(StringTab, _default.overhead, sleByte, VER(8)),
-		MKLINE(StringTab, no_talk_anim, sleByte, VER(8)),
-		MKLINE(StringTab, _default.no_talk_anim, sleByte, VER(8)),
-		MKLINE(StringTab, wrapping, sleByte, VER(71)),
-		MKLINE(StringTab, _default.wrapping, sleByte, VER(71)),
-		MKEND()
-	};
-
-	const SaveLoadEntry colorCycleEntries[] = {
-		MKLINE(ColorCycle, delay, sleUint16, VER(8)),
-		MKLINE(ColorCycle, counter, sleUint16, VER(8)),
-		MKLINE(ColorCycle, flags, sleUint16, VER(8)),
-		MKLINE(ColorCycle, start, sleByte, VER(8)),
-		MKLINE(ColorCycle, end, sleByte, VER(8)),
-		MKEND()
-	};
-
-	const SaveLoadEntry scaleSlotsEntries[] = {
-		MKLINE(ScaleSlot, x1, sleUint16, VER(13)),
-		MKLINE(ScaleSlot, y1, sleUint16, VER(13)),
-		MKLINE(ScaleSlot, scale1, sleUint16, VER(13)),
-		MKLINE(ScaleSlot, x2, sleUint16, VER(13)),
-		MKLINE(ScaleSlot, y2, sleUint16, VER(13)),
-		MKLINE(ScaleSlot, scale2, sleUint16, VER(13)),
-		MKEND()
-	};
-
-	// MSVC6 FIX (Jamieson630):
-	// MSVC6 has a problem with any notation that involves
-	// more than one set of double colons ::
-	// The following MKLINE macros expand to such things
-	// as AudioCDManager::Status::playing, and MSVC6 has
-	// a fit with that. This typedef simplifies the notation
-	// to something MSVC6 can grasp.
-	typedef AudioCDManager::Status AudioCDManager_Status;
-	const SaveLoadEntry audioCDEntries[] = {
-		MKLINE(AudioCDManager_Status, playing, sleUint32, VER(24)),
-		MKLINE(AudioCDManager_Status, track, sleInt32, VER(24)),
-		MKLINE(AudioCDManager_Status, start, sleUint32, VER(24)),
-		MKLINE(AudioCDManager_Status, duration, sleUint32, VER(24)),
-		MKLINE(AudioCDManager_Status, numLoops, sleInt32, VER(24)),
-		MKEND()
-	};
-
+void ScummEngine::saveLoadWithSerializer(Common::Serializer &s) {
 	int i;
 	int var120Backup;
 	int var98Backup;
 	uint8 md5Backup[16];
 
 	// MD5 Operations: Backup on load, compare, and reset.
-	if (s->isLoading())
+	if (s.isLoading())
 		memcpy(md5Backup, _gameMD5, 16);
 
 
 	//
 	// Save/load main state (many members of class ScummEngine get saved here)
 	//
-	s->saveLoadEntries(this, mainEntries);
+	s.syncBytes(_gameMD5, sizeof(_gameMD5), VER(39));
+	s.skip(2, VER(8), VER(50)); // _roomWidth
+	s.skip(2, VER(8), VER(50)); // _roomHeight
+	s.skip(4, VER(8), VER(50)); // _ENCD_offs
+	s.skip(4, VER(8), VER(50)); // _EXCD_offs
+	s.skip(4, VER(8), VER(50)); // _IM00_offs
+	s.skip(4, VER(8), VER(50)); // _CLUT_offs
+	s.skip(4, VER(8), VER(9)); // _EPAL_offs
+	s.skip(4, VER(8), VER(50)); // _PALS_offs
+	s.syncAsByte(_curPalIndex, VER(8));
+	s.syncAsByte(_currentRoom, VER(8));
+	s.syncAsByte(_roomResource, VER(8));
+	s.syncAsByte(_numObjectsInRoom, VER(8));
+	s.syncAsByte(_currentScript, VER(8));
+	s.skip(4 * _numLocalScripts, VER(8), VER(50)); // _localScriptOffsets
+
+	// vm.localvar grew from 25 to 40 script entries and then from
+	// 16 to 32 bit variables (but that wasn't reflect here)... and
+	// THEN from 16 to 25 variables.
+	sync2DArray(s, vm.localvar, 25, 17, Common::Serializer::Uint16LE, VER(8), VER(8));
+	sync2DArray(s, vm.localvar, 40, 17, Common::Serializer::Uint16LE, VER(9), VER(14));
+
+	// We used to save 25 * 40 = 1000 blocks; but actually, each 'row consisted of 26 entry,
+	// i. 26 * 40 = 1040. Thus the last 40 blocks of localvar where not saved at all. To be
+	// able to load this screwed format, we use a trick: We load 26 * 38 = 988 blocks.
+	// Then, we mark the followin 12 blocks (24 bytes) as obsolete.
+	sync2DArray(s, vm.localvar, 38, 26, Common::Serializer::Uint16LE, VER(15), VER(17));
+	s.skip(2 * 12, VER(15), VER(17));
+
+	// This was the first proper multi dimensional version of the localvars, with 32 bit values
+	sync2DArray(s, vm.localvar, 40, 26, Common::Serializer::Uint32LE, VER(18), VER(19));
+
+	// Then we doubled the script slots again, from 40 to 80
+	sync2DArray(s, vm.localvar, NUM_SCRIPT_SLOT, 26, Common::Serializer::Uint32LE, VER(20));
+
+	s.syncBytes(_resourceMapper, 128, VER(8));
+	s.syncBytes(_charsetColorMap, 16, VER(8));
+
+	// _charsetData grew from 10*16, to 15*16, to 23*16 bytes
+	for (i = 0; i < 10; ++i) {
+		s.syncBytes(_charsetData[i], 16, VER(8));
+	}
+	for (; i < 15; ++i) {
+		s.syncBytes(_charsetData[i], 16, VER(10));
+	}
+	for (; i < 23; ++i) {
+		s.syncBytes(_charsetData[i], 16, VER(67));
+	}
+
+	s.skip(2, VER(8), VER(62)); // _curExecScript
+
+	s.syncAsSint16LE(camera._dest.x, VER(8));
+	s.syncAsSint16LE(camera._dest.y, VER(8));
+	s.syncAsSint16LE(camera._cur.x, VER(8));
+	s.syncAsSint16LE(camera._cur.y, VER(8));
+	s.syncAsSint16LE(camera._last.x, VER(8));
+	s.syncAsSint16LE(camera._last.y, VER(8));
+	s.syncAsSint16LE(camera._accel.x, VER(8));
+	s.syncAsSint16LE(camera._accel.y, VER(8));
+	s.syncAsSint16LE(_screenStartStrip, VER(8));
+	s.syncAsSint16LE(_screenEndStrip, VER(8));
+	s.syncAsByte(camera._mode, VER(8));
+	s.syncAsByte(camera._follows, VER(8));
+	s.syncAsSint16LE(camera._leftTrigger, VER(8));
+	s.syncAsSint16LE(camera._rightTrigger, VER(8));
+	s.syncAsUint16LE(camera._movingToActor, VER(8));
+
+	s.syncAsByte(_actorToPrintStrFor, VER(8));
+	s.syncAsByte(_charsetColor, VER(8));
+
+	// _charsetBufPos was changed from byte to int
+	s.syncAsByte(_charsetBufPos, VER(8), VER(9));
+	s.syncAsSint16LE(_charsetBufPos, VER(10));
+
+	s.syncAsByte(_haveMsg, VER(8));
+	s.syncAsByte(_haveActorSpeechMsg, VER(61));
+	s.syncAsByte(_useTalkAnims, VER(8));
+
+	s.syncAsSint16LE(_talkDelay, VER(8));
+	s.syncAsSint16LE(_defaultTalkDelay, VER(8));
+	s.skip(2, VER(8), VER(27)); // _numInMsgStack
+	s.syncAsByte(_sentenceNum, VER(8));
+
+	s.syncAsByte(vm.cutSceneStackPointer, VER(8));
+	s.syncArray(vm.cutScenePtr, 5, Common::Serializer::Uint32LE, VER(8));
+	s.syncBytes(vm.cutSceneScript, 5, VER(8));
+	s.syncArray(vm.cutSceneData, 5, Common::Serializer::Sint16LE, VER(8));
+	s.syncAsSint16LE(vm.cutSceneScriptIndex, VER(8));
+
+	s.syncAsByte(vm.numNestedScripts, VER(8));
+	s.syncAsByte(_userPut, VER(8));
+	s.syncAsUint16LE(_userState, VER(17));
+	s.syncAsByte(_cursor.state, VER(8));
+	s.skip(1, VER(8), VER(20)); // _gdi->_cursorActive
+	s.syncAsByte(_currentCursor, VER(8));
+	// TODO: This seems wrong, _grabbedCursor is >8192 bytes and sometimes holds
+	// 16-bit values
+	s.syncBytes(_grabbedCursor, 8192, VER(20));
+	s.syncAsSint16LE(_cursor.width, VER(20));
+	s.syncAsSint16LE(_cursor.height, VER(20));
+	s.syncAsSint16LE(_cursor.hotspotX, VER(20));
+	s.syncAsSint16LE(_cursor.hotspotY, VER(20));
+	s.syncAsByte(_cursor.animate, VER(20));
+	s.syncAsByte(_cursor.animateIndex, VER(20));
+	s.syncAsSint16LE(_mouse.x, VER(20));
+	s.syncAsSint16LE(_mouse.y, VER(20));
+
+	s.syncBytes(_colorUsedByCycle, 256, VER(60));
+	s.syncAsByte(_doEffect, VER(8));
+	s.syncAsByte(_switchRoomEffect, VER(8));
+	s.syncAsByte(_newEffect, VER(8));
+	s.syncAsByte(_switchRoomEffect2, VER(8));
+	s.syncAsByte(_bgNeedsRedraw, VER(8));
+
+	// The state of palManipulate is stored only since V10
+	s.syncAsByte(_palManipStart, VER(10));
+	s.syncAsByte(_palManipEnd, VER(10));
+	s.syncAsUint16LE(_palManipCounter, VER(10));
+
+	// gfxUsageBits grew from 200 to 410 entries. Then 3 * 410 entries:
+	s.syncArray(gfxUsageBits, 200, Common::Serializer::Uint32LE, VER(8), VER(9));
+	s.syncArray(gfxUsageBits, 410, Common::Serializer::Uint32LE, VER(10), VER(13));
+	s.syncArray(gfxUsageBits, 3 * 410, Common::Serializer::Uint32LE, VER(14));
+
+	s.skip(1, VER(8), VER(50)); // _gdi->_transparentColor
+	s.syncBytes(_currentPalette, 768, VER(8));
+	s.syncBytes(_darkenPalette, 768, VER(53));
+
+	// Sam & Max specific palette replaced by _shadowPalette now.
+	s.skip(256, VER(8), VER(33)); // _proc_special_palette
+
+	s.syncBytes(_charsetBuffer, 256, VER(8));
+
+	s.syncAsByte(_egoPositioned, VER(8));
+
+	// _gdi->_imgBufOffs grew from 4 to 5 entries. Then one day we realized
+	// that we don't have to store it since initBGBuffers() recomputes it.
+	s.skip(2 * 4, VER(8), VER(9)); // _gdi->_imgBufOffs
+	s.skip(2 * 5, VER(10), VER(26)); // _gdi->_imgBufOffs
+
+	// See _imgBufOffs: _numZBuffer is recomputed by initBGBuffers().
+	s.skip(1, VER(8), VER(26)); // _gdi->_numZBuffer
+
+	s.syncAsByte(_screenEffectFlag, VER(8));
+
+	s.skip(4, VER(8), VER(9)); // _randSeed1
+	s.skip(4, VER(8), VER(9)); // _randSeed2
+
+	// Converted _shakeEnabled to boolean and added a _shakeFrame field.
+	s.syncAsSint16LE(_shakeEnabled, VER(8), VER(9));
+	s.syncAsByte(_shakeEnabled, VER(10));
+	s.syncAsUint32LE(_shakeFrame, VER(10));
+
+	s.syncAsByte(_keepText, VER(8));
+
+	s.syncAsUint16LE(_screenB, VER(8));
+	s.syncAsUint16LE(_screenH, VER(8));
+
+	s.syncAsUint16LE(_NESCostumeSet, VER(47));
+
+	s.skip(2, VER(9), VER(9)); // _cd_track
+	s.skip(2, VER(9), VER(9)); // _cd_loops
+	s.skip(2, VER(9), VER(9)); // _cd_frame
+	s.skip(2, VER(9), VER(9)); // _cd_end
 
 	// MD5 Operations: Backup on load, compare, and reset.
-	if (s->isLoading()) {
+	if (s.isLoading()) {
 		char md5str1[32+1], md5str2[32+1];
 		for (i = 0; i < 16; i++) {
 			sprintf(md5str1 + i*2, "%02x", (int)_gameMD5[i]);
 			sprintf(md5str2 + i*2, "%02x", (int)md5Backup[i]);
 		}
 
-		debug(2, "Save version: %d", s->getVersion());
-		debug(2, "Saved game MD5: %s", (s->getVersion() >= 39) ? md5str1 : "unknown");
+		debug(2, "Save version: %d", s.getVersion());
+		debug(2, "Saved game MD5: %s", (s.getVersion() >= 39) ? md5str1 : "unknown");
 
 		if (memcmp(md5Backup, _gameMD5, 16) != 0) {
 			warning("Game was saved with different gamedata - you may encounter problems");
@@ -1134,22 +1142,22 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 	// that have more than 30 actors (up to 94 are supported now, in theory).
 	// Since the format of the usage bits was changed by this, we have to
 	// convert them when loading an older savegame.
-	if (s->isLoading() && s->getVersion() < VER(14))
+	if (s.isLoading() && s.getVersion() < VER(14))
 		upgradeGfxUsageBits();
 
 	// When loading, reset the ShakePos. Fixes one part of bug #7141
-	if (s->isLoading() && s->getVersion() >= VER(10))
+	if (s.isLoading() && s.getVersion() >= VER(10))
 		_system->setShakePos(0);
 
 	// When loading, move the mouse to the saved mouse position.
-	if (s->isLoading() && s->getVersion() >= VER(20)) {
+	if (s.isLoading() && s.getVersion() >= VER(20)) {
 		updateCursor();
 		_system->warpMouse(_mouse.x, _mouse.y);
 	}
 
 	// Before V61, we re-used the _haveMsg flag to handle "alternative" speech
 	// sound files (see charset code 10).
-	if (s->isLoading() && s->getVersion() < VER(61)) {
+	if (s.isLoading() && s.getVersion() < VER(61)) {
 		if (_haveMsg == 0xFE) {
 			_haveActorSpeechMsg = false;
 			_haveMsg = 0xFF;
@@ -1174,14 +1182,11 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 	//
 	// Save/load script data
 	//
-	if (s->getVersion() < VER(9))
-		s->saveLoadArrayOf(vm.slot, 25, sizeof(vm.slot[0]), scriptSlotEntries);
-	else if (s->getVersion() < VER(20))
-		s->saveLoadArrayOf(vm.slot, 40, sizeof(vm.slot[0]), scriptSlotEntries);
-	else
-		s->saveLoadArrayOf(vm.slot, NUM_SCRIPT_SLOT, sizeof(vm.slot[0]), scriptSlotEntries);
+	s.syncArray(vm.slot, 25, syncWithSerializer, VER(0), VER(8));
+	s.syncArray(vm.slot, 40, syncWithSerializer, VER(9), VER(19));
+	s.syncArray(vm.slot, NUM_SCRIPT_SLOT, syncWithSerializer, VER(20));
 
-	if (s->getVersion() < VER(46)) {
+	if (s.getVersion() < VER(46)) {
 		// When loading an old savegame, make sure that the 'cycle'
 		// field is set to something sensible, otherwise the scripts
 		// that were running probably won't be.
@@ -1195,13 +1200,13 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 	//
 	// Save/load local objects
 	//
-	s->saveLoadArrayOf(_objs, _numLocalObjects, sizeof(_objs[0]), objectEntries);
-	if (s->isLoading()) {
-		if (s->getVersion() < VER(13)) {
+	s.syncArray(_objs, _numLocalObjects, syncWithSerializer);
+	if (s.isLoading()) {
+		if (s.getVersion() < VER(13)) {
 			// Since roughly v13 of the save games, the objs storage has changed a bit
 			for (i = _numObjectsInRoom; i < _numLocalObjects; i++)
 				_objs[i].obj_nr = 0;
-		} else if (_game.version == 0 && s->getVersion() < VER(91)) {
+		} else if (_game.version == 0 && s.getVersion() < VER(91)) {
 			for (i = 0; i < _numLocalObjects; i++) {
 				// Merge object id and type (previously stored in flags)
 				if (_objs[i].obj_nr != 0 && OBJECT_V0_TYPE(_objs[i].obj_nr) == 0 && _objs[i].flags != 0)
@@ -1215,13 +1220,12 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 	//
 	// Save/load misc stuff
 	//
-	s->saveLoadArrayOf(_verbs, _numVerbs, sizeof(_verbs[0]), verbEntries);
-	s->saveLoadArrayOf(vm.nest, 16, sizeof(vm.nest[0]), nestedScriptEntries);
-	s->saveLoadArrayOf(_sentence, 6, sizeof(_sentence[0]), sentenceTabEntries);
-	s->saveLoadArrayOf(_string, 6, sizeof(_string[0]), stringTabEntries);
-	s->saveLoadArrayOf(_colorCycle, 16, sizeof(_colorCycle[0]), colorCycleEntries);
-	if (s->getVersion() >= VER(13))
-		s->saveLoadArrayOf(_scaleSlots, 20, sizeof(_scaleSlots[0]), scaleSlotsEntries);
+	s.syncArray(_verbs, _numVerbs, syncWithSerializer);
+	s.syncArray(vm.nest, 16, syncWithSerializer);
+	s.syncArray(_sentence, 6, syncWithSerializer);
+	s.syncArray(_string, 6, syncWithSerializer);
+	s.syncArray(_colorCycle, 16, syncWithSerializer);
+	s.syncArray(_scaleSlots, 20, syncWithSerializer, VER(13));
 
 
 	//
@@ -1229,30 +1233,31 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 	//
 	ResType type;
 	ResId idx;
-	if (s->getVersion() >= VER(26)) {
+	if (s.getVersion() >= VER(26)) {
 		// New, more robust resource save/load system. This stores the type
 		// and index of each resource. Thus if we increase e.g. the maximum
 		// number of script resources, savegames won't break.
-		if (s->isSaving()) {
+		if (s.isSaving()) {
+			uint16 endMarker = 0xFFFF;
 			for (type = rtFirst; type <= rtLast; type = ResType(type + 1)) {
 				if (_res->_types[type]._mode != kStaticResTypeMode && type != rtTemp && type != rtBuffer) {
-					s->saveUint16(type);	// Save the res type...
+					s.syncAsUint16LE(type);	// Save the res type...
 					for (idx = 0; idx < _res->_types[type].size(); idx++) {
 						// Only save resources which actually exist...
 						if (_res->_types[type][idx]._address) {
-							s->saveUint16(idx);	// Save the index of the resource
+							s.syncAsUint16LE(idx);	// Save the index of the resource
 							saveResource(s, type, idx);
 						}
 					}
-					s->saveUint16(0xFFFF);	// End marker
+					s.syncAsUint16LE(endMarker);
 				}
 			}
-			s->saveUint16(0xFFFF);	// End marker
+			s.syncAsUint16LE(endMarker);
 		} else {
 			uint16 tmp;
-			while ((tmp = s->loadUint16()) != 0xFFFF) {
+			while (s.syncAsUint16LE(tmp), tmp != 0xFFFF) {
 				type = (ResType)tmp;
-				while ((idx = s->loadUint16()) != 0xFFFF) {
+				while (s.syncAsUint16LE(idx), idx != 0xFFFF) {
 					assert(idx < _res->_types[type].size());
 					loadResource(s, type, idx);
 				}
@@ -1278,17 +1283,17 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 	//
 	// Save/load global object state
 	//
-	s->saveLoadArrayOf(_objectOwnerTable, _numGlobalObjects, sizeof(_objectOwnerTable[0]), sleByte);
-	s->saveLoadArrayOf(_objectStateTable, _numGlobalObjects, sizeof(_objectStateTable[0]), sleByte);
+	s.syncBytes(_objectOwnerTable, _numGlobalObjects);
+	s.syncBytes(_objectStateTable, _numGlobalObjects);
 	if (_objectRoomTable)
-		s->saveLoadArrayOf(_objectRoomTable, _numGlobalObjects, sizeof(_objectRoomTable[0]), sleByte);
+		s.syncBytes(_objectRoomTable, _numGlobalObjects);
 
 
 	//
 	// Save/load palette data
 	// Don't save 16 bit palette in FM-Towns and PCE games, since it gets regenerated afterwards anyway.
-	if (_16BitPalette && !(_game.platform == Common::kPlatformFMTowns && s->getVersion() < VER(82)) && !((_game.platform == Common::kPlatformFMTowns || _game.platform == Common::kPlatformPCEngine) && s->getVersion() > VER(87))) {
-		s->saveLoadArrayOf(_16BitPalette, 512, sizeof(_16BitPalette[0]), sleUint16);
+	if (_16BitPalette && !(_game.platform == Common::kPlatformFMTowns && s.getVersion() < VER(82)) && !((_game.platform == Common::kPlatformFMTowns || _game.platform == Common::kPlatformPCEngine) && s.getVersion() > VER(87))) {
+		s.syncArray(_16BitPalette, 512, Common::Serializer::Uint16LE);
 	}
 
 
@@ -1300,92 +1305,80 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 
 #ifdef DISABLE_TOWNS_DUAL_LAYER_MODE
 	byte hasTownsData = 0;
-	if (_game.platform == Common::kPlatformFMTowns && s->getVersion() > VER(87))
-		s->saveLoadArrayOf(&hasTownsData, 1, sizeof(byte), sleByte);
+	if (_game.platform == Common::kPlatformFMTowns && s.getVersion() > VER(87))
+		s.syncAsByte(hasTownsData);
 
 	if (hasTownsData) {
 		// Skip FM-Towns specific data
-		for (i = 69 * sizeof(uint8) + 44 * sizeof(int16); i; i--)
-			s->loadByte();
+		s.skip(69 + 44 * sizeof(int16));
 	}
 
 #else
-	byte hasTownsData = ((_game.platform == Common::kPlatformFMTowns && s->getVersion() >= VER(87)) || (s->getVersion() >= VER(82) && s->getVersion() < VER(87))) ? 1 : 0;
-	if (_game.platform == Common::kPlatformFMTowns && s->getVersion() > VER(87))
-		s->saveLoadArrayOf(&hasTownsData, 1, sizeof(byte), sleByte);
+	byte hasTownsData = ((_game.platform == Common::kPlatformFMTowns && s.getVersion() >= VER(87)) || (s.getVersion() >= VER(82) && s.getVersion() < VER(87))) ? 1 : 0;
+	if (_game.platform == Common::kPlatformFMTowns && s.getVersion() > VER(87))
+		s.syncAsByte(hasTownsData);
 
 	if (hasTownsData) {
-		const SaveLoadEntry townsFields[] = {
-			MKLINE(Common::Rect, left, sleInt16, VER(82)),
-			MKLINE(Common::Rect, top, sleInt16, VER(82)),
-			MKLINE(Common::Rect, right, sleInt16, VER(82)),
-			MKLINE(Common::Rect, bottom, sleInt16, VER(82)),
-			MKEND()
-		};
-
-		const SaveLoadEntry townsExtraEntries[] = {
-			MKLINE(ScummEngine, _townsOverrideShadowColor, sleUint8, VER(82)),
-			MKLINE(ScummEngine, _numCyclRects, sleUint8, VER(82)),
-			MKLINE(ScummEngine, _townsPaletteFlags, sleUint8, VER(82)),
-			MKLINE(ScummEngine, _townsClearLayerFlag, sleUint8, VER(82)),
-			MKLINE(ScummEngine, _townsActiveLayerFlags, sleUint8, VER(82)),
-			MKEND()
-		};
-
-		s->saveLoadArrayOf(_textPalette, 48, sizeof(_textPalette[0]), sleUint8);
-		s->saveLoadArrayOf(_cyclRects, 10, sizeof(_cyclRects[0]), townsFields);
-		s->saveLoadArrayOf(&_curStringRect, 1, sizeof(_curStringRect), townsFields);
-		s->saveLoadArrayOf(_townsCharsetColorMap, 16, sizeof(_townsCharsetColorMap[0]), sleUint8);
-		s->saveLoadEntries(this, townsExtraEntries);
-	} else if (_game.platform == Common::kPlatformFMTowns && s->getVersion() >= VER(82)) {
+		s.syncBytes(_textPalette, 48);
+		// TODO: This seems wrong, there are 16 _cyclRects
+		s.syncArray(_cyclRects, 10, syncWithSerializer, VER(82));
+		if (s.getVersion() >= VER(82))
+			syncWithSerializer(s, _curStringRect);
+		s.syncBytes(_townsCharsetColorMap, 16);
+		s.syncAsByte(_townsOverrideShadowColor, VER(82));
+		s.syncAsByte(_numCyclRects, VER(82));
+		s.syncAsByte(_townsPaletteFlags, VER(82));
+		s.syncAsByte(_townsClearLayerFlag, VER(82));
+		s.syncAsByte(_townsActiveLayerFlags, VER(82));
+	} else if (_game.platform == Common::kPlatformFMTowns && s.getVersion() >= VER(82)) {
 		warning("Save file is missing FM-Towns specific graphic data (game was apparently saved on another platform)");
 	}
 #endif
 
 	if (_shadowPaletteSize) {
-		s->saveLoadArrayOf(_shadowPalette, _shadowPaletteSize, 1, sleByte);
+		s.syncBytes(_shadowPalette, _shadowPaletteSize);
 		// _roomPalette didn't show up until V21 save games
 		// Note that we also save the room palette for Indy4 Amiga, since it
 		// is used as palette map there too, but we do so slightly a bit
 		// further down to group it with the other special palettes needed.
-		if (s->getVersion() >= VER(21) && _game.version < 5)
-			s->saveLoadArrayOf(_roomPalette, sizeof(_roomPalette), 1, sleByte);
+		if (s.getVersion() >= VER(21) && _game.version < 5)
+			s.syncBytes(_roomPalette, sizeof(_roomPalette));
 	}
 
 	// PalManip data was not saved before V10 save games
-	if (s->getVersion() < VER(10))
+	if (s.getVersion() < VER(10))
 		_palManipCounter = 0;
 	if (_palManipCounter) {
 		if (!_palManipPalette)
 			_palManipPalette = (byte *)calloc(0x300, 1);
 		if (!_palManipIntermediatePal)
 			_palManipIntermediatePal = (byte *)calloc(0x600, 1);
-		s->saveLoadArrayOf(_palManipPalette, 0x300, 1, sleByte);
-		s->saveLoadArrayOf(_palManipIntermediatePal, 0x600, 1, sleByte);
+		s.syncBytes(_palManipPalette, 0x300);
+		s.syncBytes(_palManipIntermediatePal, 0x600);
 	}
 
 	// darkenPalette was not saved before V53
-	if (s->isLoading() && s->getVersion() < VER(53)) {
+	if (s.isLoading() && s.getVersion() < VER(53)) {
 		memcpy(_darkenPalette, _currentPalette, 768);
 	}
 
 	// _colorUsedByCycle was not saved before V60
-	if (s->isLoading() && s->getVersion() < VER(60)) {
+	if (s.isLoading() && s.getVersion() < VER(60)) {
 		memset(_colorUsedByCycle, 0, sizeof(_colorUsedByCycle));
 	}
 
 	// Indy4 Amiga specific palette tables were not saved before V85
 	if (_game.platform == Common::kPlatformAmiga && _game.id == GID_INDY4) {
-		if (s->getVersion() >= 85) {
-			s->saveLoadArrayOf(_roomPalette, 256, 1, sleByte);
-			s->saveLoadArrayOf(_verbPalette, 256, 1, sleByte);
-			s->saveLoadArrayOf(_amigaPalette, 3 * 64, 1, sleByte);
+		if (s.getVersion() >= 85) {
+			s.syncBytes(_roomPalette, 256);
+			s.syncBytes(_verbPalette, 256);
+			s.syncBytes(_amigaPalette, 3 * 64);
 
 			// Starting from version 86 we also save the first used color in
 			// the palette beyond the verb palette. For old versions we just
 			// look for it again, which hopefully won't cause any troubles.
-			if (s->getVersion() >= 86) {
-				s->saveLoadArrayOf(&_amigaFirstUsedColor, 1, 2, sleUint16);
+			if (s.getVersion() >= VER(86)) {
+				s.syncAsUint16LE(_amigaFirstUsedColor);
 			} else {
 				amigaPaletteFindFirstUsedColor();
 			}
@@ -1400,7 +1393,7 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 	//
 	// Save/load more global object state
 	//
-	s->saveLoadArrayOf(_classData, _numGlobalObjects, sizeof(_classData[0]), sleUint32);
+	s.syncArray(_classData, _numGlobalObjects, Common::Serializer::Uint32LE);
 
 
 	//
@@ -1409,40 +1402,40 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 	var120Backup = _scummVars[120];
 	var98Backup = _scummVars[98];
 
-	if (s->getVersion() > VER(37))
-		s->saveLoadArrayOf(_roomVars, _numRoomVariables, sizeof(_roomVars[0]), sleInt32);
+	s.syncArray(_roomVars, _numRoomVariables, Common::Serializer::Sint32LE, VER(38));
 
 	// The variables grew from 16 to 32 bit.
-	if (s->getVersion() < VER(15))
-		s->saveLoadArrayOf(_scummVars, _numVariables, sizeof(_scummVars[0]), sleInt16);
+	if (s.getVersion() < VER(15))
+		s.syncArray(_scummVars, _numVariables, Common::Serializer::Sint16LE);
 	else
-		s->saveLoadArrayOf(_scummVars, _numVariables, sizeof(_scummVars[0]), sleInt32);
+		s.syncArray(_scummVars, _numVariables, Common::Serializer::Sint32LE);
 
 	if (_game.id == GID_TENTACLE)	// Maybe misplaced, but that's the main idea
 		_scummVars[120] = var120Backup;
 	if (_game.id == GID_INDY4)
 		_scummVars[98] = var98Backup;
 
-	s->saveLoadArrayOf(_bitVars, _numBitVariables >> 3, 1, sleByte);
+	s.syncBytes(_bitVars, _numBitVariables / 8);
 
 
 	//
 	// Save/load a list of the locked objects
 	//
-	if (s->isSaving()) {
+	if (s.isSaving()) {
+		byte endMarker = 0xFF;
 		for (type = rtFirst; type <= rtLast; type = ResType(type + 1))
 			for (idx = 1; idx < _res->_types[type].size(); idx++) {
 				if (_res->isLocked(type, idx)) {
-					s->saveByte(type);
-					s->saveUint16(idx);
+					s.syncAsByte(type);
+					s.syncAsUint16LE(idx);
 				}
 			}
-		s->saveByte(0xFF);
+		s.syncAsByte(endMarker);
 	} else {
 		uint8 tmp;
-		while ((tmp = s->loadByte()) != 0xFF) {
+		while (s.syncAsByte(tmp), tmp != 0xFF) {
 			type = (ResType)tmp;
-			idx = s->loadUint16();
+			s.syncAsUint16LE(idx);
 			_res->lock(type, idx);
 		}
 	}
@@ -1451,15 +1444,15 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 	//
 	// Save/load the Audio CD status
 	//
-	if (s->getVersion() >= VER(24)) {
+	if (s.getVersion() >= VER(24)) {
 		AudioCDManager::Status info;
-		if (s->isSaving())
+		if (s.isSaving())
 			info = _system->getAudioCDManager()->getStatus();
-		s->saveLoadArrayOf(&info, 1, sizeof(info), audioCDEntries);
+		syncWithSerializer(s, info);
 		// If we are loading, and the music being loaded was supposed to loop
 		// forever, then resume playing it. This helps a lot when the audio CD
 		// is used to provide ambient music (see bug #788195).
-		if (s->isLoading() && info.playing && info.numLoops < 0)
+		if (s.isLoading() && info.playing && info.numLoops < 0)
 			_sound->playCDTrackInternal(info.track, info.numLoops, info.start, info.duration);
 	}
 
@@ -1468,7 +1461,7 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 	// Save/load the iMuse status
 	//
 	if (_imuse && (_saveSound || !_saveTemporaryState)) {
-		_imuse->save_or_load(s, this);
+		_imuse->saveLoadIMuse(s, this);
 	}
 
 
@@ -1483,11 +1476,13 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 	//
 	// Save/load the charset renderer state
 	//
-	if (s->getVersion() >= VER(73)) {
+	if (s.getVersion() >= VER(73)) {
 		_charset->saveLoadWithSerializer(s);
-	} else if (s->isLoading()) {
-		if (s->getVersion() == VER(72)) {
-			_charset->setCurID(s->loadByte());
+	} else if (s.isLoading()) {
+		if (s.getVersion() == VER(72)) {
+			byte curId;
+			s.syncAsByte(curId);
+			_charset->setCurID(curId);
 		} else {
 			// Before V72, the charset id wasn't saved. This used to cause issues such
 			// as the one described in the bug report #1722153. For these savegames,
@@ -1497,57 +1492,48 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 	}
 }
 
-void ScummEngine_v0::saveOrLoad(Serializer *s) {
-	ScummEngine_v2::saveOrLoad(s);
+void ScummEngine_v0::saveLoadWithSerializer(Common::Serializer &s) {
+	ScummEngine_v2::saveLoadWithSerializer(s);
 
-	const SaveLoadEntry v0Entrys[] = {
-		MKLINE(ScummEngine_v0, _currentMode, sleByte, VER(78)),
-		MKLINE(ScummEngine_v0, _currentLights, sleByte, VER(78)),
-		MKLINE(ScummEngine_v0, _activeVerb, sleByte, VER(92)),
-		MKLINE(ScummEngine_v0, _activeObject, sleUint16, VER(92)),
-		MKLINE(ScummEngine_v0, _activeObject2, sleUint16, VER(92)),
-		MKLINE(ScummEngine_v0, _cmdVerb, sleByte, VER(92)),
-		MKLINE(ScummEngine_v0, _cmdObject, sleUint16, VER(92)),
-		MKLINE(ScummEngine_v0, _cmdObject2, sleUint16, VER(92)),
-		MKLINE(ScummEngine_v0, _walkToObject, sleUint16, VER(92)),
-		MKLINE(ScummEngine_v0, _walkToObjectState, sleByte, VER(92)),
-		MKEND()
-	};
- 	s->saveLoadEntries(this, v0Entrys);
+	s.syncAsByte(_currentMode, VER(78));
+	s.syncAsByte(_currentLights, VER(78));
+	s.syncAsByte(_activeVerb, VER(92));
+	s.syncAsUint16LE(_activeObject, VER(92));
+	s.syncAsUint16LE(_activeObject2, VER(92));
+	s.syncAsByte(_cmdVerb, VER(92));
+	s.syncAsUint16LE(_cmdObject, VER(92));
+	s.syncAsUint16LE(_cmdObject2, VER(92));
+	s.syncAsUint16LE(_walkToObject, VER(92));
+	s.syncAsByte(_walkToObjectState, VER(92));
 }
 
 
-void ScummEngine_v2::saveOrLoad(Serializer *s) {
-	ScummEngine::saveOrLoad(s);
+void ScummEngine_v2::saveLoadWithSerializer(Common::Serializer &s) {
+	ScummEngine::saveLoadWithSerializer(s);
 
-	const SaveLoadEntry v2Entrys[] = {
-		MKLINE(ScummEngine_v2, _inventoryOffset, sleUint16, VER(79)),
-		MKEND()
-	};
-	s->saveLoadEntries(this, v2Entrys);
+	s.syncAsUint16LE(_inventoryOffset, VER(79));
 
 	// In old saves we didn't store _inventoryOffset -> reset it to
 	// a sane default when loading one of those.
-	if (s->getVersion() < 79 && s->isLoading()) {
+	if (s.getVersion() < VER(79) && s.isLoading()) {
 		_inventoryOffset = 0;
 	}
+
+	s.syncAsByte(_flashlight.xStrips, VER(99));
+	s.syncAsByte(_flashlight.yStrips, VER(99));
 }
 
-void ScummEngine_v5::saveOrLoad(Serializer *s) {
-	ScummEngine::saveOrLoad(s);
-
-	const SaveLoadEntry cursorEntries[] = {
-		MKARRAY2(ScummEngine_v5, _cursorImages[0][0], sleUint16, 16, 4, (byte *)_cursorImages[1] - (byte *)_cursorImages[0], VER(44)),
-		MKARRAY(ScummEngine_v5, _cursorHotspots[0], sleByte, 8, VER(44)),
-		MKEND()
-	};
+void ScummEngine_v5::saveLoadWithSerializer(Common::Serializer &s) {
+	ScummEngine::saveLoadWithSerializer(s);
 
 	// This is probably only needed for Loom.
-	s->saveLoadEntries(this, cursorEntries);
+	// TODO: This looks wrong, _cursorImages is [4][17]
+	sync2DArray(s, _cursorImages, 4, 16, Common::Serializer::Uint16LE, VER(44));
+	s.syncBytes(_cursorHotspots, 8, VER(44));
 
 	// Reset cursors for old FM-Towns savegames saved with 256 color setting.
 	// Otherwise the cursor will be messed up when displayed in the new hi color setting.
-	if (_game.platform == Common::kPlatformFMTowns && _outputPixelFormat.bytesPerPixel == 2 && s->isLoading() && s->getVersion() < VER(82)) {
+	if (_game.platform == Common::kPlatformFMTowns && _outputPixelFormat.bytesPerPixel == 2 && s.isLoading() && s.getVersion() < VER(82)) {
 		if (_game.id == GID_LOOM) {
 			redefineBuiltinCursorFromChar(1, 1);
 			redefineBuiltinCursorHotspot(1, 0, 0);
@@ -1560,7 +1546,7 @@ void ScummEngine_v5::saveOrLoad(Serializer *s) {
 	// This avoids color issues when loading savegames that have been saved with a different ScummVM port
 	// that uses a different 16bit color mode than the ScummVM port which is currently used.
 #ifdef USE_RGB_COLOR
-	if (_game.platform == Common::kPlatformPCEngine && s->isLoading()) {
+	if (_game.platform == Common::kPlatformPCEngine && s.isLoading()) {
 		for (int i = 0; i < 256; ++i)
 			_16BitPalette[i] = get16BitColor(_currentPalette[i * 3 + 0], _currentPalette[i * 3 + 1], _currentPalette[i * 3 + 2]);
 	}
@@ -1568,154 +1554,133 @@ void ScummEngine_v5::saveOrLoad(Serializer *s) {
 }
 
 #ifdef ENABLE_SCUMM_7_8
-void ScummEngine_v7::saveOrLoad(Serializer *s) {
-	ScummEngine::saveOrLoad(s);
+void syncWithSerializer(Common::Serializer &s, ScummEngine_v7::SubtitleText &st) {
+	s.syncBytes(st.text, 256, VER(61));
+	s.syncAsByte(st.charset, VER(61));
+	s.syncAsByte(st.color, VER(61));
+	s.syncAsSint16LE(st.xpos, VER(61));
+	s.syncAsSint16LE(st.ypos, VER(61));
+	s.syncAsByte(st.actorSpeechMsg, VER(61));
+}
 
-	const SaveLoadEntry subtitleQueueEntries[] = {
-		MKARRAY(SubtitleText, text[0], sleByte, 256, VER(61)),
-		MKLINE(SubtitleText, charset, sleByte, VER(61)),
-		MKLINE(SubtitleText, color, sleByte, VER(61)),
-		MKLINE(SubtitleText, xpos, sleInt16, VER(61)),
-		MKLINE(SubtitleText, ypos, sleInt16, VER(61)),
-		MKLINE(SubtitleText, actorSpeechMsg, sleByte, VER(61)),
-		MKEND()
-	};
+void ScummEngine_v7::saveLoadWithSerializer(Common::Serializer &s) {
+	ScummEngine::saveLoadWithSerializer(s);
 
-	const SaveLoadEntry V7Entries[] = {
-		MKLINE(ScummEngine_v7, _subtitleQueuePos, sleInt32, VER(61)),
-		MK_OBSOLETE(ScummEngine_v7, _verbCharset, sleInt32, VER(68), VER(68)),
-		MKLINE(ScummEngine_v7, _verbLineSpacing, sleInt32, VER(68)),
-		MKEND()
-	};
+	_imuseDigital->saveLoadEarly(s);
 
-	_imuseDigital->saveOrLoad(s);
+	s.syncArray(_subtitleQueue, ARRAYSIZE(_subtitleQueue), syncWithSerializer);
+	s.syncAsSint32LE(_subtitleQueuePos, VER(61));
+	s.skip(4, VER(68), VER(68)); // _verbCharset
+	s.syncAsSint32LE(_verbLineSpacing, VER(68));
 
-	s->saveLoadArrayOf(_subtitleQueue, ARRAYSIZE(_subtitleQueue), sizeof(_subtitleQueue[0]), subtitleQueueEntries);
-	s->saveLoadEntries(this, V7Entries);
-
-	if (s->getVersion() <= VER(68) && s->isLoading()) {
+	if (s.getVersion() <= VER(68) && s.isLoading()) {
 		// WORKAROUND bug #1846049: Reset the default charset color to a sane value.
 		_string[0]._default.charset = 1;
 	}
 }
 #endif
 
-void ScummEngine_v60he::saveOrLoad(Serializer *s) {
-	ScummEngine::saveOrLoad(s);
+void ScummEngine_v60he::saveLoadWithSerializer(Common::Serializer &s) {
+	ScummEngine::saveLoadWithSerializer(s);
 
-	s->saveLoadArrayOf(_arraySlot, _numArray, sizeof(_arraySlot[0]), sleByte);
+	s.syncBytes(_arraySlot, _numArray);
 }
 
-void ScummEngine_v70he::saveOrLoad(Serializer *s) {
-	ScummEngine_v60he::saveOrLoad(s);
+void ScummEngine_v70he::saveLoadWithSerializer(Common::Serializer &s) {
+	ScummEngine_v60he::saveLoadWithSerializer(s);
 
-	const SaveLoadEntry HE70Entries[] = {
-		MKLINE(ScummEngine_v70he, _heSndSoundId, sleInt32, VER(51)),
-		MKLINE(ScummEngine_v70he, _heSndOffset, sleInt32, VER(51)),
-		MKLINE(ScummEngine_v70he, _heSndChannel, sleInt32, VER(51)),
-		MKLINE(ScummEngine_v70he, _heSndFlags, sleInt32, VER(51)),
-		MKEND()
-	};
-
-	s->saveLoadEntries(this, HE70Entries);
+	s.syncAsSint32LE(_heSndSoundId, VER(51));
+	s.syncAsSint32LE(_heSndOffset, VER(51));
+	s.syncAsSint32LE(_heSndChannel, VER(51));
+	s.syncAsSint32LE(_heSndFlags, VER(51));
 }
 
 #ifdef ENABLE_HE
-void ScummEngine_v71he::saveOrLoad(Serializer *s) {
-	ScummEngine_v70he::saveOrLoad(s);
-
-	const SaveLoadEntry polygonEntries[] = {
-		MKLINE(WizPolygon, vert[0].x, sleInt16, VER(40)),
-		MKLINE(WizPolygon, vert[0].y, sleInt16, VER(40)),
-		MKLINE(WizPolygon, vert[1].x, sleInt16, VER(40)),
-		MKLINE(WizPolygon, vert[1].y, sleInt16, VER(40)),
-		MKLINE(WizPolygon, vert[2].x, sleInt16, VER(40)),
-		MKLINE(WizPolygon, vert[2].y, sleInt16, VER(40)),
-		MKLINE(WizPolygon, vert[3].x, sleInt16, VER(40)),
-		MKLINE(WizPolygon, vert[3].y, sleInt16, VER(40)),
-		MKLINE(WizPolygon, vert[4].x, sleInt16, VER(40)),
-		MKLINE(WizPolygon, vert[4].y, sleInt16, VER(40)),
-		MKLINE(WizPolygon, bound.left, sleInt16, VER(40)),
-		MKLINE(WizPolygon, bound.top, sleInt16, VER(40)),
-		MKLINE(WizPolygon, bound.right, sleInt16, VER(40)),
-		MKLINE(WizPolygon, bound.bottom, sleInt16, VER(40)),
-		MKLINE(WizPolygon, id, sleInt16, VER(40)),
-		MKLINE(WizPolygon, numVerts, sleInt16, VER(40)),
-		MKLINE(WizPolygon, flag, sleByte, VER(40)),
-		MKEND()
-	};
-
-	s->saveLoadArrayOf(_wiz->_polygons, ARRAYSIZE(_wiz->_polygons), sizeof(_wiz->_polygons[0]), polygonEntries);
+static void syncWithSerializer(Common::Serializer &s, WizPolygon &wp) {
+	s.syncAsSint16LE(wp.vert[0].x, VER(40));
+	s.syncAsSint16LE(wp.vert[0].y, VER(40));
+	s.syncAsSint16LE(wp.vert[1].x, VER(40));
+	s.syncAsSint16LE(wp.vert[1].y, VER(40));
+	s.syncAsSint16LE(wp.vert[2].x, VER(40));
+	s.syncAsSint16LE(wp.vert[2].y, VER(40));
+	s.syncAsSint16LE(wp.vert[3].x, VER(40));
+	s.syncAsSint16LE(wp.vert[3].y, VER(40));
+	s.syncAsSint16LE(wp.vert[4].x, VER(40));
+	s.syncAsSint16LE(wp.vert[4].y, VER(40));
+	s.syncAsSint16LE(wp.bound.left, VER(40));
+	s.syncAsSint16LE(wp.bound.top, VER(40));
+	s.syncAsSint16LE(wp.bound.right, VER(40));
+	s.syncAsSint16LE(wp.bound.bottom, VER(40));
+	s.syncAsSint16LE(wp.id, VER(40));
+	s.syncAsSint16LE(wp.numVerts, VER(40));
+	s.syncAsByte(wp.flag, VER(40));
 }
 
-void ScummEngine_v90he::saveOrLoad(Serializer *s) {
-	ScummEngine_v71he::saveOrLoad(s);
+void ScummEngine_v71he::saveLoadWithSerializer(Common::Serializer &s) {
+	ScummEngine_v70he::saveLoadWithSerializer(s);
 
-	const SaveLoadEntry floodFillEntries[] = {
-		MKLINE(FloodFillParameters, box.left, sleInt32, VER(51)),
-		MKLINE(FloodFillParameters, box.top, sleInt32, VER(51)),
-		MKLINE(FloodFillParameters, box.right, sleInt32, VER(51)),
-		MKLINE(FloodFillParameters, box.bottom, sleInt32, VER(51)),
-		MKLINE(FloodFillParameters, x, sleInt32, VER(51)),
-		MKLINE(FloodFillParameters, y, sleInt32, VER(51)),
-		MKLINE(FloodFillParameters, flags, sleInt32, VER(51)),
-		MK_OBSOLETE(FloodFillParameters, unk1C, sleInt32, VER(51), VER(62)),
-		MKEND()
-	};
-
-	const SaveLoadEntry HE90Entries[] = {
-		MKLINE(ScummEngine_v90he, _curMaxSpriteId, sleInt32, VER(51)),
-		MKLINE(ScummEngine_v90he, _curSpriteId, sleInt32, VER(51)),
-		MKLINE(ScummEngine_v90he, _curSpriteGroupId, sleInt32, VER(51)),
-		MK_OBSOLETE(ScummEngine_v90he, _numSpritesToProcess, sleInt32, VER(51), VER(63)),
-		MKLINE(ScummEngine_v90he, _heObject, sleInt32, VER(51)),
-		MKLINE(ScummEngine_v90he, _heObjectNum, sleInt32, VER(51)),
-		MKLINE(ScummEngine_v90he, _hePaletteNum, sleInt32, VER(51)),
-		MKEND()
-	};
-
-	_sprite->saveOrLoadSpriteData(s);
-
-	s->saveLoadArrayOf(&_floodFillParams, 1, sizeof(_floodFillParams), floodFillEntries);
-
-	s->saveLoadEntries(this, HE90Entries);
+	s.syncArray(_wiz->_polygons, ARRAYSIZE(_wiz->_polygons), syncWithSerializer);
 }
 
-void ScummEngine_v99he::saveOrLoad(Serializer *s) {
-	ScummEngine_v90he::saveOrLoad(s);
-
-	s->saveLoadArrayOf(_hePalettes, (_numPalettes + 1) * _hePaletteSlot, sizeof(_hePalettes[0]), sleUint8);
+void syncWithSerializer(Common::Serializer &s, FloodFillParameters &ffp) {
+	s.syncAsSint32LE(ffp.box.left, VER(51));
+	s.syncAsSint32LE(ffp.box.top, VER(51));
+	s.syncAsSint32LE(ffp.box.right, VER(51));
+	s.syncAsSint32LE(ffp.box.bottom, VER(51));
+	s.syncAsSint32LE(ffp.x, VER(51));
+	s.syncAsSint32LE(ffp.y, VER(51));
+	s.syncAsSint32LE(ffp.flags, VER(51));
+	s.skip(4, VER(51), VER(62)); // unk1C
 }
 
-void ScummEngine_v100he::saveOrLoad(Serializer *s) {
-	ScummEngine_v99he::saveOrLoad(s);
+void ScummEngine_v90he::saveLoadWithSerializer(Common::Serializer &s) {
+	ScummEngine_v71he::saveLoadWithSerializer(s);
 
-	const SaveLoadEntry HE100Entries[] = {
-		MKLINE(ScummEngine_v100he, _heResId, sleInt32, VER(51)),
-		MKLINE(ScummEngine_v100he, _heResType, sleInt32, VER(51)),
-		MKEND()
-	};
+	_sprite->saveLoadWithSerializer(s);
 
-	s->saveLoadEntries(this, HE100Entries);
+	syncWithSerializer(s, _floodFillParams);
+
+	s.syncAsSint32LE(_curMaxSpriteId, VER(51));
+	s.syncAsSint32LE(_curSpriteId, VER(51));
+	s.syncAsSint32LE(_curSpriteGroupId, VER(51));
+	s.skip(4, VER(51), VER(63)); // _numSpritesToProcess
+	s.syncAsSint32LE(_heObject, VER(51));
+	s.syncAsSint32LE(_heObjectNum, VER(51));
+	s.syncAsSint32LE(_hePaletteNum, VER(51));
+}
+
+void ScummEngine_v99he::saveLoadWithSerializer(Common::Serializer &s) {
+	ScummEngine_v90he::saveLoadWithSerializer(s);
+
+	s.syncBytes(_hePalettes, (_numPalettes + 1) * _hePaletteSlot);
+}
+
+void ScummEngine_v100he::saveLoadWithSerializer(Common::Serializer &s) {
+	ScummEngine_v99he::saveLoadWithSerializer(s);
+
+	s.syncAsSint32LE(_heResId, VER(51));
+	s.syncAsSint32LE(_heResType, VER(51));
 }
 #endif
 
-void ScummEngine::loadResourceOLD(Serializer *ser, ResType type, ResId idx) {
+void ScummEngine::loadResourceOLD(Common::Serializer &ser, ResType type, ResId idx) {
 	uint32 size;
 
-	if (type == rtSound && ser->getVersion() >= VER(23)) {
+	if (type == rtSound && ser.getVersion() >= VER(23)) {
 		// Save/load only a list of resource numbers that need to be reloaded.
-		if (ser->loadUint16())
+		uint16 tmp;
+		ser.syncAsUint16LE(tmp);
+		if (tmp)
 			ensureResourceLoaded(rtSound, idx);
 	} else if (_res->_types[type]._mode == kDynamicResTypeMode) {
-		size = ser->loadUint32();
+		ser.syncAsUint32LE(size);
 		if (size) {
 			_res->createResource(type, idx, size);
-			ser->loadBytes(getResourceAddress(type, idx), size);
+			ser.syncBytes(getResourceAddress(type, idx), size);
 			if (type == rtInventory) {
-				_inventory[idx] = ser->loadUint16();
+				ser.syncAsUint16LE(_inventory[idx]);
 			}
-			if (type == rtObjectName && ser->getVersion() >= VER(25)) {
+			if (type == rtObjectName && ser.getVersion() >= VER(25)) {
 				// Paranoia: We increased the possible number of new names
 				// to fix bugs #933610 and #936323. The savegame format
 				// didn't change, but at least during the transition
@@ -1723,38 +1688,39 @@ void ScummEngine::loadResourceOLD(Serializer *ser, ResType type, ResId idx) {
 				// more names than we have allocated space for. If so,
 				// discard them.
 				if (idx < _numNewNames)
-					_newNames[idx] = ser->loadUint16();
+					ser.syncAsUint16LE(_newNames[idx]);
 			}
 		}
 	}
 }
 
-void ScummEngine::saveResource(Serializer *ser, ResType type, ResId idx) {
+void ScummEngine::saveResource(Common::Serializer &ser, ResType type, ResId idx) {
 	assert(_res->_types[type][idx]._address);
 
 	if (_res->_types[type]._mode == kDynamicResTypeMode) {
 		byte *ptr = _res->_types[type][idx]._address;
 		uint32 size = _res->_types[type][idx]._size;
 
-		ser->saveUint32(size);
-		ser->saveBytes(ptr, size);
+		ser.syncAsUint32LE(size);
+		ser.syncBytes(ptr, size);
 
 		if (type == rtInventory) {
-			ser->saveUint16(_inventory[idx]);
+			ser.syncAsUint16LE(_inventory[idx]);
 		}
 		if (type == rtObjectName) {
-			ser->saveUint16(_newNames[idx]);
+			ser.syncAsUint16LE(_newNames[idx]);
 		}
 	}
 }
 
-void ScummEngine::loadResource(Serializer *ser, ResType type, ResId idx) {
-	if (_game.heversion >= 60 && ser->getVersion() <= VER(65) &&
+void ScummEngine::loadResource(Common::Serializer &ser, ResType type, ResId idx) {
+	if (_game.heversion >= 60 && ser.getVersion() <= VER(65) &&
 		((type == rtSound && idx == 1) || (type == rtSpoolBuffer))) {
-		uint32 size = ser->loadUint32();
+		uint32 size;
+		ser.syncAsUint32LE(size);
 		assert(size);
 		_res->createResource(type, idx, size);
-		ser->loadBytes(getResourceAddress(type, idx), size);
+		ser.syncBytes(getResourceAddress(type, idx), size);
 	} else if (type == rtSound) {
 		// HE Games use sound resource 1 for speech
 		if (_game.heversion >= 60 && idx == 1)
@@ -1762,243 +1728,18 @@ void ScummEngine::loadResource(Serializer *ser, ResType type, ResId idx) {
 
 		ensureResourceLoaded(rtSound, idx);
 	} else if (_res->_types[type]._mode == kDynamicResTypeMode) {
-		uint32 size = ser->loadUint32();
+		uint32 size;
+		ser.syncAsUint32LE(size);
 		assert(size);
 		byte *ptr = _res->createResource(type, idx, size);
-		ser->loadBytes(ptr, size);
+		ser.syncBytes(ptr, size);
 
 		if (type == rtInventory) {
-			_inventory[idx] = ser->loadUint16();
+			ser.syncAsUint16LE(_inventory[idx]);
 		}
 		if (type == rtObjectName) {
-			_newNames[idx] = ser->loadUint16();
+			ser.syncAsUint16LE(_newNames[idx]);
 		}
-	}
-}
-
-void Serializer::saveBytes(void *b, int len) {
-	_saveStream->write(b, len);
-}
-
-void Serializer::loadBytes(void *b, int len) {
-	_loadStream->read(b, len);
-}
-
-void Serializer::saveUint32(uint32 d) {
-	_saveStream->writeUint32LE(d);
-}
-
-void Serializer::saveUint16(uint16 d) {
-	_saveStream->writeUint16LE(d);
-}
-
-void Serializer::saveByte(byte b) {
-	_saveStream->writeByte(b);
-}
-
-uint32 Serializer::loadUint32() {
-	return _loadStream->readUint32LE();
-}
-
-uint16 Serializer::loadUint16() {
-	return _loadStream->readUint16LE();
-}
-
-byte Serializer::loadByte() {
-	return _loadStream->readByte();
-}
-
-void Serializer::saveArrayOf(void *b, int len, int datasize, byte filetype) {
-	byte *at = (byte *)b;
-	uint32 data;
-
-	// speed up byte arrays
-	if (datasize == 1 && filetype == sleByte) {
-		if (len > 0) {
-			saveBytes(b, len);
-		}
-		return;
-	}
-
-	while (--len >= 0) {
-		if (datasize == 0) {
-			// Do nothing for obsolete data
-			data = 0;
-		} else if (datasize == 1) {
-			data = *(byte *)at;
-			at += 1;
-		} else if (datasize == 2) {
-			data = *(uint16 *)at;
-			at += 2;
-		} else if (datasize == 4) {
-			data = *(uint32 *)at;
-			at += 4;
-		} else {
-			error("saveArrayOf: invalid size %d", datasize);
-		}
-		switch (filetype) {
-		case sleByte:
-			saveByte((byte)data);
-			break;
-		case sleUint16:
-		case sleInt16:
-			saveUint16((int16)data);
-			break;
-		case sleInt32:
-		case sleUint32:
-			saveUint32(data);
-			break;
-		default:
-			error("saveArrayOf: invalid filetype %d", filetype);
-		}
-	}
-}
-
-void Serializer::loadArrayOf(void *b, int len, int datasize, byte filetype) {
-	byte *at = (byte *)b;
-	uint32 data;
-
-	// speed up byte arrays
-	if (datasize == 1 && filetype == sleByte) {
-		loadBytes(b, len);
-		return;
-	}
-
-	while (--len >= 0) {
-		switch (filetype) {
-		case sleByte:
-			data = loadByte();
-			break;
-		case sleUint16:
-			data = loadUint16();
-			break;
-		case sleInt16:
-			data = (int16)loadUint16();
-			break;
-		case sleUint32:
-			data = loadUint32();
-			break;
-		case sleInt32:
-			data = (int32)loadUint32();
-			break;
-		default:
-			error("loadArrayOf: invalid filetype %d", filetype);
-		}
-		if (datasize == 0) {
-			// Do nothing for obsolete data
-		} else if (datasize == 1) {
-			*(byte *)at = (byte)data;
-			at += 1;
-		} else if (datasize == 2) {
-			*(uint16 *)at = (uint16)data;
-			at += 2;
-		} else if (datasize == 4) {
-			*(uint32 *)at = data;
-			at += 4;
-		} else {
-			error("loadArrayOf: invalid size %d", datasize);
-		}
-	}
-}
-
-void Serializer::saveLoadArrayOf(void *b, int num, int datasize, const SaveLoadEntry *sle) {
-	byte *data = (byte *)b;
-
-	if (isSaving()) {
-		while (--num >= 0) {
-			saveEntries(data, sle);
-			data += datasize;
-		}
-	} else {
-		while (--num >= 0) {
-			loadEntries(data, sle);
-			data += datasize;
-		}
-	}
-}
-
-void Serializer::saveLoadArrayOf(void *b, int len, int datasize, byte filetype) {
-	if (isSaving())
-		saveArrayOf(b, len, datasize, filetype);
-	else
-		loadArrayOf(b, len, datasize, filetype);
-}
-
-void Serializer::saveLoadEntries(void *d, const SaveLoadEntry *sle) {
-	if (isSaving())
-		saveEntries(d, sle);
-	else
-		loadEntries(d, sle);
-}
-
-void Serializer::saveEntries(void *d, const SaveLoadEntry *sle) {
-	byte type;
-	byte *at;
-	int size;
-
-	while (sle->offs != 0xFFFF) {
-		at = (byte *)d + sle->offs;
-		size = sle->size;
-		type = (byte) sle->type;
-
-		if (sle->maxVersion != CURRENT_VER) {
-			// Skip obsolete entries
-			if (type & 128)
-				sle++;
-		} else {
-			// save entry
-			int columns = 1;
-			int rows = 1;
-			int rowlen = 0;
-			if (type & 128) {
-				sle++;
-				columns = sle->offs;
-				rows = sle->type;
-				rowlen = sle->size;
-				type &= ~128;
-			}
-			while (rows--) {
-				saveArrayOf(at, columns, size, type);
-				at += rowlen;
-			}
-		}
-		sle++;
-	}
-}
-
-void Serializer::loadEntries(void *d, const SaveLoadEntry *sle) {
-	byte type;
-	byte *at;
-	int size;
-
-	while (sle->offs != 0xFFFF) {
-		at = (byte *)d + sle->offs;
-		size = sle->size;
-		type = (byte) sle->type;
-
-		if (_savegameVersion < sle->minVersion || _savegameVersion > sle->maxVersion) {
-			// Skip entries which are not present in this save game version
-			if (type & 128)
-				sle++;
-		} else {
-			// load entry
-			int columns = 1;
-			int rows = 1;
-			int rowlen = 0;
-
-			if (type & 128) {
-				sle++;
-				columns = sle->offs;
-				rows = sle->type;
-				rowlen = sle->size;
-				type &= ~128;
-			}
-			while (rows--) {
-				loadArrayOf(at, columns, size, type);
-				at += rowlen;
-			}
-		}
-		sle++;
 	}
 }
 

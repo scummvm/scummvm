@@ -80,12 +80,12 @@ public:
 
 	bool fn1(CStarField *starField, CSurfaceArea *surfaceArea, CStarCamera *camera);
 	void fn2(CVideoSurface *surface, CStarField *starField, CStarMarkers *markers);
-	
+
 	/**
 	 * Increments the index for the number of matches
 	 */
 	void incMatches();
-	
+
 	/**
 	 * Draw the crosshairs for a given star
 	 */
@@ -101,12 +101,12 @@ public:
 	 * Erase crosshairs for the most recently selected star
 	 */
 	void eraseCurrent(CSurfaceArea *surfaceArea);
-	
+
 	/**
 	 * Draw crosshairs at the given position
 	 */
 	void drawAt(const FPoint &pt, CSurfaceArea *surfaceArea);
-	
+
 	/**
 	 * Returns the position of the most recently selected star
 	 */

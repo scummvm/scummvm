@@ -258,8 +258,8 @@ void ScalpelEngine::setupGraphics() {
 
 		// First try for a 640x400 mode
 		g_system->beginGFXTransaction();
-		initCommonGFX();
-		g_system->initSize(640, 400, &pixelFormatRGB565);
+			initCommonGFX();
+			g_system->initSize(640, 400, &pixelFormatRGB565);
 		OSystem::TransactionError gfxError = g_system->endGFXTransaction();
 
 		if (gfxError == OSystem::kTransactionSuccess) {
@@ -762,7 +762,7 @@ bool ScalpelEngine::showCityCutscene3DO() {
 		if (finished) {
 			ImageFile3DO titleImage_Copyright("title1c.cel", kImageFile3DOType_Cel);
 
-			screen.SHtransBlitFrom(titleImage_Copyright[0]._frame, Common::Point(20, 190));
+			screen.SHtransBlitFrom(titleImage_Copyright[0]._frame, Common::Point(40, 380));
 			finished = _events->delay(3500, true);
 		}
 	}
@@ -1035,8 +1035,8 @@ void ScalpelEngine::startScene() {
 			// Blackwood's capture
 			_res->addToCache("final2.vda", "epilogue.lib");
 			_res->addToCache("final2.vdx", "epilogue.lib");
-			_animation->play("final1", false, 1, 3, true, 4);
-			_animation->play("final2", false, 1, 0, false, 4);
+			_animation->play("final1", false, 1, 3, true, 2);
+			_animation->play("final2", false, 1, 0, false, 2);
 			break;
 
 		case RESCUE_ANNA:
@@ -1052,8 +1052,8 @@ void ScalpelEngine::startScene() {
 			_res->addToCache("finale4.vda", "EPILOG2.lib");
 			_res->addToCache("finale4.vdx", "EPILOG2.lib");
 
-			_animation->play("finalr1", false, 1, 3, true, 4);
-			_animation->play("finalr2", false, 1, 0, false, 4);
+			_animation->play("finalr1", false, 1, 3, true, 2);
+			_animation->play("finalr2", false, 1, 0, false, 2);
 
 			if (!_res->isInCache("finale2.vda")) {
 				// Finale file isn't cached
@@ -1065,12 +1065,12 @@ void ScalpelEngine::startScene() {
 				_res->addToCache("finale4.vdx", "EPILOG2.lib");
 			}
 
-			_animation->play("finale1", false, 1, 0, false, 4);
-			_animation->play("finale2", false, 1, 0, false, 4);
-			_animation->play("finale3", false, 1, 0, false, 4);
+			_animation->play("finale1", false, 1, 0, false, 2);
+			_animation->play("finale2", false, 1, 0, false, 2);
+			_animation->play("finale3", false, 1, 0, false, 2);
 
 			_useEpilogue2 = true;
-			_animation->play("finale4", false, 1, 0, false, 4);
+			_animation->play("finale4", false, 1, 0, false, 2);
 			_useEpilogue2 = false;
 			break;
 
@@ -1081,9 +1081,9 @@ void ScalpelEngine::startScene() {
 			_res->addToCache("SUBWAY3.vda", "epilogue.lib");
 			_res->addToCache("SUBWAY3.vdx", "epilogue.lib");
 
-			_animation->play("SUBWAY1", false, 1, 3, true, 4);
-			_animation->play("SUBWAY2", false, 1, 0, false, 4);
-			_animation->play("SUBWAY3", false, 1, 0, false, 4);
+			_animation->play("SUBWAY1", false, 1, 3, true, 2);
+			_animation->play("SUBWAY2", false, 1, 0, false, 2);
+			_animation->play("SUBWAY3", false, 1, 0, false, 2);
 
 			// Set fading to direct fade temporary so the transition goes quickly.
 			_scene->_tempFadeStyle = _screen->_fadeStyle ? 257 : 256;
@@ -1092,7 +1092,7 @@ void ScalpelEngine::startScene() {
 
 		case BRUMWELL_SUICIDE:
 			// Brumwell suicide
-			_animation->play("suicid", false, 1, 3, true, 4);
+			_animation->play("suicid", false, 1, 3, true, 2);
 			break;
 		default:
 			break;

@@ -27,6 +27,35 @@ namespace Access {
 
 namespace Martian {
 
+MartianResources::~MartianResources() {
+	delete _font6x6;
+	delete _font3x5;
+}
+
+void MartianResources::load(Common::SeekableReadStream &s) {
+	Resources::load(s);
+	uint count;
+
+	// Get the offset of the general shared data for the game
+	uint entryOffset = findEntry(_vm->getGameID(), 2, 0, (Common::Language)0);
+	s.seek(entryOffset);
+
+	// Read in the cursor list
+	count = s.readUint16LE();
+	CURSORS.resize(count);
+	for (uint idx = 0; idx < count; ++idx) {
+		uint count2 = s.readUint16LE();
+		CURSORS[idx].resize(count2);
+		s.read(&CURSORS[idx][0], count2);
+	}
+
+	// Load font data
+	_font6x6 = new MartianFont(6, s);
+	_font3x5 = new MartianFont(5, s);
+}
+
+/*------------------------------------------------------------------------*/
+
 const int SIDEOFFR[] = {  4, 0, 7, 10,  3, 1, 2, 13, 0, 0, 0, 0 };
 const int SIDEOFFL[] = { 11, 6, 1,  4, 10, 6, 1,  4, 0, 0, 0, 0 };
 const int SIDEOFFU[] = {  1, 2, 0,  2,  2, 1, 1,  0, 0, 0, 0, 0 };

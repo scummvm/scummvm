@@ -23,6 +23,7 @@
 #include "mohawk/cursors.h"
 #include "mohawk/myst.h"
 #include "mohawk/myst_areas.h"
+#include "mohawk/myst_card.h"
 #include "mohawk/myst_graphics.h"
 #include "mohawk/myst_scripts.h"
 #include "mohawk/myst_sound.h"
@@ -40,9 +41,10 @@ MystScriptEntry::MystScriptEntry() {
 	var = 0;
 	resourceId = 0;
 	u1 = 0;
+	opcode = 0;
 }
 
-const uint8 MystScriptParser::_stackMap[11] = {
+const MystStack MystScriptParser::_stackMap[11] = {
 	kSeleniticStack,
 	kStoneshipStack,
 	kMystStack,
@@ -72,15 +74,18 @@ const uint16 MystScriptParser::_startCard[11] = {
 
 // NOTE: Credits Start Card is 10000
 
-MystScriptParser::MystScriptParser(MohawkEngine_Myst *vm) :
+MystScriptParser::MystScriptParser(MohawkEngine_Myst *vm, MystStack stackId) :
 		_vm(vm),
+		_stackId(stackId),
 		_globals(vm->_gameState->_globals) {
 	setupCommonOpcodes();
 	_invokingResource = nullptr;
 	_savedCardId = 0;
 	_savedCursorId = 0;
+	_savedMapCardId = 0;
 	_tempVar = 0;
 	_scriptNestingLevel = 0;
+	_startTime = 0;
 }
 
 MystScriptParser::~MystScriptParser() {
@@ -160,16 +165,16 @@ void MystScriptParser::overrideOpcode(uint16 op, const char *name, MystScriptPar
 	warning("Unable to find opcode %d to override with '%s'", op, name);
 }
 
-void MystScriptParser::runScript(MystScript script, MystArea *invokingResource) {
+void MystScriptParser::runScript(const MystScript &script, MystArea *invokingResource) {
 	_scriptNestingLevel++;
 
-	for (uint16 i = 0; i < script->size(); i++) {
-		MystScriptEntry &entry = (*script)[i];
+	for (uint16 i = 0; i < script.size(); i++) {
+		const MystScriptEntry &entry = script[i];
 
 		if (entry.type == kMystScriptNormal)
 			_invokingResource = invokingResource;
 		else
-			_invokingResource = _vm->_resources[entry.resourceId];
+			_invokingResource = _vm->getCard()->getResource<MystArea>(entry.resourceId);
 
 		runOpcode(entry.opcode, entry.var, entry.args);
 	}
@@ -230,13 +235,12 @@ MystScript MystScriptParser::readScript(Common::SeekableReadStream *stream, Myst
 	assert(stream);
 	assert(type != kMystScriptNone);
 
-	MystScript script = MystScript(new Common::Array<MystScriptEntry>());
-
 	uint16 opcodeCount = stream->readUint16LE();
-	script->resize(opcodeCount);
+
+	MystScript script(opcodeCount);
 
 	for (uint16 i = 0; i < opcodeCount; i++) {
-		MystScriptEntry &entry = (*script)[i];
+		MystScriptEntry &entry = script[i];
 		entry.type = type;
 
 		// Resource ID only exists in INIT and EXIT scripts
@@ -313,12 +317,12 @@ void MystScriptParser::NOP(uint16 var, const ArgumentsArray &args) {
 
 void MystScriptParser::o_toggleVar(uint16 var, const ArgumentsArray &args) {
 	toggleVar(var);
-	_vm->redrawArea(var);
+	_vm->getCard()->redrawArea(var);
 }
 
 void MystScriptParser::o_setVar(uint16 var, const ArgumentsArray &args) {
 	if (setVarValue(var, args[0]))
-		_vm->redrawArea(var);
+		_vm->getCard()->redrawArea(var);
 }
 
 void MystScriptParser::o_changeCardSwitch4(uint16 var, const ArgumentsArray &args) {
@@ -375,17 +379,17 @@ void MystScriptParser::o_takePage(uint16 var, const ArgumentsArray &args) {
 			cursorId = kDefaultMystCursor;
 	}
 
-	uint16 oldPage = _globals.heldPage;
+	HeldPage oldPage = _globals.heldPage;
 
 	// Take / drop page
 	toggleVar(var);
 
 	if (oldPage != _globals.heldPage) {
 		_vm->_cursor->hideCursor();
-		_vm->redrawArea(var);
+		_vm->getCard()->redrawArea(var);
 
 		// Set new cursor
-		if (_globals.heldPage)
+		if (_globals.heldPage != kNoPage)
 			_vm->setMainCursor(cursorId);
 		else
 			_vm->setMainCursor(kDefaultMystCursor);
@@ -395,8 +399,8 @@ void MystScriptParser::o_takePage(uint16 var, const ArgumentsArray &args) {
 }
 
 void MystScriptParser::o_redrawCard(uint16 var, const ArgumentsArray &args) {
-	_vm->drawCardBackground();
-	_vm->drawResourceImages();
+	_vm->getCard()->drawBackground();
+	_vm->getCard()->drawResourceImages();
 	_vm->_gfx->copyBackBufferToScreen(Common::Rect(544, 333));
 }
 
@@ -461,7 +465,7 @@ void MystScriptParser::o_drawAreaState(uint16 var, const ArgumentsArray &args) {
 }
 
 void MystScriptParser::o_redrawAreaForVar(uint16 var, const ArgumentsArray &args) {
-	_vm->redrawArea(var);
+	_vm->getCard()->redrawArea(var);
 }
 
 void MystScriptParser::o_changeCardDirectional(uint16 var, const ArgumentsArray &args) {
@@ -480,7 +484,7 @@ void MystScriptParser::o_changeCardDirectional(uint16 var, const ArgumentsArray 
 // Opcode 18 then "pops" this stored CardId and returns to that card.
 
 void MystScriptParser::o_changeCardPush(uint16 var, const ArgumentsArray &args) {
-	_savedCardId = _vm->getCurCard();
+	_savedCardId = _vm->getCard()->getId();
 
 	uint16 cardId = args[0];
 	TransitionType transition = static_cast<TransitionType>(args[1]);
@@ -507,7 +511,7 @@ void MystScriptParser::o_enableAreas(uint16 var, const ArgumentsArray &args) {
 		if (args[i + 1] == 0xFFFF)
 			resource = _invokingResource;
 		else
-			resource = _vm->_resources[args[i + 1]];
+			resource = _vm->getCard()->getResource<MystArea>(args[i + 1]);
 
 		if (resource)
 			resource->setEnabled(true);
@@ -524,7 +528,7 @@ void MystScriptParser::o_disableAreas(uint16 var, const ArgumentsArray &args) {
 		if (args[i + 1] == 0xFFFF)
 			resource = _invokingResource;
 		else
-			resource = _vm->_resources[args[i + 1]];
+			resource = _vm->getCard()->getResource<MystArea>(args[i + 1]);
 
 		if (resource)
 			resource->setEnabled(false);
@@ -545,7 +549,7 @@ void MystScriptParser::o_toggleAreasActivation(uint16 var, const ArgumentsArray 
 		if (args[i + 1] == 0xFFFF)
 			resource = _invokingResource;
 		else
-			resource = _vm->_resources[args[i + 1]];
+			resource = _vm->getCard()->getResource<MystArea>(args[i + 1]);
 
 		if (resource)
 			resource->setEnabled(!resource->isEnabled());
@@ -556,6 +560,15 @@ void MystScriptParser::o_toggleAreasActivation(uint16 var, const ArgumentsArray 
 
 void MystScriptParser::o_playSound(uint16 var, const ArgumentsArray &args) {
 	uint16 soundId = args[0];
+
+	// WORKAROUND: In the Myst age, when in front of the cabin coming from the left
+	// with the door open, when trying to go left, a script tries to play a sound
+	// with id 4197. That sound does not exist in the game archives. However, when
+	// going right another script plays a door closing sound with id 4191.
+	// Here, we replace the incorrect sound id with a proper one.
+	if (soundId == 4197) {
+		soundId = 4191;
+	}
 
 	_vm->_sound->playEffect(soundId);
 }
@@ -587,6 +600,15 @@ void MystScriptParser::o_copyBackBufferToScreen(uint16 var, const ArgumentsArray
 	debugC(kDebugScript, "\trect.bottom: %d", rect.bottom);
 
 	_vm->_gfx->copyBackBufferToScreen(rect);
+
+	// WORKAROUND: On Channelwood, wait for the sound to complete when
+	// closing the gate on the third level near the blue page.
+	// Fixes the gate not changing visual state despite the closing
+	// sound playing.
+	// There is one card id per side of the gate.
+	if (_vm->getCard()->getId() == 3481 || _vm->getCard()->getId() == 3522) {
+		soundWaitStop();
+	}
 }
 
 void MystScriptParser::o_copyImageToBackBuffer(uint16 var, const ArgumentsArray &args) {
@@ -600,9 +622,11 @@ void MystScriptParser::o_copyImageToBackBuffer(uint16 var, const ArgumentsArray 
 
 	Common::Rect dstRect = Common::Rect(args[5], args[6], 544, 333);
 
-	if (dstRect.left == -1 || dstRect.top == -1) {
-		// Interpreted as full screen
+	if (dstRect.left == -1) {
 		dstRect.left = 0;
+	}
+
+	if (dstRect.top == -1) {
 		dstRect.top = 0;
 	}
 
@@ -619,9 +643,22 @@ void MystScriptParser::o_copyImageToBackBuffer(uint16 var, const ArgumentsArray 
 	debugC(kDebugScript, "\tdstRect.bottom: %d", dstRect.bottom);
 
 	_vm->_gfx->copyImageSectionToBackBuffer(imageId, srcRect, dstRect);
+
+	// WORKAROUND: When hitting the switch of the torture chamber in Achenar's
+	// hidden room on the Mechanical Age, the game calls this opcode multiple
+	// times in a row with different images without waiting in between.
+	// As a result the images are not shown since the screen is only
+	// updated once per frame. The original engine misbehaves as well.
+	// Here we artificially introduce a delay after each image to allow
+	// them to be visible for a few frames.
+	if (_vm->getCard()->getId() == 6009) {
+		_vm->wait(100);
+	}
 }
 
 void MystScriptParser::o_changeBackgroundSound(uint16 var, const ArgumentsArray &args) {
+	soundWaitStop();
+
 	// Used on Stoneship Card 2080
 	// Used on Channelwood Card 3225 with argc = 8 i.e. Conditional Sound List
 	Common::MemoryWriteStreamDynamic writeStream = Common::MemoryWriteStreamDynamic(DisposeAfterUse::YES);
@@ -749,10 +786,10 @@ void MystScriptParser::o_changeCardPlaySoundDirectional(uint16 var, const Argume
 	debugC(kDebugScript, "\tdelay between steps: %d", delayBetweenSteps);
 	debugC(kDebugScript, "\tanimated update data size: %d", dataSize);
 
+	_vm->changeToCard(cardId, kNoTransition);
+
 	if (soundId)
 		_vm->_sound->playEffect(soundId);
-
-	_vm->changeToCard(cardId, kNoTransition);
 
 	animatedUpdate(ArgumentsArray(args.begin() + 4, dataSize), delayBetweenSteps);
 }
@@ -784,22 +821,28 @@ void MystScriptParser::o_soundWaitStop(uint16 var, const ArgumentsArray &args) {
 	// Used on Selenitic Card 1191 (Maze Runner)
 	// Used on Mechanical Card 6267 (Code Lock)
 	// Used when Button is pushed...
-	while (_vm->_sound->isEffectPlaying())
+	soundWaitStop();
+}
+
+void MystScriptParser::soundWaitStop() const {
+	while (_vm->_sound->isEffectPlaying() && !Engine::shouldQuit())
 		_vm->doFrame();
 }
 
 void MystScriptParser::o_quit(uint16 var, const ArgumentsArray &args) {
-	_vm->quitGame();
+	Engine::quitGame();
 }
 
 void MystScriptParser::showMap() {
-	if (_vm->getCurCard() != getMap()) {
-		_savedMapCardId = _vm->getCurCard();
+	if (_vm->getCard()->getId() != getMap()) {
+		_savedMapCardId = _vm->getCard()->getId();
 		_vm->changeToCard(getMap(), kTransitionCopy);
 	}
 }
 
 void MystScriptParser::o_exitMap(uint16 var, const ArgumentsArray &args) {
+	assert(_savedMapCardId);
+
 	_vm->changeToCard(_savedMapCardId, kTransitionCopy);
 }
 

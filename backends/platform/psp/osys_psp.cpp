@@ -64,6 +64,11 @@ OSystem_PSP::~OSystem_PSP() {}
 void OSystem_PSP::initBackend() {
 	DEBUG_ENTER_FUNC();
 
+	ConfMan.registerDefault("aspect_ratio", false);
+	ConfMan.registerDefault("gfx_mode", "Fit to Screen");
+	ConfMan.registerDefault("kbdmouse_speed", 3);
+	ConfMan.registerDefault("joystick_deadzone", 3);
+
 	// Instantiate real time clock
 	PspRtc::instance();
 
@@ -109,7 +114,8 @@ void OSystem_PSP::engineDone() {
 }
 
 bool OSystem_PSP::hasFeature(Feature f) {
-	return (f == kFeatureOverlaySupportsAlpha || f == kFeatureCursorPalette);
+	return (f == kFeatureOverlaySupportsAlpha || f == kFeatureCursorPalette || 
+			f == kFeatureKbdMouseSpeed || f == kFeatureJoystickDeadzone);
 }
 
 void OSystem_PSP::setFeatureState(Feature f, bool enable) {
@@ -308,7 +314,7 @@ void OSystem_PSP::setMouseCursor(const void *buf, uint w, uint h, int hotspotX, 
 	_displayManager.waitUntilRenderFinished();
 	_pendingUpdate = false;
 
-	PSP_DEBUG_PRINT("pbuf[%p], w[%u], h[%u], hotspot:X[%d], Y[%d], keycolor[%d], scale[%d], pformat[%p]\n", buf, w, h, hotspotX, hotspotY, keycolor, cursorTargetScale, format);
+	PSP_DEBUG_PRINT("pbuf[%p], w[%u], h[%u], hotspot:X[%d], Y[%d], keycolor[%d], scale[%d], pformat[%p]\n", buf, w, h, hotspotX, hotspotY, keycolor, !dontScale, format);
 	if (format) {
 		PSP_DEBUG_PRINT("format: bpp[%d], rLoss[%d], gLoss[%d], bLoss[%d], aLoss[%d], rShift[%d], gShift[%d], bShift[%d], aShift[%d]\n", format->bytesPerPixel, format->rLoss, format->gLoss, format->bLoss, format->aLoss, format->rShift, format->gShift, format->bShift, format->aShift);
 	}

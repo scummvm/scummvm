@@ -1029,11 +1029,7 @@ top:
 		}
 
 		_mchan[x].volume += _mchan[x].voldelta;
-
-		if (_mchan[x].volume < 0)
-			_mchan[x].volume = 0;
-		if (_mchan[x].volume > MAXVOLUME)
-			_mchan[x].volume = MAXVOLUME;
+		_mchan[x].volume = CLIP(_mchan[x].volume, 0, MAXVOLUME);
 
 		APU_writeChannel(x, 0, (_mchan[x].volume >> 3) | _mchan[x].envflags);
 	}

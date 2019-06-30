@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef GLOBAL_DIALOGS_H
-#define GLOBAL_DIALOGS_H
+#ifndef GUI_PREDICTIVEDIALOG_H
+#define GUI_PREDICTIVEDIALOG_H
 
 #include "gui/dialog.h"
 #include "common/str.h"

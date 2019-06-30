@@ -38,14 +38,14 @@
 namespace LastExpress {
 
 Train::Train(LastExpressEngine *engine) : Entity(engine, kEntityTrain) {
-	ADD_CALLBACK_FUNCTION(Train, savegame);
+	ADD_CALLBACK_FUNCTION_II(Train, savegame);
 	ADD_CALLBACK_FUNCTION(Train, chapter1);
 	ADD_CALLBACK_FUNCTION(Train, chapter2);
 	ADD_CALLBACK_FUNCTION(Train, chapter3);
 	ADD_CALLBACK_FUNCTION(Train, chapter4);
 	ADD_CALLBACK_FUNCTION(Train, chapter5);
-	ADD_CALLBACK_FUNCTION(Train, harem);
-	ADD_CALLBACK_FUNCTION(Train, process);
+	ADD_CALLBACK_FUNCTION_II(Train, harem);
+	ADD_CALLBACK_FUNCTION_TYPE2(Train, process, EntityParametersIIII, EntityParametersIIIS);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -111,14 +111,14 @@ IMPLEMENT_FUNCTION_II(7, Train, harem, ObjectIndex, uint32)
 	}
 
 	params->param4 = getEntities()->isInsideCompartment(kEntityAlouan, kCarGreenSleeping, (EntityPosition)params->param3);
-	params->param5 = (ENTITY_PARAM(0, 7) - params->param3) < 1 ? true : false;
+	params->param5 = (ENTITY_PARAM(0, 7) == params->param3) ? true : false;
 	params->param6 = getEntities()->isInsideCompartment(kEntityYasmin, kCarGreenSleeping, (EntityPosition)params->param3);
 	params->param7 = getEntities()->isInsideCompartment(kEntityHadija, kCarGreenSleeping, (EntityPosition)params->param3);
 
 	getObjects()->update((ObjectIndex)params->param1, kEntityTrain, kObjectLocation3, kCursorNormal, kCursorNormal);
 
 	// Knock / closed door sound
-	getSound()->playSound(kEntityTables5, (params->param2 == 8) ? "LIB012" : "LIB013", kFlagDefault);
+	getSound()->playSound(kEntityTables5, (params->param2 == 8) ? "LIB012" : "LIB013", kVolumeFull);
 
 	if (params->param4 && params->param5) {
 
@@ -130,17 +130,17 @@ IMPLEMENT_FUNCTION_II(7, Train, harem, ObjectIndex, uint32)
 			break;
 
 		case 1:
-			getSound()->playSound(kEntityTables5, "Har1014", kFlagDefault, 15);
+			getSound()->playSound(kEntityTables5, "Har1014", kVolumeFull, 15);
 			break;
 
 		case 2:
-			getSound()->playSound(kEntityTables5, "Har1013", kFlagDefault, 15);
-			getSound()->playSound(kEntityTables5, "Har1016", kFlagDefault, 150);
+			getSound()->playSound(kEntityTables5, "Har1013", kVolumeFull, 15);
+			getSound()->playSound(kEntityTables5, "Har1016", kVolumeFull, 150);
 			break;
 
 		case 3:
-			getSound()->playSound(kEntityTables5, "Har1015A", kFlagDefault, 15);
-			getSound()->playSound(kEntityTables5, "Har1015", kFlagDefault, 150);
+			getSound()->playSound(kEntityTables5, "Har1015A", kVolumeFull, 15);
+			getSound()->playSound(kEntityTables5, "Har1015", kVolumeFull, 150);
 			break;
 		}
 
@@ -164,15 +164,15 @@ IMPLEMENT_FUNCTION_II(7, Train, harem, ObjectIndex, uint32)
 			break;
 
 		case 1:
-			getSound()->playSound(kEntityTables5, "Har1014", kFlagDefault, 15);
+			getSound()->playSound(kEntityTables5, "Har1014", kVolumeFull, 15);
 			break;
 
 		case 2:
-			getSound()->playSound(kEntityTables5, "Har1013", kFlagDefault, 15);
+			getSound()->playSound(kEntityTables5, "Har1013", kVolumeFull, 15);
 			break;
 
 		case 3:
-			getSound()->playSound(kEntityTables5, "Har1013A", kFlagDefault, 15);
+			getSound()->playSound(kEntityTables5, "Har1013A", kVolumeFull, 15);
 			break;
 		}
 
@@ -191,11 +191,11 @@ IMPLEMENT_FUNCTION_II(7, Train, harem, ObjectIndex, uint32)
 				break;
 
 			case 1:
-				getSound()->playSound(kEntityTables5, "Har1012", kFlagDefault, 15);
+				getSound()->playSound(kEntityTables5, "Har1012", kVolumeFull, 15);
 				break;
 
 			case 2:
-				getSound()->playSound(kEntityTables5, "Har1012A", kFlagDefault, 15);
+				getSound()->playSound(kEntityTables5, "Har1012A", kVolumeFull, 15);
 				break;
 			}
 
@@ -207,7 +207,7 @@ IMPLEMENT_FUNCTION_II(7, Train, harem, ObjectIndex, uint32)
 				ENTITY_PARAM(0, 1)++;
 
 				if (ENTITY_PARAM(0, 1) <= 1)
-					getSound()->playSound(kEntityTables5, "Har1014", kFlagDefault, 15);
+					getSound()->playSound(kEntityTables5, "Har1014", kVolumeFull, 15);
 				else
 					params->param8 = 1;
 
@@ -221,7 +221,7 @@ IMPLEMENT_FUNCTION_II(7, Train, harem, ObjectIndex, uint32)
 				ENTITY_PARAM(0, 4)++;
 
 				if (ENTITY_PARAM(0, 4) <= 1) {
-					getSound()->playSound(kEntityTables5, "Har1011", kFlagDefault, 15);
+					getSound()->playSound(kEntityTables5, "Har1011", kVolumeFull, 15);
 					handleCompartmentAction();
 					return;
 				}
@@ -241,11 +241,11 @@ IMPLEMENT_FUNCTION_II(7, Train, harem, ObjectIndex, uint32)
 		break;
 
 	case 1:
-		getSound()->playSound(kEntityTables5, "Har1013", kFlagDefault, 15);
+		getSound()->playSound(kEntityTables5, "Har1013", kVolumeFull, 15);
 		break;
 
 	case 2:
-		getSound()->playSound(kEntityTables5, "Har1013A", kFlagDefault, 15);
+		getSound()->playSound(kEntityTables5, "Har1013A", kVolumeFull, 15);
 		break;
 	}
 
@@ -346,7 +346,7 @@ label_process:
 		} else {
 			params->param6 = 0;
 			if (getSoundQueue()->isBuffered("ZFX1001", true))
-				getSoundQueue()->removeFromQueue("ZFX1001");
+				getSoundQueue()->stop("ZFX1001");
 		}
 
 		// Draw moving background behind windows
@@ -374,7 +374,10 @@ label_process:
 					break;
 
 				case kCarRestaurant:
-					getEntities()->drawSequenceLeft(kEntityTrain, isNight() ? "RCWNN" : "RCWND");
+					if (getProgress().isNightTime)
+						getEntities()->drawSequenceLeft(kEntityTrain, "RCWNM");
+					else
+						getEntities()->drawSequenceLeft(kEntityTrain, isNight() ? "RCWNN" : "RCWND");
 					break;
 				}
 
@@ -478,7 +481,7 @@ label_process:
 		break;
 
 	case kAction203863200:
-		if (!strcmp(savepoint.param.charValue, "")) {
+		if (strcmp(savepoint.param.charValue, "")) {
 			params->param8 = 1;
 			strcpy((char *)&params1->seq, savepoint.param.charValue);	// this is the sound file name
 		}
@@ -502,7 +505,7 @@ label_process:
 		case kObjectCompartment4:
 		case kObjectCompartmentC:
 		case kObjectCompartmentD:
-			params1->param1 = (savepoint.param.intValue == kObjectCompartment1 || savepoint.param.intValue == kObjectCompartment2) ? kCarGreenSleeping : kCarRedSleeping;
+			params1->param1 = (savepoint.param.intValue == kObjectCompartment3 || savepoint.param.intValue == kObjectCompartment4) ? kCarGreenSleeping : kCarRedSleeping;
 			params1->param2 = (savepoint.param.intValue == kObjectCompartment3 || savepoint.param.intValue == kObjectCompartmentC) ? kPosition_6470 : kPosition_5790;
 			params1->param3 = kPosition_6130;
 			break;
@@ -511,7 +514,7 @@ label_process:
 		case kObjectCompartment6:
 		case kObjectCompartmentE:
 		case kObjectCompartmentF:
-			params1->param1 = (savepoint.param.intValue == kObjectCompartment1 || savepoint.param.intValue == kObjectCompartment2) ? kCarGreenSleeping : kCarRedSleeping;
+			params1->param1 = (savepoint.param.intValue == kObjectCompartment5 || savepoint.param.intValue == kObjectCompartment6) ? kCarGreenSleeping : kCarRedSleeping;
 			params1->param2 = (savepoint.param.intValue == kObjectCompartment5 || savepoint.param.intValue == kObjectCompartmentE) ? kPosition_4840 : kPosition_4070;
 			params1->param3 = kPosition_4455;
 			break;
@@ -520,7 +523,7 @@ label_process:
 		case kObjectCompartment8:
 		case kObjectCompartmentG:
 		case kObjectCompartmentH:
-			params1->param1 = (savepoint.param.intValue == kObjectCompartment1 || savepoint.param.intValue == kObjectCompartment2) ? kCarGreenSleeping : kCarRedSleeping;
+			params1->param1 = (savepoint.param.intValue == kObjectCompartment7 || savepoint.param.intValue == kObjectCompartment8) ? kCarGreenSleeping : kCarRedSleeping;
 			params1->param2 = (savepoint.param.intValue == kObjectCompartment7 || savepoint.param.intValue == kObjectCompartmentG) ? kPosition_3050 : kPosition_2740;
 			params1->param3 = kPositionNone;
 			break;
@@ -565,7 +568,7 @@ void Train::resetParam8() {
 	 && !getEntities()->isInsideCompartment(kEntityPlayer, (CarIndex)params1->param1, (EntityPosition)params1->param3)) {
 
 		if (getSoundQueue()->isBuffered((const char *)&params1->seq))
-			getSoundQueue()->processEntry((const char *)&params1->seq);
+			getSoundQueue()->fade((const char *)&params1->seq);
 
 		params->param8 = 0;
 	}

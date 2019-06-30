@@ -128,6 +128,8 @@ void SaveManager::writeSaveGameHeader(Common::OutSaveFile *file, const Common::S
 	file->writeSint16LE(td.tm_mday);
 	file->writeSint16LE(td.tm_hour);
 	file->writeSint16LE(td.tm_min);
+
+	file->writeUint32LE(g_engine->getTotalPlayTime() / 1000);
 }
 
 Common::Error SaveManager::loadGame(int slot) {
@@ -162,8 +164,6 @@ Common::Error SaveManager::loadGame(int slot) {
 	scriptManager->deserialize(saveFile);
 
 	delete saveFile;
-	if (header.thumbnail)
-		delete header.thumbnail;
 
 	if (_engine->getGameId() == GID_NEMESIS && scriptManager->getCurrentLocation() == "tv2f") {
 		// WORKAROUND for script bug #6793: location tv2f (stairs) has two states:
@@ -186,20 +186,26 @@ Common::Error SaveManager::loadGame(int slot) {
 		}
 	}
 
+	g_engine->setTotalPlayTime(header.playTime * 1000);
+
 	return Common::kNoError;
 }
 
-bool SaveManager::readSaveGameHeader(Common::InSaveFile *in, SaveGameHeader &header) {
+bool SaveManager::readSaveGameHeader(Common::InSaveFile *in, SaveGameHeader &header, bool skipThumbnail) {
+	header.saveYear    = 0;
+	header.saveMonth   = 0;
+	header.saveDay     = 0;
+	header.saveHour    = 0;
+	header.saveMinutes = 0;
+	header.playTime    = 0;
+	header.saveName.clear();
+	header.thumbnail   = nullptr;
+	header.version     = 0;
+
 	uint32 tag = in->readUint32BE();
 	// Check if it's original savegame than fill header structure
 	if (tag == MKTAG('Z', 'N', 'S', 'G')) {
-		header.saveYear = 0;
-		header.saveMonth = 0;
-		header.saveDay = 0;
-		header.saveHour = 0;
-		header.saveMinutes = 0;
 		header.saveName = "Original Save";
-		header.thumbnail = NULL;
 		header.version = SAVE_ORIGINAL;
 		in->seek(-4, SEEK_CUR);
 		return true;
@@ -226,22 +232,25 @@ bool SaveManager::readSaveGameHeader(Common::InSaveFile *in, SaveGameHeader &hea
 	}
 
 	// Read in the save name
-	header.saveName.clear();
 	char ch;
 	while ((ch = (char)in->readByte()) != '\0')
 		header.saveName += ch;
 
 	// Get the thumbnail
-	header.thumbnail = Graphics::loadThumbnail(*in);
-	if (!header.thumbnail)
+	if (!Graphics::loadThumbnail(*in, header.thumbnail, skipThumbnail)) {
 		return false;
+	}
 
 	// Read in save date/time
-	header.saveYear = in->readSint16LE();
-	header.saveMonth = in->readSint16LE();
-	header.saveDay = in->readSint16LE();
-	header.saveHour = in->readSint16LE();
+	header.saveYear    = in->readSint16LE();
+	header.saveMonth   = in->readSint16LE();
+	header.saveDay     = in->readSint16LE();
+	header.saveHour    = in->readSint16LE();
 	header.saveMinutes = in->readSint16LE();
+
+	if (header.version >= 2) {
+		header.playTime  = in->readUint32LE();
+	}
 
 	return true;
 }

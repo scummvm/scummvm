@@ -22,6 +22,7 @@
 
 #include "engines/game.h"
 #include "common/gui_options.h"
+#include "common/translation.h"
 
 
 const PlainGameDescriptor *findPlainGameDescriptor(const char *gameid, const PlainGameDescriptor *list) {
@@ -34,93 +35,198 @@ const PlainGameDescriptor *findPlainGameDescriptor(const char *gameid, const Pla
 	return 0;
 }
 
-GameDescriptor::GameDescriptor() {
-	setVal("gameid", "");
-	setVal("description", "");
+PlainGameDescriptor PlainGameDescriptor::empty() {
+	PlainGameDescriptor pgd;
+	pgd.gameId = nullptr;
+	pgd.description = nullptr;
+	return pgd;
 }
 
-GameDescriptor::GameDescriptor(const PlainGameDescriptor &pgd, Common::String guioptions) {
-	setVal("gameid", pgd.gameId);
-	setVal("description", pgd.description);
-
-	if (!guioptions.empty())
-		setVal("guioptions", Common::getGameGUIOptionsDescription(guioptions));
+PlainGameDescriptor PlainGameDescriptor::of(const char *gameId, const char *description) {
+	PlainGameDescriptor pgd;
+	pgd.gameId = gameId;
+	pgd.description = description;
+	return pgd;
 }
 
-GameDescriptor::GameDescriptor(const Common::String &g, const Common::String &d, Common::Language l, Common::Platform p, Common::String guioptions, GameSupportLevel gsl) {
-	setVal("gameid", g);
-	setVal("description", d);
-	if (l != Common::UNK_LANG)
-		setVal("language", Common::getLanguageCode(l));
-	if (p != Common::kPlatformUnknown)
-		setVal("platform", Common::getPlatformCode(p));
-	if (!guioptions.empty())
-		setVal("guioptions", Common::getGameGUIOptionsDescription(guioptions));
-
-	setSupportLevel(gsl);
+DetectedGame::DetectedGame() :
+		engineName(nullptr),
+		hasUnknownFiles(false),
+		canBeAdded(true),
+		language(Common::UNK_LANG),
+		platform(Common::kPlatformUnknown),
+		gameSupportLevel(kStableGame) {
 }
 
-void GameDescriptor::setGUIOptions(Common::String guioptions) {
-	if (!guioptions.empty())
-		setVal("guioptions", Common::getGameGUIOptionsDescription(guioptions));
-	else
-		erase("guioptions");
+DetectedGame::DetectedGame(const PlainGameDescriptor &pgd) :
+		engineName(nullptr),
+		hasUnknownFiles(false),
+		canBeAdded(true),
+		language(Common::UNK_LANG),
+		platform(Common::kPlatformUnknown),
+		gameSupportLevel(kStableGame) {
+
+	gameId = pgd.gameId;
+	preferredTarget = pgd.gameId;
+	description = pgd.description;
 }
 
-void GameDescriptor::appendGUIOptions(const Common::String &str) {
-	setVal("guioptions", getVal("guioptions", "") + " " + str);
+DetectedGame::DetectedGame(const Common::String &id, const Common::String &d, Common::Language l, Common::Platform p, const Common::String &ex) :
+		engineName(nullptr),
+		hasUnknownFiles(false),
+		canBeAdded(true),
+		gameSupportLevel(kStableGame) {
+
+	gameId = id;
+	preferredTarget = id;
+	description = d;
+	language = l;
+	platform = p;
+	extra = ex;
+
+	// Append additional information, if set, to the description.
+	description += updateDesc();
 }
 
-void GameDescriptor::updateDesc(const char *extra) {
-	const bool hasCustomLanguage = (language() != Common::UNK_LANG);
-	const bool hasCustomPlatform = (platform() != Common::kPlatformUnknown);
-	const bool hasExtraDesc = (extra && extra[0]);
+void DetectedGame::setGUIOptions(const Common::String &guioptions) {
+	_guiOptions = Common::getGameGUIOptionsDescription(guioptions);
+}
+
+void DetectedGame::appendGUIOptions(const Common::String &str) {
+	if (!_guiOptions.empty())
+		_guiOptions += " ";
+
+	_guiOptions += str;
+}
+
+Common::String DetectedGame::updateDesc() const {
+	const bool hasCustomLanguage = (language != Common::UNK_LANG);
+	const bool hasCustomPlatform = (platform != Common::kPlatformUnknown);
+	const bool hasExtraDesc = !extra.empty();
 
 	// Adapt the description string if custom platform/language is set.
-	if (hasCustomLanguage || hasCustomPlatform || hasExtraDesc) {
-		Common::String descr = description();
+	Common::String descr;
+	if (!hasCustomLanguage && !hasCustomPlatform && !hasExtraDesc)
+		return descr;
 
-		descr += " (";
+	descr += " (";
+
+	if (hasExtraDesc)
+		descr += extra;
+	if (hasCustomPlatform) {
 		if (hasExtraDesc)
-			descr += extra;
-		if (hasCustomPlatform) {
-			if (hasExtraDesc)
-				descr += "/";
-			descr += Common::getPlatformDescription(platform());
-		}
-		if (hasCustomLanguage) {
-			if (hasExtraDesc || hasCustomPlatform)
-				descr += "/";
-			descr += Common::getLanguageDescription(language());
-		}
-		descr += ")";
-		setVal("description", descr);
+			descr += "/";
+		descr += Common::getPlatformDescription(platform);
 	}
+	if (hasCustomLanguage) {
+		if (hasExtraDesc || hasCustomPlatform)
+			descr += "/";
+		descr += Common::getLanguageDescription(language);
+	}
+
+	descr += ")";
+
+	return descr;
 }
 
-GameSupportLevel GameDescriptor::getSupportLevel() {
-	GameSupportLevel gsl = kStableGame;
-	if (contains("gsl")) {
-		Common::String gslString = getVal("gsl");
-		if (gslString.equals("unstable"))
-			gsl = kUnstableGame;
-		else if (gslString.equals("testing"))
-			gsl = kTestingGame;
-	}
-	return gsl;
+DetectionResults::DetectionResults(const DetectedGames &detectedGames) :
+		_detectedGames(detectedGames) {
 }
 
-void GameDescriptor::setSupportLevel(GameSupportLevel gsl) {
-	switch (gsl) {
-	case kUnstableGame:
-		setVal("gsl", "unstable");
-		break;
-	case kTestingGame:
-		setVal("gsl", "testing");
-		break;
-	case kStableGame:
-		// Fall Through intended
-	default:
-		erase("gsl");
+bool DetectionResults::foundUnknownGames() const {
+	for (uint i = 0; i < _detectedGames.size(); i++) {
+		if (_detectedGames[i].hasUnknownFiles) {
+			return true;
+		}
 	}
+	return false;
+}
+
+DetectedGames DetectionResults::listRecognizedGames() const {
+	DetectedGames candidates;
+	for (uint i = 0; i < _detectedGames.size(); i++) {
+		if (_detectedGames[i].canBeAdded) {
+			candidates.push_back(_detectedGames[i]);
+		}
+	}
+	return candidates;
+}
+
+DetectedGames DetectionResults::listDetectedGames() const {
+	return _detectedGames;
+}
+
+Common::String DetectionResults::generateUnknownGameReport(bool translate, uint32 wordwrapAt) const {
+	return ::generateUnknownGameReport(_detectedGames, translate, false, wordwrapAt);
+}
+
+Common::String generateUnknownGameReport(const DetectedGames &detectedGames, bool translate, bool fullPath, uint32 wordwrapAt) {
+	assert(!detectedGames.empty());
+
+	const char *reportStart = _s("The game in '%s' seems to be an unknown game variant.\n\n"
+	                             "Please report the following data to the ScummVM team at %s "
+	                             "along with the name of the game you tried to add and "
+	                             "its version, language, etc.:");
+	const char *reportEngineHeader = _s("Matched game IDs for the %s engine:");
+
+	Common::String report = Common::String::format(
+			translate ? _(reportStart) : reportStart,
+			fullPath ? detectedGames[0].path.c_str() : detectedGames[0].shortPath.c_str(),
+			"https://bugs.scummvm.org/"
+	);
+	report += "\n";
+
+	FilePropertiesMap matchedFiles;
+
+	const char *currentEngineName = nullptr;
+	for (uint i = 0; i < detectedGames.size(); i++) {
+		const DetectedGame &game = detectedGames[i];
+
+		if (!game.hasUnknownFiles) continue;
+
+		if (!currentEngineName || strcmp(currentEngineName, game.engineName) != 0) {
+			currentEngineName = game.engineName;
+
+			// If the engine is not the same as for the previous entry, print an engine line header
+			report += "\n";
+			report += Common::String::format(
+					translate ? _(reportEngineHeader) : reportEngineHeader,
+					game.engineName
+			);
+			report += " ";
+
+		} else {
+			report += ", ";
+		}
+
+		// Add the gameId to the list of matched games for the engine
+		// TODO: Use the gameId here instead of the preferred target.
+		// This is currently impossible due to the AD singleId feature losing the information.
+		report += game.preferredTarget;
+
+		// Consolidate matched files across all engines and detection entries
+		for (FilePropertiesMap::const_iterator it = game.matchedFiles.begin(); it != game.matchedFiles.end(); it++) {
+			matchedFiles.setVal(it->_key, it->_value);
+		}
+	}
+
+	if (wordwrapAt) {
+		report.wordWrap(wordwrapAt);
+	}
+
+	report += "\n\n";
+
+	for (FilePropertiesMap::const_iterator file = matchedFiles.begin(); file != matchedFiles.end(); ++file)
+		report += Common::String::format("  {\"%s\", 0, \"%s\", %d},\n", file->_key.c_str(), file->_value.md5.c_str(), file->_value.size);
+
+	report += "\n";
+
+	return report;
+}
+
+Common::String generateUnknownGameReport(const DetectedGame &detectedGame, bool translate, bool fullPath, uint32 wordwrapAt) {
+	DetectedGames detectedGames;
+	detectedGames.push_back(detectedGame);
+
+	return generateUnknownGameReport(detectedGames, translate, fullPath, wordwrapAt);
 }

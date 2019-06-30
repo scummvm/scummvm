@@ -23,167 +23,272 @@
 #include "common/scummsys.h"
 #include "common/algorithm.h"
 #include "common/memstream.h"
+#include "common/substream.h"
+#include "common/translation.h"
+#include "graphics/scaler.h"
+#include "graphics/thumbnail.h"
+#include "gui/saveload.h"
 #include "xeen/saves.h"
 #include "xeen/files.h"
 #include "xeen/xeen.h"
 
 namespace Xeen {
 
-OutFile::OutFile(XeenEngine *vm, const Common::String filename) :
-		_vm(vm),
-		_filename(filename),
-		_backingStream(DisposeAfterUse::YES) {
-}
-
-uint32 OutFile::write(const void *dataPtr, uint32 dataSize) {
-	return _backingStream.write(dataPtr, dataSize);
-}
-
-int32 OutFile::pos() const {
-	return _backingStream.pos();
-}
-
-void OutFile::finalize() {
-	uint16 id = BaseCCArchive::convertNameToId(_filename);
-
-	if (!_vm->_saves->_newData.contains(id))
-		_vm->_saves->_newData[id] = new Common::MemoryWriteStreamDynamic(DisposeAfterUse::YES);
-
-	Common::MemoryWriteStreamDynamic *out = _vm->_saves->_newData[id];
-	out->write(_backingStream.getData(), _backingStream.size());
-}
-
-/*------------------------------------------------------------------------*/
-
-SavesManager::SavesManager(XeenEngine *vm, Party &party) :
-		BaseCCArchive(), _vm(vm), _party(party) {
-	SearchMan.add("saves", this, 0, false);
-	_data = nullptr;
-	_wonWorld = false;
-	_wonDarkSide = false;
+SavesManager::SavesManager(const Common::String &targetName): _targetName(targetName),
+		_wonWorld(false), _wonDarkSide(false) {
+	File::_xeenSave = nullptr;
+	File::_darkSave = nullptr;
 }
 
 SavesManager::~SavesManager() {
-	for (Common::HashMap<uint16, Common::MemoryWriteStreamDynamic *>::iterator it = _newData.begin(); it != _newData.end(); it++) {
-		delete (*it)._value;
-	}
-	delete[] _data;
+	delete File::_xeenSave;
+	delete File::_darkSave;
 }
 
-void SavesManager::syncBitFlags(Common::Serializer &s, bool *startP, bool *endP) {
-	byte data = 0;
+const char *const SAVEGAME_STR = "XEEN";
+#define SAVEGAME_STR_SIZE 6
 
-	int bitCounter = 0;
-	for (bool *p = startP; p <= endP; ++p, bitCounter = (bitCounter + 1) % 8) {
-		if (p == endP || bitCounter == 0) {
-			if (p != endP || s.isSaving())
-				s.syncAsByte(data);
-			if (p == endP)
-				break;
+WARN_UNUSED_RESULT bool SavesManager::readSavegameHeader(Common::InSaveFile *in, XeenSavegameHeader &header, bool skipThumbnail) {
+	char saveIdentBuffer[SAVEGAME_STR_SIZE + 1];
 
-			if (s.isSaving())
-				data = 0;
+	// Validate the header Id
+	in->read(saveIdentBuffer, SAVEGAME_STR_SIZE + 1);
+	if (strncmp(saveIdentBuffer, SAVEGAME_STR, SAVEGAME_STR_SIZE))
+		return false;
+
+	header._version = in->readByte();
+	if (header._version > XEEN_SAVEGAME_VERSION)
+		return false;
+
+	// Read in the string
+	header._saveName.clear();
+	char ch;
+	while ((ch = (char)in->readByte()) != '\0')
+		header._saveName += ch;
+
+	// Get the thumbnail
+	if (!Graphics::loadThumbnail(*in, header._thumbnail, skipThumbnail)) {
+		return false;
+	}
+
+	// Read in save date/time
+	header._year = in->readSint16LE();
+	header._month = in->readSint16LE();
+	header._day = in->readSint16LE();
+	header._hour = in->readSint16LE();
+	header._minute = in->readSint16LE();
+	header._totalFrames = in->readUint32LE();
+
+	return true;
+}
+
+void SavesManager::writeSavegameHeader(Common::OutSaveFile *out, XeenSavegameHeader &header) {
+	EventsManager &events = *g_vm->_events;
+	Screen &screen = *g_vm->_screen;
+
+	// Write out a savegame header
+	out->write(SAVEGAME_STR, SAVEGAME_STR_SIZE + 1);
+
+	out->writeByte(XEEN_SAVEGAME_VERSION);
+
+	// Write savegame name
+	out->writeString(header._saveName);
+	out->writeByte('\0');
+
+	// Write a thumbnail of the screen
+	uint8 thumbPalette[768];
+	screen.getPalette(thumbPalette);
+	Graphics::Surface saveThumb;
+	::createThumbnail(&saveThumb, (const byte *)screen.getPixels(),
+		screen.w, screen.h, thumbPalette);
+	Graphics::saveThumbnail(*out, saveThumb);
+	saveThumb.free();
+
+	// Write out the save date/time
+	TimeDate td;
+	g_system->getTimeAndDate(td);
+	out->writeSint16LE(td.tm_year + 1900);
+	out->writeSint16LE(td.tm_mon + 1);
+	out->writeSint16LE(td.tm_mday);
+	out->writeSint16LE(td.tm_hour);
+	out->writeSint16LE(td.tm_min);
+	out->writeUint32LE(events.playTime());
+}
+
+Common::Error SavesManager::saveGameState(int slot, const Common::String &desc) {
+	Common::OutSaveFile *out = g_system->getSavefileManager()->openForSaving(
+		generateSaveName(slot));
+	if (!out)
+		return Common::kCreatingFileFailed;
+
+	// Push map and party data to the save archives
+	Map &map = *g_vm->_map;
+	map.saveMaze();
+
+	// Write the savegame header
+	XeenSavegameHeader header;
+	header._saveName = desc;
+	writeSavegameHeader(out, header);
+
+	// Loop through saving the sides' save archives
+	SaveArchive *archives[2] = { File::_xeenSave, File::_darkSave };
+	for (int idx = 0; idx < 2; ++idx) {
+		if (archives[idx]) {
+			archives[idx]->save(*out);
+		} else {
+			// Side isn't present
+			out->writeUint32LE(0);
 		}
-
-		if (s.isLoading())
-			*p = (data >> bitCounter) != 0;
-		else if (*p)
-			data |= 1 << bitCounter;
-	}
-}
-
-Common::SeekableReadStream *SavesManager::createReadStreamForMember(const Common::String &name) const {
-	CCEntry ccEntry;
-
-	// If the given resource has already been perviously "written" to the
-	// save manager, then return that new resource
-	uint16 id = BaseCCArchive::convertNameToId(name);
-	if (_newData.contains(id)) {
-		Common::MemoryWriteStreamDynamic *stream = _newData[id];
-		return new Common::MemoryReadStream(stream->getData(), stream->size());
 	}
 
-	// Retrieve the resource from the loaded savefile
-	if (getHeaderEntry(name, ccEntry)) {
-		// Open the correct CC entry
-		return new Common::MemoryReadStream(_data + ccEntry._offset, ccEntry._size);
-	}
+	// Write out miscellaneous
+	FileManager &files = *g_vm->_files;
+	files.save(*out);
 
-	return nullptr;
+	out->finalize();
+	delete out;
+
+	return Common::kNoError;
 }
 
-void SavesManager::load(Common::SeekableReadStream *stream) {
-	loadIndex(stream);
+Common::Error SavesManager::loadGameState(int slot) {
+	Combat &combat = *g_vm->_combat;
+	EventsManager &events = *g_vm->_events;
+	FileManager &files = *g_vm->_files;
+	Map &map = *g_vm->_map;
+	Party &party = *g_vm->_party;
 
-	delete[] _data;
-	_data = new byte[stream->size()];
-	stream->seek(0);
-	stream->read(_data, stream->size());
+	Common::InSaveFile *saveFile = g_system->getSavefileManager()->openForLoading(
+		generateSaveName(slot));
+	if (!saveFile)
+		return Common::kReadingFailed;
 
-	// Load in the character stats and active party
-	Common::SeekableReadStream *chr = createReadStreamForMember("maze.chr");
-	Common::Serializer sChr(chr, nullptr);
-	_party._roster.synchronize(sChr);
-	delete chr;
+	// Load the savaegame header
+	XeenSavegameHeader header;
+	if (!readSavegameHeader(saveFile, header))
+		error("Invalid savegame");
 
-	Common::SeekableReadStream *pty = createReadStreamForMember("maze.pty");
-	Common::Serializer sPty(pty, nullptr);
-	_party.synchronize(sPty);
-	delete pty;
-}
+	// Set the total play time
+	events.setPlayTime(header._totalFrames);
 
-void SavesManager::reset() {
-	Common::String prefix = _vm->getGameID() != GType_DarkSide ? "xeen|" : "dark|";
-	Common::MemoryWriteStreamDynamic saveFile(DisposeAfterUse::YES);
-	Common::File fIn;
+	// Loop through loading the sides' save archives
+	SaveArchive *archives[2] = { File::_xeenSave, File::_darkSave };
+	for (int idx = 0; idx < 2; ++idx) {
+		uint fileSize = saveFile->readUint32LE();
 
-	const int RESOURCES[6] = { 0x2A0C, 0x2A1C, 0x2A2C, 0x2A3C, 0x284C, 0x2A5C };
-	for (int i = 0; i < 6; ++i) {
-		Common::String filename = prefix + Common::String::format("%.4x", RESOURCES[i]);
-		if (fIn.exists(filename)) {
-			// Read in the next resource
-			fIn.open(filename);
-			byte *data = new byte[fIn.size()];
-			fIn.read(data, fIn.size());
-
-			// Copy it to the combined savefile resource
-			saveFile.write(data, fIn.size());
-			delete[] data;
-			fIn.close();
+		if (archives[idx]) {
+			if (fileSize) {
+				Common::SeekableSubReadStream arcStream(saveFile, saveFile->pos(),
+					saveFile->pos() + fileSize);
+				archives[idx]->load(arcStream);
+			} else {
+				archives[idx]->reset((idx == 1) ? File::_darkCc : File::_xeenCc);
+			}
+		} else {
+			assert(!fileSize);
 		}
 	}
 
-	Common::MemoryReadStream f(saveFile.getData(), saveFile.size());
-	load(&f);
+	// Read in miscellaneous
+	files.load(*saveFile);
 
-	// Set up the party and characters from dark.cur
-	CCArchive gameCur("xeen.cur", false);
-	File fParty("maze.pty", gameCur);
-	Common::Serializer sParty(&fParty, nullptr);
-	_party.synchronize(sParty);
-	fParty.close();
+	// Load the character roster and party
+	File::_currentSave->loadParty();
 
-	File fChar("maze.chr", gameCur);
-	Common::Serializer sChar(&fChar, nullptr);
-	_party._roster.synchronize(sChar);
-	fChar.close();
+	// Reset any combat information from the previous game
+	combat.reset();
+	party._treasure.reset();
+
+	// Load the new map
+	map.clearMaze();
+	map._loadCcNum = files._ccNum;
+	map.load(party._mazeId);
+
+	delete saveFile;
+	return Common::kNoError;
+}
+
+Common::String SavesManager::generateSaveName(int slot) {
+	return Common::String::format("%s.%03d", _targetName.c_str(), slot);
+}
+
+void SavesManager::newGame() {
+	delete File::_xeenSave;
+	delete File::_darkSave;
+	File::_xeenSave = nullptr;
+	File::_darkSave = nullptr;
+
+	// Reset any combat information from the previous game
+	g_vm->_combat->reset();
+
+	// Reset the game states
+	if (g_vm->getGameID() != GType_Clouds) {
+		File::_darkSave = new SaveArchive(g_vm->_party);
+		File::_darkSave->reset(File::_darkCc);
+	}
+	if (g_vm->getGameID() != GType_DarkSide && g_vm->getGameID() != GType_Swords) {
+		File::_xeenSave = new SaveArchive(g_vm->_party);
+		File::_xeenSave->reset(File::_xeenCc);
+	}
+
+	File::_currentSave = g_vm->getGameID() == GType_DarkSide || g_vm->getGameID() == GType_Swords ?
+		File::_darkSave : File::_xeenSave;
+	assert(File::_currentSave);
+
+	// Load the character roster and party
+	File::_currentSave->loadParty();
 
 	// Set any final initial values
-	_party.resetBlacksmithWares();
-	_party._year = _vm->getGameID() == GType_WorldOfXeen ? 610 : 850;
-	_party._totalTime = 0;
+	Party &party = *g_vm->_party;
+	party.resetBlacksmithWares();
+	party._totalTime = 0;
+
+	switch (g_vm->getGameID()) {
+	case GType_Swords:
+		party._year = 1050;
+		break;
+	case GType_DarkSide:
+		party._year = 850;
+		break;
+	default:
+		party._year = 610;
+		break;
+	}
+	party._day = 1;
 }
 
-void SavesManager::readCharFile() {
-	warning("TODO: readCharFile");
+bool SavesManager::loadGame() {
+	GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Load game:"), _("Load"), false);
+	int slotNum = dialog->runModalWithCurrentTarget();
+	delete dialog;
+
+	if (slotNum != -1) {
+		loadGameState(slotNum);
+		g_vm->_interface->drawParty(true);
+	}
+
+	return slotNum != -1;
 }
 
-void SavesManager::writeCharFile() {
-	warning("TODO: writeCharFile");
-}
+bool SavesManager::saveGame() {
+	Map &map = *g_vm->_map;
 
-void SavesManager::saveChars() {
-	warning("TODO: saveChars");
+	if (map.mazeData()._mazeFlags & RESTRICTION_SAVE) {
+		ErrorScroll::show(g_vm, Res.SAVE_OFF_LIMITS, WT_NONFREEZED_WAIT);
+		return false;
+	} else if (!g_vm->canSaveGameStateCurrently()) {
+		return false;
+	} else {
+		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
+		int slotNum = dialog->runModalWithCurrentTarget();
+		Common::String saveName = dialog->getResultString();
+		delete dialog;
+
+		if (slotNum != -1)
+			saveGameState(slotNum, saveName);
+
+		return slotNum != -1;
+	}
 }
 
 } // End of namespace Xeen

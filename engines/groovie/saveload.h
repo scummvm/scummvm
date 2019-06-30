@@ -40,7 +40,7 @@ public:
 	static SaveStateList listValidSaves(const Common::String &target);
 
 	// Opening savefiles
-	static Common::InSaveFile *openForLoading(const Common::String &target, int slot, SaveStateDescriptor *descriptor = NULL);
+	static Common::InSaveFile *openForLoading(const Common::String &target, int slot, SaveStateDescriptor *descriptor = nullptr);
 	static Common::OutSaveFile *openForSaving(const Common::String &target, int slot);
 };
 

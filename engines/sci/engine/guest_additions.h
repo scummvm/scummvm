@@ -45,6 +45,7 @@ enum {
 
 	kRamaVolumeMax         = 16,
 	kLSL6HiresUIVolumeMax  = 13,
+	kHoyle5VolumeMax       = 8,
 	kLSL6HiresSubtitleFlag = 105
 };
 #endif
@@ -387,6 +388,7 @@ private:
 	void syncGK1VolumeFromScummVM(const int16 musicVolume, const int16 dacVolume) const;
 
 	void syncGK2VolumeFromScummVM(const int16 musicVolume) const;
+	void syncHoyle5VolumeFromScummVM(const int16 musicVolume) const;
 	void syncLSL6HiresVolumeFromScummVM(const int16 musicVolume) const;
 	void syncPhant2VolumeFromScummVM(const int16 masterVolume) const;
 	void syncRamaVolumeFromScummVM(const int16 musicVolume) const;
@@ -416,6 +418,7 @@ private:
 
 	void syncGK1UI() const;
 	void syncGK2UI() const;
+	void syncHoyle5UI(const int16 musicVolume) const;
 	void syncLSL6HiresUI(const int16 musicVolume) const;
 	void syncMGDXUI(const int16 musicVolume) const;
 	void syncPhant1UI(const int16 oldMusicVolume, const int16 musicVolume, reg_t &musicGlobal, const int16 oldDacVolume, const int16 dacVolume, reg_t &dacGlobal) const;

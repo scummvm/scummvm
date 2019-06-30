@@ -707,7 +707,7 @@ protected:
 
 class MohawkEngine_LivingBooks : public MohawkEngine {
 protected:
-	Common::Error run();
+	Common::Error run() override;
 
 public:
 	MohawkEngine_LivingBooks(OSystem *syst, const MohawkGameDescription *gamedesc);
@@ -725,7 +725,7 @@ public:
 	Common::SeekableSubReadStreamEndian *wrapStreamEndian(uint32 tag, uint16 id);
 	Common::String readString(Common::ReadStream *stream);
 	Common::Rect readRect(Common::ReadStreamEndian *stream);
-	GUI::Debugger *getDebugger() { return _console; }
+	GUI::Debugger *getDebugger() override { return _console; }
 
 	void addArchive(Archive *archive);
 	void removeArchive(Archive *archive);

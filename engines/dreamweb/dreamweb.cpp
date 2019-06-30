@@ -91,7 +91,6 @@ DreamWebEngine::DreamWebEngine(OSystem *syst, const DreamWebGameDescription *gam
 	// misc variables
 	_speechCount = 0;
 	_charShift = 0;
-	_kerning = 0;
 	_brightPalette = false;
 	_roomLoaded = 0;
 	_didZoom = 0;

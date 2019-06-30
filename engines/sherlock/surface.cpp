@@ -22,6 +22,7 @@
 
 #include "sherlock/surface.h"
 #include "sherlock/fonts.h"
+#include "sherlock/sherlock.h"
 
 namespace Sherlock {
 
@@ -32,6 +33,10 @@ BaseSurface::BaseSurface() : Graphics::Screen(0, 0), Fonts() {
 BaseSurface::BaseSurface(int width_, int height_) : Graphics::Screen(width_, height_),
 		Fonts() {
 	create(width_, height_);
+}
+
+BaseSurface::BaseSurface(int width_, int height_, const Graphics::PixelFormat &pf) :
+		Graphics::Screen(width_, height_, pf), Fonts() {
 }
 
 void BaseSurface::writeString(const Common::String &str, const Common::Point &pt, uint overrideColor) {
@@ -62,7 +67,7 @@ void BaseSurface::SHtransBlitFrom(const Graphics::Surface &src, const Common::Po
 	Common::Rect destRect(pt.x, pt.y, pt.x + src.w * SCALE_THRESHOLD / scaleVal,
 		pt.y + src.h * SCALE_THRESHOLD / scaleVal);
 
-	Graphics::Screen::transBlitFrom(src, srcRect, destRect, TRANSPARENCY,
+	Graphics::Screen::transBlitFrom(src, srcRect, destRect, IS_3DO ? 0 : TRANSPARENCY,
 		flipped, overrideColor);
 }
 

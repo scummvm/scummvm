@@ -22,15 +22,22 @@
 
 #include "sludge/allfiles.h"
 #include "sludge/backdrop.h"
+#include "sludge/graphics.h"
 #include "sludge/newfatal.h"
 
 namespace Sludge {
 
-extern byte brightnessLevel;
-
 extern float snapTexW, snapTexH;
 
-byte fadeMode = 2;
+void GraphicsManager::setBrightnessLevel(int brightnessLevel)
+{
+	if (brightnessLevel < 0)
+		_brightnessLevel = 0;
+	else if (brightnessLevel > 255)
+		_brightnessLevel = 255;
+	else
+		_brightnessLevel = brightnessLevel;
+}
 
 //----------------------------------------------------
 // PROPER BRIGHTNESS FADING
@@ -142,7 +149,7 @@ void transitionSnapshotBox() {
 uint32 randbuffer[KK][2];  // history buffer
 int p1, p2;
 
-void resetRandW() {
+void GraphicsManager::resetRandW() {
 	int32 seed = 12345;
 
 	for (int i = 0; i < KK; i++) {
@@ -373,8 +380,8 @@ void transitionBlinds() {
 
 //----------------------------------------------------
 
-void fixBrightness() {
-	switch (fadeMode) {
+void GraphicsManager::fixBrightness() {
+	switch (_fadeMode) {
 		case 0:
 			transitionFader();
 			break;

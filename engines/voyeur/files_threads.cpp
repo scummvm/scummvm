@@ -864,7 +864,7 @@ const byte *ThreadResource::cardPerform(const byte *card) {
 			if (cardPerform2(card, id)) {
 				card += subId;
 				card = cardPerform(card);
-				while (*card++ != 61) ;
+				while (*card++ != 61) {}
 			} else {
 				card += subId;
 				while (*card != 61 && *card != 29)

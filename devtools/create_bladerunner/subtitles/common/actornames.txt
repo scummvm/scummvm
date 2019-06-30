@@ -1,0 +1,75 @@
+Id	Short	ActorDesc	#skip first row
+0	MCCOY	McCoy
+1	STEEL	Steele
+2	GORDO	Gordo
+3	DEKTO	Dektora
+4	GUZZA	Guzza
+5	CLOVI	Clovis
+6	LLUCY	Lucy
+7	IIIZO	Izo
+8	SADIK	Sadik
+9	CRAZY	Crazylegs
+10	LUTHE	Luther
+11	GRIGO	Grigorian
+12	TRANS	Transient
+13	LANCE	Lance
+14	BBBOB	Bullet Bob
+15	RUNCI	Runciter
+16	INSEC	Insect Dealer
+17	TGUAR	Tyrell Guard
+18	EARLQ	Early Q
+19	ZUBEN	Zuben
+20	HASAN	Hasan
+21	MARCU	Marcus
+22	MMMIA	Mia
+23	OLEAR	Officer Leary
+24	OGRAY	Officer Grayford
+25	HANOI	Hanoi
+26	BAKER	Baker
+27	DCLER	Desk Clerk
+28	HOWIE	Howie Lee
+29	FISHD	Fish Dealer
+30	KLEIN	Klein
+31	MURRA	Murray
+32	HBARK	Hawker's Barkeep
+33	HOLLO	Holloway
+34	SWALL	Sergeant Walls
+35	MORAJ	Moraji
+36	TBARD	The Bard
+37	PHOTG	Photographer
+38	DISPA	Dispatcher
+39	ANSWM	Answering Machine
+40	RAJIF	Rajif
+41	GKOLV	Governor Kolvig
+42	ERLQB	Early Q Bartender
+43	HPARR	Hawker's Parrot
+44	TAFPA	Taffy Patron
+45	LOCGU	Lockup Guard
+46	TEENA	Teenager
+47	HPATA	Hysteria Patron A
+48	HPATB	Hysteria Patron B
+49	HPATC	Hysteria Patron C
+50	SHOES	Shoeshine Man
+51	TYREL	Tyrell
+52	CCHEW	Chew
+53	GGAFF	Gaff
+54	BRYAN	Bryant
+55	TAFFY	Taffy
+56	SEBAS	Sebastian
+57	RACHA	Rachael
+58	GDOLL	General Doll
+59	ISABE	Isabella
+60	BLIMP	Blimp Guy
+61	NEWSC	Newscaster
+62	LLEON	Leon
+63	MALAN	Male Announcer
+64	FREEA	Free Slot A
+65	FREEB	Free Slot B
+66	MAGGI	Maggie
+67	ACTGA	Actor Genwalker A
+68	ACTGB	Actor Genwalker B
+69	ACTGC	Actor Genwalker C
+70	MUTAA	Mutant A
+71	MUTAB	Mutant B
+72	MUTAC	Mutant C
+99	MAINF	Mainframe

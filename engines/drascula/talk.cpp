@@ -39,7 +39,15 @@ bool DrasculaEngine::isTalkFinished() {
 		return true;
 	}
 
-	if (getScan() != 0)
+	Common::KeyCode key = getScan();
+	if (key == Common::KEYCODE_SPACE || key == Common::KEYCODE_PAUSE) {
+		// Pause speech until space is pressed again
+		// Note: an alternative is to implement a PauseDialog as is done in engines/scumm/dialogs.cpp
+		do {
+			pause(10);
+			key = getScan();
+		} while (key != Common::KEYCODE_SPACE && key != Common::KEYCODE_PAUSE && !shouldQuit());
+	} else if (key != 0)
 		stopSound();
 	if (soundIsActive())
 		return false;

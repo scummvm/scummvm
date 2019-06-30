@@ -134,11 +134,11 @@ public:
 	}
 
 	virtual const char *getName() const {
-		return "Fullpipe Engine";
+		return "Full Pipe";
 	}
 
 	virtual const char *getOriginalCopyright() const {
-		return "Fullpipe Engine (C) Pipe Studio";
+		return "Full Pipe (C) Pipe Studio";
 	}
 
 	virtual bool hasFeature(MetaEngineFeature f) const;
@@ -184,7 +184,9 @@ SaveStateList FullpipeMetaEngine::listSaves(const char *target) const {
 			Common::ScopedPtr<Common::InSaveFile> in(saveFileMan->openForLoading(*file));
 			if (in) {
 				Fullpipe::FullpipeSavegameHeader header;
-				Fullpipe::readSavegameHeader(in.get(), header);
+				if (!Fullpipe::readSavegameHeader(in.get(), header)) {
+					continue;
+				}
 
 				SaveStateDescriptor desc;
 
@@ -212,7 +214,9 @@ SaveStateDescriptor FullpipeMetaEngine::querySaveMetaInfos(const char *target, i
 
 	if (f) {
 		Fullpipe::FullpipeSavegameHeader header;
-		Fullpipe::readSavegameHeader(f.get(), header);
+		if (!Fullpipe::readSavegameHeader(f.get(), header, false)) {
+			return SaveStateDescriptor();
+		}
 
 		// Create the return descriptor
 		SaveStateDescriptor desc;

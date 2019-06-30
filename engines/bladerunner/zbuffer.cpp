@@ -24,6 +24,8 @@
 
 #include "bladerunner/decompress_lzo.h"
 
+#include "common/debug.h"
+
 namespace BladeRunner {
 
 void ZBufferDirtyRects::reset() {
@@ -57,7 +59,7 @@ void ZBufferDirtyRects::extendExisting() {
 	}
 }
 
-int ZBufferDirtyRects::getCount() {
+int ZBufferDirtyRects::getCount() const {
 	return _count;
 }
 
@@ -70,12 +72,18 @@ bool ZBufferDirtyRects::popRect(Common::Rect *rect) {
 }
 
 ZBuffer::ZBuffer() {
-	reset();
+	_zbuf1 = nullptr;
+	_zbuf2 = nullptr;
+	_dirtyRects = new ZBufferDirtyRects();
+	_width = 0;
+	_height = 0;
+	enable();
 }
 
 ZBuffer::~ZBuffer() {
-	delete[] _zbuf1;
 	delete[] _zbuf2;
+	delete[] _zbuf1;
+	delete _dirtyRects;
 }
 
 void ZBuffer::init(int width, int height) {
@@ -84,8 +92,6 @@ void ZBuffer::init(int width, int height) {
 
 	_zbuf1 = new uint16[width * height];
 	_zbuf2 = new uint16[width * height];
-
-	_dirtyRects = new ZBufferDirtyRects();
 }
 
 static int decodePartialZBuffer(const uint8 *src, uint16 *curZBUF, uint32 srcLen) {
@@ -93,9 +99,9 @@ static int decodePartialZBuffer(const uint8 *src, uint16 *curZBUF, uint32 srcLen
 	uint32 dstRemain = dstSize;
 
 	uint16 *curzp = curZBUF;
-	const uint16 *inp = (const uint16*)src;
+	const uint16 *inp = (const uint16 *)src;
 
-	while (dstRemain && (inp - (const uint16*)src) < (std::ptrdiff_t)srcLen) {
+	while (dstRemain && (inp - (const uint16 *)src) < (std::ptrdiff_t)srcLen) {
 		uint32 count = FROM_LE_16(*inp++);
 
 		if (count & 0x8000) {
@@ -147,7 +153,14 @@ bool ZBuffer::decodeData(const uint8 *data, int size) {
 	if (complete) {
 		resetUpdates();
 		size_t zbufOutSize;
-		decompress_lzo1x(data, size, (uint8*)_zbuf1, &zbufOutSize);
+		decompress_lzo1x(data, size, (uint8 *)_zbuf1, &zbufOutSize);
+#ifdef SCUMM_BIG_ENDIAN
+		// As the compression is working with 8-bit data, on big-endian architectures we have to switch order of bytes in uncompressed data
+		uint8 *rawZbuf = (uint8 *)_zbuf1;
+		for (size_t i = 0; i < zbufOutSize - 1; i += 2) {
+			SWAP(rawZbuf[i], rawZbuf[i + 1]);
+		}
+#endif
 		memcpy(_zbuf2, _zbuf1, 2 * _width * _height);
 	} else {
 		clean();
@@ -158,27 +171,19 @@ bool ZBuffer::decodeData(const uint8 *data, int size) {
 	return true;
 }
 
-uint16 *ZBuffer::getData() {
+uint16 *ZBuffer::getData() const {
 	return _zbuf2;
 }
 
-uint16 ZBuffer::getZValue(int x, int y) {
+uint16 ZBuffer::getZValue(int x, int y) const {
 	assert(x >= 0 && x < _width);
 	assert(y >= 0 && y < _height);
 
-	if (!_zbuf2)
+	if (_zbuf2 == nullptr) {
 		return 0;
+	}
 
 	return _zbuf2[y * _width + x];
-}
-
-void ZBuffer::reset() {
-	_zbuf1 = nullptr;
-	_zbuf2 = nullptr;
-	_dirtyRects = nullptr;
-	_width = 0;
-	_height = 0;
-	enable();
 }
 
 void ZBuffer::blit(Common::Rect rect) {

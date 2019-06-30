@@ -26,7 +26,6 @@
 #include "common/debug.h"
 #include "common/debug-channels.h"
 #include "common/error.h"
-#include "gui/EventRecorder.h"
 #include "common/file.h"
 #include "common/savefile.h"
 #include "common/fs.h"
@@ -560,6 +559,8 @@ void EdenGame::move(Direction dir) {
 	case kCryoWest:
 		newLoc = room->_exits[3];
 		break;
+	default:
+		break;
 	}
 	deplaval((roomNum & 0xFF00) | newLoc);
 }
@@ -582,6 +583,8 @@ void EdenGame::move2(Direction dir) {
 		break;
 	case kCryoWest:
 		newLoc = room->_exits[3];
+		break;
+	default:
 		break;
 	}
 	deplaval((roomNum & 0xFF00) | newLoc);
@@ -2013,7 +2016,7 @@ void EdenGame::loadCharacter(perso_t *perso) {
 		ptr += READ_LE_UINT16(ptr) - 2;
 		_globals->_persoSpritePtr = baseptr;
 		_globals->_persoSpritePtr2 = baseptr + READ_LE_UINT16(ptr);
-		debug("load perso: b6 len is %ld", _globals->_persoSpritePtr2 - _globals->_persoSpritePtr);
+		debug("load perso: b6 len is %d", (int)(_globals->_persoSpritePtr2 - _globals->_persoSpritePtr));
 	} else {
 		useBank(_globals->_characterImageBank);
 		_characterBankData = _bankData;
@@ -2321,7 +2324,7 @@ void EdenGame::my_bulle() {
 		} else if (c >= 0x80 && c < 0x90)
 			SysBeep(1);
 		else if (c >= 0x90 && c < 0xA0) {
-			while (*textPtr++ != 0xFF) ;
+			while (*textPtr++ != 0xFF) {}
 			textPtr--;
 		} else if (c >= 0xA0 && c < 0xC0)
 			_globals->_textToken1 = c & 0xF;
@@ -2333,7 +2336,7 @@ void EdenGame::my_bulle() {
 #ifdef FAKE_DOS_VERSION
 				_globals->_textWidthLimit = c1 + 160;
 #else
-				_globals->_textWidthLimit = c1 + _subtitlesXCenter; //TODO: signed? 160 in pc ver
+				_globals->_textWidthLimit = c1 + _subtitlesXCenter; // TODO: signed? 160 in pc ver
 #endif
 			else {
 				byte c2 = *textPtr++;
@@ -3126,13 +3129,16 @@ void EdenGame::tyranDies(perso_t *perso) {
 }
 
 void EdenGame::specialObjects(perso_t *perso, char objid) {
-#pragma pack(push, 1)
+
+#include "common/pack-start.h"	// START STRUCT PACKING
+
 	struct SpecialObject {
 		int8  _characterType;
 		int8  _objectId;
 		void  (EdenGame::*dispFct)(perso_t *perso);
 	};
-#pragma pack(pop)
+
+#include "common/pack-end.h"	// END STRUCT PACKING
 
 	static SpecialObject kSpecialObjectActions[] = {
 		//    persoType, objectId, dispFct
@@ -3185,7 +3191,7 @@ void EdenGame::dialautooff() {
 
 void EdenGame::follow() {
 	if (_globals->_roomCharacterType == PersonFlags::pfType12) {
-		debug("follow: hiding person %ld", _globals->_roomCharacterPtr - _persons);
+		debug("follow: hiding person %d", (int)(_globals->_roomCharacterPtr - _persons));
 		_globals->_roomCharacterPtr->_flags |= PersonFlags::pf80;
 		_globals->_roomCharacterPtr->_roomNum = 0;
 		_globals->_gameFlags |= GameFlags::gfFlag8;
@@ -5848,7 +5854,7 @@ void EdenGame::perso_ici(int16 action) {
 
 // Original name: setpersohere
 void EdenGame::setCharacterHere() {
-	debug("setCharacterHere, perso is %ld", _globals->_characterPtr - _persons);
+	debug("setCharacterHere, perso is %d", (int)(_globals->_characterPtr - _persons));
 	_globals->_partyOutside = 0;
 	_globals->_party = 0;
 	_globals->_roomCharacterPtr = nullptr;
@@ -5874,7 +5880,7 @@ void EdenGame::faire_suivre(int16 roomNum) {
 
 // Original name: suis_moi5
 void EdenGame::AddCharacterToParty() {
-	debug("adding person %ld to party", _globals->_characterPtr - _persons);
+	debug("adding person %d to party", (int)(_globals->_characterPtr - _persons));
 	_globals->_characterPtr->_flags |= PersonFlags::pfInParty;
 	_globals->_characterPtr->_roomNum = _globals->_roomNum;
 	_globals->_party |= _globals->_characterPtr->_partyMask;
@@ -5891,7 +5897,7 @@ void EdenGame::addToParty(int16 index) {
 
 // Original name: reste_ici5
 void EdenGame::removeCharacterFromParty() {
-	debug("removing person %ld from party", _globals->_characterPtr - _persons);
+	debug("removing person %d from party", (int)(_globals->_characterPtr - _persons));
 	_globals->_characterPtr->_flags &= ~PersonFlags::pfInParty;
 	_globals->_partyOutside |= _globals->_characterPtr->_partyMask;
 	_globals->_party &= ~_globals->_characterPtr->_partyMask;
@@ -7093,9 +7099,9 @@ void EdenGame::projectionFix(Cube *cubep, int n) {
 		int y = cubep->_vertices[i].y;
 		int z = cubep->_vertices[i].z;
 
-		int transformX = _passMat31 * x + _passMat21 * y + _passMat11 * z + (int)(_translationX * 256.0f);
-		int transformY = _passMat32 * x + _passMat22 * y + _passMat12 * z + (int)(_translationY * 256.0f);
-		int transformZ = _passMat33 * x + _passMat23 * y + _passMat13 * z + (int)(_translationZ * 256.0f);
+		int transformX = _passMat31 * x + _passMat21 * y + _passMat11 * z + (int)(_translationX * 256.0F);
+		int transformY = _passMat32 * x + _passMat22 * y + _passMat12 * z + (int)(_translationY * 256.0F);
+		int transformZ = _passMat33 * x + _passMat23 * y + _passMat13 * z + (int)(_translationZ * 256.0F);
 
 		transformZ >>= 8;
 		if (transformZ == -256)
@@ -7169,7 +7175,7 @@ void EdenGame::loadMap(int file_id, byte *buffer) {
 }
 
 void EdenGame::NEWcharge_objet_mob(Cube *cubep, int fileNum, byte *texturePtr) {
-	char *tmp1 = (char *)malloc(454);
+	char *tmp1 = new char[454];
 	if (_vm->getPlatform() == Common::kPlatformMacintosh)
 		loadpartoffile(fileNum, tmp1, 0, 454);
 	else {
@@ -7217,7 +7223,7 @@ void EdenGame::NEWcharge_objet_mob(Cube *cubep, int fileNum, byte *texturePtr) {
 		} else
 			tmp4[i]->ff_4 = 0;
 	}
-	free(tmp1);
+	delete[] tmp1;
 	cubep->_num = count2;
 	cubep->_faces = tmp4;
 	cubep->_projection = projection;

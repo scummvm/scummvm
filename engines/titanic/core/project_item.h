@@ -155,7 +155,7 @@ public:
 	/**
 	 * Read in the header information for a savegame
 	 */
-	static bool readSavegameHeader(SimpleFile *file, TitanicSavegameHeader &header);
+	WARN_UNUSED_RESULT static bool readSavegameHeader(SimpleFile *file, TitanicSavegameHeader &header, bool skipThumbnail = true);
 public:
 	CLASSDEF;
 	CProjectItem();

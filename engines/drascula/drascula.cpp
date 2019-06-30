@@ -246,6 +246,9 @@ Common::Error DrasculaEngine::run() {
 	case Common::IT_ITA:
 		_lang = kItalian;
 		break;
+	case Common::RU_RUS:
+		_lang = kRussian;
+		break;
 	default:
 		warning("Unknown game language. Falling back to English");
 		_lang = kEnglish;
@@ -271,10 +274,16 @@ Common::Error DrasculaEngine::run() {
 	// Check if a save is loaded from the launcher
 	int directSaveSlotLoading = ConfMan.getInt("save_slot");
 	if (directSaveSlotLoading >= 0) {
+		// Set the current chapter to -1. This forces the load to happen
+		// later during the game loop, and not now.
+		currentChapter = -1;
 		loadGame(directSaveSlotLoading);
+		currentChapter++;
 	}
 
 	checkCD();
+
+	allocMemory();
 
 	while (!shouldQuit()) {
 		int i;
@@ -315,8 +324,6 @@ Common::Error DrasculaEngine::run() {
 		for (i = 0; i < 8; i++)
 			actorFrames[i] = 0;
 		actorFrames[kFrameVonBraun] = 1;
-
-		allocMemory();
 
 		_subtitlesDisabled = !ConfMan.getBool("subtitles");
 
@@ -379,6 +386,8 @@ Common::Error DrasculaEngine::run() {
 		currentChapter++;
 	}
 
+	freeMemory();
+
 	return Common::kNoError;
 }
 
@@ -388,7 +397,6 @@ void DrasculaEngine::endChapter() {
 	black();
 	MusicFadeout();
 	stopMusic();
-	freeMemory();
 }
 
 bool DrasculaEngine::runCurrentChapter() {

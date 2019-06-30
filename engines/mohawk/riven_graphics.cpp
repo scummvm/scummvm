@@ -29,7 +29,12 @@
 #include "mohawk/riven_video.h"
 
 #include "common/system.h"
+
 #include "engines/util.h"
+
+#include "graphics/fontman.h"
+#include "graphics/font.h"
+#include "graphics/fonts/ttf.h"
 #include "graphics/colormasks.h"
 
 namespace Mohawk {
@@ -101,7 +106,7 @@ public:
 		_lastCopyArea = makeDirectionalInitalArea();
 	}
 
-	virtual bool drawFrame(uint32 elapsed) override {
+	bool drawFrame(uint32 elapsed) override {
 		Common::Rect copyArea;
 		switch (_type) {
 			case kRivenTransitionWipeLeft:
@@ -162,7 +167,7 @@ public:
 		 complete = false;
 	}
 
-	virtual bool drawFrame(uint32 elapsed) override {
+	bool drawFrame(uint32 elapsed) override {
 		Common::Rect newArea;
 		switch (_type) {
 			case kRivenTransitionPanLeft:
@@ -264,7 +269,7 @@ public:
 		_timeBased = false;
 	}
 
-	virtual bool drawFrame(uint32 elapsed) override {
+	bool drawFrame(uint32 elapsed) override {
 		assert(_effectScreen->format == _mainScreen->format);
 		assert(_effectScreen->format == _system->getScreenFormat());
 
@@ -303,7 +308,23 @@ public:
 	}
 };
 
-RivenGraphics::RivenGraphics(MohawkEngine_Riven* vm) : GraphicsManager(), _vm(vm) {
+RivenGraphics::RivenGraphics(MohawkEngine_Riven* vm) :
+		GraphicsManager(),
+		_vm(vm),
+		_screenUpdateNesting(0),
+		_screenUpdateRunning(false),
+		_enableCardUpdateScript(true),
+		_scheduledTransition(kRivenTransitionNone),
+		_dirtyScreen(false),
+		_creditsImage(kRivenCreditsZeroImage),
+		_creditsPos(0),
+		_transitionMode(kRivenTransitionModeFastest),
+		_transitionOffset(-1),
+		_waterEffect(nullptr),
+		_fliesEffect(nullptr),
+		_menuFont(nullptr),
+		_transitionFrames(0),
+		_transitionDuration(0) {
 	_bitmapDecoder = new MohawkBitmap();
 
 	// Restrict ourselves to a single pixel format to simplify the effects implementation
@@ -318,19 +339,7 @@ RivenGraphics::RivenGraphics(MohawkEngine_Riven* vm) : GraphicsManager(), _vm(vm
 	_effectScreen = new Graphics::Surface();
 	_effectScreen->create(608, 392, _pixelFormat);
 
-	_screenUpdateNesting = 0;
-	_screenUpdateRunning = false;
-	_enableCardUpdateScript = true;
-	_scheduledTransition = kRivenTransitionNone;
-	_dirtyScreen = false;
-
-	_creditsImage = 302;
-	_creditsPos = 0;
-
-	_transitionMode = kRivenTransitionModeFastest;
-	_transitionOffset = -1;
-	_waterEffect = nullptr;
-	_fliesEffect = nullptr;
+	loadMenuFont();
 }
 
 RivenGraphics::~RivenGraphics() {
@@ -339,7 +348,9 @@ RivenGraphics::~RivenGraphics() {
 	_mainScreen->free();
 	delete _mainScreen;
 	delete _bitmapDecoder;
-	delete _fliesEffect;
+	clearFliesEffect();
+	clearWaterEffect();
+	delete _menuFont;
 }
 
 MohawkSurface *RivenGraphics::decodeImage(uint16 id) {
@@ -645,8 +656,11 @@ void RivenGraphics::beginCredits() {
 	// Clear the old cache
 	clearCache();
 
+	_creditsImage = kRivenCreditsZeroImage;
+	_creditsPos = 0;
+
 	// Now cache all the credits images
-	for (uint16 i = 302; i <= 320; i++) {
+	for (uint16 i = kRivenCreditsZeroImage; i <= kRivenCreditsLastImage; i++) {
 		MohawkSurface *surface = _bitmapDecoder->decodeImage(_vm->getExtrasResource(ID_TBMP, i));
 		surface->convertToTrueColor();
 		addImageToCache(i, surface);
@@ -658,32 +672,32 @@ void RivenGraphics::beginCredits() {
 }
 
 void RivenGraphics::updateCredits() {
-	if ((_creditsImage == 303 || _creditsImage == 304) && _creditsPos == 0)
+	if ((_creditsImage == kRivenCreditsFirstImage || _creditsImage == kRivenCreditsSecondImage) && _creditsPos == 0)
 		fadeToBlack();
 
-	if (_creditsImage < 304) {
+	if (_creditsImage < kRivenCreditsSecondImage) {
 		// For the first two credit images, they are faded from black to the image and then out again
 		scheduleTransition(kRivenTransitionBlend);
 
 		Graphics::Surface *frame = findImage(_creditsImage++)->getSurface();
-
 		for (int y = 0; y < frame->h; y++)
 			memcpy(_mainScreen->getBasePtr(124, y), frame->getBasePtr(0, y), frame->pitch);
 
 		runScheduledTransition();
 	} else {
-		// Otheriwse, we're scrolling
+		// Otherwise, we're scrolling
+		// This is done by 1) moving the screen up one row and 
+		// 2) adding a new row at the bottom that is the current row of the current image or 
+		// not and it defaults to being empty (a black row).
+
 		// Move the screen up one row
 		memmove(_mainScreen->getPixels(), _mainScreen->getBasePtr(0, 1), _mainScreen->pitch * (_mainScreen->h - 1));
 
-		// Only update as long as we're not before the last frame
-		// Otherwise, we're just moving up a row (which we already did)
-		if (_creditsImage <= 320) {
-			// Copy the next row to the bottom of the screen
+		// Copy the next row to the bottom of the screen and keep incrementing the credit images and which row we are on until we reach the last.
+		if (_creditsImage <= kRivenCreditsLastImage) {
 			Graphics::Surface *frame = findImage(_creditsImage)->getSurface();
 			memcpy(_mainScreen->getBasePtr(124, _mainScreen->h - 1), frame->getBasePtr(0, _creditsPos), frame->pitch);
 			_creditsPos++;
-
 			if (_creditsPos == _mainScreen->h) {
 				_creditsImage++;
 				_creditsPos = 0;
@@ -760,16 +774,69 @@ void RivenGraphics::enableCardUpdateScript(bool enable) {
 	_enableCardUpdateScript = enable;
 }
 
+void RivenGraphics::drawText(const Common::U32String &text, const Common::Rect &dest, uint8 greyLevel) {
+	_mainScreen->fillRect(dest, _pixelFormat.RGBToColor(0, 0, 0));
+
+	uint32 color = _pixelFormat.RGBToColor(greyLevel, greyLevel, greyLevel);
+
+	const Graphics::Font *font = getMenuFont();
+	font->drawString(_mainScreen, text, dest.left, dest.top, dest.width(), color);
+
+	_dirtyScreen = true;
+}
+
+void RivenGraphics::loadMenuFont() {
+	const char *fontName;
+
+	if (_vm->getLanguage() != Common::JA_JPN) {
+		fontName = "FreeSans.ttf";
+	} else {
+		fontName = "mplus-2c-regular.ttf";
+	}
+
+#if defined(USE_FREETYPE2)
+	int fontHeight;
+
+	if (_vm->getLanguage() != Common::JA_JPN) {
+		fontHeight = 12;
+	} else {
+		fontHeight = 11;
+	}
+
+	Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember(fontName);
+	if (stream) {
+		_menuFont = Graphics::loadTTFFont(*stream, fontHeight);
+		delete stream;
+	}
+#endif
+
+	if (!_menuFont) {
+		warning("Cannot load font %s", fontName);
+	}
+}
+
+const Graphics::Font *RivenGraphics::getMenuFont() const {
+	const Graphics::Font *font;
+
+	if (_menuFont) {
+		font = _menuFont;
+	} else {
+		font = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
+	}
+
+	return font;
+}
+
 const FliesEffect::FliesEffectData FliesEffect::_firefliesParameters = {
 		true,
 		true,
 		true,
 		true,
-		3.0,
-		0.7,
+		3.0F,
+		0.7F,
 		40,
-		2.0,
-		1.0,
+		2.0F,
+		1.0F,
 		8447718,
 		30,
 		10
@@ -780,11 +847,11 @@ const FliesEffect::FliesEffectData FliesEffect::_fliesParameters = {
 		false,
 		false,
 		true,
-		8.0,
-		3.0,
+		8.0F,
+		3.0F,
 		80,
-		3.0,
-		1.0,
+		3.0F,
+		1.0F,
 		661528,
 		30,
 		10
@@ -821,8 +888,8 @@ void FliesEffect::initFlies(uint16 count) {
 }
 
 void FliesEffect::initFlyRandomPosition(uint index) {
-	int posX = _vm->_rnd->getRandomNumber(_gameRect.right - 3);
-	int posY = _vm->_rnd->getRandomNumber(_gameRect.bottom - 3);
+	int posX = _vm->_rnd->getRandomNumber(_gameRect.right - 4);
+	int posY = _vm->_rnd->getRandomNumber(_gameRect.bottom - 4);
 
 	if (posY < 100) {
 		posY = 100;
@@ -848,9 +915,9 @@ void FliesEffect::initFlyAtPosition(uint index, int posX, int posY, int posZ) {
 	fly.framesTillLightSwitch = randomBetween(_parameters->minFramesLit, _parameters->minFramesLit + _parameters->maxLightDuration);
 
 	fly.hasBlur = false;
-	fly.directionAngleRad = randomBetween(0, 300) / 100.0f;
-	fly.directionAngleRadZ = randomBetween(0, 300) / 100.0f;
-	fly.speed = randomBetween(0, 100) / 100.0f;
+	fly.directionAngleRad = randomBetween(0, 300) / 100.0F;
+	fly.directionAngleRadZ = randomBetween(0, 300) / 100.0F;
+	fly.speed = randomBetween(0, 100) / 100.0F;
 }
 
 void FliesEffect::update() {
@@ -886,17 +953,17 @@ void FliesEffect::updateFlies() {
 void FliesEffect::updateFlyPosition(uint index) {
 	FliesEffectEntry &fly = _fly[index];
 
-	if (fly.directionAngleRad > 2.0f * M_PI) {
-		fly.directionAngleRad = fly.directionAngleRad - 2.0f * M_PI;
+	if (fly.directionAngleRad > 2.0F * M_PI) {
+		fly.directionAngleRad = fly.directionAngleRad - 2.0F * M_PI;
 	}
-	if (fly.directionAngleRad < 0.0f) {
-		fly.directionAngleRad = fly.directionAngleRad + 2.0f * M_PI;
+	if (fly.directionAngleRad < 0.0F) {
+		fly.directionAngleRad = fly.directionAngleRad + 2.0F * M_PI;
 	}
-	if (fly.directionAngleRadZ > 2.0f * M_PI) {
-		fly.directionAngleRadZ = fly.directionAngleRadZ - 2.0f * M_PI;
+	if (fly.directionAngleRadZ > 2.0F * M_PI) {
+		fly.directionAngleRadZ = fly.directionAngleRadZ - 2.0F * M_PI;
 	}
-	if (fly.directionAngleRadZ < 0.0f) {
-		fly.directionAngleRadZ = fly.directionAngleRadZ + 2.0f * M_PI;
+	if (fly.directionAngleRadZ < 0.0F) {
+		fly.directionAngleRadZ = fly.directionAngleRadZ + 2.0F * M_PI;
 	}
 	fly.posXFloat += cos(fly.directionAngleRad) * fly.speed;
 	fly.posYFloat += sin(fly.directionAngleRad) * fly.speed;
@@ -908,7 +975,7 @@ void FliesEffect::updateFlyPosition(uint index) {
 			&fly.alphaMap,
 			&fly.width,
 			&fly.height);
-	fly.posZFloat += cos(fly.directionAngleRadZ) * (fly.speed / 2.0f);
+	fly.posZFloat += cos(fly.directionAngleRadZ) * (fly.speed / 2.0F);
 	fly.posZ = fly.posZFloat;
 	if (_parameters->canBlur && fly.speed > _parameters->blurSpeedTreshold) {
 		fly.hasBlur = true;
@@ -930,16 +997,16 @@ void FliesEffect::updateFlyPosition(uint index) {
 			maxAngularSpeed /= 2;
 		}
 		int angularSpeed = randomBetween(-maxAngularSpeed, maxAngularSpeed);
-		fly.directionAngleRad += angularSpeed / 100.0f;
+		fly.directionAngleRad += angularSpeed / 100.0F;
 	} else {
 		// Make the flies go down if they are too high in the screen
 		int angularSpeed = randomBetween(0, 50);
-		if (fly.directionAngleRad >= M_PI / 2.0f && fly.directionAngleRad <= 3.0f * M_PI / 2.0f) {
+		if (fly.directionAngleRad >= M_PI / 2.0F && fly.directionAngleRad <= 3.0F * M_PI / 2.0F) {
 			// Going down
-			fly.directionAngleRad -= angularSpeed / 100.0f;
+			fly.directionAngleRad -= angularSpeed / 100.0F;
 		} else {
 			// Going up
-			fly.directionAngleRad += angularSpeed / 100.0f;
+			fly.directionAngleRad += angularSpeed / 100.0F;
 		}
 		if (fly.posY < 1) {
 			initFlyRandomPosition(index);
@@ -959,23 +1026,23 @@ void FliesEffect::updateFlyPosition(uint index) {
 			distanceToScreenEdge = 30;
 		}
 		if (fly.posZ <= distanceToScreenEdge) {
-			fly.directionAngleRadZ += randomBetween(-_parameters->maxAcceleration, _parameters->maxAcceleration) / 100.0f;
+			fly.directionAngleRadZ += randomBetween(-_parameters->maxAcceleration, _parameters->maxAcceleration) / 100.0F;
 		} else {
 			fly.posZ = distanceToScreenEdge;
-			fly.directionAngleRadZ += M_PI;
+			fly.directionAngleRadZ += (float)M_PI;
 		}
 	} else {
 		fly.posZ = 0;
-		fly.directionAngleRadZ += M_PI;
+		fly.directionAngleRadZ += (float)M_PI;
 	}
-	float minSpeed = _parameters->minSpeed - fly.posZ / 40.0f;
-	float maxSpeed = _parameters->maxSpeed - fly.posZ / 20.0f;
-	fly.speed += randomBetween(-_parameters->maxAcceleration, _parameters->maxAcceleration) / 100.0f;
+	float minSpeed = _parameters->minSpeed - fly.posZ / 40.0F;
+	float maxSpeed = _parameters->maxSpeed - fly.posZ / 20.0F;
+	fly.speed += randomBetween(-_parameters->maxAcceleration, _parameters->maxAcceleration) / 100.0F;
 	if (fly.speed > maxSpeed) {
-		fly.speed -= randomBetween(0, 50) / 100.0f;
+		fly.speed -= randomBetween(0, 50) / 100.0F;
 	}
 	if (fly.speed < minSpeed) {
-		fly.speed += randomBetween(0, 50) / 100.0f;
+		fly.speed += randomBetween(0, 50) / 100.0F;
 	}
 }
 
@@ -1133,9 +1200,9 @@ void FliesEffect::draw() {
 			}
 
 			if (_vm->_rnd->getRandomBit()) {
-				fly.directionAngleRad += M_PI / 2.0;
+				fly.directionAngleRad += (float)M_PI / 2.0F;
 			} else {
-				fly.directionAngleRad -= M_PI / 2.0;
+				fly.directionAngleRad -= (float)M_PI / 2.0F;
 			}
 		}
 	}

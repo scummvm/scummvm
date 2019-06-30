@@ -116,8 +116,6 @@ public:
 	MidiChannel *allocateChannel() { return 0; }
 	MidiChannel *getPercussionChannel() { return 0; }
 
-	uint8 currentProgram();
-
 	void timerCallback(int timerId);
 
 private:
@@ -640,7 +638,12 @@ byte MidiPlayer_FMTowns::getPlayId() const {
 }
 
 int MidiPlayer_FMTowns::getPolyphony() const {
-	return (_version == SCI_VERSION_1_EARLY) ? 1 : 6;
+	// WORKAROUND:
+	// I set the return value to 16 for SCI_VERSION_1_EARLY here, which fixes music playback in Mixed Up Mothergoose.
+	// This has been broken since the introduction of SciMusic::remapChannels() and the corresponding code.
+	// The original code of Mixed Up Mothergoose code doesn't have the remapping and doesn't seem to check the polyphony
+	// setting ever. So the value of 1 was probably incorrect.
+	return (_version == SCI_VERSION_1_EARLY) ? 16 : 6;
 }
 
 void MidiPlayer_FMTowns::playSwitch(bool play) {

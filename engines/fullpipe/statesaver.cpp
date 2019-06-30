@@ -63,7 +63,7 @@ bool GameLoader::writeSavegame(Scene *sc, const char *fname, const Common::Strin
 
 	GameVar *nxt = 0;
 	GameVar *prv = 0;
-	GameVar *par;
+	GameVar *par = 0;
 	if (v) {
 		nxt = v->_nextVarObj;
 		prv = v->_prevVarObj;

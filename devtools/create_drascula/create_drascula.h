@@ -27,7 +27,7 @@
 
 #define DATAALIGNMENT 4
 
-#define NUM_LANGS 5
+#define NUM_LANGS 6
 #define NUM_TEXT 501
 #define NUM_TEXTD 84
 #define NUM_TEXTB 15

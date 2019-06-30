@@ -25,7 +25,7 @@
 
 namespace Sludge {
 
-enum sludgeCommand {
+enum SludgeCommand {
 	SLU_UNKNOWN,
 	SLU_RETURN,
 	SLU_BRANCH,

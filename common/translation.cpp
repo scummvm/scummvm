@@ -23,8 +23,6 @@
 #if defined(WIN32)
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
-// winnt.h defines ARRAYSIZE, but we want our own one... - this is needed before including util.h
-#undef ARRAYSIZE
 #endif
 
 #define TRANSLATIONS_DAT_VER 3
@@ -46,7 +44,7 @@ bool operator<(const TLanguage &l, const TLanguage &r) {
 	return strcmp(l.name, r.name) < 0;
 }
 
-TranslationManager::TranslationManager() : _currentLang(-1), _charmap(0) {
+TranslationManager::TranslationManager() : _currentLang(-1), _charmap(nullptr) {
 	loadTranslationsInfoDat();
 
 	// Set the default language
@@ -110,7 +108,7 @@ void TranslationManager::setLanguage(const String &lang) {
 }
 
 const char *TranslationManager::getTranslation(const char *message) const {
-	return getTranslation(message, NULL);
+	return getTranslation(message, nullptr);
 }
 
 const char *TranslationManager::getTranslation(const char *message, const char *context) const {
@@ -144,7 +142,7 @@ const char *TranslationManager::getTranslation(const char *message, const char *
 				++rightIndex;
 			}
 			// Find the context we want
-			if (context == NULL || *context == '\0' || leftIndex == rightIndex)
+			if (context == nullptr || *context == '\0' || leftIndex == rightIndex)
 				return _currentTranslationMessages[leftIndex].msgstr.c_str();
 			// We could use again binary search, but there should be only a small number of contexts.
 			while (rightIndex > leftIndex) {
@@ -416,7 +414,7 @@ void TranslationManager::loadLanguageDat(int index) {
 	// Setup the new charset mapping
 	if (charmapNum == -1) {
 		delete[] _charmap;
-		_charmap = 0;
+		_charmap = nullptr;
 	} else {
 		if (!_charmap)
 			_charmap = new uint32[256];

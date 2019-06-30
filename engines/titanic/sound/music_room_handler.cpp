@@ -230,7 +230,7 @@ void CMusicRoomHandler::updateAudio() {
 				}
 			}
 		}
-		
+
 		_audioBuffer->push(audioData, size);
 		delete[] audioData;
 	}

@@ -21,15 +21,15 @@
  */
 
 #include "xeen/interface_scene.h"
-#include "xeen/dialogs_error.h"
+#include "xeen/dialogs/dialogs_message.h"
 #include "xeen/resources.h"
 #include "xeen/xeen.h"
 
 namespace Xeen {
 
 const int COMBAT_POS_X[3][2] = { { 102, 134 },{ 36, 67 },{ 161, 161 } };
-const int INDOOR_INDEXES[3] = { 157, 151, 154 };
-const int OUTDOOR_INDEXES[3] = { 119, 113, 116 };
+const int INDOOR_POW_INDEXES[3] = { 157, 151, 154 };
+const int OUTDOOR_POW_INDEXES[3] = { 119, 113, 116 };
 const int COMBAT_OFFSET_X[4] = { 8, 6, 4, 2 };
 
 OutdoorDrawList::OutdoorDrawList() : _sky1(_data[0]), _sky2(_data[1]),
@@ -63,11 +63,11 @@ OutdoorDrawList::OutdoorDrawList() : _sky1(_data[0]), _sky2(_data[1]),
 	_data[25] = DrawStruct(0, 8, 109);
 	_data[26] = DrawStruct(0, 201, 109);
 	_data[27] = DrawStruct(0, 8, 109);
-	_data[28] = DrawStruct(1, -64, 61, 14, SPRFLAG_SCENE_CLIPPED);
+	_data[28] = DrawStruct(1, -64, 61, 14);
 	_data[29] = DrawStruct(1, -40, 61, 14, 0);
 	_data[30] = DrawStruct(1, -16, 61, 14, 0);
 	_data[31] = DrawStruct(1, 8, 61, 14, 0);
-	_data[32] = DrawStruct(1, 128, 61, 14, SPRFLAG_HORIZ_FLIPPED | SPRFLAG_SCENE_CLIPPED);
+	_data[32] = DrawStruct(1, 128, 61, 14, SPRFLAG_HORIZ_FLIPPED);
 	_data[33] = DrawStruct(1, 104, 61, 14, SPRFLAG_HORIZ_FLIPPED);
 	_data[34] = DrawStruct(1, 80, 61, 14, SPRFLAG_HORIZ_FLIPPED);
 	_data[35] = DrawStruct(1, 56, 61, 14, SPRFLAG_HORIZ_FLIPPED);
@@ -123,10 +123,10 @@ OutdoorDrawList::OutdoorDrawList() : _sky1(_data[0]), _sky2(_data[1]),
 	_data[85] = DrawStruct(2, 146, 40, 0, SPRFLAG_HORIZ_FLIPPED);
 	_data[86] = DrawStruct(1, 32, 40, 6, 0);
 	_data[87] = DrawStruct(0, -7, 30, 7, 0);
-	_data[88] = DrawStruct(0, -112, 30, 7, SPRFLAG_SCENE_CLIPPED);
-	_data[89] = DrawStruct(0, 98, 30, 7, SPRFLAG_SCENE_CLIPPED);
-	_data[90] = DrawStruct(0, -112, 30, 8, SPRFLAG_SCENE_CLIPPED);
-	_data[91] = DrawStruct(0, 98, 30, 8, SPRFLAG_SCENE_CLIPPED);
+	_data[88] = DrawStruct(0, -112, 30, 7);
+	_data[89] = DrawStruct(0, 98, 30, 7);
+	_data[90] = DrawStruct(0, -112, 30, 8);
+	_data[91] = DrawStruct(0, 98, 30, 8);
 	_data[92] = DrawStruct(0, -38, 30, 8, 0);
 	_data[93] = DrawStruct(0, 25, 30, 8, 0);
 	_data[94] = DrawStruct(0, -7, 30, 8, 0);
@@ -141,22 +141,22 @@ OutdoorDrawList::OutdoorDrawList() : _sky1(_data[0]), _sky2(_data[1]),
 	_data[103] = DrawStruct(0, 8, 24);
 	_data[104] = DrawStruct(0, 169, 24, 0, SPRFLAG_HORIZ_FLIPPED);
 	_data[105] = DrawStruct(1, 32, 24);
-	_data[106] = DrawStruct(0, -23, 40, 0, SPRFLAG_SCENE_CLIPPED);
-	_data[107] = DrawStruct(0, 200, 40, 0, SPRFLAG_HORIZ_FLIPPED | SPRFLAG_SCENE_CLIPPED);
+	_data[106] = DrawStruct(0, -23, 40, 0);
+	_data[107] = DrawStruct(0, 200, 40, 0, SPRFLAG_HORIZ_FLIPPED);
 	_data[108] = DrawStruct(0, 8, 47);
 	_data[109] = DrawStruct(0, 169, 47, 0, SPRFLAG_HORIZ_FLIPPED);
-	_data[110] = DrawStruct(1, -56, -4, 0x8000, SPRFLAG_4000 | SPRFLAG_SCENE_CLIPPED);
-	_data[111] = DrawStruct(0, -5, 2, 0, SPRFLAG_4000 | SPRFLAG_SCENE_CLIPPED);
-	_data[112] = DrawStruct(0, -67, 2, 0, SPRFLAG_4000 | SPRFLAG_SCENE_CLIPPED);
+	_data[110] = DrawStruct(1, -56, -4, SCALE_ENLARGE, SPRFLAG_BOTTOM_CLIPPED);
+	_data[111] = DrawStruct(0, -5, 2, 0, SPRFLAG_BOTTOM_CLIPPED);
+	_data[112] = DrawStruct(0, -67, 2, 0, SPRFLAG_BOTTOM_CLIPPED);
 	_data[113] = DrawStruct(0, 44, 73);
 	_data[114] = DrawStruct(0, 44, 73);
-	_data[115] = DrawStruct(0, 58, 14, 0, SPRFLAG_4000 | SPRFLAG_SCENE_CLIPPED);
+	_data[115] = DrawStruct(0, 58, 14, 0, SPRFLAG_BOTTOM_CLIPPED);
 	_data[116] = DrawStruct(0, 169, 73);
 	_data[117] = DrawStruct(0, 169, 73);
-	_data[118] = DrawStruct(0, -5, 14, 0, SPRFLAG_4000 | SPRFLAG_SCENE_CLIPPED);
+	_data[118] = DrawStruct(0, -5, 14, 0, SPRFLAG_BOTTOM_CLIPPED);
 	_data[119] = DrawStruct(0, 110, 73);
 	_data[120] = DrawStruct(0, 110, 73);
-	_data[121] = DrawStruct(0, -5, 14, 0, SPRFLAG_4000 | SPRFLAG_SCENE_CLIPPED);
+	_data[121] = DrawStruct(0, -5, 14, 0, SPRFLAG_BOTTOM_CLIPPED);
 	_data[122] = DrawStruct(0, 110, 73);
 	_data[123] = DrawStruct(0, 110, 73);
 	_data[124] = DrawStruct(0, 72, 43);
@@ -167,6 +167,18 @@ OutdoorDrawList::OutdoorDrawList() : _sky1(_data[0]), _sky2(_data[1]),
 	_data[129] = DrawStruct(0, 47, 36, 0, SPRFLAG_HORIZ_FLIPPED);
 	_data[130] = DrawStruct(0, 118, 42);
 	_data[131] = DrawStruct(0, 26, 42, 0, SPRFLAG_HORIZ_FLIPPED);
+
+	for (int idx = 0; idx < 132; ++idx)
+		_data[idx]._flags |= SPRFLAG_SCENE_CLIPPED;
+}
+
+void OutdoorDrawList::draw() {
+	// Mark all items to be drawn as being clipped to the scene area
+	for (int idx = 0; idx < size(); ++idx)
+		_data[idx]._flags |= SPRFLAG_SCENE_CLIPPED;
+
+	// Draw the list
+	(*g_vm->_windows)[3].drawList(_data, size());
 }
 
 /*------------------------------------------------------------------------*/
@@ -283,16 +295,16 @@ IndoorDrawList::IndoorDrawList() :
 	_data[84] = DrawStruct(0, 71, 53, 12, SPRFLAG_HORIZ_FLIPPED);
 	_data[85] = DrawStruct(0, 80, 57, 12, 0);
 	_data[86] = DrawStruct(0, 64, 57, 12, SPRFLAG_HORIZ_FLIPPED);
-	_data[87] = DrawStruct(7, -24, 52, 0, SPRFLAG_SCENE_CLIPPED);
+	_data[87] = DrawStruct(7, -24, 52, 0);
 	_data[88] = DrawStruct(7, 32, 52);
 	_data[89] = DrawStruct(7, 88, 52);
 	_data[90] = DrawStruct(0, 144, 52);
-	_data[91] = DrawStruct(0, 200, 52, 0, SPRFLAG_SCENE_CLIPPED);
-	_data[92] = DrawStruct(0, -79, 52, 11, SPRFLAG_SCENE_CLIPPED);
+	_data[91] = DrawStruct(0, 200, 52, 0);
+	_data[92] = DrawStruct(0, -79, 52, 11);
 	_data[93] = DrawStruct(0, -27, 52, 11, 0);
 	_data[94] = DrawStruct(0, 32, 52, 11, 0);
 	_data[95] = DrawStruct(0, 89, 52, 11, 0);
-	_data[96] = DrawStruct(0, 145, 52, 11, SPRFLAG_SCENE_CLIPPED);
+	_data[96] = DrawStruct(0, 145, 52, 11);
 	_data[97] = DrawStruct(0, -8, 50, 12, 0);
 	_data[98] = DrawStruct(0, -65, 50, 12, 0);
 	_data[99] = DrawStruct(0, 49, 50, 12, 0);
@@ -315,17 +327,17 @@ IndoorDrawList::IndoorDrawList() :
 	_data[116] = DrawStruct(0, 63, 47, 8, SPRFLAG_HORIZ_FLIPPED);
 	_data[117] = DrawStruct(0, 94, 52, 8, 0);
 	_data[118] = DrawStruct(0, 50, 52, 8, SPRFLAG_HORIZ_FLIPPED);
-	_data[119] = DrawStruct(6, -40, 40, 0, SPRFLAG_SCENE_CLIPPED);
+	_data[119] = DrawStruct(6, -40, 40, 0);
 	_data[120] = DrawStruct(6, 64, 40);
-	_data[121] = DrawStruct(0, 168, 40, 0, SPRFLAG_SCENE_CLIPPED);
-	_data[122] = DrawStruct(0, -72, 40, 6, SPRFLAG_SCENE_CLIPPED);
+	_data[121] = DrawStruct(0, 168, 40, 0);
+	_data[122] = DrawStruct(0, -72, 40, 6);
 	_data[123] = DrawStruct(0, 32, 40, 6, 0);
-	_data[124] = DrawStruct(0, 137, 40, 6, SPRFLAG_SCENE_CLIPPED);
+	_data[124] = DrawStruct(0, 137, 40, 6);
 	_data[125] = DrawStruct(0, -7, 25, 7, 0);
-	_data[126] = DrawStruct(0, -112, 25, 7, SPRFLAG_SCENE_CLIPPED);
-	_data[127] = DrawStruct(0, 98, 25, 7, SPRFLAG_SCENE_CLIPPED);
-	_data[128] = DrawStruct(0, -112, 29, 8, SPRFLAG_SCENE_CLIPPED);
-	_data[129] = DrawStruct(0, 98, 29, 8, SPRFLAG_SCENE_CLIPPED);
+	_data[126] = DrawStruct(0, -112, 25, 7);
+	_data[127] = DrawStruct(0, 98, 25, 7);
+	_data[128] = DrawStruct(0, -112, 29, 8);
+	_data[129] = DrawStruct(0, 98, 29, 8);
 	_data[130] = DrawStruct(0, -38, 29, 8, 0);
 	_data[131] = DrawStruct(0, 25, 29, 8, 0);
 	_data[132] = DrawStruct(0, -7, 29, 8, 0);
@@ -339,23 +351,23 @@ IndoorDrawList::IndoorDrawList() :
 	_data[140] = DrawStruct(0, 55, 41, 4, SPRFLAG_HORIZ_FLIPPED);
 	_data[141] = DrawStruct(0, 106, 47, 4, 0);
 	_data[142] = DrawStruct(0, 38, 47, 4, SPRFLAG_HORIZ_FLIPPED);
-	_data[143] = DrawStruct(0, -136, 24, 0, SPRFLAG_SCENE_CLIPPED);
+	_data[143] = DrawStruct(0, -136, 24, 0);
 	_data[144] = DrawStruct(0, 8, 12);
 	_data[145] = DrawStruct(0, 32, 24);
 	_data[146] = DrawStruct(0, 200, 12, 0, SPRFLAG_HORIZ_FLIPPED);
-	_data[147] = DrawStruct(0, 200, 24, 0, SPRFLAG_SCENE_CLIPPED);
+	_data[147] = DrawStruct(0, 200, 24, 0);
 	_data[148] = DrawStruct(0, 32, 24);
-	_data[149] = DrawStruct(0, -5, 2, 0, SPRFLAG_4000 | SPRFLAG_SCENE_CLIPPED);
-	_data[150] = DrawStruct(0, -67, 10, 0, SPRFLAG_4000 | SPRFLAG_SCENE_CLIPPED);
+	_data[149] = DrawStruct(0, -5, 2, 0, SPRFLAG_BOTTOM_CLIPPED);
+	_data[150] = DrawStruct(0, -67, 10, 0, SPRFLAG_BOTTOM_CLIPPED);
 	_data[151] = DrawStruct(0, 44, 73);
 	_data[152] = DrawStruct(0, 44, 73);
-	_data[153] = DrawStruct(0, 58, 14, 0, SPRFLAG_4000 | SPRFLAG_SCENE_CLIPPED);
+	_data[153] = DrawStruct(0, 58, 14, 0, SPRFLAG_BOTTOM_CLIPPED);
 	_data[154] = DrawStruct(0, 169, 73);
 	_data[155] = DrawStruct(0, 169, 73);
-	_data[156] = DrawStruct(0, -5, 14, 0, SPRFLAG_4000 | SPRFLAG_SCENE_CLIPPED);
+	_data[156] = DrawStruct(0, -5, 14, 0, SPRFLAG_BOTTOM_CLIPPED);
 	_data[157] = DrawStruct(0, 110, 73);
 	_data[158] = DrawStruct(0, 110, 73);
-	_data[159] = DrawStruct(0, -5, 14, 0, SPRFLAG_4000 | SPRFLAG_SCENE_CLIPPED);
+	_data[159] = DrawStruct(0, -5, 14, 0, SPRFLAG_BOTTOM_CLIPPED);
 	_data[160] = DrawStruct(0, 110, 73);
 	_data[161] = DrawStruct(0, 110, 73);
 	_data[162] = DrawStruct(0, 72, 43);
@@ -366,6 +378,15 @@ IndoorDrawList::IndoorDrawList() :
 	_data[167] = DrawStruct(0, 47, 36, 0, SPRFLAG_HORIZ_FLIPPED);
 	_data[168] = DrawStruct(0, 118, 42);
 	_data[169] = DrawStruct(0, 26, 42, 0, SPRFLAG_HORIZ_FLIPPED);
+}
+
+void IndoorDrawList::draw() {
+	// Mark all items to be drawn as being clipped to the scene area
+	for (int idx = 0; idx < size(); ++idx)
+		_data[idx]._flags |= SPRFLAG_SCENE_CLIPPED;
+
+	// Draw the list
+	(*g_vm->_windows)[3].drawList(_data, size());
 }
 
 /*------------------------------------------------------------------------*/
@@ -380,7 +401,7 @@ InterfaceScene::InterfaceScene(XeenEngine *vm): _vm(vm) {
 	_flipDefaultGround = false;
 	_isAttacking = false;
 	_charsShooting = false;
-	_objNumber = 0;
+	_objNumber = -1;
 	_combatFloatCounter = 0;
 	_thinWall = false;
 	_isAnimReset = false;
@@ -392,9 +413,8 @@ void InterfaceScene::drawScene() {
 	Map &map = *_vm->_map;
 	Scripts &scripts = *_vm->_scripts;
 
-	MazeObject &objObject = map._mobData._objects[_objNumber];
+	MazeObject *obj = (_objNumber == -1) ? nullptr : &map._mobData._objects[_objNumber];
 	Direction partyDirection = _vm->_party->_mazeDirection;
-	int objNum = _objNumber - 1;
 
 	// Loop to update the frame numbers for each maze object, applying the animation frame
 	// limits as specified by the map's _animationInfo listing
@@ -407,9 +427,9 @@ void InterfaceScene::drawScene() {
 			mazeObject._frame = animEntry._frame1._frames[directionIndex];
 		} else {
 			++mazeObject._frame;
-			if ((int)idx == objNum && scripts._animCounter > 0 && (
-				objObject._spriteId == (_vm->_files->_isDarkCc ? 15 : 16) ||
-				objObject._spriteId == 58 || objObject._spriteId == 73)) {
+			if ((int)idx == _objNumber && scripts._animCounter > 0 && (
+				obj->_spriteId == (_vm->_files->_ccNum ? 15 : 16) ||
+				obj->_spriteId == 58 || obj->_spriteId == 73)) {
 				if (mazeObject._frame > 4 || mazeObject._spriteId == 58)
 					mazeObject._frame = 1;
 			} else if (mazeObject._frame >= animEntry._frame2._frames[directionIndex]) {
@@ -433,10 +453,10 @@ void InterfaceScene::drawOutdoorsScene() {
 	Map &map = *_vm->_map;
 
 	for (int idx = 0; idx < 44; ++idx)
-		_outdoorList[Res.OUTDOOR_DRAWSTRCT_INDEXES[idx]]._frame = -1;
+		_outdoorList[Res.OUTDOOR_DRAWSTRUCT_INDEXES[idx]]._frame = -1;
 
 	if (combat._monstersAttacking) {
-		for (int idx = 0; idx < 8; ++idx) {
+		for (int idx = 0; idx < MAX_PARTY_COUNT; ++idx) {
 			if (_outdoorList._attackImgs4[idx]._sprites)
 				_outdoorList._attackImgs4[idx]._frame = 0;
 			else if (_outdoorList._attackImgs3[idx]._sprites)
@@ -447,7 +467,7 @@ void InterfaceScene::drawOutdoorsScene() {
 				_outdoorList._attackImgs1[idx]._frame = 0;
 		}
 	} else if (_charsShooting) {
-		for (int idx = 0; idx < 8; ++idx) {
+		for (int idx = 0; idx < MAX_PARTY_COUNT; ++idx) {
 			if (_outdoorList._attackImgs1[idx]._sprites)
 				_outdoorList._attackImgs1[idx]._frame = 0;
 			else if (_outdoorList._attackImgs2[idx]._sprites)
@@ -462,41 +482,41 @@ void InterfaceScene::drawOutdoorsScene() {
 	_isAnimReset = false;
 	int attackMon2 = combat._attackMonsters[2];
 
+	// Only the front rank of pow points result in a Pow splatter effect
 	for (int idx = 0; idx < 3; ++idx) {
-		DrawStruct &ds1 = _outdoorList[OUTDOOR_INDEXES[idx] + 1];
-		DrawStruct &ds2 = _outdoorList[OUTDOOR_INDEXES[idx]];
+		DrawStruct &ds1 = _outdoorList[OUTDOOR_POW_INDEXES[idx] + 1];
+		DrawStruct &ds2 = _outdoorList[OUTDOOR_POW_INDEXES[idx]];
 		ds1._sprites = nullptr;
 		ds2._sprites = nullptr;
 
-		if (combat._charsArray1[idx]) {
+		if (combat._pow[idx]._duration) {
 			int vIndex = combat._attackMonsters[1] && !attackMon2 ? 1 : 0;
-			combat._charsArray1[idx]--;
+			combat._pow[idx]._duration--;
 
-			if (combat._monPow[idx]) {
+			if (combat._pow[idx]._active) {
 				ds2._x = COMBAT_POS_X[idx][vIndex];
 				ds2._frame = 0;
-				ds2._scale = combat._monsterScale[idx];
+				ds2._scale = combat._pow[idx]._scale;
 
-				if (ds2._scale == 0x8000) {
+				if (ds2._scale == SCALE_ENLARGE) {
 					ds2._x /= 3;
 					ds2._y = 60;
-				}
-				else {
+				} else {
 					ds2._y = 73;
 				}
 
-				ds2._flags = SPRFLAG_4000 | SPRFLAG_SCENE_CLIPPED;
+				ds2._flags = SPRFLAG_BOTTOM_CLIPPED | SPRFLAG_SCENE_CLIPPED;
 				ds2._sprites = &_charPowSprites;
 			}
 
-			if (combat._elemPow[idx]) {
+			if (combat._pow[idx]._elemFrame) {
 				ds1._x = COMBAT_POS_X[idx][vIndex] + COMBAT_OFFSET_X[idx];
-				ds1._frame = combat._elemPow[idx];
-				ds1._scale = combat._elemScale[idx];
+				ds1._frame = combat._pow[idx]._elemFrame;
+				ds1._scale = combat._pow[idx]._elemScale;
 
-				if (ds1._scale == 0x8000)
+				if (ds1._scale == SCALE_ENLARGE)
 					ds1._x /= 3;
-				ds1._flags = SPRFLAG_4000 | SPRFLAG_SCENE_CLIPPED;
+				ds1._flags = SPRFLAG_BOTTOM_CLIPPED | SPRFLAG_SCENE_CLIPPED;
 				ds1._sprites = &_charPowSprites;
 			}
 		}
@@ -524,7 +544,7 @@ void InterfaceScene::drawOutdoorsScene() {
 		_outdoorList[123] = _outdoorList[114];
 		_outdoorList[112]._sprites = nullptr;
 		_outdoorList[113]._sprites = nullptr;
-		_outdoorList[124]._sprites = nullptr;
+		_outdoorList[114]._sprites = nullptr;
 		monsterIndex = 2;
 	} else if (combat._attackMonsters[2] != -1 && map._mobData._monsters[combat._attackMonsters[2]]._frame >= 8) {
 		_outdoorList[121] = _outdoorList[115];
@@ -570,7 +590,7 @@ void InterfaceScene::drawIndoorsScene() {
 		_indoorList[idx]._frame = -1;
 
 	if (combat._monstersAttacking) {
-		for (int idx = 0; idx < 96; ++idx) {
+		for (int idx = 0; idx < 8; ++idx) {
 			if (_indoorList[79 + idx]._sprites != nullptr) {
 				_indoorList[79 + idx]._frame = 0;
 			} else if (_indoorList[111 + idx]._sprites != nullptr) {
@@ -582,7 +602,7 @@ void InterfaceScene::drawIndoorsScene() {
 			}
 		}
 	} else if (_charsShooting) {
-		for (int idx = 0; idx < 8; ++idx) {
+		for (int idx = 0; idx < MAX_PARTY_COUNT; ++idx) {
 			if (_indoorList._attackImgs1[idx]._sprites != nullptr) {
 				_indoorList._attackImgs1[idx]._frame = 0;
 			} else if (_indoorList._attackImgs2[idx]._sprites != nullptr) {
@@ -599,40 +619,41 @@ void InterfaceScene::drawIndoorsScene() {
 	_isAnimReset = false;
 
 	// Code in the original that's not being used
-	//MazeObject &objObject = map._mobData._objects[_objNumber - 1];
+	//MazeObject &objObject = map._mobData._objects[_objNumber];
 
+	// Only the front rank of pow points result in a Pow splatter effect
 	for (int idx = 0; idx < 3; ++idx) {
-		DrawStruct &ds1 = _indoorList[INDOOR_INDEXES[idx]];
-		DrawStruct &ds2 = _indoorList[INDOOR_INDEXES[idx] + 1];
+		DrawStruct &ds1 = _indoorList[INDOOR_POW_INDEXES[idx]];
+		DrawStruct &ds2 = _indoorList[INDOOR_POW_INDEXES[idx] + 1];
 		ds1._sprites = nullptr;
 		ds2._sprites = nullptr;
 
-		if (combat._charsArray1[idx]) {
+		if (combat._pow[idx]._duration) {
 			int posIndex = combat._attackMonsters[1] && !combat._attackMonsters[2] ? 1 : 0;
-			--combat._charsArray1[idx];
+			--combat._pow[idx]._duration;
 
-			if (combat._monPow[idx]) {
+			if (combat._pow[idx]._active) {
 				ds1._x = COMBAT_POS_X[idx][posIndex];
 				ds1._frame = 0;
-				ds1._scale = combat._monsterScale[idx];
-				if (ds1._scale == 0x8000) {
+				ds1._scale = combat._pow[idx]._scale;
+				if (ds1._scale == SCALE_ENLARGE) {
 					ds1._x /= 3;
 					ds1._y = 60;
 				} else {
 					ds1._y = 73;
 				}
 
-				ds1._flags = SPRFLAG_4000 | SPRFLAG_SCENE_CLIPPED;
+				ds1._flags = SPRFLAG_BOTTOM_CLIPPED | SPRFLAG_SCENE_CLIPPED;
 				ds1._sprites = &_charPowSprites;
 			}
 
-			if (combat._elemPow[idx]) {
+			if (combat._pow[idx]._elemFrame) {
 				ds2._x = COMBAT_POS_X[idx][posIndex] + COMBAT_OFFSET_X[idx];
-				ds2._frame = combat._elemPow[idx];
-				ds2._scale = combat._elemScale[idx];
-				if (ds2._scale == 0x8000)
+				ds2._frame = combat._pow[idx]._elemFrame;
+				ds2._scale = combat._pow[idx]._elemScale;
+				if (ds2._scale == SCALE_ENLARGE)
 					ds2._x /= 3;
-				ds2._flags = SPRFLAG_4000 | SPRFLAG_SCENE_CLIPPED;
+				ds2._flags = SPRFLAG_BOTTOM_CLIPPED | SPRFLAG_SCENE_CLIPPED;
 				ds2._sprites = &_charPowSprites;
 			}
 		}
@@ -705,7 +726,7 @@ void InterfaceScene::animate3d() {
 
 	for (uint idx = 0; idx < map._mobData._monsters.size(); ++idx) {
 		MazeMonster &monster = map._mobData._monsters[idx];
-		if (!monster._damageType) {
+		if (monster._damageType == DT_PHYSICAL) {
 			if (monster._frame < 8) {
 				MonsterStruct &monsterData = *monster._monsterData;
 				if (!monsterData._loopAnimation) {
@@ -724,14 +745,14 @@ void InterfaceScene::animate3d() {
 						monster._field9 = 0;
 				}
 			} else if (monster._frame == 11) {
-				--monster._fieldA;
-				if (monster._fieldA == 0)
+				--monster._postAttackDelay;
+				if (monster._postAttackDelay == 0)
 					monster._frame = 0;
 			} else {
 				++monster._frame;
 				if (monster._frame == 11) {
-					--monster._frame;
-					monster._frame = monster._fieldA ? 10 : 0;
+					--monster._postAttackDelay;
+					monster._frame = monster._postAttackDelay ? 10 : 0;
 				}
 			}
 		}
@@ -761,40 +782,44 @@ void InterfaceScene::animate3d() {
 		}
 	}
 
-	DrawStruct *combatImgs1 = map._isOutdoors ? _outdoorList._attackImgs1 : _indoorList._attackImgs1;
-	DrawStruct *combatImgs2 = map._isOutdoors ? _outdoorList._attackImgs2 : _indoorList._attackImgs2;
-	DrawStruct *combatImgs3 = map._isOutdoors ? _outdoorList._attackImgs3 : _indoorList._attackImgs3;
-	DrawStruct *combatImgs4 = map._isOutdoors ? _outdoorList._attackImgs4 : _indoorList._attackImgs4;
+	DrawStruct *rangedImgs1 = map._isOutdoors ? _outdoorList._attackImgs1 : _indoorList._attackImgs1;
+	DrawStruct *rangedImgs2 = map._isOutdoors ? _outdoorList._attackImgs2 : _indoorList._attackImgs2;
+	DrawStruct *rangedImgs3 = map._isOutdoors ? _outdoorList._attackImgs3 : _indoorList._attackImgs3;
+	DrawStruct *rangedImgs4 = map._isOutdoors ? _outdoorList._attackImgs4 : _indoorList._attackImgs4;
 
 	if (combat._monstersAttacking) {
-		for (int idx = 0; idx < 8; ++idx) {
-			if (combatImgs1[idx]._sprites) {
-				combatImgs1[idx]._sprites = nullptr;
-				combat._shooting[idx] = false;
-			} else if (combatImgs2[idx]._sprites) {
-				combatImgs1[idx]._sprites = combatImgs2[idx]._sprites;
-				combatImgs2[idx]._sprites = nullptr;
-			} else if (combatImgs3[idx]._sprites) {
-				combatImgs2[idx]._sprites = combatImgs3[idx]._sprites;
-				combatImgs3[idx]._sprites = nullptr;
-			} else if (combatImgs4[idx]._sprites) {
-				combatImgs3[idx]._sprites = combatImgs4[idx]._sprites;
-				combatImgs4[idx]._sprites = nullptr;
+		// Monsters doing ranged attacks. Sequentially move the attack from
+		// whichever row it started in to the front (where the party is)
+		for (int idx = 0; idx < MAX_PARTY_COUNT; ++idx) {
+			if (rangedImgs1[idx]._sprites) {
+				rangedImgs1[idx]._sprites = nullptr;
+				combat._shootingRow[idx] = 0;
+			} else if (rangedImgs2[idx]._sprites) {
+				rangedImgs1[idx]._sprites = rangedImgs2[idx]._sprites;
+				rangedImgs2[idx]._sprites = nullptr;
+			} else if (rangedImgs3[idx]._sprites) {
+				rangedImgs2[idx]._sprites = rangedImgs3[idx]._sprites;
+				rangedImgs3[idx]._sprites = nullptr;
+			} else if (rangedImgs4[idx]._sprites) {
+				rangedImgs3[idx]._sprites = rangedImgs4[idx]._sprites;
+				rangedImgs4[idx]._sprites = nullptr;
 			}
 		}
 	} else if (_charsShooting) {
-		for (int idx = 0; idx < 8; ++idx) {
-			if (combatImgs4[idx]._sprites) {
-				combatImgs4[idx]._sprites = nullptr;
-			} else if (combatImgs3[idx]._sprites) {
-				combatImgs4[idx]._sprites = combatImgs3[idx]._sprites;
-				combatImgs3[idx]._sprites = nullptr;
-			} else if (combatImgs2[idx]._sprites) {
-				combatImgs3[idx]._sprites = combatImgs2[idx]._sprites;
-				combatImgs2[idx]._sprites = nullptr;
-			} else if (combatImgs1[idx]._sprites) {
-				combatImgs2[idx]._sprites = combatImgs1[idx]._sprites;
-				combatImgs1[idx]._sprites = nullptr;
+		// Characters shooting at monsters. Sequentially move the attack
+		// away from the party
+		for (int idx = 0; idx < MAX_PARTY_COUNT; ++idx) {
+			if (rangedImgs4[idx]._sprites) {
+				rangedImgs4[idx]._sprites = nullptr;
+			} else if (rangedImgs3[idx]._sprites) {
+				rangedImgs4[idx]._sprites = rangedImgs3[idx]._sprites;
+				rangedImgs3[idx]._sprites = nullptr;
+			} else if (rangedImgs2[idx]._sprites) {
+				rangedImgs3[idx]._sprites = rangedImgs2[idx]._sprites;
+				rangedImgs2[idx]._sprites = nullptr;
+			} else if (rangedImgs1[idx]._sprites) {
+				rangedImgs2[idx]._sprites = rangedImgs1[idx]._sprites;
+				rangedImgs1[idx]._sprites = nullptr;
 			}
 		}
 	}
@@ -2316,7 +2341,10 @@ void InterfaceScene::setIndoorsMonsters() {
 	Common::Point mazePos = _vm->_party->_mazePosition;
 	Direction dir = _vm->_party->_mazeDirection;
 
-	combat.clear();
+	// Reset the list of attacking monsters
+	combat.clearAttackers();
+
+	// Iterate through the monsters list checking for proximity to party
 	for (uint monsterIdx = 0; monsterIdx < map._mobData._monsters.size(); ++monsterIdx) {
 		MazeMonster &monster = map._mobData._monsters[monsterIdx];
 		SpriteResource *sprites = monster._sprites;
@@ -2630,7 +2658,7 @@ void InterfaceScene::setMonsterSprite(DrawStruct &drawStruct, MazeMonster &monst
 
 	if (flying) {
 		drawStruct._x = Res.COMBAT_FLOAT_X[_combatFloatCounter];
-		drawStruct._y = Res.COMBAT_FLOAT_Y[_combatFloatCounter];
+		drawStruct._y += Res.COMBAT_FLOAT_Y[_combatFloatCounter];
 	} else {
 		drawStruct._x = 0;
 	}
@@ -2644,7 +2672,7 @@ void InterfaceScene::setIndoorsObjects() {
 	Common::Point mazePos = _vm->_party->_mazePosition;
 	Direction dir = _vm->_party->_mazeDirection;
 	Common::Point pt;
-	_objNumber = 0;
+	_objNumber = -1;
 
 	Common::Array<MazeObject> &objects = _vm->_map->_mobData._objects;
 	for (uint idx = 0; idx < objects.size(); ++idx) {
@@ -2652,7 +2680,7 @@ void InterfaceScene::setIndoorsObjects() {
 
 		// Determine which half of the X/Y lists to use
 		int listOffset;
-		if (_vm->_files->_isDarkCc) {
+		if (_vm->_files->_ccNum) {
 			listOffset = mazeObject._spriteId == 47 ? 1 : 0;
 		} else {
 			listOffset = mazeObject._spriteId == 113 ? 1 : 0;
@@ -2877,16 +2905,16 @@ void InterfaceScene::setIndoorsWallPics() {
 		if (wallItem._direction != dir)
 			continue;
 
-		if (mazePos.x == (wallItem._position.x + Res.SCREEN_POSITIONING_X[dir][2]) &&
-				mazePos.y == (wallItem._position.y + Res.SCREEN_POSITIONING_Y[dir][2])) {
+		if (wallItem._position.x == (mazePos.x + Res.SCREEN_POSITIONING_X[dir][2]) &&
+				wallItem._position.y == (mazePos.y + Res.SCREEN_POSITIONING_Y[dir][2])) {
 			if (_wp[1] == -1) {
 				_indoorList[148]._frame = wallItem._frame;
 				_indoorList[148]._sprites = wallItem._sprites;
 			}
 		}
 
-		if (mazePos.x == (wallItem._position.x + Res.SCREEN_POSITIONING_X[dir][7]) &&
-				mazePos.y == (wallItem._position.y + Res.SCREEN_POSITIONING_Y[dir][7])) {
+		if (wallItem._position.x == (mazePos.x + Res.SCREEN_POSITIONING_X[dir][7]) &&
+				wallItem._position.y == (mazePos.y + Res.SCREEN_POSITIONING_Y[dir][7])) {
 			if (!_wo[27] && _wp[1] == -1) {
 				_indoorList[123]._frame = wallItem._frame;
 				_indoorList[123]._sprites = wallItem._sprites;
@@ -2894,8 +2922,8 @@ void InterfaceScene::setIndoorsWallPics() {
 			}
 		}
 
-		if (mazePos.x == (wallItem._position.x + Res.SCREEN_POSITIONING_X[dir][5]) &&
-				mazePos.y == (wallItem._position.y + Res.SCREEN_POSITIONING_Y[dir][5])) {
+		if (wallItem._position.x == (mazePos.x + Res.SCREEN_POSITIONING_X[dir][5]) &&
+				wallItem._position.y == (mazePos.y + Res.SCREEN_POSITIONING_Y[dir][5])) {
 			if (_wo[27] && _wo[25]) {
 			} else if (_wo[27] && _wo[28]) {
 			} else if (_wo[23] && _wo[25]) {
@@ -2907,8 +2935,8 @@ void InterfaceScene::setIndoorsWallPics() {
 			}
 		}
 
-		if (mazePos.x == (wallItem._position.x + Res.SCREEN_POSITIONING_X[dir][9]) &&
-				mazePos.y == (wallItem._position.y + Res.SCREEN_POSITIONING_Y[dir][9])) {
+		if (wallItem._position.x == (mazePos.x + Res.SCREEN_POSITIONING_X[dir][9]) &&
+				wallItem._position.y == (mazePos.y + Res.SCREEN_POSITIONING_Y[dir][9])) {
 			if (_wo[27] && _wo[26]) {
 			} else if (_wo[27] && _wo[29]) {
 			} else if (_wo[24] && _wo[26]) {
@@ -2920,17 +2948,17 @@ void InterfaceScene::setIndoorsWallPics() {
 			}
 		}
 
-		if (mazePos.x == (wallItem._position.x + Res.SCREEN_POSITIONING_X[dir][14]) &&
-				mazePos.y == (wallItem._position.y + Res.SCREEN_POSITIONING_Y[dir][14])) {
-			if (!_wo[22] && !_wo[27] && !_wp[8]) {
+		if (wallItem._position.x == (mazePos.x + Res.SCREEN_POSITIONING_X[dir][14]) &&
+				wallItem._position.y == (mazePos.y + Res.SCREEN_POSITIONING_Y[dir][14])) {
+			if (!_wo[22] && !_wo[27] && _wp[8] == -1) {
 				_indoorList[94]._frame = wallItem._frame;
 				_indoorList[94]._sprites = wallItem._sprites;
 				_wp[8] = idx;
 			}
 		}
 
-		if (mazePos.x == (wallItem._position.x + Res.SCREEN_POSITIONING_X[dir][12]) &&
-				mazePos.y == (wallItem._position.y + Res.SCREEN_POSITIONING_Y[dir][12])) {
+		if (wallItem._position.x == (mazePos.x + Res.SCREEN_POSITIONING_X[dir][12]) &&
+				wallItem._position.y == (mazePos.y + Res.SCREEN_POSITIONING_Y[dir][12])) {
 			if (_wo[27]) {
 			} else if (_wo[22] && _wo[23]) {
 			} else if (_wo[22] && _wo[20]) {
@@ -2943,8 +2971,8 @@ void InterfaceScene::setIndoorsWallPics() {
 			}
 		}
 
-		if (mazePos.x == (wallItem._position.x + Res.SCREEN_POSITIONING_X[dir][16]) &&
-				mazePos.y == (wallItem._position.y + Res.SCREEN_POSITIONING_Y[dir][16])) {
+		if (wallItem._position.x == (mazePos.x + Res.SCREEN_POSITIONING_X[dir][16]) &&
+				wallItem._position.y == (mazePos.y + Res.SCREEN_POSITIONING_Y[dir][16])) {
 			if (_wo[27]) {
 			} else if (_wo[22] && _wo[24]) {
 			} else if (_wo[22] && _wo[21]) {
@@ -2957,8 +2985,8 @@ void InterfaceScene::setIndoorsWallPics() {
 			}
 		}
 
-		if (mazePos.x == (wallItem._position.x + Res.SCREEN_POSITIONING_X[dir][12]) &&
-				mazePos.y == (wallItem._position.y + Res.SCREEN_POSITIONING_Y[dir][12])) {
+		if (wallItem._position.x == (mazePos.x + Res.SCREEN_POSITIONING_X[dir][12]) &&
+				wallItem._position.y == (mazePos.y + Res.SCREEN_POSITIONING_Y[dir][12])) {
 			if (_wo[27]) {
 			} else if (_wo[25] && _wo[28]) {
 			} else if (_wo[20] && _wo[16]) {
@@ -2969,8 +2997,8 @@ void InterfaceScene::setIndoorsWallPics() {
 			}
 		}
 
-		if (mazePos.x == (wallItem._position.x + Res.SCREEN_POSITIONING_X[dir][16]) &&
-				mazePos.y == (wallItem._position.y + Res.SCREEN_POSITIONING_Y[dir][16])) {
+		if (wallItem._position.x == (mazePos.x + Res.SCREEN_POSITIONING_X[dir][16]) &&
+				wallItem._position.y == (mazePos.y + Res.SCREEN_POSITIONING_Y[dir][16])) {
 			if (!_wo[26] && !_wo[29] && !_wo[21] && !_wo[18] && _wp[10] == -1) {
 				_indoorList[96]._frame = wallItem._frame;
 				_indoorList[96]._sprites = wallItem._sprites;
@@ -2978,8 +3006,8 @@ void InterfaceScene::setIndoorsWallPics() {
 			}
 		}
 
-		if (mazePos.x == (wallItem._position.x + Res.SCREEN_POSITIONING_X[dir][27]) &&
-				mazePos.y == (wallItem._position.y + Res.SCREEN_POSITIONING_Y[dir][27])) {
+		if (wallItem._position.x == (mazePos.x + Res.SCREEN_POSITIONING_X[dir][27]) &&
+				wallItem._position.y == (mazePos.y + Res.SCREEN_POSITIONING_Y[dir][27])) {
 			if (!_wo[27] && !_wo[22] && !_wo[15] && _wp[15] == -1) {
 				_indoorList[50]._frame = wallItem._frame;
 				_indoorList[50]._sprites = wallItem._sprites;
@@ -2987,8 +3015,8 @@ void InterfaceScene::setIndoorsWallPics() {
 			}
 		}
 
-		if (mazePos.x == (wallItem._position.x + Res.SCREEN_POSITIONING_X[dir][25]) &&
-				mazePos.y == (wallItem._position.y + Res.SCREEN_POSITIONING_Y[dir][25])) {
+		if (wallItem._position.x == (mazePos.x + Res.SCREEN_POSITIONING_X[dir][25]) &&
+				wallItem._position.y == (mazePos.y + Res.SCREEN_POSITIONING_Y[dir][25])) {
 			if (_wo[27]) {
 			} else if (_wo[27] && _wo[22]) {
 			} else if (_wo[15] && _wo[17]) {
@@ -3002,8 +3030,8 @@ void InterfaceScene::setIndoorsWallPics() {
 			}
 		}
 
-		if (mazePos.x == (wallItem._position.x + Res.SCREEN_POSITIONING_X[dir][23]) &&
-				mazePos.y == (wallItem._position.y + Res.SCREEN_POSITIONING_Y[dir][23])) {
+		if (wallItem._position.x == (mazePos.x + Res.SCREEN_POSITIONING_X[dir][23]) &&
+				wallItem._position.y == (mazePos.y + Res.SCREEN_POSITIONING_Y[dir][23])) {
 			if (_wo[27]) {
 			} else if (_wo[22] && _wo[20]) {
 			} else if (_wo[22] && _wo[23]) {
@@ -3017,8 +3045,8 @@ void InterfaceScene::setIndoorsWallPics() {
 			}
 		}
 
-		if (mazePos.x == (wallItem._position.x + Res.SCREEN_POSITIONING_X[dir][29]) &&
-				mazePos.y == (wallItem._position.y + Res.SCREEN_POSITIONING_Y[dir][29])) {
+		if (wallItem._position.x == (mazePos.x + Res.SCREEN_POSITIONING_X[dir][29]) &&
+				wallItem._position.y == (mazePos.y + Res.SCREEN_POSITIONING_Y[dir][29])) {
 			if (_wo[27] || _wo[22]) {
 			} else if (_wo[15] && _wo[19]) {
 			} else if (_wo[15] && _wo[14]) {
@@ -3031,8 +3059,8 @@ void InterfaceScene::setIndoorsWallPics() {
 			}
 		}
 
-		if (mazePos.x == (wallItem._position.x + Res.SCREEN_POSITIONING_X[dir][31]) &&
-				mazePos.y == (wallItem._position.y + Res.SCREEN_POSITIONING_Y[dir][31])) {
+		if (wallItem._position.x == (mazePos.x + Res.SCREEN_POSITIONING_X[dir][31]) &&
+				wallItem._position.y == (mazePos.y + Res.SCREEN_POSITIONING_Y[dir][31])) {
 			if (_wo[27]) {
 			} else if (_wo[22] && _wo[21]) {
 			} else if (_wo[22] && _wo[24]) {
@@ -3045,8 +3073,8 @@ void InterfaceScene::setIndoorsWallPics() {
 			}
 		}
 
-		if (mazePos.x == (wallItem._position.x + Res.SCREEN_POSITIONING_X[dir][23]) &&
-				mazePos.y == (wallItem._position.y + Res.SCREEN_POSITIONING_Y[dir][23])) {
+		if (wallItem._position.x == (mazePos.x + Res.SCREEN_POSITIONING_X[dir][23]) &&
+				wallItem._position.y == (mazePos.y + Res.SCREEN_POSITIONING_Y[dir][23])) {
 			if (!_wo[27] && !_wo[20] && !_wo[12] && !_wo[23] && !_wo[8] && !_wo[30]) {
 				if (_wp[12] == -1) {
 					_indoorList[47]._frame = wallItem._frame;
@@ -3056,8 +3084,8 @@ void InterfaceScene::setIndoorsWallPics() {
 			}
 		}
 
-		if (mazePos.x == (wallItem._position.x + Res.SCREEN_POSITIONING_X[dir][31]) &&
-				mazePos.y == (wallItem._position.y + Res.SCREEN_POSITIONING_Y[dir][31])) {
+		if (wallItem._position.x == (mazePos.x + Res.SCREEN_POSITIONING_X[dir][31]) &&
+				wallItem._position.y == (mazePos.y + Res.SCREEN_POSITIONING_Y[dir][31])) {
 			if (!_wo[27] && !_wo[21] && !_wo[14] && !_wo[24] && !_wo[10] && !_wo[31]) {
 				if (_wp[18] == -1) {
 					_indoorList[53]._frame = wallItem._frame;
@@ -3067,8 +3095,8 @@ void InterfaceScene::setIndoorsWallPics() {
 			}
 		}
 
-		if (mazePos.x == (wallItem._position.x + Res.SCREEN_POSITIONING_X[dir][23]) &&
-				mazePos.y == (wallItem._position.y + Res.SCREEN_POSITIONING_Y[dir][23])) {
+		if (wallItem._position.x == (mazePos.x + Res.SCREEN_POSITIONING_X[dir][23]) &&
+				wallItem._position.y == (mazePos.y + Res.SCREEN_POSITIONING_Y[dir][23])) {
 			if (!_wo[25] && !_wo[28] && !_wo[20] && !_wo[11] && !_wo[16] && !_wo[30] && !_wo[32]) {
 				if (_wp[11] == -1) {
 					_indoorList[46]._frame = wallItem._frame;
@@ -3078,8 +3106,8 @@ void InterfaceScene::setIndoorsWallPics() {
 			}
 		}
 
-		if (mazePos.x == (wallItem._position.x + Res.SCREEN_POSITIONING_X[dir][31]) &&
-				mazePos.y == (wallItem._position.y + Res.SCREEN_POSITIONING_Y[dir][31])) {
+		if (wallItem._position.x == (mazePos.x + Res.SCREEN_POSITIONING_X[dir][31]) &&
+				wallItem._position.y == (mazePos.y + Res.SCREEN_POSITIONING_Y[dir][31])) {
 			if (!_wo[26] && !_wo[20] && !_wo[21] && !_wo[13] && !_wo[18] && !_wo[31] && !_wo[33]) {
 				if (_wp[19] == -1) {
 					_indoorList[54]._frame = wallItem._frame;
@@ -3098,6 +3126,10 @@ void InterfaceScene::setOutdoorsMonsters() {
 	Direction dir = party._mazeDirection;
 	Common::Point pt = party._mazePosition;
 
+	// Reset the list of attacking monsters
+	combat.clearAttackers();
+
+	// Iterate through the monsters list checking for proximity to party
 	for (uint idx = 0; idx < map._mobData._monsters.size(); ++idx) {
 		MazeMonster &monster = map._mobData._monsters[idx];
 
@@ -3310,24 +3342,23 @@ void InterfaceScene::setOutdoorsMonsters() {
 		_outdoorList[45]._x = -16;
 	}
 
-	for (int idx = 0; idx < 26; ++idx) {
+	for (int idx = 0; idx < ATTACK_MONSTERS_COUNT; ++idx) {
 		DrawStruct &ds = _outdoorList[Res.OUTDOOR_MONSTER_INDEXES[idx]];
 
 		if (ds._frame != -1) {
 			ds._flags &= ~0xfff;
 
-			// TODO: Double-check.. this section looks *weird*
+			// Use the frame number as an index to the correct monster,
+			// and replace the frame number with the monster's current frame
 			MazeMonster &monster = map._mobData._monsters[ds._frame];
-			MonsterStruct &monsterData = *monster._monsterData;
-
 			ds._frame = monster._frame;
 
 			if (monster._effect2) {
-				ds._flags = Res.MONSTER_EFFECT_FLAGS[monster._effect2 - 1][monster._effect3];
+				ds._flags |= Res.MONSTER_EFFECT_FLAGS[monster._effect2 - 1][monster._effect3];
 			}
 
 			if (monster._frame > 7) {
-				monster._frame -= 8;
+				ds._frame -= 8;
 				ds._sprites = monster._attackSprites;
 			} else {
 				ds._sprites = monster._sprites;
@@ -3335,13 +3366,13 @@ void InterfaceScene::setOutdoorsMonsters() {
 
 			ds._y = Res.OUTDOOR_MONSTERS_Y[idx];
 
+			MonsterStruct &monsterData = *monster._monsterData;
 			if (monsterData._flying) {
 				ds._x += Res.COMBAT_FLOAT_X[_combatFloatCounter];
 				ds._y += Res.COMBAT_FLOAT_Y[_combatFloatCounter];
 			}
 		}
 	}
-	// TODO
 }
 
 void InterfaceScene::setOutdoorsObjects() {
@@ -3350,11 +3381,12 @@ void InterfaceScene::setOutdoorsObjects() {
 	const Common::Point &pt = party._mazePosition;
 	Direction dir = party._mazeDirection;
 	int posIndex;
+	_objNumber = -1;
 
 	for (uint idx = 0; idx < map._mobData._objects.size(); ++idx) {
 		MazeObject &obj = map._mobData._objects[idx];
 
-		if (_vm->_files->_isDarkCc) {
+		if (_vm->_files->_ccNum) {
 			posIndex = obj._spriteId == 47 ? 1 : 0;
 		} else {
 			posIndex = obj._spriteId == 113 ? 1 : 0;
@@ -3533,7 +3565,6 @@ void InterfaceScene::setOutdoorsObjects() {
 
 void InterfaceScene::drawIndoors() {
 	Map &map = *_vm->_map;
-	Windows &windows = *_vm->_windows;
 	int surfaceId;
 
 	// Draw any surface tiles on top of the default ground
@@ -3656,8 +3687,9 @@ void InterfaceScene::drawIndoors() {
 			_indoorList._fwl_4F4R._frame = 9;
 		else if (_wo[35])
 			_indoorList._fwl_4F4R._frame = 0;
+		/* TODO: Duplicated switch in the original executable.. original bug meant to check some other index?
 		else if (_wo[79])
-			_indoorList._fwl_4F4R._frame = 15;
+			_indoorList._fwl_4F4R._frame = 15;*/
 		else if (_wo[213])
 			_indoorList._fwl_4F4R._frame = 14;
 		else if (_wo[233])
@@ -3919,7 +3951,9 @@ void InterfaceScene::drawIndoors() {
 		_indoorList._fwl_4F1R._frame = 13;
 	}
 
-	if (_wo[27] || _wo[22] || _wo[15] || _wo[96]) {
+	if (_wo[27] || _wo[22] || _wo[15]) {
+	} else if (_wo[96]) {
+		_indoorList._fwl_4F._frame = 7;
 	} else if (_wo[50]) {
 		_indoorList._fwl_4F._frame = 16;
 	} else if (_wo[156]) {
@@ -4366,12 +4400,12 @@ void InterfaceScene::drawIndoors() {
 	_indoorList._horizon._frame = 7;
 
 	// Finally draw the darn indoor scene
-	windows[3].drawList(&_indoorList[0], _indoorList.size());
+	_indoorList.draw();
 
 	// Check for any character shooting
 	_isAttacking = false;
 	for (uint idx = 0; idx < _vm->_party->_activeParty.size(); ++idx) {
-		if (_vm->_combat->_shooting[idx])
+		if (_vm->_combat->_shootingRow[idx])
 			_isAttacking = true;
 	}
 
@@ -4381,7 +4415,6 @@ void InterfaceScene::drawIndoors() {
 void InterfaceScene::drawOutdoors() {
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
-	Windows &windows = *_vm->_windows;
 	int surfaceId;
 
 	// Draw any surface tiles on top of the default ground
@@ -4414,40 +4447,45 @@ void InterfaceScene::drawOutdoors() {
 	assert(map._currentWall != INVALID_CELL);
 	for (int idx = 0; idx < 9; ++idx) {
 		map.getCell(TERRAIN_INDEXES1[idx]);
+		assert(map._currentWall != INVALID_CELL);
 		SpriteResource &spr = map._wallSprites._surfaces[map._currentWall];
-		_outdoorList[28 + idx]._sprites = spr.size() == 0 ? (SpriteResource *)nullptr : &spr;
+		_outdoorList[28 + idx]._sprites = spr.empty() ? (SpriteResource *)nullptr : &spr;
 	}
 	for (int idx = 0; idx < 5; ++idx) {
 		map.getCell(TERRAIN_INDEXES2[idx]);
+		assert(map._currentWall != INVALID_CELL);
 		SpriteResource &spr = map._wallSprites._surfaces[map._currentWall];
-		_outdoorList[61 + idx]._sprites = spr.size() == 0 ? (SpriteResource *)nullptr : &spr;
+		_outdoorList[61 + idx]._sprites = spr.empty() ? (SpriteResource *)nullptr : &spr;
 	}
 	for (int idx = 0; idx < 3; ++idx) {
 		map.getCell(TERRAIN_INDEXES3[idx]);
+		assert(map._currentWall != INVALID_CELL);
 		SpriteResource &spr = map._wallSprites._surfaces[map._currentWall];
-		_outdoorList[84 + idx]._sprites = spr.size() == 0 ? (SpriteResource *)nullptr : &spr;
+		_outdoorList[84 + idx]._sprites = spr.empty() ? (SpriteResource *)nullptr : &spr;
 	}
 	for (int idx = 0; idx < 5; ++idx) {
 		map.getCell(TERRAIN_INDEXES4[idx]);
+		assert(map._currentWall != INVALID_CELL);
 		SpriteResource &spr = map._wallSprites._surfaces[map._currentWall];
-		_outdoorList[103 + idx]._sprites = spr.size() == 0 ? (SpriteResource *)nullptr : &spr;
+		_outdoorList[103 + idx]._sprites = spr.empty() ? (SpriteResource *)nullptr : &spr;
 	}
 
 	map.getCell(1);
+	assert(map._currentWall != INVALID_CELL);
 	SpriteResource &surface = map._wallSprites._surfaces[map._currentWall];
-	_outdoorList[108]._sprites = surface.size() == 0 ? (SpriteResource *)nullptr : &surface;
+	_outdoorList[108]._sprites = surface.empty() ? (SpriteResource *)nullptr : &surface;
 	_outdoorList[109]._sprites = _outdoorList[108]._sprites;
 	_outdoorList[110]._sprites = _outdoorList[108]._sprites;
 	_outdoorList._sky1._flags = _outdoorList._sky2._flags = _flipSky ? SPRFLAG_HORIZ_FLIPPED : 0;
 	_outdoorList._groundSprite._flags = _flipWater ? SPRFLAG_HORIZ_FLIPPED : 0;
 
 	// Finally render the outdoor scene
-	windows[3].drawList(&_outdoorList[0], _outdoorList.size());
+	_outdoorList.draw();
 
 	// Check for any character shooting
 	_isAttacking = false;
 	for (uint idx = 0; idx < _vm->_party->_activeParty.size(); ++idx) {
-		if (_vm->_combat->_shooting[idx])
+		if (_vm->_combat->_shootingRow[idx])
 			_isAttacking = true;
 	}
 

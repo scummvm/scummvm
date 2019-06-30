@@ -233,7 +233,7 @@ Common::Error GnapEngine::run() {
 		error("Could not load ufos.exe");
 
 #ifdef USE_FREETYPE2
-	Common::SeekableReadStream *stream = _exe->getResource(Common::kPEFont, 2000);
+	Common::SeekableReadStream *stream = _exe->getResource(Common::kWinFont, 2000);
 	_font = Graphics::loadTTFFont(*stream, 24);
 	if (!_font)
 		warning("Unable to load font");
@@ -979,7 +979,7 @@ int GnapEngine::playSoundC() {
 
 	if (!_timers[_soundTimerIndexC]) {
 		_timers[_soundTimerIndexC] = getRandom(50) + 150;
-		soundId = kSoundIdsC[getRandom(7)] ;
+		soundId = kSoundIdsC[getRandom(7)];
 		playSound(soundId | 0x10000, false);
 	}
 	return soundId;

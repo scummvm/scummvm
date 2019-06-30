@@ -795,6 +795,36 @@ static const SAGAGameDescription gameDescriptions[] = {
 		NULL,
 	},
 
+	// I Have No Mouth And I Must Scream - Hungarian fan CD translation
+	// English CD version with Hungarian text patch
+	// (English speech - Hungarian text)
+	{
+		{
+			"ihnm",
+			"fan-made",
+			{
+	{"musicfm.res",	GAME_MUSICFILE_FM,					"0439083e3dfdc51b486071d45872ae52", 302676},
+	{"musicgm.res",	GAME_MUSICFILE_GM,					"80f875a1fb384160d1f4b27166eef583", 314020},
+	{"scream.res",	GAME_RESOURCEFILE,					"46bbdc65d164ba7e89836a0935eec8e6", 83411541},
+	{"scripts.res",	GAME_SCRIPTFILE,					"be38bbc5a26be809dbf39f13befebd01", 505001},
+	{"patch.re_",	GAME_PATCHFILE | GAME_RESOURCEFILE,	"58b79e61594779513c7f2d35509fa89e", 5038599},
+	{"sfx.res",		GAME_SOUNDFILE,						"1c610d543f32ec8b525e3f652536f269", 22561056},
+	{ NULL, 0, NULL, 0}
+			},
+			Common::HU_HUN,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GID_IHNM,
+		0,
+		IHNM_DEFAULT_SCENE,
+		&IHNM_Resources,
+		ARRAYSIZE(IHNMCD_GameFonts),
+		IHNMCD_GameFonts,
+		NULL,
+	},
+
 	// I Have No Mouth And I Must Scream - Sp CD version
 	{
 		{

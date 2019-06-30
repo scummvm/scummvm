@@ -47,6 +47,8 @@ class String {
 public:
 	static const uint32 npos = 0xFFFFFFFF;
 
+	static void releaseMemoryPoolMutex();
+
 	typedef char          value_type;
 	/**
 	 * Unsigned version of the underlying type. This can be used to cast
@@ -154,9 +156,13 @@ public:
 
 	bool hasSuffix(const String &x) const;
 	bool hasSuffix(const char *x) const;
+	bool hasSuffixIgnoreCase(const String &x) const;
+	bool hasSuffixIgnoreCase(const char *x) const;
 
 	bool hasPrefix(const String &x) const;
 	bool hasPrefix(const char *x) const;
+	bool hasPrefixIgnoreCase(const String &x) const;
+	bool hasPrefixIgnoreCase(const char *x) const;
 
 	bool contains(const String &x) const;
 	bool contains(const char *x) const;
@@ -173,6 +179,7 @@ public:
 	 *      "*": any character, any amount of times.
 	 *      "?": any character, only once.
 	 *      "#": any decimal digit, only once.
+	 *      "\#": #, only once.
 	 *
 	 * Example strings/patterns:
 	 *      String: monkey.s01   Pattern: monkey.s??    => true
@@ -285,7 +292,7 @@ public:
 	 * except that it stores the result in (variably sized) String
 	 * instead of a fixed size buffer.
 	 */
-	static String format(const char *fmt, ...) GCC_PRINTF(1,2);
+	static String format(const char *fmt, ...) GCC_PRINTF(1, 2);
 
 	/**
 	 * Print formatted data into a String object. Similar to vsprintf,
@@ -478,5 +485,6 @@ size_t strnlen(const char *src, size_t maxSize);
 
 extern int scumm_stricmp(const char *s1, const char *s2);
 extern int scumm_strnicmp(const char *s1, const char *s2, uint n);
+extern char *scumm_strdup(const char *in);
 
 #endif

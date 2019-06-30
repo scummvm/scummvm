@@ -70,8 +70,8 @@ public:
 	void getCelSpecialHoyle4Rect(int16 loopNo, int16 celNo, int16 x, int16 y, int16 z, Common::Rect &outRect) const;
 	void getCelScaledRect(int16 loopNo, int16 celNo, int16 x, int16 y, int16 z, int16 scaleX, int16 scaleY, Common::Rect &outRect) const;
 	const SciSpan<const byte> &getBitmap(int16 loopNo, int16 celNo);
-	void draw(const Common::Rect &rect, const Common::Rect &clipRect, const Common::Rect &clipRectTranslated, int16 loopNo, int16 celNo, byte priority, uint16 EGAmappingNr, bool upscaledHires);
-	void drawScaled(const Common::Rect &rect, const Common::Rect &clipRect, const Common::Rect &clipRectTranslated, int16 loopNo, int16 celNo, byte priority, int16 scaleX, int16 scaleY);
+	void draw(const Common::Rect &rect, const Common::Rect &clipRect, const Common::Rect &clipRectTranslated, int16 loopNo, int16 celNo, byte priority, uint16 EGAmappingNr, bool upscaledHires, uint16 scaleSignal = 0);
+	void drawScaled(const Common::Rect &rect, const Common::Rect &clipRect, const Common::Rect &clipRectTranslated, int16 loopNo, int16 celNo, byte priority, int16 scaleX, int16 scaleY, uint16 scaleSignal = 0);
 	uint16 getLoopCount() const { return _loop.size(); }
 	uint16 getCelCount(int16 loopNo) const;
 	Palette *getPalette();
@@ -85,6 +85,7 @@ private:
 	void initData(GuiResourceId resourceId);
 	void unpackCel(int16 loopNo, int16 celNo, SciSpan<byte> &outPtr);
 	void unditherBitmap(SciSpan<byte> &bitmap, int16 width, int16 height, byte clearKey);
+	byte getMappedColor(byte color, uint16 scaleSignal, const Palette *palette, int x2, int y2);
 
 	ResourceManager *_resMan;
 	GfxCoordAdjuster16 *_coordAdjuster;

@@ -35,11 +35,11 @@
 #include "sludge/imgloader.h"
 #include "sludge/moreio.h"
 #include "sludge/newfatal.h"
+#include "sludge/speech.h"
 #include "sludge/statusba.h"
 #include "sludge/zbuffer.h"
 #include "sludge/sludge.h"
 #include "sludge/sludger.h"
-#include "sludge/talk.h"
 #include "sludge/variable.h"
 #include "sludge/version.h"
 
@@ -185,7 +185,7 @@ bool GraphicsManager::snapshot() {
 
 	// draw snapshot to rendersurface
 	displayBase();
-	viewSpeech(); // ...and anything being said
+	_vm->_speechMan->display();
 	drawStatusBar();
 
 	// copy backdrop to snapshot
@@ -367,7 +367,7 @@ void GraphicsManager::drawBackDrop() {
 		return;
 	// draw backdrop
 	Graphics::TransparentSurface tmp(_backdropSurface, false);
-	tmp.blit(_renderSurface, 0, 0);
+	tmp.blit(_renderSurface, -_cameraX, -_cameraY);
 }
 
 bool GraphicsManager::loadLightMap(int v) {
@@ -422,6 +422,7 @@ void GraphicsManager::saveLightMap(Common::WriteStream *stream) {
 		stream->writeByte(0);
 	}
 	stream->writeByte(_lightMapMode);
+	stream->writeByte(_fadeMode);
 }
 
 bool GraphicsManager::loadLightMap(int ssgVersion, Common::SeekableReadStream *stream) {
@@ -433,6 +434,8 @@ bool GraphicsManager::loadLightMap(int ssgVersion, Common::SeekableReadStream *s
 	if (ssgVersion >= VERSION(1, 4)) {
 		_lightMapMode = stream->readByte() % 3;
 	}
+
+	_fadeMode = stream->readByte();
 
 	return true;
 }
@@ -504,6 +507,27 @@ void GraphicsManager::saveHSI(Common::WriteStream *stream) {
 	Image::writePNG(*stream, _backdropSurface);
 }
 
+void GraphicsManager::saveBackdrop(Common::WriteStream *stream) {
+	stream->writeUint16BE(_cameraX);
+	stream->writeUint16BE(_cameraY);
+	stream->writeFloatLE(_cameraZoom);
+	stream->writeByte(_brightnessLevel);
+	saveHSI(stream);
+}
+
+void GraphicsManager::loadBackdrop(int ssgVersion, Common::SeekableReadStream *stream) {
+	_cameraX = stream->readUint16BE();
+	_cameraY = stream->readUint16BE();
+	if (ssgVersion >= VERSION(2, 0)) {
+		_cameraZoom = stream->readFloatLE();
+	} else {
+		_cameraZoom = 1.0;
+	}
+
+	_brightnessLevel = stream->readByte();
+
+	loadHSI(stream, 0, 0, true);
+}
 
 bool GraphicsManager::getRGBIntoStack(uint x, uint y, StackHandler *sH) {
 	if (x >= _sceneWidth || y >= _sceneHeight) {
@@ -516,14 +540,14 @@ bool GraphicsManager::getRGBIntoStack(uint x, uint y, StackHandler *sH) {
 
 	byte *target = (byte *)_renderSurface.getBasePtr(x, y);
 
-	setVariable(newValue, SVT_INT, target[1]);
+	newValue.setVariable(SVT_INT, target[1]);
 	if (!addVarToStackQuick(newValue, sH->first)) return false;
 	sH->last = sH->first;
 
-	setVariable(newValue, SVT_INT, target[2]);
+	newValue.setVariable(SVT_INT, target[2]);
 	if (!addVarToStackQuick(newValue, sH->first)) return false;
 
-	setVariable(newValue, SVT_INT, target[3]);
+	newValue.setVariable(SVT_INT, target[3]);
 	if (!addVarToStackQuick(newValue, sH->first)) return false;
 
 	return true;

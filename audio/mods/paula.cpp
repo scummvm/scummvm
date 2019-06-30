@@ -20,13 +20,36 @@
  *
  */
 
+/*
+ * The low-pass filter code is based on UAE's audio filter code
+ * found in audio.c. UAE is licensed under the terms of the GPLv2.
+ *
+ * audio.c in UAE states the following:
+ * Copyright 1995, 1996, 1997 Bernd Schmidt
+ * Copyright 1996 Marcus Sundberg
+ * Copyright 1996 Manfred Thole
+ * Copyright 2006 Toni Wilen
+ */
+
+#include <math.h>
+
+#include "common/scummsys.h"
+
 #include "audio/mods/paula.h"
 #include "audio/null.h"
 
 namespace Audio {
 
-Paula::Paula(bool stereo, int rate, uint interruptFreq) :
+Paula::Paula(bool stereo, int rate, uint interruptFreq, FilterMode filterMode) :
 		_stereo(stereo), _rate(rate), _periodScale((double)kPalPaulaClock / rate), _intFreq(interruptFreq) {
+
+	_filterState.mode      = filterMode;
+	_filterState.ledFilter = false;
+	filterResetState();
+
+	_filterState.a0[0] = filterCalculateA0(rate,  6200);
+	_filterState.a0[1] = filterCalculateA0(rate, 20000);
+	_filterState.a0[2] = filterCalculateA0(rate,  7000);
 
 	clearVoices();
 	_voice[0].panning = 191;
@@ -73,12 +96,70 @@ int Paula::readBuffer(int16 *buffer, const int numSamples) {
 		return readBufferIntern<false>(buffer, numSamples);
 }
 
+/* Denormals are very small floating point numbers that force FPUs into slow
+ * mode. All lowpass filters using floats are suspectible to denormals unless
+ * a small offset is added to avoid very small floating point numbers.
+ */
+#define DENORMAL_OFFSET (1E-10)
+
+/* Based on UAE.
+ * Original comment in UAE:
+ *
+ * Amiga has two separate filtering circuits per channel, a static RC filter
+ * on A500 and the LED filter. This code emulates both.
+ *
+ * The Amiga filtering circuitry depends on Amiga model. Older Amigas seem
+ * to have a 6 dB/oct RC filter with cutoff frequency such that the -6 dB
+ * point for filter is reached at 6 kHz, while newer Amigas have no filtering.
+ *
+ * The LED filter is complicated, and we are modelling it with a pair of
+ * RC filters, the other providing a highboost. The LED starts to cut
+ * into signal somewhere around 5-6 kHz, and there's some kind of highboost
+ * in effect above 12 kHz. Better measurements are required.
+ *
+ * The current filtering should be accurate to 2 dB with the filter on,
+ * and to 1 dB with the filter off.
+ */
+inline int32 filter(int32 input, Paula::FilterState &state, int voice) {
+	float normalOutput, ledOutput;
+
+	switch (state.mode) {
+	case Paula::kFilterModeA500:
+		state.rc[voice][0] = state.a0[0] * input + (1 - state.a0[0]) * state.rc[voice][0] + DENORMAL_OFFSET;
+		state.rc[voice][1] = state.a0[1] * state.rc[voice][0] + (1-state.a0[1]) * state.rc[voice][1];
+		normalOutput = state.rc[voice][1];
+
+		state.rc[voice][2] = state.a0[2] * normalOutput        + (1 - state.a0[2]) * state.rc[voice][2];
+		state.rc[voice][3] = state.a0[2] * state.rc[voice][2]  + (1 - state.a0[2]) * state.rc[voice][3];
+		state.rc[voice][4] = state.a0[2] * state.rc[voice][3]  + (1 - state.a0[2]) * state.rc[voice][4];
+
+		ledOutput = state.rc[voice][4];
+		break;
+
+	case Paula::kFilterModeA1200:
+		normalOutput = input;
+
+		state.rc[voice][1] = state.a0[2] * normalOutput        + (1 - state.a0[2]) * state.rc[voice][1] + DENORMAL_OFFSET;
+		state.rc[voice][2] = state.a0[2] * state.rc[voice][1]  + (1 - state.a0[2]) * state.rc[voice][2];
+		state.rc[voice][3] = state.a0[2] * state.rc[voice][2]  + (1 - state.a0[2]) * state.rc[voice][3];
+
+		ledOutput = state.rc[voice][3];
+		break;
+
+	case Paula::kFilterModeNone:
+	default:
+		return input;
+
+	}
+
+	return CLIP<int32>(state.ledFilter ? ledOutput : normalOutput, -32768, 32767);
+}
 
 template<bool stereo>
-inline int mixBuffer(int16 *&buf, const int8 *data, Paula::Offset &offset, frac_t rate, int neededSamples, uint bufSize, byte volume, byte panning) {
+inline int mixBuffer(int16 *&buf, const int8 *data, Paula::Offset &offset, frac_t rate, int neededSamples, uint bufSize, byte volume, byte panning, Paula::FilterState &filterState, int voice) {
 	int samples;
 	for (samples = 0; samples < neededSamples && offset.int_off < bufSize; ++samples) {
-		const int32 tmp = ((int32) data[offset.int_off]) * volume;
+		const int32 tmp = filter(((int32) data[offset.int_off]) * volume, filterState, voice);
 		if (stereo) {
 			*buf++ += (tmp * (255 - panning)) >> 7;
 			*buf++ += (tmp * (panning)) >> 7;
@@ -142,7 +223,7 @@ int Paula::readBufferIntern(int16 *buffer, const int numSamples) {
 			// by the OS/2 version of Hopkins FBI.
 
 			// Mix the generated samples into the output buffer
-			neededSamples -= mixBuffer<stereo>(p, ch.data, ch.offset, rate, neededSamples, ch.length, ch.volume, ch.panning);
+			neededSamples -= mixBuffer<stereo>(p, ch.data, ch.offset, rate, neededSamples, ch.length, ch.volume, ch.panning, _filterState, voice);
 
 			// Wrap around if necessary
 			if (ch.offset.int_off >= ch.length) {
@@ -164,7 +245,7 @@ int Paula::readBufferIntern(int16 *buffer, const int numSamples) {
 				// Repeat as long as necessary.
 				while (neededSamples > 0) {
 					// Mix the generated samples into the output buffer
-					neededSamples -= mixBuffer<stereo>(p, ch.data, ch.offset, rate, neededSamples, ch.length, ch.volume, ch.panning);
+					neededSamples -= mixBuffer<stereo>(p, ch.data, ch.offset, rate, neededSamples, ch.length, ch.volume, ch.panning, _filterState, voice);
 
 					if (ch.offset.int_off >= ch.length) {
 						// Wrap around. See also the note above.
@@ -182,6 +263,32 @@ int Paula::readBufferIntern(int16 *buffer, const int numSamples) {
 	return numSamples;
 }
 
+void Paula::filterResetState() {
+	for (int i = 0; i < NUM_VOICES; i++)
+		for (int j = 0; j < 5; j++)
+			_filterState.rc[i][j] = 0.0f;
+}
+
+/* Based on UAE.
+ * Original comment in UAE:
+ *
+ * This computes the 1st order low-pass filter term b0.
+ * The a1 term is 1.0 - b0. The center frequency marks the -3 dB point.
+ */
+float Paula::filterCalculateA0(int rate, int cutoff) {
+	float omega;
+	/* The BLT correction formula below blows up if the cutoff is above nyquist. */
+	if (cutoff >= rate / 2)
+		return 1.0;
+
+	omega = 2 * M_PI * cutoff / rate;
+	/* Compensate for the bilinear transformation. This allows us to specify the
+	 * stop frequency more exactly, but the filter becomes less steep further
+	 * from stopband. */
+	omega = tan(omega / 2) * 2;
+	return 1 / (1 + 1 / omega);
+}
+
 } // End of namespace Audio
 
 
@@ -193,7 +300,7 @@ int Paula::readBufferIntern(int16 *buffer, const int numSamples) {
 class AmigaMusicPlugin : public NullMusicPlugin {
 public:
 	const char *getName() const {
-		return _s("Amiga Audio Emulator");
+		return _s("Amiga Audio emulator");
 	}
 
 	const char *getId() const {

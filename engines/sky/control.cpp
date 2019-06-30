@@ -43,6 +43,9 @@
 #include "sky/text.h"
 #include "sky/compact.h"
 
+#define ANIM_DELAY 20
+#define CLICK_DELAY 150
+
 namespace Sky {
 
 ConResource::ConResource(void *pSpData, uint32 pNSprites, uint32 pCurSprite, uint16 pX, uint16 pY, uint32 pText, uint8 pOnClick, OSystem *system, uint8 *screen) {
@@ -388,7 +391,7 @@ void Control::animClick(ConResource *pButton) {
 		pButton->drawToScreen(NO_MASK);
 		_text->drawToScreen(WITH_MASK);
 		_system->updateScreen();
-		delay(150);
+		delay(CLICK_DELAY);
 		if (!_controlPanel)
 			return;
 		pButton->_curSprite--;
@@ -488,7 +491,7 @@ void Control::doControlPanel() {
 		_text->drawToScreen(WITH_MASK);
 		_system->updateScreen();
 		_mouseClicked = false;
-		delay(50);
+		delay(ANIM_DELAY);
 		if (!_controlPanel)
 			return;
 		if (_keyPressed.keycode == Common::KEYCODE_ESCAPE) { // escape pressed
@@ -635,7 +638,7 @@ bool Control::getYesNo(char *text) {
 			_skyMouse->spriteMouse(mouseType, 0, 0);
 		}
 		_system->updateScreen();
-		delay(50);
+		delay(ANIM_DELAY);
 		if (!_controlPanel) {
 			free(dlgTextDat);
 			delete dlgText;
@@ -672,7 +675,7 @@ uint16 Control::doMusicSlide() {
 	int ofsY = _slide2->_y - mouse.y;
 	uint8 volume;
 	while (_mouseClicked) {
-		delay(50);
+		delay(ANIM_DELAY);
 		if (!_controlPanel)
 			return 0;
 		mouse = _system->getEventManager()->getMousePos();
@@ -703,7 +706,7 @@ uint16 Control::doSpeedSlide() {
 	speedDelay *= SPEED_MULTIPLY;
 	speedDelay += 2;
 	while (_mouseClicked) {
-		delay(50);
+		delay(ANIM_DELAY);
 		if (!_controlPanel)
 			return SPEED_CHANGED;
 		mouse = _system->getEventManager()->getMousePos();
@@ -896,7 +899,7 @@ uint16 Control::saveRestorePanel(bool allowSave) {
 		_text->drawToScreen(WITH_MASK);
 		_system->updateScreen();
 		_mouseClicked = false;
-		delay(50);
+		delay(ANIM_DELAY);
 		if (!_controlPanel)
 			return clickRes;
 		if (_keyPressed.keycode == Common::KEYCODE_ESCAPE) { // escape pressed

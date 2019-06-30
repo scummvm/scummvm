@@ -102,10 +102,7 @@ MidiMusic::~MidiMusic() {
 }
 
 void MidiMusic::setVolume(int volume) {
-	if (volume < 0)
-		volume = 0;
-	else if (volume > 255)
-		volume = 255;
+	volume = CLIP(volume, 0, 255);
 
 	if (_masterVolume == volume)
 		return;

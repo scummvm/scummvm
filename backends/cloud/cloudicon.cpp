@@ -27,9 +27,9 @@
 
 namespace Cloud {
 
-const float CloudIcon::ALPHA_SPEED = 0.0005;
-const float CloudIcon::ALPHA_MAX = 1;
-const float CloudIcon::ALPHA_MIN = 0.6;
+const float CloudIcon::ALPHA_SPEED = 0.0005f;
+const float CloudIcon::ALPHA_MAX = 1.f;
+const float CloudIcon::ALPHA_MIN = 0.6f;
 
 CloudIcon::CloudIcon() {
 	initIcons();

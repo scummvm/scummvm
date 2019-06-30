@@ -43,7 +43,7 @@ enum {
 
 static void cursorTimerHandler(void *refCon);
 
-MacTextWindow::MacTextWindow(MacWindowManager *wm, const MacFont *font, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, MacMenu *menu) :
+MacTextWindow::MacTextWindow(MacWindowManager *wm, const MacFont *font, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, MacMenu *menu, bool cursorHandler) :
 		MacWindow(wm->getLastId(), true, true, true, wm) {
 
 	_font = font;
@@ -70,9 +70,10 @@ MacTextWindow::MacTextWindow(MacWindowManager *wm, const MacFont *font, int fgco
 	_cursorRect = new Common::Rect(0, 0, 1, kCursorHeight);
 
 	_cursorSurface = new ManagedSurface(1, kCursorHeight);
-	_cursorSurface->fillRect(*_cursorRect, kColorBlack);
+	_cursorSurface->fillRect(*_cursorRect, _wm->_colorBlack);
 
-	g_system->getTimerManager()->installTimerProc(&cursorTimerHandler, 200000, this, "textWindowCursor");
+	if (cursorHandler)
+		g_system->getTimerManager()->installTimerProc(&cursorTimerHandler, 200000, this, "textWindowCursor");
 }
 
 void MacTextWindow::resize(int w, int h) {
@@ -107,7 +108,9 @@ void MacTextWindow::clearText() {
 }
 
 MacTextWindow::~MacTextWindow() {
+	delete _cursorRect;
 	delete _cursorSurface;
+	delete _mactext;
 
 	g_system->getTimerManager()->removeTimerProc(&cursorTimerHandler);
 }
@@ -131,7 +134,7 @@ bool MacTextWindow::draw(ManagedSurface *g, bool forceRedraw) {
 	if (_borderIsDirty || forceRedraw) {
 		drawBorder();
 
-		_composeSurface.clear(kColorWhite);
+		_composeSurface.clear(_wm->_colorWhite);
 	}
 
 	if (_inputIsDirty || forceRedraw) {
@@ -187,7 +190,7 @@ void MacTextWindow::drawSelection() {
 	end = MIN((int)getInnerDimensions().height(), end);
 
 	int numLines = 0;
-	int x1, x2;
+	int x1 = 0, x2 = 0;
 
 	for (int y = start; y < end; y++) {
 		if (!numLines) {
@@ -209,10 +212,10 @@ void MacTextWindow::drawSelection() {
 		byte *ptr = (byte *)_composeSurface.getBasePtr(x1 + kConWOverlap - 2, y + kConWOverlap - 2);
 
 		for (int x = x1; x < x2; x++, ptr++)
-			if (*ptr == kColorBlack)
-				*ptr = kColorWhite;
+			if (*ptr == _wm->_colorBlack)
+				*ptr = _wm->_colorWhite;
 			else
-				*ptr = kColorBlack;
+				*ptr = _wm->_colorBlack;
 	}
 }
 
@@ -356,7 +359,7 @@ bool MacTextWindow::processEvent(Common::Event &event) {
 			startMarking(event.mouse.x, event.mouse.y);
 
 			return true;
-		} else if (event.type == Common::EVENT_LBUTTONUP) {
+		} else if (event.type == Common::EVENT_LBUTTONUP && _menu) {
 			if (_inTextSelection) {
 				_inTextSelection = false;
 
@@ -445,7 +448,7 @@ void MacTextWindow::drawInput() {
 
 	// Now recalc new text height
 	_fontRef->wordWrapText(_inputText, _maxWidth, text);
-	_inputTextHeight = MAX(1u, text.size()); // We always have line to clean
+	_inputTextHeight = MAX((uint)1, text.size()); // We always have line to clean
 
 	// And add new input line to the text
 	appendText(_inputText, _font, true);

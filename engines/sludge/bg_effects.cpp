@@ -166,7 +166,7 @@ bool blur_createSettings(int numParams, VariableStack *&stack) {
 				error = "Third and subsequent parameters in setBackgroundEffect should be arrays";
 				break;
 			} else {
-				int w = stackSize(justToCheckSizes->thisVar.varData.theStack);
+				int w = justToCheckSizes->thisVar.varData.theStack->getStackSize();
 				if (a) {
 					if (w != width) {
 						error = "Arrays in setBackgroundEffect must be the same size";
@@ -196,7 +196,7 @@ bool blur_createSettings(int numParams, VariableStack *&stack) {
 						for (int x = 0; x < width; x++) {
 							int arraySlot = x + (y * width);
 //							s_matrixEffectData[arraySlot] = (rand() % 4);
-							if (!getValueType(s_matrixEffectData[arraySlot], SVT_INT, eachNumber->thisVar)) {
+							if (!eachNumber->thisVar.getValueType(s_matrixEffectData[arraySlot], SVT_INT)) {
 								error = "";
 								break;
 							}
@@ -205,10 +205,10 @@ bool blur_createSettings(int numParams, VariableStack *&stack) {
 						trimStack(stack);
 					}
 				}
-				if (error.empty() && !getValueType(s_matrixEffectDivide, SVT_INT, stack->thisVar))
+				if (error.empty() && !stack->thisVar.getValueType(s_matrixEffectDivide, SVT_INT))
 					error = "";
 				trimStack(stack);
-				if (error.empty() && !getValueType(s_matrixEffectBase, SVT_INT, stack->thisVar))
+				if (error.empty() && !stack->thisVar.getValueType(s_matrixEffectBase, SVT_INT))
 					error = "";
 				trimStack(stack);
 				if (error.empty()) {
@@ -244,6 +244,10 @@ bool blur_createSettings(int numParams, VariableStack *&stack) {
 	return !createNullThing;
 }
 
+// FIXME - Disabled until blurScreen() is internally implemented where these are used...
+//         although these may be replaced by common/util.h, CLIP() function to replace clampi
+//         and various methods of Graphics::Surface.
+#if 0
 static inline int clampi(int i, int min, int max) {
 	return (i >= max) ? max : ((i <= min) ? min : i);
 }
@@ -264,6 +268,7 @@ static inline void blur_createSourceLine(byte *createLine, byte *fromLine, int o
 		createLine[miniX * 4 + 2] = fromLine[width * 4 - 2];
 	}
 }
+#endif
 
 bool blurScreen() {
 #if 0

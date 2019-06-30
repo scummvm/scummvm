@@ -28,7 +28,7 @@ namespace BladeRunner {
 
 uint32 decompress_lcw(uint8 *inBuf, uint32 inLen, uint8 *outBuf, uint32 outLen) {
 	int version = 1;
-	int count, i, color, pos, relpos, out_remain;
+	int count, i, color, pos, relpos;
 
 	uint8 *src = inBuf;
 	uint8 *dst = outBuf;
@@ -40,7 +40,7 @@ uint32 decompress_lcw(uint8 *inBuf, uint32 inLen, uint8 *outBuf, uint32 outLen) 
 	}
 
 	while (src < inBuf + inLen && dst < outEnd && src[0] != 0x80) {
-		out_remain = (int)(outEnd - dst);
+		int out_remain = (int)(outEnd - dst);
 
 		if (src[0] == 0xff) {     // 0b11111111
 			count = src[1] | (src[2] << 8);

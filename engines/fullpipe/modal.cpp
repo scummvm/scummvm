@@ -21,22 +21,20 @@
  */
 
 #include "fullpipe/fullpipe.h"
-#include "fullpipe/messages.h"
-#include "fullpipe/constants.h"
-#include "fullpipe/motion.h"
-#include "fullpipe/scenes.h"
-#include "fullpipe/gameloader.h"
-#include "fullpipe/statics.h"
-#include "fullpipe/modal.h"
 
 #include "fullpipe/constants.h"
+#include "fullpipe/gameloader.h"
+#include "fullpipe/messages.h"
+#include "fullpipe/modal.h"
+#include "fullpipe/motion.h"
 #include "fullpipe/objectnames.h"
+#include "fullpipe/scenes.h"
+#include "fullpipe/statics.h"
+
+#include "engines/savestate.h"
 
 #include "graphics/palette.h"
 #include "graphics/surface.h"
-
-#include "engines/savestate.h"
-#include "engines/advancedDetector.h"
 
 namespace Fullpipe {
 
@@ -2142,7 +2140,8 @@ bool ModalSaveGame::getFileInfo(int slot, FileInfo *fileinfo) {
 		return false;
 
 	Fullpipe::FullpipeSavegameHeader header;
-	Fullpipe::readSavegameHeader(f.get(), header);
+	if (!Fullpipe::readSavegameHeader(f.get(), header))
+		return false;
 
 	// Create the return descriptor
 	SaveStateDescriptor desc(slot, header.saveName);
@@ -2396,7 +2395,7 @@ bool ModalDemo::init(int counterDiff) {
 	if (_clickedQuit == -1)
 		return true;
 
-	g_system->openUrl("http://www.amazon.de/EuroVideo-Bildprogramm-GmbH-Full-Pipe/dp/B003TO51YE/ref=sr_1_1?ie=UTF8&s=videogames&qid=1279207213&sr=8-1");
+	g_system->openUrl("http://www.amazon.de/EuroVideo-Bildprogramm-GmbH-Full-Pipe/dp/B003TO51YE/ref=sr_1_1");
 
 	g_fp->_gameContinue = false;
 

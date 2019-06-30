@@ -225,7 +225,7 @@ TTword *TTvocab::getPrimeWord(TTstring &str, TTword **srcWord) const {
 	if (srcWord)
 		// Pass out the pointer to the original word
 		*srcWord = vocabP;
-	
+
 	// Return the new copy of the word
 	return newWord;
 }
@@ -267,7 +267,7 @@ TTword *TTvocab::getSuffixedWord(TTstring &str, TTword **srcWord) const {
 				word = getPrimeWord(tempStr);
 			}
 		}
-	
+
 	} else if (tempStr.hasSuffix("ing")) {
 		tempStr.deleteSuffix(3);
 		word = getPrimeWord(tempStr);
@@ -303,11 +303,11 @@ TTword *TTvocab::getSuffixedWord(TTstring &str, TTword **srcWord) const {
 				}
 			}
 		}
-	
+
 	} else if (tempStr.hasSuffix("ed")) {
 		tempStr.deleteSuffix(1);
 		word = getPrimeWord(tempStr);
-		
+
 		if (!word) {
 			tempStr.deleteSuffix(1);
 			word = getPrimeWord(tempStr);
@@ -333,7 +333,7 @@ TTword *TTvocab::getSuffixedWord(TTstring &str, TTword **srcWord) const {
 		} else {
 			tempStr = str;
 		}
-	
+
 	} else if (tempStr.hasSuffix("er")) {
 		tempStr.deleteSuffix(1);
 		word = getPrimeWord(tempStr);
@@ -395,7 +395,7 @@ TTword *TTvocab::getSuffixedWord(TTstring &str, TTword **srcWord) const {
 				}
 			}
 		}
-	
+
 	} else if (tempStr.hasSuffix("est")) {
 		tempStr.deleteSuffix(2);
 		word = getPrimeWord(tempStr);

@@ -861,8 +861,8 @@ public:
 	const char *getString(int index) {
 		return _entries[index].c_str();
 	}
-	const char *getString(Action action) { return getString((int) action - 1); }
-	const char *getString(StringEnum sEnum) { return getString((int) sEnum); }
+	const char *getString(Action action) { return getString((int)action - 1); }
+	const char *getString(StringEnum sEnum) { return getString((int)sEnum); }
 	void setString(Action action, const Common::String &s) { _entries[(int)action - 1] = s; }
 };
 

@@ -60,7 +60,7 @@ SaveLoadCloudSyncProgressDialog::SaveLoadCloudSyncProgressDialog(bool canRunInBa
 	new ButtonWidget(this, "SaveLoadCloudSyncProgress.Cancel", "Cancel", 0, kCancelSyncCmd, Common::ASCII_ESCAPE);	// Cancel dialog
 	ButtonWidget *backgroundButton = new ButtonWidget(this, "SaveLoadCloudSyncProgress.Background", "Run in background", 0, kBackgroundSyncCmd, Common::ASCII_RETURN);	// Confirm dialog
 	backgroundButton->setEnabled(canRunInBackground);
-	draw();
+	g_gui.scheduleTopDialogRedraw();
 }
 
 SaveLoadCloudSyncProgressDialog::~SaveLoadCloudSyncProgressDialog() {
@@ -72,7 +72,7 @@ void SaveLoadCloudSyncProgressDialog::handleCommand(CommandSender *sender, uint3
 	case kSavesSyncProgressCmd:
 		_percentLabel->setLabel(Common::String::format("%u%%", data));
 		_progressBar->setValue(data);
-		_progressBar->draw();
+		_progressBar->markAsDirty();
 		break;
 
 	case kCancelSyncCmd:
@@ -264,10 +264,16 @@ void SaveLoadChooserDialog::handleTickle() {
 
 void SaveLoadChooserDialog::reflowLayout() {
 #ifndef DISABLE_SAVELOADCHOOSER_GRID
-	addChooserButtons();
-
 	const SaveLoadChooserType currentType = getType();
 	const SaveLoadChooserType requestedType = getRequestedSaveLoadDialog(*_metaEngine);
+
+	addChooserButtons();
+	if (currentType == kSaveLoadDialogList) {
+		_listButton->setEnabled(false);
+	}
+	if (currentType == kSaveLoadDialogGrid) {
+		_gridButton->setEnabled(false);
+	}
 
 	// Change the dialog type if there is any need for it.
 	if (requestedType != currentType) {
@@ -463,13 +469,14 @@ void SaveLoadChooserSimple::handleCommand(CommandSender *sender, uint32 cmd, uin
 }
 
 void SaveLoadChooserSimple::reflowLayout() {
-	if (g_gui.xmlEval()->getVar("Globals.SaveLoadChooser.ExtInfo.Visible") == 1 && _thumbnailSupport) {
+	if (g_gui.xmlEval()->getVar("Globals.SaveLoadChooser.ExtInfo.Visible") == 1 && (_thumbnailSupport || _saveDateSupport || _playTimeSupport)) {
 		int16 x, y;
 		uint16 w, h;
 
 		if (!g_gui.xmlEval()->getWidgetData("SaveLoadChooser.Thumbnail", x, y, w, h))
 			error("Error when loading position data for Save/Load Thumbnails");
 
+		// Even if there is no thumbnail support, getWidgetData() will provide default thumbnail values
 		int thumbW = kThumbnailWidth;
 		int thumbH = kThumbnailHeight2;
 		int thumbX = x + (w >> 1) - (thumbW >> 1);
@@ -483,28 +490,40 @@ void SaveLoadChooserSimple::reflowLayout() {
 		if (textLines > 0)
 			textLines++; // add a line of padding at the bottom
 
-		_container->resize(x, y, w, h + (kLineHeight * textLines));
-		_gfxWidget->resize(thumbX, thumbY, thumbW, thumbH);
+		if (_thumbnailSupport) {
+			_gfxWidget->resize(thumbX, thumbY, thumbW, thumbH);	
+			_gfxWidget->setVisible(true);
+		} else { 
+			// choose sensible values for displaying playtime and date/time when a thumbnail is not being used
+			thumbH = 0;
+			thumbY = y;
+			h = kLineHeight;
+			_gfxWidget->setVisible(false);
+		}
 
 		int height = thumbY + thumbH + kLineHeight;
 
 		if (_saveDateSupport) {
-			_date->resize(thumbX, height, kThumbnailWidth, kLineHeight);
+			_date->resize(thumbX, height, thumbW, kLineHeight);
 			height += kLineHeight;
-			_time->resize(thumbX, height, kThumbnailWidth, kLineHeight);
+			_time->resize(thumbX, height, thumbW, kLineHeight);
 			height += kLineHeight;
+			_date->setVisible(_saveDateSupport);
+			_time->setVisible(_saveDateSupport);
+		} else {
+			_date->setVisible(false);
+			_time->setVisible(false);
 		}
 
-		if (_playTimeSupport)
-			_playtime->resize(thumbX, height, kThumbnailWidth, kLineHeight);
+		if (_playTimeSupport) {
+			_playtime->resize(thumbX, height, thumbW, kLineHeight);
+			_playtime->setVisible(_playTimeSupport);
+		} else {
+			_playtime->setVisible(false);
+		}
 
+		_container->resize(x, y, w, h + (kLineHeight * textLines));
 		_container->setVisible(true);
-		_gfxWidget->setVisible(true);
-
-		_date->setVisible(_saveDateSupport);
-		_time->setVisible(_saveDateSupport);
-
-		_playtime->setVisible(_playTimeSupport);
 
 		updateSelection(false);
 	} else {
@@ -594,14 +613,14 @@ void SaveLoadChooserSimple::updateSelection(bool redraw) {
 	_deleteButton->setEnabled(isDeletable && !isLocked && (selItem >= 0) && (!_list->getSelectedString().empty()));
 
 	if (redraw) {
-		_gfxWidget->draw();
-		_date->draw();
-		_time->draw();
-		_playtime->draw();
-		_chooseButton->draw();
-		_deleteButton->draw();
+		_gfxWidget->markAsDirty();
+		_date->markAsDirty();
+		_time->markAsDirty();
+		_playtime->markAsDirty();
+		_chooseButton->markAsDirty();
+		_deleteButton->markAsDirty();
 
-		draw();
+		g_gui.scheduleTopDialogRedraw();
 	}
 }
 
@@ -703,7 +722,7 @@ void SaveLoadChooserSimple::updateSaveList() {
 	else
 		_chooseButton->setEnabled(false);
 
-	draw();
+	g_gui.scheduleTopDialogRedraw();
 }
 
 // SaveLoadChooserGrid implementation
@@ -761,13 +780,13 @@ void SaveLoadChooserGrid::handleCommand(CommandSender *sender, uint32 cmd, uint3
 	case kNextCmd:
 		++_curPage;
 		updateSaves();
-		draw();
+		g_gui.scheduleTopDialogRedraw();
 		break;
 
 	case kPrevCmd:
 		--_curPage;
 		updateSaves();
-		draw();
+		g_gui.scheduleTopDialogRedraw();
 		break;
 
 	case kNewSaveCmd:
@@ -788,13 +807,13 @@ void SaveLoadChooserGrid::handleMouseWheel(int x, int y, int direction) {
 		if (_nextButton->isEnabled()) {
 			++_curPage;
 			updateSaves();
-			draw();
+			g_gui.scheduleTopDialogRedraw();
 		}
 	} else {
 		if (_prevButton->isEnabled()) {
 			--_curPage;
 			updateSaves();
-			draw();
+			g_gui.scheduleTopDialogRedraw();
 		}
 	}
 }
@@ -802,7 +821,7 @@ void SaveLoadChooserGrid::handleMouseWheel(int x, int y, int direction) {
 void SaveLoadChooserGrid::updateSaveList() {
 	SaveLoadChooserDialog::updateSaveList();
 	updateSaves();
-	draw();
+	g_gui.scheduleTopDialogRedraw();
 }
 
 void SaveLoadChooserGrid::open() {

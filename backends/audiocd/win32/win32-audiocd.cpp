@@ -46,7 +46,6 @@
 
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
-#undef ARRAYSIZE // winnt.h defines ARRAYSIZE, but we want our own one...
 
 #include "backends/audiocd/win32/win32-audiocd.h"
 
@@ -149,13 +148,14 @@ public:
 	Win32AudioCDManager();
 	~Win32AudioCDManager();
 
-	bool open();
-	void close();
-	bool play(int track, int numLoops, int startFrame, int duration, bool onlyEmulate = false);
+	bool open() override;
+	void close() override;
+	bool play(int track, int numLoops, int startFrame, int duration, bool onlyEmulate,
+			Audio::Mixer::SoundType soundType) override;
 
 protected:
-	bool openCD(int drive);
-	bool openCD(const Common::String &drive);
+	bool openCD(int drive) override;
+	bool openCD(const Common::String &drive) override;
 
 private:
 	bool loadTOC();
@@ -254,9 +254,10 @@ void Win32AudioCDManager::close() {
 	_tocEntries.clear();
 }
 
-bool Win32AudioCDManager::play(int track, int numLoops, int startFrame, int duration, bool onlyEmulate) {
+bool Win32AudioCDManager::play(int track, int numLoops, int startFrame, int duration, bool onlyEmulate,
+		Audio::Mixer::SoundType soundType) {
 	// Prefer emulation
-	if (DefaultAudioCDManager::play(track, numLoops, startFrame, duration, onlyEmulate))
+	if (DefaultAudioCDManager::play(track, numLoops, startFrame, duration, onlyEmulate, soundType))
 		return true;
 
 	// If we're set to only emulate, or have no CD drive, return here
@@ -289,7 +290,7 @@ bool Win32AudioCDManager::play(int track, int numLoops, int startFrame, int dura
 	_emulating = true;
 
 	_mixer->playStream(
-	    Audio::Mixer::kMusicSoundType,
+	    soundType,
 	    &_handle,
 	    Audio::makeLoopingAudioStream(audioStream, start, end, (numLoops < 1) ? numLoops + 1 : numLoops),
 	    -1,

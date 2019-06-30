@@ -27,6 +27,8 @@
 
 namespace Common {
 
+class String;
+
 /**
  * Very simple string class for UTF-32 strings in ScummVM. The main intention
  * behind this class is to feature a simple way of displaying UTF-32 strings
@@ -100,23 +102,46 @@ public:
 	/** Construct a copy of the given string. */
 	U32String(const U32String &str);
 
+	/** Construct a new string from the given NULL-terminated C string. */
+	explicit U32String(const char *str);
+
+	/** Construct a new string containing exactly len characters read from address str. */
+	U32String(const char *str, uint32 len);
+
+	/** Construct a new string containing the characters between beginP (including) and endP (excluding). */
+	U32String(const char *beginP, const char *endP);
+
+	/** Construct a copy of the given string. */
+	U32String(const String &str);
+
 	~U32String();
 
 	U32String &operator=(const U32String &str);
+	U32String &operator=(const String &str);
+	U32String &operator=(const value_type *str);
+	U32String &operator=(const char *str);
 	U32String &operator+=(const U32String &str);
 	U32String &operator+=(value_type c);
-
-	/**
-	 * Equivalence comparison operator.
-	 * @see equals
-	 */
-	bool operator==(const U32String &x) const { return equals(x); }
+	bool operator==(const U32String &x) const;
+	bool operator==(const String &x) const;
+	bool operator==(const value_type *x) const;
+	bool operator==(const char *x) const;
+	bool operator!=(const U32String &x) const;
+	bool operator!=(const String &x) const;
+	bool operator!=(const value_type *x) const;
+	bool operator!=(const char *x) const;
 
 	/**
 	 * Compares whether two U32String are the same based on memory comparison.
 	 * This does *not* do comparison based on canonical equivalence.
 	 */
 	bool equals(const U32String &x) const;
+
+	/**
+	 * Compares whether two U32String are the same based on memory comparison.
+	 * This does *not* do comparison based on canonical equivalence.
+	 */
+	bool equals(const String &x) const;
 
 	bool contains(value_type x) const;
 
@@ -182,13 +207,31 @@ public:
 	const_iterator end() const {
 		return begin() + size();
 	}
+
 private:
 	void makeUnique();
 	void ensureCapacity(uint32 new_size, bool keep_old);
 	void incRefCount() const;
 	void decRefCount(int *oldRefCount);
 	void initWithCStr(const value_type *str, uint32 len);
+	void initWithCStr(const char *str, uint32 len);
 };
+
+U32String convertUtf8ToUtf32(const String &str);
+String convertUtf32ToUtf8(const U32String &str);
+
+enum CodePage {
+	kUtf8,
+	kWindows1250,
+	kWindows1251,
+	kWindows1252,
+	kWindows1253,
+	kWindows1255,
+	kWindows1257
+};
+
+U32String convertToU32String(const char *str, CodePage page = kUtf8);
+String convertFromU32String(const U32String &str, CodePage page = kUtf8);
 
 } // End of namespace Common
 

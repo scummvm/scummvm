@@ -25,7 +25,6 @@
 
 #include "common/scummsys.h"
 #include "common/config-manager.h"
-#include "engines/advancedDetector.h"
 #include "common/debug.h"
 #include "common/debug-channels.h"
 #include "common/error.h"
@@ -38,6 +37,8 @@
 #include "cryo/eden.h"
 #include "cryo/video.h"
 #include "cryo/debugger.h"
+
+struct ADGameDescription;
 
 namespace Cryo {
 

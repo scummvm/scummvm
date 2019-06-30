@@ -49,7 +49,7 @@ Tables::Tables(LastExpressEngine *engine, EntityIndex id) : Entity(engine, id) {
 IMPLEMENT_FUNCTION(1, Tables, chapter1)
 	if (savepoint.action == kActionDefault) {
 		if (_id == kEntityTables2)
-			getSound()->playSoundWithSubtitles("LOOP8A.SND", kFlagLoop, kEntityTables2);
+			getSound()->playSoundWithSubtitles("LOOP8A.SND", kSoundTypeWalla | kSoundFlagLooped | kVolume8, kEntityTables2);
 
 		setup_draw();
 	}
@@ -59,7 +59,7 @@ IMPLEMENT_FUNCTION_END
 IMPLEMENT_FUNCTION(2, Tables, chapter2)
 	if (savepoint.action == kActionDefault) {
 		if (_id == kEntityTables2)
-			getSound()->playSoundWithSubtitles("LOOP8A.SND", kFlagLoop, kEntityTables2);
+			getSound()->playSoundWithSubtitles("LOOP8A.SND", kSoundTypeWalla | kSoundFlagLooped | kVolume8, kEntityTables2);
 
 		setup_draw();
 	}
@@ -69,7 +69,7 @@ IMPLEMENT_FUNCTION_END
 IMPLEMENT_FUNCTION(3, Tables, chapter3)
 	if (savepoint.action == kActionDefault) {
 		if (_id == kEntityTables2)
-			getSound()->playSoundWithSubtitles("LOOP8A.SND", kFlagLoop, kEntityTables2);
+			getSound()->playSoundWithSubtitles("LOOP8A.SND", kSoundTypeWalla | kSoundFlagLooped | kVolume8, kEntityTables2);
 
 		setup_draw();
 	}
@@ -79,7 +79,7 @@ IMPLEMENT_FUNCTION_END
 IMPLEMENT_FUNCTION(4, Tables, chapter4)
 	if (savepoint.action == kActionDefault) {
 		if (_id == kEntityTables2)
-			getSound()->playSoundWithSubtitles("LOOP8A.SND", kFlagLoop, kEntityTables2);
+			getSound()->playSoundWithSubtitles("LOOP8A.SND", kSoundTypeWalla | kSoundFlagLooped | kVolume8, kEntityTables2);
 
 		setup_draw();
 	}
@@ -89,7 +89,7 @@ IMPLEMENT_FUNCTION_END
 IMPLEMENT_FUNCTION(5, Tables, chapter5)
 	if (savepoint.action == kActionDefault) {
 		if (_id == kEntityTables2 && getSoundQueue()->isBuffered(kEntityTables2))
-			getSoundQueue()->processEntry(kEntityTables2);
+			getSoundQueue()->fade(kEntityTables2);
 
 		setup_draw();
 	}
@@ -113,21 +113,21 @@ IMPLEMENT_FUNCTION(6, Tables, draw)
 		case kChapter1:
 			if (getState()->time > kTime1165500 && !params->param1) {
 				params->param1 = 1;
-				getSoundQueue()->processEntry(kEntityTables2);
+				getSoundQueue()->fade(kEntityTables2);
 			}
 			break;
 
 		case kChapter3:
 			if (getState()->time > kTime2052000 && !params->param2) {
 				params->param2 = 1;
-				getSoundQueue()->processEntry(kEntityTables2);
+				getSoundQueue()->fade(kEntityTables2);
 			}
 			break;
 
 		case kChapter4:
 			if (getState()->time > kTime2488500 && !params->param3) {
 				params->param3 = 1;
-				getSoundQueue()->processEntry(kEntityTables2);
+				getSoundQueue()->fade(kEntityTables2);
 			}
 			break;
 

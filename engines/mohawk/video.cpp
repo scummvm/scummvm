@@ -38,7 +38,7 @@
 
 namespace Mohawk {
 
-VideoEntry::VideoEntry() : _video(0), _id(-1), _x(0), _y(0), _loop(false), _enabled(true) {
+VideoEntry::VideoEntry() : _video(nullptr), _id(-1), _x(0), _y(0), _loop(false), _enabled(true) {
 }
 
 VideoEntry::VideoEntry(Video::VideoDecoder *video, const Common::String &fileName) : _video(video), _fileName(fileName), _id(-1), _x(0), _y(0), _loop(false), _enabled(true) {
@@ -53,7 +53,7 @@ VideoEntry::~VideoEntry() {
 
 void VideoEntry::close() {
 	delete _video;
-	_video = 0;
+	_video = nullptr;
 }
 
 bool VideoEntry::endOfVideo() const {
@@ -230,7 +230,7 @@ bool VideoManager::drawNextFrame(VideoEntryPtr videoEntry) {
 		return false;
 	}
 
-	Graphics::Surface *convertedFrame = 0;
+	Graphics::Surface *convertedFrame = nullptr;
 	Graphics::PixelFormat pixelFormat = _vm->_system->getScreenFormat();
 
 	if (frame->format != pixelFormat) {

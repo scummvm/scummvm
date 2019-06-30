@@ -154,6 +154,7 @@ class GameObject : public CObject {
 	GameObject();
 	GameObject(GameObject *src);
 
+	virtual Common::String toXML();
 	virtual bool load(MfcArchive &file);
 	void setOXY(int x, int y);
 	void renumPictures(Common::Array<StaticANIObject *> *lst);

@@ -23,7 +23,8 @@
 #ifndef PLATFORM_3DS_H
 #define PLATFORM_3DS_H
 
-#include <citro3d.h>
+#define FORBIDDEN_SYMBOL_EXCEPTION_time_h
+
 #include "backends/mutex/mutex.h"
 #include "backends/base-backend.h"
 #include "graphics/palette.h"

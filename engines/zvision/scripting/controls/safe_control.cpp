@@ -157,7 +157,7 @@ bool SafeControl::onMouseUp(const Common::Point &screenSpacePos, const Common::P
 
 			Common::Point tmp = backgroundImageSpacePos - _center;
 
-			float dd = atan2((float)tmp.x, (float)tmp.y) * 57.29578;
+			float dd = atan2((float)tmp.y, (float)tmp.x) * 57.29578;
 
 			int16 dp_state = 360 / _statesCount;
 

@@ -29,6 +29,8 @@
 #include "agos/midi.h"
 
 #include "agos/drivers/accolade/mididriver.h"
+#include "agos/drivers/accolade/adlib.h"
+#include "agos/drivers/accolade/mt32.h"
 #include "agos/drivers/simon1/adlib.h"
 // Miles Audio for Simon 2
 #include "audio/miles.h"
@@ -89,7 +91,7 @@ int MidiPlayer::open(int gameType, bool isDemo) {
 	assert(!_driver);
 
 	Common::String accoladeDriverFilename;
-	MusicType musicType = MT_INVALID;
+	musicType = MT_INVALID;
 
 	switch (gameType) {
 	case GType_ELVIRA1:
@@ -159,6 +161,7 @@ int MidiPlayer::open(int gameType, bool isDemo) {
 		switch (musicType) {
 		case MT_ADLIB:
 			_driver = MidiDriver_Accolade_AdLib_create(accoladeDriverFilename);
+			
 			break;
 		case MT_MT32:
 			_driver = MidiDriver_Accolade_MT32_create(accoladeDriverFilename);
@@ -473,6 +476,10 @@ void MidiPlayer::pause(bool b) {
 	_paused = b;
 
 	Common::StackLock lock(_mutex);
+	// if using the driver Accolade_AdLib call setVolume() to turn off\on the volume on all channels
+	if (musicType == MT_ADLIB && _musicMode == kMusicModeAccolade) {
+		static_cast <MidiDriver_Accolade_AdLib*> (_driver)->setVolume(_paused ? 0 : 128);
+	}
 	for (int i = 0; i < 16; ++i) {
 		if (_music.channel[i])
 			_music.channel[i]->volume(_paused ? 0 : (_music.volume[i] * _musicVolume / 255));
@@ -482,20 +489,14 @@ void MidiPlayer::pause(bool b) {
 }
 
 void MidiPlayer::setVolume(int musicVol, int sfxVol) {
-	if (musicVol < 0)
-		musicVol = 0;
-	else if (musicVol > 255)
-		musicVol = 255;
-	if (sfxVol < 0)
-		sfxVol = 0;
-	else if (sfxVol > 255)
-		sfxVol = 255;
+	musicVol = CLIP(musicVol, 0, 255);
+	sfxVol   = CLIP(sfxVol,   0, 255);
 
 	if (_musicVolume == musicVol && _sfxVolume == sfxVol)
 		return;
 
 	_musicVolume = musicVol;
-	_sfxVolume = sfxVol;
+	_sfxVolume   = sfxVol;
 
 	// Now tell all the channels this.
 	Common::StackLock lock(_mutex);

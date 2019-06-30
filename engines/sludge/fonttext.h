@@ -46,12 +46,14 @@ public:
 
 	bool loadFont(int filenum, const Common::String &charOrder, int);
 	void pasteString(const Common::String &theText, int, int, SpritePalette &);
-	void pasteStringToBackdrop(const Common::String &theText, int xOff, int y, SpritePalette &thePal);
-	void burnStringToBackdrop(const Common::String &theText, int xOff, int y, SpritePalette &thePal);
+	void pasteStringToBackdrop(const Common::String &theText, int xOff, int y);
+	void burnStringToBackdrop(const Common::String &theText, int xOff, int y);
 	bool isInFont(const Common::String &theText);
 
+	// setter & getter
 	void setFontSpace(int fontSpace) { _fontSpace = fontSpace; }
 	int getFontHeight() const { return _fontHeight; }
+	void setPasterColor(byte r, byte g, byte b) { _pastePalette.setColor(r, g, b); }
 
 	// load & save
 	void saveFont(Common::WriteStream *stream);
@@ -62,14 +64,13 @@ private:
 	int _fontHeight, _numFontColours, _loadedFontNum;
 	UTF8Converter _fontOrder;
 	int16 _fontSpace;
+	SpritePalette _pastePalette;
 
 	Common::HashMap<uint32, uint32> _fontTable;
 
 	inline uint32 fontInTable(uint32 x) { return _fontTable[x]; }
 
 };
-
-void setFontColour(SpritePalette &sP, byte r, byte g, byte b);
 
 } // End of namespace Sludge
 

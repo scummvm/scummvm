@@ -86,7 +86,7 @@ void SoundMixer::stop(int16 fadeLength) {
 
 	_fade = true;
 	_fadeVol = 65536;
-	_fadeSamples = (int) (fadeLength * (((double) _rate) / 10.0));
+	_fadeSamples = (int)(fadeLength * (((double) _rate) / 10.0));
 	_fadeVolStep = MAX((int32) 1, (int32) (65536 / _fadeSamples));
 	_curFadeSamples = 0;
 }
@@ -133,7 +133,7 @@ void SoundMixer::setSample(SoundDesc &sndDesc, int16 repCount, int16 frequency,
 	} else {
 		_fade = true;
 		_fadeVol = 0;
-		_fadeSamples = (int) (fadeLength * (((double) _rate) / 10.0));
+		_fadeSamples = (int)(fadeLength * (((double) _rate) / 10.0));
 		_fadeVolStep = - MAX((int32) 1, (int32) (65536 / _fadeSamples));
 	}
 }

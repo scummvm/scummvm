@@ -93,10 +93,6 @@ namespace Mohawk {
 #define ID_BMAP MKTAG('B','M','A','P') // Old Mohawk Bitmap
 #define ID_BCOD MKTAG('B','C','O','D') // Book Code
 
-// JamesMath Resource FourCC's
-#define ID_TANM MKTAG('t','A','N','M') // Animation?
-#define ID_TMFO MKTAG('t','M','F','O') // ???
-
 // CSTime Resource FourCC's
 #define ID_CINF MKTAG('C','I','N','F') // Case Info
 #define ID_CONV MKTAG('C','O','N','V') // Conversation
@@ -111,10 +107,6 @@ namespace Mohawk {
 #define ID_ADPC MKTAG('A','D','P','C') // Game Sound Chunk
 #define ID_DATA MKTAG('D','a','t','a') // Game Sound Chunk
 #define ID_CUE  MKTAG('C','u','e','#') // Game Sound Chunk
-
-// Mohawk MIDI Tags
-#define ID_MIDI MKTAG('M','I','D','I') // Game Sound (Third Tag), instead of WAVE
-#define ID_PRG  MKTAG('P','r','g','#') // MIDI Patch
 
 // Common Resource FourCC's
 #define ID_TBMP MKTAG('t','B','M','P') // Standard Mohawk Bitmap
@@ -153,6 +145,8 @@ public:
 	Common::Array<uint32> getResourceTypeList() const;
 	Common::Array<uint16> getResourceIDList(uint32 type) const;
 
+	/** Offset the resource ids for a resource type by the specified amount */
+	void offsetResourceIDs(uint32 type, uint16 startId, int16 increment);
 protected:
 	Common::SeekableReadStream *_stream;
 
@@ -170,25 +164,25 @@ protected:
 class MohawkArchive : public Archive {
 public:
 	MohawkArchive() : Archive() {}
-	~MohawkArchive() {}
+	~MohawkArchive() override {}
 
-	bool openStream(Common::SeekableReadStream *stream);
+	bool openStream(Common::SeekableReadStream *stream) override;
 };
 
 class LivingBooksArchive_v1 : public Archive {
 public:
 	LivingBooksArchive_v1() : Archive() {}
-	~LivingBooksArchive_v1() {}
+	~LivingBooksArchive_v1() override {}
 
-	bool openStream(Common::SeekableReadStream *stream);
+	bool openStream(Common::SeekableReadStream *stream) override;
 };
 
 class DOSArchive_v2 : public Archive {
 public:
 	DOSArchive_v2() : Archive() {}
-	~DOSArchive_v2() {}
+	~DOSArchive_v2() override {}
 
-	bool openStream(Common::SeekableReadStream *stream);
+	bool openStream(Common::SeekableReadStream *stream) override;
 };
 
 } // End of namespace Mohawk

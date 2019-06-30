@@ -31,11 +31,11 @@
 #include "audio/mods/mod_xm_s3m.h"
 
 #include "sludge/allfiles.h"
-#include "sludge/newfatal.h"
-#include "sludge/sound.h"
-#include "sludge/moreio.h"
 #include "sludge/fileset.h"
+#include "sludge/moreio.h"
+#include "sludge/newfatal.h"
 #include "sludge/sludge.h"
+#include "sludge/sound.h"
 
 namespace Sludge {
 
@@ -402,7 +402,7 @@ bool SoundManager::getSoundCacheStack(StackHandler *sH) {
 
 	for (int a = 0; a < MAX_SAMPLES; a++) {
 		if (_soundCache[a].fileLoaded != -1) {
-			setVariable(newFileHandle, SVT_FILE, _soundCache[a].fileLoaded);
+			newFileHandle.setVariable(SVT_FILE, _soundCache[a].fileLoaded);
 			if (!addVarToStackQuick(newFileHandle, sH->first))
 				return false;
 			if (sH->last == NULL)

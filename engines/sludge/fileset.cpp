@@ -48,12 +48,14 @@ void ResourceManager::init() {
 	_startOfSubIndex = 0;
 	_startOfObjectIndex = 0;
 	_startIndex = 0;
+	_allResourceNames.clear();
 }
 void ResourceManager::kill() {
 	if (_bigDataFile) {
 		delete _bigDataFile;
 		_bigDataFile = nullptr;
 	}
+	_allResourceNames.clear();
 }
 
 bool ResourceManager::openSubSlice(int num) {
@@ -214,6 +216,30 @@ bool ResourceManager::startAccess() {
 }
 void ResourceManager::finishAccess() {
 	_sliceBusy = false;
+}
+
+void ResourceManager::readResourceNames(Common::SeekableReadStream *readStream) {
+	int numResourceNames = readStream->readUint16BE();
+	debugC(2, kSludgeDebugDataLoad, "numResourceNames %i", numResourceNames);
+	_allResourceNames.reserve(numResourceNames);
+
+	for (int fn = 0; fn < numResourceNames; fn++) {
+		_allResourceNames.push_back(readString(readStream));
+		debugC(2, kSludgeDebugDataLoad, "Resource %i: %s", fn, _allResourceNames[fn].c_str());
+	}
+}
+
+const Common::String ResourceManager::resourceNameFromNum(int i) {
+	if (i == -1)
+		return "";
+
+	if (_allResourceNames.empty())
+		return "RESOURCE";
+
+	if (i < (int)_allResourceNames.size())
+		return _allResourceNames[i];
+
+	return "Unknown resource";
 }
 
 void ResourceManager::setData(Common::File *fp) {

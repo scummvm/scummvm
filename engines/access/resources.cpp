@@ -70,7 +70,20 @@ bool Resources::load(Common::String &errorMessage) {
 		_datIndex[idx]._gameId = f.readByte();
 		_datIndex[idx]._discType = f.readByte();
 		_datIndex[idx]._demoType = f.readByte();
-		_datIndex[idx]._language = (Common::Language)f.readByte();
+
+		byte language = f.readByte();
+		switch (language) {
+		case 0:
+			_datIndex[idx]._language = (Common::Language)0;
+			break;
+		case 5:
+			_datIndex[idx]._language = Common::EN_ANY;
+			break;
+		default:
+			error("Unknown language");
+			break;
+		}
+
 		_datIndex[idx]._fileOffset = f.readUint32LE();
 	}
 

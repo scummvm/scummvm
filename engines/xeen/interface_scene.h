@@ -42,14 +42,28 @@ public:
 	DrawStruct * const _attackImgs3;
 	DrawStruct * const _attackImgs4;
 public:
+	/**
+	 * Constructor
+	 */
 	OutdoorDrawList();
 
+	/**
+	 * Get a draw list entry
+	 */
 	DrawStruct &operator[](int idx) {
 		assert(idx < size());
 		return _data[idx];
 	}
 
+	/**
+	 * Return the size of the list
+	 */
 	int size() const { return 132; }
+
+	/**
+	 * Draw the list to the scene
+	 */
+	void draw();
 };
 
 class IndoorDrawList {
@@ -80,12 +94,23 @@ public:
 public:
 	IndoorDrawList();
 
+	/**
+	 * Get a draw list entry
+	 */
 	DrawStruct &operator[](int idx) {
 		assert(idx < size());
 		return _data[idx];
 	}
 
+	/**
+	 * Return the size of the list
+	 */
 	int size() const { return 170; }
+
+	/**
+	 * Draw the list to the scene
+	 */
+	void draw();
 };
 
 class InterfaceScene {

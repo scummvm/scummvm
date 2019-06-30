@@ -217,7 +217,7 @@ void TuckerEngine::execData3PreUpdate_locationNum2Helper() {
 		return;
 	}
 	int start, end;
-	if (_locationNum == 2) {
+	if (_location == kLocationBackAlley) {
 		start = 116;
 		end = 125;
 	} else {
@@ -711,12 +711,12 @@ void TuckerEngine::execData3PreUpdate_locationNum9() {
 	if (_flagsTable[7] < 2) {
 		_flagsTable[7] = 2;
 	}
-	if (_flagsTable[8] == 0 && _locationMusicsTable[0]._volume != 0) {
-		_locationMusicsTable[0]._volume = 0;
-	} else {
-		_locationMusicsTable[0]._volume = _xPosCurrent / 40;
-	}
+
+	// If the door to the dentist is open play the dentist room music based on
+	// Bud's proximity to the door (the closer the louder the music is played)
+	_locationMusicsTable[0]._volume = _flagsTable[8] == 0 ? 0 : _xPosCurrent / 40;
 	setVolumeMusic(0, _locationMusicsTable[0]._volume);
+
 	if (!isSoundPlaying(1) && getRandomNumber() > 32000) {
 		int i = getRandomNumber() / 5500 + 3;
 		assert(i >= 0 && i < kLocationSoundsTableSize);
@@ -972,9 +972,12 @@ void TuckerEngine::updateSprite_locationNum14(int i) {
 }
 
 void TuckerEngine::execData3PreUpdate_locationNum14() {
-	if (_yPosCurrent >= 127)
-		return;
+	if (_yPosCurrent >= 127) {
+		execData3Update_locationNum14();
+	}
+}
 
+void TuckerEngine::execData3Update_locationNum14() {
 	if (!isSoundPlaying(0)) {
 		int num = -1;
 		const int i = getRandomNumber();
@@ -1058,7 +1061,7 @@ void TuckerEngine::execData3PreUpdate_locationNum14Helper2(int i) {
 
 void TuckerEngine::execData3PostUpdate_locationNum14() {
 	if (_yPosCurrent < 127) {
-		execData3PreUpdate_locationNum14();
+		execData3Update_locationNum14();
 	}
 }
 
@@ -1347,7 +1350,7 @@ void TuckerEngine::updateSprite_locationNum21() {
 
 void TuckerEngine::execData3PreUpdate_locationNum21() {
 	if (_xPosCurrent > 460 && _flagsTable[58] == 0 && _nextAction == 0) {
-		_currentActionVerb = 0;
+		_currentActionVerb = kVerbWalk;
 		_pendingActionDelay = 0;
 		_flagsTable[59] = 1;
 		_nextAction = 2;
@@ -1751,7 +1754,7 @@ void TuckerEngine::execData3PreUpdate_locationNum28() {
 		_csDataLoaded = false;
 		_pendingActionDelay = 0;
 		_pendingActionIndex = 0;
-		_currentActionVerb = 0;
+		_currentActionVerb = kVerbWalk;
 	}
 }
 
@@ -1791,11 +1794,15 @@ void TuckerEngine::execData3PreUpdate_locationNum29() {
 		const int d = _updateLocationFadePaletteCounter / 2;
 		uint8 scrollPal[5 * 3];
 		for (int i = 0; i < 5; ++i) {
-			scrollPal[i * 3]     = r[i + d];
-			scrollPal[i * 3 + 1] = g[i + d];
-			scrollPal[i * 3 + 2] = b[i + d];
+			// Bug Trac#6378. Shift the palette two bits to the left.
+			// The original was writing to 0x3C8-0x3c9 VGA registers which are
+			// 6-bit
+			scrollPal[i * 3 + 0] = r[i + d] << 2;
+			scrollPal[i * 3 + 1] = g[i + d] << 2;
+			scrollPal[i * 3 + 2] = b[i + d] << 2;
 		}
 		_system->getPaletteManager()->setPalette(scrollPal, 118, 5);
+
 		if (_flagsTable[143] == 1) {
 			_locationObjectsTable[2]._xPos = 999;
 			_locationObjectsTable[3]._xPos = 187;
@@ -2043,8 +2050,8 @@ void TuckerEngine::execData3PreUpdate_locationNum41() {
 	if (_panelLockedFlag && _yPosCurrent > 130 && _selectedObject._yPos > 135 && _nextAction == 0 && _flagsTable[223] == 0) {
 		_panelLockedFlag = false;
 		_csDataLoaded = false;
-		_nextLocationNum = 0;
-		_selectedObject._locationObjectLocationNum = 0;
+		_nextLocation = kLocationNone;
+		_selectedObject._locationObjectLocation = kLocationNone;
 		_locationMaskType = 0;
 		_nextAction = _flagsTable[163] + 32;
 		++_flagsTable[163];
@@ -2077,7 +2084,7 @@ void TuckerEngine::updateSprite_locationNum42(int i) {
 	} else if (_flagsTable[223] == 3) {
 		state = 5;
 		_spritesTable[i]._updateDelay = 5;
-		_spritesTable[i]._state = _spritesTable[i]._firstFrame - 1; // FIXME: bug, fxNum ?
+		_spritesTable[i]._state = _spritesTable[i]._firstFrame - 1;
 		_updateSpriteFlag1 = true;
 	} else {
 		state = 2;
@@ -2349,7 +2356,7 @@ void TuckerEngine::execData3PreUpdate_locationNum53() {
 		_csDataLoaded = false;
 		_pendingActionDelay = 0;
 		_pendingActionIndex = 0;
-		_currentActionVerb = 0;
+		_currentActionVerb = kVerbWalk;
 	}
 }
 
@@ -2475,7 +2482,7 @@ void TuckerEngine::updateSprite_locationNum58(int i) {
 
 void TuckerEngine::execData3PreUpdate_locationNum58() {
 	// workaround original game glitch #2872348: do not change position on location change
-	if (_nextLocationNum == 0 && _flagsTable[190] < 3 && _xPosCurrent > 310) {
+	if (_nextLocation == kLocationNone && _flagsTable[190] < 3 && _xPosCurrent > 310) {
 		_xPosCurrent = 310;
 		_panelLockedFlag = false;
 	}
@@ -2886,13 +2893,25 @@ void TuckerEngine::updateSprite_locationNum66_4(int i) {
 }
 
 void TuckerEngine::execData3PreUpdate_locationNum66() {
-	// FIXME: shouldn't be executed after using the map
+	// WORKAROUND
+	// If you don't have the appointment card yet and use the map to go to
+	// Seedy Street Bud ends up being teleported back to the mall.
+	// Because of the destination coordinates which warp Bud past x==583 the
+	// below 'if' triggers and automatically makes Violet refuse Bud entrance
+	// to the dentist. On top of that the graphics end up all garbled which
+	// indicates that even worse things happen under the hood.
+	// To work around this we only trigger Violet if Bud actually _walked_ past
+	// the trigger coordinates (as opposed to using the map).
+	// Fixes Trac#10452.
+	if (_nextLocation != kLocationNone)
+		return;
+
 	_flagsTable[137] = 0;
 	if (_xPosCurrent > 583 && _flagsTable[191] == 0 && _nextAction == 0 && _locationMaskType == 0) {
 		_panelLockedFlag = false;
 		_csDataLoaded = false;
-		_nextLocationNum = 0;
-		_selectedObject._locationObjectLocationNum = 0;
+		_nextLocation = kLocationNone;
+		_selectedObject._locationObjectLocation = kLocationNone;
 		if (_flagsTable[131] == 0) {
 			_nextAction = 13;
 		} else if (_flagsTable[130] == 0) {
@@ -3013,12 +3032,12 @@ void TuckerEngine::execData3PreUpdate_locationNum70() {
 		_flagsTable[143] = 0;
 		_updateLocation70StringLen = 0;
 		_forceRedrawPanelItems = true;
-		_panelState = 1;
-		setCursorType(2);
+		_panelType = kPanelTypeEmpty;
+		setCursorState(kCursorStateDisabledHidden);
 	}
 	_forceRedrawPanelItems = true;
-	_panelState = 1;
-	setCursorType(2);
+	_panelType = kPanelTypeEmpty;
+	setCursorState(kCursorStateDisabledHidden);
 	int pos = getPositionForLine(22, _infoBarBuf);
 	const int yPos = (_flagsTable[143] == 0) ? 90 : 72;
 	drawStringAlt(88, yPos, color, &_infoBarBuf[pos]);

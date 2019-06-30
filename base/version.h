@@ -23,10 +23,10 @@
 #ifndef BASE_VERSION_H
 #define BASE_VERSION_H
 
-extern const char *gScummVMVersion;		// e.g. "0.4.1"
-extern const char *gScummVMBuildDate;	// e.g. "2003-06-24"
+extern const char *gScummVMVersion;     // e.g. "0.4.1"
+extern const char *gScummVMBuildDate;   // e.g. "2003-06-24"
 extern const char *gScummVMVersionDate; // e.g. "0.4.1 (2003-06-24)"
-extern const char *gScummVMFullVersion;	// e.g. "ScummVM 0.4.1 (2003-06-24)"
-extern const char *gScummVMFeatures;	// e.g. "ALSA MPEG2 zLib"
+extern const char *gScummVMFullVersion; // e.g. "ScummVM 0.4.1 (2003-06-24)"
+extern const char *gScummVMFeatures;    // e.g. "ALSA MPEG2 zLib"
 
 #endif

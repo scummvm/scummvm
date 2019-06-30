@@ -191,6 +191,15 @@ void ZVision::initialize() {
 		}
 	}
 
+	Graphics::ModeList modes;
+	modes.push_back(Graphics::Mode(WINDOW_WIDTH, WINDOW_HEIGHT));
+#if defined(USE_MPEG2) && defined(USE_A52)
+	// For the DVD version of ZGI we can play high resolution videos
+	if (getGameId() == GID_GRANDINQUISITOR && (getFeatures() & GF_DVD))
+		modes.push_back(Graphics::Mode(HIRES_WINDOW_WIDTH, HIRES_WINDOW_HEIGHT));
+#endif
+	initGraphicsModes(modes);
+
 	initScreen();
 
 	// Register random source
@@ -219,8 +228,8 @@ void ZVision::initialize() {
 
 	loadSettings();
 
-#ifndef USE_MPEG2
-	// libmpeg2 not loaded, disable the MPEG2 movies option
+#if !defined(USE_MPEG2) || !defined(USE_A52)
+	// libmpeg2 or liba52 not loaded, disable the MPEG2 movies option
 	_scriptManager->setStateValue(StateKey_MPEGMovies, 2);
 #endif
 
@@ -276,7 +285,8 @@ Common::Error ZVision::run() {
 
 			if (!Common::File::exists(fontName) && !_searchManager->hasFile(fontName) &&
 				!Common::File::exists(liberationFontName) && !_searchManager->hasFile(liberationFontName) &&
-				!Common::File::exists(freeFontName) && !_searchManager->hasFile(freeFontName)) {
+				!Common::File::exists(freeFontName) && !_searchManager->hasFile(freeFontName) &&
+				!Common::File::exists("fonts.dat") && !_searchManager->hasFile("fonts.dat")) {
 				foundAllFonts = false;
 				break;
 			}

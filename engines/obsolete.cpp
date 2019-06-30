@@ -55,7 +55,7 @@ void upgradeTargetIfNecessary(const ObsoleteGameID *obsoleteList) {
 	}
 }
 
-GameDescriptor findGameID(
+PlainGameDescriptor findGameID(
 	const char *gameid,
 	const PlainGameDescriptor *gameids,
 	const ObsoleteGameID *obsoleteList
@@ -63,7 +63,7 @@ GameDescriptor findGameID(
 	// First search the list of supported gameids for a match.
 	const PlainGameDescriptor *g = findPlainGameDescriptor(gameid, gameids);
 	if (g)
-		return GameDescriptor(*g);
+		return *g;
 
 	// If we didn't find the gameid in the main list, check if it
 	// is an obsolete game id.
@@ -73,16 +73,16 @@ GameDescriptor findGameID(
 			if (0 == scumm_stricmp(gameid, o->from)) {
 				g = findPlainGameDescriptor(o->to, gameids);
 				if (g && g->description)
-					return GameDescriptor(gameid, "Obsolete game ID (" + Common::String(g->description) + ")");
+					return PlainGameDescriptor::of(gameid, g->description);
 				else
-					return GameDescriptor(gameid, "Obsolete game ID");
+					return PlainGameDescriptor::of(gameid, "Obsolete game ID");
 			}
 			o++;
 		}
 	}
 
 	// No match found
-	return GameDescriptor();
+	return PlainGameDescriptor::empty();
 }
 
 } // End of namespace Engines

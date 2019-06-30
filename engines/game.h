@@ -26,6 +26,7 @@
 #include "common/array.h"
 #include "common/hash-str.h"
 #include "common/str.h"
+#include "common/str-array.h"
 #include "common/language.h"
 #include "common/platform.h"
 
@@ -38,6 +39,9 @@
 struct PlainGameDescriptor {
 	const char *gameId;
 	const char *description;
+
+	static PlainGameDescriptor empty();
+	static PlainGameDescriptor of(const char *gameId, const char *description);
 };
 
 /**
@@ -46,6 +50,18 @@ struct PlainGameDescriptor {
  * The end of the list must be marked by an entry with gameid 0.
  */
 const PlainGameDescriptor *findPlainGameDescriptor(const char *gameid, const PlainGameDescriptor *list);
+
+class PlainGameList : public Common::Array<PlainGameDescriptor> {
+public:
+	PlainGameList() {}
+	PlainGameList(const PlainGameList &list) : Common::Array<PlainGameDescriptor>(list) {}
+	PlainGameList(const PlainGameDescriptor *g) {
+		while (g->gameId) {
+			push_back(*g);
+			g++;
+		}
+	}
+};
 
 /**
  * Ths is an enum to describe how done a game is. This also indicates what level of support is expected.
@@ -56,63 +72,172 @@ enum GameSupportLevel {
 	kUnstableGame // the game is not even ready for public testing yet
 };
 
-/**
- * A hashmap describing details about a given game. In a sense this is a refined
- * version of PlainGameDescriptor, as it also contains a gameid and a description string.
- * But in addition, platform and language settings, as well as arbitrary other settings,
- * can be contained in a GameDescriptor.
- * This is an essential part of the glue between the game engines and the launcher code.
- */
-class GameDescriptor : public Common::StringMap {
-public:
-	GameDescriptor();
-	GameDescriptor(const PlainGameDescriptor &pgd, Common::String guioptions = Common::String());
-	GameDescriptor(const Common::String &gameid,
-	              const Common::String &description,
-	              Common::Language language = Common::UNK_LANG,
-				  Common::Platform platform = Common::kPlatformUnknown,
-				  Common::String guioptions = Common::String(),
-				  GameSupportLevel gsl = kStableGame);
 
+/**
+ * A record describing the properties of a file. Used on the existing
+ * files while detecting a game.
+ */
+struct FileProperties {
+	int32 size;
+	Common::String md5;
+
+	FileProperties() : size(-1) {}
+};
+
+/**
+ * A map of all relevant existing files while detecting.
+ */
+typedef Common::HashMap<Common::String, FileProperties, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> FilePropertiesMap;
+
+/**
+ * Details about a given game.
+ *
+ * While PlainGameDescriptor refers to a game supported by an engine, this refers to a game copy
+ * that has been detected by an engine's detector.
+ * It contains all the necessary data to add the game to the configuration manager and / or to launch it.
+ */
+struct DetectedGame {
+	DetectedGame();
+	explicit DetectedGame(const PlainGameDescriptor &pgd);
+	DetectedGame(const Common::String &id,
+	               const Common::String &description,
+	               Common::Language language = Common::UNK_LANG,
+	               Common::Platform platform = Common::kPlatformUnknown,
+	               const Common::String &extra = Common::String());
+
+	void setGUIOptions(const Common::String &options);
+	void appendGUIOptions(const Common::String &str);
+	Common::String getGUIOptions() const { return _guiOptions; }
+
+	/**
+	 * The name of the engine supporting the detected game
+	 */
+	const char *engineName;
+
+	/**
+	 * A game was detected, but some files were not recognized
+	 *
+	 * This can happen when the md5 or size of the detected files did not match the engine's detection tables.
+	 * When this is true, the list of matched files below contains detail about the unknown files.
+	 *
+	 * @see matchedFiles
+	 */
+	bool hasUnknownFiles;
+
+	/**
+	 * An optional list of the files that were used to match the game with the engine's detection tables
+	 */
+	FilePropertiesMap matchedFiles;
+
+	/**
+	 * This detection entry contains enough data to add the game to the configuration manager and launch it
+	 *
+	 * @see matchedGame
+	 */
+	bool canBeAdded;
+
+	Common::String gameId;
+	Common::String preferredTarget;
+	Common::String description;
+	Common::Language language;
+	Common::Platform platform;
+	Common::String path;
+	Common::String shortPath;
+	Common::String extra;
+
+	/**
+	 * What level of support is expected of this game
+	 */
+	GameSupportLevel gameSupportLevel;
+
+	/**
+	 * A list of extra keys to write to the configuration file
+	 */
+	Common::StringMap _extraConfigEntries;
+
+	/**
+	 * Allows adding of extra entries to be saved as part of the detection entry
+	 * in the configuration file.
+	 * @remarks		Any entry added using this should not be relied on being present
+	 *				in the configuration file, since starting games directly from the
+	 *				command line bypasses the game detection code
+	 */
+	void addExtraEntry(const Common::String &key, const Common::String &value) {
+		_extraConfigEntries[key] = value;
+	}
+private:
 	/**
 	 * Update the description string by appending (EXTRA/PLATFORM/LANG) to it.
 	 * Values that are missing are omitted, so e.g. (EXTRA/LANG) would be
 	 * added if no platform has been specified but a language and an extra string.
 	 */
-	void updateDesc(const char *extra = 0);
+	Common::String updateDesc() const;
 
-	void setGUIOptions(Common::String options);
-	void appendGUIOptions(const Common::String &str);
-
-	/**
-	 * What level of support is expected of this game
-	 */
-	GameSupportLevel getSupportLevel();
-	void setSupportLevel(GameSupportLevel gsl);
-
-	Common::String &gameid() { return getVal("gameid"); }
-	Common::String &description() { return getVal("description"); }
-	const Common::String &gameid() const { return getVal("gameid"); }
-	const Common::String &description() const { return getVal("description"); }
-	Common::Language language() const { return contains("language") ? Common::parseLanguage(getVal("language")) : Common::UNK_LANG; }
-	Common::Platform platform() const { return contains("platform") ? Common::parsePlatform(getVal("platform")) : Common::kPlatformUnknown; }
-
-	const Common::String &preferredtarget() const {
-		return contains("preferredtarget") ? getVal("preferredtarget") : getVal("gameid");
-	}
+	Common::String _guiOptions;
 };
 
 /** List of games. */
-class GameList : public Common::Array<GameDescriptor> {
+typedef Common::Array<DetectedGame> DetectedGames;
+
+/**
+ * Contains a list of games found by the engines' detectors.
+ *
+ * Each detected game can either:
+ * - be fully recognized (e.g. an exact match was found in the detection tables of an engine)
+ * - be an unknown variant (e.g. a game using files with the same name was found in the detection tables)
+ * - be recognized with unknown files (e.g. the game was exactly not found in the detection tables,
+ *              but the detector was able to gather enough data to allow launching the game)
+ *
+ * Practically, this means a detected game can be in both the recognized game list and in the unknown game
+ * report handled by this class.
+ */
+class DetectionResults {
 public:
-	GameList() {}
-	GameList(const GameList &list) : Common::Array<GameDescriptor>(list) {}
-	GameList(const PlainGameDescriptor *g) {
-		while (g->gameId) {
-			push_back(GameDescriptor(*g));
-			g++;
-		}
-	}
+	explicit DetectionResults(const DetectedGames &detectedGames);
+
+	/**
+	 * List all the games that were recognized by the engines
+	 *
+	 * Recognized games can be added to the configuration manager and then launched.
+	 */
+	DetectedGames listRecognizedGames() const;
+
+	/**
+	 * List all the games that were detected
+	 *
+	 * That includes entries that don't have enough information to be added to the
+	 * configuration manager.
+	 */
+	DetectedGames listDetectedGames() const;
+
+	/**
+	 * Were unknown game variants found by the engines?
+	 *
+	 * When unknown game variants are found, an unknown game report can be generated.
+	 */
+	bool foundUnknownGames() const;
+
+	/**
+	 * Generate a report that we found an unknown game variant.
+	 *
+	 * @see ::generateUnknownGameReport
+	 */
+	Common::String generateUnknownGameReport(bool translate, uint32 wordwrapAt = 0) const;
+
+private:
+	DetectedGames _detectedGames;
 };
+
+/**
+ * Generate a report that we found an unknown game variant, together with the file
+ * names, sizes and MD5 sums.
+ *
+ * @param translate translate the report to the currently active GUI language
+ * @param fullPath include the full path where the files are located, otherwise only the name
+ *                 of last component of the path is included
+ * @param wordwrapAt word wrap the text part of the report after a number of characters
+ */
+Common::String generateUnknownGameReport(const DetectedGames &detectedGames, bool translate, bool fullPath, uint32 wordwrapAt = 0);
+Common::String generateUnknownGameReport(const DetectedGame &detectedGame, bool translate, bool fullPath, uint32 wordwrapAt = 0);
 
 #endif

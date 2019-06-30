@@ -27,25 +27,25 @@
 #include "common/system.h"
 #include "common/error.h"
 #include "common/random.h"
-#include "common/savefile.h"
 #include "common/serializer.h"
 #include "common/util.h"
 #include "engines/engine.h"
 #include "xeen/combat.h"
 #include "xeen/debugger.h"
-#include "xeen/dialogs.h"
+#include "xeen/dialogs/dialogs.h"
 #include "xeen/events.h"
 #include "xeen/files.h"
 #include "xeen/interface.h"
+#include "xeen/locations.h"
 #include "xeen/map.h"
 #include "xeen/party.h"
+#include "xeen/patcher.h"
 #include "xeen/resources.h"
 #include "xeen/saves.h"
 #include "xeen/screen.h"
 #include "xeen/scripts.h"
 #include "xeen/sound.h"
 #include "xeen/spells.h"
-#include "xeen/town.h"
 #include "xeen/window.h"
 
 /**
@@ -77,8 +77,8 @@ enum XeenDebugChannels {
 
 enum Mode {
 	MODE_FF = -1,
-	MODE_0 = 0,
-	MODE_1 = 1,
+	MODE_STARTUP = 0,
+	MODE_INTERACTIVE = 1,
 	MODE_COMBAT = 2,
 	MODE_3 = 3,
 	MODE_4 = 4,
@@ -86,81 +86,121 @@ enum Mode {
 	MODE_6 = 6,
 	MODE_7 = 7,
 	MODE_8 = 8,
-	MODE_RECORD_EVENTS = 9,
+	MODE_SCRIPT_IN_PROGRESS = 9,
 	MODE_CHARACTER_INFO = 10,
-	MODE_12 = 12,
+	MODE_INTERACTIVE2 = 12,
 	MODE_DIALOG_123 = 13,
-	MODE_17 = 17,
+	MODE_INTERACTIVE7 = 17,
 	MODE_86 = 86
+};
+
+enum GameMode {
+	GMODE_NONE = 0,
+	GMODE_STARTUP = 1,
+	GMODE_MENU = 2,
+	GMODE_PLAY_GAME = 3,
+	GMODE_QUIT = 4
 };
 
 struct XeenGameDescription;
 
 #define XEEN_SAVEGAME_VERSION 1
-#define GAME_FRAME_TIME 50
 
 class XeenEngine : public Engine {
+	/**
+	 * Container to a set of options newly introduced under ScummVM
+	 */
+	struct ExtendedOptions {
+		bool _showItemCosts;
+		bool _durableArmor;
+
+		ExtendedOptions() : _showItemCosts(false), _durableArmor(false) {}
+	};
 private:
 	const XeenGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
-	int _loadSaveSlot;
+private:
+	/**
+	 * Initializes all the engine sub-objects
+	 */
+	bool initialize();
 
-	void play();
+	/**
+	 * Load settings
+	 */
+	void loadSettings();
 
-	void pleaseWait();
+	// Engine APIs
+	virtual Common::Error run();
+	virtual bool hasFeature(EngineFeature f) const;
 
-	void gameLoop();
-protected:
 	/**
 	 * Outer gameplay loop responsible for dispatching control to game-specific
 	 * intros, main menus, or to play the actual game
 	 */
-	virtual void outerGameLoop() = 0;
+	void outerGameLoop();
+
+	/**
+	 * Inner game loop
+	 */
+	void gameLoop();
+
+	/**
+	 * Plays the actual game
+	 */
+	void play();
+
+	/**
+	 * Shows a please wait dialog
+	 */
+	void pleaseWait();
+protected:
+	int _loadSaveSlot;
+protected:
+	/**
+	 * Show the starting sequence/intro
+	 */
+	virtual void showStartup() = 0;
+
+	/**
+	 * Show the startup menu
+	 */
+	virtual void showMainMenu() = 0;
 
 	/**
 	 * Play the game
 	 */
 	virtual void playGame();
-private:
-	void initialize();
 
 	/**
-	 * Synchronize savegame data
+	 * Death cutscene
 	 */
-	void synchronize(Common::Serializer &s);
-
-	/**
-	 * Support method that generates a savegame name
-	 * @param slot		Slot number
-	 */
-	Common::String generateSaveName(int slot);
-
-	// Engine APIs
-	virtual Common::Error run();
-	virtual bool hasFeature(EngineFeature f) const;
+	virtual void death() = 0;
 public:
 	Combat *_combat;
 	Debugger *_debugger;
 	EventsManager *_events;
 	FileManager *_files;
 	Interface *_interface;
+	LocationManager *_locations;
 	Map *_map;
 	Party *_party;
+	Patcher *_patcher;
 	Resources *_resources;
 	SavesManager *_saves;
 	Screen *_screen;
 	Scripts *_scripts;
 	Sound *_sound;
 	Spells *_spells;
-	Town *_town;
 	Windows *_windows;
 	Mode _mode;
-	GameEvent _gameEvent;
-	Common::SeekableReadStream *_eventData;
-	int _quitMode;
+	GameMode _gameMode;
 	bool _noDirectionSense;
 	bool _startupWindowActive;
 	uint _endingScore;
+	bool _gameWon[3];
+	uint _finalScore;
+	ExtendedOptions _extOptions;
 public:
 	XeenEngine(OSystem *syst, const XeenGameDescription *gameDesc);
 	virtual ~XeenEngine();
@@ -171,10 +211,21 @@ public:
 	uint16 getVersion() const;
 	uint32 getGameID() const;
 	uint32 getGameFeatures() const;
+	bool getIsCD() const;
 
 	int getRandomNumber(int maxNumber);
 
 	int getRandomNumber(int minNumber, int maxNumber);
+
+	/**
+	 * Returns true if the game should be exited (either quitting, exiting to the main menu, or loading a savegame)
+	 */
+	bool shouldExit() const { return _gameMode != GMODE_NONE || isLoadPending() || shouldQuit(); }
+
+	/**
+	 * Returns true if a savegame load is pending
+	 */
+	bool isLoadPending() const { return _loadSaveSlot != -1; }
 
 	/**
 	 * Load a savegame
@@ -187,30 +238,43 @@ public:
 	virtual Common::Error saveGameState(int slot, const Common::String &desc);
 
 	/**
+	 * Updates sound settings
+	 */
+	virtual void syncSoundSettings();
+
+	/**
 	 * Returns true if a savegame can currently be loaded
 	 */
-	bool canLoadGameStateCurrently();
+	virtual bool canLoadGameStateCurrently();
 
 	/**
 	* Returns true if the game can currently be saved
 	*/
-	bool canSaveGameStateCurrently();
+	virtual bool canSaveGameStateCurrently();
 
 	/**
-	 * Read in a savegame header
+	 * Show a cutscene
+	 * @param name		Name of cutscene
+	 * @param status	For World of Xeen, Goober status
+	 * @param score		Final score
 	 */
-	static bool readSavegameHeader(Common::InSaveFile *in, XeenSavegameHeader &header);
+	virtual void showCutscene(const Common::String &name, int status, uint score) {}
 
 	/**
-	 * Write out a savegame header
+	 * Dream sequence
 	 */
-	void writeSavegameHeader(Common::OutSaveFile *out, XeenSavegameHeader &header);
+	virtual void dream() = 0;
 
 	static Common::String printMil(uint value);
 
 	static Common::String printK(uint value);
 
 	static Common::String printK2(uint value);
+
+	/**
+	 * Saves engine settings
+	 */
+	void saveSettings();
 };
 
 extern XeenEngine *g_vm;

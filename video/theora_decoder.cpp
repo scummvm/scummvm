@@ -356,9 +356,11 @@ Audio::AudioStream *TheoraDecoder::VorbisAudioTrack::getAudioStream() const {
 
 #define AUDIOFD_FRAGSIZE 10240
 
+#ifndef USE_TREMOR
 static double rint(double v) {
 	return floor(v + 0.5);
 }
+#endif
 
 bool TheoraDecoder::VorbisAudioTrack::decodeSamples() {
 #ifdef USE_TREMOR
@@ -383,7 +385,11 @@ bool TheoraDecoder::VorbisAudioTrack::decodeSamples() {
 
 		for (i = 0; i < ret && i < maxsamples; i++) {
 			for (int j = 0; j < channels; j++) {
+#ifdef USE_TREMOR
+				int val = CLIP((int)pcm[j][i] >> 9, -32768, 32767);
+#else
 				int val = CLIP((int)rint(pcm[j][i] * 32767.f), -32768, 32767);
+#endif
 				_audioBuffer[count++] = val;
 			}
 		}

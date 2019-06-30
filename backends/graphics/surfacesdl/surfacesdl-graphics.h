@@ -39,10 +39,6 @@
 #define USE_SDL_DEBUG_FOCUSRECT
 #endif
 
-#if !defined(_WIN32_WCE) && !defined(__SYMBIAN32__)
-#define USE_OSD	1
-#endif
-
 enum {
 	GFX_NORMAL = 0,
 	GFX_DOUBLESIZE = 1,
@@ -74,7 +70,7 @@ public:
 /**
  * SDL graphics manager
  */
-class SurfaceSdlGraphicsManager : public SdlGraphicsManager, public Common::EventObserver {
+class SurfaceSdlGraphicsManager : public SdlGraphicsManager {
 public:
 	SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSource, SdlWindow *window);
 	virtual ~SurfaceSdlGraphicsManager();
@@ -98,6 +94,12 @@ public:
 	virtual const OSystem::GraphicsMode *getSupportedShaders() const override;
 	virtual int getShader() const override;
 	virtual bool setShader(int id) override;
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	virtual const OSystem::GraphicsMode *getSupportedStretchModes() const override;
+	virtual int getDefaultStretchMode() const override;
+	virtual bool setStretchMode(int mode) override;
+	virtual int getStretchMode() const override;
+#endif
 	virtual void initSize(uint w, uint h, const Graphics::PixelFormat *format = NULL) override;
 	virtual int getScreenChangeID() const override { return _screenChangeCount; }
 
@@ -112,6 +114,12 @@ protected:
 	virtual void setPalette(const byte *colors, uint start, uint num) override;
 	virtual void grabPalette(byte *colors, uint start, uint num) const override;
 
+	/**
+	 * Convert from the SDL pixel format to Graphics::PixelFormat
+	 * @param in    The SDL pixel format to convert
+	 * @param out   A pixel format to be written to
+	 */
+	Graphics::PixelFormat convertSDLPixelFormat(SDL_PixelFormat *in) const;
 public:
 	virtual void copyRectToScreen(const void *buf, int pitch, int x, int y, int w, int h) override;
 	virtual Graphics::Surface *lockScreen() override;
@@ -174,6 +182,9 @@ protected:
 	virtual bool gameNeedsAspectRatioCorrection() const override {
 		return _videoMode.aspectRatioCorrection;
 	}
+	virtual int getGameRenderScale() const override {
+		return _videoMode.scaleFactor;
+	}
 
 	virtual void handleResizeImpl(const int width, const int height) override;
 
@@ -188,7 +199,7 @@ protected:
 	void recreateScreenTexture();
 
 	virtual SDL_Surface *SDL_SetVideoMode(int width, int height, int bpp, Uint32 flags);
-	void SDL_UpdateRects(SDL_Surface *screen, int numrects, SDL_Rect *rects);
+	virtual void SDL_UpdateRects(SDL_Surface *screen, int numrects, SDL_Rect *rects);
 #endif
 
 	/** Unseen game screen */
@@ -225,6 +236,7 @@ protected:
 		bool needUpdatescreen;
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 		bool needTextureUpdate;
+		bool needDisplayResize;
 #endif
 #ifdef USE_RGB_COLOR
 		bool formatChanged;
@@ -238,9 +250,10 @@ protected:
 		bool fullscreen;
 		bool aspectRatioCorrection;
 		AspectRatio desiredAspectRatio;
-
-#if SDL_VERSION_ATLEAST(2, 0, 0)
 		bool filtering;
+		
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+		int stretchMode;
 #endif
 
 		int mode;
@@ -370,18 +383,15 @@ protected:
 	virtual bool hotswapGFXMode();
 
 	virtual void setAspectRatioCorrection(bool enable);
-#if SDL_VERSION_ATLEAST(2, 0, 0)
 	void setFilteringMode(bool enable);
-#endif
 
-	virtual bool saveScreenshot(const char *filename);
+	virtual bool saveScreenshot(const Common::String &filename) const;
 	virtual void setGraphicsModeIntern();
 
 private:
 	void setFullscreenMode(bool enable);
 	bool handleScalerHotkeys(Common::KeyCode key);
 	bool isScalerHotkey(const Common::Event &event);
-	void toggleFullScreen();
 
 	/**
 	 * Converts the given point from the overlay's coordinate space to the

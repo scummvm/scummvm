@@ -78,6 +78,8 @@ void SdlWindow::setupIcon() {
 			col = 0x00000000;
 		else if (!strcmp(color, "black"))
 			col = 0xFF000000;
+		else if (!strcmp(color, "gray20"))
+			col = 0xFF333333;
 		else if (color[0] == '#') {
 			if (sscanf(color + 1, "%06x", &col) != 1) {
 				warning("Wrong format of color (%s)", color + 1);

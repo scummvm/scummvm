@@ -203,6 +203,9 @@ byte *loadCharacter(Common::SeekableReadStream &stream, int &encoding, int &adva
 
 	while (true) {
 		line = stream.readLine();
+		line.trim(); 	// BDF files created from unifont tools (make hex)
+						// have a rogue space character after the "BITMAP" label
+
 		if (stream.err() || stream.eos()) {
 			warning("BdfFont::loadCharacter: Premature end of file");
 			delete[] bitmap;
@@ -411,8 +414,8 @@ BdfFont *BdfFont::loadFont(Common::SeekableReadStream &stream) {
 				boxes[encoding] = box;
 			}
 		} else if (line.hasPrefix("FAMILY_NAME \"")) {
-			familyName = new char[line.size()]; // We will definitely fit here
-			Common::strlcpy(familyName, &line.c_str()[13], line.size());
+			familyName = new char[line.size()];
+			Common::strlcpy(familyName, line.c_str() + 13, line.size() - 12);	// strlcpy() copies at most size-1 characters and then add a '\0'
 			char *p = &familyName[strlen(familyName)];
 			while (p != familyName && *p != '"')
 				p--;
@@ -428,8 +431,8 @@ BdfFont *BdfFont::loadFont(Common::SeekableReadStream &stream) {
 			}
 			*p = '\0'; // Remove last quote
 		} else if (line.hasPrefix("SLANT \"")) {
-			slant = new char[line.size()]; // We will definitely fit here
-			Common::strlcpy(slant, &line.c_str()[7], line.size());
+			slant = new char[line.size()];
+			Common::strlcpy(slant, line.c_str() + 7, line.size() - 6);  // strlcpy() copies at most size-1 characters and then add a '\0'
 			char *p = &slant[strlen(slant)];
 			while (p != slant && *p != '"')
 				p--;
@@ -725,8 +728,8 @@ BdfFont *BdfFont::scaleFont(BdfFont *src, int newSize) {
 	data.firstCharacter = src->_data.firstCharacter;
 	data.defaultCharacter = src->_data.defaultCharacter;
 	data.numCharacters = src->_data.numCharacters;
-	data.familyName = strdup(src->_data.familyName);
-	data.slant = strdup(src->_data.slant);
+	data.familyName = scumm_strdup(src->_data.familyName);
+	data.slant = scumm_strdup(src->_data.slant);
 
 	BdfBoundingBox *boxes = new BdfBoundingBox[data.numCharacters];
 	for (int i = 0; i < data.numCharacters; ++i) {

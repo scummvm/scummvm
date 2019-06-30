@@ -20,12 +20,14 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_EXCEPTION_time_h
+
+#include "osystem.h"
 #include "backends/timer/default/default-timer.h"
 #include "engines/engine.h"
 #include "gui.h"
 #include "options-dialog.h"
 #include "config.h"
-#include "osystem.h"
 
 namespace _3DS {
 

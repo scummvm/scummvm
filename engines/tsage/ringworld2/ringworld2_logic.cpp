@@ -1224,6 +1224,13 @@ void Ringworld2Game::processEvent(Event &event) {
 			R2_GLOBALS._events.setCursorFromFlag();
 			break;
 
+		case Common::KEYCODE_F5:
+			// F5 - Save
+			saveGame();
+			R2_GLOBALS._events.setCursorFromFlag();
+			event.handled = true;
+			break;
+
 		case Common::KEYCODE_F7:
 			// F7 - Restore
 			restoreGame();

@@ -35,6 +35,16 @@ class ASpit : public RivenStack {
 public:
 	ASpit(MohawkEngine_Riven *vm);
 
+	enum PatchedExternalCommandNameId {
+		kExternalSaveGame    = 20,
+		kExternalRestoreGame = 21,
+		kExternalResume      = 22,
+		kExternalOptions     = 23,
+		kExternalQuit        = 24,
+		kExternalNewGame     = 25
+
+	};
+
 	// External commands - Main Menu
 	void xastartupbtnhide(const ArgumentArray &args);
 	void xasetupcomplete(const ArgumentArray &args);
@@ -59,6 +69,12 @@ public:
 	// External commands - DVD-specific
 	void xarestoregame(const ArgumentArray &args);
 
+	// External commands - ScummVM 25th anniversary specific
+	void xaSaveGame(const ArgumentArray &args);
+	void xaResumeGame(const ArgumentArray &args);
+	void xaOptions(const ArgumentArray &args);
+	void xaNewGame(const ArgumentArray &args);
+
 	// External commands - Demo-specific
 	void xadisablemenureturn(const ArgumentArray &args);
 	void xaenablemenureturn(const ArgumentArray &args);
@@ -73,6 +89,7 @@ private:
 
 	void cathBookDrawPage(uint32 page);
 
+	bool showConfirmationDialog(const char *message, const char *confirmButton, const char *cancelButton);
 };
 
 } // End of namespace RivenStacks

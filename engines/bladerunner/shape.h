@@ -26,7 +26,7 @@
 #include "common/str.h"
 
 namespace Graphics {
-	struct Surface;
+struct Surface;
 }
 
 namespace BladeRunner {
@@ -44,9 +44,9 @@ public:
 	Shape(BladeRunnerEngine *vm);
 	~Shape();
 
-	bool readFromContainer(const Common::String &container, int index);
+	bool open(const Common::String &container, int index);
 
-	void draw(Graphics::Surface &surface, int x, int y);
+	void draw(Graphics::Surface &surface, int x, int y) const;
 
 	int getWidth()  const { return _width;  }
 	int getHeight() const { return _height; }

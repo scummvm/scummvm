@@ -24,7 +24,7 @@
 
 namespace Common {
 
-EventDispatcher::EventDispatcher() : _autoFreeMapper(false), _mapper(0) {
+EventDispatcher::EventDispatcher() : _autoFreeMapper(false), _mapper(nullptr) {
 }
 
 EventDispatcher::~EventDispatcher() {
@@ -41,7 +41,7 @@ EventDispatcher::~EventDispatcher() {
 	if (_autoFreeMapper) {
 		delete _mapper;
 	}
-	_mapper = 0;
+	_mapper = nullptr;
 }
 
 void EventDispatcher::dispatch() {

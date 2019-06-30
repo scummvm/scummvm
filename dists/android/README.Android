@@ -3,7 +3,7 @@ README for the Android port of ScummVM
 
 REQUIREMENTS
 
-  TODO
+  - Android 2.3 or later
 
 INSTALL
 
@@ -32,9 +32,8 @@ CONTROLS
     In touchpad mode, the mouse cursor is independent of the touched point, it
     is moved relative to its current position - like on a touchpad.
 
-    The port currently misses its own configuration dialog, the mode can
-    be toggled with the "Mixed AdLib/MIDI mode" on the MIDI tab in ScummVM's
-    own option dialog.
+    The mode can be toggled with the "Touchpad mouse mode" on the Control tab
+    in ScummVM's own option dialog.
 
     Tap + movement: Mouse movement
     Tap without movement: Left mouse button click

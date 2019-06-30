@@ -25,6 +25,8 @@
 // Disable symbol overrides so that we can use "FILE"
 #define FORBIDDEN_SYMBOL_EXCEPTION_FILE
 #define FORBIDDEN_SYMBOL_EXCEPTION_printf
+#define FORBIDDEN_SYMBOL_EXCEPTION_abort
+#define FORBIDDEN_SYMBOL_EXCEPTION_exit
 
 #include "backends/fs/ps2/ps2-fs.h"
 

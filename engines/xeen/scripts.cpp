@@ -21,10 +21,13 @@
  */
 
 #include "common/config-manager.h"
+#include "common/textconsole.h"
+#include "backends/audiocd/audiocd.h"
 #include "xeen/scripts.h"
-#include "xeen/dialogs_input.h"
-#include "xeen/dialogs_whowill.h"
-#include "xeen/dialogs_query.h"
+#include "xeen/dialogs/dialogs_copy_protection.h"
+#include "xeen/dialogs/dialogs_input.h"
+#include "xeen/dialogs/dialogs_whowill.h"
+#include "xeen/dialogs/dialogs_query.h"
 #include "xeen/party.h"
 #include "xeen/resources.h"
 #include "xeen/xeen.h"
@@ -45,7 +48,7 @@ uint16 EventParameters::Iterator::readUint16LE() {
 }
 
 uint32 EventParameters::Iterator::readUint32LE() {
-	uint16 result = ((_index + 3) >= _data.size()) ? 0 :
+	uint32 result = ((_index + 3) >= _data.size()) ? 0 :
 		READ_LE_UINT32(&_data[_index]);
 	_index += 4;
 	return result;
@@ -116,7 +119,6 @@ Scripts::Scripts(XeenEngine *vm) : _vm(vm) {
 	_treasureItems = 0;
 	_lineNum = 0;
 	_charIndex = 0;
-	_v2 = 0;
 	_nEdamageType = DT_PHYSICAL;
 	_animCounter = 0;
 	_eventSkipped = false;
@@ -124,7 +126,7 @@ Scripts::Scripts(XeenEngine *vm) : _vm(vm) {
 	_refreshIcons = false;
 	_scriptResult = false;
 	_scriptExecuted = false;
-	_var50 = false;
+	_dirFlag = false;
 	_redrawDone = false;
 	_windowIndex = -1;
 	_event = nullptr;
@@ -133,22 +135,21 @@ Scripts::Scripts(XeenEngine *vm) : _vm(vm) {
 int Scripts::checkEvents() {
 	Combat &combat = *_vm->_combat;
 	EventsManager &events = *_vm->_events;
+	FileManager &files = *_vm->_files;
 	Interface &intf = *_vm->_interface;
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
 	Sound &sound = *_vm->_sound;
-	Town &town = *_vm->_town;
 	Windows &windows = *_vm->_windows;
-	bool isDarkCc = _vm->_files->_isDarkCc;
+	int ccNum = files._ccNum;
 
 	_refreshIcons = false;
 	_itemType = 0;
 	_scriptExecuted = false;
-	_var50 = false;
+	_dirFlag = false;
 	_whoWill = 0;
 	Mode oldMode = _vm->_mode;
 	Common::fill(&intf._charFX[0], &intf._charFX[MAX_ACTIVE_PARTY], 0);
-	//int items = _treasureItems;
 
 	if (party._treasure._gold & party._treasure._gems) {
 		// Backup any current treasure data
@@ -169,38 +170,37 @@ int Scripts::checkEvents() {
 		_redrawDone = false;
 		_currentPos = party._mazePosition;
 		_charIndex = 1;
-		_v2 = 1;
+		combat._combatTarget = 1;
 		_nEdamageType = DT_PHYSICAL;
-//		int var40 = -1;
 
-		while (!_vm->shouldQuit() && _lineNum >= 0) {
-			// Break out of the events if there's an attacking monster
+		while (!_vm->shouldExit() && _lineNum >= 0) {
+			// Stop processing events if there's an attacking monster
 			if (combat._attackMonsters[0] != -1) {
 				_eventSkipped = true;
+				_lineNum = SCRIPT_ABORT;
 				break;
 			}
 
-			_eventSkipped = false;
 			uint eventIndex;
-			for (eventIndex = 0; eventIndex < map._events.size() && !_vm->shouldQuit(); ++eventIndex) {
+			for (eventIndex = 0; eventIndex < map._events.size() && !_vm->shouldExit(); ++eventIndex) {
 				MazeEvent &event = map._events[eventIndex];
 
-				if (event._position == _currentPos && party._mazeDirection !=
-						(_currentPos.x | _currentPos.y) && event._line == _lineNum) {
+				if (event._position == _currentPos && event._line == _lineNum &&
+						(party._mazeDirection | _currentPos.x | _currentPos.y)) {
 					if (event._direction == party._mazeDirection || event._direction == DIR_ALL) {
-						_vm->_mode = MODE_RECORD_EVENTS;
+						_vm->_mode = MODE_SCRIPT_IN_PROGRESS;
 						_scriptExecuted = true;
 						doOpcode(event);
 						break;
 					} else {
-						_var50 = true;
+						_dirFlag = true;
 					}
 				}
 			}
 			if (eventIndex == map._events.size())
-				_lineNum = -1;
+				_lineNum = SCRIPT_ABORT;
 		}
-	} while (!_vm->shouldQuit() && !_eventSkipped && _lineNum != -1);
+	} while (!_vm->shouldExit() && _lineNum != SCRIPT_ABORT);
 
 	intf._face1State = intf._face2State = 2;
 	if (_refreshIcons) {
@@ -212,24 +212,27 @@ int Scripts::checkEvents() {
 	if (party._treasure._hasItems || party._treasure._gold || party._treasure._gems)
 		party.giveTreasure();
 
-	if (_animCounter > 0 && intf._objNumber) {
-		MazeObject &selectedObj = map._mobData._objects[intf._objNumber - 1];
+	if (_animCounter > 0 && intf._objNumber != -1) {
+		MazeObject &selectedObj = map._mobData._objects[intf._objNumber];
 
-		if (selectedObj._spriteId == (isDarkCc ? 15 : 16)) {
-			for (uint idx = 0; idx < 16; ++idx) {
-				MazeObject &obj = map._mobData._objects[idx];
-				if (obj._spriteId == (isDarkCc ? 62 : 57)) {
+		if (selectedObj._spriteId == (ccNum ? 15 : 16)) {
+			// Treasure chests that were opened will be set to be in an open, empty state
+			for (uint idx = 0; idx < map._mobData._objectSprites.size(); ++idx) {
+				MonsterObjectData::SpriteResourceEntry &e = map._mobData._objectSprites[idx];
+				if (e._spriteId == (ccNum ? 57 : 62)) {
 					selectedObj._id = idx;
-					selectedObj._spriteId = isDarkCc ? 62 : 57;
+					selectedObj._spriteId = ccNum ? 57 : 62;
+					selectedObj._sprites = &e._sprites;
 					break;
 				}
 			}
 		} else if (selectedObj._spriteId == 73) {
-			for (uint idx = 0; idx < 16; ++idx) {
-				MazeObject &obj = map._mobData._objects[idx];
-				if (obj._spriteId == 119) {
+			for (uint idx = 0; idx < map._mobData._objectSprites.size(); ++idx) {
+				MonsterObjectData::SpriteResourceEntry &e = map._mobData._objectSprites[idx];
+				if (e._spriteId == 119) {
 					selectedObj._id = idx;
 					selectedObj._spriteId = 119;
+					selectedObj._sprites = &e._sprites;
 					break;
 				}
 			}
@@ -240,8 +243,17 @@ int Scripts::checkEvents() {
 	_vm->_mode = oldMode;
 	windows.closeAll();
 
-	if (_scriptExecuted || !intf._objNumber || _var50) {
-		if (_var50 && !_scriptExecuted && intf._objNumber && !map._currentIsEvent) {
+	if (g_vm->getIsCD() && g_system->getAudioCDManager()->isPlaying())
+		// Stop any playing voice
+		g_system->getAudioCDManager()->stop();
+
+	if (g_vm->shouldExit())
+		return g_vm->_gameMode;
+
+	if (_scriptExecuted)
+		intf.clearEvents();
+	if (_scriptExecuted || intf._objNumber == -1 || _dirFlag) {
+		if (_dirFlag && !_scriptExecuted && intf._objNumber != -1 && !map._currentIsEvent) {
 			sound.playFX(21);
 		}
 	} else {
@@ -254,7 +266,7 @@ int Scripts::checkEvents() {
 			intf.draw3d(true);
 			events.updateGameCounter();
 			events.wait(1);
-		} while (!events.isKeyMousePressed());
+		} while (!events.isKeyMousePressed() && !_vm->shouldExit());
 		events.clearEvents();
 
 		w.close();
@@ -266,77 +278,77 @@ int Scripts::checkEvents() {
 		party._treasure = party._savedTreasure;
 	}
 
-	// Clear any town loaded sprites
-	town.clearSprites();
-
-	_v2 = 1;
+	combat._combatTarget = 1;
 	Common::fill(&intf._charFX[0], &intf._charFX[6], 0);
 
 	return _scriptResult;
 }
 
-void Scripts::openGrate(int wallVal, int action) {
+bool Scripts::openGrate(int wallVal, int action) {
 	Combat &combat = *_vm->_combat;
+	FileManager &files = *_vm->_files;
 	Interface &intf = *_vm->_interface;
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
 	Sound &sound = *_vm->_sound;
-	bool isDarkCc = _vm->_files->_isDarkCc;
+	int ccNum = files._ccNum;
 
-	if ((wallVal != 13 || map._currentGrateUnlocked) && (!isDarkCc || wallVal != 9 ||
-			map.mazeData()._wallKind != 2)) {
-		if (wallVal != 9 && !map._currentGrateUnlocked) {
-			int charIndex = WhoWill::show(_vm, 13, action, false) - 1;
-			if (charIndex < 0) {
-				intf.draw3d(true);
-				return;
-			}
+	if (!((wallVal != 13 || map._currentGrateUnlocked) && (!ccNum || wallVal != 9 ||
+			map.mazeData()._wallKind != 2)))
+		return false;
 
-			// There is a 1 in 4 chance the character will receive damage
-			if (_vm->getRandomNumber(1, 4) == 1) {
-				combat.giveCharDamage(map.mazeData()._trapDamage,
-					(DamageType)_vm->getRandomNumber(0, 6), charIndex);
-			}
-
-			// Check whether character can unlock the door
-			Character &c = party._activeParty[charIndex];
-			if ((c.getThievery() + _vm->getRandomNumber(1, 20)) <
-					map.mazeData()._difficulties._unlockDoor)
-				return;
-
-			c._experience += map.mazeData()._difficulties._unlockDoor * c.getCurrentLevel();
+	if (wallVal != 9 && !map._currentGrateUnlocked) {
+		int charIndex = WhoWill::show(_vm, 13, action, false) - 1;
+		if (charIndex < 0) {
+			intf.draw3d(true);
+			return true;
 		}
 
-		// Flag the grate as unlocked, and the wall the grate is on
-		map.setCellSurfaceFlags(party._mazePosition, 0x80);
-		map.setWall(party._mazePosition, party._mazeDirection, wallVal);
-
-		// Set the grate as opened and the wall on the other side of the grate
-		Common::Point pt = party._mazePosition;
-		Direction dir = (Direction)((int)party._mazeDirection ^ 2);
-		switch (party._mazeDirection) {
-		case DIR_NORTH:
-			pt.y++;
-			break;
-		case DIR_EAST:
-			pt.x++;
-			break;
-		case DIR_SOUTH:
-			pt.y--;
-			break;
-		case DIR_WEST:
-			pt.x--;
-			break;
-		default:
-			break;
+		// There is a 1 in 4 chance the character will receive damage
+		if (_vm->getRandomNumber(1, 4) == 1) {
+			combat.giveCharDamage(map.mazeData()._trapDamage,
+				(DamageType)_vm->getRandomNumber(0, 6), charIndex);
 		}
 
-		map.setCellSurfaceFlags(pt, 0x80);
-		map.setWall(pt, dir, wallVal);
+		// Check whether character can unlock the door
+		Character &c = party._activeParty[charIndex];
+		if ((c.getThievery() + _vm->getRandomNumber(1, 20)) <
+				map.mazeData()._difficulties._unlockDoor)
+			return true;
 
-		sound.playFX(10);
-		intf.draw3d(true);
+		c._experience += map.mazeData()._difficulties._unlockDoor * c.getCurrentLevel();
 	}
+
+	// Flag the grate as unlocked, and the wall the grate is on
+	map.setCellSurfaceFlags(party._mazePosition, 0x80);
+	map.setWall(party._mazePosition, party._mazeDirection, wallVal);
+
+	// Set the grate as opened and the wall on the other side of the grate
+	Common::Point pt = party._mazePosition;
+	Direction dir = (Direction)((int)party._mazeDirection ^ 2);
+	switch (party._mazeDirection) {
+	case DIR_NORTH:
+		pt.y++;
+		break;
+	case DIR_EAST:
+		pt.x++;
+		break;
+	case DIR_SOUTH:
+		pt.y--;
+		break;
+	case DIR_WEST:
+		pt.x--;
+		break;
+	default:
+		break;
+	}
+
+	map.setCellSurfaceFlags(pt, 0x80);
+	map.setWall(pt, dir, wallVal);
+
+	sound.playFX(10);
+	intf.draw3d(true);
+	return true;
 }
 
 bool Scripts::doOpcode(MazeEvent &event) {
@@ -350,7 +362,7 @@ bool Scripts::doOpcode(MazeEvent &event) {
 		&Scripts::cmdMoveObj, &Scripts::cmdTakeOrGive, &Scripts::cmdDoNothing,
 		&Scripts::cmdRemove, &Scripts::cmdSetChar, &Scripts::cmdSpawn,
 		&Scripts::cmdDoTownEvent, &Scripts::cmdExit, &Scripts::cmdAlterMap,
-		&Scripts::cmdGiveExtended, &Scripts::cmdConfirmWord, &Scripts::cmdDamage,
+		&Scripts::cmdGiveMulti, &Scripts::cmdConfirmWord, &Scripts::cmdDamage,
 		&Scripts::cmdJumpRnd, &Scripts::cmdAlterEvent, &Scripts::cmdCallEvent,
 		&Scripts::cmdReturn, &Scripts::cmdSetVar, &Scripts::cmdTakeOrGive,
 		&Scripts::cmdTakeOrGive, &Scripts::cmdCutsceneEndClouds,
@@ -378,7 +390,7 @@ bool Scripts::doOpcode(MazeEvent &event) {
 	bool result = (this->*COMMAND_LIST[event._opcode])(params);
 	if (result)
 		// Move to next line
-		_lineNum = _vm->_party->_partyDead ? -1 : _lineNum + 1;
+		_lineNum = _vm->_party->_dead ? SCRIPT_ABORT : _lineNum + 1;
 
 	return result;
 }
@@ -393,7 +405,7 @@ bool Scripts::cmdDisplay1(ParamsIterator &params) {
 	Common::String msg = Common::String::format("\r\x03""c%s", paramText.c_str());
 
 	windows[12].close();
-	if (windows[38]._enabled)
+	if (!windows[38]._enabled)
 		windows[38].open();
 	windows[38].writeString(msg);
 	windows[38].update();
@@ -440,13 +452,13 @@ bool Scripts::cmdSignText(ParamsIterator &params) {
 bool Scripts::cmdNPC(ParamsIterator &params) {
 	Map &map = *_vm->_map;
 
-	params.readByte();
+	params.readByte();					// _message already holds title
 	int textNum = params.readByte();
 	int portrait = params.readByte();
 	int confirm = params.readByte();
 	int lineNum = params.readByte();
 
-	if (TownMessage::show(_vm, portrait, _message, map._events._text[textNum],
+	if (LocationMessage::show(portrait, _message, map._events._text[textNum],
 			confirm)) {
 		_lineNum = lineNum;
 		return false;
@@ -471,6 +483,7 @@ bool Scripts::cmdTeleport(ParamsIterator &params) {
 
 	windows.closeAll();
 
+	bool restartFlag = _event->_opcode == OP_TeleportAndContinue;
 	int mapId = params.readByte();
 	Common::Point pt;
 
@@ -495,8 +508,7 @@ bool Scripts::cmdTeleport(ParamsIterator &params) {
 
 	party._stepped = true;
 	if (mapId != party._mazeId) {
-		int spriteId = (intf._objNumber == 0) ? -1 :
-			map._mobData._objects[intf._objNumber - 1]._spriteId;
+		int spriteId = (intf._objNumber == -1) ? -1 : map._mobData._objects[intf._objNumber]._spriteId;
 
 		switch (spriteId) {
 		case 47:
@@ -521,16 +533,19 @@ bool Scripts::cmdTeleport(ParamsIterator &params) {
 
 	events.clearEvents();
 
-	if (_event->_opcode == OP_TeleportAndContinue) {
-		intf.draw3d(true);
-		_lineNum = 0;
-		return true;
+	if (restartFlag) {
+		// Draw the new location and start any script at that location
+		events.ipause(2);
+		_lineNum = SCRIPT_RESET;
+		return false;
 	} else {
+		// Stop executing the script
 		return cmdExit(params);
 	}
 }
 
 bool Scripts::cmdIf(ParamsIterator &params) {
+	Combat &combat = *_vm->_combat;
 	Party &party = *_vm->_party;
 	uint32 val;
 	int newLineNum;
@@ -560,7 +575,7 @@ bool Scripts::cmdIf(ParamsIterator &params) {
 	} else {
 		result = false;
 		for (int idx = 0; idx < (int)party._activeParty.size() && !result; ++idx) {
-			if (_charIndex == 0 || (_charIndex == 8 && (int)idx != _v2)) {
+			if (_charIndex == 0 || (_charIndex == 8 && (int)idx != combat._combatTarget)) {
 				result = ifProc(mode, val, _event->_opcode - 8, idx);
 			}
 		}
@@ -590,11 +605,13 @@ bool Scripts::cmdMoveObj(ParamsIterator &params) {
 }
 
 bool Scripts::cmdTakeOrGive(ParamsIterator &params) {
+	Combat &combat = *_vm->_combat;
 	Party &party = *_vm->_party;
 	Windows &windows = *_vm->_windows;
-	int mode1, mode2, mode3, param2;
+	int mode1, mode2, mode3;
 	uint32 val1, val2, val3;
 
+	_refreshIcons = true;
 	mode1 = params.readByte();
 	switch (mode1) {
 	case 16:
@@ -613,7 +630,7 @@ bool Scripts::cmdTakeOrGive(ParamsIterator &params) {
 		break;
 	}
 
-	param2 = mode2 = params.readByte();
+	mode2 = params.readByte();
 	switch (mode2) {
 	case 16:
 	case 34:
@@ -656,7 +673,7 @@ bool Scripts::cmdTakeOrGive(ParamsIterator &params) {
 	case OP_TakeOrGive_2:
 		if (_charIndex == 0 || _charIndex == 8) {
 			for (uint idx = 0; idx < party._activeParty.size(); ++idx) {
-				if (_charIndex == 0 || (_charIndex == 8 && (int)idx != _v2)) {
+				if (_charIndex == 0 || (_charIndex == 8 && (int)idx != combat._combatTarget)) {
 					if (ifProc(mode1, val1, _event->_opcode == OP_TakeOrGive_4 ? 2 : 1, idx)) {
 						party.giveTake(0, 0, mode2, val2, idx);
 						if (mode2 == 82)
@@ -672,7 +689,7 @@ bool Scripts::cmdTakeOrGive(ParamsIterator &params) {
 	case OP_TakeOrGive_3:
 		if (_charIndex == 0 || _charIndex == 8) {
 			for (uint idx = 0; idx < party._activeParty.size(); ++idx) {
-				if (_charIndex == 0 || (_charIndex == 8 && (int)idx != _v2)) {
+				if (_charIndex == 0 || (_charIndex == 8 && (int)idx != combat._combatTarget)) {
 					if (ifProc(mode1, val1, 1, idx) && ifProc(mode2, val2, 1, idx)) {
 						party.giveTake(0, 0, mode2, val3, idx);
 						if (mode2 == 82)
@@ -689,7 +706,7 @@ bool Scripts::cmdTakeOrGive(ParamsIterator &params) {
 	case OP_TakeOrGive_4:
 		if (_charIndex == 0 || _charIndex == 8) {
 			for (uint idx = 0; idx < party._activeParty.size(); ++idx) {
-				if (_charIndex == 0 || (_charIndex == 8 && (int)idx != _v2)) {
+				if (_charIndex == 0 || (_charIndex == 8 && (int)idx != combat._combatTarget)) {
 					if (ifProc(mode1, val1, _event->_opcode == OP_TakeOrGive_4 ? 2 : 1, idx)) {
 						party.giveTake(0, 0, mode2, val2, idx);
 						if (mode2 == 82)
@@ -705,8 +722,8 @@ bool Scripts::cmdTakeOrGive(ParamsIterator &params) {
 	default:
 		if (_charIndex == 0 || _charIndex == 8) {
 			for (uint idx = 0; idx < party._activeParty.size(); ++idx) {
-				if (_charIndex == 0 || (_charIndex == 8 && (int)idx != _v2)) {
-					party.giveTake(mode1, val1, mode2, val2, idx);
+				if (_charIndex == 0 || (_charIndex == 8 && (int)idx != combat._combatTarget)) {
+					bool flag = party.giveTake(mode1, val1, mode2, val2, idx);
 
 					switch (mode1) {
 					case 8:
@@ -714,7 +731,7 @@ bool Scripts::cmdTakeOrGive(ParamsIterator &params) {
 						// fall through
 					case 21:
 					case 66:
-						if (param2) {
+						if (flag) {
 							switch (mode2) {
 							case 82:
 								mode1 = 0;
@@ -727,13 +744,18 @@ bool Scripts::cmdTakeOrGive(ParamsIterator &params) {
 							case 100:
 							case 101:
 							case 106:
-								if (param2)
+								if (flag)
 									continue;
 
 								// Break out of character loop
 								idx = party._activeParty.size();
 								break;
+							default:
+								break;
 							}
+						} else {
+							// Break out of character loop
+							idx = party._activeParty.size();
 						}
 						break;
 
@@ -743,7 +765,7 @@ bool Scripts::cmdTakeOrGive(ParamsIterator &params) {
 					case 100:
 					case 101:
 					case 106:
-						if (param2) {
+						if (flag) {
 							_lineNum = -1;
 							return false;
 						}
@@ -765,7 +787,7 @@ bool Scripts::cmdTakeOrGive(ParamsIterator &params) {
 						case 100:
 						case 101:
 						case 106:
-							if (param2)
+							if (flag)
 								continue;
 
 							// Break out of character loop
@@ -792,9 +814,9 @@ bool Scripts::cmdRemove(ParamsIterator &params) {
 	Interface &intf = *_vm->_interface;
 	Map &map = *_vm->_map;
 
-	if (intf._objNumber) {
+	if (intf._objNumber != -1) {
 		// Give the active object a completely way out of bounds position
-		MazeObject &obj = map._mobData._objects[intf._objNumber - 1];
+		MazeObject &obj = map._mobData._objects[intf._objNumber];
 		obj._position = Common::Point(128, 128);
 	}
 
@@ -803,16 +825,17 @@ bool Scripts::cmdRemove(ParamsIterator &params) {
 }
 
 bool Scripts::cmdSetChar(ParamsIterator &params) {
+	Combat &combat = *_vm->_combat;
 	int charId = params.readByte();
 
 	if (charId == 0) {
 		_charIndex = 0;
-		_v2 = 0;
+		combat._combatTarget = 0;
 	} else if (charId < 7) {
-		_v2 = charId;
+		combat._combatTarget = charId;
 	} else if (charId == 7) {
 		_charIndex = _vm->getRandomNumber(1, _vm->_party->_activeParty.size());
-		_v2 = 1;
+		combat._combatTarget = 1;
 	} else {
 		_charIndex = WhoWill::show(_vm, 22, 3, false);
 		if (_charIndex == 0)
@@ -843,7 +866,7 @@ bool Scripts::cmdSpawn(ParamsIterator &params) {
 }
 
 bool Scripts::cmdDoTownEvent(ParamsIterator &params) {
-	_scriptResult = _vm->_town->townAction((TownAction)params.readByte());
+	_scriptResult = _vm->_locations->doAction(params.readByte());
 	_vm->_party->_stepped = true;
 	_refreshIcons = true;
 
@@ -851,7 +874,7 @@ bool Scripts::cmdDoTownEvent(ParamsIterator &params) {
 }
 
 bool Scripts::cmdExit(ParamsIterator &params) {
-	_lineNum = -1;
+	_lineNum = SCRIPT_ABORT;
 	return false;
 }
 
@@ -872,51 +895,55 @@ bool Scripts::cmdAlterMap(ParamsIterator &params) {
 	return true;
 }
 
-bool Scripts::cmdGiveExtended(ParamsIterator &params) {
+bool Scripts::cmdGiveMulti(ParamsIterator &params) {
 	Party &party = *_vm->_party;
-	uint32 val;
-	int newLineNum;
-	bool result;
+	int modes[3];
+	uint32 vals[3];
 
-	int mode = params.readByte();
-	switch (mode) {
-	case 16:
-	case 34:
-	case 100:
-		val = params.readUint32LE();
-		break;
-	case 25:
-	case 35:
-	case 101:
-	case 106:
-		val = params.readUint16LE();
-		break;
-	default:
-		val = params.readByte();
-		break;
-	}
-	newLineNum = params.readByte();
-
-	if ((_charIndex != 0 && _charIndex != 8) || mode == 44) {
-		result = ifProc(mode, val, _event->_opcode - OP_If1, _charIndex - 1);
-	} else {
-		result = false;
-		for (int idx = 0; idx < (int)party._activeParty.size() && !result; ++idx) {
-			if (_charIndex == 0 || (_charIndex == 8 && _v2 != idx)) {
-				result = ifProc(mode, val, _event->_opcode - OP_If1, idx);
-			}
+	_refreshIcons = true;
+	for (int idx = 0; idx < 3; ++idx) {
+		modes[idx] = params.readByte();
+		switch (modes[idx]) {
+		case 16:
+		case 34:
+		case 100:
+			vals[idx] = params.readUint32LE();
+			break;
+		case 25:
+		case 35:
+		case 101:
+		case 106:
+			vals[idx] = params.readUint16LE();
+			break;
+		default:
+			vals[idx] = params.readByte();
+			break;
 		}
 	}
 
+	_scriptExecuted = true;
+	bool result = party.giveExt(modes[0], vals[0], modes[1], vals[1], modes[2], vals[2],
+		(_charIndex > 0) ? _charIndex - 1 : 0);
+
 	if (result) {
-		_lineNum = newLineNum;
-		return false;
+		if (_animCounter == 255) {
+			_animCounter = 0;
+			return cmdExit(params);
+		} else if (modes[0] == 67 || modes[1] == 67 || modes[2] == 67) {
+			_animCounter = 1;
+		} else {
+			return cmdExit(params);
+		}
+	} else {
+		if (modes[0] == 67 || modes[1] == 67 || modes[2] == 67)
+			return cmdExit(params);
 	}
 
 	return true;
 }
 
 bool Scripts::cmdConfirmWord(ParamsIterator &params) {
+	FileManager &files = *_vm->_files;
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
 	int inputType = params.readByte();
@@ -924,40 +951,46 @@ bool Scripts::cmdConfirmWord(ParamsIterator &params) {
 	int param2 = params.readByte();
 	int param3 = params.readByte();
 
-	Common::String msg1 = param2 ? map._events._text[param2] : _message;
-	Common::String msg2;
+	Common::String expected2;
+	Common::String title;
 
 	if (_event->_opcode == OP_ConfirmWord_2) {
-		msg2 = "";
+		title = "";
 	} else if (param3) {
-		msg2 = map._events._text[param3];
+		title = map._events._text[param3];
 	} else {
-		msg2 = Res.WHATS_THE_PASSWORD;
+		title = Res.WHATS_THE_PASSWORD;
 	}
 
-	_mirrorId = StringInput::show(_vm, inputType, msg1, msg2, _event->_opcode);
+	if (!param2) {
+		expected2 = _message;
+	} else if (param2 < (int)map._events._text.size()) {
+		expected2 = map._events._text[param2];
+	}
+
+	_mirrorId = StringInput::show(_vm, inputType, expected2, title, _event->_opcode);
 	if (_mirrorId) {
-		if (_mirrorId == 33 && _vm->_files->_isDarkCc) {
-			doEndGame2();
-		} else if (_mirrorId == 34 && _vm->_files->_isDarkCc) {
-			doWorldEnd();
-		} else if (_mirrorId == 35 && _vm->_files->_isDarkCc &&
+		if (_mirrorId == 33 && files._ccNum) {
+			doDarkSideEnding();
+		} else if (_mirrorId == 34 && files._ccNum) {
+			doWorldEnding();
+		} else if (_mirrorId == 35 && files._ccNum &&
 				_vm->getGameID() == GType_WorldOfXeen) {
-			doEndGame();
-		} else if (_mirrorId == 40 && !_vm->_files->_isDarkCc) {
-			doEndGame();
-		} else if (_mirrorId == 60 && !_vm->_files->_isDarkCc) {
-			doEndGame2();
-		} else if (_mirrorId == 61 && !_vm->_files->_isDarkCc) {
-			doWorldEnd();
+			doCloudsEnding();
+		} else if (_mirrorId == 40 && !files._ccNum) {
+			doCloudsEnding();
+		} else if (_mirrorId == 60 && !files._ccNum) {
+			doDarkSideEnding();
+		} else if (_mirrorId == 61 && !files._ccNum) {
+			doWorldEnding();
 		} else {
-			if (_mirrorId == 59 && !_vm->_files->_isDarkCc) {
+			if (_mirrorId == 59 && !files._ccNum) {
 				for (int idx = 0; idx < MAX_TREASURE_ITEMS; ++idx) {
 					XeenItem &item = party._treasure._weapons[idx];
 					if (!item._id) {
-						item._id = 34;
+						item._id = XEEN_SLAYER_SWORD;
 						item._material = 0;
-						item._bonusFlags = 0;
+						item._state.clear();
 						party._treasure._hasItems = true;
 
 						return cmdExit(params);
@@ -984,7 +1017,7 @@ bool Scripts::cmdDamage(ParamsIterator &params) {
 
 	int damage = params.readUint16LE();
 	DamageType damageType = (DamageType)params.readByte();
-	combat.giveCharDamage(damage, damageType, _charIndex);
+	combat.giveCharDamage(damage, damageType, _charIndex - 1);
 
 	return true;
 }
@@ -1027,14 +1060,20 @@ bool Scripts::cmdCallEvent(ParamsIterator &params) {
 }
 
 bool Scripts::cmdReturn(ParamsIterator &params) {
-	StackEntry &se = _stack.top();
-	_currentPos = se;
-	_lineNum = se.line;
+	if (_stack.empty()) {
+		// WORKAROUND: Some scripts in Swords of Xeen use cmdReturn as a substitute for cmdExit
+		return cmdExit(params);
+	} else {
+		StackEntry se = _stack.pop();
+		_currentPos = se;
+		_lineNum = se.line;
 
-	return true;
+		return true;
+	}
 }
 
 bool Scripts::cmdSetVar(ParamsIterator &params) {
+	Combat &combat = *_vm->_combat;
 	Party &party = *_vm->_party;
 	uint val;
 	_refreshIcons = true;
@@ -1062,7 +1101,7 @@ bool Scripts::cmdSetVar(ParamsIterator &params) {
 	} else {
 		// Set value for entire party
 		for (int idx = 0; idx < (int)party._activeParty.size(); ++idx) {
-			if (_charIndex == 0 || (_charIndex == 8 && _v2 != idx)) {
+			if (_charIndex == 0 || (_charIndex == 8 && combat._combatTarget != idx)) {
 				party._activeParty[idx].setValue(mode, val);
 			}
 		}
@@ -1071,7 +1110,19 @@ bool Scripts::cmdSetVar(ParamsIterator &params) {
 	return true;
 }
 
-bool Scripts::cmdCutsceneEndClouds(ParamsIterator &params) { error("TODO"); }
+bool Scripts::cmdCutsceneEndClouds(ParamsIterator &params) {
+	Party &party = *_vm->_party;
+	party._gameFlags[0][75] = true;
+	party._mazeId = 28;
+	party._mazePosition = Common::Point(18, 4);
+
+	g_vm->_gameWon[0] = true;
+	g_vm->_finalScore = party.getScore();
+	g_vm->saveSettings();
+
+	doCloudsEnding();
+	return false;
+}
 
 bool Scripts::cmdWhoWill(ParamsIterator &params) {
 	int msg = params.readByte();
@@ -1095,17 +1146,17 @@ bool Scripts::cmdRndDamage(ParamsIterator &params) {
 
 	DamageType dmgType = (DamageType)params.readByte();
 	int max = params.readByte();
-	combat.giveCharDamage(_vm->getRandomNumber(1, max), dmgType, _charIndex);
+	combat.giveCharDamage(_vm->getRandomNumber(1, max), dmgType, _charIndex - 1);
 	return true;
 }
 
 bool Scripts::cmdMoveWallObj(ParamsIterator &params) {
 	Map &map = *_vm->_map;
-	int itemNum = params.readByte();
+	int index = params.readByte();
 	int x = params.readShort();
 	int y = params.readShort();
 
-	map._mobData._wallItems[itemNum]._position = Common::Point(x, y);
+	map._mobData._wallItems[index]._position = Common::Point(x, y);
 	return true;
 }
 
@@ -1184,14 +1235,25 @@ bool Scripts::cmdDisplayBottom(ParamsIterator &params) {
 
 bool Scripts::cmdIfMapFlag(ParamsIterator &params) {
 	Map &map = *_vm->_map;
-	MazeMonster &monster = map._mobData._monsters[params.readByte()];
+	int monsterNum = params.readByte();
+	int lineNum = params.readByte();
 
-	if (monster._position.x >= 32 || monster._position.y >= 32) {
-		_lineNum = params.readByte();
-		return false;
+	if (monsterNum == 0xff) {
+		for (monsterNum = 0; monsterNum < (int)map._mobData._monsters.size(); ++monsterNum) {
+			MazeMonster &monster = map._mobData._monsters[monsterNum];
+
+			if ((uint)monster._position.x < 32 && (uint)monster._position.y < 32)
+				return true;
+		}
+	} else {
+		MazeMonster &monster = map._mobData._monsters[monsterNum];
+
+		if ((uint)monster._position.x < 32 && (uint)monster._position.y < 32)
+			return true;
 	}
 
-	return true;
+	_lineNum = lineNum;
+	return false;
 }
 
 bool Scripts::cmdSelectRandomChar(ParamsIterator &params) {
@@ -1201,64 +1263,47 @@ bool Scripts::cmdSelectRandomChar(ParamsIterator &params) {
 
 bool Scripts::cmdGiveEnchanted(ParamsIterator &params) {
 	Party &party = *_vm->_party;
-
+	int itemOffset = _vm->getGameID() == GType_Swords ? 6 : 0;
+	XeenItem *item;
+	int invIndex;
 	int id = params.readByte();
-	int material = params.readByte();
-	int flags = params.readByte();
 
-	if (id >= 35) {
-		if (id < 49) {
-			for (int idx = 0; idx < MAX_TREASURE_ITEMS; ++idx) {
-				XeenItem &item = party._treasure._armor[idx];
-				if (!item.empty()) {
-					item._id = id - 35;
-					item._material = material;
-					item._bonusFlags = flags;
-					party._treasure._hasItems = true;
-					break;
-				}
-			}
-
-			return true;
-		} else if (id < 60) {
-			for (int idx = 0; idx < MAX_TREASURE_ITEMS; ++idx) {
-				XeenItem &item = party._treasure._accessories[idx];
-				if (!item.empty()) {
-					item._id = id - 49;
-					item._material = material;
-					item._bonusFlags = flags;
-					party._treasure._hasItems = true;
-					break;
-				}
-			}
-
-			return true;
-		} else if (id < 82) {
-			for (int idx = 0; idx < MAX_TREASURE_ITEMS; ++idx) {
-				XeenItem &item = party._treasure._misc[idx];
-				if (!item.empty()) {
-					item._id = id;
-					item._material = material;
-					item._bonusFlags = flags;
-					party._treasure._hasItems = true;
-					break;
-				}
-			}
-
-			return true;
-		} else {
-			error("Invalid id");
-		}
+	// Get category of item to add
+	ItemCategory cat = CATEGORY_WEAPON;
+	if (id < (35 + itemOffset)) {
+	} else if (id < (49 + itemOffset)) {
+		cat = CATEGORY_ARMOR;
+		id -= 35 + itemOffset;
+	} else if (id < (60 + itemOffset)) {
+		cat = CATEGORY_ACCESSORY;
+		id -= 49 + itemOffset;
+	} else if (id < (82 + itemOffset)) {
+		cat = CATEGORY_MISC;
+		id -= 60 + itemOffset;
+	} else {
+		party._questItems[id - (82 + itemOffset)]++;
 	}
 
-	for (int idx = 0; idx < MAX_TREASURE_ITEMS; ++idx) {
-		XeenItem &item = party._treasure._weapons[idx];
-		if (!item.empty()) {
-			item._id = id;
-			item._material = material;
-			item._bonusFlags = flags;
-			party._treasure._hasItems = true;
-			break;
+	// Check for an empty slot
+	for (invIndex = 0, item = party._treasure[cat]; invIndex < MAX_TREASURE_ITEMS && !item->empty(); ++invIndex, ++item)
+		;
+
+	if (invIndex == MAX_TREASURE_ITEMS) {
+		// Treasure category entirely full. Should never happen
+		warning("Treasure category was completely filled up");
+	} else {
+		party._treasure._hasItems = true;
+
+		if (cat == CATEGORY_MISC) {
+			// Handling of misc items. Note that for them, id actually specifies the material field
+			item->_material = id;
+			item->_id = params.readByte();
+			item->_state._counter = (item->_material == 10 || item->_material == 11) ? 1 : _vm->getRandomNumber(3, 10);
+		} else {
+			// Weapons, armor, and accessories
+			item->_id = id;
+			item->_material = params.readByte();
+			item->_state = params.readByte();
 		}
 	}
 
@@ -1311,7 +1356,7 @@ bool Scripts::cmdDisplayBottomTwoLines(ParamsIterator &params) {
 	params.readByte();
 	int textId = params.readByte();
 
-	Common::String msg = Common::String::format("\r\x03c\t000\v007%s\n\n%s",
+	Common::String msg = Common::String::format("\r\x03""c\t000\v007%s\n\n%s",
 		"",
 		map._events._text[textId].c_str());
 	w.close();
@@ -1325,8 +1370,22 @@ bool Scripts::cmdDisplayBottomTwoLines(ParamsIterator &params) {
 }
 
 bool Scripts::cmdDisplayLarge(ParamsIterator &params) {
-	error("TODO: Implement event text loading");
+	Party &party = *g_vm->_party;
+	Common::String filename = Common::String::format("aaze2%03u.txt", party._mazeId);
+	uint offset = params.readByte();
 
+	// Get the text data for the current maze
+	File f(filename);
+	char *data = new char[f.size()];
+	f.read(data, f.size());
+	f.close();
+
+	// Get the message at the specified offset
+	_message = Common::String(data + offset);
+	delete[] data;
+
+	// Display the message
+	_windowIndex = 11;
 	display(true, 0);
 	return true;
 }
@@ -1353,11 +1412,13 @@ bool Scripts::cmdFallToMap(ParamsIterator &params) {
 	party._fallDamage = params.readByte();
 	intf.startFalling(true);
 
-	_lineNum = -1;
+	_lineNum = SCRIPT_RESET;
 	return false;
 }
 
 bool Scripts::cmdDisplayMain(ParamsIterator &params) {
+	_windowIndex = 11;
+
 	display(false, 0);
 	return true;
 }
@@ -1382,115 +1443,159 @@ bool Scripts::cmdCutsceneEndDarkside(ParamsIterator &params) {
 	Party &party = *_vm->_party;
 	_vm->_saves->_wonDarkSide = true;
 	party._questItems[53] = 1;
-	party._darkSideEnd = true;
+	party._darkSideCompleted = true;
 	party._mazeId = 29;
 	party._mazeDirection = DIR_NORTH;
 	party._mazePosition = Common::Point(25, 21);
 
-	doEndGame2();
+	g_vm->_gameWon[1] = true;
+	g_vm->_finalScore = party.getScore();
+	g_vm->saveSettings();
+
+	doDarkSideEnding();
 	return false;
 }
 
 bool Scripts::cmdCutsceneEndWorld(ParamsIterator &params) {
-	_vm->_saves->_wonWorld = true;
-	_vm->_party->_worldEnd = true;
+	Party &party = *g_vm->_party;
 
-	doWorldEnd();
+	g_vm->_gameWon[2] = true;
+	g_vm->_finalScore = party.getScore();
+	g_vm->saveSettings();
+
+	_vm->_saves->_wonWorld = true;
+	_vm->_party->_worldCompleted = true;
+
+	doWorldEnding();
 	return false;
 }
 
 bool Scripts::cmdFlipWorld(ParamsIterator &params) {
-	_vm->_map->_loadDarkSide = params.readByte() != 0;
+	_vm->_map->_loadCcNum = params.readByte();
 	return true;
 }
 
-bool Scripts::cmdPlayCD(ParamsIterator &params) { error("TODO"); }
+bool Scripts::cmdPlayCD(ParamsIterator &params) {
+	int trackNum = params.readByte();
+	int start = params.readUint16LE();
+	int finish = params.readUint16LE();
+	debugC(3, kDebugScripts, "cmdPlayCD Track=%d start=%d finish=%d", trackNum, start, finish);
 
-void Scripts::doEndGame() {
-	doEnding("ENDGAME", 0);
+	if (_vm->_files->_ccNum && trackNum < 31)
+		trackNum += 30;
+	assert(trackNum <= 60);
+
+	start = convertCDTime(start);
+	finish = convertCDTime(finish);
+
+	g_system->getAudioCDManager()->play(trackNum, 1, start, finish - start, false, Audio::Mixer::kSpeechSoundType);
+	return true;
 }
 
-void Scripts::doEndGame2() {
-	Party &party = *_vm->_party;
-	int v2 = 0;
+#define CD_FRAME_RATE 75
+uint Scripts::convertCDTime(uint srcTime) {
+	// Times are encoded as MMSSCC - MM=Minutes, SS=Seconds, CC=Centiseconds (1/100th second)
+	uint mins = srcTime / 10000;
+	uint csec = srcTime % 10000;
+	return (mins * 6000 + csec) * CD_FRAME_RATE / 100;
+}
 
+void Scripts::doCloudsEnding() {
+	g_vm->_party->_cloudsCompleted = true;
+	doEnding("ENDGAME");
+
+	g_vm->_mode = MODE_INTERACTIVE;
+	g_vm->_saves->saveGame();
+
+	g_vm->_gameMode = GMODE_MENU;
+	g_vm->_mode = MODE_STARTUP;
+}
+
+void Scripts::doDarkSideEnding() {
+	g_vm->_party->_darkSideCompleted = true;
+	doEnding("ENDGAME2");
+}
+
+void Scripts::doWorldEnding() {
+	doEnding("WORLDEND");
+}
+
+void Scripts::doEnding(const Common::String &endStr) {
+	Party &party = *_vm->_party;
+
+	int state = 0;
 	for (uint idx = 0; idx < party._activeParty.size(); ++idx) {
 		Character &player = party._activeParty[idx];
-		if (player.hasAward(77)) {
-			v2 = 2;
+		if (player.hasAward(SUPER_GOOBER)) {
+			state = 2;
 			break;
-		}
-		else if (player.hasAward(76)) {
-			v2 = 1;
+		} else if (player.hasAward(GOOBER)) {
+			state = 1;
 			break;
 		}
 	}
 
-	doEnding("ENDGAME2", v2);
-}
+	// Get the current total score
+	uint finalScore = party.getScore();
 
-void Scripts::doWorldEnd() {
-	error("TODO: doWorldEnd");
-}
-
-void Scripts::doEnding(const Common::String &endStr, int v2) {
-	_vm->_saves->saveChars();
-
-	error("TODO: doEnding");
+	g_vm->_mode = MODE_STARTUP;
+	g_vm->showCutscene(endStr, state, finalScore);
+	g_vm->_gameMode = GMODE_MENU;
 }
 
 bool Scripts::ifProc(int action, uint32 val, int mode, int charIndex) {
+	FileManager &files = *_vm->_files;
 	Party &party = *_vm->_party;
-	Character &ps = party._activeParty[charIndex];
+	Character *ps = (charIndex == -1) ? nullptr : &party._activeParty[charIndex];
 	uint v = 0;
 
 	switch (action) {
 	case 3:
 		// Player sex
-		v = (uint)ps._sex;
+		v = (uint)ps->_sex;
 		break;
 	case 4:
 		// Player race
-		v = (uint)ps._race;
+		v = (uint)ps->_race;
 		break;
 	case 5:
 		// Player class
-		v = (uint)ps._class;
+		v = (uint)ps->_class;
 		break;
 	case 8:
 		// Current health points
-		v = (uint)ps._currentHp;
+		v = (uint)ps->_currentHp;
 		break;
 	case 9:
 		// Current spell points
-		v = (uint)ps._currentSp;
+		v = (uint)ps->_currentSp;
 		break;
 	case 10:
 		// Get armor class
-		v = (uint)ps.getArmorClass(false);
+		v = (uint)ps->getArmorClass(false);
 		break;
 	case 11:
 		// Level bonus (extra beyond base)
-		v = ps._level._temporary;
+		v = ps->_level._temporary;
 		break;
 	case 12:
 		// Current age, including unnatural aging
-		v = ps.getAge(false);
+		v = ps->getAge(false);
 		break;
 	case 13:
 		assert(val < 18);
-		if (ps._skills[val])
+		if (ps->_skills[val])
 			v = val;
 		break;
 	case 15:
 		// Award
-		assert(val < 128);
-		if (ps.hasAward(val))
+		assert(val < AWARDS_TOTAL);
+		if (ps->hasAward(val))
 			v = val;
 		break;
 	case 16:
 		// Experience
-		v = ps._experience;
+		v = ps->_experience;
 		break;
 	case 17:
 		// Party poison resistence
@@ -1498,38 +1603,19 @@ bool Scripts::ifProc(int action, uint32 val, int mode, int charIndex) {
 		break;
 	case 18:
 		// Condition
-		assert(val < 16);
-		if (!ps._conditions[val] && !(val & 0x10))
-			v = val;
+		assert(val <= NO_CONDITION);
+		v = (ps->_conditions[val] || val == NO_CONDITION) ? val : 0xffffffff;
 		break;
 	case 19: {
 		// Can player cast a given spell
-
-		// Get the type of character
-		int category;
-		switch (ps._class) {
-		case CLASS_KNIGHT:
-		case CLASS_ARCHER:
-			category = 0;
-			break;
-		case CLASS_PALADIN:
-		case CLASS_CLERIC:
-			category = 1;
-			break;
-		case CLASS_BARBARIAN:
-		case CLASS_DRUID:
-			category = 2;
-			break;
-		default:
-			category = 0;
-			break;
-		}
+		SpellsCategory category = ps->getSpellsCategory();
+		assert(category != SPELLCAT_INVALID);
 
 		// Check if the character class can cast the particular spell
-		for (int idx = 0; idx < 39; ++idx) {
-			if (Res.SPELLS_ALLOWED[category][idx] == val) {
+		for (int idx = 0; idx < SPELLS_PER_CLASS; ++idx) {
+			if (Res.SPELLS_ALLOWED[category][idx] == (int)val) {
 				// Can cast it. Check if the player has it in their spellbook
-				if (ps._spells[idx])
+				if (ps->_spells[idx])
 					v = val;
 				break;
 			}
@@ -1537,42 +1623,44 @@ bool Scripts::ifProc(int action, uint32 val, int mode, int charIndex) {
 		break;
 	}
 	case 20:
-		if (_vm->_files->_isDarkCc)
+		assert(val < 256);
+		if (files._ccNum && _vm->getGameID() != GType_Swords)
 			val += 256;
-		assert(val < 512);
 		v = party._gameFlags[val / 256][val % 256] ? val : 0xffffffff;
 		break;
-	case 21:
+	case 21: {
 		// Scans inventories for given item number
+		uint itemOffset = _vm->getGameID() == GType_Swords ? 6 : 0;
 		v = 0xFFFFFFFF;
-		if (val < 82) {
-			for (int idx = 0; idx < 9; ++idx) {
-				if (val == 35) {
-					if (ps._weapons[idx]._id == val) {
+		if (val < (82 + itemOffset)) {
+			for (int idx = 0; idx < INV_ITEMS_TOTAL; ++idx) {
+				if (val < (35 + itemOffset)) {
+					if (ps->_weapons[idx]._id == val) {
 						v = val;
 						break;
 					}
-				} else if (val < 49) {
-					if (ps._armor[idx]._id == (val - 35)) {
+				} else if (val < (49 + itemOffset)) {
+					if (ps->_armor[idx]._id == (val - 35)) {
 						v = val;
 						break;
 					}
-				} else if (val < 60) {
-					if (ps._accessories[idx]._id == (val - 49)) {
+				} else if (val < (60 + itemOffset)) {
+					if (ps->_accessories[idx]._id == (val - (49 + itemOffset))) {
 						v = val;
 						break;
 					}
 				} else {
-					if (ps._misc[idx]._id == (val - 60)) {
+					if (ps->_misc[idx]._id == (val - (60 + itemOffset))) {
 						v = val;
 						break;
 					}
 				}
 			}
-		} else {
-			error("Invalid id");
+		} else if (party._questItems[val - (82 + itemOffset)]) {
+			v = val;
 		}
 		break;
+	}
 	case 25:
 		// Returns number of minutes elapsed in the day (0-1440)
 		v = party._minutes;
@@ -1586,32 +1674,32 @@ bool Scripts::ifProc(int action, uint32 val, int mode, int charIndex) {
 		v = party._gems;
 		break;
 	case 37:
-		// Might bonus (extra beond base)
-		v = ps._might._temporary;
+		// Might bonus (extra beyond base)
+		v = ps->_might._temporary;
 		break;
 	case 38:
 		// Intellect bonus (extra beyond base)
-		v = ps._intellect._temporary;
+		v = ps->_intellect._temporary;
 		break;
 	case 39:
 		// Personality bonus (extra beyond base)
-		v = ps._personality._temporary;
+		v = ps->_personality._temporary;
 		break;
 	case 40:
 		// Endurance bonus (extra beyond base)
-		v = ps._endurance._temporary;
+		v = ps->_endurance._temporary;
 		break;
 	case 41:
 		// Speed bonus (extra beyond base)
-		v = ps._speed._temporary;
+		v = ps->_speed._temporary;
 		break;
 	case 42:
 		// Accuracy bonus (extra beyond base)
-		v = ps._accuracy._temporary;
+		v = ps->_accuracy._temporary;
 		break;
 	case 43:
 		// Luck bonus (extra beyond base)
-		v = ps._luck._temporary;
+		v = ps->_luck._temporary;
 		break;
 	case 44:
 		v = YesNo::show(_vm, val);
@@ -1619,83 +1707,83 @@ bool Scripts::ifProc(int action, uint32 val, int mode, int charIndex) {
 		break;
 	case 45:
 		// Might base (before bonus)
-		v = ps._might._permanent;
+		v = ps->_might._permanent;
 		break;
 	case 46:
 		// Intellect base (before bonus)
-		v = ps._intellect._permanent;
+		v = ps->_intellect._permanent;
 		break;
 	case 47:
 		// Personality base (before bonus)
-		v = ps._personality._permanent;
+		v = ps->_personality._permanent;
 		break;
 	case 48:
 		// Endurance base (before bonus)
-		v = ps._endurance._permanent;
+		v = ps->_endurance._permanent;
 		break;
 	case 49:
 		// Speed base (before bonus)
-		v = ps._speed._permanent;
+		v = ps->_speed._permanent;
 		break;
 	case 50:
 		// Accuracy base (before bonus)
-		v = ps._accuracy._permanent;
+		v = ps->_accuracy._permanent;
 		break;
 	case 51:
 		// Luck base (before bonus)
-		v = ps._luck._permanent;
+		v = ps->_luck._permanent;
 		break;
 	case 52:
 		// Fire resistence (before bonus)
-		v = ps._fireResistence._permanent;
+		v = ps->_fireResistence._permanent;
 		break;
 	case 53:
 		// Elecricity resistence (before bonus)
-		v = ps._electricityResistence._permanent;
+		v = ps->_electricityResistence._permanent;
 		break;
 	case 54:
 		// Cold resistence (before bonus)
-		v = ps._coldResistence._permanent;
+		v = ps->_coldResistence._permanent;
 		break;
 	case 55:
 		// Poison resistence (before bonus)
-		v = ps._poisonResistence._permanent;
+		v = ps->_poisonResistence._permanent;
 		break;
 	case 56:
 		// Energy reistence (before bonus)
-		v = ps._energyResistence._permanent;
+		v = ps->_energyResistence._permanent;
 		break;
 	case 57:
 		// Energy resistence (before bonus)
-		v = ps._magicResistence._permanent;
+		v = ps->_magicResistence._permanent;
 		break;
 	case 58:
 		// Fire resistence (extra beyond base)
-		v = ps._fireResistence._temporary;
+		v = ps->_fireResistence._temporary;
 		break;
 	case 59:
 		// Electricity resistence (extra beyond base)
-		v = ps._electricityResistence._temporary;
+		v = ps->_electricityResistence._temporary;
 		break;
 	case 60:
 		// Cold resistence (extra beyond base)
-		v = ps._coldResistence._temporary;
+		v = ps->_coldResistence._temporary;
 		break;
 	case 61:
 		// Poison resistence (extra beyod base)
-		v = ps._poisonResistence._temporary;
+		v = ps->_poisonResistence._temporary;
 		break;
 	case 62:
 		// Energy resistence (extra beyond base)
-		v = ps._energyResistence._temporary;
+		v = ps->_energyResistence._temporary;
 		break;
 	case 63:
 		// Magic resistence (extra beyond base)
-		v = ps._magicResistence._temporary;
+		v = ps->_magicResistence._temporary;
 		break;
 	case 64:
 		// Level (before bonus)
-		v = ps._level._permanent;
+		v = ps->_level._permanent;
 		break;
 	case 65:
 		// Total party food
@@ -1726,19 +1814,19 @@ bool Scripts::ifProc(int action, uint32 val, int mode, int charIndex) {
 		break;
 	case 77:
 		// Armor class (extra beyond base)
-		v = ps._ACTemp;
+		v = ps->_ACTemp;
 		break;
 	case 78:
-		// Test whether current Hp is equal to or exceeds the max HP
-		v = ps._currentHp >= ps.getMaxHP() ? 1 : 0;
+		// Test whether current Hp exceeds max HP or not
+		v = ps->_currentHp <= ps->getMaxHP() ? 1 : 0;
 		break;
 	case 79:
 		// Test for Wizard Eye being active
 		v = party._wizardEyeActive ? 1 : 0;
 		break;
 	case 81:
-		// Test whether current Sp is equal to or exceeds the max SP
-		v = ps._currentSp >= ps.getMaxSP() ? 1 : 0;
+		// Test whether current Sp exceeds the max SP or not
+		v = ps->_currentSp <= ps->getMaxSP() ? 1 : 0;
 		break;
 	case 84:
 		// Current facing direction
@@ -1756,7 +1844,7 @@ bool Scripts::ifProc(int action, uint32 val, int mode, int charIndex) {
 	case 91:
 	case 92:
 		// Get a player stat
-		v = ps.getStat((Attribute)(action - 86), 0);
+		v = ps->getStat((Attribute)(action - 86), 0);
 		break;
 	case 93:
 		// Current day of the week (10 days per week)
@@ -1772,7 +1860,7 @@ bool Scripts::ifProc(int action, uint32 val, int mode, int charIndex) {
 		break;
 	case 102:
 		// Thievery skill
-		v = ps.getThievery();
+		v = ps->getThievery();
 		break;
 	case 103:
 		// Get value of world flag
@@ -1780,7 +1868,7 @@ bool Scripts::ifProc(int action, uint32 val, int mode, int charIndex) {
 		break;
 	case 104:
 		// Get value of quest flag
-		v = party._questFlags[_vm->_files->_isDarkCc][val] ? val : 0xffffffff;
+		v = party._questFlags[(_vm->getGameID() == GType_Swords ? 0 : files._ccNum * 30) + val] ? val : 0xffffffff;
 		break;
 	case 105:
 		// Test number of Megacredits in party. Only used by King's Engineer in Castle Burlock
@@ -1788,7 +1876,7 @@ bool Scripts::ifProc(int action, uint32 val, int mode, int charIndex) {
 		break;
 	case 107:
 		// Get value of character flag
-		error("Unused");
+		v = party._characterFlags[ps->_rosterId][val] ? val : 0xffffffff;
 		break;
 	default:
 		break;
@@ -1811,8 +1899,8 @@ bool Scripts::copyProtectionCheck() {
 	if (!ConfMan.getBool("copy_protection"))
 		return true;
 
-	// Currently not implemented
-	return true;
+	// Show the copy protection dialog
+	return CopyProtection::show(_vm);
 }
 
 void Scripts::display(bool justifyFlag, int var46) {
@@ -1833,11 +1921,18 @@ void Scripts::display(bool justifyFlag, int var46) {
 	if (!w._enabled)
 		w.open();
 
-	while (!_vm->shouldQuit()) {
-		_displayMessage = w.writeString(_displayMessage);
+	while (!_vm->shouldExit()) {
+		const char *newPos = w.writeString(_displayMessage);
 		w.update();
+
+		// Check for end of message
+		if (!newPos)
+			break;
+		_displayMessage = Common::String(newPos);
 		if (_displayMessage.empty())
 			break;
+
+		// Wait for click
 		events.clearEvents();
 
 		do {
@@ -1845,7 +1940,7 @@ void Scripts::display(bool justifyFlag, int var46) {
 			intf.draw3d(true);
 
 			events.wait(1);
-		} while (!_vm->shouldQuit() && !events.isKeyMousePressed());
+		} while (!_vm->shouldExit() && !events.isKeyMousePressed());
 
 		w.writeString(justifyFlag ? "\r" : "\r\x3""c");
 	}

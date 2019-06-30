@@ -131,9 +131,6 @@ public:
 				if (in) {
 					if (TsAGE::Saver::readSavegameHeader(in, header)) {
 						saveList.push_back(SaveStateDescriptor(slot, header._saveName));
-
-						header._thumbnail->free();
-						delete header._thumbnail;
 					}
 
 					delete in;
@@ -161,7 +158,11 @@ public:
 
 		if (f) {
 			TsAGE::tSageSavegameHeader header;
-			TsAGE::Saver::readSavegameHeader(f, header);
+			if (!TsAGE::Saver::readSavegameHeader(f, header, false)) {
+				delete f;
+				return SaveStateDescriptor();
+			}
+
 			delete f;
 
 			// Create the return descriptor

@@ -6,8 +6,13 @@ RMEnsure SharedUnixLibrary 1.14 Error ScummVM requires SharedUnixLibrary 1.14 or
 RMEnsure DigitalRenderer 0.56 RMLoad System:Modules.DRenderer
 RMEnsure DigitalRenderer 0.56 Error ScummVM requires DigitalRenderer 0.56 or later. This can be downloaded from https://www.riscos.info/packages/LibraryDetails.html#DRenderer
 
-Set ScummVM$stdout ><Choices$Write>.ScummVM.stdout 2><Choices$Write>.ScummVM.stderr
-If "<Wimp$State>"="commands" Then Unset ScummVM$stdout Else CDir <Choices$Write>.ScummVM
+| If running from the desktop, redirect stdout and stderr to a file.
+| This shouldn't happen when running from the command line, so that commands like "<ScummVM$Dir> --help" still work as expected.
+Set Alias$Run_ScummVM Run <ScummVM$Dir>.scummvm %%*0 ><Choices$Write>.ScummVM.stdout 2><Choices$Write>.ScummVM.stderr
+If "<Wimp$State>"="commands" Then Set Alias$Run_ScummVM Run <ScummVM$Dir>.scummvm %%*0
+CDir <Choices$Write>.ScummVM
 
 |WimpSlot
-Do Run <ScummVM$Dir>.scummvm %*0 <ScummVM$stdout>
+Run_ScummVM %*0
+
+Unset Alias$Run_ScummVM

@@ -341,7 +341,7 @@ static const char *const kEoB1WandStringsDOSEnglish[2] = {
 static const StringListProvider kEoB1WandStringsDOSEnglishProvider = { ARRAYSIZE(kEoB1WandStringsDOSEnglish), kEoB1WandStringsDOSEnglish };
 
 static const char *const kEoB1ItemMisuseStringsDOSEnglish[3] = {
-	" can not use this item.\r",
+	"%s can not use this item.\r",
 	"This item automatically used when worn.\r",
 	"This item is not used in this way.\r"
 };
@@ -817,6 +817,13 @@ static const char *const kEoB1MagicStrings8DOSEnglish[3] = {
 
 static const StringListProvider kEoB1MagicStrings8DOSEnglishProvider = { ARRAYSIZE(kEoB1MagicStrings8DOSEnglish), kEoB1MagicStrings8DOSEnglish };
 
+/*
+static const char *const kEoB1MagicStrings9DOSEnglish[1] = {
+	"%s is already protected by stoneskin.\r"
+};
+
+static const StringListProvider kEoB1MagicStrings9DOSEnglishProvider = { ARRAYSIZE(kEoB1MagicStrings9DOSEnglish), kEoB1MagicStrings9DOSEnglish };
+*/
 static const byte kEoB1ManDefDOSEnglish[120] = {
 	0x09, 0x0A, 0x02, 0x00, 0x09, 0x04, 0x03, 0x00,
 	0x09, 0x06, 0x06, 0x00, 0x09, 0x03, 0x03, 0x00,

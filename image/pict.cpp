@@ -75,6 +75,7 @@ void PICTDecoder::setupOpcodesCommon() {
 
 void PICTDecoder::setupOpcodesNormal() {
 	setupOpcodesCommon();
+	OPCODE(0x0090, on_bitsRect, "BitsRect");
 	OPCODE(0x0098, on_packBitsRect, "PackBitsRect");
 	OPCODE(0x009A, on_directBitsRect, "DirectBitsRect");
 	OPCODE(0x8200, on_compressedQuickTime, "CompressedQuickTime");
@@ -163,6 +164,11 @@ void PICTDecoder::o_headerOp(Common::SeekableReadStream &stream) {
 	origResRect.bottom = stream.readUint16BE();
 	origResRect.right = stream.readUint16BE();
 	stream.readUint32BE(); // Reserved
+}
+
+void PICTDecoder::on_bitsRect(Common::SeekableReadStream &stream) {
+	// Copy unpacked data with clipped rectangle (8bpp or lower)
+	unpackBitsRect(stream, true);
 }
 
 void PICTDecoder::on_packBitsRect(Common::SeekableReadStream &stream) {
@@ -344,13 +350,25 @@ void PICTDecoder::unpackBitsRect(Common::SeekableReadStream &stream, bool withPa
 
 	// Read in amount of data per row
 	for (uint16 i = 0; i < packBitsData.pixMap.bounds.height(); i++) {
-		// NOTE: Compression 0 is "default". The format in SCI games is packed when 0.
-		// In the future, we may need to have something to set the  "default" packing
+		// NOTE: Compression 0 is "default". The format in SCI games is packed when 0
+		// unless rowBytes is less than 8 in which case the pict can't be packed,
+		// such as the shovel inventory icon in FPFP Mac. (bug #7059)
+		// In the future, we may need to have something to set the "default" packing
 		// format, but this is good for now.
 
 		if (packBitsData.pixMap.packType == 1 || packBitsData.pixMap.rowBytes < 8) { // Unpacked, Pad-Byte (on 24-bit)
-			// TODO: Finish this. Hasn't been needed (yet).
-			error("Unpacked DirectBitsRect data (padded)");
+			// only support 1 bpp for now as there is currently only one known
+			//  SCI pict that requires any unpacked support.
+			if (bytesPerPixel == 1 && packBitsData.pixMap.pixelSize == 8) {
+				stream.read(&buffer[i * width], width);
+				if (width < packBitsData.pixMap.rowBytes) {
+					// skip padding and/or clipped bytes
+					stream.seek(packBitsData.pixMap.rowBytes - width, SEEK_CUR);
+				}
+			} else {
+				// TODO: Finish this. Hasn't been needed (yet).
+				error("Unpacked DirectBitsRect data (padded) with bytes per pixel: %d and pixel size: %d", bytesPerPixel, packBitsData.pixMap.pixelSize);
+			}
 		} else if (packBitsData.pixMap.packType == 2) { // Unpacked, No Pad-Byte (on 24-bit)
 			// TODO: Finish this. Hasn't been needed (yet).
 			error("Unpacked DirectBitsRect data (not padded)");
@@ -577,9 +595,14 @@ void PICTDecoder::decodeCompressedQuickTime(Common::SeekableReadStream &stream) 
 		_outputSurface = new Graphics::Surface();
 		_outputSurface->create(_imageRect.width(), _imageRect.height(), surface->format);
 	}
+	assert(_outputSurface->format == surface->format);
 
-	for (uint16 y = 0; y < surface->h; y++)
-		memcpy(_outputSurface->getBasePtr(0 + xOffset, y + yOffset), surface->getBasePtr(0, y), surface->w * surface->format.bytesPerPixel);
+	Common::Rect outputRect(surface->w, surface->h);
+	outputRect.translate(xOffset, yOffset);
+	outputRect.clip(_imageRect);
+
+	for (uint16 y = 0; y < outputRect.height(); y++)
+		memcpy(_outputSurface->getBasePtr(outputRect.left, y + outputRect.top), surface->getBasePtr(0, y), outputRect.width() * surface->format.bytesPerPixel);
 
 	stream.seek(startPos + dataSize);
 	delete codec;

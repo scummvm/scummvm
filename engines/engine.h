@@ -51,6 +51,7 @@ class Dialog;
  * Initializes graphics and shows error message.
  */
 void GUIErrorMessage(const Common::String &msg);
+void GUIErrorMessageFormat(const char *fmt, ...) GCC_PRINTF(1, 2);
 
 
 class Engine {

@@ -40,8 +40,13 @@ extern SludgeEngine *g_sludge;
 
 class CursorManager;
 class EventManager;
+class FatalMsgManager;
+class FloorManager;
 class GraphicsManager;
+class PeopleManager;
+class RegionManager;
 class SoundManager;
+class SpeechManager;
 class TextManager;
 
 class SludgeConsole;
@@ -70,9 +75,6 @@ public:
 	Common::String launchNext;
 	Common::String loadNow;
 	Common::String gamePath;
-	Common::String bundleFolder;
-	Common::String fatalMessage;
-	Common::String fatalInfo;
 
 	// timer
 	Timer _timer;
@@ -86,6 +88,11 @@ public:
 	SoundManager *_soundMan;
 	TextManager *_txtMan;
 	CursorManager *_cursorMan;
+	SpeechManager *_speechMan;
+	RegionManager *_regionMan;
+	PeopleManager *_peopleMan;
+	FloorManager *_floorMan;
+	FatalMsgManager *_fatalMan;
 
 	SludgeEngine(OSystem *syst, const SludgeGameDescription *gameDesc);
 	virtual ~SludgeEngine();

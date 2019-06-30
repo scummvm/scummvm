@@ -589,9 +589,8 @@ void GnapEngine::writeSavegameHeader(Common::OutSaveFile *out, GnapSavegameHeade
 	out->writeSint16LE(td.tm_min);
 }
 
-bool GnapEngine::readSavegameHeader(Common::InSaveFile *in, GnapSavegameHeader &header) {
+WARN_UNUSED_RESULT bool GnapEngine::readSavegameHeader(Common::InSaveFile *in, GnapSavegameHeader &header, bool skipThumbnail) {
 	char saveIdentBuffer[SAVEGAME_STR_SIZE + 1];
-	header._thumbnail = nullptr;
 
 	// Validate the header Id
 	in->read(saveIdentBuffer, SAVEGAME_STR_SIZE + 1);
@@ -612,9 +611,9 @@ bool GnapEngine::readSavegameHeader(Common::InSaveFile *in, GnapSavegameHeader &
 	if (header._version == 1)
 		header._thumbnail = nullptr;
 	else {
-		header._thumbnail = Graphics::loadThumbnail(*in);
-		if (!header._thumbnail)
+		if (!Graphics::loadThumbnail(*in, header._thumbnail, skipThumbnail)) {
 			return false;
+		}
 	}
 
 	// Read in save date/time

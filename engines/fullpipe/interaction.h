@@ -70,11 +70,10 @@ public:
 
  private:
 	InteractionList _interactions;
-	int16 _field_20;
 	static bool compareInteractions(const Interaction *i1, const Interaction *i2);
 
  public:
-	InteractionController() : _field_20(0), _flag24(true) {}
+	InteractionController() : _flag24(true) {}
 	virtual ~InteractionController();
 
 	virtual bool load(MfcArchive &file);

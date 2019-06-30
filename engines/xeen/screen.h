@@ -93,17 +93,33 @@ public:
 	 */
 	void vertMerge(int yp);
 
-	void draw(void *data = nullptr);
-
+	/**
+	 * Fades in the screen
+	 */
 	void fadeIn(int step = 4);
 
+	/**
+	 * Fades out the screen
+	 */
 	void fadeOut(int step = 4);
 
+	/**
+	 * Saves a copy of the current screen into a specified slot
+	 */
 	void saveBackground(int slot = 1);
 
+	/**
+	 * Restores a previously saved screen
+	 */
 	void restoreBackground(int slot = 1);
 
-	void frameWindow(uint bgType);
+	/**
+	 * Draws the scroll in the background
+	 * @param rollUp		If true, rolls up the scroll. If false, unrolls.
+	 * @param fadeInFlag	If true, does an initial fade in
+	 * @returns		True if key or mouse pressed
+	 */
+	bool doScroll(bool rollUp, bool fadeInFlag);
 };
 
 } // End of namespace Xeen

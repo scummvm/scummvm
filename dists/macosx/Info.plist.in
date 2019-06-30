@@ -6,10 +6,24 @@
 	<string>English</string>
 	<key>CFBundleDisplayName</key>
 	<string>ScummVM</string>
+	<key>CFBundleDocumentTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeName</key>
+			<string>All Files</string>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>public.data</string>
+				<string>public.content</string>
+			</array>
+		</dict>
+	</array>
 	<key>CFBundleExecutable</key>
 	<string>scummvm</string>
 	<key>CFBundleGetInfoString</key>
-	<string>@VERSION@, Copyright 2001-2017 The ScummVM Team</string>
+	<string>@VERSION@, Copyright 2001-2019 The ScummVM Team</string>
 	<key>CFBundleIconFile</key>
 	<string>scummvm.icns</string>
 	<key>CFBundleIdentifier</key>
@@ -49,7 +63,7 @@
 	<key>CFBundleVersion</key>
 	<string>@VERSION@</string>
 	<key>NSHumanReadableCopyright</key>
-	<string>Copyright 2001-2017 The ScummVM Team</string>
+	<string>Copyright 2001-2019 The ScummVM Team</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
 	<key>SUFeedURL</key>

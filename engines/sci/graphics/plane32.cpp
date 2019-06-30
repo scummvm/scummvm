@@ -44,8 +44,8 @@ void DrawList::add(ScreenItem *screenItem, const Common::Rect &rect) {
 
 #pragma mark -
 #pragma mark Plane
-uint16 Plane::_nextObjectId = 20000;
-uint32 Plane::_nextCreationId = 0;
+uint16 Plane::_nextObjectId; // Will be initialized in Plane::init()
+uint32 Plane::_nextCreationId; // ditto
 
 Plane::Plane(const Common::Rect &gameRect, PlanePictureCodes pictureId) :
 _creationId(_nextCreationId++),
@@ -132,7 +132,7 @@ void Plane::operator=(const Plane &other) {
 }
 
 void Plane::init() {
-	_nextObjectId = 20000;
+	_nextObjectId = g_sci->_features->detectPlaneIdBase();
 	_nextCreationId = 0;
 }
 

@@ -58,7 +58,7 @@ static const CompressedSoundFile compressedSoundFilesTable[] = {
 #ifdef USE_MAD
 	{ "TUCKER.SO3", Audio::makeMP3Stream },
 #endif
-	{ 0, 0 }
+	{ nullptr,      nullptr }
 };
 
 static void decodeData(uint8 *data, int dataSize) {
@@ -166,7 +166,7 @@ public:
 uint8 *TuckerEngine::loadFile(const char *fname, uint8 *p) {
 	Common::String filename;
 	filename = fname;
-	if (_gameLang == Common::DE_DEU) {
+	if (_gameLang == Common::DE_DEU || _gameLang == Common::RU_RUS) {
 		if (filename == "bgtext.c") {
 			filename = "bgtextgr.c";
 		} else if (filename == "charname.c") {
@@ -195,7 +195,7 @@ uint8 *TuckerEngine::loadFile(const char *fname, uint8 *p) {
 	Common::File f;
 	if (!f.open(filename)) {
 		warning("Unable to open '%s'", filename.c_str());
-		return 0;
+		return nullptr;
 	}
 	const int sz = f.size();
 	if (!p) {
@@ -234,7 +234,7 @@ void CompressedSound::closeFile() {
 
 Audio::RewindableAudioStream *CompressedSound::load(CompressedSoundType type, int num) {
 	if (_compressedSoundType < 0) {
-		return 0;
+		return nullptr;
 	}
 	int offset = 0;
 	switch (type) {
@@ -254,9 +254,9 @@ Audio::RewindableAudioStream *CompressedSound::load(CompressedSoundType type, in
 		break;
 	}
 	if (offset == 0) {
-		return 0;
+		return nullptr;
 	}
-	Audio::SeekableAudioStream *stream = 0;
+	Audio::SeekableAudioStream *stream = nullptr;
 	_fCompressedSound.seek(offset);
 	int dirOffset = _fCompressedSound.readUint32LE();
 	int dirSize = _fCompressedSound.readUint32LE();
@@ -377,17 +377,17 @@ void TuckerEngine::loadCharSizeDta() {
 }
 
 void TuckerEngine::loadPanel() {
-	loadImage((_panelNum == 0) ? "panel1.pcx" : "panel2.pcx", _panelGfxBuf, 0);
+	loadImage((_panelStyle == kPanelStyleVerbs) ? "panel1.pcx" : "panel2.pcx", _panelGfxBuf, 0);
 }
 
-void TuckerEngine::loadBudSpr(int startOffset) {
+void TuckerEngine::loadBudSpr() {
 	int framesCount[20];
 	memset(framesCount, 0, sizeof(framesCount));
-	int endOffset = loadCTable01(0, startOffset, framesCount);
-	loadCTable02(0);
+	int endOffset = loadCTable01(framesCount);
+	loadCTable02();
 	int frame = 0;
 	int spriteOffset = 0;
-	for (int i = startOffset; i < endOffset; ++i) {
+	for (int i = 0; i < endOffset; ++i) {
 		if (framesCount[frame] == i) {
 			Common::String filename;
 			switch (_flagsTable[137]) {
@@ -414,12 +414,12 @@ void TuckerEngine::loadBudSpr(int startOffset) {
 	}
 }
 
-int TuckerEngine::loadCTable01(int index, int firstSpriteNum, int *framesCount) {
+int TuckerEngine::loadCTable01(int *framesCount) {
 	loadFile("ctable01.c", _loadTempBuf);
 	DataTokenizer t(_loadTempBuf,  _fileLoadSize);
-	int lastSpriteNum = firstSpriteNum;
+	int lastSpriteNum = 0;
 	int count = 0;
-	if (t.findIndex(index)) {
+	if (t.findIndex(0)) {
 		while (t.findNextToken(kDataTokenDw)) {
 			const int x = t.getNextInteger();
 			if (x < 0) {
@@ -430,10 +430,20 @@ int TuckerEngine::loadCTable01(int index, int firstSpriteNum, int *framesCount) 
 				continue;
 			}
 			const int y = t.getNextInteger();
-			SpriteFrame *c = &_spriteFramesTable[lastSpriteNum++];
+			SpriteFrame *c = &_spriteFramesTable[lastSpriteNum];
 			c->_sourceOffset = y * 320 + x;
 			c->_xSize = t.getNextInteger();
 			c->_ySize = t.getNextInteger();
+
+			// WORKAROUND: original game glitch
+			// The sprite grab animation table incorrectly states a height of 24
+			// pixels for sprite number 57 while the correct size is 54 pixels.
+			// This fixes a glitch in animation sequence 8 (the only to use sprite 57)
+			// which gets triggered when picking up the nail in front of the museum.
+			// Fixes Trac#10430
+			if (lastSpriteNum == 57)
+				c->_ySize = 54;
+
 			c->_xOffset = t.getNextInteger();
 			if (c->_xOffset > 300) {
 				c->_xOffset -= 500;
@@ -442,14 +452,14 @@ int TuckerEngine::loadCTable01(int index, int firstSpriteNum, int *framesCount) 
 			if (c->_yOffset > 300) {
 				c->_yOffset -= 500;
 			}
+			++lastSpriteNum;
 		}
 	}
 	framesCount[count] = -1;
 	return lastSpriteNum;
 }
 
-void TuckerEngine::loadCTable02(int fl) {
-	assert(fl == 0);
+void TuckerEngine::loadCTable02() {
 	int entry = 0;
 	int i = 0;
 	loadFile("ctable02.c", _loadTempBuf);
@@ -461,7 +471,7 @@ void TuckerEngine::loadCTable02(int fl) {
 		}
 		_spriteAnimationsTable[entry]._rotateFlag = t.getNextInteger();
 		int num = t.getNextInteger();
-		if (num != fl) {
+		if (num != 0) {
 			continue;
 		}
 		int start = 0;
@@ -481,36 +491,36 @@ void TuckerEngine::loadCTable02(int fl) {
 void TuckerEngine::loadLoc() {
 	Common::String filename;
 
-	int i = _locationWidthTable[_locationNum];
-	_locationHeight = (_locationNum < 73) ? 140 : 200;
-	filename = Common::String::format((i == 1) ? "loc%02d.pcx" : "loc%02da.pcx", _locationNum);
+	int i = _locationWidthTable[_location];
+	_locationHeight = (_location < kLocationJesusCutscene1) ? 140 : 200;
+	filename = Common::String::format((i == 1) ? "loc%02d.pcx" : "loc%02da.pcx", _location);
 	copyLocBitmap(filename.c_str(), 0, false);
 	Graphics::copyRect(_quadBackgroundGfxBuf, 320, _locationBackgroundGfxBuf, 640, 320, _locationHeight);
 	if (_locationHeight == 200) {
 		return;
 	}
-	filename = Common::String::format((i != 2) ? "path%02d.pcx" : "path%02da.pcx", _locationNum);
+	filename = Common::String::format((i != 2) ? "path%02d.pcx" : "path%02da.pcx", _location);
 	copyLocBitmap(filename.c_str(), 0, true);
 	if (i > 1) {
-		filename = Common::String::format("loc%02db.pcx", _locationNum);
+		filename = Common::String::format("loc%02db.pcx", _location);
 		copyLocBitmap(filename.c_str(), 320, false);
 		Graphics::copyRect(_quadBackgroundGfxBuf + 44800, 320, _locationBackgroundGfxBuf + 320, 640, 320, _locationHeight);
 		if (i == 2) {
-			filename = Common::String::format("path%02db.pcx", _locationNum);
+			filename = Common::String::format("path%02db.pcx", _location);
 			copyLocBitmap(filename.c_str(), 320, true);
 		}
 	}
 	if (i > 2) {
-		filename = Common::String::format("loc%02dc.pcx", _locationNum);
+		filename = Common::String::format("loc%02dc.pcx", _location);
 		copyLocBitmap(filename.c_str(), 0, false);
 		Graphics::copyRect(_quadBackgroundGfxBuf + 89600, 320, _locationBackgroundGfxBuf, 640, 320, 140);
 	}
-	if (_locationNum == 1) {
+	if (_location == kLocationHotelRoom) {
 		_loadLocBufPtr = _quadBackgroundGfxBuf + 89600;
 		loadImage("rochpath.pcx", _loadLocBufPtr, 0);
 	}
 	if (i > 3) {
-		filename = Common::String::format("loc%02dd.pcx", _locationNum);
+		filename = Common::String::format("loc%02dd.pcx", _location);
 		copyLocBitmap(filename.c_str(), 0, false);
 		Graphics::copyRect(_quadBackgroundGfxBuf + 134400, 320, _locationBackgroundGfxBuf + 320, 640, 320, 140);
 	}
@@ -518,45 +528,47 @@ void TuckerEngine::loadLoc() {
 }
 
 void TuckerEngine::loadObj() {
-	if (_locationNum == 99) {
+	if (_location == kLocationMap) {
 		return;
 	}
-	if (_locationNum < 24) {
-		_partNum = 1;
+	if (_location <= kLocationWarehouseCutscene) {
+		_part = kPartOne;
 		_speechSoundBaseNum = 2639;
-	} else if (_locationNum < 41 || (_locationNum > 69 && _locationNum < 73) || (_locationNum > 78 && _locationNum < 83)) {
-		_partNum = 2;
+	} else if ((                                        _location <= kLocationFarDocks)
+	        || (_location >= kLocationComputerScreen && _location <= kLocationSeedyStreetCutscene)
+	        || (_location >= kLocationElvisCutscene  && _location <= kLocationJesusCutscene2)) {
+		_part = kPartTwo;
 		_speechSoundBaseNum = 2679;
 	} else {
-		_partNum = 3;
+		_part = kPartThree;
 		_speechSoundBaseNum = 2719;
 	}
-	if (_partNum == _currentPartNum) {
+	if (_part == _currentPart) {
 		return;
 	}
-	debug(2, "loadObj() partNum %d locationNum %d", _partNum, _locationNum);
+	debug(2, "loadObj() part %d location %d", _part, _location);
 	// If a savegame is loaded from the launcher, skip the display chapter
 	if (_startSlot != -1)
 		_startSlot = -1;
 	else if ((_gameFlags & kGameFlagDemo) == 0) {
 		handleNewPartSequence();
 	}
-	_currentPartNum = _partNum;
+	_currentPart = _part;
 
 	Common::String filename;
-	filename = Common::String::format("objtxt%d.c", _partNum);
+	filename = Common::String::format("objtxt%d.c", _part);
 	free(_objTxtBuf);
-	_objTxtBuf = loadFile(filename.c_str(), 0);
-	filename = Common::String::format("pt%dtext.c", _partNum);
+	_objTxtBuf = loadFile(filename.c_str(), nullptr);
+	filename = Common::String::format("pt%dtext.c", _part);
 	free(_ptTextBuf);
-	_ptTextBuf = loadFile(filename.c_str(), 0);
+	_ptTextBuf = loadFile(filename.c_str(), nullptr);
 	_characterSpeechDataPtr = _ptTextBuf;
 	loadData();
 	loadPanObj();
 }
 
 void TuckerEngine::loadData() {
-	int objNum = _partNum * 10;
+	int objNum = _part * 10;
 	loadFile("data.c", _loadTempBuf);
 	DataTokenizer t(_loadTempBuf, _fileLoadSize);
 	_dataCount = 0;
@@ -587,7 +599,7 @@ void TuckerEngine::loadData() {
 	_dataCount = maxCount;
 	int offset = 0;
 	for (int i = 0; i < count; ++i) {
-		Common::String filename = Common::String::format("scrobj%d%d.pcx", _partNum, i);
+		Common::String filename = Common::String::format("scrobj%d%d.pcx", _part, i);
 		loadImage(filename.c_str(), _loadTempBuf, 0);
 		offset = loadDataHelper(offset, i);
 	}
@@ -605,7 +617,7 @@ int TuckerEngine::loadDataHelper(int offset, int index) {
 }
 
 void TuckerEngine::loadPanObj() {
-	Common::String filename = Common::String::format("panobjs%d.pcx", _partNum);
+	Common::String filename = Common::String::format("panobjs%d.pcx", _part);
 	loadImage(filename.c_str(), _loadTempBuf, 0);
 	int offset = 0;
 	for (int y = 0; y < 5; ++y) {
@@ -621,7 +633,7 @@ void TuckerEngine::loadData3() {
 	loadFile("data3.c", _loadTempBuf);
 	DataTokenizer t(_loadTempBuf, _fileLoadSize);
 	_locationAnimationsCount = 0;
-	if (t.findIndex(_locationNum)) {
+	if (t.findIndex(_location)) {
 		while (t.findNextToken(kDataTokenDw)) {
 			int num = t.getNextInteger();
 			if (num < 0) {
@@ -668,7 +680,7 @@ void TuckerEngine::loadData4() {
 		_displayGameHints = t.getNextInteger() != 0;
 	}
 	_locationObjectsCount = 0;
-	if (t.findIndex(_locationNum)) {
+	if (t.findIndex(_location)) {
 		while (t.findNextToken(kDataTokenDw)) {
 			int i = t.getNextInteger();
 			if (i < 0)
@@ -683,9 +695,9 @@ void TuckerEngine::loadData4() {
 			d->_standX = t.getNextInteger();
 			d->_standY = t.getNextInteger();
 			d->_textNum = t.getNextInteger();
-			d->_cursorNum = t.getNextInteger();
-			d->_locationNum = t.getNextInteger();
-			if (d->_locationNum > 0) {
+			d->_cursorStyle = (CursorStyle)t.getNextInteger();
+			d->_location = (Location)t.getNextInteger();
+			if (d->_location != kLocationNone) {
 				d->_toX = t.getNextInteger();
 				d->_toY = t.getNextInteger();
 				d->_toX2 = t.getNextInteger();
@@ -698,27 +710,19 @@ void TuckerEngine::loadData4() {
 }
 
 void TuckerEngine::loadActionFile() {
-	char filename[40];
-	if ((_gameFlags & kGameFlagDemo) != 0) {
-		strcpy(filename, "action.c");
+	assert(_part != kPartInit);
+
+	Common::String filename;
+	if (_gameFlags & kGameFlagDemo) {
+		filename = "action.c";
 	} else {
-		switch (_partNum) {
-		case 1:
-			strcpy(filename, "action1.c");
-			break;
-		case 2:
-			strcpy(filename, "action2.c");
-			break;
-		default:
-			strcpy(filename, "action3.c");
-			break;
-		}
+		filename = Common::String::format("action%d.c", _part);
 	}
-	loadFile(filename, _loadTempBuf);
+	loadFile(filename.c_str(), _loadTempBuf);
 
 	DataTokenizer t(_loadTempBuf, _fileLoadSize);
 	_actionsCount = 0;
-	if (t.findIndex(_locationNum)) {
+	if (t.findIndex(_location)) {
 		while (t.findNextToken(kDataTokenDw)) {
 			int keyA = t.getNextInteger();
 			if (keyA < 0) {
@@ -751,7 +755,7 @@ void TuckerEngine::loadCharPos() {
 	loadFile("charpos.c", _loadTempBuf);
 	DataTokenizer t(_loadTempBuf, _fileLoadSize);
 	_charPosCount = 0;
-	if (t.findIndex(_locationNum)) {
+	if (t.findIndex(_location)) {
 		while (t.findNextToken(kDataTokenDw)) {
 			const int i = t.getNextInteger();
 			if (i < 0) {
@@ -811,10 +815,10 @@ void TuckerEngine::loadCharPos() {
 
 void TuckerEngine::loadSprA02_01() {
 	unloadSprA02_01();
-	const int count = _sprA02LookupTable[_locationNum];
+	const int count = _sprA02LookupTable[_location];
 	for (int i = 1; i < count + 1; ++i) {
-		Common::String filename = Common::String::format("sprites/a%02d_%02d.spr", _locationNum, i);
-		_sprA02Table[i] = loadFile(filename.c_str(), 0);
+		Common::String filename = Common::String::format("sprites/a%02d_%02d.spr", _location, i);
+		_sprA02Table[i] = loadFile(filename.c_str(), nullptr);
 	}
 	_sprA02Table[0] = _sprA02Table[1];
 }
@@ -829,13 +833,13 @@ void TuckerEngine::unloadSprA02_01() {
 
 void TuckerEngine::loadSprC02_01() {
 	unloadSprC02_01();
-	const int count = _sprC02LookupTable[_locationNum];
+	const int count = _sprC02LookupTable[_location];
 	for (int i = 1; i < count + 1; ++i) {
-		Common::String filename = Common::String::format("sprites/c%02d_%02d.spr", _locationNum, i);
-		_sprC02Table[i] = loadFile(filename.c_str(), 0);
+		Common::String filename = Common::String::format("sprites/c%02d_%02d.spr", _location, i);
+		_sprC02Table[i] = loadFile(filename.c_str(), nullptr);
 	}
 	_sprC02Table[0] = _sprC02Table[1];
-	_spritesCount = _sprC02LookupTable2[_locationNum];
+	_spritesCount = _sprC02LookupTable2[_location];
 	for (int i = 0; i < kMaxCharacters; ++i) {
 		memset(&_spritesTable[i], 0, sizeof(Sprite));
 		_spritesTable[i]._state = -1;
@@ -854,7 +858,7 @@ void TuckerEngine::unloadSprC02_01() {
 void TuckerEngine::loadFx() {
 	loadFile("fx.c", _loadTempBuf);
 	DataTokenizer t(_loadTempBuf, _fileLoadSize);
-	if (t.findIndex(_locationNum)) {
+	if (t.findIndex(_location)) {
 		t.findNextToken(kDataTokenDw);
 		_locationSoundsCount = t.getNextInteger();
 		_currentFxSet = 0;
@@ -888,6 +892,21 @@ void TuckerEngine::loadFx() {
 				break;
 			}
 			if (s->_type == 8) {
+				// type 8 is basically a pointer to another type 6 sample
+
+				// WORKAROUND
+				// There is at least one instance (namely in location 40) where the reference
+				// is to another sample which has not yet been read in.
+				// It seems that the original doesn't properly handle this case which
+				// results in the sample not being played at all.
+				// We just ignore and hop over these.
+				if (s->_num >= i) {
+					--i;
+					continue;
+				}
+
+				assert(s->_num >= 0 && s ->_num < i);
+				s->_num  = _locationSoundsTable[s->_num]._num;
 				s->_type = 6;
 			}
 		}
@@ -910,12 +929,13 @@ void TuckerEngine::loadFx() {
 			}
 		}
 	} else {
-		error("loadFx() - Index not found for location %d", _locationNum);
+		error("loadFx() - Index not found for location %d", _location);
 	}
+
 }
 
 void TuckerEngine::loadSound(Audio::Mixer::SoundType type, int num, int volume, bool loop, Audio::SoundHandle *handle) {
-	Audio::RewindableAudioStream *stream = 0;
+	Audio::RewindableAudioStream *stream = nullptr;
 	switch (type) {
 	case Audio::Mixer::kSFXSoundType:
 		stream = _compressedSound.load(kSoundTypeFx, num);
@@ -965,15 +985,15 @@ void TuckerEngine::loadActionsTable() {
 	do {
 		if (!_csDataLoaded) {
 			DataTokenizer t(_csDataBuf, _csDataSize);
-			bool found = t.findIndex(_locationNum);
+			bool found = t.findIndex(_location);
 			assert(found);
 			for (int i = 0; i < _nextAction; ++i) {
 				found = t.findNextToken(kDataTokenDw);
 				assert(found);
 			}
 			_forceRedrawPanelItems = true;
-			_panelState = 1;
-			setCursorType(2);
+			_panelType = kPanelTypeEmpty;
+			setCursorState(kCursorStateDisabledHidden);
 			_tableInstructionsPtr = _csDataBuf + t._pos + 1;
 			_csDataLoaded = true;
 			_csDataHandled = true;
@@ -1022,7 +1042,7 @@ void TuckerEngine::loadActionsTable() {
 				_nextAction = _nextTableToLoadTable[_nextTableToLoadIndex];
 				_csDataLoaded = false;
 				 _conversationOptionsCount = 0;
-				setCursorType(2);
+				setCursorState(kCursorStateDisabledHidden);
 			}
 			break;
 		}
@@ -1034,8 +1054,8 @@ void TuckerEngine::loadActionsTable() {
 		_nextAction = 0;
 		_csDataLoaded = false;
 		_forceRedrawPanelItems = true;
-		_panelState = 0;
-		setCursorType(0);
+		_panelType = kPanelTypeNormal;
+		setCursorState(kCursorStateNormal);
 		_csDataHandled = false;
 		_actionVerbLocked = false;
 		_mouseClick = 1;

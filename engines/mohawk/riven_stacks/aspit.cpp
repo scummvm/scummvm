@@ -31,6 +31,10 @@
 
 #include "common/translation.h"
 
+#include "graphics/fonts/ttf.h"
+#include "graphics/font.h"
+#include "graphics/fontman.h"
+
 #include "gui/message.h"
 
 namespace Mohawk {
@@ -60,11 +64,80 @@ ASpit::ASpit(MohawkEngine_Riven *vm) :
 	REGISTER_COMMAND(ASpit, xaenablemenuintro);
 	REGISTER_COMMAND(ASpit, xademoquit);
 	REGISTER_COMMAND(ASpit, xaexittomain);
+
+	REGISTER_COMMAND(ASpit, xaSaveGame);
+	REGISTER_COMMAND(ASpit, xaResumeGame);
+	REGISTER_COMMAND(ASpit, xaOptions);
+	REGISTER_COMMAND(ASpit, xaNewGame);
 }
+
+struct MenuItemText {
+	int language;
+	const char *items[7];
+} static const menuItems[] = {
+	{ Common::EN_ANY, { "SETUP",      "START NEW GAME",  "START SAVED GAME",     "SAVE GAME",       "RESUME",     "OPTIONS",  "QUIT" } },
+	{ Common::DE_DEU, { "SETUP",      "SPIELEN",         "SPIELSTAND LADEN",     "SPIEL SPEICHERN", "FORTSETZEN", "OPTIONEN", "BEENDEN" } },
+	{ Common::ES_ESP, { "IMAGEN",     "IR A RIVEN",      "CARGAR JUEGO",         "GUARDAR JUEGO",   "CONTINUAR",  "OPCIONES", "SALIR" } },
+	{ Common::FR_FRA, { "CONFIG",     "NOUVELLE PARTIE", "CHARGER",              "ENREGISTRER",     "REPRENDRE",  "OPTIONS",  "QUITTER" } },
+	{ Common::IT_ITA, { "CONF.",      "GIOCA",           "CARICA GIOCO",         "SALVA IL GIOCO",  "SEGUITARE",  "OPZIONI",  "ECSI" } },
+	{ Common::RU_RUS, { "УСТАНОВКИ",  "СТАРТ",           "ПРОДОЛЖИТЬ ИГРУ",      "СОХРАНИТЬ ИГРУ",  "ПРОДОЛЖИТЬ", "ОПЦИИ",    "ВЫЙТИ" } },
+	{ Common::JA_JPN, { "セットアップ", "RIVENを演奏する",   "保存したゲームを開始する", "ゲームを保存する",  "持続する",     "オプション","やめる" } },
+	{ Common::PL_POL, { "USTAWIENIA", "GRAJ W RIVEN",    "ZAŁADUJ GRĘ",          "ZAPISZ GRĘ",      "POWRÓT",     "OPCJE",    "WYJŚCIE" } },
+	{ -1, { 0 } }
+};
 
 void ASpit::xastartupbtnhide(const ArgumentArray &args) {
 	// The original game hides the start/setup buttons depending on an ini entry.
 	// It's safe to ignore this command.
+
+	if (!(_vm->getFeatures() & GF_25TH))
+		return;
+
+	int lang = -1;
+	for (int i = 0; menuItems[i].language != -1; i++) {
+		if (menuItems[i].language == _vm->getLanguage()) {
+			lang = i;
+			break;
+		}
+	}
+
+	if (lang == -1) {
+		warning("Unsupported menu language, falling back to English");
+		lang = 0;
+	}
+
+	struct MenuItem {
+		uint16 blstId;
+		bool requiresStartedGame;
+	};
+
+	MenuItem items[] = {
+		{ 22, false }, // Setup
+		{ 16, false }, // New game
+		{ 23, false }, // Load game
+		{ 24, true  }, // Save game
+		{ 25, true  }, // Resume
+		{ 26, false }, // Options
+		{ 27, false }  // Quit
+	};
+
+	for (uint i = 0; i < ARRAYSIZE(items); i++) {
+		RivenHotspot *hotspot = _vm->getCard()->getHotspotByBlstId(items[i].blstId);
+
+		if (!hotspot) {
+			warning("Missing hotspot %d", items[i].blstId);
+			continue;
+		}
+
+		bool enabled = !items[i].requiresStartedGame || _vm->isGameStarted();
+		hotspot->enable(enabled);
+
+		Common::U32String str = Common::convertUtf8ToUtf32(menuItems[lang].items[i]);
+		Common::Rect hotspotRect = hotspot->getRect();
+		uint8 greyLevel = enabled ? 164 : 96;
+
+		_vm->_gfx->drawText(str, hotspotRect, greyLevel);
+	}
 }
 
 void ASpit::xasetupcomplete(const ArgumentArray &args) {
@@ -273,8 +346,55 @@ void ASpit::xatrapbookopen(const ArgumentArray &args) {
 }
 
 void ASpit::xarestoregame(const ArgumentArray &args) {
+	if (!showConfirmationDialog(_("Are you sure you want to load a saved game? All unsaved progress will be lost."),
+	                            _("Load game"), _("Cancel"))) {
+		return;
+	}
+
 	// Launch the load game dialog
 	_vm->runLoadDialog();
+}
+
+void ASpit::xaSaveGame(const ArgumentArray &args) {
+	_vm->runSaveDialog();
+}
+
+void ASpit::xaResumeGame(const ArgumentArray &args) {
+	_vm->resumeFromMainMenu();
+}
+
+void ASpit::xaOptions(const ArgumentArray &args) {
+	_vm->runOptionsDialog();
+}
+
+void ASpit::xaNewGame(const ArgumentArray &args) {
+	if (!showConfirmationDialog(_("Are you sure you want to start a new game? All unsaved progress will be lost."),
+	                            _("New game"), _("Cancel"))) {
+		return;
+	}
+
+	_vm->startNewGame();
+
+	RivenScriptPtr script = _vm->_scriptMan->createScriptFromData(2,
+	                  kRivenCommandTransition,  1, kRivenTransitionBlend,
+	                  kRivenCommandChangeCard,  1, 2);
+
+	script->addCommand(RivenCommandPtr(new RivenStackChangeCommand(_vm, 0, 0x6E9A, false, false)));
+
+	script += _vm->_scriptMan->createScriptFromData(1,
+	                  kRivenCommandStopSound,   1, 2);
+
+	_vm->_scriptMan->runScript(script, false);
+}
+
+bool ASpit::showConfirmationDialog(const char *message, const char *confirmButton, const char *cancelButton) {
+	if (!_vm->isGameStarted()) {
+		return true;
+	}
+
+	GUI::MessageDialog dialog(message, confirmButton, cancelButton);
+
+	return dialog.runModal() !=0;
 }
 
 void ASpit::xadisablemenureturn(const ArgumentArray &args) {
@@ -332,6 +452,11 @@ void ASpit::xaenablemenuintro(const ArgumentArray &args) {
 }
 
 void ASpit::xademoquit(const ArgumentArray &args) {
+	if (!showConfirmationDialog(_("Are you sure you want to quit? All unsaved progress will be lost."), _("Quit"),
+	                            _("Cancel"))) {
+		return;
+	}
+
 	// Exactly as it says on the tin. In the demo, this function quits.
 	_vm->setGameEnded();
 }

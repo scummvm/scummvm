@@ -52,8 +52,8 @@ static void displayAlert(void *ctx) {
 }
 
 void OSystem_iOS7::fatalError() {
-	if (_lastErrorMessage) {
-		dispatch_async_f(dispatch_get_main_queue(), _lastErrorMessage, displayAlert);
+	if (_lastErrorMessage.size()) {
+		dispatch_async_f(dispatch_get_main_queue(), (void *)_lastErrorMessage.c_str(), displayAlert);
 		for(;;);
 	}
 	else {
@@ -64,13 +64,17 @@ void OSystem_iOS7::fatalError() {
 void OSystem_iOS7::engineInit() {
 	EventsBaseBackend::engineInit();
 	// Prevent the device going to sleep during game play (and in particular cut scenes)
-	[[UIApplication sharedApplication] setIdleTimerDisabled:YES];
+	dispatch_async(dispatch_get_main_queue(), ^{
+		[[UIApplication sharedApplication] setIdleTimerDisabled:YES];
+	});
 }
 
 void OSystem_iOS7::engineDone() {
 	EventsBaseBackend::engineDone();
 	// Allow the device going to sleep if idle while in the Launcher
-	[[UIApplication sharedApplication] setIdleTimerDisabled:NO];
+	dispatch_async(dispatch_get_main_queue(), ^{
+		[[UIApplication sharedApplication] setIdleTimerDisabled:NO];
+	});
 }
 
 void OSystem_iOS7::initVideoContext() {
@@ -578,4 +582,24 @@ void OSystem_iOS7::updateMouseTexture() {
 	execute_on_main_thread(^ {
 		[[iOS7AppDelegate iPhoneView] updateMouseCursor];
 	});
+}
+
+void OSystem_iOS7::setShowKeyboard(bool show) {
+	if (show) {
+		execute_on_main_thread(^ {
+			[[iOS7AppDelegate iPhoneView] showKeyboard];
+		});
+	} else {
+		// Do not hide the keyboard in portrait mode as it is shown automatically and not
+		// just when asked with the kFeatureVirtualKeyboard.
+		if (_screenOrientation == kScreenOrientationLandscape || _screenOrientation == kScreenOrientationFlippedLandscape) {
+			execute_on_main_thread(^ {
+				[[iOS7AppDelegate iPhoneView] hideKeyboard];
+			});
+		}
+	}
+}
+
+bool OSystem_iOS7::isKeyboardShown() const {
+	return [[iOS7AppDelegate iPhoneView] isKeyboardShown];
 }

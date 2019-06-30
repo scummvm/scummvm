@@ -125,7 +125,7 @@ bool BaseRenderOSystem::initRenderer(int width, int height, bool windowed) {
 
 	Graphics::PixelFormat format(4, 8, 8, 8, 8, 24, 16, 8, 0);
 	g_system->beginGFXTransaction();
-	g_system->initSize(_width, _height, &format);
+		g_system->initSize(_width, _height, &format);
 	OSystem::TransactionError gfxError = g_system->endGFXTransaction();
 
 	if (gfxError != OSystem::kTransactionSuccess) {
@@ -576,7 +576,7 @@ void BaseRenderOSystem::endSaveLoad() {
 	_skipThisFrame = true;
 	_lastFrameIter = _renderQueue.end();
 
-	_renderSurface->fillRect(Common::Rect(0, 0, _renderSurface->h, _renderSurface->w), _renderSurface->format.ARGBToColor(255, 0, 0, 0));
+	_renderSurface->fillRect(Common::Rect(0, 0, _renderSurface->w, _renderSurface->h), _renderSurface->format.ARGBToColor(255, 0, 0, 0));
 	g_system->copyRectToScreen((byte *)_renderSurface->getPixels(), _renderSurface->pitch, 0, 0, _renderSurface->w, _renderSurface->h);
 	g_system->updateScreen();
 }

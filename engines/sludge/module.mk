@@ -12,6 +12,7 @@ MODULE_OBJS := \
 	floor.o \
 	freeze.o \
 	fonttext.o \
+	function.o \
 	graphics.o \
 	hsi.o \
 	imgloader.o \
@@ -28,10 +29,10 @@ MODULE_OBJS := \
 	sludge.o \
 	sludger.o \
 	sound.o \
+	speech.o \
 	sprbanks.o \
 	sprites.o \
 	statusba.o \
-	talk.o \
 	thumbnail.o \
 	timing.o \
 	transition.o \

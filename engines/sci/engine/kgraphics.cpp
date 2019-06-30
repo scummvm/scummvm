@@ -492,7 +492,12 @@ reg_t kNumLoops(EngineState *s, int argc, reg_t *argv) {
 	GuiResourceId viewId = readSelectorValue(s->_segMan, object, SELECTOR(view));
 	int16 loopCount;
 
-	loopCount = g_sci->_gfxCache->kernelViewGetLoopCount(viewId);
+#ifdef ENABLE_SCI32
+	if (getSciVersion() >= SCI_VERSION_2) {
+		loopCount = CelObjView::getNumLoops(viewId);
+	} else
+#endif
+		loopCount = g_sci->_gfxCache->kernelViewGetLoopCount(viewId);
 
 	debugC(9, kDebugLevelGraphics, "NumLoops(view.%d) = %d", viewId, loopCount);
 
@@ -505,7 +510,12 @@ reg_t kNumCels(EngineState *s, int argc, reg_t *argv) {
 	int16 loopNo = readSelectorValue(s->_segMan, object, SELECTOR(loop));
 	int16 celCount;
 
-	celCount = g_sci->_gfxCache->kernelViewGetCelCount(viewId, loopNo);
+#ifdef ENABLE_SCI32
+	if (getSciVersion() >= SCI_VERSION_2) {
+		celCount = CelObjView::getNumCels(viewId, loopNo);
+	} else
+#endif
+		celCount = g_sci->_gfxCache->kernelViewGetCelCount(viewId, loopNo);
 
 	debugC(9, kDebugLevelGraphics, "NumCels(view.%d, %d) = %d", viewId, loopNo, celCount);
 
@@ -646,18 +656,17 @@ reg_t kPaletteAnimate(EngineState *s, int argc, reg_t *argv) {
 	bool paletteChanged = false;
 
 	// Palette animation in non-VGA SCI1 games has been removed
-	if (g_sci->_gfxPalette16->getTotalColorCount() < 256)
-		return s->r_acc;
-
-	for (argNr = 0; argNr < argc; argNr += 3) {
-		uint16 fromColor = argv[argNr].toUint16();
-		uint16 toColor = argv[argNr + 1].toUint16();
-		int16 speed = argv[argNr + 2].toSint16();
-		if (g_sci->_gfxPalette16->kernelAnimate(fromColor, toColor, speed))
-			paletteChanged = true;
+	if (g_sci->_gfxPalette16->getTotalColorCount() == 256) {
+		for (argNr = 0; argNr < argc; argNr += 3) {
+			uint16 fromColor = argv[argNr].toUint16();
+			uint16 toColor = argv[argNr + 1].toUint16();
+			int16 speed = argv[argNr + 2].toSint16();
+			if (g_sci->_gfxPalette16->kernelAnimate(fromColor, toColor, speed))
+				paletteChanged = true;
+		}
+		if (paletteChanged)
+			g_sci->_gfxPalette16->kernelAnimateSet();
 	}
-	if (paletteChanged)
-		g_sci->_gfxPalette16->kernelAnimateSet();
 
 	// WORKAROUND: The game scripts in SQ4 floppy count the number of elapsed
 	// cycles in the intro from the number of successive kAnimate calls during
@@ -668,8 +677,10 @@ reg_t kPaletteAnimate(EngineState *s, int argc, reg_t *argv) {
 	// speed throttler gets called) between the different palette animation calls.
 	// Thus, we add a small delay between each animate call to make the whole
 	// palette animation effect slower and visible, and not have the logo screen
-	// get skipped because the scripts don't wait between animation steps. Fixes
-	// bug #3537232.
+	// get skipped because the scripts don't wait between animation steps. This
+	// workaround is applied to non-VGA versions as well because even though they
+	// don't use palette animation they still call this function and use it for
+	// timing. Fixes bugs #6057, #6193.
 	// The original workaround was for the intro SQ4 logo (room#1).
 	// This problem also happens in the time pod (room#531).
 	// This problem also happens in the ending cutscene time rip (room#21).
@@ -1073,6 +1084,7 @@ reg_t kSetPort(EngineState *s, int argc, reg_t *argv) {
 
 	case 7:
 		initPriorityBandsFlag = true;
+		// fall through
 	case 6:
 		picRect.top = argv[0].toSint16();
 		picRect.left = argv[1].toSint16();
@@ -1274,6 +1286,35 @@ reg_t kRemapColors(EngineState *s, int argc, reg_t *argv) {
 		break;
 	}
 
+	return s->r_acc;
+}
+
+// Later SCI32-style kRemapColors, but in SCI11+.
+reg_t kRemapColorsKawa(EngineState *s, int argc, reg_t *argv) {
+	uint16 operation = argv[0].toUint16();
+
+	switch (operation) {
+	case 0: // off
+		break;
+	case 1: { // remap by percent
+		uint16 from = argv[1].toUint16();
+		uint16 percent = argv[2].toUint16();
+		g_sci->_gfxRemap16->resetRemapping();
+		g_sci->_gfxRemap16->setRemappingPercent(from, percent);
+		}
+		break;
+	case 2: { // remap by range
+		uint16 from = argv[1].toUint16();
+		uint16 to = argv[2].toUint16();
+		uint16 base = argv[3].toUint16();
+		g_sci->_gfxRemap16->resetRemapping();
+		g_sci->_gfxRemap16->setRemappingRange(254, from, to, base);
+		}
+		break;
+	default:
+		error("Unsupported SCI32-style kRemapColors(%d) has been called", operation);
+		break;
+	}
 	return s->r_acc;
 }
 

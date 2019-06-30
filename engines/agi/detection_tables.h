@@ -659,6 +659,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 	FANMADE_FO("2 Player Demo", "4279f46b3cebd855132496476b1d2cca", GF_AGIMOUSE, GAMEOPTIONS_FANMADE_MOUSE),
 	FANMADE("AGI Combat", "0be6a8a9e19203dcca0067d280798871"),
+	FANMADE("AGI Combat (Beta)", "341a47d07be8490a488d0c709578dd10"),
 	FANMADE("AGI Contest 1 Template", "d879aed25da6fc655564b29567358ae2"),
 	FANMADE("AGI Contest 2 Template", "5a2fb2894207eff36c72f5c1b08bcc07"),
 	FANMADE_O("AGI Mouse Demo 0.60 demo 1", "c07e2519de674c67386cb2cc6f2e3904", GAMEOPTIONS_FANMADE_MOUSE),
@@ -825,6 +826,7 @@ static const AGIGameDescription gameDescriptions[] = {
 	FANMADE("SQ2Eye (v0.484)", "f2c86fae7b9046d408c62c8c49a4b882"),
 	FANMADE("SQ2Eye (v0.485)", "af59e36bc28f44545458b68a93e91e67"),
 	FANMADE("SQ2Eye (v0.486)", "3fd86436e93456770dbdd4593eded70a"),
+	FANMADE("Sarien", "314e5fdef17b803226d1de3af2e997ea"),
 	FANMADE("Save Santa (v1.0)", "4644f6beb5802081772f14be56ae196c"),
 	FANMADE("Save Santa (v1.3)", "f8afdb6efc5af5e7c0228b44633066af"),
 	FANMADE("Schiller (preview 1)", "ade39dea968c959cfebe1cf935d653e9"),

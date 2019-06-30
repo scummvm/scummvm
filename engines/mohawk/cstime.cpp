@@ -77,6 +77,10 @@ MohawkEngine_CSTime::~MohawkEngine_CSTime() {
 Common::Error MohawkEngine_CSTime::run() {
 	MohawkEngine::run();
 
+	if (!_mixer->isReady()) {
+		return Common::kAudioDeviceInitFailed;
+	}
+
 	_console = new CSTimeConsole(this);
 	_gfx = new CSTimeGraphics(this);
 	_video = new VideoManager(this);

@@ -14,8 +14,8 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef FLOAT_SAMPLE_PROVIDER_H
-#define FLOAT_SAMPLE_PROVIDER_H
+#ifndef SRCTOOLS_FLOAT_SAMPLE_PROVIDER_H
+#define SRCTOOLS_FLOAT_SAMPLE_PROVIDER_H
 
 namespace SRCTools {
 
@@ -24,11 +24,11 @@ typedef float FloatSample;
 /** Interface defines an abstract source of samples. It can either define a single channel stream or a stream with interleaved channels. */
 class FloatSampleProvider {
 public:
-	virtual ~FloatSampleProvider() {};
+	virtual ~FloatSampleProvider() {}
 
 	virtual void getOutputSamples(FloatSample *outBuffer, unsigned int size) = 0;
 };
 
 } // namespace SRCTools
 
-#endif // FLOAT_SAMPLE_PROVIDER_H
+#endif // SRCTOOLS_FLOAT_SAMPLE_PROVIDER_H

@@ -574,6 +574,7 @@ bool GameFeatures::audioVolumeSyncUsesGlobals() const {
 	switch (g_sci->getGameId()) {
 	case GID_GK1:
 	case GID_GK2:
+	case GID_HOYLE5:
 	case GID_LSL6HIRES:
 	case GID_LSL7:
 	case GID_PHANTASMAGORIA:
@@ -627,6 +628,14 @@ MessageTypeSyncStrategy GameFeatures::getMessageTypeSyncStrategy() const {
 	return kMessageTypeSyncStrategyNone;
 }
 
+int GameFeatures::detectPlaneIdBase() {
+	if (getSciVersion() == SCI_VERSION_2 &&
+	    g_sci->getGameId() != GID_PQ4)
+		return 0;
+	else
+		return 20000;
+}
+	
 bool GameFeatures::autoDetectMoveCountType() {
 	// Look up the script address
 	reg_t addr = getDetectionAddr("Motion", SELECTOR(doit));

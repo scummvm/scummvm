@@ -90,6 +90,8 @@ public:
 	void palVaryPrepareForTransition();
 	void palVaryProcess(int signal, bool setPalette);
 
+	void delayForPalVaryWorkaround();
+
 	Palette _sysPalette;
 
 	void saveLoadWithSerializer(Common::Serializer &s);
@@ -124,6 +126,7 @@ protected:
 	uint16 _palVaryTicks;
 	int _palVaryPaused;
 	int _palVarySignal;
+	bool _palVaryZeroTick;
 	uint16 _totalScreenColors;
 
 	void loadMacIconBarPalette();

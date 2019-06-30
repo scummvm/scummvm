@@ -379,9 +379,9 @@ int32 ScriptFunc::sys_Cmd_Visited_Scene(EMCState *state) {
 
 int32 ScriptFunc::sys_Cmd_Query_Rif_Flag(EMCState *state) {
 
-	int32 hs = _vm->getHotspots()->FindBasedOnCorner(stackPos(0), stackPos(1));
+	int32 hs = _vm->getHotspots()->findBasedOnCorner(stackPos(0), stackPos(1));
 	if (hs >= 0)
-		return _vm->getHotspots()->Get(hs)->getData(stackPos(2));
+		return _vm->getHotspots()->get(hs)->getData(stackPos(2));
 
 	return 0;
 }
@@ -472,9 +472,9 @@ int32 ScriptFunc::sys_Cmd_Say_Lines(EMCState *state) {
 }
 
 int32 ScriptFunc::sys_Cmd_Set_Rif_Flag(EMCState *state) {
-	int32 hs = _vm->getHotspots()->FindBasedOnCorner(stackPos(0), stackPos(1));
+	int32 hs = _vm->getHotspots()->findBasedOnCorner(stackPos(0), stackPos(1));
 	if (hs >= 0)
-		_vm->getHotspots()->Get(hs)->setData(stackPos(2), stackPos(3));
+		_vm->getHotspots()->get(hs)->setData(stackPos(2), stackPos(3));
 	return 0;
 }
 

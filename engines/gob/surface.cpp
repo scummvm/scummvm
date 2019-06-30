@@ -766,7 +766,7 @@ bool Surface::loadImage(Common::SeekableReadStream &stream, ImageType type) {
 		return loadJPEG(stream);
 
 	default:
-		warning("Surface::loadImage(): Unknown image type: %d", (int) type);
+		warning("Surface::loadImage(): Unknown image type: %d", (int)type);
 		return false;
 	}
 

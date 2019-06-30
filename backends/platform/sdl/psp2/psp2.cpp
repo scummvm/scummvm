@@ -22,7 +22,6 @@
 
 #define FORBIDDEN_SYMBOL_EXCEPTION_mkdir
 #define FORBIDDEN_SYMBOL_EXCEPTION_time_h	// sys/stat.h includes sys/time.h
-#define FORBIDDEN_SYMBOL_EXCEPTION_unistd_h
 
 #include "common/scummsys.h"
 #include "common/config-manager.h"
@@ -55,11 +54,11 @@ OSystem_PSP2::OSystem_PSP2(Common::String baseConfigName)
 }
 
 void OSystem_PSP2::init() {
-	
+
 #if __PSP2_DEBUG__
 	gDebugLevel = 3;
 #endif
-	
+
 	// Initialze File System Factory
 	sceIoMkdir("ux0:data", 0755);
 	sceIoMkdir("ux0:data/scummvm", 0755);
@@ -71,9 +70,8 @@ void OSystem_PSP2::init() {
 }
 
 void OSystem_PSP2::initBackend() {
-	
+
 	ConfMan.set("joystick_num", 0);
-	ConfMan.set("vkeybdpath", PREFIX "/data");
 	ConfMan.registerDefault("fullscreen", true);
 	ConfMan.registerDefault("aspect_ratio", false);
 	ConfMan.registerDefault("gfx_mode", "2x");
@@ -81,6 +79,8 @@ void OSystem_PSP2::initBackend() {
 	ConfMan.registerDefault("kbdmouse_speed", 3);
 	ConfMan.registerDefault("joystick_deadzone", 2);
 	ConfMan.registerDefault("shader", 0);
+	ConfMan.registerDefault("touchpad_mouse_mode", false);
+	ConfMan.registerDefault("frontpanel_touchpad_mode", false);
 
 	if (!ConfMan.hasKey("fullscreen")) {
 		ConfMan.setBool("fullscreen", true);
@@ -94,19 +94,28 @@ void OSystem_PSP2::initBackend() {
 	if (!ConfMan.hasKey("filtering")) {
 		ConfMan.setBool("filtering", true);
 	}
-	if (!ConfMan.hasKey("kbdmouse_speed")) {
-		ConfMan.setInt("kbdmouse_speed", 3);
-	}
-	if (!ConfMan.hasKey("joystick_deadzone")) {
-		ConfMan.setInt("joystick_deadzone", 2);
-	}
 	if (!ConfMan.hasKey("shader")) {
 		ConfMan.setInt("shader", 2);
 	}
+	if (!ConfMan.hasKey("touchpad_mouse_mode")) {
+		ConfMan.setBool("touchpad_mouse_mode", false);
+	}
+	if (!ConfMan.hasKey("frontpanel_touchpad_mode")) {
+		ConfMan.setBool("frontpanel_touchpad_mode", false);
+	}
+
 
 	// Create the savefile manager
 	if (_savefileManager == 0)
 		_savefileManager = new DefaultSaveFileManager("ux0:data/scummvm/saves");
+
+	// Controller mappings for Vita, various names have been used in various SDL versions
+	SDL_GameControllerAddMapping("50535669746120436f6e74726f6c6c65,PSVita Controller,y:b0,b:b1,a:b2,x:b3,leftshoulder:b4,rightshoulder:b5,dpdown:b6,dpleft:b7,dpup:b8,dpright:b9,back:b10,start:b11,leftx:a0,lefty:a1,rightx:a2,righty:a3,");
+	SDL_GameControllerAddMapping("50535669746120636f6e74726f6c6c65,PSVita controller,y:b0,b:b1,a:b2,x:b3,leftshoulder:b4,rightshoulder:b5,dpdown:b6,dpleft:b7,dpup:b8,dpright:b9,back:b10,start:b11,leftx:a0,lefty:a1,rightx:a2,righty:a3,");
+	SDL_GameControllerAddMapping("50535669746120636f6e74726f6c6c65,PSVita controller 2,y:b0,b:b1,a:b2,x:b3,leftshoulder:b4,rightshoulder:b5,dpdown:b6,dpleft:b7,dpup:b8,dpright:b9,back:b10,start:b11,leftx:a0,lefty:a1,rightx:a2,righty:a3,");
+	SDL_GameControllerAddMapping("50535669746120636f6e74726f6c6c65,PSVita controller 3,y:b0,b:b1,a:b2,x:b3,leftshoulder:b4,rightshoulder:b5,dpdown:b6,dpleft:b7,dpup:b8,dpright:b9,back:b10,start:b11,leftx:a0,lefty:a1,rightx:a2,righty:a3,");
+	SDL_GameControllerAddMapping("50535669746120636f6e74726f6c6c65,PSVita controller 4,y:b0,b:b1,a:b2,x:b3,leftshoulder:b4,rightshoulder:b5,dpdown:b6,dpleft:b7,dpup:b8,dpright:b9,back:b10,start:b11,leftx:a0,lefty:a1,rightx:a2,righty:a3,");
+	SDL_GameControllerAddMapping("505356697461206275696c74696e206a,PSVita builtin joypad,y:b0,b:b1,a:b2,x:b3,leftshoulder:b4,rightshoulder:b5,dpdown:b6,dpleft:b7,dpup:b8,dpright:b9,back:b10,start:b11,leftx:a0,lefty:a1,rightx:a2,righty:a3,");
 
 	// Event source
 	if (_eventSource == 0)
@@ -124,7 +133,30 @@ bool OSystem_PSP2::hasFeature(Feature f) {
 	return (f == kFeatureKbdMouseSpeed ||
 		f == kFeatureJoystickDeadzone ||
 		f == kFeatureShader ||
+		f == kFeatureTouchpadMode ||
 		OSystem_SDL::hasFeature(f));
+}
+
+void OSystem_PSP2::setFeatureState(Feature f, bool enable) {
+	switch (f) {
+	case kFeatureTouchpadMode:
+		ConfMan.setBool("touchpad_mouse_mode", enable);
+		break;
+	default:
+		OSystem_SDL::setFeatureState(f, enable);
+		break;
+	}
+}
+
+bool OSystem_PSP2::getFeatureState(Feature f) {
+	switch (f) {
+	case kFeatureTouchpadMode:
+		return ConfMan.getBool("touchpad_mouse_mode");
+		break;
+	default:
+		return OSystem_SDL::getFeatureState(f);
+		break;
+	}
 }
 
 void OSystem_PSP2::logMessage(LogMessageType::Type type, const char *message) {

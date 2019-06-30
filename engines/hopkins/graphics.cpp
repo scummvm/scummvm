@@ -676,6 +676,7 @@ void GraphicsManager::updateScreen() {
 
 	// Update the screen
 	g_system->updateScreen();
+	debugC(1, kDebugGraphics, "updateScreen()");
 }
 
 void GraphicsManager::copyWinscanVbe3(const byte *srcData, byte *destSurface) {
@@ -1141,10 +1142,12 @@ void GraphicsManager::displayDirtyRects() {
 }
 
 void GraphicsManager::displayRefreshRects() {
+	debugC(1, kDebugGraphics, "displayRefreshRects() start");
 	Graphics::Surface *screenSurface = NULL;
 	if (_showDirtyRects) {
 		screenSurface = g_system->lockScreen();
 		g_system->copyRectToScreen(_screenBuffer, _screenLineSize, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+		debugC(1, kDebugGraphics, "\tcopyRectToScreen(_screenBuffer, %d, %d, %d, %d, %d) - Full Blit", _screenLineSize, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 	}
 
 	// Loop through copying over any  specified rects to the screen
@@ -1153,6 +1156,7 @@ void GraphicsManager::displayRefreshRects() {
 
 		byte *srcP = _screenBuffer + _screenLineSize * r.top + (r.left * 2);
 		g_system->copyRectToScreen(srcP, _screenLineSize, r.left, r.top, r.width(), r.height());
+		debugC(1, kDebugGraphics, "\tcopyRectToScreen(_screenBuffer[%d][%d], %d, %d, %d, %d, %d) - Rect Blit", (r.left * 2), (_screenLineSize * r.top), _screenLineSize, r.left, r.top, r.width(), r.height());
 
 		if (_showDirtyRects)
 			screenSurface->frameRect(r, 0xffffff);
@@ -1162,6 +1166,7 @@ void GraphicsManager::displayRefreshRects() {
 		g_system->unlockScreen();
 
 	resetRefreshRects();
+	debugC(1, kDebugGraphics, "displayRefreshRects() end");
 }
 
 /**

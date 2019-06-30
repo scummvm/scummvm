@@ -46,13 +46,15 @@
 
 #ifdef USE_PNG
 #include "image/png.h"
+#else
+#include "image/bmp.h"
 #endif
 
 namespace OpenGL {
 
 OpenGLGraphicsManager::OpenGLGraphicsManager()
     : _currentState(), _oldState(), _transactionMode(kTransactionNone), _screenChangeID(1 << (sizeof(int) * 8 - 2)),
-      _pipeline(nullptr),
+      _pipeline(nullptr), _stretchMode(STRETCH_FIT),
       _defaultFormat(), _defaultFormatAlpha(),
       _gameScreen(nullptr), _gameScreenShakeOffset(0), _overlay(nullptr),
       _cursor(nullptr),
@@ -86,6 +88,7 @@ bool OpenGLGraphicsManager::hasFeature(OSystem::Feature f) const {
 	case OSystem::kFeatureAspectRatioCorrection:
 	case OSystem::kFeatureCursorPalette:
 	case OSystem::kFeatureFilteringMode:
+	case OSystem::kFeatureStretchMode:
 		return true;
 
 	case OSystem::kFeatureOverlaySupportsAlpha:
@@ -182,7 +185,103 @@ int OpenGLGraphicsManager::getGraphicsMode() const {
 Graphics::PixelFormat OpenGLGraphicsManager::getScreenFormat() const {
 	return _currentState.gameFormat;
 }
+
+Common::List<Graphics::PixelFormat> OpenGLGraphicsManager::getSupportedFormats() const {
+	Common::List<Graphics::PixelFormat> formats;
+
+	// Our default mode is (memory layout wise) RGBA8888 which is a different
+	// logical layout depending on the endianness. We chose this mode because
+	// it is the only 32bit color mode we can safely assume to be present in
+	// OpenGL and OpenGL ES implementations. Thus, we need to supply different
+	// logical formats based on endianness.
+#ifdef SCUMM_LITTLE_ENDIAN
+	// ABGR8888
+	formats.push_back(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+#else
+	// RGBA8888
+	formats.push_back(Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
 #endif
+	// RGB565
+	formats.push_back(Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));
+	// RGBA5551
+	formats.push_back(Graphics::PixelFormat(2, 5, 5, 5, 1, 11, 6, 1, 0));
+	// RGBA4444
+	formats.push_back(Graphics::PixelFormat(2, 4, 4, 4, 4, 12, 8, 4, 0));
+
+#if !USE_FORCED_GLES && !USE_FORCED_GLES2
+#if !USE_FORCED_GL
+	if (!isGLESContext()) {
+#endif
+#ifdef SCUMM_LITTLE_ENDIAN
+		// RGBA8888
+		formats.push_back(Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
+#else
+		// ABGR8888
+		formats.push_back(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+#endif
+#if !USE_FORCED_GL
+	}
+#endif
+#endif
+
+	// RGB555, this is used by SCUMM HE 16 bit games.
+	// This is not natively supported by OpenGL ES implementations, we convert
+	// the pixel format internally.
+	formats.push_back(Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0));
+
+	formats.push_back(Graphics::PixelFormat::createFormatCLUT8());
+
+	return formats;
+}
+#endif
+
+namespace {
+const OSystem::GraphicsMode glStretchModes[] = {
+	{"center", _s("Center"), STRETCH_CENTER},
+	{"pixel-perfect", _s("Pixel-perfect scaling"), STRETCH_INTEGRAL},
+	{"fit", _s("Fit to window"), STRETCH_FIT},
+	{"stretch", _s("Stretch to window"), STRETCH_STRETCH},
+	{nullptr, nullptr, 0}
+};
+
+} // End of anonymous namespace
+
+const OSystem::GraphicsMode *OpenGLGraphicsManager::getSupportedStretchModes() const {
+	return glStretchModes;
+}
+
+int OpenGLGraphicsManager::getDefaultStretchMode() const {
+	return STRETCH_FIT;
+}
+
+bool OpenGLGraphicsManager::setStretchMode(int mode) {
+	assert(getTransactionMode() != kTransactionNone);
+
+	if (mode == _stretchMode)
+		return true;
+
+	// Check this is a valid mode
+	const OSystem::GraphicsMode *sm = getSupportedStretchModes();
+	bool found = false;
+	while (sm->name) {
+		if (sm->id == mode) {
+			found = true;
+			break;
+		}
+		sm++;
+	}
+	if (!found) {
+		warning("unknown stretch mode %d", mode);
+		return false;
+	}
+
+	_stretchMode = mode;
+	return true;
+}
+
+int OpenGLGraphicsManager::getStretchMode() const {
+	return _stretchMode;
+}
 
 void OpenGLGraphicsManager::beginGFXTransaction() {
 	assert(_transactionMode == kTransactionNone);
@@ -420,16 +519,22 @@ void OpenGLGraphicsManager::updateScreen() {
 
 	const GLfloat shakeOffset = _gameScreenShakeOffset * (GLfloat)_gameDrawRect.height() / _gameScreen->getHeight();
 
+	// Alpha blending is disabled when drawing the screen
+	_backBuffer.enableBlend(Framebuffer::kBlendModeDisabled);
+
 	// First step: Draw the (virtual) game screen.
 	g_context.getActivePipeline()->drawTexture(_gameScreen->getGLTexture(), _gameDrawRect.left, _gameDrawRect.top + shakeOffset, _gameDrawRect.width(), _gameDrawRect.height());
 
 	// Second step: Draw the overlay if visible.
 	if (_overlayVisible) {
+		_backBuffer.enableBlend(Framebuffer::kBlendModeTraditionalTransparency);
 		g_context.getActivePipeline()->drawTexture(_overlay->getGLTexture(), 0, 0, _overlayDrawRect.width(), _overlayDrawRect.height());
 	}
 
 	// Third step: Draw the cursor if visible.
 	if (_cursorVisible && _cursor) {
+		_backBuffer.enableBlend(Framebuffer::kBlendModePremultipliedTransparency);
+
 		// Adjust game screen shake position, but only when the overlay is not
 		// visible.
 		const GLfloat cursorOffset = _overlayVisible ? 0 : shakeOffset;
@@ -446,6 +551,10 @@ void OpenGLGraphicsManager::updateScreen() {
 
 #ifdef USE_OSD
 	// Fourth step: Draw the OSD.
+	if (_osdMessageSurface || _osdIconSurface) {
+		_backBuffer.enableBlend(Framebuffer::kBlendModeTraditionalTransparency);
+	}
+
 	if (_osdMessageSurface) {
 		// Update alpha value.
 		const int diff = g_system->getMillis(false) - _osdMessageFadeStartTime;
@@ -549,20 +658,35 @@ void OpenGLGraphicsManager::grabOverlay(void *buf, int pitch) const {
 }
 
 namespace {
-template<typename DstPixel, typename SrcPixel>
-void applyColorKey(DstPixel *dst, const SrcPixel *src, uint w, uint h, uint dstPitch, uint srcPitch, SrcPixel keyColor, DstPixel alphaMask) {
-	const uint srcAdd = srcPitch - w * sizeof(SrcPixel);
-	const uint dstAdd = dstPitch - w * sizeof(DstPixel);
+template<typename SrcColor, typename DstColor>
+void multiplyColorWithAlpha(const byte *src, byte *dst, const uint w, const uint h,
+                            const Graphics::PixelFormat &srcFmt, const Graphics::PixelFormat &dstFmt,
+                            const uint srcPitch, const uint dstPitch, const SrcColor keyColor) {
+	for (uint y = 0; y < h; ++y) {
+		for (uint x = 0; x < w; ++x) {
+			const uint32 color = *(const SrcColor *)src;
 
-	while (h-- > 0) {
-		for (uint x = w; x > 0; --x, ++dst, ++src) {
-			if (*src == keyColor) {
-				*dst &= ~alphaMask;
+			if (color == keyColor) {
+				*(DstColor *)dst = 0;
+			} else {
+				byte a, r, g, b;
+				srcFmt.colorToARGB(color, a, r, g, b);
+
+				if (a != 0xFF) {
+					r = (int) r * a / 255;
+					g = (int) g * a / 255;
+					b = (int) b * a / 255;
+				}
+
+				*(DstColor *)dst = dstFmt.ARGBToColor(a, r, g, b);
 			}
+
+			src += sizeof(SrcColor);
+			dst += sizeof(DstColor);
 		}
 
-		dst = (DstPixel *)((byte *)dst + dstAdd);
-		src = (const SrcPixel *)((const byte *)src + srcAdd);
+		src += srcPitch - w * srcFmt.bytesPerPixel;
+		dst += dstPitch - w * dstFmt.bytesPerPixel;
 	}
 }
 } // End of anonymous namespace
@@ -629,27 +753,26 @@ void OpenGLGraphicsManager::setMouseCursor(const void *buf, uint w, uint h, int 
 
 		// Copy the cursor data to the actual texture surface. This will make
 		// sure that the data is also converted to the expected format.
-		Graphics::crossBlit((byte *)dst->getPixels(), (const byte *)buf, dst->pitch, srcPitch,
-		                    w, h, dst->format, inputFormat);
 
-		// We apply the color key by setting the alpha bits of the pixels to
-		// fully transparent.
-		const uint32 aMask = (0xFF >> dst->format.aLoss) << dst->format.aShift;
+		// Also multiply the color values with the alpha channel.
+		// The pre-multiplication allows using a blend mode that prevents
+		// color fringes due to filtering.
+
 		if (dst->format.bytesPerPixel == 2) {
 			if (inputFormat.bytesPerPixel == 2) {
-				applyColorKey<uint16, uint16>((uint16 *)dst->getPixels(), (const uint16 *)buf, w, h,
-				                              dst->pitch, srcPitch, keycolor, aMask);
+				multiplyColorWithAlpha<uint16, uint16>((const byte *) buf, (byte *) dst->getPixels(), w, h,
+				                                       inputFormat, dst->format, srcPitch, dst->pitch, keycolor);
 			} else if (inputFormat.bytesPerPixel == 4) {
-				applyColorKey<uint16, uint32>((uint16 *)dst->getPixels(), (const uint32 *)buf, w, h,
-				                              dst->pitch, srcPitch, keycolor, aMask);
+				multiplyColorWithAlpha<uint32, uint16>((const byte *) buf, (byte *) dst->getPixels(), w, h,
+				                                       inputFormat, dst->format, srcPitch, dst->pitch, keycolor);
 			}
 		} else {
 			if (inputFormat.bytesPerPixel == 2) {
-				applyColorKey<uint32, uint16>((uint32 *)dst->getPixels(), (const uint16 *)buf, w, h,
-				                              dst->pitch, srcPitch, keycolor, aMask);
+				multiplyColorWithAlpha<uint16, uint32>((const byte *) buf, (byte *) dst->getPixels(), w, h,
+				                                       inputFormat, dst->format, srcPitch, dst->pitch, keycolor);
 			} else if (inputFormat.bytesPerPixel == 4) {
-				applyColorKey<uint32, uint32>((uint32 *)dst->getPixels(), (const uint32 *)buf, w, h,
-				                              dst->pitch, srcPitch, keycolor, aMask);
+				multiplyColorWithAlpha<uint32, uint32>((const byte *) buf, (byte *) dst->getPixels(), w, h,
+				                                       inputFormat, dst->format, srcPitch, dst->pitch, keycolor);
 			}
 		}
 
@@ -881,14 +1004,10 @@ void OpenGLGraphicsManager::notifyContextCreate(const Graphics::PixelFormat &def
 
 	g_context.getActivePipeline()->setColor(1.0f, 1.0f, 1.0f, 1.0f);
 
-	GL_CALL(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
-
 	// Setup backbuffer state.
 
 	// Default to black as clear color.
 	_backBuffer.setClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-	// Setup alpha blend (for overlay and cursor).
-	_backBuffer.enableBlend(true);
 
 	g_context.getActivePipeline()->setFramebuffer(&_backBuffer);
 
@@ -1192,41 +1311,17 @@ bool OpenGLGraphicsManager::saveScreenshot(const Common::String &filename) const
 	pixels.resize(lineSize * height);
 	GL_CALL(glReadPixels(0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, &pixels.front()));
 
-#ifdef USE_PNG
+#ifdef SCUMM_LITTLE_ENDIAN
+	const Graphics::PixelFormat format(3, 8, 8, 8, 0, 0, 8, 16, 0);
+#else
 	const Graphics::PixelFormat format(3, 8, 8, 8, 0, 16, 8, 0, 0);
+#endif
 	Graphics::Surface data;
 	data.init(width, height, lineSize, &pixels.front(), format);
+#ifdef USE_PNG
 	return Image::writePNG(out, data, true);
 #else
-	// BMP stores as BGR. Since we can't assume that GL_BGR is supported we
-	// will swap the components from the RGB we read to BGR on our own.
-	for (uint y = height; y-- > 0;) {
-		uint8 *line = &pixels.front() + y * lineSize;
-
-		for (uint x = width; x > 0; --x, line += 3) {
-			SWAP(line[0], line[2]);
-		}
-	}
-
-	out.writeByte('B');
-	out.writeByte('M');
-	out.writeUint32LE(height * lineSize + 54);
-	out.writeUint32LE(0);
-	out.writeUint32LE(54);
-	out.writeUint32LE(40);
-	out.writeUint32LE(width);
-	out.writeUint32LE(height);
-	out.writeUint16LE(1);
-	out.writeUint16LE(24);
-	out.writeUint32LE(0);
-	out.writeUint32LE(0);
-	out.writeUint32LE(0);
-	out.writeUint32LE(0);
-	out.writeUint32LE(0);
-	out.writeUint32LE(0);
-	out.write(&pixels.front(), pixels.size());
-
-	return true;
+	return Image::writeBMP(out, data, true);
 #endif
 }
 

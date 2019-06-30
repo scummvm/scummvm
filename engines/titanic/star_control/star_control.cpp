@@ -241,7 +241,7 @@ void CStarControl::doAction(StarControlAction action) {
 			pet->starsSetReference();
 		break;
 	}
-	
+
 	case STAR_FADE_IN:
 		_view.fn3(true);
 		break;

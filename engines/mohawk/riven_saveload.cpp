@@ -38,10 +38,11 @@ RivenSaveMetadata::RivenSaveMetadata() {
 	saveHour = 0;
 	saveMinute = 0;
 	totalPlayTime = 0;
+	autoSave = false;
 }
 
 bool RivenSaveMetadata::sync(Common::Serializer &s) {
-	static const Common::Serializer::Version kCurrentVersion = 1;
+	static const Common::Serializer::Version kCurrentVersion = 2;
 
 	if (!s.syncVersion(kCurrentVersion)) {
 		return false;
@@ -54,9 +55,12 @@ bool RivenSaveMetadata::sync(Common::Serializer &s) {
 	s.syncAsByte(saveMinute);
 	s.syncString(saveDescription);
 	s.syncAsUint32BE(totalPlayTime);
+	s.syncAsByte(autoSave, 2);
 
 	return true;
 }
+
+const int RivenSaveLoad::kAutoSaveSlot = 0;
 
 RivenSaveLoad::RivenSaveLoad(MohawkEngine_Riven *vm, Common::SaveFileManager *saveFileMan) : _vm(vm), _saveFileMan(saveFileMan) {
 }
@@ -105,22 +109,25 @@ Common::String RivenSaveLoad::querySaveDescription(const int slot) {
 SaveStateDescriptor RivenSaveLoad::querySaveMetaInfos(const int slot) {
 	Common::String filename = buildSaveFilename(slot);
 	Common::InSaveFile *loadFile = g_system->getSavefileManager()->openForLoading(filename);
+	SaveStateDescriptor descriptor;
+	descriptor.setWriteProtectedFlag(slot == kAutoSaveSlot);
+
 	if (!loadFile) {
-		return SaveStateDescriptor();
+		return descriptor;
 	}
 
 	MohawkArchive mhk;
 	if (!mhk.openStream(loadFile)) {
-		return SaveStateDescriptor();
+		return descriptor;
 	}
 
 	if (!mhk.hasResource(ID_META, 1)) {
-		return SaveStateDescriptor();
+		return descriptor;
 	}
 
 	Common::SeekableReadStream *metaStream = mhk.getResource(ID_META, 1);
 	if (!metaStream) {
-		return SaveStateDescriptor();
+		return descriptor;
 	}
 
 	Common::Serializer serializer = Common::Serializer(metaStream, nullptr);
@@ -128,14 +135,15 @@ SaveStateDescriptor RivenSaveLoad::querySaveMetaInfos(const int slot) {
 	RivenSaveMetadata metadata;
 	if (!metadata.sync(serializer)) {
 		delete metaStream;
-		return SaveStateDescriptor();
+		return descriptor;
 	}
 
-	SaveStateDescriptor descriptor;
 	descriptor.setDescription(metadata.saveDescription);
 	descriptor.setPlayTime(metadata.totalPlayTime);
 	descriptor.setSaveDate(metadata.saveYear, metadata.saveMonth, metadata.saveDay);
 	descriptor.setSaveTime(metadata.saveHour, metadata.saveMinute);
+	if (metadata.autoSave) // Allow non-saves to be deleted, but not autosaves
+		descriptor.setDeletableFlag(slot != kAutoSaveSlot);	
 
 	delete metaStream;
 
@@ -148,11 +156,49 @@ SaveStateDescriptor RivenSaveLoad::querySaveMetaInfos(const int slot) {
 		return descriptor;
 	}
 
-	descriptor.setThumbnail(Graphics::loadThumbnail(*thmbStream));
+	Graphics::Surface *thumbnail;
+	if (!Graphics::loadThumbnail(*thmbStream, thumbnail)) {
+		return descriptor;
+	}
+	descriptor.setThumbnail(thumbnail);
 
 	delete thmbStream;
 
 	return descriptor;
+}
+
+bool RivenSaveLoad::isAutoSaveAllowed() {
+	// Open autosave slot and see if it an autosave
+	// Autosaving will be enabled if it is an autosave or if there is no save in that slot
+
+	Common::String filename = buildSaveFilename(kAutoSaveSlot);
+	Common::InSaveFile *loadFile = g_system->getSavefileManager()->openForLoading(filename);
+	if (!loadFile) {
+		return true; // There is no save in the autosave slot, enable autosave
+	}
+
+	MohawkArchive mhk;
+	if (!mhk.openStream(loadFile)) {
+		return true; // Corrupt save, enable autosave
+	}
+
+	if (!mhk.hasResource(ID_META, 1)) {
+		return false; // don't autosave over saves that don't have a meta section (like saves from the original)
+	}
+
+	Common::ScopedPtr<Common::SeekableReadStream> metaStream(mhk.getResource(ID_META, 1));
+	if (!metaStream) {
+		return true; // corrupt save, enable autosave
+	}
+
+	Common::Serializer serializer = Common::Serializer(metaStream.get(), nullptr);
+
+	RivenSaveMetadata metadata;
+	if (!metadata.sync(serializer)) {
+		return true; // corrupt save, enable autosave
+	}
+
+	return metadata.autoSave;
 }
 
 Common::Error RivenSaveLoad::loadGame(const int slot) {
@@ -367,15 +413,19 @@ Common::MemoryWriteStreamDynamic *RivenSaveLoad::genZIPSSection() {
 	return stream;
 }
 
-Common::MemoryWriteStreamDynamic *RivenSaveLoad::genTHMBSection() const {
+Common::MemoryWriteStreamDynamic *RivenSaveLoad::genTHMBSection(const Graphics::Surface *thumbnail) const {
 	Common::MemoryWriteStreamDynamic *stream = new Common::MemoryWriteStreamDynamic(DisposeAfterUse::YES);
 
-	Graphics::saveThumbnail(*stream);
+	if (thumbnail) {
+		Graphics::saveThumbnail(*stream, *thumbnail);
+	} else {
+		Graphics::saveThumbnail(*stream);
+	}
 
 	return stream;
 }
 
-Common::MemoryWriteStreamDynamic *RivenSaveLoad::genMETASection(const Common::String &desc) const {
+Common::MemoryWriteStreamDynamic *RivenSaveLoad::genMETASection(const Common::String &desc, bool autoSave) const {
 	Common::MemoryWriteStreamDynamic *stream = new Common::MemoryWriteStreamDynamic(DisposeAfterUse::YES);
 	Common::Serializer serializer = Common::Serializer(nullptr, stream);
 
@@ -390,12 +440,14 @@ Common::MemoryWriteStreamDynamic *RivenSaveLoad::genMETASection(const Common::St
 	metadata.saveMinute = t.tm_min;
 	metadata.saveDescription = desc;
 	metadata.totalPlayTime = _vm->getTotalPlayTime();
+	metadata.autoSave = autoSave;
 	metadata.sync(serializer);
 
 	return stream;
 }
 
-Common::Error RivenSaveLoad::saveGame(const int slot, const Common::String &description) {
+Common::Error RivenSaveLoad::saveGame(const int slot, const Common::String &description,
+                                      const Graphics::Surface *thumbnail, bool autoSave) {
 	// NOTE: This code is designed to only output a Mohawk archive
 	// for a Riven saved game. It's hardcoded to do this because
 	// (as of right now) this is the only place in the engine
@@ -411,9 +463,9 @@ Common::Error RivenSaveLoad::saveGame(const int slot, const Common::String &desc
 
 	debug (0, "Saving game to \'%s\'", filename.c_str());
 
-	Common::MemoryWriteStreamDynamic *metaSection = genMETASection(description);
+	Common::MemoryWriteStreamDynamic *metaSection = genMETASection(description, autoSave);
 	Common::MemoryWriteStreamDynamic *nameSection = genNAMESection();
-	Common::MemoryWriteStreamDynamic *thmbSection = genTHMBSection();
+	Common::MemoryWriteStreamDynamic *thmbSection = genTHMBSection(thumbnail);
 	Common::MemoryWriteStreamDynamic *varsSection = genVARSSection();
 	Common::MemoryWriteStreamDynamic *versSection = genVERSSection();
 	Common::MemoryWriteStreamDynamic *zipsSection = genZIPSSection();

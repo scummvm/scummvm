@@ -80,16 +80,16 @@ static const char *const g_filesToCheck[NUM_FILES_TO_CHECK] = { // these files h
 class SwordMetaEngine : public MetaEngine {
 public:
 	virtual const char *getName() const {
-		return "Sword1";
+		return "Broken Sword: The Shadow of the Templars";
 	}
 	virtual const char *getOriginalCopyright() const {
-		return "Broken Sword Games (C) Revolution";
+		return "Broken Sword: The Shadow of the Templars (C) Revolution";
 	}
 
 	virtual bool hasFeature(MetaEngineFeature f) const;
-	virtual GameList getSupportedGames() const;
-	virtual GameDescriptor findGame(const char *gameid) const;
-	virtual GameList detectGames(const Common::FSList &fslist) const;
+	PlainGameList getSupportedGames() const override;
+	PlainGameDescriptor findGame(const char *gameId) const override;
+	DetectedGames detectGames(const Common::FSList &fslist) const override;
 	virtual SaveStateList listSaves(const char *target) const;
 	virtual int getMaximumSaveSlot() const;
 	virtual void removeSaveState(const char *target, int slot) const;
@@ -116,31 +116,31 @@ bool Sword1::SwordEngine::hasFeature(EngineFeature f) const {
 	    (f == kSupportsLoadingDuringRuntime);
 }
 
-GameList SwordMetaEngine::getSupportedGames() const {
-	GameList games;
-	games.push_back(GameDescriptor(sword1FullSettings, GUIO_NOMIDI));
-	games.push_back(GameDescriptor(sword1DemoSettings, GUIO_NOMIDI));
-	games.push_back(GameDescriptor(sword1MacFullSettings, GUIO_NOMIDI));
-	games.push_back(GameDescriptor(sword1MacDemoSettings, GUIO_NOMIDI));
-	games.push_back(GameDescriptor(sword1PSXSettings, GUIO_NOMIDI));
-	games.push_back(GameDescriptor(sword1PSXDemoSettings, GUIO_NOMIDI));
+PlainGameList SwordMetaEngine::getSupportedGames() const {
+	PlainGameList games;
+	games.push_back(sword1FullSettings);
+	games.push_back(sword1DemoSettings);
+	games.push_back(sword1MacFullSettings);
+	games.push_back(sword1MacDemoSettings);
+	games.push_back(sword1PSXSettings);
+	games.push_back(sword1PSXDemoSettings);
 	return games;
 }
 
-GameDescriptor SwordMetaEngine::findGame(const char *gameid) const {
-	if (0 == scumm_stricmp(gameid, sword1FullSettings.gameId))
+PlainGameDescriptor SwordMetaEngine::findGame(const char *gameId) const {
+	if (0 == scumm_stricmp(gameId, sword1FullSettings.gameId))
 		return sword1FullSettings;
-	if (0 == scumm_stricmp(gameid, sword1DemoSettings.gameId))
+	if (0 == scumm_stricmp(gameId, sword1DemoSettings.gameId))
 		return sword1DemoSettings;
-	if (0 == scumm_stricmp(gameid, sword1MacFullSettings.gameId))
+	if (0 == scumm_stricmp(gameId, sword1MacFullSettings.gameId))
 		return sword1MacFullSettings;
-	if (0 == scumm_stricmp(gameid, sword1MacDemoSettings.gameId))
+	if (0 == scumm_stricmp(gameId, sword1MacDemoSettings.gameId))
 		return sword1MacDemoSettings;
-	if (0 == scumm_stricmp(gameid, sword1PSXSettings.gameId))
+	if (0 == scumm_stricmp(gameId, sword1PSXSettings.gameId))
 		return sword1PSXSettings;
-	if (0 == scumm_stricmp(gameid, sword1PSXDemoSettings.gameId))
+	if (0 == scumm_stricmp(gameId, sword1PSXDemoSettings.gameId))
 		return sword1PSXDemoSettings;
-	return GameDescriptor();
+	return PlainGameDescriptor::empty();
 }
 
 void Sword1CheckDirectory(const Common::FSList &fslist, bool *filesFound, bool recursion = false) {
@@ -175,9 +175,9 @@ void Sword1CheckDirectory(const Common::FSList &fslist, bool *filesFound, bool r
 	}
 }
 
-GameList SwordMetaEngine::detectGames(const Common::FSList &fslist) const {
+DetectedGames SwordMetaEngine::detectGames(const Common::FSList &fslist) const {
 	int i, j;
-	GameList detectedGames;
+	DetectedGames detectedGames;
 	bool filesFound[NUM_FILES_TO_CHECK];
 	for (i = 0; i < NUM_FILES_TO_CHECK; i++)
 		filesFound[i] = false;
@@ -212,31 +212,33 @@ GameList SwordMetaEngine::detectGames(const Common::FSList &fslist) const {
 		if (!filesFound[i] || psxFilesFound)
 			psxDemoFilesFound = false;
 
-	GameDescriptor gd;
+	DetectedGame game;
 	if (mainFilesFound && pcFilesFound && demoFilesFound)
-		gd = GameDescriptor(sword1DemoSettings, GUIO2(GUIO_NOMIDI, GUIO_NOASPECT));
+		game = DetectedGame(sword1DemoSettings);
 	else if (mainFilesFound && pcFilesFound && psxFilesFound)
-		gd = GameDescriptor(sword1PSXSettings, GUIO2(GUIO_NOMIDI, GUIO_NOASPECT));
+		game = DetectedGame(sword1PSXSettings);
 	else if (mainFilesFound && pcFilesFound && psxDemoFilesFound)
-		gd = GameDescriptor(sword1PSXDemoSettings, GUIO2(GUIO_NOMIDI, GUIO_NOASPECT));
+		game = DetectedGame(sword1PSXDemoSettings);
 	else if (mainFilesFound && pcFilesFound && !psxFilesFound)
-		gd = GameDescriptor(sword1FullSettings, GUIO2(GUIO_NOMIDI, GUIO_NOASPECT));
+		game = DetectedGame(sword1FullSettings);
 	else if (mainFilesFound && macFilesFound)
-		gd = GameDescriptor(sword1MacFullSettings, GUIO2(GUIO_NOMIDI, GUIO_NOASPECT));
+		game = DetectedGame(sword1MacFullSettings);
 	else if (mainFilesFound && macDemoFilesFound)
-		gd = GameDescriptor(sword1MacDemoSettings, GUIO2(GUIO_NOMIDI, GUIO_NOASPECT));
+		game = DetectedGame(sword1MacDemoSettings);
 	else
 		return detectedGames;
 
-	gd.appendGUIOptions(getGameGUIOptionsDescriptionLanguage(Common::EN_ANY));
-	gd.appendGUIOptions(getGameGUIOptionsDescriptionLanguage(Common::DE_DEU));
-	gd.appendGUIOptions(getGameGUIOptionsDescriptionLanguage(Common::FR_FRA));
-	gd.appendGUIOptions(getGameGUIOptionsDescriptionLanguage(Common::IT_ITA));
-	gd.appendGUIOptions(getGameGUIOptionsDescriptionLanguage(Common::ES_ESP));
-	gd.appendGUIOptions(getGameGUIOptionsDescriptionLanguage(Common::PT_BRA));
-	gd.appendGUIOptions(getGameGUIOptionsDescriptionLanguage(Common::CZ_CZE));
+	game.setGUIOptions(GUIO2(GUIO_NOMIDI, GUIO_NOASPECT));
 
-	detectedGames.push_back(gd);
+	game.appendGUIOptions(getGameGUIOptionsDescriptionLanguage(Common::EN_ANY));
+	game.appendGUIOptions(getGameGUIOptionsDescriptionLanguage(Common::DE_DEU));
+	game.appendGUIOptions(getGameGUIOptionsDescriptionLanguage(Common::FR_FRA));
+	game.appendGUIOptions(getGameGUIOptionsDescriptionLanguage(Common::IT_ITA));
+	game.appendGUIOptions(getGameGUIOptionsDescriptionLanguage(Common::ES_ESP));
+	game.appendGUIOptions(getGameGUIOptionsDescriptionLanguage(Common::PT_BRA));
+	game.appendGUIOptions(getGameGUIOptionsDescriptionLanguage(Common::CZ_CZE));
+
+	detectedGames.push_back(game);
 
 	return detectedGames;
 }
@@ -300,7 +302,11 @@ SaveStateDescriptor SwordMetaEngine::querySaveMetaInfos(const char *target, int 
 			in->skip(1);
 
 		if (Graphics::checkThumbnailHeader(*in)) {
-			Graphics::Surface *const thumbnail = Graphics::loadThumbnail(*in);
+			Graphics::Surface *thumbnail;
+			if (!Graphics::loadThumbnail(*in, thumbnail)) {
+				delete in;
+				return SaveStateDescriptor();
+			}
 			desc.setThumbnail(thumbnail);
 		}
 

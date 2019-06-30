@@ -72,8 +72,10 @@ ScummVM Team
        Benjamin Haisch
 
     Blade Runner:
+       Thanasis Antoniou
        Thomas Fach-Pedersen
        Peter Kohaut
+       Eugene Sandulenko
 
     CGE:
        Arnaud Boutonne
@@ -107,6 +109,10 @@ ScummVM Team
        Pawel Kolodziejski
        Thierry Crozat
 
+    DM:
+       Arnaud Boutonne
+       Bendeguz Nagy
+
     DreamWeb:
        Torbjorn Andersson
        Bertrand Augereau
@@ -116,6 +122,14 @@ ScummVM Team
 
     Fullpipe:
        Eugene Sandulenko
+
+    ScummGlk:
+       Paul Gilbert
+       Tor Andersson                - GarGlk library
+       Stefan Jokisch               - Frotz interpreter
+       Andrew Plotkin               - Glulxe interpreter
+       Alan Cox                     - ScottFree interpreter
+       Michael J. Roberts           - TADS interpreter
 
     Gnap:
        Arnaud Boutonne
@@ -140,6 +154,10 @@ ScummVM Team
        Arnaud Boutonne
        Oystein Eftevaag
        Eugene Sandulenko
+
+    Illusions:
+       Benjamin Haisch
+       Eric Fry
 
     Kyra:
        Torbjorn Andersson           - VQA Player
@@ -178,10 +196,15 @@ ScummVM Team
        Alyssa Milburn
        Eugene Sandulenko
        David Turner
+       David Fioramonti
 
     Mortevielle:
        Arnaud Boutonne
        Paul Gilbert
+
+    MutationOfJB:
+       Lubomir Remak
+       Miroslav Remak
 
     Neverhood:
        Benjamin Haisch
@@ -192,6 +215,11 @@ ScummVM Team
 
     Pegasus:
        Matthew Hoops                - (retired)
+
+    Prince:
+       Eugene Sandulenko
+       Lukasz Watka
+       Kamil Zbrog
 
     Queen:
        David Eriksson               - (retired)
@@ -292,6 +320,11 @@ ScummVM Team
        Einar Johan T. Somaaen
        Tobia Tesan
 
+    Xeen:
+       Paul Gilbert
+       David Goldsmith              - (analysis)
+       Matt Taylor                  - (analysis)
+
     Z-Vision:
        Adrian Astley
        Filippos Karapetis
@@ -333,6 +366,10 @@ ScummVM Team
     Nintendo DS:
        Bertrand Augereau            - HQ software scaler
        Neil Millstone
+
+    Nintendo Switch:
+       Cpasjuste
+       rsn8887
 
     OpenPandora:
        John Willis
@@ -385,6 +422,7 @@ ScummVM Team
        Johannes Schickel            - (retired)
 
     GUI:
+       Max Horn                     - (retired)
        Vicent Marti
        Eugene Sandulenko
        Johannes Schickel            - (retired)
@@ -420,6 +458,7 @@ ScummVM Team
      Eugene Sandulenko            - Forum, IRC channel, Screen Shots and
                                     Mailing list maintainer
      John Willis
+     Matan Bareket                - Site maintainer
 
   Website (content)
   -----------------

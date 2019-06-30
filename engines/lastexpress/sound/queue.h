@@ -40,31 +40,28 @@ public:
 	SoundQueue(LastExpressEngine *engine);
 	~SoundQueue();
 
-	// Timer
-	void handleTimer();
-
 	// Queue
 	void addToQueue(SoundEntry *entry);
-	void removeFromQueue(Common::String filename);
-	void removeFromQueue(EntityIndex entity);
+	void stop(Common::String filename);
+	void stop(EntityIndex entity);
 	void updateQueue();
-	void resetQueue();
-	void resetQueue(SoundType type1, SoundType type2 = kSoundTypeNone);
-	void clearQueue();
+	void stopAmbient();
+	void stopAllExcept(SoundTag tag1, SoundTag tag2 = kSoundTagNone);
+	void destroyAllSound();
 
 	// State
-	void clearStatus();
-	int getSoundState() { return _state; }
-	void resetState() { resetState(kSoundState1); }
-	void resetState(SoundState state) { _state |= state; }
+	void stopAll();
+	int getAmbientState() { return _ambientState; }
+	void startAmbient() { _ambientState |= kAmbientSoundEnabled; }
+	void setAmbientToSteam() { _ambientState |= kAmbientSoundSteam; }
 
 	// Entries
-	void setupEntry(SoundType type, EntityIndex index);
-	void processEntry(EntityIndex entity);
-	void processEntry(SoundType type);
-	void processEntry(Common::String filename);
-	void processEntries();
-	SoundEntry *getEntry(SoundType type);
+	void assignNISLink(EntityIndex index);
+	void fade(EntityIndex entity);
+	void fade(SoundTag tag);
+	void fade(Common::String filename);
+	void endAmbient();
+	SoundEntry *getEntry(SoundTag tag);
 	SoundEntry *getEntry(EntityIndex index);
 	SoundEntry *getEntry(Common::String name);
 	uint32 getEntryTime(EntityIndex index);
@@ -86,8 +83,8 @@ public:
 	uint32 getFlag() { return _flag; }
 	int getSubtitleFlag() { return _subtitlesFlag; }
 	void setSubtitleFlag(int flag) { _subtitlesFlag = flag; }
-	SoundType getCurrentType() { return _currentType; }
-	void setCurrentType(SoundType type) { _currentType = type; }
+
+	int32 generateNextTag() { return _currentTag++; }
 
 protected:
 	// Debug
@@ -96,12 +93,9 @@ protected:
 private:
 	LastExpressEngine *_engine;
 
-	Common::Mutex _mutex;
-
 	// State & shared data
-	int _state;
-	SoundType _currentType;
-	// TODO: this seems to be a synchronization flag for the sound timer
+	int _ambientState;
+	int32 _currentTag;
 	uint32 _flag;
 
 	// Entries

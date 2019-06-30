@@ -1,6 +1,6 @@
 [scummvm]
-gui_theme=scummmodern
-mute=false 
+gui_theme=scummremastered
+mute=false
 speech_volume=192
 native_mt32=false
 midi_gain=100
@@ -8,11 +8,11 @@ talkspeed=60
 subtitles=true
 multi_midi=false
 fullscreen=true
-sfx_volume=192   
+sfx_volume=192
 music_volume=192
 autosave_period=300
 music_driver=auto
-opl_driver=auto 
+opl_driver=auto
 aspect_ratio=false
 speech_mute=false
 enable_gs=false

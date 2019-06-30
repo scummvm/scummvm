@@ -47,6 +47,8 @@
 	#include "backends/fs/amigaos4/amigaos4-fs-factory.h"
 #elif defined(POSIX)
 	#include "backends/fs/posix/posix-fs-factory.h"
+#elif defined(RISCOS)
+	#include "backends/fs/riscos/riscos-fs-factory.h"
 #elif defined(WIN32)
 	#include "backends/fs/windows/windows-fs-factory.h"
 #endif
@@ -73,6 +75,8 @@ OSystem_NULL::OSystem_NULL() {
 		_fsFactory = new AmigaOSFilesystemFactory();
 	#elif defined(POSIX)
 		_fsFactory = new POSIXFilesystemFactory();
+	#elif defined(RISCOS)
+		_fsFactory = new RISCOSFilesystemFactory();
 	#elif defined(WIN32)
 		_fsFactory = new WindowsFilesystemFactory();
 	#else
@@ -133,7 +137,7 @@ int main(int argc, char *argv[]) {
 
 	// Invoke the actual ScummVM main entry point:
 	int res = scummvm_main(argc, argv);
-	delete (OSystem_NULL *)g_system;
+	g_system->destroy();
 	return res;
 }
 

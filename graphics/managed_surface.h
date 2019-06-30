@@ -307,17 +307,14 @@ public:
 	 * Copy the data from another Surface, reinitializing the
 	 * surface to match the dimensions of the passed surface
 	 */
-	void copyFrom(const ManagedSurface &surf) {
-		clearDirtyRects();
-		_innerSurface.copyFrom(surf._innerSurface);
-	}
+	void copyFrom(const ManagedSurface &surf);
 
 	/**
 	 * Draw a line.
 	 */
 	void drawLine(int x0, int y0, int x1, int y1, uint32 color) {
 		_innerSurface.drawLine(x0, y0, x1, y1, color);
-		addDirtyRect(Common::Rect(x0, y0, x1, y1));
+		addDirtyRect(Common::Rect(MIN(x0, x1), MIN(y0, y1), MAX(x0, x1), MAX(y0, y1)));
 	}
 
 	/**
@@ -325,7 +322,7 @@ public:
 	 */
 	void drawThickLine(int x0, int y0, int x1, int y1, int penX, int penY, uint32 color) {
 		_innerSurface.drawThickLine(x0, y0, x1, y1, penX, penY, color);
-		addDirtyRect(Common::Rect(x0, y0, x1 + penX, y1 + penY));
+		addDirtyRect(Common::Rect(MIN(x0, x1 + penX), MIN(y0, y1 + penY), MAX(x0, x1 + penX), MAX(y0, y1 + penY)));
 	}
 
 	/**
@@ -368,9 +365,22 @@ public:
 		addDirtyRect(area);
 		return _innerSurface.getSubArea(area);
 	}
+
+	/**
+	 * Convert the data to another pixel format.
+	 *
+	 * This works in-place. This means it will not create an additional buffer
+	 * for the conversion process. The value of 'pixels' might change though
+	 * (that means it might realloc the pixel data).
+	 *
+	 * @param dstFormat The desired format
+	 * @param palette   The palette (in RGB888), if the source format has a Bpp of 1
+	 */
+	void convertToInPlace(const PixelFormat &dstFormat, const byte *palette = 0) {
+		_innerSurface.convertToInPlace(dstFormat, palette);
+	}
 };
 
 } // End of namespace Graphics
-
 
 #endif

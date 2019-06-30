@@ -132,6 +132,9 @@ struct CelInfo32 {
 		default:
 			assert(!"Should never happen");
 		}
+		// This code should not be reached but the compiler expects to see a legal
+		// return from a non-void function.
+		return Common::String("here be dragons");
 	}
 };
 

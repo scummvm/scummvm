@@ -241,7 +241,7 @@ void Frame::readChannels(Common::ReadStreamEndian *stream) {
 			sprite._width = stream->readUint16();
 			stream->readUint16();
 			stream->readUint16();
-			
+
 		}
 
 		if (sprite._castId) {
@@ -700,7 +700,7 @@ void Frame::renderButton(Graphics::ManagedSurface &surface, uint16 spriteId) {
 		break;
 	case kTypeButton: {
 			_rect = Common::Rect(x, y, x + width, y + height + 3);
-			Graphics::MacPlotData pd(&surface, &_vm->getMacWindowManager()->getPatterns(), Graphics::MacGUIConstants::kPatternSolid, 1);
+			Graphics::MacPlotData pd(&surface, &_vm->getMacWindowManager()->getPatterns(), Graphics::MacGUIConstants::kPatternSolid, 1, Graphics::kColorWhite);
 			Graphics::drawRoundRect(_rect, 4, 0, false, Graphics::macDrawPixel, &pd);
 			addDrawRect(spriteId, _rect);
 		}
@@ -772,7 +772,7 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Commo
 
 	Graphics::MacFont *macFont = new Graphics::MacFont(textCast->fontId, textCast->fontSize, textCast->textSlant);
 
-	debugC(3, kDebugText, "renderText: x: %d y: %d w: %d h: %d font: '%s'", x, y, width, height, _vm->_wm->_fontMan->getFontName(*macFont));
+	debugC(3, kDebugText, "renderText: x: %d y: %d w: %d h: %d font: '%s'", x, y, width, height, _vm->_wm->_fontMan->getFontName(*macFont).c_str());
 
 	uint16 boxShadow = (uint16)textCast->boxShadow;
 	uint16 borderSize = (uint16)textCast->borderSize;

@@ -163,6 +163,8 @@ bool StaticANIObject::load(MfcArchive &file) {
 
 	GameObject::load(file);
 
+	debugC(6, kDebugXML, "%% <OLDANI %s>", GameObject::toXML().c_str());
+
 	int count = file.readUint16LE();
 
 	for (int i = 0; i < count; i++) {
@@ -196,6 +198,8 @@ bool StaticANIObject::load(MfcArchive &file) {
 	} else {
 		pt.x = pt.y = 100;
 	}
+
+	debugC(6, kDebugXML, "%% </OLDANI>");
 
 	setOXY(pt.x, pt.y);
 
@@ -1371,7 +1375,8 @@ bool Statics::load(MfcArchive &file) {
 	_staticsId = file.readUint16LE();
 
 	_staticsName = file.readPascalString();
-	debugC(7, kDebugLoading, "statics: <%s> id: %d (%x)", transCyrillic(_staticsName), _staticsId, _staticsId);
+	debugC(6, kDebugXML, "%% <STATICS id=\"%s\" name=\"%s\" %s />",
+		g_fp->gameIdToStr(_staticsId).c_str(), transCyrillic(_staticsName), DynamicPhase::toXML().c_str());
 
 	_picture.load(file);
 
@@ -1573,7 +1578,6 @@ bool Movement::load(MfcArchive &file, StaticANIObject *ani) {
 
 	int dynCount = file.readUint16LE();
 
-	debugC(7, kDebugLoading, "dynCount: %d  _id: %d", dynCount, _id);
 	if (dynCount != 0xffff || _id == MV_MAN_TURN_LU) {
 		_framePosOffsets.resize(dynCount + 2);
 
@@ -1599,12 +1603,12 @@ bool Movement::load(MfcArchive &file, StaticANIObject *ani) {
 		_mx = file.readSint32LE();
 		_my = file.readSint32LE();
 
-		staticsid = file.readUint16LE();
+		int staticsid2 = file.readUint16LE();
 
-		_staticsObj2 = ani->getStaticsById(staticsid);
+		_staticsObj2 = ani->getStaticsById(staticsid2);
 
-		if (!_staticsObj2 && (staticsid & 0x4000)) {
-			Statics *s = ani->getStaticsById(staticsid ^ 0x4000);
+		if (!_staticsObj2 && (staticsid2 & 0x4000)) {
+			Statics *s = ani->getStaticsById(staticsid2 ^ 0x4000);
 			_staticsObj2 = ani->addReverseStatics(s);
 		}
 
@@ -1617,6 +1621,14 @@ bool Movement::load(MfcArchive &file, StaticANIObject *ani) {
 			_framePosOffsets[_dynamicPhases.size() - 1].x = _m2x;
 			_framePosOffsets[_dynamicPhases.size() - 1].y = _m2y;
 		}
+
+		debugC(6, kDebugXML, "%% <MOVEMENT %s staticsId=\"%s\" mX=%d my=%d staticsId2=\"%s\" m2x=%d m2y=%d>",
+			GameObject::toXML().c_str(), g_fp->gameIdToStr(staticsid).c_str(), _mx, _my, g_fp->gameIdToStr(staticsid2).c_str(), _m2x, _m2y);
+
+		for (int i = 0; i < dynCount; i++)
+			debugC(6, kDebugXML, "%% <PHASE %s />", _dynamicPhases[i]->toXML().c_str());
+
+		debugC(6, kDebugXML, "%% </MOVEMENT>");
 
 	} else {
 		int movid = file.readUint16LE();
@@ -2127,6 +2139,12 @@ DynamicPhase::DynamicPhase(DynamicPhase *src, bool reverse) {
 	copyMemoryObject2(*src);
 }
 
+Common::String DynamicPhase::toXML() {
+	return Common::String::format("f7c=%d left=%d top=%d right=%d bottom=%d sX=%d sY=%d dynFlags=%d %s",
+			_field_7C, _rect.left, _rect.top, _rect.right, _rect.bottom, _someX, _someY, _dynFlags,
+			StaticPhase::toXML().c_str());
+}
+
 bool DynamicPhase::load(MfcArchive &file) {
 	debugC(5, kDebugLoading, "DynamicPhase::load()");
 
@@ -2155,6 +2173,10 @@ StaticPhase::StaticPhase() {
 	_initialCountdown = 0;
 	_countdown = 0;
 	_field_68 = 0;
+}
+
+Common::String StaticPhase::toXML() {
+	return Common::String::format("countdown=%d f6a=%d", _initialCountdown, _field_6A);
 }
 
 bool StaticPhase::load(MfcArchive &file) {

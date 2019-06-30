@@ -31,30 +31,31 @@ Windows::Windows() {
 	byte *data = new byte[f.size()];
 	f.read(data, f.size());
 	_fontData = data;
+	_fontWritePos = new Common::Point();
 
 	Common::fill(&_textColors[0], &_textColors[4], 0);
 	_bgColor = DEFAULT_BG_COLOR;
 	_fontReduced = false;
 	_fontJustify = JUSTIFY_NONE;
 
-	Window windows[40] = {
+	Window windows[48] = {
 		Window(Common::Rect(0, 0, 320, 200), 0, 0, 0, 0, 320, 200),
 		Window(Common::Rect(237, 9, 317, 74), 0, 0, 237, 12, 307, 68),
-		Window(Common::Rect(225, 1, 319, 73), 1, 8, 225, 1, 319, 73),
+		Window(Common::Rect(225, 1, 320, 73), 1, 8, 225, 1, 319, 73),
 		Window(Common::Rect(0, 0, 230, 149), 0, 0, 9, 8, 216, 140),
 		Window(Common::Rect(235, 148, 309, 189), 2, 8, 0, 0, 0, 0),
 		Window(Common::Rect(70, 20, 250, 183), 3, 8, 80, 38, 240, 166),
-		Window(Common::Rect(52, 149, 268, 197), 4, 8, 0, 0, 0, 0),
+		Window(Common::Rect(52, 149, 268, 198), 4, 8, 0, 0, 0, 0),
 		Window(Common::Rect(108, 0, 200, 200), 5, 0, 0, 0, 0, 0),
 		Window(Common::Rect(232, 9, 312, 74), 0, 0, 0, 0, 0, 0),
 		Window(Common::Rect(103, 156, 217, 186), 6, 8, 0, 0, 0, 0),
-		Window(Common::Rect(226, 0, 319, 146), 7, 8, 0, 0, 0, 0),
+		Window(Common::Rect(226, 0, 320, 146), 7, 8, 0, 0, 0, 0),
 		Window(Common::Rect(8, 8, 224, 140), 8, 8, 8, 8, 224, 200),
 		Window(Common::Rect(0, 143, 320, 199), 9, 8, 0, 0, 0, 0),
 		Window(Common::Rect(50, 103, 266, 139), 10, 8, 0, 0, 0, 0),
 		Window(Common::Rect(0, 7, 320, 138), 11, 8, 0, 0, 0, 0),
 		Window(Common::Rect(50, 71, 182, 129), 12, 8, 0, 0, 0, 0),
-		Window(Common::Rect(228, 106, 319, 146), 13, 8, 0, 0, 0, 0),
+		Window(Common::Rect(228, 106, 320, 146), 13, 8, 0, 0, 0, 0),
 		Window(Common::Rect(20, 142, 290, 199), 14, 8, 0, 0, 0, 0),
 		Window(Common::Rect(0, 20, 320, 180), 15, 8, 0, 0, 0, 0),
 		Window(Common::Rect(231, 48, 317, 141), 16, 8, 0, 0, 0, 0),
@@ -73,17 +74,21 @@ Windows::Windows() {
 		Window(Common::Rect(12, 11, 164, 94), 0, 0, 0, 0, 52, 0),
 		Window(Common::Rect(8, 147, 224, 192), 0, 8, 0, 0, 0, 94),
 		Window(Common::Rect(232, 74, 312, 138), 29, 8, 0, 0, 0, 0),
-		Window(Common::Rect(226, 26, 319, 146), 30, 8, 0, 0, 0, 0),
-		Window(Common::Rect(225, 74, 319, 154), 31, 8, 0, 0, 0, 0),
+		Window(Common::Rect(226, 26, 320, 146), 30, 8, 0, 0, 0, 0),
+		Window(Common::Rect(225, 74, 320, 154), 31, 8, 0, 0, 0, 0),
 		Window(Common::Rect(27, 6, 195, 142), 0, 8, 0, 0, 0, 0),
-		Window(Common::Rect(225, 140, 319, 199), 0, 8, 0, 0, 0, 0)
+		Window(Common::Rect(225, 140, 320, 199), 0, 8, 0, 0, 0, 0),
+		Window(Common::Rect(12, 8, 162, 198), 0, 0, 128, 0, 119, 0),
+		Window(Common::Rect(0, 0, 320, 200), 32, 8, 0, 0, 320, 190),
+		Window(Common::Rect(0, 0, 320, 200), 33, 8, 0, 0, 320, 200)
 	};
 
-	_windows = Common::Array<Window>(windows, 40);
+	_windows = Common::Array<Window>(windows, 42);
 }
 
 Windows::~Windows() {
 	delete[] _fontData;
+	delete _fontWritePos;
 }
 
 void Windows::closeAll() {
@@ -136,7 +141,7 @@ void Window::setBounds(const Common::Rect &r) {
 void Window::open() {
 	Screen &screen = *g_vm->_screen;
 
-	if (!_enabled) {
+	if (!_enabled && !isFullScreen()) {
 		// Save a copy of the area under the window
 		_savedArea.create(_bounds.width(), _bounds.height());
 		_savedArea.copyRectToSurface(screen, 0, 0, _bounds);
@@ -163,7 +168,7 @@ void Window::open() {
 void Window::close() {
 	Screen &screen = *g_vm->_screen;
 
-	if (_enabled) {
+	if (_enabled && !isFullScreen()) {
 		// Update the window
 		update();
 
@@ -256,6 +261,10 @@ void Window::drawList(DrawStruct *items, int count) {
 
 		items->_sprites->draw(*this, items->_frame, pt, items->_flags, items->_scale);
 	}
+}
+
+bool Window::isFullScreen() const {
+	return _bounds.width() == SCREEN_WIDTH && _bounds.height() == SCREEN_HEIGHT;
 }
 
 } // End of namespace Xeen

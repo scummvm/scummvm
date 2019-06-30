@@ -91,6 +91,8 @@ public:
 	void drawVerticalLine(uint, uint, uint);
 	void hardScroll(int distance);
 	bool getRGBIntoStack(uint x, uint y, StackHandler *sH);
+	void saveBackdrop(Common::WriteStream *stream); // To game save
+	void loadBackdrop(int ssgVersion, Common::SeekableReadStream *streamn); // From game save
 
 	// Lightmap
 	int _lightMapMode;
@@ -109,11 +111,6 @@ public:
 	int getCamX() { return _cameraX; }
 	int getCamY() { return _cameraY; }
 	float getCamZoom() { return _cameraZoom; }
-	void setCamera(int camerX, int camerY, float camerZ) {
-		_cameraX = camerX;
-		_cameraY = camerY;
-		_cameraZoom = camerZ;
-	}
 	void aimCamera(int cameraX, int cameraY);
 	void zoomCamera(int z);
 
@@ -167,10 +164,17 @@ public:
 	void saveColors(Common::WriteStream *stream);
 	void loadColors(Common::SeekableReadStream *stream);
 
-	// Thumb nail
+	// Thumbnail
+	bool setThumbnailSize(int thumbWidth, int thumbHeight);
 	bool saveThumbnail(Common::WriteStream *stream);
 	bool skipThumbnail(Common::SeekableReadStream *stream);
 	void showThumbnail(const Common::String &filename, int x, int y);
+
+	// Transition
+	void setBrightnessLevel(int brightnessLevel);
+	void setFadeMode(int fadeMode) { _fadeMode = fadeMode; };
+	void fixBrightness();
+	void resetRandW();
 
 private:
 	SludgeEngine *_vm;
@@ -222,6 +226,14 @@ private:
 	// Colors
 	uint _currentBlankColour;
 	byte _currentBurnR, _currentBurnG, _currentBurnB;
+
+	// Thumbnail
+	int _thumbWidth;
+	int _thumbHeight;
+
+	// Transition
+	byte _brightnessLevel;
+	byte _fadeMode;
 };
 
 } // End of namespace Sludge

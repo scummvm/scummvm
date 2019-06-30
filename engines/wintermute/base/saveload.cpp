@@ -101,6 +101,7 @@ bool SaveLoad::saveGame(int slot, const char *desc, bool quickSave, BaseGame *ga
 				pm->putDWORD(BaseEngine::instance().getRandomSource()->getSeed());
 				if (DID_SUCCEED(ret = pm->saveFile(filename))) {
 					ConfMan.setInt("most_recent_saveslot", slot);
+					ConfMan.flushToDisk();
 				}
 			}
 		}

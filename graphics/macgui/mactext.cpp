@@ -47,7 +47,8 @@ const Common::String MacFontRun::toString() {
 			(palinfo3 >> 8) & 0xff, palinfo3 & 0xff);
 }
 
-MacText::~MacText(){
+MacText::~MacText() {
+	delete _surface;
 	delete _macFont;
 }
 
@@ -513,11 +514,11 @@ Common::String MacText::getTextChunk(int startRow, int startCol, int endRow, int
 					if (formatted)
 						res += _textLines[i].chunks[chunk].toString();
 
-					if (endCol >= (int) _textLines[i].chunks[chunk].text.size())
+					if (endCol >= (int)_textLines[i].chunks[chunk].text.size())
 						res += _textLines[i].chunks[chunk].text;
 					else
 						res += Common::String(_textLines[i].chunks[chunk].text.c_str(), endCol);
-				} else if ((int) _textLines[i].chunks[chunk].text.size() > startCol) {
+				} else if ((int)_textLines[i].chunks[chunk].text.size() > startCol) {
 					if (formatted)
 						res += _textLines[i].chunks[chunk].toString();
 
@@ -537,7 +538,7 @@ Common::String MacText::getTextChunk(int startRow, int startCol, int endRow, int
 						res += _textLines[i].chunks[chunk].toString();
 
 					res += _textLines[i].chunks[chunk].text;
-				} else if ((int) _textLines[i].chunks[chunk].text.size() > startCol) {
+				} else if ((int)_textLines[i].chunks[chunk].text.size() > startCol) {
 					if (formatted)
 						res += _textLines[i].chunks[chunk].toString();
 
@@ -555,7 +556,7 @@ Common::String MacText::getTextChunk(int startRow, int startCol, int endRow, int
 				if (formatted)
 					res += _textLines[i].chunks[chunk].toString();
 
-				if (endCol >= (int) _textLines[i].chunks[chunk].text.size())
+				if (endCol >= (int)_textLines[i].chunks[chunk].text.size())
 					res += _textLines[i].chunks[chunk].text;
 				else
 					res += Common::String(_textLines[i].chunks[chunk].text.c_str(), endCol);

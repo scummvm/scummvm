@@ -84,7 +84,7 @@ struct FullpipeSavegameHeader {
 	uint32 date;
 	uint16 time;
 	uint32 playtime;
-	Common::SharedPtr<Graphics::Surface> thumbnail;
+	Graphics::Surface *thumbnail;
 };
 
 struct SaveHeader {
@@ -142,7 +142,7 @@ class GameLoader : public CObject {
 };
 
 const char *getSavegameFile(int saveGameIdx);
-bool readSavegameHeader(Common::InSaveFile *in, FullpipeSavegameHeader &header);
+WARN_UNUSED_RESULT bool readSavegameHeader(Common::InSaveFile *in, FullpipeSavegameHeader &header, bool skipThumbnail = true);
 void parseSavegameHeader(Fullpipe::FullpipeSavegameHeader &header, SaveStateDescriptor &desc);
 
 Inventory2 *getGameLoaderInventory();

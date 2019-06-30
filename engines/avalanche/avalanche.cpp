@@ -39,9 +39,6 @@ AvalancheEngine::AvalancheEngine(OSystem *syst, const AvalancheGameDescription *
 	_console = new AvalancheConsole(this);
 
 	_rnd = new Common::RandomSource("avalanche");
-	TimeDate time;
-	_system->getTimeAndDate(time);
-	_rnd->setSeed(time.tm_sec + time.tm_min + time.tm_hour);
 	_showDebugLines = false;
 
 	_clock = nullptr;
@@ -60,7 +57,6 @@ AvalancheEngine::AvalancheEngine(OSystem *syst, const AvalancheGameDescription *
 	_help = nullptr;
 	_highscore = nullptr;
 
-	_platform = gd->desc.platform;
 	initVariables();
 }
 
@@ -180,10 +176,6 @@ Common::ErrorCode AvalancheEngine::initialize() {
 
 GUI::Debugger *AvalancheEngine::getDebugger() {
 	return _console;
-}
-
-Common::Platform AvalancheEngine::getPlatform() const {
-	return _platform;
 }
 
 bool AvalancheEngine::hasFeature(EngineFeature f) const {

@@ -88,7 +88,7 @@ public:
  * Simple memory based 'stream', which implements the WriteStream interface for
  * a plain memory block.
  */
-class MemoryWriteStream : public WriteStream {
+class MemoryWriteStream : public SeekableWriteStream {
 private:
 	const uint32 _bufSize;
 protected:
@@ -111,11 +111,13 @@ public:
 		return dataSize;
 	}
 
-	int32 pos() const { return _pos; }
-	uint32 size() const { return _bufSize; }
+	virtual int32 pos() const override { return _pos; }
+	virtual int32 size() const override { return _bufSize; }
 
-	virtual bool err() const { return _err; }
-	virtual void clearErr() { _err = false; }
+	virtual bool err() const override { return _err; }
+	virtual void clearErr() override { _err = false; }
+
+	virtual bool seek(int32 offset, int whence = SEEK_SET) override { return false; }
 };
 
 /**
@@ -126,7 +128,8 @@ private:
 	byte *_ptrOrig;
 public:
 	SeekableMemoryWriteStream(byte *buf, uint32 len) : MemoryWriteStream(buf, len), _ptrOrig(buf) {}
-	uint32 seek(uint32 offset, int whence = SEEK_SET) {
+
+	virtual bool seek(int32 offset, int whence = SEEK_SET) override {
 		switch (whence) {
 		case SEEK_END:
 			// SEEK_END works just like SEEK_SET, only 'reversed',
@@ -143,11 +146,12 @@ public:
 			break;
 		}
 		// Post-Condition
-		if (_pos > size()) {
+		if ((int32)_pos > size()) {
 			_pos = size();
 			_ptr = _ptrOrig + _pos;
 		}
-		return _pos;
+
+		return true;
 	}
 };
 
@@ -156,7 +160,7 @@ public:
  * A sort of hybrid between MemoryWriteStream and Array classes. A stream
  * that grows as it's written to.
  */
-class MemoryWriteStreamDynamic : public WriteStream {
+class MemoryWriteStreamDynamic : public SeekableWriteStream {
 protected:
 	uint32 _capacity;
 	uint32 _size;
@@ -184,7 +188,7 @@ protected:
 		_size = new_len;
 	}
 public:
-	explicit MemoryWriteStreamDynamic(DisposeAfterUse::Flag disposeMemory) : _capacity(0), _size(0), _ptr(0), _data(0), _pos(0), _disposeMemory(disposeMemory) {}
+	explicit MemoryWriteStreamDynamic(DisposeAfterUse::Flag disposeMemory) : _capacity(0), _size(0), _ptr(nullptr), _data(nullptr), _pos(0), _disposeMemory(disposeMemory) {}
 
 	~MemoryWriteStreamDynamic() {
 		if (_disposeMemory)
@@ -201,18 +205,39 @@ public:
 		return dataSize;
 	}
 
-	int32 pos() const { return _pos; }
-	uint32 size() const { return _size; }
+	virtual int32 pos() const override { return _pos; }
+	virtual int32 size() const override { return _size; }
 
 	byte *getData() { return _data; }
 
-	bool seek(int32 offset, int whence = SEEK_SET);
+	virtual bool seek(int32 offs, int whence = SEEK_SET) override {
+		// Pre-Condition
+		assert(_pos <= _size);
+		switch (whence) {
+		case SEEK_END:
+			// SEEK_END works just like SEEK_SET, only 'reversed', i.e. from the end.
+			offs = _size + offs;
+			// Fall through
+		case SEEK_SET:
+			_ptr = _data + offs;
+			_pos = offs;
+			break;
+
+		case SEEK_CUR:
+			_ptr += offs;
+			_pos += offs;
+			break;
+		}
+
+		assert(_pos <= _size);
+		return true;
+	}
 };
 
 /**
 * MemoryStream based on RingBuffer. Grows if has insufficient buffer size.
 */
-class MemoryReadWriteStream : public SeekableReadStream, public WriteStream {
+class MemoryReadWriteStream : public SeekableReadStream, public SeekableWriteStream {
 private:
 	uint32 _capacity;
 	uint32 _size;
@@ -247,7 +272,7 @@ private:
 		}
 	}
 public:
-	explicit MemoryReadWriteStream(DisposeAfterUse::Flag disposeMemory) : _capacity(0), _size(0), _data(0), _writePos(0), _readPos(0), _pos(0), _length(0), _disposeMemory(disposeMemory), _eos(false) {}
+	explicit MemoryReadWriteStream(DisposeAfterUse::Flag disposeMemory) : _capacity(0), _size(0), _data(nullptr), _writePos(0), _readPos(0), _pos(0), _length(0), _disposeMemory(disposeMemory), _eos(false) {}
 
 	~MemoryReadWriteStream() {
 		if (_disposeMemory)
@@ -271,7 +296,7 @@ public:
 		return dataSize;
 	}
 
-	virtual uint32 read(void *dataPtr, uint32 dataSize) {
+	virtual uint32 read(void *dataPtr, uint32 dataSize) override {
 		if (_length < dataSize) {
 			dataSize = _length;
 			_eos = true;
@@ -289,11 +314,11 @@ public:
 		return dataSize;
 	}
 
-	int32 pos() const { return _pos - _length; } //'read' position in the stream
-	int32 size() const { return _size; } //that's also 'write' position in the stream, as it's append-only
-	bool seek(int32, int) { return false; }
-	bool eos() const { return _eos; }
-	void clearErr() { _eos = false; }
+	virtual int32 pos() const override { return _pos - _length; }
+	virtual int32 size() const override { return _size; }
+	virtual bool seek(int32, int) override { return false; }
+	virtual bool eos() const override { return _eos; }
+	virtual void clearErr() override { _eos = false; }
 
 	byte *getData() { return _data; }
 };

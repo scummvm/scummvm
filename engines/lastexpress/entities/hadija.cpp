@@ -34,10 +34,10 @@ namespace LastExpress {
 
 Hadija::Hadija(LastExpressEngine *engine) : Entity(engine, kEntityHadija) {
 	ADD_CALLBACK_FUNCTION(Hadija, reset);
-	ADD_CALLBACK_FUNCTION(Hadija, enterExitCompartment);
-	ADD_CALLBACK_FUNCTION(Hadija, playSound);
-	ADD_CALLBACK_FUNCTION(Hadija, updateFromTime);
-	ADD_CALLBACK_FUNCTION(Hadija, updateEntity);
+	ADD_CALLBACK_FUNCTION_SI(Hadija, enterExitCompartment);
+	ADD_CALLBACK_FUNCTION_S(Hadija, playSound);
+	ADD_CALLBACK_FUNCTION_I(Hadija, updateFromTime);
+	ADD_CALLBACK_FUNCTION_II(Hadija, updateEntity);
 	ADD_CALLBACK_FUNCTION(Hadija, peekF);
 	ADD_CALLBACK_FUNCTION(Hadija, peekH);
 	ADD_CALLBACK_FUNCTION(Hadija, goFtoH);
@@ -151,15 +151,15 @@ label_callback2:
 						return;
 					}
 				}
-
-				if (params->param3 >= getState()->time)
-					return;
 			}
+			if (getState()->time > kTime1134000 || getState()->time > params->param3) {
 
-			params->param3 = kTimeInvalid;
+				params->param3 = kTimeInvalid;
 
-			setCallback(3);
-			setup_peekH();
+				setCallback(3);
+				setup_peekH();
+				break;
+			}
 		}
 
 label_callback3:
@@ -341,10 +341,6 @@ label_callback4:
 			if (Entity::timeCheckCar(kTime2254500, params->param5, 5, WRAP_SETUP_FUNCTION(Hadija, setup_peekF)))
 				break;
 		}
-		break;
-
-	case kActionDefault:
-		getSavePoints()->push(kEntityAlouan, kEntityTrain, kAction191070912, kPosition_4840);
 		break;
 
 	case kActionCallback:

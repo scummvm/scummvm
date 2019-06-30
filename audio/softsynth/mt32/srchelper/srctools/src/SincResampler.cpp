@@ -16,11 +16,11 @@
 
 #include <cmath>
 
-#ifdef SINC_RESAMPLER_DEBUG_LOG
+#ifdef SRCTOOLS_SINC_RESAMPLER_DEBUG_LOG
 #include <iostream>
 #endif
 
-#include "SincResampler.h"
+#include "../include/SincResampler.h"
 
 #ifndef M_PI
 static const double M_PI = 3.1415926535897932;
@@ -124,7 +124,7 @@ ResamplerStage *SincResampler::createSincResampler(const double inputFrequency, 
 	unsigned int order = KaizerWindow::estimateOrder(dbSNR, fp, fs);
 	const unsigned int kernelLength = order + 1;
 
-#ifdef SINC_RESAMPLER_DEBUG_LOG
+#ifdef SRCTOOLS_SINC_RESAMPLER_DEBUG_LOG
 	std::clog << "FIR: " << upsampleFactor << "/" << downsampleFactor << ", N=" << kernelLength << ", NPh=" << kernelLength / double(upsampleFactor) << ", C=" << 0.5 / fc << ", fp=" << fp << ", fs=" << fs << ", M=" << maxUpsampleFactor << std::endl;
 #endif
 

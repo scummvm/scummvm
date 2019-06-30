@@ -39,21 +39,21 @@ namespace LastExpress {
 
 Verges::Verges(LastExpressEngine *engine) : Entity(engine, kEntityVerges) {
 	ADD_CALLBACK_FUNCTION(Verges, reset);
-	ADD_CALLBACK_FUNCTION(Verges, draw);
+	ADD_CALLBACK_FUNCTION_S(Verges, draw);
 	ADD_CALLBACK_FUNCTION(Verges, callbackActionOnDirection);
-	ADD_CALLBACK_FUNCTION(Verges, playSound);
-	ADD_CALLBACK_FUNCTION(Verges, playSound16);
+	ADD_CALLBACK_FUNCTION_S(Verges, playSound);
+	ADD_CALLBACK_FUNCTION_S(Verges, playSound16);
 	ADD_CALLBACK_FUNCTION(Verges, callbackActionRestaurantOrSalon);
-	ADD_CALLBACK_FUNCTION(Verges, savegame);
-	ADD_CALLBACK_FUNCTION(Verges, updateEntity);
-	ADD_CALLBACK_FUNCTION(Verges, walkBetweenCars);
-	ADD_CALLBACK_FUNCTION(Verges, makeAnnouncement);
+	ADD_CALLBACK_FUNCTION_II(Verges, savegame);
+	ADD_CALLBACK_FUNCTION_II(Verges, updateEntity);
+	ADD_CALLBACK_FUNCTION_S(Verges, walkBetweenCars);
+	ADD_CALLBACK_FUNCTION_IIS(Verges, makeAnnouncement);
 	ADD_CALLBACK_FUNCTION(Verges, function11);
 	ADD_CALLBACK_FUNCTION(Verges, function12);
-	ADD_CALLBACK_FUNCTION(Verges, baggageCar);
-	ADD_CALLBACK_FUNCTION(Verges, updateFromTime);
-	ADD_CALLBACK_FUNCTION(Verges, dialog);
-	ADD_CALLBACK_FUNCTION(Verges, dialog2);
+	ADD_CALLBACK_FUNCTION_I(Verges, baggageCar);
+	ADD_CALLBACK_FUNCTION_I(Verges, updateFromTime);
+	ADD_CALLBACK_FUNCTION_IS(Verges, dialog);
+	ADD_CALLBACK_FUNCTION_ISS(Verges, dialog2);
 	ADD_CALLBACK_FUNCTION(Verges, talkAboutPassengerList);
 	ADD_CALLBACK_FUNCTION(Verges, chapter1);
 	ADD_CALLBACK_FUNCTION(Verges, talkHarem);
@@ -67,7 +67,7 @@ Verges::Verges(LastExpressEngine *engine) : Entity(engine, kEntityVerges) {
 	ADD_CALLBACK_FUNCTION(Verges, chapter2);
 	ADD_CALLBACK_FUNCTION(Verges, chapter2Handler);
 	ADD_CALLBACK_FUNCTION(Verges, chapter3);
-	ADD_CALLBACK_FUNCTION(Verges, function30);
+	ADD_CALLBACK_FUNCTION_S(Verges, function30);
 	ADD_CALLBACK_FUNCTION(Verges, talkAboutMax);
 	ADD_CALLBACK_FUNCTION(Verges, function32);
 	ADD_CALLBACK_FUNCTION(Verges, function33);
@@ -123,7 +123,7 @@ IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_NOSETUP(5, Verges, playSound16)
-	Entity::playSound(savepoint, false, kFlagDefault);
+	Entity::playSound(savepoint, false, kVolumeFull);
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
@@ -492,7 +492,7 @@ IMPLEMENT_FUNCTION_ISS(16, Verges, dialog2, EntityIndex)
 		break;
 
 	case kActionNone:
-		if (CURRENT_PARAM(1, 1) && params->param8) {
+		if (CURRENT_PARAM(1, 1) >= 2 && params->param8) {
 			getSavePoints()->push(kEntityVerges, (EntityIndex)params->param1, kAction125499160);
 
 			if (!getEntities()->isPlayerPosition(kCarGreenSleeping, 2) && !getEntities()->isPlayerPosition(kCarRedSleeping, 2))
@@ -700,12 +700,12 @@ IMPLEMENT_FUNCTION(24, Verges, policeGettingOffTrain)
 		break;
 
 	case kActionDefault:
-		getSound()->playSound(kEntityVerges, "POL1101", kFlagDefault);
+		getSound()->playSound(kEntityVerges, "POL1101", kVolumeFull);
 		break;
 
 	case kActionCallback:
 		if (getCallback() == 1) {
-			getSoundQueue()->processEntry(kEntityVerges);
+			getSoundQueue()->fade(kEntityVerges);
 			getAction()->playAnimation(kEventGendarmesArrestation);
 			getLogic()->gameOver(kSavegameTypeIndex, 1, kSceneGameOverPolice1, true);
 		}
@@ -742,7 +742,7 @@ IMPLEMENT_FUNCTION(25, Verges, policeSearch)
 					getData()->car = kCarRedSleeping;
 					getData()->entityPosition = kPosition_9270;
 				} else {
-					if (getEntityData(kEntityPlayer)->car > kCarGreenSleeping
+					if (getEntityData(kEntityPlayer)->car < kCarGreenSleeping
 					 || (getEntityData(kEntityPlayer)->car == kCarGreenSleeping && getEntityData(kEntityPlayer)->entityPosition < kPosition_4840)) {
 						getSound()->playSound(kEntityPlayer, "BUMP");
 						getScenes()->loadSceneFromObject(kObjectCompartment5, true);
@@ -777,7 +777,7 @@ IMPLEMENT_FUNCTION(25, Verges, policeSearch)
 					setup_makeAnnouncement(kCarGreenSleeping, kPosition_540, "TRA1005");
 				} else {
 					setCallback(7);
-					setup_makeAnnouncement(kCarRedSleeping, kPosition_9460, "TRA1006");
+					setup_makeAnnouncement(kCarRedSleeping, kPosition_9460, "TRA1005");
 				}
 				break;
 			}
@@ -911,15 +911,13 @@ label_callback3:
 			break;
 
 label_callback4:
-		if (Entity::timeCheckCallback(kTime1089000, params->param8, 5, WRAP_SETUP_FUNCTION(Verges, setup_function12)))
-			break;
-
-		params->param8 = 1;
-
-		if (!params->param5) {
-			setCallback(5);
-			setup_function12();
-			break;
+		if (getState()->time > kTime1089000 && !params->param8) {
+			params->param8 = 1;
+			if (!params->param5) {
+				setCallback(5);
+				setup_function12();
+				break;
+			}
 		}
 
 label_callback8:
@@ -970,7 +968,7 @@ label_callback15:
 
 	case kActionOpenDoor:
 		setCallback(17);
-		setup_baggageCar(savepoint.param.intValue < 106 ? true : false);
+		setup_baggageCar(savepoint.param.intValue == kObject105 ? true : false);
 		break;
 
 	case kActionDefault:
@@ -1085,6 +1083,7 @@ IMPLEMENT_FUNCTION(28, Verges, chapter2Handler)
 		if (getEntities()->isInBaggageCarEntrance(kEntityPlayer)) {
 			setCallback(1);
 			setup_baggageCar(false);
+			break;
 		}
 
 label_callback_1:
@@ -1130,7 +1129,7 @@ label_callback_6:
 
 	case kActionOpenDoor:
 		setCallback(8);
-		setup_baggageCar(savepoint.param.intValue < 106);
+		setup_baggageCar(savepoint.param.intValue == kObject105);
 		break;
 
 	case kActionDefault:
@@ -1318,7 +1317,7 @@ IMPLEMENT_FUNCTION(32, Verges, function32)
 			break;
 
 		case 1:
-			getData()->entityPosition = kPosition_8500;
+			getData()->entityPosition = kPosition_5800;
 			getData()->location = kLocationOutsideCompartment;
 			getSound()->playSound(kEntityVerges, "TRA3004");
 
@@ -1400,12 +1399,12 @@ IMPLEMENT_FUNCTION(33, Verges, function33)
 			getData()->entityPosition = kPosition_5799;
 
 			setCallback(getProgress().field_3C ? 4 : 5);
-			setup_playSound(getProgress().field_3C ? "ABB3035A" : "ABB3035");
+			setup_playSound(getProgress().field_3C ? "ABB3035A" : "Abb3035");
 			break;
 
 		case 4:
 			setCallback(5);
-			setup_playSound("ABB3035");
+			setup_playSound("Abb3035");
 			break;
 
 		case 5:
@@ -1480,7 +1479,7 @@ label_callback_9:
 
 	case kActionOpenDoor:
 		setCallback(11);
-		setup_baggageCar(savepoint.param.intValue < 106);
+		setup_baggageCar(savepoint.param.intValue == kObject105);
 		break;
 
 	case kActionCallback:
@@ -1542,7 +1541,7 @@ IMPLEMENT_FUNCTION(35, Verges, organizeConcertInvitations)
 
 		case 2:
 			setCallback(3);
-			setup_dialog(kEntityMertens, "Tra3011A");
+			setup_dialog(kEntityCoudert, "Tra3011A");
 			break;
 
 		case 3:
@@ -1614,7 +1613,7 @@ IMPLEMENT_FUNCTION(37, Verges, chapter4Handler)
 		}
 
 label_callback_1:
-		if (ENTITY_PARAM(0, 6)) {
+		if (!ENTITY_PARAM(0, 6)) {
 			if (ENTITY_PARAM(0, 3)) {
 				setCallback(2);
 				setup_talkAboutPassengerList();
@@ -1652,7 +1651,7 @@ label_callback_8:
 
 	case kActionOpenDoor:
 		setCallback(10);
-		setup_baggageCar(savepoint.param.intValue < 106);
+		setup_baggageCar(savepoint.param.intValue == kObject105);
 		break;
 
 	case kActionDefault:
@@ -1710,7 +1709,7 @@ IMPLEMENT_FUNCTION(38, Verges, resetState)
 
 		getData()->entityPosition = kPosition_6469;
 		getData()->location = kLocationOutsideCompartment;
-		getData()->car = kCarGreenSleeping;
+		getData()->car = kCarRedSleeping;
 		break;
 
 	case kActionCallback:
@@ -1739,7 +1738,7 @@ IMPLEMENT_FUNCTION(38, Verges, resetState)
 		getData()->entityPosition = kPosition_5790;
 
 		setCallback(1);
-		setup_updateEntity(kCarGreenSleeping, kPosition_540);
+		setup_updateEntity(kCarRedSleeping, kPosition_540);
 		break;
 	}
 IMPLEMENT_FUNCTION_END
@@ -1782,10 +1781,10 @@ IMPLEMENT_FUNCTION(40, Verges, chapter5Handler)
 
 	case kActionOpenDoor:
 		if (getSoundQueue()->isBuffered(kEntityVerges))
-			getSoundQueue()->processEntry(kEntityVerges);
+			getSoundQueue()->fade(kEntityVerges);
 
 		if (getSoundQueue()->isBuffered("MUS050"))
-			getSoundQueue()->processEntry("MUS050");
+			getSoundQueue()->fade("MUS050");
 
 		getObjects()->update(kObject65, kEntityPlayer, kObjectLocationNone, kCursorNormal, kCursorForward);
 
@@ -1905,6 +1904,7 @@ void Verges::talk(const SavePoint &savepoint, const char *sound1, const char *so
 			break;
 
 		case 5:
+			setCallback(6);
 			setup_function11();
 			break;
 

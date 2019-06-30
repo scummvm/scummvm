@@ -61,12 +61,6 @@
 
 namespace Sci {
 
-
-#define VER(x) Common::Serializer::Version(x)
-
-
-#pragma mark -
-
 // These are serialization functions for various objects.
 
 void syncWithSerializer(Common::Serializer &s, Common::Serializable &obj) {
@@ -1256,15 +1250,31 @@ void gamestate_afterRestoreFixUp(EngineState *s, int savegameId) {
 		}
 		break;
 	case GID_PQ2:
-		// HACK: Same as above - enable the save game menu option when loading in PQ2 (bug #6875).
-		// It gets disabled in the game's death screen.
+		// HACK: Same as in Jones - enable the save game menu option when loading in
+		// PQ2 (bug #6875). It gets disabled in the game's death screen.
 		g_sci->_gfxMenu->kernelSetAttribute(2, 1, SCI_MENU_ATTRIBUTE_ENABLED, TRUE_REG);	// Game -> Save Game
 		break;
 #ifdef ENABLE_SCI32
+	case GID_KQ7:
+		if (Common::checkGameGUIOption(GAMEOPTION_UPSCALE_VIDEOS, ConfMan.get("guioptions"))) {
+			uint16 value = ConfMan.getBool("enable_video_upscale") ? 32 : 0;
+			s->variables[VAR_GLOBAL][kGlobalVarKQ7UpscaleVideos] = make_reg(0, value);
+		}
+		break;
 	case GID_PHANTASMAGORIA2:
 		if (Common::checkGameGUIOption(GAMEOPTION_ENABLE_CENSORING, ConfMan.get("guioptions"))) {
 			s->variables[VAR_GLOBAL][kGlobalVarPhant2CensorshipFlag] = make_reg(0, ConfMan.getBool("enable_censoring"));
 		}
+		break;
+	case GID_SHIVERS:
+		// WORKAROUND: When loading a saved game from the GMM in the same scene in
+		// Shivers, we end up with the same draw list, but the scene palette is not
+		// set properly. Normally, Shivers does a room change when showing the saved
+		// game list, which does not occur when loading directly from the GMM. When
+		// loading from the GMM, at this point all of the visible planes and items
+		// are deleted, so calling frameOut here helps reset the game palette
+		// properly, like when changing a room.
+		g_sci->_gfxFrameout->frameOut(true);
 		break;
 #endif
 	default:

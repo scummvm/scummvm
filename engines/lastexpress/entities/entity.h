@@ -76,11 +76,37 @@ struct SavePoint;
 #define ENTITY_CALLBACK(class, name, pointer) \
 	Common::Functor1Mem<const SavePoint&, void, class>(pointer, &class::name)
 
-#define ADD_CALLBACK_FUNCTION(class, name) \
-	_callbacks.push_back(new ENTITY_CALLBACK(class, name, this));
+#define ADD_CALLBACK_FUNCTION_TYPE(class, name, type) \
+	_callbacks.push_back(new ENTITY_CALLBACK(class, name, this)); \
+	_paramsTypeSetters.push_back(&EntityData::resetParametersType<EntityData::type, EntityData::EntityParametersIIII, EntityData::EntityParametersIIII>);
+
+#define ADD_CALLBACK_FUNCTION_TYPE2(class, name, type1, type2) \
+	_callbacks.push_back(new ENTITY_CALLBACK(class, name, this)); \
+	_paramsTypeSetters.push_back(&EntityData::resetParametersType<EntityData::type1, EntityData::type2, EntityData::EntityParametersIIII>);
+
+#define ADD_CALLBACK_FUNCTION_TYPE3(class, name, type1, type2, type3) \
+	_callbacks.push_back(new ENTITY_CALLBACK(class, name, this)); \
+	_paramsTypeSetters.push_back(&EntityData::resetParametersType<EntityData::type1, EntityData::type2, EntityData::type3>);
+
+#define ADD_CALLBACK_FUNCTION(class, name) ADD_CALLBACK_FUNCTION_TYPE(class, name, EntityParametersIIII)
+#define ADD_CALLBACK_FUNCTION_I(class, name) ADD_CALLBACK_FUNCTION_TYPE(class, name, EntityParametersIIII)
+#define ADD_CALLBACK_FUNCTION_II(class, name) ADD_CALLBACK_FUNCTION_TYPE(class, name, EntityParametersIIII)
+#define ADD_CALLBACK_FUNCTION_III(class, name) ADD_CALLBACK_FUNCTION_TYPE(class, name, EntityParametersIIII)
+#define ADD_CALLBACK_FUNCTION_S(class, name) ADD_CALLBACK_FUNCTION_TYPE(class, name, EntityParametersSIIS)
+#define ADD_CALLBACK_FUNCTION_SI(class, name) ADD_CALLBACK_FUNCTION_TYPE(class, name, EntityParametersSIIS)
+#define ADD_CALLBACK_FUNCTION_SII(class, name) ADD_CALLBACK_FUNCTION_TYPE(class, name, EntityParametersSIII)
+#define ADD_CALLBACK_FUNCTION_SIII(class, name) ADD_CALLBACK_FUNCTION_TYPE(class, name, EntityParametersSIII)
+#define ADD_CALLBACK_FUNCTION_SIIS(class, name) ADD_CALLBACK_FUNCTION_TYPE(class, name, EntityParametersSIIS)
+#define ADD_CALLBACK_FUNCTION_SS(class, name) ADD_CALLBACK_FUNCTION_TYPE(class, name, EntityParametersSSII)
+#define ADD_CALLBACK_FUNCTION_SSI(class, name) ADD_CALLBACK_FUNCTION_TYPE(class, name, EntityParametersSSII)
+#define ADD_CALLBACK_FUNCTION_IS(class, name) ADD_CALLBACK_FUNCTION_TYPE(class, name, EntityParametersISII)
+#define ADD_CALLBACK_FUNCTION_ISS(class, name) ADD_CALLBACK_FUNCTION_TYPE(class, name, EntityParametersISSI)
+#define ADD_CALLBACK_FUNCTION_IIS(class, name) ADD_CALLBACK_FUNCTION_TYPE(class, name, EntityParametersIISI)
+#define ADD_CALLBACK_FUNCTION_IISS(class, name) ADD_CALLBACK_FUNCTION_TYPE(class, name, EntityParametersIISS)
 
 #define ADD_NULL_FUNCTION() \
-	_callbacks.push_back(new ENTITY_CALLBACK(Entity, nullfunction, this));
+	_callbacks.push_back(new ENTITY_CALLBACK(Entity, nullfunction, this)); \
+	_paramsTypeSetters.push_back(&(EntityData::resetParametersType<EntityData::EntityParametersIIII, EntityData::EntityParametersIIII, EntityData::EntityParametersIIII>));
 
 #define WRAP_SETUP_FUNCTION(className, method) \
 	new Common::Functor0Mem<void, className>(this, &className::method)
@@ -125,7 +151,7 @@ struct SavePoint;
 // simple setup with no parameters
 #define IMPLEMENT_FUNCTION(index, class, name) \
 	void class::setup_##name() { \
-		Entity::setup(#class "::setup_" #name, index); \
+		Entity::setup(#class "::setup_" #name, index, _paramsTypeSetters[index]); \
 	} \
 	void class::name(const SavePoint &savepoint) { \
 		EXPOSE_PARAMS(EntityData::EntityParametersIIII) \
@@ -136,13 +162,13 @@ struct SavePoint;
 // nullfunction call
 #define IMPLEMENT_NULL_FUNCTION(index, class) \
 	void class::setup_nullfunction() { \
-		Entity::setup(#class "::setup_nullfunction", index); \
+		Entity::setup(#class "::setup_nullfunction", index, _paramsTypeSetters[index]); \
 	}
 
 // setup with one uint parameter
 #define IMPLEMENT_FUNCTION_I(index, class, name, paramType) \
 	void class::setup_##name(paramType param1) { \
-		Entity::setupI(#class "::setup_" #name, index, param1); \
+		Entity::setupI(#class "::setup_" #name, index, _paramsTypeSetters[index], param1); \
 	} \
 	void class::name(const SavePoint &savepoint) { \
 		EXPOSE_PARAMS(EntityData::EntityParametersIIII) \
@@ -151,7 +177,7 @@ struct SavePoint;
 // setup with two uint parameters
 #define IMPLEMENT_FUNCTION_II(index, class, name, paramType1, paramType2) \
 	void class::setup_##name(paramType1 param1, paramType2 param2) { \
-		Entity::setupII(#class "::setup_" #name, index, param1, param2); \
+		Entity::setupII(#class "::setup_" #name, index, _paramsTypeSetters[index], param1, param2); \
 	} \
 	void class::name(const SavePoint &savepoint) { \
 		EXPOSE_PARAMS(EntityData::EntityParametersIIII) \
@@ -160,7 +186,7 @@ struct SavePoint;
 // setup with three uint parameters
 #define IMPLEMENT_FUNCTION_III(index, class, name, paramType1, paramType2, paramType3) \
 	void class::setup_##name(paramType1 param1, paramType2 param2, paramType3 param3) { \
-		Entity::setupIII(#class "::setup_" #name, index, param1, param2, param3); \
+		Entity::setupIII(#class "::setup_" #name, index, _paramsTypeSetters[index], param1, param2, param3); \
 	} \
 	void class::name(const SavePoint &savepoint) { \
 		EXPOSE_PARAMS(EntityData::EntityParametersIIII) \
@@ -169,7 +195,7 @@ struct SavePoint;
 // setup with one char *parameter
 #define IMPLEMENT_FUNCTION_S(index, class, name) \
 	void class::setup_##name(const char *seq1) { \
-		Entity::setupS(#class "::setup_" #name, index, seq1); \
+		Entity::setupS(#class "::setup_" #name, index, _paramsTypeSetters[index], seq1); \
 	} \
 	void class::name(const SavePoint &savepoint) { \
 		EXPOSE_PARAMS(EntityData::EntityParametersSIIS) \
@@ -178,7 +204,7 @@ struct SavePoint;
 // setup with one char *parameter and one uint
 #define IMPLEMENT_FUNCTION_SI(index, class, name, paramType2) \
 	void class::setup_##name(const char *seq1, paramType2 param4) { \
-		Entity::setupSI(#class "::setup_" #name, index, seq1, param4); \
+		Entity::setupSI(#class "::setup_" #name, index, _paramsTypeSetters[index], seq1, param4); \
 	} \
 	void class::name(const SavePoint &savepoint) { \
 		EXPOSE_PARAMS(EntityData::EntityParametersSIIS) \
@@ -187,16 +213,16 @@ struct SavePoint;
 // setup with one char *parameter and two uints
 #define IMPLEMENT_FUNCTION_SII(index, class, name, paramType2, paramType3) \
 	void class::setup_##name(const char *seq1, paramType2 param4, paramType3 param5) { \
-		Entity::setupSII(#class "::setup_" #name, index, seq1, param4, param5); \
+		Entity::setupSII(#class "::setup_" #name, index, _paramsTypeSetters[index], seq1, param4, param5); \
 	} \
 	void class::name(const SavePoint &savepoint) { \
-		EXPOSE_PARAMS(EntityData::EntityParametersSIIS) \
-		debugC(6, kLastExpressDebugLogic, "Entity: " #class "::" #name "(%s, %d, %d) - action: %s", (char *)&params->seq1, params->param4, params->param5, ACTION_NAME(savepoint.action));
+		EXPOSE_PARAMS(EntityData::EntityParametersSIII) \
+		debugC(6, kLastExpressDebugLogic, "Entity: " #class "::" #name "(%s, %d, %d) - action: %s", (char *)&params->seq, params->param4, params->param5, ACTION_NAME(savepoint.action));
 
 // setup with one char *parameter and three uints
 #define IMPLEMENT_FUNCTION_SIII(index, class, name, paramType2, paramType3, paramType4) \
 	void class::setup_##name(const char *seq, paramType2 param4, paramType3 param5, paramType4 param6) { \
-		Entity::setupSIII(#class "::setup_" #name, index, seq, param4, param5, param6); \
+		Entity::setupSIII(#class "::setup_" #name, index, _paramsTypeSetters[index], seq, param4, param5, param6); \
 	} \
 	void class::name(const SavePoint &savepoint) { \
 		EXPOSE_PARAMS(EntityData::EntityParametersSIII) \
@@ -204,7 +230,7 @@ struct SavePoint;
 
 #define IMPLEMENT_FUNCTION_SIIS(index, class, name, paramType2, paramType3) \
 	void class::setup_##name(const char *seq1, paramType2 param4, paramType3 param5, const char *seq2) { \
-		Entity::setupSIIS(#class "::setup_" #name, index, seq1, param4, param5, seq2); \
+		Entity::setupSIIS(#class "::setup_" #name, index, _paramsTypeSetters[index], seq1, param4, param5, seq2); \
 	} \
 	void class::name(const SavePoint &savepoint) { \
 		EXPOSE_PARAMS(EntityData::EntityParametersSIIS) \
@@ -212,7 +238,7 @@ struct SavePoint;
 
 #define IMPLEMENT_FUNCTION_SS(index, class, name) \
 	void class::setup_##name(const char *seq1, const char *seq2) { \
-		Entity::setupSS(#class "::setup_" #name, index, seq1, seq2); \
+		Entity::setupSS(#class "::setup_" #name, index, _paramsTypeSetters[index], seq1, seq2); \
 	} \
 	void class::name(const SavePoint &savepoint) { \
 		EXPOSE_PARAMS(EntityData::EntityParametersSSII) \
@@ -220,7 +246,7 @@ struct SavePoint;
 
 #define IMPLEMENT_FUNCTION_SSI(index, class, name, paramType3) \
 	void class::setup_##name(const char *seq1, const char *seq2, paramType3 param7) { \
-		Entity::setupSSI(#class "::setup_" #name, index, seq1, seq2, param7); \
+		Entity::setupSSI(#class "::setup_" #name, index, _paramsTypeSetters[index], seq1, seq2, param7); \
 	} \
 	void class::name(const SavePoint &savepoint) { \
 		EXPOSE_PARAMS(EntityData::EntityParametersSSII) \
@@ -228,7 +254,7 @@ struct SavePoint;
 
 #define IMPLEMENT_FUNCTION_IS(index, class, name, paramType) \
 	void class::setup_##name(paramType param1, const char *seq) { \
-		Entity::setupIS(#class "::setup_" #name, index, param1, seq); \
+		Entity::setupIS(#class "::setup_" #name, index, _paramsTypeSetters[index], param1, seq); \
 	} \
 	void class::name(const SavePoint &savepoint) { \
 		EXPOSE_PARAMS(EntityData::EntityParametersISII) \
@@ -236,7 +262,7 @@ struct SavePoint;
 
 #define IMPLEMENT_FUNCTION_ISS(index, class, name, paramType) \
 	void class::setup_##name(paramType param1, const char *seq1, const char *seq2) { \
-		Entity::setupISS(#class "::setup_" #name, index, param1, seq1, seq2); \
+		Entity::setupISS(#class "::setup_" #name, index, _paramsTypeSetters[index], param1, seq1, seq2); \
 	} \
 	void class::name(const SavePoint &savepoint) { \
 		EXPOSE_PARAMS(EntityData::EntityParametersISSI) \
@@ -244,7 +270,7 @@ struct SavePoint;
 
 #define IMPLEMENT_FUNCTION_IIS(index, class, name, paramType1, paramType2) \
 	void class::setup_##name(paramType1 param1, paramType2 param2, const char *seq) { \
-		Entity::setupIIS(#class "::setup_" #name, index, param1, param2, seq); \
+		Entity::setupIIS(#class "::setup_" #name, index, _paramsTypeSetters[index], param1, param2, seq); \
 	} \
 	void class::name(const SavePoint &savepoint) { \
 		EXPOSE_PARAMS(EntityData::EntityParametersIISI) \
@@ -252,7 +278,7 @@ struct SavePoint;
 
 #define IMPLEMENT_FUNCTION_IISS(index, class, name, paramType1, paramType2) \
 	void class::setup_##name(paramType1 param1, paramType2 param2, const char *seq1, const char *seq2) { \
-		Entity::setupIISS(#class "::setup_" #name, index, param1, param2, seq1, seq2); \
+		Entity::setupIISS(#class "::setup_" #name, index, _paramsTypeSetters[index], param1, param2, seq1, seq2); \
 	} \
 	void class::name(const SavePoint &savepoint) { \
 		EXPOSE_PARAMS(EntityData::EntityParametersIISS) \
@@ -260,7 +286,7 @@ struct SavePoint;
 
 
 //////////////////////////////////////////////////////////////////////////
-class EntityData : Common::Serializable {
+class EntityData {
 public:
 
 	struct EntityParameters : Common::Serializable {
@@ -688,6 +714,23 @@ public:
 			memset(&seq, 0, 13);
 		}
 
+		Common::String toString() {
+			return Common::String::format("I5S: %d %d %d %d %d %s\n", param1, param2, param3, param4, param5, seq);
+		}
+
+		void update(uint32 index) {
+			switch (index) {
+			default:
+				error("[EntityParametersI5S::update] Invalid index (was: %d)", index);
+
+			case 0: param1 = 1; break;
+			case 1: param2 = 1; break;
+			case 2: param3 = 1; break;
+			case 3: param4 = 1; break;
+			case 4: param5 = 1; break;
+			}
+		}
+
 		void saveLoadWithSerializer(Common::Serializer &s) {
 			s.syncAsUint32LE(param1);
 			s.syncAsUint32LE(param2);
@@ -830,13 +873,13 @@ public:
 
 	EntityData() {}
 
-	template<class T>
-	void resetCurrentParameters() {
-		EntityCallParameters *params = &_parameters[_data.currentCall];
+	template<class T1, class T2, class T3>
+	static void resetParametersType(EntityCallParameters* params) {
 		params->clear();
-
-		for (int i = 0; i < 4; i++)
-			params->parameters[i] = new T();
+		params->parameters[0] = new T1();
+		params->parameters[1] = new T2();
+		params->parameters[2] = new T3();
+		params->parameters[3] = new EntityParametersIIII();
 	}
 
 	EntityCallData       *getCallData() { return &_data; }
@@ -853,7 +896,8 @@ public:
 	void                  updateParameters(uint32 index) const;
 
 	// Serializable
-	void                  saveLoadWithSerializer(Common::Serializer &ser);
+	typedef void(*TypeSetter)(EntityCallParameters*);
+	void saveLoadWithSerializer(Common::Serializer &ser, const Common::Array<TypeSetter>* paramsTypeSetters);
 
 private:
 
@@ -890,7 +934,7 @@ public:
 	virtual void setup_playSound(const char*) { error("[Entity::setup_playSound] Trying to call the parent setup function. Use the specific entity function directly"); }
 
 	// Serializable
-	void saveLoadWithSerializer(Common::Serializer &ser) { _data->saveLoadWithSerializer(ser); }
+	void saveLoadWithSerializer(Common::Serializer &ser) { _data->saveLoadWithSerializer(ser, &_paramsTypeSetters); }
 
 	void nullfunction(const SavePoint &savepoint) {}
 
@@ -901,6 +945,7 @@ protected:
 	EntityIndex                _entityIndex;
 	EntityData                *_data;
 	Common::Array<Callback *>  _callbacks;
+	Common::Array<EntityData::TypeSetter> _paramsTypeSetters;
 
 	/**
 	 * Saves the game
@@ -914,9 +959,10 @@ protected:
 	/**
 	 * Saves the game before being found out with a blood covered jacket.
 	 *
-	 * @param	saveFunction	The setup function to call to save the game
+	 * @param callback argument for setCallback()
+	 * @return         true if the event has been processed, false if nothing happened
 	 */
-	void savegameBloodJacket();
+	bool savegameBloodJacket(byte callback);
 
 	/**
 	 * Play sound
@@ -926,7 +972,7 @@ protected:
 	 * @param resetItem true to reset item.
 	 * @param flag      sound flag
 	 */
-	void playSound(const SavePoint &savepoint, bool resetItem = false, SoundFlag flag = kFlagInvalid);
+	void playSound(const SavePoint &savepoint, bool resetItem = false, SoundFlag flag = kSoundVolumeEntityDefault);
 
 	/**
 	 * Draws the entity
@@ -968,10 +1014,10 @@ protected:
 	 * Resets an entity
 	 *
 	 * @param savepoint    The savepoint.
-	 * @param resetClothes true to reset clothes.
+	 * @param maxClothes   cycles clothes from kClothesDefault to maxClothes inclusively
 	 * @param resetItem    true to reset inventoryItem to kItemInvalid
 	 */
-	void reset(const SavePoint &savepoint, bool resetClothes = false, bool resetItem = false);
+	void reset(const SavePoint &savepoint, ClothesIndex maxClothes = kClothesDefault, bool resetItem = false);
 
 	/**
 	 * Process callback action when the entity direction is not kDirectionRight
@@ -1064,21 +1110,21 @@ protected:
 	//////////////////////////////////////////////////////////////////////////
 	// Setup functions
 	//////////////////////////////////////////////////////////////////////////
-	void setup(const char *name, uint index);
-	void setupI(const char *name, uint index, uint param1);
-	void setupII(const char *name, uint index, uint param1, uint param2);
-	void setupIII(const char *name, uint index, uint param1, uint param2, uint param3);
-	void setupS(const char *name, uint index, const char *seq1);
-	void setupSS(const char *name, uint index, const char *seq1, const char *seq2);
-	void setupSI(const char *name, uint index, const char *seq1, uint param4);
-	void setupSII(const char *name, uint index, const char *seq1, uint param4, uint param5);
-	void setupSIII(const char *name, uint index, const char *seq, uint param4, uint param5, uint param6);
-	void setupSIIS(const char *name, uint index, const char *seq1, uint param4, uint param5, const char *seq2);
-	void setupSSI(const char *name, uint index, const char *seq1, const char *seq2, uint param7);
-	void setupIS(const char *name, uint index, uint param1, const char *seq);
-	void setupISS(const char *name, uint index, uint param1, const char *seq1, const char *seq2);
-	void setupIIS(const char *name, uint index, uint param1, uint param2, const char *seq);
-	void setupIISS(const char *name, uint index, uint param1, uint param2, const char *seq1, const char *seq2);
+	void setup(const char *name, uint index, EntityData::TypeSetter paramsTypeSetter);
+	void setupI(const char *name, uint index, EntityData::TypeSetter paramsTypeSetter, uint param1);
+	void setupII(const char *name, uint index, EntityData::TypeSetter paramsTypeSetter, uint param1, uint param2);
+	void setupIII(const char *name, uint index, EntityData::TypeSetter paramsTypeSetter, uint param1, uint param2, uint param3);
+	void setupS(const char *name, uint index, EntityData::TypeSetter paramsTypeSetter, const char *seq1);
+	void setupSS(const char *name, uint index, EntityData::TypeSetter paramsTypeSetter, const char *seq1, const char *seq2);
+	void setupSI(const char *name, uint index, EntityData::TypeSetter paramsTypeSetter, const char *seq1, uint param4);
+	void setupSII(const char *name, uint index, EntityData::TypeSetter paramsTypeSetter, const char *seq1, uint param4, uint param5);
+	void setupSIII(const char *name, uint index, EntityData::TypeSetter paramsTypeSetter, const char *seq, uint param4, uint param5, uint param6);
+	void setupSIIS(const char *name, uint index, EntityData::TypeSetter paramsTypeSetter, const char *seq1, uint param4, uint param5, const char *seq2);
+	void setupSSI(const char *name, uint index, EntityData::TypeSetter paramsTypeSetter, const char *seq1, const char *seq2, uint param7);
+	void setupIS(const char *name, uint index, EntityData::TypeSetter paramsTypeSetter, uint param1, const char *seq);
+	void setupISS(const char *name, uint index, EntityData::TypeSetter paramsTypeSetter, uint param1, const char *seq1, const char *seq2);
+	void setupIIS(const char *name, uint index, EntityData::TypeSetter paramsTypeSetter, uint param1, uint param2, const char *seq);
+	void setupIISS(const char *name, uint index, EntityData::TypeSetter paramsTypeSetter, uint param1, uint param2, const char *seq1, const char *seq2);
 
 	//////////////////////////////////////////////////////////////////////////
 	// Helper functions

@@ -26,6 +26,7 @@
 #include "common/keyboard.h"
 #include "common/translation.h"
 #include "common/system.h"
+#include "graphics/scaler.h"
 #include "gui/saveload.h"
 #include "gui/message.h"
 
@@ -71,6 +72,10 @@ MohawkEngine_Riven::MohawkEngine_Riven(OSystem *syst, const MohawkGameDescriptio
 	_optionsDialog = nullptr;
 	_card = nullptr;
 	_inventory = nullptr;
+	_lastSaveTime = 0;
+
+	_menuSavedCard = -1;
+	_menuSavedStack = -1;
 
 	DebugMan.addDebugChannel(kRivenDebugScript, "Script", "Track Script Execution");
 	DebugMan.addDebugChannel(kRivenDebugPatches, "Patches", "Track Script Patching");
@@ -112,6 +117,10 @@ GUI::Debugger *MohawkEngine_Riven::getDebugger() {
 
 Common::Error MohawkEngine_Riven::run() {
 	MohawkEngine::run();
+
+	if (!_mixer->isReady()) {
+		return Common::kAudioDeviceInitFailed;
+	}
 
 	// Let's try to open the installer file (it holds extras.mhk)
 	// Though, we set a low priority to prefer the extracted version
@@ -200,6 +209,7 @@ Common::Error MohawkEngine_Riven::run() {
 
 void MohawkEngine_Riven::doFrame() {
 	// Update background running things
+	uint32 loopStart = _system->getMillis();
 	_sound->updateSLST();
 	_video->updateMovies();
 
@@ -207,6 +217,32 @@ void MohawkEngine_Riven::doFrame() {
 		_stack->keyResetAction();
 	}
 
+	processInput();
+
+	_stack->onFrame();
+
+	if (!_scriptMan->runningQueuedScripts()) {
+		// Don't run queued scripts if we are calling from a queued script
+		// otherwise infinite looping will happen.
+		_scriptMan->runQueuedScripts();
+	}
+
+	if (shouldPerformAutoSave(_lastSaveTime)) {
+		tryAutoSaving();
+	}
+
+	_inventory->onFrame();
+
+	// Update the screen once per frame
+	_system->updateScreen();
+	uint32 loopElapsed = _system->getMillis() - loopStart;
+
+	// Cut down on CPU usage
+	if (loopElapsed < 10)
+		_system->delayMillis(10 - loopElapsed);
+}
+
+void MohawkEngine_Riven::processInput() {
 	Common::Event event;
 	while (_eventMan->pollEvent(event)) {
 		switch (event.type) {
@@ -235,11 +271,7 @@ void MohawkEngine_Riven::doFrame() {
 				pauseGame();
 				break;
 			case Common::KEYCODE_F5:
-				runDialog(*_optionsDialog);
-				if (_optionsDialog->getLoadSlot() >= 0)
-					loadGameStateAndDisplayError(_optionsDialog->getLoadSlot());
-				_gfx->setTransitionMode((RivenTransitionMode) _vars["transitionmode"]);
-				_card->initializeZipMode();
+				runOptionsDialog();
 				break;
 			case Common::KEYCODE_r:
 				// Return to the main menu in the demo on ctrl+r
@@ -257,6 +289,32 @@ void MohawkEngine_Riven::doFrame() {
 					changeToCard(6);
 				}
 				break;
+			case Common::KEYCODE_o:
+				if (event.kbd.flags & Common::KBD_CTRL) {
+					if (canLoadGameStateCurrently()) {
+						runLoadDialog();
+					}
+				}
+				break;
+			case Common::KEYCODE_s:
+				if (event.kbd.flags & Common::KBD_CTRL) {
+					if (canSaveGameStateCurrently()) {
+						runSaveDialog();
+					}
+				}
+				break;
+			case Common::KEYCODE_ESCAPE:
+				if (!_scriptMan->hasQueuedScripts() && getFeatures() & GF_25TH) {
+					// Check if we haven't jumped to menu
+					if (_menuSavedStack == -1) {
+						goToMainMenu();
+					} else {
+						resumeFromMainMenu();
+					}
+				} else {
+					_stack->onKeyPressed(event.kbd);
+				}
+				break;
 			default:
 				if (event.kbdRepeat) {
 					continue;
@@ -265,26 +323,52 @@ void MohawkEngine_Riven::doFrame() {
 				break;
 			}
 			break;
+		case Common::EVENT_QUIT:
+		case Common::EVENT_RTL:
+			// Attempt to autosave before exiting
+			tryAutoSaving();
+			break;
 		default:
 			break;
 		}
 	}
+}
 
-	_stack->onFrame();
-
-	if (!_scriptMan->runningQueuedScripts()) {
-		// Don't run queued scripts if we are calling from a queued script
-		// otherwise infinite looping will happen.
-		_scriptMan->runQueuedScripts();
+void MohawkEngine_Riven::goToMainMenu() {
+	if (isInMainMenu()) {
+		return;
 	}
 
-	_inventory->onFrame();
+	_menuSavedStack = _stack->getId();
+	_menuSavedCard = _card->getId();
 
-	// Update the screen once per frame
-	_system->updateScreen();
+	_menuThumbnail.reset(new Graphics::Surface());
+	createThumbnailFromScreen(_menuThumbnail.get());
 
-	// Cut down on CPU usage
-	_system->delayMillis(10);
+	RivenCommand *go = new RivenStackChangeCommand(this, kStackAspit, 1, true, true);
+	RivenScriptPtr goScript = _scriptMan->createScriptWithCommand(go);
+	_scriptMan->runScript(goScript, true);
+}
+
+void MohawkEngine_Riven::resumeFromMainMenu() {
+	assert(_menuSavedStack != -1);
+
+	RivenCommand *resume = new RivenStackChangeCommand(this, _menuSavedStack, _menuSavedCard, true, true);
+	RivenScriptPtr resumeScript = _scriptMan->createScriptWithCommand(resume);
+	_scriptMan->runScript(resumeScript, true);
+
+	_menuSavedStack = -1;
+	_menuSavedCard = -1;
+	_menuThumbnail.reset();
+}
+
+bool MohawkEngine_Riven::isInMainMenu() const {
+	static const uint16 kCardIdAspitAtrusJournal = 5;
+	return _stack->getId() == kStackAspit && _card->getId() < kCardIdAspitAtrusJournal;
+}
+
+bool MohawkEngine_Riven::isGameStarted() const {
+	return !isInMainMenu() || _menuSavedStack != -1;
 }
 
 void MohawkEngine_Riven::pauseEngineIntern(bool pause) {
@@ -294,6 +378,12 @@ void MohawkEngine_Riven::pauseEngineIntern(bool pause) {
 		_video->pauseVideos();
 	} else {
 		_video->resumeVideos();
+
+		if (_stack) {
+			// The mouse may have moved while the game was paused,
+			// the mouse cursor needs to be updated.
+			_stack->onMouseMove(_eventMan->getMousePos());
+		}
 	}
 }
 
@@ -324,6 +414,11 @@ void MohawkEngine_Riven::changeToStack(uint16 stackId) {
 	// Get the prefix character for the destination stack
 	char prefix = RivenStacks::getName(stackId)[0];
 
+	// Load the localization override file if any
+	if (getFeatures() & GF_LANGUAGE_FILES) {
+		loadLanguageDatafile(prefix, stackId);
+	}
+
 	// Load files that start with the prefix
 	const char **datafiles = listExpectedDatafiles();
 	for (int i = 0; datafiles[i] != nullptr; i++) {
@@ -342,6 +437,10 @@ void MohawkEngine_Riven::changeToStack(uint16 stackId) {
 
 	delete _stack;
 	_stack = constructStackById(stackId);
+
+	// Set the mouse position to the correct value so the mouse
+	// cursor can be computed accurately when loading a card.
+	_stack->onMouseMove(getEventManager()->getMousePos());
 }
 
 const char **MohawkEngine_Riven::listExpectedDatafiles() const {
@@ -418,6 +517,38 @@ bool MohawkEngine_Riven::checkDatafiles() {
 	GUIErrorMessage(message);
 
 	return false;
+}
+
+void MohawkEngine_Riven::loadLanguageDatafile(char prefix, uint16 stackId) {
+	Common::String language = getDatafileLanguageName("a_data_");
+	if (language.empty()) {
+		return;
+	}
+
+	Common::String languageDatafile = Common::String::format("%c_data_%s.mhk", prefix, language.c_str());
+
+	MohawkArchive *mhk = new MohawkArchive();
+	if (mhk->openFile(languageDatafile)) {
+
+		if (stackId == kStackOspit && getLanguage() != Common::EN_ANY && getLanguage() != Common::RU_RUS) {
+			// WORKAROUND: The international CD versions were repacked for the 25th anniversary release
+			// so they share the same resources as the English DVD version. The resource IDs for the DVD
+			// version resources have a delta of 1 in their numbering when compared the the CD version
+			// resources for Gehn's office. Unfortunately this delta was not compensated when repacking
+			// the archives. We need to do it here at run time...
+			mhk->offsetResourceIDs(ID_TBMP, 196, 1);
+		} else if (stackId == kStackJspit && getLanguage() != Common::EN_ANY && getLanguage() != Common::RU_RUS) {
+			// WORKAROUND: Same thing with Gehn's imager in the School in Jungle Island.
+			mhk->offsetResourceIDs(ID_TMOV, 342, -2);
+		} else if (stackId == kStackGspit && getLanguage() == Common::PL_POL) {
+			// WORKAROUND: Same thing for the advertisement easter egg on Garden Island.
+			mhk->offsetResourceIDs(ID_TMOV, 148, 2);
+		}
+
+		_mhk.push_back(mhk);
+	} else {
+		delete mhk;
+	}
 }
 
 RivenStack *MohawkEngine_Riven::constructStackById(uint16 id) {
@@ -505,12 +636,37 @@ Common::SeekableReadStream *MohawkEngine_Riven::getExtrasResource(uint32 tag, ui
 	return _extrasFile->getResource(tag, id);
 }
 
+Common::Array<uint16> MohawkEngine_Riven::getResourceIDList(uint32 type) const {
+	Common::Array<uint16> ids;
+
+	for (uint i = 0; i < _mhk.size(); i++) {
+		ids.push_back(_mhk[i]->getResourceIDList(type));
+	}
+
+	return ids;
+}
+
+
 void MohawkEngine_Riven::delay(uint32 ms) {
 	uint32 startTime = _system->getMillis();
 
 	while (_system->getMillis() < startTime + ms && !hasGameEnded()) {
 		doFrame();
 	}
+}
+
+void MohawkEngine_Riven::startNewGame() {
+	// Clear all the state data
+	_menuSavedStack = -1;
+	_menuSavedCard = -1;
+	_menuThumbnail.reset();
+
+	_vars.clear();
+	initVars();
+
+	_zipModeData.clear();
+
+	setTotalPlayTime(0);
 }
 
 void MohawkEngine_Riven::runLoadDialog() {
@@ -525,8 +681,34 @@ void MohawkEngine_Riven::runLoadDialog() {
 	}
 }
 
+void MohawkEngine_Riven::runSaveDialog() {
+	GUI::SaveLoadChooser slc(_("Save game:"), _("Save"), true);
+
+	pauseEngine(true);
+	int slot = slc.runModalWithCurrentTarget();
+	pauseEngine(false);
+
+	if (slot >= 0) {
+		Common::String result(slc.getResultString());
+		if (result.empty()) {
+			// If the user was lazy and entered no save name, come up with a default name.
+			result = slc.createDefaultSaveDescription(slot);
+		}
+
+		saveGameStateAndDisplayError(slot, result);
+	}
+}
+
 Common::Error MohawkEngine_Riven::loadGameState(int slot) {
-	return _saveLoad->loadGame(slot);
+	Common::Error loadError = _saveLoad->loadGame(slot);
+
+	if (loadError.getCode() == Common::kNoError) {
+		_menuSavedStack = -1;
+		_menuSavedCard = -1;
+		_menuThumbnail.reset();
+	}
+
+	return loadError;
 }
 
 void MohawkEngine_Riven::loadGameStateAndDisplayError(int slot) {
@@ -541,8 +723,53 @@ void MohawkEngine_Riven::loadGameStateAndDisplayError(int slot) {
 }
 
 Common::Error MohawkEngine_Riven::saveGameState(int slot, const Common::String &desc) {
-	return _saveLoad->saveGame(slot, desc);
+	return saveGameState(slot, desc, false);
 }
+
+Common::Error MohawkEngine_Riven::saveGameState(int slot, const Common::String &desc, bool autosave) {
+	if (_menuSavedStack != -1) {
+		_vars["CurrentStackID"] = _menuSavedStack;
+		_vars["CurrentCardID"] = _menuSavedCard;
+	}
+
+	const Graphics::Surface *thumbnail = _menuSavedStack != -1 ? _menuThumbnail.get() : nullptr;
+	Common::Error error = _saveLoad->saveGame(slot, desc, thumbnail, autosave);
+
+	if (_menuSavedStack != -1) {
+		_vars["CurrentStackID"] = 1;
+		_vars["CurrentCardID"] = 1;
+	}
+
+	return error;
+}
+
+void MohawkEngine_Riven::saveGameStateAndDisplayError(int slot, const Common::String &desc) {
+	assert(slot >= 0 && !desc.empty());
+
+	Common::Error saveError = saveGameState(slot, desc);
+
+	if (saveError.getCode() != Common::kNoError) {
+		GUI::MessageDialog dialog(saveError.getDesc());
+		dialog.runModal();
+	}
+}
+
+void MohawkEngine_Riven::tryAutoSaving() {
+	if (!canSaveGameStateCurrently() || _gameEnded) {
+		return; // Can't save right now, try again on the next frame
+	}
+
+	_lastSaveTime = _system->getMillis();
+
+	if (!_saveLoad->isAutoSaveAllowed()) {
+		return; // Can't autosave ever, try again after the next autosave delay
+	}
+
+	Common::Error saveError = saveGameState(RivenSaveLoad::kAutoSaveSlot, "Autosave", true);
+	if (saveError.getCode() != Common::kNoError)
+		warning("Attempt to autosave has failed.");
+}
+
 
 void MohawkEngine_Riven::addZipVisitedCard(uint16 cardId, uint16 cardNameId) {
 	Common::String cardName = getStack()->getName(kCardNames, cardNameId);
@@ -581,7 +808,7 @@ bool MohawkEngine_Riven::canLoadGameStateCurrently() {
 }
 
 bool MohawkEngine_Riven::canSaveGameStateCurrently() {
-	return canLoadGameStateCurrently();
+	return canLoadGameStateCurrently() && isGameStarted();
 }
 
 bool MohawkEngine_Riven::hasGameEnded() const {
@@ -590,6 +817,18 @@ bool MohawkEngine_Riven::hasGameEnded() const {
 
 void MohawkEngine_Riven::setGameEnded() {
 	_gameEnded = true;
+}
+
+void MohawkEngine_Riven::runOptionsDialog() {
+	runDialog(*_optionsDialog);
+
+	if (hasGameEnded()) {
+		// Attempt to autosave before exiting
+		tryAutoSaving();
+	}
+
+	_gfx->setTransitionMode((RivenTransitionMode) _vars["transitionmode"]);
+	_card->initializeZipMode();
 }
 
 bool ZipMode::operator== (const ZipMode &z) const {

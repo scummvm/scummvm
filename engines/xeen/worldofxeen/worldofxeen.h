@@ -24,41 +24,45 @@
 #define XEEN_WORLDOFXEEN_WORLDOFXEEN_H
 
 #include "xeen/xeen.h"
-#include "xeen/worldofxeen/clouds_cutscenes.h"
-#include "xeen/worldofxeen/darkside_cutscenes.h"
+#include "xeen/worldofxeen/worldofxeen_cutscenes.h"
 
 namespace Xeen {
 namespace WorldOfXeen {
-
-enum WOXGameAction {
-	WOX_QUIT, WOX_CLOUDS_INTRO, WOX_CLOUDS_ENDING, WOX_DARKSIDE_INTRO,
-	WOX_DARKSIDE_ENDING, WOX_WORLD_ENDING, WOX_MENU, WOX_PLAY_GAME
-};
 
 /**
  * Implements a descendant of the base Xeen engine to handle
  * Clouds of Xeen, Dark Side of Xeen, and Worlds of Xeen specific
  * game code
  */
-class WorldOfXeenEngine: public XeenEngine, public CloudsCutscenes,
-		public DarkSideCutscenes {
+class WorldOfXeenEngine: public XeenEngine, public WorldOfXeenCutscenes {
 protected:
 	/**
-	 * Outer gameplay loop responsible for dispatching control to game-specific
-	 * intros, main menus, or to play the actual game
+	 * Show the starting sequence/intro
 	 */
-	virtual void outerGameLoop();
-public:
-	bool _seenDarkSideIntro;
-	WOXGameAction _pendingAction;
+	virtual void showStartup();
+
+	/**
+	 * Show the startup menu
+	 */
+	virtual void showMainMenu();
+
+	/**
+	 * Death cutscene
+	 */
+	virtual void death();
 public:
 	WorldOfXeenEngine(OSystem *syst, const XeenGameDescription *gameDesc);
 	virtual ~WorldOfXeenEngine() {}
 
 	/**
-	 * Set the next overall game action to do
+	 * Show a cutscene
 	 */
-	void setPendingAction(WOXGameAction action) { _pendingAction = action; }
+	virtual void showCutscene(const Common::String &name, int status, uint score);
+
+	/**
+	 * Dream sequence
+	 */
+	virtual void dream();
 };
 
 #define WOX_VM (*(::Xeen::WorldOfXeen::WorldOfXeenEngine *)g_vm)

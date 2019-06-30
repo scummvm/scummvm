@@ -32,7 +32,7 @@ namespace Mohawk {
 // Base Archive code
 
 Archive::Archive() {
-	_stream = 0;
+	_stream = nullptr;
 }
 
 Archive::~Archive() {
@@ -57,7 +57,7 @@ bool Archive::openFile(const Common::String &fileName) {
 
 void Archive::close() {
 	_types.clear();
-	delete _stream; _stream = 0;
+	delete _stream; _stream = nullptr;
 }
 
 bool Archive::hasResource(uint32 tag, uint16 id) const {
@@ -152,6 +152,25 @@ Common::Array<uint16> Archive::getResourceIDList(uint32 type) const {
 		idList.push_back(it->_key);
 
 	return idList;
+}
+
+void Archive::offsetResourceIDs(uint32 type, uint16 startId, int16 increment) {
+	if (!_types.contains(type)) {
+		return;
+	}
+
+	const ResourceMap &oldResMap = _types[type];
+	ResourceMap newResMap;
+
+	for (ResourceMap::const_iterator it = oldResMap.begin(); it != oldResMap.end(); it++) {
+		if (it->_key >= startId) {
+			newResMap[it->_key + increment] = it->_value;
+		} else {
+			newResMap[it->_key] = it->_value;
+		}
+	}
+
+	_types[type] = newResMap;
 }
 
 // Mohawk Archive code

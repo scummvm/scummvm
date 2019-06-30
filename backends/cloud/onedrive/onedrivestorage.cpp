@@ -22,6 +22,7 @@
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
+#include <curl/curl.h>
 #include "backends/cloud/onedrive/onedrivestorage.h"
 #include "backends/cloud/cloudmanager.h"
 #include "backends/cloud/onedrive/onedrivecreatedirectoryrequest.h"
@@ -34,7 +35,6 @@
 #include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/json.h"
-#include <curl/curl.h>
 
 #ifdef ENABLE_RELEASE
 #include "dists/clouds/cloud_keys.h"

@@ -25,6 +25,7 @@
 #include "audio/mixer.h"
 #include "audio/softsynth/opl/dosbox.h"
 #include "audio/softsynth/opl/mame.h"
+#include "audio/softsynth/opl/nuked.h"
 
 #include "common/config-manager.h"
 #include "common/system.h"
@@ -42,13 +43,21 @@ namespace ALSA {
 } // End of namespace ALSA
 #endif // USE_ALSA
 
+#ifdef ENABLE_OPL2LPT
+namespace OPL2LPT {
+	OPL *create();
+} // End of namespace OPL2LPT
+#endif // ENABLE_OPL2LPT
+
 // Config implementation
 
 enum OplEmulator {
 	kAuto = 0,
 	kMame = 1,
 	kDOSBox = 2,
-	kALSA = 3
+	kALSA = 3,
+	kNuked = 4,
+	kOPL2LPT = 5
 };
 
 OPL::OPL() {
@@ -63,8 +72,14 @@ const Config::EmulatorDescription Config::_drivers[] = {
 #ifndef DISABLE_DOSBOX_OPL
 	{ "db", _s("DOSBox OPL emulator"), kDOSBox, kFlagOpl2 | kFlagDualOpl2 | kFlagOpl3 },
 #endif
+#ifndef DISABLE_NUKED_OPL
+	{ "nuked", _s("Nuked OPL emulator"), kNuked, kFlagOpl2 | kFlagDualOpl2 | kFlagOpl3 },
+#endif
 #ifdef USE_ALSA
 	{ "alsa", _s("ALSA Direct FM"), kALSA, kFlagOpl2 | kFlagDualOpl2 | kFlagOpl3 },
+#endif
+#ifdef ENABLE_OPL2LPT
+	{ "opl2lpt", _s("OPL2LPT"), kOPL2LPT, kFlagOpl2 },
 #endif
 	{ 0, 0, 0, 0 }
 };
@@ -178,9 +193,23 @@ OPL *Config::create(DriverId driver, OplType type) {
 		return new DOSBox::OPL(type);
 #endif
 
+#ifndef DISABLE_NUKED_OPL
+	case kNuked:
+		return new NUKED::OPL(type);
+#endif
+
 #ifdef USE_ALSA
 	case kALSA:
 		return ALSA::create(type);
+#endif
+
+#ifdef ENABLE_OPL2LPT
+	case kOPL2LPT:
+		if (type == kOpl2)
+			return OPL2LPT::create();
+		else
+			warning("OPL2LPT only supports OPL2");
+		return 0;
 #endif
 
 	default:

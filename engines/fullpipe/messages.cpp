@@ -107,7 +107,7 @@ bool ExCommand::load(MfcArchive &file) {
 
 	_objtype = kObjTypeExCommand;
 
-	debugC(6, kDebugLoading, "%% <COMMAND parent=%d cmd=%s x=%d y=%d f14=%d sceneX=%d sceneY=%d f20=%d f24=%d param=%d f2c=%d f30=%d f34=%d num=%d flags=%d parId=%d />",
+	debugC(6, kDebugXML, "%% <COMMAND parent=%d cmd=%s x=%d y=%d f14=%d sceneX=%d sceneY=%d f20=%d f24=%d param=%d f2c=%d f30=%d f34=%d num=%d flags=%d parId=%d />",
 			_parentId, exCommandType2str(_messageKind), _x, _y, _z, _sceneClickX, _sceneClickY, _field_20, _field_24, _param, _field_2C,
 			_field_30, _field_34, _messageNum, _excFlags, _parId);
 
@@ -240,7 +240,7 @@ bool ObjstateCommand::load(MfcArchive &file) {
 
 	_objCommandName = file.readPascalString();
 
-	debugC(6, kDebugLoading, "%% <COMMAND cmd=\"USER\" type=\"SET_LOGIC\" title=\"%s\" state=\"%d\" />", transCyrillic(_objCommandName.c_str()), _value);
+	debugC(6, kDebugXML, "%% <COMMAND cmd=\"USER\" type=\"SET_LOGIC\" title=\"%s\" state=\"%d\" />", transCyrillic(_objCommandName.c_str()), _value);
 
 	return true;
 }

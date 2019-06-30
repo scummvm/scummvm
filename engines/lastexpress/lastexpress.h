@@ -79,7 +79,7 @@ public:
 	~LastExpressEngine();
 
 	// Misc
-	Common::RandomSource getRandom() const {return _random; }
+	Common::RandomSource& getRandom() {return _random; }
 
 	// Game
 	Cursor          *getCursor()          const { return _cursor; }
@@ -104,13 +104,8 @@ public:
 	bool isDemo() const;
 
 	// Frame Counter
-	uint32 getFrameCounter() { return _frameCounter; }
-	void setFrameCounter(uint32 count) { _frameCounter = count; }
-
-protected:
-	// Sound Timer
-	static void soundTimer(void *ptr);
-	void handleSoundTimer();
+	// TODO: all callers could use _system->getMillis() directly without extra conversions
+	uint32 getFrameCounter() const;
 
 private:
 	const ADGameDescription *_gameDescription;
@@ -127,7 +122,6 @@ private:
 	Menu   *_menu;
 
 	// Frame counter
-	uint32 _frameCounter;
 	uint32 _lastFrameCount;
 
 	// Managers

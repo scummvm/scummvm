@@ -156,6 +156,7 @@ static const byte fragment14[] = {OP_LIBCALL | OPSIZE8, 58,
 		OP_IMM, FRAGMENT_DWORD((42 << 23)), OP_ONE, OP_ZERO, OP_LIBCALL | OPSIZE8, 44,
 		OP_LIBCALL | OPSIZE8, 97, OP_JUMP | OPSIZE16, FRAGMENT_WORD(2220)
 };
+static const byte fragment15[] = { OP_JMPFALSE | OPSIZE16, FRAGMENT_WORD(154) };
 
 #undef FRAGMENT_WORD
 
@@ -225,6 +226,9 @@ const WorkaroundEntry workaroundList[] = {
 	// DW1 PSX DEMO: Alters a script in the PSX DW1 demo to show the Idle animation scene rather than
 	// quitting the game when no user input happens for a while
 	{TINSEL_V1, true, true, Common::kPlatformPSX, 0, 2186, sizeof(fragment14), fragment14},
+
+	// DW1-GRA: Fixes hang in Temple, when trying to use items on the big hammer
+	{TINSEL_V1, false, false, Common::kPlatformUnknown, 276915849, 0x98, sizeof(fragment15), fragment15},
 
 	{TINSEL_V0, false, false, Common::kPlatformUnknown, 0, 0, 0, NULL}
 };

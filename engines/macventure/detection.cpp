@@ -54,7 +54,7 @@ static const PlainGameDescriptor macventureGames[] = {
 
 namespace MacVenture {
 
-SaveStateDescriptor loadMetaData(Common::SeekableReadStream *s, int slot);
+SaveStateDescriptor loadMetaData(Common::SeekableReadStream *s, int slot, bool skipThumbnail = true);
 
 class MacVentureMetaEngine : public AdvancedMetaEngine {
 public:
@@ -63,18 +63,19 @@ public:
 		_md5Bytes = 5000000; // TODO: Upper limit, adjust it once all games are added
 	}
 
-	virtual const char *getName() const override {
+	const char *getName() const {
 		return "MacVenture";
 	}
-	virtual const char *getOriginalCopyright() const override {
+	const char *getOriginalCopyright() const {
 		return "(C) ICOM Simulations";
 	}
 
-	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
-	virtual bool hasFeature(MetaEngineFeature f) const;
-	virtual SaveStateList listSaves(const char *target) const;
-	virtual int getMaximumSaveSlot() const;
-	virtual void removeSaveState(const char *target, int slot) const;
+protected:
+	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
+	bool hasFeature(MetaEngineFeature f) const;
+	SaveStateList listSaves(const char *target) const;
+	int getMaximumSaveSlot() const;
+	void removeSaveState(const char *target, int slot) const;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
 };
 
@@ -163,7 +164,7 @@ SaveStateDescriptor MacVentureMetaEngine::querySaveMetaInfos(const char *target,
 
 	Common::InSaveFile *in = saveFileMan->openForLoading(saveFileName);
 	if (in) {
-		desc = loadMetaData(in, slot);
+		desc = loadMetaData(in, slot, false);
 		delete in;
 		return desc;
 	}

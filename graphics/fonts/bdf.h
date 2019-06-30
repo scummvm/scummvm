@@ -85,9 +85,9 @@ private:
 };
 
 #define DEFINE_FONT(n) \
-	const BdfFont *n = 0;   \
+	const BdfFont *n = 0; \
 	void create_##n() { \
-		n = new BdfFont(desc, DisposeAfterUse::NO);  \
+		n = new BdfFont(desc, DisposeAfterUse::NO); \
 	}
 
 #define FORWARD_DECLARE_FONT(n) \

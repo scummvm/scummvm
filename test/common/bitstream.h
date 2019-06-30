@@ -50,7 +50,7 @@ public:
 private:
 	template<class MS, class BS>
 	void tmpl_skip() {
-		byte contents[] = { 'a', 'b' };
+		byte contents[] = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j' };
 
 		MS ms(contents, sizeof(contents));
 
@@ -61,6 +61,8 @@ private:
 		bs.skip(4);
 		TS_ASSERT_EQUALS(bs.pos(), 9u);
 		TS_ASSERT_EQUALS(bs.getBits(3), 6u);
+		bs.skip(65);
+		TS_ASSERT_EQUALS(bs.pos(), 77u);
 		TS_ASSERT(!bs.eos());
 	}
 public:
@@ -133,7 +135,7 @@ private:
 		TS_ASSERT_EQUALS(bs.pos(), 3u);
 		bs.skip(8);
 		TS_ASSERT_EQUALS(bs.pos(), 11u);
-		TS_ASSERT_EQUALS(bs.peekBits(5), 2u);
+		TS_ASSERT_EQUALS(bs.peekBits(6), 4u);
 		TS_ASSERT(!bs.eos());
 	}
 public:
@@ -203,12 +205,54 @@ private:
 		TS_ASSERT_EQUALS(bs.pos(), 3u);
 		bs.skip(8);
 		TS_ASSERT_EQUALS(bs.pos(), 11u);
-		TS_ASSERT_EQUALS(bs.peekBits(5), 12u);
+		TS_ASSERT_EQUALS(bs.peekBits(20), 12u);
 		TS_ASSERT(!bs.eos());
 	}
 public:
 	void test_peek_bits_lsb() {
 		tmpl_peek_bits_lsb<Common::MemoryReadStream, Common::BitStream8LSB>();
 		tmpl_peek_bits_lsb<Common::BitStreamMemoryStream, Common::BitStreamMemory8LSB>();
+	}
+
+private:
+	template<class MS, class BS>
+	void tmpl_align() {
+		byte contents[] = { 'a', 'b' };
+
+		MS ms(contents, sizeof(contents));
+
+		BS bs(ms);
+		TS_ASSERT_EQUALS(bs.pos(), 0u);
+		bs.align();
+		TS_ASSERT_EQUALS(bs.pos(), 0u);
+		bs.skip(3);
+		bs.align();
+		TS_ASSERT_EQUALS(bs.pos(), 8u);
+	}
+public:
+	void test_align() {
+		tmpl_align<Common::MemoryReadStream, Common::BitStream8LSB>();
+		tmpl_align<Common::BitStreamMemoryStream, Common::BitStreamMemory8LSB>();
+	}
+
+private:
+	template<class MS, class BS>
+	void tmpl_align_16() {
+		byte contents[] = { 'a', 'b' };
+
+		MS ms(contents, sizeof(contents));
+
+		BS bs(ms);
+		TS_ASSERT_EQUALS(bs.pos(), 0u);
+		bs.align();
+		TS_ASSERT_EQUALS(bs.pos(), 0u);
+		bs.skip(3);
+		bs.align();
+		TS_ASSERT_EQUALS(bs.pos(), 16u);
+	}
+public:
+	void test_align_16() {
+		tmpl_align_16<Common::MemoryReadStream, Common::BitStream16BELSB>();
+		tmpl_align_16<Common::BitStreamMemoryStream, Common::BitStreamMemory16BELSB>();
 	}
 };

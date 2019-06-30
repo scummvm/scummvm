@@ -341,7 +341,7 @@ static const char *const kEoB1WandStringsDOSItalian[2] = {
 static const StringListProvider kEoB1WandStringsDOSItalianProvider = { ARRAYSIZE(kEoB1WandStringsDOSItalian), kEoB1WandStringsDOSItalian };
 
 static const char *const kEoB1ItemMisuseStringsDOSItalian[3] = {
-	" non pu""\x11"" usare quest'oggetto.\r",
+	"%s non pu""\x11"" usare quest'oggetto.\r",
 	"Se indossato quest'oggetto funziona in automatico.\r",
 	"Questo oggetto non si usa cos""\x10"".\r"
 };
@@ -816,7 +816,13 @@ static const char *const kEoB1MagicStrings8DOSItalian[3] = {
 };
 
 static const StringListProvider kEoB1MagicStrings8DOSItalianProvider = { ARRAYSIZE(kEoB1MagicStrings8DOSItalian), kEoB1MagicStrings8DOSItalian };
+/*
+static const char *const kEoB1MagicStrings9DOSItalian[1] = {
+	"%s e gia protetto da pelle di pietra.\r"
+};
 
+static const StringListProvider kEoB1MagicStrings9DOSItalianProvider = { ARRAYSIZE(kEoB1MagicStrings9DOSItalian), kEoB1MagicStrings9DOSItalian };
+*/
 static const byte kEoB1ManDefDOSItalian[120] = {
 	0x09, 0x0A, 0x02, 0x00, 0x09, 0x04, 0x03, 0x00,
 	0x09, 0x06, 0x06, 0x00, 0x09, 0x03, 0x03, 0x00,

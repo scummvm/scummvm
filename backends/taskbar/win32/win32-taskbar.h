@@ -25,16 +25,15 @@
 
 #if defined(WIN32) && defined(USE_TASKBAR)
 
-#include "backends/platform/sdl/sdl-window.h"
-
 #include "common/str.h"
 #include "common/taskbar.h"
 
+class SdlWindow_Win32;
 struct ITaskbarList3;
 
 class Win32TaskbarManager : public Common::TaskbarManager {
 public:
-	Win32TaskbarManager(SdlWindow *window);
+	Win32TaskbarManager(SdlWindow_Win32 *window);
 	virtual ~Win32TaskbarManager();
 
 	virtual void setOverlayIcon(const Common::String &name, const Common::String &description);
@@ -46,7 +45,7 @@ public:
 	virtual void clearError();
 
 private:
-	SdlWindow *_window;
+	SdlWindow_Win32 *_window;
 
 	ITaskbarList3 *_taskbar;
 
@@ -62,11 +61,6 @@ private:
 	 * @return	The icon path (or "" if no icon was found)
 	 */
 	Common::String getIconPath(Common::String target);
-
-	// Helper functions
-	bool confirmWindowsVersion(uint majorVersion, uint minorVersion);
-	LPWSTR ansiToUnicode(const char *s);
-	HWND getHwnd();
 };
 
 #endif

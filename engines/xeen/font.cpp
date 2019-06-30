@@ -23,22 +23,24 @@
 #include "common/endian.h"
 #include "xeen/font.h"
 #include "xeen/resources.h"
+#include "xeen/xeen.h"
 
 namespace Xeen {
 
 const byte *FontData::_fontData;
-Common::Point FontData::_writePos;
+Common::Point *FontData::_fontWritePos;
 byte FontData::_textColors[4];
 byte FontData::_bgColor;
 bool FontData::_fontReduced;
 Justify FontData::_fontJustify;
 
-FontSurface::FontSurface() : XSurface(), _msgWraps(false), _displayString(nullptr) {
+FontSurface::FontSurface() : XSurface(), _msgWraps(false), _displayString(nullptr),
+		_writePos(*FontData::_fontWritePos) {
 	setTextColor(0);
 }
 
 FontSurface::FontSurface(int wv, int hv) : XSurface(wv, hv),
-		_msgWraps(false), _displayString(nullptr) {
+		_msgWraps(false), _displayString(nullptr), _writePos(*FontData::_fontWritePos) {
 	create(w, h);
 	setTextColor(0);
 }
@@ -216,7 +218,7 @@ const char *FontSurface::writeString(const Common::String &s, const Common::Rect
 			} else if (c == 10) {
 				// Newline
 				if (newLine(bounds))
-					break;
+					return _displayString;
 			} else if (c == 11) {
 				// Set y position
 				int yp = fontAtoi();
@@ -245,6 +247,13 @@ const char *FontSurface::writeString(const Common::String &s, const Common::Rect
 	}
 
 	return _displayString;
+}
+
+void FontSurface::writeCharacter(char c, const Common::Rect &clipRect) {
+	Justify justify = _fontJustify;
+	_fontJustify = JUSTIFY_NONE;
+	writeString(Common::String::format("%c", c), clipRect);
+	_fontJustify = justify;
 }
 
 char FontSurface::getNextChar() {
@@ -312,7 +321,7 @@ int FontSurface::fontAtoi(int len) {
 }
 
 void FontSurface::setTextColor(int idx) {
-	const byte *colP = &Res.TEXT_COLORS[idx][0];
+	const byte *colP = (g_vm->_mode == MODE_STARTUP) ? &Res.TEXT_COLORS_STARTUP[idx][0] : &Res.TEXT_COLORS[idx][0];
 	Common::copy(colP, colP + 4, &_textColors[0]);
 }
 
@@ -321,6 +330,7 @@ void FontSurface::writeChar(char c, const Common::Rect &clipRect) {
 	int y = _writePos.y;
 	if (c == 'g' || c == 'p' || c == 'q' || c == 'y')
 		++y;
+	int yStart = y;
 
 	// Get pointers into font data and surface to write pixels to
 	int charIndex = (int)c + (_fontReduced ? 0x80 : 0);
@@ -345,8 +355,8 @@ void FontSurface::writeChar(char c, const Common::Rect &clipRect) {
 		}
 	}
 
-	addDirtyRect(Common::Rect(_writePos.x, _writePos.y, _writePos.x + FONT_WIDTH,
-		_writePos.y + FONT_HEIGHT));
+	addDirtyRect(Common::Rect(_writePos.x, yStart, _writePos.x + FONT_WIDTH,
+		yStart + FONT_HEIGHT));
 	_writePos.x += _fontData[0x1000 + charIndex];
 }
 

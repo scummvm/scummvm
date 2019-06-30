@@ -43,6 +43,10 @@ typedef void (VectorRenderer::*DrawingFunctionCallback)(const Common::Rect &, co
 
 
 struct DrawStep {
+	DrawingFunctionCallback drawingCall; /**< Pointer to drawing function */
+	Graphics::Surface* blitSrc;
+	Graphics::TransparentSurface* blitAlphaSrc;
+
 	struct Color {
 		uint8 r, g, b;
 		bool set;
@@ -81,10 +85,6 @@ struct DrawStep {
 	uint32 scale; /**< scale of all the coordinates in FIXED POINT with 16 bits mantissa */
 
 	GUI::ThemeEngine::AutoScaleMode autoscale; /**< scale alphaimage if present */
-
-	DrawingFunctionCallback drawingCall; /**< Pointer to drawing function */
-	Graphics::Surface *blitSrc;
-	Graphics::TransparentSurface *blitAlphaSrc;
 };
 
 VectorRenderer *createRenderer(int mode);
@@ -290,6 +290,13 @@ public:
 	}
 
 	/**
+	 * Returns the currently active drawing surface
+	 */
+	virtual TransparentSurface *getActiveSurface() {
+		return _activeSurface;
+	}
+
+	/**
 	 * Fills the active surface with the specified fg/bg color or the active gradient.
 	 * Defaults to using the active Foreground color for filling.
 	 */
@@ -430,7 +437,7 @@ public:
 	void drawCallback_ALPHABITMAP(const Common::Rect &area, const DrawStep &step, const Common::Rect &clip) {
 		uint16 x, y, w, h;
 		stepGetPositions(step, area, x, y, w, h);
-		blitAlphaBitmap(step.blitAlphaSrc, Common::Rect(x, y, x + w, y + h), step.autoscale, step.xAlign, step.yAlign); //TODO
+		blitAlphaBitmap(step.blitAlphaSrc, Common::Rect(x, y, x + w, y + h), step.autoscale, step.xAlign, step.yAlign); // TODO
 	}
 
 	void drawCallback_CROSS(const Common::Rect &area, const DrawStep &step, const Common::Rect &clip) {

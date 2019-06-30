@@ -20,123 +20,182 @@
  *
  */
 
-#include "bladerunner/script/ai.h"
+#include "bladerunner/script/ai_script.h"
+//#include "common/debug.h"
 
 namespace BladeRunner {
 
-void AIScriptOfficerLeary::Initialize() {
-	var_45D5B0_animation_state = 0;
-	var_45D5B4_animation_frame = 0;
-	var_462880 = 0;
+AIScriptOfficerLeary::AIScriptOfficerLeary(BladeRunnerEngine *vm) : AIScriptBase(vm) {
 	var_45D5B8 = 0;
 	var_45D5BC = 0;
-	var_462884 = 0;
+}
 
-	Actor_Put_In_Set(kActorOfficerLeary, 69);
+void AIScriptOfficerLeary::Initialize() {
+	_animationState = 0;
+	_animationFrame = 0;
+	_animationStateNext = 0;
+	var_45D5B8 = 0;
+	var_45D5BC = 0;
+	_animationNext = 0;
+
+	Actor_Put_In_Set(kActorOfficerLeary, kSetRC01);
 	Actor_Set_At_XYZ(kActorOfficerLeary, -261.80f, 6.00f, 79.58f, 512);
-	Actor_Set_Goal_Number(kActorOfficerLeary, 0);
+	Actor_Set_Goal_Number(kActorOfficerLeary, kGoalOfficerLearyDefault);
 	Actor_Set_Frame_Rate_FPS(kActorOfficerLeary, 8);
 }
 
 bool AIScriptOfficerLeary::Update() {
-	if (Global_Variable_Query(1) == 4 && Actor_Query_Goal_Number(kActorOfficerLeary) < 300) {
+	if (Global_Variable_Query(kVariableChapter) == 4
+	 && Actor_Query_Goal_Number(kActorOfficerLeary) < kGoalOfficerLearyStartOfAct4
+	) {
 		AI_Movement_Track_Flush(kActorOfficerLeary);
-		Actor_Set_Goal_Number(kActorOfficerLeary, 300);
-	} else if (Global_Variable_Query(1) == 5 && Actor_Query_Goal_Number(kActorOfficerLeary) < 400) {
+		Actor_Set_Goal_Number(kActorOfficerLeary, kGoalOfficerLearyStartOfAct4);
+		return false;
+	}
+
+	if (Global_Variable_Query(kVariableChapter) == 5
+	 && Actor_Query_Goal_Number(kActorOfficerLeary) < kGoalOfficerLearyStartOfAct5
+	) {
 		AI_Movement_Track_Flush(kActorOfficerLeary);
-		Actor_Set_Goal_Number(kActorOfficerLeary, 400);
-	} else if (!Game_Flag_Query(182) && Game_Flag_Query(147) == 1 && Game_Flag_Query(163) == 1 && Player_Query_Current_Scene() != 78 && Global_Variable_Query(1) < 3) {
+		Actor_Set_Goal_Number(kActorOfficerLeary, kGoalOfficerLearyStartOfAct5);
+		return false;
+	}
+
+	if (!Game_Flag_Query(kFlagMcCoyInRunciters)
+	 &&  Game_Flag_Query(kFlagRC51ChopstickWrapperTaken)
+	 &&  Game_Flag_Query(kFlagRC01ChromeDebrisTaken)
+	 &&  Player_Query_Current_Scene() != kSceneRC01
+	 &&  !Game_Flag_Query(kFlagRC01PoliceDone)          // otherwise this clause keeps repeating
+	 &&  Global_Variable_Query(kVariableChapter) < 3
+	) {
 		Game_Flag_Set(kFlagRC01PoliceDone);
-		Actor_Set_Goal_Number(kActorOfficerLeary, 3);
-	} else if (Actor_Query_Goal_Number(kActorOfficerLeary) != 1 && Actor_Query_Goal_Number(kActorOfficerLeary) != 2 && Game_Flag_Query(199) == 1) {
-		Game_Flag_Reset(199);
-	} else if (Global_Variable_Query(15) > 4 && !Actor_Clue_Query(kActorOfficerLeary, kClueMcCoyIsStupid)) {
-		Actor_Clue_Acquire(kActorOfficerLeary, kClueMcCoyIsStupid, 1, -1);
-	} else if (Game_Flag_Query(629) == 1) {
-		Game_Flag_Reset(629);
-	} else if (Game_Flag_Query(623) == 1 && !Game_Flag_Query(664)) {
-		Game_Flag_Set(664);
-		Actor_Set_Goal_Number(kActorOfficerLeary, 305);
-	} else if (Actor_Query_Goal_Number(kActorOfficerLeary) == 310 && Actor_Query_Which_Set_In(kActorOfficerLeary) != Player_Query_Current_Set()) {
+		Actor_Set_Goal_Number(kActorOfficerLeary, kGoalOfficerLearyPoliceDoneFromRC01);
+		return false;
+	}
+
+	if (Actor_Query_Goal_Number(kActorOfficerLeary) != kGoalOfficerLearyRC01WalkToCrowd
+	 && Actor_Query_Goal_Number(kActorOfficerLeary) != kGoalOfficerLearyRC01CrowdInterrogation
+	 && Game_Flag_Query(kFlagOfficerLearyTakingNotes)
+	) {
+		Game_Flag_Reset(kFlagOfficerLearyTakingNotes);
+		return false;
+	}
+
+	if ( Global_Variable_Query(15) > 4
+	 && !Actor_Clue_Query(kActorOfficerLeary, kClueMcCoyIsStupid)
+	) {
+		Actor_Clue_Acquire(kActorOfficerLeary, kClueMcCoyIsStupid, true, -1);
+		return false;
+	}
+
+	if (Game_Flag_Query(kFlagUnpauseGenWalkers)) {
+		Game_Flag_Reset(kFlagUnpauseGenWalkers);
+		return false;
+	}
+
+	if ( Game_Flag_Query(kFlagUG07Empty)
+	 && !Game_Flag_Query(kFlagUG07PoliceLeave)
+	) {
+		Game_Flag_Set(kFlagUG07PoliceLeave);
+		Actor_Set_Goal_Number(kActorOfficerLeary, kGoalOfficerLearyHuntingAroundAct4);
+		return false;
+	}
+
+	if (Actor_Query_Goal_Number(kActorOfficerLeary) == kGoalOfficerLearyAttackMcCoyAct4
+	 && Actor_Query_Which_Set_In(kActorOfficerLeary) != Player_Query_Current_Set()
+	) {
 		Non_Player_Actor_Combat_Mode_Off(kActorOfficerLeary);
-		Actor_Set_Goal_Number(kActorOfficerLeary, 305);
-	} else if (Actor_Query_Goal_Number(kActorOfficerLeary) == 599 && Actor_Query_Which_Set_In(kActorOfficerLeary) != Player_Query_Current_Set()) {
+		Actor_Set_Goal_Number(kActorOfficerLeary, kGoalOfficerLearyHuntingAroundAct4);
+		return false;
+	}
+
+	if (Actor_Query_Goal_Number(kActorOfficerLeary) == kGoalOfficerLearyDead
+	 && Actor_Query_Which_Set_In(kActorOfficerLeary) != Player_Query_Current_Set()
+	) {
+		// dead officer gets revived and re-used
 		Actor_Set_Health(kActorOfficerLeary, 40, 40);
-		Actor_Set_Goal_Number(kActorOfficerLeary, 305);
-	} else if (Actor_Query_Goal_Number(kActorOfficerLeary) == 305) {
+		Actor_Set_Goal_Number(kActorOfficerLeary, kGoalOfficerLearyHuntingAroundAct4);
+		return false;
+	}
+
+	if (Actor_Query_Goal_Number(kActorOfficerLeary) == kGoalOfficerLearyHuntingAroundAct4) {
 		switch (Actor_Query_Which_Set_In(kActorOfficerLeary)) {
-		case 7:
+		case kSetDR01_DR02_DR04:
 			if (Actor_Query_Which_Set_In(kActorOfficerLeary) == Player_Query_Current_Set()) {
-				Actor_Set_Goal_Number(kActorOfficerLeary, 310);
-				Non_Player_Actor_Combat_Mode_On(kActorOfficerLeary, 0, 1, kActorMcCoy, 0, 4, 7, 8, -1, -1, -1, 10, 300, 0);
+				Actor_Set_Goal_Number(kActorOfficerLeary, kGoalOfficerLearyAttackMcCoyAct4);
+				Non_Player_Actor_Combat_Mode_On(kActorOfficerLeary, kActorCombatStateIdle, true, kActorMcCoy, 0, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, -1, -1, -1, 10, 300, false);
 			}
 			break;
-		case 20:
+		case kSetBB01:
 			if (Actor_Query_Which_Set_In(kActorOfficerLeary) == Player_Query_Current_Set()) {
-				Actor_Set_Goal_Number(kActorOfficerLeary, 310);
-				Non_Player_Actor_Combat_Mode_On(kActorOfficerLeary, 0, 1, kActorMcCoy, 1, 4, 7, 8, -1, -1, -1, 10, 300, 0);
+				Actor_Set_Goal_Number(kActorOfficerLeary, kGoalOfficerLearyAttackMcCoyAct4);
+				Non_Player_Actor_Combat_Mode_On(kActorOfficerLeary, kActorCombatStateIdle, true, kActorMcCoy, 1, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, -1, -1, -1, 10, 300, false);
 			}
 			break;
-		case 33:
+		case kSetCT11:
 			if (Actor_Query_Which_Set_In(kActorOfficerLeary) == Player_Query_Current_Set()) {
-				Actor_Set_Goal_Number(kActorOfficerLeary, 310);
-				Non_Player_Actor_Combat_Mode_On(kActorOfficerLeary, 0, 1, kActorMcCoy, 5, 4, 7, 8, -1, -1, -1, 10, 300, 0);
+				Actor_Set_Goal_Number(kActorOfficerLeary, kGoalOfficerLearyAttackMcCoyAct4);
+				Non_Player_Actor_Combat_Mode_On(kActorOfficerLeary, kActorCombatStateIdle, true, kActorMcCoy, 5, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, -1, -1, -1, 10, 300, false);
 			}
 			break;
-		case 53:
+		case kSetMA07:
 			if (Actor_Query_Which_Set_In(kActorOfficerLeary) == Player_Query_Current_Set()) {
-				Actor_Set_Goal_Number(kActorOfficerLeary, 310);
-				Non_Player_Actor_Combat_Mode_On(kActorOfficerLeary, 0, 1, kActorMcCoy, 7, 4, 7, 8, -1, -1, -1, 10, 300, 0);
+				Actor_Set_Goal_Number(kActorOfficerLeary, kGoalOfficerLearyAttackMcCoyAct4);
+				Non_Player_Actor_Combat_Mode_On(kActorOfficerLeary, kActorCombatStateIdle, true, kActorMcCoy, 7, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, -1, -1, -1, 10, 300, false);
 			}
 			break;
-		case 54:
+		case kSetNR01:
 			if (Actor_Query_Which_Set_In(kActorOfficerLeary) == Player_Query_Current_Set()) {
-				Actor_Set_Goal_Number(kActorOfficerLeary, 310);
-				Non_Player_Actor_Combat_Mode_On(kActorOfficerLeary, 0, 1, kActorMcCoy, 3, 4, 7, 8, -1, -1, -1, 10, 300, 0);
+				Actor_Set_Goal_Number(kActorOfficerLeary, kGoalOfficerLearyAttackMcCoyAct4);
+				Non_Player_Actor_Combat_Mode_On(kActorOfficerLeary, kActorCombatStateIdle, true, kActorMcCoy, 3, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, -1, -1, -1, 10, 300, false);
 			}
 			break;
-		case 70:
+		case kSetRC03:
 			if (Actor_Query_Which_Set_In(kActorOfficerLeary) == Player_Query_Current_Set()) {
-				Actor_Set_Goal_Number(kActorOfficerLeary, 310);
-				Non_Player_Actor_Combat_Mode_On(kActorOfficerLeary, 0, 1, kActorMcCoy, 18, 4, 7, 8, -1, -1, -1, 10, 300, 0);
+				Actor_Set_Goal_Number(kActorOfficerLeary, kGoalOfficerLearyAttackMcCoyAct4);
+				Non_Player_Actor_Combat_Mode_On(kActorOfficerLeary, kActorCombatStateIdle, true, kActorMcCoy, 18, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, -1, -1, -1, 10, 300, false);
 			}
 			break;
-		case 74:
+		case kSetUG01:
 			if (Actor_Query_Which_Set_In(kActorOfficerLeary) == Player_Query_Current_Set()) {
-				Actor_Set_Goal_Number(kActorOfficerLeary, 310);
-				Non_Player_Actor_Combat_Mode_On(kActorOfficerLeary, 0, 1, kActorMcCoy, 11, 4, 7, 8, -1, -1, -1, 10, 300, 0);
+				Actor_Set_Goal_Number(kActorOfficerLeary, kGoalOfficerLearyAttackMcCoyAct4);
+				Non_Player_Actor_Combat_Mode_On(kActorOfficerLeary, kActorCombatStateIdle, true, kActorMcCoy, 11, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, -1, -1, -1, 10, 300, false);
 			}
 			break;
-		case 77:
-		case 78:
-		case 79:
+		case kSetUG04:
+			// fall through
+		case kSetUG05:
+			// fall through
+		case kSetUG06:
 			if (Actor_Query_Which_Set_In(kActorOfficerLeary) == Player_Query_Current_Set()) {
-				Actor_Set_Goal_Number(kActorOfficerLeary, 310);
-				Non_Player_Actor_Combat_Mode_On(kActorOfficerLeary, 0, 1, kActorMcCoy, 10, 4, 7, 8, -1, -1, -1, 10, 300, 0);
+				Actor_Set_Goal_Number(kActorOfficerLeary, kGoalOfficerLearyAttackMcCoyAct4);
+				Non_Player_Actor_Combat_Mode_On(kActorOfficerLeary, kActorCombatStateIdle, true, kActorMcCoy, 10, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, -1, -1, -1, 10, 300, false);
 			}
 			break;
-		case 81:
+// TODO Missing UG07 case -  would be a type 10 combat, 12 flee?
+		case kSetUG08:
 			if (Actor_Query_Which_Set_In(kActorOfficerLeary) == Player_Query_Current_Set()) {
-				Actor_Set_Goal_Number(kActorOfficerLeary, 310);
-				Non_Player_Actor_Combat_Mode_On(kActorOfficerLeary, 0, 1, kActorMcCoy, 13, 4, 7, 8, -1, -1, -1, 10, 300, 0);
+				Actor_Set_Goal_Number(kActorOfficerLeary, kGoalOfficerLearyAttackMcCoyAct4);
+				Non_Player_Actor_Combat_Mode_On(kActorOfficerLeary, kActorCombatStateIdle, true, kActorMcCoy, 13, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, -1, -1, -1, 10, 300, false);
 			}
 			break;
-		case 83:
+// TODO Missing UG09 case -  would be a type ?? //
+		case kSetUG10:
 			if (Actor_Query_Which_Set_In(kActorOfficerLeary) == Player_Query_Current_Set()) {
-				Actor_Set_Goal_Number(kActorOfficerLeary, 310);
-				Non_Player_Actor_Combat_Mode_On(kActorOfficerLeary, 0, 1, kActorMcCoy, 14, 4, 7, 8, -1, -1, -1, 10, 300, 0);
+				Actor_Set_Goal_Number(kActorOfficerLeary, kGoalOfficerLearyAttackMcCoyAct4);
+				Non_Player_Actor_Combat_Mode_On(kActorOfficerLeary, kActorCombatStateIdle, true, kActorMcCoy, 14, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, -1, -1, -1, 10, 300, false);
 			}
 			break;
-		case 84:
+		case kSetUG12:
 			if (Actor_Query_Which_Set_In(kActorOfficerLeary) == Player_Query_Current_Set()) {
-				Actor_Set_Goal_Number(kActorOfficerLeary, 310);
-				Non_Player_Actor_Combat_Mode_On(kActorOfficerLeary, 0, 1, kActorMcCoy, 16, 4, 7, 8, -1, -1, -1, 10, 300, 0);
+				Actor_Set_Goal_Number(kActorOfficerLeary, kGoalOfficerLearyAttackMcCoyAct4);
+				Non_Player_Actor_Combat_Mode_On(kActorOfficerLeary, kActorCombatStateIdle, true, kActorMcCoy, 16, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, -1, -1, -1, 10, 300, false);
 			}
 			break;
-		case 86:
+		case kSetUG14:
 			if (Actor_Query_Which_Set_In(kActorOfficerLeary) == Player_Query_Current_Set()) {
-				Actor_Set_Goal_Number(kActorOfficerLeary, 310);
-				Non_Player_Actor_Combat_Mode_On(kActorOfficerLeary, 0, 1, kActorMcCoy, 17, 4, 7, 8, -1, -1, -1, 10, 300, 0);
+				Actor_Set_Goal_Number(kActorOfficerLeary, kGoalOfficerLearyAttackMcCoyAct4);
+				Non_Player_Actor_Combat_Mode_On(kActorOfficerLeary, kActorCombatStateIdle, true, kActorMcCoy, 17, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, -1, -1, -1, 10, 300, false);
 			}
 			break;
 		}
@@ -145,54 +204,61 @@ bool AIScriptOfficerLeary::Update() {
 }
 
 void AIScriptOfficerLeary::TimerExpired(int timer) {
-	if (timer == 1) {
-		AI_Countdown_Timer_Reset(kActorOfficerLeary, 1);
-		if (Actor_Query_In_Set(kActorMcCoy, 41)) {
-			Actor_Set_Goal_Number(kActorOfficerLeary, 430);
-			Actor_Set_Goal_Number(kActorOfficerGrayford, 430);
+	if (timer == kActorTimerAIScriptCustomTask1) {
+		AI_Countdown_Timer_Reset(kActorOfficerLeary, kActorTimerAIScriptCustomTask1);
+		if (Actor_Query_In_Set(kActorMcCoy, kSetHF05)) {
+			Actor_Set_Goal_Number(kActorOfficerLeary, kGoalOfficerLearyPoliceAboutToAttackHF05);
+			Actor_Set_Goal_Number(kActorOfficerGrayford, kGoalOfficerGrayfordPoliceAboutToAttackHF05);
 		} else {
-			Game_Flag_Set(684);
+			Game_Flag_Set(kFlagHF05PoliceAttacked);
 		}
-	} else if (timer == 2) {
-		AI_Countdown_Timer_Reset(kActorOfficerLeary, 2);
-		sub_431420();
+	} else if (timer == kActorTimerAIScriptCustomTask2) {
+		AI_Countdown_Timer_Reset(kActorOfficerLeary, kActorTimerAIScriptCustomTask2);
+		Game_Flag_Reset(kFlagOfficerLearyTakingNotes);
 	}
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+	else if (timer == kActorTimerAIScriptCustomTask0) {
+		AI_Countdown_Timer_Reset(kActorOfficerLeary, kActorTimerAIScriptCustomTask0);
+		if (Actor_Query_Goal_Number(kActorOfficerLeary) == kGoalOfficerLearyRC01ResumeWalkToCrowd) {
+			Actor_Set_Goal_Number(kActorOfficerLeary, kGoalOfficerLearyRC01WalkToCrowd);
+		}
+	}
+#endif // BLADERUNNER_ORIGINAL_BUGS
+
 }
 
 void AIScriptOfficerLeary::CompletedMovementTrack() {
-	int v0;
-	unsigned int v1;
-
-	v0 = Actor_Query_Goal_Number(kActorOfficerLeary);
-	if (v0 == 1) {
-		Actor_Set_Goal_Number(kActorOfficerLeary, 2);
+	int goal = Actor_Query_Goal_Number(kActorOfficerLeary);
+	if (goal == kGoalOfficerLearyRC01WalkToCrowd) {
+		Actor_Set_Goal_Number(kActorOfficerLeary, kGoalOfficerLearyRC01CrowdInterrogation);
 		return;
 	}
-	//todo: tidyup
-	v1 = v0 - 305;
-	if (v1 > 3) {
+	if (goal > 308) {
 		return;
 	}
-	if (!v1) {
-		Actor_Set_Goal_Number(kActorOfficerLeary, 306);
+	if (goal == kGoalOfficerLearyHuntingAroundAct4) {
+//		debug("Leary completed Movement");
+		Actor_Set_Goal_Number(kActorOfficerLeary, kGoalOfficerLearyPrepareToHuntAroundAct4);
 		return;
 	}
-	if (v1 != 2) {
-		if (v1 == 3) {
-			Actor_Change_Animation_Mode(kActorOfficerLeary, 4);
-			Actor_Face_Actor(kActorOfficerLeary, kActorMcCoy, true);
-			Actor_Set_Goal_Number(kActorOfficerLeary, 309);
-		}
-		return;
+	if (goal == kGoalOfficerLearyBlockingUG07) {
+		// UG07 before McCoy visits his apartment in Act 4
+		Non_Player_Actor_Combat_Mode_On(kActorOfficerLeary, kActorCombatStateIdle, true, kActorMcCoy, 12, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, 0, -1, -1, 15, 300, false);
 	}
-	Non_Player_Actor_Combat_Mode_On(kActorOfficerLeary, 0, 1, kActorMcCoy, 12, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, 0, -1, -1, 15, 300, 0);
+	if (goal == 308) {
+		// goal 308 (and 309) are never triggered in the original code
+		Actor_Change_Animation_Mode(kActorOfficerLeary, 4);
+		Actor_Face_Actor(kActorOfficerLeary, kActorMcCoy, true);
+		Actor_Set_Goal_Number(kActorOfficerLeary, 309);
+	}
 }
 
 void AIScriptOfficerLeary::ReceivedClue(int clueId, int fromActorId) {
-	if (clueId == 222) {
+	if (clueId == kClueMcCoyRetiredZuben) {
 		Actor_Modify_Friendliness_To_Other(kActorOfficerLeary, kActorMcCoy, 5);
 	}
-	if (clueId == 215) {
+	if (clueId == kClueMcCoyLetZubenEscape) {
 		Actor_Modify_Friendliness_To_Other(kActorOfficerLeary, kActorMcCoy, -4);
 	}
 }
@@ -209,15 +275,17 @@ void AIScriptOfficerLeary::OtherAgentEnteredCombatMode(int otherActorId, int com
 
 void AIScriptOfficerLeary::ShotAtAndMissed() {}
 
-void AIScriptOfficerLeary::ShotAtAndHit() {
-	if (Actor_Query_Goal_Number(kActorOfficerLeary) == 307) {
+bool AIScriptOfficerLeary::ShotAtAndHit() {
+	// Leary is invincible while blocking the UG07 (before McCoy visits his apartment in Act 4)
+	if (Actor_Query_Goal_Number(kActorOfficerLeary) == kGoalOfficerLearyBlockingUG07) {
 		Actor_Set_Health(kActorOfficerLeary, 50, 50);
 	}
+	return false;
 }
 
 void AIScriptOfficerLeary::Retired(int byActorId) {
-	Actor_Set_Goal_Number(kActorOfficerLeary, 599);
-	Game_Flag_Set(607);
+	Actor_Set_Goal_Number(kActorOfficerLeary, kGoalOfficerLearyDead);
+	Game_Flag_Set(kFlagMcCoyRetiredHuman);
 }
 
 int AIScriptOfficerLeary::GetFriendlinessModifierIfGetsClue(int otherActorId, int clueId) {
@@ -225,27 +293,27 @@ int AIScriptOfficerLeary::GetFriendlinessModifierIfGetsClue(int otherActorId, in
 		return 0;
 	}
 	switch (clueId) {
-	case 242:
+	case kClueMcCoyIsInsane:
 		return -6;
-	case 240:
+	case kClueMcCoyIsAnnoying:
 		return -2;
-	case 239:
+	case kClueMcCoyIsStupid:
 		return -5;
-	case 228:
+	case kClueMcCoyRetiredLutherLance:
 		return 2;
-	case 227:
+	case kClueMcCoyShotZubenInTheBack:
 		return 4;
-	case 226:
+	case kClueMcCoyRetiredSadik:
 		return 4;
-	case 225:
+	case kClueMcCoyRetiredGordo:
 		return 3;
-	case 224:
+	case kClueMcCoyRetiredDektora:
 		return 3;
-	case 223:
+	case kClueMcCoyRetiredLucy:
 		return 2;
-	case 222:
+	case kClueMcCoyRetiredZuben:
 		return 3;
-	case 215:
+	case kClueMcCoyLetZubenEscape:
 		return -5;
 	}
 	return 0;
@@ -253,7 +321,8 @@ int AIScriptOfficerLeary::GetFriendlinessModifierIfGetsClue(int otherActorId, in
 
 bool AIScriptOfficerLeary::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 	switch (newGoalNumber) {
-	case 1:
+	case kGoalOfficerLearyRC01WalkToCrowd:
+		// kSetRC01
 		AI_Movement_Track_Flush(kActorOfficerLeary);
 		if (Random_Query(1, 2) == 1) {
 			AI_Movement_Track_Append(kActorOfficerLeary, 57, 7);
@@ -264,46 +333,63 @@ bool AIScriptOfficerLeary::GoalChanged(int currentGoalNumber, int newGoalNumber)
 		}
 		AI_Movement_Track_Repeat(kActorOfficerLeary);
 		return true;
-	case 2:
+	case kGoalOfficerLearyRC01CrowdInterrogation:
 		if (Random_Query(1, 3) == 1) {
-			if (Random_Query(1, 2) == 1 && !Actor_Clue_Query(kActorOfficerLeary, kClueCrowdInterviewA)) {
-				Actor_Clue_Acquire(kActorOfficerLeary, kClueCrowdInterviewA, 0, -1);
+			if ( Random_Query(1, 2) == 1
+			 && !Actor_Clue_Query(kActorOfficerLeary, kClueCrowdInterviewA)
+			) {
+				Actor_Clue_Acquire(kActorOfficerLeary, kClueCrowdInterviewA, false, -1);
 			} else if (!Actor_Clue_Query(kActorOfficerLeary, kClueCrowdInterviewB)) {
-				Actor_Clue_Acquire(kActorOfficerLeary, kClueCrowdInterviewB, 0, -1);
+				Actor_Clue_Acquire(kActorOfficerLeary, kClueCrowdInterviewB, false, -1);
 			}
 		}
-		if (Game_Flag_Query(182)) {
-			if (Actor_Clue_Query(kActorOfficerLeary, kClueCrowdInterviewA) && Actor_Clue_Query(kActorOfficerLeary, kClueCrowdInterviewB)) {
-				Actor_Set_Goal_Number(kActorOfficerLeary, 0);
+		if (Game_Flag_Query(kFlagMcCoyInRunciters)) {
+			if (Actor_Clue_Query(kActorOfficerLeary, kClueCrowdInterviewA)
+			 && Actor_Clue_Query(kActorOfficerLeary, kClueCrowdInterviewB)
+			) {
+				Actor_Set_Goal_Number(kActorOfficerLeary, kGoalOfficerLearyDefault);
 			} else {
-				Actor_Set_Goal_Number(kActorOfficerLeary, 1);
+				Actor_Set_Goal_Number(kActorOfficerLeary, kGoalOfficerLearyRC01WalkToCrowd);
 			}
 		} else {
-			Actor_Set_Goal_Number(kActorOfficerLeary, 0);
+			Actor_Set_Goal_Number(kActorOfficerLeary, kGoalOfficerLearyDefault);
 		}
 		return true;
-	case 3:
+	case kGoalOfficerLearyPoliceDoneFromRC01:
+		// kSetFreeSlotG -> kSetFreeSlotC
 		AI_Movement_Track_Flush(kActorOfficerLeary);
-		AI_Movement_Track_Append(kActorOfficerLeary, 39, Random_Query(120, 240));
-		AI_Movement_Track_Append(kActorOfficerLeary, 35, 0);
+		AI_Movement_Track_Append(kActorOfficerLeary, 39, Random_Query(120, 240)); // kSetFreeSlotG
+		AI_Movement_Track_Append(kActorOfficerLeary, 35, 0); // kSetFreeSlotC
 		AI_Movement_Track_Repeat(kActorOfficerLeary);
 		return true;
-	case 99:
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+	case kGoalOfficerLearyRC01ResumeWalkToCrowd:
+		AI_Countdown_Timer_Reset(kActorOfficerLeary, kActorTimerAIScriptCustomTask0);    // usable for custom stuff are timers 0-2
+		AI_Countdown_Timer_Start(kActorOfficerLeary, kActorTimerAIScriptCustomTask0, 4); // wait a few seconds before starting taking notes again
+		return true;
+#endif // BLADERUNNER_ORIGINAL_BUGS
+	case kGoalOfficerLearyEndOfAct1:
 		AI_Movement_Track_Flush(kActorOfficerLeary);
 		return false;
-	case 102:
+	case kGoalOfficerLearyVisitsBulletBob:
+		// kSetRC04
+		// Leary visits Bullet Bob shop - un-triggered
 		AI_Movement_Track_Flush(kActorOfficerLeary);
 		AI_Movement_Track_Append(kActorOfficerLeary, 107, 0);
 		AI_Movement_Track_Append(kActorOfficerLeary, 108, 0);
 		AI_Movement_Track_Repeat(kActorOfficerLeary);
 		return true;
-	case 300:
-		Actor_Set_Goal_Number(kActorOfficerLeary, 305);
+	case kGoalOfficerLearyStartOfAct4:
+		Actor_Set_Goal_Number(kActorOfficerLeary, kGoalOfficerLearyHuntingAroundAct4);
 		return true;
-	case 305:
+	case kGoalOfficerLearyHuntingAroundAct4:
+//		debug("Flushing Leary movement track");
 		AI_Movement_Track_Flush(kActorOfficerLeary);
 		switch (Random_Query(1, 10)) {
 		case 1:
+			// kSetNR01
+//			debug("leary 1 kSetNR01");
 			AI_Movement_Track_Append(kActorOfficerLeary, 398, 15);
 			AI_Movement_Track_Append(kActorOfficerLeary, 399, 0);
 			AI_Movement_Track_Append(kActorOfficerLeary, 400, 0);
@@ -314,6 +400,8 @@ bool AIScriptOfficerLeary::GoalChanged(int currentGoalNumber, int newGoalNumber)
 			AI_Movement_Track_Repeat(kActorOfficerLeary);
 			break;
 		case 2:
+			// kSetCT11
+//			debug("leary 2 kSetCT11");
 			AI_Movement_Track_Append(kActorOfficerLeary, 385, 10);
 			AI_Movement_Track_Append(kActorOfficerLeary, 242, 2);
 			AI_Movement_Track_Append(kActorOfficerLeary, 386, 2);
@@ -321,6 +409,8 @@ bool AIScriptOfficerLeary::GoalChanged(int currentGoalNumber, int newGoalNumber)
 			AI_Movement_Track_Repeat(kActorOfficerLeary);
 			break;
 		case 3:
+			// kSetDR01_DR02_DR04
+//			debug("leary 3 kSetDR01_DR02_DR04");
 			AI_Movement_Track_Append(kActorOfficerLeary, 390, 10);
 			AI_Movement_Track_Append(kActorOfficerLeary, 391, 0);
 			AI_Movement_Track_Append(kActorOfficerLeary, 392, 5);
@@ -329,28 +419,39 @@ bool AIScriptOfficerLeary::GoalChanged(int currentGoalNumber, int newGoalNumber)
 			AI_Movement_Track_Repeat(kActorOfficerLeary);
 			break;
 		case 4:
+			// kSetRC03 -> kSetFreeSlotC
+//			debug("leary 4 kSetRC03 -> kSetFreeSlotC");
 			AI_Movement_Track_Append(kActorOfficerLeary, 381, 15);
 			AI_Movement_Track_Append(kActorOfficerLeary, 382, 0);
 			AI_Movement_Track_Append(kActorOfficerLeary, 383, 15);
 			AI_Movement_Track_Append(kActorOfficerLeary, 382, 3);
 			AI_Movement_Track_Append(kActorOfficerLeary, 384, 0);
-			AI_Movement_Track_Append(kActorOfficerLeary, 35, 30);
+			AI_Movement_Track_Append(kActorOfficerLeary, 35, 30); // kSetFreeSlotC
 			AI_Movement_Track_Repeat(kActorOfficerLeary);
 			break;
 		case 5:
+			// kSetBB01 -> kSetFreeSlotC
+//			debug("leary 5 kSetBB01 -> kSetFreeSlotC");
 			AI_Movement_Track_Append(kActorOfficerLeary, 388, 10);
 			AI_Movement_Track_Append(kActorOfficerLeary, 389, 10);
-			AI_Movement_Track_Append(kActorOfficerLeary, 35, 30);
+			AI_Movement_Track_Append(kActorOfficerLeary, 35, 30); // kSetFreeSlotC
 			AI_Movement_Track_Repeat(kActorOfficerLeary);
 			break;
 		case 6:
+			// kSetCT11 - identical to case 2
+//			debug("leary 6 kSetCT11 - identical to case 2");
 			AI_Movement_Track_Append(kActorOfficerLeary, 385, 10);
 			AI_Movement_Track_Append(kActorOfficerLeary, 242, 2);
 			AI_Movement_Track_Append(kActorOfficerLeary, 386, 2);
 			AI_Movement_Track_Append(kActorOfficerLeary, 387, 15);
 			AI_Movement_Track_Repeat(kActorOfficerLeary);
 			break;
+#if BLADERUNNER_ORIGINAL_BUGS
+		// Gaff is waiting at MA07 and he will trigger a non-interactive dialogue with McCoy.
+		// When the police officer is there as well he will kill McCoy because player cannot control him.
+
 		case 7:
+			// kSetMA07 -> kSetFreeSlotC
 			AI_Movement_Track_Append(kActorOfficerLeary, 394, 15);
 			AI_Movement_Track_Append(kActorOfficerLeary, 395, 0);
 			AI_Movement_Track_Append(kActorOfficerLeary, 396, 0);
@@ -358,19 +459,32 @@ bool AIScriptOfficerLeary::GoalChanged(int currentGoalNumber, int newGoalNumber)
 			AI_Movement_Track_Append(kActorOfficerLeary, 396, 0);
 			AI_Movement_Track_Append(kActorOfficerLeary, 395, 0);
 			AI_Movement_Track_Append(kActorOfficerLeary, 430, 15);
-			AI_Movement_Track_Append(kActorOfficerLeary, 35, 30);
+			AI_Movement_Track_Append(kActorOfficerLeary, 35, 30); // kSetFreeSlotC
 			AI_Movement_Track_Repeat(kActorOfficerLeary);
 			break;
+#else
+		case 7:
+			// kSetFreeSlotC
+//			debug("leary 7 MA07 changed to kSetFreeSlotC");
+			// just put him away for a few seconds
+			AI_Movement_Track_Append(kActorOfficerLeary, 35, 30); // kSetFreeSlotC
+			AI_Movement_Track_Repeat(kActorOfficerLeary);
+			break;
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		case 8:
 			switch (Random_Query(1, 7)) {
 			case 1:
+				// kSetUG10 -> kSetFreeSlotC
+//				debug("leary 8-1  kSetUG10 -> kSetFreeSlotC");
 				AI_Movement_Track_Append(kActorOfficerLeary, 302, 0);
 				AI_Movement_Track_Append(kActorOfficerLeary, 407, 0);
 				AI_Movement_Track_Append(kActorOfficerLeary, 408, 0);
-				AI_Movement_Track_Append(kActorOfficerLeary, 35, 30);
+				AI_Movement_Track_Append(kActorOfficerLeary, 35, 30); // kSetFreeSlotC
 				AI_Movement_Track_Repeat(kActorOfficerLeary);
 				break;
 			case 2:
+				// kSetUG14
+//				debug("leary 8-2 kSetUG14");
 				AI_Movement_Track_Append(kActorOfficerLeary, 536, 0);
 				AI_Movement_Track_Append(kActorOfficerLeary, 537, 0);
 				AI_Movement_Track_Append(kActorOfficerLeary, 538, 1);
@@ -379,108 +493,179 @@ bool AIScriptOfficerLeary::GoalChanged(int currentGoalNumber, int newGoalNumber)
 				AI_Movement_Track_Repeat(kActorOfficerLeary);
 				break;
 			case 3:
+				// kSetUG04 -> kSetFreeSlotC
+//				debug("leary 8-3 kSetUG04 -> kSetFreeSlotC");
 				AI_Movement_Track_Append(kActorOfficerLeary, 296, 10);
 				AI_Movement_Track_Append(kActorOfficerLeary, 409, 2);
 				AI_Movement_Track_Append(kActorOfficerLeary, 296, 10);
-				AI_Movement_Track_Append(kActorOfficerLeary, 35, 30);
+				AI_Movement_Track_Append(kActorOfficerLeary, 35, 30); // kSetFreeSlotC
 				AI_Movement_Track_Repeat(kActorOfficerLeary);
 				break;
 			case 4:
+				// kSetUG05 -> kSetFreeSlotC
+//				debug("leary 8-4 kSetUG05 -> kSetFreeSlotC");
 				AI_Movement_Track_Append(kActorOfficerLeary, 411, 10);
 				AI_Movement_Track_Append(kActorOfficerLeary, 412, 5);
 				AI_Movement_Track_Append(kActorOfficerLeary, 411, 0);
-				AI_Movement_Track_Append(kActorOfficerLeary, 35, 30);
+				AI_Movement_Track_Append(kActorOfficerLeary, 35, 30); // kSetFreeSlotC
 				AI_Movement_Track_Repeat(kActorOfficerLeary);
 				break;
 			case 5:
+#if BLADERUNNER_ORIGINAL_BUGS
+				// kSetUG06 -> kSetFreeSlotC
+//				debug("leary 8-5 kSetUG06 -> kSetFreeSlotC");
 				AI_Movement_Track_Append(kActorOfficerLeary, 413, 10);
 				AI_Movement_Track_Append(kActorOfficerLeary, 414, 0);
 				AI_Movement_Track_Append_With_Facing(kActorOfficerLeary, 431, 0, 1017);
 				AI_Movement_Track_Append(kActorOfficerLeary, 432, 10);
-				AI_Movement_Track_Append(kActorOfficerLeary, 35, 30);
+				AI_Movement_Track_Append(kActorOfficerLeary, 35, 30); // kSetFreeSlotC
 				AI_Movement_Track_Repeat(kActorOfficerLeary);
 				break;
+#else
+				// Don't allow police officers to shoot McCoy while he is
+				// disabled reciting his monologue at start of Act 4
+				if (Game_Flag_Query(kFlagUG06Chapter4Started)) {
+					// kSetUG06 -> kSetFreeSlotC
+					// debug("leary 8-5 kSetUG06 -> kSetFreeSlotC");
+					AI_Movement_Track_Append(kActorOfficerLeary, 413, 10);
+					AI_Movement_Track_Append(kActorOfficerLeary, 414, 0);
+					AI_Movement_Track_Append_With_Facing(kActorOfficerLeary, 431, 0, 1017);
+					AI_Movement_Track_Append(kActorOfficerLeary, 432, 10);
+					AI_Movement_Track_Append(kActorOfficerLeary, 35, 30); // kSetFreeSlotC
+					AI_Movement_Track_Repeat(kActorOfficerLeary);
+					break;
+				}
+#endif // BLADERUNNER_ORIGINAL_BUGS
+				// fall through
+
 			case 6:
+#if BLADERUNNER_ORIGINAL_BUGS
+				// kSetUG07 -> kSetFreeSlotC
+				// debug("leary 8-6 kSetUG07 -> kSetFreeSlotC");
 				AI_Movement_Track_Append(kActorOfficerLeary, 415, 0);
 				AI_Movement_Track_Append_With_Facing(kActorOfficerLeary, 416, 0, 620);
 				AI_Movement_Track_Append(kActorOfficerLeary, 417, 0);
 				AI_Movement_Track_Append(kActorOfficerLeary, 418, 0);
-				AI_Movement_Track_Append(kActorOfficerLeary, 35, 30);
+				AI_Movement_Track_Append(kActorOfficerLeary, 35, 30); // kSetFreeSlotC
 				AI_Movement_Track_Repeat(kActorOfficerLeary);
 				break;
+#else
+				// Don't put police in UG07 after the UG18 Guzza scene
+				// since Clovis may be there too and that does not work well
+				if (!Game_Flag_Query(kFlagUG18GuzzaScene)) {
+					// kSetUG07 -> kSetFreeSlotC
+					// debug("leary 8-6 kSetUG07 -> kSetFreeSlotC");
+					AI_Movement_Track_Append(kActorOfficerLeary, 415, 0);
+					AI_Movement_Track_Append_With_Facing(kActorOfficerLeary, 416, 0, 620);
+					AI_Movement_Track_Append(kActorOfficerLeary, 417, 0);
+					AI_Movement_Track_Append(kActorOfficerLeary, 418, 0);
+					AI_Movement_Track_Append(kActorOfficerLeary, 35, 30); // kSetFreeSlotC
+					AI_Movement_Track_Repeat(kActorOfficerLeary);
+					break;
+				}
+#endif // BLADERUNNER_ORIGINAL_BUGS
+				// fall through
+
 			case 7:
+				// kSetUG01 -> kSetFreeSlotC
+//				debug("leary 8-7 kSetUG01 -> kSetFreeSlotC");
 				AI_Movement_Track_Append(kActorOfficerLeary, 405, 10);
 				AI_Movement_Track_Append(kActorOfficerLeary, 406, 0);
-				AI_Movement_Track_Append(kActorOfficerLeary, 35, 30);
+				AI_Movement_Track_Append(kActorOfficerLeary, 35, 30); // kSetFreeSlotC
 				AI_Movement_Track_Repeat(kActorOfficerLeary);
 				return false;
 			default:
 				return false;
 			}
-			//no break
+#if !BLADERUNNER_ORIGINAL_BUGS
+			break;
+#endif // BLADERUNNER_ORIGINAL_BUGS
+			// a bug in original game - no break here
+			// fall through
 		case 9:
-			if (Random_Query(1, 2) - 1 == 1) {
+			if (Random_Query(1, 2) == 2) {
+				// kSetUG09 -> kSetFreeSlotC
+//				debug("leary 9-2 kSetUG09 -> kSetFreeSlotC");
 				AI_Movement_Track_Append(kActorOfficerLeary, 433, 10);
 				AI_Movement_Track_Append(kActorOfficerLeary, 434, 0);
 				AI_Movement_Track_Append(kActorOfficerLeary, 435, 0);
-				AI_Movement_Track_Append(kActorOfficerLeary, 35, 30);
+				AI_Movement_Track_Append(kActorOfficerLeary, 35, 30); // kSetFreeSlotC
 				AI_Movement_Track_Repeat(kActorOfficerLeary);
 				return false;
 			}
+			// kSetUG08 -> kSetFreeSlotC
+//			debug("leary 9-1 kSetUG08 -> kSetFreeSlotC");
 			AI_Movement_Track_Append(kActorOfficerLeary, 420, 10);
 			AI_Movement_Track_Append(kActorOfficerLeary, 422, 2);
 			AI_Movement_Track_Append(kActorOfficerLeary, 421, 1);
 			AI_Movement_Track_Append_With_Facing(kActorOfficerLeary, 422, 4, 182);
 			AI_Movement_Track_Append(kActorOfficerLeary, 420, 10);
-			AI_Movement_Track_Append(kActorOfficerLeary, 35, 30);
+			AI_Movement_Track_Append(kActorOfficerLeary, 35, 30); // kSetFreeSlotC
 			AI_Movement_Track_Repeat(kActorOfficerLeary);
+#if !BLADERUNNER_ORIGINAL_BUGS
+			return false;
+#endif // BLADERUNNER_ORIGINAL_BUGS
+			// a bug in original game - no break or return here
 			// fall through
 		case 10:
+			// kSetUG12 -> kSetFreeSlotC
+//			debug("leary 10 kSetUG12 -> kSetFreeSlotC");
 			AI_Movement_Track_Append(kActorOfficerLeary, 310, 0);
 			AI_Movement_Track_Append(kActorOfficerLeary, 307, 0);
 			AI_Movement_Track_Append(kActorOfficerLeary, 309, 0);
 			AI_Movement_Track_Append(kActorOfficerLeary, 310, 0);
-			AI_Movement_Track_Append(kActorOfficerLeary, 35, 30);
+			AI_Movement_Track_Append(kActorOfficerLeary, 35, 30); // kSetFreeSlotC
 			AI_Movement_Track_Repeat(kActorOfficerLeary);
 			return false;
 		default:
 			return false;
 		}
-		//no break
-	case 306:
-		Actor_Set_Goal_Number(kActorOfficerLeary, 305);
+#if !BLADERUNNER_ORIGINAL_BUGS
+			return false;
+#endif // BLADERUNNER_ORIGINAL_BUGS
+		// a bug in original game - no break or return here
+		// fall through
+	case kGoalOfficerLearyPrepareToHuntAroundAct4:
+		// aux goal in order to immediately switch back to kGoalOfficerLearyHuntingAroundAct4 goal
+		// and run GoalChanged() for kGoalOfficerLearyHuntingAroundAct4 again
+//		debug("Setting Leary goal to kGoalOfficerLearyHuntingAroundAct4");
+		Actor_Set_Goal_Number(kActorOfficerLeary, kGoalOfficerLearyHuntingAroundAct4);
 		return true;
-	case 307:
+	case kGoalOfficerLearyBlockingUG07:
+		// kSetUG07
 		AI_Movement_Track_Flush(kActorOfficerLeary);
 		AI_Movement_Track_Append_With_Facing(kActorOfficerLeary, 416, 0, 556);
 		Actor_Change_Animation_Mode(kActorOfficerLeary, 4);
 		AI_Movement_Track_Repeat(kActorOfficerLeary);
 		return true;
 	case 308:
+		// kSetCT01_CT12
+		// never triggered - TODO a bug? Could be related to cut McCoy's arrest from Grayford
 		AI_Movement_Track_Flush(kActorOfficerLeary);
 		AI_Movement_Track_Append_Run_With_Facing(kActorOfficerLeary, 440, 2, 355);
 		AI_Movement_Track_Append_Run_With_Facing(kActorOfficerLeary, 441, 0, 825);
 		AI_Movement_Track_Repeat(kActorOfficerLeary);
 		return true;
-	case 400:
+	case kGoalOfficerLearyStartOfAct5:
+		// kSetFreeSlotC
 		AI_Movement_Track_Flush(kActorOfficerLeary);
-		AI_Movement_Track_Append(kActorOfficerLeary, 35, 0);
+		AI_Movement_Track_Append(kActorOfficerLeary, 35, 0); // kSetFreeSlotC
 		AI_Movement_Track_Repeat(kActorOfficerLeary);
-		Actor_Set_Goal_Number(kActorOfficerLeary, 410);
+		Actor_Set_Goal_Number(kActorOfficerLeary, kGoalOfficerLearyDummyGoalAct5);
 		return true;
-	case 420:
-		AI_Countdown_Timer_Reset(kActorOfficerLeary, 1);
-		AI_Countdown_Timer_Start(kActorOfficerLeary, 1, 120);
-		Actor_Set_Goal_Number(kActorOfficerLeary, 410);
+	case kGoalOfficerLearyPoliceWait120SecondsToAttackHF05:
+		AI_Countdown_Timer_Reset(kActorOfficerLeary, kActorTimerAIScriptCustomTask1);
+		AI_Countdown_Timer_Start(kActorOfficerLeary, kActorTimerAIScriptCustomTask1, 120);
+		Actor_Set_Goal_Number(kActorOfficerLeary, kGoalOfficerLearyDummyGoalAct5);
 		return true;
-	case 425:
-		AI_Countdown_Timer_Reset(kActorOfficerLeary, 1);
-		AI_Countdown_Timer_Start(kActorOfficerLeary, 1, 60);
-		Actor_Set_Goal_Number(kActorOfficerLeary, 410);
+	case kGoalOfficerLearyPoliceWait60SecondsToAttackHF05:
+		AI_Countdown_Timer_Reset(kActorOfficerLeary, kActorTimerAIScriptCustomTask1);
+		AI_Countdown_Timer_Start(kActorOfficerLeary, kActorTimerAIScriptCustomTask1, 60);
+		Actor_Set_Goal_Number(kActorOfficerLeary, kGoalOfficerLearyDummyGoalAct5);
 		return true;
-	case 430:
-		Actor_Set_Goal_Number(kActorOfficerLeary, 410);
-		Actor_Set_Goal_Number(kActorOfficerGrayford, 410);
+	case kGoalOfficerLearyPoliceAboutToAttackHF05:
+		Actor_Set_Goal_Number(kActorOfficerLeary, kGoalOfficerLearyDummyGoalAct5);
+		Actor_Set_Goal_Number(kActorOfficerGrayford, kGoalOfficerGrayfordDummyGoalAct5);
 		return false;
 	default:
 		return false;
@@ -488,327 +673,324 @@ bool AIScriptOfficerLeary::GoalChanged(int currentGoalNumber, int newGoalNumber)
 }
 
 bool AIScriptOfficerLeary::UpdateAnimation(int *animation, int *frame) {
-	int v57;
-	int a1;
-
-	switch (var_45D5B0_animation_state) {
+	switch (_animationState) {
 	case 32:
 		*animation = 603;
-		var_45D5B4_animation_frame++;
-		if (var_45D5B4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(603)) {
+		_animationFrame++;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(603)) {
 			*animation = 589;
-			var_45D5B0_animation_state = 0;
+			_animationState = 0;
 			var_45D5B8 = 0;
-			var_45D5B4_animation_frame = 0;
+			_animationFrame = 0;
 		}
-		*frame = var_45D5B4_animation_frame;
+		*frame = _animationFrame;
 		return true;
 	case 31:
 		*animation = 604;
-		var_45D5B4_animation_frame++;
-		if (var_45D5B4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(604)) {
+		_animationFrame++;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(604)) {
 			*animation = 601;
-			var_45D5B0_animation_state = 1;
-			var_45D5B4_animation_frame = 0;
+			_animationState = 1;
+			_animationFrame = 0;
 		}
-		*frame = var_45D5B4_animation_frame;
+		*frame = _animationFrame;
 		return true;
 	case 30:
 		*animation = 587;
-		var_45D5B4_animation_frame++;
-		if (var_45D5B4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(587)) {
+		_animationFrame++;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(587)) {
 			*animation = 589;
-			var_45D5B0_animation_state = 0;
-			var_45D5B4_animation_frame = 0;
+			_animationState = 0;
+			_animationFrame = 0;
 			Actor_Change_Animation_Mode(kActorOfficerLeary, 0);
 		}
-		*frame = var_45D5B4_animation_frame;
+		*frame = _animationFrame;
 		return true;
 	case 29:
 		*animation = 586;
-		var_45D5B4_animation_frame++;
-		if (var_45D5B4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(586)) {
+		_animationFrame++;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(586)) {
 			*animation = 589;
-			var_45D5B0_animation_state = 0;
-			var_45D5B4_animation_frame = 0;
+			_animationState = 0;
+			_animationFrame = 0;
 			Actor_Change_Animation_Mode(kActorOfficerLeary, 0);
 		}
-		*frame = var_45D5B4_animation_frame;
+		*frame = _animationFrame;
 		return true;
 	case 28:
 		*animation = 576;
-		if (var_45D5B4_animation_frame < Slice_Animation_Query_Number_Of_Frames(576) - 1) {
-			++var_45D5B4_animation_frame;
+		if (_animationFrame < Slice_Animation_Query_Number_Of_Frames(576) - 1) {
+			++_animationFrame;
 		}
-		*frame = var_45D5B4_animation_frame;
+		*frame = _animationFrame;
 		return true;
 	case 27:
 		*animation = 588;
-		if (var_45D5B4_animation_frame < Slice_Animation_Query_Number_Of_Frames(588) - 1) {
-			++var_45D5B4_animation_frame;
+		if (_animationFrame < Slice_Animation_Query_Number_Of_Frames(588) - 1) {
+			++_animationFrame;
 		}
-		*frame = var_45D5B4_animation_frame;
+		*frame = _animationFrame;
 		return true;
 	case 26:
 		*animation = 573;
-		var_45D5B4_animation_frame++;
-		if (var_45D5B4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(573)) {
-			var_45D5B0_animation_state = 21;
-			var_45D5B4_animation_frame = 0;
+		_animationFrame++;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(573)) {
+			_animationState = 21;
+			_animationFrame = 0;
 			*animation = 571;
 			Actor_Change_Animation_Mode(kActorOfficerLeary, 4);
 		}
-		*frame = var_45D5B4_animation_frame;
+		*frame = _animationFrame;
 		return true;
 	case 25:
 		*animation = 572;
-		var_45D5B4_animation_frame++;
-		if (var_45D5B4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(572)) {
-			var_45D5B0_animation_state = 21;
-			var_45D5B4_animation_frame = 0;
+		_animationFrame++;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(572)) {
+			_animationState = 21;
+			_animationFrame = 0;
 			*animation = 571;
 			Actor_Change_Animation_Mode(kActorOfficerLeary, 4);
 		}
-		*frame = var_45D5B4_animation_frame;
+		*frame = _animationFrame;
 		return true;
 	case 24:
 		*animation = 581;
-		var_45D5B4_animation_frame++;
-		if (var_45D5B4_animation_frame == 4) {
+		_animationFrame++;
+		if (_animationFrame == 4) {
 			if (Random_Query(1, 2) == 1) {
 				Sound_Play_Speech_Line(kActorOfficerLeary, 9010, 75, 0, 99);
 			} else {
 				Sound_Play_Speech_Line(kActorOfficerLeary, 9015, 75, 0, 99);
 			}
 		}
-		if (var_45D5B4_animation_frame == 5) {
+		if (_animationFrame == 5) {
 			Actor_Combat_AI_Hit_Attempt(kActorOfficerLeary);
 		}
-		if (var_45D5B4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(581)) {
-			var_45D5B0_animation_state = 21;
-			var_45D5B4_animation_frame = 0;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(581)) {
+			_animationState = 21;
+			_animationFrame = 0;
 			*animation = 571;
 			Actor_Change_Animation_Mode(kActorOfficerLeary, 4);
 		}
-		*frame = var_45D5B4_animation_frame;
+		*frame = _animationFrame;
 		return true;
 	case 23:
 		*animation = 580;
-		var_45D5B4_animation_frame++;
-		if (var_45D5B4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(580)) {
+		_animationFrame++;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(580)) {
 			*animation = 589;
-			var_45D5B0_animation_state = 0;
-			var_45D5B4_animation_frame = 0;
+			_animationState = 0;
+			_animationFrame = 0;
 		}
-		*frame = var_45D5B4_animation_frame;
+		*frame = _animationFrame;
 		return true;
 	case 22:
 		*animation = 579;
-		var_45D5B4_animation_frame++;
-		if (var_45D5B4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(579)) {
-			var_45D5B0_animation_state = 21;
-			var_45D5B4_animation_frame = 0;
+		_animationFrame++;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(579)) {
+			_animationState = 21;
+			_animationFrame = 0;
 			*animation = 571;
 		}
-		*frame = var_45D5B4_animation_frame;
+		*frame = _animationFrame;
 		return true;
 	case 21:
 		*animation = 571;
-		var_45D5B4_animation_frame++;
-		if (var_45D5B4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(571)) {
-			var_45D5B4_animation_frame = 0;
+		_animationFrame++;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(571)) {
+			_animationFrame = 0;
 		}
-		*frame = var_45D5B4_animation_frame;
+		*frame = _animationFrame;
 		return true;
 	case 20:
 		*animation = 571;
-		var_45D5B4_animation_frame++;
-		if (var_45D5B4_animation_frame > Slice_Animation_Query_Number_Of_Frames(571) - 1) {
-			var_45D5B4_animation_frame = 0;
+		_animationFrame++;
+		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(571) - 1) {
+			_animationFrame = 0;
 		}
-		*frame = var_45D5B4_animation_frame;
+		*frame = _animationFrame;
 		return true;
 	case 19:
 		*animation = 600;
-		var_45D5B4_animation_frame++;
-		if (var_45D5B4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(600)) {
-			var_45D5B0_animation_state = 11;
-			var_45D5B4_animation_frame = 0;
+		_animationFrame++;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(600)) {
+			_animationState = 11;
+			_animationFrame = 0;
 			*animation = 592;
 		}
-		*frame = var_45D5B4_animation_frame;
+		*frame = _animationFrame;
 		return true;
 	case 18:
 		*animation = 599;
-		var_45D5B4_animation_frame++;
-		if (var_45D5B4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(599)) {
-			var_45D5B0_animation_state = 11;
-			var_45D5B4_animation_frame = 0;
+		_animationFrame++;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(599)) {
+			_animationState = 11;
+			_animationFrame = 0;
 			*animation = 592;
 		}
-		*frame = var_45D5B4_animation_frame;
+		*frame = _animationFrame;
 		return true;
 	case 17:
 		*animation = 598;
-		var_45D5B4_animation_frame++;
-		if (var_45D5B4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(598)) {
-			var_45D5B0_animation_state = 11;
-			var_45D5B4_animation_frame = 0;
+		_animationFrame++;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(598)) {
+			_animationState = 11;
+			_animationFrame = 0;
 			*animation = 592;
 		}
-		*frame = var_45D5B4_animation_frame;
+		*frame = _animationFrame;
 		return true;
 	case 16:
 		*animation = 597;
-		var_45D5B4_animation_frame++;
-		if (var_45D5B4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(597)) {
-			var_45D5B0_animation_state = 11;
-			var_45D5B4_animation_frame = 0;
+		_animationFrame++;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(597)) {
+			_animationState = 11;
+			_animationFrame = 0;
 			*animation = 592;
 		}
-		*frame = var_45D5B4_animation_frame;
+		*frame = _animationFrame;
 		return true;
 	case 15:
 		*animation = 596;
-		var_45D5B4_animation_frame++;
-		if (var_45D5B4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(596)) {
-			var_45D5B0_animation_state = 11;
-			var_45D5B4_animation_frame = 0;
+		_animationFrame++;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(596)) {
+			_animationState = 11;
+			_animationFrame = 0;
 			*animation = 592;
 		}
-		*frame = var_45D5B4_animation_frame;
+		*frame = _animationFrame;
 		return true;
 	case 14:
 		*animation = 595;
-		var_45D5B4_animation_frame++;
-		if (var_45D5B4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(595)) {
-			var_45D5B0_animation_state = 11;
-			var_45D5B4_animation_frame = 0;
+		_animationFrame++;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(595)) {
+			_animationState = 11;
+			_animationFrame = 0;
 			*animation = 592;
 		}
-		*frame = var_45D5B4_animation_frame;
+		*frame = _animationFrame;
 		return true;
 	case 13:
 		*animation = 594;
-		var_45D5B4_animation_frame++;
-		if (var_45D5B4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(594)) {
-			var_45D5B0_animation_state = 11;
-			var_45D5B4_animation_frame = 0;
+		_animationFrame++;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(594)) {
+			_animationState = 11;
+			_animationFrame = 0;
 			*animation = 592;
 		}
-		*frame = var_45D5B4_animation_frame;
+		*frame = _animationFrame;
 		return true;
 	case 12:
 		*animation = 593;
-		var_45D5B4_animation_frame++;
-		if (var_45D5B4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(593)) {
-			var_45D5B0_animation_state = 11;
-			var_45D5B4_animation_frame = 0;
+		_animationFrame++;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(593)) {
+			_animationState = 11;
+			_animationFrame = 0;
 			*animation = 592;
 		}
-		*frame = var_45D5B4_animation_frame;
+		*frame = _animationFrame;
 		return true;
 	case 11:
-		if (var_45D5BC && var_45D5B4_animation_frame <= 2) {
+		if (_animationFrame <= 2) {
 			var_45D5BC = 0;
-			var_45D5B0_animation_state = 0;
-			var_45D5B4_animation_frame = 0;
+			_animationState = 0;
+			_animationFrame = 0;
 			*animation = 589;
 			var_45D5B8 = Random_Query(0, 1);
-			*frame = var_45D5B4_animation_frame;
+			*frame = _animationFrame;
 			return true;
 		}
 
 		*animation = 592;
-		var_45D5B4_animation_frame++;
-		if (var_45D5B4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(592)) {
-			var_45D5B4_animation_frame = 0;
+		_animationFrame++;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(592)) {
+			_animationFrame = 0;
 			if (var_45D5BC) {
 				var_45D5BC = 0;
-				var_45D5B0_animation_state = 0;
-				var_45D5B4_animation_frame = 0;
+				_animationState = 0;
+				_animationFrame = 0;
 				*animation = 589;
 				var_45D5B8 = Random_Query(0, 1);
 			} else {
-				var_45D5B0_animation_state = Random_Query(0, 8) + 11;
+				_animationState = Random_Query(0, 8) + 11;
 			}
-			var_45D5B4_animation_frame = 0;
+			_animationFrame = 0;
 		}
-		*frame = var_45D5B4_animation_frame;
+		*frame = _animationFrame;
 		return true;
 	case 10:
 		*animation = 578;
-		var_45D5B4_animation_frame++;
-		if (var_45D5B4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(578)) {
-			var_45D5B4_animation_frame = 0;
+		_animationFrame++;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(578)) {
+			_animationFrame = 0;
 		}
-		*frame = var_45D5B4_animation_frame;
+		*frame = _animationFrame;
 		return true;
 	case 9:
 		*animation = 577;
-		var_45D5B4_animation_frame++;
-		if (var_45D5B4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(577)) {
-			var_45D5B4_animation_frame = 0;
+		_animationFrame++;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(577)) {
+			_animationFrame = 0;
 		}
-		*frame = var_45D5B4_animation_frame;
+		*frame = _animationFrame;
 		return true;
 	case 8:
 		*animation = 575;
-		var_45D5B4_animation_frame++;
-		if (var_45D5B4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(575)) {
-			var_45D5B4_animation_frame = 0;
+		_animationFrame++;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(575)) {
+			_animationFrame = 0;
 		}
-		*frame = var_45D5B4_animation_frame;
+		*frame = _animationFrame;
 		return true;
 	case 7:
 		*animation = 574;
-		var_45D5B4_animation_frame++;
-		if (var_45D5B4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(574)) {
-			var_45D5B4_animation_frame = 0;
+		_animationFrame++;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(574)) {
+			_animationFrame = 0;
 		}
-		*frame = var_45D5B4_animation_frame;
+		*frame = _animationFrame;
 		return true;
 	case 6:
 		*animation = 585;
-		var_45D5B4_animation_frame++;
-		if (var_45D5B4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(585)) {
-			var_45D5B4_animation_frame = 0;
+		_animationFrame++;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(585)) {
+			_animationFrame = 0;
 		}
-		*frame = var_45D5B4_animation_frame;
+		*frame = _animationFrame;
 		return true;
 	case 5:
 		*animation = 584;
-		var_45D5B4_animation_frame++;
-		if (var_45D5B4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(584)) {
-			var_45D5B4_animation_frame = 0;
+		_animationFrame++;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(584)) {
+			_animationFrame = 0;
 		}
-		*frame = var_45D5B4_animation_frame;
+		*frame = _animationFrame;
 		return true;
 	case 4:
 		*animation = 583;
-		var_45D5B4_animation_frame++;
-		if (var_45D5B4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(583)) {
-			var_45D5B4_animation_frame = 0;
+		_animationFrame++;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(583)) {
+			_animationFrame = 0;
 		}
-		*frame = var_45D5B4_animation_frame;
+		*frame = _animationFrame;
 		return true;
 	case 3:
 		*animation = 582;
-		var_45D5B4_animation_frame++;
-		if (var_45D5B4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(582)) {
-			var_45D5B4_animation_frame = 0;
+		_animationFrame++;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(582)) {
+			_animationFrame = 0;
 		}
-		*frame = var_45D5B4_animation_frame;
+		*frame = _animationFrame;
 		return true;
 	case 2:
-		if (Game_Flag_Query(199)) {
+		if (Game_Flag_Query(kFlagOfficerLearyTakingNotes)) {
 			*animation = 603;
-			var_45D5B4_animation_frame++;
-			if (var_45D5B4_animation_frame > Slice_Animation_Query_Number_Of_Frames(603) - 1) {
-				Game_Flag_Reset(199);
-				var_45D5B4_animation_frame = 0;
-				var_45D5B0_animation_state = var_462880;
-				*animation = var_462884;
+			_animationFrame++;
+			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(603)) {
+				Game_Flag_Reset(kFlagOfficerLearyTakingNotes);
+				_animationFrame = 0;
+				_animationState = _animationStateNext;
+				*animation = _animationNext;
 			}
 		} else {
 			if (var_45D5B8 == 0) {
@@ -820,71 +1002,70 @@ bool AIScriptOfficerLeary::UpdateAnimation(int *animation, int *frame) {
 			if (var_45D5B8 == 2) {
 				*animation = 591;
 			}
-			if (var_45D5B4_animation_frame > Slice_Animation_Query_Number_Of_Frames(*animation) / 2) {
-				a1 = *animation;
-				var_45D5B4_animation_frame += 3;
-				v57 = var_45D5B4_animation_frame;
-				if (v57 > Slice_Animation_Query_Number_Of_Frames(a1) - 1) {
-					var_45D5B4_animation_frame = 0;
-					var_45D5B0_animation_state = var_462880;
-					*animation = var_462884;
+			if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(*animation) / 2) {
+				_animationFrame += 3;
+				if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(*animation) - 1) {
+					_animationFrame = 0;
+					_animationState = _animationStateNext;
+					*animation = _animationNext;
 				}
 			} else {
-				var_45D5B4_animation_frame -= 3;
-				if (var_45D5B4_animation_frame < 0) {
-					var_45D5B4_animation_frame = 0;
-					var_45D5B0_animation_state = var_462880;
-					*animation = var_462884;
+				_animationFrame -= 3;
+				if (_animationFrame < 0) {
+					_animationFrame = 0;
+					_animationState = _animationStateNext;
+					*animation = _animationNext;
 				}
 			}
 		}
-		*frame = var_45D5B4_animation_frame;
+		*frame = _animationFrame;
 		return true;
 	case 1:
 		*animation = 601;
-		var_45D5B4_animation_frame++;
-		if (var_45D5B4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(601)) {
-			var_45D5B4_animation_frame = 0;
+		_animationFrame++;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(601)) {
+			_animationFrame = 0;
 		}
-		if (!Game_Flag_Query(199)) {
-			var_45D5B0_animation_state = 32;
-			var_45D5B4_animation_frame = 0;
+		if (!Game_Flag_Query(kFlagOfficerLearyTakingNotes)) {
+			_animationState = 32;
+			_animationFrame = 0;
 			*animation = 603;
 		}
-		*frame = var_45D5B4_animation_frame;
+		*frame = _animationFrame;
 		return true;
 	case 0:
-		if (Game_Flag_Query(199) && !Game_Flag_Query(392)) {
-			var_45D5B0_animation_state = 31;
-			var_45D5B4_animation_frame = 0;
+		if ( Game_Flag_Query(kFlagOfficerLearyTakingNotes)
+		 && !Game_Flag_Query(kFlagRC01McCoyAndOfficerLearyTalking)) {
+			_animationState = 31;
+			_animationFrame = 0;
 			*animation = 604;
 		} else if (var_45D5B8 == 1) {
 			*animation = 590;
-			var_45D5B4_animation_frame++;
-			if (var_45D5B4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(590)) {
+			_animationFrame++;
+			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(590)) {
 				var_45D5B8 = Random_Query(0, 2);
-				var_45D5B4_animation_frame = 0;
+				_animationFrame = 0;
 			}
 		} else if (var_45D5B8 == 2) {
 			*animation = 591;
-			var_45D5B4_animation_frame++;
-			if (var_45D5B4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(591)) {
+			_animationFrame++;
+			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(591)) {
 				var_45D5B8 = Random_Query(0, 2);
-				var_45D5B4_animation_frame = 0;
+				_animationFrame = 0;
 			}
 		} else if (var_45D5B8 == 0) {
 			*animation = 589;
-			var_45D5B4_animation_frame++;
-			if (var_45D5B4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(589)) {
+			_animationFrame++;
+			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(589)) {
 				var_45D5B8 = Random_Query(0, 2);
-				var_45D5B4_animation_frame = 0;
+				_animationFrame = 0;
 			}
 		}
-		*frame = var_45D5B4_animation_frame;
+		*frame = _animationFrame;
 		return true;
 	default:
 		*animation = 399;
-		*frame = var_45D5B4_animation_frame;
+		*frame = _animationFrame;
 		return true;
 	}
 }
@@ -894,17 +1075,17 @@ bool AIScriptOfficerLeary::ChangeAnimationMode(int mode) {
 
 	switch (mode) {
 	case kAnimationModeIdle:
-		switch (var_45D5B0_animation_state) {
+		switch (_animationState) {
 		case 21:
 		case 24:
-			var_45D5B0_animation_state = 23;
-			var_45D5B4_animation_frame = 0;
+			_animationState = 23;
+			_animationFrame = 0;
 			break;
 		case 20:
-			v1 = var_45D5B4_animation_frame;
-			Actor_Change_Animation_Mode(kActorOfficerLeary, 4);
-			var_45D5B4_animation_frame = v1;
-			var_45D5B0_animation_state = 21;
+			v1 = _animationFrame;
+			Actor_Change_Animation_Mode(kActorOfficerLeary, kAnimationModeCombatIdle);
+			_animationFrame = v1;
+			_animationState = 21;
 			break;
 		case 11:
 		case 12:
@@ -921,37 +1102,37 @@ bool AIScriptOfficerLeary::ChangeAnimationMode(int mode) {
 		case 23:
 			break;
 		default:
-			var_45D5B0_animation_state = 0;
-			var_45D5B4_animation_frame = 0;
+			_animationState = 0;
+			_animationFrame = 0;
 			var_45D5B8 = Random_Query(0, 1);
 			break;
 		}
 		break;
 	case kAnimationModeWalk:
-		var_45D5B0_animation_state = 3;
-		var_45D5B4_animation_frame = 0;
+		_animationState = 3;
+		_animationFrame = 0;
 		break;
 	case kAnimationModeRun:
-		var_45D5B0_animation_state = 4;
-		var_45D5B4_animation_frame = 0;
+		_animationState = 4;
+		_animationFrame = 0;
 		break;
-	case 3:
-		if (var_45D5B0_animation_state == 0 || var_45D5B0_animation_state == 1) {
-			var_45D5B0_animation_state = 2;
-			var_462880 = 11;
-			var_462884 = 592;
-			if (Game_Flag_Query(199) == 1) {
-				var_45D5B4_animation_frame = 0;
+	case kAnimationModeTalk:
+		if (_animationState == 1) {
+			_animationState = 2;
+			_animationStateNext = 11;
+			_animationNext = 592;
+			if (Game_Flag_Query(kFlagOfficerLearyTakingNotes)) {
+				_animationFrame = 0;
 			}
 		}
-		else if (var_45D5B0_animation_state < 11 || var_45D5B0_animation_state > 19) {
-			var_45D5B0_animation_state = 11;
-			var_45D5B4_animation_frame = 0;
+		else if (_animationState > 19) {
+			_animationState = 11;
+			_animationFrame = 0;
 			var_45D5BC = 0;
 		}
 		break;
 	case kAnimationModeCombatIdle:
-		switch (var_45D5B0_animation_state) {
+		switch (_animationState) {
 		case 21:
 		case 22:
 		case 24:
@@ -960,247 +1141,234 @@ bool AIScriptOfficerLeary::ChangeAnimationMode(int mode) {
 		case 8:
 		case 9:
 		case 10:
-			var_45D5B0_animation_state = 21;
-			var_45D5B4_animation_frame = 0;
+			_animationState = 21;
+			_animationFrame = 0;
 			break;
 		case 0:
-			var_45D5B0_animation_state = 22;
-			var_45D5B4_animation_frame = 0;
+			_animationState = 22;
+			_animationFrame = 0;
 			break;
 		default:
-			var_45D5B0_animation_state = 21;
-			var_45D5B4_animation_frame = 0;
+			_animationState = 21;
+			_animationFrame = 0;
 			break;
 		}
 		break;
-	case 6:
-		var_45D5B0_animation_state = 24;
-		var_45D5B4_animation_frame = 0;
+	case kAnimationModeCombatAttack:
+		_animationState = 24;
+		_animationFrame = 0;
 		break;
 	case kAnimationModeCombatWalk:
-		var_45D5B0_animation_state = 7;
-		var_45D5B4_animation_frame = 0;
+		_animationState = 7;
+		_animationFrame = 0;
 		break;
 	case kAnimationModeCombatRun:
-		var_45D5B0_animation_state = 8;
-		var_45D5B4_animation_frame = 0;
+		_animationState = 8;
+		_animationFrame = 0;
 		break;
 	case 12:
-		if (var_45D5B0_animation_state == 0 || var_45D5B0_animation_state == 1) {
-			var_45D5B0_animation_state = 2;
-			var_462880 = 12;
-			var_462884 = 593;
-			if (Game_Flag_Query(199) == 1) {
-				var_45D5B4_animation_frame = 0;
+		if (_animationState == 1) {
+			_animationState = 2;
+			_animationStateNext = 12;
+			_animationNext = 593;
+			if (Game_Flag_Query(kFlagOfficerLearyTakingNotes)) {
+				_animationFrame = 0;
 			}
-		}
-		else if (var_45D5B0_animation_state < 11 || var_45D5B0_animation_state > 19) {
-			var_45D5B0_animation_state = 12;
-			var_45D5B4_animation_frame = 0;
+		} else if (_animationState > 19) {
+			_animationState = 12;
+			_animationFrame = 0;
 			var_45D5BC = 0;
 		}
 		break;
 	case 13:
-		if (var_45D5B0_animation_state == 0 || var_45D5B0_animation_state == 1) {
-			var_45D5B0_animation_state = 2;
-			var_462880 = 13;
-			var_462884 = 594;
-			if (Game_Flag_Query(199) == 1) {
-				var_45D5B4_animation_frame = 0;
+		if (_animationState == 1) {
+			_animationState = 2;
+			_animationStateNext = 13;
+			_animationNext = 594;
+			if (Game_Flag_Query(kFlagOfficerLearyTakingNotes)) {
+				_animationFrame = 0;
 			}
-		}
-		else if (var_45D5B0_animation_state < 11 || var_45D5B0_animation_state > 19) {
-			var_45D5B0_animation_state = 13;
-			var_45D5B4_animation_frame = 0;
+		} else if (_animationState > 19) {
+			_animationState = 13;
+			_animationFrame = 0;
 			var_45D5BC = 0;
 		}
 		break;
 	case 14:
-		if (var_45D5B0_animation_state == 0 || var_45D5B0_animation_state == 1) {
-			var_45D5B0_animation_state = 2;
-			var_462880 = 14;
-			var_462884 = 595;
-			if (Game_Flag_Query(199) == 1) {
-				var_45D5B4_animation_frame = 0;
+		if (_animationState == 1) {
+			_animationState = 2;
+			_animationStateNext = 14;
+			_animationNext = 595;
+			if (Game_Flag_Query(kFlagOfficerLearyTakingNotes)) {
+				_animationFrame = 0;
 			}
-		}
-		else if (var_45D5B0_animation_state < 11 || var_45D5B0_animation_state > 19) {
-			var_45D5B0_animation_state = 14;
-			var_45D5B4_animation_frame = 0;
+		} else if (_animationState > 19) {
+			_animationState = 14;
+			_animationFrame = 0;
 			var_45D5BC = 0;
 		}
 		break;
 	case 15:
-		if (var_45D5B0_animation_state == 0 || var_45D5B0_animation_state == 1) {
-			var_45D5B0_animation_state = 2;
-			var_462880 = 15;
-			var_462884 = 596;
-			if (Game_Flag_Query(199) == 1) {
-				var_45D5B4_animation_frame = 0;
+		if (_animationState == 1) {
+			_animationState = 2;
+			_animationStateNext = 15;
+			_animationNext = 596;
+			if (Game_Flag_Query(kFlagOfficerLearyTakingNotes)) {
+				_animationFrame = 0;
 			}
-		}
-		else if (var_45D5B0_animation_state < 11 || var_45D5B0_animation_state > 19) {
-			var_45D5B0_animation_state = 15;
-			var_45D5B4_animation_frame = 0;
+		} else if (_animationState > 19) {
+			_animationState = 15;
+			_animationFrame = 0;
 			var_45D5BC = 0;
 		}
 		break;
 	case 16:
-		if (var_45D5B0_animation_state == 0 || var_45D5B0_animation_state == 1) {
-			var_45D5B0_animation_state = 2;
-			var_462880 = 16;
-			var_462884 = 597;
-			if (Game_Flag_Query(199) == 1) {
-				var_45D5B4_animation_frame = 0;
+		if (_animationState == 1) {
+			_animationState = 2;
+			_animationStateNext = 16;
+			_animationNext = 597;
+			if (Game_Flag_Query(kFlagOfficerLearyTakingNotes)) {
+				_animationFrame = 0;
 			}
-		}
-		else if (var_45D5B0_animation_state < 11 || var_45D5B0_animation_state > 19) {
-			var_45D5B0_animation_state = 16;
-			var_45D5B4_animation_frame = 0;
+		} else if (_animationState > 19) {
+			_animationState = 16;
+			_animationFrame = 0;
 			var_45D5BC = 0;
 		}
 		break;
 	case 17:
-		if (var_45D5B0_animation_state == 0 || var_45D5B0_animation_state == 1) {
-			var_45D5B0_animation_state = 2;
-			var_462880 = 17;
-			var_462884 = 598;
-			if (Game_Flag_Query(199) == 1) {
-				var_45D5B4_animation_frame = 0;
+		if (_animationState == 1) {
+			_animationState = 2;
+			_animationStateNext = 17;
+			_animationNext = 598;
+			if (Game_Flag_Query(kFlagOfficerLearyTakingNotes)) {
+				_animationFrame = 0;
 			}
-		}
-		else if (var_45D5B0_animation_state < 11 || var_45D5B0_animation_state > 19) {
-			var_45D5B0_animation_state = 17;
-			var_45D5B4_animation_frame = 0;
+		} else if (_animationState > 19) {
+			_animationState = 17;
+			_animationFrame = 0;
 			var_45D5BC = 0;
 		}
 		break;
 	case 18:
-		if (var_45D5B0_animation_state == 0 || var_45D5B0_animation_state == 1) {
-			var_45D5B0_animation_state = 2;
-			var_462880 = 18;
-			var_462884 = 599;
-			if (Game_Flag_Query(199) == 1) {
-				var_45D5B4_animation_frame = 0;
+		if (_animationState == 1) {
+			_animationState = 2;
+			_animationStateNext = 18;
+			_animationNext = 599;
+			if (Game_Flag_Query(kFlagOfficerLearyTakingNotes)) {
+				_animationFrame = 0;
 			}
-		} else if (var_45D5B0_animation_state < 11 || var_45D5B0_animation_state > 19) {
-			var_45D5B0_animation_state = 18;
-			var_45D5B4_animation_frame = 0;
+		} else if (_animationState > 19) {
+			_animationState = 18;
+			_animationFrame = 0;
 			var_45D5BC = 0;
 		}
 		break;
 	case 19:
-		if (var_45D5B0_animation_state == 0 || var_45D5B0_animation_state == 1) {
-			var_45D5B0_animation_state = 2;
-			var_462880 = 19;
-			var_462884 = 600;
-			if (Game_Flag_Query(199) == 1) {
-				var_45D5B4_animation_frame = 0;
+		if (_animationState == 1) {
+			_animationState = 2;
+			_animationStateNext = 19;
+			_animationNext = 600;
+			if (Game_Flag_Query(kFlagOfficerLearyTakingNotes)) {
+				_animationFrame = 0;
 			}
-		} else if (var_45D5B0_animation_state < 11 || var_45D5B0_animation_state > 19) {
-			var_45D5B0_animation_state = 19;
-			var_45D5B4_animation_frame = 0;
+		} else if (_animationState > 19) {
+			_animationState = 19;
+			_animationFrame = 0;
 			var_45D5BC = 0;
 		}
 		break;
 	case 21:
-		if (var_45D5B0_animation_state == 21 || var_45D5B0_animation_state == 24) {
+		if (_animationState == 24) {
 			if (Random_Query(0, 1)) {
-				var_45D5B0_animation_state = 25;
+				_animationState = 25;
 			} else {
-				var_45D5B0_animation_state = 26;
+				_animationState = 26;
 			}
-			var_45D5B4_animation_frame = 0;
+			_animationFrame = 0;
 		} else {
 			if (Random_Query(0, 1)) {
-				var_45D5B0_animation_state = 29;
+				_animationState = 29;
 			} else {
-				var_45D5B0_animation_state = 30;
+				_animationState = 30;
 			}
-			var_45D5B4_animation_frame = 0;
+			_animationFrame = 0;
 		}
 		break;
 	case 22:
 		if (Random_Query(0, 1)) {
-			var_45D5B0_animation_state = 25;
+			_animationState = 25;
 		} else {
-			var_45D5B0_animation_state = 26;
+			_animationState = 26;
 		}
-		var_45D5B4_animation_frame = 0;
+		_animationFrame = 0;
 		break;
 	case 27:
-		Game_Flag_Reset(199);
+		Game_Flag_Reset(kFlagOfficerLearyTakingNotes);
 		break;
 	case 28:
-		Game_Flag_Set(199);
+		Game_Flag_Set(kFlagOfficerLearyTakingNotes);
 		break;
-	case 44:
-		var_45D5B0_animation_state = 5;
-		var_45D5B4_animation_frame = 0;
+	case kAnimationModeWalkUp:
+		_animationState = 5;
+		_animationFrame = 0;
 		break;
-	case 45:
-		var_45D5B0_animation_state = 6;
-		var_45D5B4_animation_frame = 0;
+	case kAnimationModeWalkDown:
+		_animationState = 6;
+		_animationFrame = 0;
 		break;
-	case 46:
-		var_45D5B0_animation_state = 9;
-		var_45D5B4_animation_frame = 0;
+	case kAnimationModeCombatWalkUp:
+		_animationState = 9;
+		_animationFrame = 0;
 		break;
-	case 47:
-		var_45D5B0_animation_state = 10;
-		var_45D5B4_animation_frame = 0;
+	case kAnimationModeCombatWalkDown:
+		_animationState = 10;
+		_animationFrame = 0;
 		break;
-	case 48:
-		if (var_45D5B0_animation_state == 21 || var_45D5B0_animation_state == 22 || var_45D5B0_animation_state == 24) {
-			var_45D5B0_animation_state = 28;
-			var_45D5B4_animation_frame = 0;
+	case kAnimationModeDie:
+		if (_animationState == 24) {
+			_animationState = 28;
+			_animationFrame = 0;
 		} else {
-			var_45D5B0_animation_state = 27;
-			var_45D5B4_animation_frame = 0;
+			_animationState = 27;
+			_animationFrame = 0;
 		}
 		break;
 	case 58:
-		var_45D5B0_animation_state = 20;
-		var_45D5B4_animation_frame = 0;
+		_animationState = 20;
+		_animationFrame = 0;
 		break;
 	}
 	return true;
 }
 
-void AIScriptOfficerLeary::QueryAnimationState(int *animationState, int *animationFrame, int *a3, int *a4) {
-	*animationState = var_45D5B0_animation_state;
-	*animationFrame = var_45D5B4_animation_frame;
-	*a3 = var_462880;
-	*a4 = var_462884;
+void AIScriptOfficerLeary::QueryAnimationState(int *animationState, int *animationFrame, int *animationStateNext, int *animationNext) {
+	*animationState     = _animationState;
+	*animationFrame     = _animationFrame;
+	*animationStateNext = _animationStateNext;
+	*animationNext      = _animationNext;
 }
 
-void AIScriptOfficerLeary::SetAnimationState(int animationState, int animationFrame, int a3, int a4) {
-	var_45D5B0_animation_state = animationState;
-	var_45D5B4_animation_frame = animationFrame;
-	var_462880 = a3;
-	var_462884 = a4;
+void AIScriptOfficerLeary::SetAnimationState(int animationState, int animationFrame, int animationStateNext, int animationNext) {
+	_animationState     = animationState;
+	_animationFrame     = animationFrame;
+	_animationStateNext = animationStateNext;
+	_animationNext      = animationNext;
 }
 
 bool AIScriptOfficerLeary::ReachedMovementTrackWaypoint(int waypointId) {
+//	debug("Leary reached waypoint: %d", waypointId);
 	if (waypointId == 57 || waypointId == 58) {
-		sub_431408();
-		AI_Countdown_Timer_Reset(kActorOfficerLeary, 2);
-		AI_Countdown_Timer_Start(kActorOfficerLeary, 2, 6);
+		// Interrogating crowd in kSetRC01
+		Game_Flag_Set(kFlagOfficerLearyTakingNotes);
+		AI_Countdown_Timer_Reset(kActorOfficerLeary, kActorTimerAIScriptCustomTask2);
+		AI_Countdown_Timer_Start(kActorOfficerLeary, kActorTimerAIScriptCustomTask2, 6);
 	}
 	return true;
 }
 
 void AIScriptOfficerLeary::FledCombat() {
-	Actor_Set_Goal_Number(kActorOfficerLeary, 300);
+	Actor_Set_Goal_Number(kActorOfficerLeary, kGoalOfficerLearyStartOfAct4);
 }
 
-bool AIScriptOfficerLeary::sub_431408() {
-	Game_Flag_Set(199);
-	return true;
-}
-
-bool AIScriptOfficerLeary::sub_431420() {
-	Game_Flag_Reset(199);
-	return true;
-}
 } // End of namespace BladeRunner

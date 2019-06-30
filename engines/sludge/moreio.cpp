@@ -167,4 +167,15 @@ Common::String decodeFilename(const Common::String &nameIn) {
 	return newName;
 }
 
+char *createCString(const Common::String &s) {
+	uint n = s.size() + 1;
+	char *res = new char[n];
+	if (!checkNew(res)) {
+		fatal("createCString : Unable to copy String");
+		return NULL;
+	}
+	memcpy(res, s.c_str(), n);
+	return res;
+}
+
 } // End of namespace Sludge

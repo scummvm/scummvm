@@ -203,8 +203,8 @@ bool SoundEngine::playSound(const Common::String &fileName, SOUND_TYPES type, fl
 }
 
 uint SoundEngine::playSoundEx(const Common::String &fileName, SOUND_TYPES type, float volume, float pan, bool loop, int loopStart, int loopEnd, uint layer, uint handleId) {
-	Common::SeekableReadStream *in = Kernel::getInstance()->getPackage()->getStream(fileName);
 #ifdef USE_VORBIS
+	Common::SeekableReadStream *in = Kernel::getInstance()->getPackage()->getStream(fileName);
 	Audio::SeekableAudioStream *stream = Audio::makeVorbisStream(in, DisposeAfterUse::YES);
 #endif
 	uint id = handleId;

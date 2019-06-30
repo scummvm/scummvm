@@ -60,6 +60,8 @@ class StaticPhase : public Picture {
 
 	virtual bool load(MfcArchive &file);
 
+	virtual Common::String toXML();
+
 	ExCommand *getExCommand() { return _exCommand.get(); }
 };
 
@@ -77,6 +79,8 @@ class DynamicPhase : public StaticPhase {
 	DynamicPhase(DynamicPhase *src, bool reverse);
 
 	virtual bool load(MfcArchive &file);
+
+	virtual Common::String toXML();
 
 	int getDynFlags() { return _dynFlags; }
 };

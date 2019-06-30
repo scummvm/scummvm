@@ -21,8 +21,14 @@
  */
 
 #include "prince/prince.h"
+#include "engines/advancedDetector.h"
 
 namespace Prince {
+
+struct PrinceGameDescription {
+	ADGameDescription desc;
+	PrinceGameType gameType;
+};
 
 int PrinceEngine::getGameType() const {
 	return _gameDescription->gameType;
@@ -43,7 +49,7 @@ Common::Language PrinceEngine::getLanguage() const {
 } // End of namespace Prince
 
 static const PlainGameDescriptor princeGames[] = {
-	{"prince", "Prince Game"},
+	{"prince", "The Prince and the Coward"},
 	{0, 0}
 };
 
@@ -52,11 +58,11 @@ static const PrinceGameDescription gameDescriptions[] = {
 	{
 		{
 			"prince",
-			"Galador",
+			"Galador: Der Fluch des Prinzen",
 			AD_ENTRY1s("databank.ptc", "5fa03833177331214ec1354761b1d2ee", 3565031),
 			Common::DE_DEU,
 			Common::kPlatformWindows,
-			ADGF_TESTING,
+			ADGF_USEEXTRAASTITLE | ADGF_TESTING,
 			GUIO1(GUIO_NONE)
 		},
 		kPrinceDataDE
@@ -68,7 +74,7 @@ static const PrinceGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("databank.ptc", "48ec9806bda9d152acbea8ce31c93c49", 3435298),
 			Common::PL_POL,
 			Common::kPlatformWindows,
-			ADGF_TESTING,
+			ADGF_USEEXTRAASTITLE | ADGF_TESTING,
 			GUIO1(GUIO_NONE)
 		},
 		kPrinceDataPL
@@ -76,11 +82,11 @@ static const PrinceGameDescription gameDescriptions[] = {
 	{
 		{
 			"prince",
-			"Galador",
+			"",
 			AD_ENTRY1s("talktxt.dat", "02bb2372f19aca3c65896ed81b2cefb3", 125702),
 			Common::RU_RUS,
 			Common::kPlatformWindows,
-			ADGF_TESTING,
+			ADGF_TESTING | GF_EXTRACTED,
 			GUIO1(GUIO_NONE)
 		},
 		kPrinceDataDE
@@ -88,19 +94,19 @@ static const PrinceGameDescription gameDescriptions[] = {
 	{
 		{
 			"prince",
-			"Galador",
+			"",
 			AD_ENTRY1s("databank.ptc", "a67b55730f3d7064921bd2a59e1063a3", 3892982),
 			Common::RU_RUS,
 			Common::kPlatformWindows,
-			ADGF_TESTING,
+			ADGF_TESTING | GF_NOVOICES,
 			GUIO1(GUIO_NONE)
 		},
-		kPrinceDataPL
+		kPrinceDataDE
 	},
 	{
 		{
 			"prince",
-			"The Prince and the Coward",
+			"",
 			{
 				{"databank.ptc", 0, "5fa03833177331214ec1354761b1d2ee", 3565031},
 				{"prince_translation.dat", 0, 0, -1},
@@ -116,7 +122,7 @@ static const PrinceGameDescription gameDescriptions[] = {
 	{
 		{
 			"prince",
-			"The Prince and the Coward",
+			"",
 			{
 				{"databank.ptc", 0, "48ec9806bda9d152acbea8ce31c93c49", 3435298},
 				{"prince_translation.dat", 0, 0, -1},
@@ -147,9 +153,9 @@ public:
 		_directoryGlobs = directoryGlobs;
 	}
 
-	virtual const char *getName() const {
-		return "Prince Engine";
-	}
+        virtual const char *getName() const {
+                return "The Prince and the Coward";
+        }
 
 	virtual const char *getOriginalCopyright() const {
 		return "The Prince and the Coward (C) 1996-97 Metropolis";
@@ -169,6 +175,7 @@ bool PrinceMetaEngine::hasFeature(MetaEngineFeature f) const {
 		(f == kSavesSupportMetaInfo) ||
 		(f == kSavesSupportThumbnail) ||
 		(f == kSavesSupportCreationDate) ||
+		(f == kSavesSupportPlayTime) ||
 		(f == kSupportsListSaves) ||
 		(f == kSupportsLoadingDuringStartup) ||
 		(f == kSimpleSavesNames);
@@ -188,7 +195,6 @@ SaveStateList PrinceMetaEngine::listSaves(const char *target) const {
 	pattern += ".###";
 
 	filenames = saveFileMan->listSavefiles(pattern);
-	sort(filenames.begin(), filenames.end()); // Sort (hopefully ensuring we are sorted numerically..)
 
 	SaveStateList saveList;
 	for (Common::StringArray::const_iterator filename = filenames.begin(); filename != filenames.end(); filename++) {
@@ -209,10 +215,6 @@ SaveStateList PrinceMetaEngine::listSaves(const char *target) const {
 					// Valid savegame
 					if (Prince::PrinceEngine::readSavegameHeader(file, header)) {
 						saveList.push_back(SaveStateDescriptor(slotNum, header.saveName));
-						if (header.thumbnail) {
-							header.thumbnail->free();
-							delete header.thumbnail;
-						}
 					}
 				} else {
 					// Must be an original format savegame
@@ -224,6 +226,7 @@ SaveStateList PrinceMetaEngine::listSaves(const char *target) const {
 		}
 	}
 
+	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
 	return saveList;
 }
 
@@ -239,7 +242,7 @@ SaveStateDescriptor PrinceMetaEngine::querySaveMetaInfos(const char *target, int
 		f->read(buffer, kSavegameStrSize + 1);
 
 		bool hasHeader = !strncmp(buffer, kSavegameStr, kSavegameStrSize + 1) &&
-			Prince::PrinceEngine::readSavegameHeader(f, header);
+			Prince::PrinceEngine::readSavegameHeader(f, header, false);
 		delete f;
 
 		if (!hasHeader) {
@@ -252,6 +255,7 @@ SaveStateDescriptor PrinceMetaEngine::querySaveMetaInfos(const char *target, int
 			desc.setThumbnail(header.thumbnail);
 			desc.setSaveDate(header.saveYear, header.saveMonth, header.saveDay);
 			desc.setSaveTime(header.saveHour, header.saveMinutes);
+			desc.setPlayTime(header.playTime * 1000);
 
 			return desc;
 		}

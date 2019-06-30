@@ -24,18 +24,9 @@
 
 namespace Sludge {
 
+bool handleSaveLoad();
 bool saveGame(const Common::String &fname);
 bool loadGame(const Common::String &fname);
-
-bool saveVariable(Variable *from, Common::WriteStream *stream);
-bool loadVariable(Variable *to, Common::SeekableReadStream *stream);
-
-VariableStack *loadStack(Common::SeekableReadStream *stream, VariableStack **last);
-bool saveStackRef(StackHandler *vs, Common::WriteStream *stream);
-StackHandler *loadStackRef(Common::SeekableReadStream *stream);
-
-LoadedFunction *loadFunction(Common::SeekableReadStream *stream);
-void saveFunction(LoadedFunction *fun, Common::WriteStream *stream);
 
 } // End of namespace Sludge
 

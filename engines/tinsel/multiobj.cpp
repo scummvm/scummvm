@@ -122,8 +122,7 @@ void MultiDeleteObject(OBJECT **pObjList, OBJECT *pMultiObj) {
 
 		// next obj in list
 		pMultiObj = pMultiObj->pSlave;
-	}
-	while (pMultiObj != NULL);
+	} while (pMultiObj != NULL);
 }
 
 /**
@@ -180,8 +179,7 @@ void MultiVerticalFlip(OBJECT *pFlipObj) {
 
 		// next obj in list
 		pFlipObj = pFlipObj->pSlave;
-	}
-	while (pFlipObj != NULL);
+	} while (pFlipObj != NULL);
 }
 
 /**
@@ -351,8 +349,7 @@ void MultiSetZPosition(OBJECT *pMultiObj, int newZ) {
 
 		// next obj in list
 		pMultiObj = pMultiObj->pSlave;
-	}
-	while (pMultiObj != NULL);
+	} while (pMultiObj != NULL);
 }
 
 /**

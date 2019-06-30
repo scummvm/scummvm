@@ -1,0 +1,33 @@
+Engine
+----------
+MouseFields
+    [0;256[     - Viewport
+    [256;512[   - Command Row
+    [512;768[   - Inventory
+    [768;769]   - Inventory Arrows
+
+Dimensions
+    Viewport:           (0,0) (320, 150)
+    Command Row:        (0, 150) (320, 159)
+    Inventory:          (0, 161) (270, 200)
+    Inventory Arrows:   (271, 161) (279, 200)
+    Exit Maps:          (283, 163) (317, 197)
+
+
+Text
+-------
+AE - 216    ae - 204
+OE - 231    oe - 224
+UE - 232    ue - 201
+SZ - 341
+
+
+Ingame Bugs
+------------
+In Cabin_R3 (starting room) you can take the discman from your locker without
+opening it first.
+
+
+Improvements
+-------------
+Incidate in inventory (?) what parts of your space suit you are wearing

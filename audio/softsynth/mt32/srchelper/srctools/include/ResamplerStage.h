@@ -14,8 +14,8 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef RESAMPLER_STAGE_H
-#define RESAMPLER_STAGE_H
+#ifndef SRCTOOLS_RESAMPLER_STAGE_H
+#define SRCTOOLS_RESAMPLER_STAGE_H
 
 #include "FloatSampleProvider.h"
 
@@ -24,7 +24,7 @@ namespace SRCTools {
 /** Interface defines an abstract source of samples. It can either define a single channel stream or a stream with interleaved channels. */
 class ResamplerStage {
 public:
-	virtual ~ResamplerStage() {};
+	virtual ~ResamplerStage() {}
 
 	/** Returns a lower estimation of required number of input samples to produce the specified number of output samples. */
 	virtual unsigned int estimateInLength(const unsigned int outLength) const = 0;
@@ -35,4 +35,4 @@ public:
 
 } // namespace SRCTools
 
-#endif // RESAMPLER_STAGE_H
+#endif // SRCTOOLS_RESAMPLER_STAGE_H

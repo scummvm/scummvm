@@ -1152,7 +1152,7 @@ void writeResource(const char *sectionStr, uint32 resId, bool isEnglish = true) 
 	sprintf(nameBuffer, "%s/%u", sectionStr, resId);
 	if (!isEnglish)
 		strcat(nameBuffer, "/DE");
-	
+
 	writeResource(nameBuffer, sectionStr, resId, isEnglish);
 }
 

@@ -26,9 +26,7 @@ namespace Access {
 
 byte Font::_fontColors[4];
 
-Font::Font() {
-	_bitWidth = 0;
-	_height = 0;
+Font::Font(byte firstCharIndex) : _firstCharIndex(firstCharIndex), _bitWidth(0), _height(0) {
 }
 
 Font::~Font() {
@@ -36,50 +34,11 @@ Font::~Font() {
 		_chars[i].free();
 }
 
-void Font::load(const int *fontIndex, const byte *fontData) {
-	assert(_chars.size() == 0);
-	int count = fontIndex[0];
-	_bitWidth = fontIndex[1];
-	_height = fontIndex[2];
-
-	_chars.resize(count);
-
-	for (int i = 0; i < count; ++i) {
-		const byte *pData = fontData + fontIndex[i + 3];
-		_chars[i].create(*pData++, _height, Graphics::PixelFormat::createFormatCLUT8());
-
-		for (int y = 0; y < _height; ++y) {
-			int bitsLeft = 0;
-			byte srcByte = 0;
-			byte pixel;
-
-			byte *pDest = (byte *)_chars[i].getBasePtr(0, y);
-			for (int x = 0; x < _chars[i].w; ++x, ++pDest) {
-				// Get the pixel
-				pixel = 0;
-				for (int pixelCtr = 0; pixelCtr < _bitWidth; ++pixelCtr, --bitsLeft) {
-					// No bits in current byte left, so get next byte
-					if (bitsLeft == 0) {
-						bitsLeft = 8;
-						srcByte = *pData++;
-					}
-
-					pixel = (pixel << 1) | (srcByte >> 7);
-					srcByte <<= 1;
-				}
-
-				// Write out the pixel
-				*pDest = pixel;
-			}
-		}
-	}
-}
-
 int Font::charWidth(char c) {
-	if (c < ' ')
+	if (c < _firstCharIndex)
 		return 0;
 
-	return _chars[c - ' '].w;
+	return _chars[c - _firstCharIndex].w;
 }
 
 int Font::stringWidth(const Common::String &msg) {
@@ -150,7 +109,7 @@ void Font::drawString(BaseSurface *s, const Common::String &msg, const Common::P
 }
 
 int Font::drawChar(BaseSurface *s, char c, Common::Point &pt) {
-	Graphics::Surface &ch = _chars[c - ' '];
+	Graphics::Surface &ch = _chars[c - _firstCharIndex];
 	Graphics::Surface dest = s->getSubArea(Common::Rect(pt.x, pt.y, pt.x + ch.w, pt.y + ch.h));
 
 	// Loop through the lines of the character
@@ -170,9 +129,109 @@ int Font::drawChar(BaseSurface *s, char c, Common::Point &pt) {
 
 /*------------------------------------------------------------------------*/
 
-FontManager::FontManager() {
+void AmazonFont::load(const int *fontIndex, const byte *fontData) {
+	assert(_chars.size() == 0);
+	int count = fontIndex[0];
+	_bitWidth = fontIndex[1];
+	_height = fontIndex[2];
+
+	_chars.resize(count);
+
+	for (int i = 0; i < count; ++i) {
+		const byte *pData = fontData + fontIndex[i + 3];
+		_chars[i].create(*pData++, _height, Graphics::PixelFormat::createFormatCLUT8());
+
+		for (int y = 0; y < _height; ++y) {
+			int bitsLeft = 0;
+			byte srcByte = 0;
+			byte pixel;
+
+			byte *pDest = (byte *)_chars[i].getBasePtr(0, y);
+			for (int x = 0; x < _chars[i].w; ++x, ++pDest) {
+				// Get the pixel
+				pixel = 0;
+				for (int pixelCtr = 0; pixelCtr < _bitWidth; ++pixelCtr, --bitsLeft) {
+					// No bits in current byte left, so get next byte
+					if (bitsLeft == 0) {
+						bitsLeft = 8;
+						srcByte = *pData++;
+					}
+
+					pixel = (pixel << 1) | (srcByte >> 7);
+					srcByte <<= 1;
+				}
+
+				// Write out the pixel
+				*pDest = pixel;
+			}
+		}
+	}
+}
+
+/*------------------------------------------------------------------------*/
+
+MartianFont::MartianFont(int height, Common::SeekableReadStream &s) : Font(0) {
+	_height = height;
+	load(s);
+}
+
+void MartianFont::load(Common::SeekableReadStream &s) {
+	// Get the number of characters and the size of the raw font data
+	size_t count = s.readUint16LE();
+	size_t dataSize = s.readUint16LE();
+	assert(count < 256);
+
+	// Get the character widths
+	Common::Array<byte> widths;
+	widths.resize(count);
+	s.read(&widths[0], count);
+
+	// Get the character offsets
+	Common::Array<int> offsets;
+	offsets.resize(count);
+	for (size_t idx = 0; idx < count; ++idx)
+		offsets[idx] = s.readUint16LE();
+
+	// Get the raw character data
+	Common::Array<byte> data;
+	data.resize(dataSize);
+	s.read(&data[0], dataSize);
+
+	// Iterate through decoding each character
+	_chars.resize(count);
+	for (size_t idx = 0; idx < count; ++idx) {
+		Graphics::Surface &surface = _chars[idx];
+		surface.create(widths[idx], _height, Graphics::PixelFormat::createFormatCLUT8());
+		const byte *srcP = &data[offsets[idx]];
+		int x1, y1, x2, y2;
+
+		// Write horizontal lines
+		while ((x1 = *srcP++) != 0xff) {
+			x2 = *srcP++;
+			y1 = *srcP++;
+			surface.hLine(x1, y1, x2, 3);
+		}
+
+		// Write vertical lines
+		while ((x1 = *srcP++) != 0xff) {
+			y1 = *srcP++;
+			y2 = *srcP++;
+			surface.vLine(x1, y1, y2, 3);
+		}
+	}
+}
+
+/*------------------------------------------------------------------------*/
+
+FontManager::FontManager() : _font1(nullptr), _font2(nullptr) {
 	_printMaxX = 0;
 	Common::fill(&Font::_fontColors[0], &Font::_fontColors[4], 0);
 }
+
+void FontManager::load(Font *font1, Font *font2) {
+	_font1 = font1;
+	_font2 = font2;
+}
+
 
 } // End of namespace Access

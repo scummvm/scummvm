@@ -130,9 +130,13 @@ void GfxMenu::kernelAddEntry(Common::String title, Common::String content, reg_t
 				altPos = curPos;
 				break;
 			case '#': // Function-prefix
-				if (functionPos)
-					error("multiple function markers within one menu-item");
-				functionPos = curPos;
+				// #G is used as language separator (SQ3 German Amiga) so only
+				//  treat # as a function prefix once ` has been reached
+				if (rightAlignedPos) {
+					if (functionPos)
+						error("multiple function markers within one menu-item");
+					functionPos = curPos;
+				}
 				break;
 			}
 			curPos++;
@@ -197,6 +201,7 @@ void GfxMenu::kernelAddEntry(Common::String title, Common::String content, reg_t
 				separatorCount++;
 				break;
 			case '%':
+			case '#':
 				// Some multilingual sci01 games use e.g. '--!%G--!' (which doesn't really make sense)
 				separatorCount += 2;
 				curPos++;

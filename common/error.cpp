@@ -42,6 +42,8 @@ static String errorToString(ErrorCode errorCode) {
 		return _s("Game id not supported");
 	case kUnsupportedColorMode:
 		return _s("Unsupported color mode");
+	case kAudioDeviceInitFailed:
+		return _s("Audio device initialization failed");
 
 	case kReadPermissionDenied:
 		return _s("Read permission denied");

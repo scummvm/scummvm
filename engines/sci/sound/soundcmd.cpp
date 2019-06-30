@@ -100,12 +100,7 @@ void SoundCommandParser::initSoundResource(MusicEntry *newSound) {
 	// a relevant audio resource, play it, otherwise switch to synthesized
 	// effects. If the resource exists, play it using map 65535 (sound
 	// effects map)
-	bool checkAudioResource = getSciVersion() >= SCI_VERSION_1_1;
-	// Hoyle 4 has garbled audio resources in place of the sound resources.
-	if (g_sci->getGameId() == GID_HOYLE4)
-		checkAudioResource = false;
-
-	if (checkAudioResource && _resMan->testResource(ResourceId(kResourceTypeAudio, newSound->resourceId))) {
+	if (getSciVersion() >= SCI_VERSION_1_1 && _resMan->testResource(ResourceId(kResourceTypeAudio, newSound->resourceId))) {
 		// Found a relevant audio resource, create an audio stream if there is
 		// no associated sound resource, or if both resources exist and the
 		// user wants the digital version.
@@ -455,7 +450,7 @@ reg_t SoundCommandParser::kDoSoundFade(EngineState *s, int argc, reg_t *argv) {
 		musicSlot->fadeTicker = 0;
 
 		// argv[4] is a boolean. Scripts sometimes pass strange values,
-		// but SSCI only checks for zero/non-zero. (Verified in KQ6.)
+		// but SSCI only checks for zero/non-zero. (Verified in KQ6).
 		// KQ6 room 460 even passes an object, but treating this as 'true'
 		// seems fine in that case.
 		if (argc == 5)
@@ -633,6 +628,12 @@ reg_t SoundCommandParser::kDoSoundSendMidi(EngineState *s, int argc, reg_t *argv
 	byte midiCmd = (argc == 5) ? argv[2].toUint16() & 0xff : 0xB0;	// 0xB0: controller
 	uint16 controller = (argc == 5) ? argv[3].toUint16() : argv[2].toUint16();
 	uint16 param = (argc == 5) ? argv[4].toUint16() : argv[3].toUint16();
+
+	// This call is made in Hoyle 5 when toggling the music from the main menu.
+	// Ignore it for this game, since it doesn't use MIDI audio, and this call
+	// looks to be a leftover in Sound::mute (script 64989).
+	if (g_sci->getGameId() == GID_HOYLE5)
+		return s->r_acc;
 
 	if (argc == 4 && controller == 0xFF) {
 		midiCmd = 0xE0;	// 0xE0: pitch wheel

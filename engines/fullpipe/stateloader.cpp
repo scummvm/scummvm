@@ -22,21 +22,19 @@
 
 #include "fullpipe/fullpipe.h"
 
+#include "fullpipe/constants.h"
+#include "fullpipe/gameloader.h"
+#include "fullpipe/interaction.h"
+#include "fullpipe/objects.h"
+#include "fullpipe/scene.h"
+#include "fullpipe/statics.h"
+
 #include "common/file.h"
 #include "common/array.h"
 #include "common/list.h"
 #include "common/memstream.h"
 
 #include "graphics/thumbnail.h"
-
-#include "fullpipe/objects.h"
-#include "fullpipe/gameloader.h"
-#include "fullpipe/scene.h"
-#include "fullpipe/statics.h"
-#include "fullpipe/interaction.h"
-#include "fullpipe/gameloader.h"
-
-#include "fullpipe/constants.h"
 
 namespace Fullpipe {
 
@@ -68,6 +66,11 @@ bool GameLoader::readSavegame(const char *fname) {
 
 	Common::Array<byte> map(800);
 	saveFile->read(map.data(), 800);
+
+	FullpipeSavegameHeader header2;
+	if (Fullpipe::readSavegameHeader(saveFile.get(), header2)) {
+		g_fp->setTotalPlayTime(header2.playtime * 1000);
+	}
 
 	{
 		Common::MemoryReadStream tempStream(map.data(), 800, DisposeAfterUse::NO);
@@ -185,10 +188,10 @@ void fillDummyHeader(Fullpipe::FullpipeSavegameHeader &header) {
 	// This is wrong header, perhaps it is original savegame. Thus fill out dummy values
 	header.date = (20 << 24) | (9 << 16) | 2016;
 	header.time = (9 << 8) | 56;
-	header.playtime = 1000;
+	header.playtime = 0;
 }
 
-bool readSavegameHeader(Common::InSaveFile *in, FullpipeSavegameHeader &header) {
+WARN_UNUSED_RESULT bool readSavegameHeader(Common::InSaveFile *in, FullpipeSavegameHeader &header, bool skipThumbnail) {
 	uint oldPos = in->pos();
 
 	in->seek(-4, SEEK_END);
@@ -232,12 +235,12 @@ bool readSavegameHeader(Common::InSaveFile *in, FullpipeSavegameHeader &header) 
 		header.description = header.saveName;
 
 	// Get the thumbnail
-	header.thumbnail = Common::SharedPtr<Graphics::Surface>(Graphics::loadThumbnail(*in), Graphics::SurfaceDeleter());
+	if (!Graphics::loadThumbnail(*in, header.thumbnail, skipThumbnail)) {
+		in->seek(oldPos, SEEK_SET); // Rewind the file
+		return false;
+	}
 
 	in->seek(oldPos, SEEK_SET); // Rewind the file
-
-	if (!header.thumbnail)
-		return false;
 
 	return true;
 }

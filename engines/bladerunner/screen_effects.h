@@ -36,16 +36,17 @@ namespace BladeRunner {
 class BladeRunnerEngine;
 
 class ScreenEffects {
+	friend class Debugger;
+	static const int kMaxEffectsInScene = 7;
 public:
-	struct Entry
-	{
+	struct Entry {
 		Color256 palette[16];
-		uint16   x;
-		uint16   y;
-		uint16   width;
-		uint16   height;
-		uint16   z;
-		uint8   *data;
+		uint16  x;
+		uint16  y;
+		uint16  width;
+		uint16  height;
+		uint16  z;
+		uint8  *data;
 	};
 
 	BladeRunnerEngine *_vm;
@@ -53,14 +54,21 @@ public:
 	Common::Array<Entry>  _entries;
 	uint8                *_data;
 	int                   _dataSize;
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+	Common::Array<int>	  _skipEntries; // added member to allow skipping specified effects
+#endif // BLADERUNNER_ORIGINAL_BUGS
 
 public:
 	ScreenEffects(BladeRunnerEngine *vm, int size);
 	~ScreenEffects();
 
 	void readVqa(Common::SeekableReadStream *stream);
-	void getColor(Color256 *outColor, uint16 x, uint16 y, uint16 z);
-
+	void getColor(Color256 *outColor, uint16 x, uint16 y, uint16 z) const;
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+	void toggleEntry(int effectId, bool skip); // added method to allow skipping specified effects
+#endif // BLADERUNNER_ORIGINAL_BUGS
 	//TODO
 	//bool isAffectingArea(int x, int y, int width, int height, int unk);
 };

@@ -32,31 +32,31 @@ namespace BladeRunner {
 
 class BladeRunnerEngine;
 
-class VQADecoder;
+class SaveFileReadStream;
+class SaveFileWriteStream;
 class SetEffects;
 class SceneObjects;
-
-struct Object {
-	char        _name[20];
-	BoundingBox _bbox;
-	uint8       _isObstacle;
-	uint8       _isClickable;
-	uint8       _isHotMouse;
-	uint8       _isTarget;
-	uint8       _unknown1;
-};
-
-struct Walkbox {
-	char    _name[20];
-	float   _altitude;
-	int     _vertexCount;
-	Vector3 _vertices[8];
-};
+class VQADecoder;
 
 class Set {
-#if _DEBUG
-	friend class BladeRunnerEngine;
-#endif
+	friend class Debugger;
+
+	struct Object {
+		Common::String name;
+		BoundingBox    bbox;
+		uint8          isObstacle;
+		uint8          isClickable;
+		uint8          isHotMouse;
+		uint8          isTarget;
+		uint8          unknown1;
+	};
+
+	struct Walkbox {
+		Common::String name;
+		float          altitude;
+		int            vertexCount;
+		Vector3        vertices[8];
+	};
 
 	BladeRunnerEngine *_vm;
 
@@ -68,6 +68,7 @@ class Set {
 	int         _walkboxStepSound[85];
 	int         _footstepSoundOverride;
 //	float       _unknown[10];
+
 public:
 	SetEffects *_effects;
 
@@ -83,23 +84,36 @@ public:
 	float getAltitudeAtXZ(float x, float z, bool *inWalkbox) const;
 
 	int findWalkbox(float x, float z) const;
-	int findObject(const char *objectName) const;
+	int findObject(const Common::String &objectName) const;
 
 	bool objectSetHotMouse(int objectId) const;
 	bool objectGetBoundingBox(int objectId, BoundingBox *boundingBox) const;
-	void objectSetIsClickable(int objectId, bool isClickable) const;
-	void objectSetIsObstacle(int objectId, bool isObstacle) const;
-	void objectSetIsTarget(int objectId, bool isTarget) const;
-	const char *objectGetName(int objectId) const;
+	void objectSetIsClickable(int objectId, bool isClickable);
+	void objectSetIsObstacle(int objectId, bool isObstacle);
+	void objectSetIsTarget(int objectId, bool isTarget);
+	const Common::String &objectGetName(int objectId) const;
 
-	void setWalkboxStepSound(int walkboxId, int soundId);
-	void setFoodstepSoundOverride(int soundId);
+	void setWalkboxStepSound(int walkboxId, int floorType);
+	void setFoodstepSoundOverride(int floorType);
 	void resetFoodstepSoundOverride();
-	int getWalkboxSoundWalkLeft(int walkboxId);
-	int getWalkboxSoundWalkRight(int walkboxId);
-	int getWalkboxSoundRunLeft(int walkboxId);
-	int getWalkboxSoundRunRight(int walkboxId);
-	
+
+	int getWalkboxSoundWalkLeft(int walkboxId) const;
+	int getWalkboxSoundWalkRight(int walkboxId) const;
+	int getWalkboxSoundRunLeft(int walkboxId) const;
+	int getWalkboxSoundRunRight(int walkboxId) const;
+
+	void save(SaveFileWriteStream &f);
+	void load(SaveFileReadStream &f);
+
+private:
+	static bool isXZInWalkbox(float x, float z, const Walkbox &walkbox);
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+	void overrideSceneObjectInfo(int objectId) const;
+	void setupNewObjectInSet(Common::String objName, BoundingBox objBbox);
+	void patchInAdditionalObjectsInSet();
+	void patchOutBadObjectsFromSet();
+#endif // BLADERUNNER_ORIGINAL_BUGS
 };
 
 } // End of namespace BladeRunner

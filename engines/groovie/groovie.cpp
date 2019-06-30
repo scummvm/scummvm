@@ -350,6 +350,7 @@ Common::Platform GroovieEngine::getPlatform() const {
 bool GroovieEngine::hasFeature(EngineFeature f) const {
 	return
 		(f == kSupportsRTL) ||
+		(f == kSupportsSavingDuringRuntime) ||
 		(f == kSupportsLoadingDuringRuntime);
 }
 
@@ -372,11 +373,29 @@ void GroovieEngine::syncSoundSettings() {
 
 bool GroovieEngine::canLoadGameStateCurrently() {
 	// TODO: verify the engine has been initialized
-	return true;
+	if (_script)
+		return true;
+	else
+		return false;
+}
+
+bool GroovieEngine::canSaveGameStateCurrently() {
+	// TODO: verify the engine has been initialized
+	if (_script)
+		return _script->canDirectSave();
+	else
+		return false;
 }
 
 Common::Error GroovieEngine::loadGameState(int slot) {
 	_script->directGameLoad(slot);
+
+	// TODO: Use specific error codes
+	return Common::kNoError;
+}
+
+Common::Error GroovieEngine::saveGameState(int slot, const Common::String &desc) {
+	_script->directGameSave(slot,desc);
 
 	// TODO: Use specific error codes
 	return Common::kNoError;

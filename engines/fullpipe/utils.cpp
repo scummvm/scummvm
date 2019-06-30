@@ -49,7 +49,7 @@ bool ObArray::load(MfcArchive &file) {
 	debugC(5, kDebugLoading, "ObArray::load()");
 	int count = file.readCount();
 
-	resize(count);
+	reserve(count);
 
 	for (int i = 0; i < count; i++) {
 		CObject *t = file.readClass<CObject>();
@@ -66,7 +66,7 @@ bool DWordArray::load(MfcArchive &file) {
 
 	debugC(9, kDebugLoading, "DWordArray::count: %d", count);
 
-	resize(count);
+	reserve(count);
 
 	for (int i = 0; i < count; i++) {
 		int32 t = file.readSint32LE();
@@ -544,6 +544,45 @@ byte *transCyrillic(const Common::String &str) {
 	tmp[i] = 0;
 
 	return tmp;
+}
+
+void FullpipeEngine::loadGameObjH() {
+	Common::File file;
+
+	if (!file.open("gameobj.h"))
+		return;
+
+	while(true) {
+		Common::String s = file.readLine();
+
+		if (file.eos())
+			break;
+
+		if (!s.hasPrefix("#define ")) {
+			warning("Bad read: <%s>", s.c_str());
+			continue;
+		}
+
+		int cnt = 0;
+		const char *ptr = &s.c_str()[8]; // Skip '#define ''
+
+		while (*ptr && *ptr != ' ') {
+			cnt++;
+			ptr++;
+		}
+
+		Common::String val(&s.c_str()[8], cnt);
+		int key = strtol(ptr, NULL, 10);
+
+		_gameObjH[(uint16)key] = val;
+	}
+}
+
+Common::String FullpipeEngine::gameIdToStr(uint16 id) {
+	if (_gameObjH.contains(id))
+		return _gameObjH[id];
+
+	return Common::String::format("%d", id);
 }
 
 } // End of namespace Fullpipe

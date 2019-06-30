@@ -50,9 +50,6 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 
 	g_director = this;
 
-	if (!_mixer->isReady())
-		error("Sound initialization failed");
-
 	// Setup mixer
 	syncSoundSettings();
 
@@ -115,6 +112,10 @@ DirectorEngine::~DirectorEngine() {
 
 Common::Error DirectorEngine::run() {
 	debug("Starting v%d Director game", getVersion());
+
+	if (!_mixer->isReady()) {
+		return Common::kAudioDeviceInitFailed;
+	}
 
 	_currentPalette = nullptr;
 

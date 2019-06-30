@@ -54,6 +54,7 @@
 #include "common/config-manager.h"
 
 #include "backends/keymapper/keymapper.h"
+#include "backends/mutex/pthread/pthread-mutex.h"
 #include "backends/saves/default/default-saves.h"
 #include "backends/timer/default/default-timer.h"
 
@@ -132,10 +133,11 @@ OSystem_Android::OSystem_Android(int audio_sample_rate, int audio_buffer_size) :
 	_show_mouse(false),
 	_show_overlay(false),
 	_enable_zoning(false),
+	_mutexManager(0),
 	_mixer(0),
 	_shake_offset(0),
 	_queuedEventTime(0),
-	_event_queue_lock(createMutex()),
+	_event_queue_lock(0),
 	_touch_pt_down(),
 	_touch_pt_scroll(),
 	_touch_pt_dt(),
@@ -180,6 +182,9 @@ OSystem_Android::~OSystem_Android() {
 	_timerManager = 0;
 
 	deleteMutex(_event_queue_lock);
+
+	delete _mutexManager;
+	_mutexManager = 0;
 }
 
 void *OSystem_Android::timerThreadFunc(void *arg) {
@@ -347,14 +352,16 @@ void OSystem_Android::initBackend() {
 
 	ConfMan.registerDefault("fullscreen", true);
 	ConfMan.registerDefault("aspect_ratio", true);
+	ConfMan.registerDefault("touchpad_mouse_mode", true);
 
 	ConfMan.setInt("autosave_period", 0);
 	ConfMan.setBool("FM_high_quality", false);
 	ConfMan.setBool("FM_medium_quality", true);
 
-	// TODO hackity hack
-	if (ConfMan.hasKey("multi_midi"))
-		_touchpad_mode = !ConfMan.getBool("multi_midi");
+	if (ConfMan.hasKey("touchpad_mouse_mode"))
+		_touchpad_mode = ConfMan.getBool("touchpad_mouse_mode");
+	else
+		ConfMan.setBool("touchpad_mouse_mode", true);
 
 	// must happen before creating TimerManager to avoid race in
 	// creating EventManager
@@ -364,7 +371,10 @@ void OSystem_Android::initBackend() {
 	// screen. Passing the savepath in this way makes it stick
 	// (via ConfMan.registerDefault)
 	_savefileManager = new DefaultSaveFileManager(ConfMan.get("savepath"));
+	_mutexManager = new PthreadMutexManager();
 	_timerManager = new DefaultTimerManager();
+
+	_event_queue_lock = createMutex();
 
 	gettimeofday(&_startTime, 0);
 
@@ -402,7 +412,9 @@ bool OSystem_Android::hasFeature(Feature f) {
 			f == kFeatureCursorPalette ||
 			f == kFeatureVirtualKeyboard ||
 			f == kFeatureOverlaySupportsAlpha ||
-			f == kFeatureOpenUrl);
+			f == kFeatureOpenUrl ||
+			f == kFeatureTouchpadMode ||
+			f == kFeatureClipboardSupport);
 }
 
 void OSystem_Android::setFeatureState(Feature f, bool enable) {
@@ -426,6 +438,10 @@ void OSystem_Android::setFeatureState(Feature f, bool enable) {
 		if (!enable)
 			disableCursorPalette();
 		break;
+	case kFeatureTouchpadMode:
+		ConfMan.setBool("touchpad_mouse_mode", enable);
+		_touchpad_mode = enable;
+		break;
 	default:
 		break;
 	}
@@ -441,6 +457,8 @@ bool OSystem_Android::getFeatureState(Feature f) {
 		return _virtkeybd_on;
 	case kFeatureCursorPalette:
 		return _use_mouse_palette;
+	case kFeatureTouchpadMode:
+		return ConfMan.getBool("touchpad_mouse_mode");
 	default:
 		return false;
 	}
@@ -460,41 +478,23 @@ void OSystem_Android::delayMillis(uint msecs) {
 }
 
 OSystem::MutexRef OSystem_Android::createMutex() {
-	pthread_mutexattr_t attr;
-
-	pthread_mutexattr_init(&attr);
-	pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
-
-	pthread_mutex_t *mutex = new pthread_mutex_t;
-
-	if (pthread_mutex_init(mutex, &attr) != 0) {
-		warning("pthread_mutex_init() failed");
-
-		delete mutex;
-
-		return 0;
-	}
-
-	return (MutexRef)mutex;
+	assert(_mutexManager);
+	return _mutexManager->createMutex();
 }
 
 void OSystem_Android::lockMutex(MutexRef mutex) {
-	if (pthread_mutex_lock((pthread_mutex_t *)mutex) != 0)
-		warning("pthread_mutex_lock() failed");
+	assert(_mutexManager);
+	_mutexManager->lockMutex(mutex);
 }
 
 void OSystem_Android::unlockMutex(MutexRef mutex) {
-	if (pthread_mutex_unlock((pthread_mutex_t *)mutex) != 0)
-		warning("pthread_mutex_unlock() failed");
+	assert(_mutexManager);
+	_mutexManager->unlockMutex(mutex);
 }
 
 void OSystem_Android::deleteMutex(MutexRef mutex) {
-	pthread_mutex_t *m = (pthread_mutex_t *)mutex;
-
-	if (pthread_mutex_destroy(m) != 0)
-		warning("pthread_mutex_destroy() failed");
-	else
-		delete m;
+	assert(_mutexManager);
+	_mutexManager->deleteMutex(mutex);
 }
 
 void OSystem_Android::quit() {
@@ -589,6 +589,22 @@ Common::String OSystem_Android::getSystemLanguage() const {
 
 bool OSystem_Android::openUrl(const Common::String &url) {
 	return JNI::openUrl(url.c_str());
+}
+
+bool OSystem_Android::hasTextInClipboard() {
+	return JNI::hasTextInClipboard();
+}
+
+Common::String OSystem_Android::getTextFromClipboard() {
+	return JNI::getTextFromClipboard();
+}
+
+bool OSystem_Android::setTextInClipboard(const Common::String &text) {
+	return JNI::setTextInClipboard(text);
+}
+
+bool OSystem_Android::isConnectionLimited() {
+	return JNI::isConnectionLimited();
 }
 
 Common::String OSystem_Android::getSystemProperty(const char *name) const {

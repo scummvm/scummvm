@@ -25,23 +25,43 @@
 #include "common/util.h"
 #include "common/textconsole.h"
 
+#define EUP_EVENT(x) _euphonyEvents.push_back(new EuphonyEvent(this, &EuphonyPlayer::event_##x))
+
 EuphonyPlayer::EuphonyPlayer(Audio::Mixer *mixer) : _partConfig_enable(0), _partConfig_type(0), _partConfig_ordr(0), _partConfig_volume(0),
-	_partConfig_transpose(0), _musicPos(0), _musicStart(0), _playing(false), _savedEventsChain(0),
-	_tempoControlMode(0), _timerSetting(0), _tempoMode1PulseCounter(0), _parseToBar(0), _tempoMode1UpdateF8(0), _loop(false),
-	_endOfTrack(false), _paused(false), _musicTrackSize(0) {
+	_partConfig_transpose(0), _musicPos(0), _musicStart(0), _playing(false), _pendingEventsChain(0), _tempoModifier(0), _bar(0),
+	_beat(0), _defaultBarLength(0), _barLength(0), _playerUpdatesLeft(0), _updatesPerPulseRemainder(0),	_updatesPerPulse(0),
+	_deltaTicks(0), _defaultTempo(0), _trackTempo(0), _tempoControlMode(0), _timerSetting(0), _tempoMode1PulseCounter(0),
+	_parseToBar(0), _tempoMode1UpdateF8(0), _loop(false), _endOfTrack(false), _paused(false), _musicTrackSize(0) {
+	EUP_EVENT(notImpl);
+	EUP_EVENT(noteOn);
+	EUP_EVENT(polyphonicAftertouch);
+	EUP_EVENT(controlChange_pitchWheel);
+	EUP_EVENT(programChange_channelAftertouch);
+	EUP_EVENT(programChange_channelAftertouch);
+	EUP_EVENT(controlChange_pitchWheel);
+	EUP_EVENT(sysex);
+	EUP_EVENT(advanceBar);
+	EUP_EVENT(notImpl);
+	EUP_EVENT(notImpl);
+	EUP_EVENT(setTempo);
+	EUP_EVENT(notImpl);
+	EUP_EVENT(typeOrdrChange);
+
 	_drivers[0] = _eupDriver = new EuphonyDriver(mixer, this);
 	_drivers[1] = new Type0Driver(this);
 	_drivers[2] = 0;
 	resetTempo();
 }
 
+#undef EUP_EVENT
+
 EuphonyPlayer::~EuphonyPlayer() {
 	for (int i = 0; i < 3; i++)
 		delete _drivers[i];
 
-	while (_savedEventsChain) {
-		SavedEvent *evt = _savedEventsChain;
-		_savedEventsChain = _savedEventsChain->next;
+	while (_pendingEventsChain) {
+		PendingEvent *evt = _pendingEventsChain;
+		_pendingEventsChain = _pendingEventsChain->next;
 		delete evt;
 	}
 
@@ -50,6 +70,9 @@ EuphonyPlayer::~EuphonyPlayer() {
 	delete[] _partConfig_ordr;
 	delete[] _partConfig_volume;
 	delete[] _partConfig_transpose;
+
+	for (EuphonyEventsArray::iterator i = _euphonyEvents.begin(); i != _euphonyEvents.end(); ++i)
+		delete *i;
 }
 
 bool EuphonyPlayer::init() {
@@ -66,9 +89,9 @@ bool EuphonyPlayer::init() {
 	if (!_drivers[0] || !_drivers[1])
 		return false;
 
-	while (_savedEventsChain) {
-		SavedEvent *evt = _savedEventsChain;
-		_savedEventsChain = _savedEventsChain->next;
+	while (_pendingEventsChain) {
+		PendingEvent *evt = _pendingEventsChain;
+		_pendingEventsChain = _pendingEventsChain->next;
 		delete evt;
 	}
 
@@ -203,9 +226,9 @@ void EuphonyPlayer::reset() {
 
 	resetPartConfig();
 
-	while (_savedEventsChain) {
-		SavedEvent *evt = _savedEventsChain;
-		_savedEventsChain = _savedEventsChain->next;
+	while (_pendingEventsChain) {
+		PendingEvent *evt = _pendingEventsChain;
+		_pendingEventsChain = _pendingEventsChain->next;
 		delete evt;
 	}
 
@@ -308,35 +331,15 @@ void EuphonyPlayer::updateParser() {
 }
 
 void EuphonyPlayer::updateCheckEot() {
-	if (!_endOfTrack || _savedEventsChain)
+	if (!_endOfTrack || _pendingEventsChain)
 		return;
 	stop();
 }
 
 bool EuphonyPlayer::parseEvent() {
-#define EVENT(x) &EuphonyPlayer::event_##x
-	static const EuphonyEvent events[] = {
-		EVENT(notImpl),
-		EVENT(noteOn),
-		EVENT(polyphonicAftertouch),
-		EVENT(controlChange_pitchWheel),
-		EVENT(programChange_channelAftertouch),
-		EVENT(programChange_channelAftertouch),
-		EVENT(controlChange_pitchWheel),
-
-		EVENT(sysex),
-		EVENT(advanceBar),
-		EVENT(notImpl),
-		EVENT(notImpl),
-		EVENT(setTempo),
-		EVENT(notImpl),
-		EVENT(typeOrdrChange)
-	};
-#undef EVENT
-
 	uint cmd = _musicPos[0];
 	if (cmd != 0xfe && cmd != 0xfd) {
-		bool result = (cmd >= 0xf0) ? (this->*events[((cmd - 0xf0) >> 1) + 7])() : (this->*events[(cmd - 0x80) >> 4])();
+		bool result = (cmd >= 0xf0) ? (*_euphonyEvents[((cmd - 0xf0) >> 1) + 7])() : (*_euphonyEvents[(cmd - 0x80) >> 4])();
 		if (!result) {
 			proceedToNextEvent();
 			return false;
@@ -368,8 +371,8 @@ void EuphonyPlayer::proceedToNextEvent() {
 }
 
 void EuphonyPlayer::updateHangingNotes() {
-	SavedEvent *l = 0;
-	SavedEvent *e = _savedEventsChain;
+	PendingEvent *l = 0;
+	PendingEvent *e = _pendingEventsChain;
 
 	while (e) {
 		if (--e->len) {
@@ -378,13 +381,13 @@ void EuphonyPlayer::updateHangingNotes() {
 			continue;
 		}
 
-		SavedEvent *n = e->next;
+		PendingEvent *n = e->next;
 		if (l)
 			l->next = n;
-		if (_savedEventsChain == e)
-			_savedEventsChain = n;
+		if (_pendingEventsChain == e)
+			_pendingEventsChain = n;
 
-		sendNoteEvent(e->type, e->evt, e->note, e->velo);
+		sendPendingEvent(e->type, e->evt, e->note, e->velo);
 		delete e;
 
 		e = n;
@@ -392,10 +395,10 @@ void EuphonyPlayer::updateHangingNotes() {
 }
 
 void EuphonyPlayer::clearHangingNotes() {
-	while (_savedEventsChain) {
-		SavedEvent *e = _savedEventsChain;
-		_savedEventsChain = _savedEventsChain->next;
-		sendNoteEvent(e->type, e->evt, e->note, e->velo);
+	while (_pendingEventsChain) {
+		PendingEvent *e = _pendingEventsChain;
+		_pendingEventsChain = _pendingEventsChain->next;
+		sendPendingEvent(e->type, e->evt, e->note, e->velo);
 		delete e;
 	}
 }
@@ -444,9 +447,9 @@ bool EuphonyPlayer::event_noteOn() {
 	uint8 note = _musicPos[4];
 	uint8 velo = _musicPos[5];
 
-	sendEvent(type, evt);
-	sendEvent(type, applyTranspose(note));
-	sendEvent(type, applyVolumeAdjust(velo));
+	sendByte(type, evt);
+	sendByte(type, applyTranspose(note));
+	sendByte(type, applyVolumeAdjust(velo));
 
 	proceedToNextEvent();
 	if (_musicPos[0] == 0xfe || _musicPos[0] == 0xfd)
@@ -455,7 +458,7 @@ bool EuphonyPlayer::event_noteOn() {
 	velo = _musicPos[5];
 	uint16 len = (_musicPos[1] & 0x0f) | ((_musicPos[2] & 0x0f) << 4) | ((_musicPos[3] & 0x0f) << 8) | ((_musicPos[4] & 0x0f) << 12);
 
-	_savedEventsChain = new SavedEvent(evt, type, note, velo, len ? len : 1, _savedEventsChain);
+	_pendingEventsChain = new PendingEvent(evt, type, note, velo, len ? len : 1, _pendingEventsChain);
 
 	return false;
 }
@@ -469,9 +472,9 @@ bool EuphonyPlayer::event_polyphonicAftertouch() {
 	uint8 evt = appendEvent(_musicPos[0], _musicPos[1]);
 	uint8 type = _partConfig_type[_musicPos[1]];
 
-	sendEvent(type, evt);
-	sendEvent(type, applyTranspose(_musicPos[4]));
-	sendEvent(type, _musicPos[5]);
+	sendByte(type, evt);
+	sendByte(type, applyTranspose(_musicPos[4]));
+	sendByte(type, _musicPos[5]);
 
 	return false;
 }
@@ -485,9 +488,9 @@ bool EuphonyPlayer::event_controlChange_pitchWheel() {
 	uint8 evt = appendEvent(_musicPos[0], _musicPos[1]);
 	uint8 type = _partConfig_type[_musicPos[1]];
 
-	sendEvent(type, evt);
-	sendEvent(type, _musicPos[4]);
-	sendEvent(type, _musicPos[5]);
+	sendByte(type, evt);
+	sendByte(type, _musicPos[4]);
+	sendByte(type, _musicPos[5]);
 
 	return false;
 }
@@ -501,21 +504,21 @@ bool EuphonyPlayer::event_programChange_channelAftertouch() {
 	uint8 evt = appendEvent(_musicPos[0], _musicPos[1]);
 	uint8 type = _partConfig_type[_musicPos[1]];
 
-	sendEvent(type, evt);
-	sendEvent(type, _musicPos[4]);
+	sendByte(type, evt);
+	sendByte(type, _musicPos[4]);
 
 	return false;
 }
 
 bool EuphonyPlayer::event_sysex() {
 	uint8 type = _partConfig_type[_musicPos[1]];
-	sendEvent(type, 0xF0);
+	sendByte(type, 0xF0);
 	proceedToNextEvent();
 
 	for (bool loop = true; loop; ) {
 		for (int i = 0; i < 6; i++) {
 			if (_musicPos[i] != 0xFF) {
-				sendEvent(type, _musicPos[i]);
+				sendByte(type, _musicPos[i]);
 				if (_musicPos[i] >= 0x80) {
 					loop = false;
 					break;
@@ -578,36 +581,36 @@ uint8 EuphonyPlayer::applyVolumeAdjust(uint8 in) {
 	return out & 0xff;
 }
 
-void EuphonyPlayer::sendEvent(uint8 type, uint8 command) {
+void EuphonyPlayer::sendByte(uint8 type, uint8 command) {
 	int drv = ((type >> 4) + 1) & 3;
 	if (_drivers[drv])
 		_drivers[drv]->send(command);
 }
 
-void EuphonyPlayer::sendNoteEvent(int type, int evt, int note, int velo) {
+void EuphonyPlayer::sendPendingEvent(int type, int evt, int note, int velo) {
 	if (velo)
 		evt &= 0x8f;
-	sendEvent(type, evt);
-	sendEvent(type, note);
-	sendEvent(type, velo);
+	sendByte(type, evt);
+	sendByte(type, note);
+	sendByte(type, velo);
 }
 
 void EuphonyPlayer::sendControllerReset(int type, int part) {
-	sendEvent(type, 0xb0 | part);
-	sendEvent(type, 0x40);
-	sendEvent(type, 0);
-	sendEvent(type, 0xb0 | part);
-	sendEvent(type, 0x7b);
-	sendEvent(type, 0);
-	sendEvent(type, 0xb0 | part);
-	sendEvent(type, 0x79);
-	sendEvent(type, 0x40);
+	sendByte(type, 0xb0 | part);
+	sendByte(type, 0x40);
+	sendByte(type, 0);
+	sendByte(type, 0xb0 | part);
+	sendByte(type, 0x7b);
+	sendByte(type, 0);
+	sendByte(type, 0xb0 | part);
+	sendByte(type, 0x79);
+	sendByte(type, 0x40);
 }
 
 void EuphonyPlayer::sendAllNotesOff(int type, int part) {
-	sendEvent(type, 0xb0 | part);
-	sendEvent(type, 0x40);
-	sendEvent(type, 0);
+	sendByte(type, 0xb0 | part);
+	sendByte(type, 0x40);
+	sendByte(type, 0);
 }
 
 void EuphonyPlayer::sendTempo(int tempo) {

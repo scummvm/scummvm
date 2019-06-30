@@ -20,40 +20,43 @@
  *
  */
 
-#include "bladerunner/script/scene.h"
+#include "bladerunner/script/scene_script.h"
 
 namespace BladeRunner {
 
 void SceneScriptBB09::InitializeScene() {
 	Setup_Scene_Information(111.2f, -8.96f, 134.65f, 0);
-	if (Game_Flag_Query(221)) {
-		Game_Flag_Reset(221);
+	if (Game_Flag_Query(kFlagBB10toBB09)) {
+		Game_Flag_Reset(kFlagBB10toBB09);
 		Setup_Scene_Information(115.45f, -8.96f, 134.0f, 628);
-	} else if (Game_Flag_Query(218)) {
-		Game_Flag_Reset(218);
+	} else if (Game_Flag_Query(kFlagBB08toBB09)) {
+		Game_Flag_Reset(kFlagBB08toBB09);
 		Setup_Scene_Information(107.45f, -9.14f, 166.0f, 244);
 	}
+
 	Scene_Exit_Add_2D_Exit(0, 224, 213, 286, 353, 1);
-	Scene_Exit_Add_2D_Exit(1, 75, 450, 480, 479, 2);
-	Ambient_Sounds_Add_Looping_Sound(54, 20, 100, 1);
-	Ambient_Sounds_Add_Looping_Sound(103, 40, 0, 1);
-	Ambient_Sounds_Add_Looping_Sound(105, 50, 55, 1);
-	Ambient_Sounds_Add_Sound(297, 5, 20, 20, 25, -100, -100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(298, 5, 20, 20, 25, -100, -100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(299, 5, 20, 20, 25, -100, -100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(443, 2, 180, 14, 16, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(444, 2, 180, 14, 16, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(445, 2, 180, 14, 16, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(446, 2, 180, 14, 16, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(303, 5, 50, 17, 27, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(304, 5, 50, 17, 27, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(305, 5, 50, 17, 27, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(306, 5, 50, 17, 27, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(307, 5, 50, 17, 27, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(308, 5, 50, 17, 27, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(309, 5, 50, 17, 27, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(310, 5, 50, 17, 27, -100, 100, -101, -101, 0, 0);
-	Actor_Set_Targetable(kActorSadik, true);
+	Scene_Exit_Add_2D_Exit(1,  75, 450, 480, 479, 2);
+
+	Ambient_Sounds_Add_Looping_Sound(kSfxCTRAIN1,  20, 100, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxRAINAWN1, 40,   0, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxCTRUNOFF, 50,  55, 1);
+	Ambient_Sounds_Add_Sound(kSfxRADIATR2, 5,  20, 20, 25, -100, -100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxRADIATR3, 5,  20, 20, 25, -100, -100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxRADIATR4, 5,  20, 20, 25, -100, -100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSCARY4,   2, 180, 14, 16, -100,  100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSCARY5,   2, 180, 14, 16, -100,  100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSCARY6,   2, 180, 14, 16, -100,  100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSCARY7,   2, 180, 14, 16, -100,  100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBGRN1,   5,  50, 17, 27, -100,  100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBGRN2,   5,  50, 17, 27, -100,  100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBGRN3,   5,  50, 17, 27, -100,  100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBMOVE1,  5,  50, 17, 27, -100,  100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBMOVE2,  5,  50, 17, 27, -100,  100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBMOVE3,  5,  50, 17, 27, -100,  100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxHAUNT1,   5,  50, 17, 27, -100,  100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxHAUNT2,   5,  50, 17, 27, -100,  100, -101, -101, 0, 0);
+
+	Actor_Set_Targetable(kActorSadik, true); // Don't kill Sadik yet, game cannot continue. This is an original bug - fixed in ScummVM in Sadik's AI script (method ShotAtAndHit() )
 }
 
 void SceneScriptBB09::SceneLoaded() {
@@ -80,22 +83,23 @@ bool SceneScriptBB09::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptBB09::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 454.56f, -9.0f, 190.31f, 0, 1, false, 0)) {
-			Loop_Actor_Walk_To_XYZ(kActorMcCoy, 450.56f, -9.0f, 250.31f, 0, 0, false, 0);
-			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 454.56f, -9.0f, 190.31f, 0, true, false, false)) {
+			Loop_Actor_Walk_To_XYZ(kActorMcCoy, 450.56f, -9.0f, 250.31f, 0, false, false, false);
+			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
-			Game_Flag_Set(216);
-			Game_Flag_Set(220);
-			Set_Enter(25, 11);
+			Game_Flag_Set(kFlagBB09toBB10a);
+			Game_Flag_Set(kFlagBB09toBB10b);
+			Set_Enter(kSetBB10, kSceneBB10);
 		}
 		return true;
 	}
+
 	if (exitId == 1) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 71.0f, -9.0f, 136.0f, 72, 1, false, 0)) {
-			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 71.0f, -9.0f, 136.0f, 72, true, false, false)) {
+			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
-			Game_Flag_Set(219);
-			Set_Enter(23, 9);
+			Game_Flag_Set(kFlagBB09toBB08);
+			Set_Enter(kSetBB08, kSceneBB08);
 		}
 		return true;
 	}

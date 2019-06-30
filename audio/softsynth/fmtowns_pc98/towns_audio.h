@@ -40,9 +40,23 @@ public:
 	TownsAudioInterface(Audio::Mixer *mixer, TownsAudioInterfacePluginDriver *driver, bool externalMutexHandling = false);
 	~TownsAudioInterface();
 
+	enum ErrorCode {
+		kSuccess = 0,
+		kInvalidChannel,
+		kUnavailable,
+		kArgumentOutOfRange,
+		kNotImplemented,
+		kOutOfWaveMemory,
+		kInvalidWaveTable,
+		kChannelNotReserved,
+		kNoteOutOfRangeForInstrument,
+		kNoMatchingWaveTable,
+		kDuplicateWaveTable
+	};
+
 	bool init();
 
-	int callback(int command, ...);
+	ErrorCode callback(int command, ...);
 
 	void setMusicVolume(int volume);
 	void setSoundEffectVolume(int volume);

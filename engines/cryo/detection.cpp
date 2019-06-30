@@ -137,11 +137,11 @@ public:
 	}
 
 	virtual const char *getName() const {
-		return "Cryo Engine";
+		return "Cryo";
 	}
 
 	virtual const char *getOriginalCopyright() const {
-		return "Cryo Engine (C) Cryo Interactive";
+		return "Cryo (C) Cryo Interactive";
 	}
 
 	virtual bool hasFeature(MetaEngineFeature f) const;

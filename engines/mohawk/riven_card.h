@@ -152,7 +152,16 @@ private:
 	void loadCardHotspotEnableList(uint16 id);
 	void loadCardWaterEffectList(uint16 id);
 	void applyPatches(uint16 id);
+	void applyPropertiesPatchE2E(uint32 globalId);
+	void applyPropertiesPatch1518D(uint32 globalId);
+	void applyPropertiesPatch8EB7(uint32 globalId, const Common::String &var, uint16 hotspotId);
+	void applyPropertiesPatch2E76(uint32 globalId);
+	void applyPropertiesPatch22118(uint32 globalId);
 	void setCurrentCardVariable();
+
+	void moveHotspot(uint16 blstId, const Common::Rect &position);
+	void addMenuHotspot(uint16 blstId, const Common::Rect &position, uint16 index,
+	                    uint16 externalCommandNameId, const char *externalCommandName);
 
 	RivenScriptPtr getScript(uint16 scriptType) const;
 	void defaultLoadScript();

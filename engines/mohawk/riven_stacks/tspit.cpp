@@ -141,25 +141,25 @@ void TSpit::xtopenfissure() {
 		// The best ending: Catherine is free, Gehn is trapped, Atrus comes to rescue you.
 		// And now we fall back to Earth... all the way...
 		_vm->getCard()->playMovie(8);
-		runEndGame(8, 5000);
+		runEndGame(8, 5000, 2640);
 	} else if (_vm->_vars["agehn"] == 4) {
 		// The ok ending: Catherine is still trapped, Gehn is trapped, Atrus comes to rescue you.
 		// Nice going! Catherine and the islanders are all dead now! Just go back to your home...
 		_vm->getCard()->playMovie(9);
-		runEndGame(9, 5000);
+		runEndGame(9, 5000, 2088);
 	} else if (_vm->_vars["atrapbook"] == 1) {
 		// The bad ending: Catherine is trapped, Gehn is free, Atrus gets shot by Gehn,
 		// And then you get shot by Cho. Nice going! Catherine and the islanders are dead
 		// and you have just set Gehn free from Riven, not to mention you're dead.
 		_vm->getCard()->playMovie(10);
-		runEndGame(10, 5000);
+		runEndGame(10, 5000, 1703);
 	} else {
 		// The impossible ending: You don't have Catherine's journal and yet you were somehow
 		// able to open the hatch on the telescope. The game provides an ending for those who
 		// cheat, load a saved game with the combo, or just guess the telescope combo. Atrus
 		// doesn't come and you just fall into the fissure.
 		_vm->getCard()->playMovie(11);
-		runEndGame(11, 5000);
+		runEndGame(11, 5000, 0);
 	}
 }
 
@@ -362,8 +362,12 @@ void TSpit::xtakeit(const ArgumentArray &args) {
 		}
 	}
 
-	// xtakeit() shouldn't be called if we're not on a marble hotspot
-	assert(marble != 0);
+	if (marble == 0) {
+		// xtakeit() shouldn't be called if we're not on a marble hotspot,
+		// but maybe another mouse moved event was received between the moment
+		// this script was queued and the moment it was executed.
+		return;
+	}
 
 	// Redraw the background
 	_vm->getCard()->drawPicture(1);

@@ -1,5 +1,5 @@
 /* Copyright (C) 2003, 2004, 2005, 2006, 2008, 2009 Dean Beeler, Jerome Fisher
- * Copyright (C) 2011-2016 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
+ * Copyright (C) 2011-2017 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
@@ -15,9 +15,13 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MT32EMU_LA32_WAVE_GENERATOR_H
-#error This file should be included from LA32WaveGenerator.h only.
-#endif
+#ifndef MT32EMU_LA32_FLOAT_WAVE_GENERATOR_H
+#define MT32EMU_LA32_FLOAT_WAVE_GENERATOR_H
+
+#include "globals.h"
+#include "internals.h"
+#include "Types.h"
+#include "LA32WaveGenerator.h"
 
 namespace MT32Emu {
 
@@ -29,7 +33,7 @@ namespace MT32Emu {
  * The beginning and the ending of the resonant sine is multiplied by a cosine window.
  * To synthesise sawtooth waves, the resulting square wave is multiplied by synchronous cosine wave.
  */
-class LA32WaveGenerator {
+class LA32FloatWaveGenerator {
 	//***************************************************************************
 	//  The local copy of partial parameters below
 	//***************************************************************************
@@ -88,23 +92,17 @@ public:
 
 	// Return true if the WG engine generates PCM wave samples
 	bool isPCMWave() const;
-}; // class LA32WaveGenerator
+}; // class LA32FloatWaveGenerator
 
-// LA32PartialPair contains a structure of two partials being mixed / ring modulated
-class LA32PartialPair {
-	LA32WaveGenerator master;
-	LA32WaveGenerator slave;
+class LA32FloatPartialPair : public LA32PartialPair {
+	LA32FloatWaveGenerator master;
+	LA32FloatWaveGenerator slave;
 	bool ringModulated;
 	bool mixed;
 	float masterOutputSample;
 	float slaveOutputSample;
 
 public:
-	enum PairType {
-		MASTER,
-		SLAVE
-	};
-
 	// ringModulated should be set to false for the structures with mixing or stereo output
 	// ringModulated should be set to true for the structures with ring modulation
 	// mixed is used for the structures with ring modulation and indicates whether the master partial output is mixed to the ring modulator output
@@ -127,6 +125,8 @@ public:
 
 	// Return active state of the WG engine
 	bool isActive(const PairType master) const;
-}; // class LA32PartialPair
+}; // class LA32FloatPartialPair
 
 } // namespace MT32Emu
+
+#endif // #ifndef MT32EMU_LA32_FLOAT_WAVE_GENERATOR_H

@@ -26,6 +26,9 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 #include "backends/fs/stdiostream.h"
+#ifdef _WIN32_WCE
+#include "backends/platform/wince/missing/fopen.h"
+#endif
 
 StdioStream::StdioStream(void *handle) : _handle(handle) {
 	assert(handle);

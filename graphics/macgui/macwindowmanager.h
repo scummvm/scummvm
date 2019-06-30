@@ -55,6 +55,14 @@ enum {
 	kPatternLightGray = 5,
 	kPatternDarkGray = 6
 };
+
+enum {
+	kWMModeNone         = 0,
+	kWMModeNoDesktop    = (1 << 0),
+	kWMModeAutohideMenu = (1 << 1),
+	kWMModalMenuMode = (1 << 2)
+};
+
 }
 using namespace MacGUIConstants;
 
@@ -76,7 +84,7 @@ struct MacPlotData {
 	int thickness;
 	uint bgColor;
 
-	MacPlotData(Graphics::ManagedSurface *s, MacPatterns *p, int f, int t, uint bg = kColorWhite) :
+	MacPlotData(Graphics::ManagedSurface *s, MacPatterns *p, int f, int t, uint bg) :
 		surface(s), patterns(p), fillType(f), thickness(t), bgColor(bg) {
 	}
 };
@@ -107,7 +115,7 @@ public:
 	 * @return Pointer to the newly created window.
 	 */
 	MacWindow *addWindow(bool scrollable, bool resizable, bool editable);
-	MacTextWindow *addTextWindow(const MacFont *font, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, MacMenu *menu);
+	MacTextWindow *addTextWindow(const MacFont *font, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, MacMenu *menu, bool cursorHandler = true);
 
 	/**
 	 * Adds a window that has already been initialized to the registry.
@@ -132,6 +140,20 @@ public:
 	 * @return Pointer to a new empty menu.
 	 */
 	MacMenu *addMenu();
+
+	void activateMenu();
+
+	bool isMenuActive();
+
+	/**
+	 * Set hot zone where menu appears (works only with autohide menu)
+	 */
+	void setMenuHotzone(const Common::Rect &rect) { _menuHotzone = rect; }
+
+	/**
+	 * Set delay in milliseconds when menu appears (works only with autohide menu)
+	 */
+	void setMenuDelay(int delay) { _menuDelay = delay; }
 	/**
 	 * Set the desired window state to active.
 	 * @param id ID of the window that has to be set to active.
@@ -187,8 +209,24 @@ public:
 	void pushWatchCursor();
 	void popCursor();
 
+	void pauseEngine(bool pause);
+
+	void setMode(uint32 mode) { _mode = mode; }
+
+	void setEnginePauseCallback(void *engine, void (*pauseCallback)(void *engine, bool pause));
+
+	void passPalette(const byte *palette, uint size);
+
 public:
 	MacFontManager *_fontMan;
+	uint32 _mode;
+
+	Common::Point _lastMousePos;
+	Common::Rect _menuHotzone;
+
+	bool _menuTimerActive;
+
+	int _colorBlack, _colorWhite;
 
 private:
 	void drawDesktop();
@@ -197,9 +235,11 @@ private:
 	void removeFromStack(BaseMacWindow *target);
 	void removeFromWindowList(BaseMacWindow *target);
 
-private:
+public:
 	ManagedSurface *_screen;
+	ManagedSurface *_screenCopy;
 
+private:
 	Common::List<BaseMacWindow *> _windowStack;
 	Common::Array<BaseMacWindow *> _windows;
 
@@ -214,6 +254,10 @@ private:
 	MacPatterns _patterns;
 
 	MacMenu *_menu;
+	uint32 _menuDelay;
+
+	void *_engine;
+	void (*_pauseEngineCallback)(void *engine, bool pause);
 
 	bool _cursorIsArrow;
 };

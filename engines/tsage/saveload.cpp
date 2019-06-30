@@ -189,10 +189,10 @@ Common::Error Saver::restore(int slot) {
 
 	// Read in the savegame header
 	tSageSavegameHeader header;
-	readSavegameHeader(saveFile, header);
-	if (header._thumbnail)
-		header._thumbnail->free();
-	delete header._thumbnail;
+	if (!readSavegameHeader(saveFile, header)) {
+		delete saveFile;
+		return Common::kReadingFailed;
+	}
 
 	serializer.setSaveVersion(header._version);
 
@@ -247,9 +247,8 @@ Common::Error Saver::restore(int slot) {
 const char *SAVEGAME_STR = "SCUMMVM_TSAGE";
 #define SAVEGAME_STR_SIZE 13
 
-bool Saver::readSavegameHeader(Common::InSaveFile *in, tSageSavegameHeader &header) {
+WARN_UNUSED_RESULT bool Saver::readSavegameHeader(Common::InSaveFile *in, tSageSavegameHeader &header, bool skipThumbnail) {
 	char saveIdentBuffer[SAVEGAME_STR_SIZE + 1];
-	header._thumbnail = NULL;
 
 	// Validate the header Id
 	in->read(saveIdentBuffer, SAVEGAME_STR_SIZE + 1);
@@ -266,9 +265,9 @@ bool Saver::readSavegameHeader(Common::InSaveFile *in, tSageSavegameHeader &head
 	while ((ch = (char)in->readByte()) != '\0') header._saveName += ch;
 
 	// Get the thumbnail
-	header._thumbnail = Graphics::loadThumbnail(*in);
-	if (!header._thumbnail)
+	if (!Graphics::loadThumbnail(*in, header._thumbnail, skipThumbnail)) {
 		return false;
+	}
 
 	// Read in save date/time
 	header._saveYear = in->readSint16LE();

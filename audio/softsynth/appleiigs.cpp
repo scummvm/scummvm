@@ -30,7 +30,7 @@
 class AppleIIGSMusicPlugin : public NullMusicPlugin {
 public:
 	const char *getName() const {
-		return _s("Apple II GS Emulator (NOT IMPLEMENTED)");
+		return _s("Apple II GS emulator (NOT IMPLEMENTED)");
 	}
 
 	const char *getId() const {

@@ -369,7 +369,7 @@ int JSpit::jspitElevatorLoop() {
 			return 1;
 		}
 	}
-	
+
 	return 0;
 }
 

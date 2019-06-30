@@ -23,6 +23,7 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 #include "common/scummsys.h"
+#include "common/str.h"
 #include "zipreader.h"
 
 ZipFile::ZipFile() {
@@ -193,7 +194,7 @@ bool ZipFile::findFile(const char *search) {
 		}
 
 
-		if (!stricmp(name, searchName)) {
+		if (!scumm_stricmp(name, searchName)) {
 //			consolePrintf("'%s'=='%s'\n", name, searchName);
 			return true;		// Got it!
 		} else {

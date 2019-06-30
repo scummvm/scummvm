@@ -1,7 +1,7 @@
 ScummVM LÄS MIG
 ------------------------------------------------------------------------
 
-För ytterligare information, kompatibilitetslistor, donationsdetaljer, den senaste programversionen, utvecklingsrapporter med mera, var god besök ScummVM:s hemsida på http://www.scummvm.org/
+För ytterligare information, kompatibilitetslistor, donationsdetaljer, den senaste programversionen, utvecklingsrapporter med mera, var god besök ScummVM:s hemsida på https://www.scummvm.org/
 
 Innehåll:
 ---------
@@ -83,7 +83,7 @@ VIKTIGT: Den här korta guiden förutsätter att du använder ScummVM på svensk
 
 För de otåliga följer här instruktioner för att köra igång ScummVM i fem enkla steg.
 
-1. Ladda hem ScummVM från http://www.scummvm.org/downloads.php och installera programmet.
+1. Ladda hem ScummVM från https://www.scummvm.org/downloads/ och installera programmet.
 
 2. Skapa en filkatalog på din hårddisk och kopiera spelets datafiler från dess ursprungliga plats till den nya katalogen. Upprepa det här steget för varje spel du vill spela (det är bättre att använda separata kataloger för vaje spel).
 
@@ -115,7 +115,7 @@ Det enklaste sättet att kontakta ScummVM-teamet är att skicka in bugg-rapporte
 ---- ----------------------
 För att rapportera en bugg måste du skapa ett konto hos SourceForge och följa “Bug Tracker”-länken från våran hemsida. Var god se till att buggen kan reproduceras med säkerhet och att den fortfarande är aktiv i den senaste git/Daily build-versionen. Se även till att kontrollera att felet inte redan rapporterats genom att läsa listan av kända fel för spelet på våran kompatibilitetssida:
 
-  http://www.scummvm.org/compatibility_stable.php
+  https://www.scummvm.org/compatibility/
 
 Var god rapportera inte buggar för spel som inte är möjliga att avklara enligt “Supported Games”-avdelningen, eller i kompatibilitetslistan. Vi vet redan att dessa spel är buggiga.
 
@@ -375,7 +375,7 @@ Vi har även ett verktyg som heter ”extract_scumm_mac” i tools-paketet för 
 
 För ytterligare information om hur man kopierar spelfiler för Macintosh till hårddisken, besök:
 
-  http://wiki.scummvm.org/index.php/HOWTO-Mac_Games
+  https://wiki.scummvm.org/index.php/HOWTO-Mac_Games
 
 
 3.5) Notiser om spel med flera CD-skivor:
@@ -403,12 +403,12 @@ Filmscenerna i Broken Sword-spelen har varit med om en hel del (se nästa avdeln
 
 För PlayStation-versionerna kan du dumpa originalfilmerna från CD:n. Dumpa varje fil med ändelsen ”STR” som råa sektorer från CD:n (samtliga 2352 bitar per sektor). DU kan även använde de omkodade filmscenerna nedan istället, men detta fungerar inte för alla filmer i Broken Sword II. För ytterligare information, se:
 
-  http://wiki.scummvm.org/index.php/HOWTO-PlayStation_Videos
+  https://wiki.scummvm.org/index.php/HOWTO-PlayStation_Videos
 
 
 Vissa nyutgåvor av spelen, tillika PlayStation-versionen, har inga Smacker videos. Revolution Software har varit goda nog att skapa nykodade filmscener som kan laddas hem från våran hemsida:
 
-  http://www.scummvm.org/downloads.php
+  https://www.scummvm.org/downloads/
 
 Dessa filmscener är tillgängliga i DXA-format med FLAC-ljud. Kvaliteten är densamma som i originalversionerna av spelet tack vare ickedestruktiv komprimering. För att se dessa filmscener krävs en version av ScummVM som kompilerats med stöd för både FLAC och zlib.
 
@@ -465,7 +465,7 @@ CD-versionerna av Gobliiins-spelen innehåller ett stort ljudspår som du måste
 ----- ------------------------------------------------
 För att spela nyutgåvan från Wyrmkeep för Mac OS X måste du kopiera datafilerna från CD:n till din hårddisk. Om du är PC-användare, hänvisa sedan till:
 
-  http://wiki.scummvm.org/index.php/HOWTO-Mac_Games
+  https://wiki.scummvm.org/index.php/HOWTO-Mac_Games
 
 Länken handlar i huvudsak om SCUMM-spel men nämner även verktyget “HFVExplorer” som du behöver för att extrahera filerna. Märk att du måste lägga tal-datafilerna ”Inherit the Earth Voices” i samma katalog som speldatan som förvaras i:
 
@@ -640,7 +640,7 @@ Stödda plattformar inkluderar bl.a. följande:
 
 Dreamcast-konversionen stöder inte The Curse of Monkey Island eller The Dig. Nintendo DS-konversionen stöder inte Full Throttle, The Dig eller The Curse of Monkey Island.
 För fler plattform-specifika begränsningar, se vår Wiki:
-  http://wiki.scummvm.org/index.php/Platforms
+  https://wiki.scummvm.org/index.php/Platforms
 
 För Macintosh-konversionen emuleras höger musknapp med Cmd-klickning (klicka med vänster musknapp medan du håller ned Command/Apple/Propeller-knappen).
 
@@ -712,7 +712,7 @@ Ordning: scummvm [INSTÄLLNINGAR]... [SPEL]
   --native-mt32            True Roland MT-32 (deaktivera GM-emulation)
   --enable-gs              Aktivera Roland GS-läge för MIDI-uppspelning
   --output-rate=RATE       Välj ljudfrekvens i Hz (t.ex. 22050)
-  --opl-driver=DRIVER      Välj AdLib (OPL)-emulator (db, mame)
+  --opl-driver=DRIVER      Välj AdLib (OPL)-emulator (db, mame, nuked)
   --aspect-ratio           Aktivera korrektion av bildförhållande
   --render-mode=MODE       Aktivera ytterligare renderingslägen (cga, ega,                      
                            hercGreen, hercAmber, amiga)
@@ -1720,22 +1720,22 @@ Om specialinställningarna inte visas måste spelet köras en gång eller lägga
 9.0) Kompilering:
 ---- ------------
 För en uppdaterad överblick för hur man kompilerar ScummVM på diverse plattformar var god se vår Wiki, speciellt den här här sidan:
-   http://wiki.scummvm.org/index.php/Compiling_ScummVM
+   https://wiki.scummvm.org/index.php/Compiling_ScummVM
 
 Om du kompilerar för Windows, Linux eller Mac OS X behöver du SDL-1.2.2 eller senare (äldre versioner kan fungera, men stöds inte) och ett stött kompileringsprogram. Flera kompileringsprogram inklusive GCC, mingw och senare versioner av Microsoft Visual C++ stöds. Om du vill använda MP3-komprimerade CD-spår eller .SOU-filer måste du installera MAD-biblioteket; på samma sätt behöver du de nödvändiga biblioteken för Ogg Vorbis och FLAC-komprimerat ljud. För komprimerade spardata krävs zlib.
 
-Vissa delar av ScummVM, speciellt skalningsfilter, har optimerade versioner skrivna i assembler-kod. Om du vill använda dem måste du installera nasm-assemblern (se http://nasm.sf.net). Märk att vi för tillfället endast har optimerade versioner för x86 MMX och att de inte kan kompileras med andra processorer.
+Vissa delar av ScummVM, speciellt skalningsfilter, har optimerade versioner skrivna i assembler-kod. Om du vill använda dem måste du installera nasm-assemblern (se https://nasm.us/). Märk att vi för tillfället endast har optimerade versioner för x86 MMX och att de inte kan kompileras med andra processorer.
 
-På Win9x/NT/XP kan du definiera USE_WINDBG och lägga till WinDbg för att visa debug-meddelanden (se http://www.sysinternals.com/ntw2k/freeware/debugview.shtml).
+På Windows kan du definiera USE_WINDBG och lägga till WinDbg för att visa debug-meddelanden (se https://docs.microsoft.com/sv-se/windows-hardware/drivers/debugger/index).
 
   GCC och MinGW32:
     * Skriv "./configure"
     * Skriv "make" (eller "gmake", eller "gnumake", beroende på vilken GNU 
       används av ditt system) så kompilerar ScummVM förhoppningsvis allt åt dig.
     * För ytterligare information se:
-      http://wiki.scummvm.org/index.php/Compiling_ScummVM/GCC
+      https://wiki.scummvm.org/index.php/Compiling_ScummVM/GCC
       eller
-      http://wiki.scummvm.org/index.php/Compiling_ScummVM/MinGW
+      https://wiki.scummvm.org/index.php/Compiling_ScummVM/MinGW
 
   Microsoft Visual C++ 8/9/10:
     * Läs på hur man skapar projekt-filerna i "dists\msvc8",
@@ -1745,18 +1745,18 @@ På Win9x/NT/XP kan du definiera USE_WINDBG och lägga till WinDbg för att visa
       Tools|Options|Projects and Solutions|VC++ Directories.
     * Programmet borde nu kompileras utan problem.
     * För mer information se:
-      http://wiki.scummvm.org/index.php/Compiling_ScummVM/VS2005
+      https://wiki.scummvm.org/index.php/Compiling_ScummVM/VS2005
 
   Windows Mobile:
     * Var god se:
-      http://wiki.scummvm.org/index.php/Compiling_ScummVM/Windows_CE
+      https://wiki.scummvm.org/index.php/Compiling_ScummVM/Windows_CE
 
   Mac OS X:
     * Se till att du har utvecklingsverktygen istallerade.
     * SDL-utvecklingspaketet för OS X som finns tillgängligt på SLD:s hemsida
       är INTE lämpligt. Du behöver istället en unix-artad kompilation av SDL.
       Ett sätt att få tag i en sådan är att installera SDL via Fink
-      (http://fink.sf.net). Annars kan du kompilera SDL manuellt från källkoden
+      (http://www.finkproject.org/). Annars kan du kompilera SDL manuellt från källkoden
       med unix build-systemet (configure && make).
     * Skriv "./configure" i ScummVM-katalogen.
     * Du kan nu skriva ”make” för att skapa en kommandorad-binary.
@@ -1765,7 +1765,7 @@ På Win9x/NT/XP kan du definiera USE_WINDBG och lägga till WinDbg för att visa
       (vilket sker om du använder Fink). Om du installerade SDL på annat vis måste
       du redigera ports.mk).
     * För ytterligare information se:
-      http://wiki.scummvm.org/index.php/Compiling_ScummVM/MacOS_X_Crosscompiling
+      https://wiki.scummvm.org/index.php/Compiling_ScummVM/MacOS_X_Crosscompiling
 
   AmigaOS 4 (Kors-kompilering med Cygwin):
     * Se till att du har SDL installerad. Du kan även behöva
@@ -1779,7 +1779,7 @@ På Win9x/NT/XP kan du definiera USE_WINDBG och lägga till WinDbg för att visa
 
   iPhone:
     * Var god se:
-      http://wiki.scummvm.org/index.php/Compiling_ScummVM/iPhone
+      https://wiki.scummvm.org/index.php/Compiling_ScummVM/iPhone
 
   Maemo:
     * Installera Maemo SDK med 4.1.2 rootstrap
@@ -1791,5 +1791,5 @@ På Win9x/NT/XP kan du definiera USE_WINDBG och lägga till WinDbg för att visa
 ------------------------------------------------------------------------
 Lycka till och glada äventyr!
 ScummVM-teamet.
-http://www.scummvm.org/
+https://www.scummvm.org/
 ------------------------------------------------------------------------

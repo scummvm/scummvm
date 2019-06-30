@@ -7,117 +7,152 @@
 .Nd graphic adventure game interpreter
 .Sh SYNOPSIS
 .Nm scummvm
-.Op Ar options
-.Op Ar game
+.Op Ar OPTIONS
+.Op Ar GAME
 .Sh DESCRIPTION
 .Nm
 is an interpreter that will play graphic adventure games
 based on a variety of game engines.
+.Pp
+\fIGAME\fR is a short name of game to load. For example, \fImonkey\fR for
+Monkey Island. This can be either a built-in gameid, or a user configured
+target.
+.Sh OPTIONS
+.Pp
+Please note that more detailed information for the following options can be
+found in the \fIREADME\fR file.
+.Pp
+The meaning of most long options (that is, those options starting with a
+double-dash) can be inverted by prefixing them with \fBno-\fR. For example,
+\fB--no-aspect-ratio\fR will turn aspect ratio correction off. This is useful
+if you want to override a setting in the configuration file.
+.\" FIXME better way to do long options?
 .Bl -tag -width Ds
-.It Fl F
-Force windowed mode.
-.It Fl b Ar param
-Pass number to the boot script (boot param).
-.It Fl c Ar config
-Use
-.Ar config
-as alternate configuration file.
-.It Fl d Ar level
-Set debug verbosity to
-.Ar level .
-.It Fl e Ar driver
-Music
-.Ar driver
-to use:
-.Bl -tag -width Ds
-.It Em adlib
-AdLib emulation (default)
-.It Em alsa
-Output using ALSA sequencer device
-.It Em amidi
-Use the MorphOS MIDI system, for MorphOS users
-.It Em core
-CoreAudio sound, for Mac OS X users
-.It Em mt32
-MT-32 emulation
-.It Em null
-Null output.
-Don't play any music.
-.It Em pcjr
-PCjr emulation
-.It Em pcspk
-PC Speaker emulation
-.It Em seq
-Use /dev/sequencer for MIDI output
-.It Em towns
-FM-TOWNS YM2612 emulation
-.It Em windows
-Windows built in MIDI sequencer for Windows users
-.El
-.It Fl f
+.It Fl v, -version
+Display ScummVM version information and exit.
+.It Fl h, -help
+Display a brief help text and exit.
+.It Fl z, -list-games
+Display list of supported games and exit.
+.It Fl t, -list-targets
+Display list of configured targets and exit.
+.It Fl -list-saves
+Display a list of saved games for the target specified with
+\fB--game=\fITARGET\fR or all targets if none is specified.
+.It Fl a, -add
+Add all games from current or specified directory. If \fB--game=\fIID\fR is
+passed only the game with id \fBID\fR is added. See also \fB--detect\fR.
+Use \fB--path=\fIPATH\fR to specify a directory.
+.It Fl -detect
+Display a list of games with their ID from current or specified directory
+without adding it to the config. Use \fB--path=\fIPATH\fR to specify a directory.
+.It Fl -game= Ns Ar ID
+In combination with \fB--add\fR or \fB--detect\fR only adds or attempts to
+detect the game with id \fBID\fR.
+.It Fl -auto-detect
+Display a list of games from current or specified directory and start the first
+one. Use \fB--path=\fIPATH\fR to specify a directory.
+.It Fl -recursive
+In combination with \fB--add\fR or \fB--detect\fR recurse down all
+subdirectories
+.It Fl c, -config= Ns Ar CONFIG
+Use alternate configuration file.
+.It Fl p, -path= Ns Ar PATH
+Path to where the game is installed.
+.It Fl x, -save-slot= Ns Ar [SLOT]
+Saved game slot to load (default: autosave).
+.It Fl f, -fulscreen
 Force full-screen mode.
-.It Fl g Ar scaler
-Select graphics
-.Ar scaler :
-.Bl -tag -width Ds
+.It Fl F, -no-fullscreen
+Force windowed mode.
+.It Fl g, -gfx-mode= Ns Ar MODE
+Select graphics scaler:
+.Bl -tag -width 10m
+.It Em 1x
+No filtering, no scaling. Fastest.
 .It Em 2x
 No filtering, factor 2x (default for non 640x480 games).
 .It Em 3x
 No filtering, factor 3x.
 .It Em 2xsai
-2xsai filter, factor 2x.
-.It Em advmame2x
-Doesn't rely on blurring like 2xSAI, fast.
-Factor 2x.
-.It Em advmame3x
-Doesn't rely on blurring like 2xSAI, fast.
-Factor 3x.
-.It Em dotmatrix
-Dot matrix effect.
-Factor 2x.
-.It Em hq2x
-Very nice high quality filter but slow.
-Factor 2x.
-.It Em hq3x
-Very nice high quality filter but slow.
-Factor 3x.
-.It Em normal
-No filtering, no scaling.
-Fastest.
+2xSAI filter, factor 2x.
 .It Em super2xsai
-Enhanced 2xsai filtering, factor 2x.
+Enhanced 2xSAI filtering, factor 2x.
 .It Em supereagle
-Less blurry than 2xsai, but slower.
-Factor 2x.
+Less blurry than 2xSAI, but slower. Factor 2x.
+.It Em advmame2x
+Doesn't rely on blurring like 2xSAI, fast. Factor 2x.
+.It Em advmame3x
+Doesn't rely on blurring like 2xSAI, fast. Factor 3x.
+.It Em hq2x
+Very nice high quality filter but slow. Factor 2x.
+.It Em hq3x
+Very nice high quality filter but slow. Factor 3x.
 .It Em tv2x
-Interlace filter, tries to emulate a TV.
-Factor 2x.
+Interlace filter, tries to emulate a TV. Factor 2x.
+.It Em dotmatrix
+Dot matrix effect. Factor 2x.
 .El
-.It Fl h
-Display a brief help text and exit.
-.It Fl m Ar vol
-Set the music volume to
-.Ar vol
-range 0-255 (default: 192).
-.It Fl n
-Enable subtitles (use with games that have voice).
-.It Fl p Ar path
-Path to where the game is installed.
-.It Fl q Ar language
-Select game language:
+.It Fl -stretch-mode= Ns Ar MODE
+Select stretch mode (\fIcenter\fR, \fIintegral\fR, \fIfit\fR, \fIstretch\fR)
+.It Fl -filtering
+Force filtered graphics mode
+.It Fl -no-filtering
+Force unfiltered graphics mode
+.It Fl -gui-theme= Ns Ar THEME
+Select GUI theme (\fIdefault\fR, \fImodern\fR, \fIclassic\fR)
+.It Fl -themepath= Ns Ar PATH
+Path to where GUI themes are stored
+.It Fl -list-themes
+Display list of all usable GUI themes
+.It Fl e, -music-driver= Ns Ar MODE
+Select music driver:
+.Bl -tag -width 10m
+.It Em null
+Null output. Don't play any music.
+.It Em adlib
+Internal AdLib emulation
+.It Em fluidsynth
+FluidSynth MIDI emulation
+.It Em mt32
+Internal MT-32 emulation
+.It Em pcjr
+Internal PCjr emulation (only usable in SCUMM games)
+.It Em pcspk
+Internal PC Speaker emulation
+.It Em towns
+Internal FM-TOWNS YM2612 emulation (only usable in SCUMM FM-TOWNS games)
+.It Em alsa
+Output using ALSA sequencer device
+.It Em core
+CoreAudio sound, for Mac OS X users
+.It Em coremidi
+CoreMIDI sound, for Mac OS X users. Use only if you have a hardware MIDI
+synthesizer.
+.It Em seq
+Use /dev/sequencer for MIDI, *nix users.
+.It Em timidity
+Connect to TiMidity++ MIDI server.
+.It Em windows
+Windows built in MIDI sequencer for Windows users
+.El
+.It Fl -list-audio-devices
+List all available audio devices
+.It Fl q, -language= Ns Ar LANG
+Select game's language:
 .Bl -tag -width Ds
 .It Em cz
 Czech
-.It Em en
-English (USA) (default)
 .It Em de
 German
+.It Em en
+English (USA) (default)
 .It Em es
 Spanish
 .It Em fr
 French
 .It Em gb
-English (Great Britain) (default for BASS)
+English (Great Britain)
 .It Em hb
 Hebrew
 .It Em it
@@ -135,84 +170,79 @@ Swedish
 .It Em zh
 Chinese
 .El
-.It Fl r Ar vol
-Set the speech volume to
-.Ar vol
-range 0-255 (default: 192).
-.It Fl s Ar vol
-Set the sfx volume to
-.Ar vol
-range 0-255 (default: 192).
-.It Fl t
-Display list of configured targets and exit.
-.It Fl u
-Enable script dumping if a directory called
-.Ql dumps
-exists in the current directory.
-.It Fl v
-Display ScummVM version information and exit.
-.It Fl x Ar slot
-Save game
-.Ar slot
-number to load (default: autosave).
-.It Fl z
-Display list of supported games and exit.
-.\" FIXME better way to do long options?
-.It Fl -alt-intro
-Use alternative intro for CD versions of Beneath a Steel Sky and
-Flight of the Amazon Queen.
-.It Fl -aspect-ratio
-Enable aspect ratio correction.
-.It Fl -cdrom= Ns Ar num
+.It Fl m, -music-volume= Ns Ar NUM
+Set the music volume, 0-255 (default: 192).
+.It Fl s, -sfx-volume= Ns Ar NUM
+Set the sfx volume to, 0-255 (default: 192).
+.It Fl r, -speech-volume Ns Ar NUM
+Set the voice volume to, 0-255 (default: 192).
+.It Fl -midi-gain= Ns Ar NUM
+Set the gain for MIDI playback, 0-1000 (default: 100)
+.br
+(only supported by some MIDI drivers)
+.It Fl n, -subtitles
+Enable subtitles (use with games that have voice).
+.It Fl b, -boot-param= Ns Ar NUM
+Pass number to the boot script (boot param).
+.It Fl d, -debuglevel= Ns Ar NUM
+Set debug verbosity level
+.It Fl -debugflags= Ns Arm FLAGS
+Enable engine specific debug flags (separated by commas)
+.It Fl u, -dump-scripts
+Enable script dumping if a directory called \fIdumps\fR exists in the current
+directory.
+.It Fl -cdrom= Ns Ar NUM
 CD drive to play CD audio from (default: 0 = first drive).
-.It Fl -copy-protection
-Enable copy protection in SCUMM games, when ScummVM disables it
-by default.
-.It Fl -demo-mode
-Start demo mode of Maniac Mansion.
-.It Fl -enable-gs
-Enable Roland GS mode for MIDI playback.
-.It Fl -extrapath= Ns Ar path
-Look for additional game data in
-.Ar path .
-.It Fl -joystick= Ns Ar num
-Enable input with joystick (default: 0 = first joystick).
+.It Fl -joystick= Ns Ar [NUM]
+Enable joystick input (default: 0 = first joystick).
+.It Fl -platform= Ns Ar WORD
+Specify platform of game (allowed values: \fI2gs\fR, \fI3do\fR, \fIacorn\fR,
+\fIamiga\fR, \fIatari\fR, \fIc64\fR, \fIfmtowns\fR, \fImac\fR, \fInes\fR,
+\fIpc\fR, \fIpce\fR, \fIsegacd\fR, \fIwindows\fR)
+.It Fl -savepath= Ns Ar PATH
+Path to where saved games are stored
+.It Fl -extrapath= Ns Ar PATH
+Extra path to additional game data
+.It Fl -soundfont= Ns Ar FILE
+Select the SoundFont for MIDI playback (only supported by some MIDI drivers).
 .It Fl -multi-midi
-Enable combination AdLib and native MIDI.
+Enable combination of AdLib and native MIDI.
 .It Fl -native-mt32
 True Roland MT-32 MIDI (disable GM emulation).
-.It Fl --render-mode= Ns Ar mode
-Enable additional render
-.Ar mode
-(cga, ega, hercGreen, hercAmber, amiga).
-.It Fl -platform= Ns Ar plat
-Specify original platform of game.
-.It Fl -output-rate= Ns Ar rate
-Set output sample rate in Hz to
-.Ar rate
-(e.g. 22050).
-.It Fl -savepath= Ns Ar path
-Look for savegames in
-.Ar path .
-.It Fl -soundfont= Ns Ar fILE
-Select the SoundFont for MIDI playback (only supported by some MIDI drivers).
-.It Fl -talkspeed= Ns Ar speed
-Set talk speed to
-.Ar speed
-for SCUMM games (default: 60).
-.It Fl -tempo= Ns Ar tempo
-Set music tempo to
-.Ar tempo
-(in percent, 50-200) for SCUMM games (default: 100).
+.It Fl -enable-gs
+Enable Roland GS mode for MIDI playback.
+.It Fl -output-rate= Ns Ar RATE
+Set output sample rate in Hz (e.g. 22050).
+.It Fl -opl-driver= Ns Ar DRIVER
+Select AdLib (OPL) emulator (\fIdb\fR, \fImame\fR, \fInuked\fR)
+.It Fl -aspect-ratio
+Enable aspect ratio correction.
+.It Fl -render-mode= Ns Ar MODE
+Enable additional render modes (\fIhercGreen\fR, \fIhercAmber\fR, \fIcga\fR,
+\fIega\fR, \fIvga\fR, \fIamiga\fR, \fIfmtowns\fR, \fIpc9821\fR, \fIpc9801\fR,
+\fI2gs\fR, \fIatari\fR, \fImacintosh\fR)
+.It Fl -alt-intro
+Use alternative intro for CD versions of Beneath a Steel Sky and Flight of the
+Amazon Queen.
+.It Fl -copy-protection
+Enable copy protection in games, when ScummVM disables it by default.
+.It Fl -talkspeed= Ns Ar NUM
+Set talk delay for SCUMM games, or talk speed for other games (default: 60)
+.It Fl -demo-mode
+Start demo mode of Maniac Mansion (Classic version)
+.It Fl -tempo= Ns Ar NUM
+Set music tempo (in percent, 50-200) for SCUMM games (default: 100).
 .El
-.Sh INGAME KEYS
-.Bl -tag -width Ds
+.Sh INGAME HOTKEYS
+.Bl -tag -width 13m
+.It Ctrl-F5
+Display the Global Menu
 .It Cmd-q
 Quit (Mac OS X)
 .It Ctrl-q
 Quit (Most platforms)
-.It Ctrl-f
-Toggle fast mode
+.It Ctrl-u
+Mute all sounds
 .It Ctrl-m
 Toggle mouse capture
 .It Ctrl-Alt 1-8
@@ -223,9 +253,20 @@ Increase scale factor
 Decrease scale factor
 .It Ctrl-Alt a
 Toggle aspect-ratio correction
+.It Ctrl-Alt f
+Toggle graphics filtering
+.It Ctrl-Alt s
+Cycle through scaling modes
 .It Alt-Enter
 Toggle full screen/windowed
+.It Alt-s
+Make a screenshot (SDL backend only)
+.It Ctrl-F7
+Open virtual keyboard (if enabled). This can also be triggered by a long press
+of the middle mouse button or wheel.
 .El
+.Pp
+There are many more SCUMM and game-specific hotkeys. See the \fIREADME\fR file.
 .Sh ENVIRONMENT
 .Bl -tag -width SCUMMVM
 .It Ev SCUMMVM_MIDI
@@ -265,8 +306,8 @@ Running the Italian version of Maniac Mansion fullscreen:
 .Pp
 .Dl $ scummvm -q it -f maniac
 .Sh SEE ALSO
-More information can be found in the README and on the website
-.Pa http://www.scummvm.org .
+More information can be found in the \fIREADME\fR and on the website
+.Pa https://www.scummvm.org .
 .Sh AUTHORS
 This manual page written by Jonathan Gray <khalek at scummvm.org>.
 ScummVM was written by the ScummVM team.

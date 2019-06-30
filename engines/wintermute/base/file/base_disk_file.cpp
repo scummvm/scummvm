@@ -122,6 +122,7 @@ Common::SeekableReadStream *openDiskFile(const Common::String &filename) {
 		const char* const knownPrefixes[] = { // Known absolute paths
 				"c:/windows/fonts/", // East Side Story refers to "c:\windows\fonts\framd.ttf"
 				"c:/carol6/svn/data/", // Carol Reed 6: Black Circle refers to "c:\carol6\svn\data\sprites\system\help.png"
+				"d:/engine/\0xD2\0xC32/tg_ie_080128_1005/data/", // Tanya Grotter and the Disappearing Floor refers to "d:\engine\<\0xD2><\0xC3>2\tg_ie_080128_1005\data\interface\pixel\pixel.png"
 				"f:/dokument/spel 5/demo/data/" // Carol Reed 5 (non-demo) refers to "f:\dokument\spel 5\demo\data\scenes\credits\op_cred_00\op_cred_00.jpg"
 		};
 

@@ -14,8 +14,8 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef SAMPLE_RATE_CONVERTER_H
-#define SAMPLE_RATE_CONVERTER_H
+#ifndef MT32EMU_SAMPLE_RATE_CONVERTER_H
+#define MT32EMU_SAMPLE_RATE_CONVERTER_H
 
 #include "globals.h"
 #include "Types.h"
@@ -33,21 +33,17 @@ class Synth;
  */
 class MT32EMU_EXPORT SampleRateConverter {
 public:
-	enum Quality {
-		// Use this only when the speed is more important than the audio quality.
-		FASTEST,
-		FAST,
-		GOOD,
-		BEST
-	};
-
 	// Returns the value of AnalogOutputMode for which the output signal may retain its full frequency spectrum
 	// at the sample rate specified by the targetSampleRate argument.
 	static AnalogOutputMode getBestAnalogOutputMode(double targetSampleRate);
 
+	// Returns the sample rate supported by the sample rate conversion implementation currently in effect
+	// that is closest to the one specified by the desiredSampleRate argument.
+	static double getSupportedOutputSampleRate(double desiredSampleRate);
+
 	// Creates a SampleRateConverter instance that converts output signal from the synth to the given sample rate
 	// with the specified conversion quality.
-	SampleRateConverter(Synth &synth, double targetSampleRate, Quality quality);
+	SampleRateConverter(Synth &synth, double targetSampleRate, SamplerateConversionQuality quality);
 	~SampleRateConverter();
 
 	// Fills the provided output buffer with the results of the sample rate conversion.
@@ -70,9 +66,10 @@ public:
 
 private:
 	const double synthInternalToTargetSampleRateRatio;
+	const bool useSynthDelegate;
 	void * const srcDelegate;
 }; // class SampleRateConverter
 
 } // namespace MT32Emu
 
-#endif // SAMPLE_RATE_CONVERTER_H
+#endif // MT32EMU_SAMPLE_RATE_CONVERTER_H

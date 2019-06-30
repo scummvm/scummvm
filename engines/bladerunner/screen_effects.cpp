@@ -26,30 +26,68 @@
 
 namespace BladeRunner {
 
-ScreenEffects::ScreenEffects(BladeRunnerEngine *vm, int size) : _vm(vm) {
+ScreenEffects::ScreenEffects(BladeRunnerEngine *vm, int size) {
+	_vm = vm;
 	_dataSize = size;
 	_data = new uint8[size];
-	_entries.reserve(8);
+	_entries.reserve(kMaxEffectsInScene + 1);
 }
 
 ScreenEffects::~ScreenEffects() {
 	delete[] _data;
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+	if (!_skipEntries.empty()) {
+		_skipEntries.clear();
+	}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 }
 
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+void ScreenEffects::toggleEntry(int effectId, bool skip) {
+	if (effectId >= 0 && effectId < kMaxEffectsInScene) {
+		int foundAt = -1;
+		for (int i = 0; i < (int)_skipEntries.size(); i++) {
+			if (_skipEntries[i] == effectId) {
+				foundAt = i;
+				break;
+			}
+		}
+
+		if (skip && foundAt < 0) {
+			int newSlot = 0;
+			// keep the array sorted (from greater values to lower values)
+			for (int i = 0; i < (int)_skipEntries.size(); i++) {
+				if (effectId > _skipEntries[i]) {
+					newSlot = i;
+					break;
+				}
+			}
+			_skipEntries.insert_at(newSlot, effectId);
+		} else if (!skip && foundAt >= 0 ) {
+			_skipEntries.remove_at(foundAt);
+		}
+	} else if (effectId == -1 && !skip) {
+		_skipEntries.clear();
+	}
+}
+#endif // BLADERUNNER_ORIGINAL_BUGS
+
 void ScreenEffects::readVqa(Common::SeekableReadStream *stream) {
-	uint8* dataPtr = _data;
+	uint8 *dataPtr = _data;
 	int dataSize   = _dataSize;
 
-	int entriesCount = stream->readUint32LE();
+	int entryCount = stream->readUint32LE();
 
-	if (entriesCount == 0) {
+	if (entryCount == 0) {
 		return;
 	}
 
-	entriesCount = MIN(entriesCount, 7);
-	_entries.resize(entriesCount);
+	entryCount = MIN(entryCount, kMaxEffectsInScene);
+	_entries.resize(entryCount);
 
-	for (Common::Array<Entry>::iterator entry = _entries.begin(); entry != _entries.end(); entry++) {
+	for (Common::Array<Entry>::iterator entry = _entries.begin(); entry != _entries.end(); ++entry) {
 		stream->read(&entry->palette, sizeof(Color256) * 16);
 
 		entry->x      = stream->readUint16LE();
@@ -62,12 +100,12 @@ void ScreenEffects::readVqa(Common::SeekableReadStream *stream) {
 
 		int pixelCount = entry->width * entry->height;
 
-		if (pixelCount > dataSize) { // to big to fit
+		if (pixelCount > dataSize) { // too big to fit
 			entry->width = 0;
 			entry->height = 0;
 			entry->data = _data;
 			continue;
-			// there is a issue in the game code, because it's not skipping data of entry in this case
+			// TODO a bug? there is a issue in the game code, because it's not skipping data of entry in this case
 		}
 
 		int pos = stream->pos();
@@ -93,6 +131,14 @@ void ScreenEffects::readVqa(Common::SeekableReadStream *stream) {
 		} while (pixelCount > 0);
 		stream->seek(pos + entryDataSize, SEEK_SET);
 	}
+
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+	// added code to allow skipping specific effects
+	for (int i = 0; i < (int)_skipEntries.size(); i++) {
+		_entries.remove_at(_skipEntries[i]);
+	}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 }
 
 //TODO:
@@ -109,7 +155,7 @@ void ScreenEffects::readVqa(Common::SeekableReadStream *stream) {
 //			if (entry.width < (width >> 1) + xx) {
 //				if (entry.width + entry.x > xx) {
 //					if (entry.height < (height >> 1) + yy) {
-//						if(entry.height + entry.y > yy) {
+//						if (entry.height + entry.y > yy) {
 //							return true;
 //						}
 //					}
@@ -120,12 +166,12 @@ void ScreenEffects::readVqa(Common::SeekableReadStream *stream) {
 //	return false;
 //}
 
-void ScreenEffects::getColor(Color256 *outColor, uint16 x, uint16 y, uint16 z) {
+void ScreenEffects::getColor(Color256 *outColor, uint16 x, uint16 y, uint16 z) const {
 	Color256 color = { 0, 0, 0 };
-	for (Common::Array<Entry>::iterator entry = _entries.begin(); entry != _entries.end(); entry++) {
+	for (Common::Array<const Entry>::iterator entry = _entries.begin(); entry != _entries.end(); ++entry) {
 		uint16 x1 = (x / 2) - entry->x;
 		uint16 y1 = (y / 2) - entry->y;
-		if ( x1 < entry->width && y1 < entry->height && z > entry->z) {
+		if (x1 < entry->width && y1 < entry->height && z > entry->z) {
 			int colorIndex = entry->data[y1 * entry->width + x1];
 			Color256 entryColor = entry->palette[colorIndex];
 			color.r += entryColor.r;

@@ -29,8 +29,7 @@
 #include "common/serializer.h"
 #include "xeen/character.h"
 #include "xeen/combat.h"
-#include "xeen/dialogs_error.h"
-#include "xeen/items.h"
+#include "xeen/dialogs/dialogs_message.h"
 
 namespace Xeen {
 
@@ -48,13 +47,13 @@ enum PartyBank {
 	WHERE_PARTY = 0, WHERE_BANK = 1
 };
 
-#define ITEMS_COUNT 36
 #define TOTAL_CHARACTERS 30
 #define XEEN_TOTAL_CHARACTERS 24
 #define MAX_ACTIVE_PARTY 6
 #define MAX_PARTY_COUNT 8
 #define TOTAL_STATS 7
 #define TOTAL_QUEST_ITEMS 85
+#define TOTAL_QUEST_ITEMS_SWORDS 51
 #define TOTAL_QUEST_FLAGS 56
 #define MAX_TREASURE_ITEMS 10
 
@@ -78,6 +77,77 @@ public:
 	int _gems, _gold;
 public:
 	Treasure();
+
+	/**
+	 * Returns a particular category's array
+	 */
+	XeenItem *operator[](int category) { return _categories[category]; }
+
+	/**
+	 * Clears the treasure list
+	 */
+	void clear();
+
+	/**
+	 * Completely reset the treasure data
+	 */
+	void reset();
+};
+
+/**
+ * Each side of Xeen supports 4 blacksmith inventories of up to 9 items each
+ */
+typedef XeenItem BlacksmithItems[2][4][INV_ITEMS_TOTAL];
+
+class BlacksmithWares {
+private:
+	/**
+	 * Returns the slot containing the wares for the blacksmith of the currently active map
+	 */
+	uint getSlotIndex() const;
+
+public:
+	BlacksmithItems _weapons;
+	BlacksmithItems _armor;
+	BlacksmithItems _accessories;
+	BlacksmithItems _misc;
+public:
+	/**
+	 * Constructor
+	 */
+	BlacksmithWares() { clear(); }
+
+	/**
+	 * Clear all current blacksmith wares
+	 */
+	void clear();
+
+	/**
+	 * Generates a fresh set of blacksmith inventories
+	 */
+	void regenerate();
+
+	/**
+	 * Gets the items for a particular item category
+	 */
+	BlacksmithItems &operator[](ItemCategory category);
+
+	/**
+	 * Loads a passed temporary character with the item set the given blacksmith has available,
+	 * so the player can "view" the wares as if it were a standard character's inventory
+	 */
+	void blackData2CharData(Character &c);
+
+	/**
+	 * Saves the inventory from the passed temporary character back into the blacksmith storage,
+	 * so changes in blacksmith inventories remain persistent
+	 */
+	void charData2BlackData(Character &c);
+
+	/**
+	 * Synchronizes data for the blacksmith wares
+	 */
+	void synchronize(Common::Serializer &s, int ccNum);
 };
 
 class Party {
@@ -124,14 +194,11 @@ public:
 	int _holyBonus;
 	int _heroism;
 	Difficulty _difficulty;
-	XeenItem _blacksmithWeapons[2][ITEMS_COUNT];
-	XeenItem _blacksmithArmor[2][ITEMS_COUNT];
-	XeenItem _blacksmithAccessories[2][ITEMS_COUNT];
-	XeenItem _blacksmithMisc[2][ITEMS_COUNT];
-	bool _cloudsEnd;
-	bool _darkSideEnd;
-	bool _worldEnd;
-	int _ctr24;	// TODO: Figure out proper name
+	BlacksmithWares _blacksmithWares;
+	bool _cloudsCompleted;
+	bool _darkSideCompleted;
+	bool _worldCompleted;
+	int _ctr24;		// Unused counter
 	int _day;
 	uint _year;
 	int _minutes;
@@ -153,14 +220,13 @@ public:
 	bool _rested;
 	bool _gameFlags[2][256];
 	bool _worldFlags[128];
-	bool _questFlags[2][30];
+	bool _questFlags[60];
 	int _questItems[TOTAL_QUEST_ITEMS];
 	bool _characterFlags[30][24];
 public:
 	// Other party related runtime data
 	Roster _roster;
-	Common::Array<Character> _activeParty;
-	bool _partyDead;
+	CharacterArray _activeParty;
 	bool _newDay;
 	bool _isNight;
 	bool _stepped;
@@ -174,6 +240,9 @@ public:
 public:
 	Party(XeenEngine *vm);
 
+	/**
+	 * Synchronizes data for the party
+	 */
 	void synchronize(Common::Serializer &s);
 
 	void loadActiveParty();
@@ -199,9 +268,9 @@ public:
 
 	void handleLight();
 
-	int subtract(ConsumableType consumableId, uint amount, PartyBank whereId, ErrorWaitType wait = WT_FREEZE_WAIT);
+	int subtract(ConsumableType consumableId, uint amount, PartyBank whereId, MessageWaitType wait = WT_FREEZE_WAIT);
 
-	void notEnough(ConsumableType consumableId, PartyBank whereId, bool mode, ErrorWaitType wait);
+	void notEnough(ConsumableType consumableId, PartyBank whereId, bool mode, MessageWaitType wait);
 
 	void checkPartyDead();
 
@@ -228,9 +297,19 @@ public:
 	bool giveTake(int takeMode, uint takeVal, int giveMode, uint giveVal, int charIdx);
 
 	/**
+	 * Gives up to three different item/amounts to various character and/or party properties
+	 */
+	bool giveExt(int mode1, uint val1, int mode2, uint val2, int mode3, uint val3, int charId);
+
+	/**
 	 * Resets the inventory that Blacksmiths sell
 	 */
 	void resetBlacksmithWares();
+
+	/**
+	 * Returns the current total score
+	 */
+	uint getScore();
 };
 
 } // End of namespace Xeen

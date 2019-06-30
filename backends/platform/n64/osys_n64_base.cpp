@@ -227,7 +227,7 @@ int OSystem_N64::getDefaultGraphicsMode() const {
 bool OSystem_N64::setGraphicsMode(const char *mode) {
 	int i = 0;
 	while (s_supportedGraphicsModes[i].name) {
-		if (!strcmpi(s_supportedGraphicsModes[i].name, mode)) {
+		if (!scumm_stricmp(s_supportedGraphicsModes[i].name, mode)) {
 			_graphicMode = s_supportedGraphicsModes[i].id;
 
 			switchGraphicModeId(_graphicMode);

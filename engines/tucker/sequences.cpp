@@ -50,13 +50,13 @@ void TuckerEngine::handleCreditsSequence() {
 	int counter3 = 0;
 	int num = 0;
 	int imgNum = 0;
-	int prevLocationNum = _locationNum;
+	Location prevLocation = _location;
 	int counter2 = 0;
 	int counter1 = 0;
 	loadCharset2();
 	showCursor(false);
 	stopSounds();
-	_locationNum = 74;
+	_location = kLocationCredits;
 	_flagsTable[236] = 74;
 	uint8 *imgBuf = (uint8 *)malloc(16 * 64000);
 	loadSprC02_01();
@@ -143,7 +143,7 @@ void TuckerEngine::handleCreditsSequence() {
 					filename = "loc78.pcx";
 					break;
 				}
-				if (filename != "")
+				if (!filename.empty())
 					loadImage(filename.c_str(), _quadBackgroundGfxBuf, 2);
 			}
 			_spritesCount = _creditsSequenceSpriteCounts[num];
@@ -151,7 +151,7 @@ void TuckerEngine::handleCreditsSequence() {
 		}
 	} while (!_quitGame && isSpeechSoundPlaying());
 	free(imgBuf);
-	_locationNum = prevLocationNum;
+	_location = prevLocation;
 	do {
 		if (_fadePaletteCounter > 0) {
 			fadeInPalette();
@@ -185,7 +185,9 @@ void TuckerEngine::handleCongratulationsSequence() {
 }
 
 void TuckerEngine::handleNewPartSequence() {
-	char filename[40];
+	assert(_part != kPartInit);
+
+	Common::String filename;
 
 	showCursor(false);
 	stopSounds();
@@ -197,43 +199,36 @@ void TuckerEngine::handleNewPartSequence() {
 		_inventoryObjectsOffset = 0;
 		_inventoryObjectsCount = 0;
 		addObjectToInventory(30);
-		if (_partNum == 1 || _partNum == 3) {
+		if (_part == kPartOne || _part == kPartThree) {
 			addObjectToInventory(1);
 			addObjectToInventory(0);
 		}
 		_redrawPanelItemsCounter = 0;
 	}
 	_scrollOffset = 0;
-	switch (_partNum) {
-	case 1:
-		strcpy(filename, "pt1bak.pcx");
-		break;
-	case 2:
-		strcpy(filename, "pt2bak.pcx");
-		break;
-	default:
-		strcpy(filename, "pt3bak.pcx");
-		break;
-	}
-	loadImage(filename, _quadBackgroundGfxBuf, 1);
+
+	filename = Common::String::format("pt%dbak.pcx", _part);
+	loadImage(filename.c_str(), _quadBackgroundGfxBuf, 1);
 	_spritesCount = 1;
 	clearSprites();
-	int currentLocation = _locationNum;
-	_locationNum = 98;
+	Location currentLocation = _location;
+	_location = kLocationNewPart;
 	unloadSprA02_01();
 	unloadSprC02_01();
-	switch (_partNum) {
-	case 1:
-		strcpy(filename, "sprites/partone.spr");
+	switch (_part) {
+	case kPartOne:
+		filename = "sprites/partone.spr";
 		break;
-	case 2:
-		strcpy(filename, "sprites/parttwo.spr");
+	case kPartTwo:
+		filename = "sprites/parttwo.spr";
+		break;
+	case kPartThree:
+		filename = "sprites/partthr.spr";
 		break;
 	default:
-		strcpy(filename, "sprites/partthr.spr");
 		break;
 	}
-	_sprC02Table[1] = loadFile(filename, 0);
+	_sprC02Table[1] = loadFile(filename.c_str(), nullptr);
 	startSpeechSound(9000, 60);
 	_fadePaletteCounter = 0;
 	do {
@@ -265,29 +260,21 @@ void TuckerEngine::handleNewPartSequence() {
 		redrawScreen(0);
 		waitForTimer(3);
 	} while (_fadePaletteCounter > 0 && !_quitGame);
-	_locationNum = currentLocation;
+	_location = currentLocation;
 	showCursor(true);
 }
 
 void TuckerEngine::handleMeanwhileSequence() {
-	char filename[40];
+	assert(_part != kPartInit);
+
+	Common::String filename;
 	uint8 backupPalette[256 * 3];
 	memcpy(backupPalette, _currentPalette, 256 * 3);
-	switch (_partNum) {
-	case 1:
-		strcpy(filename, "meanw01.pcx");
-		break;
-	case 2:
-		strcpy(filename, "meanw02.pcx");
-		break;
-	default:
-		strcpy(filename, "meanw03.pcx");
-		break;
-	}
+	filename = Common::String::format("meanw%02d.pcx", _part);
 	if (_flagsTable[215] == 0 && _flagsTable[231] == 1) {
-		strcpy(filename, "loc80.pcx");
+		filename = "loc80.pcx";
 	}
-	loadImage(filename, _quadBackgroundGfxBuf + 89600, 1);
+	loadImage(filename.c_str(), _quadBackgroundGfxBuf + 89600, 1);
 	showCursor(false);
 	_fadePaletteCounter = 0;
 	for (int i = 0; i < 60 && !_quitGame; ++i) {
@@ -322,7 +309,7 @@ void TuckerEngine::handleMeanwhileSequence() {
 void TuckerEngine::handleMapSequence() {
 	loadImage("map2.pcx", _quadBackgroundGfxBuf + 89600, 0);
 	loadImage("map1.pcx", _loadTempBuf, 1);
-	_selectedObject._locationObjectLocationNum = 0;
+	_selectedObject._locationObjectLocation = kLocationNone;
 	if (_flagsTable[7] > 0) {
 		copyMapRect(0, 0, 140, 86);
 	}
@@ -339,53 +326,54 @@ void TuckerEngine::handleMapSequence() {
 		copyMapRect(220, 0, 100, 180);
 	}
 	_fadePaletteCounter = 0;
-	int xPos = 0, yPos = 0, textNum = 0;
+	int xPos = 0, yPos = 0;
 	while (!_quitGame) {
+		int textNum = 0;
 		waitForTimer(2);
 		updateMouseState();
 		Graphics::copyRect(_locationBackgroundGfxBuf + _scrollOffset, 640, _quadBackgroundGfxBuf + 89600, 320, 320, 200);
 		_fullRedraw = true;
 		if (_flagsTable[7] > 0 && _mousePosX > 30 && _mousePosX < 86 && _mousePosY > 36 && _mousePosY < 86) {
 			textNum = 13;
-			_nextLocationNum = (_partNum == 1) ? 3 : 65;
+			_nextLocation = (_part == kPartOne) ? kLocationSeedyStreet : kLocationSeedyStreetPartThree;
 			xPos = 620;
 			yPos = 130;
 		} else if (_flagsTable[7] > 1 && _mousePosX > 60 && _mousePosX < 120 && _mousePosY > 120 && _mousePosY < 170) {
 			textNum = 14;
-			_nextLocationNum = (_partNum == 1) ? 9 : 66;
+			_nextLocation = (_part == kPartOne) ? kLocationMall : kLocationMallPartThree;
 			xPos = 344;
 			yPos = 120;
 		} else if (_flagsTable[7] > 2 && _mousePosX > 160 && _mousePosX < 210 && _mousePosY > 110 && _mousePosY < 160) {
 			textNum = 15;
-			_nextLocationNum = (_partNum == 1) ? 16 : 61;
+			_nextLocation = (_part == kPartOne) ? kLocationPark : kLocationParkPartThree;
 			xPos = 590;
 			yPos = 130;
 		} else if ((_flagsTable[7] == 4 || _flagsTable[7] == 6) && _mousePosX > 150 && _mousePosX < 200 && _mousePosY > 20 && _mousePosY < 70) {
 			textNum = 16;
-			_nextLocationNum = (_partNum == 1) ? 20 : 68;
+			_nextLocation = (_part == kPartOne) ? kLocationOutsideMuseum : kLocationOutsideMuseumPartThree;
 			xPos = 20;
 			yPos = 130;
 		} else if (_flagsTable[120] == 1 && _mousePosX > 240 && _mousePosX < 290 && _mousePosY > 35 && _mousePosY < 90) {
 			textNum = 17;
-			_nextLocationNum = (_partNum == 1) ? 19 : 62;
+			_nextLocation = (_part == kPartOne) ? kLocationDocks : kLocationDocksPartThree;
 			xPos = 20;
 			yPos = 124;
 		} else if (_mousePosX > 135 && _mousePosX < 185 && _mousePosY > 170 && _mousePosY < 200) {
 			textNum = 18;
-			_nextLocationNum = _locationNum;
+			_nextLocation = _location;
 			if (!_noPositionChangeAfterMap) {
 				xPos = _xPosCurrent;
 				yPos = _yPosCurrent;
-			} else if (_locationNum == 3 || _locationNum == 65) {
+			} else if (_location == kLocationSeedyStreet || _location == kLocationSeedyStreetPartThree) {
 				xPos = 620;
 				yPos = 130;
-			} else if (_locationNum == 9 || _locationNum == 66) {
+			} else if (_location == kLocationMall || _location == kLocationMallPartThree) {
 				xPos = 344;
 				yPos = 120;
-			} else if (_locationNum == 16 || _locationNum == 61) {
+			} else if (_location == kLocationPark || _location == kLocationParkPartThree) {
 				xPos = 590;
 				yPos = 130;
-			} else if (_locationNum == 20 || _locationNum == 68) {
+			} else if (_location == kLocationOutsideMuseum || _location == kLocationOutsideMuseumPartThree) {
 				xPos = 20;
 				yPos = 130;
 			} else {
@@ -411,14 +399,14 @@ void TuckerEngine::handleMapSequence() {
 		--_fadePaletteCounter;
 	}
 	_mouseClick = 1;
-	if (_nextLocationNum == 9 && _noPositionChangeAfterMap) {
+	if (_nextLocation == kLocationMall && _noPositionChangeAfterMap) {
 		_backgroundSpriteCurrentAnimation = 2;
 		_backgroundSpriteCurrentFrame = 0;
-		setCursorType(2);
-	} else if (_nextLocationNum == 66 && _noPositionChangeAfterMap) {
+		setCursorState(kCursorStateDisabledHidden);
+	} else if (_nextLocation == kLocationMallPartThree && _noPositionChangeAfterMap) {
 		_backgroundSpriteCurrentAnimation = 1;
 		_backgroundSpriteCurrentFrame = 0;
-		setCursorType(2);
+		setCursorState(kCursorStateDisabledHidden);
 	}
 	_noPositionChangeAfterMap = false;
 	_xPosCurrent = xPos;
@@ -436,21 +424,21 @@ void TuckerEngine::copyMapRect(int x, int y, int w, int h) {
 }
 
 bool TuckerEngine::handleSpecialObjectSelectionSequence() {
-	char filename[40];
-	if (_partNum == 1 && _selectedObjectNum == 6) {
-		strcpy(filename, "news1.pcx");
+	Common::String filename;
+	if (_part == kPartOne && _selectedObjectNum == 6) {
+		filename = "news1.pcx";
 		_flagsTable[7] = 4;
-	} else if (_partNum == 3 && _selectedObjectNum == 45) {
-		strcpy(filename, "profnote.pcx");
-	} else if (_partNum == 1 && _selectedObjectNum == 26) {
-		strcpy(filename, "photo.pcx");
-	} else if (_partNum == 3 && _selectedObjectNum == 39) {
-		strcpy(filename, "news2.pcx");
+	} else if (_part == kPartThree && _selectedObjectNum == 45) {
+		filename = "profnote.pcx";
+	} else if (_part == kPartOne && _selectedObjectNum == 26) {
+		filename = "photo.pcx";
+	} else if (_part == kPartThree && _selectedObjectNum == 39) {
+		filename = "news2.pcx";
 		_flagsTable[135] = 1;
 	} else if (_currentInfoString1SourceType == 0 && _currentActionObj1Num == 259) {
-		strcpy(filename, "postit.pcx");
+		filename = "postit.pcx";
 	} else if (_currentInfoString1SourceType == 1 && _currentActionObj1Num == 91) {
-		strcpy(filename, "memo.pcx");
+		filename = "memo.pcx";
 	} else {
 		return false;
 	}
@@ -460,7 +448,7 @@ bool TuckerEngine::handleSpecialObjectSelectionSequence() {
 		--_fadePaletteCounter;
 	}
 	_mouseClick = 1;
-	loadImage(filename, _quadBackgroundGfxBuf, 1);
+	loadImage(filename.c_str(), _quadBackgroundGfxBuf, 1);
 	_fadePaletteCounter = 0;
 	while (!_quitGame) {
 		waitForTimer(2);
@@ -474,7 +462,7 @@ bool TuckerEngine::handleSpecialObjectSelectionSequence() {
 		if (!_leftMouseButtonPressed && _mouseClick == 1) {
 			_mouseClick = 0;
 		}
-		if (_partNum == 3 && _selectedObjectNum == 45) {
+		if (_part == kPartThree && _selectedObjectNum == 45) {
 			for (int i = 0; i < 13; ++i) {
 				const int offset = _dataTable[204 + i]._yDest * 640 + _dataTable[204 + i]._xDest;
 				static const int itemsTable[] = { 15, 44, 25, 19, 21, 24, 12, 27, 20, 29, 35, 23, 3 };
@@ -529,7 +517,7 @@ void AnimationSequencePlayer::mainLoop() {
 		{ 13, 2, &AnimationSequencePlayer::loadIntroSeq13_14, &AnimationSequencePlayer::playIntroSeq13_14 },
 		{ 15, 2, &AnimationSequencePlayer::loadIntroSeq15_16, &AnimationSequencePlayer::playIntroSeq15_16 },
 		{ 27, 2, &AnimationSequencePlayer::loadIntroSeq27_28, &AnimationSequencePlayer::playIntroSeq27_28 },
-		{  1, 0, 0, 0 }
+		{  1, 0, nullptr,                                     nullptr                                     }
 	};
 	static const SequenceUpdateFunc _gameSeqUpdateFuncs[] = {
 		{ 17, 1, &AnimationSequencePlayer::loadIntroSeq17_18, &AnimationSequencePlayer::playIntroSeq17_18 },
@@ -537,7 +525,7 @@ void AnimationSequencePlayer::mainLoop() {
 		{  3, 2, &AnimationSequencePlayer::loadIntroSeq3_4,   &AnimationSequencePlayer::playIntroSeq3_4   },
 		{  9, 2, &AnimationSequencePlayer::loadIntroSeq9_10,  &AnimationSequencePlayer::playIntroSeq9_10  },
 		{ 21, 2, &AnimationSequencePlayer::loadIntroSeq21_22, &AnimationSequencePlayer::playIntroSeq21_22 },
-		{  1, 0, 0, 0 }
+		{  1, 0, nullptr,                                     nullptr                                     }
 	};
 	switch (_seqNum) {
 	case kFirstAnimationSequenceDemo:
@@ -644,7 +632,7 @@ Audio::RewindableAudioStream *AnimationSequencePlayer::loadSound(int index, Anim
 void AnimationSequencePlayer::loadSounds(int num) {
 	if (_soundSeqDataList[num].musicVolume != 0) {
 		Audio::AudioStream *s;
-		if ((s = loadSound(_soundSeqDataList[num].musicIndex, kAnimationSoundType8BitsRAW)) != 0) {
+		if ((s = loadSound(_soundSeqDataList[num].musicIndex, kAnimationSoundType8BitsRAW)) != nullptr) {
 			_mixer->playStream(Audio::Mixer::kMusicSoundType, &_musicHandle, s, -1, scaleMixerVolume(_soundSeqDataList[num].musicVolume));
 		}
 	}
@@ -654,17 +642,17 @@ void AnimationSequencePlayer::loadSounds(int num) {
 }
 
 void AnimationSequencePlayer::updateSounds() {
-	Audio::RewindableAudioStream *s = 0;
+	Audio::RewindableAudioStream *s = nullptr;
 	const SoundSequenceData *p = &_soundSeqData[_soundSeqDataIndex];
 	while (_soundSeqDataIndex < _soundSeqDataCount && p->timestamp <= _frameCounter) {
 		switch (p->opcode) {
 		case 0:
-			if ((s = loadSound(p->num, kAnimationSoundTypeWAV)) != 0) {
+			if ((s = loadSound(p->num, kAnimationSoundTypeWAV)) != nullptr) {
 				_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundsHandle[p->index], s, -1, scaleMixerVolume(p->volume));
 			}
 			break;
 		case 1:
-			if ((s = loadSound(p->num, kAnimationSoundTypeWAV)) != 0) {
+			if ((s = loadSound(p->num, kAnimationSoundTypeWAV)) != nullptr) {
 				_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundsHandle[p->index], Audio::makeLoopingAudioStream(s, 0),
 				                        -1, scaleMixerVolume(p->volume));
 			}
@@ -677,18 +665,18 @@ void AnimationSequencePlayer::updateSounds() {
 			break;
 		case 4:
 			_mixer->stopHandle(_musicHandle);
-			if ((s = loadSound(p->num, kAnimationSoundType8BitsRAW)) != 0) {
+			if ((s = loadSound(p->num, kAnimationSoundType8BitsRAW)) != nullptr) {
 				_mixer->playStream(Audio::Mixer::kMusicSoundType, &_musicHandle, s, -1, scaleMixerVolume(p->volume));
 			}
 			break;
 		case 5:
-			if ((s = loadSound(p->num, kAnimationSoundTypeWAV)) != 0) {
+			if ((s = loadSound(p->num, kAnimationSoundTypeWAV)) != nullptr) {
 				_mixer->playStream(Audio::Mixer::kSFXSoundType, &_sfxHandle, s, -1, scaleMixerVolume(p->volume));
 			}
 			break;
 		case 6:
 			_mixer->stopHandle(_musicHandle);
-			if ((s = loadSound(p->num, kAnimationSoundType16BitsRAW)) != 0) {
+			if ((s = loadSound(p->num, kAnimationSoundType16BitsRAW)) != nullptr) {
 				_mixer->playStream(Audio::Mixer::kMusicSoundType, &_musicHandle, s, -1, scaleMixerVolume(p->volume));
 			}
 			break;
@@ -822,7 +810,7 @@ void AnimationSequencePlayer::playIntroSeq19_20() {
 	// The intro credits animation. This uses 2 animations: the foreground one, which
 	// is the actual intro credits, and the background one, which is an animation of
 	// cogs, and is being replayed when an intro credit appears
-	const ::Graphics::Surface *surface = 0;
+	const ::Graphics::Surface *surface = nullptr;
 
 	if (_flicPlayer[0].getCurFrame() >= 115) {
 		surface = _flicPlayer[1].decodeNextFrame();

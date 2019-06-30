@@ -13,9 +13,9 @@ Summary		: Graphic adventure game interpreter
 Group		: Interpreters
 License		: GPL
 
-Url             : http://www.scummvm.org
+Url             : https://www.scummvm.org
 
-Source		: %{name}-%{version}.tar.bz2
+Source		: %{name}-%{version}.tar.xz
 Source1		: faad2-2.8.6.tar.gz
 Source2		: libmpeg2-0.5.1.tar.gz
 BuildRoot	: %{_tmppath}/%{name}-%{version}-root
@@ -46,7 +46,7 @@ Quest 1-6, Space Quest 1-5, ...), Discworld 1 and 2, Simon the Sorcerer 1 and
 2, Beneath A Steel Sky, Lure of the Temptress, Broken Sword 1 and 2, Flight of
 the Amazon Queen, Gobliiins 1-3, The Legend of Kyrandia 1-3, many of Humongous
 Entertainment's children's SCUMM games (including Freddi Fish and Putt Putt
-games) and many more. See http://www.scummvm.org for a full compatibility list.
+games) and many more. See https://www.scummvm.org for a full compatibility list.
 
 #------------------------------------------------------------------------------
 #   install scripts
@@ -86,7 +86,7 @@ fi
 #------------------------------------------------------------------------------
 %files
 %defattr(0644,root,root,0755)
-%doc AUTHORS README NEWS COPYING COPYING.LGPL COPYING.FREEFONT COPYING.BSD COPYRIGHT
+%doc AUTHORS README NEWS COPYING COPYING.LGPL COPYING.FREEFONT COPYING.OFL COPYING.BSD COPYRIGHT
 %attr(0755,root,root)%{_bindir}/scummvm
 %{_datadir}/applications/*
 %{_datadir}/pixmaps/scummvm.xpm

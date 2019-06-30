@@ -126,7 +126,7 @@ DisplayMan::DisplayMan(DMEngine *dmEngine) : _vm(dmEngine) {
 	_bitmapWallSetD3LCR = nullptr;
 	_bitmapWallSetD2LCR = nullptr;
 	_bitmapWallSetD1LCR = nullptr;
-	bitmapWallSetWallD0L = nullptr;
+	_bitmapWallSetWallD0L = nullptr;
 	_bitmapWallSetWallD0R = nullptr;
 	_bitmapWallSetDoorFrameTopD2LCR = nullptr;
 	_bitmapWallSetDoorFrameTopD1LCR = nullptr;
@@ -645,7 +645,7 @@ DisplayMan::~DisplayMan() {
 	delete[] _bitmapWallSetD3LCR;
 	delete[] _bitmapWallSetD2LCR;
 	delete[] _bitmapWallSetD1LCR;
-	delete[] bitmapWallSetWallD0L;
+	delete[] _bitmapWallSetWallD0L;
 	delete[] _bitmapWallSetWallD0R;
 	delete[] _bitmapWallSetDoorFrameTopD2LCR;
 	delete[] _bitmapWallSetDoorFrameTopD1LCR;
@@ -690,7 +690,7 @@ void DisplayMan::initializeGraphicData() {
 	_bitmapWallSetD3LCR = new byte[128 * 51];
 	_bitmapWallSetD2LCR = new byte[144 * 71];
 	_bitmapWallSetD1LCR = new byte[256 * 111];
-	bitmapWallSetWallD0L = new byte[32 * 136];
+	_bitmapWallSetWallD0L = new byte[32 * 136];
 	_bitmapWallSetWallD0R = new byte[32 * 136];
 	_bitmapWallSetDoorFrameTopD2LCR = new byte[96 * 3];
 	_bitmapWallSetDoorFrameTopD1LCR = new byte[128 * 4];
@@ -1423,7 +1423,7 @@ void DisplayMan::drawSquareD3L(Direction dir, int16 posX, int16 posY) {
 	);
 
 	uint16 squareAspect[5];
-	CellOrder order;
+	CellOrder order = kDMCellOrderNone;
 	bool skip = false;
 	DungeonMan &dungeon = *_vm->_dungeonMan;
 
@@ -1586,7 +1586,7 @@ void DisplayMan::drawSquareD3C(Direction dir, int16 posX, int16 posY) {
 	);
 
 	uint16 squareAspect[5];
-	CellOrder order;
+	CellOrder order = kDMCellOrderNone;
 	bool skip = false;
 
 	DungeonMan &dungeon = *_vm->_dungeonMan;
@@ -1665,7 +1665,7 @@ void DisplayMan::drawSquareD2L(Direction dir, int16 posX, int16 posY) {
 		Frame(40, 63, 24, 82, 32, 61, 32, 0)   /* Right Horizontal Closed three fourth */
 	);
 
-	CellOrder order;
+	CellOrder order = kDMCellOrderNone;
 	uint16 squareAspect[5];
 	bool skip = false;
 
@@ -1748,7 +1748,7 @@ void DisplayMan::drawSquareD2R(Direction dir, int16 posX, int16 posY) {
 		Frame(200, 223, 24, 82, 32, 61, 32, 0)  /* Right Horizontal Closed three fourth */
 	);
 
-	CellOrder order;
+	CellOrder order = kDMCellOrderNone;
 	uint16 squareAspect[5];
 	bool skip = false;
 
@@ -1835,7 +1835,7 @@ void DisplayMan::drawSquareD2C(Direction dir, int16 posX, int16 posY) {
 		Frame(120, 143, 24, 82, 32, 61, 32, 0)   /* Right Horizontal Closed three fourth */
 	);
 
-	CellOrder order;
+	CellOrder order = kDMCellOrderNone;
 	uint16 squareAspect[5];
 	bool skip = false;
 
@@ -1918,7 +1918,7 @@ void DisplayMan::drawSquareD1L(Direction dir, int16 posX, int16 posY) {
 		Frame(0, 31, 17, 102, 48, 88, 52, 0)    /* Right Horizontal Closed three fourth */
 	);
 
-	CellOrder order;
+	CellOrder order = kDMCellOrderNone;
 	uint16 squareAspect[5];
 	bool skip = false;
 
@@ -2003,7 +2003,7 @@ void DisplayMan::drawSquareD1R(Direction dir, int16 posX, int16 posY) {
 		Frame(0, 0, 0, 0, 0, 0, 0, 0)             /* Right Horizontal Closed three fourth */
 	);
 
-	CellOrder order;
+	CellOrder order = kDMCellOrderNone;
 	uint16 squareAspect[5];
 	bool skip = false;
 
@@ -2075,7 +2075,7 @@ void DisplayMan::drawSquareD1C(Direction dir, int16 posX, int16 posY) {
 
 	ChampionMan &championMan = *_vm->_championMan;
 
-	CellOrder order;
+	CellOrder order = kDMCellOrderNone;
 	uint16 squareAspect[5];
 	bool skip = false;
 
@@ -2162,20 +2162,20 @@ void DisplayMan::drawSquareD0L(Direction dir, int16 posX, int16 posY) {
 	uint16 squareAspect[5];
 	_vm->_dungeonMan->setSquareAspect(squareAspect, dir, posX, posY);
 	switch (squareAspect[kDMSquareAspectElement]) {
-	case kDMElementTypeWall:
-		drawWallSetBitmap(bitmapWallSetWallD0L, _frameWalls163[kDMViewSquareD0L]);
-		break;
-	case kDMElementTypeCorridor:
-	case kDMElementTypeTeleporter:
-	case kDMElementTypeDoorSide:
-		drawObjectsCreaturesProjectilesExplosions(Thing(squareAspect[kDMSquareAspectFirstGroupOrObject]), dir, posX, posY, kDMViewSquareD0L, kDMCellOrderBackRight);
-		break;
+	case kDMElementTypeStairsSide:
+		drawFloorPitOrStairsBitmap(_stairsNativeBitmapIndexSideD0L, frameStairsSideD0L);
+		return;
 	case kDMElementTypePit:
 		drawFloorPitOrStairsBitmap(squareAspect[kDMSquareAspectPitInvisible] ? kDMGraphicIdxFloorPitInvisibleD0L : kDMGraphicIdxFloorPitD0L, frameFloorPitD0L);
-	case kDMElementTypeStairsSide:
-		if (squareAspect[kDMSquareAspectStairsUp])
-			drawFloorPitOrStairsBitmap(_stairsNativeBitmapIndexSideD0L, frameStairsSideD0L);
+		// fall through
+	case kDMElementTypeCorridor:
+	case kDMElementTypeDoorSide:
+	case kDMElementTypeTeleporter:
+		drawObjectsCreaturesProjectilesExplosions(Thing(squareAspect[kDMSquareAspectFirstGroupOrObject]), dir, posX, posY, kDMViewSquareD0L, kDMCellOrderBackRight);
 		break;
+	case kDMElementTypeWall:
+		drawWallSetBitmap(_bitmapWallSetWallD0L, _frameWalls163[kDMViewSquareD0L]);
+		return;
 	default:
 		break;
 	}
@@ -2200,6 +2200,7 @@ void DisplayMan::drawSquareD0R(Direction dir, int16 posX, int16 posY) {
 	case kDMElementTypePit:
 		drawFloorPitOrStairsBitmapFlippedHorizontally(squareAspect[kDMSquareAspectPitInvisible] ? kDMGraphicIdxFloorPitInvisibleD0L
 														   : kDMGraphicIdxFloorPitD0L, frameFloorPitD0R);
+		// fall through
 	case kDMElementTypeCorridor:
 	case kDMElementTypeDoorSide:
 	case kDMElementTypeTeleporter:
@@ -2209,6 +2210,8 @@ void DisplayMan::drawSquareD0R(Direction dir, int16 posX, int16 posY) {
 	case kDMElementTypeWall:
 		drawWallSetBitmap(_bitmapWallSetWallD0R, _frameWalls163[kDMViewSquareD0R]);
 		return;
+	default:
+		break;
 	}
 	if ((squareAspect[kDMSquareAspectElement] == kDMElementTypeTeleporter) && squareAspect[kDMSquareAspectTeleporterVisible])
 		drawField(&_fieldAspects188[kDMViewSquareD0R], _frameWalls163[kDMViewSquareD0R]._box);
@@ -2252,6 +2255,8 @@ void DisplayMan::drawSquareD0C(Direction dir, int16 posX, int16 posY) {
 	case kDMElementTypePit:
 		drawFloorPitOrStairsBitmap(squareAspect[kDMSquareAspectPitInvisible] ? kDMGraphicIdxFloorPitInvisibleD0C : kDMGraphicIdxFloorPitD0C, frameFloorPitD0C);
 		break;
+	default:
+		break;
 	}
 	drawCeilingPit(kDMGraphicIdxCeilingPitD0C, &frameCeilingPitD0C, posX, posY, false);
 	drawObjectsCreaturesProjectilesExplosions(Thing(squareAspect[kDMSquareAspectFirstGroupOrObject]), dir, posX, posY, kDMViewSquareD0C, kDMCellOrderBackLeftBackRight);
@@ -2285,7 +2290,7 @@ void DisplayMan::drawDungeon(Direction dir, int16 posX, int16 posY) {
 		_bitmapWallSetD3LCR = _bitmapWallD3LCRFlipped;
 		_bitmapWallSetD2LCR = _bitmapWallD2LCRFlipped;
 		_bitmapWallSetD1LCR = _bitmapWallD1LCRFlipped;
-		bitmapWallSetWallD0L = _bitmapWallD0LFlipped;
+		_bitmapWallSetWallD0L = _bitmapWallD0LFlipped;
 		_bitmapWallSetWallD0R = _bitmapWallD0RFlipped;
 	} else {
 		copyBitmapAndFlipHorizontal(_bitmapCeiling, _tmpBitmap, k112_byteWidthViewport, 29);
@@ -2361,7 +2366,7 @@ void DisplayMan::drawDungeon(Direction dir, int16 posX, int16 posY) {
 		_bitmapWallSetD3LCR = _bitmapWallD3LCRNative;
 		_bitmapWallSetD2LCR = _bitmapWallD2LCRNative;
 		_bitmapWallSetD1LCR = _bitmapWallD1LCRNative;
-		bitmapWallSetWallD0L = _bitmapWallD0LNative;
+		_bitmapWallSetWallD0L = _bitmapWallD0LNative;
 		_bitmapWallSetWallD0R = _bitmapWallD0RNative;
 	}
 
@@ -2410,7 +2415,7 @@ void DisplayMan::loadWallSet(WallSet set) {
 	loadIntoBitmap(graphicIndice++, _bitmapWallSetDoorFrameTopD1LCR);
 	loadIntoBitmap(graphicIndice++, _bitmapWallSetDoorFrameTopD2LCR);
 	loadIntoBitmap(graphicIndice++, _bitmapWallSetWallD0R);
-	loadIntoBitmap(graphicIndice++, bitmapWallSetWallD0L);
+	loadIntoBitmap(graphicIndice++, _bitmapWallSetWallD0L);
 	loadIntoBitmap(graphicIndice++, _bitmapWallSetD1LCR);
 	loadIntoBitmap(graphicIndice++, _bitmapWallSetD2LCR);
 	loadIntoBitmap(graphicIndice++, _bitmapWallSetD3LCR);
@@ -2537,7 +2542,7 @@ void DisplayMan::loadCurrentMapGraphics() {
 
 	copyBitmapAndFlipHorizontal(_bitmapWallD1LCRNative = _bitmapWallSetD1LCR, _bitmapWallD1LCRFlipped,
 									_frameWalls163[kDMViewSquareD1C]._srcByteWidth, _frameWalls163[kDMViewSquareD1C]._srcHeight);
-	copyBitmapAndFlipHorizontal(_bitmapWallD0LNative = bitmapWallSetWallD0L, _bitmapWallD0RFlipped,
+	copyBitmapAndFlipHorizontal(_bitmapWallD0LNative = _bitmapWallSetWallD0L, _bitmapWallD0RFlipped,
 									_frameWalls163[kDMViewSquareD0L]._srcByteWidth, _frameWalls163[kDMViewSquareD0L]._srcHeight);
 	copyBitmapAndFlipHorizontal(_bitmapWallD0RNative = _bitmapWallSetWallD0R, _bitmapWallD0LFlipped,
 									_frameWalls163[kDMViewSquareD0L]._srcByteWidth, _frameWalls163[kDMViewSquareD0L]._srcHeight);
@@ -3204,6 +3209,7 @@ void DisplayMan::drawObjectsCreaturesProjectilesExplosions(Thing thingParam, Dir
 	byte *bitmapGreenAnt = nullptr;
 	do {
 		/* Draw objects */
+		ActiveGroup *activeGroup = nullptr;
 		if (L0135_B_DrawAlcoveObjects) {
 			AL_2_viewCell = kDMViewCellAlcove; /* Index of coordinates to draw objects in alcoves */
 			cellYellowBear = _vm->returnOppositeDir(directionParam); /* Alcove is on the opposite direction of the viewing direction */
@@ -3361,7 +3367,6 @@ T0115015_DrawProjectileAsObject:
 		if ((groupThing == _vm->_thingNone) || drawCreaturesCompleted)
 			goto T0115129_DrawProjectiles; /* Skip code to draw creatures */
 
-		ActiveGroup *activeGroup;
 		if (group == nullptr) { /* If all creature data and info has not already been gathered */
 			group = (Group *)dungeon.getThingData(groupThing);
 			activeGroup = &_vm->_groupMan->_activeGroups[group->getActiveGroupIndex()];

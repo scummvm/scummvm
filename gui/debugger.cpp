@@ -51,7 +51,6 @@ namespace GUI {
 Debugger::Debugger() {
 	_frameCountdown = 0;
 	_isActive = false;
-	_errStr = NULL;
 	_firstTime = true;
 #ifndef USE_TEXT_CONSOLE_FOR_DEBUGGER
 	_debuggerDialog = new GUI::ConsoleDialog(1.0f, 0.67f);
@@ -159,8 +158,7 @@ void Debugger::attach(const char *entry) {
 	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
 
 	// Set error string (if any)
-	free(_errStr);
-	_errStr = entry ? strdup(entry) : 0;
+	_errStr = entry ? entry : "";
 
 	// Reset frame countdown (i.e. attach immediately)
 	_frameCountdown = 1;
@@ -224,10 +222,9 @@ void Debugger::enter() {
 		_firstTime = false;
 	}
 
-	if (_errStr) {
-		debugPrintf("ERROR: %s\n\n", _errStr);
-		free(_errStr);
-		_errStr = NULL;
+	if (_errStr.size()) {
+		debugPrintf("ERROR: %s\n\n", _errStr.c_str());
+		_errStr.clear();
 	}
 
 	_debuggerDialog->runModal();
@@ -260,6 +257,7 @@ void Debugger::enter() {
 
 	do {
 		printf("debug> ");
+		::fflush(stdout);
 		if (!fgets(buf, sizeof(buf), stdin))
 			return;
 
@@ -293,19 +291,16 @@ bool Debugger::parseCommand(const char *inputOrig) {
 	const char *param[256];
 
 	// Parse out any params
-	// One of the rare occasions using strdup is OK, since splitCommands needs to modify it
-	char *input = strdup(inputOrig);
+	Common::String input(inputOrig);
 	splitCommand(input, num_params, &param[0]);
 
 	if (num_params == 0) {
-		free(input);
 		return true;
 	}
 
 	// Handle commands first
 	bool result;
 	if (handleCommand(num_params, param, result)) {
-		free(input);
 		return result;
 	}
 
@@ -390,31 +385,29 @@ bool Debugger::parseCommand(const char *inputOrig) {
 				}
 			}
 
-			free(input);
 			return true;
 		}
 	}
 
 	debugPrintf("Unknown command or variable\n");
-	free(input);
 	return true;
 }
 
-void Debugger::splitCommand(char *input, int &argc, const char **argv) {
+void Debugger::splitCommand(Common::String &input, int &argc, const char **argv) {
 	byte c;
 	enum states { DULL, IN_WORD, IN_STRING } state = DULL;
 	const char *paramStart = nullptr;
-	
+
 	argc = 0;
-	for (char *p = input; *p; ++p) {
+	for (Common::String::iterator p = input.begin(); *p; ++p) {
 		c = (byte)*p;
 
 		switch (state) {
-		case DULL: 
+		case DULL:
 			// not in a word, not in a double quoted string
 			if (isspace(c))
 				break;
-			
+
 			// not a space -- if it's a double quote we go to IN_STRING, else to IN_WORD
 			if (c == '"') {
 				state = IN_STRING;
@@ -470,7 +463,7 @@ bool Debugger::tabComplete(const char *input, Common::String &completion) const 
 
 	CommandsMap::const_iterator i, e = _cmds.end();
 	for (i = _cmds.begin(); i != e; ++i) {
-		if (i->_key.hasPrefix(input)) {
+		if (i->_key.hasPrefixIgnoreCase(input)) {
 			uint commandlen = i->_key.size();
 			if (commandlen == inputlen) { // perfect match, so no tab completion possible
 				return false;

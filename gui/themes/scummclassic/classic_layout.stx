@@ -275,6 +275,11 @@
 	</dialog>
 
 	<dialog name = 'GlobalOptions_Graphics' overlays = 'Dialog.GlobalOptions.TabWidget'>
+		<layout type = 'vertical' padding = '0, 0, 0, 0'>
+			<widget name = 'Container'/>
+		</layout>
+	</dialog>
+	<dialog name = 'GlobalOptions_Graphics_Container' overlays = 'GlobalOptions_Graphics.Container'>
 		<layout type = 'vertical' padding = '16, 16, 16, 16' spacing = '8'>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' center = 'true'>
 				<widget name = 'grModePopupDesc'
@@ -289,6 +294,14 @@
 						type = 'OptionsLabel'
 				/>
 				<widget name = 'grRenderPopup'
+						type = 'PopUp'
+				/>
+			</layout>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' center = 'true'>
+				<widget name = 'grStretchModePopupDesc'
+						type = 'OptionsLabel'
+				/>
+				<widget name = 'grStretchModePopup'
 						type = 'PopUp'
 				/>
 			</layout>
@@ -552,6 +565,16 @@
 				/>
 				<widget name = 'GuiLanguagePopup'
 						type = 'PopUp'
+				/>
+			</layout>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' center = 'true'>
+				<widget name = 'GuiLanguageUseGameLanguage'
+						type = 'Checkbox'
+				/>
+			</layout>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' center = 'true'>
+				<widget name = 'UseSystemDialogs'
+						type = 'Checkbox'
 				/>
 			</layout>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' center = 'true'>
@@ -827,11 +850,16 @@
 	</dialog>
 
 	<dialog name = 'GameOptions_Graphics' overlays = 'Dialog.GlobalOptions.TabWidget'>
+		<layout type = 'vertical' padding = '0, 0, 0, 0'>
+			<widget name = 'Container'/>
+		</layout>
+	</dialog>
+	<dialog name = 'GameOptions_Graphics_Container' overlays = 'GameOptions_Graphics.Container'>
 		<layout type = 'vertical' padding = '16, 16, 16, 16' spacing = '8'>
 			<widget name = 'EnableTabCheckbox'
 					type = 'Checkbox'
 			/>
-			<import layout = 'Dialog.GlobalOptions_Graphics' />
+			<import layout = 'Dialog.GlobalOptions_Graphics_Container' />
 		</layout>
 	</dialog>
 

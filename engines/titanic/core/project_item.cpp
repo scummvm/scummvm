@@ -189,17 +189,14 @@ void CProjectItem::loadGame(int slotId) {
 
 	// Load the savegame header in
 	TitanicSavegameHeader header;
-	readSavegameHeader(&file, header);
-	if (header._thumbnail) {
-		header._thumbnail->free();
-		delete header._thumbnail;
-	}
+	if (!readSavegameHeader(&file, header))
+		error("Failed to read save game header");
 
 	g_vm->_events->setTotalPlayTicks(header._totalFrames);
 
 	// Load the contents in
 	CProjectItem *newProject = loadData(&file);
-	file.IsClassStart();
+	file.isClassStart();
 	getGameManager()->load(&file);
 
 	file.close();
@@ -254,7 +251,7 @@ void CProjectItem::clear() {
 }
 
 CProjectItem *CProjectItem::loadData(SimpleFile *file) {
-	if (!file->IsClassStart())
+	if (!file->isClassStart())
 		return nullptr;
 
 	CProjectItem *root = nullptr;
@@ -295,8 +292,8 @@ CProjectItem *CProjectItem::loadData(SimpleFile *file) {
 			item->load(file);
 		}
 
-		file->IsClassStart();
-	} while (file->IsClassStart());
+		file->isClassStart();
+	} while (file->isClassStart());
 
 	return root;
 }
@@ -488,13 +485,9 @@ SaveStateList CProjectItem::getSavegameList(const Common::String &target) {
 			if (in) {
 				SimpleFile f;
 				f.open(in);
-				if (!readSavegameHeader(&f, header))
-					continue;
+				if (readSavegameHeader(&f, header))
+					saveList.push_back(SaveStateDescriptor(slot, header._saveName));
 
-				saveList.push_back(SaveStateDescriptor(slot, header._saveName));
-
-				header._thumbnail->free();
-				delete header._thumbnail;
 				delete in;
 			}
 		}
@@ -503,7 +496,7 @@ SaveStateList CProjectItem::getSavegameList(const Common::String &target) {
 	return saveList;
 }
 
-bool CProjectItem::readSavegameHeader(SimpleFile *file, TitanicSavegameHeader &header) {
+WARN_UNUSED_RESULT bool CProjectItem::readSavegameHeader(SimpleFile *file, TitanicSavegameHeader &header, bool skipThumbnail) {
 	char saveIdentBuffer[SAVEGAME_STR_SIZE + 1];
 	header._thumbnail = nullptr;
 	header._totalFrames = 0;
@@ -526,8 +519,7 @@ bool CProjectItem::readSavegameHeader(SimpleFile *file, TitanicSavegameHeader &h
 	while ((ch = (char)file->readByte()) != '\0') header._saveName += ch;
 
 	// Get the thumbnail
-	header._thumbnail = Graphics::loadThumbnail(*file);
-	if (!header._thumbnail)
+	if (!Graphics::loadThumbnail(*file, header._thumbnail, skipThumbnail))
 		return false;
 
 	// Read in save date/time

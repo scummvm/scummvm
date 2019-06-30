@@ -81,12 +81,10 @@ void DebugState::updateActiveBreakpointTypes() {
 }
 
 // Disassembles one command from the heap, returns address of next command or 0 if a ret was encountered.
-reg_t disassemble(EngineState *s, reg32_t pos, const Object *obj, bool printBWTag, bool printBytecode) {
+reg_t disassemble(EngineState *s, reg_t pos, const Object *obj, bool printBWTag, bool printBytecode) {
 	SegmentObj *mobj = s->_segMan->getSegment(pos.getSegment(), SEG_TYPE_SCRIPT);
 	Script *script_entity = NULL;
-	reg_t retval;
-	retval.setSegment(pos.getSegment());
-	retval.setOffset(pos.getOffset() + 1);
+	reg_t retval = make_reg32(pos.getSegment(), pos.getOffset() + 1);
 	uint16 param_value = 0xffff; // Suppress GCC warning by setting default value, chose value as invalid to getKernelName etc.
 	uint i = 0;
 	Kernel *kernel = g_sci->getKernel();
@@ -220,7 +218,11 @@ reg_t disassemble(EngineState *s, reg32_t pos, const Object *obj, bool printBWTa
 					if (obj != nullptr) {
 						const Object *const super = obj->getClass(s->_segMan);
 						assert(super);
-						selectorName = kernel->getSelectorName(super->getVarSelector(param_value / 2)).c_str();
+						if (param_value / 2 < super->getVarCount()) {
+							selectorName = kernel->getSelectorName(super->getVarSelector(param_value / 2)).c_str();
+						} else {
+							selectorName = "<invalid>";
+						}
 					} else {
 						selectorName = "<unavailable>";
 					}
@@ -261,9 +263,7 @@ reg_t disassemble(EngineState *s, reg32_t pos, const Object *obj, bool printBWTa
 			}
 
 			const uint32 offset = findOffset(param_value, script_entity, pos.getOffset() + bytecount);
-			reg_t addr;
-			addr.setSegment(retval.getSegment());
-			addr.setOffset(offset);
+			reg_t addr = make_reg32(retval.getSegment(), offset);
 			if (!s->_segMan->isObject(addr)) {
 				debugN("\t\"%s\"", s->_segMan->derefString(addr));
 			} else {
@@ -370,6 +370,8 @@ reg_t disassemble(EngineState *s, reg32_t pos, const Object *obj, bool printBWTa
 					case kSelectorNone:
 						debugN("INVALID");
 						break;
+					default:
+						break;
 					}
 				}
 
@@ -438,7 +440,7 @@ void SciEngine::scriptDebug() {
 		}
 
 		if (_debugState.seeking != kDebugSeekNothing) {
-			const reg32_t pc = s->xs->addr.pc;
+			const reg_t pc = s->xs->addr.pc;
 			SegmentObj *mobj = s->_segMan->getSegment(pc.getSegment(), SEG_TYPE_SCRIPT);
 
 			if (mobj) {
@@ -454,6 +456,8 @@ void SciEngine::scriptDebug() {
 				case kDebugSeekSpecialCallk:
 					if (paramb1 != _debugState.seekSpecial)
 						return;
+					// fall through
+					// FIXME: fall through intended?
 
 				case kDebugSeekCallk:
 					if (op != op_callk)
@@ -762,7 +766,7 @@ bool SciEngine::checkExportBreakpoint(uint16 script, uint16 pubfunct) {
 	return found;
 }
 
-bool SciEngine::checkAddressBreakpoint(const reg32_t &address) {
+bool SciEngine::checkAddressBreakpoint(const reg_t &address) {
 	if (!(_debugState._activeBreakpointTypes & BREAK_ADDRESS))
 		return false;
 
@@ -936,6 +940,8 @@ void debugSelectorCall(reg_t send_obj, Selector selector, int argc, StackPtr arg
 				}
 			}
 		break;
+	default:
+		break;
 	}	// switch
 }
 
@@ -1037,7 +1043,7 @@ void logKernelCall(const KernelFunction *kernelCall, const KernelSubFunction *ke
 						// TODO: Any other segment types which could
 						// use special handling?
 
-						if (kernelCall->function == kSaid) {
+						if (kernelCall->function == &kSaid) {
 							SegmentRef saidSpec = s->_segMan->dereference(argv[parmNr]);
 							if (saidSpec.isRaw) {
 								debugN(" ('");
@@ -1083,7 +1089,8 @@ void logBacktrace() {
 		switch (call.type) {
 		case EXEC_STACK_TYPE_CALL: // Normal function
 			if (call.type == EXEC_STACK_TYPE_CALL)
-			con->debugPrintf(" %x: script %d - ", i, s->_segMan->getScript(call.addr.pc.getSegment())->getScriptNumber());
+				con->debugPrintf(" %x: script %d - ", i, s->_segMan->getScript(call.addr.pc.getSegment())->getScriptNumber());
+			
 			if (call.debugSelector != -1) {
 				con->debugPrintf("%s::%s(", objname, g_sci->getKernel()->getSelectorName(call.debugSelector).c_str());
 			} else if (call.debugExportId != -1) {

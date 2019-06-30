@@ -86,8 +86,10 @@ const struct GameOpt {
 	{ GUIO_GAMEOPTIONS11, "gameOptionB" },
 	{ GUIO_GAMEOPTIONS12, "gameOptionC" },
 	{ GUIO_GAMEOPTIONS13, "gameOptionD" },
+	{ GUIO_GAMEOPTIONS14, "gameOptionE" },
+	{ GUIO_GAMEOPTIONS15, "gameOptionF" },
 
-	{ GUIO_NONE, 0 }
+	{ GUIO_NONE, nullptr }
 };
 
 bool checkGameGUIOption(const String &option, const String &str) {

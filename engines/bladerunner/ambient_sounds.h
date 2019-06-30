@@ -25,36 +25,43 @@
 
 #include "audio/audiostream.h"
 
+#include "common/str.h"
+
 namespace BladeRunner {
 
 class BladeRunnerEngine;
+class SaveFileReadStream;
+class SaveFileWriteStream;
 
 class AmbientSounds {
+	static const int kNonLoopingSounds = 25;
+	static const int kLoopingSounds = 3;
+
 	struct NonLoopingSound {
-		bool   isActive;
-		char   name[13];
-		int32  hash;
-		int32  audioPlayerTrack;
-		int32  timeMin;
-		int32  timeMax;
-		uint32 nextPlayTime;
-		int32  volumeMin;
-		int32  volumeMax;
-		int32  volume;
-		int32  panStartMin;
-		int32  panStartMax;
-		int32  panEndMin;
-		int32  panEndMax;
-		int32  priority;
+		bool           isActive;
+		Common::String name;
+		int32          hash;
+		int            audioPlayerTrack;
+		int            timeMin;
+		int            timeMax;
+		uint32         nextPlayTime;
+		int            volumeMin;
+		int            volumeMax;
+		int            volume;
+		int            panStartMin;
+		int            panStartMax;
+		int            panEndMin;
+		int            panEndMax;
+		int            priority;
 	};
 
 	struct LoopingSound {
-		bool  isActive;
-		char  name[13];
-		int32 hash;
-		int   audioPlayerTrack;
-		int32 volume;
-		int   pan;
+		bool           isActive;
+		Common::String name;
+		int32          hash;
+		int            audioPlayerTrack;
+		int            volume;
+		int            pan;
 	};
 
 	BladeRunnerEngine *_vm;
@@ -86,6 +93,7 @@ public:
 		int panEndMin, int panEndMax,
 		int priority, int unk);
 	void playSound(int sfxId, int volume, int panStart, int panEnd, int priority);
+	void playSpeech(int actorId, int sentenceId, int volume, int panStart, int panEnd, int priority);
 
 	void addLoopingSound(int sfxId, int volume, int pan, int delay);
 	void adjustLoopingSound(int sfxId, int volume, int pan, int delay);
@@ -96,26 +104,22 @@ public:
 
 	void tick();
 
-	// setVolume
-	// getVolume
+	void setVolume(int volume);
+	int getVolume() const;
+	void playSample();
+
+	void save(SaveFileWriteStream &f);
+	void load(SaveFileReadStream &f);
 
 private:
-	int findAvailableNonLoopingTrack();
-	int findNonLoopingTrackByHash(int32 hash);
+	int findAvailableNonLoopingTrack() const;
+	int findNonLoopingTrackByHash(int32 hash) const;
 
-	int findAvailableLoopingTrack();
-	int findLoopingTrackByHash(int32 hash);
-
-	// stopNonLoopingTrack
-	// stopLoopingTrack
-
-	// saveToSaveGame
-	// initFromSaveGame
-	// addSoundByName
-	// playVolumeAdjustSound
+	int findAvailableLoopingTrack() const;
+	int findLoopingTrackByHash(int32 hash) const;
 
 	void addSoundByName(
-		const char *name,
+		const Common::String &name,
 		int timeMin, int timeMax,
 		int volumeMin, int volumeMax,
 		int panStartMin, int panStartMax,

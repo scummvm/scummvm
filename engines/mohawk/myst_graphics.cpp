@@ -28,12 +28,18 @@
 #include "common/system.h"
 #include "common/textconsole.h"
 #include "engines/util.h"
+#include "graphics/fonts/ttf.h"
+#include "graphics/fontman.h"
 #include "graphics/palette.h"
+#include "graphics/scaler.h"
 #include "image/pict.h"
 
 namespace Mohawk {
 
-MystGraphics::MystGraphics(MohawkEngine_Myst* vm) : GraphicsManager(), _vm(vm) {
+MystGraphics::MystGraphics(MohawkEngine_Myst* vm) :
+		GraphicsManager(),
+		_vm(vm),
+		_menuFont(nullptr) {
 	_bmpDecoder = new MystBitmap();
 
 	_viewport = Common::Rect(544, 332);
@@ -55,6 +61,31 @@ MystGraphics::MystGraphics(MohawkEngine_Myst* vm) : GraphicsManager(), _vm(vm) {
 	// Initialize our buffer
 	_backBuffer = new Graphics::Surface();
 	_backBuffer->create(_vm->_system->getWidth(), _vm->_system->getHeight(), _pixelFormat);
+
+	_mainMenuBackupScreen.reset(new Graphics::Surface());
+	_mainMenuBackupScreenThumbnail.reset(new Graphics::Surface());
+	_mainMenuBackupBackBuffer.reset(new Graphics::Surface());
+
+	if (_vm->getFeatures() & GF_25TH) {
+		const char *menuFontName = "NotoSans-ExtraBold.ttf";
+#ifdef USE_FREETYPE2
+		int fontSize;
+		if (_vm->getLanguage() == Common::PL_POL) {
+			fontSize = 11; // The Polish diacritics need significantly more space, so we use a smaller font
+		} else {
+			fontSize = 16;
+		}
+
+		Common::SeekableReadStream *fontStream = SearchMan.createReadStreamForMember(menuFontName);
+		if (fontStream) {
+			_menuFont = Graphics::loadTTFFont(*fontStream, fontSize);
+			delete fontStream;
+		} else
+#endif
+		{
+			warning("Unable to open the menu font file '%s'", menuFontName);
+		}
+	}
 }
 
 MystGraphics::~MystGraphics() {
@@ -62,6 +93,7 @@ MystGraphics::~MystGraphics() {
 
 	_backBuffer->free();
 	delete _backBuffer;
+	delete _menuFont;
 }
 
 MohawkSurface *MystGraphics::decodeImage(uint16 id) {
@@ -230,6 +262,15 @@ void MystGraphics::copyImageSectionToScreen(uint16 image, Common::Rect src, Comm
 void MystGraphics::copyImageSectionToBackBuffer(uint16 image, Common::Rect src, Common::Rect dest) {
 	MohawkSurface *mhkSurface = findImage(image);
 	Graphics::Surface *surface = mhkSurface->getSurface();
+
+	if (image == 2258 && _vm->getFeatures() & GF_ME) {
+		// In Myst ME, the image for the open red page brother door
+		// when the special lights are on does not have the correct width.
+		// We work around this issue by tweaking the destination rectangle
+		// so it renders at the correct position.
+		// The original executable does the same hack.
+		dest.left += 49;
+	}
 
 	// Make sure the image is bottom aligned in the dest rect
 	dest.top = dest.bottom - MIN<int>(surface->h, dest.height());
@@ -788,6 +829,73 @@ byte MystGraphics::getColorIndex(const byte *palette, byte red, byte green, byte
 
 void MystGraphics::setPaletteToScreen() {
 	_vm->_system->getPaletteManager()->setPalette(_palette, 0, 256);
+}
+
+void MystGraphics::saveStateForMainMenu() {
+	Graphics::Surface *screen = _vm->_system->lockScreen();
+	_mainMenuBackupScreen->copyFrom(*screen);
+	_vm->_system->unlockScreen();
+
+	// Create a thumbnail of the screen that will be used when saving from the main menu
+	createThumbnailFromScreen(_mainMenuBackupScreenThumbnail.get());
+
+	_mainMenuBackupBackBuffer->copyFrom(*_backBuffer);
+}
+
+void MystGraphics::restoreStateForMainMenu() {
+	_vm->_system->copyRectToScreen(_mainMenuBackupScreen->getPixels(), _mainMenuBackupScreen->pitch,
+	                               0, 0, _mainMenuBackupScreen->w, _mainMenuBackupScreen->h);
+
+	_backBuffer->copyFrom(*_mainMenuBackupBackBuffer);
+
+	_mainMenuBackupScreen->free();
+	_mainMenuBackupScreenThumbnail->free();
+	_mainMenuBackupBackBuffer->free();
+}
+
+Graphics::Surface *MystGraphics::getThumbnailForMainMenu() const {
+	return _mainMenuBackupScreenThumbnail.get();
+}
+
+void MystGraphics::drawText(uint16 image, const Common::U32String &text, const Common::Rect &dest, uint8 r, uint8 g, uint8 b, Graphics::TextAlign align, int16 deltaY) {
+	MohawkSurface *mhkSurface = findImage(image);
+	Graphics::Surface *surface = mhkSurface->getSurface();
+
+	const Graphics::Font *font = getMenuFont();
+	font->drawString(surface, text, dest.left, dest.top + deltaY, dest.width(), surface->format.RGBToColor(r, g, b), align);
+}
+
+Common::Rect MystGraphics::getTextBoundingBox(const Common::U32String &text, const Common::Rect &dest, Graphics::TextAlign align) {
+	const Graphics::Font *font = getMenuFont();
+	return font->getBoundingBox(text, dest.left, dest.top, dest.width(), align);
+}
+
+const Graphics::Font *MystGraphics::getMenuFont() const {
+	const Graphics::Font *font;
+	if (_menuFont) {
+		font = _menuFont;
+	} else {
+		font = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
+	}
+	return font;
+}
+
+void MystGraphics::replaceImageWithRect(uint16 destImage, uint16 sourceImage, const Common::Rect &sourceRect) {
+	MohawkSurface *sourceSurface = findImage(sourceImage);
+	const Graphics::Surface sourceArea = sourceSurface->getSurface()->getSubArea(sourceRect);
+
+	Graphics::Surface *replacementSurface = new Graphics::Surface();
+	replacementSurface->copyFrom(sourceArea);
+
+	MohawkSurface *destSurface = new MohawkSurface(replacementSurface, nullptr, 0, 0);
+	addImageToCache(destImage, destSurface);
+}
+
+void MystGraphics::clearScreen() {
+	if (_vm->getFeatures() & GF_ME)
+		_vm->_system->fillScreen(_pixelFormat.RGBToColor(0, 0, 0));
+	else
+		_vm->_system->fillScreen(0);
 }
 
 } // End of namespace Mohawk

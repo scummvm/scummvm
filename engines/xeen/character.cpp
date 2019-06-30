@@ -21,636 +21,14 @@
  */
 
 #include "xeen/character.h"
-#include "xeen/dialogs_query.h"
-#include "xeen/dialogs_error.h"
 #include "xeen/resources.h"
 #include "xeen/xeen.h"
 
 namespace Xeen {
 
-XeenItem::XeenItem() {
-	clear();
+AttributePair::AttributePair() {
+	_temporary = _permanent = 0;
 }
-
-void XeenItem::clear() {
-	_material = _id = _bonusFlags = 0;
-	_frame = 0;
-}
-
-void XeenItem::synchronize(Common::Serializer &s) {
-	s.syncAsByte(_material);
-	s.syncAsByte(_id);
-	s.syncAsByte(_bonusFlags);
-	s.syncAsByte(_frame);
-}
-
-ElementalCategory XeenItem::getElementalCategory() const {
-	int idx;
-	for (idx = 0; Res.ELEMENTAL_CATEGORIES[idx] < _material; ++idx)
-		;
-
-	return (ElementalCategory)idx;
-}
-
-AttributeCategory XeenItem::getAttributeCategory() const {
-	int m = _material - 59;
-	int idx;
-	for (idx = 0; Res.ATTRIBUTE_CATEGORIES[idx] < m; ++idx)
-		;
-
-	return (AttributeCategory)idx;
-}
-
-/*------------------------------------------------------------------------*/
-
-InventoryItems::InventoryItems(Character *character, ItemCategory category):
-		_character(character), _category(category) {
-	resize(INV_ITEMS_TOTAL);
-
-	_names = Res.ITEM_NAMES[category];
-}
-
-void InventoryItems::clear() {
-	for (uint idx = 0; idx < size(); ++idx)
-		operator[](idx).clear();
-}
-
-bool InventoryItems::passRestrictions(int itemId, bool showError) const {
-	CharacterClass charClass = _character->_class;
-
-	switch (charClass) {
-	case CLASS_KNIGHT:
-	case CLASS_PALADIN:
-		return true;
-
-	case CLASS_ARCHER:
-	case CLASS_CLERIC:
-	case CLASS_SORCERER:
-	case CLASS_ROBBER:
-	case CLASS_NINJA:
-	case CLASS_BARBARIAN:
-	case CLASS_DRUID:
-	case CLASS_RANGER: {
-		if (!(Res.ITEM_RESTRICTIONS[itemId + Res.RESTRICTION_OFFSETS[_category]] &
-			(1 << (charClass - CLASS_ARCHER))))
-			return true;
-		break;
-	}
-
-	default:
-		break;
-	}
-
-	Common::String name = _names[itemId];
-	if (showError) {
-		Common::String msg = Common::String::format(Res.NOT_PROFICIENT,
-			Res.CLASS_NAMES[charClass], name.c_str());
-		ErrorScroll::show(Party::_vm, msg, WT_FREEZE_WAIT);
-	}
-
-	return false;
-}
-
-Common::String InventoryItems::getName(int itemIndex) {
-	int id = operator[](itemIndex)._id;
-	return _names[id];
-}
-
-Common::String InventoryItems::getIdentifiedDetails(int itemIndex) {
-	XeenItem &item = operator[](itemIndex);
-
-	Common::String classes;
-	for (int charClass = CLASS_KNIGHT; charClass <= CLASS_RANGER; ++charClass) {
-		if (passRestrictions(charClass, true)) {
-			const char *const name = Res.CLASS_NAMES[charClass];
-			classes += name[0];
-			classes += name[1];
-			classes += " ";
-		}
-	}
-	if (classes.size() == 30)
-		classes = Res.ALL;
-
-	return getAttributes(item, classes);
-}
-
-bool InventoryItems::discardItem(int itemIndex) {
-	XeenItem &item = operator[](itemIndex);
-	XeenEngine *vm = Party::_vm;
-
-	if (item._bonusFlags & ITEMFLAG_CURSED) {
-		ErrorScroll::show(vm, Res.CANNOT_DISCARD_CURSED_ITEM);
-	} else {
-		Common::String itemDesc = getFullDescription(itemIndex, 4);
-		Common::String msg = Common::String::format(Res.PERMANENTLY_DISCARD, itemDesc.c_str());
-
-		if (Confirm::show(vm, msg)) {
-			operator[](itemIndex).clear();
-			sort();
-
-			return true;
-		}
-	}
-
-	return true;
-}
-
-void InventoryItems::sort() {
-	for (uint idx = 0; idx < size(); ++idx) {
-		if (operator[](idx)._id == 0) {
-			// Found empty slot
-			operator[](idx).clear();
-
-			// Scan through the rest of the list to find any item
-			for (uint idx2 = idx + 1; idx2 < size(); ++idx2) {
-				if (operator[](idx2)._id) {
-					// Found an item, so move it into the blank slot
-					operator[](idx) = operator[](idx2);
-					operator[](idx2).clear();
-					break;
-				}
-			}
-		}
-	}
-}
-
-void InventoryItems::removeItem(int itemIndex) {
-	XeenItem &item = operator[](itemIndex);
-	XeenEngine *vm = Party::_vm;
-
-	if (item._bonusFlags & ITEMFLAG_CURSED)
-		ErrorScroll::show(vm, Res.CANNOT_REMOVE_CURSED_ITEM);
-	else
-		item._frame = 0;
-}
-
-XeenEngine *InventoryItems::getVm() {
-	return Party::_vm;
-}
-
-void InventoryItems::equipError(int itemIndex1, ItemCategory category1, int itemIndex2,
-		ItemCategory category2) {
-	XeenEngine *vm = Party::_vm;
-
-	if (itemIndex1 >= 0) {
-		Common::String itemName1 = _character->_items[category1].getName(itemIndex1);
-		Common::String itemName2 = _character->_items[category2].getName(itemIndex2);
-
-		ErrorDialog::show(vm, Common::String::format(Res.REMOVE_X_TO_EQUIP_Y,
-			itemName1.c_str(), itemName2.c_str()));
-	} else {
-		ErrorDialog::show(vm, Common::String::format(Res.EQUIPPED_ALL_YOU_CAN,
-			(itemIndex1 == -1) ? Res.RING : Res.MEDAL));
-	}
-}
-
-void InventoryItems::enchantItem(int itemIndex, int amount) {
-	XeenEngine *vm = Party::_vm;
-	vm->_sound->playFX(21);
-	ErrorScroll::show(vm, Common::String::format(Res.NOT_ENCHANTABLE, Res.SPELL_FAILED));
-}
-
-bool InventoryItems::isFull() const {
-	return operator[](size() - 1)._id != 0;
-}
-
-/*------------------------------------------------------------------------*/
-
-void WeaponItems::equipItem(int itemIndex) {
-	XeenItem &item = operator[](itemIndex);
-
-	if (item._id <= 17) {
-		if (passRestrictions(item._id, false)) {
-			for (uint idx = 0; idx < size(); ++idx) {
-				XeenItem &i = operator[](idx);
-				if (i._frame == 13 || i._frame == 1) {
-					equipError(itemIndex, CATEGORY_WEAPON, idx, CATEGORY_WEAPON);
-					return;
-				}
-			}
-
-			item._frame = 1;
-		}
-	} else if (item._id >= 30 && item._id <= 33) {
-		if (passRestrictions(item._id, false)) {
-			for (uint idx = 0; idx < size(); ++idx) {
-				XeenItem &i = operator[](idx);
-				if (i._frame == 4) {
-					equipError(itemIndex, CATEGORY_WEAPON, idx, CATEGORY_WEAPON);
-					return;
-				}
-			}
-
-			item._frame = 4;
-		}
-	} else {
-		if (passRestrictions(item._id, false)) {
-			for (uint idx = 0; idx < size(); ++idx) {
-				XeenItem &i = operator[](idx);
-				if (i._frame == 13 || i._frame == 1) {
-					equipError(itemIndex, CATEGORY_WEAPON, idx, CATEGORY_WEAPON);
-					return;
-				}
-			}
-
-			for (uint idx = 0; idx < _character->_armor.size(); ++idx) {
-				XeenItem &i = _character->_armor[idx];
-				if (i._frame == 2) {
-					equipError(itemIndex, CATEGORY_WEAPON, idx, CATEGORY_ARMOR);
-					return;
-				}
-			}
-
-			item._frame = 13;
-		}
-	}
-}
-
-Common::String WeaponItems::getFullDescription(int itemIndex, int displayNum) {
-	XeenItem &i = operator[](itemIndex);
-	Resources &res = *getVm()->_resources;
-
-	return Common::String::format("\f%02u%s%s%s\f%02u%s%s%s", displayNum,
-		!i._bonusFlags ? res._maeNames[i._material].c_str() : "",
-		(i._bonusFlags & ITEMFLAG_BROKEN) ? Res.ITEM_BROKEN : "",
-		(i._bonusFlags & ITEMFLAG_CURSED) ? Res.ITEM_CURSED : "",
-		displayNum,
-		Res.WEAPON_NAMES[i._id],
-		!i._bonusFlags ? "" : Res.BONUS_NAMES[i._bonusFlags & ITEMFLAG_BONUS_MASK],
-		(i._bonusFlags & (ITEMFLAG_BROKEN | ITEMFLAG_CURSED)) ||
-			!i._bonusFlags ? "\b " : ""
-	);
-}
-
-void WeaponItems::enchantItem(int itemIndex, int amount) {
-	Sound &sound = *getVm()->_sound;
-	XeenItem &item = operator[](itemIndex);
-	Character tempCharacter;
-
-	if (item._material == 0 && item._bonusFlags == 0 && item._id != 34) {
-		tempCharacter.makeItem(amount, 0, 1);
-		XeenItem &tempItem = tempCharacter._weapons[0];
-
-		item._material = tempItem._material;
-		item._bonusFlags = tempItem._bonusFlags;
-		sound.playFX(19);
-	} else {
-		InventoryItems::enchantItem(itemIndex, amount);
-	}
-}
-
-/*
- * Returns a text string listing all the stats/attributes of a given item
- */
-Common::String WeaponItems::getAttributes(XeenItem &item, const Common::String &classes) {
-	Common::String attrBonus, elemDamage, physDamage, toHit, specialPower;
-	attrBonus = elemDamage = physDamage = toHit = specialPower = Res.FIELD_NONE;
-
-	// First calculate physical damage
-	int minVal = Res.WEAPON_DAMAGE_BASE[item._id];
-	int maxVal = minVal * Res.WEAPON_DAMAGE_MULTIPLIER[item._id];
-
-	if (item._material >= 37 && item._material <= 58) {
-		minVal += Res.METAL_DAMAGE[item._material - 37];
-		maxVal += Res.METAL_DAMAGE[item._material - 37];
-		toHit = Common::String::format("%+d", Res.METAL_DAMAGE_PERCENT[item._material - 37]);
-	}
-
-	physDamage = Common::String::format(Res.DAMAGE_X_TO_Y, minVal, maxVal);
-
-	// Next handle elemental/attribute damage
-	if (item._material < 37) {
-		int damage = Res.ELEMENTAL_DAMAGE[item._material];
-		if (damage > 0) {
-			ElementalCategory elemCategory = item.getElementalCategory();
-			elemDamage = Common::String::format(Res.ELEMENTAL_XY_DAMAGE,
-				damage, Res.ELEMENTAL_NAMES[elemCategory]);
-		}
-	} else if (item._material >= 59) {
-		int bonus = Res.ATTRIBUTE_BONUSES[item._material - 59];
-		AttributeCategory attrCategory = item.getAttributeCategory();
-		attrBonus = Common::String::format(Res.ATTR_XY_BONUS, bonus,
-			Res.ATTRIBUTE_NAMES[attrCategory]);
-	}
-
-	// Handle weapon effective against
-	int effective = item._bonusFlags & ITEMFLAG_BONUS_MASK;
-	if (effective) {
-		specialPower = Common::String::format(Res.EFFECTIVE_AGAINST,
-			Res.EFFECTIVENESS_NAMES[effective]);
-	}
-
-	return Common::String::format(Res.ITEM_DETAILS, classes.c_str(),
-		toHit.c_str(), physDamage.c_str(), elemDamage.c_str(),
-		Res.FIELD_NONE, Res.FIELD_NONE, attrBonus.c_str(), specialPower.c_str()
-	);
-}
-
-/*------------------------------------------------------------------------*/
-
-void ArmorItems::equipItem(int itemIndex) {
-	XeenItem &item = operator[](itemIndex);
-
-	if (item._id <= 7) {
-		if (passRestrictions(item._id, false)) {
-			for (uint idx = 0; idx < size(); ++idx) {
-				XeenItem &i = operator[](idx);
-				if (i._frame == 9) {
-					equipError(itemIndex, CATEGORY_ARMOR, idx, CATEGORY_ARMOR);
-					return;
-				}
-			}
-
-			item._frame = 3;
-		}
-	} else if (item._id == 8) {
-		if (passRestrictions(item._id, false)) {
-			for (uint idx = 0; idx < size(); ++idx) {
-				XeenItem &i = operator[](idx);
-				if (i._frame == 2) {
-					equipError(itemIndex, CATEGORY_ARMOR, idx, CATEGORY_ARMOR);
-					return;
-				}
-			}
-
-			for (uint idx = 0; idx < _character->_weapons.size(); ++idx) {
-				XeenItem &i = _character->_weapons[idx];
-				if (i._frame == 13) {
-					equipError(itemIndex, CATEGORY_ARMOR, idx, CATEGORY_WEAPON);
-					return;
-				}
-			}
-
-			item._frame = 2;
-		}
-	} else if (item._id == 9) {
-		for (uint idx = 0; idx < size(); ++idx) {
-			XeenItem &i = operator[](idx);
-			if (i._frame == 5) {
-				equipError(itemIndex, CATEGORY_ARMOR, idx, CATEGORY_ARMOR);
-				return;
-			}
-		}
-
-		item._frame = 5;
-	} else if (item._id == 10) {
-		for (uint idx = 0; idx < size(); ++idx) {
-			XeenItem &i = operator[](idx);
-			if (i._frame == 9) {
-				equipError(itemIndex, CATEGORY_ARMOR, idx, CATEGORY_ARMOR);
-				return;
-			}
-		}
-
-		item._frame = 9;
-	} else if (item._id <= 12) {
-		for (uint idx = 0; idx < size(); ++idx) {
-			XeenItem &i = operator[](idx);
-			if (i._frame == 10) {
-				equipError(itemIndex, CATEGORY_ARMOR, idx, CATEGORY_ARMOR);
-				return;
-			}
-		}
-
-		item._frame = 10;
-	} else {
-		for (uint idx = 0; idx < size(); ++idx) {
-			XeenItem &i = operator[](idx);
-			if (i._frame == 6) {
-				equipError(itemIndex, CATEGORY_ARMOR, idx, CATEGORY_ARMOR);
-				return;
-			}
-		}
-
-		item._frame = 6;
-	}
-}
-
-Common::String ArmorItems::getFullDescription(int itemIndex, int displayNum) {
-	XeenItem &i = operator[](itemIndex);
-	Resources &res = *getVm()->_resources;
-
-	return Common::String::format("\f%02u%s%s%s\f%02u%s%s", displayNum,
-		!i._bonusFlags ? "" : res._maeNames[i._material].c_str(),
-		(i._bonusFlags & ITEMFLAG_BROKEN) ? Res.ITEM_BROKEN : "",
-		(i._bonusFlags & ITEMFLAG_CURSED) ? Res.ITEM_CURSED : "",
-		displayNum,
-		Res.ARMOR_NAMES[i._id],
-		(i._bonusFlags & (ITEMFLAG_BROKEN | ITEMFLAG_CURSED)) ||
-			!i._bonusFlags ? "\b " : ""
-	);
-}
-
-void ArmorItems::enchantItem(int itemIndex, int amount) {
-	Sound &sound = *getVm()->_sound;
-	XeenItem &item = operator[](itemIndex);
-	Character tempCharacter;
-
-	if (item._material == 0 && item._bonusFlags == 0) {
-		tempCharacter.makeItem(amount, 0, 2);
-		XeenItem &tempItem = tempCharacter._armor[0];
-
-		item._material = tempItem._material;
-		item._bonusFlags = tempItem._bonusFlags;
-		sound.playFX(19);
-	} else {
-		InventoryItems::enchantItem(itemIndex, amount);
-	}
-}
-
-/*
-* Returns a text string listing all the stats/attributes of a given item
-*/
-Common::String ArmorItems::getAttributes(XeenItem &item, const Common::String &classes) {
-	Common::String elemResist, attrBonus, acBonus;
-	elemResist = attrBonus = acBonus = Res.FIELD_NONE;
-
-	if (item._material < 36) {
-		int resistence = Res.ELEMENTAL_RESISTENCES[item._material];
-		if (resistence > 0) {
-			int eCategory = ELEM_FIRE;
-			while (eCategory < ELEM_MAGIC && Res.ELEMENTAL_CATEGORIES[eCategory] < item._material)
-				++eCategory;
-
-			elemResist = Common::String::format(Res.ATTR_XY_BONUS, resistence,
-				Res.ELEMENTAL_NAMES[eCategory]);
-		}
-	} else if (item._material >= 59) {
-		int bonus = Res.ATTRIBUTE_BONUSES[item._material - 59];
-		AttributeCategory aCategory = item.getAttributeCategory();
-		attrBonus = Common::String::format(Res.ATTR_XY_BONUS, bonus,
-			Res.ATTRIBUTE_NAMES[aCategory]);
-	}
-
-	int strength = Res.ARMOR_STRENGTHS[item._id];
-	if (item._material >= 37 && item._material <= 58) {
-		strength += Res.METAL_LAC[item._material - 37];
-	}
-	acBonus = Common::String::format("%+d", strength);
-
-	return Common::String::format(Res.ITEM_DETAILS, classes.c_str(),
-		Res.FIELD_NONE, Res.FIELD_NONE, Res.FIELD_NONE,
-		elemResist.c_str(), acBonus.c_str(), attrBonus.c_str(), Res.FIELD_NONE);
-}
-
-/*------------------------------------------------------------------------*/
-
-void AccessoryItems::equipItem(int itemIndex) {
-	XeenItem &item = operator[](itemIndex);
-
-	if (item._id == 1) {
-		int count = 0;
-		for (uint idx = 0; idx < size(); ++idx) {
-			XeenItem &i = operator[](idx);
-			if (i._frame == 8)
-				++count;
-		}
-
-		if (count <= 1)
-			item._frame = 8;
-		else
-			equipError(-1, CATEGORY_ACCESSORY, itemIndex, CATEGORY_ACCESSORY);
-	} else if (item._id == 2) {
-		for (uint idx = 0; idx < size(); ++idx) {
-			XeenItem &i = operator[](idx);
-			if (i._frame == 12) {
-				equipError(itemIndex, CATEGORY_ACCESSORY, idx, CATEGORY_ACCESSORY);
-				return;
-			}
-		}
-	} else if (item._id <= 7) {
-		int count = 0;
-		for (uint idx = 0; idx < size(); ++idx) {
-			XeenItem &i = operator[](idx);
-			if (i._frame == 7)
-				++count;
-		}
-
-		if (count <= 1)
-			item._frame = 7;
-		else
-			equipError(-2, CATEGORY_ACCESSORY, itemIndex, CATEGORY_ACCESSORY);
-	} else {
-		for (uint idx = 0; idx < size(); ++idx) {
-			XeenItem &i = operator[](idx);
-			if (i._frame == 11) {
-				equipError(itemIndex, CATEGORY_ACCESSORY, idx, CATEGORY_ACCESSORY);
-				return;
-			}
-		}
-
-		item._frame = 11;
-	}
-}
-
-Common::String AccessoryItems::getFullDescription(int itemIndex, int displayNum) {
-	XeenItem &i = operator[](itemIndex);
-	Resources &res = *getVm()->_resources;
-
-	return Common::String::format("\f%02u%s%s%s\f%02u%s%s", displayNum,
-		!i._bonusFlags ? "" : res._maeNames[i._material].c_str(),
-		(i._bonusFlags & ITEMFLAG_BROKEN) ? Res.ITEM_BROKEN : "",
-		(i._bonusFlags & ITEMFLAG_CURSED) ? Res.ITEM_CURSED : "",
-		displayNum,
-		Res.ARMOR_NAMES[i._id],
-		(i._bonusFlags & (ITEMFLAG_BROKEN | ITEMFLAG_CURSED)) ||
-			!i._bonusFlags ? "\b " : ""
-	);
-}
-
-/*
-* Returns a text string listing all the stats/attributes of a given item
-*/
-Common::String AccessoryItems::getAttributes(XeenItem &item, const Common::String &classes) {
-	Common::String elemResist, attrBonus;
-	elemResist = attrBonus = Res.FIELD_NONE;
-
-	if (item._material < 36) {
-		int resistence = Res.ELEMENTAL_RESISTENCES[item._material];
-		if (resistence > 0) {
-			int eCategory = ELEM_FIRE;
-			while (eCategory < ELEM_MAGIC && Res.ELEMENTAL_CATEGORIES[eCategory] < item._material)
-				++eCategory;
-
-			elemResist = Common::String::format(Res.ATTR_XY_BONUS, resistence,
-				Res.ELEMENTAL_NAMES[eCategory]);
-		}
-	} else if (item._material >= 59) {
-		int bonus = Res.ATTRIBUTE_BONUSES[item._material - 59];
-		AttributeCategory aCategory = item.getAttributeCategory();
-		attrBonus = Common::String::format(Res.ATTR_XY_BONUS, bonus,
-			Res.ATTRIBUTE_NAMES[aCategory]);
-	}
-
-	return Common::String::format(Res.ITEM_DETAILS, classes.c_str(),
-		Res.FIELD_NONE, Res.FIELD_NONE, Res.FIELD_NONE,
-		elemResist.c_str(), Res.FIELD_NONE, attrBonus.c_str(), Res.FIELD_NONE);
-}
-
-/*------------------------------------------------------------------------*/
-
-Common::String MiscItems::getFullDescription(int itemIndex, int displayNum) {
-	XeenItem &i = operator[](itemIndex);
-	Resources &res = *getVm()->_resources;
-
-	return Common::String::format("\f%02u%s%s%s\f%02u%s%s", displayNum,
-		!i._bonusFlags ? "" : res._maeNames[i._material].c_str(),
-		(i._bonusFlags & ITEMFLAG_BROKEN) ? Res.ITEM_BROKEN : "",
-		(i._bonusFlags & ITEMFLAG_CURSED) ? Res.ITEM_CURSED : "",
-		displayNum,
-		Res.ARMOR_NAMES[i._id],
-		(i._bonusFlags & (ITEMFLAG_BROKEN | ITEMFLAG_CURSED)) ||
-			!i._id ? "\b " : ""
-	);
-}
-
-
-/*
-* Returns a text string listing all the stats/attributes of a given item
-*/
-Common::String MiscItems::getAttributes(XeenItem &item, const Common::String &classes) {
-	Common::String specialPower = Res.FIELD_NONE;
-	Spells &spells = *getVm()->_spells;
-
-	if (item._id) {
-		specialPower = spells._spellNames[Res.MISC_SPELL_INDEX[item._id]];
-	}
-
-	return Common::String::format(Res.ITEM_DETAILS, classes.c_str(),
-		Res.FIELD_NONE, Res.FIELD_NONE, Res.FIELD_NONE, Res.FIELD_NONE, Res.FIELD_NONE,
-		Res.FIELD_NONE, specialPower.c_str());
-}
-/*------------------------------------------------------------------------*/
-
-InventoryItemsGroup::InventoryItemsGroup(InventoryItems &weapons, InventoryItems &armor,
-		InventoryItems &accessories, InventoryItems &misc) {
-	_itemSets[0] = &weapons;
-	_itemSets[1] = &armor;
-	_itemSets[2] = &accessories;
-	_itemSets[3] = &misc;
-}
-
-InventoryItems &InventoryItemsGroup::operator[](ItemCategory category) {
-	return *_itemSets[category];
-}
-
-void InventoryItemsGroup::breakAllItems() {
-	for (int idx = 0; idx < INV_ITEMS_TOTAL; ++idx) {
-		if ((*_itemSets[0])[idx]._id != 34) {
-			(*_itemSets[0])[idx]._bonusFlags |= ITEMFLAG_BROKEN;
-			(*_itemSets[0])[idx]._frame = 0;
-		}
-
-		(*_itemSets[1])[idx]._bonusFlags |= ITEMFLAG_BROKEN;
-		(*_itemSets[2])[idx]._bonusFlags |= ITEMFLAG_BROKEN;
-		(*_itemSets[3])[idx]._bonusFlags |= ITEMFLAG_BROKEN;
-		(*_itemSets[1])[idx]._frame = 0;
-		(*_itemSets[2])[idx]._frame = 0;
-	}
-}
-
-/*------------------------------------------------------------------------*/
-
 
 void AttributePair::synchronize(Common::Serializer &s) {
 	s.syncAsByte(_permanent);
@@ -659,18 +37,25 @@ void AttributePair::synchronize(Common::Serializer &s) {
 
 /*------------------------------------------------------------------------*/
 
-AttributePair::AttributePair() {
-	_temporary = _permanent = 0;
+int CharacterArray::indexOf(const Character &c) {
+	for (uint idx = 0; idx < size(); ++idx) {
+		if ((*this)[idx] == c)
+			return idx;
+	}
+
+	return -1;
 }
 
 /*------------------------------------------------------------------------*/
 
-Character::Character():
-		_weapons(this), _armor(this), _accessories(this), _misc(this),
-		_items(_weapons, _armor, _accessories, _misc) {
+Character::Character(): _weapons(this), _armor(this), _accessories(this), _misc(this), _items(this) {
 	clear();
 	_faceSprites = nullptr;
 	_rosterId = -1;
+}
+
+Character::Character(const Character &src) : _weapons(this), _armor(this), _accessories(this), _misc(this), _items(this) {
+	operator=(src);
 }
 
 void Character::clear() {
@@ -682,8 +67,8 @@ void Character::clear() {
 	_birthDay = 0;
 	_tempAge = 0;
 	Common::fill(&_skills[0], &_skills[18], 0);
-	Common::fill(&_awards[0], &_awards[128], false);
-	Common::fill(&_spells[0], &_spells[39], 0);
+	Common::fill(&_awards[0], &_awards[128], 0);
+	Common::fill(&_spells[0], &_spells[39], false);
 	_lloydMap = 0;
 	_hasSpells = false;
 	_currentSpell = 0;
@@ -718,6 +103,65 @@ void Character::clear() {
 	_misc.clear();
 }
 
+Character &Character::operator=(const Character &src) {
+	clear();
+
+	_faceSprites = src._faceSprites;
+	_rosterId = src._rosterId;
+	_name = src._name;
+	_sex = src._sex;
+	_race = src._race;
+	_xeenSide = src._xeenSide;
+	_class = src._class;
+	_might = src._might;
+	_intellect = src._intellect;
+	_personality = src._personality;
+	_endurance = src._endurance;
+	_speed = src._speed;
+	_accuracy = src._accuracy;
+	_luck = src._luck;
+	_ACTemp = src._ACTemp;
+	_level = src._level;
+	_birthDay = src._birthDay;
+	_tempAge = src._tempAge;
+	Common::copy(&src._skills[0], &src._skills[18], &_skills[0]);
+	Common::copy(&src._awards[0], &src._awards[128], &_awards[0]);
+	Common::copy(&src._spells[0], &src._spells[SPELLS_PER_CLASS], &_spells[0]);
+	_lloydMap = src._lloydMap;
+	_lloydPosition = src._lloydPosition;
+	_hasSpells = src._hasSpells;
+	_currentSpell = src._currentSpell;
+	_quickOption = src._quickOption;
+	_weapons = src._weapons;
+	_armor = src._armor;
+	_accessories = src._accessories;
+	_misc = src._misc;
+	_lloydSide = src._lloydSide;
+	_fireResistence = src._fireResistence;
+	_coldResistence = src._coldResistence;
+	_electricityResistence = src._electricityResistence;
+	_poisonResistence = src._poisonResistence;
+	_energyResistence = src._energyResistence;
+	_magicResistence = src._magicResistence;
+	Common::copy(&src._conditions[0], &src._conditions[16], &_conditions[0]);
+	_townUnknown = src._townUnknown;
+	_savedMazeId = src._savedMazeId;
+	_currentHp = src._currentHp;
+	_currentSp = src._currentSp;
+	_birthYear = src._birthYear;
+	_experience = src._experience;
+	_currentAdventuringSpell = src._currentAdventuringSpell;
+	_currentCombatSpell = src._currentCombatSpell;
+
+	for (ItemCategory category = CATEGORY_WEAPON; category <= CATEGORY_MISC; category = (ItemCategory)((int)category + 1)) {
+		const InventoryItems &srcItems = src._items[category];
+		InventoryItems &destItems = _items[category];
+		destItems = srcItems;
+	}
+
+	return *this;
+}
+
 void Character::synchronize(Common::Serializer &s) {
 	char name[16];
 	Common::fill(&name[0], &name[16], '\0');
@@ -748,18 +192,21 @@ void Character::synchronize(Common::Serializer &s) {
 	for (int idx = 0; idx < 18; ++idx)
 		s.syncAsByte(_skills[idx]);
 
-	// Synchronize character awards
+	// Synchronize character awards. The original packed awards 64..127 in the
+	// upper nibble of the first 64 bytes. Except for award 9, which was a full
+	// byte counter counting the number of times the warzone was awarded
 	for (int idx = 0; idx < 64; ++idx) {
-		byte b = (_awards[idx] ? 1 : 0) | (_awards[idx + 64] ? 0x10 : 0);
+		byte b = (idx == WARZONE_AWARD) ? _awards[idx] :
+			(_awards[idx] ? 0x1 : 0) | (_awards[idx + 64] ? 0x10 : 0);
 		s.syncAsByte(b);
 		if (s.isLoading()) {
-			_awards[idx] = (b & 0xF) != 0;
-			_awards[idx + 64] = (b & 0xF0) != 0;
+			_awards[idx] = (idx == WARZONE_AWARD) ? b : b & 0xF;
+			_awards[idx + 64] = (idx == WARZONE_AWARD) ? 0 : (b >> 4) & 0xf;
 		}
 	}
 
 	// Synchronize spell list
-	for (int i = 0; i < MAX_SPELLS_PER_CLASS; ++i)
+	for (int i = 0; i < SPELLS_PER_CLASS; ++i)
 		s.syncAsByte(_spells[i]);
 	s.syncAsByte(_lloydMap);
 	s.syncAsByte(_lloydPosition.x);
@@ -790,8 +237,8 @@ void Character::synchronize(Common::Serializer &s) {
 
 	s.syncAsUint16LE(_townUnknown);
 	s.syncAsByte(_savedMazeId);
-	s.syncAsUint16LE(_currentHp);
-	s.syncAsUint16LE(_currentSp);
+	s.syncAsSint16LE(_currentHp);
+	s.syncAsSint16LE(_currentSp);
 	s.syncAsUint16LE(_birthYear);
 	s.syncAsUint32LE(_experience);
 	s.syncAsByte(_currentAdventuringSpell);
@@ -963,7 +410,7 @@ int Character::statColor(int amount, int threshold) {
 		return 2;
 	else if (amount == threshold)
 		return 15;
-	else if (amount <= (threshold / 4))
+	else if (amount >= (threshold / 4))
 		return 9;
 	else
 		return 32;
@@ -971,8 +418,9 @@ int Character::statColor(int amount, int threshold) {
 
 int Character::statBonus(uint statValue) const {
 	int idx;
-	for (idx = 0; Res.STAT_VALUES[idx] <= statValue; ++idx)
-		;
+	for (idx = 0; idx < ARRAYSIZE(Res.STAT_VALUES) - 1; ++idx)
+		if (Res.STAT_VALUES[idx] > (int)statValue)
+			break;
 
 	return Res.STAT_BONUSES[idx];
 }
@@ -1018,15 +466,15 @@ bool Character::noActions() {
 	Condition condition = worstCondition();
 
 	switch (condition) {
-	case CURSED:
-	case POISONED:
-	case DISEASED:
-	case INSANE:
-	case IN_LOVE:
-	case DRUNK: {
+	case ASLEEP:
+	case PARALYZED:
+	case UNCONSCIOUS:
+	case DEAD:
+	case STONED:
+	case ERADICATED: {
 		Common::String msg = Common::String::format(Res.IN_NO_CONDITION, _name.c_str());
 		ErrorScroll::show(Party::_vm, msg,
-			Party::_vm->_mode == 17 ? WT_2 : WT_NONFREEZED_WAIT);
+			Party::_vm->_mode == 17 ? WT_LOC_WAIT : WT_NONFREEZED_WAIT);
 		return true;
 	}
 	default:
@@ -1041,7 +489,7 @@ void Character::setAward(int awardId, bool value) {
 	else if (awardId == 81)
 		v = 127;
 
-	_awards[v] = value;
+	_awards[v] = value ? 1 : 0;
 }
 
 bool Character::hasAward(int awardId) const {
@@ -1103,87 +551,73 @@ uint Character::getCurrentLevel() const {
 int Character::itemScan(int itemId) const {
 	int result = 0;
 
-	for (int accessIdx = 0; accessIdx < 3; ++accessIdx) {
-		switch (accessIdx) {
-		case 0:
-			for (int idx = 0; idx < INV_ITEMS_TOTAL; ++idx) {
-				const XeenItem &item = _weapons[idx];
+	// Weapons
+	for (int idx = 0; idx < INV_ITEMS_TOTAL; ++idx) {
+		const XeenItem &item = _weapons[idx];
 
-				if (item._frame && !(item._bonusFlags & 0xC0) && itemId < 11
-						&& itemId != 3 && item._material >= 59 && item._material <= 130) {
-					int mIndex = (int)item.getAttributeCategory();
-					if (mIndex > PERSONALITY)
-						++mIndex;
+		if (item._frame && !item.isBad() && itemId < 11
+				&& itemId != 3 && item._material >= 59 && item._material <= 130) {
+			int mIndex = (int)item.getAttributeCategory();
+			if (mIndex > PERSONALITY)
+				++mIndex;
 
-					if (mIndex == itemId)
-						result += Res.ATTRIBUTE_BONUSES[item._material - 59];
+			if (mIndex == itemId)
+				result += Res.ATTRIBUTE_BONUSES[item._material - 59];
+		}
+	}
+
+	// Armor
+	for (int idx = 0; idx < INV_ITEMS_TOTAL; ++idx) {
+		const XeenItem &item = _armor[idx];
+
+		if (item._frame && !item.isBad()) {
+			if (itemId < 11 && itemId != 3 && item._material >= 59 && item._material <= 130) {
+				int mIndex = (int)item.getAttributeCategory();
+				if (mIndex > PERSONALITY)
+					++mIndex;
+
+				if (mIndex == itemId)
+					result += Res.ATTRIBUTE_BONUSES[item._material - 59];
+			}
+
+			if (itemId > 10 && item._material < 37) {
+				int mIndex = item.getElementalCategory() + 11;
+
+				if (mIndex == itemId) {
+					result += Res.ELEMENTAL_RESISTENCES[item._material];
 				}
 			}
-			break;
 
-		case 1:
-			for (int idx = 0; idx < INV_ITEMS_TOTAL; ++idx) {
-				const XeenItem &item = _armor[idx];
+			if (itemId == 9) {
+				result += Res.ARMOR_STRENGTHS[item._id];
 
-				if (item._frame && !(item._bonusFlags & 0xC0)) {
-					if (itemId < 11 && itemId != 3 && item._material >= 59 && item._material <= 130) {
-						int mIndex = (int)item.getAttributeCategory();
-						if (mIndex > PERSONALITY)
-							++mIndex;
+				if (item._material >= 37 && item._material <= 58)
+					result += Res.METAL_LAC[item._material - 37];
+			}
+		}
+	}
 
-						if (mIndex == itemId)
-							result += Res.ATTRIBUTE_BONUSES[item._material - 59];
-					}
+	// Accessories
+	for (int idx = 0; idx < INV_ITEMS_TOTAL; ++idx) {
+		const XeenItem &item = _accessories[idx];
 
-					if (itemId > 10 && item._material < 37) {
-						int mIndex = item.getElementalCategory() + 11;
+		if (item._frame && !item.isBad()) {
+			if (itemId < 11 && itemId != 3 && item._material >= 59 && item._material <= 130) {
+				int mIndex = (int)item.getAttributeCategory();
+				if (mIndex > PERSONALITY)
+					++mIndex;
 
-						if (mIndex == itemId) {
-							result += Res.ELEMENTAL_RESISTENCES[item._material];
-						}
-					}
-
-					if (itemId == 9) {
-						result += Res.ARMOR_STRENGTHS[item._id];
-
-						if (item._material >= 37 && item._material <= 58)
-							result += Res.METAL_LAC[item._material - 37];
-					}
+				if (mIndex == itemId) {
+					result += Res.ATTRIBUTE_BONUSES[item._material - 59];
 				}
 			}
-			break;
 
-		case 2:
-			for (int idx = 0; idx < INV_ITEMS_TOTAL; ++idx) {
-				const XeenItem &item = _accessories[idx];
+			if (itemId > 10 && item._material < 37) {
+				int mIndex = item.getElementalCategory() + 11;
 
-				if (item._frame && !(item._bonusFlags & 0xC0)) {
-					if (itemId < 11 && itemId != 3 && item._material >= 59 && item._material <= 130) {
-						int mIndex = (int)item.getAttributeCategory();
-						if (mIndex > PERSONALITY)
-							++mIndex;
-
-						if (mIndex == itemId) {
-							result += Res.ATTRIBUTE_BONUSES[item._material - 59];
-						}
-					}
-
-					if (itemId > 10 && item._material < 37) {
-						int mIndex = item.getElementalCategory() + 11;
-
-						if (mIndex == itemId)
-							result += Res.ELEMENTAL_RESISTENCES[item._material];
-					}
-
-					if (itemId == 9) {
-						result += Res.ARMOR_STRENGTHS[item._id];
-						if (item._material >= 37 && item._material <= 58) {
-							result += Res.METAL_LAC[item._material - 37];
-						}
-					}
-				}
+				if (mIndex == itemId)
+					result += Res.ELEMENTAL_RESISTENCES[item._material];
 			}
-			break;
 		}
 	}
 
@@ -1279,7 +713,7 @@ void Character::setValue(int id, uint value) {
 		// Set condition
 		if (value == 16) {
 			// Clear all the conditions
-			Common::fill(&_conditions[CURSED], &_conditions[NO_CONDITION], false);
+			clearConditions();
 		} else if (value == 6) {
 			_conditions[value] = 1;
 		} else {
@@ -1436,23 +870,39 @@ void Character::setValue(int id, uint value) {
 }
 
 bool Character::guildMember() const {
-	Party &party = *Party::_vm->_party;
+	FileManager &files = *g_vm->_files;
+	Party &party = *g_vm->_party;
 
-	if (party._mazeId == 49 && !Party::_vm->_files->_isDarkCc) {
-		return hasAward(5);
-	}
-
-	switch (party._mazeId) {
-	case 29:
-		return hasAward(83);
-	case 31:
-		return hasAward(84);
-	case 33:
-		return hasAward(85);
-	case 35:
-		return hasAward(86);
-	default:
-		return hasAward(87);
+	if (g_vm->getGameID() == GType_Swords) {
+		switch (party._mazeId) {
+		case 49:
+			return true;
+		case 53:
+			return hasAward(83);
+		case 63:
+			return hasAward(85);
+		case 92:
+			return hasAward(84);
+		default:
+			return hasAward(87);
+		}
+	} else if (files._ccNum) {
+		switch (party._mazeId) {
+		case 29:
+			return hasAward(CASTLEVIEW_GUILD_MEMBER);
+		case 31:
+			return hasAward(SANDCASTER_GUILD_MEMBER);
+		case 33:
+			return hasAward(LAKESIDE_GUILD_MEMBER);
+		case 35:
+			return hasAward(NECROPOLIS_GUILD_MEMBER);
+		default:
+			return hasAward(OLYMPUS_GUILD_MEMBER);
+		}
+	} else if (party._mazeId == 49) {
+		return hasAward(SHANGRILA_GUILD_MEMBER);
+	} else {
+		return hasAward(party._mazeId - 28);
 	}
 }
 
@@ -1508,7 +958,7 @@ int Character::getNumSkills() const {
 
 int Character::getNumAwards() const {
 	int total = 0;
-	for (int idx = 0; idx < 88; ++idx) {
+	for (int idx = 0; idx < AWARDS_TOTAL; ++idx) {
 		if (hasAward(idx))
 			++total;
 	}
@@ -1516,33 +966,34 @@ int Character::getNumAwards() const {
 	return total;
 }
 
-int Character::makeItem(int p1, int itemIndex, int p3) {
+ItemCategory Character::makeItem(int p1, int itemIndex, int p3) {
 	XeenEngine *vm = Party::_vm;
 	Scripts &scripts = *vm->_scripts;
+	int itemOffset = vm->getGameID() == GType_Swords ? 6 : 0;
 
 	if (!p1)
-		return 0;
+		return CATEGORY_WEAPON;
 
 	int itemId = 0;
 	int v4 = vm->getRandomNumber(100);
 	int v6 = vm->getRandomNumber(p1 < 6 ? 100 : 80);
 	ItemCategory category;
-	int v16 = 0, v14 = 0, miscBonus = 0, miscId = 0, v8 = 0, v12 = 0;
+	int v16 = 0, v14 = 0, miscCharges = 0, miscId = 0, v8 = 0, v12 = 0;
 
 	// Randomly pick a category and item Id
 	if (p3 == 12) {
-		if (scripts._itemType < 35) {
+		if (scripts._itemType < (35 + itemOffset)) {
 			category = CATEGORY_WEAPON;
 			itemId = scripts._itemType;
-		} else if (scripts._itemType < 49) {
+		} else if (scripts._itemType < (49 + itemOffset)) {
 			category = CATEGORY_ARMOR;
-			itemId = scripts._itemType - 35;
-		} else if (scripts._itemType < 60) {
+			itemId = scripts._itemType - (35 + itemOffset);
+		} else if (scripts._itemType < (60 + itemOffset)) {
 			category = CATEGORY_ACCESSORY;
-			itemId = scripts._itemType - 49;
+			itemId = scripts._itemType - (49 + itemOffset);
 		} else {
 			category = CATEGORY_MISC;
-			itemId = scripts._itemType - 60;
+			itemId = scripts._itemType - (60 + itemOffset);
 		}
 	} else {
 		switch (p3) {
@@ -1719,7 +1170,7 @@ int Character::makeItem(int p1, int itemIndex, int p3) {
 			break;
 
 		case 4:
-			miscBonus = vm->getRandomNumber(Res.MAKE_ITEM_ARR5[p1][0], Res.MAKE_ITEM_ARR5[p1][1]);
+			miscCharges = vm->getRandomNumber(Res.MAKE_ITEM_ARR5[p1][0], Res.MAKE_ITEM_ARR5[p1][1]);
 			break;
 
 		default:
@@ -1732,7 +1183,7 @@ int Character::makeItem(int p1, int itemIndex, int p3) {
 		if (p1 != 1) {
 			newItem._material = (v14 ? v14 + 58 : 0) + (v16 ? v16 + 36 : 0) + v12;
 			if (vm->getRandomNumber(20) == 10)
-				newItem._bonusFlags = vm->getRandomNumber(1, 6);
+				newItem._state._counter = vm->getRandomNumber(1, 6);
 		}
 		break;
 
@@ -1745,7 +1196,7 @@ int Character::makeItem(int p1, int itemIndex, int p3) {
 
 	case CATEGORY_MISC:
 		newItem._id = miscId;
-		newItem._bonusFlags = miscBonus;
+		newItem._state._counter = miscCharges;
 		break;
 
 	default:
@@ -1772,13 +1223,22 @@ void Character::addHitPoints(int amount) {
 		intf.drawParty(true);
 	}
 
+	assert(_currentHp < 65000);
 	Common::fill(&intf._charFX[0], &intf._charFX[MAX_ACTIVE_PARTY], 0);
 }
 
 void Character::subtractHitPoints(int amount) {
-	Sound &sound = *Party::_vm->_sound;
+	Debugger &debugger = *g_vm->_debugger;
+	Sound &sound = *g_vm->_sound;
+
+	// If invincibility is turned on in the debugger, ignore all damage
+	if (debugger._invincible)
+		return;
+
+	// Subtract the given HP amount
 	_currentHp -= amount;
-	bool flag = _currentHp <= 10;
+	bool breakFlag = _currentHp <= (g_vm->_extOptions._durableArmor ? -80 : -10);
+	assert(_currentHp < 65000);
 
 	if (_currentHp < 1) {
 		int v = getMaxHP() + _currentHp;
@@ -1787,25 +1247,25 @@ void Character::subtractHitPoints(int amount) {
 			sound.playFX(38);
 		} else {
 			_conditions[DEAD] = 1;
-			flag = true;
+			breakFlag = true;
 			if (_currentHp > 0)
 				_currentHp = 0;
 		}
 
-		if (flag) {
-			// Check for breaking equipped armor
+		if (breakFlag) {
+			// Break any equipped armor the character has
 			for (int idx = 0; idx < INV_ITEMS_TOTAL; ++idx) {
 				XeenItem &item = _armor[idx];
 				if (item._id && item._frame)
-					item._bonusFlags |= ITEMFLAG_BROKEN;
+					item._state._broken = true;
 			}
 		}
 	}
 }
 
-bool Character::hasSpecialItem() const {
+bool Character::hasSlayerSword() const {
 	for (uint idx = 0; idx < INV_ITEMS_TOTAL; ++idx) {
-		if (_weapons[idx]._id == 34)
+		if (_weapons[idx]._id == XEEN_SLAYER_SWORD)
 			// Character has Xeen Slayer sword
 			return true;
 	}
@@ -1823,19 +1283,27 @@ bool Character::hasMissileWeapon() const {
 	return false;
 }
 
-int Character::getClassCategory() const {
+SpellsCategory Character::getSpellsCategory() const {
 	switch (_class) {
+	case CLASS_PALADIN:
+	case CLASS_CLERIC:
+		return SPELLCAT_CLERICAL;
+
 	case CLASS_ARCHER:
 	case CLASS_SORCERER:
-		return 1;
+		return SPELLCAT_WIZARDRY;
 
 	case CLASS_DRUID:
 	case CLASS_RANGER:
-		return 2;
+		return SPELLCAT_DRUIDIC;
 
 	default:
-		return 0;
+		return SPELLCAT_INVALID;
 	}
+}
+
+void Character::clearConditions() {
+	Common::fill(&_conditions[CURSED], &_conditions[NO_CONDITION], false);
 }
 
 } // End of namespace Xeen

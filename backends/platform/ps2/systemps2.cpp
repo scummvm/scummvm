@@ -46,6 +46,7 @@
 #include "common/events.h"
 #include "common/file.h"
 #include "common/scummsys.h"
+#include "common/str.h"
 
 #include "backends/platform/ps2/asyncfio.h"
 #include "backends/platform/ps2/cd.h"
@@ -1096,7 +1097,7 @@ void OSystem_PS2::makeConfigPath() {
 	else
 		ps2_fclose(src);
 
-	_configFile = strdup(path);
+	_configFile = scumm_strdup(path);
 }
 
 Common::String OSystem_PS2::getDefaultConfigFileName() {

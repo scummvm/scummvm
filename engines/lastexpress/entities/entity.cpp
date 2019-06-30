@@ -147,11 +147,35 @@ void EntityData::updateParameters(uint32 index) const {
 		error("[EntityData::updateParameters] Invalid param index to update (was:%d, max:32)", index);
 }
 
-void EntityData::saveLoadWithSerializer(Common::Serializer &s) {
-	for (uint i = 0; i < ARRAYSIZE(_parameters); i++)
-		_parameters[i].saveLoadWithSerializer(s);
+void EntityData::saveLoadWithSerializer(Common::Serializer &s, const Common::Array<TypeSetter>* paramsTypeSetters) {
+	if (s.isSaving()) {
+		for (uint i = 0; i < ARRAYSIZE(_parameters); i++)
+			_parameters[i].saveLoadWithSerializer(s);
 
-	_data.saveLoadWithSerializer(s);
+		_data.saveLoadWithSerializer(s);
+	} else {
+		// to correctly deserialize parameters, we need to know their runtime type
+		// but we don't know it until callbacks[] array will be deserialized
+		// all types of parameters are serialized to 32*4 bytes
+		// (the original game has same-size-PODs and just memcpy-s them.
+		// *sigh* Why does this implementation even need the extra byte in strings?
+		// Well, big-endian vs little-endian is also a thing...)
+		byte buf[ARRAYSIZE(_parameters) * 32 * 4];
+		s.syncBytes(buf, sizeof(buf));
+
+		_data.saveLoadWithSerializer(s);
+
+		for (uint i = 0; i < 8; i++) {
+			if (!paramsTypeSetters || _data.callbacks[i] >= paramsTypeSetters->size())
+				resetParametersType<EntityParametersIIII, EntityParametersIIII, EntityParametersIIII>(&_parameters[i]);
+			else
+				(*paramsTypeSetters)[_data.callbacks[i]](&_parameters[i]);
+		}
+		Common::MemoryReadStream paramsStream(buf, sizeof(buf));
+		Common::Serializer paramsSerializer(&paramsStream, NULL);
+		for (uint i = 0; i < ARRAYSIZE(_parameters); i++)
+			_parameters[i].saveLoadWithSerializer(paramsSerializer);
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -162,6 +186,7 @@ Entity::Entity(LastExpressEngine *engine, EntityIndex index) : _engine(engine), 
 
 	// Add first empty entry to callbacks array
 	_callbacks.push_back(NULL);
+	_paramsTypeSetters.push_back(&EntityData::resetParametersType<EntityData::EntityParametersIIII, EntityData::EntityParametersIIII, EntityData::EntityParametersIIII>);
 }
 
 Entity::~Entity() {
@@ -211,7 +236,7 @@ void Entity::setup(ChapterIndex index) {
 // Shared functions
 //////////////////////////////////////////////////////////////////////////
 
-void Entity::reset(const SavePoint &savepoint, bool resetClothes, bool resetItem) {
+void Entity::reset(const SavePoint &savepoint, ClothesIndex maxClothes, bool resetItem) {
 	EXPOSE_PARAMS(EntityData::EntityParametersIIII)
 
 	switch (savepoint.action) {
@@ -219,10 +244,10 @@ void Entity::reset(const SavePoint &savepoint, bool resetClothes, bool resetItem
 		break;
 
 	case kAction1:
-		if (resetClothes) {
+		if (maxClothes != kClothesDefault) {
 			// Select next available clothes
 			getData()->clothes = (ClothesIndex)(getData()->clothes + 1);
-			if (getData()->clothes > kClothes3)
+			if (getData()->clothes > maxClothes)
 				getData()->clothes = kClothesDefault;
 		}
 		break;
@@ -263,26 +288,16 @@ void Entity::savegame(const SavePoint &savepoint) {
 	}
 }
 
-void Entity::savegameBloodJacket() {
+bool Entity::savegameBloodJacket(byte callback) {
 	if (getProgress().jacket == kJacketBlood
 	 && getEntities()->isDistanceBetweenEntities(_entityIndex, kEntityPlayer, 1000)
 	 && !getEntities()->isInsideCompartments(kEntityPlayer)
 	 && !getEntities()->checkFields10(kEntityPlayer)) {
-		setCallback(1);
-
-		switch (_entityIndex) {
-		default:
-			break;
-
-		case kEntityCoudert:
-			setup_savegame(kSavegameTypeEvent, kEventCoudertBloodJacket);
-			break;
-
-		case kEntityMertens:
-			setup_savegame(kSavegameTypeEvent, kEventCoudertBloodJacket);
-			break;
-		}
+		setCallback(callback);
+		setup_savegame(kSavegameTypeEvent, kEventMertensBloodJacket);
+		return true;
 	}
+	return false;
 }
 
 void Entity::playSound(const SavePoint &savepoint, bool resetItem, SoundFlag flag) {
@@ -355,7 +370,7 @@ void Entity::updateFromTicks(const SavePoint &savepoint) {
 		break;
 
 	case kActionNone:
-		if (Entity::updateParameter(params->param2, getState()->timeTicks, params->param1))
+		if (!Entity::updateParameter(params->param2, getState()->timeTicks, params->param1))
 			break;
 
 		callbackAction();
@@ -371,7 +386,7 @@ void Entity::updateFromTime(const SavePoint &savepoint) {
 		break;
 
 	case kActionNone:
-		if (Entity::updateParameter(params->param2, getState()->time, params->param1))
+		if (!Entity::updateParameter(params->param2, getState()->time, params->param1))
 			break;
 
 		callbackAction();
@@ -388,7 +403,7 @@ void Entity::callbackActionOnDirection(const SavePoint &savepoint) {
 		callbackAction();
 		break;
 
-	case kActionDefault:
+	case kActionNone:
 		if (getData()->direction != kDirectionRight)
 			callbackAction();
 		break;
@@ -609,22 +624,22 @@ void Entity::callbackAction() {
 //////////////////////////////////////////////////////////////////////////
 // Setup functions
 //////////////////////////////////////////////////////////////////////////
-void Entity::setup(const char *name, uint index) {
+void Entity::setup(const char *name, uint index, EntityData::TypeSetter paramsTypeSetter) {
 	debugC(6, kLastExpressDebugLogic, "Entity: %s()", name);
 
 	_engine->getGameLogic()->getGameState()->getGameSavePoints()->setCallback(_entityIndex, _callbacks[index]);
 	_data->setCurrentCallback(index);
-	_data->resetCurrentParameters<EntityData::EntityParametersIIII>();
+	paramsTypeSetter(_data->getCurrentCallParameters());
 
 	_engine->getGameLogic()->getGameState()->getGameSavePoints()->call(_entityIndex, _entityIndex, kActionDefault);
 }
 
-void Entity::setupI(const char *name, uint index, uint param1) {
+void Entity::setupI(const char *name, uint index, EntityData::TypeSetter paramsTypeSetter, uint param1) {
 	debugC(6, kLastExpressDebugLogic, "Entity: %s(%u)", name, param1);
 
 	_engine->getGameLogic()->getGameState()->getGameSavePoints()->setCallback(_entityIndex, _callbacks[index]);
 	_data->setCurrentCallback(index);
-	_data->resetCurrentParameters<EntityData::EntityParametersIIII>();
+	paramsTypeSetter(_data->getCurrentCallParameters());
 
 	EntityData::EntityParametersIIII *params = (EntityData::EntityParametersIIII *)_data->getCurrentParameters();
 	params->param1 = (unsigned int)param1;
@@ -632,12 +647,12 @@ void Entity::setupI(const char *name, uint index, uint param1) {
 	_engine->getGameLogic()->getGameState()->getGameSavePoints()->call(_entityIndex, _entityIndex, kActionDefault);
 }
 
-void Entity::setupII(const char *name, uint index, uint param1, uint param2) {
+void Entity::setupII(const char *name, uint index, EntityData::TypeSetter paramsTypeSetter, uint param1, uint param2) {
 	debugC(6, kLastExpressDebugLogic, "Entity: %s(%u, %u)", name, param1, param2);
 
 	_engine->getGameLogic()->getGameState()->getGameSavePoints()->setCallback(_entityIndex, _callbacks[index]);
 	_data->setCurrentCallback(index);
-	_data->resetCurrentParameters<EntityData::EntityParametersIIII>();
+	paramsTypeSetter(_data->getCurrentCallParameters());
 
 	EntityData::EntityParametersIIII *params = (EntityData::EntityParametersIIII *)_data->getCurrentParameters();
 	params->param1 = param1;
@@ -646,12 +661,12 @@ void Entity::setupII(const char *name, uint index, uint param1, uint param2) {
 	_engine->getGameLogic()->getGameState()->getGameSavePoints()->call(_entityIndex, _entityIndex, kActionDefault);
 }
 
-void Entity::setupIII(const char *name, uint index, uint param1, uint param2, uint param3) {
+void Entity::setupIII(const char *name, uint index, EntityData::TypeSetter paramsTypeSetter, uint param1, uint param2, uint param3) {
 	debugC(6, kLastExpressDebugLogic, "Entity: %s(%u, %u, %u)", name, param1, param2, param3);
 
 	_engine->getGameLogic()->getGameState()->getGameSavePoints()->setCallback(_entityIndex, _callbacks[index]);
 	_data->setCurrentCallback(index);
-	_data->resetCurrentParameters<EntityData::EntityParametersIIII>();
+	paramsTypeSetter(_data->getCurrentCallParameters());
 
 	EntityData::EntityParametersIIII *params = (EntityData::EntityParametersIIII *)_data->getCurrentParameters();
 	params->param1 = param1;
@@ -661,12 +676,12 @@ void Entity::setupIII(const char *name, uint index, uint param1, uint param2, ui
 	_engine->getGameLogic()->getGameState()->getGameSavePoints()->call(_entityIndex, _entityIndex, kActionDefault);
 }
 
-void Entity::setupS(const char *name, uint index, const char *seq1) {
+void Entity::setupS(const char *name, uint index, EntityData::TypeSetter paramsTypeSetter, const char *seq1) {
 	debugC(6, kLastExpressDebugLogic, "Entity: %s(%s)", name, seq1);
 
 	_engine->getGameLogic()->getGameState()->getGameSavePoints()->setCallback(_entityIndex, _callbacks[index]);
 	_data->setCurrentCallback(index);
-	_data->resetCurrentParameters<EntityData::EntityParametersSIIS>();
+	paramsTypeSetter(_data->getCurrentCallParameters());
 
 	EntityData::EntityParametersSIIS *params = (EntityData::EntityParametersSIIS*)_data->getCurrentParameters();
 	strncpy(params->seq1, seq1, 12);
@@ -674,12 +689,12 @@ void Entity::setupS(const char *name, uint index, const char *seq1) {
 	_engine->getGameLogic()->getGameState()->getGameSavePoints()->call(_entityIndex, _entityIndex, kActionDefault);
 }
 
-void Entity::setupSS(const char *name, uint index, const char *seq1, const char *seq2) {
+void Entity::setupSS(const char *name, uint index, EntityData::TypeSetter paramsTypeSetter, const char *seq1, const char *seq2) {
 	debugC(6, kLastExpressDebugLogic, "Entity: %s(%s, %s)", name, seq1, seq2);
 
 	_engine->getGameLogic()->getGameState()->getGameSavePoints()->setCallback(_entityIndex, _callbacks[index]);
 	_data->setCurrentCallback(index);
-	_data->resetCurrentParameters<EntityData::EntityParametersSSII>();
+	paramsTypeSetter(_data->getCurrentCallParameters());
 
 	EntityData::EntityParametersSSII *params = (EntityData::EntityParametersSSII*)_data->getCurrentParameters();
 	strncpy(params->seq1, seq1, 12);
@@ -688,12 +703,12 @@ void Entity::setupSS(const char *name, uint index, const char *seq1, const char 
 	_engine->getGameLogic()->getGameState()->getGameSavePoints()->call(_entityIndex, _entityIndex, kActionDefault);
 }
 
-void Entity::setupSI(const char *name, uint index, const char *seq1, uint param4) {
+void Entity::setupSI(const char *name, uint index, EntityData::TypeSetter paramsTypeSetter, const char *seq1, uint param4) {
 	debugC(6, kLastExpressDebugLogic, "Entity: %s(%s, %u)", name, seq1, param4);
 
 	_engine->getGameLogic()->getGameState()->getGameSavePoints()->setCallback(_entityIndex, _callbacks[index]);
 	_data->setCurrentCallback(index);
-	_data->resetCurrentParameters<EntityData::EntityParametersSIIS>();
+	paramsTypeSetter(_data->getCurrentCallParameters());
 
 	EntityData::EntityParametersSIIS *params = (EntityData::EntityParametersSIIS *)_data->getCurrentParameters();
 	strncpy(params->seq1, seq1, 12);
@@ -702,27 +717,27 @@ void Entity::setupSI(const char *name, uint index, const char *seq1, uint param4
 	_engine->getGameLogic()->getGameState()->getGameSavePoints()->call(_entityIndex, _entityIndex, kActionDefault);
 }
 
-void Entity::setupSII(const char *name, uint index, const char *seq1, uint param4, uint param5) {
+void Entity::setupSII(const char *name, uint index, EntityData::TypeSetter paramsTypeSetter, const char *seq1, uint param4, uint param5) {
 	debugC(6, kLastExpressDebugLogic, "Entity: %s(%s, %u, %u)", name, seq1, param4, param5);
 
 	_engine->getGameLogic()->getGameState()->getGameSavePoints()->setCallback(_entityIndex, _callbacks[index]);
 	_data->setCurrentCallback(index);
-	_data->resetCurrentParameters<EntityData::EntityParametersSIIS>();
+	paramsTypeSetter(_data->getCurrentCallParameters());
 
-	EntityData::EntityParametersSIIS *params = (EntityData::EntityParametersSIIS *)_data->getCurrentParameters();
-	strncpy(params->seq1, seq1, 12);
+	EntityData::EntityParametersSIII *params = (EntityData::EntityParametersSIII *)_data->getCurrentParameters();
+	strncpy(params->seq, seq1, 12);
 	params->param4 = param4;
 	params->param5 = param5;
 
 	_engine->getGameLogic()->getGameState()->getGameSavePoints()->call(_entityIndex, _entityIndex, kActionDefault);
 }
 
-void Entity::setupSIII(const char *name, uint index, const char *seq, uint param4, uint param5, uint param6) {
+void Entity::setupSIII(const char *name, uint index, EntityData::TypeSetter paramsTypeSetter, const char *seq, uint param4, uint param5, uint param6) {
 	debugC(6, kLastExpressDebugLogic, "Entity: %s(%s, %u, %u, %u)", name, seq, param4, param5, param6);
 
 	_engine->getGameLogic()->getGameState()->getGameSavePoints()->setCallback(_entityIndex, _callbacks[index]);
 	_data->setCurrentCallback(index);
-	_data->resetCurrentParameters<EntityData::EntityParametersSIII>();
+	paramsTypeSetter(_data->getCurrentCallParameters());
 
 	EntityData::EntityParametersSIII *params = (EntityData::EntityParametersSIII *)_data->getCurrentParameters();
 	strncpy(params->seq, seq, 12);
@@ -733,12 +748,12 @@ void Entity::setupSIII(const char *name, uint index, const char *seq, uint param
 	_engine->getGameLogic()->getGameState()->getGameSavePoints()->call(_entityIndex, _entityIndex, kActionDefault);
 }
 
-void Entity::setupSIIS(const char *name, uint index, const char *seq1, uint param4, uint param5, const char *seq2) {
+void Entity::setupSIIS(const char *name, uint index, EntityData::TypeSetter paramsTypeSetter, const char *seq1, uint param4, uint param5, const char *seq2) {
 	debugC(6, kLastExpressDebugLogic, "Entity: %s(%s, %u, %u, %s)", name, seq1, param4, param5, seq2);
 
 	_engine->getGameLogic()->getGameState()->getGameSavePoints()->setCallback(_entityIndex, _callbacks[index]);
 	_data->setCurrentCallback(index);
-	_data->resetCurrentParameters<EntityData::EntityParametersSIIS>();
+	paramsTypeSetter(_data->getCurrentCallParameters());
 
 	EntityData::EntityParametersSIIS *params = (EntityData::EntityParametersSIIS *)_data->getCurrentParameters();
 	strncpy(params->seq1, seq1, 12);
@@ -749,12 +764,12 @@ void Entity::setupSIIS(const char *name, uint index, const char *seq1, uint para
 	_engine->getGameLogic()->getGameState()->getGameSavePoints()->call(_entityIndex, _entityIndex, kActionDefault);
 }
 
-void Entity::setupSSI(const char *name, uint index, const char *seq1, const char *seq2, uint param7) {
+void Entity::setupSSI(const char *name, uint index, EntityData::TypeSetter paramsTypeSetter, const char *seq1, const char *seq2, uint param7) {
 	debugC(6, kLastExpressDebugLogic, "Entity: %s(%s, %s, %u)", name, seq1, seq2, param7);
 
 	_engine->getGameLogic()->getGameState()->getGameSavePoints()->setCallback(_entityIndex, _callbacks[index]);
 	_data->setCurrentCallback(index);
-	_data->resetCurrentParameters<EntityData::EntityParametersSSII>();
+	paramsTypeSetter(_data->getCurrentCallParameters());
 
 	EntityData::EntityParametersSSII *params = (EntityData::EntityParametersSSII *)_data->getCurrentParameters();
 	strncpy(params->seq1, seq1, 12);
@@ -764,12 +779,12 @@ void Entity::setupSSI(const char *name, uint index, const char *seq1, const char
 	_engine->getGameLogic()->getGameState()->getGameSavePoints()->call(_entityIndex, _entityIndex, kActionDefault);
 }
 
-void Entity::setupIS(const char *name, uint index, uint param1, const char *seq) {
+void Entity::setupIS(const char *name, uint index, EntityData::TypeSetter paramsTypeSetter, uint param1, const char *seq) {
 	debugC(6, kLastExpressDebugLogic, "Entity: %s(%u, %s)", name, param1, seq);
 
 	_engine->getGameLogic()->getGameState()->getGameSavePoints()->setCallback(_entityIndex, _callbacks[index]);
 	_data->setCurrentCallback(index);
-	_data->resetCurrentParameters<EntityData::EntityParametersISII>();
+	paramsTypeSetter(_data->getCurrentCallParameters());
 
 	EntityData::EntityParametersISII *params = (EntityData::EntityParametersISII *)_data->getCurrentParameters();
 	params->param1 = (unsigned int)param1;
@@ -778,12 +793,12 @@ void Entity::setupIS(const char *name, uint index, uint param1, const char *seq)
 	_engine->getGameLogic()->getGameState()->getGameSavePoints()->call(_entityIndex, _entityIndex, kActionDefault);
 }
 
-void Entity::setupISS(const char *name, uint index, uint param1, const char *seq1, const char *seq2) {
+void Entity::setupISS(const char *name, uint index, EntityData::TypeSetter paramsTypeSetter, uint param1, const char *seq1, const char *seq2) {
 	debugC(6, kLastExpressDebugLogic, "Entity: %s(%u, %s, %s)", name, param1, seq1, seq2);
 
 	_engine->getGameLogic()->getGameState()->getGameSavePoints()->setCallback(_entityIndex, _callbacks[index]);
 	_data->setCurrentCallback(index);
-	_data->resetCurrentParameters<EntityData::EntityParametersISSI>();
+	paramsTypeSetter(_data->getCurrentCallParameters());
 
 	EntityData::EntityParametersISSI *params = (EntityData::EntityParametersISSI *)_data->getCurrentParameters();
 	params->param1 = param1;
@@ -793,12 +808,12 @@ void Entity::setupISS(const char *name, uint index, uint param1, const char *seq
 	_engine->getGameLogic()->getGameState()->getGameSavePoints()->call(_entityIndex, _entityIndex, kActionDefault);
 }
 
-void Entity::setupIIS(const char *name, uint index, uint param1, uint param2, const char *seq) {
+void Entity::setupIIS(const char *name, uint index, EntityData::TypeSetter paramsTypeSetter, uint param1, uint param2, const char *seq) {
 	debugC(6, kLastExpressDebugLogic, "Entity: %s(%u, %u, %s)", name, param1, param2, seq);
 
 	_engine->getGameLogic()->getGameState()->getGameSavePoints()->setCallback(_entityIndex, _callbacks[index]);
 	_data->setCurrentCallback(index);
-	_data->resetCurrentParameters<EntityData::EntityParametersIISI>();
+	paramsTypeSetter(_data->getCurrentCallParameters());
 
 	EntityData::EntityParametersIISI *params = (EntityData::EntityParametersIISI *)_data->getCurrentParameters();
 	params->param1 = param1;
@@ -808,12 +823,12 @@ void Entity::setupIIS(const char *name, uint index, uint param1, uint param2, co
 	_engine->getGameLogic()->getGameState()->getGameSavePoints()->call(_entityIndex, _entityIndex, kActionDefault);
 }
 
-void Entity::setupIISS(const char *name, uint index, uint param1, uint param2, const char *seq1, const char *seq2) {
+void Entity::setupIISS(const char *name, uint index, EntityData::TypeSetter paramsTypeSetter, uint param1, uint param2, const char *seq1, const char *seq2) {
 	debugC(6, kLastExpressDebugLogic, "Entity: %s(%u, %u, %s, %s)", name, param1, param2, seq1, seq2);
 
 	_engine->getGameLogic()->getGameState()->getGameSavePoints()->setCallback(_entityIndex, _callbacks[index]);
 	_data->setCurrentCallback(index);
-	_data->resetCurrentParameters<EntityData::EntityParametersIISS>();
+	paramsTypeSetter(_data->getCurrentCallParameters());
 
 	EntityData::EntityParametersIISS *params = (EntityData::EntityParametersIISS *)_data->getCurrentParameters();
 	params->param1 = param1;
@@ -855,11 +870,11 @@ bool Entity::updateParameterTime(TimeValue timeValue, bool check, uint &paramete
 }
 
 bool Entity::updateParameterCheck(uint &parameter, uint timeType, uint delta) const {
-	if (parameter && parameter >= timeType)
-		return false;
-
 	if (!parameter)
 		parameter = (uint)(timeType + delta);
+
+	if (parameter && parameter >= timeType)
+		return false;
 
 	return true;
 }

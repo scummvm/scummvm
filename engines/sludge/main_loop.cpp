@@ -28,8 +28,10 @@
 #include "sludge/backdrop.h"
 #include "sludge/event.h"
 #include "sludge/floor.h"
+#include "sludge/function.h"
 #include "sludge/graphics.h"
 #include "sludge/language.h"
+#include "sludge/loadsave.h"
 #include "sludge/newfatal.h"
 #include "sludge/objtypes.h"
 #include "sludge/people.h"
@@ -38,15 +40,12 @@
 #include "sludge/sound.h"
 #include "sludge/sludge.h"
 #include "sludge/sludger.h"
-#include "sludge/talk.h"
-#include "sludge/transition.h"
+#include "sludge/speech.h"
 #include "sludge/timing.h"
 
 namespace Sludge {
 
 extern VariableStack *noStack;
-
-int dialogValue = 0;
 
 int main_loop(Common::String filename) {
 
@@ -63,9 +62,10 @@ int main_loop(Common::String filename) {
 
 	while (!g_sludge->_evtMan->quit()) {
 		g_sludge->_evtMan->checkInput();
-		walkAllPeople();
+		g_sludge->_peopleMan->walkAllPeople();
 		if (g_sludge->_evtMan->handleInput()) {
-			runSludge();
+			runAllFunctions();
+			handleSaveLoad();
 		}
 		sludgeDisplay();
 		g_sludge->_soundMan->handleSoundLists();

@@ -23,28 +23,38 @@
 #include "graphics/surface.h"
 
 #include "sludge/allfiles.h"
-#include "sludge/newfatal.h"
 #include "sludge/fileset.h"
+#include "sludge/floor.h"
 #include "sludge/graphics.h"
 #include "sludge/moreio.h"
+#include "sludge/newfatal.h"
+#include "sludge/people.h"
 #include "sludge/sludge.h"
-#include "sludge/floor.h"
+
+#define ANGLEFIX (180.0 / 3.14157)
 
 namespace Sludge {
 
-Floor *currentFloor = NULL;
+FloorManager::FloorManager(SludgeEngine *vm) {
+	_vm = vm;
+	_currentFloor = nullptr;
+}
 
-bool pointInFloorPolygon(FloorPolygon &floorPoly, int x, int y) {
+FloorManager::~FloorManager() {
+	kill();
+}
+
+bool FloorManager::pointInFloorPolygon(FloorPolygon &floorPoly, int x, int y) {
 	int i = 0, j, c = 0;
 	float xp_i, yp_i;
 	float xp_j, yp_j;
 
 	for (j = floorPoly.numVertices - 1; i < floorPoly.numVertices; j = i++) {
 
-		xp_i = currentFloor->vertex[floorPoly.vertexID[i]].x;
-		yp_i = currentFloor->vertex[floorPoly.vertexID[i]].y;
-		xp_j = currentFloor->vertex[floorPoly.vertexID[j]].x;
-		yp_j = currentFloor->vertex[floorPoly.vertexID[j]].y;
+		xp_i = _currentFloor->vertex[floorPoly.vertexID[i]].x;
+		yp_i = _currentFloor->vertex[floorPoly.vertexID[i]].y;
+		xp_j = _currentFloor->vertex[floorPoly.vertexID[j]].x;
+		yp_j = _currentFloor->vertex[floorPoly.vertexID[j]].y;
 
 		if ((((yp_i <= y) && (y < yp_j)) || ((yp_j <= y) && (y < yp_i))) && (x < (xp_j - xp_i) * (y - yp_i) / (yp_j - yp_i) + xp_i)) {
 			c = !c;
@@ -53,7 +63,7 @@ bool pointInFloorPolygon(FloorPolygon &floorPoly, int x, int y) {
 	return c;
 }
 
-bool getMatchingCorners(FloorPolygon &a, FloorPolygon &b, int &cornerA, int &cornerB) {
+bool FloorManager::getMatchingCorners(FloorPolygon &a, FloorPolygon &b, int &cornerA, int &cornerB) {
 	int sharedVertices = 0;
 	int i, j;
 
@@ -73,7 +83,7 @@ bool getMatchingCorners(FloorPolygon &a, FloorPolygon &b, int &cornerA, int &cor
 	return false;
 }
 
-bool polysShareSide(FloorPolygon &a, FloorPolygon &b) {
+bool FloorManager::polysShareSide(FloorPolygon &a, FloorPolygon &b) {
 	int sharedVertices = 0;
 	int i, j;
 
@@ -89,46 +99,46 @@ bool polysShareSide(FloorPolygon &a, FloorPolygon &b) {
 	return false;
 }
 
-void noFloor() {
-	currentFloor->numPolygons = 0;
-	currentFloor->polygon = NULL;
-	currentFloor->vertex = NULL;
-	currentFloor->matrix = NULL;
-}
-
-bool initFloor() {
-	currentFloor = new Floor;
-	if (!checkNew(currentFloor))
+bool FloorManager::init() {
+	_currentFloor = new Floor;
+	if (!checkNew(_currentFloor))
 		return false;
-	noFloor();
+	_currentFloor->numPolygons = 0;
+	_currentFloor->polygon = nullptr;
+	_currentFloor->vertex = nullptr;
+	_currentFloor->matrix = nullptr;
 	return true;
 }
 
-void killFloor() {
-	if (currentFloor) {
-		for (int i = 0; i < currentFloor->numPolygons; i++) {
-			delete []currentFloor->polygon[i].vertexID;
-			delete []currentFloor->matrix[i];
+void FloorManager::setFloorNull() {
+	if (_currentFloor) {
+		for (int i = 0; i < _currentFloor->numPolygons; i++) {
+			delete[] _currentFloor->polygon[i].vertexID;
+			delete[] _currentFloor->matrix[i];
 		}
-		delete []currentFloor->polygon;
-		currentFloor->polygon = NULL;
-		delete []currentFloor->vertex;
-		currentFloor->vertex = NULL;
-		delete []currentFloor->matrix;
-		currentFloor->matrix = NULL;
+		_currentFloor->numPolygons = 0;
+		delete[] _currentFloor->polygon;
+		_currentFloor->polygon = nullptr;
+		delete[] _currentFloor->vertex;
+		_currentFloor->vertex = nullptr;
+		delete[] _currentFloor->matrix;
+		_currentFloor->matrix = nullptr;
 	}
 }
 
-void setFloorNull() {
-	killFloor();
-	noFloor();
+void FloorManager::kill() {
+	setFloorNull();
+	if (_currentFloor) {
+		delete _currentFloor;
+		_currentFloor = nullptr;
+	}
 }
 
-bool setFloor(int fileNum) {
+bool FloorManager::setFloor(int fileNum) {
 
 	int i, j;
 
-	killFloor();
+	setFloorNull();
 
 	setResourceForFatal(fileNum);
 
@@ -137,73 +147,73 @@ bool setFloor(int fileNum) {
 
 	// Find out how many polygons there are and reserve memory
 
-	currentFloor->originalNum = fileNum;
-	currentFloor->numPolygons = g_sludge->_resMan->getData()->readByte();
-	currentFloor->polygon = new FloorPolygon[currentFloor->numPolygons];
-	if (!checkNew(currentFloor->polygon))
+	_currentFloor->originalNum = fileNum;
+	_currentFloor->numPolygons = g_sludge->_resMan->getData()->readByte();
+	_currentFloor->polygon = new FloorPolygon[_currentFloor->numPolygons];
+	if (!checkNew(_currentFloor->polygon))
 		return false;
 
 	// Read in each polygon
 
-	for (i = 0; i < currentFloor->numPolygons; i++) {
+	for (i = 0; i < _currentFloor->numPolygons; i++) {
 
 		// Find out how many vertex IDs there are and reserve memory
 
-		currentFloor->polygon[i].numVertices = g_sludge->_resMan->getData()->readByte();
-		currentFloor->polygon[i].vertexID = new int[currentFloor->polygon[i].numVertices];
-		if (!checkNew(currentFloor->polygon[i].vertexID))
+		_currentFloor->polygon[i].numVertices = g_sludge->_resMan->getData()->readByte();
+		_currentFloor->polygon[i].vertexID = new int[_currentFloor->polygon[i].numVertices];
+		if (!checkNew(_currentFloor->polygon[i].vertexID))
 			return false;
 
 		// Read in each vertex ID
 
-		for (j = 0; j < currentFloor->polygon[i].numVertices; j++) {
-			currentFloor->polygon[i].vertexID[j] = g_sludge->_resMan->getData()->readUint16BE();
+		for (j = 0; j < _currentFloor->polygon[i].numVertices; j++) {
+			_currentFloor->polygon[i].vertexID[j] = g_sludge->_resMan->getData()->readUint16BE();
 		}
 	}
 
 	// Find out how many vertices there are and reserve memory
 
 	i = g_sludge->_resMan->getData()->readUint16BE();
-	currentFloor->vertex = new Common::Point[i];
-	if (!checkNew(currentFloor->vertex))
+	_currentFloor->vertex = new Common::Point[i];
+	if (!checkNew(_currentFloor->vertex))
 		return false;
 
 	for (j = 0; j < i; j++) {
 
-		currentFloor->vertex[j].x = g_sludge->_resMan->getData()->readUint16BE();
-		currentFloor->vertex[j].y = g_sludge->_resMan->getData()->readUint16BE();
+		_currentFloor->vertex[j].x = g_sludge->_resMan->getData()->readUint16BE();
+		_currentFloor->vertex[j].y = g_sludge->_resMan->getData()->readUint16BE();
 	}
 
 	g_sludge->_resMan->finishAccess();
 
 	// Now build the movement martix
 
-	currentFloor->matrix = new int *[currentFloor->numPolygons];
-	int **distanceMatrix = new int *[currentFloor->numPolygons];
+	_currentFloor->matrix = new int *[_currentFloor->numPolygons];
+	int **distanceMatrix = new int *[_currentFloor->numPolygons];
 
-	if (!checkNew(currentFloor->matrix))
+	if (!checkNew(_currentFloor->matrix))
 		return false;
 
-	for (i = 0; i < currentFloor->numPolygons; i++) {
-		currentFloor->matrix[i] = new int[currentFloor->numPolygons];
-		distanceMatrix[i] = new int[currentFloor->numPolygons];
-		if (!checkNew(currentFloor->matrix[i]))
+	for (i = 0; i < _currentFloor->numPolygons; i++) {
+		_currentFloor->matrix[i] = new int[_currentFloor->numPolygons];
+		distanceMatrix[i] = new int[_currentFloor->numPolygons];
+		if (!checkNew(_currentFloor->matrix[i]))
 			return false;
-		for (j = 0; j < currentFloor->numPolygons; j++) {
-			currentFloor->matrix[i][j] = -1;
+		for (j = 0; j < _currentFloor->numPolygons; j++) {
+			_currentFloor->matrix[i][j] = -1;
 			distanceMatrix[i][j] = 10000;
 		}
 	}
 
-	for (i = 0; i < currentFloor->numPolygons; i++) {
-		for (j = 0; j < currentFloor->numPolygons; j++) {
+	for (i = 0; i < _currentFloor->numPolygons; i++) {
+		for (j = 0; j < _currentFloor->numPolygons; j++) {
 			if (i != j) {
-				if (polysShareSide(currentFloor->polygon[i], currentFloor->polygon[j])) {
-					currentFloor->matrix[i][j] = j;
+				if (polysShareSide(_currentFloor->polygon[i], _currentFloor->polygon[j])) {
+					_currentFloor->matrix[i][j] = j;
 					distanceMatrix[i][j] = 1;
 				}
 			} else {
-				currentFloor->matrix[i][j] = -2;
+				_currentFloor->matrix[i][j] = -2;
 				distanceMatrix[i][j] = 0;
 			}
 		}
@@ -214,17 +224,16 @@ bool setFloor(int fileNum) {
 
 	do {
 		lookForDistance++;
-//		debugMatrix ();
 		madeChange = false;
-		for (i = 0; i < currentFloor->numPolygons; i++) {
-			for (j = 0; j < currentFloor->numPolygons; j++) {
-				if (currentFloor->matrix[i][j] == -1) {
+		for (i = 0; i < _currentFloor->numPolygons; i++) {
+			for (j = 0; j < _currentFloor->numPolygons; j++) {
+				if (_currentFloor->matrix[i][j] == -1) {
 
 					// OK, so we don't know how to get from i to j...
-					for (int d = 0; d < currentFloor->numPolygons; d++) {
+					for (int d = 0; d < _currentFloor->numPolygons; d++) {
 						if (d != i && d != j) {
-							if (currentFloor->matrix[i][d] == d && currentFloor->matrix[d][j] >= 0 && distanceMatrix[d][j] <= lookForDistance) {
-								currentFloor->matrix[i][j] = d;
+							if (_currentFloor->matrix[i][d] == d && _currentFloor->matrix[d][j] >= 0 && distanceMatrix[d][j] <= lookForDistance) {
+								_currentFloor->matrix[i][j] = d;
 								distanceMatrix[i][j] = lookForDistance + 1;
 								madeChange = true;
 							}
@@ -235,44 +244,44 @@ bool setFloor(int fileNum) {
 		}
 	} while (madeChange);
 
-	for (i = 0; i < currentFloor->numPolygons; i++) {
+	for (i = 0; i < _currentFloor->numPolygons; i++) {
 		delete[] distanceMatrix[i];
 	}
 
 	delete []distanceMatrix;
-	distanceMatrix = NULL;
+	distanceMatrix = nullptr;
 
 	setResourceForFatal(-1);
 
 	return true;
 }
 
-void drawFloor() {
+void FloorManager::drawFloor() {
 	int i, j, nV;
-	for (i = 0; i < currentFloor->numPolygons; i++) {
-		nV = currentFloor->polygon[i].numVertices;
+	for (i = 0; i < _currentFloor->numPolygons; i++) {
+		nV = _currentFloor->polygon[i].numVertices;
 		if (nV > 1) {
 			for (j = 1; j < nV; j++) {
-				g_sludge->_gfxMan->drawLine(currentFloor->vertex[currentFloor->polygon[i].vertexID[j - 1]].x, currentFloor->vertex[currentFloor->polygon[i].vertexID[j - 1]].y,
-						currentFloor->vertex[currentFloor->polygon[i].vertexID[j]].x, currentFloor->vertex[currentFloor->polygon[i].vertexID[j]].y);
+				g_sludge->_gfxMan->drawLine(_currentFloor->vertex[_currentFloor->polygon[i].vertexID[j - 1]].x, _currentFloor->vertex[_currentFloor->polygon[i].vertexID[j - 1]].y,
+						_currentFloor->vertex[_currentFloor->polygon[i].vertexID[j]].x, _currentFloor->vertex[_currentFloor->polygon[i].vertexID[j]].y);
 			}
-			g_sludge->_gfxMan->drawLine(currentFloor->vertex[currentFloor->polygon[i].vertexID[0]].x, currentFloor->vertex[currentFloor->polygon[i].vertexID[0]].y,
-					currentFloor->vertex[currentFloor->polygon[i].vertexID[nV - 1]].x, currentFloor->vertex[currentFloor->polygon[i].vertexID[nV - 1]].y);
+			g_sludge->_gfxMan->drawLine(_currentFloor->vertex[_currentFloor->polygon[i].vertexID[0]].x, _currentFloor->vertex[_currentFloor->polygon[i].vertexID[0]].y,
+					_currentFloor->vertex[_currentFloor->polygon[i].vertexID[nV - 1]].x, _currentFloor->vertex[_currentFloor->polygon[i].vertexID[nV - 1]].y);
 		}
 	}
 }
 
-int inFloor(int x, int y) {
+int FloorManager::inFloor(int x, int y) {
 	int i, r = -1;
 
-	for (i = 0; i < currentFloor->numPolygons; i++)
-		if (pointInFloorPolygon(currentFloor->polygon[i], x, y))
+	for (i = 0; i < _currentFloor->numPolygons; i++)
+		if (pointInFloorPolygon(_currentFloor->polygon[i], x, y))
 			r = i;
 
 	return r;
 }
 
-bool closestPointOnLine(int &closestX, int &closestY, int x1, int y1, int x2, int y2, int xP, int yP) {
+bool FloorManager::closestPointOnLine(int &closestX, int &closestY, int x1, int y1, int x2, int y2, int xP, int yP) {
 	int xDiff = x2 - x1;
 	int yDiff = y2 - y1;
 
@@ -291,6 +300,128 @@ bool closestPointOnLine(int &closestX, int &closestY, int x1, int y1, int x2, in
 		return true;
 	}
 	return false;
+}
+
+bool FloorManager::handleClosestPoint(int &setX, int &setY, int &setPoly) {
+	int gotX = 320, gotY = 200, gotPoly = -1, i, j, xTest1, yTest1, xTest2, yTest2, closestX, closestY, oldJ, currentDistance = 0xFFFFF, thisDistance;
+
+	for (i = 0; i < _currentFloor->numPolygons; i++) {
+		oldJ = _currentFloor->polygon[i].numVertices - 1;
+		for (j = 0; j < _currentFloor->polygon[i].numVertices; j++) {
+			xTest1 = _currentFloor->vertex[_currentFloor->polygon[i].vertexID[j]].x;
+			yTest1 = _currentFloor->vertex[_currentFloor->polygon[i].vertexID[j]].y;
+			xTest2 = _currentFloor->vertex[_currentFloor->polygon[i].vertexID[oldJ]].x;
+			yTest2 = _currentFloor->vertex[_currentFloor->polygon[i].vertexID[oldJ]].y;
+			closestPointOnLine(closestX, closestY, xTest1, yTest1, xTest2, yTest2, setX, setY);
+			xTest1 = setX - closestX;
+			yTest1 = setY - closestY;
+			thisDistance = xTest1 * xTest1 + yTest1 * yTest1;
+
+			if (thisDistance < currentDistance) {
+				currentDistance = thisDistance;
+				gotX = closestX;
+				gotY = closestY;
+				gotPoly = i;
+			}
+			oldJ = j;
+		}
+	}
+
+	if (gotPoly == -1)
+		return false;
+	setX = gotX;
+	setY = gotY;
+	setPoly = gotPoly;
+	return true;
+}
+
+bool FloorManager::doBorderStuff(OnScreenPerson *moveMe) {
+	if (moveMe->inPoly == moveMe->walkToPoly) {
+		moveMe->inPoly = -1;
+		moveMe->thisStepX = moveMe->walkToX;
+		moveMe->thisStepY = moveMe->walkToY;
+	} else {
+		// The section in which we need to be next...
+		int newPoly = _currentFloor->matrix[moveMe->inPoly][moveMe->walkToPoly];
+		if (newPoly == -1)
+			return false;
+
+		// Grab the index of the second matching corner...
+		int ID, ID2;
+		if (!getMatchingCorners(_currentFloor->polygon[moveMe->inPoly], _currentFloor->polygon[newPoly], ID, ID2))
+			return fatal("Not a valid floor plan!");
+
+		// Remember that we're walking to the new polygon...
+		moveMe->inPoly = newPoly;
+
+		// Calculate the destination position on the coincidantal line...
+		int x1 = moveMe->x, y1 = moveMe->y;
+		int x2 = moveMe->walkToX, y2 = moveMe->walkToY;
+		int x3 = _currentFloor->vertex[ID].x, y3 = _currentFloor->vertex[ID].y;
+		int x4 = _currentFloor->vertex[ID2].x, y4 = _currentFloor->vertex[ID2].y;
+
+		int xAB = x1 - x2;
+		int yAB = y1 - y2;
+		int xCD = x4 - x3;
+		int yCD = y4 - y3;
+
+		double m = (yAB * (x3 - x1) - xAB * (y3 - y1));
+		m /= ((xAB * yCD) - (yAB * xCD));
+
+		if (m > 0 && m < 1) {
+			moveMe->thisStepX = x3 + m * xCD;
+			moveMe->thisStepY = y3 + m * yCD;
+		} else {
+			int dx13 = x1 - x3, dx14 = x1 - x4, dx23 = x2 - x3, dx24 = x2 - x4;
+			int dy13 = y1 - y3, dy14 = y1 - y4, dy23 = y2 - y3, dy24 = y2 - y4;
+
+			dx13 *= dx13;
+			dx14 *= dx14;
+			dx23 *= dx23;
+			dx24 *= dx24;
+			dy13 *= dy13;
+			dy14 *= dy14;
+			dy23 *= dy23;
+			dy24 *= dy24;
+
+			if (sqrt((double)dx13 + dy13) + sqrt((double)dx23 + dy23) < sqrt((double)dx14 + dy14) + sqrt((double)dx24 + dy24)) {
+				moveMe->thisStepX = x3;
+				moveMe->thisStepY = y3;
+			} else {
+				moveMe->thisStepX = x4;
+				moveMe->thisStepY = y4;
+			}
+		}
+	}
+
+	float yDiff = moveMe->thisStepY - moveMe->y;
+	float xDiff = moveMe->x - moveMe->thisStepX;
+	if (xDiff || yDiff) {
+		moveMe->wantAngle = 180 + ANGLEFIX * atan2(xDiff, yDiff * 2);
+		moveMe->spinning = true;
+	}
+
+	moveMe->makeTalker();
+	return true;
+}
+
+void FloorManager::save(Common::WriteStream *stream) {
+	if (_currentFloor->numPolygons) {
+		stream->writeByte(1);
+		stream->writeUint16BE(_currentFloor->originalNum);
+	} else {
+		stream->writeByte(0);
+	}
+}
+
+bool FloorManager::load(Common::SeekableReadStream *stream) {
+	if (stream->readByte()) {
+		if (!setFloor(stream->readUint16BE()))
+			return false;
+	} else {
+		setFloorNull();
+	}
+	return true;
 }
 
 } // End of namespace Sludge

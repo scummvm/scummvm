@@ -25,34 +25,59 @@
 
 #include "common/scummsys.h"
 #include "common/events.h"
+#include "common/queue.h"
 #include "xeen/sprites.h"
 
 namespace Xeen {
 
-#define GAME_FRAME_RATE (1000 / 18.2)
+#define GAME_FRAME_RATE (1000 / 50)
+#define GAME_FRAME_TIME 50
+#define SCREEN_UPDATE_TIME 10
+#define MAX_PENDING_EVENTS 5
 
 class XeenEngine;
+
+struct PendingEvent {
+	Common::KeyState _keyState;
+	bool _leftButton;
+	bool _rightButton;
+
+	PendingEvent() : _leftButton(false), _rightButton(false) {}
+	PendingEvent(const Common::KeyState &keyState) : _keyState(keyState), _leftButton(false), _rightButton(false) {}
+	PendingEvent(bool leftButton, bool rightButton) : _leftButton(leftButton), _rightButton(rightButton) {}
+
+	/**
+	 * Returns true if a keyboard event is pending
+	 */
+	bool isKeyboard() const { return _keyState.keycode != Common::KEYCODE_INVALID; }
+
+	/**
+	 * Returns ture if a mouse button event is pending
+	 */
+	bool isMouse() const { return _leftButton || _rightButton; }
+};
 
 class EventsManager {
 private:
 	XeenEngine *_vm;
 	uint32 _frameCounter;
 	uint32 _priorFrameCounterTime;
+	uint32 _priorScreenRefreshTime;
 	uint32 _gameCounter;
 	uint32 _gameCounters[6];
-	Common::KeyState _key;
+	uint32 _playTime;
+	Common::Queue<PendingEvent> _pendingEvents;
 	SpriteResource _sprites;
+	bool _mousePressed;
 
 	/**
 	 * Handles moving to the next game frame
 	 */
 	void nextFrame();
 public:
-	bool _leftButton, _rightButton;
 	Common::Point _mousePos;
 public:
 	EventsManager(XeenEngine *vm);
-
 	~EventsManager();
 
 	/*
@@ -75,17 +100,45 @@ public:
 	 */
 	bool isCursorVisible();
 
+	/**
+	 * Polls the ScummVM backend for any pending events
+	 */
 	void pollEvents();
 
+	/**
+	 * Polls for events, and wait a slight delay. This ensures the game doesn't use up 100% of the CPU
+	 */
 	void pollEventsAndWait();
 
+	/**
+	 * Clears all pending events
+	 */
 	void clearEvents();
 
+	/**
+	 * Waits for a mouse press to be released
+	 */
 	void debounceMouse();
 
-	bool getKey(Common::KeyState &key);
+	/**
+	 * Adds a keyboard event to the queue
+	 */
+	void addEvent(const Common::KeyState &keyState);
 
-	bool isKeyPending() const;
+	/**
+	 * Adds a mouse button event to the queue
+	 */
+	void addEvent(bool leftButton, bool rightButton);
+
+	/**
+	 * Returns the next pending key/mouse press, if any
+	 */
+	bool getEvent(PendingEvent &pe);
+
+	/**
+	 * Returns true if a key or mouse event is pending
+	 */
+	bool isEventPending() const { return !_pendingEvents.empty(); }
 
 	/**
 	 * Returns true if a key or mouse press is pending
@@ -106,15 +159,36 @@ public:
 	uint32 timeElapsed4() const { return _frameCounter - _gameCounters[4]; }
 	uint32 timeElapsed5() const { return _frameCounter - _gameCounters[5]; }
 	uint32 getTicks() { return _frameCounter; }
+	uint32 playTime() const { return _playTime; }
+	void setPlayTime(uint32 time) { _playTime = time; }
 
+	/**
+	 * Waits for a given number of frames
+	 * @param numFrames			Number of frames to wait
+	 * @param interruptable		If set, aborts if the mouse or a key is pressed
+	 * @returns		True if the wait was aborted
+	 */
 	bool wait(uint numFrames, bool interruptable = true);
 
+	/**
+	 * Pause for a set amount
+	 */
 	void ipause(uint amount);
-};
 
-class GameEvent {
-public:
-	GameEvent();
+	/**
+	 * Pauses a set amount past the previous call to timeMark5
+	 */
+	void ipause5(uint amount);
+
+	/**
+	 * Waits for a key or mouse press, animating the 3d view in the background
+	 */
+	void waitForPressAnimated();
+
+	/**
+	 * Waits for a key or mouse press
+	 */
+	void waitForPress();
 };
 
 } // End of namespace Xeen

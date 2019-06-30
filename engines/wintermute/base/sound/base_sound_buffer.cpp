@@ -33,7 +33,9 @@
 #include "engines/wintermute/wintermute.h"
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
+#ifdef USE_VORBIS
 #include "audio/decoders/vorbis.h"
+#endif
 #include "audio/decoders/wave.h"
 #include "audio/decoders/raw.h"
 #include "common/system.h"
@@ -103,7 +105,11 @@ bool BaseSoundBuffer::loadFromFile(const Common::String &filename, bool forceRel
 	Common::String strFilename(filename);
 	strFilename.toLowercase();
 	if (strFilename.hasSuffix(".ogg")) {
+#ifdef USE_VORBIS
 		_stream = Audio::makeVorbisStream(_file, DisposeAfterUse::YES);
+#else
+		error("BSoundBuffer::LoadFromFile - Ogg Vorbis not supported by this version of ScummVM (please report as this shouldn't trigger)");
+#endif
 	} else if (strFilename.hasSuffix(".wav")) {
 		int waveSize, waveRate;
 		byte waveFlags;

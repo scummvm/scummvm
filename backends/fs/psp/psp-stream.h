@@ -69,7 +69,7 @@ public:
 	PspIoStream(const Common::String &path, bool writeMode);
 	virtual ~PspIoStream();
 
-	void * open();		// open the file pointed to by the file path
+	SceUID open();		// open the file pointed to by the file path
 
 	bool err() const;
 	void clearErr();

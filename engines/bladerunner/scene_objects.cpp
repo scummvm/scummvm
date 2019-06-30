@@ -25,8 +25,8 @@
 #include "bladerunner/bladerunner.h"
 
 #include "bladerunner/obstacles.h"
+#include "bladerunner/savefile.h"
 #include "bladerunner/view.h"
-
 
 namespace BladeRunner {
 
@@ -35,50 +35,45 @@ SceneObjects::SceneObjects(BladeRunnerEngine *vm, View *view) {
 	_view = view;
 
 	_count = 0;
-	_sceneObjects = new SceneObject[SCENE_OBJECTS_COUNT];
-	_sceneObjectsSortedByDistance = new int[SCENE_OBJECTS_COUNT];
 
-	for (int i = 0; i < SCENE_OBJECTS_COUNT; ++i) {
-		_sceneObjectsSortedByDistance[i] = -1;
-	}
+	clear();
 }
 
 SceneObjects::~SceneObjects() {
 	_vm = nullptr;
 	_view = nullptr;
 	_count = 0;
-
-	delete[] _sceneObjectsSortedByDistance;
-	delete[] _sceneObjects;
 }
 
 void SceneObjects::clear() {
-	for (int i = 0; i < SCENE_OBJECTS_COUNT; ++i) {
-		_sceneObjects[i]._sceneObjectId = -1;
-		_sceneObjects[i]._sceneObjectType = SceneObjectTypeUnknown;
-		_sceneObjects[i]._distanceToCamera = 0;
-		_sceneObjects[i]._present = 0;
-		_sceneObjects[i]._isClickable = 0;
-		_sceneObjects[i]._isObstacle = 0;
-		_sceneObjects[i]._unknown1 = 0;
-		_sceneObjects[i]._isTarget = 0;
-		_sceneObjects[i]._isMoving = 0;
-		_sceneObjects[i]._isRetired = 0;
+	for (int i = 0; i < kSceneObjectCount; ++i) {
+		_sceneObjects[i].id               = -1;
+		_sceneObjects[i].type             = kSceneObjectTypeUnknown;
+		_sceneObjects[i].distanceToCamera = 0.0f;
+		_sceneObjects[i].isPresent        = false;
+		_sceneObjects[i].isClickable      = false;
+		_sceneObjects[i].isObstacle       = false;
+		_sceneObjects[i].unknown1         = 0;
+		_sceneObjects[i].isTarget         = false;
+		_sceneObjects[i].isMoving         = false;
+		_sceneObjects[i].isRetired        = false;
+
+		_sceneObjectsSortedByDistance[i]  = -1;
 	}
 	_count = 0;
 }
 
-bool SceneObjects::addActor(int sceneObjectId, BoundingBox *boundingBox, Common::Rect *screenRectangle, uint8 isClickable, uint8 isMoving, uint8 isTarget, uint8 isRetired) {
-	return addSceneObject(sceneObjectId, SceneObjectTypeActor, boundingBox, screenRectangle, isClickable, 0, 0, isTarget, isMoving, isRetired);
+bool SceneObjects::addActor(int sceneObjectId, const BoundingBox &boundingBox, const Common::Rect &screenRectangle, bool isClickable, bool isMoving, bool isTarget, bool isRetired) {
+	return addSceneObject(sceneObjectId, kSceneObjectTypeActor, boundingBox, screenRectangle, isClickable, false, 0, isTarget, isMoving, isRetired);
 }
 
-bool SceneObjects::addObject(int sceneObjectId, BoundingBox *boundingBox, uint8 isClickable, uint8 isObstacle, uint8 unknown1, uint8 isTarget) {
+bool SceneObjects::addObject(int sceneObjectId, const BoundingBox &boundingBox, bool isClickable, bool isObstacle, uint8 unknown1, bool isTarget) {
 	Common::Rect rect(-1, -1, -1, -1);
-	return addSceneObject(sceneObjectId, SceneObjectTypeObject, boundingBox, &rect, isClickable, isObstacle, unknown1, isTarget, 0, 0);
+	return addSceneObject(sceneObjectId, kSceneObjectTypeObject, boundingBox, rect, isClickable, isObstacle, unknown1, isTarget, false, false);
 }
 
-bool SceneObjects::addItem(int sceneObjectId, BoundingBox *boundingBox, Common::Rect *screenRectangle, uint8 isTarget, uint8 isObstacle) {
-	return addSceneObject(sceneObjectId, SceneObjectTypeItem, boundingBox, screenRectangle, isObstacle, 0, 0, isTarget, 0, 0);
+bool SceneObjects::addItem(int sceneObjectId, const BoundingBox &boundingBox, const Common::Rect &screenRectangle, bool isTarget, bool isObstacle) {
+	return addSceneObject(sceneObjectId, kSceneObjectTypeItem, boundingBox, screenRectangle, isObstacle, 0, 0, isTarget, 0, 0);
 }
 
 bool SceneObjects::remove(int sceneObjectId) {
@@ -86,7 +81,7 @@ bool SceneObjects::remove(int sceneObjectId) {
 	if (i == -1) {
 		return false;
 	}
-	_sceneObjects[i]._present = 0;
+	_sceneObjects[i].isPresent = false;
 	int j;
 	for (j = 0; j < _count; ++j) {
 		if (_sceneObjectsSortedByDistance[j] == i) {
@@ -101,31 +96,31 @@ bool SceneObjects::remove(int sceneObjectId) {
 	return true;
 }
 
-int SceneObjects::findByXYZ(int *isClickable, int *isObstacle, int *isTarget, float x, float y, float z, int findClickables, int findObstacles, int findTargets) {
-	*isClickable = 0;
-	*isObstacle = 0;
-	*isTarget = 0;
+int SceneObjects::findByXYZ(bool *isClickable, bool *isObstacle, bool *isTarget, Vector3 &position, bool findClickables, bool findObstacles, bool findTargets) const {
+	*isClickable = false;
+	*isObstacle  = false;
+	*isTarget    = false;
 
 	for (int i = 0; i < _count; ++i) {
-		assert(_sceneObjectsSortedByDistance[i] < SCENE_OBJECTS_COUNT);
+		assert(_sceneObjectsSortedByDistance[i] < kSceneObjectCount);
 
-		SceneObject &sceneObject = _sceneObjects[_sceneObjectsSortedByDistance[i]];
+		const SceneObject *sceneObject = &_sceneObjects[_sceneObjectsSortedByDistance[i]];
 
-		if ((findClickables && sceneObject._isClickable) ||
-			(findObstacles  && sceneObject._isObstacle) ||
-			(findTargets    && sceneObject._isTarget)) {
-			BoundingBox boundingBox = sceneObject._boundingBox;
+		if ((findClickables && sceneObject->isClickable) ||
+			(findObstacles  && sceneObject->isObstacle) ||
+			(findTargets    && sceneObject->isTarget)) {
+			BoundingBox boundingBox = sceneObject->boundingBox;
 
-			if (sceneObject._sceneObjectType == SceneObjectTypeObject || sceneObject._sceneObjectType == SceneObjectTypeItem) {
+			if (sceneObject->type == kSceneObjectTypeActor) {
 				boundingBox.expand(-4.0, 0.0, -4.0, 4.0, 0.0, 4.0);
 			}
 
-			if (boundingBox.inside(x, y, z)) {
-				*isClickable = sceneObject._isClickable;
-				*isObstacle = sceneObject._isObstacle;
-				*isTarget = sceneObject._isTarget;
+			if (boundingBox.inside(position)) {
+				*isClickable = sceneObject->isClickable;
+				*isObstacle  = sceneObject->isObstacle;
+				*isTarget    = sceneObject->isTarget;
 
-				return sceneObject._sceneObjectId;
+				return sceneObject->id;
 			}
 		}
 	}
@@ -133,34 +128,49 @@ int SceneObjects::findByXYZ(int *isClickable, int *isObstacle, int *isTarget, fl
 	return -1;
 }
 
-bool SceneObjects::existsOnXZ(int exceptSceneObjectId, float x, float z, bool a5, bool a6) {
+bool SceneObjects::existsOnXZ(int exceptSceneObjectId, float x, float z, bool movingActorIsObstacle, bool standingActorIsObstacle) const {
 	float xMin = x - 12.5f;
 	float xMax = x + 12.5f;
 	float zMin = z - 12.5f;
 	float zMax = z + 12.5f;
 
-	int count = this->_count;
+	int count = _count;
 
 	if (count > 0) {
 		for (int i = 0; i < count; i++) {
-			SceneObject *sceneObject = &this->_sceneObjects[this->_sceneObjectsSortedByDistance[i]];
-			bool v13 = false;
-			if (sceneObject->_sceneObjectType == SceneObjectTypeActor) {
-				if (sceneObject->_isRetired) {
-					v13 = false;
-				} else if (sceneObject->_isMoving) {
-					v13 = a5 != 0;
+			const SceneObject *sceneObject = &_sceneObjects[_sceneObjectsSortedByDistance[i]];
+			bool isObstacle = false;
+			if (sceneObject->type == kSceneObjectTypeActor) {
+				if (sceneObject->isRetired) {
+					isObstacle = false;
+				} else if (sceneObject->isMoving) {
+					isObstacle = movingActorIsObstacle;
 				} else {
-					v13 = a6 != 0;
+					isObstacle = standingActorIsObstacle;
 				}
 			} else {
-				v13 = sceneObject->_isObstacle;
+				isObstacle = sceneObject->isObstacle;
 			}
 
-			if (v13 && sceneObject->_sceneObjectId != exceptSceneObjectId) {
+			if (isObstacle && sceneObject->id != exceptSceneObjectId) {
 				float x1, y1, z1, x2, y2, z2;
-				sceneObject->_boundingBox.getXYZ(&x1, &y1, &z1, &x2, &y2, &z2);
+				sceneObject->boundingBox.getXYZ(&x1, &y1, &z1, &x2, &y2, &z2);
 				if (z1 <= zMax && z2 >= zMin && x1 <= xMax && x2 >= xMin) {
+//					if (sceneObject->type == kSceneObjectTypeObject) {
+//						Vector3 a(x1,y1,z1);
+//						Vector3 b(x2,y2,z2);
+//						Vector3 pos = _vm->_view->calculateScreenPosition(0.5 * (a + b));
+//						debug("%d: %s (Clk: %s, Trg: %s, Prs: %s, Obs: %s, Mvg: %s), Pos(%02.2f,%02.2f,%02.2f)\n     Bbox(%02.2f,%02.2f,%02.2f) ~ (%02.2f,%02.2f,%02.2f)\n",
+//								 sceneObject->id - kSceneObjectOffsetObjects,
+//								 _vm->_scene->objectGetName(sceneObject->id - kSceneObjectOffsetObjects).c_str(),
+//								 sceneObject->isClickable? "T" : "F",
+//								 sceneObject->isTarget?    "T" : "F",
+//								 sceneObject->isPresent?   "T" : "F",
+//								 sceneObject->isObstacle?  "T" : "F",
+//								 sceneObject->isMoving?    "T" : "F",
+//								 pos.x, pos.y, pos.z,
+//								 a.x, a.y, a.z, b.x, b.y, b.z);
+//					}
 					return true;
 				}
 			}
@@ -169,48 +179,48 @@ bool SceneObjects::existsOnXZ(int exceptSceneObjectId, float x, float z, bool a5
 	return false;
 }
 
-int SceneObjects::findById(int sceneObjectId) {
+int SceneObjects::findById(int sceneObjectId) const {
 	for (int i = 0; i < _count; ++i) {
 		int j = this->_sceneObjectsSortedByDistance[i];
 
-		if (_sceneObjects[j]._present && _sceneObjects[j]._sceneObjectId == sceneObjectId) {
+		if (_sceneObjects[j].isPresent && _sceneObjects[j].id == sceneObjectId) {
 			return j;
 		}
 	}
 	return -1;
 }
 
-bool SceneObjects::addSceneObject(int sceneObjectId, SceneObjectType sceneObjectType, BoundingBox *boundingBox, Common::Rect *screenRectangle, uint8 isClickable, uint8 isObstacle, uint8 unknown1, uint8 isTarget, uint isMoving, uint isRetired) {
+bool SceneObjects::addSceneObject(int sceneObjectId, SceneObjectType sceneObjectType, const BoundingBox &boundingBox, const Common::Rect &screenRectangle, bool isClickable, bool isObstacle, uint8 unknown1, bool isTarget, bool isMoving, bool isRetired) {
 	int index = findEmpty();
 	if (index == -1) {
 		return false;
 	}
 
-	_sceneObjects[index]._sceneObjectId = sceneObjectId;
-	_sceneObjects[index]._sceneObjectType = sceneObjectType;
-	_sceneObjects[index]._present = 1;
-	_sceneObjects[index]._boundingBox = *boundingBox;
-	_sceneObjects[index]._screenRectangle = *screenRectangle;
-	_sceneObjects[index]._isClickable = isClickable;
-	_sceneObjects[index]._isObstacle = isObstacle;
-	_sceneObjects[index]._unknown1 = unknown1;
-	_sceneObjects[index]._isTarget = isTarget;
-	_sceneObjects[index]._isMoving = isMoving;
-	_sceneObjects[index]._isRetired = isRetired;
+	_sceneObjects[index].id              = sceneObjectId;
+	_sceneObjects[index].type            = sceneObjectType;
+	_sceneObjects[index].isPresent       = true;
+	_sceneObjects[index].boundingBox     = boundingBox;
+	_sceneObjects[index].screenRectangle = screenRectangle;
+	_sceneObjects[index].isClickable     = isClickable;
+	_sceneObjects[index].isObstacle      = isObstacle;
+	_sceneObjects[index].unknown1        = unknown1;
+	_sceneObjects[index].isTarget        = isTarget;
+	_sceneObjects[index].isMoving        = isMoving;
+	_sceneObjects[index].isRetired       = isRetired;
 
-	float centerZ = (_sceneObjects[index]._boundingBox.getZ0() + _sceneObjects[index]._boundingBox.getZ1()) / 2.0;
+	float centerZ = (_sceneObjects[index].boundingBox.getZ0() + _sceneObjects[index].boundingBox.getZ1()) / 2.0f;
 
-	float distanceToCamera = fabs(_view->_cameraPosition.z - centerZ);
-	_sceneObjects[index]._distanceToCamera = distanceToCamera;
+	float distanceToCamera = fabs(-centerZ - _view->_cameraPosition.y); // y<->z is intentional, not a bug
+	_sceneObjects[index].distanceToCamera = distanceToCamera;
 
 	// insert according to distance from camera
 	int i;
 	for (i = 0; i < _count; ++i) {
-		if (distanceToCamera < _sceneObjects[_sceneObjectsSortedByDistance[i]]._distanceToCamera) {
+		if (distanceToCamera < _sceneObjects[_sceneObjectsSortedByDistance[i]].distanceToCamera) {
 			break;
 		}
 	}
-	for (int j = _count - 2; j >= i; --j) {
+	for (int j = CLIP(_count - 1, 0, kSceneObjectCount - 2); j >= i; --j) {
 		_sceneObjectsSortedByDistance[j + 1] = _sceneObjectsSortedByDistance[j];
 	}
 
@@ -219,9 +229,9 @@ bool SceneObjects::addSceneObject(int sceneObjectId, SceneObjectType sceneObject
 	return true;
 }
 
-int SceneObjects::findEmpty() {
-	for (int i = 0; i < SCENE_OBJECTS_COUNT; ++i) {
-		if (!_sceneObjects[i]._present)
+int SceneObjects::findEmpty() const {
+	for (int i = 0; i < kSceneObjectCount; ++i) {
+		if (!_sceneObjects[i].isPresent)
 			return i;
 	}
 	return -1;
@@ -232,7 +242,7 @@ void SceneObjects::setMoving(int sceneObjectId, bool isMoving) {
 	if (i == -1) {
 		return;
 	}
-	_sceneObjects[i]._isMoving = isMoving;
+	_sceneObjects[i].isMoving = isMoving;
 }
 
 void SceneObjects::setRetired(int sceneObjectId, bool isRetired) {
@@ -240,34 +250,65 @@ void SceneObjects::setRetired(int sceneObjectId, bool isRetired) {
 	if (i == -1) {
 		return;
 	}
-	_sceneObjects[i]._isRetired = isRetired;
+	_sceneObjects[i].isRetired = isRetired;
 }
 
-bool SceneObjects::isBetweenTwoXZ(int sceneObjectId, float x1, float z1, float x2, float z2) {
+bool SceneObjects::isBetween(float sourceX, float sourceZ, float targetX, float targetZ, int sceneObjectId) const {
 	int i = findById(sceneObjectId);
 	if (i == -1) {
 		return false;
 	}
 
 	float objectX1, objectY1, objectZ1, objectX2, objectY2, objectZ2;
-	_sceneObjects[i]._boundingBox.getXYZ(&objectX1, &objectY1, &objectZ1, &objectX2, &objectY2, &objectZ2);
+	_sceneObjects[i].boundingBox.getXYZ(&objectX1, &objectY1, &objectZ1, &objectX2, &objectY2, &objectZ2);
 
-	//TODO
-	//		if (!lineIntersectection(sourceX, sourceZ, targetX, targetZ, objectX1, objectZ1, objectX2, objectZ1, &intersectionX, &intersectionY, &v18)
-	//			&& !lineIntersectection(sourceX, sourceZ, targetX, targetZ, objectX2, objectZ1, objectX2, objectZ2, &intersectionX, &intersectionY, &v18)
-	//			&& !lineIntersectection(sourceX, sourceZ, targetX, targetZ, objectX2, objectZ2, objectX1, objectZ2, &intersectionX, &intersectionY, &v18)
-	//			&& !lineIntersectection(sourceX, sourceZ, targetX, targetZ, objectX1, objectZ2, objectX1, objectZ1, &intersectionX, &intersectionY, &v18))
-	//			return false;
-	return true;
+	Vector2 intersection;
+	return lineIntersection(Vector2(sourceX, sourceZ), Vector2(targetX, targetZ), Vector2(objectX1, objectZ1), Vector2(objectX2, objectZ1), &intersection)
+	    || lineIntersection(Vector2(sourceX, sourceZ), Vector2(targetX, targetZ), Vector2(objectX2, objectZ1), Vector2(objectX2, objectZ2), &intersection)
+	    || lineIntersection(Vector2(sourceX, sourceZ), Vector2(targetX, targetZ), Vector2(objectX2, objectZ2), Vector2(objectX1, objectZ2), &intersection)
+	    || lineIntersection(Vector2(sourceX, sourceZ), Vector2(targetX, targetZ), Vector2(objectX1, objectZ2), Vector2(objectX1, objectZ1), &intersection);
 }
 
+bool SceneObjects::isObstacleBetween(const Vector3 &source, const Vector3 &target, int exceptSceneObjectId) const {
+	for (int i = 0; i < _count; ++i) {
+		const SceneObject *sceneObject = &_sceneObjects[_sceneObjectsSortedByDistance[i]];
+
+		if (sceneObject->type == kSceneObjectTypeActor || !sceneObject->isObstacle || sceneObject->id == exceptSceneObjectId) {
+			continue;
+		}
+
+		float objectX1, objectY1, objectZ1, objectX2, objectY2, objectZ2;
+		sceneObject->boundingBox.getXYZ(&objectX1, &objectY1, &objectZ1, &objectX2, &objectY2, &objectZ2);
+
+		if (84.0f <= objectY1 - source.y || 72.0f >= objectY2 - source.y) {
+			continue;
+		}
+
+		float xAdjustement = (objectX2 - objectX1) * 0.1f;
+		float zAdjustement = (objectZ2 - objectZ1) * 0.1f;
+
+		objectX1 = objectX1 + xAdjustement;
+		objectZ1 = objectZ1 + zAdjustement;
+		objectX2 = objectX2 - xAdjustement;
+		objectZ2 = objectZ2 - zAdjustement;
+
+		Vector2 intersection;
+		if (lineIntersection(Vector2(source.x, source.z), Vector2(target.x, target.z), Vector2(objectX1, objectZ1), Vector2(objectX2, objectZ1), &intersection)
+		 || lineIntersection(Vector2(source.x, source.z), Vector2(target.x, target.z), Vector2(objectX2, objectZ1), Vector2(objectX2, objectZ2), &intersection)
+		 || lineIntersection(Vector2(source.x, source.z), Vector2(target.x, target.z), Vector2(objectX2, objectZ2), Vector2(objectX1, objectZ2), &intersection)
+		 || lineIntersection(Vector2(source.x, source.z), Vector2(target.x, target.z), Vector2(objectX1, objectZ2), Vector2(objectX1, objectZ1), &intersection)) {
+			return true;
+		}
+	}
+	return false;
+}
 
 void SceneObjects::setIsClickable(int sceneObjectId, bool isClickable) {
 	int i = findById(sceneObjectId);
 	if (i == -1) {
 		return;
 	}
-	_sceneObjects[i]._isClickable = isClickable;
+	_sceneObjects[i].isClickable = isClickable;
 }
 
 void SceneObjects::setIsObstacle(int sceneObjectId, bool isObstacle) {
@@ -275,7 +316,7 @@ void SceneObjects::setIsObstacle(int sceneObjectId, bool isObstacle) {
 	if (i == -1) {
 		return;
 	}
-	_sceneObjects[i]._isObstacle = isObstacle;
+	_sceneObjects[i].isObstacle = isObstacle;
 }
 
 void SceneObjects::setIsTarget(int sceneObjectId, bool isTarget) {
@@ -283,22 +324,63 @@ void SceneObjects::setIsTarget(int sceneObjectId, bool isTarget) {
 	if (i == -1) {
 		return;
 	}
-	_sceneObjects[i]._isTarget = isTarget;
+	_sceneObjects[i].isTarget = isTarget;
 }
-
 
 void SceneObjects::updateObstacles() {
 	_vm->_obstacles->clear();
-	for(int i = 0; i < _count; i++) {
+	for (int i = 0; i < _count; ++i) {
 		int index = _sceneObjectsSortedByDistance[i];
-		SceneObject sceneObject = _sceneObjects[index];
-		if(sceneObject._isObstacle) {
+		const SceneObject *sceneObject = &_sceneObjects[index];
+		if (sceneObject->isObstacle) {
 			float x0, y0, z0, x1, y1, z1;
-			sceneObject._boundingBox.getXYZ(&x0, &y0, &z0, &x1, &y1, &z1);
+			sceneObject->boundingBox.getXYZ(&x0, &y0, &z0, &x1, &y1, &z1);
 			_vm->_obstacles->add(x0, z0, x1, z1);
 		}
 	}
 	_vm->_obstacles->backup();
+}
+
+void SceneObjects::save(SaveFileWriteStream &f) {
+	f.writeInt(_count);
+	for (int i = 0; i < kSceneObjectCount; ++i) {
+		f.writeInt(_sceneObjects[i].id);
+		f.writeInt(_sceneObjects[i].type);
+		f.writeBoundingBox(_sceneObjects[i].boundingBox, true);
+		f.writeRect(_sceneObjects[i].screenRectangle);
+		f.writeFloat(_sceneObjects[i].distanceToCamera);
+		f.writeBool(_sceneObjects[i].isPresent);
+		f.writeBool(_sceneObjects[i].isClickable);
+		f.writeBool(_sceneObjects[i].isObstacle);
+		f.writeInt(_sceneObjects[i].unknown1);
+		f.writeBool(_sceneObjects[i].isTarget);
+		f.writeBool(_sceneObjects[i].isMoving);
+		f.writeBool(_sceneObjects[i].isRetired);
+	}
+	for (int i = 0; i < kSceneObjectCount; ++i) {
+		f.writeInt(_sceneObjectsSortedByDistance[i]);
+	}
+}
+
+void SceneObjects::load(SaveFileReadStream &f) {
+	_count = f.readInt();
+	for (int i = 0; i < kSceneObjectCount; ++i) {
+		_sceneObjects[i].id = f.readInt();
+		_sceneObjects[i].type = (SceneObjectType)f.readInt();
+		_sceneObjects[i].boundingBox = f.readBoundingBox(true);
+		_sceneObjects[i].screenRectangle = f.readRect();
+		_sceneObjects[i].distanceToCamera = f.readFloat();
+		_sceneObjects[i].isPresent = f.readBool();
+		_sceneObjects[i].isClickable = f.readBool();
+		_sceneObjects[i].isObstacle = f.readBool();
+		_sceneObjects[i].unknown1 = f.readInt();
+		_sceneObjects[i].isTarget = f.readBool();
+		_sceneObjects[i].isMoving = f.readBool();
+		_sceneObjects[i].isRetired = f.readBool();
+	}
+	for (int i = 0; i < kSceneObjectCount; ++i) {
+		_sceneObjectsSortedByDistance[i] = f.readInt();
+	}
 }
 
 } // End of namespace BladeRunner

@@ -31,20 +31,12 @@
 namespace Parallaction {
 
 GfxObj::GfxObj(uint objType, Frames *frames, const char* name) :
-	_frames(frames), x(0), y(0), z(0), _prog(0), _flags(0),
+	_name(name), _frames(frames), x(0), y(0), z(0), _prog(0), _flags(0),
 	type(objType), frame(0), layer(3), scale(100), _hasMask(false), _hasPath(false),
-	transparentKey(0), _maskId(0), _pathId(0) {
-
-	if (name) {
-		_name = strdup(name);
-	} else {
-		_name = 0;
-	}
-}
+	transparentKey(0), _maskId(0), _pathId(0) {}
 
 GfxObj::~GfxObj() {
 	delete _frames;
-	free(_name);
 }
 
 void GfxObj::release() {
@@ -53,7 +45,7 @@ void GfxObj::release() {
 }
 
 const char *GfxObj::getName() const {
-	return _name;
+	return _name.c_str();
 }
 
 uint GfxObj::getNum() {

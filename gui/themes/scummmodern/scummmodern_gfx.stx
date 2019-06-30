@@ -161,6 +161,23 @@
 				scalable_file = 'FreeMonoBold.ttf'
 				point_size = '8'
 		/>
+		<font	id = 'console'
+				file = 'builtinConsole'
+				scalable_file = 'SourceCodeVariable-Roman.ttf'
+				point_size = '12'
+		/>
+		<font	resolution = 'y<800'
+				id = 'console'
+				file = 'builtinConsole'
+				scalable_file = 'SourceCodeVariable-Roman.ttf'
+				point_size = '10'
+		/>
+		<font	resolution = 'y<400'
+				id = 'console'
+				file = 'builtinConsole'
+				scalable_file = 'SourceCodeVariable-Roman.ttf'
+				point_size = '8'
+		/>
 
 		<text_color	id = 'color_normal'
 				color = 'black'

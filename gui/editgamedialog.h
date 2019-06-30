@@ -40,8 +40,6 @@ class StaticTextWidget;
 class EditTextWidget;
 class SaveLoadChooser;
 
-Common::String addGameToConf(const GameDescriptor &result);
-
 /*
 * A dialog that allows the user to edit a config game entry.
 * TODO: add widgets for some/all of the following
@@ -62,13 +60,15 @@ class EditGameDialog : public OptionsDialog {
 	typedef Common::String String;
 	typedef Common::Array<Common::String> StringArray;
 public:
-	EditGameDialog(const String &domain, const String &desc);
+	EditGameDialog(const String &domain);
 
 	void open();
 	virtual void apply();
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 
 protected:
+	virtual void setupGraphicsTab();
+
 	EditTextWidget *_descriptionWidget;
 	DomainEditTextWidget *_domainWidget;
 

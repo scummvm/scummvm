@@ -23,6 +23,7 @@
 #include "common/events.h"
 #include "common/list.h"
 #include "common/system.h"
+#include "common/timer.h"
 
 #include "graphics/cursorman.h"
 #include "graphics/managed_surface.h"
@@ -144,12 +145,26 @@ static const byte macCursorCrossBar[] = {
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 };
 
+static void menuTimerHandler(void *refCon);
+
 MacWindowManager::MacWindowManager() {
 	_screen = 0;
+	_screenCopy = 0;
 	_lastId = 0;
 	_activeWindow = -1;
+	_needsRemoval = false;
+
+	_mode = kWMModeNone;
 
 	_menu = 0;
+	_menuDelay = 0;
+	_menuTimerActive = false;
+
+	_engine = nullptr;
+	_pauseEngineCallback = nullptr;
+
+	_colorBlack = 0;
+	_colorWhite = 2;
 
 	_fullRefresh = true;
 
@@ -171,6 +186,9 @@ MacWindowManager::~MacWindowManager() {
 		delete _windows[i];
 
 	delete _fontMan;
+	delete _screenCopy;
+
+	g_system->getTimerManager()->removeTimerProc(&menuTimerHandler);
 }
 
 MacWindow *MacWindowManager::addWindow(bool scrollable, bool resizable, bool editable) {
@@ -183,8 +201,8 @@ MacWindow *MacWindowManager::addWindow(bool scrollable, bool resizable, bool edi
 	return w;
 }
 
-MacTextWindow *MacWindowManager::addTextWindow(const MacFont *font, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, MacMenu *menu) {
-	MacTextWindow *w = new MacTextWindow(this, font, fgcolor, bgcolor, maxWidth, textAlignment, menu);
+MacTextWindow *MacWindowManager::addTextWindow(const MacFont *font, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, MacMenu *menu, bool cursorHandler) {
+	MacTextWindow *w = new MacTextWindow(this, font, fgcolor, bgcolor, maxWidth, textAlignment, menu, cursorHandler);
 
 	addWindowInitialized(w);
 
@@ -205,6 +223,20 @@ MacMenu *MacWindowManager::addMenu() {
 	_windows.push_back(_menu);
 
 	return _menu;
+}
+
+void MacWindowManager::activateMenu() {
+	if (!_menu)
+		return;
+
+	_menu->setVisible(true);
+}
+
+bool MacWindowManager::isMenuActive() {
+	if (!_menu)
+		return false;
+
+	return _menu->isVisible();
 }
 
 void MacWindowManager::setActive(int id) {
@@ -267,9 +299,9 @@ void macDrawPixel(int x, int y, int color, void *data) {
 void MacWindowManager::drawDesktop() {
 	Common::Rect r(_screen->getBounds());
 
-	MacPlotData pd(_screen, &_patterns, kPatternCheckers, 1);
+	MacPlotData pd(_screen, &_patterns, kPatternCheckers, 1, _colorWhite);
 
-	Graphics::drawRoundRect(r, kDesktopArc, kColorBlack, true, macDrawPixel, &pd);
+	Graphics::drawRoundRect(r, kDesktopArc, _colorBlack, true, macDrawPixel, &pd);
 
 	g_system->copyRectToScreen(_screen->getPixels(), _screen->pitch, 0, 0, _screen->w, _screen->h);
 }
@@ -279,7 +311,7 @@ void MacWindowManager::draw() {
 
 	removeMarked();
 
-	if (_fullRefresh)
+	if (_fullRefresh && !(_mode & kWMModeNoDesktop))
 		drawDesktop();
 
 	for (Common::List<BaseMacWindow *>::const_iterator it = _windowStack.begin(); it != _windowStack.end(); it++) {
@@ -303,21 +335,55 @@ void MacWindowManager::draw() {
 	_fullRefresh = false;
 }
 
+static void menuTimerHandler(void *refCon) {
+	MacWindowManager *wm = (MacWindowManager *)refCon;
+
+	if (wm->_menuHotzone.contains(wm->_lastMousePos)) {
+		wm->activateMenu();
+		if (wm->_mode & kWMModalMenuMode) {
+			if (!wm->_screenCopy)
+				wm->_screenCopy = new ManagedSurface(*wm->_screen);	// Create a copy
+			else
+				*wm->_screenCopy = *wm->_screen;
+			wm->pauseEngine(true);
+		}
+	}
+
+	wm->_menuTimerActive = false;
+
+	g_system->getTimerManager()->removeTimerProc(&menuTimerHandler);
+}
+
 bool MacWindowManager::processEvent(Common::Event &event) {
+	if (event.type == Common::EVENT_MOUSEMOVE)
+		_lastMousePos = event.mouse;
+
+	if (_menu && !_menu->isVisible()) {
+		if ((_mode & kWMModeAutohideMenu) && event.type == Common::EVENT_MOUSEMOVE) {
+			if (!_menuTimerActive && _menuHotzone.contains(event.mouse)) {
+				_menuTimerActive = true;
+
+				g_system->getTimerManager()->installTimerProc(&menuTimerHandler, _menuDelay, this, "menuWindowCursor");
+			}
+		}
+	}
+
 	// Menu gets events first for shortcuts and menu bar
 	if (_menu && _menu->processEvent(event))
 		return true;
 
-	if (_windows[_activeWindow]->isEditable() && _windows[_activeWindow]->getType() == kWindowWindow &&
-			((MacWindow *)_windows[_activeWindow])->getInnerDimensions().contains(event.mouse.x, event.mouse.y)) {
-		if (_cursorIsArrow) {
-			CursorMan.replaceCursor(macCursorBeam, 11, 16, 3, 8, 3);
-			_cursorIsArrow = false;
-		}
-	} else {
-		if (_cursorIsArrow == false) {
-			CursorMan.replaceCursor(macCursorArrow, 11, 16, 1, 1, 3);
-			_cursorIsArrow = true;
+	if (_activeWindow != -1) {
+		if (_windows[_activeWindow]->isEditable() && _windows[_activeWindow]->getType() == kWindowWindow &&
+				((MacWindow *)_windows[_activeWindow])->getInnerDimensions().contains(event.mouse.x, event.mouse.y)) {
+			if (_cursorIsArrow) {
+				CursorMan.replaceCursor(macCursorBeam, 11, 16, 3, 8, 3);
+				_cursorIsArrow = false;
+			}
+		} else {
+			if (_cursorIsArrow == false) {
+				CursorMan.replaceCursor(macCursorArrow, 11, 16, 1, 1, 3);
+				_cursorIsArrow = true;
+			}
 		}
 	}
 
@@ -401,5 +467,64 @@ void MacWindowManager::popCursor() {
 	CursorMan.popCursor();
 }
 
+///////////////////
+// Palette stuff
+///////////////////
+void MacWindowManager::passPalette(const byte *pal, uint size) {
+	const byte *p = pal;
+
+	_colorWhite = -1;
+	_colorBlack = -1;
+
+	// Search pure white and black colors
+	for (uint i = 0; i < size; i++) {
+		if (_colorWhite == -1 && p[0] == 0xff && p[1] == 0xff && p[2] == 0xff)
+			_colorWhite = i;
+
+
+		if (_colorBlack == -1 && p[0] == 0x00 && p[1] == 0x00 && p[2] == 0x00)
+			_colorBlack = i;
+
+		p += 3;
+	}
+
+	if (_colorWhite != -1 && _colorBlack != -1)
+		return;
+
+	// We did not find some color. Let's find closest approximations
+	float darkest = 1000.0f, brightest = -1.0f;
+	int di = -1, bi = -1;
+	p = pal;
+
+	for (uint i = 0; i < size; i++) {
+		float gray = p[0] * 0.3f + p[1] * 0.59f + p[2] * 0.11f;
+
+		if (darkest > gray) {
+			darkest = gray;
+			di = i;
+		}
+
+		if (brightest < gray) {
+			brightest = gray;
+			bi = i;
+		}
+
+		p += 3;
+	}
+
+	_colorWhite = bi;
+	_colorBlack = di;
+}
+
+void MacWindowManager::pauseEngine(bool pause) {
+	if (_engine && _pauseEngineCallback) {
+		_pauseEngineCallback(_engine, pause);
+	}
+}
+
+void MacWindowManager::setEnginePauseCallback(void *engine, void (*pauseCallback)(void *, bool)) {
+	_engine = engine;
+	_pauseEngineCallback = pauseCallback;
+}
 
 } // End of namespace Graphics

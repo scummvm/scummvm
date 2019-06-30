@@ -26,6 +26,8 @@
 #include "titanic/star_control/surface_area.h"
 #include "titanic/titanic.h"
 
+#include "common/math.h"
+
 namespace Titanic {
 
 #define MKTAG_BE(a3,a2,a1,a0) ((uint32)((a3) | ((a2) << 8) | ((a1) << 16) | ((a0) << 24)))
@@ -65,13 +67,12 @@ bool CStarCloseup::setup() {
 }
 
 bool CStarCloseup::setup2(int val1, int val2) {
-	const float FACTOR = 2 * M_PI / 360.0;
 	const int VALUES1[] = { 0x800, 0xC00, 0x1000, 0x1400, 0x1800 };
 	const int VALUES2[] = {
 		0xF95BCD, 0xA505A0, 0xFFAD43, 0x98F4EB, 0xF3EFA5, 0,
-		0xFFFFFF, 0x81EEF5, 0x5FFD3, 0x4EE4FA, 0x11C3FF, 0x28F3F4, 
-		0x36FCF2, 0x29F1FD, 0x29BCFD, 0x98E3F4, 0xBBF3D9, 0x8198F5, 
-		0x5BE4F9, 0x0D6E2, 0x74EEF6, 0x68DEF8 
+		0xFFFFFF, 0x81EEF5, 0x5FFD3, 0x4EE4FA, 0x11C3FF, 0x28F3F4,
+		0x36FCF2, 0x29F1FD, 0x29BCFD, 0x98E3F4, 0xBBF3D9, 0x8198F5,
+		0x5BE4F9, 0x0D6E2, 0x74EEF6, 0x68DEF8
 	};
 
 	Entry *e = &_entries[0];
@@ -83,7 +84,7 @@ bool CStarCloseup::setup2(int val1, int val2) {
 			e->_pixel3 = 0x40;
 			e->_field8 = g_vm->getRandomNumber(3) + 3;
 			e->_fieldC = g_vm->getRandomNumber(255);
-			e->_field10 = FACTOR * 7.0;
+			e->_field10 = Common::deg2rad<double>(7.0);
 			e->_field14 = 0.0084687499;
 
 			++e;
@@ -93,7 +94,7 @@ bool CStarCloseup::setup2(int val1, int val2) {
 			e->_pixel3 = 0;
 			e->_field8 = g_vm->getRandomNumber(3) + 3;
 			e->_fieldC = g_vm->getRandomNumber(255);
-			e->_field10 = FACTOR * 3.0;
+			e->_field10 = Common::deg2rad<double>(3.0);
 			e->_field14 = 0.021011719;
 
 			++e;
@@ -113,7 +114,7 @@ bool CStarCloseup::setup2(int val1, int val2) {
 			e->_pixel3 = 0;
 			e->_field8 = g_vm->getRandomNumber(3) + 3;
 			e->_fieldC = g_vm->getRandomNumber(255);
-			e->_field10 = FACTOR * 2.0;
+			e->_field10 = Common::deg2rad<double>(2.0);
 			e->_field14 = 0.01178125;
 
 			++e;
@@ -123,7 +124,7 @@ bool CStarCloseup::setup2(int val1, int val2) {
 			e->_pixel3 = 0;
 			e->_field8 = g_vm->getRandomNumber(3) + 3;
 			e->_fieldC = g_vm->getRandomNumber(255);
-			e->_field10 = FACTOR * 1.0;
+			e->_field10 = Common::deg2rad<double>(1.0);
 			e->_field14 = 0.24791406;
 
 			++e;
@@ -133,7 +134,7 @@ bool CStarCloseup::setup2(int val1, int val2) {
 			e->_pixel3 = 0xe6;
 			e->_field8 = g_vm->getRandomNumber(3) + 3;
 			e->_fieldC = g_vm->getRandomNumber(255);
-			e->_field10 = FACTOR * 3.0;
+			e->_field10 = Common::deg2rad<double>(3.0);
 			e->_field14 = 0.20832032;
 
 			++e;
@@ -143,7 +144,7 @@ bool CStarCloseup::setup2(int val1, int val2) {
 			e->_pixel3 = 0x28;
 			e->_field8 = g_vm->getRandomNumber(3) + 3;
 			e->_fieldC = g_vm->getRandomNumber(255);
-			e->_field10 = FACTOR * 1.0;
+			e->_field10 = Common::deg2rad<double>(1.0);
 			e->_field14 = 0.088164061;
 
 			++e;
@@ -153,7 +154,7 @@ bool CStarCloseup::setup2(int val1, int val2) {
 			e->_pixel3 = 0xf0;
 			e->_field8 = g_vm->getRandomNumber(3) + 3;
 			e->_fieldC = g_vm->getRandomNumber(255);
-			e->_field10 = FACTOR * 2.0;
+			e->_field10 = Common::deg2rad<double>(2.0);
 			e->_field14 = 0.084375001;
 
 			++e;
@@ -163,7 +164,7 @@ bool CStarCloseup::setup2(int val1, int val2) {
 			e->_pixel3 = 0x20;
 			e->_field8 = g_vm->getRandomNumber(3) + 3;
 			e->_fieldC = g_vm->getRandomNumber(255);
-			e->_field10 = FACTOR * 17.0;
+			e->_field10 = Common::deg2rad<double>(17.0);
 			e->_field14 = 1 / 256.0;
 		} else {
 			for (int ctr = 0; ctr < 5; ++ctr) {
@@ -174,9 +175,8 @@ bool CStarCloseup::setup2(int val1, int val2) {
 				e->_pixel2 = (val >> 8) & 0xff;
 				e->_pixel3 = (val >> 16) & 0xff;
 				e->_field8 = g_vm->getRandomNumber(3) + 3;
-				
 				e->_fieldC = g_vm->getRandomNumber(255);
-				e->_field10 = FACTOR * (float)g_vm->getRandomNumber(15);
+				e->_field10 = Common::deg2rad<double>((double)g_vm->getRandomNumber(15));
 				e->_field14 = ((float)g_vm->getRandomNumber(0xfffffffe)
 					* 50.0 / 65536.0) / 256.0;
 			}
@@ -293,7 +293,7 @@ void CStarCloseup::draw(const FPose &pose, const FVector &vector, const FVector 
 			}
 
 			switch (starColor) {
-			case WHITE: 
+			case WHITE:
 				surfaceArea->setMode(SA_SOLID);
 				surfaceArea->_pixel = MKTAG_BE(entryP->_pixel1, entryP->_pixel2,
 					entryP->_pixel3, 0);
@@ -424,7 +424,7 @@ void CStarCloseup::draw(const FPose &pose, const FVector &vector, const FVector 
 				surfaceArea->drawLine(FRect(grid1._position._x, grid1._position._y,
 					grid2._position._x, grid2._position._y));
 			}
-		}		
+		}
 		break;
 	case PINK:
 		surfaceArea->setMode(SA_SOLID);
@@ -492,7 +492,6 @@ bool CStarCloseup::setupEntry(int width, int height, int index, float val) {
 	SubEntry &entry = _array[index];
 	entry.clear();
 
-	const float FACTOR = 2.0 * M_PI / 360.0;
 	int d1Count, d2Count, size3, height1;
 	int ctr, ctr2, idx, incr;
 	float vx, vy, yVal, degrees, cosVal, sinVal, angle;
@@ -511,12 +510,12 @@ bool CStarCloseup::setupEntry(int width, int height, int index, float val) {
 
 	for (ctr = height - 2, idx = 1, yVal = vy; ctr > 0; --ctr, yVal += vy) {
 		degrees = 0.0;
-		cosVal = cos(yVal * FACTOR);
-		sinVal = sin(yVal * FACTOR);
+		cosVal = cos(Common::deg2rad<float>(yVal));
+		sinVal = sin(Common::deg2rad<float>(yVal));
 
 		if (width > 0) {
 			for (int xCtr = 0; xCtr < width; ++xCtr, ++idx, degrees += vx) {
-				angle = degrees * FACTOR;
+				angle = Common::deg2rad<float>(degrees);
 
 				FVector &tempV = entry._data2[idx];
 				tempV._x = sin(angle) * sinVal * val;

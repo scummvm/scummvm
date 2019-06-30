@@ -257,6 +257,8 @@ reg_t kDoAudio(EngineState *s, int argc, reg_t *argv) {
 			debugC(kDebugLevelSound, "kDoAudio: CD audio subop");
 			return kDoCdAudio(s, argc - 1, argv + 1);
 		}
+		// fall through
+		// FIXME: fall through intended?
 
 		// 3 new subops in Pharkas CD (including CD demo). kDoAudio in Pharkas sits at seg026:038C
 	case 11:
