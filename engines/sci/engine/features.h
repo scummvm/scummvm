@@ -164,19 +164,6 @@ public:
 	inline bool usesAlternateSelectors() const {
 		return g_sci->getGameId() == GID_PHANTASMAGORIA2;
 	}
-
-	inline bool hasEmptyScaleDrawHack() const {
-		// Yes: KQ7 (all), PQ4CD, QFG4CD, SQ6, Phant1
-		// No: All SCI2, all SCI3, GK2, LSL6hires, PQ:SWAT, Torin
-		// Unknown: Hoyle5, MGDX, Shivers
-		const SciGameId &gid = g_sci->getGameId();
-		return getSciVersion() > SCI_VERSION_2 &&
-			getSciVersion() < SCI_VERSION_2_1_LATE &&
-			gid != GID_LSL6HIRES &&
-			gid != GID_GK2 &&
-			gid != GID_PQSWAT &&
-			gid != GID_TORIN;
-	}
 #endif
 
 	/**

@@ -857,9 +857,8 @@ void CelObj::drawUncompHzFlipNoMDNoSkip(Buffer &target, const Common::Rect &targ
 void CelObj::scaleDrawNoMD(Buffer &target, const Ratio &scaleX, const Ratio &scaleY, const Common::Rect &targetRect, const Common::Point &scaledPosition) const {
 	// In SSCI the checks are > because their rects are BR-inclusive; our checks
 	// are >= because our rects are BR-exclusive
-	if (g_sci->_features->hasEmptyScaleDrawHack() &&
-		(targetRect.left >= targetRect.right ||
-		 targetRect.top >= targetRect.bottom)) {
+	if (targetRect.left >= targetRect.right ||
+		 targetRect.top >= targetRect.bottom) {
 		return;
 	}
 
@@ -872,9 +871,8 @@ void CelObj::scaleDrawNoMD(Buffer &target, const Ratio &scaleX, const Ratio &sca
 void CelObj::scaleDrawUncompNoMD(Buffer &target, const Ratio &scaleX, const Ratio &scaleY, const Common::Rect &targetRect, const Common::Point &scaledPosition) const {
 	// In SSCI the checks are > because their rects are BR-inclusive; our checks
 	// are >= because our rects are BR-exclusive
-	if (g_sci->_features->hasEmptyScaleDrawHack() &&
-		(targetRect.left >= targetRect.right ||
-		 targetRect.top >= targetRect.bottom)) {
+	if (targetRect.left >= targetRect.right ||
+		 targetRect.top >= targetRect.bottom) {
 		return;
 	}
 
