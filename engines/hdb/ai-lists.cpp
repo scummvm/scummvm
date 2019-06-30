@@ -699,7 +699,7 @@ void AI::addToPathList(int x, int y, int type, AIDir dir) {
 
 	arrowPath->type = type;
 	arrowPath->tileX = x;
-	arrowPath->tileX = y;
+	arrowPath->tileY = y;
 	arrowPath->dir = dir;
 
 	_arrowPaths->push_back(arrowPath);
