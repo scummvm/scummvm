@@ -26,6 +26,7 @@
 #include "audio/mixer.h"
 
 #include "common/hash-str.h"
+#include "common/ptr.h"
 
 namespace Common {
 class SeekableReadStream;
