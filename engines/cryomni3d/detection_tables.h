@@ -178,6 +178,57 @@ static const CryOmni3DGameDescription gameDescriptions[] = {
 		GF_VERSAILLES_AUDIOPADDING,
 	},
 
+	// Versailles 1685
+	// Spanish Windows 95 from hybrid Win95/DOS CD
+	// From lePhilousophe
+	{
+		{
+			"versailles",
+			"",
+			AD_ENTRY1s("VERSAILL.EXE", "78d90d656ec3b76f158721d38bc68083", 346112),
+			Common::ES_ESP,
+			Common::kPlatformWindows,
+			ADGF_UNSTABLE,
+			GUI_OPTIONS_VERSAILLES
+		},
+		GType_VERSAILLES,
+		GF_VERSAILLES_NUMERICFONTS | GF_VERSAILLES_AUDIOPADDING,
+	},
+
+	// Versailles 1685
+	// Spanish Windows 95 compressed from hybrid Win95/DOS CD
+	// From lePhilousophe
+	{
+		{
+			"versailles",
+			"",
+			AD_ENTRY1s("PROGRAM.Z", "9e7c0c3125124010d45dde9dc62744ef", 346112),
+			Common::ES_ESP,
+			Common::kPlatformWindows,
+			ADGF_UNSTABLE,
+			GUI_OPTIONS_VERSAILLES
+		},
+		GType_VERSAILLES,
+		GF_VERSAILLES_NUMERICFONTS | GF_VERSAILLES_AUDIOPADDING,
+	},
+
+	// Versailles 1685
+	// Spanish DOS from hybrid Win95/DOS CD
+	// From lePhilousophe
+	{
+		{
+			"versailles",
+			"",
+			AD_ENTRY1s("VERSAILL.PGM", "1c992f034f43418a5da2e8ebd0b92620", 715887),
+			Common::ES_ESP,
+			Common::kPlatformDOS,
+			ADGF_UNSTABLE,
+			GUI_OPTIONS_VERSAILLES
+		},
+		GType_VERSAILLES,
+		GF_VERSAILLES_NUMERICFONTS | GF_VERSAILLES_AUDIOPADDING,
+	},
+
 	{ AD_TABLE_END_MARKER, 0, 0 }
 };
 
