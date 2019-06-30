@@ -544,43 +544,44 @@ static const WMEGameDescription gameDescriptions[] = {
 		WME_ENTRY1s("data.dcp", "d230b0b99c0aa77b9ecd094d8ee5573b", 17844056), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
 
 	// Oknytt
+	// TODO: Engine version WME_1_9_3 is just a guess, need to check this
 	WME_WINENTRY("oknytt", "Version 1.0",
-		WME_ENTRY1s("data.dcp", "6456cf8f429905c83f07509f9da536dd", 109502959), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+		WME_ENTRY1s("data.dcp", "6456cf8f429905c83f07509f9da536dd", 109502959), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
 
 	// Oknytt (Version 1.12 English) (These are detected along with d_sounds.dcp to avoid mass-detecting in the languages-subfolder.)
 	WME_WINENTRY("oknytt", "Version 1.12",
 		WME_ENTRY2s("english.dcp", "cea08a6b5c88f40cb9937f77a72dce2e", 293273567,
-					"d_sounds.dcp", "8df683174ef01e6f717e2df926fa0b4a", 154943401), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+					"d_sounds.dcp", "8df683174ef01e6f717e2df926fa0b4a", 154943401), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
 
 	// Oknytt (Version 1.12 German)
 	WME_WINENTRY("oknytt", "Version 1.12",
 		WME_ENTRY2s("german.dcp", "a4f8e76dd6bec15656e83a871e36920c", 304292572,
-					"d_sounds.dcp", "8df683174ef01e6f717e2df926fa0b4a", 154943401), Common::DE_DEU, ADGF_UNSTABLE, LATEST_VERSION),
+					"d_sounds.dcp", "8df683174ef01e6f717e2df926fa0b4a", 154943401), Common::DE_DEU, ADGF_UNSTABLE, WME_1_9_3),
 
 	// Oknytt (Version 1.12 Russian)
 	WME_WINENTRY("oknytt", "Version 1.12",
 		WME_ENTRY2s("russian.dcp", "82e0ae002dd6a4106cbd1e4f8db9cfe0", 362681666,
-					"d_sounds.dcp", "8df683174ef01e6f717e2df926fa0b4a", 154943401), Common::RU_RUS, ADGF_UNSTABLE, LATEST_VERSION),
+					"d_sounds.dcp", "8df683174ef01e6f717e2df926fa0b4a", 154943401), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_3),
 
 	// Oknytt (Version 1.13 English) (These are detected along with d_sounds.dcp to avoid mass-detecting in the languages-subfolder.)
 	WME_WINENTRY("oknytt", "Version 1.13",
 		WME_ENTRY2s("english.dcp", "d2afd722c78cfe66b7d4250d11f6ae16", 293274135,
-					"d_sounds.dcp", "7d04dff8ca11174486bd4b7a80fdcabb", 154943401), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+					"d_sounds.dcp", "7d04dff8ca11174486bd4b7a80fdcabb", 154943401), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
 
 	// Oknytt (Version 1.13 German)
 	WME_WINENTRY("oknytt", "Version 1.13",
 		WME_ENTRY2s("german.dcp", "0fc6401d8d76b04f6da49206ecafa0dc", 304292574,
-					"d_sounds.dcp", "7d04dff8ca11174486bd4b7a80fdcabb", 154943401), Common::DE_DEU, ADGF_UNSTABLE, LATEST_VERSION),
+					"d_sounds.dcp", "7d04dff8ca11174486bd4b7a80fdcabb", 154943401), Common::DE_DEU, ADGF_UNSTABLE, WME_1_9_3),
 
 	// Oknytt (Version 1.13 Russian)
 	WME_WINENTRY("oknytt", "Version 1.13",
 		WME_ENTRY2s("russian.dcp", "dd24a1c0b36a82e2b02fb6c1050d4aad", 362681669,
-					"d_sounds.dcp", "7d04dff8ca11174486bd4b7a80fdcabb", 154943401), Common::RU_RUS, ADGF_UNSTABLE, LATEST_VERSION),
+					"d_sounds.dcp", "7d04dff8ca11174486bd4b7a80fdcabb", 154943401), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_3),
 
 	// Oknytt (Version 1.13 Spanish)
 	WME_WINENTRY("oknytt", "Version 1.13",
 		WME_ENTRY2s("spanish.dcp", "10c46152cb29581671f3b6b7c229c957", 319406572,
-					"d_sounds.dcp", "7d04dff8ca11174486bd4b7a80fdcabb", 154943401), Common::ES_ESP, ADGF_UNSTABLE, LATEST_VERSION),
+					"d_sounds.dcp", "7d04dff8ca11174486bd4b7a80fdcabb", 154943401), Common::ES_ESP, ADGF_UNSTABLE, WME_1_9_3),
 
 	// One Helluva Day (Demo) (multi-language)
 	WME_WINENTRY("onehelluvaday", "",
@@ -1770,12 +1771,12 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// 1 1/2 Ritter: Auf der Suche nach der hinreissenden Herzelinde (German)
 	WME_WINENTRY("ritter", "",
-		WME_ENTRY1s("data.dcp", "5ac416cee605d3a30f4d59687b1cdab2", 364260278), Common::DE_DEU, ADGF_UNSTABLE, LATEST_VERSION),
+		WME_ENTRY1s("data.dcp", "5ac416cee605d3a30f4d59687b1cdab2", 364260278), Common::DE_DEU, ADGF_UNSTABLE, WME_1_8_6),
 
 	// 1 1/2 Ritter: Auf der Suche nach der hinreissenden Herzelinde (Russian)
 	WME_WINENTRY("ritter", "",
 		WME_ENTRY2s("data.dcp", "5ac416cee605d3a30f4d59687b1cdab2", 364260278,
-				"string3.tab", "e9d0e6341e8994be5fa6d70d39ac630b", 813982), Common::RU_RUS, ADGF_UNSTABLE, LATEST_VERSION),
+				"string3.tab", "e9d0e6341e8994be5fa6d70d39ac630b", 813982), Common::RU_RUS, ADGF_UNSTABLE, WME_1_8_6),
 
 	// Satan and Son
 	WME_WINENTRY("satanandson", "",
@@ -1787,7 +1788,7 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Securanote
 	WME_PLATENTRY("securanote", "",
-		WME_ENTRY1s("data.dcp", "5213d3e59b9e95b7fbd5c56f7de5341a", 2625554), Common::EN_ANY, Common::kPlatformIOS, ADGF_UNSTABLE, LATEST_VERSION),
+		WME_ENTRY1s("data.dcp", "5213d3e59b9e95b7fbd5c56f7de5341a", 2625554), Common::EN_ANY, Common::kPlatformIOS, ADGF_UNSTABLE, WME_LITE),
 
 	// Shaban
 	WME_WINENTRY("shaban", "",
