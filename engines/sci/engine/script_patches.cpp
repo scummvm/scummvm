@@ -12479,6 +12479,61 @@ static const uint16 sq4CdPatchGetPointsForChangingBackClothes[] = {
 	PATCH_END
 };
 
+// The English Amiga version contains curious changes to the dress logic in
+//  Sock's which break the game and weren't included in later versions:
+//
+// 1. Purchasing the dress is recorded in flag 90 instead of mall:rFlag3
+// 2. Flag 90 is cleared when changing clothes after clearing out the ATM
+//
+// Game flags are global while mall flags are reset upon leaving the mall, which
+//  makes this look like a bug fix, but Sock's is closed when returning so this
+//  shouldn't change game logic. Unfortunately Sierra forgot to update the other
+//  scripts which query mall:rFlag3 and so they never see the dress purchase.
+//  This creates scenarios where exiting Sock's (room 371) after paying causes
+//  room 370 to kick Roger out for not paying, preventing game completion.
+//
+// Clearing the dress-purchase flag has no effect other than to allow purchasing
+//  the dress a second time as if it never happened, leaving the player without
+//  enough money to complete the game, having paid for the dress twice.
+//
+// We fix both bugs by updating the mall scripts so that they all test flag 90
+//  and never clear it. It's possible the flag change was an optimization, which
+//  many Amiga tweaks are, since it eliminated a message send in rm371:doit.
+//
+// Applies to: English Amiga Floppy
+// Responsible methods: rm371:doit, rm370:init, warningScript:changeState(1)
+// Fixes bug #11004
+static const uint16 sq4AmigaSignatureDressPurchaseFlagClear[] = {
+	SIG_MAGICDWORD,
+	0x78,                               // push1
+	0x39, 0x5a,                         // pushi 5a
+	0x45, 0x08, 0x02,                   // callb proc0_8 02 [ clear flag 90 ]
+	SIG_END
+};
+
+static const uint16 sq4AmigaPatchDressPurchaseFlagClear[] = {
+	0x32, PATCH_UINT16(0x0003),         // jmp 0003 [ don't clear flag 90 ]
+	PATCH_END
+};
+
+static const uint16 sq4AmigaSignatureDressPurchaseFlagCheck[] = {
+	SIG_MAGICDWORD,
+	0x36,                               // push [ mall ]
+	0x38, SIG_UINT16(0x0228),           // pushi rFlag3
+	0x39, 0x04,                         // pushi 04
+	0x46, SIG_UINT16(0x02bc),           // calle proc700_3 06 [ is mall:rFlag3 flag 4 set? ]
+	      SIG_UINT16(0x0003), 0x06,
+	SIG_END
+};
+
+static const uint16 sq4AmigaPatchDressPurchaseFlagCheck[] = {
+	0x78,                               // push1
+	0x39, 0x5a,                         // pushi 5a
+	0x45, 0x06, 0x02,                   // callb proc0_6 02 [ is flag 90 set? ]
+	0x32, PATCH_UINT16(0x0003),         // jmp 0003
+	PATCH_END
+};
+
 // The Big And Tall store (room 381) doesn't display its Look message in the CD
 //  version. We add the missing super:doVerb call to theStore:doVerb.
 //
@@ -13581,6 +13636,9 @@ static const SciScriptPatcherEntry sq4Signatures[] = {
 	{  true,   370, "CD: sock's door restore and message fix",        1, sq4CdSignatureSocksDoor,                       sq4CdPatchSocksDoor },
 	{  true,   370, "CD/Floppy: sock's sequel police flag fix (1/2)", 1, sq4SignatureSocksSequelPoliceFlag1,            sq4PatchSocksSequelPoliceFlag1 },
 	{  true,   370, "CD/Floppy: sock's sequel police flag fix (2/2)", 1, sq4SignatureSocksSequelPoliceFlag2,            sq4PatchSocksSequelPoliceFlag2 },
+	{ false,   370, "Amiga: dress purchase flag check fix",           1, sq4AmigaSignatureDressPurchaseFlagCheck,       sq4AmigaPatchDressPurchaseFlagCheck },
+	{ false,   371, "Amiga: dress purchase flag clear fix",           1, sq4AmigaSignatureDressPurchaseFlagClear,       sq4AmigaPatchDressPurchaseFlagClear },
+	{ false,   386, "Amiga: dress purchase flag check fix",           1, sq4AmigaSignatureDressPurchaseFlagCheck,       sq4AmigaPatchDressPurchaseFlagCheck },
 	{  true,   381, "CD: big and tall room description",              1, sq4CdSignatureBigAndTallDescription,           sq4CdPatchBigAndTallDescription },
 	{  true,   385, "CD: monolith burger door message fix",           1, sq4CdSignatureMonolithBurgerDoor,              sq4CdPatchMonolithBurgerDoor },
 	{  true,   390, "CD: hz so good sequel police lockup fix",        1, sq4CdSignatureHzSoGoodSequelPoliceLockup,      sq4CdPatchHzSoGoodSequelPoliceLockup },
@@ -15037,6 +15095,19 @@ void ScriptPatcher::processScript(uint16 scriptNr, SciSpan<byte> scriptData) {
 					enablePatch(signatureTable, "Floppy: fix guild tunnel access (3/3)");
 					enablePatch(signatureTable, "Floppy: fix crest bookshelf");
 					enablePatch(signatureTable, "Floppy: fix peer bats, upper door (2/2)");
+				}
+				break;
+			case GID_SQ4:
+				// Enable the dress-purchase flag fixes for English Amiga only.
+				//  One of these patches is applied to scripts that are the same as those
+				//  in other versions which must not be patched, including German Amiga.
+				if (g_sci->getPlatform() == Common::kPlatformAmiga) {
+					// Check for buggy Sock's (room 371) script from English Amiga version
+					Resource *socksScript = g_sci->getResMan()->findResource(ResourceId(kResourceTypeScript, 371), false);
+					if (socksScript && socksScript->size() == 14340) {
+						enablePatch(signatureTable, "Amiga: dress purchase flag check fix");
+						enablePatch(signatureTable, "Amiga: dress purchase flag clear fix");
+					}
 				}
 				break;
 			default:
