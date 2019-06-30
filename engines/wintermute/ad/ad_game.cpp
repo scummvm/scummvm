@@ -38,6 +38,7 @@
 #include "engines/wintermute/ad/ad_scene.h"
 #include "engines/wintermute/ad/ad_scene_state.h"
 #include "engines/wintermute/ad/ad_sentence.h"
+#include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/base/font/base_font.h"
 #include "engines/wintermute/base/base_object.h"
@@ -2173,7 +2174,13 @@ bool AdGame::onMouseLeftUp() {
 	_capturedObject = nullptr;
 	_mouseLeftDown = false;
 
-	bool handled = /*_state==GAME_RUNNING &&*/ DID_SUCCEED(applyEvent("LeftRelease"));
+	bool handled;
+	if (BaseEngine::instance().getTargetExecutable() < WME_LITE) {
+		handled = _state==GAME_RUNNING && DID_SUCCEED(applyEvent("LeftRelease"));
+	} else {
+		handled = DID_SUCCEED(applyEvent("LeftRelease"));
+	}
+	
 	if (!handled) {
 		if (_activeObject != nullptr) {
 			_activeObject->applyEvent("LeftRelease");

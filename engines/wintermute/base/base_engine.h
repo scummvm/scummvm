@@ -49,6 +49,8 @@ enum WMETargetExecutable {
 	WME_1_8_0,
 	WME_1_8_6,
 	WME_1_9_0,
+	WME_1_9_3, //displayed version of 1.10.1beta is "1.9.3"
+	WME_LITE,
 	LATEST_VERSION
 };
 
