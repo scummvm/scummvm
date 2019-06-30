@@ -105,7 +105,7 @@ void Versailles_Documentation::init(const Sprites *sprites, FontManager *fontMan
 	allDocsFile.close();
 
 	const char *patterns[] = { "FICH=", nullptr };
-	RecordInfo record;
+	RecordInfo record = { 0, 0, 0 };
 
 	char *currentPos = allDocs;
 	char *lastRecordName = nullptr;
@@ -1823,7 +1823,7 @@ char *Versailles_Documentation::getDocPartAddress(char *start, char *end, const 
 	}
 	char *foundPos = nullptr;
 	const char *pattern;
-	uint patternLen;
+	uint patternLen = 0;
 	for (const char **patternP = patterns; *patternP && !foundPos; patternP++) {
 		pattern = *patternP;
 		patternLen = strlen(pattern);
