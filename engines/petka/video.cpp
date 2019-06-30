@@ -32,7 +32,7 @@
 namespace Petka {
 
 VideoSystem::VideoSystem() :
-	_shake(false), _shift(false), _shakeTime(0) {
+	_shake(false), _shift(false), _shakeTime(0), _time(0) {
 	addDirtyRect({0, 0, 640, 480});
 }
 
@@ -42,9 +42,10 @@ static bool objCmp(QVisibleObject *&l, QVisibleObject *&r) {
 
 void VideoSystem::update() {
 	Interface *interface = g_vm->getQSystem()->_currInterface;
+	int time = g_system->getMillis();
 	if (interface) {
 		for (uint i = 0; i < interface->_objs.size(); ++i) {
-			interface->_objs[i]->update();
+			interface->_objs[i]->update(time - _time);
 		}
 
 		for (uint i = 0; i < interface->_objs.size(); ++i) {
@@ -57,7 +58,7 @@ void VideoSystem::update() {
 			interface->_objs[i]->draw();
 		}
 	}
-
+	_time = time;
 	_rects.clear();
 
 	if (_shake) {

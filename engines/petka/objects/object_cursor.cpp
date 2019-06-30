@@ -66,30 +66,24 @@ void QObjectCursor::draw() {
 	}
 }
 
-void QObjectCursor::update() {
+void QObjectCursor::update(int time) {
 	if (!_isShown || !_animate)
 		return;
 	FlicDecoder *flc = g_vm->resMgr()->loadFlic(_resourceId);
-	while (flc && flc->needsUpdate()) {
-		flc->decodeNextFrame();
-		if (flc->endOfVideo()) {
-			flc->rewind();
-		}
+	_time += time;
+	while (flc && _time > flc->getDelay()) {
+		flc->setFrame(-1);
 		Common::Rect dirty(flc->getBounds());
 		dirty.translate(_x, _y);
 		g_vm->videoSystem()->addDirtyRect(dirty);
+		_time -= flc->getDelay();
 	}
 }
 
 void QObjectCursor::setCursorPos(int x, int y, bool center) {
 	FlicDecoder *flc = g_vm->resMgr()->loadFlic(_resourceId);
 	if (!_animate) {
-		flc->stop();
-		flc->rewind();
-		flc->decodeNextFrame();
-	} else if (!flc->isPlaying()) {
-		flc->rewind();
-		flc->start();
+		flc->setFrame(1);
 	}
 
 	Common::Rect dirty(flc->getBounds());

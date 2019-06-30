@@ -44,6 +44,7 @@ private:
 	Graphics::Screen _screen;
 	Common::List<Common::Rect> _rects;
 	uint32 _shakeTime;
+	int _time;
 	bool _shake;
 	bool _shift;
 };

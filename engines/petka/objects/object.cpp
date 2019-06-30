@@ -43,7 +43,7 @@ QVisibleObject::QVisibleObject()
 	: _resourceId(-1), _z(240) {}
 
 QMessageObject::QMessageObject()
-	: _id(-1), _dialogColor(-1) {}
+	: _id(-1), _dialogColor(-1), _time(0) {}
 
 void QMessageObject::processMessage(const QMessage &msg) {
 	for (uint i = 0; i < _reactions.size(); ++i) {
