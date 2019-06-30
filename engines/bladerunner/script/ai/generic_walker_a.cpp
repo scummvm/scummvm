@@ -47,6 +47,14 @@ void AIScriptGenericWalkerA::Initialize() {
 }
 
 bool AIScriptGenericWalkerA::Update() {
+#if !BLADERUNNER_ORIGINAL_BUGS
+	// extra check for possible fix of Bullet Bob's gun missing
+	if (Player_Query_Current_Set() == kSetRC04
+	    && Actor_Query_Goal_Number(kActorGenwalkerA) != kGoalGenwalkerABulletBobsTrackGun
+	) {
+		Actor_Set_Goal_Number(kActorGenwalkerA, kGoalGenwalkerABulletBobsTrackGun);
+	}
+#endif // !BLADERUNNER_ORIGINAL_BUGS
 	switch (Actor_Query_Goal_Number(kActorGenwalkerA)) {
 		case kGoalGenwalkerDefault:
 			if (prepareWalker()) {
@@ -75,6 +83,16 @@ void AIScriptGenericWalkerA::TimerExpired(int timer) {
 }
 
 void AIScriptGenericWalkerA::CompletedMovementTrack() {
+#if !BLADERUNNER_ORIGINAL_BUGS
+	// extra check for possible fix of Bullet Bob's gun missing
+	if (Player_Query_Current_Set() == kSetRC04
+	    && Actor_Query_Goal_Number(kActorGenwalkerA) != kGoalGenwalkerABulletBobsTrackGun
+	) {
+		Actor_Set_Goal_Number(kActorGenwalkerA, kGoalGenwalkerABulletBobsTrackGun);
+		return;
+	}
+#endif // !BLADERUNNER_ORIGINAL_BUGS
+
 	if (Actor_Query_Goal_Number(kActorGenwalkerA) > kGoalGenwalkerDefault) {
 		Actor_Set_Goal_Number(kActorGenwalkerA, kGoalGenwalkerDefault);
 		if (!Game_Flag_Query(kFlagGenericWalkerWaiting)) {
