@@ -24,7 +24,7 @@
 
 namespace HDB {
 
-DrawMan::DrawMan() {
+Gfx::Gfx() {
 	_tLookupArray = NULL;
 	_gfxCache = new Common::Array<GfxCache *>;
 	_globalSurface.create(kScreenWidth, kScreenHeight, g_hdb->_format);
@@ -32,12 +32,12 @@ DrawMan::DrawMan() {
 	_systemInit = false;
 }
 
-DrawMan::~DrawMan() {
+Gfx::~Gfx() {
 	delete _gfxCache;
 	_globalSurface.free();
 }
 
-bool DrawMan::init() {
+bool Gfx::init() {
 
 	// Set the default cursor pos & char clipping
 	setCursor(0, 0);
@@ -136,17 +136,17 @@ bool DrawMan::init() {
 	return true;
 }
 
-void DrawMan::fillScreen(uint32 color) {
+void Gfx::fillScreen(uint32 color) {
 	_globalSurface.fillRect(Common::Rect(kScreenWidth, kScreenHeight), color);
 	g_system->fillScreen(color);
 }
 
-void DrawMan::updateVideo() {
+void Gfx::updateVideo() {
 	updateFade();
-	debug(9, "STUB: DrawMan::updateVideo incomplete");
+	debug(9, "STUB: Gfx::updateVideo incomplete");
 }
 
-void DrawMan::drawPointer() {
+void Gfx::drawPointer() {
 	static int anim = 0;
 	static uint32 animTime = 0;
 
@@ -164,11 +164,11 @@ void DrawMan::drawPointer() {
 		_mousePointer[anim]->drawMasked(g_hdb->_input->getMouseX() - 16, g_hdb->_input->getMouseY() - 16);
 }
 
-void DrawMan::setPointerState(int value) {
+void Gfx::setPointerState(int value) {
 	_pointerDisplayable = value;
 }
 
-void DrawMan::setFade(bool fadeIn, bool black, int steps) {
+void Gfx::setFade(bool fadeIn, bool black, int steps) {
 	_fadeInfo.isFadeIn = fadeIn;
 	_fadeInfo.isBlack = black;
 
@@ -186,12 +186,12 @@ void DrawMan::setFade(bool fadeIn, bool black, int steps) {
 	_fadeInfo.active = true;
 }
 
-void DrawMan::updateFade() {
+void Gfx::updateFade() {
 	_fadeInfo.active = false;
-	debug(9, "STUB: DrawMan::updateFade incomplete");
+	debug(9, "STUB: Gfx::updateFade incomplete");
 }
 
-Picture *DrawMan::loadPic(const char *picName) {
+Picture *Gfx::loadPic(const char *picName) {
 	Picture *pic = new Picture;
 	Common::SeekableReadStream *stream = g_hdb->_fileMan->findFirstData(picName, TYPE_PIC);
 	if (!stream)
@@ -200,7 +200,7 @@ Picture *DrawMan::loadPic(const char *picName) {
 	return pic;
 }
 
-Tile *DrawMan::loadTile(const char *tileName) {
+Tile *Gfx::loadTile(const char *tileName) {
 	Tile *tile = new Tile;
 	Common::SeekableReadStream *stream = g_hdb->_fileMan->findFirstData(tileName, TYPE_TILE32);
 	if (!stream)
@@ -209,7 +209,7 @@ Tile *DrawMan::loadTile(const char *tileName) {
 	return tile;
 }
 
-Tile *DrawMan::getTile(int index) {
+Tile *Gfx::getTile(int index) {
 
 	if (index < 0 || index > _numTiles) {
 		if (index != 0xFFFF)
@@ -232,12 +232,12 @@ Tile *DrawMan::getTile(int index) {
 	return _tLookupArray[index].tData;
 }
 
-void DrawMan::cacheTileSequence(int tileIndex, int count) {
+void Gfx::cacheTileSequence(int tileIndex, int count) {
 	for (int i = tileIndex; i < tileIndex + count; i++)
 		getTile(i);
 }
 
-int DrawMan::getTileIndex(const char *name) {
+int Gfx::getTileIndex(const char *name) {
 	if (!name) {
 		return -1;
 	}
@@ -249,7 +249,7 @@ int DrawMan::getTileIndex(const char *name) {
 	return -1;
 }
 
-Picture *DrawMan::getPicture(const char *name) {
+Picture *Gfx::getPicture(const char *name) {
 	Common::SeekableReadStream *stream = g_hdb->_fileMan->findFirstData(name, TYPE_PIC);
 	Picture *picture = new Picture;
 	picture->load(stream);
@@ -257,7 +257,7 @@ Picture *DrawMan::getPicture(const char *name) {
 }
 
 // Returns: true->Tile, false->Pic
-bool DrawMan::selectGfxType(const char *name) {
+bool Gfx::selectGfxType(const char *name) {
 	// Check for Pic types
 	if (Common::matchString(name, "clubup1"))
 		return false;
@@ -303,7 +303,7 @@ bool DrawMan::selectGfxType(const char *name) {
 	return true;
 }
 
-Tile *DrawMan::getTileGfx(const char *name, uint32 size) {
+Tile *Gfx::getTileGfx(const char *name, uint32 size) {
 	// Try to find graphic
 	for (Common::Array<GfxCache *>::iterator it = _gfxCache->begin(); it != _gfxCache->end(); it++) {
 		if (Common::matchString((*it)->name, name)) {
@@ -331,7 +331,7 @@ Tile *DrawMan::getTileGfx(const char *name, uint32 size) {
 	return gc->tileGfx;
 }
 
-Picture *DrawMan::getPicGfx(const char *name, uint32 size) {
+Picture *Gfx::getPicGfx(const char *name, uint32 size) {
 	// Try to find graphic
 	for (Common::Array<GfxCache *>::iterator it = _gfxCache->begin(); it != _gfxCache->end(); it++) {
 		if (Common::matchString((*it)->name, name)) {
@@ -359,7 +359,7 @@ Picture *DrawMan::getPicGfx(const char *name, uint32 size) {
 	return gc->picGfx;
 }
 
-int DrawMan::isSky(int index) {
+int Gfx::isSky(int index) {
 	if (!index) {
 		return 0;
 	}
@@ -373,7 +373,7 @@ int DrawMan::isSky(int index) {
 	return 0;
 }
 
-void DrawMan::setSky(int skyIndex) {
+void Gfx::setSky(int skyIndex) {
 	int tileIndex = _skyTiles[skyIndex - 1];
 	_currentSky = skyIndex;
 
@@ -396,7 +396,7 @@ void DrawMan::setSky(int skyIndex) {
 	}
 }
 
-void DrawMan::setup3DStars() {
+void Gfx::setup3DStars() {
 	for (int i = 0; i < kNum3DStars; i++) {
 		_stars3D[i].x = g_hdb->_rnd->getRandomNumber(kScreenWidth);
 		_stars3D[i].y = g_hdb->_rnd->getRandomNumber(kScreenHeight);
@@ -406,7 +406,7 @@ void DrawMan::setup3DStars() {
 	}
 }
 
-void DrawMan::setup3DStarsLeft() {
+void Gfx::setup3DStarsLeft() {
 	for (int i = 0; i < kNum3DStars; i++) {
 		_stars3DSlow[i].x = g_hdb->_rnd->getRandomNumber(kScreenWidth);
 		_stars3DSlow[i].y = g_hdb->_rnd->getRandomNumber(kScreenHeight);
@@ -415,7 +415,7 @@ void DrawMan::setup3DStarsLeft() {
 	}
 }
 
-void DrawMan::draw3DStars() {
+void Gfx::draw3DStars() {
 	fillScreen(0);
 	for (int i = 0; i < kNum3DStars; i++) {
 		_starField[_stars3D[i].color]->drawMasked((int)_stars3D[i].x, (int)_stars3D[i].y);
@@ -426,7 +426,7 @@ void DrawMan::draw3DStars() {
 	}
 }
 
-void DrawMan::draw3DStarsLeft() {
+void Gfx::draw3DStarsLeft() {
 	fillScreen(0);
 	for (int i = 0; i < kNum3DStars; i++) {
 		_starField[_stars3DSlow[i].color]->drawMasked((int)_stars3DSlow[i].x, (int)_stars3DSlow[i].y);
@@ -437,7 +437,7 @@ void DrawMan::draw3DStarsLeft() {
 	}
 }
 
-void DrawMan::drawSky() {
+void Gfx::drawSky() {
 	int tile = _skyTiles[_currentSky - 1];
 
 	if (tile == _tileSkyStars) {
@@ -461,11 +461,11 @@ void DrawMan::drawSky() {
 	}
 }
 
-int DrawMan::animateTile(int tileIndex) {
+int Gfx::animateTile(int tileIndex) {
 	return _tLookupArray[tileIndex].animIndex;
 }
 
-bool DrawMan::loadFont(const char *string) {
+bool Gfx::loadFont(const char *string) {
 	Common::SeekableReadStream *stream = g_hdb->_fileMan->findFirstData(string, TYPE_FONT);
 	if (!stream)
 		return false;
@@ -522,7 +522,7 @@ bool DrawMan::loadFont(const char *string) {
 	return true;
 }
 
-void DrawMan::drawText(const char *string) {
+void Gfx::drawText(const char *string) {
 	if (!_systemInit)
 		return;
 
@@ -592,7 +592,7 @@ void DrawMan::drawText(const char *string) {
 }
 
 // Calculates pixel width of a string
-void DrawMan::getDimensions(const char *string, int *pixelsWide, int *lines) {
+void Gfx::getDimensions(const char *string, int *pixelsWide, int *lines) {
 	if (!string) {
 		*pixelsWide = kFontSpace;
 		*lines = 1;
@@ -646,42 +646,42 @@ void DrawMan::getDimensions(const char *string, int *pixelsWide, int *lines) {
 	*lines = height;
 }
 
-int DrawMan::stringLength(const char *string) {
+int Gfx::stringLength(const char *string) {
 	int w, h;
 	getDimensions(string, &w, &h);
 	return w;
 }
 
-void DrawMan::setTextEdges(int left, int right, int top, int bottom) {
+void Gfx::setTextEdges(int left, int right, int top, int bottom) {
 	_eLeft = left;
 	_eRight = right;
 	_eTop = top;
 	_eBottom = bottom;
 }
 
-void DrawMan::getTextEdges(int *left, int *right, int *top, int *bottom) {
+void Gfx::getTextEdges(int *left, int *right, int *top, int *bottom) {
 	*left = _eLeft;
 	*right = _eRight;
 	*top = _eTop;
 	*bottom = _eBottom;
 }
 
-void DrawMan::setKernLead(int kern, int lead) {
+void Gfx::setKernLead(int kern, int lead) {
 	_fontHeader.kerning = kern;
 	_fontHeader.leading = lead;
 }
 
-void DrawMan::getKernLead(int *kern, int *lead) {
+void Gfx::getKernLead(int *kern, int *lead) {
 	*kern = _fontHeader.kerning;
 	*lead = _fontHeader.leading;
 }
 
-void DrawMan::setCursor(int x, int y) {
+void Gfx::setCursor(int x, int y) {
 	_cursorX = x;
 	_cursorY = y;
 }
 
-void DrawMan::getCursor(int *x, int *y) {
+void Gfx::getCursor(int *x, int *y) {
 	*x = _cursorX;
 	*y = _cursorY;
 }
