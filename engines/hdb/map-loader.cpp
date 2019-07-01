@@ -55,11 +55,11 @@ int Map::loadTiles() {
 	for (uint j = 0; j < _height; j++) {
 		for (uint i = 0; i < _width; i++) {
 			tile = _background[j * _width + i];
-			if ((temp = g_hdb->_drawMan->isSky(tile)) && !skyIndex) {
+			if ((temp = g_hdb->_gfx->isSky(tile)) && !skyIndex) {
 				skyIndex = temp;
 			}
-			g_hdb->_drawMan->getTile(tile);
-			g_hdb->_drawMan->getTile(_foreground[j * _width + i]);
+			g_hdb->_gfx->getTile(tile);
+			g_hdb->_gfx->getTile(_foreground[j * _width + i]);
 		}
 	}
 
@@ -141,7 +141,7 @@ bool Map::load(Common::SeekableReadStream *stream) {
 	_mapLaserBeams = new byte[_width * _height];
 
 	int sky = loadTiles();
-	g_hdb->_drawMan->setSky(sky);
+	g_hdb->_gfx->setSky(sky);
 	_mapX = _mapY = 0;
 
 	// Setup animating Tile lists
@@ -646,14 +646,14 @@ void Map::draw() {
 			}
 
 			// Draw if not a sky tile
-			if (!g_hdb->_drawMan->isSky(tileIndex)) {
-				g_hdb->_drawMan->getTile(tileIndex)->draw(screenX, screenY);
+			if (!g_hdb->_gfx->isSky(tileIndex)) {
+				g_hdb->_gfx->getTile(tileIndex)->draw(screenX, screenY);
 			}
 
 			// Draw Foreground Tile
 			tileIndex = _foreground[matrixY + _mapTileX + i];
 			if (tileIndex >= 0) {
-				Tile *fTile = g_hdb->_drawMan->getTile(tileIndex);
+				Tile *fTile = g_hdb->_gfx->getTile(tileIndex);
 				if (fTile && !(fTile->_flags & kFlagInvisible)) {
 
 					if ((fTile->_flags & kFlagGrating) && (_numGratings < kMaxGratings)) {
@@ -689,33 +689,33 @@ void Map::draw() {
 	// Animate FAST Map Tiles
 	if (!(_animCycle % kAnimFastFrames)) {
 		for (Common::Array<uint32>::iterator it = _listBGAnimFast.begin(); it != _listBGAnimFast.end(); it++) {
-			_background[(*it)] = g_hdb->_drawMan->animateTile(_background[(*it)]);
+			_background[(*it)] = g_hdb->_gfx->animateTile(_background[(*it)]);
 		}
 
 		for (Common::Array<uint32>::iterator it = _listFGAnimFast.begin(); it != _listFGAnimFast.end(); it++) {
-			_foreground[(*it)] = g_hdb->_drawMan->animateTile(_foreground[(*it)]);
+			_foreground[(*it)] = g_hdb->_gfx->animateTile(_foreground[(*it)]);
 		}
 	}
 
 	// Animate MEDIUM Map Tiles
 	if (!(_animCycle % kAnimFastFrames)) {
 		for (Common::Array<uint32>::iterator it = _listBGAnimMedium.begin(); it != _listBGAnimMedium.end(); it++) {
-			_background[(*it)] = g_hdb->_drawMan->animateTile(_background[(*it)]);
+			_background[(*it)] = g_hdb->_gfx->animateTile(_background[(*it)]);
 		}
 
 		for (Common::Array<uint32>::iterator it = _listFGAnimMedium.begin(); it != _listFGAnimMedium.end(); it++) {
-			_foreground[(*it)] = g_hdb->_drawMan->animateTile(_foreground[(*it)]);
+			_foreground[(*it)] = g_hdb->_gfx->animateTile(_foreground[(*it)]);
 		}
 	}
 
 	// Animate SLOW Map Tiles
 	if (!(_animCycle % kAnimFastFrames)) {
 		for (Common::Array<uint32>::iterator it = _listBGAnimSlow.begin(); it != _listBGAnimSlow.end(); it++) {
-			_background[(*it)] = g_hdb->_drawMan->animateTile(_background[(*it)]);
+			_background[(*it)] = g_hdb->_gfx->animateTile(_background[(*it)]);
 		}
 
 		for (Common::Array<uint32>::iterator it = _listFGAnimSlow.begin(); it != _listFGAnimSlow.end(); it++) {
-			_foreground[(*it)] = g_hdb->_drawMan->animateTile(_foreground[(*it)]);
+			_foreground[(*it)] = g_hdb->_gfx->animateTile(_foreground[(*it)]);
 		}
 	}
 
@@ -728,7 +728,7 @@ void Map::drawEnts() {
 
 void Map::drawGratings() {
 	for (int i = 0; i < _numGratings; i++) {
-		g_hdb->_drawMan->getTile(_gratings[i]->tile)->drawMasked(_gratings[i]->x, _gratings[i]->y);
+		g_hdb->_gfx->getTile(_gratings[i]->tile)->drawMasked(_gratings[i]->x, _gratings[i]->y);
 	}
 
 	debug(8, "Gratings Count: %d", _numGratings);
@@ -736,7 +736,7 @@ void Map::drawGratings() {
 
 void Map::drawForegrounds() {
 	for (int i = 0; i < _numForegrounds; i++) {
-		g_hdb->_drawMan->getTile(_foregrounds[i]->tile)->drawMasked(_foregrounds[i]->x, _foregrounds[i]->y);
+		g_hdb->_gfx->getTile(_foregrounds[i]->tile)->drawMasked(_foregrounds[i]->x, _foregrounds[i]->y);
 	}
 
 	debug(8, "Foregrounds Count: %d", _numForegrounds);
@@ -746,7 +746,7 @@ uint32 Map::getMapBGTileFlags(int x, int y) {
 	if (x < 0 || x >= _width || y < 0 || y >= _height) {
 		return 0;
 	}
-	Tile *tile = g_hdb->_drawMan->getTile(_background[y * _width + x]);
+	Tile *tile = g_hdb->_gfx->getTile(_background[y * _width + x]);
 	if (tile)
 		return tile->_flags;
 	return 0;
@@ -756,7 +756,7 @@ uint32 Map::getMapFGTileFlags(int x, int y) {
 	if (x < 0 || x >= _width || y < 0 || y >= _height) {
 		return 0;
 	}
-	Tile *tile = g_hdb->_drawMan->getTile(_foreground[y * _width + x]);
+	Tile *tile = g_hdb->_gfx->getTile(_foreground[y * _width + x]);
 	if (tile)
 		return tile->_flags;
 	return 0;
@@ -794,7 +794,7 @@ void Map::addBGTileAnimation(int x, int y) {
 
 	int i = y * _width + x;
 
-	Tile *tile = g_hdb->_drawMan->getTile(_background[i]);
+	Tile *tile = g_hdb->_gfx->getTile(_background[i]);
 	if (!tile)
 		return;
 	uint32 flags = tile->_flags;
@@ -813,7 +813,7 @@ void Map::addFGTileAnimation(int x, int y) {
 
 	int i = y * _width + x;
 
-	Tile *tile = g_hdb->_drawMan->getTile(_foreground[i]);
+	Tile *tile = g_hdb->_gfx->getTile(_foreground[i]);
 	if (!tile)
 		return;
 	uint32 flags = tile->_flags;
@@ -831,7 +831,7 @@ void Map::addFGTileAnimation(int x, int y) {
 void Map::removeBGTileAnimation(int x, int y) {
 	int i = y * _width + x;
 
-	Tile *tile = g_hdb->_drawMan->getTile(_background[i]);
+	Tile *tile = g_hdb->_gfx->getTile(_background[i]);
 	if (!tile)
 		return;
 	uint32 flags = tile->_flags;
@@ -860,7 +860,7 @@ void Map::removeBGTileAnimation(int x, int y) {
 void Map::removeFGTileAnimation(int x, int y) {
 	int i = y * _width + x;
 
-	Tile *tile = g_hdb->_drawMan->getTile(_foreground[i]);
+	Tile *tile = g_hdb->_gfx->getTile(_foreground[i]);
 	if (!tile)
 		return;
 	uint32 flags = tile->_flags;

@@ -229,8 +229,8 @@ void Input::updateMouse(int newX, int newY) {
 		_mouseY = kScreenHeight - 1;
 
 	// Turn Cursor back on?
-	if (!g_hdb->_drawMan->getPointer()) {
-		g_hdb->_drawMan->showPointer(true);
+	if (!g_hdb->_gfx->getPointer()) {
+		g_hdb->_gfx->showPointer(true);
 	}
 
 	// Check if LButton is being dragged
@@ -292,40 +292,40 @@ void Input::updateKeys(Common::Event event, bool keyDown) {
 		if (event.kbd.keycode == _keyUp) {
 			if (keyDown) {
 				buttons |= kButtonUp;
-				if (g_hdb->_drawMan->getPointer())
-					g_hdb->_drawMan->showPointer(false);
+				if (g_hdb->_gfx->getPointer())
+					g_hdb->_gfx->showPointer(false);
 			} else {
 				buttons &= ~kButtonUp;
 			}
 		} else if (event.kbd.keycode == _keyDown) {
 			if (keyDown) {
 				buttons |= kButtonDown;
-				if (g_hdb->_drawMan->getPointer())
-					g_hdb->_drawMan->showPointer(false);
+				if (g_hdb->_gfx->getPointer())
+					g_hdb->_gfx->showPointer(false);
 			} else {
 				buttons &= ~kButtonDown;
 			}
 		} else if (event.kbd.keycode == _keyLeft) {
 			if (keyDown) {
 				buttons |= kButtonLeft;
-				if (g_hdb->_drawMan->getPointer())
-					g_hdb->_drawMan->showPointer(false);
+				if (g_hdb->_gfx->getPointer())
+					g_hdb->_gfx->showPointer(false);
 			} else {
 				buttons &= ~kButtonLeft;
 			}
 		} else if (event.kbd.keycode == _keyRight) {
 			if (keyDown) {
 				buttons |= kButtonRight;
-				if (g_hdb->_drawMan->getPointer())
-					g_hdb->_drawMan->showPointer(false);
+				if (g_hdb->_gfx->getPointer())
+					g_hdb->_gfx->showPointer(false);
 			} else {
 				buttons &= ~kButtonRight;
 			}
 		} else if (event.kbd.keycode == _keyUse) {
 			if (keyDown) {
 				buttons |= kButtonB;
-				if (g_hdb->_drawMan->getPointer())
-					g_hdb->_drawMan->showPointer(false);
+				if (g_hdb->_gfx->getPointer())
+					g_hdb->_gfx->showPointer(false);
 			} else {
 				buttons &= ~kButtonB;
 			}
@@ -335,7 +335,7 @@ void Input::updateKeys(Common::Event event, bool keyDown) {
 	if (event.kbd.keycode == _keyMenu) {
 		if (keyDown) {
 			buttons |= kButtonA;
-			g_hdb->_drawMan->showPointer(true);
+			g_hdb->_gfx->showPointer(true);
 		} else {
 			buttons &= ~kButtonA;
 		}

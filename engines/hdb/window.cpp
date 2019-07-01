@@ -28,49 +28,49 @@ bool Window::init() {
 
 	warning("STUB: Window::init: Incomplete");
 
-	_gfxTL = g_hdb->_drawMan->loadPic("menu_back_topleft");
-	_gfxTM = g_hdb->_drawMan->loadPic("menu_back_top");
-	_gfxTR = g_hdb->_drawMan->loadPic("menu_back_topright");
+	_gfxTL = g_hdb->_gfx->loadPic("menu_back_topleft");
+	_gfxTM = g_hdb->_gfx->loadPic("menu_back_top");
+	_gfxTR = g_hdb->_gfx->loadPic("menu_back_topright");
 
-	_gfxL = g_hdb->_drawMan->loadPic("menu_back_left");
-	_gfxM = g_hdb->_drawMan->loadPic("menu_back_middle");
-	_gfxR = g_hdb->_drawMan->loadPic("menu_back_right");
+	_gfxL = g_hdb->_gfx->loadPic("menu_back_left");
+	_gfxM = g_hdb->_gfx->loadPic("menu_back_middle");
+	_gfxR = g_hdb->_gfx->loadPic("menu_back_right");
 
-	_gfxBL = g_hdb->_drawMan->loadPic("menu_back_btmleft");
-	_gfxBM = g_hdb->_drawMan->loadPic("menu_back_bottom");
-	_gfxBR = g_hdb->_drawMan->loadPic("menu_back_btmright");
+	_gfxBL = g_hdb->_gfx->loadPic("menu_back_btmleft");
+	_gfxBM = g_hdb->_gfx->loadPic("menu_back_bottom");
+	_gfxBR = g_hdb->_gfx->loadPic("menu_back_btmright");
 
-	_gfxTitleL = g_hdb->_drawMan->loadPic("menu_title_left");
-	_gfxTitleM = g_hdb->_drawMan->loadPic("menu_title_mid");
-	_gfxTitleR = g_hdb->_drawMan->loadPic("menu_title_right");
+	_gfxTitleL = g_hdb->_gfx->loadPic("menu_title_left");
+	_gfxTitleM = g_hdb->_gfx->loadPic("menu_title_mid");
+	_gfxTitleR = g_hdb->_gfx->loadPic("menu_title_right");
 
-	_gGfxTL = g_hdb->_drawMan->loadPic("g_menu_back_topleft");
-	_gGfxTM = g_hdb->_drawMan->loadPic("g_menu_back_top");
-	_gGfxTR = g_hdb->_drawMan->loadPic("g_menu_back_topright");
+	_gGfxTL = g_hdb->_gfx->loadPic("g_menu_back_topleft");
+	_gGfxTM = g_hdb->_gfx->loadPic("g_menu_back_top");
+	_gGfxTR = g_hdb->_gfx->loadPic("g_menu_back_topright");
 
-	_gGfxL = g_hdb->_drawMan->loadPic("g_menu_back_left");
-	_gGfxM = g_hdb->_drawMan->loadPic("g_menu_back_middle");
-	_gGfxR = g_hdb->_drawMan->loadPic("g_menu_back_right");
+	_gGfxL = g_hdb->_gfx->loadPic("g_menu_back_left");
+	_gGfxM = g_hdb->_gfx->loadPic("g_menu_back_middle");
+	_gGfxR = g_hdb->_gfx->loadPic("g_menu_back_right");
 
-	_gGfxBL = g_hdb->_drawMan->loadPic("g_menu_back_btmleft");
-	_gGfxBM = g_hdb->_drawMan->loadPic("g_menu_back_bottom");
-	_gGfxBR = g_hdb->_drawMan->loadPic("g_menu_back_btmright");
+	_gGfxBL = g_hdb->_gfx->loadPic("g_menu_back_btmleft");
+	_gGfxBM = g_hdb->_gfx->loadPic("g_menu_back_bottom");
+	_gGfxBR = g_hdb->_gfx->loadPic("g_menu_back_btmright");
 
-	_gGfxTitleL = g_hdb->_drawMan->loadPic("g_menu_title_left");
-	_gGfxTitleM = g_hdb->_drawMan->loadPic("g_menu_title_mid");
-	_gGfxTitleR = g_hdb->_drawMan->loadPic("g_menu_title_right");
+	_gGfxTitleL = g_hdb->_gfx->loadPic("g_menu_title_left");
+	_gGfxTitleM = g_hdb->_gfx->loadPic("g_menu_title_mid");
+	_gGfxTitleR = g_hdb->_gfx->loadPic("g_menu_title_right");
 
-	_gfxIndent = g_hdb->_drawMan->loadPic("menu_delivery_indentation");
-	_gfxArrowTo = g_hdb->_drawMan->loadPic("menu_arrow_deliverto");
+	_gfxIndent = g_hdb->_gfx->loadPic("menu_delivery_indentation");
+	_gfxArrowTo = g_hdb->_gfx->loadPic("menu_arrow_deliverto");
 
 	_gfxTry = _gfxAgain = NULL; // They will be loaded when needed
 
-	_gfxInvSelect = g_hdb->_drawMan->loadPic("inventory_normal");
-	_gfxHandright = g_hdb->_drawMan->loadPic("menu_hand_pointright");
+	_gfxInvSelect = g_hdb->_gfx->loadPic("inventory_normal");
+	_gfxHandright = g_hdb->_gfx->loadPic("menu_hand_pointright");
 
-	_gfxInfobar = g_hdb->_drawMan->loadPic("pic_infobar");
-	_gfxDarken = g_hdb->_drawMan->loadPic("screen_darken");
-	_gfxPausePlaque = g_hdb->_drawMan->loadPic("pause_plaque");
+	_gfxInfobar = g_hdb->_gfx->loadPic("pic_infobar");
+	_gfxDarken = g_hdb->_gfx->loadPic("screen_darken");
+	_gfxPausePlaque = g_hdb->_gfx->loadPic("pause_plaque");
 
 	_infobarDimmed = 0;
 
@@ -96,7 +96,7 @@ void Window::restartSystem() {
 	_dialogChoiceInfo.active = false;
 	_invWinInfo.active = false;
 	_dialogDelay = _invWinInfo.selection = 0;
-	_gemGfx = g_hdb->_drawMan->loadTile("ent_gem_white_sit01");
+	_gemGfx = g_hdb->_gfx->loadTile("ent_gem_white_sit01");
 	_infobarDimmed = 0;
 }
 
@@ -133,11 +133,11 @@ void Window::openDialog(const char *title, int tileIndex, const char *string, in
 		strncpy(_dialogInfo.string, string, sizeof(_dialogInfo.string) - 1);
 	else
 		strcpy(_dialogInfo.string, string);
-	g_hdb->_drawMan->getTextEdges(&e1, &e2, &e3, &e4);
-	g_hdb->_drawMan->setTextEdges(kDialogTextLeft, kDialogTextRight, 0, 480);
-	g_hdb->_drawMan->getDimensions(string, &width, &height);
-	g_hdb->_drawMan->getDimensions(title, &titleWidth, &titleHeight);
-	g_hdb->_drawMan->setTextEdges(e1, e2, e3, e4);
+	g_hdb->_gfx->getTextEdges(&e1, &e2, &e3, &e4);
+	g_hdb->_gfx->setTextEdges(kDialogTextLeft, kDialogTextRight, 0, 480);
+	g_hdb->_gfx->getDimensions(string, &width, &height);
+	g_hdb->_gfx->getDimensions(title, &titleWidth, &titleHeight);
+	g_hdb->_gfx->setTextEdges(e1, e2, e3, e4);
 	_dialogInfo.height = (height + 2) * 16;
 	w = _dialogInfo.width = width + 32;
 	_dialogInfo.titleWidth = titleWidth;
@@ -207,16 +207,16 @@ void Window::drawDialog() {
 	}
 
 	int e1, e2, e3, e4;
-	g_hdb->_drawMan->getTextEdges(&e1, &e2, &e3, &e4);
-	g_hdb->_drawMan->setTextEdges(_dialogInfo.x + 10, 480, 0, kScreenHeight);
-	g_hdb->_drawMan->setCursor(0, _dialogInfo.y - 7);
+	g_hdb->_gfx->getTextEdges(&e1, &e2, &e3, &e4);
+	g_hdb->_gfx->setTextEdges(_dialogInfo.x + 10, 480, 0, kScreenHeight);
+	g_hdb->_gfx->setCursor(0, _dialogInfo.y - 7);
 	if (_dialogInfo.title)
-		g_hdb->_drawMan->drawText(_dialogInfo.title);
-	g_hdb->_drawMan->setTextEdges(_dialogInfo.x + 16, _dialogInfo.x + _dialogInfo.width - 16, 0, kScreenHeight);
-	g_hdb->_drawMan->setCursor(0, _dialogInfo.y + 16);
+		g_hdb->_gfx->drawText(_dialogInfo.title);
+	g_hdb->_gfx->setTextEdges(_dialogInfo.x + 16, _dialogInfo.x + _dialogInfo.width - 16, 0, kScreenHeight);
+	g_hdb->_gfx->setCursor(0, _dialogInfo.y + 16);
 	if (_dialogInfo.string)
-		g_hdb->_drawMan->drawText(_dialogInfo.string);
-	g_hdb->_drawMan->setTextEdges(e1, e2, e3, e4);
+		g_hdb->_gfx->drawText(_dialogInfo.string);
+	g_hdb->_gfx->setTextEdges(e1, e2, e3, e4);
 }
 
 void Window::closeDialog() {
@@ -343,20 +343,20 @@ void Window::openDialogChoice(const char *title, const char *text, const char *f
 		strcpy(_dialogChoiceInfo.choices[i], choices[i]);
 	_dialogChoiceInfo.active = true;
 
-	g_hdb->_drawMan->getTextEdges(&e1, &e2, &e3, &e4);
-	g_hdb->_drawMan->setTextEdges(kOpenDialogTextLeft, kOpenDialogTextRight, 0, 480);
-	g_hdb->_drawMan->getDimensions(text, &width, &height);
-	g_hdb->_drawMan->getDimensions(title, &titleWidth, &titleHeight);
+	g_hdb->_gfx->getTextEdges(&e1, &e2, &e3, &e4);
+	g_hdb->_gfx->setTextEdges(kOpenDialogTextLeft, kOpenDialogTextRight, 0, 480);
+	g_hdb->_gfx->getDimensions(text, &width, &height);
+	g_hdb->_gfx->getDimensions(title, &titleWidth, &titleHeight);
 
 	for (i = 0; i < 10; i++)
 		if (choices[i]) {
 			int	w, h;
-			g_hdb->_drawMan->getDimensions(choices[i], &w, &h);
+			g_hdb->_gfx->getDimensions(choices[i], &w, &h);
 			if (w > width)
 				width = w;
 		}
 
-	g_hdb->_drawMan->setTextEdges(e1, e2, e3, e4);
+	g_hdb->_gfx->setTextEdges(e1, e2, e3, e4);
 	_dialogChoiceInfo.textHeight = (height + 1) * 16;
 	_dialogChoiceInfo.height = (height + 2 + numChoices) * 16;
 	_dialogChoiceInfo.width = width + 48;
@@ -406,21 +406,21 @@ void Window::drawDialogChoice() {
 		_gGfxTitleR->drawMasked(_dialogChoiceInfo.x + (blocks + 1) * 16, _dialogChoiceInfo.y - 10);
 	}
 
-	g_hdb->_drawMan->getTextEdges(&e1, &e2, &e3, &e4);
-	g_hdb->_drawMan->setTextEdges(_dialogChoiceInfo.x + 10, kOpenDialogTextRight, 0, 480);
-	g_hdb->_drawMan->setCursor(0, _dialogChoiceInfo.y - 7);
+	g_hdb->_gfx->getTextEdges(&e1, &e2, &e3, &e4);
+	g_hdb->_gfx->setTextEdges(_dialogChoiceInfo.x + 10, kOpenDialogTextRight, 0, 480);
+	g_hdb->_gfx->setCursor(0, _dialogChoiceInfo.y - 7);
 	if (_dialogChoiceInfo.title)
-		g_hdb->_drawMan->drawText(_dialogChoiceInfo.title);
-	g_hdb->_drawMan->setTextEdges(_dialogChoiceInfo.x + 16, kOpenDialogTextRight, 0, 480);
-	g_hdb->_drawMan->setCursor(0, _dialogChoiceInfo.y + 16);
+		g_hdb->_gfx->drawText(_dialogChoiceInfo.title);
+	g_hdb->_gfx->setTextEdges(_dialogChoiceInfo.x + 16, kOpenDialogTextRight, 0, 480);
+	g_hdb->_gfx->setCursor(0, _dialogChoiceInfo.y + 16);
 	if (_dialogChoiceInfo.text)
-		g_hdb->_drawMan->drawText(_dialogChoiceInfo.text);
+		g_hdb->_gfx->drawText(_dialogChoiceInfo.text);
 
 	for (i = 0; i < _dialogChoiceInfo.numChoices; i++) {
-		g_hdb->_drawMan->setCursor(_dialogChoiceInfo.x + 48, _dialogChoiceInfo.y + _dialogChoiceInfo.textHeight + 16 * i);
-		g_hdb->_drawMan->drawText(_dialogChoiceInfo.choices[i]);
+		g_hdb->_gfx->setCursor(_dialogChoiceInfo.x + 48, _dialogChoiceInfo.y + _dialogChoiceInfo.textHeight + 16 * i);
+		g_hdb->_gfx->drawText(_dialogChoiceInfo.choices[i]);
 	}
-	g_hdb->_drawMan->setTextEdges(e1, e2, e3, e4);
+	g_hdb->_gfx->setTextEdges(e1, e2, e3, e4);
 
 	_gfxHandright->drawMasked(_dialogChoiceInfo.x + 10, 4 + _dialogChoiceInfo.y + _dialogChoiceInfo.textHeight + 16 * _dialogChoiceInfo.selection);
 }
@@ -490,10 +490,10 @@ void Window::openMessageBar(const char *title, int time) {
 	_msgInfo.timer = (time * kGameFPS);
 	strcpy(_msgInfo.title, title);
 
-	g_hdb->_drawMan->getTextEdges(&e1, &e2, &e3, &e4);
-	g_hdb->_drawMan->setTextEdges(kDialogTextLeft, kDialogTextRight, 0, 480);
-	g_hdb->_drawMan->getDimensions(title, &width, &height);
-	g_hdb->_drawMan->setTextEdges(e1, e2, e3, e4);
+	g_hdb->_gfx->getTextEdges(&e1, &e2, &e3, &e4);
+	g_hdb->_gfx->setTextEdges(kDialogTextLeft, kDialogTextRight, 0, 480);
+	g_hdb->_gfx->getDimensions(title, &width, &height);
+	g_hdb->_gfx->setTextEdges(e1, e2, e3, e4);
 
 	_msgInfo.height = (height + 2) * 16;
 	_msgInfo.width = width + 32;
@@ -518,11 +518,11 @@ void Window::drawMessageBar() {
 
 	drawBorder(_msgInfo.x, _msgInfo.y, _msgInfo.width, _msgInfo.height, false);
 
-	g_hdb->_drawMan->getTextEdges(&e1, &e2, &e3, &e4);
-	g_hdb->_drawMan->setTextEdges(_msgInfo.x + 16, _msgInfo.x + _msgInfo.width - 16, 0, 320);
-	g_hdb->_drawMan->setCursor(_msgInfo.x + 16, _msgInfo.y + 16);
-	g_hdb->_drawMan->drawText(_msgInfo.title);
-	g_hdb->_drawMan->setTextEdges(e1, e2, e3, e4);
+	g_hdb->_gfx->getTextEdges(&e1, &e2, &e3, &e4);
+	g_hdb->_gfx->setTextEdges(_msgInfo.x + 16, _msgInfo.x + _msgInfo.width - 16, 0, 320);
+	g_hdb->_gfx->setCursor(_msgInfo.x + 16, _msgInfo.y + 16);
+	g_hdb->_gfx->drawText(_msgInfo.title);
+	g_hdb->_gfx->setTextEdges(e1, e2, e3, e4);
 
 	//
 	// time to go away?  see if we have any more msgs in the queue...
@@ -554,10 +554,10 @@ void Window::nextMsgQueued() {
 	strcpy(_msgInfo.title, _msgQueueStr[0]);
 	_msgInfo.timer = (_msgQueueWait[0] * kGameFPS);
 
-	g_hdb->_drawMan->getTextEdges(&e1, &e2, &e3, &e4);
-	g_hdb->_drawMan->setTextEdges(kDialogTextLeft, kDialogTextRight, 0, 480);
-	g_hdb->_drawMan->getDimensions(_msgInfo.title, &width, &height);
-	g_hdb->_drawMan->setTextEdges(e1, e2, e3, e4);
+	g_hdb->_gfx->getTextEdges(&e1, &e2, &e3, &e4);
+	g_hdb->_gfx->setTextEdges(kDialogTextLeft, kDialogTextRight, 0, 480);
+	g_hdb->_gfx->getDimensions(_msgInfo.title, &width, &height);
+	g_hdb->_gfx->setTextEdges(e1, e2, e3, e4);
 
 	_msgInfo.height = (height + 2) * 16;
 
@@ -623,8 +623,8 @@ void Window::drawInventory() {
 	// Draw the Gem Amount
 	gems = g_hdb->_ai->getGemAmount();
 	sprintf(string, "%d", gems);
-	g_hdb->_drawMan->setCursor(drawX + 32, drawY + 8);
-	g_hdb->_drawMan->drawText(string);
+	g_hdb->_gfx->setCursor(drawX + 32, drawY + 8);
+	g_hdb->_gfx->drawText(string);
 
 	// Draw the mini monkeystone
 	mstones = g_hdb->_ai->getMonkeystoneAmount();
@@ -634,8 +634,8 @@ void Window::drawInventory() {
 
 		// Draw the monkeystone amount
 		sprintf(string, "%d", mstones);
-		g_hdb->_drawMan->setCursor(drawX + 28, drawY + 8);
-		g_hdb->_drawMan->drawText(string);
+		g_hdb->_gfx->setCursor(drawX + 28, drawY + 8);
+		g_hdb->_gfx->drawText(string);
 	}
 
 	// If you have an inventory, draw the selection cursor
@@ -651,8 +651,8 @@ void Window::drawInventory() {
 		if (sel) {
 			int centerX = baseX - 4 + (kScreenWidth - baseX) / 2;
 			drawY = _invWinInfo.y + (kInvItemSpaceY * 4) + 16;
-			g_hdb->_drawMan->setCursor(centerX - g_hdb->_drawMan->stringLength(sel->printedName) / 2, drawY);
-			g_hdb->_drawMan->drawText(sel->printedName);
+			g_hdb->_gfx->setCursor(centerX - g_hdb->_gfx->stringLength(sel->printedName) / 2, drawY);
+			g_hdb->_gfx->drawText(sel->printedName);
 		}
 	}
 }
@@ -680,9 +680,9 @@ void Window::openDeliveries(bool animate) {
 	for (int i = 0; i < g_hdb->_ai->getDeliveriesAmount(); i++) {
 		d = g_hdb->_ai->getDeliveryItem(i);
 		if (d->itemGfxName[0])
-			d->itemGfx = g_hdb->_drawMan->loadTile(d->itemGfxName);
+			d->itemGfx = g_hdb->_gfx->loadTile(d->itemGfxName);
 		if (d->destGfxName[0])
-			d->destGfx = g_hdb->_drawMan->loadTile(d->destGfxName);
+			d->destGfx = g_hdb->_gfx->loadTile(d->destGfxName);
 	}
 
 	warning("STUB: Play SND_POP");
@@ -728,8 +728,8 @@ void Window::drawDeliveries() {
 					_gfxIndent->draw(drawX, drawY);
 					d->itemGfx->drawMasked(drawX, drawY);
 
-					g_hdb->_drawMan->setCursor(centerX - g_hdb->_drawMan->stringLength(d->itemTextName) / 2, kDlvItemTextY);
-					g_hdb->_drawMan->drawText(d->itemTextName);
+					g_hdb->_gfx->setCursor(centerX - g_hdb->_gfx->stringLength(d->itemTextName) / 2, kDlvItemTextY);
+					g_hdb->_gfx->drawText(d->itemTextName);
 					if (!_dlvsInfo.go2) {
 						_dlvsInfo.go2 = true;
 						_dlvsInfo.delay2 = g_hdb->getTimeSlice() + 500;
@@ -742,8 +742,8 @@ void Window::drawDeliveries() {
 					// Draw TO
 					_gfxArrowTo->drawMasked(_dlvsInfo.x + kDlvItemSpaceX * _dlvsInfo.selected + 8, drawY + kTileHeight);
 
-					g_hdb->_drawMan->setCursor(centerX - g_hdb->_drawMan->stringLength("to") / 2, kDlvItemTextY + 12);
-					g_hdb->_drawMan->drawText("to");
+					g_hdb->_gfx->setCursor(centerX - g_hdb->_gfx->stringLength("to") / 2, kDlvItemTextY + 12);
+					g_hdb->_gfx->drawText("to");
 					if (!_dlvsInfo.go3) {
 						_dlvsInfo.go3 = true;
 						_dlvsInfo.delay3 = g_hdb->getTimeSlice() + 500;
@@ -757,9 +757,9 @@ void Window::drawDeliveries() {
 					_gfxIndent->draw(drawX, drawY + kTileHeight + 16);
 					d->destGfx->drawMasked(drawX, drawY + kTileHeight + 16);
 
-					g_hdb->_drawMan->setCursor(centerX - (g_hdb->_drawMan->stringLength(d->destTextName) + g_hdb->_drawMan->stringLength("to")) / 2, kDlvItemTextY + 12);
-					g_hdb->_drawMan->drawText("to ");
-					g_hdb->_drawMan->drawText(d->destTextName);
+					g_hdb->_gfx->setCursor(centerX - (g_hdb->_gfx->stringLength(d->destTextName) + g_hdb->_gfx->stringLength("to")) / 2, kDlvItemTextY + 12);
+					g_hdb->_gfx->drawText("to ");
+					g_hdb->_gfx->drawText(d->destTextName);
 
 					warning("STUB: Play crazy sound");
 					_dlvsInfo.animate = false;
@@ -775,11 +775,11 @@ void Window::drawDeliveries() {
 			d->destGfx->drawMasked(drawX, drawY + kTileHeight + 16);
 
 			if (!_dlvsInfo.animate && inv == _dlvsInfo.selected) {
-				g_hdb->_drawMan->setCursor(centerX - g_hdb->_drawMan->stringLength(d->itemTextName)/2, kDlvItemTextY);
-				g_hdb->_drawMan->drawText(d->itemTextName);
-				g_hdb->_drawMan->setCursor(centerX - (g_hdb->_drawMan->stringLength(d->destTextName) + g_hdb->_drawMan->stringLength("to ")) / 2, kDlvItemTextY + 12);
-				g_hdb->_drawMan->drawText("to ");
-				g_hdb->_drawMan->drawText(d->destTextName);
+				g_hdb->_gfx->setCursor(centerX - g_hdb->_gfx->stringLength(d->itemTextName)/2, kDlvItemTextY);
+				g_hdb->_gfx->drawText(d->itemTextName);
+				g_hdb->_gfx->setCursor(centerX - (g_hdb->_gfx->stringLength(d->destTextName) + g_hdb->_gfx->stringLength("to ")) / 2, kDlvItemTextY + 12);
+				g_hdb->_gfx->drawText("to ");
+				g_hdb->_gfx->drawText(d->destTextName);
 			}
 
 			drawX += kDlvItemSpaceX;
@@ -792,8 +792,8 @@ void Window::drawDeliveries() {
 
 	// Draw "No Deliveries" or the arrow that points to the currently selected one
 	if (!inv) {
-		g_hdb->_drawMan->setCursor(baseX + 16, _dlvsInfo.y);
-		g_hdb->_drawMan->drawText("No Deliveries");
+		g_hdb->_gfx->setCursor(baseX + 16, _dlvsInfo.y);
+		g_hdb->_gfx->drawText("No Deliveries");
 	} else if (!_dlvsInfo.animate) {
 		int dx, dy, rowtwo;
 
@@ -845,7 +845,7 @@ void Window::textOut(const char *text, int x, int y, int timer) {
 
 	if (x < 0) {
 		int pw, lines;
-		g_hdb->_drawMan->getDimensions(t->text, &pw, &lines);
+		g_hdb->_gfx->getDimensions(t->text, &pw, &lines);
 		t->x = kTextOutCenterX - pw / 2;
 	}
 
@@ -854,7 +854,7 @@ void Window::textOut(const char *text, int x, int y, int timer) {
 
 void Window::centerTextOut(const char *text, int y, int timer) {
 	int width, lines;
-	g_hdb->_drawMan->getDimensions(text, &width, &lines);
+	g_hdb->_gfx->getDimensions(text, &width, &lines);
 	textOut(text, kTextOutCenterX - ((width - 8) >> 1), y, timer);
 }
 
@@ -866,15 +866,15 @@ void Window::drawTextOut() {
 	if (_textOutList.empty())
 		return;
 
-	g_hdb->_drawMan->getTextEdges(&e1, &e2, &e3, &e4);
-	g_hdb->_drawMan->setTextEdges(0, 480, 0, kScreenHeight);
+	g_hdb->_gfx->getTextEdges(&e1, &e2, &e3, &e4);
+	g_hdb->_gfx->setTextEdges(0, 480, 0, kScreenHeight);
 
 	time = g_system->getMillis();
 
 	for (uint i = 0; i < _textOutList.size(); i++) {
 		t = _textOutList[i];
-		g_hdb->_drawMan->setCursor(t->x, t->y);
-		g_hdb->_drawMan->drawText(t->text);
+		g_hdb->_gfx->setCursor(t->x, t->y);
+		g_hdb->_gfx->drawText(t->text);
 
 		if (t->timer < time) {
 			_textOutList.remove_at(i);
@@ -882,7 +882,7 @@ void Window::drawTextOut() {
 		}
 	}
 
-	g_hdb->_drawMan->setTextEdges(e1, e2, e3, e4);
+	g_hdb->_gfx->setTextEdges(e1, e2, e3, e4);
 }
 
 void Window::closeTextOut() {

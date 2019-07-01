@@ -130,7 +130,7 @@ public:
 	*/
 
 	FileMan *_fileMan;
-	DrawMan *_drawMan;
+	DrawMan *_gfx;
 	LuaScript *_lua;
 	Map *_map;
 	AI *_ai;

@@ -101,8 +101,8 @@ bool AI::cacheEntGfx(AIEntity *e, bool init) {
 				for (Common::Array<const char *>::iterator it = gfxFiles->begin(); it != gfxFiles->end(); it++) {
 					size = g_hdb->_fileMan->getLength((*it), TYPE_TILE32);
 
-					if (g_hdb->_drawMan->selectGfxType((*it))) {
-						Tile *gfx = g_hdb->_drawMan->getTileGfx((*it), size);
+					if (g_hdb->_gfx->selectGfxType((*it))) {
+						Tile *gfx = g_hdb->_gfx->getTileGfx((*it), size);
 
 						switch (list[j].state) {
 						case STATE_STANDDOWN:
@@ -381,7 +381,7 @@ bool AI::cacheEntGfx(AIEntity *e, bool init) {
 							break;
 						}
 					} else {
-						Picture *gfx = g_hdb->_drawMan->getPicGfx((*it), size);
+						Picture *gfx = g_hdb->_gfx->getPicGfx((*it), size);
 
 						switch (list[j].state) {
 						case STATE_ATK_CLUB_UP:
