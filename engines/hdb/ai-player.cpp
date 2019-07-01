@@ -600,15 +600,33 @@ void aiCrateInit(AIEntity *e) {
 }
 
 void aiBarrelLightAction(AIEntity *e) {
-	warning("STUB: AI: aiBarrelLightAction required");
+	if (!e->goalX) {
+		if (e->state == STATE_FLOATING)
+			g_hdb->_ai->animEntFrames(e);
+		return;
+	}
+
+	g_hdb->_ai->animateEntity(e);
 }
 
 void aiBarrelLightInit2(AIEntity *e) {
-	warning("STUB: AI: aiBarrelLightInit2 required");
+	// point all light barrel move frames to the standing one
+	e->movedownFrames =
+		e->moveleftFrames =
+		e->moverightFrames =
+		e->moveupFrames = 1;
+
+	e->movedownGfx[0] =
+		e->moveupGfx[0] =
+		e->moveleftGfx[0] =
+		e->moverightGfx[0] = e->standdownGfx[0];
+
+	e->draw = e->standdownGfx[0];			// standing frame - doesn't move
 }
 
 void aiBarrelLightInit(AIEntity *e) {
-	warning("STUB: AI: aiBarrelLightInit required");
+	e->moveSpeed = kPushMoveSpeed;
+	e->aiAction = aiBarrelLightAction;
 }
 
 void aiBarrelHeavyAction(AIEntity *e) {
