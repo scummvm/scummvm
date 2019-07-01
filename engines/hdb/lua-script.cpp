@@ -714,7 +714,27 @@ static int animation(lua_State *L) {
 }
 
 static int spawnEntity(lua_State *L) {
-	warning("STUB: SPAWN ENTITY");
+	double type = lua_tonumber(L, 1);
+	double	dir = lua_tonumber(L, 2);
+	double	x = lua_tonumber(L, 3);
+	double	y = lua_tonumber(L, 4);
+	char *funcInit = (char *)lua_tostring(L, 5);
+	char *funcAction = (char *)lua_tostring(L, 6);
+	char *funcUse = (char *)lua_tostring(L, 7);
+	double	dir2 = lua_tonumber(L, 8);
+	double	level = lua_tonumber(L, 9);
+	double	value1 = lua_tonumber(L, 10);
+	double	value2 = lua_tonumber(L, 11);
+
+	int t = (int)type;
+	int d = (int)dir;
+	int d2 = (int)dir2;
+
+	g_hdb->_lua->checkParameters("spawnEntity", 11);
+
+	lua_pop(L, 11);
+
+	g_hdb->_ai->spawn((AIType)t, (AIDir)d, (int)x, (int)y, funcInit, funcAction, funcUse, (AIDir)d2, (int)level, (int)value1, (int)value2, 1);
 	return 0;
 }
 
