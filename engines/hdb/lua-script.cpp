@@ -428,18 +428,39 @@ static int cineCenterTextOut(lua_State *L) {
 }
 
 static int newDelivery(lua_State *L) {
-	warning("STUB: NEW DELIVERY");
+	const char *itemTextName, *itemGfxName;
+	const char *destTextName, *destGfxName, *id;
+
+	itemTextName = lua_tostring(L, 1);
+	itemGfxName = lua_tostring(L, 2);
+	destTextName = lua_tostring(L, 3);
+	destGfxName = lua_tostring(L, 4);
+	id = lua_tostring(L, 5);
+
+	g_hdb->_lua->checkParameters("newDelivery", 5);
+
+	lua_pop(L, 5);
+
+	g_hdb->_ai->newDelivery(itemTextName, itemGfxName, destTextName, destGfxName, id);
+
 	return 0;
 }
 
 static int completeDelivery(lua_State *L) {
-	warning("STUB: COMPLETE DELIVERY");
-	return 0;
+	const char *id = lua_tostring(L, 1);
+	double rtn = g_hdb->_ai->completeDelivery(id);
+
+	g_hdb->_lua->checkParameters("completeDelivery", 1);
+
+	lua_pop(L, 1);
+	lua_pushnumber(L, rtn);
+	return 1;
 }
 
 static int deliveriesLeft(lua_State *L) {
-	warning("STUB: DELIVERIES LEFT");
-	return 0;
+	double	value = (double)g_hdb->_ai->getDeliveriesAmount();
+	lua_pushnumber(L, value);
+	return 1;
 }
 
 static int getEntityXY(lua_State *L) {
