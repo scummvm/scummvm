@@ -656,12 +656,37 @@ static int dialog(lua_State *L) {
 }
 
 static int dialogChoice(lua_State *L) {
-	warning("STUB: DIALOG CHOICE");
+	const char *title = lua_tostring(L, 1);
+	const char *text = lua_tostring(L, 2);
+	const char *func = lua_tostring(L, 3);
+	const char *choice[10] = {0,0,0,0,0,0,0,0,0,0};
+
+	int	i, amount = lua_gettop(L) - 3;
+	if (amount > 9)
+		amount = 9;
+
+	for (i = 0; i < amount; i++)
+		choice[i] = lua_tostring(L, 4 + i);
+
+	lua_pop(L, amount + 3);
+
+	g_hdb->_window->openDialogChoice(title, text, func, amount, &choice[0]);
 	return 0;
 }
 
 static int message(lua_State *L) {
-	warning("STUB: MESSAGE");
+	const char *title;
+	double	delay;
+
+	title = lua_tostring(L, 1);
+	delay = lua_tonumber(L, 2);
+
+
+	g_hdb->_lua->checkParameters("message", 2);
+
+	lua_pop(L, 2);
+
+	g_hdb->_window->openMessageBar(title, (int)delay);
 	return 0;
 }
 
