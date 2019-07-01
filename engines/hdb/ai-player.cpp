@@ -630,15 +630,33 @@ void aiBarrelLightInit(AIEntity *e) {
 }
 
 void aiBarrelHeavyAction(AIEntity *e) {
-	warning("STUB: AI: aiBarrelHeavyAction required");
+	if (!e->goalX) {
+		if (e->state == STATE_FLOATING)
+			g_hdb->_ai->animEntFrames(e);
+		return;
+	}
+
+	g_hdb->_ai->animateEntity(e);
 }
 
 void aiBarrelHeavyInit2(AIEntity *e) {
-	warning("STUB: AI: aiBarrelHeavyInit2 required");
+	// point all heavy barrel move frames to the standing one
+	e->movedownFrames =
+		e->moveleftFrames =
+		e->moverightFrames =
+		e->moveupFrames = 1;
+
+	e->movedownGfx[0] =
+		e->moveupGfx[0] =
+		e->moveleftGfx[0] =
+		e->moverightGfx[0] = e->standdownGfx[0];
+
+	e->draw = e->standdownGfx[0];			// standing frame - doesn't move
 }
 
 void aiBarrelHeavyInit(AIEntity *e) {
-	warning("STUB: AI: aiBarrelHeavyInit required");
+	e->moveSpeed = kPushMoveSpeed;
+	e->aiAction = aiBarrelHeavyAction;
 }
 
 void aiBarrelExplosionEnd(AIEntity *e) {
