@@ -838,7 +838,12 @@ static int removeInvItem(lua_State *L) {
 }
 
 static int killTrigger(lua_State *L) {
-	warning("STUB: KILL TRIGGER");
+	char *id = (char *)lua_tostring(L, 1);
+
+	g_hdb->_lua->checkParameters("killTrigger", 1);
+
+	lua_pop(L, 1);
+	g_hdb->_ai->killTrigger(id);
 	return 0;
 }
 
