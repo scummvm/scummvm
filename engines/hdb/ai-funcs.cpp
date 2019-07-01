@@ -1619,16 +1619,6 @@ void AI::animEntFrames(AIEntity *e) {
 	}
 }
 
-void AI::animLuaEntity(const char *initName, AIState st) {
-	for (Common::Array<AIEntity *>::iterator it = _ents->begin(); it != _ents->end(); it++) {
-		if (Common::matchString((*it)->entityName, initName)) {
-			(*it)->state = st;
-			(*it)->animFrame = 0;
-			(*it)->animDelay = (*it)->animCycle;
-		}
-	}
-}
-
 void AI::drawEnts(int x, int y, int w, int h) {
 
 	static int stunAnim = 0;
@@ -1812,6 +1802,19 @@ void AI::animGrabbing() {
 
 	_player->state = s;
 	_player->animFrame = 5;
+}
+
+void AI::entityFace(const char *luaName, int dir) {
+	AIEntity *e = locateEntity(luaName);
+	e->dir = (AIDir)dir;
+
+	switch (e->dir) {
+	case DIR_UP: e->state = STATE_STANDUP; break;
+	case DIR_DOWN: e->state = STATE_STANDDOWN; break;
+	case DIR_LEFT: e->state = STATE_STANDLEFT; break;
+	case DIR_RIGHT: e->state = STATE_STANDRIGHT; break;
+	case DIR_NONE: break;
+	}
 }
 
 void AI::moveEnts() {

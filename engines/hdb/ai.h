@@ -760,6 +760,7 @@ public:
 	void drawEnts(int x, int y, int w, int h);
 	void drawLevel2Ents();
 	void animGrabbing();
+	void entityFace(const char *luaName, int dir);
 
 	void moveEnts();
 
