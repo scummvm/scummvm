@@ -160,7 +160,7 @@ Common::WriteStream *N64FilesystemNode::createWriteStream() {
 	return RomfsStream::makeFromPath(getPath(), true);
 }
 
-bool N64FilesystemNode::create(bool isDirectoryFlag) {
+bool N64FilesystemNode::createDirectory() {
 	error("Not supported");
 	return false;
 }

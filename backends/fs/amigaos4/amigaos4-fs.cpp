@@ -443,7 +443,7 @@ Common::WriteStream *AmigaOSFilesystemNode::createWriteStream() {
 	return StdioStream::makeFromPath(getPath(), true);
 }
 
-bool AmigaOSFilesystemNode::create(bool isDirectoryFlag) {
+bool AmigaOSFilesystemNode::createDirectory() {
 	error("Not supported");
 	return false;
 }

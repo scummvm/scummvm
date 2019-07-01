@@ -134,6 +134,12 @@ WindowsFilesystemNode::WindowsFilesystemNode(const Common::String &p, const bool
 
 	_displayName = lastPathComponent(_path, '\\');
 
+	setFlags();
+
+	_isPseudoRoot = false;
+}
+
+void WindowsFilesystemNode::setFlags() {
 	// Check whether it is a directory, and whether the file actually exists
 	DWORD fileAttribs = GetFileAttributes(toUnicode(_path.c_str()));
 
@@ -148,7 +154,6 @@ WindowsFilesystemNode::WindowsFilesystemNode(const Common::String &p, const bool
 			_path += '\\';
 		}
 	}
-	_isPseudoRoot = false;
 }
 
 AbstractFSNode *WindowsFilesystemNode::getChild(const Common::String &n) const {
@@ -244,36 +249,11 @@ Common::WriteStream *WindowsFilesystemNode::createWriteStream() {
 	return StdioStream::makeFromPath(getPath(), true);
 }
 
-bool WindowsFilesystemNode::create(bool isDirectoryFlag) {
-	bool success;
+bool WindowsFilesystemNode::createDirectory() {
+	if (CreateDirectory(toUnicode(_path.c_str()), NULL) != 0)
+		setFlags();
 
-	if (isDirectoryFlag) {
-		success = CreateDirectory(toUnicode(_path.c_str()), NULL) != 0;
-	} else {
-		success = CreateFile(toUnicode(_path.c_str()), GENERIC_READ|GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL) != INVALID_HANDLE_VALUE;
-	}
-
-	if (success) {
-		//this piece is copied from constructor, it checks that file exists and detects whether it's a directory
-		DWORD fileAttribs = GetFileAttributes(toUnicode(_path.c_str()));
-		if (fileAttribs != INVALID_FILE_ATTRIBUTES) {
-			_isDirectory = ((fileAttribs & FILE_ATTRIBUTE_DIRECTORY) != 0);
-			_isValid = true;
-			// Add a trailing slash, if necessary.
-			if (_isDirectory && _path.lastChar() != '\\') {
-				_path += '\\';
-			}
-
-			if (_isDirectory != isDirectoryFlag) warning("failed to create %s: got %s", isDirectoryFlag ? "directory" : "file", _isDirectory ? "directory" : "file");
-			return _isDirectory == isDirectoryFlag;
-		}
-
-		warning("WindowsFilesystemNode: Create%s() was a success, but GetFileAttributes() indicates there is no such %s",
-			    isDirectoryFlag ? "Directory" : "File", isDirectoryFlag ? "directory" : "file");
-		return false;
-	}
-
-	return false;
+	return _isValid && _isDirectory;
 }
 
 #endif //#ifdef WIN32

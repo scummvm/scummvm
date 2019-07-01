@@ -67,7 +67,12 @@ public:
 
 	virtual Common::SeekableReadStream *createReadStream();
 	virtual Common::WriteStream *createWriteStream();
-	virtual bool create(bool isDirectoryFlag);
+	virtual bool createDirectory();
+private:
+	/**
+	 * Tests and sets the _isValid and _isDirectory flags, using OS_File 20.
+	 */
+	virtual void setFlags();
 };
 
 namespace Riscos {

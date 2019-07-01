@@ -91,7 +91,7 @@ public:
 
 	virtual Common::SeekableReadStream *createReadStream();
 	virtual Common::WriteStream *createWriteStream();
-	virtual bool create(bool isDirectoryFlag);
+	virtual bool createDirectory();
 
 	/**
 	 * Returns the zip file this node points to.
@@ -157,7 +157,7 @@ public:
 
 	virtual Common::SeekableReadStream *createReadStream();
 	virtual Common::WriteStream *createWriteStream();
-	virtual bool create(bool isDirectoryFlag);
+	virtual bool createDirectory();
 };
 
 struct fileHandle {
