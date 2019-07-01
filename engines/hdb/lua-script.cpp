@@ -361,8 +361,8 @@ static int cineSetForeground(lua_State *L) {
 	g_hdb->_lua->checkParameters("cineSetForeground", 3);
 
 	lua_pop(L, 3);
-	int index = g_hdb->_drawMan->getTileIndex(tileName);
-	g_hdb->_drawMan->getTile(index);
+	int index = g_hdb->_gfx->getTileIndex(tileName);
+	g_hdb->_gfx->getTile(index);
 	g_hdb->_ai->cineSetForeground((int)x, (int)y, index);
 	return 0;
 }
@@ -375,8 +375,8 @@ static int cineSetBackground(lua_State *L) {
 	g_hdb->_lua->checkParameters("cineSetBackground", 3);
 
 	lua_pop(L, 3);
-	int index = g_hdb->_drawMan->getTileIndex(tileName);
-	g_hdb->_drawMan->getTile(index);
+	int index = g_hdb->_gfx->getTileIndex(tileName);
+	g_hdb->_gfx->getTile(index);
 	g_hdb->_ai->cineSetBackground((int)x, (int)y, index);
 	return 0;
 }
@@ -613,8 +613,8 @@ static int setForeground(lua_State *L) {
 	g_hdb->_lua->checkParameters("setForeground", 3);
 
 	lua_pop(L, 3);
-	int index = g_hdb->_drawMan->getTileIndex(tileName);
-	g_hdb->_drawMan->getTile(index);
+	int index = g_hdb->_gfx->getTileIndex(tileName);
+	g_hdb->_gfx->getTile(index);
 	g_hdb->_map->setMapFGTileIndex((int)x, (int)y, index);
 	g_hdb->_map->addFGTileAnimation((int)x, (int)y);
 	return 0;
@@ -628,8 +628,8 @@ static int setBackground(lua_State *L) {
 	g_hdb->_lua->checkParameters("setBackground", 3);
 
 	lua_pop(L, 3);
-	int index = g_hdb->_drawMan->getTileIndex(tileName);
-	g_hdb->_drawMan->getTile(index);
+	int index = g_hdb->_gfx->getTileIndex(tileName);
+	g_hdb->_gfx->getTile(index);
 	g_hdb->_map->setMapBGTileIndex((int)x, (int)y, index);
 	g_hdb->_map->addBGTileAnimation((int)x, (int)y);
 	return 0;
@@ -986,7 +986,7 @@ static int setPointerState(lua_State *L) {
 
 	lua_pop(L, 1);
 
-	g_hdb->_drawMan->setPointerState((int)value);
+	g_hdb->_gfx->setPointerState((int)value);
 	return 0;
 }
 

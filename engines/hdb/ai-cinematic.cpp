@@ -299,7 +299,7 @@ void AI::processCines() {
 			if (!_cine[i]->start) {
 				Picture *pic = cineFindInBlitList(_cine[i]->id);
 				if (!pic) {
-					pic = g_hdb->_drawMan->loadPic(_cine[i]->string);
+					pic = g_hdb->_gfx->loadPic(_cine[i]->string);
 					cineAddToFreeList(pic);
 				} else
 					cineRemoveFromBlitList(_cine[i]->id);
@@ -334,17 +334,17 @@ void AI::processCines() {
 			break;
 		case C_FADEIN:
 			if (!_cine[i]->start) {
-				g_hdb->_drawMan->setFade(true, (bool)_cine[i]->end, _cine[i]->speed);
+				g_hdb->_gfx->setFade(true, (bool)_cine[i]->end, _cine[i]->speed);
 				_cine[i]->start = 1;
-			} else if (!g_hdb->_drawMan->isFadeActive()) {
+			} else if (!g_hdb->_gfx->isFadeActive()) {
 				complete = true;
 			}
 			break;
 		case C_FADEOUT:
 			if (!_cine[i]->start) {
-				g_hdb->_drawMan->setFade(false, (bool)_cine[i]->end, _cine[i]->speed);
+				g_hdb->_gfx->setFade(false, (bool)_cine[i]->end, _cine[i]->speed);
 				_cine[i]->start = 1;
-			} else if (!g_hdb->_drawMan->isFadeActive()) {
+			} else if (!g_hdb->_gfx->isFadeActive()) {
 				complete = true;
 			}
 			break;

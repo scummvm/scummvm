@@ -106,22 +106,22 @@ void aiPlayerInit2(AIEntity *e) {
 		g_hdb->_ai->_slugAttackGfx[3]->load(g_hdb->_fileMan->findFirstData("slug_shot4", TYPE_PIC));
 
 		int32 size = g_hdb->_fileMan->getLength("shock_spark_sit01", TYPE_TILE32);
-		g_hdb->_ai->_stunLightningGfx[0] = g_hdb->_drawMan->getTileGfx("shock_spark_sit01", size);
+		g_hdb->_ai->_stunLightningGfx[0] = g_hdb->_gfx->getTileGfx("shock_spark_sit01", size);
 		size = g_hdb->_fileMan->getLength("shock_spark_sit02", TYPE_TILE32);
-		g_hdb->_ai->_stunLightningGfx[1] = g_hdb->_drawMan->getTileGfx("shock_spark_sit02", size);
+		g_hdb->_ai->_stunLightningGfx[1] = g_hdb->_gfx->getTileGfx("shock_spark_sit02", size);
 		size = g_hdb->_fileMan->getLength("shock_spark_sit03", TYPE_TILE32);
-		g_hdb->_ai->_stunLightningGfx[2] = g_hdb->_drawMan->getTileGfx("shock_spark_sit03", size);
+		g_hdb->_ai->_stunLightningGfx[2] = g_hdb->_gfx->getTileGfx("shock_spark_sit03", size);
 		size = g_hdb->_fileMan->getLength("shock_spark_sit04", TYPE_TILE32);
-		g_hdb->_ai->_stunLightningGfx[3] = g_hdb->_drawMan->getTileGfx("shock_spark_sit04", size);
+		g_hdb->_ai->_stunLightningGfx[3] = g_hdb->_gfx->getTileGfx("shock_spark_sit04", size);
 
 		size = g_hdb->_fileMan->getLength("starstun_sit01", TYPE_TILE32);
-		g_hdb->_ai->_stunnedGfx[0] = g_hdb->_drawMan->getTileGfx("starstun_sit01", size);
+		g_hdb->_ai->_stunnedGfx[0] = g_hdb->_gfx->getTileGfx("starstun_sit01", size);
 		size = g_hdb->_fileMan->getLength("starstun_sit02", TYPE_TILE32);
-		g_hdb->_ai->_stunnedGfx[1] = g_hdb->_drawMan->getTileGfx("starstun_sit02", size);
+		g_hdb->_ai->_stunnedGfx[1] = g_hdb->_gfx->getTileGfx("starstun_sit02", size);
 		size = g_hdb->_fileMan->getLength("starstun_sit03", TYPE_TILE32);
-		g_hdb->_ai->_stunnedGfx[2] = g_hdb->_drawMan->getTileGfx("starstun_sit03", size);
+		g_hdb->_ai->_stunnedGfx[2] = g_hdb->_gfx->getTileGfx("starstun_sit03", size);
 		size = g_hdb->_fileMan->getLength("starstun_sit04", TYPE_TILE32);
-		g_hdb->_ai->_stunnedGfx[3] = g_hdb->_drawMan->getTileGfx("starstun_sit04", size);
+		g_hdb->_ai->_stunnedGfx[3] = g_hdb->_gfx->getTileGfx("starstun_sit04", size);
 	}
 
 	e->draw = g_hdb->_ai->getStandFrameDir(e);
@@ -409,8 +409,8 @@ void aiPlayerAction(AIEntity *e) {
 		g_hdb->_ai->animateEntity(e);
 	} else {
 		// Sometimes the fading stays black
-		if (!g_hdb->_ai->cinematicsActive() && g_hdb->_drawMan->isFadeStaying())
-			g_hdb->_drawMan->turnOffFade();
+		if (!g_hdb->_ai->cinematicsActive() && g_hdb->_gfx->isFadeStaying())
+			g_hdb->_gfx->turnOffFade();
 
 		// Did we just fall down a PLUMMET?
 		bgFlags = g_hdb->_map->getMapBGTileFlags(e->tileX, e->tileY);

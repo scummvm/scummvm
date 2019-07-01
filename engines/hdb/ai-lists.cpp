@@ -71,7 +71,7 @@ void AI::addAnimateTarget(int x, int y, int start, int end, AnimSpeed speed, boo
 			else
 				snprintf(name, 32, "%s%d", tileName, i + 1);
 			size = g_hdb->_fileMan->getLength(name, TYPE_TILE32);
-			at->gfxList[i] = g_hdb->_drawMan->getTileGfx(name, size);
+			at->gfxList[i] = g_hdb->_gfx->getTileGfx(name, size);
 		}
 	}
 

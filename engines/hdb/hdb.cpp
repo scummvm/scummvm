@@ -43,7 +43,7 @@ HDBGame::HDBGame(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst
 	_systemInit = false;
 	g_hdb = this;
 	_fileMan = new FileMan;
-	_drawMan = new DrawMan;
+	_gfx = new DrawMan;
 	_lua = new LuaScript;
 	_map = new Map;
 	_ai = new AI;
@@ -58,7 +58,7 @@ HDBGame::HDBGame(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst
 HDBGame::~HDBGame() {
 	delete _console;
 	delete _fileMan;
-	delete _drawMan;
+	delete _gfx;
 	delete _lua;
 	delete _map;
 	delete _ai;
@@ -79,7 +79,7 @@ bool HDBGame::init() {
 	if (!_fileMan->openMPC(getGameFile())) {
 		error("FileMan::openMPC: Cannot find the hyperspace.mpc data file.");
 	}
-	if (!_drawMan->init()) {
+	if (!_gfx->init()) {
 		error("DrawMan::init: Couldn't initialize DrawMan");
 	}
 	if (!_input->init()) {
@@ -147,14 +147,14 @@ void HDBGame::paint() {
 		warning("STUB: MENU::DrawMenu required");
 		break;
 	case GAME_PLAY:
-		_drawMan->drawPointer();
+		_gfx->drawPointer();
 		break;
 	case GAME_LOADING:
 		warning("STUB: DrawMan::DrawLoadingScreen required");
 		break;
 	}
 
-	_drawMan->updateVideo();
+	_gfx->updateVideo();
 }
 
 // builds a waypoint list if an entity is not next to player,
@@ -485,7 +485,7 @@ Common::Error HDBGame::run() {
 		}
 
 		if (_gameState == GAME_PLAY) {
-			_drawMan->drawSky();
+			_gfx->drawSky();
 
 			if (!_pauseFlag) {
 				_ai->moveEnts();
