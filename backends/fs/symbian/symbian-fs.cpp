@@ -233,8 +233,8 @@ Common::WriteStream *SymbianFilesystemNode::createWriteStream() {
 }
 
 bool SymbianFilesystemNode::createDirectory() {
-	error("Not supported");
-	return false;
+	warning("SymbianFilesystemNode::createDirectory(): Not supported");
+	return _isValid && _isDirectory;
 }
 
 #endif //#if defined(__SYMBIAN32__)

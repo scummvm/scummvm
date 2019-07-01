@@ -240,8 +240,8 @@ Common::WriteStream *PSPFilesystemNode::createWriteStream() {
 }
 
 bool PSPFilesystemNode::createDirectory() {
-	error("Not supported");
-	return false;
+	warning("PSPFilesystemNode::createDirectory(): Not supported");
+	return _isValid && _isDirectory;
 }
 
 #endif //#ifdef __PSP__
