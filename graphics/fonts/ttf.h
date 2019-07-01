@@ -99,8 +99,8 @@ Font *loadTTFFont(Common::SeekableReadStream &stream,
                   int size, TTFSizeMode sizeMode = kTTFSizeModeCharacter,
                   uint dpi = 0,
                   TTFRenderMode renderMode = kTTFRenderModeLight,
-                  bool stemDarkening = false,
-                  const uint32 *mapping = nullptr
+                  const uint32 *mapping = nullptr,
+                  bool stemDarkening = false
         );
 
 /**

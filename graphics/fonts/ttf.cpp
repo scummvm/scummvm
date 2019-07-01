@@ -117,7 +117,7 @@ public:
 	TTFFont();
 	virtual ~TTFFont();
 
-	bool load(Common::SeekableReadStream &stream, int size, TTFSizeMode sizeMode, uint dpi, TTFRenderMode renderMode, bool stemDarkening, const uint32 *mapping);
+	bool load(Common::SeekableReadStream &stream, int size, TTFSizeMode sizeMode, uint dpi, TTFRenderMode renderMode, const uint32 *mapping, bool stemDarkening);
 
 	virtual int getFontHeight() const;
 
@@ -184,7 +184,7 @@ TTFFont::~TTFFont() {
 	}
 }
 
-bool TTFFont::load(Common::SeekableReadStream &stream, int size, TTFSizeMode sizeMode, uint dpi, TTFRenderMode renderMode, bool stemDarkening, const uint32 *mapping) {
+bool TTFFont::load(Common::SeekableReadStream &stream, int size, TTFSizeMode sizeMode, uint dpi, TTFRenderMode renderMode, const uint32 *mapping, bool stemDarkening) {
 	if (!g_ttf.isInitialized())
 		return false;
 
@@ -675,10 +675,10 @@ void TTFFont::assureCached(uint32 chr) const {
 	}
 }
 
-Font *loadTTFFont(Common::SeekableReadStream &stream, int size, TTFSizeMode sizeMode, uint dpi, TTFRenderMode renderMode, bool stemDarkening, const uint32 *mapping) {
+Font *loadTTFFont(Common::SeekableReadStream &stream, int size, TTFSizeMode sizeMode, uint dpi, TTFRenderMode renderMode, const uint32 *mapping, bool stemDarkening) {
 	TTFFont *font = new TTFFont();
 
-	if (!font->load(stream, size, sizeMode, dpi, renderMode, stemDarkening, mapping)) {
+	if (!font->load(stream, size, sizeMode, dpi, renderMode, mapping, stemDarkening)) {
 		delete font;
 		return 0;
 	}
@@ -707,7 +707,7 @@ Font *loadTTFFontFromArchive(const Common::String &filename, int size, TTFSizeMo
 		return nullptr;
 	}
 
-	Font *font = loadTTFFont(f, size, sizeMode, dpi, renderMode, false, mapping);
+	Font *font = loadTTFFont(f, size, sizeMode, dpi, renderMode, mapping);
 
 	delete archive;
 	return font;
