@@ -572,7 +572,13 @@ void DrawMan::drawText(const char *string) {
 
 		// Blit the character
 		g_hdb->_drawMan->_globalSurface.transBlitFrom(_fontSurfaces[c], Common::Point(_cursorX, _cursorY), 0xf81f);
-		g_system->copyRectToScreen(g_hdb->_drawMan->_globalSurface.getBasePtr(_cursorX, _cursorY), g_hdb->_drawMan->_globalSurface.pitch, _cursorX, _cursorY, width, _fontHeader.height);
+
+		Common::Rect clip(0, 0, width, _fontHeader.height);
+		clip.moveTo(_cursorX, _cursorY);
+		clip.clip(_globalSurface.getBounds());
+		if (!clip.isEmpty()) {
+			g_system->copyRectToScreen(g_hdb->_drawMan->_globalSurface.getBasePtr(clip.left, clip.top), g_hdb->_drawMan->_globalSurface.pitch, clip.left, clip.top, clip.width(), clip.height());
+		}
 
 		// Advance the cursor
 		_cursorX += width + _fontHeader.kerning + kFontIncrement;
