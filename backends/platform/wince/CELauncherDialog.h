@@ -26,16 +26,11 @@
 #include "base/plugins.h"
 #include "common/fs.h"
 #include "gui/launcher.h"
-#include "gui/massadd.h"
 
-class CELauncherDialog : public GUI::LauncherDialog {
+class CELauncherDialog : public GUI::MobileLauncherDialog {
 public:
 	CELauncherDialog();
 	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
-protected:
-	void addGame();
 };
-
-typedef GUI::LauncherDialog GUILauncherDialog;
 
 #endif

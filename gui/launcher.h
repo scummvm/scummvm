@@ -82,7 +82,7 @@ protected:
 	void updateListing();
 
 	void updateButtons();
-	void switchButtonsText(ButtonWidget *button, const char *normalText, const char *shiftedText);
+	virtual void switchButtonsText(ButtonWidget *button, const char *normalText, const char *shiftedText);
 
 	void build();
 	void clean();
@@ -91,9 +91,19 @@ protected:
 	void close();
 
 	/**
+	 * Facade for "Add game..."/"Mass add game..." buttons.
+	 */
+	virtual void addGameButtonPressed();
+
+	/**
 	 * Handle "Add game..." button.
 	 */
-	virtual void addGame();
+	void addGame();
+
+	/**
+	 * Handle "Mass add game..." button.
+	 */
+	void massAddGame();
 
 	/**
 	 * Handle "Remove game..." button.
@@ -129,6 +139,16 @@ protected:
 	void selectTarget(const String &target);
 private:
 	bool checkModifier(int modifier);
+};
+
+class MobileLauncherDialog : public LauncherDialog {
+protected:
+	/**
+	 * Facade for "Add game..."/"Mass add game..." buttons.
+	 */
+	void addGameButtonPressed();
+
+	void switchButtonsText(ButtonWidget *button, const char *normalText, const char *shiftedText) {}
 };
 
 } // End of namespace GUI

@@ -32,7 +32,6 @@
 
 #include "gui/gui-manager.h"
 #include "gui/widget.h"
-#include "gui/browser.h"
 #include "gui/message.h"
 #include "gui/ThemeEval.h"
 #include "gui/widgets/list.h"
@@ -64,7 +63,7 @@ public:
 	}
 };
 
-CELauncherDialog::CELauncherDialog() : GUI::LauncherDialog() {
+CELauncherDialog::CELauncherDialog() : GUI::MobileLauncherDialog() {
 	dynamic_cast<WINCESdlGraphicsManager *>(((OSystem_SDL *)g_system)->getGraphicsManager())->reset_panel();
 }
 
@@ -77,25 +76,4 @@ void CELauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 d
 		CEAboutDialog about;
 		about.runModal();
 	}
-}
-
-void CELauncherDialog::addGame() {
-	MessageDialog alert(_("Do you want to perform an automatic scan ?"), _("Yes"), _("No"));
-	if (alert.runModal() == kMessageOK && _browser->runModal() > 0) {
-		MassAddDialog massAddDlg(_browser->getResult());
-
-		massAddDlg.runModal();
-
-		// Update the ListWidget and force a redraw
-
-		// If new target(s) were added, update the ListWidget and move
-		// the selection to to first newly detected game.
-		Common::String newTarget = massAddDlg.getFirstAddedTarget();
-		if (!newTarget.empty()) {
-			updateListing();
-			selectTarget(newTarget);
-		}
-		g_gui.scheduleTopDialogRedraw();
-	} else
-		GUILauncherDialog::addGame();
 }

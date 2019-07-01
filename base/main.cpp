@@ -100,6 +100,8 @@ static bool launcherDialog() {
 	CELauncherDialog dlg;
 #elif defined(__DC__)
 	DCLauncherDialog dlg;
+#elif defined(__ANDROID__)
+	GUI::MobileLauncherDialog dlg;
 #else
 	GUI::LauncherDialog dlg;
 #endif

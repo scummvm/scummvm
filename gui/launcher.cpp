@@ -316,7 +316,7 @@ void LauncherDialog::updateListing() {
 	_list->setFilter(_searchWidget->getEditString());
 }
 
-void LauncherDialog::addGame() {
+void LauncherDialog::addGameButtonPressed() {
 
 #ifndef DISABLE_MASS_ADD
 	const bool massAdd = checkModifier(Common::KBD_SHIFT);
@@ -325,21 +325,7 @@ void LauncherDialog::addGame() {
 		MessageDialog alert(_("Do you really want to run the mass game detector? "
 							  "This could potentially add a huge number of games."), _("Yes"), _("No"));
 		if (alert.runModal() == GUI::kMessageOK && _browser->runModal() > 0) {
-			MassAddDialog massAddDlg(_browser->getResult());
-
-			massAddDlg.runModal();
-
-			// Update the ListWidget and force a redraw
-
-			// If new target(s) were added, update the ListWidget and move
-			// the selection to to first newly detected game.
-			Common::String newTarget = massAddDlg.getFirstAddedTarget();
-			if (!newTarget.empty()) {
-				updateListing();
-				selectTarget(newTarget);
-			}
-
-			g_gui.scheduleTopDialogRedraw();
+			massAddGame();
 		}
 
 		// We need to update the buttons here, so "Mass add" will revert to "Add game"
@@ -349,6 +335,25 @@ void LauncherDialog::addGame() {
 	}
 #endif
 
+	addGame();
+}
+
+void MobileLauncherDialog::addGameButtonPressed() {
+
+#ifndef DISABLE_MASS_ADD
+	MessageDialog alert(_("Do you want to perform an automatic scan ?"), _("Yes"), _("No"));
+	if (alert.runModal() == kMessageOK) {
+		if (_browser->runModal() > 0)
+			massAddGame();
+
+		return;
+	}
+#endif
+
+	addGame();
+}
+
+void LauncherDialog::addGame() {
 	// Allow user to add a new game to the list.
 	// 1) show a dir selection dialog which lets the user pick the directory
 	//    the game data resides in.
@@ -389,6 +394,26 @@ void LauncherDialog::addGame() {
 			looping = !doGameDetection(_browser->getResult().getPath());
 		}
 	} while (looping);
+}
+
+void LauncherDialog::massAddGame() {
+#ifndef DISABLE_MASS_ADD
+	MassAddDialog massAddDlg(_browser->getResult());
+
+	massAddDlg.runModal();
+
+	// Update the ListWidget and force a redraw
+
+	// If new target(s) were added, update the ListWidget and move
+	// the selection to to first newly detected game.
+	Common::String newTarget = massAddDlg.getFirstAddedTarget();
+	if (!newTarget.empty()) {
+		updateListing();
+		selectTarget(newTarget);
+	}
+
+	g_gui.scheduleTopDialogRedraw();
+#endif
 }
 
 void LauncherDialog::removeGame(int item) {
@@ -640,7 +665,7 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 
 	switch (cmd) {
 	case kAddGameCmd:
-		addGame();
+		addGameButtonPressed();
 		break;
 	case kRemoveGameCmd:
 		removeGame(item);
