@@ -161,8 +161,7 @@ Common::WriteStream *N64FilesystemNode::createWriteStream() {
 }
 
 bool N64FilesystemNode::createDirectory() {
-	error("Not supported");
-	return false;
+	return _isValid && _isDirectory;
 }
 
 #endif //#ifdef __N64__

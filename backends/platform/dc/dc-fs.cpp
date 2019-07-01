@@ -71,6 +71,7 @@ public:
 	virtual AbstractFSNode *getChild(const Common::String &n) const;
 	virtual bool getChildren(AbstractFSList &list, ListMode mode, bool hidden) const;
 	virtual Common::SeekableReadStream *createReadStream() { return 0; }
+	virtual bool createDirectory() { return true; }
 };
 
 /* A file/directory which does not exist */

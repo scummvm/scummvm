@@ -444,8 +444,8 @@ Common::WriteStream *Ps2FilesystemNode::createWriteStream() {
 }
 
 bool Ps2FilesystemNode::createDirectory() {
-	error("Not supported");
-	return false;
+	warning("Ps2FilesystemNode::createDirectory(): Not supported");
+	return _isHere && _isDirectory;
 }
 
 #endif

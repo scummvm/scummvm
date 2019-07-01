@@ -214,8 +214,8 @@ Common::WriteStream *WiiFilesystemNode::createWriteStream() {
 }
 
 bool WiiFilesystemNode::createDirectory() {
-	error("Not supported");
-	return false;
+	warning("WiiFilesystemNode::createDirectory(): Not supported");
+	return _exists && _isDirectory;
 }
 
 #endif //#if defined(__WII__)
