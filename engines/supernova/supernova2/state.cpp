@@ -454,8 +454,8 @@ void GameManager2::handleTime() {
 void GameManager2::drawMapExits() {
 	_vm->renderBox(281, 161, 39, 39, kColorWhite25);
 
-	if ((_currentRoom >= _rooms[PYR_ENTRANCE] && _currentRoom <= _rooms[HOLE_ROOM]) ||
-		(_currentRoom >= _rooms[FLOORDOOR] && _currentRoom <= _rooms[BST_DOOR]))
+	if ((_currentRoom->getId() >= PYR_ENTRANCE && _currentRoom->getId() <= HOLE_ROOM) ||
+		(_currentRoom->getId() >= FLOORDOOR && _currentRoom->getId() <= BST_DOOR))
 		compass();
 	else {
 		int idx;
@@ -1276,26 +1276,26 @@ void GameManager2::alarm() {
 void GameManager2::caught() {
 	if (_vm->_screen->isMessageShown())
 		_vm->removeMessage();
-	if        (_currentRoom <  _rooms[MUS1]) {
-	} else if (_currentRoom <= _rooms[MUS2]) {
+	if        (_currentRoom->getId() <  MUS1) {
+	} else if (_currentRoom->getId() <= MUS2) {
 		_vm->renderImage( 8); 
 		_vm->renderImage(18);
-	} else if (_currentRoom == _rooms[MUS3]) {
+	} else if (_currentRoom->getId() == MUS3) {
 		_vm->renderImage(12); 
 		_vm->renderImage(30);
-	} else if (_currentRoom == _rooms[MUS4]) {
+	} else if (_currentRoom->getId() == MUS4) {
 		_vm->renderImage( 8); 
 		_vm->renderImage(18);
-	} else if (_currentRoom == _rooms[MUS5]) {
+	} else if (_currentRoom->getId() == MUS5) {
 		_vm->renderImage( 9); 
 		_vm->renderImage(29);
-	} else if (_currentRoom <= _rooms[MUS7]) {
+	} else if (_currentRoom->getId() <= MUS7) {
 		_vm->renderImage( 7); 
 		_vm->renderImage(17);
-	} else if (_currentRoom <= _rooms[MUS9]) {
+	} else if (_currentRoom->getId() <= MUS9) {
 		_vm->renderImage( 1); 
 		_vm->renderImage( 7);
-	} else if (_currentRoom <= _rooms[MUS11]) {
+	} else if (_currentRoom->getId() <= MUS11) {
 		_vm->renderImage( 2); 
 		_vm->renderImage( 8);
 	}
@@ -1487,7 +1487,7 @@ void GameManager2::pressureAlarmCount() {
 	if (!(_state._alarmOn ||
 			(_currentRoom == _rooms[MUS22] && _currentRoom->isSectionVisible(6)))) {
 		_state._pressureCounter++;
-		if ((_currentRoom >= _rooms[MUS12] && _state._pressureCounter > 8) || 
+		if ((_currentRoom->getId() >= MUS12 && _state._pressureCounter > 8) || 
 				_state._pressureCounter > 16)
 			alarm();
 	}
