@@ -296,6 +296,7 @@ void GameManager2::initState() {
 	int16 startPuzzleTab[15] = {12, 3, 14, 1, 11, 0, 2, 13, 9, 5, 4, 10, 7, 6, 8};
 	for (int i = 0; i < 15; i++)
 		_state._puzzleTab[i] = startPuzzleTab[i];
+	_dead = false;
 }
 
 void GameManager2::initRooms() {
@@ -728,6 +729,10 @@ void GameManager2::executeRoom() {
 		_vm->_sound->playSiren();
 	if (_processInput && !_vm->_screen->isMessageShown() && _guiEnabled) {
 		handleInput();
+		if (_dead) {
+			_dead = false;
+			return;
+		}
 		if (_mouseClicked) {
 			Common::Event event;
 			event.type = Common::EVENT_MOUSEMOVE;
@@ -750,6 +755,10 @@ void GameManager2::executeRoom() {
 			drawMapExits();
 		else
 			drawClock();
+		if (_dead) {
+			_dead = false;
+			return;
+		}
 		drawInventory();
 		drawStatus();
 		drawCommandBox();
@@ -1331,6 +1340,7 @@ void GameManager2::drawClock() {
 		//arrow();
 		_state._alarmCracked = false;
 		caught();
+		return;
 	}
 	for (int i = 0; i < 3; i++) {
 		Object *o = r->getObject(i);
@@ -1363,7 +1373,7 @@ void GameManager2::crack(int time) {
 		zv = z;
 		drawClock();
 		t++;
-	} while (t < time && _state._alarmOn == _alarmBefore);
+	} while (t < time && _state._alarmOn == _alarmBefore && !_dead);
 	_cracking = false;
 	_vm->_screen->changeCursor(ResourceManager::kCursorNormal);
 	if (_state._alarmOn == _alarmBefore)
@@ -1373,6 +1383,8 @@ void GameManager2::crack(int time) {
 bool GameManager2::crackDoor(int time) {
 	_vm->renderMessage(kStringMuseum15);
 	crack(time);
+	if (_dead)
+		return false;
 	if (_state._alarmOn != _alarmBefore) {
 		waitOnInput(_messageDuration);
 		_vm->removeMessage();

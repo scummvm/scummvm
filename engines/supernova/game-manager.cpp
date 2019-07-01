@@ -922,6 +922,7 @@ void GameManager::dead(int messageId) {
 	_vm->paletteFadeIn();
 
 	_guiEnabled = true;
+	_dead = true;
 }
 
 int GameManager::invertSection(int section) {
