@@ -467,7 +467,7 @@ DECLARE_SCRIPT(FreeSlotB)
 	int _var1;
 	int _var2;
 
-	void processGoal301();
+	void goToRandomUGxx();
 END_SCRIPT
 
 DECLARE_SCRIPT(Maggie)

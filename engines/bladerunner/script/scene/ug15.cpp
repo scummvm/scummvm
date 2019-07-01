@@ -140,9 +140,9 @@ bool SceneScriptUG15::ClickedOnExit(int exitId) {
 	}
 
 	if (exitId == 2) {
-		int v1 = Actor_Query_Goal_Number(kActorFreeSlotA);
-		if (v1 >= 300
-		 && v1 <= 303
+		int ratGoal = Actor_Query_Goal_Number(kActorFreeSlotA);
+		if (ratGoal >= 300 // kGoalFreeSlotAUG15Wait
+		 && ratGoal <= 303 // kGoalFreeSlotAUG15RunBack
 		) {
 			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -137.61f, 48.07f, 147.12f, 0, true, false, false);
 		} else if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 18.0f, 52.28f, 46.0f, 0, true, false, false)) {

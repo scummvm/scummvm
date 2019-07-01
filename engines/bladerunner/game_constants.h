@@ -2595,7 +2595,8 @@ enum GoalCrazyLegs {
 	kGoalCrazyLegsIsArrested = 699
 };
 
-enum GoalFreeSlotA { // Rat
+enum GoalFreeSlotA { // Rat A
+	kGoalFreeSlotADefault = 0,
 	kGoalFreeSlotAUG15Wait = 300,
 	kGoalFreeSlotAUG15WalkOut = 301,
 	kGoalFreeSlotAUG15RunToOtherSide = 302,
@@ -2607,7 +2608,20 @@ enum GoalFreeSlotA { // Rat
 	kGoalFreeSlotAUG15Die = 305,
 	kGoalFreeSlotAUG15Fall = 309,
 	kGoalFreeSlotAUG15Prepare = 310,
+	kGoalFreeSlotAAct5Default = 400,
+	kGoalFreeSlotAAct5Prepare = 405,
+	kGoalFreeSlotAAct5KP02Attack = 406,
 	kGoalFreeSlotAGone = 599
+};
+
+enum GoalFreeSlotB { // Rat B
+	kGoalFreeSlotBAct4Default = 300,
+	kGoalFreeSlotBAct4WalkAround = 301,
+	kGoalFreeSlotBAct4AttackMcCoy = 302,
+	kGoalFreeSlotBAct5Default = 400,
+	kGoalFreeSlotBAct5Prepare = 405,
+	kGoalFreeSlotBAct5KP02Attack = 406,
+	kGoalFreeSlotBGone = 599
 };
 
 enum GoalMaggie {

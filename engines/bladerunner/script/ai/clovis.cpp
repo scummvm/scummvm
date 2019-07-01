@@ -318,8 +318,11 @@ bool AIScriptClovis::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		return true;
 
 	case kGoalClovisUG18SadikWillShootGuzza:
+		// fall through
 	case kGoalClovisUG18SadikIsShootingGuzza:
+		// fall through
 	case kGoalClovisUG18GuzzaDied:
+		// fall through
 	case kGoalClovisUG18Leave:
 		return true;
 
