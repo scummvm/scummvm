@@ -28,6 +28,8 @@ namespace HDB {
 enum {
 	kDialogTextLeft = 64,
 	kDialogTextRight = (kDialogTextLeft + kTileWidth * 9),
+	kOpenDialogTextLeft = kDialogTextLeft,
+	kOpenDialogTextRight = (kDialogTextRight + kTileWidth * 2),
 	kWeaponX = (480 - 34),
 	kWeaponY = 2,
 	kInvItemSpaceX = 48,
@@ -56,7 +58,34 @@ struct DialogInfo {
 	int			el, er, et, eb;			// saves the text edges
 	char		luaMore[64];			// the name of the function to call after clicking the MORE button
 
-	DialogInfo() : title(""), tileIndex(0), string(""), active(false), x(0), y(0), width(0), height(0), titleWidth(0), gfx(NULL), more(0), el(0), er(0), et(0), eb(0), luaMore("") {}
+	DialogInfo() : title(""), tileIndex(0), string(""), active(false), x(0), y(0),
+		width(0), height(0), titleWidth(0), gfx(NULL), more(0), el(0), er(0), et(0),
+		eb(0), luaMore("") {}
+};
+
+struct DialogChoiceInfo {
+	char		title[64];				// TITLE string
+	char		text[160];				// actual text in the dialog
+	char		func[64];				// function to call with result
+
+	bool		active;					// is it drawing or not?
+	int			x, y;					// where to draw dialog
+	int			width, height;			// size of the dialog itself
+	int			textHeight;				// height of everything above choices
+	int			titleWidth;
+	int			el, er, et, eb;			// saves the text edges
+	uint32		timeout;				// timeout value!
+
+	int			selection;				// which choice we've made
+	int			numChoices;			// how many choices possible
+	char		choices[10][64];		// ptrs to choice text
+
+	DialogChoiceInfo() : title(""), text(""), func(""), active(false), x(0), y(0),
+		width(0), height(0), textHeight(0), titleWidth(0), el(0), er(0), et(0),
+		eb(0), timeout(0), selection(0), numChoices(0) {
+		for (int i = 0; i < 10; i++)
+			strcpy(choices[i], "");
+	}
 };
 
 struct InvWinInfo {
@@ -151,6 +180,8 @@ private:
 
 	DialogInfo _dialogInfo;
 	uint32 _dialogDelay;	// Used for Cinematics
+
+	DialogChoiceInfo _dialogChoiceInfo;
 
 	InvWinInfo _invWinInfo;
 	Common::Array<TOut *> _textOutList;
