@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-06-24 19:41+0200\n"
+"POT-Creation-Date: 2019-07-01 09:16+0200\n"
 "PO-Revision-Date: 2019-07-01 07:15+0000\n"
 "Last-Translator: jepael <kermespersialainen@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -2485,26 +2485,26 @@ msgstr "Korkealaatuinen ääni (hidas) (buuttaus)"
 msgid "Disable power off"
 msgstr "Poista virran sammutus käytöstä"
 
-#: backends/platform/ios7/ios7_osys_events.cpp:309
-#: backends/platform/ios7/ios7_osys_events.cpp:519
+#: backends/platform/ios7/ios7_osys_events.cpp:315
+#: backends/platform/ios7/ios7_osys_events.cpp:437
 #: backends/platform/iphone/osys_events.cpp:300
 msgid "Mouse-click-and-drag mode enabled."
 msgstr "Hiiren vedä-ja-pudota tila käytössä."
 
-#: backends/platform/ios7/ios7_osys_events.cpp:311
-#: backends/platform/ios7/ios7_osys_events.cpp:521
+#: backends/platform/ios7/ios7_osys_events.cpp:317
+#: backends/platform/ios7/ios7_osys_events.cpp:439
 #: backends/platform/iphone/osys_events.cpp:302
 msgid "Mouse-click-and-drag mode disabled."
 msgstr "Hiiren vedä-ja-pudota tila pois käytöstä."
 
-#: backends/platform/ios7/ios7_osys_events.cpp:322
-#: backends/platform/ios7/ios7_osys_events.cpp:540
+#: backends/platform/ios7/ios7_osys_events.cpp:328
+#: backends/platform/ios7/ios7_osys_events.cpp:458
 #: backends/platform/iphone/osys_events.cpp:313
 msgid "Touchpad mode enabled."
 msgstr "Touchpad tila päällä."
 
-#: backends/platform/ios7/ios7_osys_events.cpp:324
-#: backends/platform/ios7/ios7_osys_events.cpp:542
+#: backends/platform/ios7/ios7_osys_events.cpp:330
+#: backends/platform/ios7/ios7_osys_events.cpp:460
 #: backends/platform/iphone/osys_events.cpp:315
 msgid "Touchpad mode disabled."
 msgstr "Touchpad tila pois päältä."
@@ -3125,7 +3125,7 @@ msgstr "Resurssien alustus epäonnistui"
 msgid "A required game resource was not found"
 msgstr "Pakollista pelin resurssia ei löydetty"
 
-#: engines/bladerunner/bladerunner.cpp:2039
+#: engines/bladerunner/bladerunner.cpp:2043
 msgid ""
 "WARNING: This game was saved in Restored Cut Content mode, but you are "
 "playing in Original Content mode. The mode will be adjusted to Restored Cut "
@@ -3136,7 +3136,7 @@ msgstr ""
 "Pelisessio muutetaan 'Leikatut kohtaukset palautettu'-tilaan ja se on "
 "voimassa kunnes poistut kokonaan pelistä."
 
-#: engines/bladerunner/bladerunner.cpp:2041
+#: engines/bladerunner/bladerunner.cpp:2045
 msgid ""
 "WARNING: This game was saved in Original Content mode, but you are playing "
 "in Restored Cut Content mode. The mode will be adjusted to Original Content "
@@ -3147,7 +3147,7 @@ msgstr ""
 "muutetaan 'Alkuperäinen sisältö'-tilaan ja se on voimassa kunnes poistut "
 "kokonaan pelistä."
 
-#: engines/bladerunner/bladerunner.cpp:2043
+#: engines/bladerunner/bladerunner.cpp:2047
 msgid "Continue"
 msgstr "Jatka"
 
@@ -4195,7 +4195,7 @@ msgstr ""
 "'qfg1-' jos peli on Quest for Glory 1, 'qfg2-' jos peli on Quest for Glory "
 "2. Esimerkki: 'qfg2-thief.sav'."
 
-#: engines/sci/engine/kgraphics32.cpp:348
+#: engines/sci/engine/kgraphics32.cpp:358
 #, c-format
 msgid "Please use an external viewer to open the game's help file: %s"
 msgstr "Käytä ulkoista ohjelmaa pelin ohjetiedoston avaamiseen: %s"

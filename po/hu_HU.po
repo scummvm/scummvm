@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-06-24 19:41+0200\n"
+"POT-Creation-Date: 2019-07-01 09:16+0200\n"
 "PO-Revision-Date: 2019-07-01 07:15+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -2480,26 +2480,26 @@ msgstr "Jóminõségü audió (lassabb)(újraindítás)"
 msgid "Disable power off"
 msgstr "Leállítás tiltva"
 
-#: backends/platform/ios7/ios7_osys_events.cpp:309
-#: backends/platform/ios7/ios7_osys_events.cpp:519
+#: backends/platform/ios7/ios7_osys_events.cpp:315
+#: backends/platform/ios7/ios7_osys_events.cpp:437
 #: backends/platform/iphone/osys_events.cpp:300
 msgid "Mouse-click-and-drag mode enabled."
 msgstr "Egér kattint-és-húz mód engedélyezve."
 
-#: backends/platform/ios7/ios7_osys_events.cpp:311
-#: backends/platform/ios7/ios7_osys_events.cpp:521
+#: backends/platform/ios7/ios7_osys_events.cpp:317
+#: backends/platform/ios7/ios7_osys_events.cpp:439
 #: backends/platform/iphone/osys_events.cpp:302
 msgid "Mouse-click-and-drag mode disabled."
 msgstr "Egér kattint-és-húz mód letiltva."
 
-#: backends/platform/ios7/ios7_osys_events.cpp:322
-#: backends/platform/ios7/ios7_osys_events.cpp:540
+#: backends/platform/ios7/ios7_osys_events.cpp:328
+#: backends/platform/ios7/ios7_osys_events.cpp:458
 #: backends/platform/iphone/osys_events.cpp:313
 msgid "Touchpad mode enabled."
 msgstr "Touchpad mód engedélyezve."
 
-#: backends/platform/ios7/ios7_osys_events.cpp:324
-#: backends/platform/ios7/ios7_osys_events.cpp:542
+#: backends/platform/ios7/ios7_osys_events.cpp:330
+#: backends/platform/ios7/ios7_osys_events.cpp:460
 #: backends/platform/iphone/osys_events.cpp:315
 msgid "Touchpad mode disabled."
 msgstr "Touchpad mód letiltva."
@@ -3117,7 +3117,7 @@ msgstr "Nem sikerült inicializálni az erõforrásokat"
 msgid "A required game resource was not found"
 msgstr "A szükséges játékforrás nem található"
 
-#: engines/bladerunner/bladerunner.cpp:2039
+#: engines/bladerunner/bladerunner.cpp:2043
 msgid ""
 "WARNING: This game was saved in Restored Cut Content mode, but you are "
 "playing in Original Content mode. The mode will be adjusted to Restored Cut "
@@ -3127,7 +3127,7 @@ msgstr ""
 "de az eredeti tartalom módban játszol. Az üzemmódot a visszaállított vágott "
 "tartalomra állítom be, amíg teljesen ki nem lépsz a játékból."
 
-#: engines/bladerunner/bladerunner.cpp:2041
+#: engines/bladerunner/bladerunner.cpp:2045
 msgid ""
 "WARNING: This game was saved in Original Content mode, but you are playing "
 "in Restored Cut Content mode. The mode will be adjusted to Original Content "
@@ -3137,7 +3137,7 @@ msgstr ""
 "visszaállított vágott tartalom módban játszol. Az üzemmódot eredeti tartalom "
 "módra állítom be, amíg teljesen ki nem lépsz a játékból."
 
-#: engines/bladerunner/bladerunner.cpp:2043
+#: engines/bladerunner/bladerunner.cpp:2047
 msgid "Continue"
 msgstr "Folytatás"
 
@@ -4187,7 +4187,7 @@ msgstr ""
 "'qfg1-' Quest for Glory 1 'qfg2-' Quest for Glory 2. Például: 'qfg2-thief."
 "sav'."
 
-#: engines/sci/engine/kgraphics32.cpp:348
+#: engines/sci/engine/kgraphics32.cpp:358
 #, c-format
 msgid "Please use an external viewer to open the game's help file: %s"
 msgstr ""

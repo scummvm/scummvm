@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-06-24 19:41+0200\n"
+"POT-Creation-Date: 2019-07-01 09:16+0200\n"
 "PO-Revision-Date: 2018-04-18 10:18+0000\n"
 "Last-Translator: Adrian Fruehwirth <bonki@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -2517,26 +2517,26 @@ msgstr "Висока якість звуку (повільніше) (ребут)"
 msgid "Disable power off"
 msgstr "Заборонити вимкнення"
 
-#: backends/platform/ios7/ios7_osys_events.cpp:309
-#: backends/platform/ios7/ios7_osys_events.cpp:519
+#: backends/platform/ios7/ios7_osys_events.cpp:315
+#: backends/platform/ios7/ios7_osys_events.cpp:437
 #: backends/platform/iphone/osys_events.cpp:300
 msgid "Mouse-click-and-drag mode enabled."
 msgstr "Режим миші клікнути-та-тягнути увімкнено."
 
-#: backends/platform/ios7/ios7_osys_events.cpp:311
-#: backends/platform/ios7/ios7_osys_events.cpp:521
+#: backends/platform/ios7/ios7_osys_events.cpp:317
+#: backends/platform/ios7/ios7_osys_events.cpp:439
 #: backends/platform/iphone/osys_events.cpp:302
 msgid "Mouse-click-and-drag mode disabled."
 msgstr "Режим миші клікнути-та-тягнути вимкнено."
 
-#: backends/platform/ios7/ios7_osys_events.cpp:322
-#: backends/platform/ios7/ios7_osys_events.cpp:540
+#: backends/platform/ios7/ios7_osys_events.cpp:328
+#: backends/platform/ios7/ios7_osys_events.cpp:458
 #: backends/platform/iphone/osys_events.cpp:313
 msgid "Touchpad mode enabled."
 msgstr "Режим тачпаду увімкнено."
 
-#: backends/platform/ios7/ios7_osys_events.cpp:324
-#: backends/platform/ios7/ios7_osys_events.cpp:542
+#: backends/platform/ios7/ios7_osys_events.cpp:330
+#: backends/platform/ios7/ios7_osys_events.cpp:460
 #: backends/platform/iphone/osys_events.cpp:315
 msgid "Touchpad mode disabled."
 msgstr "Режим тачпаду вимкнено."
@@ -3159,21 +3159,21 @@ msgstr ""
 msgid "A required game resource was not found"
 msgstr ""
 
-#: engines/bladerunner/bladerunner.cpp:2039
+#: engines/bladerunner/bladerunner.cpp:2043
 msgid ""
 "WARNING: This game was saved in Restored Cut Content mode, but you are "
 "playing in Original Content mode. The mode will be adjusted to Restored Cut "
 "Content for this session until you completely Quit the game."
 msgstr ""
 
-#: engines/bladerunner/bladerunner.cpp:2041
+#: engines/bladerunner/bladerunner.cpp:2045
 msgid ""
 "WARNING: This game was saved in Original Content mode, but you are playing "
 "in Restored Cut Content mode. The mode will be adjusted to Original Content "
 "mode for this session until you completely Quit the game."
 msgstr ""
 
-#: engines/bladerunner/bladerunner.cpp:2043
+#: engines/bladerunner/bladerunner.cpp:2047
 msgid "Continue"
 msgstr ""
 
@@ -4206,7 +4206,7 @@ msgstr ""
 "збережено: 'qfg1-' для Quest for Glory1, 'qfg2-' для Quest for Glory 2. "
 "Наприклад: 'qfg2-thief.sav'."
 
-#: engines/sci/engine/kgraphics32.cpp:348
+#: engines/sci/engine/kgraphics32.cpp:358
 #, c-format
 msgid "Please use an external viewer to open the game's help file: %s"
 msgstr ""

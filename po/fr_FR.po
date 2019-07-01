@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-06-24 19:41+0200\n"
+"POT-Creation-Date: 2019-07-01 09:16+0200\n"
 "PO-Revision-Date: 2019-06-22 10:59+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -2510,26 +2510,26 @@ msgstr "Audio haute qualité (plus lent) (redémarrer)"
 msgid "Disable power off"
 msgstr "Désactiver l'extinction"
 
-#: backends/platform/ios7/ios7_osys_events.cpp:309
-#: backends/platform/ios7/ios7_osys_events.cpp:519
+#: backends/platform/ios7/ios7_osys_events.cpp:315
+#: backends/platform/ios7/ios7_osys_events.cpp:437
 #: backends/platform/iphone/osys_events.cpp:300
 msgid "Mouse-click-and-drag mode enabled."
 msgstr "Mode souris cliquer-et-déplacer activé."
 
-#: backends/platform/ios7/ios7_osys_events.cpp:311
-#: backends/platform/ios7/ios7_osys_events.cpp:521
+#: backends/platform/ios7/ios7_osys_events.cpp:317
+#: backends/platform/ios7/ios7_osys_events.cpp:439
 #: backends/platform/iphone/osys_events.cpp:302
 msgid "Mouse-click-and-drag mode disabled."
 msgstr "Mode souris cliquer-et-déplacer désactivé."
 
-#: backends/platform/ios7/ios7_osys_events.cpp:322
-#: backends/platform/ios7/ios7_osys_events.cpp:540
+#: backends/platform/ios7/ios7_osys_events.cpp:328
+#: backends/platform/ios7/ios7_osys_events.cpp:458
 #: backends/platform/iphone/osys_events.cpp:313
 msgid "Touchpad mode enabled."
 msgstr "Mode touchpad activé."
 
-#: backends/platform/ios7/ios7_osys_events.cpp:324
-#: backends/platform/ios7/ios7_osys_events.cpp:542
+#: backends/platform/ios7/ios7_osys_events.cpp:330
+#: backends/platform/ios7/ios7_osys_events.cpp:460
 #: backends/platform/iphone/osys_events.cpp:315
 msgid "Touchpad mode disabled."
 msgstr "Mode touchpad désactivé."
@@ -3154,7 +3154,7 @@ msgstr "Échec de l'initialisation des ressources"
 msgid "A required game resource was not found"
 msgstr "Une ressource de jeu nécessaire n'a pas été trouvée"
 
-#: engines/bladerunner/bladerunner.cpp:2039
+#: engines/bladerunner/bladerunner.cpp:2043
 msgid ""
 "WARNING: This game was saved in Restored Cut Content mode, but you are "
 "playing in Original Content mode. The mode will be adjusted to Restored Cut "
@@ -3164,7 +3164,7 @@ msgstr ""
 "vous jouez en mode Contenu Original. Le mode sera réglé sur Contenu Montage "
 "Restauré pour cette session jusqu'à ce que vous quittiez complètement le jeu."
 
-#: engines/bladerunner/bladerunner.cpp:2041
+#: engines/bladerunner/bladerunner.cpp:2045
 msgid ""
 "WARNING: This game was saved in Original Content mode, but you are playing "
 "in Restored Cut Content mode. The mode will be adjusted to Original Content "
@@ -3174,7 +3174,7 @@ msgstr ""
 "jouez en mode Contenu Montage Restauré. Le mode sera ajusté au mode Contenu "
 "Original pour cette session jusqu'à ce que vous quittiez complètement le jeu."
 
-#: engines/bladerunner/bladerunner.cpp:2043
+#: engines/bladerunner/bladerunner.cpp:2047
 msgid "Continue"
 msgstr "Continuer"
 
@@ -4251,7 +4251,7 @@ msgstr ""
 "Quest for Glory 1, 'qfg2' for Quest for Glory 2. Par exemple : 'qfg2-thief."
 "sav'."
 
-#: engines/sci/engine/kgraphics32.cpp:348
+#: engines/sci/engine/kgraphics32.cpp:358
 #, c-format
 msgid "Please use an external viewer to open the game's help file: %s"
 msgstr ""
