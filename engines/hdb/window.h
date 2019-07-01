@@ -154,8 +154,27 @@ public:
 		return _dialogInfo.active;
 	}
 
+	// Dialog Choice Functions
+
+	void openDialogChoice(const char *title, const char *text, const char *func, int numChoices, const char *choices[10]);
+	void drawDialogChoice();
+	void closeDialogChoice();
+	bool checkDialogChoiceClose(int x, int y);
+	void dialogChoiceMoveup();
+	void dialogChoiceMovedown();
+	bool dialogChoiceActive() {
+		return _dialogChoiceInfo.active;
+	}
+
 	// MessageBar Functions
-	void openMessageBar(const char *msg, int count);
+	void openMessageBar(const char *title, int time);
+	void drawMessageBar();
+	bool checkMsgClose(int x, int y);
+	void nextMsgQueued();
+	void closeMsg();
+	bool msgBarActive() {
+		return _msgInfo.active;
+	}
 
 	// Inventory Functions
 	void drawInventory();

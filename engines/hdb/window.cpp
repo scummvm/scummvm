@@ -326,8 +326,257 @@ void Window::setDialogDelay(int delay) {
 	_dialogDelay = g_system->getMillis() + 1000 * delay;
 }
 
-void Window::openMessageBar(const char *msg, int count) {
-	warning("STUB: Add openMessageBar()");
+void Window::openDialogChoice(const char *title, const char *text, const char *func, int numChoices, const char *choices[10]) {
+	int		width, height, titleWidth, titleHeight;
+	int		e1, e2, e3, e4, i;
+
+	if (true == _dialogInfo.active)
+		return;
+
+	memset(&_dialogChoiceInfo, 0, sizeof(_dialogChoiceInfo));
+	strcpy(_dialogChoiceInfo.title, title);
+	strcpy(_dialogChoiceInfo.text, text);
+	strcpy(_dialogChoiceInfo.func, func);
+	_dialogChoiceInfo.numChoices = numChoices;
+
+	for (i = 0; i < numChoices; i++)
+		strcpy(_dialogChoiceInfo.choices[i], choices[i]);
+	_dialogChoiceInfo.active = true;
+
+	g_hdb->_drawMan->getTextEdges(&e1, &e2, &e3, &e4);
+	g_hdb->_drawMan->setTextEdges(kOpenDialogTextLeft, kOpenDialogTextRight, 0, 480);
+	g_hdb->_drawMan->getDimensions(text, &width, &height);
+	g_hdb->_drawMan->getDimensions(title, &titleWidth, &titleHeight);
+
+	for (i = 0; i < 10; i++)
+		if (choices[i]) {
+			int	w, h;
+			g_hdb->_drawMan->getDimensions(choices[i], &w, &h);
+			if (w > width)
+				width = w;
+		}
+
+	g_hdb->_drawMan->setTextEdges(e1, e2, e3, e4);
+	_dialogChoiceInfo.textHeight = (height + 1) * 16;
+	_dialogChoiceInfo.height = (height + 2 + numChoices) * 16;
+	_dialogChoiceInfo.width = width + 48;
+	_dialogChoiceInfo.titleWidth = titleWidth;
+
+	_dialogChoiceInfo.x = (480 >> 1) - (_dialogChoiceInfo.width >> 1);
+	_dialogChoiceInfo.y = (kScreenHeight >> 1) - ((_dialogChoiceInfo.height >> 1) + 32);
+	if (_dialogChoiceInfo.y < 0)
+		_dialogChoiceInfo.y = 0;
+
+	_dialogChoiceInfo.selection = 0;
+	_dialogChoiceInfo.timeout = 0;
+	warning("STUB: Play SND_MOVE_SELECTION");
+}
+
+void Window::drawDialogChoice() {
+	int		e1, e2, e3, e4, blocks, i, w;
+
+	if (!_dialogChoiceInfo.active)
+		return;
+
+	// time out?
+	if (_dialogChoiceInfo.timeout && _dialogChoiceInfo.timeout < g_hdb->getTimeSlice()) {
+		closeDialogChoice();
+		return;
+	}
+
+	bool guyTalking = !scumm_stricmp(_dialogChoiceInfo.title, "guy");
+
+	w = _dialogChoiceInfo.width;
+	if (_dialogChoiceInfo.titleWidth > w)
+		w = _dialogChoiceInfo.titleWidth;
+
+	drawBorder(_dialogChoiceInfo.x, _dialogChoiceInfo.y, w, _dialogChoiceInfo.height, guyTalking);
+
+	if (!guyTalking) {
+		_gfxTitleL->drawMasked(_dialogChoiceInfo.x, _dialogChoiceInfo.y - 10);
+		blocks = _dialogChoiceInfo.titleWidth / 16;
+		for (i = 0; i < blocks; i++)
+			_gfxTitleM->drawMasked(_dialogChoiceInfo.x + 16 * (i + 1), _dialogChoiceInfo.y - 10);
+		_gfxTitleR->drawMasked(_dialogChoiceInfo.x + (blocks + 1) * 16, _dialogChoiceInfo.y - 10);
+	} else {
+		_gGfxTitleL->drawMasked(_dialogChoiceInfo.x, _dialogChoiceInfo.y - 10);
+		blocks = _dialogChoiceInfo.titleWidth / 16;
+		for (i = 0; i < blocks; i++)
+			_gGfxTitleM->drawMasked(_dialogChoiceInfo.x + 16 * (i + 1), _dialogChoiceInfo.y - 10);
+		_gGfxTitleR->drawMasked(_dialogChoiceInfo.x + (blocks + 1) * 16, _dialogChoiceInfo.y - 10);
+	}
+
+	g_hdb->_drawMan->getTextEdges(&e1, &e2, &e3, &e4);
+	g_hdb->_drawMan->setTextEdges(_dialogChoiceInfo.x + 10, kOpenDialogTextRight, 0, 480);
+	g_hdb->_drawMan->setCursor(0, _dialogChoiceInfo.y - 7);
+	if (_dialogChoiceInfo.title)
+		g_hdb->_drawMan->drawText(_dialogChoiceInfo.title);
+	g_hdb->_drawMan->setTextEdges(_dialogChoiceInfo.x + 16, kOpenDialogTextRight, 0, 480);
+	g_hdb->_drawMan->setCursor(0, _dialogChoiceInfo.y + 16);
+	if (_dialogChoiceInfo.text)
+		g_hdb->_drawMan->drawText(_dialogChoiceInfo.text);
+
+	for (i = 0; i < _dialogChoiceInfo.numChoices; i++) {
+		g_hdb->_drawMan->setCursor(_dialogChoiceInfo.x + 48, _dialogChoiceInfo.y + _dialogChoiceInfo.textHeight + 16 * i);
+		g_hdb->_drawMan->drawText(_dialogChoiceInfo.choices[i]);
+	}
+	g_hdb->_drawMan->setTextEdges(e1, e2, e3, e4);
+
+	_gfxHandright->drawMasked(_dialogChoiceInfo.x + 10, 4 + _dialogChoiceInfo.y + _dialogChoiceInfo.textHeight + 16 * _dialogChoiceInfo.selection);
+}
+
+void Window::closeDialogChoice() {
+	if (_dialogChoiceInfo.active) {
+		_dialogChoiceInfo.active = false;
+		g_hdb->_lua->pushFunction(_dialogChoiceInfo.func);
+		g_hdb->_lua->pushInt(_dialogChoiceInfo.selection);
+		g_hdb->_lua->call(1, 0);
+		warning("STUB: Play SND_SWITCH_USE");
+	}
+}
+
+bool Window::checkDialogChoiceClose(int x, int y) {
+	if (!_dialogChoiceInfo.active || _dialogChoiceInfo.timeout)
+		return false;
+
+	if (x >= _dialogChoiceInfo.x && x < _dialogChoiceInfo.x + _dialogChoiceInfo.width &&
+		y >= _dialogChoiceInfo.y + _dialogChoiceInfo.textHeight && y < _dialogChoiceInfo.y + _dialogChoiceInfo.textHeight + _dialogChoiceInfo.numChoices * 16) {
+		warning("STUB: Play SND_SWITCH_USE");
+		_dialogChoiceInfo.selection = (y - (_dialogChoiceInfo.y + _dialogChoiceInfo.textHeight)) >> 4;
+		_dialogChoiceInfo.timeout = g_hdb->getTimeSlice() + 500;
+		return true;
+	}
+
+	return false;
+}
+
+void Window::dialogChoiceMoveup() {
+	_dialogChoiceInfo.selection--;
+	if (_dialogChoiceInfo.selection < 0)
+		_dialogChoiceInfo.selection = _dialogChoiceInfo.numChoices - 1;
+	warning("STUB: Play SND_MOVE_SELECTION");
+}
+
+void Window::dialogChoiceMovedown() {
+	_dialogChoiceInfo.selection++;
+	if (_dialogChoiceInfo.selection >= _dialogChoiceInfo.numChoices)
+		_dialogChoiceInfo.selection = 0;
+	warning("STUB: Play SND_MOVE_SELECTION");
+}
+
+void Window::openMessageBar(const char *title, int time) {
+	int	width, height;
+	int	e1, e2, e3, e4;
+
+	// is the messagebar already up?  if so, add this msg to the queue
+	if (_msgInfo.active) {
+		if (_numMsgQueue < kMaxMsgQueue) {
+			int		i;
+			if (!scumm_stricmp(_msgInfo.title, title))
+				return;
+
+			for (i = 0; i < _numMsgQueue; i++)
+				if (!_stricmp(_msgQueueStr[i], title))
+					return;
+			strcpy(_msgQueueStr[_numMsgQueue], title);
+			_msgQueueWait[_numMsgQueue] = time;
+			_numMsgQueue++;
+		}
+		return;
+	}
+
+	memset(&_msgInfo, 0, sizeof(_msgInfo));
+
+	_msgInfo.timer = (time * kGameFPS);
+	strcpy(_msgInfo.title, title);
+
+	g_hdb->_drawMan->getTextEdges(&e1, &e2, &e3, &e4);
+	g_hdb->_drawMan->setTextEdges(kDialogTextLeft, kDialogTextRight, 0, 480);
+	g_hdb->_drawMan->getDimensions(title, &width, &height);
+	g_hdb->_drawMan->setTextEdges(e1, e2, e3, e4);
+
+	_msgInfo.height = (height + 2) * 16;
+	_msgInfo.width = width + 32;
+
+	_msgInfo.x = (480 >> 1) - (_msgInfo.width >> 1);
+	_msgInfo.active = true;
+}
+
+void Window::drawMessageBar() {
+	int	xx, py, my;
+	int	e1, e2, e3, e4;
+
+	// if msgbar's not up OR inventory is up, exit
+	if (!_msgInfo.active || _invWinInfo.active || _dialogInfo.active)
+		return;
+
+	g_hdb->_ai->getPlayerXY(&xx, &py);	// don't care about the x
+	g_hdb->_map->getMapXY(&xx, &my);
+	_msgInfo.y = (py - my) - _msgInfo.height - 64;	// put msgbar directly above player
+	if (_msgInfo.y < _msgInfo.height)
+		_msgInfo.y = (py - my) + 40;					// if at top, but it directly below
+
+	drawBorder(_msgInfo.x, _msgInfo.y, _msgInfo.width, _msgInfo.height, false);
+
+	g_hdb->_drawMan->getTextEdges(&e1, &e2, &e3, &e4);
+	g_hdb->_drawMan->setTextEdges(_msgInfo.x + 16, _msgInfo.x + _msgInfo.width - 16, 0, 320);
+	g_hdb->_drawMan->setCursor(_msgInfo.x + 16, _msgInfo.y + 16);
+	g_hdb->_drawMan->drawText(_msgInfo.title);
+	g_hdb->_drawMan->setTextEdges(e1, e2, e3, e4);
+
+	//
+	// time to go away?  see if we have any more msgs in the queue...
+	//
+	if (_msgInfo.timer-- < 1)
+		nextMsgQueued();
+}
+
+bool Window::checkMsgClose(int x, int y) {
+	if (x >= _msgInfo.x && x < _msgInfo.x + _msgInfo.width &&
+		y >= _msgInfo.y && y < _msgInfo.y + _msgInfo.height) {
+		closeMsg();
+		return true;
+	}
+
+	return false;
+}
+
+void Window::nextMsgQueued() {
+	int		xx;				// frameskip COULD be 0!
+	int		width, height;
+	int		e1, e2, e3, e4;
+
+	if (!_numMsgQueue) {
+		_msgInfo.active = false;
+		return;
+	}
+
+	strcpy(_msgInfo.title, _msgQueueStr[0]);
+	_msgInfo.timer = (_msgQueueWait[0] * kGameFPS);
+
+	g_hdb->_drawMan->getTextEdges(&e1, &e2, &e3, &e4);
+	g_hdb->_drawMan->setTextEdges(kDialogTextLeft, kDialogTextRight, 0, 480);
+	g_hdb->_drawMan->getDimensions(_msgInfo.title, &width, &height);
+	g_hdb->_drawMan->setTextEdges(e1, e2, e3, e4);
+
+	_msgInfo.height = (height + 2) * 16;
+
+	_msgInfo.width = width + 32;
+	_msgInfo.x = (480 >> 1) - (_msgInfo.width >> 1);
+	_msgInfo.y = (kScreenHeight >> 2) - (_msgInfo.height >> 1);
+
+	for (xx = 0; xx < _numMsgQueue - 1; xx++)
+	{
+		strcpy(_msgQueueStr[xx], _msgQueueStr[xx + 1]);
+		_msgQueueWait[xx] = _msgQueueWait[xx + 1];
+	}
+	_numMsgQueue--;
+	_msgInfo.active = true;
+}
+
+void Window::closeMsg() {
+	nextMsgQueued();
+	warning("STUB: Play SND_DIALOG_CLOSE");
 }
 
 void Window::drawInventory() {
