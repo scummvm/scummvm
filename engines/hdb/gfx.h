@@ -82,11 +82,11 @@ struct CharInfo {
 	int32 offset;	// From the start of the font charInfo chunk
 };
 
-class DrawMan {
+class Gfx {
 public:
 
-	DrawMan();
-	~DrawMan();
+	Gfx();
+	~Gfx();
 
 	Graphics::ManagedSurface _globalSurface;
 

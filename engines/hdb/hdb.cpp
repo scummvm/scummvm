@@ -43,7 +43,7 @@ HDBGame::HDBGame(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst
 	_systemInit = false;
 	g_hdb = this;
 	_fileMan = new FileMan;
-	_gfx = new DrawMan;
+	_gfx = new Gfx;
 	_lua = new LuaScript;
 	_map = new Map;
 	_ai = new AI;
@@ -80,7 +80,7 @@ bool HDBGame::init() {
 		error("FileMan::openMPC: Cannot find the hyperspace.mpc data file.");
 	}
 	if (!_gfx->init()) {
-		error("DrawMan::init: Couldn't initialize DrawMan");
+		error("Gfx::init: Couldn't initialize Gfx");
 	}
 	if (!_input->init()) {
 		error("Input::init: Couldn't initialize Input");
@@ -150,7 +150,7 @@ void HDBGame::paint() {
 		_gfx->drawPointer();
 		break;
 	case GAME_LOADING:
-		warning("STUB: DrawMan::DrawLoadingScreen required");
+		warning("STUB: Gfx::DrawLoadingScreen required");
 		break;
 	}
 
