@@ -528,7 +528,14 @@ static int setEntDir(lua_State *L) {
 }
 
 static int removeEntity(lua_State *L) {
-	warning("STUB: REMOVE ENTITY");
+	const char *entName = lua_tostring(L, 1);
+
+	g_hdb->_lua->checkParameters("removeEntity", 1);
+
+	lua_pop(L, 1);
+
+	g_hdb->_ai->removeLuaEntity(entName);
+
 	return 0;
 }
 
@@ -545,17 +552,42 @@ static int animEntity(lua_State *L) {
 }
 
 static int setAnimFrame(lua_State *L) {
-	warning("STUB: SET ANIM FRAME");
+	const char *entName = lua_tostring(L, 1);
+	double	state = lua_tonumber(L, 2);
+	double	frame = lua_tonumber(L, 3);
+
+	g_hdb->_lua->checkParameters("setAnimFrame", 3);
+
+	lua_pop(L, 3);
+
+	int	s = (int)state;
+	g_hdb->_ai->setLuaAnimFrame(entName, (AIState)s, (int)frame);
+
 	return 0;
 }
 
 static int useEntity(lua_State *L) {
-	warning("STUB: USE ENTITY");
+	const char *initName = lua_tostring(L, 1);
+
+	g_hdb->_lua->checkParameters("useEntity", 1);
+
+	lua_pop(L, 1);
+
+	g_hdb->_ai->useLuaEntity(initName);
+
 	return 0;
 }
 
 static int entityFace(lua_State *L) {
-	warning("STUB: ENTITY FACE");
+	const char *initName = lua_tostring(L, 1);
+	double dir = lua_tonumber(L, 2);
+
+	g_hdb->_lua->checkParameters("entityFace", 2);
+
+	lua_pop(L, 2);
+
+	g_hdb->_ai->entityFace(initName, (int)dir);
+
 	return 0;
 }
 
