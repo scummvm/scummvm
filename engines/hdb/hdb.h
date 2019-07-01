@@ -44,7 +44,7 @@
 #include "hdb/file-manager.h"
 #include "hdb/input.h"
 #include "hdb/lua-script.h"
-#include "hdb/map-loader.h"
+#include "hdb/map.h"
 #include "hdb/window.h"
 
 #define MAX_SNDCACHE_MEM	0x400000	// 4Mb of sounds in memory

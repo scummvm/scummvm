@@ -17,7 +17,7 @@ MODULE_OBJS := \
 	hdb.o \
 	input.o \
 	lua-script.o \
-	map-loader.o \
+	map.o \
 	window.o
 
 MODULE_DIRS += \
