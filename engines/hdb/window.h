@@ -30,6 +30,7 @@ enum {
 	kDialogTextRight = (kDialogTextLeft + kTileWidth * 9),
 	kOpenDialogTextLeft = kDialogTextLeft,
 	kOpenDialogTextRight = (kDialogTextRight + kTileWidth * 2),
+	kMaxMsgQueue = 10,
 	kWeaponX = (480 - 34),
 	kWeaponY = 2,
 	kInvItemSpaceX = 48,
@@ -86,6 +87,16 @@ struct DialogChoiceInfo {
 		for (int i = 0; i < 10; i++)
 			strcpy(choices[i], "");
 	}
+};
+
+struct MessageInfo {
+	bool		active;
+	char		title[128];
+	int			timer;
+	int			x, y;
+	int			width, height;
+
+	MessageInfo() : active(false), title(""), timer(0), x(0), y(0), width(0), height(0) {}
 };
 
 struct InvWinInfo {
@@ -183,9 +194,15 @@ private:
 
 	DialogChoiceInfo _dialogChoiceInfo;
 
+	MessageInfo _msgInfo;
+
 	InvWinInfo _invWinInfo;
 	Common::Array<TOut *> _textOutList;
 	DlvsInfo _dlvsInfo;
+
+	char _msgQueueStr[kMaxMsgQueue][128];
+	int _msgQueueWait[kMaxMsgQueue];
+	int _numMsgQueue;
 
 	// Windows GFX
 	Picture *_gfxTL, *_gfxTM, *_gfxTR;

@@ -90,6 +90,8 @@ bool Window::init() {
 }
 
 void Window::restartSystem() {
+	_numMsgQueue = 0;
+	_msgInfo.active = false;
 	_dialogInfo.active = false;
 	_dialogChoiceInfo.active = false;
 	_invWinInfo.active = false;
