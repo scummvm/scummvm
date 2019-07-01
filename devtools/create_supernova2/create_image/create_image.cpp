@@ -11,7 +11,7 @@ int writePalette(std::ofstream &output) {
 	std::string filename = filenumber + "/palette";
 	std::ifstream palette(filename.c_str());
 	if (!palette.is_open()) {
-		std::cerr << "Couldn't open palette file";
+		std::cerr << "Couldn't open palette file" << std::endl;
 		return 1;
 	}
 	int input;
@@ -29,7 +29,7 @@ int writeSections(std::ofstream &output) {
 	std::string filename = filenumber + "/section_info";
 	std::ifstream sectionInfo(filename.c_str());
 	if (!sectionInfo.is_open()) {
-		std::cerr << "Couldn't open section_info file";
+		std::cerr << "Couldn't open section_info file" << std::endl;
 		return 0;
 	}
 	int numSections;
@@ -72,7 +72,7 @@ int writeClickFields(std::ofstream &output) {
 	std::string filename = filenumber + "/clickfield_info";
 	std::ifstream clickFieldInfo(filename.c_str());
 	if (!clickFieldInfo.is_open()) {
-		std::cerr << "Couldn't open clickfield_info file";
+		std::cerr << "Couldn't open clickfield_info file" << std::endl;
 		return 1;
 	}
 	int numClickFields;
@@ -109,8 +109,8 @@ int writePixelData(std::ofstream &output, int imageNum, int skip) {
 	fileName << filenumber << "/image" << imageNum << ".bmp";
 	std::ifstream image(fileName.str().c_str(), std::ios::binary);
 	if (!image.is_open()) {
-		std::cerr << "Couldn't open " << fileName.str() << " file";
-		return 1;
+		std::cerr << "Couldn't open " << fileName.str() << " file" << std::endl;
+		return 0;
 	}
 
 	image.seekg(0, image.end);
@@ -121,7 +121,7 @@ int writePixelData(std::ofstream &output, int imageNum, int skip) {
 	image.read(buf, length);
 	output.write(buf, length);
 	delete buf;
-	return 0;
+	return length;
 }
 
 void printHelp() {
@@ -152,11 +152,11 @@ int main(int argc, char *argv[]) {
 	oFileName += "." + filenumber;
 	std::ofstream output(oFileName.c_str(), std::ios::binary);
 	if (!output.is_open()) {
-		std::cerr << "Couldn't open output file";
+		std::cerr << "Couldn't open output file" << std::endl;
 		return 1;
 	}
 	// size
-	// don't know how to determine that yet
+	// just a place holder, will be filled later
 	output << (char) 0x40;
 	output << (char) 0x70;
 	output << (char) 0x01;
@@ -171,8 +171,32 @@ int main(int argc, char *argv[]) {
 	// we don't compress the images, so set to 0
 	output << (char) 0; //numRepeat
 	output << (char) 0; //numZw
-	for (int i = 0; i < numImages; i++)
-		writePixelData(output, i, bytesSkip);
+	int totalLength = 0;
+	int oldLength = 0;
+	for (int i = 0; i < numImages; i++) {
+		totalLength += writePixelData(output, i, bytesSkip);
+		if (oldLength == totalLength) {
+			std::cerr << "Error while reading the image number: " << i << std::endl; 
+			return 1;
+		}
+		oldLength = totalLength;
+	}
+
+	//reversing the size computation inside the engine
+	totalLength += 15;
+	totalLength /= 16;
+	totalLength -= 0x70;
+	int i = (totalLength & 0xf000) >> 12;
+	int j = totalLength << 4;
+	char *i_p = (char *) &i;
+	char *j_p = (char *) &j;
+
+	//writing the size
+	output.seekp(0);
+	output << j_p[0];
+	output << j_p[1];
+	output << i_p[0];
+	output << i_p[1];
 	output.close();
 	return 0;
 }

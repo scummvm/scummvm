@@ -114,9 +114,6 @@ bool MSNImage::loadPbmFromEngineDataFile() {
 		if (version != SUPERNOVA_DAT_VERSION)
 			return false;
 	} else if (_MSPart == 2) {
-		if (_filenumber == 28)
-			name = "IMG1";
-		else
 			return false;
 
 		if (!f.open(SUPERNOVA2_DAT))
