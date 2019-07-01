@@ -55,7 +55,7 @@ enum DebuggerDrawnObjectType {
 class Debugger : public GUI::Debugger{
 	BladeRunnerEngine *_vm;
 
-	static const int kMaxSpecificObjectsDrawnCount = 100;
+	static const uint kMaxSpecificObjectsDrawnCount = 100;
 
 	struct DebuggerDrawnObject {
 		int                     sceneId;
