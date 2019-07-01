@@ -366,6 +366,7 @@ int main(int argc, char *argv[]) {
 	StringList featureDefines = getFeatureDefines(setup.features);
 	setup.defines.splice(setup.defines.begin(), featureDefines);
 
+	bool backendWin32 = false;
 	if (projectType == kProjectXcode) {
 		setup.defines.push_back("POSIX");
 		// Define both MACOSX, and IPHONE, but only one of them will be associated to the
@@ -376,13 +377,14 @@ int main(int argc, char *argv[]) {
 		setup.defines.push_back("MACOSX");
 		setup.defines.push_back("IPHONE");
 	} else if (projectType == kProjectMSVC || projectType == kProjectCodeBlocks) {
-		// Windows only has support for the SDL backend, so we hardcode it here (along with winmm)
 		setup.defines.push_back("WIN32");
+		backendWin32 = true;
 	} else {
 		// As a last resort, select the backend files to build based on the platform used to build create_project.
 		// This is broken when cross compiling.
 #if defined(_WIN32) || defined(WIN32)
 		setup.defines.push_back("WIN32");
+		backendWin32 = true;
 #else
 		setup.defines.push_back("POSIX");
 #endif
@@ -402,13 +404,13 @@ int main(int argc, char *argv[]) {
 
 	if (updatesEnabled) {
 		setup.defines.push_back("USE_SPARKLE");
-		if (projectType != kProjectXcode)
+		if (backendWin32)
 			setup.libraries.push_back("winsparkle");
 		else
 			setup.libraries.push_back("sparkle");
 	}
 
-	if (projectType == kProjectMSVC) {
+	if (backendWin32) {
 		if (curlEnabled) {
 			setup.defines.push_back("CURL_STATICLIB");
 			setup.libraries.push_back("ws2_32");
@@ -419,6 +421,7 @@ int main(int argc, char *argv[]) {
 		if (sdlnetEnabled) {
 			setup.libraries.push_back("iphlpapi");
 		}
+		setup.libraries.push_back("winmm");
 	}
 
 	setup.defines.push_back("SDL_BACKEND");
@@ -433,7 +436,6 @@ int main(int argc, char *argv[]) {
 		setup.defines.push_back("USE_SDL2");
 		setup.libraries.push_back("sdl2");
 	}
-	setup.libraries.push_back("winmm");
 
 	// Add additional project-specific library
 #ifdef ADDITIONAL_LIBRARY
