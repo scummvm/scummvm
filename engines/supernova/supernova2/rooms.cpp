@@ -1977,8 +1977,10 @@ bool Ship::interact(Action verb, Object &obj1, Object &obj2) {
 		else if (isSectionVisible(9)) {
 			_vm->renderImage(9 + 128);
 			_vm->renderImage(11);
-			if (!_shown[kMaxSection - 1])
+			if (!_shown[kMaxSection - 1]) {
 				kill();
+				return true;
+			}
 			_objectState[6]._click = 8;
 			_gm->wait(2);
 			_vm->renderImage(4);
@@ -1989,8 +1991,10 @@ bool Ship::interact(Action verb, Object &obj1, Object &obj2) {
 			_objectState[2]._description = kStringDefaultDescription;
 		} else {
 			_vm->renderImage(10);
-			if (!_shown[kMaxSection - 1])
+			if (!_shown[kMaxSection - 1]) {
 				kill();
+				return true;
+			}
 			_objectState[6]._click = 7;
 		}
 	} else if (verb == ACTION_USE && Object::combine(obj1, obj2, CABLE, DOOR_SWITCH) && isSectionVisible(7)) {
@@ -2004,8 +2008,10 @@ bool Ship::interact(Action verb, Object &obj1, Object &obj2) {
 		else if (isSectionVisible(10)) {
 			_vm->renderImage(10 + 128);
 			_vm->renderImage(11);
-			if (!_shown[kMaxSection - 1])
+			if (!_shown[kMaxSection - 1]) {
 				kill();
+				return true;
+			}
 			_objectState[6]._click = 8;
 			_gm->wait(2);
 			_vm->renderImage(4);
@@ -4742,6 +4748,8 @@ bool Mus22::interact(Action verb, Object &obj1, Object &obj2) {
 		else {
 			_vm->renderMessage(kStringMuseum21);
 			_gm->crack(20);
+			if (_gm->_dead)
+				return true;
 			if (!_gm->_state._alarmOn) {
 				_vm->renderMessage(kStringMuseum22);
 				_vm->playSound(kAudioSuccess2);

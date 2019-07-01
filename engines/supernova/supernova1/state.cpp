@@ -296,6 +296,7 @@ void GameManager1::initState() {
 	_state._dream = false;
 
 	_prevImgId = 0;
+	_dead = false;
 }
 
 void GameManager1::initRooms() {
@@ -1502,6 +1503,10 @@ void GameManager1::handleInput() {
 void GameManager1::executeRoom() {
 	if (_processInput && !_vm->_screen->isMessageShown() && _guiEnabled) {
 		handleInput();
+		if (_dead) {
+			_dead = false;
+			return;
+		}
 		if (_mouseClicked) {
 			Common::Event event;
 			event.type = Common::EVENT_MOUSEMOVE;

@@ -152,6 +152,7 @@ public:
 	byte _rows[6];
 	byte _rowsStart[6];
 	int32 _time;
+	bool _dead;
 
 	void takeObject(Object &obj);
 	void setObjectNull(Object *&obj);
