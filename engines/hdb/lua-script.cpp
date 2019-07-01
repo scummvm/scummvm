@@ -903,12 +903,27 @@ static int purgeGlobals(lua_State *L) {
 }
 
 static int textOut(lua_State *L) {
-	warning("STUB: TEXT OUT");
+	const char *string = lua_tostring(L, 1);
+	double	x = lua_tonumber(L, 2);
+	double	y = lua_tonumber(L, 3);
+	double	timer = lua_tonumber(L, 4);
+
+	g_hdb->_lua->checkParameters("textOut", 4);
+
+	lua_pop(L, 4);
+	g_hdb->_window->textOut(string, (int)x, (int)y, (int)timer);
 	return 0;
 }
 
 static int centerTextOut(lua_State *L) {
-	warning("STUB: CENTER TEXT OUT");
+	const char *string = lua_tostring(L, 1);
+	double	y = lua_tonumber(L, 2);
+	double	timer = lua_tonumber(L, 3);
+
+	g_hdb->_lua->checkParameters("centerTextOut", 3);
+
+	lua_pop(L, 3);
+	g_hdb->_window->centerTextOut(string, (int)y, (int)timer);
 	return 0;
 }
 
