@@ -505,7 +505,25 @@ static int setEntity(lua_State *L) {
 }
 
 static int setEntDir(lua_State *L) {
-	warning("STUB: SET ENTITY DIR");
+	AIEntity *e;
+	char buff[64];
+
+	const char *entName = lua_tostring(L, 1);
+	double d = lua_tonumber(L, 2);
+
+	g_hdb->_lua->checkParameters("setEntDir", 2);
+
+	lua_pop(L, 2);
+	e = g_hdb->_ai->locateEntity(entName);
+
+	if (e) {
+		int	dd = (int)d;
+		e->dir = (AIDir)dd;
+	} else {
+		sprintf(buff, "Could not SetEntDir on '%s'", entName);
+		g_hdb->_window->openMessageBar(buff, 10);
+	}
+
 	return 0;
 }
 
