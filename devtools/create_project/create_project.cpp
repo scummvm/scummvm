@@ -408,10 +408,18 @@ int main(int argc, char *argv[]) {
 			setup.libraries.push_back("sparkle");
 	}
 
-	if (curlEnabled && projectType == kProjectMSVC)
-		setup.defines.push_back("CURL_STATICLIB");
-	if (sdlnetEnabled && projectType == kProjectMSVC)
-		setup.libraries.push_back("iphlpapi");
+	if (projectType == kProjectMSVC) {
+		if (curlEnabled) {
+			setup.defines.push_back("CURL_STATICLIB");
+			setup.libraries.push_back("ws2_32");
+			setup.libraries.push_back("wldap32");
+			setup.libraries.push_back("crypt32");
+			setup.libraries.push_back("normaliz");
+		}
+		if (sdlnetEnabled) {
+			setup.libraries.push_back("iphlpapi");
+		}
+	}
 
 	setup.defines.push_back("SDL_BACKEND");
 	if (!setup.useSDL2) {
