@@ -80,7 +80,16 @@ void Input::setButtons(uint16 b) {
 			return;
 		}
 
-		warning("STUB: setButtons: Choose from DialogChoice");
+		// Choose from DialogChoice
+		if (g_hdb->_window->dialogChoiceActive()) {
+			if (_buttons & kButtonUp)
+				g_hdb->_window->dialogChoiceMoveup();
+			else if (_buttons & kButtonDown)
+				g_hdb->_window->dialogChoiceMovedown();
+			else if (_buttons & kButtonB)
+				g_hdb->_window->closeDialogChoice();
+			return;
+		}
 
 		// Try to move the player
 		if (!g_hdb->_ai->playerDead())
@@ -131,10 +140,17 @@ void Input::stylusDown(int x, int y) {
 		}
 
 		// Is a Choice Dialog Active?
-		warning("STUB: stylusDown: Check Choice Dialog Active");
+		if (g_hdb->_window->dialogChoiceActive()) {
+			if (!g_hdb->_window->checkDialogChoiceClose(x, y))
+				return;
+			if (!g_hdb->_ai->cinematicsActive())
+				return;
+		}
 
 		// Is MessageBar active?
-		warning("STUB: stylusDown: Check Message Bar Active");
+		if (g_hdb->_window->msgBarActive())
+			if (g_hdb->_window->checkMsgClose(x, y))
+				return;
 
 		// In a cinematic?
 		if (g_hdb->_ai->playerLocked())

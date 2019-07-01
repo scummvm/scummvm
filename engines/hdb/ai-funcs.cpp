@@ -2196,9 +2196,13 @@ void AI::movePlayer(uint16 buttons) {
 		if (g_hdb->_window->dialogActive()) {
 			g_hdb->_window->closeDialog();
 			return;
+		} else if (g_hdb->_window->dialogChoiceActive()) {
+			g_hdb->_window->closeDialogChoice();
+			return;
+		} else if (g_hdb->_window->msgBarActive()) {
+			g_hdb->_window->closeMsg();
+			return;
 		}
-		warning("STUB: movePlayer: Add DialogChoice Check");
-		warning("STUB: movePlayer: Add MessageBar Check");
 
 		if (cinematicsActive() || _playerLock)
 			return;
@@ -2302,7 +2306,11 @@ void AI::movePlayer(uint16 buttons) {
 		if (!cinematicsActive())
 			return;
 
-	warning("STUB: movePlayer: Add Choice Dialog");
+	// is a choice dialog active?
+	if (g_hdb->_window->dialogChoiceActive()) {
+		if (!cinematicsActive())
+			return;
+	}
 
 	// In a cinematic?
 	if (_playerLock || _numWaypoints)
