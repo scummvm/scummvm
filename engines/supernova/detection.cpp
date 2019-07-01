@@ -135,9 +135,9 @@ bool SupernovaMetaEngine::createInstance(OSystem *syst, Engine **engine, const A
 SaveStateList SupernovaMetaEngine::listSaves(const char *target) const {
 	Common::StringArray filenames;
 	Common::String pattern;
-	if (!strcmp(target, "msn1"))
+	if (!strncmp(target, "msn1", 4))
 		pattern = Common::String::format("msn_save.###");
-	if (!strcmp(target, "msn2"))
+	if (!strncmp(target, "msn2", 4))
 		pattern = Common::String::format("ms2_save.###");
 
 	filenames = g_system->getSavefileManager()->listSavefiles(pattern);
@@ -150,8 +150,8 @@ SaveStateList SupernovaMetaEngine::listSaves(const char *target) const {
 			Common::InSaveFile *savefile = g_system->getSavefileManager()->openForLoading(*file);
 			if (savefile) {
 				uint saveHeader = savefile->readUint32LE();
-				if ((saveHeader == SAVEGAME_HEADER && !strcmp(target, "msn1")) ||
-					(saveHeader == SAVEGAME_HEADER2 && !strcmp(target, "msn2"))) {
+				if ((saveHeader == SAVEGAME_HEADER && !strncmp(target, "msn1", 4)) ||
+					(saveHeader == SAVEGAME_HEADER2 && !strncmp(target, "msn2", 4))) {
 					byte saveVersion = savefile->readByte();
 					if (saveVersion <= SAVEGAME_VERSION) {
 						int saveFileDescSize = savefile->readSint16LE();
@@ -172,25 +172,25 @@ SaveStateList SupernovaMetaEngine::listSaves(const char *target) const {
 
 void SupernovaMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String filename;
-	if (!strcmp(target, "msn1"))
+	if (!strncmp(target, "msn1", 4))
 		filename = Common::String::format("msn_save.%03d", slot);
-	if (!strcmp(target, "msn2"))
+	if (!strncmp(target, "msn2", 4))
 		filename = Common::String::format("ms2_save.%03d", slot);
 	g_system->getSavefileManager()->removeSavefile(filename);
 }
 
 SaveStateDescriptor SupernovaMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
 	Common::String fileName;
-	if (!strcmp(target, "msn1"))
+	if (!strncmp(target, "msn1", 4))
 		fileName = Common::String::format("msn_save.%03d", slot);
-	if (!strcmp(target, "msn2"))
+	if (!strncmp(target, "msn2", 4))
 		fileName = Common::String::format("ms2_save.%03d", slot);
 	Common::InSaveFile *savefile = g_system->getSavefileManager()->openForLoading(fileName);
 
 	if (savefile) {
 		uint saveHeader = savefile->readUint32LE();
-		if ((!strcmp(target, "msn1") && saveHeader != SAVEGAME_HEADER) || 
-			(!strcmp(target, "msn2") && saveHeader != SAVEGAME_HEADER2)) {
+		if ((!strncmp(target, "msn1", 4) && saveHeader != SAVEGAME_HEADER) || 
+			(!strncmp(target, "msn2", 4) && saveHeader != SAVEGAME_HEADER2)) {
 			delete savefile;
 			return SaveStateDescriptor();
 		}
