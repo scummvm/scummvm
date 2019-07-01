@@ -651,7 +651,7 @@ static int dialog(lua_State *L) {
 
 	lua_pop(L, 4);
 	if (string)
-		g_hdb->_window->openDialog(title, (int)tileIndex, string, (int)more, more);
+		g_hdb->_window->openDialog(title, (int)tileIndex, string, more ? 1 : 0, more);
 	return 0;
 }
 
@@ -718,9 +718,9 @@ static int spawnEntity(lua_State *L) {
 	double	dir = lua_tonumber(L, 2);
 	double	x = lua_tonumber(L, 3);
 	double	y = lua_tonumber(L, 4);
-	char *funcInit = (char *)lua_tostring(L, 5);
-	char *funcAction = (char *)lua_tostring(L, 6);
-	char *funcUse = (char *)lua_tostring(L, 7);
+	const char *funcInit = lua_tostring(L, 5);
+	const char *funcAction = lua_tostring(L, 6);
+	const char *funcUse = lua_tostring(L, 7);
 	double	dir2 = lua_tonumber(L, 8);
 	double	level = lua_tonumber(L, 9);
 	double	value1 = lua_tonumber(L, 10);
@@ -741,9 +741,9 @@ static int spawnEntity(lua_State *L) {
 static int addInvItem(lua_State *L) {
 	double	type = lua_tonumber(L, 1);
 	double	amount = lua_tonumber(L, 2);
-	char *funcInit = (char *)lua_tostring(L, 3);
-	char *funcAction = (char *)lua_tostring(L, 4);
-	char *funcUse = (char *)lua_tostring(L, 5);
+	const char *funcInit = lua_tostring(L, 3);
+	const char *funcAction = lua_tostring(L, 4);
+	const char *funcUse = lua_tostring(L, 5);
 
 	int t = (int)type;
 
@@ -838,7 +838,7 @@ static int removeInvItem(lua_State *L) {
 }
 
 static int killTrigger(lua_State *L) {
-	char *id = (char *)lua_tostring(L, 1);
+	const char *id = lua_tostring(L, 1);
 
 	g_hdb->_lua->checkParameters("killTrigger", 1);
 

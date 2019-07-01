@@ -734,7 +734,7 @@ public:
 	void initAnimInfo();
 
 	// Entity Functions
-	AIEntity *spawn(AIType type, AIDir dir, int x, int y, char *funcInit, char *funcAction, char *funcUse, AIDir dir2, int level, int value1, int value2, int callInit);
+	AIEntity *spawn(AIType type, AIDir dir, int x, int y, const char *funcInit, const char *funcAction, const char *funcUse, AIDir dir2, int level, int value1, int value2, int callInit);
 	bool cacheEntGfx(AIEntity *e, bool init);
 	void stopEntity(AIEntity *e);
 	AIEntity *locateEntity(const char *luaName);
@@ -798,7 +798,7 @@ public:
 	ArrowPath *findArrowPath(int x, int y);
 	void addToTriggerList(char *luaFuncInit, char *luaFuncUse, int x, int y, int value1, int value2, char *id);
 	bool checkTriggerList(char *entName, int x, int y);
-	void killTrigger(char *id);
+	void killTrigger(const char *id);
 
 	void floatEntity(AIEntity *e, AIState state);
 	bool checkFloating(int x, int y);
@@ -955,7 +955,7 @@ public:
 	bool removeInvItem(const char *string, int amount);
 	int queryInventoryType(AIType which);
 	bool removeInvItemType(AIType which, int amount);
-	bool addItemToInventory(AIType type, int amount, char *funcInit, char *funcAction, char *funcUse);
+	bool addItemToInventory(AIType type, int amount, const char *funcInit, const char *funcAction, const char *funcUse);
 	void keepInvItem(AIType type);
 	void printYouGotMsg(const char *name);
 

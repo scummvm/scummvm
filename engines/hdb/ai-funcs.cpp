@@ -24,7 +24,7 @@
 
 namespace HDB {
 
-AIEntity *AI::spawn(AIType type, AIDir dir, int x, int y, char *funcInit, char *funcAction, char *funcUse, AIDir dir2, int level, int value1, int value2, int callInit) {
+AIEntity *AI::spawn(AIType type, AIDir dir, int x, int y, const char *funcInit, const char *funcAction, const char *funcUse, AIDir dir2, int level, int value1, int value2, int callInit) {
 	AIEntity *e = new AIEntity;
 
 	e->type = type;

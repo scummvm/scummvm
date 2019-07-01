@@ -243,7 +243,7 @@ bool AI::removeInvItemType(AIType which, int amount) {
 	return true;
 }
 
-bool AI::addItemToInventory(AIType type, int amount, char *funcInit, char *funcAction, char *funcUse) {
+bool AI::addItemToInventory(AIType type, int amount, const char *funcInit, const char *funcAction, const char *funcUse) {
 	int		i;
 	AIEntity *e;
 	for (i = 0; i < amount; i++) {
