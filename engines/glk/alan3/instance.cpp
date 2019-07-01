@@ -52,6 +52,21 @@ AttributeEntry *attributes; /* Dynamic attribute values */
 
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
+void AdminEntry::synchronize(Common::Serializer &s) {
+	s.syncAsUint32LE(location);
+
+	Aword attr = 0;
+	s.syncAsUint32LE(attr);
+
+	s.syncAsUint32LE(alreadyDescribed);
+	s.syncAsUint32LE(visitsCount);
+	s.syncAsUint32LE(script);
+	s.syncAsUint32LE(step);
+	s.syncAsUint32LE(waitCount);
+}
+
+/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+
 /* Instance query methods */
 
 /*======================================================================*/

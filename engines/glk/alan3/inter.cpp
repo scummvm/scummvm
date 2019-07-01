@@ -601,13 +601,13 @@ void interpret(Aaddr adr) {
 			case I_SAVE: {
 				if (traceInstructionOption)
 					printf("SAVE\t\t\t\t\t\t");
-				save();
+				g_vm->saveGame();
 				break;
 			}
 			case I_RESTORE: {
 				if (traceInstructionOption)
 					printf("RESTORE\t\t\t\t\t\t");
-				restore();
+				g_vm->loadGame();
 				break;
 			}
 			case I_RESTART: {

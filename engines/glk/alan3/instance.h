@@ -23,6 +23,7 @@
 #ifndef GLK_ALAN3_INSTANCE
 #define GLK_ALAN3_INSTANCE
 
+#include "common/serializer.h"
 #include "glk/alan3/acode.h"
 #include "glk/alan3/types.h"
 #include "glk/alan3/set.h"
@@ -39,6 +40,11 @@ struct AdminEntry { /* Administrative data about instances */
 	Aint script;
 	Aint step;
 	Aint waitCount;
+
+	/**
+	 * Save/Restore data
+	 */
+	void synchronize(Common::Serializer &s);
 };
 
 

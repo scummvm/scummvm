@@ -20,14 +20,24 @@
  *
  */
 
+#include "glk/alan3/save.h"
+#include "glk/alan3/acode.h"
+#include "glk/alan3/args.h"
+#include "glk/alan3/current.h"
+#include "glk/alan3/event.h"
+#include "glk/alan3/instance.h"
+#include "glk/alan3/lists.h"
+#include "glk/alan3/memory.h"
+#include "glk/alan3/msg.h"
+#include "glk/alan3/options.h"
+#include "glk/alan3/score.h"
+#include "glk/alan3/types.h"
+
 namespace Glk {
 namespace Alan3 {
 
-#ifdef TODO
-
 /*----------------------------------------------------------------------*/
-static void saveStrings(AFILE saveFile) {
-
+static void saveStrings(Common::WriteStream *saveFile) {
 	StringInitEntry *initEntry;
 
 	if (header->stringInitTable != 0)
@@ -35,68 +45,77 @@ static void saveStrings(AFILE saveFile) {
 		        !isEndOfArray(initEntry); initEntry++) {
 			char *attr = (char *)getInstanceStringAttribute(initEntry->instanceCode, initEntry->attributeCode);
 			Aint length = strlen(attr) + 1;
-			fwrite((void *)&length, sizeof(length), 1, saveFile);
-			fwrite((void *)attr, 1, length, saveFile);
+			saveFile->writeUint32LE(length);
+			saveFile->write(attr, length);
 		}
 }
 
 
 /*----------------------------------------------------------------------*/
-static void saveSets(AFILE saveFile) {
+static void saveSets(Common::WriteStream *saveFile) {
 	SetInitEntry *initEntry;
 
 	if (header->setInitTable != 0)
 		for (initEntry = (SetInitEntry *)pointerTo(header->setInitTable);
 		        !isEndOfArray(initEntry); initEntry++) {
 			Set *attr = (Set *)getInstanceSetAttribute(initEntry->instanceCode, initEntry->attributeCode);
-			fwrite((void *)&attr->size, sizeof(attr->size), 1, saveFile);
-			fwrite((void *)attr->members, sizeof(attr->members[0]), attr->size, saveFile);
+			saveFile->writeUint32LE(attr->size);
+			saveFile->write(attr->members, attr->size);
 		}
 }
 
 
 /*----------------------------------------------------------------------*/
-static void saveGameInfo(AFILE saveFile) {
-	fwrite((void *)"ASAV", 1, 4, saveFile);
-	fwrite((void *)&header->version, 1, sizeof(Aword), saveFile);
-	fwrite((void *)adventureName, 1, strlen(adventureName) + 1, saveFile);
-	fwrite((void *)&header->uid, 1, sizeof(Aword), saveFile);
+static void saveGameInfo(Common::WriteStream *saveFile) {
+	saveFile->writeUint32BE(MKTAG('A', 'S', 'A', 'V'));
+	saveFile->write(header->version, 4);
+	saveFile->write(adventureName, strlen(adventureName) + 1);
+	saveFile->writeUint32LE(header->uid);
 }
 
 
 /*----------------------------------------------------------------------*/
-static void saveAdmin(AFILE saveFile) {
-	fwrite((void *)&admin[1], sizeof(AdminEntry), header->instanceMax, saveFile);
+static void saveAdmin(Common::WriteStream *saveFile) {
+	Common::Serializer s(nullptr, saveFile);
+	for (uint i = 1; i <= header->instanceMax; i++)
+		admin[i].synchronize(s);
 }
 
 
 /*----------------------------------------------------------------------*/
-static void saveAttributeArea(AFILE saveFile) {
-	fwrite((void *)attributes, header->attributesAreaSize, sizeof(Aword), saveFile);
+static void saveAttributeArea(Common::WriteStream *saveFile) {
+	Common::Serializer s(nullptr, saveFile);
+	for (Aint i = 0; i < header->attributesAreaSize; ++i)
+		attributes[i].synchronize(s);
 }
 
 
 /*----------------------------------------------------------------------*/
-static void saveEventQueue(AFILE saveFile) {
-	fwrite((void *)&eventQueueTop, sizeof(eventQueueTop), 1, saveFile);
-	fwrite((void *)&eventQueue[0], sizeof(eventQueue[0]), eventQueueTop, saveFile);
+static void saveEventQueue(Common::WriteStream *saveFile) {
+	Common::Serializer s(nullptr, saveFile);
+
+	s.syncAsSint32LE(eventQueueTop);
+	for (int i = 0; i < eventQueueTop; ++i)
+		eventQueue[i].synchronize(s);
 }
 
 
 /*----------------------------------------------------------------------*/
-static void saveCurrentValues(AFILE saveFile) {
-	fwrite((void *)&current, sizeof(current), 1, saveFile);
+static void saveCurrentValues(Common::WriteStream *saveFile) {
+	Common::Serializer s(nullptr, saveFile);
+	current.synchronize(s);
 }
 
 
 /*----------------------------------------------------------------------*/
-static void saveScores(AFILE saveFile) {
-	fwrite((void *)scores, sizeof(Aword), header->scoreCount, saveFile);
+static void saveScores(Common::WriteStream *saveFile) {
+	for (Aint i = 0; i < header->scoreCount; ++i)
+		saveFile->writeUint32LE(scores[i]);
 }
 
 
 /*----------------------------------------------------------------------*/
-static void saveGame(AFILE saveFile) {
+void saveGame(Common::WriteStream *saveFile) {
 	/* Save tag, version of interpreter, name and uid of game */
 	saveGameInfo(saveFile);
 
@@ -115,88 +134,34 @@ static void saveGame(AFILE saveFile) {
 }
 
 
-/*======================================================================*/
-void save(void) {
-#ifdef HAVE_GLK
-	frefid_t saveFileRef;
-	strid_t saveFile;
-	saveFileRef = glk_fileref_create_by_prompt(fileusage_SavedGame, filemode_Write, 0);
-	if (saveFileRef == NULL)
-		error(M_SAVEFAILED);
-	saveFile = glk_stream_open_file(saveFileRef, filemode_Write, 0);
-
-#else
-	FILE *saveFile;
-	char str[256];
-
-	current.location = where(HERO, DIRECT);
-	/* First save ? */
-	if (saveFileName[0] == '\0') {
-		strcpy(saveFileName, adventureName);
-		strcat(saveFileName, ".sav");
-	}
-	printMessage(M_SAVEWHERE);
-	sprintf(str, "(%s) : ", saveFileName);
-	output(str);
-#ifdef USE_READLINE
-	readline(str);
-#else
-	gets(str);
-#endif
-	if (str[0] == '\0')
-		strcpy(str, saveFileName);
-	col = 1;
-	if ((saveFile = fopen(str, READ_MODE)) != NULL)
-		/* It already existed */
-		if (!regressionTestOption) {
-			/* Ask for overwrite confirmation */
-			if (!confirm(M_SAVEOVERWRITE))
-				abortPlayerCommand();            /* Return to player without saying anything */
-		}
-	strcpy(saveFileName, str);
-	if ((saveFile = fopen(saveFileName, WRITE_MODE)) == NULL)
-		error(M_SAVEFAILED);
-#endif
-
-	saveGame(saveFile);
-
-	fclose(saveFile);
-}
-
-
 /*----------------------------------------------------------------------*/
-static void restoreStrings(AFILE saveFile) {
+static void restoreStrings(Common::SeekableReadStream *saveFile) {
 	StringInitEntry *initEntry;
 
 	if (header->stringInitTable != 0)
 		for (initEntry = (StringInitEntry *)pointerTo(header->stringInitTable);
 		        !isEndOfArray(initEntry); initEntry++) {
-			Aint length;
-			char *string;
-			fread((void *)&length, sizeof(Aint), 1, saveFile);
-			string = allocate(length + 1);
-			fread((void *)string, 1, length, saveFile);
+			Aint length = saveFile->readUint32LE();
+			char *string = (char *)allocate(length + 1);
+
+			saveFile->read(string, length);
 			setInstanceAttribute(initEntry->instanceCode, initEntry->attributeCode, toAptr(string));
 		}
 }
 
 
 /*----------------------------------------------------------------------*/
-static void restoreSets(AFILE saveFile) {
+static void restoreSets(Common::SeekableReadStream *saveFile) {
 	SetInitEntry *initEntry;
 
 	if (header->setInitTable != 0)
 		for (initEntry = (SetInitEntry *)pointerTo(header->setInitTable);
 		        !isEndOfArray(initEntry); initEntry++) {
-			Aint setSize;
-			Set *set;
-			int i;
+			Aint setSize = saveFile->readUint32LE();
+			Set *set = newSet(setSize);
 
-			fread((void *)&setSize, sizeof(setSize), 1, saveFile);
-			set = newSet(setSize);
-			for (i = 0; i < setSize; i++) {
-				Aword member;
-				fread((void *)&member, sizeof(member), 1, saveFile);
+			for (int i = 0; i < setSize; i++) {
+				Aword member = saveFile->readUint32LE();
 				addToSet(set, member);
 			}
 			setInstanceAttribute(initEntry->instanceCode, initEntry->attributeCode, toAptr(set));
@@ -205,92 +170,91 @@ static void restoreSets(AFILE saveFile) {
 
 
 /*----------------------------------------------------------------------*/
-static void restoreScores(AFILE saveFile) {
-	fread((void *)scores, sizeof(Aword), header->scoreCount, saveFile);
+static void restoreScores(Common::SeekableReadStream *saveFile) {
+	for (Aint i = 0; i < header->scoreCount; ++i)
+		scores[i] = saveFile->readUint32LE();
 }
 
 
 /*----------------------------------------------------------------------*/
-static void restoreEventQueue(AFILE saveFile) {
-	fread((void *)&eventQueueTop, sizeof(eventQueueTop), 1, saveFile);
-	if (eventQueueTop > eventQueueSize) {
-		deallocate(eventQueue);
-		eventQueue = allocate(eventQueueTop * sizeof(eventQueue[0]));
-	}
-	fread((void *)&eventQueue[0], sizeof(eventQueue[0]), eventQueueTop, saveFile);
+static void restoreEventQueue(Common::SeekableReadStream *saveFile) {
+	Common::Serializer s(saveFile, nullptr);
+
+	s.syncAsSint32LE(eventQueueTop);
+	for (int i = 0; i < eventQueueTop; ++i)
+		eventQueue[i].synchronize(s);
 }
 
 
 /*----------------------------------------------------------------------*/
-static void restoreAdmin(AFILE saveFile) {
-	/* Restore admin for instances, remember to reset attribute area pointer */
-	int i;
-	for (i = 1; i <= header->instanceMax; i++) {
+static void restoreAdmin(Common::SeekableReadStream *saveFile) {
+	// Restore admin for instances, remember to reset attribute area pointer
+	Common::Serializer s(saveFile, nullptr);
+	for (uint i = 1; i <= header->instanceMax; i++) {
 		AttributeEntry *currentAttributesArea = admin[i].attributes;
-		fread((void *)&admin[i], sizeof(AdminEntry), 1, saveFile);
+		admin[i].synchronize(s);
 		admin[i].attributes = currentAttributesArea;
 	}
 }
 
 
 /*----------------------------------------------------------------------*/
-static void restoreAttributeArea(AFILE saveFile) {
-	fread((void *)attributes, header->attributesAreaSize, sizeof(Aword), saveFile);
+static void restoreAttributeArea(Common::SeekableReadStream *saveFile) {
+	Common::Serializer s(saveFile, nullptr);
+	for (Aint i = 0; i < header->attributesAreaSize; ++i)
+		attributes[i].synchronize(s);
 }
 
 
 /*----------------------------------------------------------------------*/
-static void restoreCurrentValues(AFILE saveFile) {
-	fread((void *)&current, sizeof(current), 1, saveFile);
+static void restoreCurrentValues(Common::SeekableReadStream *saveFile) {
+	Common::Serializer s(saveFile, nullptr);
+	current.synchronize(s);
 }
 
 
 /*----------------------------------------------------------------------*/
-static void verifyGameId(AFILE saveFile) {
-	Aword savedUid;
-
-	fread((void *)&savedUid, sizeof(Aword), 1, saveFile);
+static void verifyGameId(Common::SeekableReadStream *saveFile) {
+	Aword savedUid = saveFile->readUint32LE();
 	if (!ignoreErrorOption && savedUid != header->uid)
 		error(M_SAVEVERS);
 }
 
 
 /*----------------------------------------------------------------------*/
-static void verifyGameName(AFILE saveFile) {
+static void verifyGameName(Common::SeekableReadStream *saveFile) {
 	char savedName[256];
 	int i = 0;
 
-	while ((savedName[i++] = fgetc(saveFile)) != '\0');
+	while ((savedName[i++] = saveFile->readByte()) != '\0');
 	if (strcmp(savedName, adventureName) != 0)
 		error(M_SAVENAME);
 }
 
 
 /*----------------------------------------------------------------------*/
-static void verifyCompilerVersion(AFILE saveFile) {
+static void verifyCompilerVersion(Common::SeekableReadStream *saveFile) {
 	char savedVersion[4];
 
-	fread((void *)&savedVersion, sizeof(Aword), 1, saveFile);
-	if (!ignoreErrorOption && strncmp(savedVersion, header->version, 4))
+	saveFile->read(&savedVersion, 4);
+	if (!ignoreErrorOption && memcmp(savedVersion, header->version, 4))
 		error(M_SAVEVERS);
 }
 
 
 /*----------------------------------------------------------------------*/
-static void verifySaveFile(AFILE saveFile) {
-	char string[256];
-
-	fread((void *)&string, 1, 4, saveFile);
+static void verifySaveFile(Common::SeekableReadStream *saveFile) {
+	char string[5];
+	saveFile->read(string, 4);
 	string[4] = '\0';
+
 	if (strcmp(string, "ASAV") != 0)
 		error(M_NOTASAVEFILE);
 }
 
 
 /*----------------------------------------------------------------------*/
-static void restoreGame(AFILE saveFile) {
-	if (saveFile == NULL) syserr("'restoreGame()' from a null fileref");
-
+void restoreGame(Common::SeekableReadStream *saveFile) {
 	verifySaveFile(saveFile);
 
 	/* Verify version of compiler/interpreter of saved game with us */
@@ -310,55 +274,6 @@ static void restoreGame(AFILE saveFile) {
 	restoreStrings(saveFile);
 	restoreSets(saveFile);
 }
-
-
-/*======================================================================*/
-void restore(void) {
-#ifdef HAVE_GLK
-	frefid_t saveFileRef;
-	strid_t saveFile;
-	saveFileRef = glk_fileref_create_by_prompt(fileusage_SavedGame, filemode_Read, 0);
-	if (saveFileRef == NULL) return;
-	saveFile = glk_stream_open_file(saveFileRef, filemode_Read, 0);
-	if (saveFile == NULL) return;
-
-#else
-	char str[1000];
-	FILE *saveFile;
-
-	current.location = where(HERO, DIRECT);
-	/* First save ? */
-	if (saveFileName[0] == '\0') {
-		strcpy(saveFileName, adventureName);
-		strcat(saveFileName, ".sav");
-	}
-	printMessage(M_RESTOREFROM);
-	sprintf(str, "(%s) : ", saveFileName);
-	output(str);
-#ifdef USE_READLINE
-	readline(str);
-#else
-	gets(str);
-#endif
-
-	col = 1;
-	if (str[0] == '\0') {
-		strcpy(str, saveFileName);
-	}
-	if ((saveFile = fopen(str, READ_MODE)) == NULL)
-		error(M_SAVEMISSING);
-	strcpy(saveFileName, str);          /* Save it for future use */
-
-#endif
-
-	restoreGame(saveFile);
-
-	fclose(saveFile);
-}
-#else
-void save() {}
-void restore() {}
-#endif
 
 } // End of namespace Alan3
 } // End of namespace Glk

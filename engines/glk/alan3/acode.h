@@ -24,6 +24,7 @@
 #define GLK_ACODE
 
 #include "common/scummsys.h"
+#include "common/serializer.h"
 
 namespace Glk {
 namespace Alan3 {
@@ -370,6 +371,11 @@ struct AttributeEntry {         /* ATTRIBUTE LIST */
                                    string pointer, a set has a pointer
                                    to a dynamically allocated set */
 	Aaddr id;                   /* Address to the name */
+
+	/**
+	 * Save/resotre data from save file
+	 */
+	void synchronize(Common::Serializer &s);
 } PACKED_STRUCT;
 
 struct AttributeHeaderEntry {   /* ATTRIBUTE LIST in header */

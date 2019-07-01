@@ -41,6 +41,11 @@ struct CurVars {
 	    sourceLine,
 	    sourceFile;
 	bool meta;
+
+	/**
+	 * Save/load data from save file
+	 */
+	void synchronize(Common::Serializer &s);
 };
 
 /* DATA */

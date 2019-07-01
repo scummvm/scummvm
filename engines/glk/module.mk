@@ -49,6 +49,7 @@ MODULE_OBJS := \
 	alan2/sysdep.o \
 	alan2/term.o \
 	alan2/types.o \
+	alan3/acode.o \
 	alan3/act.o \
 	alan3/actor.o \
 	alan3/alan3.o \

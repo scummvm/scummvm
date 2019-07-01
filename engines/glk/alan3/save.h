@@ -23,14 +23,13 @@
 #ifndef GLK_ALAN3_SAVE
 #define GLK_ALAN3_SAVE
 
-/* Header file for save and restore unit in Alan interpreter */
+#include "common/stream.h"
 
 namespace Glk {
 namespace Alan3 {
 
-/* Functions: */
-extern void save();
-extern void restore();
+extern void saveGame(Common::WriteStream *saveFile);
+extern void restoreGame(Common::SeekableReadStream *saveFile);
 
 } // End of namespace Alan3
 } // End of namespace Glk

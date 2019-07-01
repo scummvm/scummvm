@@ -47,11 +47,6 @@ private:
 	 * Deinitialization
 	 */
 	void deinitialize();
-
-	/**
-	 * Synchronize data to or from a save file
-	 */
-	void synchronizeSave(Common::Serializer &s);
 public:
 	/**
 	 * Constructor

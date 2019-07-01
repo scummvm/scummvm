@@ -23,18 +23,26 @@
 #ifndef GLK_ALAN3_EVENT
 #define GLK_ALAN3_EVENT
 
+#include "common/serializer.h"
 #include "glk/alan3/acode.h"
 #include "glk/alan3/types.h"
 
 namespace Glk {
 namespace Alan3 {
 
-/* TYPES */
-typedef struct EventQueueEntry { /* EVENT QUEUE ENTRIES */
+/**
+ * Event queue entries
+ */
+struct EventQueueEntry {
 	int after;
 	int event;
 	int where;
-} EventQueueEntry;
+
+	/**
+	 * Save/load from a save file
+	 */
+	void synchronize(Common::Serializer &s);
+};
 
 
 /* DATA */

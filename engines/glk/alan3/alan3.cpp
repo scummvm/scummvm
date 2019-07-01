@@ -26,6 +26,7 @@
 #include "glk/alan3/glkio.h"
 #include "glk/alan3/options.h"
 #include "glk/alan3/output.h"
+#include "glk/alan3/save.h"
 #include "glk/alan3/syserr.h"
 #include "common/system.h"
 #include "common/config-manager.h"
@@ -131,28 +132,13 @@ void Alan3::deinitialize() {
 }
 
 Common::Error Alan3::readSaveData(Common::SeekableReadStream *rs) {
-	Common::Serializer s(rs, nullptr);
-	synchronizeSave(s);
-
+	Glk::Alan3::restoreGame(rs);
 	return Common::kNoError;
 }
 
 Common::Error Alan3::writeGameData(Common::WriteStream *ws) {
-	Common::Serializer s(nullptr, ws);
-	synchronizeSave(s);
-
-	ws->flush();
+	Glk::Alan3::saveGame(ws);
 	return Common::kNoError;
-}
-
-// This works around gcc errors for passing packed structure fields
-void syncVal(Common::Serializer &s, uint32 *fld) {
-	uint32 &v = *fld;
-	s.syncAsUint32LE(v);
-}
-
-void Alan3::synchronizeSave(Common::Serializer &s) {
-	// TODO
 }
 
 } // End of namespace Alan3
