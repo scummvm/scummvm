@@ -12092,6 +12092,36 @@ static const uint16 qfg4CharacterSelectPatch[] = {
 	PATCH_END
 };
 
+// Clicking Look in the dungeon (room 670) responds with the dungeon description
+//  followed by the generic message for not seeing anything. rm670:doVerb is
+//  missing a return statement and so it proceeds with generic verb handling.
+//
+// Applies to: All versions
+// Responsible method: rm670:doVerb
+static const uint16 qfg4LookDungeonSignature[] = {
+	0x38, SIG_SELECTOR16(say),          // pushi say
+	0x38, SIG_UINT16(0x0006),           // pushi 0006
+	SIG_MAGICDWORD,
+	0x76,                               // push0
+	0x78,                               // push1
+	0x76,                               // push0
+	0x76,                               // push0
+	0x76,                               // push0
+	0x38, SIG_UINT16(0x029e),           // pushi 029e
+	0x81, 0x5b,                         // lag 5b
+	0x4a, SIG_UINT16(0x0010),           // send 10 [ gloryMessager say: 0 1 0 0 0 670 ]
+	SIG_END
+};
+
+static const uint16 qfg4LookDungeonPatch[] = {
+	PATCH_ADDTOOFFSET(+11),
+	0x89, 0x0b,                         // lsg 0b [ room number, saves a byte ]
+	0x81, 0x5b,                         // lag 5b
+	0x4a, PATCH_UINT16(0x0010),         // send 10 [ gloryMessager say: 0 1 0 0 0 670 ]
+	0x48,                               // ret
+	PATCH_END
+};
+
 //          script, description,                                     signature                      patch
 static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,     0, "prevent autosave from deleting save games",   1, qfg4AutosaveSignature,         qfg4AutosavePatch },
@@ -12153,6 +12183,7 @@ static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,   663, "CD/Floppy: fix peer bats, upper door (1/2)",  1, qfg4UpperPeerBatsSignature1,       qfg4UpperPeerBatsPatch1 },
 	{  false,  663, "CD: fix peer bats, upper door (2/2)",         1, qfg4UpperPeerBatsCDSignature2,     qfg4UpperPeerBatsCDPatch2 },
 	{  false,  663, "Floppy: fix peer bats, upper door (2/2)",     1, qfg4UpperPeerBatsFloppySignature2, qfg4UpperPeerBatsFloppyPatch2 },
+	{  true,   670, "fix look dungeon message",                    1, qfg4LookDungeonSignature,      qfg4LookDungeonPatch },
 	{  true,   710, "fix tentacle wriggle cycler",                 1, qfg4TentacleWriggleSignature,  qfg4TentacleWrigglePatch },
 	{  true,   710, "fix tentacle retraction for fighter",         1, qfg4PitRopeFighterSignature,   qfg4PitRopeFighterPatch },
 	{  true,   710, "fix tentacle retraction for mage (1/2)",      1, qfg4PitRopeMageSignature1,     qfg4PitRopeMagePatch1 },
