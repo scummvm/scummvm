@@ -1339,10 +1339,26 @@ bool ShipAirlock::interact(Action verb, Object &obj1, Object &obj2) {
 }
 
 void ShipAirlock::onEntrance() {
-	if (!hasSeen())
+	if (!isSectionVisible(kMaxSection - 1)) {
 		_vm->renderMessage(kStringShipAirlock4);
+		setSectionVisible(kMaxSection -1, kShownTrue);
+	}
+	if (_vm->_improved && isSectionVisible(kMaxSection - 2)) {
+		if (_objectState[0].hasProperty(OPENED)) {
+			_objectState[4].setProperty(WORN);
+			_objectState[5].setProperty(WORN);
+			_objectState[6].setProperty(WORN);
+			interact(ACTION_PRESS, _objectState[2], _gm->_nullObject);
+			interact(ACTION_PRESS, _objectState[3], _gm->_nullObject);
+		} else {
+			_objectState[4].disableProperty(WORN);
+			_objectState[5].disableProperty(WORN);
+			_objectState[6].disableProperty(WORN);
+			interact(ACTION_PRESS, _objectState[3], _gm->_nullObject);
+			interact(ACTION_PRESS, _objectState[2], _gm->_nullObject);
+		}
+	}
 
-	setRoomSeen(true);
 }
 
 ShipHold::ShipHold(SupernovaEngine *vm, GameManager1 *gm) {
@@ -1419,6 +1435,7 @@ bool ShipHold::interact(Action verb, Object &obj1, Object &obj2) {
 void ShipHold::onEntrance() {
 	if (!hasSeen())
 		_vm->renderMessage(kStringShipHold2);
+	_gm->_rooms[AIRLOCK]->setSectionVisible(kMaxSection - 2, kShownTrue);
 	setRoomSeen(true);
 	_gm->_rooms[COCKPIT]->setRoomSeen(true);
 }

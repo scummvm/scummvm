@@ -90,6 +90,7 @@ public:
 	uint _delay;
 	int  _textSpeed;
 	char _MSPart;
+	bool _improved;
 
 	Common::Error loadGameStrings();
 	void init();

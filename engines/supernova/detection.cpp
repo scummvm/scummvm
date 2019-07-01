@@ -29,9 +29,13 @@
 
 #include "supernova/supernova.h"
 
+#define GAMEOPTION_IMPROVED GUIO_GAMEOPTIONS1
+
 static const PlainGameDescriptor supernovaGames[] = {
 	{"msn1", "Mission Supernova 1"},
 	{"msn2", "Mission Supernova 2"},
+	{"msn1-i", "Mission Supernova 1 improved"},
+	{"msn2-i", "Mission Supernova 2 improved"},
 	{nullptr, nullptr}
 };
 
@@ -56,6 +60,24 @@ static const ADGameDescription gameDescriptions[] = {
 		ADGF_UNSTABLE,
 		GUIO1(GUIO_NONE)
 	},
+	{
+		"msn1-i",
+		nullptr,
+		AD_ENTRY1s("msn_data.000", "f64f16782a86211efa919fbae41e7568", 24163),
+		Common::DE_DEU,
+		Common::kPlatformDOS,
+		ADGF_UNSTABLE,
+		GUIO1(GAMEOPTION_IMPROVED)
+	},
+	{
+		"msn1-i",
+		nullptr,
+		AD_ENTRY1s("msn_data.000", "f64f16782a86211efa919fbae41e7568", 24163),
+		Common::EN_ANY,
+		Common::kPlatformDOS,
+		ADGF_UNSTABLE,
+		GUIO1(GAMEOPTION_IMPROVED)
+	},
 	// Mission Supernova 2
 	{
 		"msn2",
@@ -74,6 +96,24 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::kPlatformDOS,
 		ADGF_UNSTABLE,
 		GUIO1(GUIO_NONE)
+	},
+	{
+		"msn2-i",
+		nullptr,
+		AD_ENTRY1s("ms2_data.000", "e595610cba4a6d24a763e428d05cc83f", 24805),
+		Common::DE_DEU,
+		Common::kPlatformDOS,
+		ADGF_UNSTABLE,
+		GUIO1(GAMEOPTION_IMPROVED)
+	},
+	{
+		"msn2-i",
+		nullptr,
+		AD_ENTRY1s("ms2_data.000", "e595610cba4a6d24a763e428d05cc83f", 24805),
+		Common::EN_ANY,
+		Common::kPlatformDOS,
+		ADGF_UNSTABLE,
+		GUIO1(GAMEOPTION_IMPROVED)
 	},
 	AD_TABLE_END_MARKER
 };
