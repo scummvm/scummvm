@@ -52,23 +52,27 @@ bool RISCOSFilesystemNode::isWritable() const {
 	return access(_path.c_str(), W_OK) == 0;
 }
 
+void RISCOSFilesystemNode::setFlags() {
+	int type = _swi(OS_File, _INR(0,1)|_RETURN(0), 20, RISCOS_Utils::toRISCOS(_path).c_str());
+	if (type == 0) {
+		_isDirectory = false;
+		_isValid = false;
+	} else if (type == 2) {
+		_isDirectory = true;
+		_isValid = true;
+	} else {
+		_isDirectory = false;
+		_isValid = true;
+	}
+}
+
 RISCOSFilesystemNode::RISCOSFilesystemNode(const Common::String &p) {
 	_path = p;
 	if (p == "/") {
 		_isDirectory = true;
 		_isValid = true;
 	} else {
-		int type = _swi(OS_File, _INR(0,1)|_RETURN(0), 20, RISCOS_Utils::toRISCOS(_path).c_str());
-		if (type == 0) {
-			_isDirectory = false;
-			_isValid = false;
-		} else if (type == 2) {
-			_isDirectory = true;
-			_isValid = true;
-		} else {
-			_isDirectory = false;
-			_isValid = true;
-		}
+		setFlags();
 	}
 }
 
@@ -198,33 +202,11 @@ Common::WriteStream *RISCOSFilesystemNode::createWriteStream() {
 	return StdioStream::makeFromPath(getPath(), true);
 }
 
-bool RISCOSFilesystemNode::create(bool isDirectoryFlag) {
-	bool success;
+bool RISCOSFilesystemNode::createDirectory() {
+	if (_swix(OS_File, _INR(0,1), 8, RISCOS_Utils::toRISCOS(_path).c_str()) == NULL)
+		setFlags();
 
-	if (isDirectoryFlag) {
-		success = _swix(OS_File, _INR(0,1), 8, RISCOS_Utils::toRISCOS(_path).c_str()) == NULL;
-	} else {
-		int fd = open(_path.c_str(), O_WRONLY | O_CREAT | O_TRUNC, 0755);
-		success = fd >= 0;
-
-		if (fd >= 0) {
-			close(fd);
-		}
-	}
-
-	if (success) {
-		if (exists()) {
-			_isDirectory = _swi(OS_File, _INR(0,1)|_RETURN(0), 20, RISCOS_Utils::toRISCOS(_path).c_str()) == 2;
-			if (_isDirectory != isDirectoryFlag) warning("failed to create %s: got %s", isDirectoryFlag ? "directory" : "file", _isDirectory ? "directory" : "file");
-			return _isDirectory == isDirectoryFlag;
-		}
-
-		warning("RISCOSFilesystemNode: Attempting to create a %s was a success, but access indicates there is no such %s",
-			isDirectoryFlag ? "directory" : "file", isDirectoryFlag ? "directory" : "file");
-		return false;
-	}
-
-	return false;
+	return _isValid && _isDirectory;
 }
 
 namespace Riscos {
@@ -270,7 +252,7 @@ bool assureDirectoryExists(const Common::String &dir, const char *prefix) {
 		}
 
 		node = new RISCOSFilesystemNode(path);
-		if (!node->create(true)) {
+		if (!node->createDirectory()) {
 			if (node->exists()) {
 				if (!node->isDirectory()) {
 					return false;

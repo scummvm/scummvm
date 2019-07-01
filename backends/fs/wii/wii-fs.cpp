@@ -213,7 +213,7 @@ Common::WriteStream *WiiFilesystemNode::createWriteStream() {
 	return StdioStream::makeFromPath(getPath(), true);
 }
 
-bool WiiFilesystemNode::create(bool isDirectoryFlag) {
+bool WiiFilesystemNode::createDirectory() {
 	error("Not supported");
 	return false;
 }

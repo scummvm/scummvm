@@ -84,7 +84,7 @@ public:
 
 	virtual Common::SeekableReadStream *createReadStream();
 	virtual Common::WriteStream *createWriteStream();
-	virtual bool create(bool isDirectoryFlag);
+	virtual bool createDirectory();
 
 private:
 	/**
@@ -114,6 +114,11 @@ private:
 	 * @return str in Unicode format.
 	 */
 	static const TCHAR* toUnicode(const char *str);
+
+	/**
+	 * Tests and sets the _isValid and _isDirectory flags, using the GetFileAttributes() function.
+	 */
+	virtual void setFlags();
 };
 
 #endif

@@ -100,7 +100,7 @@ void CreateDirectoryHandler::handle(Client &client) {
 		}
 	} else {
 		// create the <directory_name> in <path>
-		if (!node->create(true)) {
+		if (!node->createDirectory()) {
 			handleError(client, _("Failed to create the directory!"));
 			return;
 		}

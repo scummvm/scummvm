@@ -443,7 +443,7 @@ Common::WriteStream *Ps2FilesystemNode::createWriteStream() {
 	return PS2FileStream::makeFromPath(getPath(), true);
 }
 
-bool Ps2FilesystemNode::create(bool isDirectoryFlag) {
+bool Ps2FilesystemNode::createDirectory() {
 	error("Not supported");
 	return false;
 }

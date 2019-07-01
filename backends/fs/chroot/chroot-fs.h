@@ -49,7 +49,7 @@ public:
 
 	virtual Common::SeekableReadStream *createReadStream();
 	virtual Common::WriteStream *createWriteStream();
-	virtual bool create(bool isDirectoryFlag);
+	virtual bool createDirectory();
 
 private:
 	static Common::String addPathComponent(const Common::String &path, const Common::String &component);
