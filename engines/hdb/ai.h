@@ -742,6 +742,10 @@ public:
 	AIEntity *findEntityIgnore(int x, int y, AIEntity *ignore);
 	AIEntity *findEntityType(AIType type, int x, int y);
 	void getEntityXY(const char *entName, int *x, int *y);
+	bool useLuaEntity(const char *initName);
+	void removeLuaEntity(const char *initName);
+	void animLuaEntity(const char *initName, AIState st);
+	void setLuaAnimFrame(const char *initName, AIState st, int frame);
 	void removeEntity(AIEntity *e);
 	void setEntityGoal(AIEntity *e, int x, int y);
 	void initAllEnts();
@@ -753,7 +757,6 @@ public:
 
 	void animateEntity(AIEntity *e);
 	void animEntFrames(AIEntity *e);
-	void animLuaEntity(const char *initName, AIState st);
 	void drawEnts(int x, int y, int w, int h);
 	void drawLevel2Ents();
 	void animGrabbing();

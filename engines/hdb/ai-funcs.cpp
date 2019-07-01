@@ -596,6 +596,71 @@ void AI::getEntityXY(const char *entName, int *x, int *y) {
 	}
 }
 
+bool AI::useLuaEntity(const char *initName) {
+	AIEntity *e;
+
+	for (Common::Array<AIEntity *>::iterator it = _ents->begin(); it != _ents->end(); it++) {
+		e = *it;
+		if (e->entityName && !scumm_stricmp(initName, e->entityName)) {
+			e->aiUse(e);
+			checkActionList(e, e->tileX, e->tileY, true);
+			if (e->luaFuncUse)
+				g_hdb->_lua->callFunction(e->luaFuncUse, 0);
+			return true;
+		}
+	}
+
+	// Check _actions list for activation as well
+	for (int i = 0; i < kMaxActions; i++) {
+		if (_actions[i].entityName && !scumm_stricmp(initName, _actions[i].entityName)) {
+			checkActionList(&_dummyPlayer, _actions[i].x1, _actions[i].y1, false);
+			checkActionList(&_dummyPlayer, _actions[i].x2, _actions[i].y2, false);
+		}
+	}
+
+	return false;
+}
+
+void AI::removeLuaEntity(const char *initName) {
+	AIEntity *e;
+
+	for (uint i = 0; i < _ents->size(); i++) {
+		e = *(_ents->begin() + i);
+		if (e->entityName && !scumm_stricmp(initName, e->entityName)) {
+			removeEntity(*(_ents->begin() + i));
+			i--;
+		}
+	}
+}
+
+void AI::animLuaEntity(const char *initName, AIState st) {
+	AIEntity *e;
+
+	for (Common::Array<AIEntity *>::iterator it = _ents->begin(); it != _ents->end(); it++) {
+		e = *it;
+		if (e->entityName && !scumm_stricmp(initName, e->entityName)) {
+			e->state = st;
+			e->animFrame = 0;
+			e->animDelay = e->animCycle;
+		}
+	}
+}
+
+void AI::setLuaAnimFrame(const char *initName, AIState st, int frame) {
+	AIEntity *e;
+
+	for (Common::Array<AIEntity *>::iterator it = _ents->begin(); it != _ents->end(); it++) {
+		e = *it;
+		if (e->entityName && !scumm_stricmp(initName, e->entityName)) {
+			e->state = st;
+			e->animFrame = frame;
+			e->animDelay = e->animCycle;
+			animEntFrames(e);
+			e->state = STATE_NONE;
+		}
+	}
+}
+
 void AI::removeEntity(AIEntity *e) {
 	_ents->erase(&e);
 }
