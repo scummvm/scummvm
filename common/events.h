@@ -75,7 +75,6 @@ enum EventType {
 	EVENT_PREDICTIVE_DIALOG = 12,
 
 #ifdef ENABLE_KEYMAPPER
-	,
 	// IMPORTANT NOTE: This is part of the WIP Keymapper. If you plan to use
 	// this, please talk to tsoliman and/or LordHoto.
 	EVENT_CUSTOM_BACKEND_ACTION = 18,
@@ -84,7 +83,6 @@ enum EventType {
 	EVENT_KEYMAPPER_REMAP = 19,
 #endif
 #ifdef ENABLE_VKEYBD
-	,
 	EVENT_VIRTUAL_KEYBOARD = 20,
 #endif
 
