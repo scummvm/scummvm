@@ -3554,7 +3554,7 @@ BstDoor::BstDoor(SupernovaEngine *vm, GameManager2 *gm) {
 	_objectState[18] = Object(_id, kStringDoor, kStringMassive, DOOR, EXIT | OPENABLE | CLOSED, 16, 16, 0, HALL2, 2);
 
 	char germanPassword[16] =  {0, 1, 0, 0, 1, 0, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0};
-	char englishPassword[16] = {0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0};
+	char englishPassword[16] = {0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0};
 	if (ConfMan.get("language") == "en")
 		for (int i = 0; i < 16; i++)
 			_password[i] = englishPassword[i];
@@ -3564,8 +3564,6 @@ BstDoor::BstDoor(SupernovaEngine *vm, GameManager2 *gm) {
 }
 
 void BstDoor::onEntrance() {
-	if (ConfMan.get("language") == "en")
-		_vm->_screen->renderMessage("You are almost there", kMessageNormal, 105, 130);
 }
 
 void BstDoor::animation() {
