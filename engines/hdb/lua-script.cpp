@@ -666,7 +666,50 @@ static int message(lua_State *L) {
 }
 
 static int animation(lua_State *L) {
-	warning("STUB: ANIMATION");
+	double	x = lua_tonumber(L, 1);
+	double	y = lua_tonumber(L, 2);
+	double	which = lua_tonumber(L, 3);
+	double	playsnd = lua_tonumber(L, 4);
+
+	g_hdb->_lua->checkParameters("animation", 4);
+
+	x *= kTileWidth;
+	y *= kTileHeight;
+
+	switch ((int)which) {
+	case 0:
+		g_hdb->_ai->addAnimateTarget((int)x, (int)y, 0, 3, ANIM_NORMAL, false, false, GROUP_WATER_SPLASH_SIT);
+		if (playsnd)
+			warning("STUB: Play SND_SPLASH");
+		break;
+	case 1:
+		g_hdb->_ai->addAnimateTarget((int)x, (int)y, 0, 3, ANIM_NORMAL, false, false, GROUP_EXPLOSION_BOOM_SIT);
+		if (playsnd)
+			warning("STUB: Play SND_BARREL_EXPLODE");
+		break;
+	case 2:
+		g_hdb->_ai->addAnimateTarget((int)x, (int)y, 0, 3, ANIM_FAST, false, false, GROUP_STEAM_PUFF_SIT);
+		if (playsnd)
+			warning("STUB: Play SND_BARREL_MELTING");
+		break;
+	case 3:
+		g_hdb->_ai->addAnimateTarget((int)x, (int)y, 0, 7, ANIM_NORMAL, false, false, TELEPORT_FLASH);
+		if (playsnd)
+			warning("STUB: Play SND_TELEPORT");
+		break;
+	case 4:
+		g_hdb->_ai->addAnimateTarget((int)x, (int)y, 0, 3, ANIM_NORMAL, false, false, GEM_FLASH);
+		if (playsnd)
+			warning("STUB: Play SND_GET_GEM");
+		break;
+	case 5:
+		g_hdb->_ai->addAnimateTarget((int)x, (int)y, 0, 2, ANIM_NORMAL, false, false, GROUP_ENT_CHICKEN_DIE);
+		if (playsnd)
+			warning("STUB: Play SND_CHICKEN_DEATH");
+		break;
+	}
+
+	lua_pop(L, 3);
 	return 0;
 }
 
