@@ -11,9 +11,9 @@ MODULE_OBJS := \
 	ai-use.o \
 	ai-waypoint.o \
 	console.o \
-	draw-manager.o \
 	detection.o \
 	file-manager.o \
+	gfx.o \
 	hdb.o \
 	input.o \
 	lua-script.o \
