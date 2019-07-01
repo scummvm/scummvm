@@ -76,6 +76,7 @@ bool MSNImage::init(int filenumber) {
 			warning("Image data file msn_data.%03d could not be read!", filenumber);
 			return false;
 		}
+		loadStream(file);
 	}
 	else if (_MSPart == 2) {
 		if (!loadFromEngineDataFile()) {
