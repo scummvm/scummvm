@@ -557,15 +557,46 @@ void aiSpacedudeInit2(AIEntity *e) {
 }
 
 void aiCrateAction(AIEntity *e) {
-	warning("STUB: AI: aiCrateAction required");
+	// if crate isn't moving somewhere, don't move it
+	if (!e->goalX) {
+		// crate is stopped in the water... should it continue downstream?
+		// not if it's marked by the Number of the Beast!
+		if (e->state == STATE_FLOATING) {
+			if (e->value1 != 0x666) {
+				int flags = g_hdb->_map->getMapBGTileFlags(e->tileX, e->tileY);
+				if (flags & (kFlagPushRight | kFlagPushLeft | kFlagPushUp | kFlagPushDown)) {
+					g_hdb->_ai->setEntityGoal(e, e->tileX, e->tileY);
+					g_hdb->_ai->animateEntity(e);
+				} else
+					g_hdb->_ai->animEntFrames(e);
+			} else
+				g_hdb->_ai->animEntFrames(e);
+		}
+		return;
+	}
+
+	g_hdb->_ai->animateEntity(e);
 }
 
 void aiCrateInit2(AIEntity *e) {
-	warning("STUB: AI: aiCrateInit2 required");
+	// point all crate move frames to the standing one
+	e->movedownFrames =
+		e->moveleftFrames =
+		e->moverightFrames =
+		e->moveupFrames = 1;
+
+	e->movedownGfx[0] =
+		e->moveupGfx[0] =
+		e->moveleftGfx[0] =
+		e->moverightGfx[0] = e->standdownGfx[0];
+
+	e->draw = e->standdownGfx[0];			// standing frame - doesn't move
 }
 
 void aiCrateInit(AIEntity *e) {
-	warning("STUB: AI: aiCrateInit required");
+	e->moveSpeed = kPushMoveSpeed;
+	e->aiAction = aiCrateAction;
+	e->value1 = 0;
 }
 
 void aiBarrelLightAction(AIEntity *e) {
