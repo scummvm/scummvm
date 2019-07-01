@@ -71,7 +71,7 @@ void Input::setButtons(uint16 b) {
 	}
 
 	// Debug Mode Cycling
-	warning("STUB: setButtons: Check and set Debug Mode");
+	debug(9, "STUB: setButtons: Check and set Debug Mode");
 
 	if (g_hdb->getGameState() == GAME_PLAY) {
 		// Is Player Dead? Click on TRY AGAIN
@@ -283,8 +283,8 @@ void Input::updateMouseButtons(int l, int m, int r) {
 
 void Input::updateKeys(Common::Event event, bool keyDown) {
 
-	warning("STUB: updateKeys: Check for Quit key");
-	warning("STUB: updateKeys: Check for Pause key");
+	debug(9, "STUB: updateKeys: Check for Quit key");
+	debug(9, "STUB: updateKeys: Check for Pause key");
 
 	uint16 buttons = getButtons();
 
