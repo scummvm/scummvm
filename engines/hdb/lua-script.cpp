@@ -739,38 +739,102 @@ static int spawnEntity(lua_State *L) {
 }
 
 static int addInvItem(lua_State *L) {
-	warning("STUB: ADD INVENTORY ITEM");
-	return 0;
+	double	type = lua_tonumber(L, 1);
+	double	amount = lua_tonumber(L, 2);
+	char *funcInit = (char *)lua_tostring(L, 3);
+	char *funcAction = (char *)lua_tostring(L, 4);
+	char *funcUse = (char *)lua_tostring(L, 5);
+
+	int t = (int)type;
+
+	g_hdb->_lua->checkParameters("addInvItem", 5);
+
+	lua_pop(L, 5);
+
+	bool rtn = g_hdb->_ai->addItemToInventory((AIType)t, (int)amount, funcInit, funcAction, funcUse);
+
+	lua_pushnumber(L, rtn);
+	return 1;
 }
 
 static int keepInvItem(lua_State *L) {
-	warning("STUB: KEEP INVENTORY ITEM");
+	double type = lua_tonumber(L, 1);
+	int t = (int)type;
+
+	g_hdb->_lua->checkParameters("keepInvItem", 1);
+
+	lua_pop(L, 1);
+
+	g_hdb->_ai->keepInvItem((AIType)t);
 	return 0;
 }
 
 static int queryInv(lua_State *L) {
-	warning("STUB: QUERY INVENTORY");
-	return 0;
+	const char *search;
+	int	result;
+
+	search = lua_tostring(L, 1);		// get the passed-in search string
+
+	g_hdb->_lua->checkParameters("queryInv", 1);
+
+	lua_pop(L, 1);
+
+	result = g_hdb->_ai->queryInventory(search);			// call the function & get return value
+	lua_pushnumber(L, result);					// send the return value back to Lua
+	return 1;
 }
 
 static int purgeInv(lua_State *L) {
-	warning("STUB: PURGE INVENTORY");
+	g_hdb->_ai->purgeInventory();
 	return 0;
 }
 
 static int queryInvItem(lua_State *L) {
-	warning("STUB: QUERY INVENTORY ITEM");
-	return 0;
+	double	search;
+	int	result, s1;
+
+	search = lua_tonumber(L, 1);					// get the passed-in search string
+	s1 = (int)search;
+
+	g_hdb->_lua->checkParameters("queryInvItem", 1);
+
+	lua_pop(L, 1);
+
+	result = g_hdb->_ai->queryInventoryType((AIType)s1);	// call the function & get return value
+	lua_pushnumber(L, result);					// send the return value back to Lua
+	return 1;
 }
 
 static int removeInv(lua_State *L) {
-	warning("STUB: REMOVE INVENTORY");
-	return 0;
+	const char *search;
+	int	result;
+
+	search = lua_tostring(L, 1);		// get the passed-in search string
+	double number = lua_tonumber(L, 2);
+
+	g_hdb->_lua->checkParameters("removeInv", 2);
+
+	lua_pop(L, 2);
+
+	result = (int)g_hdb->_ai->removeInvItem(search, (int)number);	// call the function & get return value
+	lua_pushnumber(L, result);					// send the return value back to Lua
+	return 1;
 }
 
 static int removeInvItem(lua_State *L) {
-	warning("STUB: REMOVE INVENTORY ITEM");
-	return 0;
+	int	result;
+
+	double	search = lua_tonumber(L, 1);		// get the passed-in type value
+	double	number = lua_tonumber(L, 2);
+
+	g_hdb->_lua->checkParameters("removeInvItem", 2);
+
+	lua_pop(L, 2);
+
+	int	s = (int)search;
+	result = (int)g_hdb->_ai->removeInvItemType((AIType)s, (int)number);	// call the function & get return value
+	lua_pushnumber(L, result);					// send the return value back to Lua
+	return 1;
 }
 
 static int killTrigger(lua_State *L) {
