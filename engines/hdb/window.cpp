@@ -476,7 +476,7 @@ void Window::openMessageBar(const char *title, int time) {
 				return;
 
 			for (i = 0; i < _numMsgQueue; i++)
-				if (!_stricmp(_msgQueueStr[i], title))
+				if (!scumm_stricmp(_msgQueueStr[i], title))
 					return;
 			strcpy(_msgQueueStr[_numMsgQueue], title);
 			_msgQueueWait[_numMsgQueue] = time;
@@ -870,7 +870,7 @@ void Window::drawTextOut() {
 	g_hdb->_drawMan->setTextEdges(0, 480, 0, kScreenHeight);
 
 	time = g_system->getMillis();
-	
+
 	for (uint i = 0; i < _textOutList.size(); i++) {
 		t = _textOutList[i];
 		g_hdb->_drawMan->setCursor(t->x, t->y);
