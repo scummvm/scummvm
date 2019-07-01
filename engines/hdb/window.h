@@ -185,6 +185,9 @@ public:
 		return _invWinInfo.selection;
 	}
 	void checkInvSelect(int x, int y);
+	bool inventoryActive() {
+		return _invWinInfo.active;
+	}
 
 	// Deliveries Functions
 	void openDeliveries(bool animate);
