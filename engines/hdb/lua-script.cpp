@@ -955,7 +955,13 @@ static int setInfobarDark(lua_State *L) {
 }
 
 static int setPointerState(lua_State *L) {
-	warning("STUB: SET POINTER STATE");
+	double	value = lua_tonumber(L, 1);
+
+	g_hdb->_lua->checkParameters("setPointerState", 1);
+
+	lua_pop(L, 1);
+
+	g_hdb->_drawMan->setPointerState((int)value);
 	return 0;
 }
 
