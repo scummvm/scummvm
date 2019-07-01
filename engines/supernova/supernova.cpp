@@ -87,7 +87,8 @@ SupernovaEngine::SupernovaEngine(OSystem *syst)
 	, _sleepAutoSave(nullptr)
 	, _sleepAuoSaveVersion(-1)
 	, _delay(33)
-	, _textSpeed(kTextSpeed[2]) {
+	, _textSpeed(kTextSpeed[2])
+	, _improved(false) {
 	if (ConfMan.hasKey("textspeed"))
 		_textSpeed = ConfMan.getInt("textspeed");
 
@@ -95,7 +96,13 @@ SupernovaEngine::SupernovaEngine(OSystem *syst)
 		_MSPart = 1;
 	else if (ConfMan.get("gameid") == "msn2")
 		_MSPart = 2;
-	else
+	else if (ConfMan.get("gameid") == "msn1-i") {
+		_MSPart = 1;
+		_improved = true;
+	} else if (ConfMan.get("gameid") == "msn2-i") {
+		_MSPart = 2;
+		_improved = true;
+	} else
 		_MSPart = 0;
 	DebugMan.addDebugChannel(kDebugGeneral, "general", "Supernova general debug channel");
 }

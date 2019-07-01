@@ -2728,7 +2728,8 @@ bool PuzzleFront::interact(Action verb, Object &obj1, Object &obj2) {
 	if (_gm->move(verb, obj1)) {
 		_gm->passageConstruction();
 		_gm->_newRoom = true;
-	} else if (verb == ACTION_PRESS && obj1._id >= PART0 && obj1._id <= PART15) {
+	} else if ((verb == ACTION_PRESS || (verb == ACTION_WALK && _vm->_improved))
+			&& obj1._id >= PART0 && obj1._id <= PART15) {
 		int pos = obj1._id - PART0;
 		int newPos = 0;
 		if (pos > 3  && _gm->_puzzleField[pos - 4] == 255)
@@ -3573,7 +3574,8 @@ bool BstDoor::interact(Action verb, Object &obj1, Object &obj2) {
 	if (_gm->move(verb, obj1)) {
 		_gm->passageConstruction();
 		_gm->_newRoom = true;
-	} else if (verb == ACTION_PRESS && obj1._id >= BST1 && obj1._id <= BST16) {
+	} else if ((verb == ACTION_PRESS || (verb == ACTION_WALK && _vm->_improved))
+			&& obj1._id >= BST1 && obj1._id <= BST16) {
 		int number = obj1._id - (BST1 - 1);
 		if (isSectionVisible(number))
 			_vm->renderImage(number + 128);
