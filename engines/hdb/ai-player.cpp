@@ -668,19 +668,41 @@ void aiBarrelExplosionAction(AIEntity *e) {
 }
 
 void aiBarrelExplode(AIEntity *e) {
-	warning("STUB: AI: aiBarrelExplode required");
+	e->state = STATE_EXPLODING;
+	e->animDelay = e->animCycle;
+	e->animFrame = 0;
+	warning("STUB: Play SND_BARREL_EXPLODE");
+	g_hdb->_map->setBoomBarrel(e->tileX, e->tileY, 0);
 }
 
 void aiBarrelExplodeInit(AIEntity *e) {
-	warning("STUB: AI: aiBarrelExplodeInit required");
+	e->moveSpeed = kPushMoveSpeed;
+	e->aiAction = aiBarrelExplodeAction;
+	g_hdb->_map->setBoomBarrel(e->tileX, e->tileY, 1);
 }
 
 void aiBarrelExplodeInit2(AIEntity *e) {
-	warning("STUB: AI: aiBarrelExplodeInit2 required");
+	// point all exploding barrel MOVE frames to the standing one
+	e->blinkFrames =
+		e->movedownFrames =
+		e->moveleftFrames =
+		e->moverightFrames =
+		e->moveupFrames = 1;
+
+	e->blinkGfx[0] =
+		e->movedownGfx[0] =
+		e->moveupGfx[0] =
+		e->moveleftGfx[0] =
+		e->moverightGfx[0] = e->standdownGfx[0];
+
+	e->draw = e->standdownGfx[0];			// standing frame - doesn't move
 }
 
 void aiBarrelExplodeAction(AIEntity *e) {
-	warning("STUB: AI: aiBarrelExplodeAction required");
+	if (e->goalX)
+		g_hdb->_ai->animateEntity(e);
+	else if (e->state == STATE_EXPLODING)
+		g_hdb->_ai->animEntFrames(e);
 }
 
 void aiBarrelExplodeSpread(AIEntity *e) {
@@ -688,11 +710,14 @@ void aiBarrelExplodeSpread(AIEntity *e) {
 }
 
 void aiBarrelExplosionEnd(int x, int y) {
-	warning("STUB: AI: aiBarrelExplosionEnd(int, int) required");
+	g_hdb->_map->setExplosion(x, y, 0);
 }
 
 void aiBarrelBlowup(AIEntity *e, int x, int y) {
-	warning("STUB: AI: aiBarrelBlowup required");
+	g_hdb->_ai->addAnimateTarget(x * kTileWidth,
+		y * kTileHeight, 0, 3, ANIM_NORMAL, false, false, GROUP_EXPLOSION_BOOM_SIT);
+	g_hdb->_map->setExplosion(x, y, 1);
+	g_hdb->_ai->addCallback(AI_BARREL_EXPLOSION_END, x, y, e->animCycle * 4);
 }
 
 void aiScientistInit(AIEntity *e) {
