@@ -79,6 +79,11 @@ bool AI::addToInventory(AIEntity *e) {
 	return true;
 }
 
+void AI::purgeInventory() {
+	memset(&_inventory, 0, sizeof(InvEnt) * kMaxInventory);
+	_numInventory = 0;
+}
+
 // Clear out the Player inventory except Gems,
 // Monkeystones and Goo Cups unless its marked
 void AI::clearInventory() {
@@ -103,6 +108,167 @@ AIEntity *AI::getInvItem(int which) {
 	if (which >= _numInventory)
 		return NULL;
 	return _inventory[which].ent;
+}
+
+int AI::queryInventory(const char *string) {
+	int		i, count;
+
+	if (!scumm_stricmp(string, "monkeystone"))
+		return getMonkeystoneAmount();
+	if (!scumm_stricmp(string, "goo"))
+		return getGooCupAmount();
+	if (!scumm_stricmp(string, "gem"))
+		return getGemAmount();
+
+	if (!_numInventory)
+		return 0;
+
+	count = 0;
+	for (i = _numInventory - 1; i >= 0; i--)
+		if (_inventory[i].ent->entityName && strstr(_inventory[i].ent->entityName, string))
+			count++;
+
+	return count;
+}
+
+bool AI::removeInvItem(const char *string, int amount) {
+	int		i, j;
+	int		found;
+
+	// Check specially for Gems, Monkeystones and Goo Cups
+	if (!scumm_stricmp(string, "gem")) {
+		_numGems -= amount;
+		return true;
+	} else if (!scumm_stricmp(string, "monkeystone")) {
+		_numMonkeystones -= amount;
+		return true;
+	} else if (!scumm_stricmp(string, "goo")) {
+		_numGooCups -= amount;
+		return true;
+	}
+
+	if (!_numInventory)
+		return false;
+
+	do {
+		found = 0;
+
+		for (i = _numInventory - 1; i >= 0; i--)
+			if (_inventory[i].ent->entityName && strstr(_inventory[i].ent->entityName, string)) {
+				j = i;
+				memset(&_inventory[j], 0, sizeof(InvEnt));
+				while (j < _numInventory - 1) {
+					memcpy(&_inventory[j], &_inventory[j + 1], sizeof(InvEnt));
+					memset(&_inventory[j + 1], 0, sizeof(InvEnt));
+					j++;
+				}
+				_numInventory--;
+				amount--;
+				found = 1;
+				if (!amount)
+					break;
+			}
+	} while (found && amount);
+
+	// if we haven't removed them all, return false
+	if (amount)
+		return false;
+
+	return true;
+}
+
+int AI::queryInventoryType(AIType which) {
+	int		i, count;
+
+	if (which == ITEM_MONKEYSTONE)
+		return getMonkeystoneAmount();
+	if (which == ITEM_GOO_CUP)
+		return getGooCupAmount();
+	if (which == ITEM_GEM_WHITE)
+		return getGemAmount();
+
+	if (!_numInventory)
+		return 0;
+
+	count = 0;
+	for (i = 0; i < _numInventory; i++)
+		if (_inventory[i].ent->type == which)
+			count++;
+
+	return count;
+}
+
+bool AI::removeInvItemType(AIType which, int amount) {
+	int		i, j, found;
+
+	// Check specially for Gems, Monkeystones and Goo Cups
+	if (which == ITEM_GEM_WHITE) {
+		_numGems -= amount;
+		return true;
+	} else if (which == ITEM_MONKEYSTONE) {
+		_numMonkeystones -= amount;
+		return true;
+	} else if (which == ITEM_GOO_CUP) {
+		_numGooCups -= amount;
+		return true;
+	}
+
+	if (!_numInventory)
+		return false;
+
+	do {
+		found = 0;
+
+		for (i = 0; i < _numInventory; i++)
+			if (_inventory[i].ent->type == which) {
+				j = i;
+				memset(&_inventory[j], 0, sizeof(InvEnt));
+				while (j < _numInventory - 1) {
+					memcpy(&_inventory[j], &_inventory[j + 1], sizeof(InvEnt));
+					memset(&_inventory[j + 1], 0, sizeof(InvEnt));
+					j++;
+				}
+				_numInventory--;
+				amount--;
+				found = 1;
+				if (!amount)
+					break;
+			}
+	} while (found && amount);
+
+	// if we haven't removed them all, return false
+	if (amount)
+		return false;
+
+	return true;
+}
+
+bool AI::addItemToInventory(AIType type, int amount, char *funcInit, char *funcAction, char *funcUse) {
+	int		i;
+	AIEntity *e;
+	for (i = 0; i < amount; i++) {
+		spawn(type, DIR_UP, 0, 0, funcInit, funcAction, funcUse, DIR_UP, 1, 0, 0, 1);
+		e = findEntity(0, 0);
+		if (!e)
+			return false;
+		if (!addToInventory(e))
+			return false;
+	}
+	return true;
+}
+
+void AI::keepInvItem(AIType type) {
+	for (int i = 0; i < _numInventory; i++)
+		if (_inventory[i].ent->type == type)
+			_inventory[i].keep = 1;
+}
+
+void AI::printYouGotMsg(const char *name) {
+	if (!name || !name[0])
+		return;
+
+	sprintf(_youGotBuffer, "Got %s", name);
+	g_hdb->_window->textOut(_youGotBuffer, kYouGotX, kYouGotY, 120);
 }
 
 void AI::newDelivery(const char *itemTextName, const char *itemGfxName, const char *destTextName, const char *destGfxName, const char *id) {

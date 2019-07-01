@@ -46,7 +46,9 @@ enum {
 	kPushMoveSpeed = (kPlayerMoveSpeed >> 1),
 	kPlayerTouchPWait = 16,
 	kMaxCineGfx = 10,
-	kRunToggleDelay = 2
+	kRunToggleDelay = 2,
+	kYouGotX = -1,
+	kYouGotY = (kScreenHeight - 16)
 };
 
 enum AIType {
@@ -917,6 +919,7 @@ public:
 
 	// Inventory Functions
 	bool addToInventory(AIEntity *e);
+	void purgeInventory();
 	void clearInventory();
 	int getInvAmount() {
 		return _numInventory;
@@ -933,8 +936,24 @@ public:
 	void setGemAmount(int amt) {
 		_numGems = amt;
 	}
+	int getInvMax() {
+		return _numInventory;
+	}
+	AIType getInvItemType(int which) {
+		return _inventory[which].ent->type;
+	}
+	Tile *getInvItemGfx(int which) {
+		return _inventory[which].ent->standdownGfx[0];
+	}
 
 	AIEntity *getInvItem(int which);
+	int queryInventory(const char *string);
+	bool removeInvItem(const char *string, int amount);
+	int queryInventoryType(AIType which);
+	bool removeInvItemType(AIType which, int amount);
+	bool addItemToInventory(AIType type, int amount, char *funcInit, char *funcAction, char *funcUse);
+	void keepInvItem(AIType type);
+	void printYouGotMsg(const char *name);
 
 	// Delivery Functions
 	void newDelivery(const char *itemTextName, const char *itemGfxName, const char *destTextName, const char *destGfxName, const char *id);
@@ -1123,6 +1142,8 @@ public:
 
 	// Virtual Player
 	AIEntity _dummyPlayer, _dummyLaser;
+
+	char _youGotBuffer[32];	// For printing the text of entities that are removed
 
 	// Cinematic Variables
 	Common::Array<CineCommand *> _cine;
