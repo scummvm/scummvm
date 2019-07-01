@@ -13618,6 +13618,31 @@ static const uint16 sq4CDPatchSewerLockup[] = {
 	PATCH_END
 };
 
+// SQ4CD had an easter egg room of things removed from Sierra games for legal
+//  reasons, but the room itself was removed from the game. Instead the room's
+//  pic (570) and messages (271) were left in along with the 18 digit timepod
+//  code that attempts to load the missing room 271 and of course crashes.
+//
+// This wouldn't be a problem except that the code is publicly known due to NRS'
+//  modified version of the game which includes a script 271 that recreates the
+//  room. The code appears in easter egg lists, and players who don't realize it
+//  only applies to a modified version attempt it and crash, so we disable it.
+//
+// Applies to: English PC CD
+// Responsible method: timeToTimeWarpS:changeState(1)
+// Fixes bug #11006
+static const uint16 sq4CdSignatureRemovedRoomTimepodCode[] = {
+	SIG_MAGICDWORD,
+	0x35, 0x01,                         // ldi 01 [ 1 == room 271 code was entered ]
+	0xa3, 0x72,                         // sal 72
+	SIG_END
+};
+
+static const uint16 sq4CdPatchRemovedRoomTimepodCode[] = {
+	0x35, 0x00,                         // ldi 00
+	PATCH_END
+};
+
 //          script, description,                                      signature                                      patch
 static const SciScriptPatcherEntry sq4Signatures[] = {
 	{  true,     1, "Floppy: EGA intro delay fix",                    2, sq4SignatureEgaIntroDelay,                     sq4PatchEgaIntroDelay },
@@ -13649,6 +13674,7 @@ static const SciScriptPatcherEntry sq4Signatures[] = {
 	{  true,   406, "CD/Floppy: zero gravity blast fix",              1, sq4SignatureZeroGravityBlast,                  sq4PatchZeroGravityBlast },
 	{  true,   410, "CD/Floppy: zero gravity blast fix",              1, sq4SignatureZeroGravityBlast,                  sq4PatchZeroGravityBlast },
 	{  true,   411, "CD/Floppy: zero gravity blast fix",              1, sq4SignatureZeroGravityBlast,                  sq4PatchZeroGravityBlast },
+	{ false,   531, "CD: disable timepod code for removed room",      1, sq4CdSignatureRemovedRoomTimepodCode,          sq4CdPatchRemovedRoomTimepodCode },
 	{  true,   545, "CD: vohaul pocketpal text+speech fix",           1, sq4CdSignatureVohaulPocketPalTextSpeech,       sq4CdPatchVohaulPocketPalTextSpeech },
 	{  true,   610, "CD: biker bar door fix",                         1, sq4CdSignatureBikerBarDoor,                    sq4CdPatchBikerBarDoor },
 	{  true,   610, "CD: biker hands-on fix",                         3, sq4CdSignatureBikerHandsOn,                    sq4CdPatchBikerHandsOn },
@@ -15108,6 +15134,10 @@ void ScriptPatcher::processScript(uint16 scriptNr, SciSpan<byte> scriptData) {
 						enablePatch(signatureTable, "Amiga: dress purchase flag check fix");
 						enablePatch(signatureTable, "Amiga: dress purchase flag clear fix");
 					}
+				}
+
+				if (g_sci->isCD() && !g_sci->getResMan()->testResource(ResourceId(kResourceTypeScript, 271))) {
+					enablePatch(signatureTable, "CD: disable timepod code for removed room");
 				}
 				break;
 			default:
