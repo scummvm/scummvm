@@ -512,7 +512,9 @@ Common::Error HDBGame::run() {
 			_map->drawForegrounds();
 			_ai->animateTargets();
 
+			_window->drawDialogChoice();
 			_window->drawDialog();
+			_window->drawMessageBar();
 			_window->drawInventory();
 			_window->drawDeliveries();
 			_window->drawTextOut();
