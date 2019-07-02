@@ -446,7 +446,13 @@ struct AIEntity {
 	uint16		moverightFrames;
 	Tile		*moverightGfx[kMaxAnimFrames];
 
-	AIEntity() : luaFuncInit(""), luaFuncAction(""), luaFuncUse(""), entityName(""), printedName("") {
+	AIEntity() {
+		luaFuncInit[0] = 0;
+		luaFuncAction[0] = 0;
+		luaFuncUse[0] = 0;
+		entityName[0] = 0;
+		printedName[0] = 0;
+
 		type = AI_NONE;
 		state = STATE_NONE;
 		dir = DIR_NONE;
@@ -585,7 +591,12 @@ struct DlvEnt {
 
 	char id[32];
 
-	DlvEnt() : itemTextName(""), itemGfxName(""), itemGfx(NULL), destTextName(""), destGfxName(""), destGfx(NULL) {}
+	DlvEnt() : itemGfx(NULL), destGfx(NULL) {
+		itemTextName[0] = 0;
+		itemGfxName[0] = 0;
+		destTextName[0] = 0;
+		destGfxName[0] = 0;
+	}
 };
 
 struct Waypoint {
@@ -601,7 +612,11 @@ struct LuaT {
 	char luaFuncAction[32];
 	char luaFuncUse[32];
 
-	LuaT() : x(0), y(0), value1(0), value2(0), luaFuncInit(""), luaFuncAction(""), luaFuncUse("") {}
+	LuaT() : x(0), y(0), value1(0), value2(0) {
+		luaFuncInit[0] = 0;
+		luaFuncAction[0] = 0;
+		luaFuncUse[0] = 0;
+	}
 };
 
 struct ActionInfo {
@@ -611,7 +626,11 @@ struct ActionInfo {
 	char luaFuncUse[32];
 	char entityName[32];
 
-	ActionInfo() : x1(0), y1(0), x2(0), y2(0), luaFuncInit(""), luaFuncUse(""), entityName("") {}
+	ActionInfo() : x1(0), y1(0), x2(0), y2(0) {
+		luaFuncInit[0] = 0;
+		luaFuncUse[0] = 0;
+		entityName[0] = 0;
+	}
 };
 
 struct TeleInfo {
@@ -625,7 +644,10 @@ struct TeleInfo {
 	char luaFuncUse1[32];
 	char luaFuncUse2[32];
 
-	TeleInfo() : x1(0), y1(0), x2(0), y2(0), dir1(DIR_NONE), dir2(DIR_NONE), level1(0), level2(0), usable1(0), usable2(0), anim1(0), anim2(0), luaFuncUse1(""), luaFuncUse2("") {}
+	TeleInfo() : x1(0), y1(0), x2(0), y2(0), dir1(DIR_NONE), dir2(DIR_NONE), level1(0), level2(0), usable1(0), usable2(0), anim1(0), anim2(0) {
+		luaFuncUse1[0] = 0;
+		luaFuncUse2[0] = 0;
+	}
 };
 
 struct SingleTele {
@@ -642,7 +664,11 @@ struct AutoAction {
 	char luaFuncUse[32];
 	char entityName[32];
 
-	AutoAction() : x(0), y(0), activated(false), luaFuncInit(""), luaFuncUse(""), entityName("") {}
+	AutoAction() : x(0), y(0), activated(false) {
+		luaFuncInit[0] = 0;
+		luaFuncUse[0] = 0;
+		entityName[0] = 0;
+	}
 };
 
 struct ArrowPath {
@@ -665,7 +691,11 @@ struct Trigger {
 	char luaFuncInit[32];
 	char luaFuncUse[32];
 
-	Trigger() : id(""), x(0), y(0), value1(0), value2(0), luaFuncInit(""), luaFuncUse("") {}
+	Trigger() : x(0), y(0), value1(0), value2(0) {
+		id[0] = 0;
+		luaFuncInit[0] = 0;
+		luaFuncUse[0] = 0;
+	}
 };
 
 struct CallbackDef {
@@ -706,7 +736,7 @@ struct CineBlit {
 	const char *id;
 	bool masked;
 
-	CineBlit() : x(0), y(0), pic(NULL), name(""), id(""), masked(false) {}
+	CineBlit() : x(0), y(0), pic(NULL), name(NULL), id(NULL), masked(false) {}
 };
 
 #define onEvenTile(x, y)		( !(x & 31) && !(y & 31) )

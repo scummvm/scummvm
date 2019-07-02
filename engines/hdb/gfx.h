@@ -66,7 +66,7 @@ struct GfxCache {
 	uint32 size;
 	int16 loaded;
 
-	GfxCache() : name(""), tileGfx(NULL), size(0), loaded(0) {}
+	GfxCache() : tileGfx(NULL), size(0), loaded(0) { name[0] = 0; }
 };
 
 struct FontInfo {

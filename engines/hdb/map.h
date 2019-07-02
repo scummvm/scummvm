@@ -46,7 +46,11 @@ struct MSMIcon {
 	uint16	level;					// which floor level entity is on
 	uint16	value1, value2;
 
-	MSMIcon(): icon(0), x(0), y(0), funcInit(""), funcAction(""), funcUse(""), dir(0), level(0), value1(0), value2(0) {}
+	MSMIcon(): icon(0), x(0), y(0), dir(0), level(0), value1(0), value2(0) {
+		funcInit[0] = 0;
+		funcAction[0] = 0;
+		funcUse[0] = 0;
+	}
 };
 
 struct Foreground {
