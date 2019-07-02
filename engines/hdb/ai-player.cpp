@@ -1289,11 +1289,12 @@ void aiBurgerInit2(AIEntity *e) {
 }
 
 void aiBookInit(AIEntity *e) {
-	warning("STUB: AI: aiBookInit required");
+	strcpy(e->printedName, "a Book");
+	e->aiAction = aiGetItemAction;
 }
 
 void aiBookInit2(AIEntity *e) {
-	warning("STUB: AI: aiBookInit2 required");
+	e->draw = e->standdownGfx[0];
 }
 
 void aiClipboardInit(AIEntity *e) {
