@@ -20,6 +20,50 @@ const char *lang[] = {
 	NULL
 };
 
+void writeDocFile(File& outputFile, const char *fileExtension, const char* language) {
+	File docFile;
+	char fileName[20];
+	sprintf(fileName, "msn.%s-%s", fileExtension, language);
+	if (!docFile.open(fileName, kFileReadMode)) {
+		printf("Cannot find file 'msn.%s' for language '%s'. This file will be skipped.\n", fileExtension, language);
+		return;
+	}
+
+	// Write block header in output file (4 bytes).
+	// We convert the file extension to upper case.
+	for (int i = 0 ; i < 3 ; ++i) {
+		if (fileExtension[i] >= 97 && fileExtension[i] <= 122)
+			outputFile.writeByte(fileExtension[i] - 32);
+		else
+			outputFile.writeByte(fileExtension[i]);
+	}
+	outputFile.writeByte('1');
+
+	// And write the language code on 4 bytes as well (padded with 0 if needed).
+	int languageLength = strlen(language);
+	for (int i = 0 ; i < 4 ; ++i) {
+		if (i < languageLength)
+			outputFile.writeByte(language[i]);
+		else
+			outputFile.writeByte(0);
+	}
+
+	// Write block size
+	
+	docFile.seek(0, SEEK_END);
+	int length = docFile.pos();
+	docFile.seek(0, SEEK_SET);
+	outputFile.writeLong(length);
+
+	// Write all the bytes.
+	for (int i = 0 ; i < length; ++i) {
+		byte b = docFile.readByte();
+		outputFile.writeByte(b);
+	}
+
+	docFile.close();
+}
+
 void writeImage(File& outputFile, const char *name, const char* language) {
 	File imgFile;
 	char fileName[16];
@@ -242,6 +286,8 @@ int main(int argc, char *argv[]) {
 		writeImage(outputFile, "img1", *l);
 		writeImage(outputFile, "img2", *l);
 		writeStrings(outputFile, *l);
+		writeDocFile(outputFile, "inf", *l);
+		writeDocFile(outputFile, "doc", *l);
 		++l;
 	}
 
