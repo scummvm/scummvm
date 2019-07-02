@@ -127,6 +127,8 @@ void Window::openDialog(const char *title, int tileIndex, const char *string, in
 	if (_dialogInfo.active)
 		return;
 
+	memset(&_dialogInfo, 0, sizeof(_dialogInfo));
+
 	_dialogInfo.tileIndex = tileIndex;
 	strcpy(_dialogInfo.title, title);
 	_dialogInfo.active = true;
