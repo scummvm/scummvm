@@ -64,7 +64,7 @@ enum Color {
 	kColorLightGreen  = 13,
 	kColorLightYellow = 14,
 	kColorLightRed    = 15,
-	kColorPurple      = 35,
+	kColorPurple      = 16,
 	kColorCursorTransparent = kColorWhite25
 };
 
@@ -102,6 +102,7 @@ public:
 	};
 
 	Marquee(Screen *screen, MarqueeId id, const char *text);
+	~Marquee();
 
 	bool renderCharacter();
 	void reset();
@@ -115,6 +116,7 @@ private:
 	bool _loop;
 	int _delay;
 	int _color;
+	byte *_oldColor;
 	int _x;
 	int _y;
 	int _textWidth;

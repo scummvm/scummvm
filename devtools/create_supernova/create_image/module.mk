@@ -1,4 +1,4 @@
-MODULE := devtools/create_supernova2/create_image
+MODULE := devtools/create_supernova/create_image
 
 MODULE_OBJS := create_image.o
 

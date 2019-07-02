@@ -107,6 +107,7 @@ Marquee::Marquee(Screen *screen, MarqueeId id, const char *text)
 	, _textBegin(text)
 	, _delay(0)
 	, _loop(false)
+	, _oldColor(nullptr)
 	, _screen(screen) {
 	if (_screen->_vm->_MSPart == 1) {
 		_color = kColorLightBlue;
@@ -117,6 +118,10 @@ Marquee::Marquee(Screen *screen, MarqueeId id, const char *text)
 			_y = 1;
 		}
 	} else if (_screen->_vm->_MSPart == 2) {
+		byte purple[3] = {0x9b, 0x00, 0xfb};
+		_oldColor = new byte[3];
+		_screen->_vm->_system->getPaletteManager()->grabPalette(_oldColor, kColorPurple, 1);
+		_screen->_vm->_system->getPaletteManager()->setPalette(purple, kColorPurple, 1);
 		_color = kColorPurple;
 		if (id == kMarqueeIntro) {
 			_y = 191;
@@ -131,6 +136,13 @@ Marquee::Marquee(Screen *screen, MarqueeId id, const char *text)
 	_screen->_textCursorX = _x;
 	_screen->_textCursorY = _y;
 	_screen->_textColor = _color;
+}
+
+Marquee::~Marquee() {
+	if (_screen->_vm->_MSPart == 2) {
+		_screen->_vm->_system->getPaletteManager()->setPalette(_oldColor, kColorPurple, 1);
+		delete _oldColor;
+	}
 }
 
 void Marquee::clearText() {

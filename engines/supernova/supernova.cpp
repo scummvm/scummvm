@@ -197,47 +197,42 @@ Common::Error SupernovaEngine::loadGameStrings() {
 	Common::File f;
 	char id[5], lang[5];
 	id[4] = lang[4] = '\0';
-	if (_MSPart == 1) {
-		if (!f.open(SUPERNOVA_DAT)) {
-			GUIErrorMessageFormat(_("Unable to locate the '%s' engine data file."), SUPERNOVA_DAT);
-			return Common::kReadingFailed;
-		}
-		f.read(id, 3);
-		if (strncmp(id, "MSN", 3) != 0) {
-			GUIErrorMessageFormat(_("The '%s' engine data file is corrupt."), SUPERNOVA_DAT);
-			return Common::kReadingFailed;
-		}
-
-		int version = f.readByte();
-		if (version != SUPERNOVA_DAT_VERSION) {
-			GUIErrorMessageFormat(
-				_("Incorrect version of the '%s' engine data file found. Expected %d but got %d."),
-				SUPERNOVA_DAT, SUPERNOVA_DAT_VERSION, version);
-			return Common::kReadingFailed;
-		}
+	if (!f.open(SUPERNOVA_DAT)) {
+		GUIErrorMessageFormat(_("Unable to locate the '%s' engine data file."), SUPERNOVA_DAT);
+		return Common::kReadingFailed;
 	}
-	else if (_MSPart == 2) {
-		if (!f.open(SUPERNOVA2_DAT)) {
-			GUIErrorMessageFormat(_("Unable to locate the '%s' engine data file."), SUPERNOVA2_DAT);
-			return Common::kReadingFailed;
-		}
-		f.read(id, 3);
-		if (strncmp(id, "MS2", 3) != 0) {
-			GUIErrorMessageFormat(_("The '%s' engine data file is corrupt."), SUPERNOVA2_DAT);
-			return Common::kReadingFailed;
-		}
-
-		int version = f.readByte();
-		if (version != SUPERNOVA2_DAT_VERSION) {
-			GUIErrorMessageFormat(
-				_("Incorrect version of the '%s' engine data file found. Expected %d but got %d."),
-				SUPERNOVA2_DAT, SUPERNOVA2_DAT_VERSION, version);
-			return Common::kReadingFailed;
-		}
+	f.read(id, 3);
+	if (strncmp(id, "MSN", 3) != 0) {
+		GUIErrorMessageFormat(_("The '%s' engine data file is corrupt."), SUPERNOVA_DAT);
+		return Common::kReadingFailed;
 	}
 
+	int version = f.readByte();
+	if (version != SUPERNOVA_DAT_VERSION) {
+		GUIErrorMessageFormat(
+			_("Incorrect version of the '%s' engine data file found. Expected %d but got %d."),
+			SUPERNOVA_DAT, SUPERNOVA_DAT_VERSION, version);
+		return Common::kReadingFailed;
+	}
 
+	int part;
+	uint32 gameBlockSize;
 	while (!f.eos()) {
+		part = f.readByte();
+		gameBlockSize = f.readUint32LE();
+		if (f.eos()){
+			GUIErrorMessageFormat(_("Unable to find block for part %d"), _MSPart);
+			return Common::kReadingFailed;
+		}
+		if (part == _MSPart) {
+			break;
+		} else
+			f.skip(gameBlockSize);
+	}
+
+	uint32 readSize = 0;
+
+	while (readSize < gameBlockSize) {
 		f.read(id, 4);
 		f.read(lang, 4);
 		uint32 size = f.readUint32LE();
@@ -253,8 +248,10 @@ Common::Error SupernovaEngine::loadGameStrings() {
 				size -= s.size() + 1;
 			}
 			return Common::kNoError;
-		} else
+		} else {
 			f.skip(size);
+			readSize += size;
+		}
 	}
 
 	Common::Language l = Common::parseLanguage(cur_lang);
@@ -517,47 +514,42 @@ Common::SeekableReadStream *SupernovaEngine::getBlockFromDatFile(Common::String 
 	Common::File f;
 	char id[5], lang[5];
 	id[4] = lang[4] = '\0';
-	if (_MSPart == 1) {
-		if (!f.open(SUPERNOVA_DAT)) {
-			GUIErrorMessageFormat(_("Unable to locate the '%s' engine data file."), SUPERNOVA_DAT);
-			return nullptr;
-		}
-		f.read(id, 3);
-		if (strncmp(id, "MSN", 3) != 0) {
-			GUIErrorMessageFormat(_("The '%s' engine data file is corrupt."), SUPERNOVA_DAT);
-			return nullptr;
-		}
-
-		int version = f.readByte();
-		if (version != SUPERNOVA_DAT_VERSION) {
-			GUIErrorMessageFormat(
-				_("Incorrect version of the '%s' engine data file found. Expected %d but got %d."),
-				SUPERNOVA_DAT, SUPERNOVA_DAT_VERSION, version);
-			return nullptr;
-		}
+	if (!f.open(SUPERNOVA_DAT)) {
+		GUIErrorMessageFormat(_("Unable to locate the '%s' engine data file."), SUPERNOVA_DAT);
+		return nullptr;
 	}
-	else if (_MSPart == 2) {
-		if (!f.open(SUPERNOVA2_DAT)) {
-			GUIErrorMessageFormat(_("Unable to locate the '%s' engine data file."), SUPERNOVA2_DAT);
-			return nullptr;
-		}
-		f.read(id, 3);
-		if (strncmp(id, "MS2", 3) != 0) {
-			GUIErrorMessageFormat(_("The '%s' engine data file is corrupt."), SUPERNOVA2_DAT);
-			return nullptr;
-		}
-
-		int version = f.readByte();
-		if (version != SUPERNOVA2_DAT_VERSION) {
-			GUIErrorMessageFormat(
-				_("Incorrect version of the '%s' engine data file found. Expected %d but got %d."),
-				SUPERNOVA2_DAT, SUPERNOVA2_DAT_VERSION, version);
-			return nullptr;
-		}
+	f.read(id, 3);
+	if (strncmp(id, "MSN", 3) != 0) {
+		GUIErrorMessageFormat(_("The '%s' engine data file is corrupt."), SUPERNOVA_DAT);
+		return nullptr;
 	}
 
+	int version = f.readByte();
+	if (version != SUPERNOVA_DAT_VERSION) {
+		GUIErrorMessageFormat(
+			_("Incorrect version of the '%s' engine data file found. Expected %d but got %d."),
+			SUPERNOVA_DAT, SUPERNOVA_DAT_VERSION, version);
+		return nullptr;
+	}
 
+	int part;
+	uint32 gameBlockSize;
 	while (!f.eos()) {
+		part = f.readByte();
+		gameBlockSize = f.readUint32LE();
+		if (f.eos()){
+			GUIErrorMessageFormat(_("Unable to find block for part %d"), _MSPart);
+			return nullptr;
+		}
+		if (part == _MSPart) {
+			break;
+		} else
+			f.skip(gameBlockSize);
+	}
+
+	uint32 readSize = 0;
+
+	while (readSize < gameBlockSize) {
 		f.read(id, 4);
 		f.read(lang, 4);
 		uint32 size = f.readUint32LE();
@@ -565,8 +557,10 @@ Common::SeekableReadStream *SupernovaEngine::getBlockFromDatFile(Common::String 
 			break;
 		if (name == id && cur_lang == lang) {
 			return f.readStream(size);
-		} else
+		} else {
 			f.skip(size);
+			readSize += size;
+		}
 	}
 
 	return nullptr;

@@ -96,36 +96,24 @@ bool MSNImage::loadPbmFromEngineDataFile() {
 	Common::File f;
 	char id[5], lang[5];
 	id[4] = lang[4] = '\0';
-	if (_MSPart == 1) {
-		if (_filenumber == 1)
-			name = "IMG1";
-		else if (_filenumber == 2)
-			name = "IMG2";
-		else
+	if (_MSPart == 2)
+		return false;
+	if (_filenumber == 1)
+		name = "IMG1";
+	else if (_filenumber == 2)
+		name = "IMG2";
+	else
 
-			return false;
-		if (!f.open(SUPERNOVA_DAT))
-			return false;
-		
-		f.read(id, 3);
-		if (strncmp(id, "MSN", 3) != 0)
-			return false;
-		int version = f.readByte();
-		if (version != SUPERNOVA_DAT_VERSION)
-			return false;
-	} else if (_MSPart == 2) {
-			return false;
-
-		if (!f.open(SUPERNOVA2_DAT))
-			return false;
-
-		f.read(id, 3);
-		if (strncmp(id, "MS2", 3) != 0)
-			return false;
-		int version = f.readByte();
-		if (version != SUPERNOVA2_DAT_VERSION)
-			return false;
-	}
+		return false;
+	if (!f.open(SUPERNOVA_DAT))
+		return false;
+	
+	f.read(id, 3);
+	if (strncmp(id, "MSN", 3) != 0)
+		return false;
+	int version = f.readByte();
+	if (version != SUPERNOVA_DAT_VERSION)
+		return false;
 
 	Common::String cur_lang = ConfMan.get("language");
 
@@ -133,8 +121,23 @@ bool MSNImage::loadPbmFromEngineDataFile() {
 	// or the format is not as expected. We will get those warning when reading the
 	// strings anyway (actually the engine will even refuse to start).
 
-
+	int part;
+	uint32 gameBlockSize;
 	while (!f.eos()) {
+		part = f.readByte();
+		gameBlockSize = f.readUint32LE();
+		if (f.eos()){
+			return false;
+		}
+		if (part == _MSPart) {
+			break;
+		} else
+			f.skip(gameBlockSize);
+	}
+
+	uint32 readSize = 0;
+
+	while (readSize < gameBlockSize) {
 		f.read(id, 4);
 		f.read(lang, 4);
 		uint32 size = f.readUint32LE();
@@ -142,8 +145,10 @@ bool MSNImage::loadPbmFromEngineDataFile() {
 			break;
 		if (name == id && cur_lang == lang) {
 			return f.read(_encodedImage, size) == size;
-		} else
+		} else {
 			f.skip(size);
+			readSize += size;
+		}
 	}
 
 	return false;
@@ -164,20 +169,35 @@ bool MSNImage::loadFromEngineDataFile() {
 		else
 			return false;
 
-		if (!f.open(SUPERNOVA2_DAT))
+		if (!f.open(SUPERNOVA_DAT))
 			return false;
 
 		f.read(id, 3);
-		if (strncmp(id, "MS2", 3) != 0)
+		if (strncmp(id, "MSN", 3) != 0)
 			return false;
 		int version = f.readByte();
-		if (version != SUPERNOVA2_DAT_VERSION)
+		if (version != SUPERNOVA_DAT_VERSION)
 			return false;
 	}
 
 	Common::String cur_lang = ConfMan.get("language");
 
+	int part;
+	uint32 gameBlockSize;
 	while (!f.eos()) {
+		part = f.readByte();
+		gameBlockSize = f.readUint32LE();
+		if (f.eos()){
+			return false;
+		}
+		if (part == _MSPart) {
+			break;
+		} else
+			f.skip(gameBlockSize);
+	}
+
+	uint32 readSize = 0;
+	while (readSize < gameBlockSize) {
 		f.read(id, 4);
 		f.read(lang, 4);
 		uint32 size = f.readUint32LE();
@@ -185,8 +205,10 @@ bool MSNImage::loadFromEngineDataFile() {
 			break;
 		if (name == id && cur_lang == lang) {
 			return loadStream(*f.readStream(size));
-		} else
+		} else {
 			f.skip(size);
+			readSize += size;
+		}
 	}
 
 	return false;
