@@ -510,8 +510,6 @@ int main(int argc, char *argv[]) {
 		// For Visual Studio, all warnings are on by default in the project files,
 		// so we pass a list of warnings to disable globally or per-project
 		//
-		// Tracker reference:
-		// https://sourceforge.net/tracker/?func=detail&aid=2909981&group_id=37116&atid=418822
 		////////////////////////////////////////////////////////////////////////////
 		//
 		// 4068 (unknown pragma)
