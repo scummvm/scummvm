@@ -29,6 +29,7 @@
 
 #include "supernova/graphics.h"
 #include "supernova/sound.h"
+#include "supernova/supernova.h"
 
 
 namespace Common {
@@ -36,6 +37,7 @@ class MemoryReadStream;
 }
 
 namespace Supernova {
+class SupernovaEngine;
 
 class ResourceManager {
 public:
@@ -49,7 +51,7 @@ public:
 	static const int kNumImageFiles2 = 47;
 
 public:
-	ResourceManager(int MSPart);
+	ResourceManager(SupernovaEngine *vm);
 	~ResourceManager();
 
 	Audio::SeekableAudioStream *getSoundStream(AudioId index);
@@ -77,7 +79,7 @@ private:
 	Common::ScopedPtr<Audio::AudioStream> _musicIntro;
 	Common::ScopedPtr<Audio::AudioStream> _musicOutro;
 	Common::ScopedPtr<Audio::AudioStream> _sirenStream;
-	int _MSPart;
+	SupernovaEngine *_vm;
 	int _audioRate;
 	MSNImage **_images;
 	byte _cursorNormal[256];

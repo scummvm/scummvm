@@ -36,8 +36,8 @@
 
 namespace Supernova {
 
-MSNImage::MSNImage(int MSPart)
-	: _MSPart(MSPart) {
+MSNImage::MSNImage(SupernovaEngine *vm)
+	: _vm(vm) {
 	_palette = nullptr;
 	_encodedImage = nullptr;
 	_filenumber = -1;
@@ -71,14 +71,14 @@ MSNImage::~MSNImage() {
 bool MSNImage::init(int filenumber) {
 	Common::File file;
 	_filenumber = filenumber;
-	if (_MSPart == 1) {
+	if (_vm->_MSPart == 1) {
 		if (!file.open(Common::String::format("msn_data.%03d", filenumber))) {
 			warning("Image data file msn_data.%03d could not be read!", filenumber);
 			return false;
 		}
 		loadStream(file);
 	}
-	else if (_MSPart == 2) {
+	else if (_vm->_MSPart == 2) {
 		if (!loadFromEngineDataFile()) {
 			if (!file.open(Common::String::format("ms2_data.%03d", filenumber))) {
 				warning("Image data file ms2_data.%03d could not be read!", filenumber);
@@ -93,125 +93,38 @@ bool MSNImage::init(int filenumber) {
 
 bool MSNImage::loadPbmFromEngineDataFile() {
 	Common::String name;
-	Common::File f;
-	char id[5], lang[5];
-	id[4] = lang[4] = '\0';
-	if (_MSPart == 2)
+	if (_vm->_MSPart == 2)
 		return false;
 	if (_filenumber == 1)
 		name = "IMG1";
 	else if (_filenumber == 2)
 		name = "IMG2";
 	else
-
 		return false;
-	if (!f.open(SUPERNOVA_DAT))
+	Common::SeekableReadStream *stream = _vm->getBlockFromDatFile(name);
+	if (stream == nullptr)
 		return false;
-	
-	f.read(id, 3);
-	if (strncmp(id, "MSN", 3) != 0)
-		return false;
-	int version = f.readByte();
-	if (version != SUPERNOVA_DAT_VERSION)
-		return false;
-
-	Common::String cur_lang = ConfMan.get("language");
-
-	// Note: we don't print any warning or errors here if we cannot find the file
-	// or the format is not as expected. We will get those warning when reading the
-	// strings anyway (actually the engine will even refuse to start).
-
-	int part;
-	uint32 gameBlockSize;
-	while (!f.eos()) {
-		part = f.readByte();
-		gameBlockSize = f.readUint32LE();
-		if (f.eos()){
-			return false;
-		}
-		if (part == _MSPart) {
-			break;
-		} else
-			f.skip(gameBlockSize);
-	}
-
-	uint32 readSize = 0;
-
-	while (readSize < gameBlockSize) {
-		f.read(id, 4);
-		f.read(lang, 4);
-		uint32 size = f.readUint32LE();
-		if (f.eos())
-			break;
-		if (name == id && cur_lang == lang) {
-			return f.read(_encodedImage, size) == size;
-		} else {
-			f.skip(size);
-			readSize += size;
-		}
-	}
-
-	return false;
+	stream->read(_encodedImage, stream->size());
+	return true;
 }
 
 bool MSNImage::loadFromEngineDataFile() {
 	Common::String name;
-	Common::File f;
-	char id[5], lang[5];
-	id[4] = lang[4] = '\0';
-	if (_MSPart == 1) {
+	if (_vm->_MSPart == 1) {
 		return false;
-	} else if (_MSPart == 2) {
+	} else if (_vm->_MSPart == 2) {
 		if (_filenumber == 15)
 			name = "M015";
 		else if (_filenumber == 28)
 			name = "M028";
 		else
 			return false;
-
-		if (!f.open(SUPERNOVA_DAT))
-			return false;
-
-		f.read(id, 3);
-		if (strncmp(id, "MSN", 3) != 0)
-			return false;
-		int version = f.readByte();
-		if (version != SUPERNOVA_DAT_VERSION)
-			return false;
 	}
 
-	Common::String cur_lang = ConfMan.get("language");
-
-	int part;
-	uint32 gameBlockSize;
-	while (!f.eos()) {
-		part = f.readByte();
-		gameBlockSize = f.readUint32LE();
-		if (f.eos()){
-			return false;
-		}
-		if (part == _MSPart) {
-			break;
-		} else
-			f.skip(gameBlockSize);
-	}
-
-	uint32 readSize = 0;
-	while (readSize < gameBlockSize) {
-		f.read(id, 4);
-		f.read(lang, 4);
-		uint32 size = f.readUint32LE();
-		if (f.eos())
-			break;
-		if (name == id && cur_lang == lang) {
-			return loadStream(*f.readStream(size));
-		} else {
-			f.skip(size);
-			readSize += size;
-		}
-	}
-
-	return false;
+	Common::SeekableReadStream *stream = _vm->getBlockFromDatFile(name);
+	if (stream == nullptr)
+		return false;
+	return loadStream(*stream);
 }
 
 bool MSNImage::loadStream(Common::SeekableReadStream &stream) {
@@ -312,8 +225,8 @@ bool MSNImage::loadStream(Common::SeekableReadStream &stream) {
 }
 
 bool MSNImage::loadSections() {
-	bool isNewspaper = (_MSPart == 1 && (_filenumber == 1 || _filenumber == 2)) ||
-					   (_MSPart == 2 && _filenumber == 38);
+	bool isNewspaper = (_vm->_MSPart == 1 && (_filenumber == 1 || _filenumber == 2)) ||
+					   (_vm->_MSPart == 2 && _filenumber == 38);
 	int imageWidth = isNewspaper ? 640 : 320;
 	int imageHeight = isNewspaper ? 480 : 200;
 	_pitch = imageWidth;
