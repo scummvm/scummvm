@@ -19,6 +19,51 @@ const char *lang[] = {
 	"en",
 	NULL
 };
+
+void writeDocFile(File& outputFile, const char *fileExtension, const char* language) {
+	File docFile;
+	char fileName[20];
+	sprintf(fileName, "ms2.%s-%s", fileExtension, language);
+	if (!docFile.open(fileName, kFileReadMode)) {
+		printf("Cannot find file 'ms2.%s' for language '%s'. This file will be skipped.\n", fileExtension, language);
+		return;
+	}
+
+	// Write block header in output file (4 bytes).
+	// We convert the file extension to upper case.
+	for (int i = 0 ; i < 3 ; ++i) {
+		if (fileExtension[i] >= 97 && fileExtension[i] <= 122)
+			outputFile.writeByte(fileExtension[i] - 32);
+		else
+			outputFile.writeByte(fileExtension[i]);
+	}
+	outputFile.writeByte('2');
+
+	// And write the language code on 4 bytes as well (padded with 0 if needed).
+	int languageLength = strlen(language);
+	for (int i = 0 ; i < 4 ; ++i) {
+		if (i < languageLength)
+			outputFile.writeByte(language[i]);
+		else
+			outputFile.writeByte(0);
+	}
+
+	// Write block size
+	
+	docFile.seek(0, SEEK_END);
+	int length = docFile.pos();
+	docFile.seek(0, SEEK_SET);
+	outputFile.writeLong(length);
+
+	// Write all the bytes.
+	for (int i = 0 ; i < length; ++i) {
+		byte b = docFile.readByte();
+		outputFile.writeByte(b);
+	}
+
+	docFile.close();
+}
+
 void writeDatafile(File& outputFile, int fileNumber, const char* language) {
 	File dataFile;
 	char fileName[20];
@@ -167,9 +212,7 @@ void writeImage(File& outputFile, const char *name, const char* language) {
 	// Write block size
 	outputFile.writeLong(w * h / 8);
 
-	// Write all the bytes. We should have w * h / 8 bytes
-	// However we need to invert the bits has the engine expects 1 for the background and 0 for the text (black)
-	// but pbm uses 0 for white and 1 for black.
+	// Write all the bytes.
 	for (i = 0 ; i < w * h / 8 ; ++i) {
 		byte b = imgFile.readByte();
 		outputFile.writeByte(~b);
@@ -286,6 +329,8 @@ int main(int argc, char *argv[]) {
 		writeDatafile(outputFile, 15, *l);
 		writeDatafile(outputFile, 28, *l);
 		writeStrings(outputFile, *l);
+		writeDocFile(outputFile, "inf", *l);
+		writeDocFile(outputFile, "doc", *l);
 		++l;
 	}
 
