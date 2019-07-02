@@ -59,9 +59,13 @@ struct DialogInfo {
 	int			el, er, et, eb;			// saves the text edges
 	char		luaMore[64];			// the name of the function to call after clicking the MORE button
 
-	DialogInfo() : title(""), tileIndex(0), string(""), active(false), x(0), y(0),
+	DialogInfo() : tileIndex(0), active(false), x(0), y(0),
 		width(0), height(0), titleWidth(0), gfx(NULL), more(0), el(0), er(0), et(0),
-		eb(0), luaMore("") {}
+		eb(0) {
+			title[0] = 0;
+			string[0] = 0;
+			luaMore[0] = 0;
+		}
 };
 
 struct DialogChoiceInfo {
@@ -81,11 +85,14 @@ struct DialogChoiceInfo {
 	int			numChoices;			// how many choices possible
 	char		choices[10][64];		// ptrs to choice text
 
-	DialogChoiceInfo() : title(""), text(""), func(""), active(false), x(0), y(0),
+	DialogChoiceInfo() : active(false), x(0), y(0),
 		width(0), height(0), textHeight(0), titleWidth(0), el(0), er(0), et(0),
 		eb(0), timeout(0), selection(0), numChoices(0) {
+		title[0] = 0;
+		text[0] = 0;
+		func[0] = 0;
 		for (int i = 0; i < 10; i++)
-			strcpy(choices[i], "");
+			choices[i][0] = 0;
 	}
 };
 
@@ -96,7 +103,9 @@ struct MessageInfo {
 	int			x, y;
 	int			width, height;
 
-	MessageInfo() : active(false), title(""), timer(0), x(0), y(0), width(0), height(0) {}
+	MessageInfo() : active(false), timer(0), x(0), y(0), width(0), height(0) {
+		title[0] = 0;
+	}
 };
 
 struct InvWinInfo {
@@ -125,7 +134,9 @@ struct TOut {
 	int x, y;
 	uint32 timer;
 
-	TOut() : text(""), x(0), y(0), timer(0) {}
+	TOut() : x(0), y(0), timer(0) {
+		text[0] = 0;
+	}
 };
 
 class Window {
