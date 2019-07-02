@@ -88,6 +88,7 @@ bool Gfx::init() {
 		// ELSE IF we're in an anim group and have just reached the end
 		if (!strncmp(_tLookupArray[index].filename, search, strlen(search)) && found == -1) {
 			found = index;
+			memset(search, 0, sizeof(search));
 			strncpy(search, _tLookupArray[index].filename, strlen(_tLookupArray[index].filename) - 2);
 		} else if (!strncmp(_tLookupArray[index].filename, search, strlen(search)) && found >= 0)
 			_tLookupArray[index - 1].animIndex = index;
