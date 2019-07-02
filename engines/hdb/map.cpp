@@ -27,6 +27,8 @@ namespace HDB {
 Map::Map() {
 	_mapLoaded = false;
 
+	_animCycle = 0;
+
 	for (int i = 0; i < kMaxGratings; i++) {
 		_gratings[i] = new Foreground;
 	}
