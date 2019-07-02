@@ -422,9 +422,9 @@ void Screen::renderImage(ImageId id, bool removeImage) {
 
 void Screen::renderImage(int section) {
 	bool removeImage = false;
-	if (section > 128) {
+	if (section > kSectionInvert) {
 		removeImage = true;
-		section -= 128;
+		section -= kSectionInvert;
 	}
 
 	if (!_currentImage || section >= kMaxSection)

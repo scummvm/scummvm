@@ -165,6 +165,35 @@ void GameManager::destroyRooms() {
 }
 
 void GameManager::initState() {
+	_currentInputObject = &_nullObject;
+	_inputObject[0] = &_nullObject;
+	_inputObject[1] = &_nullObject;
+	_inputVerb = ACTION_WALK;
+	_processInput = false;
+	_guiEnabled = true;
+	_animationEnabled = true;
+	_roomBrightness = 255;
+	_mouseClicked = false;
+	_keyPressed = false;
+	_mouseX = -1;
+	_mouseY = -1;
+	_mouseField = -1;
+	_inventoryScroll = 0;
+	_oldTime = g_system->getMillis();
+	_timerPaused = 0;
+	_timePaused = false;
+	_messageDuration = 0;
+	_animationTimer = 0;
+	_currentSentence = -1;
+	for (int i = 0 ; i < 6 ; ++i) {
+		_sentenceNumber[i] = -1;
+		_texts[i] = kNoString;
+		_rows[i] = 0;
+		_rowsStart[i] = 0;
+	}
+
+	_prevImgId = 0;
+	_dead = false;
 }
 
 void GameManager::initRooms() {
@@ -926,10 +955,10 @@ void GameManager::dead(int messageId) {
 }
 
 int GameManager::invertSection(int section) {
-	if (section < 128)
-		section += 128;
+	if (section < kSectionInvert)
+		section += kSectionInvert;
 	else
-		section -= 128;
+		section -= kSectionInvert;
 
 	return section;
 }

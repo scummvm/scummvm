@@ -40,6 +40,8 @@ const int kSleepAutosaveSlot = 999;
 const byte kShownFalse = 0;
 const byte kShownTrue = 1;
 
+const byte kSectionInvert = 128;
+
 enum MessagePosition {
 	kMessageNormal,
 	kMessageLeft,

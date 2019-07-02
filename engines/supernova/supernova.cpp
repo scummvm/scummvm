@@ -287,10 +287,7 @@ void SupernovaEngine::playSound(MusicId index) {
 }
 
 void SupernovaEngine::renderImage(int section) {
-	if (section > 128)
-		_gm->_currentRoom->setSectionVisible(section - 128, false);
-	else
-		_gm->_currentRoom->setSectionVisible(section, true);
+	_gm->_currentRoom->setSectionVisible(section, true);
 
 	_screen->renderImage(section);
 }

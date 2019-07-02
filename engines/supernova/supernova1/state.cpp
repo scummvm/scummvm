@@ -243,34 +243,7 @@ void GameManager1::destroyRooms() {
 }
 
 void GameManager1::initState() {
-	_currentInputObject = &_nullObject;
-	_inputObject[0] = &_nullObject;
-	_inputObject[1] = &_nullObject;
-	_inputVerb = ACTION_WALK;
-	_processInput = false;
-	_guiEnabled = true;
-	_animationEnabled = true;
-	_roomBrightness = 255;
-	_mouseClicked = false;
-	_keyPressed = false;
-	_mouseX = -1;
-	_mouseY = -1;
-	_mouseField = -1;
-	_inventoryScroll = 0;
-	_oldTime = g_system->getMillis();
-	_timerPaused = 0;
-	_timePaused = false;
-	_messageDuration = 0;
-	_animationTimer = 0;
-
-	_currentSentence = -1;
-	for (int i = 0 ; i < 6 ; ++i) {
-		_sentenceNumber[i] = -1;
-		_texts[i] = kNoString;
-		_rows[i] = 0;
-		_rowsStart[i] = 0;
-	}
-
+	GameManager::initState();
 	_time = ticksToMsec(916364); // 2 pm
 	_state._timeSleep = 0;
 	_state._timeAlarm = ticksToMsec(458182);    // 7 am
@@ -294,9 +267,6 @@ void GameManager1::initState() {
 	_state._cableConnected = false;
 	_state._powerOff = false;
 	_state._dream = false;
-
-	_prevImgId = 0;
-	_dead = false;
 }
 
 void GameManager1::initRooms() {
@@ -811,7 +781,7 @@ void GameManager1::guardReturnedEvent() {
 
 void GameManager1::walk(int imgId) {
 	if (_prevImgId)
-		_vm->renderImage(_prevImgId + 128);
+		_vm->renderImage(_prevImgId + kSectionInvert);
 	_vm->renderImage(imgId);
 	_prevImgId = imgId;
 	wait(3);
@@ -852,7 +822,7 @@ void GameManager1::guardWalkEvent() {
 		_vm->renderImage(imgId);
 		if (!behind) {
 			wait(3);
-			_vm->renderImage(_prevImgId + 128);
+			_vm->renderImage(_prevImgId + kSectionInvert);
 			_sound->play(kAudioDoorClose);
 		}
 
@@ -916,14 +886,14 @@ void GameManager1::guardWalkEvent() {
 			_vm->renderImage(_state._destination + 1);
 			_sound->play(kAudioDoorOpen);
 			wait(3);
-			_vm->renderImage(_prevImgId + 128);
+			_vm->renderImage(_prevImgId + kSectionInvert);
 			wait(3);
-			_vm->renderImage(_state._destination + 1 + 128);
+			_vm->renderImage(_state._destination + 1 + kSectionInvert);
 			_sound->play(kAudioDoorClose);
 			_rooms[BCORRIDOR]->getObject(_state._destination + 4)->setProperty(OCCUPIED);
 			_state._destination = 255;
 		} else if (_rooms[BCORRIDOR]->isSectionVisible(_state._destination + 1)) {
-			_vm->renderImage(_prevImgId + 128);
+			_vm->renderImage(_prevImgId + kSectionInvert);
 			_rooms[BCORRIDOR]->getObject(_state._destination + 4)->setProperty(OCCUPIED);
 			SWAP(_state._origin, _state._destination);
 			_state._eventTime = _time + ticksToMsec(60);

@@ -130,7 +130,7 @@ void Room::setSectionVisible(uint section, bool visible) {
 	if (section < kMaxSection)
 		_shown[section] = visible ? kShownTrue : kShownFalse;
 	else
-		_shown[section - 128] = visible ? kShownFalse : kShownTrue;
+		_shown[section - kSectionInvert] = visible ? kShownFalse : kShownTrue;
 }
 
 bool Room::isSectionVisible(uint index) const {
