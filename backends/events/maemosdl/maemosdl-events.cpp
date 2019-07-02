@@ -25,6 +25,7 @@
 #include "common/scummsys.h"
 
 #include "backends/events/maemosdl/maemosdl-events.h"
+#include "backends/platform/maemo/maemo.h"
 #include "common/translation.h"
 
 namespace Maemo {

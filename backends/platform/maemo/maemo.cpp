@@ -129,8 +129,7 @@ void OSystem_SDL_Maemo::fatalError() {
 
 void OSystem_SDL_Maemo::setXWindowName(const char *caption) {
 	SDL_SysWMinfo info;
-	SDL_VERSION(&info.version);
-	if (SDL_GetWMInfo(&info)) {
+	if (_window->getSDLWMInformation(&info)) {
 		Display *dpy = info.info.x11.display;
 		Window win;
 		win = info.info.x11.fswindow;
@@ -155,7 +154,7 @@ void OSystem_SDL_Maemo::setWindowCaption(const char *caption) {
 		}
 	}
 
-	SDL_WM_SetCaption(cap.c_str(), cap.c_str());
+	_window->setWindowCaption(cap);
 
 	Common::String cap2("ScummVM - "); // 2 lines in OS2008 task switcher, set first line
 	cap = cap2 + cap;
