@@ -1480,11 +1480,12 @@ void aiItemChickenInit2(AIEntity *e) {
 }
 
 void aiPdaInit(AIEntity *e) {
-	warning("STUB: AI: aiPdaInit required");
+	strcpy(e->printedName, "a P.D.A.");
+	e->aiAction = aiGetItemAction;
 }
 
 void aiPdaInit2(AIEntity *e) {
-	warning("STUB: AI: aiPdaInit2 required");
+	e->draw = e->standdownGfx[0];
 }
 
 void aiCellUse(AIEntity *e) {
