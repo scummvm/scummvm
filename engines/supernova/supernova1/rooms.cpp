@@ -875,8 +875,8 @@ ShipCabinL1::ShipCabinL1(SupernovaEngine *vm, GameManager1 *gm) {
 	_objectState[2] = Object(_id, kStringImage, kStringGenericDescription3, NULLOBJECT, UNNECESSARY, 7, 7, 0, NULLROOM, 0);
 	_objectState[3] = Object(_id, kStringMagnete, kStringMagneteDescription, NULLOBJECT, UNNECESSARY, 8, 8, 0, NULLROOM, 0);
 	_objectState[4] = Object(_id, kStringImage, kStringGenericDescription4, NULLOBJECT, UNNECESSARY, 9, 9, 0);
-	_objectState[5] = Object(_id, kStringPen, kStringPenDescription, PEN, TAKE | COMBINABLE, 10, 10, 5 | 128);
-	_objectState[6] = Object(_id, kStringHatch, kStringDefaultDescription, NULLOBJECT, OPENABLE | OPENED | EXIT, 3, 3, 24 | 128, CORRIDOR_ROOM, 9);
+	_objectState[5] = Object(_id, kStringPen, kStringPenDescription, PEN, TAKE | COMBINABLE, 10, 10, 5 | kSectionInvert);
+	_objectState[6] = Object(_id, kStringHatch, kStringDefaultDescription, NULLOBJECT, OPENABLE | OPENED | EXIT, 3, 3, 24 | kSectionInvert, CORRIDOR_ROOM, 9);
 	_objectState[7] = Object(_id, kStringSlot, kStringSlotDescription, NULLOBJECT, COMBINABLE, 0, 0, 0);
 	_objectState[8] = Object(_id, kStringShelf, kStringDefaultDescription, NULLOBJECT, OPENABLE | CLOSED, 1, 1, 0);
 	_objectState[9] = Object(_id, kStringCompartment, kStringDefaultDescription, NULLOBJECT, OPENABLE | CLOSED, 2, 2, 0);
@@ -912,7 +912,7 @@ ShipCabinL2::ShipCabinL2(SupernovaEngine *vm, GameManager1 *gm) {
 	_objectState[16] = Object(_id, kStringJunk,kStringJunkDescription,NULLOBJECT,UNNECESSARY,38,38,0);
 	_objectState[17] = Object(_id, kStringMagnete,kStringMagneteDescription,NULLOBJECT,UNNECESSARY,23,23,0);
 	_objectState[18] = Object(_id, kStringToilet,kStringDefaultDescription,BATHROOM_DOOR,EXIT,255,255,0,BATHROOM,22);
-	_objectState[19] = Object(_id, kStringHatch,kStringDefaultDescription,NULLOBJECT,OPENABLE | OPENED | EXIT,3,3,24 | 128,CORRIDOR_ROOM,9);
+	_objectState[19] = Object(_id, kStringHatch,kStringDefaultDescription,NULLOBJECT,OPENABLE | OPENED | EXIT,3,3,24 | kSectionInvert,CORRIDOR_ROOM,9);
 	_objectState[20] = Object(_id, kStringSlot,kStringSlotDescription,NULLOBJECT,COMBINABLE,0,0,0);
 	_objectState[21] = Object(_id, kStringShelf,kStringDefaultDescription,NULLOBJECT,OPENABLE | CLOSED,1,1,0);
 	_objectState[22] = Object(_id, kStringCompartment,kStringDefaultDescription,NULLOBJECT,OPENABLE | CLOSED,2,2,0);
@@ -979,14 +979,14 @@ ShipCabinL3::ShipCabinL3(SupernovaEngine *vm, GameManager1 *gm) {
 	_objectState[1] = Object(_id, kStringPoster,kStringPosterDescription2,NULLOBJECT,UNNECESSARY,12,12,0);
 	_objectState[2] = Object(_id, kStringSpeaker,kStringDefaultDescription,NULLOBJECT,NULLTYPE,13,13,0);
 	_objectState[3] = Object(_id, kStringMagnete,kStringMagneteDescription,NULLOBJECT,UNNECESSARY,14,14,0);
-	_objectState[4] = Object(_id, kStringRecord,kStringRecordDescription,RECORD,TAKE | COMBINABLE,15,15,8 | 128);
+	_objectState[4] = Object(_id, kStringRecord,kStringRecordDescription,RECORD,TAKE | COMBINABLE,15,15,8 | kSectionInvert);
 	_objectState[5] = Object(_id, kStringRecordStand,kStringRecordStandDescription,NULLOBJECT,UNNECESSARY,16,16,0);
 	_objectState[6] = Object(_id, kStringButton,kStringDefaultDescription,TURNTABLE_BUTTON,PRESS,22,22,0);
 	_objectState[7] = Object(_id, kStringTurntable,kStringTurntableDescription,TURNTABLE,UNNECESSARY | COMBINABLE,17,17,0);
 	_objectState[8] = Object(_id, kStringWire,kStringDefaultDescription,WIRE,COMBINABLE,18,18,0);
 	_objectState[9] = Object(_id, kStringWire,kStringDefaultDescription,WIRE2,COMBINABLE,19,19,0);
 	_objectState[10] = Object(_id, kStringPlug,kStringDefaultDescription,PLUG,COMBINABLE,20,20,0);
-	_objectState[11] = Object(_id, kStringHatch,kStringDefaultDescription,NULLOBJECT,OPENABLE | OPENED | EXIT,3,3,24 | 128,CORRIDOR_ROOM,9);
+	_objectState[11] = Object(_id, kStringHatch,kStringDefaultDescription,NULLOBJECT,OPENABLE | OPENED | EXIT,3,3,24 | kSectionInvert,CORRIDOR_ROOM,9);
 	_objectState[12] = Object(_id, kStringSlot,kStringSlotDescription,NULLOBJECT,COMBINABLE,0,0,0);
 	_objectState[13] = Object(_id, kStringShelf,kStringDefaultDescription,NULLOBJECT,OPENABLE | CLOSED,1,1,0);
 	_objectState[14] = Object(_id, kStringCompartment,kStringDefaultDescription,NULLOBJECT,OPENABLE | CLOSED,2,2,0);
@@ -1088,7 +1088,7 @@ ShipCabinR1::ShipCabinR1(SupernovaEngine *vm, GameManager1 *gm) {
 	_objectState[0] = Object(_id, kStringImage,kStringImageDescription1,NULLOBJECT,UNNECESSARY,5,5,0);
 	_objectState[1] = Object(_id, kStringDrawingInstruments,kStringDrawingInstrumentsDescription,NULLOBJECT,UNNECESSARY,6,6,0);
 	_objectState[2] = Object(_id, kStringMagnete,kStringMagneteDescription,NULLOBJECT,UNNECESSARY,7,7,0);
-	_objectState[3] = Object(_id, kStringHatch,kStringDefaultDescription,NULLOBJECT,OPENABLE | OPENED | EXIT,3,3,15 | 128,CORRIDOR_ROOM,5);
+	_objectState[3] = Object(_id, kStringHatch,kStringDefaultDescription,NULLOBJECT,OPENABLE | OPENED | EXIT,3,3,15 | kSectionInvert,CORRIDOR_ROOM,5);
 	_objectState[4] = Object(_id, kStringSlot,kStringSlotDescription,NULLOBJECT,COMBINABLE,0,0,0);
 	_objectState[5] = Object(_id, kStringShelf,kStringDefaultDescription,NULLOBJECT,OPENABLE | CLOSED,1,1,0);
 	_objectState[6] = Object(_id, kStringCompartment,kStringDefaultDescription,NULLOBJECT,OPENABLE | CLOSED,2,2,0);
@@ -1110,7 +1110,7 @@ ShipCabinR2::ShipCabinR2(SupernovaEngine *vm, GameManager1 *gm) {
 	_objectState[0] = Object(_id, kStringChessGame,kStringChessGameDescription1,NULLOBJECT,UNNECESSARY,11,11,0);
 	_objectState[1] = Object(_id, kStringTennisRacket,kStringTennisRacketDescription,NULLOBJECT,UNNECESSARY,8,8,0);
 	_objectState[2] = Object(_id, kStringTennisBall,kStringGenericDescription2,NULLOBJECT,UNNECESSARY,9,9,0);
-	_objectState[3] = Object(_id, kStringHatch,kStringDefaultDescription,NULLOBJECT,OPENABLE | OPENED | EXIT,3,3,15 | 128,CORRIDOR_ROOM,5);
+	_objectState[3] = Object(_id, kStringHatch,kStringDefaultDescription,NULLOBJECT,OPENABLE | OPENED | EXIT,3,3,15 | kSectionInvert,CORRIDOR_ROOM,5);
 	_objectState[4] = Object(_id, kStringSlot,kStringSlotDescription,NULLOBJECT,COMBINABLE,0,0,0);
 	_objectState[5] = Object(_id, kStringShelf,kStringDefaultDescription,NULLOBJECT,OPENABLE | CLOSED,1,1,0);
 	_objectState[6] = Object(_id, kStringCompartment,kStringDefaultDescription,NULLOBJECT,OPENABLE | CLOSED,2,2,0);
@@ -1129,7 +1129,7 @@ ShipCabinR3::ShipCabinR3(SupernovaEngine *vm, GameManager1 *gm) {
 	_shown[8] = kShownTrue;
 	_shown[15] = kShownTrue;
 
-	_objectState[0] = Object(_id, kStringChessGame,kStringChessGameDescription2,CHESS,TAKE | COMBINABLE,12,12,7 | 128);
+	_objectState[0] = Object(_id, kStringChessGame,kStringChessGameDescription2,CHESS,TAKE | COMBINABLE,12,12,7 | kSectionInvert);
 	_objectState[1] = Object(_id, kStringBed,kStringBedDescription,NULLOBJECT,NULLTYPE,13,13,0);
 	_objectState[2] = Object(_id, kStringSlot,kStringSlotDescription,SLOT_K1,COMBINABLE,27,27,0);
 	_objectState[3] = Object(_id, kStringSlot,kStringSlotDescription,SLOT_K2,COMBINABLE,28,28,0);
@@ -1147,7 +1147,7 @@ ShipCabinR3::ShipCabinR3(SupernovaEngine *vm, GameManager1 *gm) {
 	_objectState[15] = Object(_id, kStringCompartment,kStringCompartmentDescription,SHELF4,OPENABLE | CLOSED,24,25,13);
 	_objectState[16] = Object(_id, kStringBook,kStringBookHitchhiker,BOOK,TAKE,26,26,14);
 	_objectState[17] = Object(_id, kStringDiscman,kStringDiscmanDescription,DISCMAN,TAKE | COMBINABLE,33,33,16);
-	_objectState[18] = Object(_id, kStringHatch,kStringDefaultDescription,NULLOBJECT,OPENABLE | EXIT,3,3,15 | 128,CORRIDOR_ROOM,5);
+	_objectState[18] = Object(_id, kStringHatch,kStringDefaultDescription,NULLOBJECT,OPENABLE | EXIT,3,3,15 | kSectionInvert,CORRIDOR_ROOM,5);
 	_objectState[19] = Object(_id, kStringSlot,kStringSlotDescription,NULLOBJECT,COMBINABLE,0,0,0);
 	_objectState[20] = Object(_id, kStringShelf,kStringDefaultDescription,NULLOBJECT,OPENABLE | CLOSED,1,1,0);
 	_objectState[21] = Object(_id, kStringCompartment,kStringDefaultDescription,NULLOBJECT,OPENABLE | CLOSED,2,2,0);
@@ -1453,7 +1453,7 @@ ShipLandingModule::ShipLandingModule(SupernovaEngine *vm, GameManager1 *gm) {
 	_objectState[2] = Object(_id, kStringMonitor,kStringDefaultDescription,LANDINGMOD_MONITOR,NULLTYPE,3,3,0);
 	_objectState[3] = Object(_id, kStringKeyboard,kStringDefaultDescription,KEYBOARD,NULLTYPE,4,4,0);
 	_objectState[4] = Object(_id, kNoString,kStringDefaultDescription,LANDINGMOD_WIRE,COMBINABLE,255,255,0);
-	_objectState[5] = Object(_id, kStringHatch,kStringDefaultDescription,LANDINGMOD_HATCH,EXIT | OPENABLE | OPENED | COMBINABLE, 0,0,1 | 128,HOLD,10);
+	_objectState[5] = Object(_id, kStringHatch,kStringDefaultDescription,LANDINGMOD_HATCH,EXIT | OPENABLE | OPENED | COMBINABLE, 0,0,1 | kSectionInvert,HOLD,10);
 }
 
 bool ShipLandingModule::interact(Action verb, Object &obj1, Object &obj2) {
@@ -1565,7 +1565,7 @@ ShipGenerator::ShipGenerator(SupernovaEngine *vm, GameManager1 *gm) {
 
 	_objectState[0] = Object(_id, kStringGeneratorWire,kStringDefaultDescription,GENERATOR_WIRE,COMBINABLE,255,255,0);
 	_objectState[1] = Object(_id, kStringEmptySpool,kStringDefaultDescription,NULLOBJECT,UNNECESSARY,255,255,0);
-	_objectState[2] = Object(_id, kStringKeycard2,kStringKeycard2Description,KEYCARD2,COMBINABLE | TAKE,12,12,5 | 128);
+	_objectState[2] = Object(_id, kStringKeycard2,kStringKeycard2Description,KEYCARD2,COMBINABLE | TAKE,12,12,5 | kSectionInvert);
 	_objectState[3] = Object(_id, kStringRope,kStringDefaultDescription,GENERATOR_ROPE,COMBINABLE,255,255,0);
 	_objectState[4] = Object(_id, kStringHatch,kStringHatchDescription3,OUTERHATCH,EXIT | OPENABLE,1,2,1,OUTSIDE,22);
 	_objectState[5] = Object(_id, kStringHatch,kStringDefaultDescription,NULLOBJECT,OPENABLE | CLOSED,3,3,0);
@@ -1883,11 +1883,11 @@ ArsanoEntrance::ArsanoEntrance(SupernovaEngine *vm, GameManager1 *gm) {
 	_objectState[0] = Object(_id, kStringPorter,kStringPorterDescription,PORTER,TALK,0,0,0);
 	_objectState[1] = Object(_id, kStringDoor,kStringDefaultDescription,NULLOBJECT,EXIT | OPENABLE | CLOSED,1,1,0,NULLROOM,5);
 	_objectState[2] = Object(_id, kStringSign,kStringSignDescription,KITCHEN_SIGN,NULLTYPE,2,2,0);
-	_objectState[3] = Object(_id, kStringChewingGum,kStringDefaultDescription,SCHNUCK,TAKE,255,255,10+128);
-	_objectState[4] = Object(_id, kStringGummyBears,kStringDefaultDescription,SCHNUCK,TAKE,255,255,11+128);
-	_objectState[5] = Object(_id, kStringChocolateBall,kStringDefaultDescription,SCHNUCK,TAKE,255,255,12+128);
-	_objectState[6] = Object(_id, kStringEgg,kStringDefaultDescription,EGG,TAKE,255,255,13+128);
-	_objectState[7] = Object(_id, kStringLiquorice,kStringDefaultDescription,SCHNUCK,TAKE,255,255,14+128);
+	_objectState[3] = Object(_id, kStringChewingGum,kStringDefaultDescription,SCHNUCK,TAKE,255,255,10+kSectionInvert);
+	_objectState[4] = Object(_id, kStringGummyBears,kStringDefaultDescription,SCHNUCK,TAKE,255,255,11+kSectionInvert);
+	_objectState[5] = Object(_id, kStringChocolateBall,kStringDefaultDescription,SCHNUCK,TAKE,255,255,12+kSectionInvert);
+	_objectState[6] = Object(_id, kStringEgg,kStringDefaultDescription,EGG,TAKE,255,255,13+kSectionInvert);
+	_objectState[7] = Object(_id, kStringLiquorice,kStringDefaultDescription,SCHNUCK,TAKE,255,255,14+kSectionInvert);
 	_objectState[8] = Object(_id, kStringPill,kStringPillDescription,PILL,TAKE,255,255,0);
 	_objectState[9] = Object(_id, kStringSlot,kStringDefaultDescription,CAR_SLOT,COMBINABLE,6,6,0);
 	_objectState[10] = Object(_id, kStringVendingMachine,kStringVendingMachineDescription,NULLOBJECT,NULLTYPE,5,5,0);
@@ -2020,16 +2020,16 @@ bool ArsanoEntrance::interact(Action verb, Object &obj1, Object &obj2) {
 				while ((e < 3) && (!allSentencesRemoved(4, 1))) {
 					switch (e = _gm->dialog(5, row1, _dialog1, 1)) {
 					case 0:
-						_gm->reply(kStringArsanoEntrance15, 1, 1 + 128);
+						_gm->reply(kStringArsanoEntrance15, 1, 1 + kSectionInvert);
 						break;
 					case 1:
-						_gm->reply(kStringArsanoEntrance3, 1, 1 + 128);
-						_gm->reply(kStringArsanoEntrance4, 1, 1 + 128);
-						_gm->reply(kStringArsanoEntrance5, 1, 1 + 128);
+						_gm->reply(kStringArsanoEntrance3, 1, 1 + kSectionInvert);
+						_gm->reply(kStringArsanoEntrance4, 1, 1 + kSectionInvert);
+						_gm->reply(kStringArsanoEntrance5, 1, 1 + kSectionInvert);
 						removeSentence(0, 2);
 						break;
 					case 2:
-						_gm->reply(kStringArsanoEntrance7, 1, 1 + 128);
+						_gm->reply(kStringArsanoEntrance7, 1, 1 + kSectionInvert);
 						_gm->_state._shoes = 2;
 						break;
 					case 3:
@@ -2037,7 +2037,7 @@ bool ArsanoEntrance::interact(Action verb, Object &obj1, Object &obj2) {
 						_gm->wait(2);
 						_vm->renderImage(4);
 						setSectionVisible(3, false);
-						_gm->reply(kStringArsanoEntrance16, 1, 1 + 128);
+						_gm->reply(kStringArsanoEntrance16, 1, 1 + kSectionInvert);
 						_vm->renderImage(3);
 						setSectionVisible(4, false);
 						_gm->wait(2);
@@ -2048,7 +2048,7 @@ bool ArsanoEntrance::interact(Action verb, Object &obj1, Object &obj2) {
 				}
 			} else {
 				_gm->dialog(2, row3, _dialog3, 0);
-				_gm->reply(kStringArsanoEntrance10, 1, 1 + 128);
+				_gm->reply(kStringArsanoEntrance10, 1, 1 + kSectionInvert);
 			}
 		}
 	} else if ((verb == ACTION_PRESS) && (obj1._id == BATHROOM_BUTTON)) {
@@ -2349,7 +2349,7 @@ ArsanoRoger::ArsanoRoger(SupernovaEngine *vm, GameManager1 *gm) {
 void ArsanoRoger::onEntrance() {
 	if (!sentenceRemoved(0, 2)) {
 		_gm->say(kStringArsanoRoger1);
-		_gm->reply(kStringArsanoRoger2, 2, 2 + 128);
+		_gm->reply(kStringArsanoRoger2, 2, 2 + kSectionInvert);
 		removeSentence(0, 2);
 	}
 }
@@ -2387,7 +2387,7 @@ bool ArsanoRoger::interact(Action verb, Object &obj1, Object &obj2) {
 			_gm->great(0);
 			return false;
 		}
-		_gm->reply(kStringArsanoRoger3, 2, 2 + 128);
+		_gm->reply(kStringArsanoRoger3, 2, 2 + kSectionInvert);
 	} else if ((verb == ACTION_USE) && (obj1._id == CUP))
 		_vm->renderMessage(kStringArsanoRoger4);
 	else if ((verb == ACTION_TALK) && (obj1._id == ROGER_W)) {
@@ -2396,40 +2396,40 @@ bool ArsanoRoger::interact(Action verb, Object &obj1, Object &obj2) {
 		else {
 			switch (_gm->dialog(4, row1, _dialog1, 1)) {
 			case 0:
-				_gm->reply(kStringArsanoRoger6, 2, 2 + 128);
-				_gm->reply(kStringArsanoRoger7, 2, 2 + 128);
+				_gm->reply(kStringArsanoRoger6, 2, 2 + kSectionInvert);
+				_gm->reply(kStringArsanoRoger7, 2, 2 + kSectionInvert);
 				break;
 			case 1:
-				_gm->reply(kStringArsanoRoger8, 2, 2 + 128);
-				_gm->reply(kStringArsanoRoger9, 2, 2 + 128);
+				_gm->reply(kStringArsanoRoger8, 2, 2 + kSectionInvert);
+				_gm->reply(kStringArsanoRoger9, 2, 2 + kSectionInvert);
 				_gm->say(kStringArsanoRoger10);
 				break;
 			case 2:
-				_gm->reply(kStringArsanoRoger11, 2, 2 + 128);
+				_gm->reply(kStringArsanoRoger11, 2, 2 + kSectionInvert);
 				_gm->say(kStringArsanoRoger12);
-				_gm->reply(kStringArsanoRoger13, 2, 2 + 128);
+				_gm->reply(kStringArsanoRoger13, 2, 2 + kSectionInvert);
 				_gm->say(kStringArsanoRoger14);
-				_gm->reply(kStringArsanoRoger15, 2, 2 + 128);
-				_gm->reply(kStringArsanoRoger16, 2, 2 + 128);
+				_gm->reply(kStringArsanoRoger15, 2, 2 + kSectionInvert);
+				_gm->reply(kStringArsanoRoger16, 2, 2 + kSectionInvert);
 				_gm->say(kStringArsanoRoger17);
 				_gm->say(kStringArsanoRoger18);
-				_gm->reply(kStringArsanoRoger19, 2, 2 + 128);
+				_gm->reply(kStringArsanoRoger19, 2, 2 + kSectionInvert);
 				_gm->say(kStringArsanoRoger20);
 				_gm->say(kStringArsanoRoger21);
-				_gm->reply(kStringArsanoRoger22, 2, 2 + 128);
+				_gm->reply(kStringArsanoRoger22, 2, 2 + kSectionInvert);
 				_gm->say(kStringArsanoRoger23);
-				_gm->reply(kStringArsanoRoger24, 2, 2 + 128);
-				_gm->reply(kStringArsanoRoger25, 2, 2 + 128);
+				_gm->reply(kStringArsanoRoger24, 2, 2 + kSectionInvert);
+				_gm->reply(kStringArsanoRoger25, 2, 2 + kSectionInvert);
 				_gm->say(kStringArsanoRoger26);
-				_gm->reply(kStringArsanoRoger27, 2, 2 + 128);
-				_gm->reply(kStringArsanoRoger28, 2, 2 + 128);
+				_gm->reply(kStringArsanoRoger27, 2, 2 + kSectionInvert);
+				_gm->reply(kStringArsanoRoger28, 2, 2 + kSectionInvert);
 				_gm->say(kStringArsanoRoger29);
-				_gm->reply(kStringArsanoRoger30, 2, 2 + 128);
-				_gm->reply(kStringArsanoRoger31, 2, 2 + 128);
+				_gm->reply(kStringArsanoRoger30, 2, 2 + kSectionInvert);
+				_gm->reply(kStringArsanoRoger31, 2, 2 + kSectionInvert);
 				_gm->say(kStringArsanoRoger32);
-				_gm->reply(kStringArsanoRoger33, 2, 2 + 128);
+				_gm->reply(kStringArsanoRoger33, 2, 2 + kSectionInvert);
 				_gm->say(kStringArsanoRoger34);
-				_gm->reply(kStringArsanoRoger35, 2, 2 + 128);
+				_gm->reply(kStringArsanoRoger35, 2, 2 + kSectionInvert);
 			}
 		}
 	} else if (((verb == ACTION_USE) && Object::combine(obj1, obj2, CHESS, ROGER_W)) ||
@@ -2437,7 +2437,7 @@ bool ArsanoRoger::interact(Action verb, Object &obj1, Object &obj2) {
 		_vm->renderImage(11);
 		_gm->great(0);
 		_gm->say(kStringArsanoRoger36);
-		_gm->reply(kStringArsanoRoger37, 2, 2 + 128);
+		_gm->reply(kStringArsanoRoger37, 2, 2 + kSectionInvert);
 		_gm->say(kStringArsanoRoger38);
 		_vm->paletteFadeOut();
 		_gm->_inventory.remove(*_gm->_rooms[CABIN_R3]->getObject(0)); // Chess board
@@ -2621,13 +2621,13 @@ bool ArsanoMeetup2::interact(Action verb, Object &obj1, Object &obj2) {
 		_vm->paletteBrightness();
 		bool found;
 		if (sentenceRemoved(0, 2) || sentenceRemoved(1, 2)) {
-			_gm->reply(kStringArsanoMeetup2_3, 1, 1 + 128);
+			_gm->reply(kStringArsanoMeetup2_3, 1, 1 + kSectionInvert);
 			found = !_gm->dialog(2, row4, _dialog4, 0);
 			if (!(found))
-				_gm->reply(kStringArsanoMeetup2_4, 1, 1 + 128);
+				_gm->reply(kStringArsanoMeetup2_4, 1, 1 + kSectionInvert);
 		} else {
-			_gm->reply(kStringArsanoMeetup2_5, 1, 1 + 128);
-			_gm->reply(kStringArsanoMeetup2_6, 1, 1 + 128);
+			_gm->reply(kStringArsanoMeetup2_5, 1, 1 + kSectionInvert);
+			_gm->reply(kStringArsanoMeetup2_6, 1, 1 + kSectionInvert);
 			found = !_gm->dialog(2, row1, _dialog1, 0);
 			removeSentence(0, 2);
 		}
@@ -2635,15 +2635,15 @@ bool ArsanoMeetup2::interact(Action verb, Object &obj1, Object &obj2) {
 			_gm->_inventory.remove(*_gm->_rooms[ROGER]->getObject(3));
 			_gm->_inventory.remove(*_gm->_rooms[ROGER]->getObject(7));
 			_gm->_inventory.remove(*_gm->_rooms[ROGER]->getObject(8));
-			_gm->reply(kStringArsanoMeetup2_7, 1, 1 + 128);
-			_gm->reply(kStringArsanoMeetup2_8, 1, 1 + 128);
+			_gm->reply(kStringArsanoMeetup2_7, 1, 1 + kSectionInvert);
+			_gm->reply(kStringArsanoMeetup2_8, 1, 1 + kSectionInvert);
 			bool flight = _gm->dialog(2, row2, _dialog2, 0);
 			if (flight) {
-				_gm->reply(kStringArsanoMeetup2_9, 1, 1 + 128);
+				_gm->reply(kStringArsanoMeetup2_9, 1, 1 + kSectionInvert);
 				_gm->dialog(4, row3, _dialog3, 0);
-				_gm->reply(kStringArsanoMeetup2_10, 1, 1 + 128);
+				_gm->reply(kStringArsanoMeetup2_10, 1, 1 + kSectionInvert);
 			} else
-				_gm->reply(kStringArsanoMeetup2_11, 1, 1 + 128);
+				_gm->reply(kStringArsanoMeetup2_11, 1, 1 + kSectionInvert);
 
 			_gm->changeRoom(MEETUP2);
 			_gm->_rooms[MEETUP2]->setSectionVisible(12, false);
@@ -2716,13 +2716,13 @@ void ArsanoMeetup2::shipStart() {
 	_gm->wait(12);
 	for (int i = 2; i <= 11; ++i) {
 		if (i >= 9)
-			_vm->renderImage(i - 1 + 128);
+			_vm->renderImage(i - 1 + kSectionInvert);
 		else
 			setSectionVisible(i - 1, false);
 		_vm->renderImage(i);
 		_gm->wait(2);
 	}
-	_vm->renderImage(11 + 128);
+	_vm->renderImage(11 + kSectionInvert);
 }
 
 ArsanoMeetup3::ArsanoMeetup3(SupernovaEngine *vm, GameManager1 *gm) {
@@ -2792,55 +2792,55 @@ bool ArsanoMeetup3::interact(Action verb, Object &obj1, Object &obj2) {
 		_vm->renderImage(0);
 		_vm->paletteFadeIn();
 		_gm->wait(18);
-		_gm->reply(kStringArsanoMeetup3_1, 2, 2 + 128);
+		_gm->reply(kStringArsanoMeetup3_1, 2, 2 + kSectionInvert);
 		_gm->wait(10);
-		_gm->reply(kStringArsanoMeetup3_2, 1, 1 + 128);
+		_gm->reply(kStringArsanoMeetup3_2, 1, 1 + kSectionInvert);
 
 		do {
 			int i = _gm->dialog(4, row2, _dialog2, 2);
 			switch (i) {
 			case 0:
-				_gm->reply(kStringArsanoMeetup3_3, 1, 1 + 128);
-				_gm->reply(kStringArsanoMeetup3_4, 1, 1 + 128);
+				_gm->reply(kStringArsanoMeetup3_3, 1, 1 + kSectionInvert);
+				_gm->reply(kStringArsanoMeetup3_4, 1, 1 + kSectionInvert);
 				break;
 			case 1:
-				_gm->reply(kStringArsanoMeetup3_5, 2, 2 + 128);
+				_gm->reply(kStringArsanoMeetup3_5, 2, 2 + kSectionInvert);
 				_gm->say(kStringArsanoMeetup3_6);
-				_gm->reply(kStringArsanoMeetup3_7, 2, 2 + 128);
-				_gm->reply(kStringArsanoMeetup3_8, 2, 2 + 128);
-				_gm->reply(kStringArsanoMeetup3_9, 2, 2 + 128);
-				_gm->reply(kStringArsanoMeetup3_10, 2, 2 + 128);
-				_gm->reply(kStringArsanoMeetup3_11, 2, 2 + 128);
+				_gm->reply(kStringArsanoMeetup3_7, 2, 2 + kSectionInvert);
+				_gm->reply(kStringArsanoMeetup3_8, 2, 2 + kSectionInvert);
+				_gm->reply(kStringArsanoMeetup3_9, 2, 2 + kSectionInvert);
+				_gm->reply(kStringArsanoMeetup3_10, 2, 2 + kSectionInvert);
+				_gm->reply(kStringArsanoMeetup3_11, 2, 2 + kSectionInvert);
 				if (_gm->dialog(2, row3, _dialog3, 0)) {
-					_gm->reply(kStringArsanoMeetup3_12, 2, 2 + 128);
+					_gm->reply(kStringArsanoMeetup3_12, 2, 2 + kSectionInvert);
 					_gm->say(kStringArsanoMeetup3_13);
 				}
-				_gm->reply(kStringArsanoMeetup3_14, 2, 2 + 128);
-				_gm->reply(kStringArsanoMeetup3_15, 2, 2 + 128);
-				_gm->reply(kStringArsanoMeetup3_16, 2, 2 + 128);
-				_gm->reply(kStringArsanoMeetup3_17, 2, 2 + 128);
+				_gm->reply(kStringArsanoMeetup3_14, 2, 2 + kSectionInvert);
+				_gm->reply(kStringArsanoMeetup3_15, 2, 2 + kSectionInvert);
+				_gm->reply(kStringArsanoMeetup3_16, 2, 2 + kSectionInvert);
+				_gm->reply(kStringArsanoMeetup3_17, 2, 2 + kSectionInvert);
 				if (_gm->dialog(2, row3, _dialog3, 0)) {
-					_gm->reply(kStringArsanoMeetup3_12, 2, 2 + 128);
+					_gm->reply(kStringArsanoMeetup3_12, 2, 2 + kSectionInvert);
 					_gm->say(kStringArsanoMeetup3_13);
 				}
-				_gm->reply(kStringArsanoMeetup3_18, 2, 2 + 128);
+				_gm->reply(kStringArsanoMeetup3_18, 2, 2 + kSectionInvert);
 				break;
 			case 2:
-				_gm->reply(kStringArsanoMeetup3_19, 2, 2 + 128);
-				_gm->reply(kStringArsanoMeetup3_20, 2, 2 + 128);
+				_gm->reply(kStringArsanoMeetup3_19, 2, 2 + kSectionInvert);
+				_gm->reply(kStringArsanoMeetup3_20, 2, 2 + kSectionInvert);
 				break;
 			case 3:
-				_gm->reply(kStringArsanoMeetup3_21, 1, 1 + 128);
-				_gm->reply(kStringArsanoMeetup3_22, 1, 1 + 128);
+				_gm->reply(kStringArsanoMeetup3_21, 1, 1 + kSectionInvert);
+				_gm->reply(kStringArsanoMeetup3_22, 1, 1 + kSectionInvert);
 				_gm->say(kStringArsanoMeetup3_23);
-				_gm->reply(kStringArsanoMeetup3_24, 1, 1 + 128);
-				_gm->reply(kStringArsanoMeetup3_25, 1, 1 + 128);
+				_gm->reply(kStringArsanoMeetup3_24, 1, 1 + kSectionInvert);
+				_gm->reply(kStringArsanoMeetup3_25, 1, 1 + kSectionInvert);
 			}
 			removeSentence(2, 2);
 		} while (!allSentencesRemoved(4, 2));
 		_gm->say(kStringArsanoMeetup3_26);
-		_gm->reply(kStringArsanoMeetup3_27, 1, 1 + 128);
-		_gm->reply(kStringArsanoMeetup3_28, 1, 1 + 128);
+		_gm->reply(kStringArsanoMeetup3_27, 1, 1 + kSectionInvert);
+		_gm->reply(kStringArsanoMeetup3_28, 1, 1 + kSectionInvert);
 		_vm->paletteFadeOut();
 		// Remove all objects from the inventory except the Knife, Watch and Discman
 		bool has_knife = _gm->_rooms[INTRO1]->getObject(1)->hasProperty(CARRIED);
@@ -2874,7 +2874,7 @@ AxacussCell::AxacussCell(SupernovaEngine *vm, GameManager1 *gm) {
 	_shown[31] = kShownTrue;
 
 	_objectState[0] = Object(_id, kStringButton,kStringDefaultDescription,CELL_BUTTON,PRESS,1,1,0);
-	_objectState[1] = Object(_id, kStringDoor,kStringDefaultDescription,CELL_DOOR,EXIT|OPENABLE|CLOSED,0,0,31+128,CORRIDOR4,1);
+	_objectState[1] = Object(_id, kStringDoor,kStringDefaultDescription,CELL_DOOR,EXIT|OPENABLE|CLOSED,0,0,31+kSectionInvert,CORRIDOR4,1);
 	_objectState[2] = Object(_id, kStringTray,kStringTrayDescription,TRAY,UNNECESSARY,255,255,0);
 	_objectState[3] = Object(_id, kStringLamp,kStringLampDescription,NULLOBJECT,COMBINABLE,3,3,0);
 	_objectState[4] = Object(_id, kStringEyes,kStringEyesDescription,NULLOBJECT,NULLTYPE,4,4,0);
@@ -2919,7 +2919,7 @@ void AxacussCell::animation() {
 		getObject(0)->_click = 255;
 		getObject(1)->resetProperty(EXIT | OPENABLE | OPENED | CLOSED);
 	} else if ((_gm->_state._timeRobot >= 601) && (_gm->_state._timeRobot <= 620)) {
-		_vm->renderImage(_gm->_state._timeRobot - 593 + 128);
+		_vm->renderImage(_gm->_state._timeRobot - 593 + kSectionInvert);
 		_vm->renderImage(_gm->_state._timeRobot - 592);
 	} else if (_gm->_state._timeRobot == 621) {
 		_vm->renderImage(31);
@@ -2929,7 +2929,7 @@ void AxacussCell::animation() {
 	} else if (_gm->_state._timeRobot == 700)
 		_gm->_state._timeRobot = 0;
 	else if (_gm->_state._timeRobot == 10002) {
-		_vm->renderImage(18 + 128);
+		_vm->renderImage(18 + kSectionInvert);
 		_vm->renderImage(29);
 		_vm->renderImage(7);
 		getObject(2)->_click = 13;
@@ -3127,9 +3127,7 @@ void AxacussCorridor3::onEntrance() {
 
 void AxacussCorridor4::onEntrance() {
 	_gm->great(4);
-	if (_gm->_state._corridorSearch)
-		_gm->busted(0);
-	else if (_gm->_rooms[GUARD]->isSectionVisible(1))
+	if (_gm->_state._corridorSearch || _gm->_rooms[GUARD]->isSectionVisible(1))
 		_gm->busted(0);
 }
 
@@ -3229,7 +3227,7 @@ void AxacussCorridor5::onEntrance() {
 
 bool AxacussCorridor5::handleMoneyDialog() {
 	if (_gm->dialog(2, _rows, _dialog2, 0) == 0) {
-		_gm->reply(kStringAxacussCorridor5_5, 1, 1 + 128);
+		_gm->reply(kStringAxacussCorridor5_5, 1, 1 + kSectionInvert);
 		addAllSentences(2);
 		if (_gm->_state._money == 0) {
 			removeSentence(2, 2);
@@ -3257,14 +3255,14 @@ bool AxacussCorridor5::handleMoneyDialog() {
 				stopInteract(_gm->_state._money - 200);
 				return true;
 			}
-			_gm->reply(kStringAxacussCorridor5_6, 1, 1 + 128);
+			_gm->reply(kStringAxacussCorridor5_6, 1, 1 + kSectionInvert);
 			break;
 		case 3:
 			if (_gm->_state._money >= 900) {
 				stopInteract(_gm->_state._money);
 				return true;
 			}
-			_gm->reply(kStringAxacussCorridor5_6, 1, 1 + 128);
+			_gm->reply(kStringAxacussCorridor5_6, 1, 1 + kSectionInvert);
 			break;
 		}
 	}
@@ -3272,7 +3270,7 @@ bool AxacussCorridor5::handleMoneyDialog() {
 }
 
 void AxacussCorridor5::stopInteract(int sum) {
-	_gm->reply(kStringAxacussCorridor5_7, 1, 1 + 128);
+	_gm->reply(kStringAxacussCorridor5_7, 1, 1 + kSectionInvert);
 	_gm->great(0);
 	_gm->changeRoom(ELEVATOR);
 	_gm->takeMoney(-sum);
@@ -3285,16 +3283,16 @@ bool AxacussCorridor5::interact(Action verb, Object &obj1, Object &obj2) {
 		_vm->renderImage(0);
 		_vm->paletteBrightness();
 		if (_gm->_guiEnabled) {
-			_gm->reply(kStringAxacussCorridor5_1, 1, 1 + 128);
+			_gm->reply(kStringAxacussCorridor5_1, 1, 1 + kSectionInvert);
 			if (handleMoneyDialog())
 				return true;
 		} else {
 			_gm->_guiEnabled = true;
-			_gm->reply(kStringAxacussCorridor5_2, 1, 1 + 128);
+			_gm->reply(kStringAxacussCorridor5_2, 1, 1 + kSectionInvert);
 			if (_gm->dialog(2, _rows, _dialog1, 0))
-				_gm->reply(kStringAxacussCorridor5_3, 1, 1 + 128);
+				_gm->reply(kStringAxacussCorridor5_3, 1, 1 + kSectionInvert);
 			else {
-				_gm->reply(kStringAxacussCorridor5_4, 1, 1 + 128);
+				_gm->reply(kStringAxacussCorridor5_4, 1, 1 + kSectionInvert);
 				if (handleMoneyDialog())
 					return true;
 			}
@@ -3648,7 +3646,7 @@ bool AxacussExit::interact(Action verb, Object &obj1, Object &obj2) {
 			if (i == 11)
 				_vm->playSound(kAudioSmash); // 046/4020
 			_gm->wait(1);
-			_vm->renderImage(i + 128);
+			_vm->renderImage(i + kSectionInvert);
 		}
 		_gm->_state._powerOff = true;
 		_objectState[5]._click = 255;
@@ -3958,7 +3956,7 @@ bool AxacussElevator::interact(Action verb, Object &obj1, Object &obj2) {
 		_vm->setCurrentImage(41);
 		_vm->renderImage(0);
 		_vm->paletteBrightness();
-		_gm->reply(kStringAxacussElevator_1, 1, 1 + 128);
+		_gm->reply(kStringAxacussElevator_1, 1, 1 + kSectionInvert);
 		_gm->say(kStringAxacussElevator_2);
 		g_system->fillScreen(kColorBlack);
 	} else if ((verb == ACTION_PRESS) && (obj1._id == BUTTON1)) {

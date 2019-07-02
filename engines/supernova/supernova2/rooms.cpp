@@ -224,7 +224,7 @@ bool Intro2::tvDialogue() {
 	_vm->setCurrentImage(42);
 	_vm->renderImage(0);
 
-	if(!_gm->talk(1, 1+128, 0, kMessageLeft, kStringIntroTV1))
+	if(!_gm->talk(1, 1 + kSectionInvert, 0, kMessageLeft, kStringIntroTV1))
 		return false;
 
 	_vm->renderImage(4);
@@ -248,7 +248,7 @@ bool Intro2::tvDialogue() {
 	if(!_gm->talk(8, 6, 0, kMessageLeft, kStringIntroTV4))
 		return false;
 
-	_vm->renderImage(10 + 128);
+	_vm->renderImage(10 + kSectionInvert);
 	_gm->wait(3);
 	_vm->renderImage(5);
 	_gm->wait(3);
@@ -263,19 +263,19 @@ bool Intro2::tvDialogue() {
 	if(!_gm->talk(9, 7, 0, kMessageCenter, kStringIntroTV7))
 		return false;
 
-	if(!_gm->talk(3, 3 + 128, 0, kMessageRight, kStringIntroTV8))
+	if(!_gm->talk(3, 3 + kSectionInvert, 0, kMessageRight, kStringIntroTV8))
 		return false;
 
-	if(!_gm->talk(3, 3 + 128, 0, kMessageRight, kStringIntroTV9))
+	if(!_gm->talk(3, 3 + kSectionInvert, 0, kMessageRight, kStringIntroTV9))
 		return false;
 
 	if(!_gm->talk(9, 7, 0, kMessageCenter, kStringIntroTV10))
 		return false;
 
-	if(!_gm->talk(3, 3 + 128, 0, kMessageRight, kStringIntroTV11))
+	if(!_gm->talk(3, 3 + kSectionInvert, 0, kMessageRight, kStringIntroTV11))
 		return false;
 
-	if(!_gm->talk(3, 3 + 128, 0, kMessageRight, kStringIntroTV12))
+	if(!_gm->talk(3, 3 + kSectionInvert, 0, kMessageRight, kStringIntroTV12))
 		return false;
 
 	if(!_gm->talk(9, 7, 8, kMessageCenter, kStringIntroTV13))
@@ -286,7 +286,7 @@ bool Intro2::tvDialogue() {
 	if(!_gm->talkRest(9, 7, 1))
 		return false;
 
-	_vm->renderImage(4 + 128);
+	_vm->renderImage(4 + kSectionInvert);
 
 	if(!_gm->talkRest(9, 7, 3))
 		return false;
@@ -303,10 +303,10 @@ bool Intro2::tvDialogue() {
 
 	_vm->removeMessage();
 
-	if(!_gm->talk(3, 3 + 128, 0, kMessageRight, kStringIntroTV14))
+	if(!_gm->talk(3, 3 + kSectionInvert, 0, kMessageRight, kStringIntroTV14))
 		return false;
 
-	if(!_gm->talk(3, 3 + 128, 0, kMessageRight, kStringIntroTV15))
+	if(!_gm->talk(3, 3 + kSectionInvert, 0, kMessageRight, kStringIntroTV15))
 		return false;
 
 	if(!_gm->talk(9, 7, 0, kMessageCenter, kStringIntroTV16))
@@ -348,7 +348,7 @@ TaxiStand::TaxiStand(SupernovaEngine *vm, GameManager2 *gm) {
 	_objectState[0] = Object(_id, kStringVehicle, kStringVehicleDescription, TAXI, NULLTYPE, 2, 2, 0, NULLROOM, 11);
 	_objectState[1] = Object(_id, kStringVehicle, kStringVehicleDescription, NULLOBJECT, NULLTYPE, 1, 1, 0);
 	_objectState[2] = Object(_id, kStringEntrance, kStringEntranceDescription, DOOR, EXIT | OPENABLE | CLOSED, 3, 3, 0, NULLROOM, 1);
-	_objectState[3] = Object(_id, kStringWallet, kStringWalletDescription, WALLET, TAKE, 0, 0, 7 + 128);
+	_objectState[3] = Object(_id, kStringWallet, kStringWalletDescription, WALLET, TAKE, 0, 0, 7 + kSectionInvert);
 	_objectState[4] = Object(_id, kStringDevice, kStringDeviceDescription, TRANSMITTER, TAKE | PRESS, 255, 255, 0);
 	_objectState[5] = Object(_id, kStringIdCard, kStringIdCardDescription, ID_CARD, TAKE | COMBINABLE, 255, 255, 0);
 	_objectState[6] = Object(_id, kStringAirport, kStringDefaultDescription, NULLOBJECT, EXIT, 255, 255, 0, AIRPORT, 22);
@@ -409,10 +409,10 @@ void Street::onEntrance() {
 
 void Street::animation() {
 	static int ltab[36] = {
-		8, 9 + 128, 10, 11 + 128, 6, 12, 13 + 128, 9, 14, 15 + 128, 19,
-		16, 17 + 128, 9 + 128, 18, 19 + 128, 6 + 128, 20, 21 + 128,
-		8 + 128, 9, 10 + 128, 11, 6, 12 + 128, 13, 14 + 128, 15, 19,
-		16 + 128, 17, 18 + 128, 19 + 128, 6 + 128, 20 + 128, 21
+		8, 9 + kSectionInvert, 10, 11 + kSectionInvert, 6, 12, 13 + kSectionInvert, 9, 14, 15 + kSectionInvert, 19,
+		16, 17 + kSectionInvert, 9 + kSectionInvert, 18, 19 + kSectionInvert, 6 + kSectionInvert, 20, 21 + kSectionInvert,
+		8 + kSectionInvert, 9, 10 + kSectionInvert, 11, 6, 12 + kSectionInvert, 13, 14 + kSectionInvert, 15, 19,
+		16 + kSectionInvert, 17, 18 + kSectionInvert, 19 + kSectionInvert, 6 + kSectionInvert, 20 + kSectionInvert, 21
 	};
 
 	static int i, banks, light;
@@ -532,7 +532,7 @@ Cabin2::Cabin2(SupernovaEngine *vm, GameManager2 *gm) {
 	_objectState[0] = Object(_id, kStringExit, kStringDefaultDescription, NULLOBJECT, EXIT, 255, 255, 0, GAMES, 22);
 	_objectState[1] = Object(_id, kStringHood, kStringHoodDescription, NULLOBJECT, NULLTYPE, 0, 0, 0);
 	_objectState[2] = Object(_id, kString400Xa, kStringDefaultDescription, PRIZE, TAKE, 255, 255, 2 + 180);
-	_objectState[3] = Object(_id, kString10Xa, kStringDefaultDescription, BACK_MONEY, TAKE, 255, 255, 2 + 128);
+	_objectState[3] = Object(_id, kString10Xa, kStringDefaultDescription, BACK_MONEY, TAKE, 255, 255, 2 + kSectionInvert);
 	_objectState[4] = Object(_id, kStringSlot, kStringSlotDescription1, SLOT1, COMBINABLE, 2, 2, 0);
 	_objectState[5] = Object(_id, kStringSlot, kStringSlotDescription2, NULLOBJECT, COMBINABLE, 3, 3, 0);
 	_objectState[6] = Object(_id, kStringChair, kStringChairDescription, CHAIR, NULLTYPE, 4, 4, 0);
@@ -549,7 +549,7 @@ void Cabin2::onEntrance() {
 void Cabin2::animation() {
 	if (_shown[kMaxSection - 1]) {
 		if (isSectionVisible(1))
-			_vm->renderImage(1 + 128);
+			_vm->renderImage(1 + kSectionInvert);
 		else
 			_vm->renderImage(1);
 	}
@@ -606,11 +606,11 @@ bool Cabin2::interact(Action verb, Object &obj1, Object &obj2) {
 		} else
 			_vm->renderMessage(kStringRest);
 	} else if (verb == ACTION_TAKE && obj1._id == PRIZE) {
-		_vm->renderImage(2 + 128);
+		_vm->renderImage(2 + kSectionInvert);
 		obj1._click = 255;
 		_gm->takeMoney(400);
 	} else if (verb == ACTION_TAKE && obj1._id == BACK_MONEY) {
-		_vm->renderImage(2 + 128);
+		_vm->renderImage(2 + kSectionInvert);
 		obj1._click = 255;
 		_gm->takeMoney(10);
 	} else if (verb == ACTION_LOOK && obj1._id == SCRIBBLE1) {
@@ -655,13 +655,13 @@ Kiosk::Kiosk(SupernovaEngine *vm, GameManager2 *gm) {
 	_objectState[1] = Object(_id, kStringBooks, kStringDefaultDescription, BOOKS, UNNECESSARY, 0, 0, 0);
 	_objectState[2] = Object(_id, kStringDictionary, kStringDefaultDescription, LEXICON, UNNECESSARY, 1, 1, 0);
 	_objectState[3] = Object(_id, kStringPlant, kStringDefaultDescription, PLANT, UNNECESSARY, 2, 2, 0);
-	_objectState[4] = Object(_id, kStringMask, kStringDefaultDescription, BMASK, UNNECESSARY, 4, 4, 2 + 128);
+	_objectState[4] = Object(_id, kStringMask, kStringDefaultDescription, BMASK, UNNECESSARY, 4, 4, 2 + kSectionInvert);
 	_objectState[5] = Object(_id, kStringSnake, kStringDefaultDescription, SNAKE, UNNECESSARY, 3, 3, 0);
 	_objectState[6] = Object(_id, kStringCup, kStringDefaultDescription, CUP, UNNECESSARY, 5, 5, 0);
 	_objectState[7] = Object(_id, kStringJoystick, kStringDefaultDescription, JOYSTICK, UNNECESSARY, 6, 6, 0);
-	_objectState[8] = Object(_id, kStringToothbrush, kStringToothbrushDescription, TOOTHBRUSH, TAKE, 7, 7, 5 + 128);
-	_objectState[9] = Object(_id, kStringMusic, kStringMusicDescription, PLAYER, TAKE | COMBINABLE, 8, 8, 4 + 128);
-	_objectState[10] = Object(_id, kStringBottle, kStringBottleDescription, BOTTLE, TAKE, 9, 9, 3 + 128);
+	_objectState[8] = Object(_id, kStringToothbrush, kStringToothbrushDescription, TOOTHBRUSH, TAKE, 7, 7, 5 + kSectionInvert);
+	_objectState[9] = Object(_id, kStringMusic, kStringMusicDescription, PLAYER, TAKE | COMBINABLE, 8, 8, 4 + kSectionInvert);
+	_objectState[10] = Object(_id, kStringBottle, kStringBottleDescription, BOTTLE, TAKE, 9, 9, 3 + kSectionInvert);
 	_objectState[11] = Object(_id, kStringBottle, kStringDefaultDescription, BOTTLE1, UNNECESSARY, 10, 10, 0);
 	_objectState[12] = Object(_id, kStringBottle, kStringDefaultDescription, BOTTLE2, UNNECESSARY, 11, 11, 0);
 	_objectState[13] = Object(_id, kStringBottle, kStringDefaultDescription, BOTTLE3, UNNECESSARY, 12, 12, 0);
@@ -682,21 +682,21 @@ void Kiosk::onEntrance() {
 		_vm->renderImage(6);
 		_vm->playSound(kAudioKiosk);
 		_gm->wait(8);
-		_vm->renderImage(6 + 128);
-		_gm->reply(kStringScaredMe, 1, 1 +128);
+		_vm->renderImage(6 + kSectionInvert);
+		_gm->reply(kStringScaredMe, 1, 1 + kSectionInvert);
 		_gm->say(kStringHowSo);
-		_gm->reply(kStringDisguise, 1, 1 +128);
+		_gm->reply(kStringDisguise, 1, 1 + kSectionInvert);
 		_gm->say(kStringWhatDisguise);
-		_gm->reply(kStringStopPretending, 1, 1 +128);
-		_gm->reply(kStringYouDisguised, 1, 1 +128);
+		_gm->reply(kStringStopPretending, 1, 1 + kSectionInvert);
+		_gm->reply(kStringYouDisguised, 1, 1 + kSectionInvert);
 		_gm->say(kStringIAmHorstHummel);
-		_gm->reply(kStringGiveItUp, 1, 1 +128);
-		_gm->reply(kStringGestures, 1, 1 +128);
-		_gm->reply(kStringMovesDifferently, 1, 1 +128);
+		_gm->reply(kStringGiveItUp, 1, 1 + kSectionInvert);
+		_gm->reply(kStringGestures, 1, 1 + kSectionInvert);
+		_gm->reply(kStringMovesDifferently, 1, 1 + kSectionInvert);
 		_gm->say(kStringHeIsRobot);
-		_gm->reply(kStringYouAreCrazy, 1, 1 +128);
+		_gm->reply(kStringYouAreCrazy, 1, 1 + kSectionInvert);
 		_gm->say(kStringYouIdiot);
-		_gm->reply(kStringShutUp, 1, 1 +128);
+		_gm->reply(kStringShutUp, 1, 1 + kSectionInvert);
 		_gm->drawGUI();
 		setRoomSeen(true);
 	}
@@ -753,7 +753,7 @@ bool Kiosk::interact(Action verb, Object &obj1, Object &obj2) {
 		Common::String format = _vm->getGameString(kStringThatCosts);
 		Common::String cost = Common::String::format(format.c_str(), price);
 		_vm->renderMessage(cost, kMessageTop);
-		_gm->reply(cost.c_str(), 1, 1 +128);
+		_gm->reply(cost.c_str(), 1, 1 + kSectionInvert);
 
 		if (_gm->_state._money < price)
 			_gm->say(dialPrice[1]);
@@ -764,7 +764,7 @@ bool Kiosk::interact(Action verb, Object &obj1, Object &obj2) {
 		_gm->drawGUI();
 	} else if (verb == ACTION_LOOK && obj1._id >= BMASK && obj1._id <= FACES) {
 		for(int i = 0; i < 3; i++) {
-			_gm->reply(dialSeller[obj1._id - BMASK][i], 1, 1 + 128);
+			_gm->reply(dialSeller[obj1._id - BMASK][i], 1, 1 + kSectionInvert);
 		}
 	} else if (verb == ACTION_TALK && obj1._id >= SELLER) {
 		int i = 2;
@@ -772,13 +772,13 @@ bool Kiosk::interact(Action verb, Object &obj1, Object &obj2) {
 			i++;
 		switch (_gm->dialog(i, _gm->_dials, dialSay, 0)) {
 		case 0:
-			_gm->reply(kStringTakeALook, 1, 1 + 128);
+			_gm->reply(kStringTakeALook, 1, 1 + kSectionInvert);
 			break;
 		case 1:
-			_gm->reply(kStringNonsense, 1, 1 + 128);
+			_gm->reply(kStringNonsense, 1, 1 + kSectionInvert);
 			break;
 		case 2:
-			_gm->reply(kStringImSorry, 1, 1 + 128);
+			_gm->reply(kStringImSorry, 1, 1 + kSectionInvert);
 			break;
 		}
 		_gm->drawGUI();
@@ -828,7 +828,7 @@ void CulturePalace::animation() {
 void CulturePalace::notEnoughMoney() {
 	_gm->reply(kStringWhat, 2, 1);
 	_gm->reply(kStringNotInformed, 2, 1);
-	_vm->renderImage(1 + 128);
+	_vm->renderImage(1 + kSectionInvert);
 	setSectionVisible(2, kShownFalse);
 }
 
@@ -897,7 +897,7 @@ bool CulturePalace::interact(Action verb, Object &obj1, Object &obj2) {
 				break;
 			}
 		}
-		_vm->renderImage(1 + 128);
+		_vm->renderImage(1 + kSectionInvert);
 		setSectionVisible(2, kShownFalse);
 		_gm->drawGUI();
 	}
@@ -916,7 +916,7 @@ bool CulturePalace::interact(Action verb, Object &obj1, Object &obj2) {
 					else
 						_gm->takeMoney(-10000);
 					_gm->takeObject(*getObject(4));
-					_vm->renderImage(1 + 128);
+					_vm->renderImage(1 + kSectionInvert);
 					setSectionVisible(2, false);
 					_gm->reply(kStringIdiot, 0, 0);
 					_shown[kMaxSection - 2] = false;
@@ -951,11 +951,11 @@ Checkout::Checkout(SupernovaEngine *vm, GameManager2 *gm) {
 void Checkout::onEntrance() {
 	if (!_shown[kMaxSection - 3]) {
 		_shown[kMaxSection - 3] = true;
-		_gm->reply(kStringAtMusicContest, 1, 1 + 128);
+		_gm->reply(kStringAtMusicContest, 1, 1 + kSectionInvert);
 		_gm->say(kStringNoImitation);
-		_gm->reply(kStringGoodJoke, 1, 1 + 128);
+		_gm->reply(kStringGoodJoke, 1, 1 + kSectionInvert);
 		_gm->say(kStringIAmHorstHummel);
-		_gm->reply(kStringCommon, 1, 1 + 128);
+		_gm->reply(kStringCommon, 1, 1 + kSectionInvert);
 		_gm->say(kStringIWillProof);
 		_gm->say(kStringIWillPerform);
 		_gm->drawGUI();
@@ -998,11 +998,11 @@ bool Checkout::interact(Action verb, Object &obj1, Object &obj2) {
 		if (_shown[kMaxSection - 4]) {
 			_vm->renderImage(2);
 			_gm->reply(kStringCheckout14, 0, 0);
-			_vm->renderImage(2 + 128);
+			_vm->renderImage(2 + kSectionInvert);
 		} else if (_shown[kMaxSection - 2] == 0) {
 			_vm->renderImage(2);
 			_gm->reply(kStringCheckout15, 0, 0);
-			_vm->renderImage(2 + 128);
+			_vm->renderImage(2 + kSectionInvert);
 			if (_gm->_rooms[CULTURE_PALACE]->getObject(4)->_type & CARRIED) {
 				_gm->say(kStringCheckout16);
 				_gm->reply(kStringCheckout17, 0, 0);
@@ -1010,7 +1010,7 @@ bool Checkout::interact(Action verb, Object &obj1, Object &obj2) {
 				_gm->say(kStringCheckout18);
 			_gm->drawGUI();
 		} else if (_shown[kMaxSection - 2] == 1) {
-			_gm->reply(kStringCheckout19, 1, 1 + 128);
+			_gm->reply(kStringCheckout19, 1, 1 + kSectionInvert);
 		} else {
 			if (_gm->_state._tipsy) {
 				_vm->setCurrentImage(22);
@@ -1089,25 +1089,25 @@ bool Checkout::interact(Action verb, Object &obj1, Object &obj2) {
 			_shown[kMaxSection - 2] == 1) {
 		_gm->_inventory.remove(obj1);
 		_shown[kMaxSection - 5] = true;
-		_gm->reply(kStringCheckout37, 1, 1 + 128);
+		_gm->reply(kStringCheckout37, 1, 1 + kSectionInvert);
 		_shown[kMaxSection - 2] = 2;
 		_gm->drawGUI();
 	} else if (verb == ACTION_GIVE && obj1._id == CARD && obj2._id == AXACUSSER) {
 		_gm->_inventory.remove(*_gm->_rooms[CULTURE_PALACE]->getObject(4));
-		_gm->reply(kStringCheckout34, 1, 1 + 128);
-		_gm->reply(kStringCheckout35, 1, 1 + 128);
+		_gm->reply(kStringCheckout34, 1, 1 + kSectionInvert);
+		_gm->reply(kStringCheckout35, 1, 1 + kSectionInvert);
 		if (_gm->dialog(2, _gm->_dials, dialCheckout2, 0) == 1) {
-			_gm->reply(kStringCheckout36, 1, 1 + 128);
+			_gm->reply(kStringCheckout36, 1, 1 + kSectionInvert);
 			_shown[kMaxSection - 2] = 1;
 		} else {
-			_gm->reply(kStringCheckout37, 1, 1 + 128);
+			_gm->reply(kStringCheckout37, 1, 1 + kSectionInvert);
 			_shown[kMaxSection - 2] = 2;
 		}
 		_gm->drawGUI();
 	} else if (verb == ACTION_TALK && obj1._id == AXACUSSER) {
 		if (_shown[kMaxSection - 4]) {
 			_gm->say(kStringCheckout38);
-			_gm->reply(kStringCheckout39, 1, 1 + 128);
+			_gm->reply(kStringCheckout39, 1, 1 + kSectionInvert);
 			_gm->drawGUI();
 		} else {
 			switch (_shown[kMaxSection - 2]) {
@@ -1115,13 +1115,13 @@ bool Checkout::interact(Action verb, Object &obj1, Object &obj2) {
 				addSentence(2, 1);
 				switch (_gm->dialog(3, _gm->_dials, dialCheckout1, 1)) {
 				case 0:
-					_gm->reply(kStringCheckout40, 1, 1 + 128);
+					_gm->reply(kStringCheckout40, 1, 1 + kSectionInvert);
 					_gm->say(kStringNo2);
-					_gm->reply(kStringCheckout41, 1, 1 + 128);
+					_gm->reply(kStringCheckout41, 1, 1 + kSectionInvert);
 					_gm->say(kStringCheckout42);
 					break;
 				case 1:
-					_gm->reply(kStringCheckout43, 1, 1 + 128);
+					_gm->reply(kStringCheckout43, 1, 1 + kSectionInvert);
 					if (_gm->_rooms[CULTURE_PALACE]->getObject(4)->_type & CARRIED) {
 						_gm->say(kStringCheckout44);
 						return interact(ACTION_GIVE,
@@ -1129,21 +1129,21 @@ bool Checkout::interact(Action verb, Object &obj1, Object &obj2) {
 								*_gm->_rooms[CHECKOUT]->getObject(2));
 					} else {
 						_gm->say(kStringNo2);
-						_gm->reply(kStringCheckout45, 1, 1 + 128);
+						_gm->reply(kStringCheckout45, 1, 1 + kSectionInvert);
 						_gm->say(kStringCheckout46);
 					}
 					break;
 				case 2:
-					_gm->reply(kStringCheckout47, 1, 1 + 128);
+					_gm->reply(kStringCheckout47, 1, 1 + kSectionInvert);
 					break;
 				}
 				_gm->drawGUI();
 				break;
 			case 1:
-				_gm->reply(kStringCheckout48, 1, 1 + 128);
+				_gm->reply(kStringCheckout48, 1, 1 + kSectionInvert);
 				break;
 			case 2:
-				_gm->reply(kStringCheckout49, 1, 1 + 128);
+				_gm->reply(kStringCheckout49, 1, 1 + kSectionInvert);
 				break;
 			}
 		}
@@ -1278,38 +1278,38 @@ void Checkout::appearance() {
 	_vm->setCurrentImage(42);
 	_vm->renderImage(0);
 	_vm->renderImage(11);
-	_gm->talk(1, 1 + 128, 0, kMessageLeft, kStringAppearance1);
-	_gm->talk(1, 1 + 128, 0, kMessageLeft, kStringAppearance2);
+	_gm->talk(1, 1 + kSectionInvert, 0, kMessageLeft, kStringAppearance1);
+	_gm->talk(1, 1 + kSectionInvert, 0, kMessageLeft, kStringAppearance2);
 	_vm->renderImage(4);
 	_gm->wait(3);
 	_vm->renderImage(6);
 	_gm->talk(8, 6, 0, kMessageLeft, kStringAppearance3);
 	_gm->talk(12, 13, 0, kMessageCenter, kStringAppearance4);
 	_gm->talk(12, 13, 0, kMessageCenter, kStringAppearance5);
-	_gm->talk(3, 3 + 128, 0, kMessageRight, kStringAppearance6);
+	_gm->talk(3, 3 + kSectionInvert, 0, kMessageRight, kStringAppearance6);
 	_gm->talk(12, 13, 0, kMessageCenter, kStringAppearance7);
 	_gm->talk(8, 6, 0, kMessageLeft, kStringAppearance8);
 	_gm->talk(12, 13, 4, kMessageCenter, kStringAppearance9);
 	_vm->renderImage(4);
 	_gm->talkRest(12, 13, 1);
-	_vm->renderImage(4 + 128);
+	_vm->renderImage(4 + kSectionInvert);
 	_gm->talkRest(12, 13, 4);
 	_vm->renderImage(4);
 	_gm->talkRest(12, 13, 1);
 	_vm->renderImage(6);
 	_gm->talkRest(12, 13, _gm->_restTime + 6);
 	_vm->removeMessage();
-	_gm->talk(3, 3 + 128, 0, kMessageRight, kStringAppearance10);
+	_gm->talk(3, 3 + kSectionInvert, 0, kMessageRight, kStringAppearance10);
 	_gm->talk(12, 13, 0, kMessageCenter, kStringAppearance11);
 	_gm->talk(12, 13, 0, kMessageCenter, kStringAppearance12);
-	_gm->talk(3, 3 + 128, 0, kMessageRight, kStringAppearance13);
+	_gm->talk(3, 3 + kSectionInvert, 0, kMessageRight, kStringAppearance13);
 	_gm->talk(12, 13, 0, kMessageCenter, kStringAppearance14);
 	_gm->talk(12, 13, 0, kMessageCenter, kStringAppearance15);
-	_gm->talk(3, 3 + 128, 0, kMessageRight, kStringAppearance16);
+	_gm->talk(3, 3 + kSectionInvert, 0, kMessageRight, kStringAppearance16);
 	_gm->talk(12, 13, 2, kMessageCenter, kStringAppearance17);
 	_vm->renderImage(4);
 	_gm->talkRest(12, 13, 1);
-	_vm->renderImage(4 + 128);
+	_vm->renderImage(4 + kSectionInvert);
 	_gm->talkRest(12, 13, 4);
 	_vm->renderImage(4);
 	_gm->talkRest(12, 13, 1);
@@ -1320,7 +1320,7 @@ void Checkout::appearance() {
 	_gm->talk(12, 13, 1, kMessageCenter, kStringAppearance19);
 	_vm->renderImage(4);
 	_gm->talkRest(12, 13, 1);
-	_vm->renderImage(4 + 128);
+	_vm->renderImage(4 + kSectionInvert);
 	_gm->talkRest(12, 13, 4);
 	_vm->renderImage(4);
 	_gm->talkRest(12, 13, 1);
@@ -1340,31 +1340,31 @@ void Checkout::appearance() {
 	_vm->renderImage(21);
 	_vm->renderImage(19);
 	_gm->wait(1);
-	_vm->renderImage(21+128);
+	_vm->renderImage(21 + kSectionInvert);
 	_vm->renderImage(22);
 	_vm->renderImage(18);
 	_gm->wait(1);
-	_vm->renderImage(22+128);
+	_vm->renderImage(22 + kSectionInvert);
 	_vm->renderImage(23);
 	_gm->wait(1);
-	_vm->renderImage(23+128);
+	_vm->renderImage(23 + kSectionInvert);
 	_vm->renderImage(24);
 	_vm->renderImage(17);
 	_gm->wait(1);
-	_vm->renderImage(24+128);
+	_vm->renderImage(24 + kSectionInvert);
 	_vm->renderImage(25);
 	_gm->wait(1);
-	_vm->renderImage(25+128);
+	_vm->renderImage(25 + kSectionInvert);
 	_vm->renderImage(32);
 	_vm->renderImage(11);
 	_vm->renderImage(26);
 	_vm->playSound(kAudioAppearance3);
 	_gm->wait(2);
-	_vm->renderImage(32+128);
+	_vm->renderImage(32 + kSectionInvert);
 	_vm->renderImage(33);
 	_vm->renderImage(27);
 	_gm->wait(2);
-	_vm->renderImage(33+128);
+	_vm->renderImage(33 + kSectionInvert);
 	_vm->renderImage(34);
 	_vm->renderImage(28);
 	_gm->wait(2);
@@ -1412,7 +1412,7 @@ void Checkout::appearance() {
 	do {
 		_vm->renderImage(1);
 		_gm->wait(1);
-		_vm->renderImage(1 + 128);
+		_vm->renderImage(1 + kSectionInvert);
 		image->_section[1].x1 += xp;
 		image->_section[1].x2 += xp;
 		image->_section[1].y1 -= 2;
@@ -1579,7 +1579,7 @@ bool Elevator2::interact(Action verb, Object &obj1, Object &obj2) {
 		_vm->playSound(kAudioElevatorBell);
 		while(_vm->_sound->isPlaying())
 			_gm->wait(1);
-		_vm->renderImage(8 + 128);
+		_vm->renderImage(8 + kSectionInvert);
 		if (_gm->_state._elevatorNumber == 4 && _gm->_state._elevatorE == 4 && !_gm->_state._toMuseum) {
 			_gm->wait(18);
 			_vm->renderImage(1);
@@ -1599,7 +1599,7 @@ bool Elevator2::interact(Action verb, Object &obj1, Object &obj2) {
 				_vm->renderImage(1);
 				setSectionVisible(2, kShownFalse);
 				_gm->wait(3);
-				_vm->renderImage(1 + 128);
+				_vm->renderImage(1 + kSectionInvert);
 				_vm->renderMessage(kStringElevator12);
 				_gm->waitOnInput(_gm->_messageDuration);
 				_vm->removeMessage();
@@ -1623,23 +1623,23 @@ bool Elevator2::interact(Action verb, Object &obj1, Object &obj2) {
 				_vm->setCurrentImage(26);
 				_vm->renderImage(0);
 				_vm->paletteFadeIn();
-				_gm->reply(kStringElevator15, 1, 1 + 128);
+				_gm->reply(kStringElevator15, 1, 1 + kSectionInvert);
 				_gm->say(kStringYes2);
-				_gm->reply(kStringElevator16, 1, 1 + 128);
-				_gm->reply(kStringElevator17, 1, 1 + 128);
+				_gm->reply(kStringElevator16, 1, 1 + kSectionInvert);
+				_gm->reply(kStringElevator17, 1, 1 + kSectionInvert);
 				if (_gm->dialog(2, _gm->_dials, dialBoss1, 0)) {
-					_gm->reply(kStringElevator18, 1, 1 + 128);
-					_gm->reply(kStringElevator19, 1, 1 + 128);
+					_gm->reply(kStringElevator18, 1, 1 + kSectionInvert);
+					_gm->reply(kStringElevator19, 1, 1 + kSectionInvert);
 					_gm->say(kStringElevator20);
 				}
-				_gm->reply(kStringElevator21, 1, 1 + 128);
-				_gm->reply(kStringElevator22, 1, 1 + 128);
-				_gm->reply(kStringElevator23, 1, 1 + 128);
-				_gm->reply(kStringElevator24, 1, 1 + 128);
-				_gm->reply(kStringElevator25, 1, 1 + 128);
-				_gm->reply(kStringElevator26, 1, 1 + 128);
-				_gm->reply(kStringElevator27, 1, 1 + 128);
-				_gm->reply(kStringElevator28, 1, 1 + 128);
+				_gm->reply(kStringElevator21, 1, 1 + kSectionInvert);
+				_gm->reply(kStringElevator22, 1, 1 + kSectionInvert);
+				_gm->reply(kStringElevator23, 1, 1 + kSectionInvert);
+				_gm->reply(kStringElevator24, 1, 1 + kSectionInvert);
+				_gm->reply(kStringElevator25, 1, 1 + kSectionInvert);
+				_gm->reply(kStringElevator26, 1, 1 + kSectionInvert);
+				_gm->reply(kStringElevator27, 1, 1 + kSectionInvert);
+				_gm->reply(kStringElevator28, 1, 1 + kSectionInvert);
 				jobDescription();
 				return true;
 			case 1:
@@ -1650,7 +1650,7 @@ bool Elevator2::interact(Action verb, Object &obj1, Object &obj2) {
 				_gm->wait(3);
 				_vm->renderImage(1);
 				setSectionVisible(2, kShownFalse);
-				_vm->renderImage(1 + 128);
+				_vm->renderImage(1 + kSectionInvert);
 				break;
 			case 2:
 				_gm->reply(kStringElevator60, 4, 3);
@@ -1660,7 +1660,7 @@ bool Elevator2::interact(Action verb, Object &obj1, Object &obj2) {
 				_gm->wait(3);
 				_vm->renderImage(1);
 				setSectionVisible(2, kShownFalse);
-				_vm->renderImage(1 + 128);
+				_vm->renderImage(1 + kSectionInvert);
 				break;
 			}
 			_gm->drawGUI();
@@ -1685,7 +1685,7 @@ bool Elevator2::interact(Action verb, Object &obj1, Object &obj2) {
 				_vm->renderMessage(kStringElevator63);
 			else if (number != _gm->_state._elevatorE) {
 				if (isSectionVisible(6)) {
-					_vm->renderImage(6 + 128);
+					_vm->renderImage(6 + kSectionInvert);
 					_objectState[4]._type &= ~OPENED;
 					_vm->playSound(kAudioElevator1);
 				}
@@ -1717,10 +1717,10 @@ void Elevator2::jobDescription() {
 	};
 	byte dialsBoss2[4] = {1,1,1,1};
 
-	_gm->reply(kStringElevator29, 1, 1 + 128);
-	_gm->reply(kStringElevator30, 1, 1 + 128);
-	_gm->reply(kStringElevator31, 1, 1 + 128);
-	_gm->reply(kStringElevator32, 1, 1 + 128);
+	_gm->reply(kStringElevator29, 1, 1 + kSectionInvert);
+	_gm->reply(kStringElevator30, 1, 1 + kSectionInvert);
+	_gm->reply(kStringElevator31, 1, 1 + kSectionInvert);
+	_gm->reply(kStringElevator32, 1, 1 + kSectionInvert);
 	_vm->setCurrentImage(30);
 	_vm->renderImage(0);
 	_gm->waitOnInput(72);
@@ -1743,26 +1743,26 @@ void Elevator2::jobDescription() {
 	_vm->setCurrentImage(26);
 	_vm->_system->fillScreen(kColorBlack);
 	_vm->renderImage(0);
-	_gm->reply(kStringElevator49, 1, 1 + 128);
+	_gm->reply(kStringElevator49, 1, 1 + kSectionInvert);
 	int e;
 	do {
 		addSentence(0, 2);
 		switch (e = _gm->dialog(4, dialsBoss2, dialBoss2, 2)) {
 		case 0:
-			_gm->reply(kStringElevator50, 1, 1 + 128);
+			_gm->reply(kStringElevator50, 1, 1 + kSectionInvert);
 			jobDescription();
 			return;
 		case 1:
-			_gm->reply(kStringElevator51, 1, 1 + 128);
+			_gm->reply(kStringElevator51, 1, 1 + kSectionInvert);
 			break;
 		case 2:
-			_gm->reply(kStringElevator52, 1, 1 + 128);
+			_gm->reply(kStringElevator52, 1, 1 + kSectionInvert);
 			break;
 		}
 		if (e == 1 || e == 2)
-			_gm->reply(kStringElevator53, 1, 1 + 128);
+			_gm->reply(kStringElevator53, 1, 1 + kSectionInvert);
 	} while (e != 3);
-	_gm->reply(kStringElevator54, 1, 1 + 128);
+	_gm->reply(kStringElevator54, 1, 1 + kSectionInvert);
 	_vm->paletteFadeOut();
 	_vm->_system->fillScreen(kColorBlack);
 	_vm->_screen->setViewportBrightness(255);
@@ -1810,7 +1810,7 @@ Apartment::Apartment(SupernovaEngine *vm, GameManager2 *gm) {
 	_objectState[3] = Object(_id, kStringMusicSystem, kStringMusicSystemDescription, MUSIC_SYSTEM, COMBINABLE, 4, 4, 0);
 	_objectState[4] = Object(_id, kStringSpeakers, kStringSpeakersDescription, NULLOBJECT, NULLTYPE, 5, 5, 0);
 	_objectState[5] = Object(_id, kStringPencils, kStringPencilsDescription, NULLOBJECT, UNNECESSARY, 6, 6, 0);
-	_objectState[6] = Object(_id, kStringMetalBlocks, kStringMetalBlocksDescription, MAGNET, TAKE | COMBINABLE, 10, 10, 3 + 128);
+	_objectState[6] = Object(_id, kStringMetalBlocks, kStringMetalBlocksDescription, MAGNET, TAKE | COMBINABLE, 10, 10, 3 + kSectionInvert);
 	_objectState[7] = Object(_id, kStringImage, kStringImageDescription, NULLOBJECT, UNNECESSARY, 7, 7, 0);
 	_objectState[8] = Object(_id, kStringCabinet, kStringCabinetDescription, CABINET, OPENABLE | CLOSED, 8, 8, 0);
 	_objectState[9] = Object(_id, kStringChair, kStringDefaultDescription, NULLOBJECT, NULLTYPE, 9, 9, 0);
@@ -1854,7 +1854,7 @@ bool Apartment::interact(Action verb, Object &obj1, Object &obj2) {
 			}
 		}
 	} else if (verb == ACTION_CLOSE && obj1._id == HATCH && obj1._type & OPENED) {
-		_vm->renderImage(1 + 128);
+		_vm->renderImage(1 + kSectionInvert);
 		setSectionVisible(2, false);
 		_vm->playSound(kAudioElevator1);
 		obj1._type &= ~OPENED;
@@ -1890,7 +1890,7 @@ Ship::Ship(SupernovaEngine *vm, GameManager2 *gm) {
 	_objectState[3] = Object(_id, kStringSwitch, kStringDefaultDescription, DOOR_SWITCH, PRESS | COMBINABLE, 255, 255, 0);
 	_objectState[4] = Object(_id, kStringSpaceSuit, kStringSpaceSuitDescription, SUIT, TAKE, 255, 255, 1);
 	_objectState[5] = Object(_id, kStringCable, kStringCableDescription1, RCABLE, COMBINABLE, 255, 255, 0);
-	_objectState[6] = Object(_id, kStringCable, kStringCableDescription2, CABLE, TAKE | COMBINABLE, 255, 255, 8 + 128);
+	_objectState[6] = Object(_id, kStringCable, kStringCableDescription2, CABLE, TAKE | COMBINABLE, 255, 255, 8 + kSectionInvert);
 
 	_outroText = 
 		_vm->getGameString(kStringIntro1) + '\0' + 
@@ -1945,7 +1945,7 @@ bool Ship::interact(Action verb, Object &obj1, Object &obj2) {
 		_vm->playSound(kAudioShip1);
 		while (_vm->_sound->isPlaying() && !_vm->shouldQuit())
 			_gm->wait(1);
-		_vm->renderImage(6 + 128);
+		_vm->renderImage(6 + kSectionInvert);
 		_vm->renderImage(7);
 		_objectState[3]._description = kStringShip1;
 		_objectState[2]._description = kStringShip2;
@@ -1969,13 +1969,13 @@ bool Ship::interact(Action verb, Object &obj1, Object &obj2) {
 	} else if (verb == ACTION_USE && Object::combine(obj1, obj2, CABLE, RCABLE)) {
 		_objectState[6]._description = kStringDefaultDescription;
 		if (_objectState[6]._click == 5)
-			_vm->renderImage(8 + 128);
+			_vm->renderImage(8 + kSectionInvert);
 		if (_objectState[6]._type & CARRIED)
 			_gm->_inventory.remove(_objectState[6]);
 		if (isSectionVisible(11) || isSectionVisible(10))
 			_vm->renderMessage(kStringShip5);
 		else if (isSectionVisible(9)) {
-			_vm->renderImage(9 + 128);
+			_vm->renderImage(9 + kSectionInvert);
 			_vm->renderImage(11);
 			if (!_shown[kMaxSection - 1]) {
 				kill();
@@ -2000,13 +2000,13 @@ bool Ship::interact(Action verb, Object &obj1, Object &obj2) {
 	} else if (verb == ACTION_USE && Object::combine(obj1, obj2, CABLE, DOOR_SWITCH) && isSectionVisible(7)) {
 		_objectState[6]._description = kStringDefaultDescription;
 		if (_objectState[6]._click == 5)
-			_vm->renderImage(8 + 128);
+			_vm->renderImage(8 + kSectionInvert);
 		if (_objectState[6]._type & CARRIED)
 			_gm->_inventory.remove(_objectState[6]);
 		if (isSectionVisible(11) || isSectionVisible(9))
 			_vm->renderMessage(kStringShip5);
 		else if (isSectionVisible(10)) {
-			_vm->renderImage(10 + 128);
+			_vm->renderImage(10 + kSectionInvert);
 			_vm->renderImage(11);
 			if (!_shown[kMaxSection - 1]) {
 				kill();
@@ -2037,27 +2037,27 @@ bool Ship::interact(Action verb, Object &obj1, Object &obj2) {
 		_vm->renderMessage(kStringShip7, kMessageRight);
 		_gm->waitOnInput(_gm->_messageDuration);
 		_vm->removeMessage();
-		_gm->reply(kStringShip8, 1, 1 + 128);
+		_gm->reply(kStringShip8, 1, 1 + kSectionInvert);
 		_vm->renderMessage(kStringShip9, kMessageRight);
 		_gm->waitOnInput(_gm->_messageDuration);
 		_vm->removeMessage();
-		_gm->reply(kStringShip10, 1, 1 + 128);
-		_gm->reply(kStringShip11, 1, 1 + 128);
-		_gm->reply(kStringShip12, 1, 1 + 128);
-		_gm->reply(kStringShip13, 1, 1 + 128);
+		_gm->reply(kStringShip10, 1, 1 + kSectionInvert);
+		_gm->reply(kStringShip11, 1, 1 + kSectionInvert);
+		_gm->reply(kStringShip12, 1, 1 + kSectionInvert);
+		_gm->reply(kStringShip13, 1, 1 + kSectionInvert);
 		_vm->renderMessage(kStringShip14, kMessageRight);
 		_gm->waitOnInput(_gm->_messageDuration);
 		_vm->removeMessage();
-		_gm->reply(kStringShip15, 1, 1 + 128);
+		_gm->reply(kStringShip15, 1, 1 + kSectionInvert);
 		_vm->renderMessage(kStringShip16, kMessageRight);
 		_gm->waitOnInput(_gm->_messageDuration);
 		_vm->removeMessage();
-		_gm->reply(kStringAha, 1, 1 + 128);
-		_gm->reply(kStringShip17, 1, 1 + 128);
+		_gm->reply(kStringAha, 1, 1 + kSectionInvert);
+		_gm->reply(kStringShip17, 1, 1 + kSectionInvert);
 		_vm->renderMessage(kStringShip18, kMessageRight);
 		_gm->waitOnInput(_gm->_messageDuration);
 		_vm->removeMessage();
-		_gm->reply(kStringShip19, 1, 1 + 128);
+		_gm->reply(kStringShip19, 1, 1 + kSectionInvert);
 		_gm->wait(16);
 		CursorMan.showMouse(false);
 		_vm->renderImage(2);
@@ -2066,7 +2066,7 @@ bool Ship::interact(Action verb, Object &obj1, Object &obj2) {
 			if (i == 9)
 				_vm->playSound(kAudioShip3);
 			_gm->wait(2);
-			_vm->renderImage(i + 128);
+			_vm->renderImage(i + kSectionInvert);
 		}
 		_vm->renderImage(12);
 		_gm->wait(18);
@@ -2142,7 +2142,7 @@ Pyramid::Pyramid(SupernovaEngine *vm, GameManager2 *gm) {
 	_id = PYRAMID;
 	_shown[0] = kShownTrue;
 
-	_objectState[0] = Object(_id, kStringRope, kStringDefaultDescription, ROPE, TAKE | COMBINABLE, 255, 255, 1 + 128);
+	_objectState[0] = Object(_id, kStringRope, kStringDefaultDescription, ROPE, TAKE | COMBINABLE, 255, 255, 1 + kSectionInvert);
 	_objectState[1] = Object(_id, kStringSign, kStringSignDescription, SIGN, COMBINABLE, 25, 25, 0);
 	_objectState[2] = Object(_id, kStringEntrance, kStringEntrance1Description, PYRA_ENTRANCE, EXIT, 27, 27, 0, PYR_ENTRANCE, 7);
 	_objectState[3] = Object(_id, kStringPyramid, kStringPyramidDescription, NULLOBJECT, NULLTYPE, 26, 26, 0);
@@ -2216,7 +2216,7 @@ bool Pyramid::interact(Action verb, Object &obj1, Object &obj2) {
 			int number = hole->_id - HOLE1;
 			int start = number / 5 * 5 + 2;
 			for (int i = 1; i <= 26; i++)
-				_vm->renderImage(i + 128);
+				_vm->renderImage(i + kSectionInvert);
 			for (int i = start; i <= start + number % 5; i++)
 				_vm->renderImage(i);
 			_objectState[0]._click = 30;
@@ -2233,7 +2233,7 @@ bool Pyramid::interact(Action verb, Object &obj1, Object &obj2) {
 	} else if (verb == ACTION_PULL && rope != nullptr && !(rope->_type & CARRIED) &&
 			!isSectionVisible(1)) {
 		for (int i = 2; i <= 26; i++)
-			_vm->renderImage(i + 128);
+			_vm->renderImage(i + kSectionInvert);
 		_vm->renderImage(1);
 		_objectState[0]._click = 29;
 		_gm->_rooms[HOLE_ROOM]->setSectionVisible(16, kShownFalse);
@@ -2241,7 +2241,7 @@ bool Pyramid::interact(Action verb, Object &obj1, Object &obj2) {
 		_gm->_rooms[HOLE_ROOM]->getObject(3)->_type = NULLTYPE;
 	} else if (verb == ACTION_TAKE && rope != nullptr && !(rope->_type & CARRIED)) {
 		for (int i = 2; i <= 26; i++)
-			_vm->renderImage(i + 128);
+			_vm->renderImage(i + kSectionInvert);
 		_gm->takeObject(*rope);
 		_gm->_rooms[HOLE_ROOM]->setSectionVisible(16, kShownFalse);
 		_gm->_rooms[HOLE_ROOM]->getObject(2)->_click = 255;
@@ -2745,7 +2745,7 @@ bool PuzzleFront::interact(Action verb, Object &obj1, Object &obj2) {
 			return true;
 		}
 		int a = _gm->_puzzleField[pos] + 1;
-		_vm->renderImage(a + 128);
+		_vm->renderImage(a + kSectionInvert);
 		image->_section[a].x1 = 95 + (newPos % 4) * 33;
 		image->_section[a].x2 = image->_section[a].x1 + 31;
 		image->_section[a].y1 = 24 + (newPos / 4) * 25;
@@ -3366,7 +3366,7 @@ InHole::InHole(SupernovaEngine *vm, GameManager2 *gm) {
 	_shown[0] = kShownTrue;
 
 	_objectState[0] = Object(_id, kStringRope, kStringDefaultDescription, ROPE, EXIT, 0, 0, 0, HOLE_ROOM, 2);
-	_objectState[1] = Object(_id, kStringNote, kStringNoteDescription1, NULLOBJECT, TAKE, 255, 255, 1 + 128);
+	_objectState[1] = Object(_id, kStringNote, kStringNoteDescription1, NULLOBJECT, TAKE, 255, 255, 1 + kSectionInvert);
 	_objectState[2] = Object(_id, kStringSlot, kStringSlotDescription3, SLOT, COMBINABLE, 1, 1, 0);
 }
 
@@ -3408,7 +3408,7 @@ Floordoor::Floordoor(SupernovaEngine *vm, GameManager2 *gm) {
 	_objectState[0] = Object(_id, kStringRight, kStringDefaultDescription, G_RIGHT, EXIT, 12, 12, 0, PYR_ENTRANCE, 14);
 	_objectState[1] = Object(_id, kStringLeft, kStringDefaultDescription, G_LEFT, EXIT, 11, 11, 0, PYR_ENTRANCE, 10);
 	_objectState[2] = Object(_id, kStringKnife1, kStringDefaultDescription, TKNIFE, TAKE | COMBINABLE, 255, 255, 9);
-	_objectState[3] = Object(_id, kStringRope, kStringDefaultDescription, ROPE, TAKE, 255, 255, 11+128);
+	_objectState[3] = Object(_id, kStringRope, kStringDefaultDescription, ROPE, TAKE, 255, 255, 11 + kSectionInvert);
 	_objectState[4] = Object(_id, kStringOpening, kStringOpeningDescription3, HOLE, EXIT, 4, 4, 0, FLOORDOOR_U, 12);
 	_objectState[5] = Object(_id, kStringStones, kStringDefaultDescription, STONES, COMBINABLE, 5, 5, 0);
 }
@@ -3578,7 +3578,7 @@ bool BstDoor::interact(Action verb, Object &obj1, Object &obj2) {
 			&& obj1._id >= BST1 && obj1._id <= BST16) {
 		int number = obj1._id - (BST1 - 1);
 		if (isSectionVisible(number))
-			_vm->renderImage(number + 128);
+			_vm->renderImage(number + kSectionInvert);
 		else
 			_vm->renderImage(number);
 		_vm->playSound(kAudioTaxiOpen);
@@ -3728,9 +3728,9 @@ bool Mask::interact(Action verb, Object &obj1, Object &obj2) {
 		else
 			_vm->renderImage(obj1._id - EYE1 + 1);
 		if (isSectionVisible(1) && isSectionVisible(2)) {
-			_gm->reply(kStringPyramid17, 3, 3 + 128);
-			_gm->reply(kStringPyramid18, 3, 3 + 128);
-			_gm->reply(kStringPyramid19, 3, 3 + 128);
+			_gm->reply(kStringPyramid17, 3, 3 + kSectionInvert);
+			_gm->reply(kStringPyramid18, 3, 3 + kSectionInvert);
+			_gm->reply(kStringPyramid19, 3, 3 + kSectionInvert);
 			_vm->playSound(kAudioAppearance1);
 			while(_vm->_sound->isPlaying())
 				_gm->wait(1);
@@ -3791,14 +3791,14 @@ void Museum::onEntrance() {
 		_vm->renderImage(0);
 		_vm->paletteFadeIn();
 		if (hasDinosaurHead) {
-			_gm->reply(kStringMuseum3, 1, 1 + 128);
-			_gm->reply(kStringMuseum4, 1, 1 + 128);
+			_gm->reply(kStringMuseum3, 1, 1 + kSectionInvert);
+			_gm->reply(kStringMuseum4, 1, 1 + kSectionInvert);
 			_gm->takeMoney(30000);
 			_vm->playSound(kAudioAppearance1);
 		} else {
-			_gm->reply(kStringMuseum5, 1, 1 + 128);
+			_gm->reply(kStringMuseum5, 1, 1 + kSectionInvert);
 			_gm->say(kStringMuseum23);
-			_gm->reply(kStringMuseum24, 1, 1 + 128);
+			_gm->reply(kStringMuseum24, 1, 1 + kSectionInvert);
 		}
 		_vm->paletteFadeOut();
 		_gm->changeRoom(CITY2);
@@ -3860,7 +3860,7 @@ bool Museum::interact(Action verb, Object &obj1, Object &obj2) {
 			_vm->playSound(kAudioTaxiOpen);
 		}
 	} else if (verb == ACTION_CLOSE && obj1._id == DOOR && (obj1._type & OPENED)) {
-		_vm->renderImage(1 + 128);
+		_vm->renderImage(1 + kSectionInvert);
 		_objectState[2]._type = EXIT | OPENABLE | CLOSED;
 		_vm->playSound(kAudioElevator1);
 	} else if (verb == ACTION_USE &&
@@ -3910,7 +3910,7 @@ bool MusEntrance::interact(Action verb, Object &obj1, Object &obj2) {
 		return true;
 	} else if (verb == ACTION_CLOSE && obj1._id == ENCRYPTED_DOOR &&
 			(obj1._type & OPENED)) {
-		_vm->renderImage(2 + 128);
+		_vm->renderImage(2 + kSectionInvert);
 		_objectState[0]._type = EXIT | OPENABLE | CLOSED;
 		_vm->playSound(kAudioElevator1);
 		return true;
@@ -4088,7 +4088,7 @@ bool Mus5::interact(Action verb, Object &obj1, Object &obj2) {
 		}
 	} else if (verb == ACTION_CLOSE && obj1._id == ENCRYPTED_DOOR && 
 				(obj1._type & OPENED)) {
-		_vm->renderImage(8 + 128);
+		_vm->renderImage(8 + kSectionInvert);
 		_objectState[1]._type = EXIT | OPENABLE | CLOSED;
 		_gm->_rooms[MUS6]->getObject(0)->_type = EXIT | OPENABLE | CLOSED;
 		_gm->_rooms[MUS6]->setSectionVisible(7, kShownFalse);
@@ -4138,7 +4138,7 @@ bool Mus6::interact(Action verb, Object &obj1, Object &obj2) {
 		}
 	} else if (verb == ACTION_CLOSE && obj1._id == ENCRYPTED_DOOR && 
 				(obj1._type & OPENED)) {
-		_vm->renderImage(7 + 128);
+		_vm->renderImage(7 + kSectionInvert);
 		_objectState[0]._type = EXIT | OPENABLE | CLOSED;
 		_gm->_rooms[MUS5]->getObject(1)->_type = EXIT | OPENABLE | CLOSED;
 		_gm->_rooms[MUS5]->setSectionVisible(8, kShownFalse);
@@ -4219,7 +4219,7 @@ bool Mus8::interact(Action verb, Object &obj1, Object &obj2) {
 		}
 	} else if (verb == ACTION_CLOSE && obj1._id == ENCRYPTED_DOOR && 
 				(obj1._type & OPENED)) {
-		_vm->renderImage(2 + 128);
+		_vm->renderImage(2 + kSectionInvert);
 		_objectState[1]._type = EXIT | OPENABLE | CLOSED;
 		_gm->_rooms[MUS9]->getObject(0)->_type = EXIT | OPENABLE | CLOSED;
 		_gm->_rooms[MUS9]->setSectionVisible(1, kShownFalse);
@@ -4266,7 +4266,7 @@ bool Mus9::interact(Action verb, Object &obj1, Object &obj2) {
 		}
 	} else if (verb == ACTION_CLOSE && obj1._id == ENCRYPTED_DOOR && 
 				(obj1._type & OPENED)) {
-		_vm->renderImage(1 + 128);
+		_vm->renderImage(1 + kSectionInvert);
 		_objectState[0]._type = EXIT | OPENABLE | CLOSED;
 		_gm->_rooms[MUS8]->getObject(1)->_type = EXIT | OPENABLE | CLOSED;
 		_gm->_rooms[MUS8]->setSectionVisible(2, kShownFalse);
@@ -4401,7 +4401,7 @@ bool MusRound::interact(Action verb, Object &obj1, Object &obj2) {
 		}
 	} else if (verb == ACTION_CLOSE && obj1._id == ENCRYPTED_DOOR && 
 				(obj1._type & OPENED)) {
-		_vm->renderImage(1 + 128);
+		_vm->renderImage(1 + kSectionInvert);
 		_objectState[0]._type = EXIT | OPENABLE | CLOSED;
 		_gm->_rooms[MUS9]->getObject(2)->_type = EXIT | OPENABLE | CLOSED;
 		_vm->playSound(kAudioElevator1);

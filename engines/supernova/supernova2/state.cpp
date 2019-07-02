@@ -230,26 +230,7 @@ void GameManager2::destroyRooms() {
 }
 
 void GameManager2::initState() {
-	_currentInputObject = &_nullObject;
-	_inputObject[0] = &_nullObject;
-	_inputObject[1] = &_nullObject;
-	_inputVerb = ACTION_WALK;
-	_processInput = false;
-	_guiEnabled = true;
-	_animationEnabled = true;
-	_roomBrightness = 255;
-	_mouseClicked = false;
-	_keyPressed = false;
-	_mouseX = -1;
-	_mouseY = -1;
-	_mouseField = -1;
-	_inventoryScroll = 0;
-	_restTime = 0;
-	_oldTime = g_system->getMillis();
-	_timerPaused = 0;
-	_timePaused = false;
-	_messageDuration = 0;
-	_animationTimer = 0;
+	GameManager::initState();
 	_mapOn = false;
 	_steps = false;
 	_cracking = false;
@@ -257,17 +238,6 @@ void GameManager2::initState() {
 	RoomId startSecurityTab[10] = {MUS6, MUS7, MUS11, MUS10, MUS3, MUS2, MUS1, MUS8, MUS9, MUS5};
 	for (int i = 0; i < 10; i++)
 		_securityTab[i] = startSecurityTab[i];
-
-	_currentSentence = -1;
-	for (int i = 0 ; i < 6 ; ++i) {
-		_sentenceNumber[i] = -1;
-		_texts[i] = kNoString;
-		_rows[i] = 0;
-		_rowsStart[i] = 0;
-		_dials[i] = 1;
-	}
-
-	_prevImgId = 0;
 
 	_state._money = 20;
 	_state._startTime = 0;
@@ -296,7 +266,10 @@ void GameManager2::initState() {
 	int16 startPuzzleTab[15] = {12, 3, 14, 1, 11, 0, 2, 13, 9, 5, 4, 10, 7, 6, 8};
 	for (int i = 0; i < 15; i++)
 		_state._puzzleTab[i] = startPuzzleTab[i];
-	_dead = false;
+
+	for (int i = 0 ; i < 6 ; ++i) {
+		_dials[i] = 1;
+	}
 }
 
 void GameManager2::initRooms() {
@@ -542,7 +515,7 @@ bool GameManager2::genericInteract(Action verb, Object &obj1, Object &obj2) {
 			if (!(o1->_type & CARRIED))
 			{
 				_vm->renderImage(1);
-				_vm->renderImage(2 + 128);
+				_vm->renderImage(2 + kSectionInvert);
 				_currentRoom->getObject(0)->_click = 255;
 			} else
 				_inventory.remove(*o1);
