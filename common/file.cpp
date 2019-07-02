@@ -155,24 +155,10 @@ bool DumpFile::open(const String &filename, bool createPath) {
 	assert(!filename.empty());
 	assert(!_handle);
 
-	if (createPath) {
-		for (uint32 i = 0; i < filename.size(); ++i) {
-			if (filename[i] == '/' || filename[i] == '\\') {
-				Common::String subpath = filename;
-				subpath.erase(i);
-				if (subpath.empty()) continue;
-				AbstractFSNode *node = g_system->getFilesystemFactory()->makeFileNodePath(subpath);
-				if (node->exists()) {
-					delete node;
-					continue;
-				}
-				if (!node->createDirectory()) warning("DumpFile: unable to create directories from path prefix");
-				delete node;
-			}
-		}
-	}
-
 	FSNode node(filename);
+	if (createPath)
+		node.getParent().createDirectoryRecursive();
+
 	return open(node);
 }
 
