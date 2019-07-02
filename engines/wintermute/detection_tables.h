@@ -242,10 +242,6 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("bookofgron", "",
 		WME_ENTRY1s("data.dcp", "e61b2ebee044a82fa0f8ca0fce2c8946", 83129531), Common::RU_RUS, ADGF_UNSTABLE, LATEST_VERSION),
 
-	// Carol Reed 4 - East Side Story (Demo)
-	WME_WINENTRY("carolreed4", "Demo",
-		WME_ENTRY1s("data.dcp", "b3f8b09bb4b05ee3e9d14697525257f9", 59296246), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, LATEST_VERSION),
-
 	// Carol Reed 4 - East Side Story (English)
 	WME_WINENTRY("carolreed4", "",
 		WME_ENTRY1s("data.dcp", "b26377797f060afc2d440d820100c1ce", 529320536), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
@@ -253,6 +249,10 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Carol Reed 4 - East Side Story (Russian)
 	WME_WINENTRY("carolreed4", "",
 		WME_ENTRY1s("data.dcp", "549e6fb7afebcc4a8092e3898a5c5cc3", 618787625), Common::RU_RUS, ADGF_UNSTABLE, LATEST_VERSION),
+
+	// Carol Reed 4 - East Side Story (Demo)
+	WME_WINENTRY("carolreed4", "Demo",
+		WME_ENTRY1s("data.dcp", "b3f8b09bb4b05ee3e9d14697525257f9", 59296246), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, LATEST_VERSION),
 
 	// Carol Reed 5 - The Colour of Murder
 	WME_WINENTRY("carolreed5", "",
@@ -266,13 +266,13 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("carolreed6", "",
 		WME_ENTRY1s("data.dcp", "0e4c532beecf23d85012168753f41189", 456258147), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
 
-	// Carol Reed 7 - Blue Madonna (Demo)
-	WME_WINENTRY("carolreed7", "Demo",
-		WME_ENTRY1s("data.dcp", "0372ad0c775266f6355e9e8ae397a2f1", 103719442), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, LATEST_VERSION),
-
 	// Carol Reed 7 - Blue Madonna
 	WME_WINENTRY("carolreed7", "",
 		WME_ENTRY1s("data.dcp", "24e3db3e2fabfc956713796d87a3efb0", 495471147), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+
+	// Carol Reed 7 - Blue Madonna (Demo)
+	WME_WINENTRY("carolreed7", "Demo",
+		WME_ENTRY1s("data.dcp", "0372ad0c775266f6355e9e8ae397a2f1", 103719442), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, LATEST_VERSION),
 
 	// Carol Reed 8 - Amber's Blood
 	WME_WINENTRY("carolreed8", "",
