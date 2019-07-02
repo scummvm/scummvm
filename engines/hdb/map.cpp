@@ -700,7 +700,7 @@ void Map::draw() {
 	}
 
 	// Animate MEDIUM Map Tiles
-	if (!(_animCycle % kAnimFastFrames)) {
+	if (!(_animCycle % kAnimMediumFrames)) {
 		for (Common::Array<uint32>::iterator it = _listBGAnimMedium.begin(); it != _listBGAnimMedium.end(); it++) {
 			_background[(*it)] = g_hdb->_gfx->animateTile(_background[(*it)]);
 		}
@@ -711,7 +711,7 @@ void Map::draw() {
 	}
 
 	// Animate SLOW Map Tiles
-	if (!(_animCycle % kAnimFastFrames)) {
+	if (!(_animCycle % kAnimSlowFrames)) {
 		for (Common::Array<uint32>::iterator it = _listBGAnimSlow.begin(); it != _listBGAnimSlow.end(); it++) {
 			_background[(*it)] = g_hdb->_gfx->animateTile(_background[(*it)]);
 		}
@@ -802,11 +802,11 @@ void Map::addBGTileAnimation(int x, int y) {
 	uint32 flags = tile->_flags;
 
 	// BACKGROUND
-	if (flags & kFlagAnimFast) {
+	if ((flags & kFlagAnimFast) == kFlagAnimFast) {	// check 'fast' first since it's a combo of slow & medium
 		_listBGAnimFast.push_back(i);
-	} else if (flags & kFlagAnimSlow) {
+	} else if ((flags & kFlagAnimSlow) == kFlagAnimSlow) {
 		_listBGAnimSlow.push_back(i);
-	} else if (flags & kFlagAnimMedium) {
+	} else if ((flags & kFlagAnimMedium) == kFlagAnimMedium) {
 		_listBGAnimMedium.push_back(i);
 	}
 }
