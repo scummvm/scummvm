@@ -1002,15 +1002,33 @@ void aiAccountantInit2(AIEntity *e) {
 }
 
 void aiFrogStatueInit(AIEntity *e) {
-	warning("STUB: AI: aiFrogStatueInit required");
+	e->moveSpeed = kPushMoveSpeed;
+	e->aiAction = aiFrogStatueAction;
 }
 
 void aiFrogStatueInit2(AIEntity *e) {
-	warning("STUB: AI: aiFrogStatueInit2 required");
+	// point all frog statue MOVE frames to the standing one
+	e->blinkFrames =
+		e->movedownFrames =
+		e->moveleftFrames =
+		e->moverightFrames =
+		e->moveupFrames = 1;
+
+	e->blinkGfx[0] =
+		e->movedownGfx[0] =
+		e->moveupGfx[0] =
+		e->moveleftGfx[0] =
+		e->moverightGfx[0] = e->standdownGfx[0];
+
+	e->draw = e->standdownGfx[0];			// standing frame - doesn't move
 }
 
 void aiFrogStatueAction(AIEntity *e) {
-	warning("STUB: AI: aiFrogStatueAction required");
+	// if frog statue isn't moving somewhere, don't move it
+	if (!e->goalX)
+		return;
+
+	g_hdb->_ai->animateEntity(e);
 }
 
 void aiRoboStunnerAction(AIEntity *e) {
