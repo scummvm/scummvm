@@ -1307,11 +1307,12 @@ void aiClipboardInit2(AIEntity *e) {
 }
 
 void aiNoteInit(AIEntity *e) {
-	warning("STUB: AI: aiNoteInit required");
+	strcpy(e->printedName, "a Note");
+	e->aiAction = aiGetItemAction;
 }
 
 void aiNoteInit2(AIEntity *e) {
-	warning("STUB: AI: aiNoteInit2 required");
+	e->draw = e->standdownGfx[0];
 }
 
 void aiKeycardWhiteInit(AIEntity *e) {
