@@ -9,4 +9,4 @@ Please make sure to read our guidelines for contributions on our
 * License: GPLv2+
 
 If you have any questions about code, style, procedure, or anything else, feel
-free to contact us on our mailing list at scummvm-devel@lists.sourceforge.net.
+free to contact us on our mailing list at scummvm-devel@lists.scummvm.org.

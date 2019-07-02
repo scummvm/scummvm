@@ -725,9 +725,8 @@ will sometimes cause slowdown in your game. However, if your flash card
 isn't big enough to fit the audio files on, you will have no choice!
 
 To convert your audio you will need a copy of the ScummVM Tools package
-<http://sourceforge.net/project/showfiles.php?group_id=37116&package_id=67433>.
-You will also need a copy of the LAME MP3 encoder
-<http://www.free-codecs.com/Lame_Encoder_download.htm>.
+<https://www.scummvm.org/downloads/#tools>. You will also need a copy of
+the LAME MP3 encoder <http://www.free-codecs.com/Lame_Encoder_download.htm>.
 
 Once this is all installed and set up, the process to encode your audio
 varies from game to game, but the Lucasarts games can all be compressed
@@ -841,9 +840,9 @@ take the source code to the project and make their own additions and fixes,
 contributing them back to the authors for consideration for the next version.
 
 To build ScummVM DS from source, it's probably better to checkout the
-latest version of the code from the ScummVM SVN repository. The ScummVM
-Sourceforge.net homepage <http://sourceforge.net/projects/scummvm> has
-all the information about how to do this.
+latest version of the code from the ScummVM Git repository. The ScummVM
+Wiki <https://wiki.scummvm.org/index.php?title=Compiling_ScummVM/Nintendo_DS>
+has all the information about how to do this.
 
 By default, ScummVM DS expects to find libmad, an MP3 compressor library
 targeted for the ARM platform.  If you don't have this, you must disable
