@@ -1232,11 +1232,12 @@ void aiDragonUse(AIEntity *e) {
 }
 
 void aiEnvelopeGreenInit(AIEntity *e) {
-	warning("STUB: AI: aiEnvelopeGreenInit required");
+	strcpy(e->printedName, "Green envelope");
+	e->aiAction = aiGetItemAction;
 }
 
 void aiEnvelopeGreenInit2(AIEntity *e) {
-	warning("STUB: AI: aiEnvelopeGreenInit2 required");
+	e->draw = e->standdownGfx[0];
 }
 
 void aiGemBlueInit(AIEntity *e) {
@@ -1496,27 +1497,30 @@ void aiCellInit(AIEntity *e) {
 }
 
 void aiEnvelopeWhiteInit(AIEntity *e) {
-	warning("STUB: AI: aiEnvelopeWhiteInit required");
+	strcpy(e->printedName, "White envelope");
+	e->aiAction = aiGetItemAction;
 }
 
 void aiEnvelopeWhiteInit2(AIEntity *e) {
-	warning("STUB: AI: aiEnvelopeWhiteInit2 required");
+	e->draw = e->standdownGfx[0];
 }
 
 void aiEnvelopeBlueInit(AIEntity *e) {
-	warning("STUB: AI: aiEnvelopeBlueInit required");
+	strcpy(e->printedName, "Blue envelope");
+	e->aiAction = aiGetItemAction;
 }
 
 void aiEnvelopeBlueInit2(AIEntity *e) {
-	warning("STUB: AI: aiEnvelopeBlueInit2 required");
+	e->draw = e->standdownGfx[0];
 }
 
 void aiEnvelopeRedInit(AIEntity *e) {
-	warning("STUB: AI: aiEnvelopeRedInit required");
+	strcpy(e->printedName, "Red envelope");
+	e->aiAction = aiGetItemAction;
 }
 
 void aiEnvelopeRedInit2(AIEntity *e) {
-	warning("STUB: AI: aiEnvelopeRedInit2 required");
+	e->draw = e->standdownGfx[0];
 }
 
 void aiTransceiverInit(AIEntity *e) {
