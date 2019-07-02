@@ -706,7 +706,107 @@ void aiBarrelExplodeAction(AIEntity *e) {
 }
 
 void aiBarrelExplodeSpread(AIEntity *e) {
-	warning("STUB: AI: aiBarrelExplodeSpread required");
+	AIEntity *e2;
+	int	x = e->tileX;
+	int	y = e->tileY;
+	int	xv, yv;
+	int	index = e->animFrame;
+	int	xv1[4] = {-1,  1, -1,  0};
+	int yv1[4] = {-1, -1,  0, -1};
+	int xv2[4] = {1,  0,  1, -1};
+	int yv2[4] = {0,  1,  1,  1};
+
+	// are we just starting an explosion ring?
+	if (e->animDelay != e->animCycle)
+		return;
+
+	// the animation frame is the index into which set of 2 explosions to spawn
+	xv = xv1[index];
+	yv = yv1[index];
+
+	// explosion 1: check to see if we can explode (non-solid tile)
+	// if so, spawn it and mark it in the explosion matrix
+	if (!(g_hdb->_map->getMapBGTileFlags(x + xv, y + yv) & kFlagSolid) && !g_hdb->_map->explosionExist(x + xv, y + yv)) {
+		aiBarrelBlowup(e, x + xv, y + yv);
+		// are we blowing up on another BOOMBARREL?  if so, start it exploding.
+		e2 = g_hdb->_ai->findEntity(x + xv, y + yv);
+		if (e2 && e2->state != STATE_EXPLODING) {
+			switch (e2->type) {
+			case AI_GUY:
+				g_hdb->_ai->killPlayer(DEATH_FRIED);
+				break;
+			case AI_BOOMBARREL:
+				aiBarrelExplode(e2);
+				break;
+			case AI_OMNIBOT:
+			case AI_TURNBOT:
+			case AI_SHOCKBOT:
+			case AI_RIGHTBOT:
+			case AI_PUSHBOT:
+			case AI_RAILRIDER:
+			case AI_MAINTBOT:
+			case AI_DEADEYE:
+			case AI_FATFROG:
+			case AI_ICEPUFF:
+			case AI_MEERKAT:
+			case AI_BUZZFLY:
+			case AI_GOODFAIRY:
+			case AI_GATEPUDDLE:
+			case AI_BADFAIRY:
+				g_hdb->_ai->addAnimateTarget(x * kTileWidth,
+					y * kTileHeight, 0, 3, ANIM_NORMAL, false, false, GROUP_EXPLOSION_BOOM_SIT);
+				if (e2->type != AI_LASERBEAM)
+					g_hdb->_ai->removeEntity(e2);
+				break;
+			default:
+				break;
+			}
+		}
+	}
+
+	xv = xv2[index];
+	yv = yv2[index];
+
+	// explosion 2: check to see if we can explode (non-solid tile)
+	// if so, spawn it and mark it in the explosion matrix
+
+	if (!(g_hdb->_map->getMapBGTileFlags(x + xv, y + yv) & kFlagSolid) && !g_hdb->_map->explosionExist(x + xv, y + yv)) {
+		aiBarrelBlowup(e, x + xv, y + yv);
+		// are we blowing up on another BOOMBARREL?  if so, start it exploding.
+		e2 = g_hdb->_ai->findEntity(x + xv, y + yv);
+		if (e2 && e2->state != STATE_EXPLODING) {
+			switch (e2->type) {
+			case AI_GUY:
+				g_hdb->_ai->killPlayer(DEATH_FRIED);
+				break;
+			case AI_BOOMBARREL:
+				aiBarrelExplode(e2);
+				break;
+			case AI_OMNIBOT:
+			case AI_TURNBOT:
+			case AI_SHOCKBOT:
+			case AI_RIGHTBOT:
+			case AI_PUSHBOT:
+			case AI_RAILRIDER:
+			case AI_MAINTBOT:
+			case AI_DEADEYE:
+			case AI_FATFROG:
+			case AI_ICEPUFF:
+			case AI_MEERKAT:
+			case AI_BUZZFLY:
+			case AI_GOODFAIRY:
+			case AI_GATEPUDDLE:
+			case AI_BADFAIRY:
+				g_hdb->_ai->addAnimateTarget(x * kTileWidth,
+					y * kTileHeight, 0, 3, ANIM_NORMAL, false, false, GROUP_EXPLOSION_BOOM_SIT);
+				if (e2->type != AI_LASERBEAM)
+					g_hdb->_ai->removeEntity(e2);
+				break;
+			default:
+				break;
+			}
+		}
+	}
 }
 
 void aiBarrelExplosionEnd(int x, int y) {
