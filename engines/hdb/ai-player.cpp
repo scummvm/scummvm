@@ -833,19 +833,148 @@ void aiScientistInit2(AIEntity *e) {
 }
 
 void aiSlugAttackAction(AIEntity *e) {
-	warning("STUB: AI: aiSlugAttackAction required");
+	int xv[5] = {9, 0, 0, -1, 1}, yv[5] = {9, -1, 1, 0, 0};
+	AIEntity *hit;
+	int	result;
+
+	if (e->goalX)
+		g_hdb->_ai->animateEntity(e);
+
+	g_hdb->_ai->checkActionList(e, e->tileX, e->tileY, false);
+	g_hdb->_ai->checkAutoList(e, e->tileX, e->tileY);
+
+	hit = g_hdb->_ai->findEntityIgnore(e->tileX, e->tileY, e);
+	if (hit && hit->type == AI_GUY)
+		hit = NULL;
+
+	// don't hit anything you can walk through...
+	if (hit && true == g_hdb->_ai->getTableEnt(hit->type))
+		hit = NULL;
+
+	// don't hit floating stuff
+	if (hit && hit->state == STATE_FLOATING)
+		hit = NULL;
+
+	uint32 bg_flags = g_hdb->_map->getMapBGTileFlags(e->tileX, e->tileY);
+	uint32 fg_flags = g_hdb->_map->getMapFGTileFlags(e->tileX, e->tileY);
+	result = (e->level == 1 ? (bg_flags & (kFlagSolid)) : !(fg_flags & kFlagGrating) && (bg_flags & (kFlagSolid)));
+	if (hit) {
+		warning("STUB: Play SND_SLUG_HIT");
+		warning("STUB: Play MetalOrFleshSnd");
+		switch (hit->type) {
+		case AI_MEERKAT:
+			if (hit->sequence > 2) {		// out of the ground?
+				g_hdb->_ai->addAnimateTarget(hit->x, hit->y, 0, 3, ANIM_NORMAL, false, false, GROUP_STEAM_PUFF_SIT);
+				g_hdb->_ai->stunEnemy(hit, 8);
+			} else {
+				g_hdb->_ai->setEntityGoal(e, e->tileX + xv[e->dir], e->tileY + yv[e->dir]);
+				e->state = STATE_MOVEDOWN;		// so it will draw & animate
+				g_hdb->_ai->animateEntity(e);
+				return;
+			}
+			break;
+		case AI_ICEPUFF:
+			if (hit->state == STATE_ICEP_APPEAR ||
+				hit->state == STATE_ICEP_THROWDOWN ||
+				hit->state == STATE_ICEP_THROWLEFT ||
+				hit->state == STATE_ICEP_THROWRIGHT) {
+				g_hdb->_ai->addAnimateTarget(hit->x, hit->y, 0, 3, ANIM_NORMAL, false, false, GROUP_STEAM_PUFF_SIT);
+				g_hdb->_ai->stunEnemy(hit, 8);
+			} else {
+				g_hdb->_ai->setEntityGoal(e, e->tileX + xv[e->dir], e->tileY + yv[e->dir]);
+				e->state = STATE_MOVEDOWN;		// so it will draw & animate
+				g_hdb->_ai->animateEntity(e);
+				return;
+			}
+			break;
+		case AI_OMNIBOT:
+		case AI_TURNBOT:
+		case AI_SHOCKBOT:
+		case AI_RIGHTBOT:
+		case AI_PUSHBOT:
+		case AI_LISTENBOT:
+		case AI_MAINTBOT:
+		case AI_FATFROG:
+		case AI_BADFAIRY:
+		case AI_BUZZFLY:
+			g_hdb->_ai->addAnimateTarget(e->x, e->y, 0, 3, ANIM_NORMAL, false, false, GROUP_STEAM_PUFF_SIT);
+			g_hdb->_ai->stunEnemy(hit, 8);
+			break;
+
+		case AI_CHICKEN:
+			g_hdb->_ai->addAnimateTarget(hit->x, hit->y, 0, 3, ANIM_NORMAL, false, false, GROUP_STEAM_PUFF_SIT);
+			g_hdb->_ai->removeEntity(hit);
+			break;
+		case AI_BOOMBARREL:
+			warning("STUB: Play SND_CLUB_HIT_METAL");
+			aiBarrelExplode(hit);
+			aiBarrelBlowup(hit, hit->tileX, hit->tileY);
+			break;
+			// ACTION MODE entities go away - except the FOURFIRER
+		case AI_GATEPUDDLE:
+			g_hdb->_ai->addAnimateTarget(e->x, e->y, 0, 7, ANIM_NORMAL, false, false, TELEPORT_FLASH);
+			g_hdb->_ai->removeEntity(hit);
+			warning("STUB: Play SND_TELEPORT");
+			break;
+		case AI_DEADEYE:
+			g_hdb->_ai->addAnimateTarget(e->tileX * kTileWidth,
+				e->tileY * kTileHeight, 0, 3, ANIM_NORMAL, false, false, GROUP_EXPLOSION_BOOM_SIT);
+			g_hdb->_ai->removeEntity(hit);
+			warning("STUB: Play SND_BARREL_EXPLODE");
+			break;
+
+		case AI_NONE:
+			if (hit->value1 == (int)AI_DRAGON) {
+				// pull dragon's coords out of "lua_func_use" string.
+				char num1[4], num2[4];
+				memset(num1, 0, 4);
+				memset(num2, 0, 4);
+				memcpy(num1, hit->luaFuncUse, 3);
+				memcpy(num2, hit->luaFuncUse + 3, 3);
+
+				warning("STUB: Play SND_CLUB_HIT_FLESH");
+				AIEntity *found = g_hdb->_ai->findEntity(atoi(num1), atoi(num2));
+				if (found)
+					aiDragonWake(found);
+				g_hdb->_ai->addAnimateTarget(e->x, e->y, 0, 3, ANIM_NORMAL, false, false, GEM_FLASH);
+			}
+			break;
+		case AI_DRAGON:
+			aiDragonWake(hit);
+			break;
+		default:
+			break;
+		}
+		g_hdb->_ai->removeEntity(e);	// bye bye!
+		return;
+	} else if (result) {		// hit a wall
+		warning("STUB: Play SND_SLUG_HIT");
+		g_hdb->_ai->addAnimateTarget(e->x, e->y, 0, 3, ANIM_NORMAL, false, false, GROUP_STEAM_PUFF_SIT);
+		g_hdb->_ai->removeEntity(e);
+	} else {
+		g_hdb->_ai->setEntityGoal(e, e->tileX + xv[e->dir], e->tileY + yv[e->dir]);
+		e->state = STATE_MOVEDOWN;		// so it will draw & animate
+		g_hdb->_ai->animateEntity(e);
+	}
 }
 
 void aiSlugAttackDraw(AIEntity *e, int mx, int my) {
-	warning("STUB: AI: aiSlugAttackDraw required");
+	g_hdb->_ai->_slugAttackGfx[e->animFrame]->drawMasked(e->x - mx + 8, e->y - my + 8);
 }
 
 void aiSlugAttackInit(AIEntity *e) {
-	warning("STUB: AI: aiSlugAttackInit required");
+	int xv[5] = {9, 0, 0, -1, 1}, yv[5] = {9, -1, 1, 0, 0};
+	e->moveSpeed = kPlayerMoveSpeed << 1;
+	g_hdb->_ai->setEntityGoal(e, e->tileX + xv[e->dir], e->tileY + yv[e->dir]);
+	e->draw = NULL;					// use custom draw function
+	e->aiDraw = aiSlugAttackDraw;
+	e->state = STATE_MOVEDOWN;		// so it will draw & animate
+	e->aiAction = aiSlugAttackAction;
+	warning("STUB: Play SND_SLUG_FIRE");
 }
 
 void aiSlugAttackInit2(AIEntity *e) {
-	warning("STUB: AI: aiSlugAttackInit2 required");
+	e->movedownFrames = 4;
 }
 
 void aiDeadWorkerInit(AIEntity *e) {
