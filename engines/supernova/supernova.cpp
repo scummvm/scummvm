@@ -510,14 +510,87 @@ void SupernovaEngine::showHelpScreen2() {
 	_gm->animationOn();
 }
 
-Common::Error SupernovaEngine::showTextReader(const char *filename) {
-	Common::File file;
+Common::SeekableReadStream *SupernovaEngine::getBlockFromDatFile(Common::String name) {
+	Common::String cur_lang = ConfMan.get("language");
 
-	if (!file.open(filename)) {
-		GUIErrorMessageFormat(_("Unable to find '%s' in game folder."), filename);
-		return Common::kReadingFailed;
+	// Validate the data file header
+	Common::File f;
+	char id[5], lang[5];
+	id[4] = lang[4] = '\0';
+	if (_MSPart == 1) {
+		if (!f.open(SUPERNOVA_DAT)) {
+			GUIErrorMessageFormat(_("Unable to locate the '%s' engine data file."), SUPERNOVA_DAT);
+			return nullptr;
+		}
+		f.read(id, 3);
+		if (strncmp(id, "MSN", 3) != 0) {
+			GUIErrorMessageFormat(_("The '%s' engine data file is corrupt."), SUPERNOVA_DAT);
+			return nullptr;
+		}
+
+		int version = f.readByte();
+		if (version != SUPERNOVA_DAT_VERSION) {
+			GUIErrorMessageFormat(
+				_("Incorrect version of the '%s' engine data file found. Expected %d but got %d."),
+				SUPERNOVA_DAT, SUPERNOVA_DAT_VERSION, version);
+			return nullptr;
+		}
 	}
-	Common::SeekableReadStream *stream = file.readStream(file.size());
+	else if (_MSPart == 2) {
+		if (!f.open(SUPERNOVA2_DAT)) {
+			GUIErrorMessageFormat(_("Unable to locate the '%s' engine data file."), SUPERNOVA2_DAT);
+			return nullptr;
+		}
+		f.read(id, 3);
+		if (strncmp(id, "MS2", 3) != 0) {
+			GUIErrorMessageFormat(_("The '%s' engine data file is corrupt."), SUPERNOVA2_DAT);
+			return nullptr;
+		}
+
+		int version = f.readByte();
+		if (version != SUPERNOVA2_DAT_VERSION) {
+			GUIErrorMessageFormat(
+				_("Incorrect version of the '%s' engine data file found. Expected %d but got %d."),
+				SUPERNOVA2_DAT, SUPERNOVA2_DAT_VERSION, version);
+			return nullptr;
+		}
+	}
+
+
+	while (!f.eos()) {
+		f.read(id, 4);
+		f.read(lang, 4);
+		uint32 size = f.readUint32LE();
+		if (f.eos())
+			break;
+		if (name == id && cur_lang == lang) {
+			return f.readStream(size);
+		} else
+			f.skip(size);
+	}
+
+	return nullptr;
+}
+
+Common::Error SupernovaEngine::showTextReader(const char *extension) {
+	Common::SeekableReadStream *stream;
+	Common::String blockName;
+	blockName = Common::String::format("%s%d", extension, _MSPart);
+	blockName.toUppercase();
+	if ((stream = getBlockFromDatFile(blockName)) == nullptr) {
+		Common::File file;
+		Common::String filename;
+		if (_MSPart == 1)
+			filename = Common::String::format("msn.%s", extension);
+		if (_MSPart == 2)
+			filename = Common::String::format("ms2.%s", extension);
+
+		if (!file.open(filename)) {
+			GUIErrorMessageFormat(_("Unable to find '%s' in game folder or the engine data file."), filename);
+			return Common::kReadingFailed;
+		}
+		stream = file.readStream(file.size());
+	}
 	int linesInFile = 0;
 	while (!stream->eos()) {
 		stream->readLine();

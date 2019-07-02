@@ -105,7 +105,8 @@ public:
 	void setGameString(int idx, const Common::String &string);
 	void showHelpScreen1();
 	void showHelpScreen2();
-	Common::Error showTextReader(const char *filename);
+	Common::SeekableReadStream *getBlockFromDatFile(Common::String name);
+	Common::Error showTextReader(const char *extension);
 
 	// forwarding calls
 	void playSound(AudioId sample);

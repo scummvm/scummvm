@@ -265,19 +265,13 @@ void GameManager::processInput(Common::KeyState &state) {
 		// show game manual
 		if (!_guiEnabled)
 			return;
-		if (_vm->_MSPart == 1)
-			_vm->showTextReader("msn.doc");
-		else if (_vm->_MSPart == 2)
-			_vm->showTextReader("ms2.doc");
+		_vm->showTextReader("doc");
 		break;
 	case Common::KEYCODE_F3:
 		// show game info
 		if (!_guiEnabled)
 			return;
-		if (_vm->_MSPart == 1)
-			_vm->showTextReader("msn.inf");
-		else if (_vm->_MSPart == 2)
-			_vm->showTextReader("ms2.inf");
+		_vm->showTextReader("inf");
 		break;
 	case Common::KEYCODE_F4:
 		if (!_guiEnabled)
