@@ -1298,11 +1298,12 @@ void aiBookInit2(AIEntity *e) {
 }
 
 void aiClipboardInit(AIEntity *e) {
-	warning("STUB: AI: aiClipboardInit required");
+	strcpy(e->printedName, "a Clipboard");
+	e->aiAction = aiGetItemAction;
 }
 
 void aiClipboardInit2(AIEntity *e) {
-	warning("STUB: AI: aiClipboardInit2 required");
+	e->draw = e->standdownGfx[0];
 }
 
 void aiNoteInit(AIEntity *e) {
