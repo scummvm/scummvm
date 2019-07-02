@@ -266,6 +266,10 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("carolreed6", "",
 		WME_ENTRY1s("data.dcp", "0e4c532beecf23d85012168753f41189", 456258147), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
 
+	// Carol Reed 6 - Black Circle (Demo)
+	WME_WINENTRY("carolreed6", "Demo",
+		WME_ENTRY1s("data.dcp", "e18bc4adc843e6dcf08cc20be00d1608", 94399373), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, LATEST_VERSION),
+
 	// Carol Reed 7 - Blue Madonna
 	WME_WINENTRY("carolreed7", "",
 		WME_ENTRY1s("data.dcp", "24e3db3e2fabfc956713796d87a3efb0", 495471147), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
@@ -278,17 +282,37 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("carolreed8", "",
 		WME_ENTRY1s("data.dcp", "859d16b0d5b9b255e470cbded2c6cedc", 502714557), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
 
+	// Carol Reed 8 - Amber's Blood (Demo)
+	WME_WINENTRY("carolreed8", "Demo",
+		WME_ENTRY1s("data.dcp", "e8c6b6e5d2e79bc87bf591f47202c233", 110106328), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, LATEST_VERSION),
+
 	// Carol Reed 9 - Cold Case Summer
 	WME_WINENTRY("carolreed9", "",
 		WME_ENTRY1s("data.dcp", "2b343b48a7aee508d728a546b414a255", 620005266), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+
+	// Carol Reed 9 - Cold Case Summer (Demo)
+	WME_WINENTRY("carolreed9", "Demo",
+		WME_ENTRY1s("data.dcp", "b3312b0b9f209a9a01b2ba9135829640", 86362217), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, LATEST_VERSION),
 
 	// Carol Reed 10 - Bosch's Damnation
 	WME_WINENTRY("carolreed10", "",
 		WME_ENTRY1s("data.dcp", "5c698e28fe10854ea52964e3768e50e4", 588439599), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
 
+	// Carol Reed 10 - Bosch's Damnation (Demo)
+	WME_WINENTRY("carolreed10", "Demo",
+		WME_ENTRY1s("data.dcp", "72b29cb3f0bc83efa6e3bae41b4e899a", 79971080), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, LATEST_VERSION),
+
 	// Carol Reed 11 - Shades Of Black
 	WME_WINENTRY("carolreed11", "",
 		WME_ENTRY1s("data.dcp", "a1e9f54b48493e9c6d737e3a94779d8c", 525450069), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+
+	// Carol Reed 11 - Shades Of Black (Demo)
+	WME_WINENTRY("carolreed11", "Demo",
+		WME_ENTRY1s("data.dcp", "8c27236d29747b6bb6a0a563fb769f20", 52692061), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, LATEST_VERSION),
+
+	// Carol Reed 11 - Shades Of Black (HD Demo)
+	WME_WINENTRY("carolreed11", "HD Demo",
+		WME_ENTRY1s("data.dcp", "ba124af0a0ee3113f3f9dc0c1159ec26", 77909344), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, LATEST_VERSION),
 
 	// Carol Reed 12 - Profound Red
 	WME_WINENTRY("carolreed12", "",
