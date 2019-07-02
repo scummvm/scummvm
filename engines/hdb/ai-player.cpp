@@ -1493,11 +1493,12 @@ void aiCellUse(AIEntity *e) {
 }
 
 void aiCellInit2(AIEntity *e) {
-	warning("STUB: AI: aiCellInit2 required");
+	e->draw = e->standdownGfx[0];
 }
 
 void aiCellInit(AIEntity *e) {
-	warning("STUB: AI: aiCellInit required");
+	strcpy(e->printedName, "Energy Cell");
+	e->aiAction = aiGetItemAction;
 }
 
 void aiEnvelopeWhiteInit(AIEntity *e) {
