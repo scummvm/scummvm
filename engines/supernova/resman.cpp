@@ -114,22 +114,22 @@ static const byte mouseWait[64] = {
 };
 
 
-ResourceManager::ResourceManager(int MSPart)
+ResourceManager::ResourceManager(SupernovaEngine *vm)
 	: _audioRate(11931)
-	, _MSPart(MSPart) {
-	if (MSPart == 1)
+	, _vm(vm) {
+	if (_vm->_MSPart == 1)
 		_soundSamples = new Common::ScopedPtr<Audio::SeekableAudioStream>[kAudioNumSamples1];
-	else if (MSPart == 2)
+	else if (_vm->_MSPart == 2)
 		_soundSamples = new Common::ScopedPtr<Audio::SeekableAudioStream>[kAudioNumSamples2];
 	initGraphics();
 }
 
 ResourceManager::~ResourceManager() {
-	if (_MSPart == 1) {	
+	if (_vm->_MSPart == 1) {	
 		for (int i = 0; i < 44; i++)
 			delete _images[i];
 	}
-	if (_MSPart == 2) {	
+	if (_vm->_MSPart == 2) {	
 		for (int i = 0; i < 47; i++)
 			delete _images[i];
 	}
@@ -140,9 +140,9 @@ ResourceManager::~ResourceManager() {
 void ResourceManager::initGraphics() {
 	Screen::initPalette();
 	initCursorGraphics();
-	if (_MSPart == 1)
+	if (_vm->_MSPart == 1)
 		initImages1();
-	else if (_MSPart == 2)
+	else if (_vm->_MSPart == 2)
 		initImages2();
 }
 
@@ -238,18 +238,18 @@ void ResourceManager::loadSound2(AudioId id) {
 }
 
 void ResourceManager::loadImage(int filenumber) {
-	if (_MSPart == 1) {
+	if (_vm->_MSPart == 1) {
 		if (filenumber < 44) {
-			_images[filenumber] = new MSNImage(_MSPart);
+			_images[filenumber] = new MSNImage(_vm);
 			if (!_images[filenumber]->init(filenumber))
 				error("Failed reading image file msn_data.%03d", filenumber);
 		} else {
-			_images[44] = new MSNImage(_MSPart);
+			_images[44] = new MSNImage(_vm);
 			if (!_images[44]->init(filenumber))
 				error("Failed reading image file msn_data.%03d", filenumber);
 		}
-	} else if (_MSPart == 2) {
-		_images[filenumber] = new MSNImage(_MSPart);
+	} else if (_vm->_MSPart == 2) {
+		_images[filenumber] = new MSNImage(_vm);
 		if (!_images[filenumber]->init(filenumber))
 			error("Failed reading image file ms2_data.%03d", filenumber);
 	}
@@ -257,9 +257,9 @@ void ResourceManager::loadImage(int filenumber) {
 
 Audio::SeekableAudioStream *ResourceManager::getSoundStream(AudioId index) {
 	if (!_soundSamples[index]) {
-		if (_MSPart == 1)
+		if (_vm->_MSPart == 1)
 			loadSound1(index);
-		else if (_MSPart == 2)
+		else if (_vm->_MSPart == 2)
 			loadSound2(index);
 	}
 	Audio::SeekableAudioStream *stream;
@@ -273,9 +273,9 @@ Audio::AudioStream *ResourceManager::getSoundStream(MusicId index) {
 	switch (index) {
 	case kMusicIntro:
 		if (!_musicIntroBuffer) {
-			if (_MSPart == 1)
+			if (_vm->_MSPart == 1)
 				_musicIntroBuffer.reset(convertToMod("msn_data.052", 1));
-			else if (_MSPart == 2)
+			else if (_vm->_MSPart == 2)
 				_musicIntroBuffer.reset(convertToMod("ms2_data.052", 2));
 		}
 		_musicIntro.reset(Audio::makeProtrackerStream(_musicIntroBuffer.get()));
@@ -284,9 +284,9 @@ Audio::AudioStream *ResourceManager::getSoundStream(MusicId index) {
 		// fall through
 	case kMusicOutro:
 		if (!_musicOutroBuffer) {
-			if (_MSPart == 1)
+			if (_vm->_MSPart == 1)
 				_musicOutroBuffer.reset(convertToMod("msn_data.049", 1));
-			else if (_MSPart == 2)
+			else if (_vm->_MSPart == 2)
 				_musicOutroBuffer.reset(convertToMod("ms2_data.056", 2));
 		}
 		_musicOutro.reset(Audio::makeProtrackerStream(_musicOutroBuffer.get()));
@@ -304,9 +304,9 @@ Audio::AudioStream *ResourceManager::getSirenStream() {
 
 MSNImage *ResourceManager::getImage(int filenumber) {
 	//check array boundaries
-	if (_MSPart == 1 && filenumber > 43 && filenumber != 55)
+	if (_vm->_MSPart == 1 && filenumber > 43 && filenumber != 55)
 		return nullptr;
-	if (_MSPart == 2 && filenumber > 46)
+	if (_vm->_MSPart == 2 && filenumber > 46)
 		return nullptr;
 
 	if (filenumber == 55) {
