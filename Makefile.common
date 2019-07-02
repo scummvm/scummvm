@@ -302,6 +302,12 @@ ifdef USE_SDL_NET
 DIST_FILES_NETWORKING:=$(addprefix $(srcdir)/dists/networking/,wwwroot.zip)
 endif
 
+# Virtual keyboard files
+DIST_FILES_VKEYBD=
+ifdef ENABLE_VKEYBD
+DIST_FILES_VKEYBD:=$(addprefix $(srcdir)/backends/vkeybd/packs/,vkeybd_default.zip vkeybd_small.zip)
+endif
+
 # Engine data files
 DIST_FILES_ENGINEDATA=
 ifdef ENABLE_ACCESS

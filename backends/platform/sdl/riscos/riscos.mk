@@ -23,6 +23,9 @@ endif
 ifdef DIST_FILES_ENGINEDATA
 	cp $(DIST_FILES_ENGINEDATA) $(APP_NAME)/data/
 endif
+ifdef DIST_FILES_VKEYBD
+	cp $(DIST_FILES_VKEYBD) $(APP_NAME)/data/
+endif
 ifdef DYNAMIC_MODULES
 	mkdir -p $(APP_NAME)/plugins
 	cp $(PLUGINS) $(APP_NAME)/plugins/
