@@ -404,7 +404,9 @@ void AI::cineAbort() {
 		if (_cine[i]->cmdType == C_STARTMAP || _cine[i]->cmdType == C_STOPCINE)
 			_cine[0] = _cine[i];
 	}
-	warning("STUB: Window: closeAll() required");
+
+	g_hdb->_window->closeAll();
+
 	if (_player)
 		stopEntity(_player);
 	_cineAborted = true;

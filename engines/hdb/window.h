@@ -135,6 +135,8 @@ public:
 	void restartSystem();
 	void setInfobarDark(int value);
 
+	void closeAll();
+
 	// Pause Functions
 	void drawPause();
 	void checkPause(uint x, uint y);

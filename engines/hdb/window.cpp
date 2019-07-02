@@ -116,6 +116,13 @@ void Window::checkPause(uint x, uint y) {
 	}
 }
 
+void Window::closeAll() {
+	closeDialog();
+	closeDialogChoice();
+	closeMsg();
+	closeTextOut();
+}
+
 void Window::openDialog(const char *title, int tileIndex, const char *string, int more, const char *luaMore) {
 	if (_dialogInfo.active)
 		return;
