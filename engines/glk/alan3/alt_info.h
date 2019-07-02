@@ -27,6 +27,7 @@
 
 #include "glk/alan3/types.h"
 #include "glk/alan3/acode.h"
+#include "glk/alan3/jumps.h"
 #include "glk/alan3/params.h"
 #include "glk/alan3/parameter_position.h"
 
@@ -72,14 +73,14 @@ typedef AltInfo AltInfoArray[];
 
 /* Functions */
 extern void primeAltInfo(AltInfo *altInfo, int level, int parameter, int instance, int cls);
-extern bool executedOk(AltInfo *altInfo);
-extern bool checkFailed(AltInfo *altInfo, bool execute);
+extern bool executedOk(CONTEXT, AltInfo *altInfo);
+extern bool checkFailed(CONTEXT, AltInfo *altInfo, bool execute);
 extern bool canBeExecuted(AltInfo *altInfo);
 extern AltInfo *duplicateAltInfoArray(AltInfoArray altInfos);
 extern int lastAltInfoIndex(AltInfoArray altInfos);
-extern bool anyCheckFailed(AltInfoArray altInfos, bool execute);
+extern bool anyCheckFailed(CONTEXT, AltInfoArray altInfos, bool execute);
 extern bool anythingToExecute(AltInfoArray altInfos);
-extern bool possible(int verb, Parameter parameters[], ParameterPosition parameterPositions[]);
+extern bool possible(CONTEXT, int verb, Parameter parameters[], ParameterPosition parameterPositions[]);
 extern AltInfo *findAllAlternatives(int verb, Parameter parameters[]);
 
 } // End of namespace Alan3

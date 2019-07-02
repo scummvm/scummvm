@@ -214,57 +214,62 @@ static void restoreCurrentValues(Common::SeekableReadStream *saveFile) {
 
 
 /*----------------------------------------------------------------------*/
-static void verifyGameId(Common::SeekableReadStream *saveFile) {
+static void verifyGameId(CONTEXT, Common::SeekableReadStream *saveFile) {
 	Aword savedUid = saveFile->readUint32LE();
 	if (!ignoreErrorOption && savedUid != header->uid)
-		error(M_SAVEVERS);
+		error(context, M_SAVEVERS);
 }
 
 
 /*----------------------------------------------------------------------*/
-static void verifyGameName(Common::SeekableReadStream *saveFile) {
+static void verifyGameName(CONTEXT, Common::SeekableReadStream *saveFile) {
 	char savedName[256];
 	int i = 0;
 
 	while ((savedName[i++] = saveFile->readByte()) != '\0');
 	if (strcmp(savedName, adventureName) != 0)
-		error(M_SAVENAME);
+		error(context, M_SAVENAME);
 }
 
 
 /*----------------------------------------------------------------------*/
-static void verifyCompilerVersion(Common::SeekableReadStream *saveFile) {
+static void verifyCompilerVersion(CONTEXT, Common::SeekableReadStream *saveFile) {
 	char savedVersion[4];
 
 	saveFile->read(&savedVersion, 4);
 	if (!ignoreErrorOption && memcmp(savedVersion, header->version, 4))
-		error(M_SAVEVERS);
+		error(context, M_SAVEVERS);
 }
 
 
 /*----------------------------------------------------------------------*/
-static void verifySaveFile(Common::SeekableReadStream *saveFile) {
+static void verifySaveFile(CONTEXT, Common::SeekableReadStream *saveFile) {
 	char string[5];
 	saveFile->read(string, 4);
 	string[4] = '\0';
 
 	if (strcmp(string, "ASAV") != 0)
-		error(M_NOTASAVEFILE);
+		error(context, M_NOTASAVEFILE);
 }
 
 
 /*----------------------------------------------------------------------*/
-void restoreGame(Common::SeekableReadStream *saveFile) {
-	verifySaveFile(saveFile);
+bool restoreGame(Common::SeekableReadStream *saveFile) {
+	Context ctx;
+	verifySaveFile(ctx, saveFile);
+	if (ctx._break) return false;
 
-	/* Verify version of compiler/interpreter of saved game with us */
-	verifyCompilerVersion(saveFile);
+	// Verify version of compiler/interpreter of saved game with us
+	verifyCompilerVersion(ctx, saveFile);
+	if (ctx._break) return false;
 
-	/* Verify name of game */
-	verifyGameName(saveFile);
+	// Verify name of game 
+	verifyGameName(ctx, saveFile);
+	if (ctx._break) return false;
 
-	/* Verify unique id of game */
-	verifyGameId(saveFile);
+	// Verify unique id of game
+	verifyGameId(ctx, saveFile);
+	if (ctx._break) return false;
 
 	restoreCurrentValues(saveFile);
 	restoreAttributeArea(saveFile);
@@ -273,6 +278,8 @@ void restoreGame(Common::SeekableReadStream *saveFile) {
 	restoreScores(saveFile);
 	restoreStrings(saveFile);
 	restoreSets(saveFile);
+
+	return true;
 }
 
 } // End of namespace Alan3

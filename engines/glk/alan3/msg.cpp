@@ -34,7 +34,8 @@ MessageEntry *msgs;         /* Message table pointer */
 
 /*======================================================================*/
 void printMessage(MsgKind msg) {    /* IN - message number */
-	interpret(msgs[msg].stms);
+	Context ctx;
+	interpret(ctx, msgs[msg].stms);
 }
 
 
@@ -48,21 +49,21 @@ void setErrorHandler(void (*handler)(MsgKind msg)) { /* IN - The error message n
 
 
 /*======================================================================*/
-void error(MsgKind msgno) { /* IN - The error message number */
+void error(CONTEXT, MsgKind msgno) { /* IN - The error message number */
 	if (errorHandler != NULL)
 		errorHandler(msgno);
 	else {
 		/* Print an error message and longjmp to main loop. */
 		if (msgno != NO_MSG)
 			printMessage(msgno);
-		//longjmp(returnLabel, ERROR_RETURN);
+		LONG_JUMP_LABEL("return");
 	}
 }
 
 
 /*======================================================================*/
-void abortPlayerCommand(void) {
-	error(NO_MSG);
+void abortPlayerCommand(CONTEXT) {
+	error(context, NO_MSG);
 }
 
 
@@ -88,11 +89,12 @@ void printMessageUsing2InstanceParameters(MsgKind message, int instance1, int in
 /*======================================================================*/
 void printMessageWithParameters(MsgKind msg, Parameter *messageParameters) {
 	Parameter *savedParameters = newParameterArray();
+	Context ctx;
 
 	copyParameterArray(savedParameters, globalParameters);
 	copyParameterArray(globalParameters, messageParameters);
 
-	interpret(msgs[msg].stms);
+	interpret(ctx, msgs[msg].stms);
 
 	copyParameterArray(globalParameters, savedParameters);
 	freeParameterArray(savedParameters);

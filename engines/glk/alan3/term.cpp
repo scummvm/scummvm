@@ -48,7 +48,7 @@ void getPageSize(void) {
 }
 
 /*======================================================================*/
-void statusline(void) {
+void statusline(CONTEXT) {
 	uint32 glkWidth;
 	char line[100];
 	int pcol = col;
@@ -64,7 +64,7 @@ void statusline(void) {
 	onStatusLine = TRUE;
 	col = 1;
 	g_vm->glk_window_move_cursor(glkStatusWin, 1, 0);
-	sayInstance(where(HERO, /*TRUE*/ TRANSITIVE));
+	CALL1(sayInstance, where(HERO, /*TRUE*/ TRANSITIVE))
 
 	// TODO Add status message1  & 2 as author customizable messages
 	if (header->maximumScore > 0)

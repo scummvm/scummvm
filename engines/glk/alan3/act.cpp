@@ -32,9 +32,10 @@ namespace Glk {
 namespace Alan3 {
 
 /*----------------------------------------------------------------------*/
-static void executeCommand(int verb, Parameter parameters[]) {
+static void executeCommand(CONTEXT, int verb, Parameter parameters[]) {
 	static AltInfo *altInfos = NULL; /* Need to survive lots of different exits...*/
 	int altIndex;
+	bool flag;
 
 	/* Did we leave anything behind last time... */
 	if (altInfos != NULL)
@@ -42,20 +43,22 @@ static void executeCommand(int verb, Parameter parameters[]) {
 
 	altInfos = findAllAlternatives(verb, parameters);
 
-	if (anyCheckFailed(altInfos, EXECUTE_CHECK_BODY_ON_FAIL))
+	FUNC2(anyCheckFailed, flag, altInfos, EXECUTE_CHECK_BODY_ON_FAIL)
+	if (flag)
 		return;
 
 	/* Check for anything to execute... */
 	if (!anythingToExecute(altInfos))
-		error(M_CANT0);
+		CALL1(error, M_CANT0)
 
 	/* Now perform actions! First try any BEFORE or ONLY from inside out */
 	for (altIndex = lastAltInfoIndex(altInfos); altIndex >= 0; altIndex--) {
 		if (altInfos[altIndex].alt != 0) // TODO Can this ever be NULL? Why?
 			if (altInfos[altIndex].alt->qual == (Aword)Q_BEFORE
 			        || altInfos[altIndex].alt->qual == (Aword)Q_ONLY) {
-				if (!executedOk(&altInfos[altIndex]))
-					abortPlayerCommand();
+				FUNC1(executedOk, flag, &altInfos[altIndex])
+				if (!flag)
+					CALL0(abortPlayerCommand)
 				if (altInfos[altIndex].alt->qual == (Aword)Q_ONLY)
 					return;
 			}
@@ -63,17 +66,22 @@ static void executeCommand(int verb, Parameter parameters[]) {
 
 	/* Then execute any not declared as AFTER, i.e. the default */
 	for (altIndex = 0; !altInfos[altIndex].end; altIndex++) {
-		if (altInfos[altIndex].alt != 0)
-			if (altInfos[altIndex].alt->qual != (Aword)Q_AFTER)
-				if (!executedOk(&altInfos[altIndex]))
-					abortPlayerCommand();
+		if (altInfos[altIndex].alt != 0) {
+			if (altInfos[altIndex].alt->qual != (Aword)Q_AFTER) {
+				FUNC1(executedOk, flag, &altInfos[altIndex])
+				if (!flag)
+					CALL0(abortPlayerCommand)
+			}
+		}
 	}
 
 	/* Finally, the ones declared as AFTER */
 	for (altIndex = lastAltInfoIndex(altInfos); altIndex >= 0; altIndex--) {
-		if (altInfos[altIndex].alt != 0)
-			if (!executedOk(&altInfos[altIndex]))
-				abortPlayerCommand();
+		if (altInfos[altIndex].alt != 0) {
+			FUNC1(executedOk, flag, &altInfos[altIndex])
+			if (!flag)
+				CALL0(abortPlayerCommand)
+		}
 	}
 }
 
@@ -86,7 +94,7 @@ static void executeCommand(int verb, Parameter parameters[]) {
   such as ALL, THEM or lists of objects.
 
 */
-void action(int verb, Parameter parameters[], Parameter multipleMatches[]) {
+void action(CONTEXT, int verb, Parameter parameters[], Parameter multipleMatches[]) {
 	int multiplePosition;
 #ifdef TODO
 	char marker[10];
@@ -115,7 +123,7 @@ void action(int verb, Parameter parameters[], Parameter multipleMatches[]) {
 #endif
 	} else {
 		setGlobalParameters(parameters);
-		executeCommand(verb, parameters);
+		CALL2(executeCommand, verb, parameters)
 	}
 
 }

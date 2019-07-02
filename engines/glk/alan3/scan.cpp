@@ -59,7 +59,7 @@ void forceNewPlayerInput() {
 
 
 /*----------------------------------------------------------------------*/
-static void unknown(char tok[]) {
+static void unknown(CONTEXT, char tok[]) {
 	char *str = strdup(tok);
 	Parameter *messageParameters = newParameterArray();
 
@@ -67,7 +67,7 @@ static void unknown(char tok[]) {
 	printMessageWithParameters(M_UNKNOWN_WORD, messageParameters);
 	deallocate(messageParameters);
 	free(str);
-	abortPlayerCommand();
+	CALL0(abortPlayerCommand)
 }
 
 
@@ -81,7 +81,7 @@ static int number(char tok[]) {
 
 
 /*----------------------------------------------------------------------*/
-static int lookup(char wrd[]) {
+static int lookup(CONTEXT, char wrd[]) {
 	int i;
 
 	for (i = 0; !isEndOfArray(&dictionary[i]); i++) {
@@ -89,7 +89,7 @@ static int lookup(char wrd[]) {
 			return (i);
 		}
 	}
-	unknown(wrd);
+	R0CALL1(unknown, wrd)
 	return (int)EOD;
 }
 
@@ -137,22 +137,21 @@ static char *gettoken(char *txtBuf) {
 static void getLine(CONTEXT) {
 	para();
 	do {
-		statusline();
+		CALL0(statusline)
+
 		if (header->prompt) {
 			anyOutput = FALSE;
-			interpret(header->prompt);
+			CALL1(interpret, header->prompt)
+
 			if (anyOutput)
 				printAndLog(" ");
 			needSpace = FALSE;
 		} else
 			printAndLog("> ");
 
-		if (!readline(buf)) {
-			if (g_vm->shouldQuit()) {
-				context._break = true;
-				return;
-			}
-
+		bool flag;
+		FUNC2(readline, flag, buf, 255);
+		if (!flag) {
 			newline();
 			quitGame();
 		}
@@ -175,12 +174,13 @@ static void getLine(CONTEXT) {
 		if (token != NULL) {
 			if (strcmp("debug", token) == 0 && header->debug) {
 				debugOption = TRUE;
-				debug(FALSE, 0, 0);
+				CALL3(debug, FALSE, 0, 0)
+
 				token = NULL;
 			} else if (strcmp("undo", token) == 0) {
 				token = gettoken(NULL);
 				if (token != NULL) /* More tokens? */
-					error(M_WHAT);
+					CALL1(error, M_WHAT)
 				undo();
 			}
 		}
@@ -215,7 +215,7 @@ void scan(CONTEXT) {
 		playerWords[i].start = token;
 		playerWords[i].end = strchr(token, '\0');
 		if (isISOLetter(token[0])) {
-			w = lookup(token);
+			FUNC1(lookup, w, token);
 			if (!isNoise(w))
 				playerWords[i++].code = w;
 		} else if (isdigit((int)token[0]) || token[0] == '\"') {
@@ -236,7 +236,7 @@ void scan(CONTEXT) {
 			eol = TRUE;
 			break;
 		} else
-			unknown(token);
+			CALL1(unknown, token)
 		setEndOfArray(&playerWords[i]);
 		eol = (token = gettoken(NULL)) == NULL;
 	} while (!eol);

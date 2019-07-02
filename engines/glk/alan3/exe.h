@@ -27,6 +27,7 @@
 
 /* IMPORTS */
 #include "glk/alan3/sysdep.h"
+#include "glk/alan3/jumps.h"
 #include "glk/alan3/acode.h"
 #include "glk/alan3/types.h"
 #include "glk/alan3/set.h"
@@ -47,9 +48,7 @@ extern Common::SeekableReadStream *textFile;		// The text and message file
 extern bool printFlag;
 
 /* Long jump buffer for restart, errors and undo */
-//extern jmp_buf restartLabel;
 //extern jmp_buf returnLabel;
-//extern jmp_buf forfeitLabel;
 
 
 /* FUNCTIONS */
@@ -69,10 +68,10 @@ extern void undo(void);
 extern void quitGame(void);
 extern void restartGame(void);
 
-extern void use(int act, int scr);
+extern void use(CONTEXT, int act, int scr);
 extern void stop(int act);
 
-extern void empty(int cnt, int whr);
+extern void empty(CONTEXT, int cnt, int whr);
 extern int getContainerMember(int container, int index, bool directly);
 extern int randomInContainer(int cont);
 

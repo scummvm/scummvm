@@ -189,7 +189,7 @@ static void sayPlayerWordsForParameter(int p) {
 
 
 /*----------------------------------------------------------------------*/
-static void sayParameter(int p, int form) {
+static void sayParameter(CONTEXT, int p, int form) {
 	int i;
 
 	for (i = 0; i <= p; i++)
@@ -201,13 +201,14 @@ static void sayParameter(int p, int form) {
 		/* Yes, so use them... */
 		sayPlayerWordsForParameter(p);
 	else
-		sayForm(params[p].code, form);
+		CALL2(sayForm(params[p].code, form)
 #else
 	if (globalParameters[p].useWords) {
 		/* Ambiguous instance referenced, so use the words he used */
 		sayPlayerWordsForParameter(p);
-	} else
-		sayForm(globalParameters[p].instance, (SayForm)form);
+	} else {
+		CALL2(sayForm, globalParameters[p].instance, (SayForm)form)
+	}
 #endif
 }
 
@@ -230,8 +231,10 @@ static void sayParameter(int p, int form) {
   T = tabulation
   $ = no space needed after this, and don't capitalize
   _ = interpret this as a single dollar, if in doubt or conflict with other symbols
-*/
-static char *printSymbol(char str[]) { /* IN - The string starting with '$' */
+
+  str - The string starting with '$'
+  */
+static char *printSymbol(CONTEXT, char str[]) { 
 	int advance = 2;
 
 	if (*str == '\0') printAndLog("$");
@@ -248,7 +251,7 @@ static char *printSymbol(char str[]) { /* IN - The string starting with '$' */
 			break;
 		case 'o':
 			space();
-			sayParameter(0, 0);
+			R0CALL2(sayParameter, 0, 0)
 			needSpace = TRUE;       /* We did print something non-white */
 			break;
 		case '+':
@@ -275,7 +278,7 @@ static char *printSymbol(char str[]) { /* IN - The string starting with '$' */
 					form = SAY_SIMPLE;
 					break;
 				}
-				sayParameter(str[2] - '1', form);
+				R0CALL2(sayParameter, str[2] - '1', form)
 				needSpace = TRUE;
 			}
 			advance = 3;
@@ -290,17 +293,17 @@ static char *printSymbol(char str[]) { /* IN - The string starting with '$' */
 		case '8':
 		case '9':
 			space();
-			sayParameter(str[1] - '1', SAY_SIMPLE);
+			R0CALL2(sayParameter, str[1] - '1', SAY_SIMPLE)
 			needSpace = TRUE;       /* We did print something non-white */
 			break;
 		case 'l':
 			space();
-			say(current.location);
+			R0CALL1(say, current.location)
 			needSpace = TRUE;       /* We did print something non-white */
 			break;
 		case 'a':
 			space();
-			say(current.actor);
+			R0CALL1(say, current.actor)
 			needSpace = TRUE;       /* We did print something non-white */
 			break;
 		case 'v':
@@ -377,6 +380,7 @@ void output(const char *original) {
 	char ch;
 	char *str, *copy;
 	char *symptr;
+	Context ctx;
 
 	copy = strdup(original);
 	str = copy;
@@ -403,7 +407,7 @@ void output(const char *original) {
 			}
 		}
 		*symptr = ch;       /* restore '$' */
-		str = printSymbol(symptr);  /* Print the symbolic reference and advance */
+		str = printSymbol(ctx, symptr);  /* Print the symbolic reference and advance */
 	}
 
 	if (str[0] != 0) {
@@ -420,14 +424,16 @@ void output(const char *original) {
 
 
 /*======================================================================*/
-bool confirm(MsgKind msgno) {
+bool confirm(CONTEXT, MsgKind msgno) {
 	char buf[80];
+	bool flag;
 
 	/* This is a bit of a hack since we really want to compare the input,
 	   it could be affirmative, but for now any input is NOT! */
 	printMessage(msgno);
 
-	if (!readline(buf))
+	R0FUNC2(readline, flag, buf, 80)
+	if (!flag)
 		return TRUE;
 	col = 1;
 

@@ -24,6 +24,7 @@
 #define GLK_ALAN3_SYNTAX
 
 #include "glk/alan3/types.h"
+#include "glk/alan3/jumps.h"
 #include "glk/alan3/memory.h"
 
 namespace Glk {
@@ -36,7 +37,7 @@ extern SyntaxEntry *stxs;   /* Syntax table pointer */
 /* FUNCTIONS */
 extern ElementEntry *elementTreeOf(SyntaxEntry *stx);
 extern char *parameterNameInSyntax(int syntaxNumber, int parameterNumber);
-extern SyntaxEntry *findSyntaxTreeForVerb(int verbCode);
+extern SyntaxEntry *findSyntaxTreeForVerb(CONTEXT, int verbCode);
 
 } // End of namespace Alan3
 } // End of namespace Glk

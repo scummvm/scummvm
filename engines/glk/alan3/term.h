@@ -25,6 +25,8 @@
 
 /* Header file for terminal functions in ARUN, the Alan interpreter */
 
+#include "glk/alan3/jumps.h"
+
 namespace Glk {
 namespace Alan3 {
 
@@ -33,7 +35,7 @@ extern bool onStatusLine;
 
 /* FUNCTIONS */
 extern void getPageSize();
-extern void statusline();
+extern void statusline(CONTEXT);
 
 } // End of namespace Alan3
 } // End of namespace Glk

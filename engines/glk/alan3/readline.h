@@ -26,13 +26,14 @@
 /* Header file for user input, history and editing support */
 
 #include "glk/alan3/types.h"
+#include "glk/alan3/jumps.h"
 
 namespace Glk {
 namespace Alan3 {
 
 #define HISTORYLENGTH 20
 
-extern bool readline(char usrbuf[]);
+extern bool readline(CONTEXT, char *usrBuf, size_t maxLen);
 
 } // End of namespace Alan3
 } // End of namespace Glk

@@ -25,6 +25,7 @@
 
 /* Header file for rules handler in Alan interpreter */
 
+#include "glk/alan3/jumps.h"
 #include "glk/alan3/acode.h"
 
 namespace Glk {
@@ -36,9 +37,9 @@ extern bool anyRuleRun;       /* Did any rule run? */
 
 /* FUNCTIONS */
 extern void initRules(Aaddr rulesTableAddress);
-extern void resetAndEvaluateRules(RuleEntry rules[], const byte *version);
+extern void resetAndEvaluateRules(CONTEXT, RuleEntry rules[], const byte *version);
 extern void resetRules(void);
-extern void evaluateRules(RuleEntry rules[]);
+extern void evaluateRules(CONTEXT, RuleEntry rules[]);
 
 } // End of namespace Alan3
 } // End of namespace Glk

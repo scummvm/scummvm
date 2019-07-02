@@ -25,6 +25,7 @@
 
 #include "common/serializer.h"
 #include "glk/alan3/acode.h"
+#include "glk/alan3/jumps.h"
 #include "glk/alan3/types.h"
 #include "glk/alan3/set.h"
 
@@ -73,15 +74,15 @@ extern void setInstanceAttribute(int instance, int atr, Aptr value);
 extern void setInstanceStringAttribute(int instance, int attribute, char *string);
 extern void setInstanceSetAttribute(int instance, int atr, Aptr set);
 
-extern void say(int instance);
-extern void sayForm(int instance, SayForm form);
-extern void sayInstance(int instance);
+extern void say(CONTEXT, int instance);
+extern void sayForm(CONTEXT, int instance, SayForm form);
+extern void sayInstance(CONTEXT, int instance);
 
 extern bool hasDescription(int instance);
 extern bool isDescribable(int instance);
-extern void describeAnything(int instance);
-extern void describeInstances(void);
-extern bool describe(int instance);
+extern void describeAnything(CONTEXT, int instance);
+extern void describeInstances(CONTEXT);
+extern bool describe(CONTEXT, int instance);
 
 extern int where(int instance, ATrans trans);
 extern int positionOf(int instance);
@@ -95,7 +96,7 @@ extern bool isNear(int instance, int other, ATrans trans);
 
 extern bool isOpaque(int container);
 
-extern void locate(int instance, int whr);
+extern void locate(CONTEXT, int instance, int whr);
 
 } // End of namespace Alan3
 } // End of namespace Glk

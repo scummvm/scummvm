@@ -27,6 +27,7 @@
 
 #include "glk/alan3/types.h"
 #include "glk/alan3/stack.h"
+#include "glk/alan3/jumps.h"
 
 namespace Glk {
 namespace Alan3 {
@@ -45,8 +46,8 @@ extern bool fail;
 
 extern void setInterpreterMock(void (*mock)(Aaddr adr));
 extern void setInterpreterStack(Stack stack);
-extern void interpret(Aaddr adr);
-extern Aword evaluate(Aaddr adr);
+extern void interpret(CONTEXT, Aaddr adr);
+extern Aword evaluate(CONTEXT, Aaddr adr);
 
 } // End of namespace Alan3
 } // End of namespace Glk

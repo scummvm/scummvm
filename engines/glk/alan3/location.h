@@ -24,13 +24,14 @@
 #define GLK_ALAN3_LOCATION
 
 #include "glk/alan3/types.h"
+#include "glk/alan3/jumps.h"
 
 namespace Glk {
 namespace Alan3 {
 
 extern bool exitto(int to, int from);
-extern void go(int location, int dir);
-extern void look(void);
+extern void go(CONTEXT, int location, int dir);
+extern void look(CONTEXT);
 
 } // End of namespace Alan3
 } // End of namespace Glk

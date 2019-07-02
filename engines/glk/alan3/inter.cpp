@@ -346,10 +346,10 @@ static void tracePointerTopValue() {
 }
 
 /*----------------------------------------------------------------------*/
-static void traceInstanceTopValue() {
+static void traceInstanceTopValue(CONTEXT) {
 	if (traceInstructionOption) {
 		printf("\t=%ld ('", (long)top(stack));
-		traceSay(top(stack));
+		CALL1(traceSay, top(stack))
 		printf("')");
 		if (traceStackOption)
 			printf("\n\t\t\t\t\t\t\t");
@@ -414,7 +414,7 @@ static bool stillOnSameLine(Aint line, Aint file) {
 
 
 /*======================================================================*/
-void interpret(Aaddr adr) {
+void interpret(CONTEXT, Aaddr adr) {
 	Aaddr oldpc;
 	Aword i;
 
@@ -532,7 +532,7 @@ void interpret(Aaddr adr) {
 					current.sourceFile = file;
 					if (atNext || atBreakpoint) {
 						stopAtNextLine = FALSE;
-						debug(TRUE, line, file);
+						CALL3(debug, TRUE, line, file)
 					}
 				}
 				break;
@@ -595,7 +595,7 @@ void interpret(Aaddr adr) {
 			case I_LOOK: {
 				if (traceInstructionOption)
 					printf("LOOK\t\t\t\t\t\t");
-				look();
+				CALL0(look)
 				break;
 			}
 			case I_SAVE: {
@@ -636,7 +636,7 @@ void interpret(Aaddr adr) {
 				Aint cnt = pop(stack);
 				if (traceInstructionOption)
 					printf("LIST \t%7ld\t\t\t\t\t", (long)cnt);
-				list(cnt);
+				CALL1(list, cnt)
 				break;
 			}
 			case I_EMPTY: {
@@ -644,7 +644,7 @@ void interpret(Aaddr adr) {
 				Aint whr = pop(stack);
 				if (traceInstructionOption)
 					printf("EMPTY \t%7ld, %7ld\t\t\t\t", (long)cnt, (long)whr);
-				empty(cnt, whr);
+				CALL2(empty, cnt, whr)
 				break;
 			}
 			case I_SCHEDULE: {
@@ -844,7 +844,7 @@ void interpret(Aaddr adr) {
 				Aint whr = pop(stack);
 				if (traceInstructionOption)
 					printf("LOCATE \t%7ld, %7ld\t\t\t", (long)id, (long)whr);
-				locate(id, whr);
+				CALL2(locate, id, whr)
 				break;
 			}
 			case I_WHERE: {
@@ -853,7 +853,7 @@ void interpret(Aaddr adr) {
 				if (traceInstructionOption)
 					printf("WHERE \t%7ld, %7s", (long)id, transitivityFlag((ATrans)transitivity));
 				push(stack, where(id, (ATrans)transitivity));
-				traceInstanceTopValue();
+				CALL0(traceInstanceTopValue);
 				break;
 			}
 			case I_LOCATION: {
@@ -861,7 +861,7 @@ void interpret(Aaddr adr) {
 				if (traceInstructionOption)
 					printf("LOCATION \t%7ld\t\t", (long)id);
 				push(stack, locationOf(id));
-				traceInstanceTopValue();
+				CALL0(traceInstanceTopValue)
 				break;
 			}
 			case I_HERE: {
@@ -927,7 +927,7 @@ void interpret(Aaddr adr) {
 				Aint scr = pop(stack);
 				if (traceInstructionOption)
 					printf("USE \t%7ld, %7ld\t\t\t\t", (long)act, (long)scr);
-				use(act, scr);
+				CALL2(use, act, scr)
 				break;
 			}
 			case I_STOP: {
@@ -943,7 +943,7 @@ void interpret(Aaddr adr) {
 					printf("DESCRIBE \t%7ld\t\t\t", (long)id);
 					col = 41;       /* To format it better! */
 				}
-				describe(id);
+				CALL1(describe, id)
 				if (traceInstructionOption)
 					printf("\n\t\t\t\t\t\t");
 				break;
@@ -953,10 +953,12 @@ void interpret(Aaddr adr) {
 				Aid id = pop(stack);
 				if (traceInstructionOption)
 					printf("SAY\t%7s, %7ld\t\t\t", printForm((SayForm)form), (long)id);
-				if (form == SAY_SIMPLE)
-					say(id);
-				else
-					sayForm(id, (SayForm)form);
+				if (form == SAY_SIMPLE) {
+					CALL1(say, id)
+				} else {
+					CALL2(sayForm, id, (SayForm)form)
+				}
+
 				if (traceInstructionOption)
 					printf("\t\t\t\t\t\t\t");
 				break;
@@ -1400,8 +1402,8 @@ exitInterpreter:
 }
 
 /*======================================================================*/
-Aword evaluate(Aaddr adr) {
-	interpret(adr);
+Aword evaluate(CONTEXT, Aaddr adr) {
+	R0CALL1(interpret, adr)
 	return pop(stack);
 }
 

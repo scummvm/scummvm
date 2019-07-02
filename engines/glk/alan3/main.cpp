@@ -79,7 +79,7 @@ static char *eventName(int event) {
 
 
 /*----------------------------------------------------------------------*/
-static void runPendingEvents(void) {
+static void runPendingEvents(CONTEXT) {
 	int i;
 
 	resetRules();
@@ -92,18 +92,16 @@ static void runPendingEvents(void) {
 		if (traceSectionOption) {
 			printf("\n<EVENT %s[%d] (at ", eventName(eventQueue[eventQueueTop].event),
 			       eventQueue[eventQueueTop].event);
-			traceSay(current.location);
+			CALL1(traceSay, current.location)
 			printf(" [%d]):>\n", current.location);
 		}
-		interpret(events[eventQueue[eventQueueTop].event].code);
-		evaluateRules(rules);
+		CALL1(interpret, events[eventQueue[eventQueueTop].event].code)
+		CALL1(evaluateRules, rules)
 	}
 
 	for (i = 0; i < eventQueueTop; i++)
 		eventQueue[i].after--;
 }
-
-
 
 
 /*----------------------------------------------------------------------*\
@@ -528,36 +526,38 @@ static void initDynamicData(void) {
 
 
 /*----------------------------------------------------------------------*/
-static void runInheritedInitialize(Aint theClass) {
+static void runInheritedInitialize(CONTEXT, Aint theClass) {
 	if (theClass == 0) return;
-	runInheritedInitialize(classes[theClass].parent);
+	CALL1(runInheritedInitialize, classes[theClass].parent)
+
 	if (classes[theClass].initialize)
-		interpret(classes[theClass].initialize);
+		interpret(context, classes[theClass].initialize);
 }
 
 
 /*----------------------------------------------------------------------*/
-static void runInitialize(Aint theInstance) {
-	runInheritedInitialize(instances[theInstance].parent);
+static void runInitialize(CONTEXT, Aint theInstance) {
+	CALL1(runInheritedInitialize, instances[theInstance].parent)
+
 	if (instances[theInstance].initialize != 0)
-		interpret(instances[theInstance].initialize);
+		interpret(context, instances[theInstance].initialize);
 }
 
 
 /*----------------------------------------------------------------------*/
-static void initializeInstances() {
+static void initializeInstances(CONTEXT) {
 	uint instanceId;
 
 	/* Set initial locations */
 	for (instanceId = 1; instanceId <= header->instanceMax; instanceId++) {
 		current.instance = instanceId;
-		runInitialize(instanceId);
+		CALL1(runInitialize, instanceId)
 	}
 }
 
 
 /*----------------------------------------------------------------------*/
-static void start(void) {
+static void start(CONTEXT) {
 	int startloc;
 
 	current.tick = 0;
@@ -565,19 +565,20 @@ static void start(void) {
 	current.actor = HERO;
 	current.score = 0;
 
-	initializeInstances();
+	CALL0(initializeInstances)
 
 	if (traceSectionOption)
 		printf("\n<START:>\n");
-	interpret(header->start);
+	CALL1(interpret, header->start)
 	para();
 
 	if (where(HERO, TRANSITIVE) == startloc) {
 		if (traceSectionOption)
 			printf("<CURRENT LOCATION:>");
-		look();
+		CALL0(look)
 	}
-	resetAndEvaluateRules(rules, header->version);
+
+	resetAndEvaluateRules(context, rules, header->version);
 }
 
 
@@ -591,7 +592,7 @@ static void openFiles(void) {
 
 
 /*----------------------------------------------------------------------*/
-static void init(void) {
+static void init(CONTEXT) {
 	int i;
 
 	/* Initialise some status */
@@ -611,25 +612,26 @@ static void init(void) {
 		}
 
 	/* Start the adventure */
-	if (debugOption)
-		debug(FALSE, 0, 0);
-	else
+	if (debugOption) {
+		CALL3(debug, FALSE, 0, 0)
+	} else {
 		clear();
+	}
 
-	start();
+	start(context);
 }
 
 
 
 /*----------------------------------------------------------------------*/
-static bool traceActor(int theActor) {
+static bool traceActor(CONTEXT, int theActor) {
 	if (traceSectionOption) {
 		printf("\n<ACTOR ");
-		traceSay(theActor);
+		R0CALL1(traceSay, theActor)
 		printf("[%d]", theActor);
 		if (current.location != 0) {
 			printf(" (at ");
-			traceSay(current.location);
+			R0CALL1(traceSay, current.location)
 		} else
 			printf(" (nowhere");
 		printf("[%d])", current.location);
@@ -655,6 +657,7 @@ static void moveActor(CONTEXT, int theActor) {
 	ScriptEntry *scr;
 	StepEntry *step;
 	Aint previousInstance = current.instance;
+	bool flag;
 
 	if (context._break) {
 		// forfeit setjmp replacement destination
@@ -682,34 +685,40 @@ static void moveActor(CONTEXT, int theActor) {
 				step = (StepEntry *) &step[admin[theActor].step];
 				/* Now execute it, maybe. First check wait count */
 				if (admin[theActor].waitCount > 0) { /* Wait some more ? */
-					if (traceActor(theActor))
+					FUNC1(traceActor, flag, theActor)
+					if (flag)
 						printf(", SCRIPT %s[%ld], STEP %ld, Waiting another %ld turns>\n",
 						       scriptName(theActor, admin[theActor].script),
 						       (long)admin[theActor].script, (long)admin[theActor].step + 1,
 						       (long)admin[theActor].waitCount);
+
 					admin[theActor].waitCount--;
 					break;
 				}
 				/* Then check possible expression to wait for */
 				if (step->exp != 0) {
-					if (traceActor(theActor))
-						printf(", SCRIPT %s[%ld], STEP %ld, Evaluating:>\n",
+					FUNC1(traceActor, flag, theActor)
+					if (flag)
+							printf(", SCRIPT %s[%ld], STEP %ld, Evaluating:>\n",
 						       scriptName(theActor, admin[theActor].script),
 						       (long)admin[theActor].script, (long)admin[theActor].step + 1);
-					if (!evaluate(step->exp))
+					FUNC1(evaluate, flag, step->exp)
+					if (!flag)
 						break;      /* Break loop, don't execute step*/
 				}
 				/* OK, so finally let him do his thing */
 				admin[theActor].step++;     /* Increment step number before executing... */
 				if (!isEndOfArray(step + 1) && (step + 1)->after != 0) {
-					admin[theActor].waitCount = evaluate((step + 1)->after);
+					FUNC1(evaluate, admin[theActor].waitCount, (step + 1)->after)
 				}
-				if (traceActor(theActor))
+
+				FUNC1(traceActor, flag, theActor)
+				if (flag)
 					printf(", SCRIPT %s[%ld], STEP %ld, Executing:>\n",
 					       scriptName(theActor, admin[theActor].script),
 					       (long)admin[theActor].script,
 					       (long)admin[theActor].step);
-				interpret(step->stms);
+				CALL1(interpret, step->stms)
 				step++;
 				/* ... so that we can see if he failed or is USEing another script now */
 				if (fail || (admin[theActor].step != 0 && isEndOfArray(step)))
@@ -722,7 +731,8 @@ static void moveActor(CONTEXT, int theActor) {
 		if (isEndOfArray(scr))
 			syserr("Unknown actor script.");
 	} else {
-		if (traceActor(theActor)) {
+		FUNC1(traceActor, flag, theActor)
+		if (flag) {
 			printf(", Idle>\n");
 		}
 	}
@@ -749,7 +759,7 @@ void run(void) {
 		initStateStack();
 
 		// Initialise and start the adventure
-		init();
+		init(ctx);
 
 		while (!g_vm->shouldQuit()) {
 			if (!(ctx._break && ctx._label == "forfeit")) {
@@ -774,13 +784,15 @@ void run(void) {
 					ctx.clear();
 				} else {
 					if (debugOption)
-						debug(FALSE, 0, 0);
+						debug(ctx, FALSE, 0, 0);
 
-					if (stackDepth(theStack) != 0)
-						syserr("Stack is not empty in main loop");
+					if (!ctx._break) {
+						if (stackDepth(theStack) != 0)
+							syserr("Stack is not empty in main loop");
 
-					if (!current.meta)
-						runPendingEvents();
+						if (!current.meta)
+							runPendingEvents(ctx);
+					}
 				}
 
 				recursionDepth = 0;
@@ -802,16 +814,20 @@ void run(void) {
 					current.tick++;
 
 					// Remove this call? Since Eval is done up there after each event...
-					resetAndEvaluateRules(rules, header->version);
+					resetAndEvaluateRules(ctx, rules, header->version);
 
-					/* Then all the other actors... */
-					for (uint i = 1; i <= header->instanceMax; i++) {
-						if (i != header->theHero && isAActor(i)) {
-							moveActor(ctx, i);
-							if (ctx._break)
-								break;
+					if (!ctx._break) {
+						// Then all the other actors...
+						for (uint i = 1; i <= header->instanceMax; i++) {
+							if (i != header->theHero && isAActor(i)) {
+								moveActor(ctx, i);
+								if (ctx._break)
+									break;
 
-							resetAndEvaluateRules(rules, header->version);
+								resetAndEvaluateRules(ctx, rules, header->version);
+								if (ctx._break)
+									break;
+							}
 						}
 					}
 				}

@@ -25,12 +25,13 @@
 
 /* Header file for action unit of ARUN Alan System interpreter */
 
+#include "glk/alan3/jumps.h"
 #include "glk/alan3/params.h"
 
 namespace Glk {
 namespace Alan3 {
 
-extern void action(int verb, Parameter *parameters, Parameter *multipleMatches);
+extern void action(CONTEXT, int verb, Parameter *parameters, Parameter *multipleMatches);
 
 } // End of namespace Alan3
 } // End of namespace Glk

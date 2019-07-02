@@ -29,7 +29,7 @@ namespace Glk {
 namespace Alan3 {
 
 extern void saveGame(Common::WriteStream *saveFile);
-extern void restoreGame(Common::SeekableReadStream *saveFile);
+extern bool restoreGame(Common::SeekableReadStream *saveFile);
 
 } // End of namespace Alan3
 } // End of namespace Glk

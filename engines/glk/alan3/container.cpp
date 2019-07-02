@@ -79,14 +79,14 @@ static bool containerIsEmpty(int container) {
 
 
 /*======================================================================*/
-void describeContainer(int container) {
+void describeContainer(CONTEXT, int container) {
 	if (!containerIsEmpty(container) && !isOpaque(container))
-		list(container);
+		CALL1(list, container)
 }
 
 
 /*======================================================================*/
-bool passesContainerLimits(Aint theContainer, Aint theAddedInstance) {
+bool passesContainerLimits(CONTEXT, Aint theContainer, Aint theAddedInstance) {
 	LimitEntry *limit;
 	Aword props;
 
@@ -100,12 +100,12 @@ bool passesContainerLimits(Aint theContainer, Aint theAddedInstance) {
 		for (limit = (LimitEntry *) pointerTo(containers[props].limits); !isEndOfArray(limit); limit++)
 			if ((int)limit->atr == 1 - I_COUNT) { /* TODO This is actually some encoding of the attribute number, right? */
 				if (countInContainer(theContainer) >= (int)limit->val) {
-					interpret(limit->stms);
+					R0CALL1(interpret, limit->stms)
 					return (FALSE);
 				}
 			} else {
 				if (sumAttributeInContainer(theContainer, limit->atr) + getInstanceAttribute(theAddedInstance, limit->atr) > limit->val) {
-					interpret(limit->stms);
+					R0CALL1(interpret, limit->stms)
 					return (FALSE);
 				}
 			}
@@ -127,7 +127,7 @@ int containerSize(int container, ATrans trans) {
 }
 
 /*======================================================================*/
-void list(int container) {
+void list(CONTEXT, int container) {
 	uint i;
 	Aword props;
 	Aword foundInstance[2] = {0, 0};
@@ -145,9 +145,9 @@ void list(int container) {
 			/* We can only see objects and actors directly in this container... */
 			if (admin[i].location == container) { /* Yes, it's in this container */
 				if (found == 0) {
-					if (containers[props].header != 0)
-						interpret(containers[props].header);
-					else {
+					if (containers[props].header != 0) {
+						CALL1(interpret, containers[props].header)
+					} else {
 						if (isAActor(containers[props].owner))
 							printMessageWithInstanceParameter(M_CARRIES, containers[props].owner);
 						else
@@ -169,9 +169,9 @@ void list(int container) {
 			printMessageWithInstanceParameter(M_CONTAINS_AND, foundInstance[1]);
 		printMessageWithInstanceParameter(M_CONTAINS_END, foundInstance[0]);
 	} else {
-		if (containers[props].empty != 0)
-			interpret(containers[props].empty);
-		else {
+		if (containers[props].empty != 0) {
+			CALL1(interpret, containers[props].empty)
+		} else {
 			if (isAActor(containers[props].owner))
 				printMessageWithInstanceParameter(M_EMPTYHANDED, containers[props].owner);
 			else

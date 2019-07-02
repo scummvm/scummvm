@@ -31,6 +31,7 @@
 #include "glk/alan3/glkio.h"
 #include "glk/alan3/instance.h"
 #include "glk/alan3/inter.h"
+#include "glk/alan3/jumps.h"
 #include "glk/alan3/lists.h"
 #include "glk/alan3/literal.h"
 #include "glk/alan3/location.h"
@@ -63,7 +64,7 @@ static void clearPronounList(Pronoun list[]) {
 
 
 typedef Aint *(*ReferencesFinder)(int wordIndex);
-typedef void (*ParameterParser)(Parameter parameters[]);
+typedef void (*ParameterParser)(CONTEXT, Parameter parameters[]);
 
 
 
@@ -108,19 +109,21 @@ static bool endOfWords(int wordIndex) {
 
 
 /*----------------------------------------------------------------------*/
-static void handleDirectionalCommand() {
+static void handleDirectionalCommand(CONTEXT) {
 	currentWordIndex++;
-	if (!endOfWords(currentWordIndex) && !isConjunctionWord(currentWordIndex))
-		error(M_WHAT);
-	else
-		go(current.location, dictionary[playerWords[currentWordIndex - 1].code].code);
+	if (!endOfWords(currentWordIndex) && !isConjunctionWord(currentWordIndex)) {
+		CALL1(error, M_WHAT)
+	} else {
+		CALL2(go, current.location, dictionary[playerWords[currentWordIndex - 1].code].code)
+	}
+
 	if (!endOfWords(currentWordIndex))
 		currentWordIndex++;
 }
 
 
 /*----------------------------------------------------------------------*/
-static void errorWhichOne(Parameter alternative[]) {
+static void errorWhichOne(CONTEXT, Parameter alternative[]) {
 	int p; /* Index into the list of alternatives */
 	ParameterArray parameters = newParameterArray();
 
@@ -136,11 +139,11 @@ static void errorWhichOne(Parameter alternative[]) {
 	addParameterToParameterArray(parameters, &alternative[p]);
 	printMessageWithParameters(M_WHICH_ONE_OR, parameters);
 	freeParameterArray(parameters);
-	abortPlayerCommand(); /* Return with empty error message */
+	CALL0(abortPlayerCommand) /* Return with empty error message */
 }
 
 /*----------------------------------------------------------------------*/
-static void errorWhichPronoun(int pronounWordIndex, Parameter alternatives[]) {
+static void errorWhichPronoun(CONTEXT, int pronounWordIndex, Parameter alternatives[]) {
 	int p; /* Index into the list of alternatives */
 	Parameter *messageParameters = newParameterArray();
 
@@ -161,26 +164,26 @@ static void errorWhichPronoun(int pronounWordIndex, Parameter alternatives[]) {
 	addParameterToParameterArray(messageParameters, &alternatives[p]);
 	printMessageWithParameters(M_WHICH_ONE_OR, messageParameters);
 	freeParameterArray(messageParameters);
-	abortPlayerCommand();
+	CALL0(abortPlayerCommand)
 }
 
 /*----------------------------------------------------------------------*/
-static void errorWhat(int playerWordIndex) {
+static void errorWhat(CONTEXT, int playerWordIndex) {
 	Parameter *messageParameters = newParameterArray();
 
 	addParameterForWord(messageParameters, playerWordIndex);
 	printMessageWithParameters(M_WHAT_WORD, messageParameters);
 	freeParameterArray(messageParameters);
-	abortPlayerCommand();
+	CALL0(abortPlayerCommand)
 }
 
 /*----------------------------------------------------------------------*/
-static void errorAfterExcept(int butWordIndex) {
+static void errorAfterExcept(CONTEXT, int butWordIndex) {
 	Parameter *messageParameters = newParameterArray();
 	addParameterForWord(messageParameters, butWordIndex);
 	printMessageWithParameters(M_AFTER_BUT, messageParameters);
 	freeParameterArray(messageParameters);
-	abortPlayerCommand();
+	CALL0(abortPlayerCommand)
 }
 
 /*----------------------------------------------------------------------*/
@@ -202,13 +205,13 @@ static int fakePlayerWordForAll() {
 }
 
 /*----------------------------------------------------------------------*/
-static void errorButAfterAll(int butWordIndex) {
+static void errorButAfterAll(CONTEXT, int butWordIndex) {
 	Parameter *messageParameters = newParameterArray();
 	addParameterForWord(messageParameters, butWordIndex);
 	addParameterForWord(messageParameters, fakePlayerWordForAll());
 	printMessageWithParameters(M_BUT_ALL, messageParameters);
 	freeParameterArray(messageParameters);
-	abortPlayerCommand();
+	CALL0(abortPlayerCommand)
 }
 
 /*----------------------------------------------------------------------*/
@@ -220,7 +223,7 @@ static Aint findInstanceForNoun(int wordIndex) {
 }
 
 /*----------------------------------------------------------------------*/
-static void errorNoSuch(Parameter parameter) {
+static void errorNoSuch(CONTEXT, Parameter parameter) {
 
 	/* If there was no instance, assume the last word used is the noun,
 	 * then find any instance with the noun he used */
@@ -232,11 +235,11 @@ static void errorNoSuch(Parameter parameter) {
 
 	clearParameterArray(globalParameters);
 	addParameterToParameterArray(globalParameters, &parameter);
-	error(M_NO_SUCH);
+	CALL1(error, M_NO_SUCH)
 }
 
 /*----------------------------------------------------------------------*/
-static void buildAllHere(Parameter list[]) {
+static void buildAllHere(CONTEXT, Parameter list[]) {
 	uint instance;
 	bool found = FALSE;
 	int word = list[0].firstWord;
@@ -249,7 +252,7 @@ static void buildAllHere(Parameter list[]) {
 			found = TRUE;
 		}
 	if (!found)
-		errorWhat(word);
+		errorWhat(context, word);
 }
 
 
@@ -375,7 +378,8 @@ static void filterOutNonReachable(Parameter filteredCandidates[], bool (*reachab
  */
 
 /*----------------------------------------------------------------------*/
-static void disambiguateCandidatesForPosition(ParameterPosition parameterPositions[], int position, Parameter candidates[]) {
+static void disambiguateCandidatesForPosition(CONTEXT, ParameterPosition parameterPositions[],
+		int position, Parameter candidates[]) {
 	int i;
 	Parameter *parameters = newParameterArray();
 
@@ -384,8 +388,15 @@ static void disambiguateCandidatesForPosition(ParameterPosition parameterPositio
 		if (candidates[i].instance != 0) { /* Already empty? */
 			copyParameter(&parameters[position], &candidates[i]);
 			// DISAMBIGUATION!!
-			if (!reachable(candidates[i].instance) || !possible(current.verb, parameters, parameterPositions))
-				candidates[i].instance = 0; /* Then remove this candidate from list */
+			if (!reachable(candidates[i].instance)) {
+				// Then remove this candidate from list
+				candidates[i].instance = 0;
+			} else {
+				bool flag;
+				FUNC3(possible, flag, current.verb, parameters, parameterPositions)
+				if (!flag)
+					candidates[i].instance = 0;
+			}
 		}
 	}
 	compressParameterArray(candidates);
@@ -409,7 +420,7 @@ static bool parseAnyAdjectives(Parameter parameters[]) {
 /*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 /* Parse the input and note the word indices in the parameters,
    matching will be done by the match* functions */
-static void parseAdjectivesAndNoun(Parameter parameters[]) {
+static void parseAdjectivesAndNoun(CONTEXT, Parameter parameters[]) {
 	int wordFirst, wordLast;
 	bool adjectiveOrNounFound = FALSE;
 
@@ -422,14 +433,14 @@ static void parseAdjectivesAndNoun(Parameter parameters[]) {
 			adjectiveOrNounFound = TRUE;
 			currentWordIndex++;
 		} else
-			error(M_NOUN);
+			CALL1(error, M_NOUN)
 	} else if (adjectiveOrNounFound) {
 		/* Perhaps the last word could also be interpreted as a noun? */
 		if (isNounWord(currentWordIndex - 1)) {
 			// TODO When does this get executed? Maybe if conjunctions can be nouns? Or nouns be adjectives?
 			printf("DEBUG: When does this get executed? Found adjective or Noun and the previous word could also be a noun...\n");
 		} else
-			error(M_NOUN);
+			CALL1(error, M_NOUN)
 	}
 
 	if (adjectiveOrNounFound) {
@@ -445,7 +456,7 @@ static void parseAdjectivesAndNoun(Parameter parameters[]) {
 
 
 /*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-static void parseReference(Parameter parameters[]) {
+static void parseReference(CONTEXT, Parameter parameters[]) {
 	clearParameterArray(parameters);
 
 	if (isLiteralWord(currentWordIndex)) {
@@ -453,7 +464,7 @@ static void parseReference(Parameter parameters[]) {
 	} else if (isPronounWord(currentWordIndex)) {
 		parsePronoun(parameters);
 	} else {
-		parseAdjectivesAndNoun(parameters);
+		CALL1(parseAdjectivesAndNoun, parameters)
 	}
 }
 
@@ -484,7 +495,7 @@ static void parseReferenceToPreviousMultipleParameters(Parameter parameters[]) {
 
 
 /*----------------------------------------------------------------------*/
-static bool parseOneParameter(Parameter parameters[], int parameterIndex) {
+static bool parseOneParameter(CONTEXT, Parameter parameters[], int parameterIndex) {
 	Parameter *parameter = newParameterArray();
 
 	// TODO Maybe this should go in the complex()?
@@ -494,7 +505,7 @@ static bool parseOneParameter(Parameter parameters[], int parameterIndex) {
 		// are previous multiple parameters we give precedence to those
 		parseReferenceToPreviousMultipleParameters(parameter);
 	} else {
-		parseReference(parameter);
+		R0CALL1(parseReference, parameter)
 		if (lengthOfParameterArray(parameter) == 0) { /* Failed to find any exceptions! */
 			freeParameterArray(parameter);
 			return FALSE;
@@ -528,13 +539,14 @@ static bool parseOneParameter(Parameter parameters[], int parameterIndex) {
  */
 
 /*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-static void simpleParameterParser(Parameter parameters[]) {
+static void simpleParameterParser(CONTEXT, Parameter parameters[]) {
+	bool flag;
 
 	/* This will loop until all references are collected (typically "a and b and c") */
 	int parameterIndex;
 	for (parameterIndex = 0;; parameterIndex++) {
-
-		if (!parseOneParameter(parameters, parameterIndex))
+		FUNC2(parseOneParameter, flag, parameters, parameterIndex)
+		if (!flag)
 			return;
 
 		if (!endOfWords(currentWordIndex)
@@ -551,13 +563,14 @@ static void simpleParameterParser(Parameter parameters[]) {
 
 
 /*----------------------------------------------------------------------*/
-static void parseExceptions(ParameterPosition *parameterPosition, ParameterParser simpleParameterParser) {
+static void parseExceptions(CONTEXT, ParameterPosition *parameterPosition, ParameterParser simpleParameterParser) {
 	int exceptWordIndex = currentWordIndex;
 	currentWordIndex++;
 	parameterPosition->exceptions = ensureParameterArrayAllocated(parameterPosition->exceptions);
-	simpleParameterParser(parameterPosition->exceptions);
+	CALL1(simpleParameterParser, parameterPosition->exceptions)
+	
 	if (lengthOfParameterArray(parameterPosition->exceptions) == 0)
-		errorAfterExcept(exceptWordIndex);
+		errorAfterExcept(context, exceptWordIndex);
 }
 
 
@@ -572,7 +585,8 @@ static void parseExceptions(ParameterPosition *parameterPosition, ParameterParse
  */
 
 /*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-static void complexParameterParserDelegate(ParameterPosition *parameterPosition, ParameterParser simpleParameterParser) {
+static void complexParameterParserDelegate(CONTEXT, ParameterPosition *parameterPosition,
+		ParameterParser simpleParameterParser) {
 	parameterPosition->parameters = ensureParameterArrayAllocated(parameterPosition->parameters);
 
 	parameterPosition->all = FALSE;
@@ -588,9 +602,9 @@ static void complexParameterParserDelegate(ParameterPosition *parameterPosition,
 		parameterPosition->parameters[0].instance = 0;
 		setEndOfArray(&parameterPosition->parameters[1]);
 		if (!endOfWords(currentWordIndex) && isExceptWord(currentWordIndex))
-			parseExceptions(parameterPosition, simpleParameterParser);
+			CALL2(parseExceptions, parameterPosition, simpleParameterParser)
 	} else {
-		simpleParameterParser(parameterPosition->parameters);
+		CALL1(simpleParameterParser, parameterPosition->parameters)
 		if (lengthOfParameterArray(parameterPosition->parameters) > 1)
 			parameterPosition->explicitMultiple = TRUE;
 	}
@@ -598,8 +612,8 @@ static void complexParameterParserDelegate(ParameterPosition *parameterPosition,
 }
 
 /*----------------------------------------------------------------------*/
-static void complexReferencesParser(ParameterPosition *parameterPosition) {
-	complexParameterParserDelegate(parameterPosition, simpleParameterParser);
+static void complexReferencesParser(CONTEXT, ParameterPosition *parameterPosition) {
+	complexParameterParserDelegate(context, parameterPosition, simpleParameterParser);
 }
 
 
@@ -653,12 +667,13 @@ static bool restrictionCheck(RestrictionEntry *restriction, int instance) {
 
 
 /*----------------------------------------------------------------------*/
-static void runRestriction(RestrictionEntry *restriction, Parameter parameters[]) {
+static void runRestriction(CONTEXT, RestrictionEntry *restriction, Parameter parameters[]) {
 	if (restriction->stms) {
 		setGlobalParameters(parameters);
-		interpret(restriction->stms);
-	} else
-		error(M_CANT0);
+		interpret(context, restriction->stms);
+	} else {
+		error(context, M_CANT0);
+	}
 }
 
 
@@ -722,15 +737,16 @@ static bool multipleAllowed(Aword flags) {
  */
 
 /*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-static void parseParameterPosition(ParameterPosition *parameterPosition, Aword flags, void (*complexReferencesParser)(ParameterPosition *parameterPosition)) {
+static void parseParameterPosition(CONTEXT, ParameterPosition *parameterPosition,
+		Aword flags, void (*complexReferencesParser)(CONTEXT, ParameterPosition *parameterPosition)) {
 	parameterPosition->parameters = ensureParameterArrayAllocated(parameterPosition->parameters);
 
-	complexReferencesParser(parameterPosition);
+	CALL1(complexReferencesParser, parameterPosition)
 	if (lengthOfParameterArray(parameterPosition->parameters) == 0) /* No object!? */
-		error(M_WHAT);
+		CALL1(error, M_WHAT)
 
 	if (parameterPosition->explicitMultiple && !multipleAllowed(flags))
-		error(M_MULTIPLE);
+		CALL1(error, M_MULTIPLE)
 }
 
 /*----------------------------------------------------------------------*/
@@ -776,7 +792,7 @@ static bool endOfPlayerCommand(int wordIndex) {
 
 
 /*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-static ElementEntry *parseInputAccordingToSyntax(SyntaxEntry *syntax, ParameterPosition parameterPositions[]) {
+static ElementEntry *parseInputAccordingToSyntax(CONTEXT, SyntaxEntry *syntax, ParameterPosition parameterPositions[]) {
 	ElementEntry *currentElement = elementTreeOf(syntax);
 	ElementEntry *nextElement = currentElement;
 
@@ -798,7 +814,8 @@ static ElementEntry *parseInputAccordingToSyntax(SyntaxEntry *syntax, ParameterP
 				// Create parameter structure for the parameter position based on player words
 				// but without resolving them
 				ParameterPosition *parameterPosition = &parameterPositions[parameterCount];
-				parseParameterPosition(parameterPosition, nextElement->flags, complexReferencesParser);
+				R0CALL3(parseParameterPosition, parameterPosition, nextElement->flags, complexReferencesParser)
+
 				parameterPosition->flags = nextElement->flags;
 				parameterPosition->endOfList = FALSE;
 
@@ -821,7 +838,7 @@ static ElementEntry *parseInputAccordingToSyntax(SyntaxEntry *syntax, ParameterP
 
 		/* Anything else is an error, but we'll handle 'but' specially here */
 		if (isExceptWord(currentWordIndex))
-			errorButAfterAll(currentWordIndex);
+			R0CALL1(errorButAfterAll, currentWordIndex)
 
 		/* If we get here we couldn't match anything... */
 		nextElement = NULL;
@@ -853,7 +870,7 @@ static bool anyAll(ParameterPosition parameterPositions[]) {
 
 
 /*----------------------------------------------------------------------*/
-static void checkRestrictedParameters(ParameterPosition parameterPositions[], ElementEntry elms[]) {
+static void checkRestrictedParameters(CONTEXT, ParameterPosition parameterPositions[], ElementEntry elms[]) {
 	RestrictionEntry *restriction;
 	static Parameter *localParameters = NULL;
 	int i;
@@ -880,7 +897,7 @@ static void checkRestrictedParameters(ParameterPosition parameterPositions[], El
 						sprintf(marker, "($%ld)", (unsigned long) restriction->parameterNumber);
 						setGlobalParameters(localParameters);
 						output(marker);
-						runRestriction(restriction, localParameters);
+						CALL2(runRestriction, restriction, localParameters)
 						para();
 					}
 					parameterPosition->parameters[i].instance = 0; /* In any case remove it from the list */
@@ -888,8 +905,8 @@ static void checkRestrictedParameters(ParameterPosition parameterPositions[], El
 			}
 		} else {
 			if (!restrictionCheck(restriction, parameterPosition->parameters[0].instance)) {
-				runRestriction(restriction, localParameters);
-				abortPlayerCommand();
+				CALL2(runRestriction, restriction, localParameters)
+				CALL0(abortPlayerCommand)
 			}
 		}
 		parameterPositions[restriction->parameterNumber - 1].checked = TRUE;
@@ -900,19 +917,19 @@ static void checkRestrictedParameters(ParameterPosition parameterPositions[], El
 
 
 /*----------------------------------------------------------------------*/
-static void impossibleWith(ParameterPosition parameterPositions[], int positionIndex) {
+static void impossibleWith(CONTEXT, ParameterPosition parameterPositions[], int positionIndex) {
 	if (isPreBeta2(header->version)) {
-		error(M_CANT0);
+		error(context, M_CANT0);
 	} else {
 		printMessageWithInstanceParameter(M_IMPOSSIBLE_WITH, parameterPositions[positionIndex].parameters[0].instance);
-		error(NO_MSG);
+		error(context, NO_MSG);
 	}
 }
 
 
 
 /*----------------------------------------------------------------------*/
-static void checkNonRestrictedParameters(ParameterPosition parameterPositions[]) {
+static void checkNonRestrictedParameters(CONTEXT, ParameterPosition parameterPositions[]) {
 	int positionIndex;
 	for (positionIndex = 0; !parameterPositions[positionIndex].endOfList; positionIndex++)
 		if (!parameterPositions[positionIndex].checked) {
@@ -924,16 +941,17 @@ static void checkNonRestrictedParameters(ParameterPosition parameterPositions[])
 						if (!isAObject(parameterPositions[positionIndex].parameters[i].instance))
 							parameterPositions[positionIndex].parameters[i].instance = 0;
 			} else if (!isAObject(parameterPositions[positionIndex].parameters[0].instance))
-				impossibleWith(parameterPositions, positionIndex);
+				impossibleWith(context, parameterPositions, positionIndex);
 		}
 }
 
 
 /*----------------------------------------------------------------------*/
-static void restrictParametersAccordingToSyntax(ParameterPosition parameterPositions[], ElementEntry *elms) {
+static void restrictParametersAccordingToSyntax(CONTEXT, ParameterPosition parameterPositions[], ElementEntry *elms) {
 	uncheckAllParameterPositions(parameterPositions);
-	checkRestrictedParameters(parameterPositions, elms);
-	checkNonRestrictedParameters(parameterPositions);
+	CALL2(checkRestrictedParameters, parameterPositions, elms)
+	CALL1(checkNonRestrictedParameters, parameterPositions)
+
 	int positionIndex;
 	for (positionIndex = 0; !parameterPositions[positionIndex].endOfList; positionIndex++)
 		compressParameterArray(parameterPositions[positionIndex].parameters);
@@ -941,16 +959,16 @@ static void restrictParametersAccordingToSyntax(ParameterPosition parameterPosit
 
 
 /*----------------------------------------------------------------------*/
-static void matchPronoun(Parameter *parameter) {
+static void matchPronoun(CONTEXT, Parameter *parameter) {
 	static Parameter *pronounInstances = NULL;
 	pronounInstances = ensureParameterArrayAllocated(pronounInstances);
 
 	int pronounCandidateCount = getPronounInstances(playerWords[parameter->firstWord].code, pronounInstances);
-	if (pronounCandidateCount == 0)
-		errorWhat(parameter->firstWord);
-	else if (pronounCandidateCount > 1)
-		errorWhichPronoun(parameter->firstWord, pronounInstances);
-	else {
+	if (pronounCandidateCount == 0) {
+		CALL1(errorWhat, parameter->firstWord)
+	} else if (pronounCandidateCount > 1) {
+		CALL2(errorWhichPronoun, parameter->firstWord, pronounInstances)
+	} else {
 		parameter->candidates[0] = pronounInstances[0];
 		setEndOfArray(&parameter->candidates[1]);
 	}
@@ -968,7 +986,7 @@ static void matchNounPhrase(Parameter *parameter, ReferencesFinder adjectiveRefe
 
 
 /*----------------------------------------------------------------------*/
-static void instanceMatcher(Parameter *parameter) {
+static void instanceMatcher(CONTEXT, Parameter *parameter) {
 	Parameter *candidates = parameter->candidates;
 	int i;
 
@@ -976,7 +994,7 @@ static void instanceMatcher(Parameter *parameter) {
 		candidates[0].instance = instanceFromLiteral(playerWords[parameter->firstWord].code - dictionarySize);
 		setEndOfArray(&candidates[1]);
 	} else if (parameter->isPronoun) {
-		matchPronoun(parameter);
+		CALL1(matchPronoun, parameter)
 	} else
 		matchNounPhrase(parameter, adjectiveReferencesForWord, nounReferencesForWord);
 
@@ -991,24 +1009,25 @@ static void instanceMatcher(Parameter *parameter) {
 
 
 /*----------------------------------------------------------------------*/
-static void findCandidates(Parameter parameters[], void (*instanceMatcher)(Parameter *parameter)) {
+static void findCandidates(CONTEXT, Parameter parameters[], void (*instanceMatcher)(CONTEXT, Parameter *parameter)) {
 	int i;
 
 	for (i = 0; i < lengthOfParameterArray(parameters); i++) {
 		parameters[i].candidates = ensureParameterArrayAllocated(parameters[i].candidates);
-		instanceMatcher(&parameters[i]);
+		CALL1(instanceMatcher, &parameters[i])
+
 		parameters[i].candidates[0].isPronoun = parameters[i].isPronoun;
 	}
 }
 
 
 /*----------------------------------------------------------------------*/
-static void handleFailedParse(ElementEntry *elms) {
+static void handleFailedParse(CONTEXT, ElementEntry *elms) {
 	if (elms == NULL)
-		error(M_WHAT);
-	if (elms->next == 0) { /* No verb code, verb not declared! */
+		error(context, M_WHAT);
+	else if (elms->next == 0) { /* No verb code, verb not declared! */
 		/* TODO Does this ever happen? */
-		error(M_CANT0);
+		error(context, M_CANT0);
 	}
 }
 
@@ -1025,13 +1044,14 @@ static void convertMultipleCandidatesToMultipleParameters(ParameterPosition para
 
 
 /*----------------------------------------------------------------------*/
-static ElementEntry *parseInput(ParameterPosition *parameterPositions) {
+static ElementEntry *parseInput(CONTEXT, ParameterPosition *parameterPositions) {
 	ElementEntry *element;
 	SyntaxEntry *stx;
 
-	stx = findSyntaxTreeForVerb(verbWordCode);
-	element = parseInputAccordingToSyntax(stx, parameterPositions);
-	handleFailedParse(element);
+	R0FUNC1(findSyntaxTreeForVerb, stx, verbWordCode)
+	R0FUNC2(parseInputAccordingToSyntax, element, stx, parameterPositions)
+	R0CALL1(handleFailedParse, element)
+
 	current.syntax = element->flags;
 	current.verb = remapParameterOrder(current.syntax, parameterPositions);
 	return element;
@@ -1039,7 +1059,7 @@ static ElementEntry *parseInput(ParameterPosition *parameterPositions) {
 
 
 /*----------------------------------------------------------------------*/
-static void findCandidatesForPlayerWords(ParameterPosition *parameterPosition) {
+static void findCandidatesForPlayerWords(CONTEXT, ParameterPosition *parameterPosition) {
 	ParameterArray parameters = parameterPosition->parameters;
 
 	if (!parameterArrayIsEmpty(parameters)) {
@@ -1047,36 +1067,39 @@ static void findCandidatesForPlayerWords(ParameterPosition *parameterPosition) {
 			parameterPosition->them = TRUE;
 			getPreviousMultipleParameters(parameters);
 			if (lengthOfParameterArray(parameters) == 0)
-				errorWhat(parameters[0].firstWord);
+				CALL1(errorWhat, parameters[0].firstWord)
 			if (lengthOfParameterArray(parameters) > 1)
 				parameterPosition->explicitMultiple = TRUE;
 		} else if (parameterPosition->all) {
-			buildAllHere(parameters);
+			CALL1(buildAllHere, parameters)
 			if (!parameterArrayIsEmpty(parameterPosition->exceptions))
-				findCandidates(parameterPosition->exceptions, instanceMatcher);
+				CALL2(findCandidates, parameterPosition->exceptions, instanceMatcher)
 		} else
-			findCandidates(parameters, instanceMatcher);
+			CALL2(findCandidates, parameters, instanceMatcher)
 	}
 }
 
 
 /*----------------------------------------------------------------------*/
-static void handleMultiplePosition(ParameterPosition parameterPositions[]) {
+static void handleMultiplePosition(CONTEXT, ParameterPosition parameterPositions[]) {
 	int multiplePosition = findMultipleParameterPosition(parameterPositions);
 	if (anyAll(parameterPositions)) {
 		/* If the player used ALL, try to find out what was applicable */
-		disambiguateCandidatesForPosition(parameterPositions, multiplePosition, parameterPositions[multiplePosition].parameters);
+		CALL3(disambiguateCandidatesForPosition, parameterPositions, multiplePosition,
+			parameterPositions[multiplePosition].parameters)
+		
 		if (lengthOfParameterArray(parameterPositions[multiplePosition].parameters) == 0)
-			errorWhat(parameterPositions[multiplePosition].parameters[0].firstWord);
+			CALL1(errorWhat, parameterPositions[multiplePosition].parameters[0].firstWord)
+
 		subtractParameterArrays(parameterPositions[multiplePosition].parameters, parameterPositions[multiplePosition].exceptions);
 		if (lengthOfParameterArray(parameterPositions[multiplePosition].parameters) == 0)
-			error(M_NOT_MUCH);
+			CALL1(error, M_NOT_MUCH)
 	} else if (anyExplicitMultiple(parameterPositions)) {
 		compressParameterArray(parameterPositions[multiplePosition].parameters);
 		if (lengthOfParameterArray(parameterPositions[multiplePosition].parameters) == 0) {
 			/* If there where multiple parameters but non left, exit without a */
 			/* word, assuming we have already said enough */
-			abortPlayerCommand();
+			CALL0(abortPlayerCommand)
 		}
 	}
 }
@@ -1115,81 +1138,89 @@ static void handleMultiplePosition(ParameterPosition parameterPositions[]) {
  */
 
 
-typedef Parameter *DisambiguationHandler(Parameter allCandidates[], Parameter presentCandidates[]);
+typedef Parameter *DisambiguationHandler(CONTEXT, Parameter allCandidates[], Parameter presentCandidates[]);
 typedef DisambiguationHandler *DisambiguationHandlerTable[3][3][2];
 
-static Parameter *disambiguate00N(Parameter allCandidates[], Parameter presentCandidates[]) {
+static Parameter *disambiguate00N(CONTEXT, Parameter allCandidates[], Parameter presentCandidates[]) {
 	if (allCandidates[0].isPronoun)
-		errorWhat(allCandidates[0].firstWord);
+		R0CALL1(errorWhat, allCandidates[0].firstWord)
 	else
-		errorNoSuch(allCandidates[0]);
+		R0CALL1(errorNoSuch, allCandidates[0]);
 	return NULL;
 }
-static Parameter *disambiguate01N(Parameter allCandidates[], Parameter presentCandidates[]) {
+
+static Parameter *disambiguate01N(CONTEXT, Parameter allCandidates[], Parameter presentCandidates[]) {
 	if (allCandidates[0].isPronoun)
-		errorWhat(allCandidates[0].firstWord);
+		R0CALL1(errorWhat, allCandidates[0].firstWord)
 	else
-		errorNoSuch(allCandidates[0]);
+		R0CALL1(errorNoSuch, allCandidates[0])
 	return NULL;
 }
-static Parameter *disambiguate0MN(Parameter allCandidates[], Parameter presentCandidates[]) {
+
+static Parameter *disambiguate0MN(CONTEXT, Parameter allCandidates[], Parameter presentCandidates[]) {
 	if (allCandidates[0].isPronoun)
-		errorWhat(allCandidates[0].firstWord);
+		R0CALL1(errorWhat, allCandidates[0].firstWord)
 	else
-		errorNoSuch(allCandidates[0]);
+		R0CALL1(errorNoSuch, allCandidates[0])
 	return NULL;
 }
-static Parameter *disambiguate10N(Parameter allCandidates[], Parameter presentCandidates[]) {
+
+static Parameter *disambiguate10N(CONTEXT, Parameter allCandidates[], Parameter presentCandidates[]) {
 	return presentCandidates;
 }
-static Parameter *disambiguate11N(Parameter allCandidates[], Parameter presentCandidates[]) {
+
+static Parameter *disambiguate11N(CONTEXT, Parameter allCandidates[], Parameter presentCandidates[]) {
 	return presentCandidates;
 }
-static Parameter *disambiguate1MN(Parameter allCandidates[], Parameter presentCandidates[]) {
+
+static Parameter *disambiguate1MN(CONTEXT, Parameter allCandidates[], Parameter presentCandidates[]) {
 	return presentCandidates;
 }
-static Parameter *disambiguateM0N(Parameter allCandidates[], Parameter presentCandidates[]) {
-	errorWhichOne(presentCandidates);
+static Parameter *disambiguateM0N(CONTEXT, Parameter allCandidates[], Parameter presentCandidates[]) {
+	R0CALL1(errorWhichOne, presentCandidates)
 	return NULL;
 }
-static Parameter *disambiguateM1N(Parameter allCandidates[], Parameter presentCandidates[]) {
-	errorWhichOne(presentCandidates);
+
+static Parameter *disambiguateM1N(CONTEXT, Parameter allCandidates[], Parameter presentCandidates[]) {
+	R0CALL1(errorWhichOne, presentCandidates)
 	return NULL;
 }
-static Parameter *disambiguateMMN(Parameter allCandidates[], Parameter presentCandidates[]) {
-	errorWhichOne(presentCandidates);
+
+static Parameter *disambiguateMMN(CONTEXT, Parameter allCandidates[], Parameter presentCandidates[]) {
+	R0CALL1(errorWhichOne, presentCandidates)
 	return NULL;
 }
-static Parameter *disambiguate00Y(Parameter allCandidates[], Parameter presentCandidates[]) {
-	errorNoSuch(allCandidates[0]);
+
+static Parameter *disambiguate00Y(CONTEXT, Parameter allCandidates[], Parameter presentCandidates[]) {
+	errorNoSuch(context, allCandidates[0]);
 	return NULL;
 }
-static Parameter *disambiguate01Y(Parameter allCandidates[], Parameter presentCandidates[]) {
+static Parameter *disambiguate01Y(CONTEXT, Parameter allCandidates[], Parameter presentCandidates[]) {
 	return allCandidates;
 }
-static Parameter *disambiguate0MY(Parameter allCandidates[], Parameter presentCandidates[]) {
-	errorWhichOne(allCandidates);
+static Parameter *disambiguate0MY(CONTEXT, Parameter allCandidates[], Parameter presentCandidates[]) {
+	R0CALL1(errorWhichOne, allCandidates)
 	return NULL;
 }
-static Parameter *disambiguate10Y(Parameter allCandidates[], Parameter presentCandidates[]) {
+static Parameter *disambiguate10Y(CONTEXT, Parameter allCandidates[], Parameter presentCandidates[]) {
 	return presentCandidates;
 }
-static Parameter *disambiguate11Y(Parameter allCandidates[], Parameter presentCandidates[]) {
+static Parameter *disambiguate11Y(CONTEXT, Parameter allCandidates[], Parameter presentCandidates[]) {
 	return presentCandidates;
 }
-static Parameter *disambiguate1MY(Parameter allCandidates[], Parameter presentCandidates[]) {
+static Parameter *disambiguate1MY(CONTEXT, Parameter allCandidates[], Parameter presentCandidates[]) {
 	return presentCandidates;
 }
-static Parameter *disambiguateM0Y(Parameter allCandidates[], Parameter presentCandidates[]) {
-	errorWhichOne(presentCandidates);
+static Parameter *disambiguateM0Y(CONTEXT, Parameter allCandidates[], Parameter presentCandidates[]) {
+	R0CALL1(errorWhichOne, presentCandidates)
 	return NULL;
 }
-static Parameter *disambiguateM1Y(Parameter allCandidates[], Parameter presentCandidates[]) {
-	errorWhichOne(presentCandidates);
+static Parameter *disambiguateM1Y(CONTEXT, Parameter allCandidates[], Parameter presentCandidates[]) {
+	R0CALL1(errorWhichOne, presentCandidates)
 	return NULL;
 }
-static Parameter *disambiguateMMY(Parameter allCandidates[], Parameter presentCandidates[]) {
-	errorWhichOne(presentCandidates);
+static Parameter *disambiguateMMY(CONTEXT, Parameter allCandidates[], Parameter presentCandidates[]) {
+	R0CALL1(errorWhichOne, presentCandidates)
 	return NULL;
 }
 
@@ -1242,7 +1273,7 @@ static DisambiguationHandlerTable disambiguationHandlerTable = {
 };
 
 /*----------------------------------------------------------------------*/
-static void disambiguateCandidates(Parameter *allCandidates, bool omnipotent, bool (*reachable)(int), DisambiguationHandlerTable handler) {
+static void disambiguateCandidates(CONTEXT, Parameter *allCandidates, bool omnipotent, bool (*reachable)(int), DisambiguationHandlerTable handler) {
 	static Parameter *presentCandidates = NULL;
 	int present;
 	int distant;
@@ -1259,7 +1290,7 @@ static void disambiguateCandidates(Parameter *allCandidates, bool omnipotent, bo
 	distant = lengthOfParameterArray(allCandidates) - present;
 	if (distant > 1) distant = 2; /* 2 = M */
 
-	result = handler[present][distant][omnipotent](allCandidates, presentCandidates);
+	FUNC2(handler[present][distant][omnipotent], result, allCandidates, presentCandidates)
 
 	// If we returned then it's ok, use the single candidate found
 	allCandidates[0] = result[0];
@@ -1268,13 +1299,13 @@ static void disambiguateCandidates(Parameter *allCandidates, bool omnipotent, bo
 
 
 /*----------------------------------------------------------------------*/
-static void disambiguate(ParameterPosition parameterPositions[], ElementEntry *element) {
+static void disambiguate(CONTEXT, ParameterPosition parameterPositions[], ElementEntry *element) {
 	/* The New Strategy! Parsing has only collected word indications,
 	   not built anything, so we need to match parameters to instances here */
 
 	int position;
 	for (position = 0; !parameterPositions[position].endOfList; position++) {
-		findCandidatesForPlayerWords(&parameterPositions[position]);
+		CALL1(findCandidatesForPlayerWords, &parameterPositions[position])
 	}
 
 	/* Now we have candidates for everything the player said, except
@@ -1291,7 +1322,8 @@ static void disambiguate(ParameterPosition parameterPositions[], ElementEntry *e
 			for (p = 0; p < lengthOfParameterArray(parameters); p++) {
 				Parameter *parameter = &parameters[p];
 				Parameter *candidates = parameter->candidates;
-				disambiguateCandidates(candidates, omni, reachable, disambiguationHandlerTable);
+				CALL4(disambiguateCandidates, candidates, omni, reachable, disambiguationHandlerTable)
+				
 				parameter->instance = candidates[0].instance;
 			}
 		}
@@ -1301,21 +1333,22 @@ static void disambiguate(ParameterPosition parameterPositions[], ElementEntry *e
 			for (p = 0; p < lengthOfParameterArray(exceptions); p++) {
 				Parameter *parameter = &exceptions[p];
 				Parameter *candidates = parameter->candidates;
-				disambiguateCandidates(candidates, omni, reachable, disambiguationHandlerTable);
+				CALL4(disambiguateCandidates, candidates, omni, reachable, disambiguationHandlerTable)
+
 				parameter->instance = candidates[0].instance;
 			}
 		}
 	}
 
-	handleMultiplePosition(parameterPositions);
+	CALL1(handleMultiplePosition, parameterPositions)
 
 	/* Now perform restriction checks */
-	restrictParametersAccordingToSyntax(parameterPositions, element);
+	CALL2(restrictParametersAccordingToSyntax, parameterPositions, element)
 }
 
 
 /*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-static void tryParam(Parameter parameters[], Parameter multipleParameters[]) {
+static void tryParam(CONTEXT, Parameter parameters[], Parameter multipleParameters[]) {
 	ElementEntry *element;      /* Pointer to element list */
 	static ParameterPosition *parameterPositions = NULL;
 	if (parameterPositions != NULL)
@@ -1325,9 +1358,8 @@ static void tryParam(Parameter parameters[], Parameter multipleParameters[]) {
 	parameterPositions = (ParameterPosition *)allocate(sizeof(ParameterPosition) * (MAXPARAMS + 1));
 	parameterPositions[0].endOfList = TRUE;
 
-	element = parseInput(parameterPositions);
-
-	disambiguate(parameterPositions, element);
+	FUNC1(parseInput, element, parameterPositions)
+	CALL2(disambiguate, parameterPositions, element)
 
 	// TODO: Now we need to convert back to legacy parameter and multipleParameter format
 	convertPositionsToParameters(parameterPositions, parameters);
@@ -1340,15 +1372,16 @@ static void tryParam(Parameter parameters[], Parameter multipleParameters[]) {
 
 
 /*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-static void parseOneCommand(Parameter parameters[], Parameter multipleParameters[]) {
-	tryParam(parameters, multipleParameters); /* ... to understand what he said */
+static void parseOneCommand(CONTEXT, Parameter parameters[], Parameter multipleParameters[]) {
+	// ... to understand what he said
+	CALL2(tryParam, parameters, multipleParameters)
 
 	/* More on this line? */
 	if (!endOfWords(currentWordIndex)) {
 		if (isConjunctionWord(currentWordIndex))
 			currentWordIndex++; /* If so skip the conjunction */
 		else
-			error(M_WHAT);
+			error(context, M_WHAT);
 	}
 }
 
@@ -1410,27 +1443,27 @@ static void notePronounsForParameters(Parameter parameters[]) {
 
 
 /*----------------------------------------------------------------------*/
-static void parseVerbCommand(Parameter parameters[], Parameter multipleParameters[]) {
+static void parseVerbCommand(CONTEXT, Parameter parameters[], Parameter multipleParameters[]) {
 	verbWord = playerWords[currentWordIndex].code;
 	verbWordCode = dictionary[verbWord].code;
 	if (isPreBeta2(header->version))
 		/* Pre-beta2 didn't generate syntax elements for verb words,
 		   need to skip first word which should be the verb */
 		currentWordIndex++;
-	parseOneCommand(parameters, multipleParameters);
+	CALL2(parseOneCommand, parameters, multipleParameters)
 	notePronounsForParameters(parameters);
 	fail = FALSE;
 }
 
 
 /*----------------------------------------------------------------------*/
-static void parseInstanceCommand(Parameter parameters[], Parameter multipleParameters[]) {
+static void parseInstanceCommand(CONTEXT, Parameter parameters[], Parameter multipleParameters[]) {
 	/* Pick up the parse tree for the syntaxes that start with an
 	   instance reference and parse according to that. The
 	   verbWord code is set to 0 to indicate that it is not a verb
 	   but an instance that starts the command. */
 	verbWordCode = 0;
-	parseOneCommand(parameters, multipleParameters);
+	CALL2(parseOneCommand, parameters, multipleParameters)
 	notePronounsForParameters(parameters);
 	fail = FALSE;
 }
@@ -1455,19 +1488,20 @@ void parse(CONTEXT) {
 
 	firstWord = currentWordIndex;
 	if (isVerbWord(currentWordIndex)) {
-		parseVerbCommand(parameters, multipleParameters);
-		action(current.verb, parameters, multipleParameters);
+		CALL2(parseVerbCommand, parameters, multipleParameters);
+		CALL3(action, current.verb, parameters, multipleParameters)
 	} else if (isDirectionWord(currentWordIndex)) {
 		clearParameterArray(previousMultipleParameters);
 		clearPronounList(pronouns);
-		handleDirectionalCommand();
+		CALL0(handleDirectionalCommand)
 	} else if (isInstanceReferenceWord(currentWordIndex)) {
-		parseInstanceCommand(parameters, multipleParameters);
-		action(current.verb, parameters, multipleParameters);
+		CALL2(parseInstanceCommand, parameters, multipleParameters)
+		CALL3(action, current.verb, parameters, multipleParameters)
 	} else
-		error(M_WHAT);
+		CALL1(error, M_WHAT)
 
-	if (fail) error(NO_MSG);
+	if (fail)
+		CALL1(error, NO_MSG)
 
 	lastWord = currentWordIndex - 1;
 	if (isConjunctionWord(lastWord))

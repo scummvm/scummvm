@@ -132,8 +132,7 @@ void Alan3::deinitialize() {
 }
 
 Common::Error Alan3::readSaveData(Common::SeekableReadStream *rs) {
-	Glk::Alan3::restoreGame(rs);
-	return Common::kNoError;
+	return Glk::Alan3::restoreGame(rs) ? Common::kNoError : Common::kReadingFailed;
 }
 
 Common::Error Alan3::writeGameData(Common::WriteStream *ws) {

@@ -25,6 +25,7 @@
 
 #include "glk/alan3/types.h"
 #include "glk/alan3/acode.h"
+#include "glk/alan3/jumps.h"
 
 namespace Glk {
 namespace Alan3 {
@@ -35,9 +36,9 @@ extern ContainerEntry *containers; /* Container table pointer */
 
 /* FUNCTIONS */
 extern int containerSize(int container, ATrans trans);
-extern bool passesContainerLimits(Aint container, Aint addedInstance);
-extern void describeContainer(int container);
-extern void list(int cnt);
+extern bool passesContainerLimits(CONTEXT, Aint container, Aint addedInstance);
+extern void describeContainer(CONTEXT, int container);
+extern void list(CONTEXT, int cnt);
 
 } // End of namespace Alan3
 } // End of namespace Glk

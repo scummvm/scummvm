@@ -61,18 +61,19 @@ StepEntry *stepOf(int actor) {
 
 
 /*======================================================================*/
-void describeActor(int actor) {
+void describeActor(CONTEXT, int actor) {
 	ScriptEntry *script = scriptOf(actor);
 
-	if (script != NULL && script->description != 0)
-		interpret(script->description);
-	else if (hasDescription(actor))
-		describeAnything(actor);
-	else {
+	if (script != NULL && script->description != 0) {
+		CALL1(interpret, script->description)
+	} else if (hasDescription(actor)) {
+		CALL1(describeAnything, actor)
+	} else {
 		printMessageWithInstanceParameter(M_SEE_START, actor);
 		printMessage(M_SEE_END);
+
 		if (instances[actor].container != 0)
-			describeContainer(actor);
+			CALL1(describeContainer, actor)
 	}
 	admin[actor].alreadyDescribed = TRUE;
 }

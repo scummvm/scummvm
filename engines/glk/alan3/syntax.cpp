@@ -69,7 +69,7 @@ static SyntaxEntry *findSyntaxEntry(int verbCode) {
 
 
 /*======================================================================*/
-SyntaxEntry *findSyntaxTreeForVerb(int verbCode) {
+SyntaxEntry *findSyntaxTreeForVerb(CONTEXT, int verbCode) {
 	SyntaxEntry *foundStx = NULL;
 	if (isPreBeta2(header->version)) {
 		foundStx = findSyntaxEntryForPreBeta2(verbCode, foundStx);
@@ -77,8 +77,8 @@ SyntaxEntry *findSyntaxTreeForVerb(int verbCode) {
 		foundStx = findSyntaxEntry(verbCode);
 	}
 	if (foundStx == NULL)
-		/* No matching syntax */
-		error(M_WHAT);
+		// No matching syntax
+		R0CALL1(error, M_WHAT)
 	return foundStx;
 }
 

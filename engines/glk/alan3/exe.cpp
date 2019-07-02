@@ -577,18 +577,18 @@ void playSound(int sound) {
 
 
 /*======================================================================*/
-void empty(int cnt, int whr) {
+void empty(CONTEXT, int cnt, int whr) {
 	uint i;
 
 	for (i = 1; i <= header->instanceMax; i++)
 		if (isIn(i, cnt, DIRECT))
-			locate(i, whr);
+			CALL2(locate, i, whr)
 }
 
 
 
 /*======================================================================*/
-void use(int actor, int script) {
+void use(CONTEXT, int actor, int script) {
 	char str[80];
 	StepEntry *step;
 
@@ -601,7 +601,7 @@ void use(int actor, int script) {
 	admin[actor].step = 0;
 	step = stepOf(actor);
 	if (step != NULL && step->after != 0) {
-		admin[actor].waitCount = evaluate(step->after);
+		FUNC1(evaluate, admin[actor].waitCount, step->after)
 	}
 
 	gameStateChanged = TRUE;

@@ -25,6 +25,7 @@
 
 #include "glk/alan3/types.h"
 #include "glk/alan3/acode.h"
+#include "glk/alan3/jumps.h"
 
 namespace Glk {
 namespace Alan3 {
@@ -48,7 +49,7 @@ typedef CheckEntry CheckEntryArray[];
 
 
 /* FUNCTIONS */
-extern bool checksFailed(Aaddr adr, bool execute);
+extern bool checksFailed(CONTEXT, Aaddr adr, bool execute);
 
 } // End of namespace Alan3
 } // End of namespace Glk

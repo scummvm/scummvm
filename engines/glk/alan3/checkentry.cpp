@@ -29,17 +29,20 @@ namespace Glk {
 namespace Alan3 {
 
 /*======================================================================*/
-bool checksFailed(Aaddr adr, bool execute) {
+bool checksFailed(CONTEXT, Aaddr adr, bool execute) {
 	CheckEntry *chk = (CheckEntry *) pointerTo(adr);
+	bool flag;
+
 	if (chk->exp == 0) {
 		if (execute == EXECUTE_CHECK_BODY_ON_FAIL)
-			interpret(chk->stms);
+			R0CALL1(interpret, chk->stms)
 		return TRUE;
 	} else {
 		while (!isEndOfArray(chk)) {
-			if (!evaluate(chk->exp)) {
+			R0FUNC1(evaluate, flag, chk->exp)
+			if (!flag) {
 				if (execute == EXECUTE_CHECK_BODY_ON_FAIL)
-					interpret(chk->stms);
+					R0CALL1(interpret, chk->stms)
 				return TRUE;
 			}
 			chk++;

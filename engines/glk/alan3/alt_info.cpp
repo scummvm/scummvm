@@ -55,8 +55,8 @@ void primeAltInfo(AltInfo *altInfo, int level, int parameter, int instance, int 
 
 
 /*----------------------------------------------------------------------*/
-static void traceInstanceAndItsClass(Aid instance, Aid cls) {
-	traceSay(instance);
+static void traceInstanceAndItsClass(CONTEXT, Aid instance, Aid cls) {
+	CALL1(traceSay, instance)
 	printf("[%d]", instance);
 	if (cls != NO_CLASS)
 		printf(", inherited from %s[%d]", idOfClass(cls), cls);
@@ -64,14 +64,14 @@ static void traceInstanceAndItsClass(Aid instance, Aid cls) {
 
 
 /*----------------------------------------------------------------------*/
-static void traceAltInfo(AltInfo *alt) {
+static void traceAltInfo(CONTEXT, AltInfo *alt) {
 	switch (alt->level) {
 	case GLOBAL_LEVEL:
 		printf("GLOBAL");
 		break;
 	case LOCATION_LEVEL:
 		printf("in (location) ");
-		traceInstanceAndItsClass(current.location, alt->_class);
+		CALL2(traceInstanceAndItsClass, current.location, alt->_class)
 		break;
 	case PARAMETER_LEVEL: {
 		char *parameterName = parameterNameInSyntax(current.verb, alt->parameter);
@@ -79,7 +79,7 @@ static void traceAltInfo(AltInfo *alt) {
 			printf("in parameter %s(#%d)=", parameterName, alt->parameter);
 		else
 			printf("in parameter #%d=", alt->parameter);
-		traceInstanceAndItsClass(globalParameters[alt->parameter - 1].instance, alt->_class);
+		CALL2(traceInstanceAndItsClass, globalParameters[alt->parameter - 1].instance, alt->_class)
 		break;
 	}
 	}
@@ -87,35 +87,36 @@ static void traceAltInfo(AltInfo *alt) {
 
 
 /*----------------------------------------------------------------------*/
-static void traceVerbCheck(AltInfo *alt, bool execute) {
+static void traceVerbCheck(CONTEXT, AltInfo *alt, bool execute) {
 	if (traceSectionOption && execute) {
 		printf("\n<VERB %d, ", current.verb);
-		traceAltInfo(alt);
+		CALL1(traceAltInfo, alt)
 		printf(", CHECK:>\n");
 	}
 }
 
 
 /*======================================================================*/
-bool checkFailed(AltInfo *altInfo, bool execute) {
+bool checkFailed(CONTEXT, AltInfo *altInfo, bool execute) {
 	if (altInfo->alt != NULL && altInfo->alt->checks != 0) {
-		traceVerbCheck(altInfo, execute);
+		R0CALL2(traceVerbCheck, altInfo, execute)
+
 		// TODO Why does this not generate a regression error with !
 		// Need a new regression case?
-		fail = FALSE;
-		if (checksFailed(altInfo->alt->checks, execute)) return TRUE;
-		if (fail) return TRUE;
+		R0FUNC2(checksFailed, fail, altInfo->alt->checks, execute)
+		return fail;
 	}
 	return FALSE;
 }
 
 
 /*----------------------------------------------------------------------*/
-static void traceVerbExecution(AltInfo *alt) {
+static void traceVerbExecution(CONTEXT, AltInfo *alt) {
 	if (traceSectionOption) {
 		printf("\n<VERB %d, ", current.verb);
-		traceAltInfo(alt);
+		CALL1(traceAltInfo, alt)
 		printf(", DOES");
+
 		switch (alt->alt->qual) {
 		case Q_BEFORE:
 			printf(" (BEFORE)");
@@ -135,12 +136,12 @@ static void traceVerbExecution(AltInfo *alt) {
 
 
 /*======================================================================*/
-bool executedOk(AltInfo *altInfo) {
+bool executedOk(CONTEXT, AltInfo *altInfo) {
 	fail = FALSE;
 	if (!altInfo->done && altInfo->alt->action != 0) {
-		traceVerbExecution(altInfo);
+		R0CALL1(traceVerbExecution, altInfo)
 		current.instance = altInfo->instance;
-		interpret(altInfo->alt->action);
+		R0CALL1(interpret, altInfo->alt->action)
 	}
 	altInfo->done = TRUE;
 	return !fail;
@@ -248,14 +249,16 @@ static void addAlternativesFromParameter(AltInfoArray altInfos, int verb, Parame
 
 
 /*======================================================================*/
-bool anyCheckFailed(AltInfoArray altInfo, bool execute) {
+bool anyCheckFailed(CONTEXT, AltInfoArray altInfo, bool execute) {
 	int altIndex;
+	bool flag;
 
 	if (altInfo != NULL)
 		for (altIndex = 0; !altInfo[altIndex].end; altIndex++) {
 			current.instance = altInfo[altIndex].instance;
-			if (checkFailed(&altInfo[altIndex], execute))
-				return TRUE;
+
+			R0FUNC2(checkFailed, flag, &altInfo[altIndex], execute)
+			return flag;
 		}
 	return FALSE;
 }
@@ -339,15 +342,17 @@ AltInfo *findAllAlternatives(int verb, Parameter parameters[]) {
 
 
 /*----------------------------------------------------------------------*/
-static bool possibleWithFinder(int verb, Parameter parameters[], AltInfoFinder *finder) {
+static bool possibleWithFinder(CONTEXT, int verb, Parameter parameters[], AltInfoFinder *finder) {
 	bool anything;
 	AltInfo *allAlternatives;
+	bool flag;
 
 	allAlternatives = finder(verb, parameters);
 
 	// TODO Need to do this since anyCheckFailed() call execute() which assumes the global parameters
 	setGlobalParameters(parameters);
-	if (anyCheckFailed(allAlternatives, DONT_EXECUTE_CHECK_BODY_ON_FAIL))
+	R0FUNC2(anyCheckFailed, flag, allAlternatives, DONT_EXECUTE_CHECK_BODY_ON_FAIL)
+	if (flag)
 		anything = FALSE;
 	else
 		anything = anythingToExecute(allAlternatives);
@@ -361,11 +366,11 @@ static bool possibleWithFinder(int verb, Parameter parameters[], AltInfoFinder *
 
 
 /*======================================================================*/
-bool possible(int verb, Parameter inParameters[], ParameterPosition parameterPositions[]) {
+bool possible(CONTEXT, int verb, Parameter inParameters[], ParameterPosition parameterPositions[]) {
 	// This is a wrapper for possibleWithFinder() which is used in unit tests
 	// possible() should be used "for real".
 
-	return possibleWithFinder(verb, inParameters, findAllAlternatives);
+	return possibleWithFinder(context, verb, inParameters, findAllAlternatives);
 }
 
 } // End of namespace Alan3

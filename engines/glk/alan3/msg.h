@@ -24,6 +24,7 @@
 #define GLK_ALAN3_MSG
 
 #include "glk/alan3/acode.h"
+#include "glk/alan3/jumps.h"
 #include "glk/alan3/types.h"
 #include "glk/alan3/params.h"
 
@@ -42,9 +43,9 @@ extern MessageEntry *msgs;  /* Message table pointer */
 
 /* FUNCTIONS */
 extern void setErrorHandler(void (*handler)(MsgKind));
-extern void abortPlayerCommand(void);
-extern void error(MsgKind msg);
-extern bool confirm(MsgKind msgno);
+extern void abortPlayerCommand(CONTEXT);
+extern void error(CONTEXT, MsgKind msg);
+extern bool confirm(CONTEXT, MsgKind msgno);
 extern void printMessage(MsgKind msg);
 extern void printMessageWithParameters(MsgKind msg, Parameter *messageParameters);
 extern void printMessageWithInstanceParameter(MsgKind message, int i);

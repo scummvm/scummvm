@@ -73,7 +73,7 @@ static void showAttributes(AttributeEntry *attrib) {
 
 
 /*----------------------------------------------------------------------*/
-static void showContents(int cnt) {
+static void showContents(CONTEXT, int cnt) {
 	uint i;
 	char str[80];
 	Abool found = FALSE;
@@ -84,7 +84,7 @@ static void showContents(int cnt) {
 			if (!found)
 				found = TRUE;
 			output("$i$t");
-			say(i);
+			say(context, i);
 			sprintf(str, "[%d] ", i);
 			output(str);
 		}
@@ -95,7 +95,7 @@ static void showContents(int cnt) {
 
 
 /*----------------------------------------------------------------------*/
-static char *idOfInstance(int instance) {
+static char *idOfInstance(CONTEXT, int instance) {
 	int base = header->instanceTableAddress +
 	           header->instanceMax * sizeof(InstanceEntry) / sizeof(Aword) + 1;
 	return (char *)&memory[memory[base + instance - 1]];
@@ -103,60 +103,61 @@ static char *idOfInstance(int instance) {
 
 
 /*----------------------------------------------------------------------*/
-static void sayInstanceNumberAndName(int ins) {
+static void sayInstanceNumberAndName(CONTEXT, int ins) {
 	char buf[1000];
 
-	sprintf(buf, "[%d] %s (\"$$", ins, idOfInstance(ins));
+	sprintf(buf, "[%d] %s (\"$$", ins, idOfInstance(context, ins));
 	output(buf);
-	say(ins);
+	say(context, ins);
 	output("$$\")");
 }
 
 
 /*----------------------------------------------------------------------*/
-static void sayLocationOfInstance(int ins, const char *prefix) {
+static void sayLocationOfInstance(CONTEXT, int ins, const char *prefix) {
 	if (admin[ins].location == 0)
 		return;
 	else {
 		output(prefix);
 		if (isALocation(admin[ins].location)) {
 			output("at");
-			sayInstanceNumberAndName(admin[ins].location);
-			sayLocationOfInstance(admin[ins].location, prefix);
+			CALL1(sayInstanceNumberAndName, admin[ins].location)
+			CALL2(sayLocationOfInstance, admin[ins].location, prefix)
 		} else if (isAContainer(admin[ins].location)) {
 			if (isAObject(admin[ins].location))
 				output("in");
 			else if (isAActor(admin[ins].location))
 				output("carried by");
-			sayInstanceNumberAndName(admin[ins].location);
-			sayLocationOfInstance(admin[ins].location, prefix);
-		} else
+			CALL1(sayInstanceNumberAndName, admin[ins].location)
+			CALL2(sayLocationOfInstance, admin[ins].location, prefix)
+		} else {
 			output("Illegal location!");
+		}
 	}
 }
 
 /*----------------------------------------------------------------------*/
-static void listInstance(int ins) {
+static void listInstance(CONTEXT, int ins) {
 	output("$i");
-	sayInstanceNumberAndName(ins);
+	CALL1(sayInstanceNumberAndName, ins)
 	if (instances[ins].container)
 		output("(container)");
-	sayLocationOfInstance(ins, ", ");
+	CALL2(sayLocationOfInstance, ins, ", ")
 }
 
 
 /*----------------------------------------------------------------------*/
-static void listInstances(char *pattern) {
+static void listInstances(CONTEXT, char *pattern) {
 	uint ins;
 	bool found = FALSE;
 
 	for (ins = 1; ins <= header->instanceMax; ins++) {
-		if (pattern == NULL || (pattern != NULL && match(pattern, idOfInstance(ins)))) {
+		if (pattern == NULL || (pattern != NULL && match(pattern, idOfInstance(context, ins)))) {
 			if (!found) {
 				output("Instances:");
 				found = TRUE;
 			}
-			listInstance(ins);
+			CALL1(listInstance, ins)
 		}
 	}
 	if (pattern != NULL && !found)
@@ -164,7 +165,7 @@ static void listInstances(char *pattern) {
 }
 
 /*----------------------------------------------------------------------*/
-static void showInstance(int ins) {
+static void showInstance(CONTEXT, int ins) {
 	char str[80];
 
 	if (ins > (int)header->instanceMax || ins < 1) {
@@ -174,7 +175,7 @@ static void showInstance(int ins) {
 	}
 
 	output("The");
-	sayInstanceNumberAndName(ins);
+	CALL1(sayInstanceNumberAndName, ins)
 	if (instances[ins].parent) {
 		sprintf(str, "Isa %s[%d]", idOfClass(instances[ins].parent), instances[ins].parent);
 		output(str);
@@ -184,14 +185,14 @@ static void showInstance(int ins) {
 		sprintf(str, "$iLocation:");
 		output(str);
 		needSpace = TRUE;
-		sayLocationOfInstance(ins, "");
+		CALL2(sayLocationOfInstance, ins, "")
 	}
 
 	output("$iAttributes:");
 	showAttributes(admin[ins].attributes);
 
 	if (instances[ins].container)
-		showContents(ins);
+		CALL1(showContents, ins)
 
 	if (isA(ins, header->actorClassId)) {
 		if (admin[ins].script == 0)
@@ -205,18 +206,18 @@ static void showInstance(int ins) {
 
 
 /*----------------------------------------------------------------------*/
-static void listObjects(void) {
+static void listObjects(CONTEXT) {
 	uint obj;
 
 	output("Objects:");
 	for (obj = 1; obj <= header->instanceMax; obj++)
 		if (isAObject(obj))
-			listInstance(obj);
+			CALL1(listInstance, obj)
 }
 
 
 /*----------------------------------------------------------------------*/
-static void showObject(int obj) {
+static void showObject(CONTEXT, int obj) {
 	char str[80];
 
 
@@ -226,8 +227,7 @@ static void showObject(int obj) {
 		return;
 	}
 
-	showInstance(obj);
-
+	CALL1(showInstance, obj)
 }
 
 /*----------------------------------------------------------------------*/
@@ -314,18 +314,18 @@ static void showClassHierarchy(int thisItem, int depth) {
 
 
 /*----------------------------------------------------------------------*/
-static void listLocations(void) {
+static void listLocations(CONTEXT) {
 	uint loc;
 
 	output("Locations:");
 	for (loc = 1; loc <= header->instanceMax; loc++)
 		if (isALocation(loc))
-			listInstance(loc);
+			listInstance(context, loc);
 }
 
 
 /*----------------------------------------------------------------------*/
-static void showLocation(int loc) {
+static void showLocation(CONTEXT, int loc) {
 	char str[80];
 
 
@@ -336,7 +336,7 @@ static void showLocation(int loc) {
 	}
 
 	output("The ");
-	say(loc);
+	CALL1(say, loc)
 	sprintf(str, "(%d) Isa location :", loc);
 	output(str);
 
@@ -346,18 +346,18 @@ static void showLocation(int loc) {
 
 
 /*----------------------------------------------------------------------*/
-static void listActors(void) {
+static void listActors(CONTEXT) {
 	uint act;
 
 	output("Actors:");
 	for (act = 1; act <= header->instanceMax; act++)
 		if (isAActor(act))
-			listInstance(act);
+			CALL1(listInstance, act)
 }
 
 
 /*----------------------------------------------------------------------*/
-static void showActor(int act) {
+static void showActor(CONTEXT, int act) {
 	char str[80];
 
 	if (!isAActor(act)) {
@@ -366,12 +366,12 @@ static void showActor(int act) {
 		return;
 	}
 
-	showInstance(act);
+	CALL1(showInstance, act)
 }
 
 
 /*----------------------------------------------------------------------*/
-static void showEvents(void) {
+static void showEvents(CONTEXT) {
 	uint event;
 	int i;
 	char str[80];
@@ -389,7 +389,7 @@ static void showEvents(void) {
 		if (scheduled) {
 			sprintf(str, "Scheduled for +%d, at ", eventQueue[i].after);
 			output(str);
-			say(eventQueue[i].where);
+			CALL1(say, eventQueue[i].where)
 		} else
 			output("Not scheduled.");
 	}
@@ -734,15 +734,17 @@ static char parseDebugCommand(char *command) {
 
 
 /*----------------------------------------------------------------------*/
-static void readCommand(char buf[]) {
+static void readCommand(CONTEXT, char buf[], size_t maxLen) {
 	char c;
+	bool flag;
 
 	capitalize = FALSE;
 	if (anyOutput) newline();
 	do {
 		output("adbg> ");
 
-		if (!readline(buf)) {
+		FUNC2(readline, flag, buf, maxLen)
+		if (!flag) {
 			newline();
 			quitGame();
 		}
@@ -919,32 +921,32 @@ static void handleNextCommand(bool calledFromBreakpoint) {
 
 
 /*----------------------------------------------------------------------*/
-static void handleLocationsCommand() {
+static void handleLocationsCommand(CONTEXT) {
 	char *parameter = strtok(NULL, "");
 	if (parameter == 0)
-		listLocations();
+		listLocations(context);
 	else
-		showLocation(atoi(parameter));
+		showLocation(context, atoi(parameter));
 }
 
 
 /*----------------------------------------------------------------------*/
-static void handleActorsCommand() {
+static void handleActorsCommand(CONTEXT) {
 	char *parameter = strtok(NULL, "");
 	if (parameter == NULL)
-		listActors();
+		listActors(context);
 	else
-		showActor(atoi(parameter));
+		showActor(context, atoi(parameter));
 }
 
 
 /*----------------------------------------------------------------------*/
-static void handleClassesCommand() {
+static void handleClassesCommand(CONTEXT) {
 	char *parameter = strtok(NULL, "");
 	if (parameter == NULL || strchr(parameter, '*') != 0) {
 		output("Classes:");
 		showClassHierarchy(1, 0);
-		listInstances(parameter);
+		listInstances(context, parameter);
 	} else if (isdigit((int)parameter[0]))
 		showClass(atoi(parameter));
 	else {
@@ -954,28 +956,28 @@ static void handleClassesCommand() {
 
 
 /*----------------------------------------------------------------------*/
-static void handleObjectsCommand() {
+static void handleObjectsCommand(CONTEXT) {
 	char *parameter = strtok(NULL, "");
 	if (parameter == NULL)
-		listObjects();
+		listObjects(context);
 	else
-		showObject(atoi(parameter));
+		showObject(context, atoi(parameter));
 }
 
 
 /*----------------------------------------------------------------------*/
-static void handleInstancesCommand() {
+static void handleInstancesCommand(CONTEXT) {
 	char *parameter = strtok(NULL, "");
 	uint i;
 
 	if (parameter == NULL || strchr(parameter, '*') != 0)
-		listInstances(parameter);
+		listInstances(context, parameter);
 	else if (isdigit((int)parameter[0]))
-		showInstance(atoi(parameter));
+		showInstance(context, atoi(parameter));
 	else {
 		for (i = 1; i < header->instanceMax; i++)
-			if (strcmp(parameter, idOfInstance(i)) == 0) {
-				showInstance(i);
+			if (strcmp(parameter, idOfInstance(context, i)) == 0) {
+				showInstance(context, i);
 				return;
 			}
 		printf("No instance named '%s'.", parameter);
@@ -992,7 +994,7 @@ static bool exactSameVersion() {
 
 
 /*======================================================================*/
-void debug(bool calledFromBreakpoint, int line, int fileNumber) {
+void debug(CONTEXT, bool calledFromBreakpoint, int line, int fileNumber) {
 	static bool warned = FALSE;
 
 	saveInfo();
@@ -1011,9 +1013,9 @@ void debug(bool calledFromBreakpoint, int line, int fileNumber) {
 	}
 
 	while (TRUE) {
-
 		char commandLine[200];
-		readCommand(commandLine);
+		CALL2(readCommand, commandLine, 200)
+
 		char *command = strtok(commandLine, " ");
 		char commandCode = parseDebugCommand(command);
 
@@ -1022,19 +1024,19 @@ void debug(bool calledFromBreakpoint, int line, int fileNumber) {
 			output("Ambiguous ADBG command abbreviation. ? for help.");
 			break;
 		case ACTORS_COMMAND:
-			handleActorsCommand();
+			handleActorsCommand(context);
 			break;
 		case BREAK_COMMAND:
 			handleBreakCommand(fileNumber);
 			break;
 		case CLASSES_COMMAND:
-			handleClassesCommand();
+			handleClassesCommand(context);
 			break;
 		case DELETE_COMMAND:
 			handleDeleteCommand(calledFromBreakpoint, line, fileNumber);
 			break;
 		case EVENTS_COMMAND:
-			showEvents();
+			showEvents(context);
 			break;
 		case EXIT_COMMAND:
 			debugOption = FALSE;
@@ -1050,7 +1052,7 @@ void debug(bool calledFromBreakpoint, int line, int fileNumber) {
 			handleHelpCommand();
 			break;
 		case INSTANCES_COMMAND:
-			handleInstancesCommand();
+			handleInstancesCommand(context);
 			break;
 		case TRACE_COMMAND:
 			handleTraceCommand();
@@ -1059,13 +1061,13 @@ void debug(bool calledFromBreakpoint, int line, int fileNumber) {
 			toggleInstructionTrace();
 			break;
 		case LOCATIONS_COMMAND:
-			handleLocationsCommand();
+			handleLocationsCommand(context);
 			break;
 		case NEXT_COMMAND:
 			handleNextCommand(calledFromBreakpoint);
 			goto exit_debug;
 		case OBJECTS_COMMAND:
-			handleObjectsCommand();
+			handleObjectsCommand(context);
 			break;
 		case QUIT_COMMAND:
 			terminate(0);
@@ -1085,7 +1087,7 @@ exit_debug:
 
 
 /*======================================================================*/
-void traceSay(int item) {
+void traceSay(CONTEXT, int item) {
 	/*
 	  Say something, but make sure we don't disturb anything and that it is
 	  shown to the player. Needed for tracing. During debugging things are
@@ -1095,10 +1097,12 @@ void traceSay(int item) {
 	saveInfo();
 	needSpace = FALSE;
 	col = 1;
-	if (item == 0)
+	if (item == 0) {
 		printf("$null$");
-	else
-		say(item);
+	} else {
+		CALL1(say, item)
+	}
+
 	needSpace = FALSE;
 	col = 1;
 	restoreInfo();
