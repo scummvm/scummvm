@@ -1319,19 +1319,21 @@ void aiKeycardBlackInit2(AIEntity *e) {
 }
 
 void aiSeedInit(AIEntity *e) {
-	warning("STUB: AI: aiSeedInit required");
+	strcpy(e->printedName, "some Henscratch");
+	e->aiAction = aiGetItemAction;
 }
 
 void aiSeedInit2(AIEntity *e) {
-	warning("STUB: AI: aiSeedInit2 required");
+	e->draw = e->standdownGfx[0];
 }
 
 void aiSodaInit(AIEntity *e) {
-	warning("STUB: AI: aiSodaInit required");
+	strcpy(e->printedName, "a Dr. Frostee");
+	e->aiAction = aiGetItemAction;
 }
 
 void aiSodaInit2(AIEntity *e) {
-	warning("STUB: AI: aiSodaInit2 required");
+	e->draw = e->standdownGfx[0];
 }
 
 void aiDollyTool1Init(AIEntity *e) {
