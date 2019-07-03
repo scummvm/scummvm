@@ -147,6 +147,12 @@ public:
 	bool init();
 
 	void start();
+
+	bool restartMap();
+	bool startMap(char *name);
+
+	bool saveSlot(int slot);
+
 	void setGameState(GameState gs) {
 		_gameState = gs;
 	}
@@ -209,7 +215,11 @@ private:
 	int _actionMode; // 0 or 1
 	int _pauseFlag;
 
+	char _currentMapname[64];
 	char _lastMapname[64];
+
+	char _currentLuaName[64];
+	char _lastLuaName[64];
 
 };
 

@@ -52,6 +52,8 @@ HDBGame::HDBGame(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst
 	_window = new Window;
 	_rnd = new Common::RandomSource("hdb");
 
+	_currentMapname[0] = _currentLuaName[0] = 0;
+
 	DebugMan.addDebugChannel(kDebugExample1, "Example1", "This is just an example to test");
 	DebugMan.addDebugChannel(kDebugExample2, "Example2", "This is also an example");
 }
@@ -143,6 +145,40 @@ void HDBGame::changeGameState() {
 	case GAME_LOADING:
 		break;
 	}
+}
+
+bool HDBGame::restartMap() {
+	if (!_currentMapname[0])
+		return false;
+
+	warning("STUB: HDBGame::restartMap()");
+
+	return true;
+}
+
+bool HDBGame::startMap(char *name) {
+	// save last mapname
+	strcpy(_lastMapname, _currentMapname);
+
+	// set current mapname
+	strcpy(_currentMapname, name);
+	strcat(_currentMapname, ".MSM");
+
+	// set current luaname
+	strcpy(_currentLuaName, name );
+	strcat(_currentLuaName, ".LUA");
+
+	restartMap();
+
+	//
+	// here is where we will be autosaving the start of level
+	// don't save cine intro/outro/etc...OR map30 (secret star map)
+	//
+	if (!scumm_strnicmp(name, "map", 3) && scumm_stricmp(name, "map30")) {
+		//_menu->fillSavegameSlots();
+		saveSlot(0);          // we ignore the slot parameter in everything else since we just keep saving...
+	}
+	return true;
 }
 
 void HDBGame::paint() {
@@ -320,6 +356,12 @@ void HDBGame::setTargetXY(int x, int y) {
 		_ai->addWaypoint(px, py, x, y, p->level);
 		break;
 	}
+}
+
+bool HDBGame::saveSlot(int slot) {
+	warning("STUB: HDBGame::saveSlot(%d)", slot);
+
+	return true;
 }
 
 // PLAYER is trying to use this entity
