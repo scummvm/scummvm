@@ -1870,13 +1870,6 @@ void AI::moveEnts() {
 	debug(9, "STUB: moveEnts: Laser Looping Sound Channel");
 }
 
-int AI::checkForTouchplate(int x, int y) {
-	int tileIndex = g_hdb->_map->getMapBGTileIndex(x, y);
-	if (tileIndex == _touchplateOff || tileIndex == _templeTouchpOff)
-		return tileIndex;
-	return 0;
-}
-
 bool AI::findPath(AIEntity *e) {
 	int x, y, xv = 0, yv = 0, max;
 	ArrowPath *here;

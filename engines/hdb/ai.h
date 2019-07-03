@@ -806,7 +806,6 @@ public:
 
 	void moveEnts();
 
-	int checkForTouchplate(int x, int y);
 	bool findPath(AIEntity *e);
 	AIEntity *legalMove(int tileX, int tileY, int level, int *result);
 	AIEntity *legalMoveOverWater(int tileX, int tileY, int level, int *result);
