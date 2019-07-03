@@ -51,7 +51,7 @@ public:
 	void setBalance(uint16 x, uint16 width);
 
 private:
-	Common::SeekableReadStream *_stream;
+	Common::ScopedPtr<Common::SeekableReadStream> _stream;
 	Audio::Mixer::SoundType _type;
 	Audio::SoundHandle _handle;
 };
