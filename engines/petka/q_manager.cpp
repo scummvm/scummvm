@@ -26,6 +26,8 @@
 
 #include "graphics/surface.h"
 
+#include "image/bmp.h"
+
 #include "petka/flc.h"
 #include "petka/q_manager.h"
 #include "petka/petka.h"
@@ -201,7 +203,18 @@ Graphics::Surface *QManager::loadBitmapSurface(Common::SeekableReadStream &strea
 	uint32 height = stream.readUint32LE();
 	stream.skip(2);
 	uint16 bitsPerPixel = stream.readUint16LE();
-	assert(bitsPerPixel == 16);
+	if (bitsPerPixel != 16 && bitsPerPixel != 1) {
+		stream.seek(0, SEEK_SET);
+		Image::BitmapDecoder decoder;
+		if (!decoder.loadStream(stream))
+			return nullptr;
+		return decoder.getSurface()->convertTo(g_system->getScreenFormat(), decoder.getPalette());
+	}
+	else if (bitsPerPixel == 1) {
+		Graphics::Surface *s = new Graphics::Surface;
+		s->create(width, height, Graphics::PixelFormat(2, 5, 6, 5, 0, 0, 5, 11, 0));
+		return s;
+	}
 
 	/* uint32 compression = stream.readUint32BE(); */
 	/* uint32 imageSize = stream.readUint32LE(); */
