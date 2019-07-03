@@ -133,29 +133,67 @@ bool AI::useTarget(int x, int y, int targetX, int targetY, int newTile, int *wor
 
 // Black Door Switch
 bool AI::useSwitch(AIEntity *e, int x, int y, int targetX, int targetY, int onTile) {
-	warning("STUB: Define useSwitch");
-	return false;
+	int worked;
+	if (g_hdb->_map->onScreen(x, y))
+		g_hdb->_sound->playSound(SND_SWITCH_USE);
+	return useTarget(x, y, targetX, targetY, onTile, &worked);
 }
 
 bool AI::useSwitchOn(AIEntity *e, int x, int y, int targetX, int targetY, int offTile) {
-	warning("STUB: Define useSwitchOn");
-	return false;
+	int worked;
+	if (g_hdb->_map->onScreen(x, y))
+		g_hdb->_sound->playSound(SND_SWITCH_USE);
+	return useTarget(x, y, targetX, targetY, offTile, &worked);
 }
 
 bool AI::useSwitch2(AIEntity *e, int x, int y, int targetX, int targetY) {
-	warning("STUB: Define useSwitch2");
-	return false;
+	int i = 10;
+	return true;
 }
 
 // Colored Keycard Switch
 bool AI::useLockedSwitch(AIEntity *e, int x, int y, int targetX, int targetY, int onTile, AIType item, const char *keyerror) {
-	warning("STUB: Define useLockedSwitch");
+	// is the PLAYER next to this thing?  No other entities are allowed to unlock anything!
+	if (abs(x - _player->tileX) > 1 || abs(y - _player->tileY) > 1)
+		return false;
+
+	int	amount = queryInventoryType(item);
+	int	worked;
+	bool rtn;
+
+	if (amount) {
+		rtn = useTarget(x, y, targetX, targetY, onTile, &worked);
+		if (worked) {
+			removeInvItemType(item, 1);
+			if (g_hdb->_map->onScreen(x, y))
+				g_hdb->_sound->playSound(SND_SWITCH_USE);
+		}
+		return rtn;
+	} else {
+		if (g_hdb->_map->onScreen(x, y))
+			g_hdb->_sound->playSound(SND_CELLHOLDER_USE_REJECT);
+		g_hdb->_window->openMessageBar(keyerror, 3);
+	}
 	return false;
 }
 
 bool AI::useLockedSwitchOn(AIEntity *e, int x, int y, int targetX, int targetY, int offTile, AIType item) {
-	warning("STUB: Define useLockedSwitchOn");
-	return false;
+	// is the PLAYER next to this thing?  No other entities are allowed to unlock anything!
+	if (abs(x - _player->tileX) > 1 || abs(y - _player->tileY) > 1)
+		return false;
+
+	int	worked;
+	bool rtn;
+	if (getInvAmount() == 10)
+		return false;
+
+	rtn = useTarget(x, y, targetX, targetY, offTile, &worked);
+	if (worked) {
+		addItemToInventory(item, 1, NULL, NULL, NULL);
+		if (g_hdb->_map->onScreen(x, y))
+			g_hdb->_sound->playSound(SND_SWITCH_USE);
+	}
+	return rtn;
 }
 
 // Purple Cell Holder Switch
