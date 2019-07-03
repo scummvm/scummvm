@@ -625,9 +625,9 @@ void AI::removeLuaEntity(const char *initName) {
 	AIEntity *e;
 
 	for (uint i = 0; i < _ents->size(); i++) {
-		e = *(_ents->begin() + i);
+		e = _ents->operator[](i);
 		if (e->entityName && !scumm_stricmp(initName, e->entityName)) {
-			removeEntity(*(_ents->begin() + i));
+			removeEntity(e);
 			i--;
 		}
 	}
@@ -1640,8 +1640,8 @@ void AI::drawEnts(int x, int y, int w, int h) {
 	static uint32 stunTimer = g_hdb->getTimeSlice();
 
 	// Draw Floating Entities
-	for (Common::Array<AIEntity *>::iterator it = _floats->begin(); it != _floats->end(); it++) {
-		AIEntity *e = (*it);
+	for (uint i = 0; i < _floats->size(); i++) {
+		AIEntity *e = _floats->operator[](i);
 		if (e->aiDraw) {
 			e->aiDraw(e, x, y);
 		}
@@ -1656,8 +1656,8 @@ void AI::drawEnts(int x, int y, int w, int h) {
 	// Draw all other Ents
 	_numLevel2Ents = 0;
 
-	for (Common::Array<AIEntity *>::iterator it = _ents->begin(); it != _ents->end(); it++) {
-		AIEntity *e = (*it);
+	for (uint i = 0; i < _ents->size(); i++) {
+		AIEntity *e = _ents->operator[](i);
 		debugN(5, "AI::drawEnts: enity %s(%d) state %s(%d)...", AIType2Str(e->type), e->type, AIState2Str(e->state), e->state);
 
 		if (e->type == AI_LASER || e->type == AI_DIVERTER) {
