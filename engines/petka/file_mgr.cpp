@@ -80,9 +80,18 @@ void FileMgr::closeAll() {
 	_stores.clear();
 }
 
+static Common::String formPath(Common::String name) {
+	for (uint i = 0; i < name.size(); ++i) {
+		if (name[i] == '\\') {
+			name.setChar('/', i);
+		}
+	}
+	return name;
+}
+
 Common::SeekableReadStream *FileMgr::getFileStream(const Common::String &name) {
 	Common::ScopedPtr<Common::File> file(new Common::File());
-	if (file->open(name)) {
+	if (file->open(formPath(name))) {
 		return file.release();
 	}
 	for (uint i = 0; i < _stores.size(); ++i) {
