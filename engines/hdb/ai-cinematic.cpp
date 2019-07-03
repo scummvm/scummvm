@@ -480,6 +480,8 @@ void AI::cineStart(bool abortable, const char *abortFunc) {
 	_cineActive = true;
 	_playerLock = false;
 	_cameraLock = false;
+
+	_cine.clear();
 }
 
 void AI::cineStop(const char *funcNext) {
