@@ -863,9 +863,11 @@ bool AI::checkTriggerList(char *entName, int x, int y) {
 }
 
 void AI::killTrigger(const char *id) {
-	for (Common::Array<Trigger *>::iterator it = _triggerList->begin(); it != _triggerList->end(); it++) {
-		if (!scumm_stricmp(id, (*it)->id))
-			_triggerList->erase(it);
+	for (uint i = 0; i < _triggerList->size(); i++) {
+		if (!scumm_stricmp(id, _triggerList->operator[](i)->id)) {
+			_triggerList->remove_at(i);
+			i--;
+		}
 	}
 }
 
