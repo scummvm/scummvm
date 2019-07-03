@@ -82,6 +82,8 @@ public:
 
 class QObject : public QMessageObject {
 public:
+	QObject();
+
 	void draw() override;
 	void update(int time) override;
 	void updateZ() override;
