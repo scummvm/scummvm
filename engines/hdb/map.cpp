@@ -73,7 +73,13 @@ void Map::restartSystem() {
 }
 
 bool Map::loadMap(char *name) {
-	warning("STUB: loadMap(%s)", name);
+	Common::SeekableReadStream *mapStream = g_hdb->_fileMan->findFirstData(name, TYPE_BINARY);
+	if (mapStream == NULL) {
+		warning("The %s MPC entry can't be found", name);
+		return false;
+	}
+
+	load(mapStream);
 
 	return true;
 }

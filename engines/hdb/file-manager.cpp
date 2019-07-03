@@ -96,23 +96,29 @@ Common::SeekableReadStream *FileMan::findFirstData(const char *string, DataType 
 	Common::String fileString;
 	MPCEntry *file = NULL;
 
-	debug(4, "Looking for Data: '%s'", string);
+	char fname[128];
+	strcpy(fname, string);
+	char *pDest = strrchr(fname, '.');
+	if (pDest)
+		*pDest = '_';
+
+	debug(4, "Looking for Data: '%s' <- '%s'", fname, string);
 
 	// Find MPC Entry
 	for (MPCIterator it = _dir.begin(); it != _dir.end(); it++) {
 		fileString = (*it)->filename;
-		if (fileString.equals(string)) {
+		if (fileString.equals(fname)) {
 			if ((*it)->type == type) {
 				file = *it;
 				break;
 			} else {
-				debug(4, "Found Data but type mismatch: '%s', target: %d, found: %d", string, type, (*it)->type);
+				debug(4, "Found Data but type mismatch: '%s', target: %d, found: %d", fname, type, (*it)->type);
 			}
 		}
 	}
 
 	if (file == NULL) {
-		debug(4, "Couldn't find Data: '%s'", string);
+		debug(4, "Couldn't find Data: '%s'", fname);
 		return NULL;
 	}
 
@@ -130,10 +136,16 @@ int32 FileMan::getLength(const char *string, DataType type) {
 	Common::String fileString;
 	MPCEntry *file = NULL;
 
+	char fname[128];
+	strcpy(fname, string);
+	char *pDest = strrchr(fname, '.');
+	if (pDest)
+		*pDest = '_';
+
 	// Find MPC Entry
 	for (MPCIterator it = _dir.begin(); it != _dir.end(); it++) {
 		fileString = (*it)->filename;
-		if (fileString.contains(string)) {
+		if (fileString.contains(fname)) {
 			if ((*it)->type == type) {
 				file = *it;
 				break;

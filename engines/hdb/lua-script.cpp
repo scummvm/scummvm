@@ -30,22 +30,22 @@
 namespace HDB {
 
 struct ScriptPatch {
-	const char* scriptName;
-	const char* search;
-	const char* replace;
+	const char *scriptName;
+	const char *search;
+	const char *replace;
 } scriptPatches[] = {
-	{"GLOBAL_LUA", "for i,npc in npcs do", "for i,npc in pairs(npcs) do"},
-	{"GLOBAL_LUA", "setglobal( npcdef.codename..\"_init\", function() return NPC_Init( %npcdef ) end )", "_G[npcdef.codename .. \"_init\"] = function() return NPC_Init( npcdef ) end"},
-	{"GLOBAL_LUA", "setglobal( npcdef.codename..\"_use\", function(x, y, v1, v2) return NPC_Use( %npcdef, x, y, v1, v2 ) end )", "_G[npcdef.codename .. \"_use\"] = function(x, y, v1, v2) return NPC_Use( npcdef, x, y, v1, v2 ) end"},
-	{"GLOBAL_LUA", "if( dtable.counter < getn(dtable) ) then", "if( dtable.counter < #dtable ) then"},
-	{"GLOBAL_LUA", "if( getglobal( \"map\"..tostring(v1)..\"_complete\" ) ) then", "if( _G[\"map\"..tostring(v1)..\"_complete\"] ) then"},
-	{"GLOBAL_LUA", "closefunc = getglobal( npcdef.codename..\"_use\" )", "closefunc = _G[npcdef.codename..\"_use\"]"},
-	{"GLOBAL_LUA", "strsub(", "string.sub("}, // line 15
-	{"MAP00_LUA", "tempfunc = function() emptybed_use( %x, %y, %v1, %v2 ) end", "tempfunc = function() emptybed_use(x, y, v1, v2) end"},
-	{"MAP00_LUA", "if( getn( beds ) == 0 ) then", "if( #beds == 0 ) then"},
-	{"MAP01_LUA", "if( covert_index < getn(covert_dialog) ) then", "if( covert_index < #covert_dialog ) then"},
-	{"MAP01_LUA", "if( chiste_index < getn( chiste_dialog ) )then", "if( covert_index < #covert_dialog ) then"},
-	{"MAP01_LUA", "strsub(", "string.sub("}, // line 23
+	{"GLOBAL.LUA", "for i,npc in npcs do", "for i,npc in pairs(npcs) do"},
+	{"GLOBAL.LUA", "setglobal( npcdef.codename..\"_init\", function() return NPC_Init( %npcdef ) end )", "_G[npcdef.codename .. \"_init\"] = function() return NPC_Init( npcdef ) end"},
+	{"GLOBAL.LUA", "setglobal( npcdef.codename..\"_use\", function(x, y, v1, v2) return NPC_Use( %npcdef, x, y, v1, v2 ) end )", "_G[npcdef.codename .. \"_use\"] = function(x, y, v1, v2) return NPC_Use( npcdef, x, y, v1, v2 ) end"},
+	{"GLOBAL.LUA", "if( dtable.counter < getn(dtable) ) then", "if( dtable.counter < #dtable ) then"},
+	{"GLOBAL.LUA", "if( getglobal( \"map\"..tostring(v1)..\"_complete\" ) ) then", "if( _G[\"map\"..tostring(v1)..\"_complete\"] ) then"},
+	{"GLOBAL.LUA", "closefunc = getglobal( npcdef.codename..\"_use\" )", "closefunc = _G[npcdef.codename..\"_use\"]"},
+	{"GLOBAL.LUA", "strsub(", "string.sub("}, // line 15
+	{"MAP00.LUA", "tempfunc = function() emptybed_use( %x, %y, %v1, %v2 ) end", "tempfunc = function() emptybed_use(x, y, v1, v2) end"},
+	{"MAP00.LUA", "if( getn( beds ) == 0 ) then", "if( #beds == 0 ) then"},
+	{"MAP01.LUA", "if( covert_index < getn(covert_dialog) ) then", "if( covert_index < #covert_dialog ) then"},
+	{"MAP01.LUA", "if( chiste_index < getn( chiste_dialog ) )then", "if( covert_index < #covert_dialog ) then"},
+	{"MAP01.LUA", "strsub(", "string.sub("}, // line 23
 	{NULL, NULL, NULL},
 };
 
@@ -62,8 +62,8 @@ LuaScript::~LuaScript() {
 
 bool LuaScript::init() {
 	// Load Global Lua Code
-	_globalLuaStream = g_hdb->_fileMan->findFirstData("GLOBAL_LUA", TYPE_BINARY);
-	_globalLuaLength = g_hdb->_fileMan->getLength("GLOBAL_LUA", TYPE_BINARY);
+	_globalLuaStream = g_hdb->_fileMan->findFirstData("GLOBAL.LUA", TYPE_BINARY);
+	_globalLuaLength = g_hdb->_fileMan->getLength("GLOBAL.LUA", TYPE_BINARY);
 	if (_globalLuaStream == NULL || _globalLuaLength == 0) {
 		error("LuaScript::initScript: 'global code' failed to load");
 		return false;
@@ -1426,9 +1426,9 @@ bool LuaScript::initScript(Common::SeekableReadStream *stream, const char *scrip
 		lua_sethook(_state, debugHook, LUA_MASKCALL | LUA_MASKLINE, 0);
 	}
 
-	// Load GLOBAL_LUA and execute it
+	// Load GLOBAL.LUA and execute it
 
-	if (!executeMPC(_globalLuaStream, "global code", "GLOBAL_LUA", _globalLuaLength)) {
+	if (!executeMPC(_globalLuaStream, "global code", "GLOBAL.LUA", _globalLuaLength)) {
 		error("LuaScript::initScript: 'global code' failed to execute");
 		return false;
 	}
@@ -1640,17 +1640,22 @@ void LuaScript::stripComments(char *chunk) {
 	}
 }
 
-void LuaScript::addPatches(Common::String &chunk, const char* scriptName) {
+void LuaScript::addPatches(Common::String &chunk, const char *scriptName) {
 	ScriptPatch *patch = scriptPatches;
+	int applied = 0;
 
 	while (patch->scriptName) {
-		if (scriptName == patch->scriptName) {
+		if (!strcmp(scriptName, patch->scriptName)) {
 			Common::String searchString(patch->search);
 			Common::String replaceString(patch->replace);
 			Common::replace(chunk, searchString, replaceString);
+			applied++;
 		}
 		patch++;
 	}
+
+	if (applied)
+		debug(1, "Applied %d patches to %s", applied, scriptName);
 }
 
 void LuaScript::checkParameters(const char *func, int params) {

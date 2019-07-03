@@ -150,7 +150,7 @@ public:
 	bool init();
 
 	bool restartMap();
-	bool startMap(char *name);
+	bool startMap(const char *name);
 
 	void changeMap(char *name) {
 		strcpy(_changeMapname, name);
