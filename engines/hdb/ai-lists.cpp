@@ -816,6 +816,8 @@ ArrowPath *AI::findArrowPath(int x, int y) {
 void AI::addToTriggerList(char *luaFuncInit, char *luaFuncUse, int x, int y, int value1, int value2, char *id) {
 	Trigger *t = new Trigger;
 
+	_triggerList->push_back(t);
+
 	strcpy(t->id, id);
 	t->x = x;
 	t->y = y;
