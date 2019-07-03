@@ -67,10 +67,30 @@ bool AI::useTouchplateOn(AIEntity *e, int x, int y, int targetX, int targetY, in
 	return false;
 }
 
+void callbackDoorOpenClose(int x, int y) {
+	int	tileIndex = g_hdb->_map->getMapBGTileIndex(x, y);
+
+	// is the door gonna close on something?  if so, wait again
+	if (!g_hdb->_ai->findEntity(x, y)) {
+		g_hdb->_ai->addCallback(CALLBACK_DOOR_OPEN_CLOSE, x, y, kDelay5Seconds);
+		return;
+	}
+
+	g_hdb->_ai->addAnimateTarget(x, y, tileIndex, tileIndex + 3, ANIM_SLOW, false, true, NULL);
+	if (g_hdb->_map->onScreen(x, y))
+		warning("STUB: Play SND_DOOR_OPEN_CLOSE");
+	return;
+}
+
 // Normal Door
 bool AI::useDoorOpenClose(AIEntity *e, int x, int y) {
-	warning("STUB: Define useDoorOpenClose");
-	return false;
+	int tileIndex = g_hdb->_map->getMapBGTileIndex(x, y);
+
+	addAnimateTarget(x, y, tileIndex, tileIndex - 3, ANIM_SLOW, false, true, NULL);
+	addCallback(CALLBACK_DOOR_OPEN_CLOSE, x, y, kDelay5Seconds);
+	if (g_hdb->_map->onScreen(x, y))
+		warning("Play SND_DOOR_OPEN_CLOSE");
+	return true;
 }
 
 void callbackAutoDoorOpenClose(int x, int y) {
