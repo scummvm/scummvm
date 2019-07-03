@@ -106,7 +106,7 @@ bool HDBGame::init() {
 		error("Input::init: Couldn't initialize Input");
 	}
 	if (!_lua->init()) {
-		error("LuaScript::init: Couldn't load the GLOBAL_LUA code.");
+		error("LuaScript::init: Couldn't load the GLOBAL.LUA code.");
 	}
 
 	_menu->init();
@@ -192,7 +192,7 @@ bool HDBGame::restartMap() {
 	return true;
 }
 
-bool HDBGame::startMap(char *name) {
+bool HDBGame::startMap(const char *name) {
 	// save last mapname
 	strcpy(_lastMapname, _currentMapname);
 
@@ -503,18 +503,7 @@ Common::Error HDBGame::run() {
 	tile->load(tileStream);
 #endif
 
-	_lua->loadLua("MAP00_LUA");
-
-	_lua->callFunction("level_loaded", 0);
-
-	Common::SeekableReadStream *mapStream = _fileMan->findFirstData("MAP00_MSM", TYPE_BINARY);
-	if (mapStream == NULL) {
-		debug("The MAP00_MSM MPC entry can't be found.");
-		return Common::kReadingFailed;
-	}
-
-	_map->load(mapStream);
-	_ai->initAnimInfo();
+	startMap("MAP00");
 
 	//_window->openDialog("Sgt. Filibuster", 0, "You address me as 'sarge' or 'sergeant' or get your snappin' teeth kicked in! Got me?", 0, NULL);
 
