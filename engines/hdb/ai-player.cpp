@@ -1400,19 +1400,51 @@ void aiPackageInit2(AIEntity *e) {
 }
 
 void aiMagicEggAction(AIEntity *e) {
-	warning("STUB: AI: aiMagicEggAction required");
+	// if magic egg isn't moving somewhere, don't move it
+	if (!e->goalX)
+		return;
+
+	g_hdb->_ai->animateEntity(e);
 }
 
 void aiMagicEggInit(AIEntity *e) {
-	warning("STUB: AI: aiMagicEggInit required");
+	e->moveSpeed = kPushMoveSpeed;
+	e->aiAction = aiMagicEggAction;
 }
 
 void aiMagicEggInit2(AIEntity *e) {
-	warning("STUB: AI: aiMagicEggInit2 required");
+	// point all magic egg move frames to the standing one
+	e->movedownFrames =
+		e->moveleftFrames =
+		e->moverightFrames =
+		e->moveupFrames = 1;
+
+	e->movedownGfx[0] =
+		e->moveupGfx[0] =
+		e->moveleftGfx[0] =
+		e->moverightGfx[0] = e->standdownGfx[0];
+
+	e->draw = e->standdownGfx[0];			// standing frame - doesn't move
 }
 
 void aiMagicEggUse(AIEntity *e) {
-	warning("STUB: AI: aiMagicEggUse required");
+	if (!scumm_strnicmp(e->luaFuncAction, "ai_", 3) || !scumm_strnicmp(e->luaFuncAction, "item_", 5)) {
+		int	i = 0;
+		AIEntity *spawned = NULL;
+		while (aiEntList[i].type != END_AI_TYPES) {
+			if (!_stricmp(aiEntList[i].luaName, e->luaFuncAction)) {
+				spawned = g_hdb->_ai->spawn(aiEntList[i].type, e->dir, e->tileX, e->tileY, NULL, NULL, NULL, DIR_NONE, e->level, 0, 0, 1);
+				break;
+			}
+			i++;
+		}
+		if (spawned) {
+			g_hdb->_ai->addAnimateTarget(e->tileX * kTileWidth,
+			e->tileY * kTileHeight, 0, 3, ANIM_NORMAL, false, false, GROUP_EXPLOSION_BOOM_SIT);
+			warning("Play SND_BARREL_EXPLODE");
+			g_hdb->_ai->removeEntity(e);
+		}
+	}
 }
 
 void aiIceBlockAction(AIEntity *e) {
