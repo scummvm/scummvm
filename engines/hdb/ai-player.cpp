@@ -1638,7 +1638,36 @@ void aiGooCupInit2(AIEntity *e) {
 }
 
 void aiVortexianAction(AIEntity *e) {
-	warning("STUB: AI: aiVortexianAction required");
+	// anim the alpha blending : down to 32, up to 180, back down...
+	e->value2 += e->value1;
+	if ((e->value2 & 0xff) > 128) {
+		e->value2 = (e->value2 & 0xff00) | 128;
+		e->value1 = -e->value1;
+	} else if ((e->value2 & 0xff) < 32) {
+		e->value2 = (e->value2 & 0xff00) | 32;
+		e->value1 = -e->value1;
+	}
+
+	// anim the shape
+	e->animFrame++;
+	if (e->animFrame >= e->standdownFrames) {
+		e->animFrame = 0;
+
+		// every 4th frame, check for player collision &
+		// do an autosave
+		AIEntity *p = g_hdb->_ai->getPlayer();
+		if (abs(p->x - e->x) < 4 && abs(p->y - e->y) < 4) {
+			if (!(e->value2 & 0xff00)) {
+				// let's make sure we don't autosave every frikken second!
+				e->value2 |= 0xff00;
+
+				g_hdb->saveWhenReady(kAutoSaveSlot);
+				g_hdb->_window->openMessageBar("Saving progress at Vortexian...", 1);
+			}
+		} else
+			e->value2 &= 0x00ff;
+	}
+	e->draw = e->standdownGfx[e->animFrame];
 }
 
 void aiVortexianUse(AIEntity *e) {
