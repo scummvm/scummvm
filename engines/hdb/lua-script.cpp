@@ -1346,10 +1346,9 @@ bool LuaScript::initScript(Common::SeekableReadStream *stream, const char *scrip
 		lua_setglobal(_state, luaGlobalValues[j].luaName);
 	}
 
-	/*
-		TODO: Set the last mapName as a global
-		after implementing the map-manager.
-	*/
+	// set the last mapname as a global
+	lua_pushstring(_state, g_hdb->lastMapname());
+	lua_setglobal(_state, "LASTMAP");
 
 	// Set the lowest printable line
 	lua_pushnumber(_state, 480 - 14);

@@ -189,6 +189,8 @@ public:
 		return _timeSlice - _prevTimeSlice;
 	}
 
+	char *lastMapname() { return _lastMapname; }
+
 	bool _gameShutdown;
 	Graphics::PixelFormat _format;
 
@@ -206,6 +208,8 @@ private:
 	GameState _gameState;
 	int _actionMode; // 0 or 1
 	int _pauseFlag;
+
+	char _lastMapname[64];
 
 };
 
