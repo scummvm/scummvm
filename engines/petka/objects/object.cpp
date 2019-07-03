@@ -167,6 +167,19 @@ void QMessageObject::show(bool v) {
 	_isShown = v;
 }
 
+QObject::QObject() {
+	_animate = true;
+	_updateZ = true;
+	_field24 = true;
+	_field20 = true;
+	_sound = nullptr;
+	_x = 0;
+	_y = 0;
+	_field14 = -1;
+	_field18 = -1;
+	_field28 = 0;
+}
+
 bool QObject::isInPoint(int x, int y) {
 	if (!_isActive)
 		return false;
