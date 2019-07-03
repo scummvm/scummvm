@@ -308,7 +308,7 @@ bool Gfx::selectGfxType(const char *name) {
 	return true;
 }
 
-Tile *Gfx::getTileGfx(const char *name, uint32 size) {
+Tile *Gfx::getTileGfx(const char *name, int32 size) {
 	// Try to find graphic
 	for (Common::Array<GfxCache *>::iterator it = _gfxCache->begin(); it != _gfxCache->end(); it++) {
 		if (Common::matchString((*it)->name, name)) {
@@ -328,6 +328,8 @@ Tile *Gfx::getTileGfx(const char *name, uint32 size) {
 	gfxTile->load(stream);
 
 	gc->tileGfx = gfxTile;
+	if (size == -1)
+		size = g_hdb->_fileMan->getLength(name, TYPE_TILE32);
 	gc->size = size;
 	gc->loaded = 1;
 
@@ -336,7 +338,7 @@ Tile *Gfx::getTileGfx(const char *name, uint32 size) {
 	return gc->tileGfx;
 }
 
-Picture *Gfx::getPicGfx(const char *name, uint32 size) {
+Picture *Gfx::getPicGfx(const char *name, int32 size) {
 	// Try to find graphic
 	for (Common::Array<GfxCache *>::iterator it = _gfxCache->begin(); it != _gfxCache->end(); it++) {
 		if (Common::matchString((*it)->name, name)) {
@@ -356,6 +358,8 @@ Picture *Gfx::getPicGfx(const char *name, uint32 size) {
 	gfxPic->load(stream);
 
 	gc->picGfx = gfxPic;
+	if (size == -1)
+		size = g_hdb->_fileMan->getLength(name, TYPE_PIC);
 	gc->size = size;
 	gc->loaded = 1;
 

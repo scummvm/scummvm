@@ -121,8 +121,8 @@ public:
 
 	// Returns: true->Tile, false->Pic
 	bool selectGfxType(const char *name);
-	Tile *getTileGfx(const char *name, uint32 size);
-	Picture *getPicGfx(const char *name, uint32 size);
+	Tile *getTileGfx(const char *name, int32 size);
+	Picture *getPicGfx(const char *name, int32 size);
 
 	int isSky(int skyIndex);
 	void setSky(int skyIndex);
