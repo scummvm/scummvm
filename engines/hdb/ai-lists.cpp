@@ -190,8 +190,7 @@ void AI::animateBridges() {
 		case DIR_DOWN:
 			g_hdb->_map->setMapFGTileIndex(_bridges[i].x, _bridges[i].y, _targetBridgeD + _bridges[i].anim);
 			_bridges[i].anim++;
-			if (_bridges[i].anim > 2)
-			{
+			if (_bridges[i].anim > 2) {
 				g_hdb->_map->setMapFGTileIndex(_bridges[i].x, _bridges[i].y, _targetBridgeMidUD);
 				yv = 1;
 				done = true;
@@ -200,8 +199,7 @@ void AI::animateBridges() {
 		case DIR_LEFT:
 			g_hdb->_map->setMapFGTileIndex(_bridges[i].x, _bridges[i].y, _targetBridgeL + _bridges[i].anim);
 			_bridges[i].anim++;
-			if (_bridges[i].anim > 2)
-			{
+			if (_bridges[i].anim > 2) {
 				g_hdb->_map->setMapFGTileIndex(_bridges[i].x, _bridges[i].y, _targetBridgeMidLR);
 				xv = -1;
 				done = true;
@@ -210,8 +208,7 @@ void AI::animateBridges() {
 		case DIR_RIGHT:
 			g_hdb->_map->setMapFGTileIndex(_bridges[i].x, _bridges[i].y, _targetBridgeR + _bridges[i].anim);
 			_bridges[i].anim++;
-			if (_bridges[i].anim > 2)
-			{
+			if (_bridges[i].anim > 2) {
 				g_hdb->_map->setMapFGTileIndex(_bridges[i].x, _bridges[i].y, _targetBridgeMidLR);
 				xv = 1;
 				done = true;
@@ -220,8 +217,7 @@ void AI::animateBridges() {
 		}
 
 		// is this bridge done extending one chunk?
-		if (done == true)
-		{
+		if (done == true) {
 			if (g_hdb->_map->onScreen(_bridges[i].x, _bridges[i].y))
 				g_hdb->_sound->playSound(SND_BRIDGE_EXTEND);
 			_bridges[i].anim = 0;
