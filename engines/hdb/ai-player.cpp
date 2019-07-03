@@ -1187,27 +1187,27 @@ void aiEnvelopeGreenInit2(AIEntity *e) {
 }
 
 void aiGemBlueInit(AIEntity *e) {
-	warning("STUB: AI: aiGemBlueInit required");
+	e->aiAction = aiGemAction;
 }
 
 void aiGemBlueInit2(AIEntity *e) {
-	warning("STUB: AI: aiGemBlueInit2 required");
+	e->draw = e->standdownGfx[0];
 }
 
 void aiGemRedInit(AIEntity *e) {
-	warning("STUB: AI: aiGemRedInit required");
+	e->aiAction = aiGemAction;
 }
 
 void aiGemRedInit2(AIEntity *e) {
-	warning("STUB: AI: aiGemRedInit2 required");
+	e->draw = e->standdownGfx[0];
 }
 
 void aiGemGreenInit(AIEntity *e) {
-	warning("STUB: AI: aiGemGreenInit required");
+	e->aiAction = aiGemAction;
 }
 
 void aiGemGreenInit2(AIEntity *e) {
-	warning("STUB: AI: aiGemGreenInit2 required");
+	e->draw = e->standdownGfx[0];
 }
 
 void aiTeaCupInit(AIEntity *e) {
@@ -1511,19 +1511,36 @@ void aiMonkeystoneUse2(AIEntity *e) {
 }
 
 void aiGemAction(AIEntity *e) {
-	warning("STUB: AI: aiGemAction required");
-}
+	AIEntity *p;
+	int tolerance;
 
-void aiGemAction2(AIEntity *e) {
-	warning("STUB: AI: aiGemAction2 required");
+	e->animFrame++;
+	if (e->animFrame >= e->standdownFrames) {
+		e->animFrame = 0;
+
+		// every 4th frame, check for player collision &
+		// add to inventory if it happens
+		p = g_hdb->_ai->getPlayer();
+		tolerance = 16;
+		if (g_hdb->_ai->playerRunning())
+			tolerance = 24;
+
+		if (e->onScreen && abs(p->x - e->x) < tolerance && abs(p->y - e->y) < tolerance && e->level == p->level) {
+			g_hdb->_ai->addAnimateTarget(e->x, e->y, 0, 3, ANIM_NORMAL, false, false, GEM_FLASH);
+			g_hdb->_ai->addToInventory(e);
+			warning("Play SND_GET_GEM");
+			return;
+		}
+	}
+	e->draw = e->standdownGfx[e->animFrame];
 }
 
 void aiGemWhiteInit(AIEntity *e) {
-	warning("STUB: AI: aiGemWhiteInit required");
+	e->aiAction = aiGemAction;
 }
 
 void aiGemWhiteInit2(AIEntity *e) {
-	warning("STUB: AI: aiGemWhiteInit2 required");
+	e->draw = e->standdownGfx[0];
 }
 
 void aiGooCupUse(AIEntity *e) {
