@@ -1169,11 +1169,12 @@ void aiClubInit2(AIEntity *e) {
 }
 
 void aiSlugSlingerInit(AIEntity *e) {
-	warning("STUB: AI: aiSlugSlingerInit required");
+	strcpy(e->printedName, "Slugslinger");
+	e->aiAction = aiGetItemAction;
 }
 
 void aiSlugSlingerInit2(AIEntity *e) {
-	warning("STUB: AI: aiSlugSlingerInit2 required");
+	e->draw = e->standdownGfx[0];
 }
 
 void aiEnvelopeGreenInit(AIEntity *e) {
