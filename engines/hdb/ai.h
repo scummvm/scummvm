@@ -1217,6 +1217,9 @@ private:
 	bool isClosedDoor(int x, int y);
 	bool isOpenDoor(int x, int y);
 
+	// MAIN FUNCTION : handles all animation of targeted tiles & changing the state of the "switch"
+	bool useTarget(int x, int y, int targetX, int targetY, int newTile, int *worked);
+
 	// Black Door Switch
 	bool useSwitch(AIEntity *e, int x, int y, int targetX, int targetY, int onTile);
 	bool useSwitchOn(AIEntity *e, int x, int y, int targetX, int targetY, int offTile);
