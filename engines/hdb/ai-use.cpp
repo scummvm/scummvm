@@ -24,6 +24,70 @@
 
 namespace HDB {
 
+bool AI::isClosedDoor(int x, int y) {
+	int tileIndex = g_hdb->_map->getMapBGTileIndex(x, y);
+
+	if ((tileIndex == _targetDoorN + 3) ||		// locked SILVER door?
+		(tileIndex == _targetDoorNv + 3) ||
+		(tileIndex == _targetDoorP + 3) ||		// locked BLUE door?
+		(tileIndex == _targetDoorPv + 3) ||
+		(tileIndex == _targetDoorS + 3) ||		// locked RED door?
+		(tileIndex == _targetDoorSv + 3) ||
+		(tileIndex == _targetDoor2N + 3) ||		// locked SILVER door?
+		(tileIndex == _targetDoor2Nv + 3) ||
+		(tileIndex == _targetDoor2P + 3) ||		// locked BLUE door?
+		(tileIndex == _targetDoor2Pv + 3) ||
+		(tileIndex == _targetDoor2S + 3) ||		// locked RED door?
+		(tileIndex == _targetDoor2Sv + 3) ||
+		(tileIndex == _target2DoorN + 3) ||		// locked SILVER door?
+		(tileIndex == _target2DoorNv + 3) ||
+		(tileIndex == _target2DoorP + 3) ||		// locked BLUE door?
+		(tileIndex == _target2DoorPv + 3) ||
+		(tileIndex == _target2DoorS + 3) ||		// locked RED door?
+		(tileIndex == _target2DoorSv + 3) ||
+		(tileIndex == _target3DoorN + 3) ||		// locked SILVER door?
+		(tileIndex == _target3DoorNv + 3) ||
+		(tileIndex == _target3DoorP + 3) ||		// locked BLUE door?
+		(tileIndex == _target3DoorPv + 3) ||
+		(tileIndex == _target3DoorS + 3) ||		// locked RED door?
+		(tileIndex == _target3DoorSv + 3) ||
+		(tileIndex == _blockpole + 3))			// blockpole UP?
+		return true;
+	return false;
+}
+
+bool AI::isOpenDoor(int x, int y) {
+	int tileIndex = g_hdb->_map->getMapBGTileIndex(x, y);
+
+	if ((tileIndex == _targetDoorN) ||		// open SILVER door?
+		(tileIndex == _targetDoorNv) ||
+		(tileIndex == _targetDoorP) ||		// open BLUE door?
+		(tileIndex == _targetDoorPv) ||
+		(tileIndex == _targetDoorS) ||		// open RED door?
+		(tileIndex == _targetDoorSv) ||
+		(tileIndex == _targetDoor2N) ||		// open SILVER door?
+		(tileIndex == _targetDoor2Nv) ||
+		(tileIndex == _targetDoor2P) ||		// open BLUE door?
+		(tileIndex == _targetDoor2Pv) ||
+		(tileIndex == _targetDoor2S) ||		// open RED door?
+		(tileIndex == _targetDoor2Sv) ||
+		(tileIndex == _target2DoorN) ||		// open SILVER door?
+		(tileIndex == _target2DoorNv) ||
+		(tileIndex == _target2DoorP) ||		// open BLUE door?
+		(tileIndex == _target2DoorPv) ||
+		(tileIndex == _target2DoorS) ||		// open RED door?
+		(tileIndex == _target2DoorSv) ||
+		(tileIndex == _target3DoorN) ||		// open SILVER door?
+		(tileIndex == _target3DoorNv) ||
+		(tileIndex == _target3DoorP) ||		// open BLUE door?
+		(tileIndex == _target3DoorPv) ||
+		(tileIndex == _target3DoorS) ||		// open RED door?
+		(tileIndex == _target3DoorSv) ||
+		(tileIndex == _blockpole))			// blockpole DOWN?
+		return true;
+	return false;
+}
+
 // Black Door Switch
 bool AI::useSwitch(AIEntity *e, int x, int y, int targetX, int targetY, int onTile) {
 	warning("STUB: Define useSwitch");

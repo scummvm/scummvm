@@ -1197,6 +1197,10 @@ private:
 
 	// Action Functions
 
+	// Checks for the existence of a closed/open door
+	bool isClosedDoor(int x, int y);
+	bool isOpenDoor(int x, int y);
+
 	// Black Door Switch
 	bool useSwitch(AIEntity *e, int x, int y, int targetX, int targetY, int onTile);
 	bool useSwitchOn(AIEntity *e, int x, int y, int targetX, int targetY, int offTile);
