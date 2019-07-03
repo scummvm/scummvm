@@ -48,6 +48,7 @@ HDBGame::HDBGame(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst
 	_map = new Map;
 	_ai = new AI;
 	_input = new Input;
+	_sound = new Sound;
 	_window = new Window;
 	_rnd = new Common::RandomSource("hdb");
 
@@ -63,6 +64,7 @@ HDBGame::~HDBGame() {
 	delete _map;
 	delete _ai;
 	delete _input;
+	delete _sound;
 	delete _window;
 	delete _rnd;
 
@@ -90,6 +92,9 @@ bool HDBGame::init() {
 	}
 	if (!_lua->init()) {
 		error("LuaScript::init: Couldn't load the GLOBAL_LUA code.");
+	}
+	if (!_sound->init()) {
+		error("Window::init: Couldn't initialize Sound");
 	}
 	if (!_window->init()) {
 		error("Window::init: Couldn't initialize Window");

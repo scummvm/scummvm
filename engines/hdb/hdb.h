@@ -45,6 +45,7 @@
 #include "hdb/input.h"
 #include "hdb/lua-script.h"
 #include "hdb/map.h"
+#include "hdb/sound.h"
 #include "hdb/window.h"
 
 #define MAX_SNDCACHE_MEM	0x400000	// 4Mb of sounds in memory
@@ -135,6 +136,7 @@ public:
 	Map *_map;
 	AI *_ai;
 	Input *_input;
+	Sound *_sound;
 	Window *_window;
 
 	// Random Source
