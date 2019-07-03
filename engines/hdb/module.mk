@@ -18,6 +18,7 @@ MODULE_OBJS := \
 	input.o \
 	lua-script.o \
 	map.o \
+	sound.o \
 	window.o
 
 MODULE_DIRS += \
