@@ -1211,27 +1211,30 @@ void aiGemGreenInit2(AIEntity *e) {
 }
 
 void aiTeaCupInit(AIEntity *e) {
-	warning("STUB: AI: aiTeaCupInit required");
+	strcpy(e->printedName, "a Teacup");
+	e->aiAction = aiGetItemAction;
 }
 
 void aiTeaCupInit2(AIEntity *e) {
-	warning("STUB: AI: aiTeaCupInit2 required");
+	e->draw = e->standdownGfx[0];
 }
 
 void aiCookieInit(AIEntity *e) {
-	warning("STUB: AI: aiCookieInit required");
+	strcpy(e->printedName, "a Cookie");
+	e->aiAction = aiGetItemAction;
 }
 
 void aiCookieInit2(AIEntity *e) {
-	warning("STUB: AI: aiCookieInit2 required");
+	e->draw = e->standdownGfx[0];
 }
 
 void aiBurgerInit(AIEntity *e) {
-	warning("STUB: AI: aiBurgerInit required");
+	strcpy(e->printedName, "a Burger");
+	e->aiAction = aiGetItemAction;
 }
 
 void aiBurgerInit2(AIEntity *e) {
-	warning("STUB: AI: aiBurgerInit2 required");
+	e->draw = e->standdownGfx[0];
 }
 
 void aiBookInit(AIEntity *e) {
