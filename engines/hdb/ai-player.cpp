@@ -484,15 +484,114 @@ void aiPlayerDraw(AIEntity *e, int mx, int my) {
 }
 
 void aiGemAttackInit(AIEntity *e) {
-	warning("STUB: AI: aiGemAttackInit required");
-}
-
-void aiGemAttackInit2(AIEntity *e) {
-	warning("STUB: AI: aiGemAttackInit2 required");
+	int xv[5] = {9, 0, 0, -1, 1}, yv[5] = {9, -1, 1, 0, 0};
+	e->moveSpeed = kPlayerMoveSpeed << 1;
+	g_hdb->_ai->setEntityGoal(e, e->tileX + xv[e->dir], e->tileY + yv[e->dir]);
+	e->state = STATE_MOVEDOWN;		// so it will draw & animate
+	e->sequence = 0;	// flying out at something
+	e->aiAction = aiGemAttackAction;
+	e->draw = e->movedownGfx[0];
+	warning("Play SND_GEM_THROW");
 }
 
 void aiGemAttackAction(AIEntity *e) {
-	warning("STUB: AI: aiGemAttackAction required");
+	int xv[5] = {9, 0, 0, -1, 1}, yv[5] = {9, -1, 1, 0, 0};
+	AIEntity *hit;
+	int		result;
+
+	switch (e->sequence) {
+		// flying out at something
+	case 0:
+		if (e->goalX)
+			g_hdb->_ai->animateEntity(e);
+		else {
+			g_hdb->_ai->checkActionList(e, e->tileX, e->tileY, false);
+			g_hdb->_ai->checkAutoList(e, e->tileX, e->tileY);
+
+			hit = g_hdb->_ai->findEntityIgnore(e->tileX, e->tileY, e);
+			uint32 bgFlags = g_hdb->_map->getMapBGTileFlags(e->tileX, e->tileY);
+			uint32 fgFlags = g_hdb->_map->getMapFGTileFlags(e->tileX, e->tileY);
+			result = (e->level == 1 ? (bgFlags & (kFlagSolid)) : !(fgFlags & kFlagGrating) && (bgFlags & (kFlagSolid)));
+			if (hit) {
+				switch (hit->type) {
+				case AI_CHICKEN:
+					g_hdb->_ai->addAnimateTarget(hit->x, hit->y, 0, 3, ANIM_NORMAL, false, false, GROUP_STEAM_PUFF_SIT);
+					g_hdb->_ai->removeEntity(hit);
+					warning("Play SND_CHICKEN_BAGAWK");
+					break;
+				case AI_BADFAIRY:
+					g_hdb->_ai->stunEnemy(hit, 2);
+					g_hdb->_ai->addAnimateTarget(hit->x, hit->y, 0, 3, ANIM_NORMAL, false, false, GEM_FLASH);
+					break;
+				case AI_NONE:
+					if (hit->value1 == (int)AI_DRAGON) {
+						// pull dragon's coords out of "lua_func_use" string.
+						char num1[4], num2[4];
+						memset(num1, 0, 4);
+						memset(num2, 0, 4);
+						memcpy(num1, hit->luaFuncUse, 3);
+						memcpy(num2, hit->luaFuncUse + 3, 3);
+
+						warning("Play SND_CLUB_HIT_FLESH");
+						AIEntity *found = g_hdb->_ai->findEntity(atoi(num1), atoi(num2));
+						if (found)
+							aiDragonWake(found);
+					}
+					g_hdb->_ai->addAnimateTarget(e->x, e->y, 0, 3, ANIM_NORMAL, false, false, GEM_FLASH);
+					warning("Play SND_INV_SELECT");
+					break;
+				case AI_DRAGON:
+					warning("Play SND_CLUB_HIT_FLESH");
+					aiDragonWake(hit);
+				default:
+					g_hdb->_ai->addAnimateTarget(e->x, e->y, 0, 3, ANIM_NORMAL, false, false, GEM_FLASH);
+					warning("Play SND_CLUB_HIT_FLESH");
+				}
+				if (e->value1)
+					e->sequence = 1;
+				else
+					g_hdb->_ai->removeEntity(e);	// bye bye!
+				return;
+			} else if (result) {		// hit a wall
+					g_hdb->_ai->addAnimateTarget(e->x, e->y, 0, 3, ANIM_NORMAL, false, false, GEM_FLASH);
+					warning("Play SND_INV_SELECT");
+					// come back to daddy?
+					if (e->value1)
+						e->sequence = 1;
+					else {
+						g_hdb->_ai->removeEntity(e);
+						return;
+					}
+			} else {
+					g_hdb->_ai->setEntityGoal(e, e->tileX + xv[e->dir], e->tileY + yv[e->dir]);
+					e->state = STATE_MOVEDOWN;		// so it will draw & animate
+			}
+			g_hdb->_ai->animateEntity(e);
+		}
+		break;
+		// coming back to daddy?
+	case 1:
+		AIEntity *p = g_hdb->_ai->getPlayer();
+		if (e->x < p->x)
+			e->x++;
+		else
+			e->x--;
+
+		if (e->y < p->y)
+			e->y++;
+		else
+			e->y--;
+
+		if (abs(e->x - p->x) < 4 && abs(e->y - p->y) < 4)
+		{
+			int	amt = g_hdb->_ai->getGemAmount();
+			g_hdb->_ai->setGemAmount(amt + 1);
+			g_hdb->_ai->addAnimateTarget(e->x, e->y, 0, 3, ANIM_NORMAL, false, false, GEM_FLASH);
+			g_hdb->_ai->removeEntity(e);
+			warning("Play SND_GET_GEM");
+		}
+		break;
+	}
 }
 
 void aiChickenAction(AIEntity *e) {
