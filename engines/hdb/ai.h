@@ -813,6 +813,9 @@ public:
 	void addAnimateTarget(int x, int y, int start, int end, AnimSpeed speed, bool killAuto, bool inMap, const char *tileName);
 	void animateTargets();
 
+	void addBridgeExtend(int x, int y, int bridgeType);
+	void animateBridges();
+
 	AIEntity *playerCollision(int topBorder, int bottomBorder, int leftBorder, int rightBorder);
 	bool checkPlayerTileCollision(int x, int y);
 	bool checkPlayerCollision(int x, int y, int border);

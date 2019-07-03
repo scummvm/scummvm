@@ -136,6 +136,110 @@ void AI::animateTargets() {
 	}
 }
 
+void AI::addBridgeExtend(int x, int y, int bridgeType) {
+	if (_numBridges >= kMaxBridges)
+		return;
+
+	if (bridgeType == _targetBridgeU)
+		_bridges[_numBridges].dir = DIR_UP;
+	else if (bridgeType == _targetBridgeD)
+		_bridges[_numBridges].dir = DIR_DOWN;
+	else if (bridgeType == _targetBridgeL)
+		_bridges[_numBridges].dir = DIR_LEFT;
+	else if (bridgeType == _targetBridgeR)
+		_bridges[_numBridges].dir = DIR_RIGHT;
+
+	_bridges[_numBridges].delay = 5;
+	_bridges[_numBridges].x = x;
+	_bridges[_numBridges].y = y;
+	_bridges[_numBridges].anim = 0;
+
+	if (g_hdb->_map->onScreen(_bridges[_numBridges].x, _bridges[_numBridges].y))
+		g_hdb->_sound->playSound(SND_BRIDGE_START);
+
+	_numBridges++;
+}
+
+void AI::animateBridges() {
+	int	i, j, tileIndex, xv, yv;
+	uint32 flags;
+	bool done;
+
+	// out quick!
+	if (!_numBridges)
+		return;
+
+	for (i = 0; i < _numBridges; i++) {
+		if (_bridges[i].delay-- > 0)
+			continue;
+
+		_bridges[i].delay = 5;
+		done = false;
+		xv = yv = 0;
+
+		switch (_bridges[i].dir) {
+		case DIR_UP:
+			g_hdb->_map->setMapFGTileIndex(_bridges[i].x, _bridges[i].y, _targetBridgeU + _bridges[i].anim);
+			_bridges[i].anim++;
+			if (_bridges[i].anim > 2) {
+				g_hdb->_map->setMapFGTileIndex(_bridges[i].x, _bridges[i].y, _targetBridgeMidUD);
+				yv = -1;
+				done = true;
+			}
+			break;
+		case DIR_DOWN:
+			g_hdb->_map->setMapFGTileIndex(_bridges[i].x, _bridges[i].y, _targetBridgeD + _bridges[i].anim);
+			_bridges[i].anim++;
+			if (_bridges[i].anim > 2)
+			{
+				g_hdb->_map->setMapFGTileIndex(_bridges[i].x, _bridges[i].y, _targetBridgeMidUD);
+				yv = 1;
+				done = true;
+			}
+			break;
+		case DIR_LEFT:
+			g_hdb->_map->setMapFGTileIndex(_bridges[i].x, _bridges[i].y, _targetBridgeL + _bridges[i].anim);
+			_bridges[i].anim++;
+			if (_bridges[i].anim > 2)
+			{
+				g_hdb->_map->setMapFGTileIndex(_bridges[i].x, _bridges[i].y, _targetBridgeMidLR);
+				xv = -1;
+				done = true;
+			}
+			break;
+		case DIR_RIGHT:
+			g_hdb->_map->setMapFGTileIndex(_bridges[i].x, _bridges[i].y, _targetBridgeR + _bridges[i].anim);
+			_bridges[i].anim++;
+			if (_bridges[i].anim > 2)
+			{
+				g_hdb->_map->setMapFGTileIndex(_bridges[i].x, _bridges[i].y, _targetBridgeMidLR);
+				xv = 1;
+				done = true;
+			}
+			break;
+		}
+
+		// is this bridge done extending one chunk?
+		if (done == true)
+		{
+			if (g_hdb->_map->onScreen(_bridges[i].x, _bridges[i].y))
+				g_hdb->_sound->playSound(SND_BRIDGE_EXTEND);
+			_bridges[i].anim = 0;
+			_bridges[i].x += xv;
+			_bridges[i].y += yv;
+			tileIndex = g_hdb->_map->getMapFGTileIndex(_bridges[i].x, _bridges[i].y);
+			flags = g_hdb->_map->getMapBGTileFlags(_bridges[i].x, _bridges[i].y);
+			if (!flags || (flags & kFlagMetal) || tileIndex >= 0 || (flags & kFlagSolid)) {
+				if (g_hdb->_map->onScreen(_bridges[i].x, _bridges[i].y))
+					g_hdb->_sound->playSound(SND_BRIDGE_END);
+				for (j = 0; j < _numBridges - 1; j++)
+					memcpy(&_bridges[i], &_bridges[i + 1], sizeof(Bridge));
+				_numBridges--;
+			}
+		}
+	}
+}
+
 // Add an action location to the list of possible actions
 // Each action must be paired with another of the same number
 void AI::addToActionList(int actionIndex, int x, int y, char *luaFuncInt, char *luaFuncUse) {
