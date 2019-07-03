@@ -62,9 +62,10 @@ Common::Rect getBoundingBoxImpl(const Font &font, const StringType &str, int x, 
 		last = cur;
 
 		Common::Rect charBox = font.getBoundingBox(cur);
-		if (x + charBox.right > rightX)
+		int charWidth = font.getCharWidth(cur);
+		if (x + charWidth > rightX)
 			break;
-		if (x + charBox.right >= leftX) {
+		if (x + charWidth >= leftX) {
 			charBox.translate(x, y);
 			if (first) {
 				bbox = charBox;
@@ -74,7 +75,7 @@ Common::Rect getBoundingBoxImpl(const Font &font, const StringType &str, int x, 
 			}
 		}
 
-		x += font.getCharWidth(cur);
+		x += charWidth;
 	}
 
 	return bbox;
@@ -115,13 +116,13 @@ void drawStringImpl(const Font &font, Surface *dst, const StringType &str, int x
 		x += font.getKerningOffset(last, cur);
 		last = cur;
 
-		Common::Rect charBox = font.getBoundingBox(cur);
-		if (x + charBox.right > rightX)
+		int charWidth = font.getCharWidth(cur);
+		if (x + charWidth > rightX)
 			break;
-		if (x + charBox.right >= leftX)
+		if (x + charWidth >= leftX)
 			font.drawChar(dst, cur, x, y, color);
 
-		x += font.getCharWidth(cur);
+		x += charWidth;
 	}
 }
 
