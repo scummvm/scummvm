@@ -503,14 +503,7 @@ Common::Error HDBGame::run() {
 	tile->load(tileStream);
 #endif
 
-	Common::SeekableReadStream *luaStream = _fileMan->findFirstData("MAP00_LUA", TYPE_BINARY);
-	int32 luaLength = _fileMan->getLength("MAP00_LUA", TYPE_BINARY);
-	if (luaStream == NULL) {
-		debug("The MAP00_LUA MPC entry can't be found.");
-		return Common::kReadingFailed;
-	}
-
-	_lua->initScript(luaStream, "MAP00_LUA", luaLength);
+	_lua->loadLua("MAP00_LUA");
 
 	_lua->callFunction("level_loaded", 0);
 

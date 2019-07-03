@@ -72,8 +72,16 @@ bool LuaScript::init() {
 	return true;
 }
 
-bool LuaScript::loadLua(char *name) {
-	warning("STUB: loadLua(%s)", name);
+bool LuaScript::loadLua(const char *name) {
+	Common::SeekableReadStream *luaStream = g_hdb->_fileMan->findFirstData(name, TYPE_BINARY);
+	int32 luaLength = g_hdb->_fileMan->getLength(name, TYPE_BINARY);
+	if (luaStream == NULL) {
+		warning("The %s MPC entry can't be found", name);
+
+		return false;
+	}
+
+	initScript(luaStream, name, luaLength);
 
 	return true;
 }

@@ -42,7 +42,7 @@ public:
 	LuaScript();
 	~LuaScript();
 
-	bool loadLua(char *name);
+	bool loadLua(const char *name);
 
 	bool init();
 	bool initScript(Common::SeekableReadStream *stream, const char *scriptName, int32 length);
