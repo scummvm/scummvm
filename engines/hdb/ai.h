@@ -50,7 +50,9 @@ enum {
 	kRunToggleDelay = 2,
 	kMsgDelay = 3,
 	kYouGotX = -1,
-	kYouGotY = (kScreenHeight - 16)
+	kYouGotY = (kScreenHeight - 16),
+	kNumSaveSlots = 8,
+	kAutoSaveSlot = 0
 };
 
 enum AIType {
