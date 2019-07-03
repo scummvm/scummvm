@@ -292,8 +292,19 @@ bool AI::useAutoDoorOpenClose(AIEntity *e, int x, int y) {
 
 // Any Type Door
 bool AI::useDoorOpenCloseBot(AIEntity *e, int x, int y) {
-	warning("STUB: Define useDoorOpenCloseBot");
-	return false;
+	int	tileIndex = g_hdb->_map->getMapBGTileIndex(x, y);
+
+	if (e == _player || e->type == AI_SLUG_ATTACK || e->type == AI_GEM_ATTACK) {
+		if (isClosedDoor(x, y))
+			g_hdb->_sound->playSound(SND_GUY_UHUH);
+		return false;
+	}
+
+	addAnimateTarget(x, y, tileIndex, tileIndex - 3, ANIM_SLOW, false, true, NULL);
+	//	AddCallback( CALLBACK_DOOR_OPEN_CLOSE, x, y, DELAY_5SECONDS / fs );
+	if (g_hdb->_map->onScreen(x, y))
+		g_hdb->_sound->playSound(SND_DOOR_OPEN_CLOSE);
+	return true;
 }
 
 } // End of Namespace
