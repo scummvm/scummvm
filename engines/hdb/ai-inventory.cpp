@@ -74,7 +74,7 @@ bool AI::addToInventory(AIEntity *e) {
 		warning("AI-INVENTORY: addToInventory: Unintended Type");
 	}
 
-	warning("STUB: addToInventory: Print a 'You Got' message");
+	printYouGotMsg(e->printedName);
 	removeEntity(e);
 	return true;
 }
