@@ -882,15 +882,15 @@ void AI::animateEntity(AIEntity *e) {
 	uint64 flags;
 
 	// Move entity if player is not dead
-	debug(3, "Before animateEntity, e->x: %d, e->y: %d", e->x, e->y);
-	debug(3, "Before animateEntity, e->tileX: %d, e->tileY: %d", e->tileX, e->tileY);
+	debug(9, "Before animateEntity, e->x: %d, e->y: %d", e->x, e->y);
+	debug(9, "Before animateEntity, e->tileX: %d, e->tileY: %d", e->tileX, e->tileY);
 	if (!_playerDead) {
 		e->x += e->xVel;
 		e->y += e->yVel;
 		e->tileX = e->x / kTileWidth;
 		e->tileY = e->y / kTileHeight;
-		debug(3, "After animateEntity, e->x: %d, e->y: %d", e->x, e->y);
-		debug(3, "After animateEntity, e->tileX: %d, e->tileY: %d", e->tileX, e->tileY);
+		debug(9, "After animateEntity, e->x: %d, e->y: %d", e->x, e->y);
+		debug(9, "After animateEntity, e->tileX: %d, e->tileY: %d", e->tileX, e->tileY);
 	}
 
 	// For non-players, check for trigger being hit
