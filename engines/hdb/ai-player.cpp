@@ -1160,11 +1160,12 @@ void aiRoboStunnerInit2(AIEntity *e) {
 }
 
 void aiClubInit(AIEntity *e) {
-	warning("STUB: AI: aiClubInit required");
+	strcpy(e->printedName, "Creature Clubber");
+	e->aiAction = aiGetItemAction;
 }
 
 void aiClubInit2(AIEntity *e) {
-	warning("STUB: AI: aiClubInit2 required");
+	e->draw = e->standdownGfx[0];
 }
 
 void aiSlugSlingerInit(AIEntity *e) {
