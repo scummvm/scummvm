@@ -52,8 +52,7 @@ bool AI::addToInventory(AIEntity *e) {
 		removeEntity(e);
 		return true;
 	default:
-		warning("AI-INVENTORY: addToInventory: Unintended Type");
-		return false;
+		break;
 	}
 
 	if (_numInventory >= kMaxInventory) {
