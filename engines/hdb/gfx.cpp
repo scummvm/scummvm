@@ -455,7 +455,8 @@ void Gfx::drawSky() {
 		static int offset = 0, wait = 0;
 		for (int j = -64; j < kScreenHeight; j += 64) {
 			for (int i = -64; i < kScreenWidth; i += 64) {
-				_skyClouds->draw(i + offset, j + offset);
+				if (_skyClouds)
+					_skyClouds->draw(i + offset, j + offset);
 			}
 		}
 		wait--;
