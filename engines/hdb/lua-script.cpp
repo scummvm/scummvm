@@ -932,7 +932,13 @@ static int freeSound(lua_State *L) {
 }
 
 static int startMap(lua_State *L) {
-	warning("STUB: START MAP");
+	const char *string = lua_tostring(L, 1);
+
+	g_hdb->_lua->checkParameters("startMap", 1);
+
+	lua_pop(L, 1);
+	g_hdb->changeLevel((char *)string);
+
 	return 0;
 }
 
