@@ -692,6 +692,8 @@ Common::Error HDBGame::run() {
 	lua->executeFile("test.lua");
 #endif
 
+	AIEntity *e;
+
 	while (!shouldQuit()) {
 
 		Common::Event event;
@@ -744,7 +746,7 @@ Common::Error HDBGame::run() {
 			_ai->processCines();
 			//_window->drawDialog();
 
-			AIEntity *e = _ai->getPlayer();
+			e = _ai->getPlayer();
 
 			if (e && e->level < 2)
 				_ai->drawWayPoints();
