@@ -661,6 +661,13 @@ void AI::setLuaAnimFrame(const char *initName, AIState st, int frame) {
 	}
 }
 
+int AI::checkForTouchplate(int x, int y) {
+	int tileIndex = g_hdb->_map->getMapBGTileIndex(x, y);
+	if (tileIndex == _touchplateOff || tileIndex == _templeTouchpOff)
+		return tileIndex;
+	return 0;
+}
+
 void AI::removeEntity(AIEntity *e) {
 	_ents->erase(&e);
 }
