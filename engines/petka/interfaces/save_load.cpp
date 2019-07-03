@@ -51,7 +51,7 @@ void InterfaceSaveLoad::startSaveLoad(bool saveMode) {
 	cursor->setCursorPos(cursor->_x, cursor->_y, 0);
 
 	g_vm->getQSystem()->_currInterface = this;
-	g_vm->videoSystem()->addDirtyRect(Common::Rect(640, 480));
+	g_vm->videoSystem()->makeAllDirty();
 }
 
 void InterfaceSaveLoad::stop() {
@@ -59,7 +59,7 @@ void InterfaceSaveLoad::stop() {
 	cursor->_resourceId = _savedCursorId;
 	g_vm->getQSystem()->_currInterface = g_vm->getQSystem()->_prevInterface;
 	g_vm->getQSystem()->_currInterface->onMouseMove(Common::Point(cursor->_x, cursor->_y));
-	g_vm->videoSystem()->addDirtyRect(Common::Rect(640, 480));
+	g_vm->videoSystem()->makeAllDirty();
 }
 
 void InterfaceSaveLoad::onLeftButtonDown(const Common::Point p) {

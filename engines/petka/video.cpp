@@ -33,7 +33,7 @@ namespace Petka {
 
 VideoSystem::VideoSystem() :
 	_shake(false), _shift(false), _shakeTime(0), _time(0) {
-	addDirtyRect({0, 0, 640, 480});
+	makeAllDirty();
 }
 
 static bool objCmp(QVisibleObject *&l, QVisibleObject *&r) {
@@ -102,6 +102,10 @@ void VideoSystem::addDirtyRect(Common::Point pos, FlicDecoder &flc) {
 	Common::Rect rect = flc.getBounds();
 	rect.translate(pos.x, pos.y);
 	addDirtyRect(rect);
+}
+
+void VideoSystem::makeAllDirty() {
+	addDirtyRect(Common::Rect(640, 480));
 }
 
 }

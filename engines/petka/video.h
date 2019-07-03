@@ -34,7 +34,7 @@ public:
 	VideoSystem();
 
 	void update();
-
+	void makeAllDirty();
 	void addDirtyRect(const Common::Rect &rect);
 	void addDirtyRect(Common::Point pos, FlicDecoder &flc);
 	const Common::List<Common::Rect> rects() const;

@@ -117,7 +117,7 @@ void QMessageObject::processMessage(const QMessage &msg) {
 		if (msg.arg2 == 1) {
 			FlicDecoder *flc = g_vm->resMgr()->loadFlic(_resourceId);
 			flc->setFrame(1);
-			g_vm->videoSystem()->addDirtyRect(Common::Rect(0, 0, 640, 480));
+			g_vm->videoSystem()->makeAllDirty();
 			_time = 0;
 		} else if (msg.arg2 == 2) {
 			g_vm->resMgr()->loadFlic(_resourceId);
