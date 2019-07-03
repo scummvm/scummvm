@@ -1146,15 +1146,17 @@ void aiFrogStatueAction(AIEntity *e) {
 }
 
 void aiRoboStunnerAction(AIEntity *e) {
-	warning("STUB: AI: aiRoboStunnerAction required");
+	aiAnimateStanddown(e, 1);
+	aiGetItemAction(e);
 }
 
 void aiRoboStunnerInit(AIEntity *e) {
-	warning("STUB: AI: aiRoboStunnerInit required");
+	e->aiAction = aiRoboStunnerAction;
+	strcpy(e->printedName, "Robostunner");
 }
 
 void aiRoboStunnerInit2(AIEntity *e) {
-	warning("STUB: AI: aiRoboStunnerInit2 required");
+	e->draw = e->standdownGfx[0];
 }
 
 void aiClubInit(AIEntity *e) {
