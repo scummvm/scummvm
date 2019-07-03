@@ -177,15 +177,9 @@ QMessageObject *QSystem::findObject(const Common::String &name) {
 
 void QSystem::update() {
 	for (Common::List<QMessage>::iterator it = _messages.begin(); it != _messages.end();) {
-		bool removeMsg = false;
-		for (uint j = 0; j < _allObjects.size(); ++j) {
-			if (it->objId == _allObjects[j]->_id) {
-				_allObjects[j]->processMessage(*it);
-				removeMsg = true;
-				break;
-			}
-		}
-		if (removeMsg) {
+		QMessageObject *obj = findObject(it->objId);
+		if (obj) {
+			obj->processMessage(*it);
 			it = _messages.erase(it);
 		} else {
 			++it;
