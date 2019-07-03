@@ -1265,51 +1265,57 @@ void aiNoteInit2(AIEntity *e) {
 }
 
 void aiKeycardWhiteInit(AIEntity *e) {
-	warning("STUB: AI: aiKeycardWhiteInit required");
+	strcpy(e->printedName, "a White keycard");
+	e->aiAction = aiGetItemAction;
 }
 
 void aiKeycardWhiteInit2(AIEntity *e) {
-	warning("STUB: AI: aiKeycardWhiteInit2 required");
+	e->draw = e->standdownGfx[0];
 }
 
 void aiKeycardBlueInit(AIEntity *e) {
-	warning("STUB: AI: aiKeycardBlueInit required");
+	strcpy(e->printedName, "a Blue keycard");
+	e->aiAction = aiGetItemAction;
 }
 
 void aiKeycardBlueInit2(AIEntity *e) {
-	warning("STUB: AI: aiKeycardBlueInit2 required");
+	e->draw = e->standdownGfx[0];
 }
 
 void aiKeycardRedInit(AIEntity *e) {
-	warning("STUB: AI: aiKeycardRedInit required");
+	strcpy(e->printedName, "a Red keycard");
+	e->aiAction = aiGetItemAction;
 }
 
 void aiKeycardRedInit2(AIEntity *e) {
-	warning("STUB: AI: aiKeycardRedInit2 required");
+	e->draw = e->standdownGfx[0];
 }
 
 void aiKeycardGreenInit(AIEntity *e) {
-	warning("STUB: AI: aiKeycardGreenInit required");
+	strcpy(e->printedName, "a Green keycard");
+	e->aiAction = aiGetItemAction;
 }
 
 void aiKeycardGreenInit2(AIEntity *e) {
-	warning("STUB: AI: aiKeycardGreenInit2 required");
+	e->draw = e->standdownGfx[0];
 }
 
 void aiKeycardPurpleInit(AIEntity *e) {
-	warning("STUB: AI: aiKeycardPurpleInit required");
+	strcpy(e->printedName, "a Purple keycard");
+	e->aiAction = aiGetItemAction;
 }
 
 void aiKeycardPurpleInit2(AIEntity *e) {
-	warning("STUB: AI: aiKeycardPurpleInit2 required");
+	e->draw = e->standdownGfx[0];
 }
 
 void aiKeycardBlackInit(AIEntity *e) {
-	warning("STUB: AI: aiKeycardBlackInit required");
+	strcpy(e->printedName, "a Black keycard");
+	e->aiAction = aiGetItemAction;
 }
 
 void aiKeycardBlackInit2(AIEntity *e) {
-	warning("STUB: AI: aiKeycardBlackInit2 required");
+	e->draw = e->standdownGfx[0];
 }
 
 void aiSeedInit(AIEntity *e) {
