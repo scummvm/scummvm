@@ -74,8 +74,11 @@ public:
 	Map();
 	~Map();
 
+	void restartSystem();
+
 	int loadTiles();
 	bool load(Common::SeekableReadStream *stream);
+	bool loadMap(char *name);
 	void draw();
 	void drawEnts();
 	void drawGratings();

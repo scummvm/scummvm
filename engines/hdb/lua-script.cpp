@@ -72,6 +72,20 @@ bool LuaScript::init() {
 	return true;
 }
 
+bool LuaScript::loadLua(char *name) {
+	warning("STUB: loadLua(%s)", name);
+
+	return true;
+}
+
+void LuaScript::setLuaGlobalValue(const char *name, int value) {
+	if (!_state)
+		return;
+
+	lua_pushnumber(_state, value);
+	lua_setglobal(_state, name);
+}
+
 /*
 	Called from Lua, this will pop into the menu
 */

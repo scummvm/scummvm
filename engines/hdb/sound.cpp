@@ -39,4 +39,8 @@ bool Sound::playVoice(int index, int actor) {
 	return true;
 }
 
+void Sound::markSoundCacheFreeable() {
+	warning("STUB: Sound::markSoundCacheFreeable() ");
+}
+
 } // End of Namespace

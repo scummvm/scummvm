@@ -107,6 +107,7 @@ public:
 	bool isFadeActive() { return _fadeInfo.active; }
 	bool isFadeStaying() { return _fadeInfo.stayFaded; }
 	void turnOffFade() { _fadeInfo.active = _fadeInfo.stayFaded = false; }
+	void turnOffSnow() { _snowInfo.active = false; }
 
 	Picture *loadPic(const char *picName);
 	Tile *loadTile(const char *tileName);
@@ -115,6 +116,8 @@ public:
 	void cacheTileSequence(int index, int count);
 	int getTileIndex(const char *name);
 	Picture *getPicture(const char *name);
+
+	void emptyGfxCaches();
 
 	// Returns: true->Tile, false->Pic
 	bool selectGfxType(const char *name);
@@ -128,6 +131,7 @@ public:
 	void draw3DStars();
 	void draw3DStarsLeft();
 	void drawSky();
+	void drawSnow();
 
 	int animateTile(int tileIndex);
 
@@ -161,6 +165,16 @@ private:
 
 		int curStep;
 	} _fadeInfo;
+
+#define MAX_SNOW                50                              // how many snowflakes onscreen
+#define MAX_SNOW_XV             12
+	struct {
+		bool    active;
+		double  x[MAX_SNOW];
+		double  y[MAX_SNOW];
+		double  yv[MAX_SNOW];
+		int     xvindex[MAX_SNOW];
+	} _snowInfo;
 
 	struct {
 		int x, y, speed;

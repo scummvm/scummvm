@@ -200,6 +200,17 @@ public:
 
 	char *lastMapname() { return _lastMapname; }
 
+	//
+	// monkeystone secret stars
+	//
+	int32 getStarsMonkeystone7() { return _monkeystone7; }
+	int32 getStarsMonkeystone14() { return _monkeystone14; }
+	int32 getStarsMonkeystone21() { return _monkeystone21; }
+
+	void setStarsMonkeystone7(int32 value) { _monkeystone7 = value; }
+	void setStarsMonkeystone14(int32 value) { _monkeystone14 = value; }
+	void setStarsMonkeystone21(int32 value) { _monkeystone21 = value; }
+
 	bool _gameShutdown;
 	Graphics::PixelFormat _format;
 
@@ -223,6 +234,10 @@ private:
 
 	char _currentLuaName[64];
 	char _lastLuaName[64];
+
+	int32 _monkeystone7;
+	int32 _monkeystone14;
+	int32 _monkeystone21;
 
 };
 

@@ -56,6 +56,10 @@ HDBGame::HDBGame(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst
 
 	_currentMapname[0] = _currentLuaName[0] = 0;
 
+	_monkeystone7 = STARS_MONKEYSTONE_7_FAKE;
+	_monkeystone14 = STARS_MONKEYSTONE_14_FAKE;
+	_monkeystone21 = STARS_MONKEYSTONE_21_FAKE;
+
 	DebugMan.addDebugChannel(kDebugExample1, "Example1", "This is just an example to test");
 	DebugMan.addDebugChannel(kDebugExample2, "Example2", "This is also an example");
 }
@@ -153,7 +157,40 @@ bool HDBGame::restartMap() {
 	if (!_currentMapname[0])
 		return false;
 
-	warning("STUB: HDBGame::restartMap()");
+	_gfx->emptyGfxCaches();
+	_lua->callFunction("level_shutdown", 0);
+
+	_gfx->turnOffSnow();
+	_window->restartSystem();
+	_ai->restartSystem();
+	_lua->init();
+	_lua->loadLua(_currentLuaName);
+
+	_sound->markSoundCacheFreeable();
+	_map->restartSystem();
+
+	if (!_map->loadMap(_currentMapname))
+		return false;
+
+	_ai->initAnimInfo();
+
+	// if there are Secret Stars here, stick the variable in Lua
+	if (!_menu->_starWarp && getStarsMonkeystone7() == STARS_MONKEYSTONE_7)
+		_lua->setLuaGlobalValue("secretstars", 1);
+	if (_menu->_starWarp == 1 && getStarsMonkeystone14() == STARS_MONKEYSTONE_14)
+		_lua->setLuaGlobalValue("secretstars", 2);
+	if (_menu->_starWarp == 2 && getStarsMonkeystone21() == STARS_MONKEYSTONE_21)
+		_lua->setLuaGlobalValue("secretstars", 3);
+
+	_lua->callFunction("level_loaded", 0);
+	if (!_ai->cinematicsActive())
+		_gfx->turnOffFade();
+
+	// center the player on the screen
+	int x, y;
+
+	_ai->getPlayerXY(&x, &y);
+	_map->centerMapXY(x + 16, y + 16);
 
 	return true;
 }

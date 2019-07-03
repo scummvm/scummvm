@@ -1383,6 +1383,8 @@ public:
 
 	bool playSound(int index);
 	bool playVoice(int index, int actor);
+
+	void markSoundCacheFreeable();
 };
 
 } // End of Namespace

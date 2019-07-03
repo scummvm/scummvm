@@ -42,6 +42,8 @@ public:
 	LuaScript();
 	~LuaScript();
 
+	bool loadLua(char *name);
+
 	bool init();
 	bool initScript(Common::SeekableReadStream *stream, const char *scriptName, int32 length);
 
@@ -57,6 +59,8 @@ public:
 	void checkParameters(const char *func, int params);
 
 	const char *getStringOffStack();
+
+	void setLuaGlobalValue(const char *name, int value);
 
 private:
 	lua_State *_state;
