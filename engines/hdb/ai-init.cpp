@@ -869,6 +869,10 @@ void AI::restartSystem() {
 	// Clear waypoints
 	memset(&_waypoints[0], 0, sizeof(_waypoints));
 	_numWaypoints = 0;
+
+	// Clear Bridges
+	memset(&_bridges[0], 0, sizeof(_bridges));
+	_numBridges = 0;
 }
 
 void AI::initAnimInfo() {

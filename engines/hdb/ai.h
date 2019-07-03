@@ -40,6 +40,7 @@ enum {
 	kMaxAutoActions = 30,
 	kMaxLuaEnts = 50,
 	kMaxCallbacks = 20,
+	kMaxBridges = 10,
 	kDelay5Seconds = 5 * kGameFPS,
 	kPlayerMoveSpeed = 4,
 	kEnemyMoveSpeed = 2,
@@ -712,6 +713,15 @@ struct Callback {
 	Callback() : type(NO_FUNCTION), x(0), y(0), delay(0) {}
 };
 
+struct Bridge {
+	uint16 x, y;
+	AIDir dir;
+	uint16 delay;
+	uint16 anim;
+
+	Bridge() : x(0), y(0), dir(DIR_NONE), delay(0), anim(0) {}
+};
+
 struct CineCommand {
 	CineType cmdType;
 	double x, y;
@@ -1171,6 +1181,9 @@ public:
 	AutoAction _autoActions[kMaxAutoActions];
 
 	Callback _callbacks[kMaxCallbacks];
+
+	Bridge _bridges[kMaxBridges];
+	int _numBridges;
 
 	Common::Array<ArrowPath *> *_arrowPaths;
 	Common::Array<HereT *> *_hereList;
