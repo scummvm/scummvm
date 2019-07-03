@@ -78,7 +78,7 @@ void callbackDoorOpenClose(int x, int y) {
 
 	g_hdb->_ai->addAnimateTarget(x, y, tileIndex, tileIndex + 3, ANIM_SLOW, false, true, NULL);
 	if (g_hdb->_map->onScreen(x, y))
-		warning("STUB: Play SND_DOOR_OPEN_CLOSE");
+		g_hdb->_sound->playSound(SND_DOOR_OPEN_CLOSE);
 	return;
 }
 
@@ -89,7 +89,7 @@ bool AI::useDoorOpenClose(AIEntity *e, int x, int y) {
 	addAnimateTarget(x, y, tileIndex, tileIndex - 3, ANIM_SLOW, false, true, NULL);
 	addCallback(CALLBACK_DOOR_OPEN_CLOSE, x, y, kDelay5Seconds);
 	if (g_hdb->_map->onScreen(x, y))
-		warning("Play SND_DOOR_OPEN_CLOSE");
+		g_hdb->_sound->playSound(SND_DOOR_OPEN_CLOSE);
 	return true;
 }
 
@@ -104,7 +104,7 @@ void callbackAutoDoorOpenClose(int x, int y) {
 
 	g_hdb->_ai->addAnimateTarget(x, y, tileIndex, tileIndex + 3, ANIM_SLOW, true, true, NULL);
 	if (g_hdb->_map->onScreen(x, y))
-		warning("STUB: callbackAutoDoorOpenClose: Play SND_DOOR_OPEN_CLOSE");
+		g_hdb->_sound->playSound(SND_DOOR_OPEN_CLOSE);
 	return;
 }
 
@@ -117,7 +117,7 @@ bool AI::useAutoDoorOpenClose(AIEntity *e, int x, int y) {
 	addAnimateTarget(x, y, tileIndex, tileIndex - 3, ANIM_SLOW, false, true, NULL);
 	addCallback(CALLBACK_AUTODOOR_OPEN_CLOSE, x, y, kDelay5Seconds);
 	if (g_hdb->_map->onScreen(x, y))
-		warning("useAutoDoorOpenClose: Play SND_DOOR_OPEN_CLOSE");
+		g_hdb->_sound->playSound(SND_DOOR_OPEN_CLOSE);
 	return false;
 }
 

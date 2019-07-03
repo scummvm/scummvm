@@ -112,7 +112,7 @@ void Window::drawPause() {
 void Window::checkPause(uint x, uint y) {
 	if (x >= 480 / 2 - _gfxPausePlaque->_width / 2 && 480 / 2 + _gfxPausePlaque->_width / 2 > x && y >= kPauseY && y < kPauseY + _gfxPausePlaque->_height) {
 		g_hdb->togglePause();
-		warning("STUB: checkPause: Play SND_POP");
+		g_hdb->_sound->playSound(SND_POP);
 	}
 }
 
@@ -168,7 +168,7 @@ void Window::openDialog(const char *title, int tileIndex, const char *string, in
 	_dialogInfo.more = more;
 	if (luaMore)
 		strcpy(_dialogInfo.luaMore, luaMore);
-	warning("STUB: openDialog: Play SND_MOVE_SELECTION");
+	g_hdb->_sound->playSound(SND_MOVE_SELECTION);
 }
 
 void Window::drawDialog() {
@@ -230,7 +230,7 @@ void Window::drawDialog() {
 
 void Window::closeDialog() {
 	if (_dialogInfo.active) {
-		warning("STUB: closeDialog: Play SND_SWITCH_USE");
+		g_hdb->_sound->playSound(SND_SWITCH_USE);
 		_dialogInfo.active = false;
 		_dialogDelay = 0;
 		if (_dialogInfo.luaMore[0] && !g_hdb->_ai->cinematicsActive())
@@ -378,7 +378,7 @@ void Window::openDialogChoice(const char *title, const char *text, const char *f
 
 	_dialogChoiceInfo.selection = 0;
 	_dialogChoiceInfo.timeout = 0;
-	warning("STUB: Play SND_MOVE_SELECTION");
+	g_hdb->_sound->playSound(SND_MOVE_SELECTION);
 }
 
 void Window::drawDialogChoice() {
@@ -440,7 +440,7 @@ void Window::closeDialogChoice() {
 		g_hdb->_lua->pushFunction(_dialogChoiceInfo.func);
 		g_hdb->_lua->pushInt(_dialogChoiceInfo.selection);
 		g_hdb->_lua->call(1, 0);
-		warning("STUB: Play SND_SWITCH_USE");
+		g_hdb->_sound->playSound(SND_SWITCH_USE);
 	}
 }
 
@@ -450,7 +450,7 @@ bool Window::checkDialogChoiceClose(int x, int y) {
 
 	if (x >= _dialogChoiceInfo.x && x < _dialogChoiceInfo.x + _dialogChoiceInfo.width &&
 		y >= _dialogChoiceInfo.y + _dialogChoiceInfo.textHeight && y < _dialogChoiceInfo.y + _dialogChoiceInfo.textHeight + _dialogChoiceInfo.numChoices * 16) {
-		warning("STUB: Play SND_SWITCH_USE");
+		g_hdb->_sound->playSound(SND_SWITCH_USE);
 		_dialogChoiceInfo.selection = (y - (_dialogChoiceInfo.y + _dialogChoiceInfo.textHeight)) >> 4;
 		_dialogChoiceInfo.timeout = g_hdb->getTimeSlice() + 500;
 		return true;
@@ -463,14 +463,14 @@ void Window::dialogChoiceMoveup() {
 	_dialogChoiceInfo.selection--;
 	if (_dialogChoiceInfo.selection < 0)
 		_dialogChoiceInfo.selection = _dialogChoiceInfo.numChoices - 1;
-	warning("STUB: Play SND_MOVE_SELECTION");
+	g_hdb->_sound->playSound(SND_MOVE_SELECTION);
 }
 
 void Window::dialogChoiceMovedown() {
 	_dialogChoiceInfo.selection++;
 	if (_dialogChoiceInfo.selection >= _dialogChoiceInfo.numChoices)
 		_dialogChoiceInfo.selection = 0;
-	warning("STUB: Play SND_MOVE_SELECTION");
+	g_hdb->_sound->playSound(SND_MOVE_SELECTION);
 }
 
 void Window::openMessageBar(const char *title, int time) {
@@ -585,7 +585,7 @@ void Window::nextMsgQueued() {
 
 void Window::closeMsg() {
 	nextMsgQueued();
-	warning("STUB: Play SND_DIALOG_CLOSE");
+	g_hdb->_sound->playSound(SND_DIALOG_CLOSE);
 }
 
 void Window::drawInventory() {
@@ -678,7 +678,7 @@ void Window::checkInvSelect(int x, int y) {
 		// If this is a weapon, choose it
 		warning("STUB: checkInvSelect: ChooseWeapon() required");
 
-		warning("STUB: checkInvSelect: Play SND_POP");
+		g_hdb->_sound->playSound(SND_POP);
 	}
 }
 
@@ -694,7 +694,7 @@ void Window::openDeliveries(bool animate) {
 			d->destGfx = g_hdb->_gfx->loadTile(d->destGfxName);
 	}
 
-	warning("STUB: Play SND_POP");
+	g_hdb->_sound->playSound(SND_POP);
 	_dlvsInfo.animate = animate;
 	_dlvsInfo.delay1 = g_hdb->getTimeSlice() + 500;
 	_dlvsInfo.go1 = _dlvsInfo.go2 = _dlvsInfo.go3 = false;
@@ -714,7 +714,45 @@ void Window::drawDeliveries() {
 	DlvEnt *d;
 	static uint32 timer = g_hdb->getTimeSlice() + 300;
 
-	debug(9, "STUB: Add Crazy Sounds");
+	int crazySounds[kNumCrazy] = {
+		SND_GUI_INPUT,
+		SND_MAIL_PROCESS,
+		SND_MONKEY_OOHOOH,
+		SND_GET_GEM,
+		SND_MENU_ACCEPT,
+		SND_MENU_BACKOUT,
+		SND_MENU_SLIDER,
+		SND_DIALOG_CLOSE,
+		SND_POP,
+		SND_SPLASH,
+		SND_CHICKEN_AMBIENT,
+		SND_SWITCH_USE,
+		SND_BARREL_EXPLODE,
+		SND_BARREL_MELTING,
+		SND_MOVE_SELECTION,
+		SND_NOTICE,
+		SND_DIALOG_OPEN,
+		SND_TOUCHPLATE_CLICK,
+		SND_MBOT_HYEAH,
+		SND_MBOT_YEAH,
+		SND_MBOT_WHISTLE1,
+		SND_CLUB_MISS,
+		SND_CLUB_HIT_METAL,
+		SND_CLUB_HIT_FLESH,
+		SND_FROG_LICK,
+		SND_ROBOT_STUNNED,
+		SND_BRIDGE_EXTEND,
+		SND_BRIDGE_END,
+		SND_AIRLOCK_CLOSE,
+		SND_FART,
+		SND_FART2,
+		SND_GEM_THROW,
+		SND_INV_SELECT,
+		SND_INFOCOMP,
+		SND_CLOCK_BONK,
+		SND_GET_GOO,
+		SND_MANNY_CRASH
+	};
 
 	if (_infobarDimmed > 1)
 		return;
@@ -742,7 +780,7 @@ void Window::drawDeliveries() {
 					if (!_dlvsInfo.go2) {
 						_dlvsInfo.go2 = true;
 						_dlvsInfo.delay2 = g_hdb->getTimeSlice() + 500;
-						warning("STUB: Play crazy sound");
+						g_hdb->_sound->playSound(crazySounds[g_hdb->_rnd->getRandomNumber(kNumCrazy)]);
 					}
 				}
 			}
@@ -756,7 +794,7 @@ void Window::drawDeliveries() {
 					if (!_dlvsInfo.go3) {
 						_dlvsInfo.go3 = true;
 						_dlvsInfo.delay3 = g_hdb->getTimeSlice() + 500;
-						warning("STUB: Play crazy sound");
+						g_hdb->_sound->playSound(crazySounds[g_hdb->_rnd->getRandomNumber(kNumCrazy)]);
 					}
 				}
 			}
@@ -770,7 +808,7 @@ void Window::drawDeliveries() {
 					g_hdb->_gfx->drawText("to ");
 					g_hdb->_gfx->drawText(d->destTextName);
 
-					warning("STUB: Play crazy sound");
+					g_hdb->_sound->playSound(crazySounds[g_hdb->_rnd->getRandomNumber(kNumCrazy)]);
 					_dlvsInfo.animate = false;
 				}
 			}
@@ -823,7 +861,7 @@ void Window::drawDeliveries() {
 
 void Window::setSelectedDelivery(int which) {
 	_dlvsInfo.selected = which;
-	warning("STUB: Play SND_MENU_SLIDER");
+	g_hdb->_sound->playSound(SND_MENU_SLIDER);
 }
 
 void Window::checkDlvSelect(int x, int y) {

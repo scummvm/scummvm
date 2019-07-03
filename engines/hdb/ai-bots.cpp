@@ -110,7 +110,7 @@ void aiOmniBotAction(AIEntity *e) {
 					omni->xVel = xv * kPlayerMoveSpeed * 2;
 					omni->yVel = yv * kPlayerMoveSpeed * 2;
 					if (g_hdb->_map->onScreen(e->tileX, e->tileY))
-						warning("STUB: aiOmniBotAction: Play SND_OMNIBOT_FIRE");
+						g_hdb->_sound->playSound(SND_OMNIBOT_FIRE);
 					if (!g_hdb->getActionMode()) {
 						omni->xVel >>= 1;
 						omni->yVel >>= 1;
@@ -122,7 +122,7 @@ void aiOmniBotAction(AIEntity *e) {
 	} else {
 		g_hdb->_ai->findPath(e);
 		if (e->onScreen)
-			warning("STUB: aiOmniBotAction: Play SND_OMNIBOT_AMBIENT");
+			g_hdb->_sound->playSound(SND_OMNIBOT_AMBIENT);
 	}
 
 	if (e->sequence)
@@ -213,7 +213,7 @@ void aiTurnBotAction(AIEntity *e) {
 		aiTurnBotChoose(e);
 		g_hdb->_ai->animateEntity(e);
 		if (e->onScreen)
-			warning("STUB: aiTurnBotAction: Play SND_TURNBOT_TURN");
+			g_hdb->_sound->playSound(SND_TURNBOT_TURN);
 	}
 
 	if (e->onScreen && onEvenTile(e->x, e->y) && g_hdb->_ai->checkPlayerCollision(e->x, e->y, 0) && !g_hdb->_ai->playerDead())
@@ -251,7 +251,7 @@ void aiShockBotAction(AIEntity *e) {
 		e->sequence = 20;
 		g_hdb->_ai->animEntFrames(e);
 		if (e->onScreen)
-			warning("STUB: aiShockBotAction: Play SND_SHOCKBOT_AMBIENT");
+			g_hdb->_sound->playSound(SND_SHOCKBOT_AMBIENT);
 
 	}
 
@@ -452,7 +452,7 @@ void aiRightBotFindGoal(AIEntity *e) {
 	e->xVel = xv * e->moveSpeed;
 	e->yVel = yv * e->moveSpeed;
 	if (e->onScreen)
-		warning("STUB: aiRightBotFindGoal: Play SND_RIGHTBOT_TURN");
+		g_hdb->_sound->playSound(SND_RIGHTBOT_TURN);
 }
 
 void aiRightBotAction(AIEntity *e) {
@@ -536,7 +536,7 @@ void aiPushBotAction(AIEntity *e) {
 				warning("STUB: aiPushBotAction: Switch Case for Sound");
 			} else {
 				if (e->onScreen)
-					warning("STUB: aiPushBotAction: Play SND_PUSHBOT_STRAIN");
+					g_hdb->_sound->playSound(SND_PUSHBOT_STRAIN);
 				e->dir = oneEighty[e->dir];
 				e->state = moveState[e->dir];
 				nx = e->tileX + xvAhead[e->dir];
@@ -680,7 +680,7 @@ void aiRailRiderOnAction(AIEntity *e) {
 		g_hdb->_ai->setPlayerInvisible(true);
 		g_hdb->_ai->setPlayerLock(true);
 		g_hdb->_ai->setEntityGoal(e, e->tileX + xv[e->dir], e->tileY + yv[e->dir]);
-		warning("STUB: aiRailRiderOnAction: Play SND_RAILRIDER_TASTE");
+		g_hdb->_sound->playSound(SND_RAILRIDER_TASTE);
 		e->sequence = 2;
 		e->value1 = 0;
 
@@ -734,7 +734,7 @@ void aiRailRiderOnAction(AIEntity *e) {
 						break;
 					}
 					g_hdb->_ai->setPlayerInvisible(false);
-					warning("STUB: aiRailRiderOnAction: Play SND_RAILRIDER_EXIT");
+					g_hdb->_sound->playSound(SND_RAILRIDER_EXIT);
 				} else if (arrowPath->type == 1) {
 					e->dir = arrowPath->dir;
 					g_hdb->_ai->setEntityGoal(e, e->tileX + xv[e->dir], e->tileY + yv[e->dir]);
@@ -742,7 +742,7 @@ void aiRailRiderOnAction(AIEntity *e) {
 			} else
 				g_hdb->_ai->setEntityGoal(e, e->tileX + xv[e->dir], e->tileY + yv[e->dir]);
 
-			warning("STUB: aiRailRiderOnAction: Play SND_RAILRIDER_ONTRACK");
+			g_hdb->_sound->playSound(SND_RAILRIDER_ONTRACK);
 		}
 
 		p->tileX = e->tileX;
@@ -818,7 +818,7 @@ void aiMaintBotAction(AIEntity *e) {
 	int	xvAhead[5] = {9, 0, 0,-1, 1}, yvAhead[5] = {9,-1, 1, 0, 0};
 	AIEntity *it;
 	int nx, ny;
-	debug(9, "STUB: aiMaintBotAction: Add sounds");
+	int	whistles[3] = {SND_MBOT_WHISTLE1, SND_MBOT_WHISTLE2, SND_MBOT_WHISTLE3};
 
 	// Waiting at an arrow (or hit by player)?
 	if (e->sequence) {
@@ -830,7 +830,10 @@ void aiMaintBotAction(AIEntity *e) {
 			switch (e->sequence) {
 			case 50:
 				if (e->onScreen && !e->int1) {
-					warning("STUB: aiMaintBotAction: Play SND_MBOT_HMMM or SND_MBOT_HMMM2");
+					if (g_hdb->_rnd->getRandomNumber(2) & 1)
+						g_hdb->_sound->playSound(SND_MBOT_HMMM2);
+					else
+						g_hdb->_sound->playSound(SND_MBOT_HMMM);
 				}
 				break;
 			// Need to USE the object
@@ -888,7 +891,7 @@ void aiMaintBotAction(AIEntity *e) {
 			// HMM
 			case 50:
 				if (e->onScreen && !e->int1)
-					warning("STUB: aiMaintBotAction: Play SND_MBOT_HMMM");
+					g_hdb->_sound->playSound(SND_MBOT_HMMM);
 				break;
 			// Look Right
 			case 40:
@@ -903,7 +906,7 @@ void aiMaintBotAction(AIEntity *e) {
 			// HMM2
 			case 25:
 				if (e->onScreen && !e->int1)
-					warning("STUB: aiMaintBotAction: Play SND_MBOT_HMM2");
+					g_hdb->_sound->playSound(SND_MBOT_HMMM2);
 				break;
 			// Decide direction and GO
 			case 0:
@@ -911,7 +914,7 @@ void aiMaintBotAction(AIEntity *e) {
 				e->dir = dirList[dir];
 				g_hdb->_ai->findPath(e);
 				if (e->onScreen)
-					warning("STUB: aiMaintBotAction: Play whistle");
+					g_hdb->_sound->playSound(whistles[g_hdb->_rnd->getRandomNumber(3)]);
 				break;
 			}
 		}
@@ -923,7 +926,7 @@ void aiMaintBotAction(AIEntity *e) {
 		g_hdb->_ai->animateEntity(e);
 		if (hitPlayer(e->x, e->y)) {
 			g_hdb->_ai->killPlayer(DEATH_GRABBED);
-			warning("STUB: aiMaintBotAction: Play SND_MBOT_DEATH");
+			g_hdb->_sound->playSound(SND_MBOT_DEATH);
 		}
 	} else {
 		// Check if there's an arrow UNDER the bot, and if its RED
@@ -942,7 +945,7 @@ void aiMaintBotAction(AIEntity *e) {
 				return;
 			} else if (ar->type == 1) {
 				g_hdb->_ai->findPath(e);
-				warning("STUB: aiMaintBotAction: Play whistle");
+				g_hdb->_sound->playSound(whistles[g_hdb->_rnd->getRandomNumber(3)]);
 			} else {
 				e->sequence = 64;
 				e->dir2 = e->dir;
@@ -975,7 +978,7 @@ void aiFourFirerAction(AIEntity *e) {
 		e->state = state[e->dir];
 		e->value1 = 16;
 		if (e->onScreen)
-			warning("STUB: aiFourFirerAction: Play SND_FOURFIRE_TURN");
+			g_hdb->_sound->playSound(SND_FOURFIRE_TURN);
 	}
 	e->value1--;
 
@@ -1011,7 +1014,7 @@ void aiFourFirerAction(AIEntity *e) {
 	if (shoot && !hit && result) {
 		fire = g_hdb->_ai->spawn(AI_OMNIBOT_MISSILE, e->dir, e->tileX + xv, e->tileY + yv, NULL, NULL, NULL, DIR_NONE, e->level, 0, 0, 1);
 		if (g_hdb->_map->onScreen(e->tileX, e->tileY))
-			warning("STUB: aiFourFirerAction: Play SND_FOUR_FIRE");
+			g_hdb->_sound->playSound(SND_FOUR_FIRE);
 		fire->xVel = xv * kPlayerMoveSpeed * 2;
 		fire->yVel = yv * kPlayerMoveSpeed * 2;
 		if (!g_hdb->getActionMode()) {
@@ -1056,9 +1059,9 @@ void aiDeadEyeWalkInPlace(AIEntity *e) {
 		e->state = s;
 		if (e->onScreen) {
 			if (e->sequence == 50)
-				warning("STUB: aiDeadEyeWalkInPlace: Play SND_DEADEYE_AMB01");
+				g_hdb->_sound->playSound(SND_DEADEYE_AMB01);
 			else if (e->sequence == 10)
-				warning("STUB: aiDeadEyeWalkInPlace: Play SND_DEADEYE_AMB02");
+				g_hdb->_sound->playSound(SND_DEADEYE_AMB02);
 		}
 		break;
 	case 0:
@@ -1127,7 +1130,7 @@ void aiDeadEyeAction(AIEntity *e) {
 				if (okToMove) {
 					e->moveSpeed = kPlayerMoveSpeed << 1;
 					g_hdb->_ai->setEntityGoal(e, newX, newY);
-					p->tileX & 1 ? warning("STUB: aiDeadEyeAction: Play SND_DEADEYE_ATTACK01") : warning("STUB: aiDeadEyeAction: Play SND_DEADEYE_ATTACK02");
+					p->tileX & 1 ? g_hdb->_sound->playSound(SND_DEADEYE_ATTACK01) : g_hdb->_sound->playSound(SND_DEADEYE_ATTACK02);
 				}
 				g_hdb->_ai->animateEntity(e);
 				return;
@@ -1148,9 +1151,9 @@ void aiDeadEyeAction(AIEntity *e) {
 
 			if (e->onScreen) {
 				if (e->sequence == 50)
-					warning("STUB: aiDeadEyeAction: Play SND_DEADEYE_AMB01");
+					g_hdb->_sound->playSound(SND_DEADEYE_AMB01);
 				else if (e->sequence == 10)
-					warning("STUB: aiDeadEyeAction: Play SND_DEADEYE_AMB01");
+					g_hdb->_sound->playSound(SND_DEADEYE_AMB02);
 			}
 			break;
 		case 0:

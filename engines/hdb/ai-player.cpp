@@ -135,7 +135,7 @@ void aiPlayerAction(AIEntity *e) {
 	// Draw the STUN lightning if it exists
 	if (e->sequence) {
 		e->aiDraw = aiPlayerDraw;
-		warning("STUB: Play SND_STUNNER_FIRE");
+		g_hdb->_sound->playSound(SND_STUNNER_FIRE);
 		hit = g_hdb->_ai->findEntity(e->tileX + xvAhead[e->dir], e->tileY + yvAhead[e->dir]);
 		if (hit)
 			switch (hit->type) {
@@ -395,7 +395,7 @@ void aiPlayerAction(AIEntity *e) {
 	int bgFlags, fgFlags;
 	if (e->goalX) {
 		if (onEvenTile(e->x, e->y)) {
-			g_hdb->_ai->playerOnIce() ? warning("STUB: Play SND_STEPS_ICE") : warning("STUB: Play SND_FOOTSTEPS");
+			g_hdb->_ai->playerOnIce() ? g_hdb->_sound->playSound(SND_STEPS_ICE) : g_hdb->_sound->playSound(SND_FOOTSTEPS);
 
 			// Did we just fall down a PLUMMET?
 			bgFlags = g_hdb->_map->getMapBGTileFlags(e->tileX, e->tileY);
@@ -491,7 +491,7 @@ void aiGemAttackInit(AIEntity *e) {
 	e->sequence = 0;	// flying out at something
 	e->aiAction = aiGemAttackAction;
 	e->draw = e->movedownGfx[0];
-	warning("Play SND_GEM_THROW");
+	g_hdb->_sound->playSound(SND_GEM_THROW);
 }
 
 void aiGemAttackAction(AIEntity *e) {
@@ -517,7 +517,7 @@ void aiGemAttackAction(AIEntity *e) {
 				case AI_CHICKEN:
 					g_hdb->_ai->addAnimateTarget(hit->x, hit->y, 0, 3, ANIM_NORMAL, false, false, GROUP_STEAM_PUFF_SIT);
 					g_hdb->_ai->removeEntity(hit);
-					warning("Play SND_CHICKEN_BAGAWK");
+					g_hdb->_sound->playSound(SND_CHICKEN_BAGAWK);
 					break;
 				case AI_BADFAIRY:
 					g_hdb->_ai->stunEnemy(hit, 2);
@@ -532,20 +532,20 @@ void aiGemAttackAction(AIEntity *e) {
 						memcpy(num1, hit->luaFuncUse, 3);
 						memcpy(num2, hit->luaFuncUse + 3, 3);
 
-						warning("Play SND_CLUB_HIT_FLESH");
+						g_hdb->_sound->playSound(SND_CLUB_HIT_FLESH);
 						AIEntity *found = g_hdb->_ai->findEntity(atoi(num1), atoi(num2));
 						if (found)
 							aiDragonWake(found);
 					}
 					g_hdb->_ai->addAnimateTarget(e->x, e->y, 0, 3, ANIM_NORMAL, false, false, GEM_FLASH);
-					warning("Play SND_INV_SELECT");
+					g_hdb->_sound->playSound(SND_INV_SELECT);
 					break;
 				case AI_DRAGON:
-					warning("Play SND_CLUB_HIT_FLESH");
+					g_hdb->_sound->playSound(SND_CLUB_HIT_FLESH);
 					aiDragonWake(hit);
 				default:
 					g_hdb->_ai->addAnimateTarget(e->x, e->y, 0, 3, ANIM_NORMAL, false, false, GEM_FLASH);
-					warning("Play SND_CLUB_HIT_FLESH");
+					g_hdb->_sound->playSound(SND_CLUB_HIT_FLESH);
 				}
 				if (e->value1)
 					e->sequence = 1;
@@ -554,7 +554,7 @@ void aiGemAttackAction(AIEntity *e) {
 				return;
 			} else if (result) {		// hit a wall
 					g_hdb->_ai->addAnimateTarget(e->x, e->y, 0, 3, ANIM_NORMAL, false, false, GEM_FLASH);
-					warning("Play SND_INV_SELECT");
+					g_hdb->_sound->playSound(SND_INV_SELECT);
 					// come back to daddy?
 					if (e->value1)
 						e->sequence = 1;
@@ -588,7 +588,7 @@ void aiGemAttackAction(AIEntity *e) {
 			g_hdb->_ai->setGemAmount(amt + 1);
 			g_hdb->_ai->addAnimateTarget(e->x, e->y, 0, 3, ANIM_NORMAL, false, false, GEM_FLASH);
 			g_hdb->_ai->removeEntity(e);
-			warning("Play SND_GET_GEM");
+			g_hdb->_sound->playSound(SND_GET_GEM);
 		}
 		break;
 	}
@@ -598,7 +598,7 @@ void aiChickenAction(AIEntity *e) {
 	static int delay = 64;
 
 	if (g_hdb->_map->checkEntOnScreen(e) && !delay) {
-		warning("Play SND_CHICKEN_AMBIENT");
+		g_hdb->_sound->playSound(SND_CHICKEN_AMBIENT);
 		delay = g_hdb->_rnd->getRandomNumber(128) + 160;
 		aiChickenUse(e);
 	}
@@ -613,7 +613,7 @@ void aiChickenAction(AIEntity *e) {
 }
 
 void aiChickenUse(AIEntity *e) {
-	warning("Play SND_CHICKEN_BAGAWK");
+	g_hdb->_sound->playSound(SND_CHICKEN_BAGAWK);
 }
 
 void aiChickenInit(AIEntity *e) {
@@ -646,7 +646,7 @@ void aiSergeantInit2(AIEntity *e) {
 
 void aiSergeantAction(AIEntity *e) {
 	if (e->goalX) {
-		debug(9, "STUB: AI-PLAYER: aiSergeantAction: Play SND_FOOTSTEPS sounds");
+		g_hdb->_sound->playSound(SND_FOOTSTEPS);
 		g_hdb->_ai->animateEntity(e);
 	} else
 		g_hdb->_ai->animEntFrames(e);
@@ -777,7 +777,7 @@ void aiBarrelExplode(AIEntity *e) {
 	e->state = STATE_EXPLODING;
 	e->animDelay = e->animCycle;
 	e->animFrame = 0;
-	warning("STUB: Play SND_BARREL_EXPLODE");
+	g_hdb->_sound->playSound(SND_BARREL_EXPLODE);
 	g_hdb->_map->setBoomBarrel(e->tileX, e->tileY, 0);
 }
 
@@ -965,7 +965,7 @@ void aiSlugAttackAction(AIEntity *e) {
 	uint32 fg_flags = g_hdb->_map->getMapFGTileFlags(e->tileX, e->tileY);
 	result = (e->level == 1 ? (bg_flags & (kFlagSolid)) : !(fg_flags & kFlagGrating) && (bg_flags & (kFlagSolid)));
 	if (hit) {
-		warning("STUB: Play SND_SLUG_HIT");
+		g_hdb->_sound->playSound(SND_SLUG_HIT);
 		warning("STUB: Play MetalOrFleshSnd");
 		switch (hit->type) {
 		case AI_MEERKAT:
@@ -1012,7 +1012,7 @@ void aiSlugAttackAction(AIEntity *e) {
 			g_hdb->_ai->removeEntity(hit);
 			break;
 		case AI_BOOMBARREL:
-			warning("STUB: Play SND_CLUB_HIT_METAL");
+			g_hdb->_sound->playSound(SND_CLUB_HIT_METAL);
 			aiBarrelExplode(hit);
 			aiBarrelBlowup(hit, hit->tileX, hit->tileY);
 			break;
@@ -1020,13 +1020,13 @@ void aiSlugAttackAction(AIEntity *e) {
 		case AI_GATEPUDDLE:
 			g_hdb->_ai->addAnimateTarget(e->x, e->y, 0, 7, ANIM_NORMAL, false, false, TELEPORT_FLASH);
 			g_hdb->_ai->removeEntity(hit);
-			warning("STUB: Play SND_TELEPORT");
+			g_hdb->_sound->playSound(SND_TELEPORT);
 			break;
 		case AI_DEADEYE:
 			g_hdb->_ai->addAnimateTarget(e->tileX * kTileWidth,
 				e->tileY * kTileHeight, 0, 3, ANIM_NORMAL, false, false, GROUP_EXPLOSION_BOOM_SIT);
 			g_hdb->_ai->removeEntity(hit);
-			warning("STUB: Play SND_BARREL_EXPLODE");
+			g_hdb->_sound->playSound(SND_BARREL_EXPLODE);
 			break;
 
 		case AI_NONE:
@@ -1038,7 +1038,7 @@ void aiSlugAttackAction(AIEntity *e) {
 				memcpy(num1, hit->luaFuncUse, 3);
 				memcpy(num2, hit->luaFuncUse + 3, 3);
 
-				warning("STUB: Play SND_CLUB_HIT_FLESH");
+				g_hdb->_sound->playSound(SND_CLUB_HIT_FLESH);
 				AIEntity *found = g_hdb->_ai->findEntity(atoi(num1), atoi(num2));
 				if (found)
 					aiDragonWake(found);
@@ -1054,7 +1054,7 @@ void aiSlugAttackAction(AIEntity *e) {
 		g_hdb->_ai->removeEntity(e);	// bye bye!
 		return;
 	} else if (result) {		// hit a wall
-		warning("STUB: Play SND_SLUG_HIT");
+		g_hdb->_sound->playSound(SND_SLUG_HIT);
 		g_hdb->_ai->addAnimateTarget(e->x, e->y, 0, 3, ANIM_NORMAL, false, false, GROUP_STEAM_PUFF_SIT);
 		g_hdb->_ai->removeEntity(e);
 	} else {
@@ -1076,7 +1076,7 @@ void aiSlugAttackInit(AIEntity *e) {
 	e->aiDraw = aiSlugAttackDraw;
 	e->state = STATE_MOVEDOWN;		// so it will draw & animate
 	e->aiAction = aiSlugAttackAction;
-	warning("STUB: Play SND_SLUG_FIRE");
+	g_hdb->_sound->playSound(SND_SLUG_FIRE);
 }
 
 void aiSlugAttackInit2(AIEntity *e) {
@@ -1433,7 +1433,7 @@ void aiMagicEggUse(AIEntity *e) {
 		if (spawned) {
 			g_hdb->_ai->addAnimateTarget(e->tileX * kTileWidth,
 			e->tileY * kTileHeight, 0, 3, ANIM_NORMAL, false, false, GROUP_EXPLOSION_BOOM_SIT);
-			warning("Play SND_BARREL_EXPLODE");
+			g_hdb->_sound->playSound(SND_BARREL_EXPLODE);
 			g_hdb->_ai->removeEntity(e);
 		}
 	}
@@ -1584,7 +1584,7 @@ void aiMonkeystoneUse(AIEntity *e) {
 	if (val > 1)
 		strcat(monkBuff, "s");
 	strcat(monkBuff, "!");
-	warning("STUB: Play SND_GET_MONKEYSTONE");
+	g_hdb->_sound->playSound(SND_GET_MONKEYSTONE);
 	g_hdb->_window->openMessageBar(monkBuff, kMsgDelay);
 
 	// have we unlocked a secret star(tm)???
@@ -1609,7 +1609,7 @@ void aiGemAction(AIEntity *e) {
 		if (e->onScreen && abs(p->x - e->x) < tolerance && abs(p->y - e->y) < tolerance && e->level == p->level) {
 			g_hdb->_ai->addAnimateTarget(e->x, e->y, 0, 3, ANIM_NORMAL, false, false, GEM_FLASH);
 			g_hdb->_ai->addToInventory(e);
-			warning("Play SND_GET_GEM");
+			g_hdb->_sound->playSound(SND_GET_GEM);
 			return;
 		}
 	}
@@ -1676,7 +1676,7 @@ void aiGenericAction(AIEntity *e) {
 	if (!e->goalX)
 		g_hdb->_ai->findPath(e);
 	else if (onEvenTile(e->x, e->y))
-		debug(9, "STUB: Play SND_FOOTSTEPS");
+		g_hdb->_sound->playSound(SND_FOOTSTEPS);
 	g_hdb->_ai->animateEntity(e);
 }
 

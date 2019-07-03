@@ -60,13 +60,13 @@ void Input::setButtons(uint16 b) {
 	if ((_buttons & kButtonA) && !changeState && (g_hdb->getGameState() != GAME_MENU)) {
 		if (g_hdb->_ai->cinematicsActive() && g_hdb->_ai->cineAbortable()) {
 			g_hdb->_ai->cineAbort();
-			warning("STUB: setButtons: Play SND_POP");
+			g_hdb->_sound->playSound(SND_POP);
 			return;
 		}
 
 		if (g_hdb->getGameState() == GAME_TITLE)
 			warning("STUB: setButtons: changeToMenu() required");
-		warning("STUB: setButtons: Play SND_MENU_BACKOUT");
+		g_hdb->_sound->playSound(SND_MENU_BACKOUT);
 		g_hdb->changeGameState();
 	}
 
@@ -181,7 +181,7 @@ void Input::stylusDown(int x, int y) {
 				g_hdb->_window->centerTextOut("Running Speed", kScreenHeight - 32, kRunToggleDelay * kGameFPS);
 			else
 				g_hdb->_window->centerTextOut("Walking Speed", kScreenHeight - 32, kRunToggleDelay * kGameFPS);
-			warning("STUB: Play SND_SWITCH_USE");
+			g_hdb->_sound->playSound(SND_SWITCH_USE);
 		}
 
 		g_hdb->setTargetXY(worldX, worldY);
@@ -268,7 +268,7 @@ void Input::updateMouseButtons(int l, int m, int r) {
 			return;
 
 		g_hdb->_ai->clearWaypoints();
-		warning("STUB: Play SND_POP");
+		g_hdb->_sound->playSound(SND_POP);
 	}
 
 	// Check if RButton has been pressed
