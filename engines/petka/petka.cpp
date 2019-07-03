@@ -28,6 +28,7 @@
 #include "common/system.h"
 #include "common/file.h"
 
+#include "engines/advancedDetector.h"
 #include "engines/util.h"
 
 #include "graphics/surface.h"
@@ -78,7 +79,7 @@ Common::Error PetkaEngine::run() {
 	_soundMgr.reset(new SoundMgr());
 	_vsys.reset(new VideoSystem());
 
-	loadPart(0);
+	loadPart(strcmp(_desc->gameId, "petka_demo") == 0 ? 1 : 0);
 
 	while (!shouldQuit()) {
 		Common::Event event;
