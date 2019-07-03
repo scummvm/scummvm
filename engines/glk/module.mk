@@ -70,7 +70,6 @@ MODULE_OBJS := \
 	alan3/exe.o \
 	alan3/fnmatch.o \
 	alan3/glkio.o \
-	alan3/glkstart.o \
 	alan3/instance.o \
 	alan3/inter.o \
 	alan3/lists.o \
