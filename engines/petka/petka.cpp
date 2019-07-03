@@ -112,6 +112,8 @@ Common::Error PetkaEngine::run() {
 }
 
 Common::SeekableReadStream *PetkaEngine::openFile(const Common::String &name, bool addCurrentPath) {
+	if (name.empty())
+		return nullptr;
 	return _fileMgr->getFileStream(addCurrentPath ? _currentPath + name : name);
 }
 
