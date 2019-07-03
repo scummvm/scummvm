@@ -1650,23 +1650,20 @@ void aiVortexianAction(AIEntity *e) {
 }
 
 void aiVortexianUse(AIEntity *e) {
-	warning("STUB: AI: aiVortexianUse required");
 }
 
 void aiVortexianInit(AIEntity *e) {
-	warning("STUB: AI: aiVortexianInit required");
+	e->aiUse = aiVortexianUse;
+	e->aiAction = aiVortexianAction;
+	e->value1 = 5;
+	e->value2 = 128;
 }
 
 void aiVortexianInit2(AIEntity *e) {
-	warning("STUB: AI: aiVortexianInit2 required");
+	e->draw = e->standdownGfx[0];
 }
 
 void aiNoneInit(AIEntity *e) {
-	warning("STUB: AI: aiNoneInit required");
-}
-
-void aiNoneInit2(AIEntity *e) {
-	warning("STUB: AI: aiNoneInit2 required");
 }
 
 // Utility Functions
