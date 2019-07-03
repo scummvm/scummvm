@@ -348,6 +348,17 @@ void AI::processCines() {
 				complete = true;
 			}
 			break;
+		case C_SPAWNENTITY:
+		{
+			int x2, y2;
+			x2 = (int)_cine[i]->x2;
+			y2 = (int)_cine[i]->y2;
+			spawn((AIType)x2, (AIDir)y2, (int)_cine[i]->x, (int)_cine[i]->y, _cine[i]->title, _cine[i]->string,
+				_cine[i]->id, (AIDir)_cine[i]->start, (int)_cine[i]->end, (int)_cine[i]->delay, (int)_cine[i]->speed, 1);
+			complete = true;
+			break;
+		}
+		break;
 		case C_CLEAR_FG:
 			g_hdb->_map->setMapFGTileIndex((int)_cine[i]->x, (int)_cine[i]->y, -1);
 			g_hdb->_map->removeFGTileAnimation((int)_cine[i]->x, (int)_cine[i]->y);
@@ -573,6 +584,25 @@ void AI::cineEntityFace(const char *luaName, double dir) {
 	cmd->title = luaName;
 	cmd->x = dir;
 	cmd->cmdType = C_ENTITYFACE;
+	_cine.push_back(cmd);
+}
+
+void AI::cineSpawnEntity(AIType t, AIDir d, int x, int y, const char *func_init, const char *func_action,
+				const char *func_use, AIDir d2, int level, int value1, int value2) {
+	CineCommand *cmd = new CineCommand;
+	cmd->cmdType = C_SPAWNENTITY;
+	cmd->x2 = (double)t;
+	cmd->y2 = (double)d;
+	cmd->x = (double)x;
+	cmd->y = (double)y;
+	cmd->title = func_init;
+	cmd->string = func_action;
+	cmd->id = func_use;
+	cmd->start = (int)d2;
+	cmd->end = level;
+	cmd->delay = value1;
+	cmd->speed = value2;
+
 	_cine.push_back(cmd);
 }
 
