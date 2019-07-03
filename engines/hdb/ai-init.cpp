@@ -816,6 +816,12 @@ void AI::restartSystem() {
 	memset(_slugLeftGfx, NULL, kMaxAnimFrames * sizeof(Tile *));
 	memset(_slugRightGfx, NULL, kMaxAnimFrames * sizeof(Tile *));
 
+	_horrible1Frames = _horrible2Frames = _horrible3Frames = _horrible4Frames = 0;
+	_plummetFrames = _dyingFrames = 0;
+	_pushdownFrames = _pushupFrames = _pushleftFrames = _pushrightFrames = 0;
+	_stunDownFrames = _stunUpFrames = _stunLeftFrames = _stunRightFrames = 0;
+	_slugDownFrames = _slugUpFrames = _slugLeftFrames = _slugRightFrames = 0;
+
 	if (_clubDownFrames) {
 		_clubDownFrames = 3;
 		_clubUpFrames = 3;
