@@ -111,7 +111,7 @@ bool SliceAnimations::openFrames(int fileNumber) {
 
 			return true;
 		} else {
-			warning("SliceAnimations::openFrames: HDFRAMES.DAT resource not found. Falling back to using CDFRAMESx.DAT files instead...");
+			debug("SliceAnimations::openFrames: HDFRAMES.DAT resource not found. Falling back to using CDFRAMESx.DAT files instead...");
 		}
 	}
 

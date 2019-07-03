@@ -310,6 +310,20 @@ void BladeRunnerEngine::pauseEngineIntern(bool pause) {
 }
 
 Common::Error BladeRunnerEngine::run() {
+
+	Common::Array<Common::String> missingFiles;
+	if (!checkFiles(missingFiles)) {
+		Common::String missingFileStr = "";
+		for (uint i = 0; i < missingFiles.size(); ++i) {
+			if (i > 0) {
+				missingFileStr += ", ";
+			}
+			missingFileStr += missingFiles[i];
+		}
+
+		return Common::Error(Common::kNoGameDataFoundError, missingFileStr);
+	}
+
 	Graphics::PixelFormat format = screenPixelFormat();
 	initGraphics(640, 480, &format);
 
@@ -384,6 +398,53 @@ Common::Error BladeRunnerEngine::run() {
 	shutdown();
 
 	return Common::kNoError;
+}
+
+bool BladeRunnerEngine::checkFiles(Common::Array<Common::String> &missingFiles) {
+	missingFiles.clear();
+
+	Common::Array<Common::String> requiredFiles;
+	requiredFiles.push_back("1.TLK");
+	requiredFiles.push_back("2.TLK");
+	requiredFiles.push_back("3.TLK");
+	requiredFiles.push_back("A.TLK");
+	requiredFiles.push_back("COREANIM.DAT");
+	requiredFiles.push_back("MODE.MIX");
+	requiredFiles.push_back("MUSIC.MIX");
+	requiredFiles.push_back("OUTTAKE1.MIX");
+	requiredFiles.push_back("OUTTAKE2.MIX");
+	requiredFiles.push_back("OUTTAKE3.MIX");
+	requiredFiles.push_back("OUTTAKE4.MIX");
+	requiredFiles.push_back("SFX.MIX");
+	requiredFiles.push_back("SPCHSFX.TLK");
+	requiredFiles.push_back("STARTUP.MIX");
+	requiredFiles.push_back("VQA1.MIX");
+	requiredFiles.push_back("VQA2.MIX");
+	requiredFiles.push_back("VQA3.MIX");
+
+	for (uint i = 0; i < requiredFiles.size(); ++i) {
+		if (!Common::File::exists(requiredFiles[i])) {
+			missingFiles.push_back(requiredFiles[i]);
+		}
+	}
+
+	bool hasHdFrames = Common::File::exists("HDFRAMES.DAT");
+
+	if (!hasHdFrames) {
+		requiredFiles.clear();
+		requiredFiles.push_back("CDFRAMES1.DAT");
+		requiredFiles.push_back("CDFRAMES2.DAT");
+		requiredFiles.push_back("CDFRAMES3.DAT");
+		requiredFiles.push_back("CDFRAMES4.DAT");
+
+		for (uint i = 0; i < requiredFiles.size(); ++i) {
+			if (!Common::File::exists(requiredFiles[i])) {
+				missingFiles.push_back(requiredFiles[i]);
+			}
+		}
+	}
+
+	return missingFiles.empty();
 }
 
 bool BladeRunnerEngine::startup(bool hasSavegames) {

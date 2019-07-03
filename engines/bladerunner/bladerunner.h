@@ -251,6 +251,8 @@ public:
 
 	Common::Error run() override;
 
+	bool checkFiles(Common::Array<Common::String> &missingFiles);
+
 	bool startup(bool hasSavegames = false);
 	void initChapterAndScene();
 	void shutdown();

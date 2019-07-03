@@ -44,7 +44,7 @@ bool MIXArchive::exists(const Common::String &filename) {
 
 bool MIXArchive::open(const Common::String &filename) {
 	if (!_fd.open(filename)) {
-		warning("MIXArchive::open(): Can not open %s", filename.c_str());
+		error("MIXArchive::open(): Can not open %s", filename.c_str());
 		return false;
 	}
 
