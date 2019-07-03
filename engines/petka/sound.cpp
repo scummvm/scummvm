@@ -44,7 +44,7 @@ void Sound::play(bool isLoop) {
 	stop();
 
 	Audio::AudioStream *audioStream;
-	Audio::SeekableAudioStream *wavStream = Audio::makeWAVStream(_stream, DisposeAfterUse::YES);
+	Audio::SeekableAudioStream *wavStream = Audio::makeWAVStream(_stream.get(), DisposeAfterUse::NO);
 	if (isLoop)
 		audioStream = Audio::makeLoopingAudioStream(wavStream, 0, 0, 0);
 	else
