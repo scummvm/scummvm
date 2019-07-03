@@ -233,6 +233,10 @@ Tile *Gfx::getTile(int index) {
 	return _tLookupArray[index].tData;
 }
 
+void Gfx::emptyGfxCaches() {
+	warning("STUB: mptyGfxCaches()");
+}
+
 void Gfx::cacheTileSequence(int tileIndex, int count) {
 	for (int i = tileIndex; i < tileIndex + count; i++)
 		getTile(i);
@@ -460,6 +464,10 @@ void Gfx::drawSky() {
 			wait = 5;
 		}
 	}
+}
+
+void Gfx::drawSnow() {
+	debug(9, "STUB: Gfx::drawSnow()");
 }
 
 int Gfx::animateTile(int tileIndex) {

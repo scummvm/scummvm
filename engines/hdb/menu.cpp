@@ -26,7 +26,10 @@
 namespace HDB {
 
 bool Menu::init() {
+	_starWarp = 0;
+
 	warning("STUB: Menu::init()");
+
 	return true;
 }
 

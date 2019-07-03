@@ -68,6 +68,16 @@ int Map::loadTiles() {
 	return skyIndex;
 }
 
+void Map::restartSystem() {
+	warning("STUB: Map::restartSystem()");
+}
+
+bool Map::loadMap(char *name) {
+	warning("STUB: loadMap(%s)", name);
+
+	return true;
+}
+
 bool Map::load(Common::SeekableReadStream *stream) {
 	if (_mapLoaded) {
 		return false;
