@@ -23,6 +23,7 @@
 #include <common/system.h>
 #include "common/stream.h"
 #include "common/events.h"
+#include "common/ini-file.h"
 
 #include "petka/flc.h"
 #include "petka/objects/object.h"
@@ -59,7 +60,12 @@ void InterfaceMain::start() {
 	g_vm->getQSystem()->update();
 	g_vm->getQSystem()->_isIniting = 0;
 
-	loadRoom(g_vm->getQSystem()->findObject("Seq - INTRO0")->_id, false);
+	Common::ScopedPtr<Common::SeekableReadStream> bgsStream(g_vm->openFile("BGs.ini", false));
+	Common::INIFile bgsIni;
+	bgsIni.loadFromStream(*bgsStream);
+	Common::String startRoom;
+	bgsIni.getKey("StartRoom", "Settings", startRoom);
+	loadRoom(g_vm->getQSystem()->findObject(startRoom)->_id, false);
 }
 
 void InterfaceMain::loadRoom(int id, bool fromSave) {
