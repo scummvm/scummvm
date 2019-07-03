@@ -16,9 +16,9 @@ endif
 # "Program not found" error. Therefore we copy the script to the cwd and
 # remove it again, once it has finished.
 	cp ${srcdir}/dists/amiga/RM2AG.rx .
-	rx RM2AG.rx README.conv
+	rx RM2AG.rexx README.conv
 	cp README.guide $(MORPHOSPATH)
-	rm RM2AG.rx
+	rm RM2AG.rexx
 	rm README.conv
 	rm README.guide
 	cp $(DIST_FILES_DOCS) $(MORPHOSPATH)
