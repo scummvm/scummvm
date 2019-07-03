@@ -1541,20 +1541,25 @@ void aiEnvelopeRedInit2(AIEntity *e) {
 }
 
 void aiTransceiverInit(AIEntity *e) {
-	warning("STUB: AI: aiTransceiverInit required");
+	e->aiAction = aiTransceiverAction;
+	strcpy(e->printedName, "Transceiver");
 }
 
 void aiTransceiverInit2(AIEntity *e) {
-	warning("STUB: AI: aiTransceiverInit2 required");
+	e->draw = e->standdownGfx[0];
 }
 
 void aiTransceiverAction(AIEntity *e) {
-	warning("STUB: AI: aiTransceiverAction required");
+	aiAnimateStanddown(e, 5);
+	if (e->onScreen)
+		aiGetItemAction(e);
 }
 
+#if 0
 void aiTransceiverUse(AIEntity *e) {
 	warning("STUB: AI: aiTransceiverUse required");
 }
+#endif
 
 void aiMonkeystoneInit(AIEntity *e) {
 	warning("STUB: AI: aiMonkeystoneInit required");
