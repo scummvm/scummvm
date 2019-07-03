@@ -1424,7 +1424,7 @@ void aiMagicEggUse(AIEntity *e) {
 		int	i = 0;
 		AIEntity *spawned = NULL;
 		while (aiEntList[i].type != END_AI_TYPES) {
-			if (!_stricmp(aiEntList[i].luaName, e->luaFuncAction)) {
+			if (!scumm_stricmp(aiEntList[i].luaName, e->luaFuncAction)) {
 				spawned = g_hdb->_ai->spawn(aiEntList[i].type, e->dir, e->tileX, e->tileY, NULL, NULL, NULL, DIR_NONE, e->level, 0, 0, 1);
 				break;
 			}
