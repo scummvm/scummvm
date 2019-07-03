@@ -12,7 +12,7 @@ Programmcodes finden Sie auf Englisch unter:
    - Might and Magic - Swords of Xeen.
 
  Neue Portierungen:
-   - Portierung auf Nintendo Switch hintzugefügt.
+   - Portierung auf Nintendo Switch hinzugefügt.
 
  Allgemein:
    - Verbesserte Performance der grafischen Benutzeroberfläche.
@@ -124,7 +124,7 @@ Programmcodes finden Sie auf Englisch unter:
    - Anstelle des ScummVM-Dateibrowsers kommt nun der Betriebssystem-Dateibrowser zum Einsatz.
 
  RISC OS-Portierung:
-   - StrongHelp-Handbuch hinzugefpgt.
+   - StrongHelp-Handbuch hinzugefügt.
    - Fehler können nun über !Reporter gemeldet werden.
 
 #### 2.0.0 (17.12.2017)
