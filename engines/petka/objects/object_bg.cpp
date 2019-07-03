@@ -61,7 +61,7 @@ void QObjectBG::processMessage(const QMessage &msg) {
 		break;
 	case kGoTo:
 		g_vm->getQSystem()->_mainInterface->loadRoom(_id, false);
-		g_vm->videoSystem()->addDirtyRect(Common::Rect(640, 480));
+		g_vm->videoSystem()->makeAllDirty();
 		break;
 	case kSetSeq:
 		break;
