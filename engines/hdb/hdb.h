@@ -56,6 +56,8 @@ struct ADGameDescription;
 
 namespace HDB {
 
+class Menu;
+
 enum GameFeatures {
 	ADGF_TALKIE = 1 << 0
 };
@@ -136,6 +138,7 @@ public:
 	Map *_map;
 	AI *_ai;
 	Input *_input;
+	Menu *_menu;
 	Sound *_sound;
 	Window *_window;
 

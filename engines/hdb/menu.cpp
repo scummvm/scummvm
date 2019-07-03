@@ -21,22 +21,17 @@
  */
 
 #include "hdb/hdb.h"
+#include "hdb/menu.h"
 
 namespace HDB {
 
-bool Sound::init() {
-	warning("STUB: Sound::init()");
+bool Menu::init() {
+	warning("STUB: Menu::init()");
 	return true;
 }
 
-bool Sound::playSound(int index) {
-	warning("STUB: Play Sound");
-	return true;
-}
-
-bool Sound::playVoice(int index, int actor) {
-	warning("STUB: Play Voice");
-	return true;
+void Menu::fillSavegameSlots() {
+	warning("STUB: PMenu::fillSavegameSlots()");
 }
 
 } // End of Namespace
