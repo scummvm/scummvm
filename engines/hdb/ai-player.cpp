@@ -1444,10 +1444,6 @@ void aiNoneInit2(AIEntity *e) {
 	warning("STUB: AI: aiNoneInit2 required");
 }
 
-void callbackDoorOpenClose(int x, int y) {
-	warning("STUB: AI: callbackDoorOpenClose required");
-}
-
 // Utility Functions
 void aiAnimateStanddown(AIEntity *e, int speed) {
 	if (e->value2-- > 0)
