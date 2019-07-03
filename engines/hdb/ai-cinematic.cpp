@@ -416,6 +416,8 @@ void AI::cineAbort() {
 			_cine[0] = _cine[i];
 	}
 
+	_cine.resize(1);
+
 	g_hdb->_window->closeAll();
 
 	if (_player)
