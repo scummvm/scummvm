@@ -1844,8 +1844,8 @@ void AI::moveEnts() {
 	}
 
 	// Call aiAction for all other Entities
-	for (Common::Array<AIEntity *>::iterator it = _ents->begin(); it != _ents->end(); it++) {
-		e = (*it);
+	for (int i = 0; i < _ents->size(); i++) {
+		e = _ents->operator[](i);
 		if (e->aiAction) {
 			// NPC Touchplate Counter
 			if (e != _player && e->touchpWait) {
