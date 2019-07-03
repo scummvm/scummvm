@@ -398,7 +398,7 @@ struct AIEntity {
 	AIDir		dir2;									// this is from TED
 
 	uint16		x, y;
-	uint16		drawXOff, drawYOff;					// might need a drawing offset
+	int16		drawXOff, drawYOff;					// might need a drawing offset
 	uint16		onScreen;								// FLAG: is this entity onscreen?
 	uint16		moveSpeed;								// movement speed of this entity
 	int16		xVel, yVel;								// movement values
