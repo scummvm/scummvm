@@ -11,6 +11,9 @@ Programmcodes finden Sie auf Englisch unter:
    - Might and Magic - World of Xeen 2 CD Talkie (mit Sprachausgabe).
    - Might and Magic - Swords of Xeen.
 
+ Neue Portierungen:
+   - Portierung auf Nintendo Switch hintzugefügt.
+
  Allgemein:
    - Verbesserte Performance der grafischen Benutzeroberfläche.
    - Skalier-Optionen hinzugefügt, die steuern, wie das ScummVM-Fenster auf
@@ -18,6 +21,7 @@ Programmcodes finden Sie auf Englisch unter:
    - Fehlerhafte Steuerung des Mauszeigers korrigiert, wenn dieser über die Tastatur
      gesteuert wird.
    - Code der Roland MT-32-Emulation auf Munt 2.3.0 aktualisiert.
+   - Unbekannte Spiele-Versionen können nun einfacher gemeldet werden.
 
  Drascula:
    - Fehler beim Laden eines in Kapitel 1 gespeicherten Spielstands korrigiert.
@@ -94,6 +98,15 @@ Programmcodes finden Sie auf Englisch unter:
 
  ZVISION:
    - Grafikfehler in Zork: Grand Inquisitor behoben.
+   - Benötigte Schriftarten werden nun zusammen mit ScummVM ausgeliefert.
+
+ iOS-Portierung:
+   - Drei-Finger-Wischgeste hinzugefügt, um Pfeiltasten zu simulieren.
+   - Zoom-Gesten hinzugefügt, um die virtuelle Tastatur ein- und auszublenden.
+   - Zusätzliche Tastensymbole, die nicht auf der Tastatur vorhanden sind, werden oberhalb der Tastatur eingeblendet.
+
+ macOS-Portierung:
+   - Anstelle des ScummVM-Dateibrowsers kommt nun der Betriebssystem-Dateibrowser zum Einsatz.
 
  PS Vita-Portierung:
    - Unterstützung für Touch-Steuerung hinzugefügt.
@@ -103,10 +116,19 @@ Programmcodes finden Sie auf Englisch unter:
    - Bewegung des Mauszeigers ist nun gleichmäßiger.
    - Einstellungsmöglichkeit für Mauszeiger-Geschwindigkeit und Joystick-Deadzone hinzugefügt.
 
- SDL-Portierung:
+ SDL-Portierungen (einschließlich Windows, Linux und macOS):
    - Unterstützung für Gamecontroller hinzugefügt.
+   - Spiele können nun via Drag-and-Drop zu ScummVM hinzugefügt werden.
+
+ Windows-Portierung:
+   - Anstelle des ScummVM-Dateibrowsers kommt nun der Betriebssystem-Dateibrowser zum Einsatz.
+
+ RISC OS-Portierung:
+   - StrongHelp-Handbuch hinzugefpgt.
+   - Fehler können nun über !Reporter gemeldet werden.
 
 #### 2.0.0 (17.12.2017)
+
  Neue Spiele:
    - Unterstützung für Full Pipe hinzugefügt.
    - Unterstützung für Hi-Res Adventure #3: Cranston Manor hinzugefügt.
