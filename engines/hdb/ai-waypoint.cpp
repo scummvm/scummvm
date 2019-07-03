@@ -85,7 +85,7 @@ void AI::addWaypoint(int px, int py, int x, int y, int level) {
 						_waypoints[_numWaypoints].y = ny;
 						_waypoints[_numWaypoints].level = lvl2;
 						_numWaypoints++;
-						warning("STUB: Play SND_MENU_SLIDER");
+						g_hdb->_sound->playSound(SND_MENU_SLIDER);
 
 						if (onEvenTile(_player->x, _player->y))
 							setEntityGoal(_player, tx, ty);
@@ -134,7 +134,7 @@ void AI::addWaypoint(int px, int py, int x, int y, int level) {
 				_waypoints[_numWaypoints].y = ny;
 				_waypoints[_numWaypoints].level = lvl2;
 				_numWaypoints++;
-				warning("STUB: Play SND_MENU_SLIDER");
+				g_hdb->_sound->playSound(SND_MENU_SLIDER);
 
 				if (onEvenTile(_player->x, _player->y))
 					setEntityGoal(_player, tx, ty);
@@ -163,7 +163,7 @@ void AI::addWaypoint(int px, int py, int x, int y, int level) {
 					_waypoints[_numWaypoints].y = ny;
 					_waypoints[_numWaypoints].level = lvl2;
 					_numWaypoints++;
-					warning("STUB: Play SND_MENU_SLIDER");
+					g_hdb->_sound->playSound(SND_MENU_SLIDER);
 
 					if (onEvenTile(_player->x, _player->y))
 						setEntityGoal(_player, tx, ty);
@@ -221,7 +221,7 @@ void AI::addWaypoint(int px, int py, int x, int y, int level) {
 							_waypoints[_numWaypoints].y = ty;
 							_waypoints[_numWaypoints].level = lvl1;
 							_numWaypoints++;
-							warning("STUB: Play SND_MENU_SLIDER");
+							g_hdb->_sound->playSound(SND_MENU_SLIDER);
 						}
 
 						if (_numWaypoints < kMaxWaypoints) {
@@ -229,7 +229,7 @@ void AI::addWaypoint(int px, int py, int x, int y, int level) {
 							_waypoints[_numWaypoints].y = ny;
 							_waypoints[_numWaypoints].level = lvl2;
 							_numWaypoints++;
-							warning("STUB: Play SND_MENU_SLIDER");
+							g_hdb->_sound->playSound(SND_MENU_SLIDER);
 						}
 					}
 				}
@@ -258,7 +258,7 @@ void AI::addWaypoint(int px, int py, int x, int y, int level) {
 							_waypoints[_numWaypoints].y = ty;
 							_waypoints[_numWaypoints].level = lvl1;
 							_numWaypoints++;
-							warning("STUB: Play SND_MENU_SLIDER");
+							g_hdb->_sound->playSound(SND_MENU_SLIDER);
 						}
 
 						if (_numWaypoints < kMaxWaypoints) {
@@ -266,7 +266,7 @@ void AI::addWaypoint(int px, int py, int x, int y, int level) {
 							_waypoints[_numWaypoints].y = ny;
 							_waypoints[_numWaypoints].level = lvl2;
 							_numWaypoints++;
-							warning("STUB: Play SND_MENU_SLIDER");
+							g_hdb->_sound->playSound(SND_MENU_SLIDER);
 						}
 					}
 				}
@@ -276,7 +276,7 @@ void AI::addWaypoint(int px, int py, int x, int y, int level) {
 					_waypoints[_numWaypoints].y = ty;
 					_waypoints[_numWaypoints].level = lvl1;
 					_numWaypoints++;
-					warning("STUB: Play SND_MENU_SLIDER");
+					g_hdb->_sound->playSound(SND_MENU_SLIDER);
 				}
 
 				if (_numWaypoints < kMaxWaypoints) {
@@ -284,7 +284,7 @@ void AI::addWaypoint(int px, int py, int x, int y, int level) {
 					_waypoints[_numWaypoints].y = ny;
 					_waypoints[_numWaypoints].level = lvl2;
 					_numWaypoints++;
-					warning("STUB: Play SND_MENU_SLIDER");
+					g_hdb->_sound->playSound(SND_MENU_SLIDER);
 				}
 			} else {
 				tx = px;
@@ -308,7 +308,7 @@ void AI::addWaypoint(int px, int py, int x, int y, int level) {
 						_waypoints[_numWaypoints].y = ty;
 						_waypoints[_numWaypoints].level = lvl1;
 						_numWaypoints++;
-						warning("STUB: Play SND_MENU_SLIDER");
+						g_hdb->_sound->playSound(SND_MENU_SLIDER);
 					}
 
 					if (_numWaypoints < kMaxWaypoints) {
@@ -316,7 +316,7 @@ void AI::addWaypoint(int px, int py, int x, int y, int level) {
 						_waypoints[_numWaypoints].y = ny;
 						_waypoints[_numWaypoints].level = lvl2;
 						_numWaypoints++;
-						warning("STUB: Play SND_MENU_SLIDER");
+						g_hdb->_sound->playSound(SND_MENU_SLIDER);
 					}
 				}
 			}
@@ -338,7 +338,7 @@ void AI::addWaypoint(int px, int py, int x, int y, int level) {
 		_waypoints[_numWaypoints].y = ny;
 		_waypoints[_numWaypoints].level = level;
 		_numWaypoints++;
-		warning("STUB: addWaypoint: Play SND_MENU_SLIDER");
+		g_hdb->_sound->playSound(SND_MENU_SLIDER);
 	}
 }
 

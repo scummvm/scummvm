@@ -670,7 +670,7 @@ bool AI::checkTeleportList(AIEntity *e, int x, int y) {
 			// Start up Teleport flash animation only if value1 is set to 1
 			if (anim1 == 1 || anim2 == 2) {
 				addAnimateTarget(e->x, e->y, 0, 7, ANIM_NORMAL, false, false, "teleporter_flash_sit");
-				warning("STUB: checkTeleporterList: Play SND_TELEPORT");
+				g_hdb->_sound->playSound(SND_TELEPORT);
 			}
 
 			// PANIC ZONE Teleports?

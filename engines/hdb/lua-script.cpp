@@ -705,32 +705,32 @@ static int animation(lua_State *L) {
 	case 0:
 		g_hdb->_ai->addAnimateTarget((int)x, (int)y, 0, 3, ANIM_NORMAL, false, false, GROUP_WATER_SPLASH_SIT);
 		if (playsnd)
-			warning("STUB: Play SND_SPLASH");
+			g_hdb->_sound->playSound(SND_SPLASH);
 		break;
 	case 1:
 		g_hdb->_ai->addAnimateTarget((int)x, (int)y, 0, 3, ANIM_NORMAL, false, false, GROUP_EXPLOSION_BOOM_SIT);
 		if (playsnd)
-			warning("STUB: Play SND_BARREL_EXPLODE");
+			g_hdb->_sound->playSound(SND_BARREL_EXPLODE);
 		break;
 	case 2:
 		g_hdb->_ai->addAnimateTarget((int)x, (int)y, 0, 3, ANIM_FAST, false, false, GROUP_STEAM_PUFF_SIT);
 		if (playsnd)
-			warning("STUB: Play SND_BARREL_MELTING");
+			g_hdb->_sound->playSound(SND_BARREL_MELTING);
 		break;
 	case 3:
 		g_hdb->_ai->addAnimateTarget((int)x, (int)y, 0, 7, ANIM_NORMAL, false, false, TELEPORT_FLASH);
 		if (playsnd)
-			warning("STUB: Play SND_TELEPORT");
+			g_hdb->_sound->playSound(SND_TELEPORT);
 		break;
 	case 4:
 		g_hdb->_ai->addAnimateTarget((int)x, (int)y, 0, 3, ANIM_NORMAL, false, false, GEM_FLASH);
 		if (playsnd)
-			warning("STUB: Play SND_GET_GEM");
+			g_hdb->_sound->playSound(SND_GET_GEM);
 		break;
 	case 5:
 		g_hdb->_ai->addAnimateTarget((int)x, (int)y, 0, 2, ANIM_NORMAL, false, false, GROUP_ENT_CHICKEN_DIE);
 		if (playsnd)
-			warning("STUB: Play SND_CHICKEN_DEATH");
+			g_hdb->_sound->playSound(SND_CHICKEN_DEATH);
 		break;
 	}
 

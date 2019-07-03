@@ -770,32 +770,32 @@ void AI::killPlayer(Death method) {
 	switch (method) {
 	case DEATH_NORMAL:
 		_player->state = STATE_DYING;
-		warning("STUB: killPlayer: Play SND_GUY_DYING");
+		g_hdb->_sound->playSound(SND_GUY_DYING);
 		break;
 	case DEATH_FRIED:
 		_player->state = STATE_HORRIBLE1;
-		warning("STUB: killPlayer: Play SND_GUY_FRIED");
+		g_hdb->_sound->playSound(SND_GUY_FRIED);
 		break;
 	case DEATH_SHOCKED:
 		_player->state = STATE_HORRIBLE2;
-		warning("STUB: killPlayer: Play SND_GUY_DYING");
-		warning("STUB: killPlayer: Play SND_SHOCKBOT_SHOCK");
+		g_hdb->_sound->playSound(SND_GUY_DYING);
+		g_hdb->_sound->playSound(SND_SHOCKBOT_SHOCK);
 		break;
 	case DEATH_GRABBED:
 		_player->state = STATE_HORRIBLE3;
-		warning("STUB: killPlayer: Play SND_GUY_GRABBED");
+		g_hdb->_sound->playSound(SND_GUY_GRABBED);
 		break;
 	case DEATH_DROWNED:
 		_player->state = STATE_HORRIBLE4;
-		warning("STUB: killPlayer: Play SND_GUY_DROWN");
+		g_hdb->_sound->playSound(SND_GUY_DROWN);
 		break;
 	case DEATH_PANICZONE:
 		_player->state = STATE_DYING;
-		warning("STUB: killPlayer: Play SND_PANIC_DEATH");
+		g_hdb->_sound->playSound(SND_PANIC_DEATH);
 		break;
 	case DEATH_PLUMMET:
 		_player->state = STATE_PLUMMET;
-		warning("STUB: killPlayer: Play SND_GUY_PLUMMET");
+		g_hdb->_sound->playSound(SND_GUY_PLUMMET);
 		break;
 	}
 
@@ -814,41 +814,41 @@ void AI::stunEnemy(AIEntity *e, int time) {
 	if (!ns)
 		switch (e->type) {
 		case AI_BUZZFLY:
-			warning("STUB: stunEnemy: Play sound");
+			g_hdb->_sound->playSound(SND_BUZZFLY_STUNNED);
 			break;
 		case AI_PUSHBOT:
-			warning("STUB: stunEnemy: Play sound");
+			g_hdb->_sound->playSound(SND_PUSHBOT_STUNNED);
 			break;
 		case AI_MEERKAT:
-			warning("STUB: stunEnemy: Play sound");
+			g_hdb->_sound->playSound(SND_MEERKAT_STUNNED);
 			break;
 		case AI_FATFROG:
-			warning("STUB: stunEnemy: Play sound");
+			g_hdb->_sound->playSound(SND_FATFROG_STUNNED);
 			break;
 		case AI_OMNIBOT:
 		case AI_SHOCKBOT:
 		case AI_LISTENBOT:
-			warning("STUB: stunEnemy: Play sound");
+			g_hdb->_sound->playSound(SND_ROBOT_STUNNED);
 			break;
 		case AI_GOODFAIRY:
-			warning("STUB: stunEnemy: Play sound");
+			g_hdb->_sound->playSound(SND_GOOD_FAERIE_STUNNED);
 			break;
 		case AI_BADFAIRY:
-			warning("STUB: stunEnemy: Play sound");
+			g_hdb->_sound->playSound(SND_BADFAIRY_STUNNED);
 			break;
 		case AI_ICEPUFF:
-			warning("STUB: stunEnemy: Play sound");
+			g_hdb->_sound->playSound(SND_ICEPUFF_STUNNED);
 			break;
 		case AI_RIGHTBOT:
-			warning("STUB: stunEnemy: Play sound");
+			g_hdb->_sound->playSound(SND_RIGHTBOT_STUNNED);
 			break;
 		case AI_BOOMBARREL:
-			warning("STUB: stunEnemy: Play sound");
+			g_hdb->_sound->playSound(SND_CLUB_HIT_METAL);
 			break;
 		case AI_CHICKEN:	// Fall through
-			warning("STUB: stunEnemy: Play sound");
+			g_hdb->_sound->playSound(SND_CHICKEN_DEATH);
 		default:
-			warning("STUB: stunEnemy: Play sound");
+			warning("STUB: stunEnemy: MetalOrFleshSnd");
 			break;
 		}
 }
@@ -1167,7 +1167,7 @@ void AI::animateEntity(AIEntity *e) {
 					if ((e->type == AI_CRATE || e->type == AI_HEAVYBARREL) && !checkFloating(e->tileX, e->tileY)) {
 						addAnimateTarget(e->x, e->y, 0, 3, ANIM_NORMAL, false, false, GROUP_SLIME_SPLASH_SIT);
 						floatEntity(e, STATE_FLOATING);
-						warning("STUB: animateEntity: Play SND_SPLASH");
+						g_hdb->_sound->playSound(SND_SPLASH);
 					} else if (!checkFloating(e->tileX, e->tileY)) {
 						if (e->type == AI_BOOMBARREL) {
 							aiBarrelExplode(e);
@@ -1176,14 +1176,14 @@ void AI::animateEntity(AIEntity *e) {
 						} else {
 							addAnimateTarget(e->x, e->y, 0, 3, ANIM_NORMAL, false, false, GROUP_STEAM_PUFF_SIT);
 							removeEntity(e);
-							warning("STUB: animateEntity: Play SND_BARREL_MELTING");
+							g_hdb->_sound->playSound(SND_BARREL_MELTING);
 						}
 					}
 				} else if ((flags & kFlagLightMelt) && e->type == AI_LIGHTBARREL) {
 					if (!checkFloating(e->tileX, e->tileY)) {
 						addAnimateTarget(e->x, e->y, 0, 3, ANIM_NORMAL, false, false, GROUP_STEAM_PUFF_SIT);
 						floatEntity(e, STATE_MELTED);
-						warning("STUB: animateEntity: Play SND_BARREL_MELTING");
+						g_hdb->_sound->playSound(SND_BARREL_MELTING);
 					}
 				} else if (flags & kFlagSlide) {
 					int xv = 0, yv = 0;
@@ -1205,7 +1205,7 @@ void AI::animateEntity(AIEntity *e) {
 						else if (flags & kFlagAnimSlow)
 							e->moveSpeed = kPlayerMoveSpeed >> 1;
 						setEntityGoal(e, e->tileX + xv, e->tileY + yv);
-						warning("STUB: animateEntity: Play SND_LIGHT_SLIDE");
+						g_hdb->_sound->playSound(SND_LIGHT_SLIDE);
 					}
 
 				} else if (!checkFloating(e->tileX, e->tileY)) {
@@ -1213,13 +1213,13 @@ void AI::animateEntity(AIEntity *e) {
 						// Make it disappear in the water
 						addAnimateTarget(e->x, e->y, 0, 3, ANIM_NORMAL, false, false, GROUP_WATER_SPLASH_SIT);
 						removeEntity(e);
-						warning("STUB: animateEntity: Play SND_SPLASH");
+						g_hdb->_sound->playSound(SND_SPLASH);
 						return;
 					} else {
 						// Make it float and splash in water
 						addAnimateTarget(e->x, e->y, 0, 3, ANIM_NORMAL, false, false, GROUP_WATER_SPLASH_SIT);
 						floatEntity(e, STATE_FLOATING);
-						warning("STUB: animateEntity: Play SND_SPLASH");
+						g_hdb->_sound->playSound(SND_SPLASH);
 						return;
 					}
 
@@ -1296,13 +1296,13 @@ void AI::animateEntity(AIEntity *e) {
 						// Evaporates in Slime
 						addAnimateTarget(e->x, e->y, 0, 3, ANIM_NORMAL, false, false, GROUP_STEAM_PUFF_SIT);
 						removeEntity(e);
-						warning("STUB: animateEntity: Play SND_SPLASH");
+						g_hdb->_sound->playSound(SND_SPLASH);
 						return;
 					} else {
 						// Drowns in water
 						addAnimateTarget(e->x, e->y, 0, 3, ANIM_NORMAL, false, false, GROUP_WATER_SPLASH_SIT);
 						removeEntity(e);
-						warning("STUB: animateEntity: Play SND_SPLASH");
+						g_hdb->_sound->playSound(SND_SPLASH);
 						return;
 					}
 				}
@@ -1401,7 +1401,7 @@ void AI::animEntFrames(AIEntity *e) {
 		max = _horrible2Frames;
 		click++;
 		if (click == 16) {
-			warning("STUB: Play SND_SHOCKBOT_SHOCK");
+			g_hdb->_sound->playSound(SND_SHOCKBOT_SHOCK);
 			click = 0;
 		}
 		break;
@@ -1413,7 +1413,7 @@ void AI::animEntFrames(AIEntity *e) {
 		max = _horrible3Frames;
 		click++;
 		if (click == 32) {
-			warning("STUB: Play SND_GUY_GRABBED");
+			g_hdb->_sound->playSound(SND_GUY_GRABBED);
 			click = 0;
 		}
 		break;
