@@ -448,12 +448,181 @@ void HDBGame::useEntity(AIEntity *e) {
 		}
 	}
 
-	/*
-		PUSHING
-		If its a pushable object, push it. Unless it's in/on water.
-	*/
+	// PUSHING
+	// If its a pushable object, push it. Unless it's in/on water.
 	if (e->type == AI_CRATE || e->type == AI_LIGHTBARREL || e->type == AI_BOOMBARREL || e->type == AI_MAGIC_EGG || e->type == AI_ICE_BLOCK || e->type == AI_FROGSTATUE || e->type == AI_DIVERTER) {
-		warning("STUB: HDBGame::useEntity PUSHING required");
+		int	xDir, yDir, chX, chY;
+		uint32 flags;
+		AIEntity *e2;
+
+		// if it's floating, don't touch!
+		if (e->state >= STATE_FLOATING && e->state <= STATE_FLOATRIGHT) {
+			g_hdb->_ai->lookAtEntity(e);
+			g_hdb->_ai->animGrabbing();
+			g_hdb->_window->openMessageBar("I can't lift that!", 1);
+			return;
+		}
+
+		xDir = yDir = 0;
+		if (p->tileX > e->tileX)
+			xDir = -2;
+		else if (p->tileX < e->tileX)
+			xDir = 2;
+
+		if (p->tileY > e->tileY)
+			yDir = -2;
+		else if (p->tileY < e->tileY)
+			yDir = 2;
+
+		// no diagonals allowed!
+		if (xDir && yDir)
+			return;
+
+		chX = p->tileX + xDir;
+		chY = p->tileY + yDir;
+
+		// are we going to push this over a sliding surface? (ok)
+		// are we going to push this into a blocking tile? (not ok)
+		if (e->level == 2) {
+			int	fg_flags = g_hdb->_map->getMapFGTileFlags(chX, chY);
+			if (fg_flags & kFlagSolid) {
+				g_hdb->_sound->playSound(SND_GUY_UHUH);
+				g_hdb->_ai->lookAtXY(chX, chY);
+				g_hdb->_ai->animGrabbing();
+				return;
+			}
+
+			flags = g_hdb->_map->getMapBGTileFlags(chX, chY);
+			if (((flags & kFlagSolid) == kFlagSolid) && !(fg_flags & kFlagGrating)) {
+				g_hdb->_sound->playSound(SND_GUY_UHUH);
+				g_hdb->_ai->lookAtXY(chX, chY);
+				g_hdb->_ai->animGrabbing();
+				return;
+			}
+		} else {
+			flags = g_hdb->_map->getMapBGTileFlags(chX, chY);
+			if (!(flags & kFlagSlide) && (flags & kFlagSolid)) {
+				g_hdb->_sound->playSound(SND_GUY_UHUH);
+				g_hdb->_ai->lookAtXY(chX, chY);
+				g_hdb->_ai->animGrabbing();
+				return;
+			}
+		}
+
+		// are we going to push this up the stairs? (not ok)
+		if (flags & kFlagStairBot) {
+			flags = g_hdb->_map->getMapBGTileFlags(e->tileX, e->tileY);
+			if (!(flags & kFlagStairTop)) {
+				g_hdb->_ai->lookAtEntity(e);
+				g_hdb->_ai->animGrabbing();
+				g_hdb->_sound->playSound(SND_GUY_UHUH);
+				return;
+			}
+		}
+
+		// is player trying to push across a dangerous floor (where the player would be ON the floor after the push)?
+		// don't allow it.
+		flags = g_hdb->_map->getMapBGTileFlags(p->tileX + (xDir >> 1), p->tileY + (yDir >> 1));
+		if (((flags & kFlagRadFloor) == kFlagRadFloor || (flags & kFlagPlasmaFloor) == kFlagPlasmaFloor) &&
+			false == g_hdb->_ai->checkFloating(p->tileX + (xDir >> 1), p->tileY + (yDir >> 1))) {
+			g_hdb->_ai->lookAtEntity(e);
+			g_hdb->_ai->animGrabbing();
+			g_hdb->_sound->playSound(SND_NOPUSH_SIZZLE);
+			return;
+		}
+
+		// are we going to push this into a gem?
+		// if it's a goodfairy, make it move!
+		e2 = g_hdb->_ai->findEntityIgnore(chX, chY, &g_hdb->_ai->_dummyLaser);
+		if (e2 && e2->type == ITEM_GEM_WHITE) {
+			g_hdb->_ai->addAnimateTarget(e2->x, e2->y, 0, 3, ANIM_NORMAL, false, false, GEM_FLASH);
+			g_hdb->_ai->removeEntity(e2);
+			g_hdb->_sound->playSound(SND_BRIDGE_END);
+			g_hdb->_ai->animGrabbing();
+			return;
+		}
+
+		// if so, is it a MELTED or FLOATING entity?  if so, that's cool...
+		if (e2) {
+			if (!g_hdb->_ai->checkFloating(e2->tileX, e2->tileY)) {
+				g_hdb->_ai->lookAtXY(chX, chY);
+				g_hdb->_ai->animGrabbing();
+				g_hdb->_sound->playSound(SND_GUY_UHUH);
+				return;
+			}
+		}
+
+		// are we trying to push this through a door? (teleporter!)
+		SingleTele info;
+		if (true == g_hdb->_ai->findTeleporterDest(chX, chY, &info)) {
+			g_hdb->_ai->lookAtXY(chX, chY);
+			g_hdb->_ai->animGrabbing();
+			g_hdb->_sound->playSound(SND_GUY_UHUH);
+			return;
+		}
+
+		// everything's clear - time to push!
+		// set goal for pushed object
+		if (e->type != AI_DIVERTER)
+			e->moveSpeed = kPushMoveSpeed;	// push DIVERTERS real fast
+		g_hdb->_ai->setEntityGoal(e, chX, chY);
+
+		// Diverters are very special - don't mess with their direction & state!
+		if (e->type == AI_DIVERTER) {
+			switch (e->dir2) {
+			case DIR_DOWN: e->state = STATE_DIVERTER_BL; break;
+			case DIR_UP: e->state = STATE_DIVERTER_BR; break;
+			case DIR_LEFT: e->state = STATE_DIVERTER_TL; break;
+			case DIR_RIGHT: e->state = STATE_DIVERTER_TR; break;
+			case DIR_NONE: break;
+			}
+		}
+
+		// set goal for player
+		if (xDir)
+			xDir = xDir >> 1;
+		if (yDir)
+			yDir = yDir >> 1;
+		if (e->type != AI_DIVERTER)			// push DIVERTERS real fast
+			p->moveSpeed = kPushMoveSpeed;
+		else
+			p->moveSpeed = kPlayerMoveSpeed;
+
+		g_hdb->_ai->setEntityGoal(p, p->tileX + xDir, p->tileY + yDir);
+
+		// need to set the state AFTER the SetEntityGoal!
+		switch (p->dir) {
+		case DIR_UP:	p->state = STATE_PUSHUP;	p->drawYOff = -10; break;
+		case DIR_DOWN:	p->state = STATE_PUSHDOWN;	p->drawYOff = 9; break;
+		case DIR_LEFT:	p->state = STATE_PUSHLEFT;	p->drawXOff = -10; break;
+		case DIR_RIGHT:	p->state = STATE_PUSHRIGHT; p->drawXOff = 10; break;
+		case DIR_NONE: break;
+		}
+
+		// if player is running, keep speed slow since we're pushing
+		if (g_hdb->_ai->playerRunning()) {
+			p->xVel = p->xVel >> 1;
+			p->yVel = p->yVel >> 1;
+		}
+
+		switch (e->type) {
+		case AI_CRATE:
+			g_hdb->_sound->playSound(SND_CRATE_SLIDE); break;
+		case AI_LIGHTBARREL:
+		case AI_FROGSTATUE:
+		case AI_ICE_BLOCK:
+			g_hdb->_sound->playSound(SND_LIGHT_SLIDE); break;
+		case AI_HEAVYBARREL:
+		case AI_MAGIC_EGG:
+		case AI_BOOMBARREL:
+			g_hdb->_sound->playSound(SND_HEAVY_SLIDE); break;
+		case AI_DIVERTER:
+			g_hdb->_sound->playSound(SND_PUSH_DIVERTER); break;
+		default:
+			break;
+		}
+
+		return;
 	}
 
 	// Look at Entity
@@ -468,7 +637,7 @@ void HDBGame::useEntity(AIEntity *e) {
 
 	// Can't push it - make a sound
 	if (e->type == AI_HEAVYBARREL) {
-		warning("STUB: HDBGame::useEntity Play HEAVYBARREL sound");
+		g_hdb->_sound->playSound(SND_GUY_UHUH);
 	}
 }
 
