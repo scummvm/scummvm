@@ -595,19 +595,34 @@ void aiGemAttackAction(AIEntity *e) {
 }
 
 void aiChickenAction(AIEntity *e) {
-	warning("STUB: AI: aiChickenAction required");
+	static int delay = 64;
+
+	if (g_hdb->_map->checkEntOnScreen(e) && !delay) {
+		warning("Play SND_CHICKEN_AMBIENT");
+		delay = g_hdb->_rnd->getRandomNumber(128) + 160;
+		aiChickenUse(e);
+	}
+
+	if (delay)
+		delay--;
+
+	if (e->goalX)
+		g_hdb->_ai->animateEntity(e);
+	else
+		g_hdb->_ai->animEntFrames(e);
 }
 
 void aiChickenUse(AIEntity *e) {
-	warning("STUB: AI: aiChickenUse required");
+	warning("Play SND_CHICKEN_BAGAWK");
 }
 
 void aiChickenInit(AIEntity *e) {
-	warning("STUB: AI: aiChickenInit required");
+	e->aiUse = aiChickenUse;
+	e->aiAction = aiChickenAction;
 }
 
 void aiChickenInit2(AIEntity *e) {
-	warning("STUB: AI: aiChickenInit2 required");
+	e->draw = e->standdownGfx[0];
 }
 
 void aiDollyInit(AIEntity *e) {
