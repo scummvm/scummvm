@@ -1448,31 +1448,47 @@ void aiMagicEggUse(AIEntity *e) {
 }
 
 void aiIceBlockAction(AIEntity *e) {
-	warning("STUB: AI: aiIceBlockAction required");
+	// if ice block isn't moving somewhere, don't move it
+	if (!e->goalX)
+		return;
+
+	g_hdb->_ai->animateEntity(e);
 }
 
 void aiIceBlockInit(AIEntity *e) {
-	warning("STUB: AI: aiIceBlockInit required");
+	e->moveSpeed = kPushMoveSpeed;
+	e->aiAction = aiIceBlockAction;
 }
 
 void aiIceBlockInit2(AIEntity *e) {
-	warning("STUB: AI: aiIceBlockInit2 required");
+	// point all ice block move frames to the standing one
+	e->movedownFrames =
+		e->moveleftFrames =
+		e->moverightFrames =
+		e->moveupFrames = 1;
+
+	e->movedownGfx[0] =
+		e->moveupGfx[0] =
+		e->moveleftGfx[0] =
+		e->moverightGfx[0] = e->standdownGfx[0];
+
+	e->draw = e->standdownGfx[0];			// standing frame - doesn't move
 }
 
 void aiCabKeyInit(AIEntity *e) {
-	warning("STUB: AI: aiCabKeyInit required");
+	strcpy(e->printedName, "a Cabinet key");
 }
 
 void aiCabKeyInit2(AIEntity *e) {
-	warning("STUB: AI: aiCabKeyInit2 required");
+	e->draw = e->standdownGfx[0];
 }
 
 void aiItemChickenInit(AIEntity *e) {
-	warning("STUB: AI: aiItemChickenInit required");
+	strcpy(e->printedName, "Cooper's chicken");
 }
 
 void aiItemChickenInit2(AIEntity *e) {
-	warning("STUB: AI: aiItemChickenInit2 required");
+	e->draw = e->standdownGfx[0];
 }
 
 void aiPdaInit(AIEntity *e) {
