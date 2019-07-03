@@ -787,6 +787,7 @@ public:
 	void removeLuaEntity(const char *initName);
 	void animLuaEntity(const char *initName, AIState st);
 	void setLuaAnimFrame(const char *initName, AIState st, int frame);
+	int checkForTouchplate(int x, int y);
 	void removeEntity(AIEntity *e);
 	void setEntityGoal(AIEntity *e, int x, int y);
 	void initAllEnts();
