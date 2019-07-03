@@ -1337,59 +1337,66 @@ void aiSodaInit2(AIEntity *e) {
 }
 
 void aiDollyTool1Init(AIEntity *e) {
-	warning("STUB: AI: aiDollyTool1Init required");
+	strcpy(e->printedName, "Dolly's Wrench");
+	e->aiAction = aiGetItemAction;
 }
 
 void aiDollyTool1Init2(AIEntity *e) {
-	warning("STUB: AI: aiDollyTool1Init2 required");
+	e->draw = e->standdownGfx[0];
 }
 
 void aiDollyTool2Init(AIEntity *e) {
-	warning("STUB: AI: aiDollyTool2Init required");
+	strcpy(e->printedName, "Dolly's Torch");
+	e->aiAction = aiGetItemAction;
 }
 
 void aiDollyTool2Init2(AIEntity *e) {
-	warning("STUB: AI: aiDollyTool2Init2 required");
+	e->draw = e->standdownGfx[0];
 }
 
 void aiDollyTool3Init(AIEntity *e) {
-	warning("STUB: AI: aiDollyTool3Init required");
+	strcpy(e->printedName, "Dolly's EMF Resonator");
+	e->aiAction = aiGetItemAction;
 }
 
 void aiDollyTool3Init2(AIEntity *e) {
-	warning("STUB: AI: aiDollyTool3Init2 required");
+	e->draw = e->standdownGfx[0];
 }
 
 void aiDollyTool4Init(AIEntity *e) {
-	warning("STUB: AI: aiDollyTool4Init required");
+	strcpy(e->printedName, "Dolly's Toolbox");
+	e->aiAction = aiGetItemAction;
 }
 
 void aiDollyTool4Init2(AIEntity *e) {
-	warning("STUB: AI: aiDollyTool4Init2 required");
+	e->draw = e->standdownGfx[0];
 }
 
 void aiRouterInit(AIEntity *e) {
-	warning("STUB: AI: aiRouterInit required");
+	strcpy(e->printedName, "a Computer Router");
+	e->aiAction = aiGetItemAction;
 }
 
 void aiRouterInit2(AIEntity *e) {
-	warning("STUB: AI: aiRouterInit2 required");
+	e->draw = e->standdownGfx[0];
 }
 
 void aiSlicerInit(AIEntity *e) {
-	warning("STUB: AI: aiSlicerInit required");
+	strcpy(e->printedName, "a Pizza Slicer");
+	e->aiAction = aiGetItemAction;
 }
 
 void aiSlicerInit2(AIEntity *e) {
-	warning("STUB: AI: aiSlicerInit2 required");
+	e->draw = e->standdownGfx[0];
 }
 
 void aiPackageInit(AIEntity *e) {
-	warning("STUB: AI: aiPackageInit required");
+	strcpy(e->printedName, "a Package");
+	e->aiAction = aiGetItemAction;
 }
 
 void aiPackageInit2(AIEntity *e) {
-	warning("STUB: AI: aiPackageInit2 required");
+	e->draw = e->standdownGfx[0];
 }
 
 void aiMagicEggAction(AIEntity *e) {
