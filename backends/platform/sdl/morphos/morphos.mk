@@ -1,5 +1,5 @@
 # Special target to create an MorphOS snapshot installation
-amigaosdist: $(EXECUTABLE)
+morphosdist: $(EXECUTABLE)
 	mkdir -p $(MORPHOSPATH)
 	mkdir -p $(MORPHOSPATH)themes
 	mkdir -p $(MORPHOSPATH)extras
