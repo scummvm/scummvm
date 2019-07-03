@@ -47,6 +47,7 @@ enum {
 	kPlayerTouchPWait = 16,
 	kMaxCineGfx = 10,
 	kRunToggleDelay = 2,
+	kMsgDelay = 3,
 	kYouGotX = -1,
 	kYouGotY = (kScreenHeight - 16)
 };
