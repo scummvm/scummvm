@@ -728,7 +728,8 @@ void AI::initAllEnts() {
 		}
 	}
 
-	for (int i = 0; i < _numInventory; i++) {
+	int i;
+	for (i = 0; i < _numInventory; i++) {
 		AIEntity *temp = _inventory[i].ent;
 
 		// Clear out all ptrs in entity before writing
@@ -762,7 +763,10 @@ void AI::initAllEnts() {
 		cacheEntGfx(temp, false);
 	}
 
-	warning("STUB: initAllEnts: Cache graphics for Deliveries");
+	for (i = 0; i < _numDeliveries; i++) {
+		_deliveries[i].itemGfx = g_hdb->_gfx->getTileGfx(_deliveries[i].itemGfxName, -1);
+		_deliveries[i].destGfx = g_hdb->_gfx->getTileGfx(_deliveries[i].destGfxName, -1);
+	}
 	warning("STUB: initAllEnts: LaserScan required");
 }
 
@@ -1844,7 +1848,7 @@ void AI::moveEnts() {
 	}
 
 	// Call aiAction for all other Entities
-	for (int i = 0; i < _ents->size(); i++) {
+	for (uint i = 0; i < _ents->size(); i++) {
 		e = _ents->operator[](i);
 		if (e->aiAction) {
 			// NPC Touchplate Counter
