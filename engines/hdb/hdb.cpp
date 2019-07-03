@@ -503,7 +503,19 @@ Common::Error HDBGame::run() {
 	tile->load(tileStream);
 #endif
 
-	startMap("MAP00");
+	if (ConfMan.hasKey("boot_param")) {
+		char mapname[10];
+		int level = ConfMan.getInt("boot_param");
+
+		if (level > 30 || level < 0)
+			level = 1;
+
+		snprintf(mapname, 10, "MAP%02d", level);
+
+		startMap(mapname);
+	} else {
+		startMap("MAP00");
+	}
 
 	//_window->openDialog("Sgt. Filibuster", 0, "You address me as 'sarge' or 'sergeant' or get your snappin' teeth kicked in! Got me?", 0, NULL);
 
