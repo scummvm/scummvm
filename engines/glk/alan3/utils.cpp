@@ -42,7 +42,7 @@ namespace Alan3 {
   return buffers...
 
  */
-void terminate(int code) {
+void terminate(CONTEXT, int code) {
 	newline();
 
 	terminateStateStack();
@@ -53,6 +53,7 @@ void terminate(int code) {
 		deallocate(memory);
 
 	g_vm->glk_exit();
+	LONG_JUMP
 }
 
 /*======================================================================*/

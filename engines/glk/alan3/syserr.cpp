@@ -26,6 +26,7 @@
 #include "glk/alan3/glkio.h"
 #include "glk/alan3/output.h"
 #include "glk/alan3/utils.h"
+#include "common/textconsole.h"
 
 namespace Glk {
 namespace Alan3 {
@@ -33,7 +34,7 @@ namespace Alan3 {
 static void (*handler)(const char *);
 
 /*----------------------------------------------------------------------*/
-static void runtimeError(const char *errorClassification, const char *errorDescription, const char *blurb) {
+static void runtimeError(CONTEXT, const char *errorClassification, const char *errorDescription, const char *blurb) {
 	output("$n$nAs you enter the twilight zone of Adventures, you stumble \
 and fall to your knees. In front of you, you can vaguely see the outlines \
 of an Adventure that never was.$n$n");
@@ -49,7 +50,11 @@ of an Adventure that never was.$n$n");
 	newline();
 	output(blurb);
 
-	terminate(2);
+	terminate(context, 2);
+}
+
+static void runtimeError(const char *errorClassification, const char *errorDescription, const char *blurb) {
+	::error("%s %s %s", errorClassification, errorDescription, blurb);
 }
 
 
@@ -90,10 +95,10 @@ If you *are* the author, then you have to figure this out before releasing the g
 }
 
 /*======================================================================*/
-void playererr(const char *description) {
+void playererr(CONTEXT, const char *description) {
 	if (handler == NULL) {
 		const char *blurb = "<You have probably done something that is not exactly right.>";
-		runtimeError("PLAYER ERROR: ", description, blurb);
+		runtimeError(context, "PLAYER ERROR: ", description, blurb);
 	} else
 		handler(description);
 }

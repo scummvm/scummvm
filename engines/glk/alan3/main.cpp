@@ -130,11 +130,11 @@ static int crcStart(const byte version[4]) {
 
 
 /*----------------------------------------------------------------------*/
-static void readTemporaryHeader(ACodeHeader *tmphdr) {
+static void readTemporaryHeader(CONTEXT, ACodeHeader *tmphdr) {
 	codfil->seek(0);
 	if (codfil->read(&tmphdr->tag[0], sizeof(ACodeHeader)) != sizeof(ACodeHeader) ||
 			strncmp((char *)tmphdr, "ALAN", 4) != 0)
-		playererr("Not an Alan game file, does not start with \"ALAN\"");
+		playererr(context, "Not an Alan game file, does not start with \"ALAN\"");
 }
 
 
@@ -347,12 +347,12 @@ void checkVersion(ACodeHeader *hdr) {
 }
 
 /*----------------------------------------------------------------------*/
-static void load(void) {
+static void load(CONTEXT) {
 	ACodeHeader tmphdr;
 	Aword crc = 0;
 	char err[100];
 
-	readTemporaryHeader(&tmphdr);
+	CALL1(readTemporaryHeader, &tmphdr)
 	checkVersion(&tmphdr);
 
 	/* Allocate and load memory */
@@ -373,12 +373,12 @@ static void load(void) {
 
 
 /*----------------------------------------------------------------------*/
-static void checkDebug(void) {
+static void checkDebug(CONTEXT) {
 	/* Make sure he can't debug if not allowed! */
 	if (!header->debug) {
 		if (debugOption | traceSectionOption | traceInstructionOption) {
 			printf("<Sorry, '%s' is not compiled for debug! Exiting.>\n", adventureFileName);
-			terminate(0);
+			CALL1(terminate, 0)
 		}
 		para();
 		debugOption = FALSE;
@@ -600,7 +600,7 @@ static void init(CONTEXT) {
 	initStaticData();
 	initDynamicData();
 	initParsing();
-	checkDebug();
+	CALL0(checkDebug)
 
 	getPageSize();
 
@@ -748,7 +748,9 @@ void run(void) {
 	do {
 		ctx.clear();
 		openFiles();
-		load();			// Load program
+		load(ctx);			// Load program
+		if (ctx._break)
+			break;
 
 		if (theStack)
 			deleteStack(theStack);

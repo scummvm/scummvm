@@ -1070,7 +1070,7 @@ void debug(CONTEXT, bool calledFromBreakpoint, int line, int fileNumber) {
 			handleObjectsCommand(context);
 			break;
 		case QUIT_COMMAND:
-			terminate(0);
+			CALL1(terminate, 0)
 			break;
 		case SECTION_TRACE_COMMAND:
 			toggleSectionTrace();

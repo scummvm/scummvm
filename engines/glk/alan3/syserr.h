@@ -25,7 +25,7 @@
 
 /* Header file for syserr unit of ARUN Alan System interpreter */
 
-#include "common/textconsole.h"
+#include "glk/alan3/jumps.h"
 
 namespace Glk {
 namespace Alan3 {
@@ -33,7 +33,7 @@ namespace Alan3 {
 /* Functions: */
 extern void syserr(const char *msg);
 extern void apperr(const char *msg);
-extern void playererr(const char *msg);
+extern void playererr(CONTEXT, const char *msg);
 extern void setSyserrHandler(void (*handler)(const char *));
 
 } // End of namespace Alan3

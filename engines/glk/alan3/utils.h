@@ -26,12 +26,13 @@
 /* Utility functions for the Alan interpreter */
 
 #include "glk/alan3/types.h"
+#include "glk/alan3/jumps.h"
 
 namespace Glk {
 namespace Alan3 {
 
 /* FUNCTIONS: */
-extern void terminate(int code);
+extern void terminate(CONTEXT, int code);
 extern void usage(const char *programName);
 extern void printVersion(int buildNumber);
 extern bool match(const char *pattern, char *input);

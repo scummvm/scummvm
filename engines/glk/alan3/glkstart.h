@@ -73,9 +73,6 @@ struct glkunix_startup_t {
 /* The list of command-line arguments; this should be defined in your code. */
 extern const glkunix_argumentlist_t glkunix_arguments[];
 
-/* The external function; this should be defined in your code. */
-extern int glkunix_startup_code(glkunix_startup_t *data);
-
 } // End of namespace Alan3
 } // End of namespace Glk
 
