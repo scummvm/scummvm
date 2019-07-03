@@ -43,8 +43,21 @@ namespace Petka {
 QVisibleObject::QVisibleObject()
 	: _resourceId(-1), _z(240) {}
 
-QMessageObject::QMessageObject()
-	: _id(-1), _dialogColor(-1), _time(0), _sound(nullptr) {}
+QMessageObject::QMessageObject() {
+	_id = -1;
+	_status = 0;
+	_time = 0;
+	_dialogColor = -1;
+	_animate = true;
+	_isShown = true;
+	_isActive = true;
+	_updateZ = 0;
+	_field_38 = 0;
+	_notLoopedSound = true;
+	_startSound = false;
+	_hasSound = false;
+	_reaction = nullptr;
+}
 
 void QMessageObject::processMessage(const QMessage &msg) {
 	for (uint i = 0; i < _reactions.size(); ++i) {

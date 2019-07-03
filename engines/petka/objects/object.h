@@ -76,6 +76,7 @@ public:
 	Common::String _nameOnScreen;
 	int32 _dialogColor;
 	Common::Array<QReaction> _reactions;
+	QReaction *_reaction;
 };
 
 
