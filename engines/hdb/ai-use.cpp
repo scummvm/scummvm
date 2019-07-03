@@ -88,6 +88,49 @@ bool AI::isOpenDoor(int x, int y) {
 	return false;
 }
 
+bool AI::useTarget(int x, int y, int targetX, int targetY, int newTile, int *worked) {
+	int tileIndex;
+
+	// open a locked door?
+	if (isClosedDoor(targetX, targetY)) {
+		tileIndex = g_hdb->_map->getMapBGTileIndex(targetX, targetY);
+
+		addAnimateTarget(targetX, targetY, tileIndex, tileIndex - 3, ANIM_SLOW, false, true, NULL);
+		g_hdb->_map->setMapBGTileIndex(x, y, newTile);
+		if (g_hdb->_map->onScreen(x, y))
+			g_hdb->_sound->playSound(SND_DOOR_OPEN_CLOSE);
+		*worked = 1;
+		return false;						// return FALSE because we need to be able to do it some more
+	}
+
+	// close an open door?
+	if (isOpenDoor(targetX, targetY)) {
+		tileIndex = g_hdb->_map->getMapBGTileIndex(targetX, targetY);
+
+		addAnimateTarget(targetX, targetY, tileIndex, tileIndex + 3, ANIM_SLOW, false, true, NULL);
+		g_hdb->_map->setMapBGTileIndex(x, y, newTile);
+		if (g_hdb->_map->onScreen(x, y))
+			g_hdb->_sound->playSound(SND_DOOR_OPEN_CLOSE);
+		*worked = 1;
+		return false;						// return FALSE because we need to be able to do it some more
+	}
+
+	// open up a bridge?
+	tileIndex = g_hdb->_map->getMapFGTileIndex(targetX, targetY);
+	if (tileIndex == _targetBridgeU ||
+		tileIndex == _targetBridgeD ||
+		tileIndex == _targetBridgeL ||
+		tileIndex == _targetBridgeR) {
+		addBridgeExtend(targetX, targetY, tileIndex);
+		g_hdb->_map->setMapBGTileIndex(x, y, newTile);
+		*worked = 1;
+		return true;						// return TRUE because we can't open it again
+	}
+
+	*worked = 0;
+	return false;
+}
+
 // Black Door Switch
 bool AI::useSwitch(AIEntity *e, int x, int y, int targetX, int targetY, int onTile) {
 	warning("STUB: Define useSwitch");
