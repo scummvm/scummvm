@@ -30,7 +30,7 @@ bool Sound::init() {
 }
 
 bool Sound::playSound(int index) {
-	warning("STUB: Play Sound");
+	debug(9, "STUB: Play Sound");
 	return true;
 }
 
