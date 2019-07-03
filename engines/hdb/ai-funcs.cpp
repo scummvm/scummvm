@@ -2224,6 +2224,9 @@ void AI::movePlayer(uint16 buttons) {
 			case STATE_STANDRIGHT:
 				if (checkForTouchplate(nx, ny))
 					break;
+
+				if (checkForTouchplate(nx, ny))
+					break;
 				if (checkActionList(_player, nx, ny, true))
 					return;
 				if (checkAutoList(_player, nx, ny))
