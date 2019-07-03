@@ -946,6 +946,7 @@ public:
 	void addWaypoint(int px, int py, int x, int y, int level);
 	void removeFirstWaypoint();
 	void clearWaypoints();
+	bool traceStraightPath(int x1, int y1, int *x2, int *y2, int *lvl);
 	Tile *getStandFrameDir(AIEntity *e);
 	void drawWayPoints();
 	int waypointsLeft() {
