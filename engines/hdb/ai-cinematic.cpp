@@ -403,7 +403,7 @@ void AI::cineCleanup() {
 	_cameraLock = false;
 	_playerLock = false;
 	g_hdb->_window->setInfobarDark(0);
-	warning("STUB: DrawMan:: Set Pointer State");
+	g_hdb->_gfx->setPointerState(1);
 
 	int px, py;
 	getPlayerXY(&px, &py);
