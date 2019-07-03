@@ -32,6 +32,7 @@
 
 #include "hdb/hdb.h"
 #include "hdb/console.h"
+#include "hdb/menu.h"
 
 namespace HDB {
 
@@ -45,6 +46,7 @@ HDBGame::HDBGame(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst
 	_fileMan = new FileMan;
 	_gfx = new Gfx;
 	_lua = new LuaScript;
+	_menu = new Menu;
 	_map = new Map;
 	_ai = new AI;
 	_input = new Input;
@@ -175,7 +177,7 @@ bool HDBGame::startMap(char *name) {
 	// don't save cine intro/outro/etc...OR map30 (secret star map)
 	//
 	if (!scumm_strnicmp(name, "map", 3) && scumm_stricmp(name, "map30")) {
-		//_menu->fillSavegameSlots();
+		_menu->fillSavegameSlots();
 		saveSlot(0);          // we ignore the slot parameter in everything else since we just keep saving...
 	}
 	return true;

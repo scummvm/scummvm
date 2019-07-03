@@ -20,23 +20,19 @@
  *
  */
 
-#include "hdb/hdb.h"
+#ifndef HDB_MENU_H
+#define HDB_MENU_H
 
 namespace HDB {
 
-bool Sound::init() {
-	warning("STUB: Sound::init()");
-	return true;
-}
+class Menu {
+public:
 
-bool Sound::playSound(int index) {
-	warning("STUB: Play Sound");
-	return true;
-}
+	bool init();
 
-bool Sound::playVoice(int index, int actor) {
-	warning("STUB: Play Voice");
-	return true;
-}
+	void fillSavegameSlots();
+};
 
 } // End of Namespace
+
+#endif // !HDB_SOUND_H
