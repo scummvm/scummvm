@@ -40,10 +40,12 @@ struct ScriptPatch {
 	{"GLOBAL_LUA", "if( dtable.counter < getn(dtable) ) then", "if( dtable.counter < #dtable ) then"},
 	{"GLOBAL_LUA", "if( getglobal( \"map\"..tostring(v1)..\"_complete\" ) ) then", "if( _G[\"map\"..tostring(v1)..\"_complete\"] ) then"},
 	{"GLOBAL_LUA", "closefunc = getglobal( npcdef.codename..\"_use\" )", "closefunc = _G[npcdef.codename..\"_use\"]"},
+	{"GLOBAL_LUA", "strsub(", "string.sub("}, // line 15
 	{"MAP00_LUA", "tempfunc = function() emptybed_use( %x, %y, %v1, %v2 ) end", "tempfunc = function() emptybed_use(x, y, v1, v2) end"},
 	{"MAP00_LUA", "if( getn( beds ) == 0 ) then", "if( #beds == 0 ) then"},
 	{"MAP01_LUA", "if( covert_index < getn(covert_dialog) ) then", "if( covert_index < #covert_dialog ) then"},
 	{"MAP01_LUA", "if( chiste_index < getn( chiste_dialog ) )then", "if( covert_index < #covert_dialog ) then"},
+	{"MAP01_LUA", "strsub(", "string.sub("}, // line 23
 	{NULL, NULL, NULL},
 };
 
