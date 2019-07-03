@@ -1494,7 +1494,10 @@ void LuaScript::call(int args, int returns) {
 	if (!_systemInit)
 		return;
 
-	lua_call(_state, args, returns);
+	if (lua_pcall(_state, args, returns, -2)) {
+		error("An error occured while executing: %s.", lua_tostring(_state, -1));
+		lua_pop(_state, -1);
+	}
 }
 
 bool LuaScript::callFunction(const char *name, int returns) {
