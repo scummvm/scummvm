@@ -773,14 +773,6 @@ void aiBarrelHeavyInit(AIEntity *e) {
 	e->aiAction = aiBarrelHeavyAction;
 }
 
-void aiBarrelExplosionEnd(AIEntity *e) {
-	warning("STUB: AI: aiBarrelExplosionEnd required");
-}
-
-void aiBarrelExplosionAction(AIEntity *e) {
-	warning("STUB: AI: aiBarrelExplosionAction required");
-}
-
 void aiBarrelExplode(AIEntity *e) {
 	e->state = STATE_EXPLODING;
 	e->animDelay = e->animCycle;
