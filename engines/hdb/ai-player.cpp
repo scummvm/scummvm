@@ -1561,24 +1561,42 @@ void aiTransceiverUse(AIEntity *e) {
 }
 #endif
 
+char monkBuff[32];
+
 void aiMonkeystoneInit(AIEntity *e) {
-	warning("STUB: AI: aiMonkeystoneInit required");
+	e->aiUse = aiMonkeystoneUse;
+	e->aiAction = aiMonkeystoneAction;
 }
 
 void aiMonkeystoneAction(AIEntity *e) {
-	warning("STUB: AI: aiMonkeystoneAction required");
+	if (!e->onScreen)
+		return;
+
+	AIEntity *p = g_hdb->_ai->getPlayer();
+	if (abs(p->x - e->x) < 16 && abs(p->y - e->y) < 16 && e->level == p->level) {
+		if (e->luaFuncUse[0])
+			g_hdb->_lua->callFunction(e->luaFuncUse, 0);
+
+		g_hdb->_ai->addToInventory(e);
+		aiMonkeystoneUse(NULL);
+	}
 }
 
 void aiMonkeystoneInit2(AIEntity *e) {
-	warning("STUB: AI: aiMonkeystoneInit2 required");
+	e->draw = e->standdownGfx[0];
 }
 
 void aiMonkeystoneUse(AIEntity *e) {
-	warning("STUB: AI: aiMonkeystoneUse required");
-}
+	int	val = g_hdb->_ai->getMonkeystoneAmount();
+	sprintf(monkBuff, "You have %d Monkeystone", val);
+	if (val > 1)
+		strcat(monkBuff, "s");
+	strcat(monkBuff, "!");
+	warning("STUB: Play SND_GET_MONKEYSTONE");
+	g_hdb->_window->openMessageBar(monkBuff, kMsgDelay);
 
-void aiMonkeystoneUse2(AIEntity *e) {
-	warning("STUB: AI: aiMonkeystoneUse2 required");
+	// have we unlocked a secret star(tm)???
+	warning("STUB: Set Secret Stars");
 }
 
 void aiGemAction(AIEntity *e) {
@@ -1615,15 +1633,16 @@ void aiGemWhiteInit2(AIEntity *e) {
 }
 
 void aiGooCupUse(AIEntity *e) {
-	warning("STUB: AI: aiGooCupUse required");
+	g_hdb->_window->openMessageBar("Got a... cup of goo.", kMsgDelay);
 }
 
 void aiGooCupInit(AIEntity *e) {
-	warning("STUB: AI: aiGooCupInit required");
+	e->aiUse = aiGooCupUse;
+	e->aiAction = aiGetItemAction;
 }
 
 void aiGooCupInit2(AIEntity *e) {
-	warning("STUB: AI: aiGooCupInit2 required");
+	e->draw = e->standdownGfx[0];
 }
 
 void aiVortexianAction(AIEntity *e) {
