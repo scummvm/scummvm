@@ -33,6 +33,16 @@ bool Menu::init() {
 	return true;
 }
 
+void Menu::startTitle() {
+	// REMOVE: Putting this here since Menu hasn't been implemented yet.
+	// Defaults the game into Action Mode
+	g_hdb->setActionMode(1);
+	g_hdb->setGameState(GAME_PLAY);
+
+	warning("STUB: Menu::startTitle()");
+
+}
+
 void Menu::fillSavegameSlots() {
 	warning("STUB: PMenu::fillSavegameSlots()");
 }

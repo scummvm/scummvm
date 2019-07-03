@@ -55,6 +55,7 @@ HDBGame::HDBGame(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst
 	_rnd = new Common::RandomSource("hdb");
 
 	_currentMapname[0] = _currentLuaName[0] = 0;
+	_lastMapname[0] = _lastLuaName[0] = 0;
 
 	_monkeystone7 = STARS_MONKEYSTONE_7_FAKE;
 	_monkeystone14 = STARS_MONKEYSTONE_14_FAKE;
@@ -84,8 +85,6 @@ bool HDBGame::init() {
 		Game Subsystem Initializations
 	*/
 
-	_lastMapname[0] = 0;
-
 	// Init fileMan
 
 	if (!_fileMan->openMPC(getGameFile())) {
@@ -94,37 +93,35 @@ bool HDBGame::init() {
 	if (!_gfx->init()) {
 		error("Gfx::init: Couldn't initialize Gfx");
 	}
-	if (!_input->init()) {
-		error("Input::init: Couldn't initialize Input");
+	if (!_sound->init()) {
+		error("Window::init: Couldn't initialize Sound");
 	}
 	if (!_ai->init()) {
 		error("AI::init: Couldn't initialize AI");
 	}
-	if (!_lua->init()) {
-		error("LuaScript::init: Couldn't load the GLOBAL_LUA code.");
-	}
-	if (!_sound->init()) {
-		error("Window::init: Couldn't initialize Sound");
-	}
 	if (!_window->init()) {
 		error("Window::init: Couldn't initialize Window");
 	}
+	if (!_input->init()) {
+		error("Input::init: Couldn't initialize Input");
+	}
+	if (!_lua->init()) {
+		error("LuaScript::init: Couldn't load the GLOBAL_LUA code.");
+	}
 
-	// REMOVE: Putting this here since Menu hasn't been implemented yet.
-	// Defaults the game into Action Mode
-	setActionMode(1);
+	_menu->init();
 
-	start();
+	_changeLevel = false;
+	_changeMapname[0] = 0;
+	_loadInfo.active = _saveInfo.active = false;
+
+	_menu->startTitle();
+
 	_gameShutdown = false;
 	_pauseFlag = 0;
 	_systemInit = true;
 
 	return true;
-}
-
-void HDBGame::start() {
-	warning("REMOVE: _gameState initialized to GAME_PLAY");
-	_gameState = GAME_PLAY;
 }
 
 /*
@@ -600,13 +597,32 @@ Common::Error HDBGame::run() {
 			_map->drawForegrounds();
 			_ai->animateTargets();
 
-			_window->drawDialogChoice();
 			_window->drawDialog();
-			_window->drawMessageBar();
+			_window->drawDialogChoice();
 			_window->drawInventory();
+			_window->drawMessageBar();
 			_window->drawDeliveries();
 			_window->drawTextOut();
 			_window->drawPause();
+
+			//_gfx->drawBonusStars();
+			_gfx->drawSnow();
+
+			if (_changeLevel == true) {
+				_changeLevel = false;
+				startMap(_changeMapname);
+			}
+
+			//
+			// should we save the game at this point?
+			//
+			if (_saveInfo.active == true) {
+				_sound->playSound(SND_VORTEX_SAVE);
+				_ai->stopEntity(e);
+				_menu->fillSavegameSlots();
+				saveSlot(_saveInfo.slot);
+				_saveInfo.active = false;
+			}
 		}
 
 		// Update Timer that's NOT used for in-game Timing

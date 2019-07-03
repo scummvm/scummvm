@@ -149,12 +149,25 @@ public:
 
 	bool init();
 
-	void start();
-
 	bool restartMap();
 	bool startMap(char *name);
 
+	void changeMap(char *name) {
+		strcpy(_changeMapname, name);
+		_changeLevel = true;
+	}
+
 	bool saveSlot(int slot);
+
+	void saveWhenReady(int slot) {
+		_saveInfo.active = true;
+		_saveInfo.slot = slot;
+	}
+
+	void loadWhenReady(int slot) {
+		_loadInfo.active = true;
+		_loadInfo.slot = slot;
+	}
 
 	void setGameState(GameState gs) {
 		_gameState = gs;
@@ -200,6 +213,11 @@ public:
 
 	char *lastMapname() { return _lastMapname; }
 
+	void changeLevel(char *name) {
+		strcpy(_changeMapname, name);
+		_changeLevel = true;
+	}
+
 	//
 	// monkeystone secret stars
 	//
@@ -238,6 +256,15 @@ private:
 	int32 _monkeystone7;
 	int32 _monkeystone14;
 	int32 _monkeystone21;
+
+	bool _changeLevel;
+	char _changeMapname[64];
+
+	struct {
+		bool active;
+		int  slot;
+	} _saveInfo, _loadInfo;
+
 
 };
 
