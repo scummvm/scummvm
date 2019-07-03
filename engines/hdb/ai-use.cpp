@@ -198,7 +198,29 @@ bool AI::useLockedSwitchOn(AIEntity *e, int x, int y, int targetX, int targetY, 
 
 // Purple Cell Holder Switch
 bool AI::useCellHolder(AIEntity *e, int x, int y, int targetX, int targetY) {
-	warning("STUB: Define useCellHolder");
+	// is the PLAYER next to this thing?  No other entities are allowed to unlock anything!
+	if (abs(x - _player->tileX) > 1 || abs(y - _player->tileY) > 1)
+		return false;
+
+	int	amount = queryInventoryType(ITEM_CELL);
+	int	worked;
+	bool rtn;
+
+	if (amount) {
+		rtn = useTarget(x, y, targetX, targetY, _useHolderFull, &worked);
+		if (worked) {
+			removeInvItemType(ITEM_CELL, 1);
+			if (g_hdb->_map->onScreen(x, y))
+				g_hdb->_sound->playSound(SND_SWITCH_USE);
+		}
+		return rtn;
+	} else {
+		if (g_hdb->_map->onScreen(x, y))
+			g_hdb->_sound->playSound(SND_CELLHOLDER_USE_REJECT);
+	}
+
+	g_hdb->_window->openDialog("Locked!", -1, "I can't use that unless I have an Energy Cell.", 0, NULL);
+	g_hdb->_sound->playVoice(GUY_ENERGY_CELL, 0);
 	return false;
 }
 
