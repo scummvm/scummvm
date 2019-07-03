@@ -29,7 +29,8 @@ void AI::addWaypoint(int px, int py, int x, int y, int level) {
 		return;
 
 	// Check for duplicates
-	for (int i = 0; i < _numWaypoints; i++)
+	int i;
+	for (i = 0; i < _numWaypoints; i++)
 		if (_waypoints[i].x == x && _waypoints[i].y == y)
 			return;
 
@@ -37,9 +38,299 @@ void AI::addWaypoint(int px, int py, int x, int y, int level) {
 	int nx = x;
 	int ny = y;
 	if (!_numWaypoints) {
-		warning("STUB: addWaypoint: Setup First Waypoint");
+		// if player is already moving and this is the first waypoint, forget it.
+		// player is using the keyboard and must be fully stopped before laying 
+		// the first waypoint
+		if (_player->goalX)
+			return;
+
+		// trace from player to new spot
+		// return value of 0 only means a diagonal was selected!
+		if (!traceStraightPath(px, py, &nx, &ny, &level)) {
+			int	tx, ty, tx2, ty2;
+
+			// it didn't work, so player is probably trying some diagonal movement.
+			// let's break it down into two waypoints: one horz, one vert
+			tx = nx;
+			ty = py;
+			tx2 = nx;
+			ty2 = ny;
+			int	lvl1, lvl2;
+
+			lvl1 = lvl2 = level;
+
+			if (traceStraightPath(px, py, &tx, &ty, &lvl1)) {
+				if (tx != nx || ty != py) {
+					tx = px;
+					ty = ny;
+					tx2 = nx;
+					ty2 = ny;
+
+					lvl1 = lvl2 = level;
+
+					if (traceStraightPath(px, py, &tx, &ty, &lvl1)) {
+						if (tx != px || ty != ny)
+							return;
+
+						traceStraightPath(tx, ty, &nx, &ny, &lvl2);
+
+						if (tx2 != nx || ty2 != ny)
+							return;
+
+						_waypoints[_numWaypoints].x = tx;
+						_waypoints[_numWaypoints].y = ty;
+						_waypoints[_numWaypoints].level = lvl1;
+						_numWaypoints++;
+						_waypoints[_numWaypoints].x = nx;
+						_waypoints[_numWaypoints].y = ny;
+						_waypoints[_numWaypoints].level = lvl2;
+						_numWaypoints++;
+						warning("STUB: Play SND_MENU_SLIDER");
+
+						if (onEvenTile(_player->x, _player->y))
+							setEntityGoal(_player, tx, ty);
+					}
+				}
+
+				traceStraightPath(tx, ty, &tx2, &ty2, &lvl2);
+
+				if (tx2 != nx || ty2 != ny) {
+					tx = px;
+					ty = ny;
+					tx2 = nx;
+					ty2 = ny;
+
+					lvl1 = lvl2 = level;
+
+					if (traceStraightPath(px, py, &tx, &ty, &lvl1)) {
+						if (tx != px || ty != ny)
+							return;
+
+						traceStraightPath(tx, ty, &nx, &ny, &lvl2);
+
+						if (tx2 != nx || ty2 != ny)
+							return;
+
+						_waypoints[_numWaypoints].x = tx;
+						_waypoints[_numWaypoints].y = ty;
+						_waypoints[_numWaypoints].level = lvl1;
+						_numWaypoints++;
+						_waypoints[_numWaypoints].x = nx;
+						_waypoints[_numWaypoints].y = ny;
+						_waypoints[_numWaypoints].level = lvl2;
+						_numWaypoints++;
+						warning("STUB: Play SND_MENU_SLIDER");
+
+						if (onEvenTile(_player->x, _player->y))
+							setEntityGoal(_player, tx, ty);
+					}
+				}
+
+				_waypoints[_numWaypoints].x = tx;
+				_waypoints[_numWaypoints].y = ty;
+				_waypoints[_numWaypoints].level = lvl1;
+				_numWaypoints++;
+				_waypoints[_numWaypoints].x = nx;
+				_waypoints[_numWaypoints].y = ny;
+				_waypoints[_numWaypoints].level = lvl2;
+				_numWaypoints++;
+				warning("STUB: Play SND_MENU_SLIDER");
+
+				if (onEvenTile(_player->x, _player->y))
+					setEntityGoal(_player, tx, ty);
+			} else {
+				tx = px;
+				ty = ny;
+				tx2 = nx;
+				ty2 = ny;
+
+				lvl1 = lvl2 = level;
+
+				if (traceStraightPath(px, py, &tx, &ty, &lvl1)) {
+					if (tx != px || ty != ny)
+						return;
+
+					traceStraightPath(tx, ty, &nx, &ny, &lvl2);
+
+					if (tx2 != nx || ty2 != ny)
+						return;
+
+					_waypoints[_numWaypoints].x = tx;
+					_waypoints[_numWaypoints].y = ty;
+					_waypoints[_numWaypoints].level = lvl1;
+					_numWaypoints++;
+					_waypoints[_numWaypoints].x = nx;
+					_waypoints[_numWaypoints].y = ny;
+					_waypoints[_numWaypoints].level = lvl2;
+					_numWaypoints++;
+					warning("STUB: Play SND_MENU_SLIDER");
+
+					if (onEvenTile(_player->x, _player->y))
+						setEntityGoal(_player, tx, ty);
+				}
+			}
+			return;
+		}
+
+		// create a waypoint @ the player x,y? NO!
+		if ((nx != px || ny != py) && onEvenTile(_player->x, _player->y))
+			setEntityGoal(_player, nx, ny);
+		else
+			return;
 	} else {
-		warning("STUB: addWaypoint: Setup additional Waypoints");
+		// trace from last waypoint to new spot
+		level = _waypoints[_numWaypoints - 1].level;
+
+		if (!traceStraightPath(_waypoints[_numWaypoints - 1].x, _waypoints[_numWaypoints - 1].y, &nx, &ny, &level)) {
+			int		tx, ty, tx2, ty2;
+
+			// it didn't work, so player is probably trying some diagonal movement.
+			// let's break it down into two waypoints: one horz, one vert
+			px = _waypoints[_numWaypoints - 1].x;
+			py = _waypoints[_numWaypoints - 1].y;
+			level = _waypoints[_numWaypoints - 1].level;
+
+			tx = nx;
+			ty = py;
+			tx2 = nx;
+			ty2 = ny;
+			int	lvl1, lvl2;
+
+			lvl1 = lvl2 = level;
+
+			if (traceStraightPath(px, py, &tx, &ty, &lvl1)) {
+				if (tx != nx || ty != py) {
+					tx = px;
+					ty = ny;
+					tx2 = nx;
+					ty2 = ny;
+
+					lvl1 = lvl2 = level;
+
+					if (traceStraightPath(px, py, &tx, &ty, &lvl1)) {
+						if (tx != px || ty != ny)
+							return;
+
+						traceStraightPath(tx, ty, &nx, &ny, &lvl2);
+
+						if (tx2 != nx || ty2 != ny)
+							return;
+
+						if (_numWaypoints < kMaxWaypoints) {
+							_waypoints[_numWaypoints].x = tx;
+							_waypoints[_numWaypoints].y = ty;
+							_waypoints[_numWaypoints].level = lvl1;
+							_numWaypoints++;
+							warning("STUB: Play SND_MENU_SLIDER");
+						}
+
+						if (_numWaypoints < kMaxWaypoints) {
+							_waypoints[_numWaypoints].x = nx;
+							_waypoints[_numWaypoints].y = ny;
+							_waypoints[_numWaypoints].level = lvl2;
+							_numWaypoints++;
+							warning("STUB: Play SND_MENU_SLIDER");
+						}
+					}
+				}
+
+				traceStraightPath(tx, ty, &tx2, &ty2, &lvl2);
+
+				if (tx2 != nx || ty2 != ny) {
+					tx = px;
+					ty = ny;
+					tx2 = nx;
+					ty2 = ny;
+
+					lvl1 = lvl2 = level;
+
+					if (traceStraightPath(px, py, &tx, &ty, &lvl1)) {
+						if (tx != px || ty != ny)
+							return;
+
+						traceStraightPath(tx, ty, &nx, &ny, &lvl2);
+
+						if (tx2 != nx || ty2 != ny)
+							return;
+
+						if (_numWaypoints < kMaxWaypoints) {
+							_waypoints[_numWaypoints].x = tx;
+							_waypoints[_numWaypoints].y = ty;
+							_waypoints[_numWaypoints].level = lvl1;
+							_numWaypoints++;
+							warning("STUB: Play SND_MENU_SLIDER");
+						}
+
+						if (_numWaypoints < kMaxWaypoints) {
+							_waypoints[_numWaypoints].x = nx;
+							_waypoints[_numWaypoints].y = ny;
+							_waypoints[_numWaypoints].level = lvl2;
+							_numWaypoints++;
+							warning("STUB: Play SND_MENU_SLIDER");
+						}
+					}
+				}
+
+				if (_numWaypoints < kMaxWaypoints) {
+					_waypoints[_numWaypoints].x = tx;
+					_waypoints[_numWaypoints].y = ty;
+					_waypoints[_numWaypoints].level = lvl1;
+					_numWaypoints++;
+					warning("STUB: Play SND_MENU_SLIDER");
+				}
+
+				if (_numWaypoints < kMaxWaypoints) {
+					_waypoints[_numWaypoints].x = nx;
+					_waypoints[_numWaypoints].y = ny;
+					_waypoints[_numWaypoints].level = lvl2;
+					_numWaypoints++;
+					warning("STUB: Play SND_MENU_SLIDER");
+				}
+			} else {
+				tx = px;
+				ty = ny;
+				tx2 = nx;
+				ty2 = ny;
+
+				lvl1 = lvl2 = level;
+
+				if (traceStraightPath(px, py, &tx, &ty, &lvl1)) {
+					if (tx != px || ty != ny)
+						return;
+
+					traceStraightPath(tx, ty, &nx, &ny, &lvl2);
+
+					if (tx2 != nx || ty2 != ny)
+						return;
+
+					if (_numWaypoints < kMaxWaypoints) {
+						_waypoints[_numWaypoints].x = tx;
+						_waypoints[_numWaypoints].y = ty;
+						_waypoints[_numWaypoints].level = lvl1;
+						_numWaypoints++;
+						warning("STUB: Play SND_MENU_SLIDER");
+					}
+
+					if (_numWaypoints < kMaxWaypoints) {
+						_waypoints[_numWaypoints].x = nx;
+						_waypoints[_numWaypoints].y = ny;
+						_waypoints[_numWaypoints].level = lvl2;
+						_numWaypoints++;
+						warning("STUB: Play SND_MENU_SLIDER");
+					}
+				}
+			}
+			return;
+		}
+
+		// create a waypoint @ the player x,y? NO!
+		if (nx == px && ny == py)
+			return;
+
+		// make sure potential waypoint isn't on other waypoints!			
+		for (i = 0; i < _numWaypoints; i++)
+			if (_waypoints[i].x == nx && _waypoints[i].y == ny)
+				return;
 	}
 
 	if (_numWaypoints < kMaxWaypoints) {
