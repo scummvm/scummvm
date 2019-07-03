@@ -155,7 +155,7 @@ void QMessageObject::show(bool v) {
 }
 
 bool QObject::isInPoint(int x, int y) {
-	if (_isActive)
+	if (!_isActive)
 		return false;
 	FlicDecoder *flc = g_vm->resMgr()->loadFlic(_resourceId);
 	Common::Rect rect(_x, _y, _x + flc->getWidth(), _y + flc->getHeight());
