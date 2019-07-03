@@ -37,6 +37,8 @@ public:
 
 	bool init();
 
+	void startTitle();
+
 	void fillSavegameSlots();
 
 	int _starWarp;
