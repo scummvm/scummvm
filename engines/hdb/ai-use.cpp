@@ -226,12 +226,14 @@ bool AI::useCellHolder(AIEntity *e, int x, int y, int targetX, int targetY) {
 
 // Touchplate
 bool AI::useTouchplate(AIEntity *e, int x, int y, int targetX, int targetY, int type) {
-	warning("STUB: Define useTouchplate");
-	return false;
+	int worked;
+	g_hdb->_sound->playSound(SND_TOUCHPLATE_CLICK);
+	return useTarget(x, y, targetX, targetY, type, &worked);
 }
 bool AI::useTouchplateOn(AIEntity *e, int x, int y, int targetX, int targetY, int type) {
-	warning("STUB: Define useTouchplateOn");
-	return false;
+	int worked;
+	g_hdb->_sound->playSound(SND_TOUCHPLATE_CLICK);
+	return useTarget(x, y, targetX, targetY, type, &worked);
 }
 
 void callbackDoorOpenClose(int x, int y) {
