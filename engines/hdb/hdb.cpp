@@ -76,6 +76,8 @@ bool HDBGame::init() {
 		Game Subsystem Initializations
 	*/
 
+	_lastMapname[0] = 0;
+
 	// Init fileMan
 
 	if (!_fileMan->openMPC(getGameFile())) {
