@@ -559,7 +559,7 @@ void interpret(CONTEXT, Aaddr adr) {
 				if (traceInstructionOption) {
 					printf("STYLE \t%7ld\t\t\"", (long)style);
 				}
-				setStyle(style);
+				g_io->setStyle(style);
 				break;
 			}
 
@@ -829,14 +829,14 @@ void interpret(CONTEXT, Aaddr adr) {
 				Aint align = pop(stack);
 				if (traceInstructionOption)
 					printf("SHOW \t%7ld, %7ld\t\t\t\t", (long)image, (long)align);
-				showImage(image, align);
+				g_io->showImage(image, align);
 				break;
 			}
 			case I_PLAY: {
 				Aint sound = pop(stack);
 				if (traceInstructionOption)
 					printf("PLAY \t%7ld\t\t\t\t", (long)sound);
-				playSound(sound);
+				g_io->playSound(sound);
 				break;
 			}
 			case I_LOCATE: {

@@ -135,7 +135,7 @@ static char *gettoken(char *txtBuf) {
 static void getLine(CONTEXT) {
 	para();
 	do {
-		CALL0(statusline)
+		CALL0(g_io->statusLine)
 
 		if (header->prompt) {
 			anyOutput = FALSE;
@@ -148,7 +148,7 @@ static void getLine(CONTEXT) {
 			printAndLog("> ");
 
 		bool flag;
-		FUNC2(readline, flag, buf, 255);
+		FUNC2(g_io->readLine, flag, buf, 255);
 		if (!flag) {
 			newline();
 			quitGame();
@@ -158,8 +158,8 @@ static void getLine(CONTEXT) {
 		anyOutput = FALSE;
 		if (transcriptOption || logOption) {
 			// TODO: Refactor out the logging to log.c?
-			g_vm->glk_put_string_stream(logFile, buf);
-			g_vm->glk_put_char_stream(logFile, '\n');
+			g_io->glk_put_string_stream(logFile, buf);
+			g_io->glk_put_char_stream(logFile, '\n');
 		}
 		/* If the player input an empty command he forfeited his command */
 		if (strlen(buf) == 0) {

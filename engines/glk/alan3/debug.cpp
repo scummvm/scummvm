@@ -742,7 +742,7 @@ static void readCommand(CONTEXT, char buf[], size_t maxLen) {
 	do {
 		output("adbg> ");
 
-		FUNC2(readline, flag, buf, maxLen)
+		FUNC2(g_io->readLine, flag, buf, maxLen)
 		if (!flag) {
 			newline();
 			quitGame();

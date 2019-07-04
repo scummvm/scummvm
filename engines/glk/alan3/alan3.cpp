@@ -29,7 +29,6 @@
 #include "glk/alan3/save.h"
 #include "glk/alan3/syserr.h"
 #include "common/system.h"
-#include "common/config-manager.h"
 #include "common/translation.h"
 #include "common/error.h"
 #include "common/scummsys.h"
@@ -42,8 +41,8 @@ namespace Alan3 {
 
 Alan3 *g_vm = nullptr;
 
-Alan3::Alan3(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gameDesc),
-	vm_exited_cleanly(false), _saveSlot(-1), _pendingLook(false) {
+Alan3::Alan3(OSystem *syst, const GlkGameDescription &gameDesc) : GlkIO(syst, gameDesc),
+	vm_exited_cleanly(false), _pendingLook(false) {
 	g_vm = this;
 
 	// main
@@ -87,28 +86,13 @@ void Alan3::runGame() {
 }
 
 bool Alan3::initialize() {
+	if (!GlkIO::initialize())
+		syserr("FATAL ERROR: Cannot open initial window");
+
 	// Set up adventure name
 	_advName = getFilename();
 	if (_advName.size() > 4 && _advName[_advName.size() - 4] == '.')
 		_advName = Common::String(_advName.c_str(), _advName.size() - 4);
-
-	// first, open a window for error output
-	glkMainWin = g_vm->glk_window_open(0, 0, 0, wintype_TextBuffer, 0);
-	if (glkMainWin == nullptr)
-		syserr("FATAL ERROR: Cannot open initial window");
-
-	g_vm->glk_stylehint_set(wintype_TextGrid, style_User1, stylehint_ReverseColor, 1);
-	glkStatusWin = g_vm->glk_window_open(glkMainWin, winmethod_Above |
-	                                     winmethod_Fixed, 1, wintype_TextGrid, 0);
-	g_vm->glk_set_window(glkMainWin);
-
-	// Set up the code file to point to the already opened game file
-	codfil = &_gameFile;
-
-	if (_gameFile.size() < 8) {
-	    GUIErrorMessage(_("This is too short to be a valid Alan3 file."));
-	    return false;
-	}
 
 	// In Alan 3, the text data comes from the adventure file itself
 	Common::File *txt = new Common::File();
@@ -119,8 +103,8 @@ bool Alan3::initialize() {
 	}
 	textFile = txt;
 
-	// Check for a save being loaded directly from the launcher
-	_saveSlot = ConfMan.hasKey("save_slot") ? ConfMan.getInt("save_slot") : -1;
+	// Set up the code file to point to the already opened game file
+	codfil = &_gameFile;
 
 	return true;
 }

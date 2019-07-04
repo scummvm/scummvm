@@ -23,7 +23,7 @@
 #ifndef GLK_ALAN3
 #define GLK_ALAN3
 
-#include "glk/glk_api.h"
+#include "glk/alan3/glkio.h"
 
 namespace Glk {
 namespace Alan3 {
@@ -31,11 +31,10 @@ namespace Alan3 {
 /**
  * Alan3 game interpreter
  */
-class Alan3 : public GlkAPI {
+class Alan3 : public GlkIO {
 public:
 	bool vm_exited_cleanly;
 	Common::String _advName;
-	int _saveSlot;
 	bool _pendingLook;
 private:
 	/**

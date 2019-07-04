@@ -23,30 +23,58 @@
 #ifndef GLK_ALAN3_GLKIO
 #define GLK_ALAN3_GLKIO
 
-#include "glk/alan3/alan3.h"
-#include "glk/alan3/jumps.h"
+#include "glk/glk_api.h"
 #include "glk/windows.h"
+#include "glk/alan3/jumps.h"
 
 namespace Glk {
 namespace Alan3 {
 
-extern winid_t glkMainWin;
-extern winid_t glkStatusWin;
-extern bool onStatusLine;
+class GlkIO : public GlkAPI {
+private:
+	winid_t glkMainWin;
+	winid_t glkStatusWin;
+	int _saveSlot;
+public:
+	bool onStatusLine;
+protected:
+	/**
+	 * Does initialization
+	 */
+	bool initialize();
+public:
+	/**
+	 * Constructor
+	 */
+	GlkIO(OSystem *syst, const GlkGameDescription &gameDesc);
+
+	void print(const char *, ...);
+
+	void showImage(int image, int align);
+
+	void playSound(int sound);
+
+	void setStyle(int style);
+
+	void statusLine(CONTEXT);
+
+	bool readLine(CONTEXT, char *usrBuf, size_t maxLen);
+
+	void clear() {
+		glk_window_clear(glkMainWin);
+	}
+
+	void flowBreak() {
+		/* Make a new paragraph, i.e one empty line (one or two newlines). */
+		if (glk_gestalt(gestalt_Graphics, 0) == 1)
+			glk_window_flow_break(glkMainWin);
+	}
+};
+
+extern GlkIO *g_io;
 
 #undef printf
-#define printf glkio_printf
-extern void glkio_printf(const char *, ...);
-
-extern void showImage(int image, int align);
-
-extern void playSound(int sound);
-
-extern void setStyle(int style);
-
-extern void statusline(CONTEXT);
-
-extern bool readline(CONTEXT, char *usrBuf, size_t maxLen);
+#define printf g_io->print
 
 } // End of namespace Alan3
 } // End of namespace Glk

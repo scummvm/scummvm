@@ -78,13 +78,13 @@ static int updateColumn(int currentColumn, const char *string) {
 
 /*======================================================================*/
 void setSubHeaderStyle(void) {
-	g_vm->glk_set_style(style_Subheader);
+	g_io->glk_set_style(style_Subheader);
 }
 
 
 /*======================================================================*/
 void setNormalStyle(void) {
-	g_vm->glk_set_style(style_Normal);
+	g_io->glk_set_style(style_Normal);
 }
 
 /*======================================================================*/
@@ -97,9 +97,7 @@ void newline(void) {
 
 /*======================================================================*/
 void para(void) {
-	/* Make a new paragraph, i.e one empty line (one or two newlines). */
-	if (g_vm->glk_gestalt(gestalt_Graphics, 0) == 1)
-		g_vm->glk_window_flow_break(glkMainWin);
+	g_io->flowBreak();
 
 	if (col != 1)
 		newline();
@@ -110,7 +108,7 @@ void para(void) {
 
 /*======================================================================*/
 void clear(void) {
-	g_vm->glk_window_clear(glkMainWin);
+	g_io->clear();
 }
 
 
@@ -135,7 +133,7 @@ void printAndLog(const char *string) {
 	char *stringPart;
 
 	printf("%s", string);
-	if (!onStatusLine && transcriptOption) {
+	if (!g_io->onStatusLine && transcriptOption) {
 		// TODO Is this assuming only 70-char wide windows for GLK?
 		if ((int)strlen(string) > 70 - column) {
 			stringCopy = strdup(string);  /* Make sure we can write NULLs */
@@ -144,16 +142,16 @@ void printAndLog(const char *string) {
 				int p;
 				for (p = 70 - column; p > 0 && !isspace((int)stringPart[p]); p--);
 				stringPart[p] = '\0';
-				g_vm->glk_put_string_stream(logFile, stringPart);
-				g_vm->glk_put_char_stream(logFile, '\n');
+				g_io->glk_put_string_stream(logFile, stringPart);
+				g_io->glk_put_char_stream(logFile, '\n');
 				column = 0;
 				stringPart = &stringPart[p + 1];
 			}
-			g_vm->glk_put_string_stream(logFile, stringPart);
+			g_io->glk_put_string_stream(logFile, stringPart);
 			column = updateColumn(column, stringPart);
 			free(stringCopy);
 		} else {
-			g_vm->glk_put_string_stream(logFile, string);
+			g_io->glk_put_string_stream(logFile, string);
 			column = updateColumn(column, string);
 		}
 	}
@@ -442,7 +440,7 @@ bool confirm(CONTEXT, MsgKind msgno) {
 	   it could be affirmative, but for now any input is NOT! */
 	printMessage(msgno);
 
-	R0FUNC2(readline, flag, buf, 80)
+	R0FUNC2(g_io->readLine, flag, buf, 80)
 	if (!flag)
 		return TRUE;
 	col = 1;

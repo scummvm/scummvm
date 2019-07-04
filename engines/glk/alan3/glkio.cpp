@@ -26,17 +26,38 @@
 #include "glk/alan3/instance.h"
 #include "glk/alan3/options.h"
 #include "glk/alan3/output.h"
+#include "common/config-manager.h"
 
 namespace Glk {
 namespace Alan3 {
 
-winid_t glkMainWin;
-winid_t glkStatusWin;
-bool onStatusLine;
+GlkIO *g_io;
 
-void glkio_printf(const char *fmt, ...) {
+GlkIO::GlkIO(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gameDesc),
+		glkMainWin(nullptr), glkStatusWin(nullptr), onStatusLine(false), _saveSlot(-1) {
+	g_io = this;
+}
+
+bool GlkIO::initialize() {
+	// first, open a window for error output
+	glkMainWin = glk_window_open(0, 0, 0, wintype_TextBuffer, 0);
+	if (glkMainWin == nullptr)
+		return false;
+
+	glk_stylehint_set(wintype_TextGrid, style_User1, stylehint_ReverseColor, 1);
+	glkStatusWin = glk_window_open(glkMainWin, winmethod_Above |
+		winmethod_Fixed, 1, wintype_TextGrid, 0);
+	glk_set_window(glkMainWin);
+
+	// Check for a save being loaded directly from the launcher
+	_saveSlot = ConfMan.hasKey("save_slot") ? ConfMan.getInt("save_slot") : -1;
+
+	return true;
+}
+
+void GlkIO::print(const char *fmt, ...) {
 	// If there's a savegame being loaded from the launcher, ignore any text out
-	if (g_vm->_saveSlot != -1)
+	if (_saveSlot != -1)
 		return;
 
 	va_list argp;
@@ -44,7 +65,7 @@ void glkio_printf(const char *fmt, ...) {
 	if (glkMainWin) {
 		char buf[1024]; /* FIXME: buf size should be foolproof */
 		vsprintf(buf, fmt, argp);
-		g_vm->glk_put_string(buf);
+		glk_put_string(buf);
 	} else {
 		// assume stdio is available in this case only
 		Common::String str = Common::String::vformat(fmt, argp);
@@ -54,54 +75,54 @@ void glkio_printf(const char *fmt, ...) {
 	va_end(argp);
 }
 
-void showImage(int image, int align) {
+void GlkIO::showImage(int image, int align) {
 	uint ecode;
 
-	if ((g_vm->glk_gestalt(gestalt_Graphics, 0) == 1) &&
-		(g_vm->glk_gestalt(gestalt_DrawImage, wintype_TextBuffer) == 1)) {
-		g_vm->glk_window_flow_break(glkMainWin);
+	if ((glk_gestalt(gestalt_Graphics, 0) == 1) &&
+		(glk_gestalt(gestalt_DrawImage, wintype_TextBuffer) == 1)) {
+		glk_window_flow_break(glkMainWin);
 		printf("\n");
-		ecode = g_vm->glk_image_draw(glkMainWin, image, imagealign_MarginLeft, 0);
+		ecode = glk_image_draw(glkMainWin, image, imagealign_MarginLeft, 0);
 		(void)ecode;
 	}
 }
 
-void playSound(int sound) {
+void GlkIO::playSound(int sound) {
 #ifdef GLK_MODULE_SOUND
 	static schanid_t soundChannel = NULL;
 
-	if (g_vm->glk_gestalt(gestalt_Sound, 0) == 1) {
+	if (glk_gestalt(gestalt_Sound, 0) == 1) {
 		if (soundChannel == NULL)
-			soundChannel = g_vm->glk_schannel_create(0);
+			soundChannel = glk_schannel_create(0);
 		if (soundChannel != NULL) {
-			g_vm->glk_schannel_stop(soundChannel);
-			(void)g_vm->glk_schannel_play(soundChannel, sound);
+			glk_schannel_stop(soundChannel);
+			(void)glk_schannel_play(soundChannel, sound);
 		}
 	}
 #endif
 }
 
-void setStyle(int style) {
+void GlkIO::setStyle(int style) {
 	switch (style) {
 	case NORMAL_STYLE:
-		g_vm->glk_set_style(style_Normal);
+		glk_set_style(style_Normal);
 		break;
 	case EMPHASIZED_STYLE:
-		g_vm->glk_set_style(style_Emphasized);
+		glk_set_style(style_Emphasized);
 		break;
 	case PREFORMATTED_STYLE:
-		g_vm->glk_set_style(style_Preformatted);
+		glk_set_style(style_Preformatted);
 		break;
 	case ALERT_STYLE:
-		g_vm->glk_set_style(style_Alert);
+		glk_set_style(style_Alert);
 		break;
 	case QUOTE_STYLE:
-		g_vm->glk_set_style(style_BlockQuote);
+		glk_set_style(style_BlockQuote);
 		break;
 	}
 }
 
-void statusline(CONTEXT) {
+void GlkIO::statusLine(CONTEXT) {
 	uint32 glkWidth;
 	char line[100];
 	int pcol = col;
@@ -110,13 +131,13 @@ void statusline(CONTEXT) {
 	if (glkStatusWin == NULL)
 		return;
 
-	g_vm->glk_set_window(glkStatusWin);
-	g_vm->glk_window_clear(glkStatusWin);
-	g_vm->glk_window_get_size(glkStatusWin, &glkWidth, NULL);
+	glk_set_window(glkStatusWin);
+	glk_window_clear(glkStatusWin);
+	glk_window_get_size(glkStatusWin, &glkWidth, NULL);
 
 	onStatusLine = TRUE;
 	col = 1;
-	g_vm->glk_window_move_cursor(glkStatusWin, 1, 0);
+	glk_window_move_cursor(glkStatusWin, 1, 0);
 	CALL1(sayInstance, where(HERO, /*TRUE*/ TRANSITIVE))
 
 		// TODO Add status message1  & 2 as author customizable messages
@@ -124,14 +145,14 @@ void statusline(CONTEXT) {
 			sprintf(line, "Score %d(%d)/%d moves", current.score, (int)header->maximumScore, current.tick);
 		else
 			sprintf(line, "%d moves", current.tick);
-	g_vm->glk_window_move_cursor(glkStatusWin, glkWidth - strlen(line) - 1, 0);
-	g_vm->glk_put_string(line);
+	glk_window_move_cursor(glkStatusWin, glkWidth - strlen(line) - 1, 0);
+	glk_put_string(line);
 	needSpace = FALSE;
 
 	col = pcol;
 	onStatusLine = FALSE;
 
-	g_vm->glk_set_window(glkMainWin);
+	glk_set_window(glkMainWin);
 }
 
 
@@ -144,32 +165,32 @@ void statusline(CONTEXT) {
 */
 
 /* TODO - length of user buffer should be used */
-bool readline(CONTEXT, char *buffer, size_t maxLen) {
+bool GlkIO::readLine(CONTEXT, char *buffer, size_t maxLen) {
 	event_t event;
 	static bool readingCommands = FALSE;
 	static frefid_t commandFileRef;
 	static strid_t commandFile;
 
 	if (readingCommands) {
-		if (g_vm->glk_get_line_stream(commandFile, buffer, maxLen) == 0) {
-			g_vm->glk_stream_close(commandFile, NULL);
+		if (glk_get_line_stream(commandFile, buffer, maxLen) == 0) {
+			glk_stream_close(commandFile, NULL);
 			readingCommands = FALSE;
 		} else {
-			g_vm->glk_set_style(style_Input);
+			glk_set_style(style_Input);
 			printf(buffer);
-			g_vm->glk_set_style(style_Normal);
+			glk_set_style(style_Normal);
 		}
 	} else {
-		g_vm->glk_request_line_event(glkMainWin, buffer, maxLen, 0);
+		glk_request_line_event(glkMainWin, buffer, maxLen, 0);
 
 		do {
-			g_vm->glk_select(&event);
-			if (g_vm->shouldQuit())
+			glk_select(&event);
+			if (shouldQuit())
 				LONG_JUMP0
 
 			switch (event.type) {
 			case evtype_Arrange:
-				R0CALL0(statusline)
+				R0CALL0(g_io->statusLine)
 				break;
 
 			default:
@@ -178,14 +199,14 @@ bool readline(CONTEXT, char *buffer, size_t maxLen) {
 		} while (event.type != evtype_LineInput);
 		if (buffer[0] == '@') {
 			buffer[event.val1] = 0;
-			commandFileRef = g_vm->glk_fileref_create_by_name(fileusage_InputRecord + fileusage_TextMode, &buffer[1], 0);
-			commandFile = g_vm->glk_stream_open_file(commandFileRef, filemode_Read, 0);
+			commandFileRef = glk_fileref_create_by_name(fileusage_InputRecord + fileusage_TextMode, &buffer[1], 0);
+			commandFile = glk_stream_open_file(commandFileRef, filemode_Read, 0);
 			if (commandFile != NULL)
-				if (g_vm->glk_get_line_stream(commandFile, buffer, maxLen) != 0) {
+				if (glk_get_line_stream(commandFile, buffer, maxLen) != 0) {
 					readingCommands = TRUE;
-					g_vm->glk_set_style(style_Input);
+					glk_set_style(style_Input);
 					printf(buffer);
-					g_vm->glk_set_style(style_Normal);
+					glk_set_style(style_Normal);
 				}
 		} else
 			buffer[event.val1] = 0;

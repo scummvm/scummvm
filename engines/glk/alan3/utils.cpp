@@ -52,7 +52,7 @@ void terminate(CONTEXT, int code) {
 	if (memory)
 		deallocate(memory);
 
-	g_vm->glk_exit();
+	g_io->glk_exit();
 	LONG_JUMP
 }
 
@@ -75,7 +75,7 @@ void usage(const char *programName) {
 	printf("    %s [<switches>] <adventure>\n\n", programName);
 	printf("where the possible optional switches are:\n");
 
-	g_vm->glk_set_style(style_Preformatted);
+	g_io->glk_set_style(style_Preformatted);
 	printf("    -v       verbose mode\n");
 	printf("    -l       log transcript to a file\n");
 	printf("    -c       log player commands to a file\n");
@@ -84,7 +84,7 @@ void usage(const char *programName) {
 	printf("    -t[<n>]  trace game execution, higher <n> gives more trace\n");
 	printf("    -i       ignore version and checksum errors\n");
 	printf("    -r       make regression test easier (don't timestamp, page break, randomize...)\n");
-	g_vm->glk_set_style(style_Normal);
+	g_io->glk_set_style(style_Normal);
 }
 
 
