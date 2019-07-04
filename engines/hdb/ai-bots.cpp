@@ -1374,17 +1374,186 @@ void aiDiverterDraw(AIEntity *e, int mx, int my) {
 }
 #endif
 
+void aiMeerkatInit(AIEntity *e) {
+	e->state = STATE_NONE;
+	e->sequence = 0;
+	if (e->value1 == 1) {
+		e->aiAction = aiMeerkatLookAround;
+		e->state = STATE_MEER_LOOK;
+	} else
+		e->aiAction = aiMeerkatAction;
+}
+
+void aiMeerkatInit2(AIEntity *e) {
+	//  hidden at the start!
+	e->draw = NULL;
+
+	// make the looking around cycle better...
+	e->movedownGfx[3] = e->movedownGfx[1];
+	e->movedownFrames++;
+}
 
 void aiMeerkatDraw(AIEntity *e, int mx, int my) {
-	warning("STUB: AI: aiMeerkatDraw required");
+	char word[3];
+	debug(9, "FIXME: Replace MaskedBlitting with AlphaMaskedBlitting");
+	g_hdb->_window->getGemGfx()->drawMasked(e->value1 - mx, e->value2 - my);
+	g_hdb->_gfx->setCursor(e->value1 + 12 - mx, e->value2 - 8 - my);
+	word[2] = 0;
+	if (!e->special1Frames) {
+		word[0] = '0';
+		word[1] = 0;
+	} else {
+		word[0] = '-';
+		word[1] = '0' + e->special1Frames;
+	}
+	g_hdb->_gfx->drawText(word);
 }
 
 void aiMeerkatAction(AIEntity *e) {
-	warning("STUB: AI: aiMeerkatAction required");
+	AIEntity *p = g_hdb->_ai->getPlayer();
+
+	switch (e->sequence) {
+		// waiting to see the player
+	case 0:
+		if ((abs(p->tileX - e->tileX) <= 1 && p->tileY == e->tileY) ||
+			(abs(p->tileY - e->tileY) <= 1 && p->tileX == e->tileX)) {
+			e->sequence = 1;
+			e->state = STATE_MEER_MOVE;
+			e->animFrame = 0;
+			e->animCycle = 1;
+			e->animDelay = e->animCycle;
+			if (e->onScreen)
+				g_hdb->_sound->playSound(SND_MEERKAT_WARNING);
+		}
+		break;
+		// time to show the mound for a sec...
+	case 1:
+		g_hdb->_ai->animateEntity(e);
+		if (!e->animFrame && e->animDelay == e->animCycle)
+			e->sequence++;
+		if (e->sequence == 2) {
+			e->state = STATE_MEER_APPEAR;
+			e->animFrame = 0;
+			e->animDelay = e->animCycle;
+			if (e->onScreen)
+				g_hdb->_sound->playSound(SND_MEERKAT_APPEAR);
+		}
+		break;
+
+		// pop outta the dirt!
+	case 2:
+		g_hdb->_ai->animateEntity(e);
+		// done w/sequence?
+		if (!e->animFrame && e->animDelay == e->animCycle) {
+			e->sequence++;
+			e->state = STATE_MEER_LOOK;
+			e->animFrame = 0;
+			e->animCycle = 2;
+			e->animDelay = e->animCycle;
+		}
+		break;
+
+		// looking around...... time to bite the player!?
+	case 3:
+	case 4:
+		g_hdb->_ai->animateEntity(e);
+		if (!e->animFrame && e->animDelay == e->animCycle) {
+			e->sequence++;
+			if (e->sequence == 5)
+				e->state = STATE_MEER_DISAPPEAR;
+		}
+		if (g_hdb->_ai->checkPlayerTileCollision(e->tileX, e->tileY)) {
+			e->state = STATE_MEER_BITE;
+			e->sequence = 6;
+			e->animFrame = 0;
+			e->animDelay = e->animCycle;
+			if (e->onScreen)
+				g_hdb->_sound->playSound(SND_MEERKAT_BITE);
+		}
+		break;
+
+		// going back underground!
+	case 5:
+		g_hdb->_ai->animateEntity(e);
+		if (!e->animFrame && e->animDelay == e->animCycle) {
+			e->sequence = 0;;
+			e->state = STATE_NONE;
+			e->draw = NULL;
+		}
+		break;
+
+		// biting the player right now!
+	case 6:
+		g_hdb->_ai->animateEntity(e);
+		// hit the player?
+		if (g_hdb->_ai->checkPlayerTileCollision(e->tileX, e->tileY)) {
+			g_hdb->_ai->stopEntity(p);
+			g_hdb->_ai->setPlayerLock(true);
+			e->sequence = 7;
+			p->moveSpeed <<= 1;
+			if (g_hdb->_ai->findEntity(p->tileX, p->tileY + 1))
+				g_hdb->_ai->setEntityGoal(p, p->tileX, p->tileY - 1);
+			else
+				g_hdb->_ai->setEntityGoal(p, p->tileX, p->tileY + 1);
+			e->aiDraw = aiMeerkatDraw;
+			e->value1 = e->x;
+			e->value2 = e->y;
+			e->blinkFrames = 0;		// index into movement table...
+
+			// figure # of gems to take
+			e->special1Frames = g_hdb->_rnd->getRandomNumber(5) + 1;
+			int	amt = g_hdb->_ai->getGemAmount();
+			if (amt - e->special1Frames < 0)
+				e->special1Frames = amt;
+
+			// if we're in Puzzle Mode and there's no gems left, give one back
+			if (!g_hdb->getActionMode() && !(e->special1Frames - amt) && e->special1Frames)
+				e->special1Frames--;
+
+			amt -= e->special1Frames;
+			g_hdb->_ai->setGemAmount(amt);
+		}
+		// go back to looking?
+		if (!e->animFrame && e->animDelay == e->animCycle) {
+			e->sequence = 3;
+			e->state = STATE_MEER_LOOK;
+			e->animFrame = 0;
+			e->animDelay = e->animCycle;
+		}
+		break;
+
+		// waiting for player to blast backward
+	case 7:
+		g_hdb->_ai->animateEntity(e);
+		if (!p->goalX) {
+			p->moveSpeed = kPlayerMoveSpeed;
+			g_hdb->_ai->setPlayerLock(false);
+			e->sequence = 5;
+			e->state = STATE_MEER_DISAPPEAR;
+			e->animFrame = 0;
+			e->animDelay = e->animCycle;
+		}
+		break;
+	}
+
+	// blasting a gem outta Guy?
+	if (e->value1) {
+		int	gem_xv[] = {0, 0,-2,-3,-4,-4,-3,-2,-2,-2,-2,-1,-1, 100};
+		int gem_yv[] = {-6,-5,-4,-3,-2,-1, 0, 0, 1, 2, 3, 4, 5, 100};
+
+		if (gem_xv[e->blinkFrames] == 100) {
+			e->value1 = 0;
+			e->aiDraw = NULL;
+			return;
+		}
+		e->value1 += gem_xv[e->blinkFrames];
+		e->value2 += gem_yv[e->blinkFrames];
+		e->blinkFrames++;
+	}
 }
 
 void aiMeerkatLookAround(AIEntity *e) {
-	warning("STUB: AI: aiMeerkatLookAround required");
+	g_hdb->_ai->animEntFrames(e);
 }
 
 void aiFatFrogAction(AIEntity *e) {
@@ -1445,14 +1614,6 @@ void aiLaserInit(AIEntity *e) {
 
 void aiLaserInit2(AIEntity *e) {
 	warning("STUB: AI: aiLaserInit2 required");
-}
-
-void aiMeerkatInit(AIEntity *e) {
-	warning("STUB: AI: aiMeerkatInit required");
-}
-
-void aiMeerkatInit2(AIEntity *e) {
-	warning("STUB: AI: aiMeerkatInit2 required");
 }
 
 void aiFatFrogInit(AIEntity *e) {
