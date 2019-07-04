@@ -24,6 +24,7 @@
 #define GLK_ALAN3_GLKIO
 
 #include "glk/alan3/alan3.h"
+#include "glk/alan3/jumps.h"
 #include "glk/windows.h"
 
 namespace Glk {
@@ -31,6 +32,7 @@ namespace Alan3 {
 
 extern winid_t glkMainWin;
 extern winid_t glkStatusWin;
+extern bool onStatusLine;
 
 #undef printf
 #define printf glkio_printf
@@ -41,6 +43,8 @@ extern void showImage(int image, int align);
 extern void playSound(int sound);
 
 extern void setStyle(int style);
+
+extern void statusline(CONTEXT);
 
 } // End of namespace Alan3
 } // End of namespace Glk

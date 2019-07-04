@@ -96,7 +96,6 @@ MODULE_OBJS := \
 	alan3/syntax.o \
 	alan3/sysdep.o \
 	alan3/syserr.o \
-	alan3/term.o \
 	alan3/types.o \
 	alan3/utils.o \
 	alan3/word.o \

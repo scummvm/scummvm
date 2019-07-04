@@ -27,7 +27,6 @@
 #include "glk/alan3/memory.h"
 #include "glk/alan3/word.h"
 #include "glk/alan3/lists.h"
-#include "glk/alan3/term.h"
 #include "glk/alan3/syserr.h"
 #include "glk/alan3/dictionary.h"
 #include "glk/alan3/current.h"
@@ -54,6 +53,18 @@ strid_t logFile;
 
 
 /*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+
+/*
+  getPageSize()
+
+  Try to get the current page size from the system, else use the ones
+  from the header.
+
+ */
+void getPageSize(void) {
+	pageLength = 0;
+	pageWidth = 0;
+}
 
 
 /*----------------------------------------------------------------------*/

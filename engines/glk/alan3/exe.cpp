@@ -41,7 +41,6 @@
 #include "glk/alan3/state.h"
 #include "glk/alan3/syserr.h"
 #include "glk/alan3/sysdep.h"
-#include "glk/alan3/term.h"
 #include "glk/alan3/types.h"
 #include "glk/alan3/utils.h"
 #include "glk/alan3/word.h"

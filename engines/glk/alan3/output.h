@@ -42,6 +42,7 @@ extern bool skipSpace;
 extern strid_t logFile;
 
 /* FUNCTIONS */
+extern void getPageSize();
 extern void setSubHeaderStyle(void);
 extern void setNormalStyle(void);
 extern void newline(void);

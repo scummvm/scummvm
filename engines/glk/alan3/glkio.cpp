@@ -20,15 +20,19 @@
  *
  */
 
-#include "glk/alan3/alan3.h"
 #include "glk/alan3/glkio.h"
 #include "glk/alan3/acode.h"
+#include "glk/alan3/current.h"
+#include "glk/alan3/instance.h"
+#include "glk/alan3/options.h"
+#include "glk/alan3/output.h"
 
 namespace Glk {
 namespace Alan3 {
 
 winid_t glkMainWin;
 winid_t glkStatusWin;
+bool onStatusLine;
 
 void glkio_printf(const char *fmt, ...) {
 	// If there's a savegame being loaded from the launcher, ignore any text out
@@ -95,6 +99,39 @@ void setStyle(int style) {
 		g_vm->glk_set_style(style_BlockQuote);
 		break;
 	}
+}
+
+void statusline(CONTEXT) {
+	uint32 glkWidth;
+	char line[100];
+	int pcol = col;
+
+	if (!statusLineOption) return;
+	if (glkStatusWin == NULL)
+		return;
+
+	g_vm->glk_set_window(glkStatusWin);
+	g_vm->glk_window_clear(glkStatusWin);
+	g_vm->glk_window_get_size(glkStatusWin, &glkWidth, NULL);
+
+	onStatusLine = TRUE;
+	col = 1;
+	g_vm->glk_window_move_cursor(glkStatusWin, 1, 0);
+	CALL1(sayInstance, where(HERO, /*TRUE*/ TRANSITIVE))
+
+		// TODO Add status message1  & 2 as author customizable messages
+		if (header->maximumScore > 0)
+			sprintf(line, "Score %d(%d)/%d moves", current.score, (int)header->maximumScore, current.tick);
+		else
+			sprintf(line, "%d moves", current.tick);
+	g_vm->glk_window_move_cursor(glkStatusWin, glkWidth - strlen(line) - 1, 0);
+	g_vm->glk_put_string(line);
+	needSpace = FALSE;
+
+	col = pcol;
+	onStatusLine = FALSE;
+
+	g_vm->glk_set_window(glkMainWin);
 }
 
 } // End of namespace Alan3

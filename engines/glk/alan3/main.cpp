@@ -51,7 +51,6 @@
 #include "glk/alan3/state.h"
 #include "glk/alan3/syserr.h"
 #include "glk/alan3/syntax.h"
-#include "glk/alan3/term.h"
 #include "glk/alan3/utils.h"
 
 namespace Glk {

@@ -24,7 +24,6 @@
 
 #include "glk/alan3/sysdep.h"
 #include "glk/alan3/output.h"
-#include "glk/alan3/term.h"
 #include "glk/alan3/exe.h"
 #include "glk/alan3/save.h"
 #include "glk/alan3/location.h"
