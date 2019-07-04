@@ -1564,8 +1564,198 @@ void aiFatFrogTongueDraw(AIEntity *e, int mx, int my) {
 	warning("STUB: AI: aiFatFrogTongueDraw required");
 }
 
+void aiGoodFairyInit(AIEntity *e) {
+	e->aiAction = aiGoodFairyAction;
+	e->sequence = 20;
+	e->blinkFrames = e->goalX = 0;
+}
+
+void aiGoodFairyInit2(AIEntity *e) {
+	e->draw = g_hdb->_ai->getStandFrameDir(e);
+}
+
 void aiGoodFairyAction(AIEntity *e) {
-	warning("STUB: AI: aiGoodFairyAction required");
+	AIState state[5] = {STATE_NONE, STATE_MOVEUP, STATE_MOVEDOWN, STATE_MOVELEFT, STATE_MOVERIGHT};
+	int	xvAhead[5] = {9, 0, 0,-1, 1}, yvAhead[5] = {9,-1, 1, 0, 0};
+	int xv, yv;
+	int	result;
+	AIEntity *hit;
+
+	if (e->sequence) {
+		e->sequence--;
+
+		// look around...
+		switch (e->sequence) {
+		case 19:
+			e->state = STATE_MOVEDOWN;
+			break;
+		case 0:
+			{
+				// Create a GEM?
+				if (g_hdb->_rnd->getRandomNumber(100) > 98) {
+					int	spawnOK;
+
+					// spawn a gem in a random direction
+					int	d = g_hdb->_rnd->getRandomNumber(4) + 1;
+					xv = xvAhead[d];
+					yv = yvAhead[d];
+
+					e->sequence = 30;
+					e->state = STATE_MOVEDOWN;
+					// is something there already?
+					if ((g_hdb->_ai->findEntityType(AI_CRATE, e->tileX + xv, e->tileY + yv) != NULL) ||
+						(g_hdb->_ai->findEntityType(AI_LIGHTBARREL, e->tileX + xv, e->tileY + yv) != NULL))
+						return;
+					hit = g_hdb->_ai->legalMove(e->tileX + xv, e->tileY + yv, e->level, &spawnOK);
+					uint32 bg_flags = g_hdb->_map->getMapBGTileFlags(e->tileX + xv, e->tileY + yv);
+					if (hit || !spawnOK || (bg_flags & kFlagSpecial))
+						return;
+
+					g_hdb->_ai->spawn(ITEM_GEM_WHITE, e->dir, e->tileX + xv, e->tileY + yv, NULL, NULL, NULL, DIR_NONE, e->level, 0, 0, 1);
+					g_hdb->_ai->addAnimateTarget(e->x + xv * kTileWidth, e->y + yv * kTileHeight, 0, 3, ANIM_NORMAL, false, false, GEM_FLASH);
+					if (e->onScreen) {
+						g_hdb->_sound->playSound(SND_GET_GEM);
+						g_hdb->_sound->playSound(SND_GOOD_FAERIE_SPELL);
+					}
+					return;
+				}
+
+				int	tries = 4;
+				do {
+					// pick a random direction, then a random # of tiles in that direction
+					int	 rnd = g_hdb->_rnd->getRandomNumber(4) + 1;
+					AIDir d = (AIDir)rnd;
+					int	 walk = g_hdb->_rnd->getRandomNumber(5) + 1;
+					AIEntity *p = g_hdb->_ai->getPlayer();
+
+					// if player is within 3 tiles, move closer
+					if (abs(p->tileX - e->tileX) < 3 && abs(p->tileY - e->tileY) < 3) {
+						if (abs(p->tileX - e->tileX) > abs(p->tileY - e->tileY)) {
+						testx:
+							if (p->tileX != e->tileX) {
+								if (p->tileX < e->tileX)
+									d = DIR_LEFT;
+								else
+									d = DIR_RIGHT;
+							} else if (p->tileY != e->tileY)
+								goto testy;
+						} else {
+						testy:
+							if (p->tileY != e->tileY) {
+								if (p->tileY <= e->tileY)
+									d = DIR_UP;
+								else
+									d = DIR_DOWN;
+							} else if (p->tileX != e->tileX)
+								goto testx;
+						}
+					}
+
+					// special case: if player is exactly 2 tiles away, move out of the way
+					if (abs(p->tileX - e->tileX) == 2 && p->tileY == e->tileY) {
+						int	move_ok;
+						d = DIR_UP;
+						AIEntity *h = g_hdb->_ai->legalMoveOverWater(e->tileX, e->tileY - 1, e->level, &move_ok);
+						if (h || !move_ok)
+							d = DIR_DOWN;
+					} else if (abs(p->tileY - e->tileY) == 2 && p->tileX == e->tileX) {
+						int	move_ok;
+						d = DIR_LEFT;
+						AIEntity *h = g_hdb->_ai->legalMoveOverWater(e->tileX - 1, e->tileY, e->level, &move_ok);
+						if (h || !move_ok)
+							d = DIR_RIGHT;
+					}
+
+					e->dir = d;
+					e->state = state[d];
+					xv = xvAhead[d] * walk;
+					if (e->tileX + xv < 1)
+						xv = -e->tileX + 1;
+					if (e->tileX + xv > g_hdb->_map->_width)
+						xv = g_hdb->_map->_width - e->tileX - 1;
+
+					yv = yvAhead[d] * walk;
+					if (e->tileY + yv < 1)
+						yv = -e->tileY + 1;
+					if (e->tileY + yv > g_hdb->_map->_height)
+						yv = g_hdb->_map->_height - e->tileY - 1;
+
+					e->value1 = xvAhead[d];
+					e->value2 = yvAhead[d];
+					e->moveSpeed = kPlayerMoveSpeed;
+
+					// make sure we can move over water & white gems, but not fg_hdb->_ai->y blockers and solids
+					hit = g_hdb->_ai->legalMoveOverWater(e->tileX + e->value1, e->tileY + e->value2, e->level, &result);
+					if (hit && ((hit->type == ITEM_GEM_WHITE) || (hit->type == AI_GUY)))
+						hit = NULL;
+					uint32 bg_flags = g_hdb->_map->getMapBGTileFlags(e->tileX + e->value1, e->tileY + e->value2);
+					if (result && !hit && !(bg_flags & kFlagSpecial)) {
+						g_hdb->_ai->setEntityGoal(e, e->tileX + xv, e->tileY + yv);
+						if (e->onScreen && !g_hdb->_rnd->getRandomNumber(30))
+							g_hdb->_sound->playSound(SND_GOOD_FAERIE_AMBIENT);
+						g_hdb->_ai->animateEntity(e);
+						return;
+					}
+					tries--;		// don't lock the system if the fg_hdb->_ai->y is cornered
+				} while (!result && tries);
+
+				// couldn't find a place to move so just sit here for a sec & try agg_hdb->_ai->
+				e->dir = DIR_NONE;
+				e->state = STATE_MOVEDOWN;
+				e->sequence = 1;
+				e->value1 = e->value2 = e->xVel = e->yVel = 0;
+			}
+		}
+		g_hdb->_ai->animEntFrames(e);
+		return;
+	}
+
+	// in the process of moving around...
+	if (e->goalX) {
+		// did we run into a wall, entity, water, slime etc?
+		// if so, pick a new direction!
+		if (onEvenTile(e->x, e->y)) {
+
+			int	index;
+			// did we hit a Fg_hdb->_ai->YSTONE??? if so - teleport the thing at the other end to here!
+			index = g_hdb->_ai->checkFairystones(e->tileX, e->tileY);
+			if (index >= 0) {
+				int	sx, sy;
+				g_hdb->_ai->getFairystonesSrc(index, &sx, &sy);
+				hit = g_hdb->_ai->findEntity(sx, sy);
+				if (hit && (hit != g_hdb->_ai->getPlayer())) {
+					hit->tileX = e->tileX;
+					hit->tileY = e->tileY;
+					hit->x = hit->tileX * kTileWidth;
+					hit->y = hit->tileY * kTileHeight;
+					hit->goalX = hit->goalY = 0;
+					g_hdb->_ai->addAnimateTarget(e->x, e->y, 0, 7, ANIM_NORMAL, false, false, TELEPORT_FLASH);
+					g_hdb->_ai->addAnimateTarget(sx * kTileWidth, sy * kTileHeight, 0, 7, ANIM_NORMAL, false, false, TELEPORT_FLASH);
+					if (e->onScreen)
+						g_hdb->_sound->playSound(SND_TELEPORT);
+					if (hit->onScreen)
+						g_hdb->_sound->playSound(SND_TELEPORT);
+				}
+			}
+
+			// see if we're about to move to a bad spot, which means:
+			// (1) we're gonna hit a solid wall; ok to move over water/slime
+			// (2) ok to move thru white gems
+			// (3) cannot move thru SPECIAL flagged tiles (fg_hdb->_ai->y blockers)
+			hit = g_hdb->_ai->legalMoveOverWater(e->tileX + e->value1, e->tileY + e->value2, e->level, &result);
+			uint32 bg_flags = g_hdb->_map->getMapBGTileFlags(e->tileX + e->value1, e->tileY + e->value2);
+			if (!result || (hit && hit->type != ITEM_GEM_WHITE && hit->type != AI_GUY) || (bg_flags & kFlagSpecial)) {
+				g_hdb->_ai->stopEntity(e);
+				e->value1 = e->value2 = 0;
+				e->state = STATE_MOVEDOWN;
+				e->sequence = 20;
+				return;
+			}
+		}
+		g_hdb->_ai->animateEntity(e);
+	} else
+		// if not, start looking around!
+		e->sequence = 20;
 }
 
 void aiBadFairyAction(AIEntity *e) {
@@ -1622,18 +1812,6 @@ void aiFatFrogInit(AIEntity *e) {
 
 void aiFatFrogInit2(AIEntity *e) {
 	warning("STUB: AI: aiFatFrogInit2 required");
-}
-
-void aiGoodFairyInit(AIEntity *e) {
-	warning("STUB: AI: aiGoodFairyInit required");
-}
-
-void aiGoodFairyInit2(AIEntity *e) {
-	warning("STUB: AI: aiGoodFairyInit2 required");
-}
-
-void aiGoodFairyMoveaway(AIEntity *e) {
-	warning("STUB: AI: aiGoodFairyMoveaway required");
 }
 
 void aiBadFairyInit(AIEntity *e) {
