@@ -596,7 +596,12 @@ bool Map::load(Common::SeekableReadStream *stream) {
 		case INFO_FAIRY_SRC3:
 		case INFO_FAIRY_SRC4:
 		case INFO_FAIRY_SRC5:
-			warning("STUB: Map::load: AddToFairystones(SRC) required");
+			g_hdb->_ai->addToFairystones(
+				aiInfo[_iconList[i].icon].type - INFO_FAIRY_SRC,
+				_iconList[i].x,
+				_iconList[i].y,
+				0
+			);
 			break;
 
 		case INFO_FAIRY_DEST:
@@ -604,7 +609,12 @@ bool Map::load(Common::SeekableReadStream *stream) {
 		case INFO_FAIRY_DEST3:
 		case INFO_FAIRY_DEST4:
 		case INFO_FAIRY_DEST5:
-			warning("STUB: Map::load: AddToFairystones(DEST) required");
+			g_hdb->_ai->addToFairystones(
+				aiInfo[_iconList[i].icon].type - INFO_FAIRY_DEST,
+				_iconList[i].x,
+				_iconList[i].y,
+				1
+			);
 			break;
 		}
 	}
