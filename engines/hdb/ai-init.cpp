@@ -772,6 +772,19 @@ bool AI::init() {
 	_kcHolderBlackOff	= g_hdb->_gfx->getTileIndex("anim_t32_kcholder_black_off1");
 	_kcHolderBlackOn	= g_hdb->_gfx->getTileIndex("t32_kcholder_black_on");
 
+	// icepuff snowball
+	icepSnowballGfxDown = icepSnowballGfxLeft = icepSnowballGfxRight = NULL;
+
+	// Frogglick
+	tileFroglickMiddleUD = tileFroglickMiddleLR = NULL;
+	tileFroglickWiggleLeft[0] = tileFroglickWiggleRight[0] = NULL;
+
+	// Dragon
+	gfxDragonAsleep = NULL;
+
+	// laser beam
+	gfxLaserbeamUD[0] = gfxLaserbeamUD[1] = gfxLaserbeamLR[0] = gfxLaserbeamLR[1] = NULL;
+
 	_dummyPlayer.type = AI_GUY;
 	_dummyLaser.type = AI_LASERBEAM;
 	strcpy(_dummyPlayer.entityName, "Virtual Player");
@@ -833,6 +846,80 @@ void AI::restartSystem() {
 	memset(_clubUpGfx, NULL, kMaxAnimFrames * sizeof(Tile *));
 	memset(_clubLeftGfx, NULL, kMaxAnimFrames * sizeof(Tile *));
 	memset(_clubRightGfx, NULL, kMaxAnimFrames * sizeof(Tile *));
+
+	int i;
+	if (icepSnowballGfxDown) {
+		icepSnowballGfxDown->free();
+		icepSnowballGfxDown = NULL;
+	}
+	if (icepSnowballGfxLeft) {
+		icepSnowballGfxLeft->free();
+		icepSnowballGfxLeft = NULL;
+	}
+	if (icepSnowballGfxRight) {
+		icepSnowballGfxRight->free();
+		icepSnowballGfxRight = NULL;
+	}
+
+	if (tileFroglickMiddleUD) {
+		tileFroglickMiddleUD->free();
+		tileFroglickMiddleUD = NULL;
+	}
+	if (tileFroglickWiggleUD[0]) {
+		for (i = 0; i < 3; i++) {
+			tileFroglickWiggleUD[i]->free();
+			tileFroglickWiggleUD[i] = NULL;
+		}
+	}
+
+	if (tileFroglickMiddleLR) {
+		tileFroglickMiddleLR->free();
+		tileFroglickMiddleLR = NULL;
+	}
+	if (tileFroglickWiggleLeft[0]) {
+		for (i = 0; i < 3; i++) {
+			tileFroglickWiggleLeft[i]->free();
+			tileFroglickWiggleLeft[i] = NULL;
+		}
+	}
+	if (tileFroglickWiggleRight[0]) {
+		for (i = 0; i < 3; i++) {
+			tileFroglickWiggleRight[i]->free();
+			tileFroglickWiggleRight[i] = NULL;
+		}
+	}
+
+	// dragon!  see ya!
+	if (gfxDragonAsleep) {
+		gfxDragonAsleep->free();
+		gfxDragonAsleep = NULL;
+		gfxDragonFlap[0]->free();
+		gfxDragonFlap[1]->free();
+		gfxDragonFlap[0] = gfxDragonFlap[1] = NULL;
+		gfxDragonBreathe[0]->free();
+		gfxDragonBreathe[1]->free();
+		gfxDragonBreathe[2]->free();
+		gfxDragonBreathe[0] = gfxDragonBreathe[1] = gfxDragonBreathe[2] = NULL;
+	}
+
+	// laser beams
+	if (gfxLaserbeamUD[0]) {
+		for (i = 0; i < 4; i++) {
+			gfxLaserbeamUD[i]->free();
+			gfxLaserbeamUDTop[i]->free();
+			gfxLaserbeamUDBottom[i]->free();
+			gfxLaserbeamLR[i]->free();
+			gfxLaserbeamLRLeft[i]->free();
+			gfxLaserbeamLRRight[i]->free();
+
+			gfxLaserbeamUD[i] = NULL;
+			gfxLaserbeamUDTop[i] = NULL;
+			gfxLaserbeamUDBottom[i] = NULL;
+			gfxLaserbeamLR[i] = NULL;
+			gfxLaserbeamLRLeft[i] = NULL;
+			gfxLaserbeamLRRight[i] = NULL;
+		}
+	}
 
 	// Clear the Action list
 	memset(_actions, 0, sizeof(_actions));
