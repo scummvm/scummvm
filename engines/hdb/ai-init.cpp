@@ -773,19 +773,18 @@ bool AI::init() {
 	_kcHolderBlackOn	= g_hdb->_gfx->getTileIndex("t32_kcholder_black_on");
 
 	// icepuff snowball
-	g_hdb->_gfx->_icepSnowballGfxDown = g_hdb->_gfx->_icepSnowballGfxLeft = 
-		g_hdb->_gfx->_icepSnowballGfxRight = NULL;
+	_icepSnowballGfxDown = _icepSnowballGfxLeft = 
+		_icepSnowballGfxRight = NULL;
 
 	// Frogglick
-	g_hdb->_gfx->_tileFroglickMiddleUD = g_hdb->_gfx->_tileFroglickMiddleLR = NULL;
-	g_hdb->_gfx->_tileFroglickWiggleLeft[0] = g_hdb->_gfx->_tileFroglickWiggleRight[0] = NULL;
+	_tileFroglickMiddleUD = _tileFroglickMiddleLR = NULL;
+	_tileFroglickWiggleLeft[0] = _tileFroglickWiggleRight[0] = NULL;
 
 	// Dragon
-	g_hdb->_gfx->_gfxDragonAsleep = NULL;
+	_gfxDragonAsleep = NULL;
 
 	// laser beam
-	g_hdb->_gfx->_gfxLaserbeamUD[0] = g_hdb->_gfx->_gfxLaserbeamUD[1] = 
-		g_hdb->_gfx->_gfxLaserbeamLR[0] = g_hdb->_gfx->_gfxLaserbeamLR[1] = NULL;
+	_gfxLaserbeamUD[0] = _gfxLaserbeamUD[1] = _gfxLaserbeamLR[0] = _gfxLaserbeamLR[1] = NULL;
 
 	_dummyPlayer.type = AI_GUY;
 	_dummyLaser.type = AI_LASERBEAM;
@@ -850,77 +849,77 @@ void AI::restartSystem() {
 	memset(_clubRightGfx, NULL, kMaxAnimFrames * sizeof(Tile *));
 
 	int i;
-	if (g_hdb->_gfx->_icepSnowballGfxDown) {
-		g_hdb->_gfx->_icepSnowballGfxDown->free();
-		g_hdb->_gfx->_icepSnowballGfxDown = NULL;
+	if (_icepSnowballGfxDown) {
+		_icepSnowballGfxDown->free();
+		_icepSnowballGfxDown = NULL;
 	}
-	if (g_hdb->_gfx->_icepSnowballGfxLeft) {
-		g_hdb->_gfx->_icepSnowballGfxLeft->free();
-		g_hdb->_gfx->_icepSnowballGfxLeft = NULL;
+	if (_icepSnowballGfxLeft) {
+		_icepSnowballGfxLeft->free();
+		_icepSnowballGfxLeft = NULL;
 	}
-	if (g_hdb->_gfx->_icepSnowballGfxRight) {
-		g_hdb->_gfx->_icepSnowballGfxRight->free();
-		g_hdb->_gfx->_icepSnowballGfxRight = NULL;
+	if (_icepSnowballGfxRight) {
+		_icepSnowballGfxRight->free();
+		_icepSnowballGfxRight = NULL;
 	}
 
-	if (g_hdb->_gfx->_tileFroglickMiddleUD) {
-		g_hdb->_gfx->_tileFroglickMiddleUD->free();
-		g_hdb->_gfx->_tileFroglickMiddleUD = NULL;
+	if (_tileFroglickMiddleUD) {
+		_tileFroglickMiddleUD->free();
+		_tileFroglickMiddleUD = NULL;
 	}
-	if (g_hdb->_gfx->_tileFroglickWiggleUD[0]) {
+	if (_tileFroglickWiggleUD[0]) {
 		for (i = 0; i < 3; i++) {
-			g_hdb->_gfx->_tileFroglickWiggleUD[i]->free();
-			g_hdb->_gfx->_tileFroglickWiggleUD[i] = NULL;
+			_tileFroglickWiggleUD[i]->free();
+			_tileFroglickWiggleUD[i] = NULL;
 		}
 	}
 
-	if (g_hdb->_gfx->_tileFroglickMiddleLR) {
-		g_hdb->_gfx->_tileFroglickMiddleLR->free();
-		g_hdb->_gfx->_tileFroglickMiddleLR = NULL;
+	if (_tileFroglickMiddleLR) {
+		_tileFroglickMiddleLR->free();
+		_tileFroglickMiddleLR = NULL;
 	}
-	if (g_hdb->_gfx->_tileFroglickWiggleLeft[0]) {
+	if (_tileFroglickWiggleLeft[0]) {
 		for (i = 0; i < 3; i++) {
-			g_hdb->_gfx->_tileFroglickWiggleLeft[i]->free();
-			g_hdb->_gfx->_tileFroglickWiggleLeft[i] = NULL;
+			_tileFroglickWiggleLeft[i]->free();
+			_tileFroglickWiggleLeft[i] = NULL;
 		}
 	}
-	if (g_hdb->_gfx->_tileFroglickWiggleRight[0]) {
+	if (_tileFroglickWiggleRight[0]) {
 		for (i = 0; i < 3; i++) {
-			g_hdb->_gfx->_tileFroglickWiggleRight[i]->free();
-			g_hdb->_gfx->_tileFroglickWiggleRight[i] = NULL;
+			_tileFroglickWiggleRight[i]->free();
+			_tileFroglickWiggleRight[i] = NULL;
 		}
 	}
 
 	// dragon!  see ya!
-	if (g_hdb->_gfx->_gfxDragonAsleep) {
-		g_hdb->_gfx->_gfxDragonAsleep->free();
-		g_hdb->_gfx->_gfxDragonAsleep = NULL;
-		g_hdb->_gfx->_gfxDragonFlap[0]->free();
-		g_hdb->_gfx->_gfxDragonFlap[1]->free();
-		g_hdb->_gfx->_gfxDragonFlap[0] = g_hdb->_gfx->_gfxDragonFlap[1] = NULL;
-		g_hdb->_gfx->_gfxDragonBreathe[0]->free();
-		g_hdb->_gfx->_gfxDragonBreathe[1]->free();
-		g_hdb->_gfx->_gfxDragonBreathe[2]->free();
-		g_hdb->_gfx->_gfxDragonBreathe[0] = g_hdb->_gfx->_gfxDragonBreathe[1] = 
-			g_hdb->_gfx->_gfxDragonBreathe[2] = NULL;
+	if (_gfxDragonAsleep) {
+		_gfxDragonAsleep->free();
+		_gfxDragonAsleep = NULL;
+		_gfxDragonFlap[0]->free();
+		_gfxDragonFlap[1]->free();
+		_gfxDragonFlap[0] = _gfxDragonFlap[1] = NULL;
+		_gfxDragonBreathe[0]->free();
+		_gfxDragonBreathe[1]->free();
+		_gfxDragonBreathe[2]->free();
+		_gfxDragonBreathe[0] = _gfxDragonBreathe[1] = 
+			_gfxDragonBreathe[2] = NULL;
 	}
 
 	// laser beams
-	if (g_hdb->_gfx->_gfxLaserbeamUD[0]) {
+	if (_gfxLaserbeamUD[0]) {
 		for (i = 0; i < 4; i++) {
-			g_hdb->_gfx->_gfxLaserbeamUD[i]->free();
-			g_hdb->_gfx->_gfxLaserbeamUDTop[i]->free();
-			g_hdb->_gfx->_gfxLaserbeamUDBottom[i]->free();
-			g_hdb->_gfx->_gfxLaserbeamLR[i]->free();
-			g_hdb->_gfx->_gfxLaserbeamLRLeft[i]->free();
-			g_hdb->_gfx->_gfxLaserbeamLRRight[i]->free();
+			_gfxLaserbeamUD[i]->free();
+			_gfxLaserbeamUDTop[i]->free();
+			_gfxLaserbeamUDBottom[i]->free();
+			_gfxLaserbeamLR[i]->free();
+			_gfxLaserbeamLRLeft[i]->free();
+			_gfxLaserbeamLRRight[i]->free();
 
-			g_hdb->_gfx->_gfxLaserbeamUD[i] = NULL;
-			g_hdb->_gfx->_gfxLaserbeamUDTop[i] = NULL;
-			g_hdb->_gfx->_gfxLaserbeamUDBottom[i] = NULL;
-			g_hdb->_gfx->_gfxLaserbeamLR[i] = NULL;
-			g_hdb->_gfx->_gfxLaserbeamLRLeft[i] = NULL;
-			g_hdb->_gfx->_gfxLaserbeamLRRight[i] = NULL;
+			_gfxLaserbeamUD[i] = NULL;
+			_gfxLaserbeamUDTop[i] = NULL;
+			_gfxLaserbeamUDBottom[i] = NULL;
+			_gfxLaserbeamLR[i] = NULL;
+			_gfxLaserbeamLRLeft[i] = NULL;
+			_gfxLaserbeamLRRight[i] = NULL;
 		}
 	}
 

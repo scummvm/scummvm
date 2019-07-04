@@ -148,29 +148,6 @@ public:
 	void setCursor(int x, int y);
 	void getCursor(int *x, int *y);
 
-	// Some Gfx
-
-	Picture *_icepSnowballGfxDown;		// ICEPUFF's snowball moving down
-	Picture *_icepSnowballGfxLeft;		// ICEPUFF's snowball moving left
-	Picture *_icepSnowballGfxRight;		// ICEPUFF's snowball moving right
-
-	Tile *_tileFroglickMiddleUD;
-	Tile *_tileFroglickWiggleUD[3];
-	Tile *_tileFroglickMiddleLR;
-	Tile *_tileFroglickWiggleLeft[3];
-	Tile *_tileFroglickWiggleRight[3];
-
-	Picture *_gfxDragonAsleep;
-	Picture *_gfxDragonFlap[2];
-	Picture *_gfxDragonBreathe[3];
-
-	Tile *_gfxLaserbeamUD[4];
-	Tile *_gfxLaserbeamUDTop[4];
-	Tile *_gfxLaserbeamUDBottom[4];
-	Tile *_gfxLaserbeamLR[4];
-	Tile *_gfxLaserbeamLRLeft[4];
-	Tile *_gfxLaserbeamLRRight[4];
-
 private:
 	int _numTiles;
 	TileLookup *_tLookupArray;
