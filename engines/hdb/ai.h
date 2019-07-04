@@ -774,7 +774,6 @@ struct CineBlit {
 	}
 #define spawnBlocking(x, y, level)	g_hdb->_ai->spawn(AI_NONE, DIR_NONE, x, y, NULL, NULL, NULL, DIR_NONE, level, 0, 0, 0)
 
-#if 0
 extern	Picture *icepSnowballGfxDown;		// ICEPUFF's snowball moving down
 extern	Picture *icepSnowballGfxLeft;		// ICEPUFF's snowball moving left
 extern	Picture *icepSnowballGfxRight;		// ICEPUFF's snowball moving right
@@ -795,7 +794,6 @@ extern	Tile *gfxLaserbeamUDBottom[4];
 extern	Tile *gfxLaserbeamLR[4];
 extern	Tile *gfxLaserbeamLRLeft[4];
 extern	Tile *gfxLaserbeamLRRight[4];
-#endif
 
 class AI {
 public:

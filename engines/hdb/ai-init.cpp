@@ -772,7 +772,6 @@ bool AI::init() {
 	_kcHolderBlackOff	= g_hdb->_gfx->getTileIndex("anim_t32_kcholder_black_off1");
 	_kcHolderBlackOn	= g_hdb->_gfx->getTileIndex("t32_kcholder_black_on");
 
-#if 0
 	// icepuff snowball
 	icepSnowballGfxDown = icepSnowballGfxLeft = icepSnowballGfxRight = NULL;
 
@@ -785,7 +784,6 @@ bool AI::init() {
 
 	// laser beam
 	gfxLaserbeamUD[0] = gfxLaserbeamUD[1] = gfxLaserbeamLR[0] = gfxLaserbeamLR[1] = NULL;
-#endif
 
 	_dummyPlayer.type = AI_GUY;
 	_dummyLaser.type = AI_LASERBEAM;
@@ -849,7 +847,6 @@ void AI::restartSystem() {
 	memset(_clubLeftGfx, NULL, kMaxAnimFrames * sizeof(Tile *));
 	memset(_clubRightGfx, NULL, kMaxAnimFrames * sizeof(Tile *));
 
-#if 0
 	int i;
 	if (icepSnowballGfxDown) {
 		icepSnowballGfxDown->free();
@@ -923,7 +920,6 @@ void AI::restartSystem() {
 			gfxLaserbeamLRRight[i] = NULL;
 		}
 	}
-#endif
 
 	// Clear the Action list
 	memset(_actions, 0, sizeof(_actions));
