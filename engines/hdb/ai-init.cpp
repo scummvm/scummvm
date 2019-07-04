@@ -968,6 +968,9 @@ void AI::restartSystem() {
 	// Clear Bridges
 	memset(&_bridges[0], 0, sizeof(_bridges));
 	_numBridges = 0;
+
+	// No Gate Puddles
+	_gatePuddles = 0;
 }
 
 void AI::initAnimInfo() {
