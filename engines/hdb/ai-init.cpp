@@ -778,7 +778,7 @@ bool AI::init() {
 
 	// Frogglick
 	_tileFroglickMiddleUD = _tileFroglickMiddleLR = NULL;
-	_tileFroglickWiggleLeft[0] = _tileFroglickWiggleRight[0] = NULL;
+	_tileFroglickWiggleUD[0] = _tileFroglickWiggleLeft[0] = _tileFroglickWiggleRight[0] = NULL;
 
 	// Dragon
 	_gfxDragonAsleep = NULL;
