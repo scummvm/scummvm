@@ -36,7 +36,6 @@
 #include "glk/alan3/memory.h"
 #include "glk/alan3/options.h"
 #include "glk/alan3/output.h"
-#include "glk/alan3/readline.h"
 #include "glk/alan3/sysdep.h"
 #include "glk/alan3/utils.h"
 #include "glk/streams.h"

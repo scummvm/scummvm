@@ -35,7 +35,6 @@
 #include "glk/alan3/msg.h"
 #include "glk/alan3/output.h"
 #include "glk/alan3/options.h"
-#include "glk/alan3/readline.h"
 #include "glk/alan3/save.h"
 #include "glk/alan3/score.h"
 #include "glk/alan3/state.h"

@@ -83,7 +83,6 @@ MODULE_OBJS := \
 	alan3/parameter_position.o \
 	alan3/params.o \
 	alan3/parse.o \
-	alan3/readline.o \
 	alan3/reverse.o \
 	alan3/rules.o \
 	alan3/save.o \

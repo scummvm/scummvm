@@ -134,5 +134,64 @@ void statusline(CONTEXT) {
 	g_vm->glk_set_window(glkMainWin);
 }
 
+
+/*======================================================================
+
+  readline()
+
+  Read a line from the user, with history and editing
+
+*/
+
+/* TODO - length of user buffer should be used */
+bool readline(CONTEXT, char *buffer, size_t maxLen) {
+	event_t event;
+	static bool readingCommands = FALSE;
+	static frefid_t commandFileRef;
+	static strid_t commandFile;
+
+	if (readingCommands) {
+		if (g_vm->glk_get_line_stream(commandFile, buffer, maxLen) == 0) {
+			g_vm->glk_stream_close(commandFile, NULL);
+			readingCommands = FALSE;
+		} else {
+			g_vm->glk_set_style(style_Input);
+			printf(buffer);
+			g_vm->glk_set_style(style_Normal);
+		}
+	} else {
+		g_vm->glk_request_line_event(glkMainWin, buffer, maxLen, 0);
+
+		do {
+			g_vm->glk_select(&event);
+			if (g_vm->shouldQuit())
+				LONG_JUMP0
+
+			switch (event.type) {
+			case evtype_Arrange:
+				R0CALL0(statusline)
+				break;
+
+			default:
+				break;
+			}
+		} while (event.type != evtype_LineInput);
+		if (buffer[0] == '@') {
+			buffer[event.val1] = 0;
+			commandFileRef = g_vm->glk_fileref_create_by_name(fileusage_InputRecord + fileusage_TextMode, &buffer[1], 0);
+			commandFile = g_vm->glk_stream_open_file(commandFileRef, filemode_Read, 0);
+			if (commandFile != NULL)
+				if (g_vm->glk_get_line_stream(commandFile, buffer, maxLen) != 0) {
+					readingCommands = TRUE;
+					g_vm->glk_set_style(style_Input);
+					printf(buffer);
+					g_vm->glk_set_style(style_Normal);
+				}
+		} else
+			buffer[event.val1] = 0;
+	}
+	return TRUE;
+}
+
 } // End of namespace Alan3
 } // End of namespace Glk

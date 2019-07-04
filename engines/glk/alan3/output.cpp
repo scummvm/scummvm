@@ -31,7 +31,6 @@
 #include "glk/alan3/dictionary.h"
 #include "glk/alan3/current.h"
 #include "glk/alan3/msg.h"
-#include "glk/alan3/readline.h"
 #include "glk/alan3/sysdep.h"
 #include "glk/alan3/instance.h"
 

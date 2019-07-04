@@ -46,6 +46,8 @@ extern void setStyle(int style);
 
 extern void statusline(CONTEXT);
 
+extern bool readline(CONTEXT, char *usrBuf, size_t maxLen);
+
 } // End of namespace Alan3
 } // End of namespace Glk
 
