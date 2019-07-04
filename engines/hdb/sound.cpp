@@ -34,6 +34,11 @@ bool Sound::playSound(int index) {
 	return true;
 }
 
+bool Sound::playSoundEx(int index, int channel, bool loop) {
+	debug(9, "STUB: Play SoundEx");
+	return true;
+}
+
 bool Sound::playVoice(int index, int actor) {
 	warning("STUB: Play Voice");
 	return true;
