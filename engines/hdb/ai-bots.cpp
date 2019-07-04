@@ -1268,6 +1268,10 @@ void aiDiverterAction(AIEntity *e) {
 }
 
 void aiDiverterDraw(AIEntity *e, int mx, int my) {
+}
+
+#if 0
+void aiDiverterDraw(AIEntity *e, int mx, int my) {
 	int		i;
 	if (!e->value1 && !e->value2)
 		return;
@@ -1356,6 +1360,8 @@ void aiDiverterDraw(AIEntity *e, int mx, int my) {
 	}
 	e->movedownFrames++;
 }
+#endif
+
 
 void aiMeerkatDraw(AIEntity *e, int mx, int my) {
 	warning("STUB: AI: aiMeerkatDraw required");
