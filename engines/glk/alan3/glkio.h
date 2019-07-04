@@ -23,8 +23,6 @@
 #ifndef GLK_ALAN3_GLKIO
 #define GLK_ALAN3_GLKIO
 
-/* Header file for Glk output for Alan interpreter */
-
 #include "glk/alan3/alan3.h"
 #include "glk/windows.h"
 
@@ -34,11 +32,15 @@ namespace Alan3 {
 extern winid_t glkMainWin;
 extern winid_t glkStatusWin;
 
-/* NB: this header must be included in any file which calls printf() */
-
 #undef printf
 #define printf glkio_printf
 extern void glkio_printf(const char *, ...);
+
+extern void showImage(int image, int align);
+
+extern void playSound(int sound);
+
+extern void setStyle(int style);
 
 } // End of namespace Alan3
 } // End of namespace Glk

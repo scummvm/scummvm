@@ -22,6 +22,7 @@
 
 #include "glk/alan3/alan3.h"
 #include "glk/alan3/glkio.h"
+#include "glk/alan3/acode.h"
 
 namespace Glk {
 namespace Alan3 {
@@ -47,6 +48,53 @@ void glkio_printf(const char *fmt, ...) {
 	}
 
 	va_end(argp);
+}
+
+void showImage(int image, int align) {
+	uint ecode;
+
+	if ((g_vm->glk_gestalt(gestalt_Graphics, 0) == 1) &&
+		(g_vm->glk_gestalt(gestalt_DrawImage, wintype_TextBuffer) == 1)) {
+		g_vm->glk_window_flow_break(glkMainWin);
+		printf("\n");
+		ecode = g_vm->glk_image_draw(glkMainWin, image, imagealign_MarginLeft, 0);
+		(void)ecode;
+	}
+}
+
+void playSound(int sound) {
+#ifdef GLK_MODULE_SOUND
+	static schanid_t soundChannel = NULL;
+
+	if (g_vm->glk_gestalt(gestalt_Sound, 0) == 1) {
+		if (soundChannel == NULL)
+			soundChannel = g_vm->glk_schannel_create(0);
+		if (soundChannel != NULL) {
+			g_vm->glk_schannel_stop(soundChannel);
+			(void)g_vm->glk_schannel_play(soundChannel, sound);
+		}
+	}
+#endif
+}
+
+void setStyle(int style) {
+	switch (style) {
+	case NORMAL_STYLE:
+		g_vm->glk_set_style(style_Normal);
+		break;
+	case EMPHASIZED_STYLE:
+		g_vm->glk_set_style(style_Emphasized);
+		break;
+	case PREFORMATTED_STYLE:
+		g_vm->glk_set_style(style_Preformatted);
+		break;
+	case ALERT_STYLE:
+		g_vm->glk_set_style(style_Alert);
+		break;
+	case QUOTE_STYLE:
+		g_vm->glk_set_style(style_BlockQuote);
+		break;
+	}
 }
 
 } // End of namespace Alan3

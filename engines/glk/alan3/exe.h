@@ -59,9 +59,6 @@ extern Aptr strip(bool stripFromBeginningNotEnd, int count, bool stripWordsNotCh
 extern Aptr concat(Aptr s1, Aptr s2);
 extern char *getStringFromFile(Aword fpos, Aword len);
 extern void print(Aword fpos, Aword len);
-extern void setStyle(int style);
-extern void showImage(int image, int align);
-extern void playSound(int sound);
 extern void score(Aword sc);
 extern void visits(Aword v);
 extern void undo(void);
