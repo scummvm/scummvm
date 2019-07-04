@@ -35,7 +35,6 @@ namespace Alan3 {
 #endif
 
 /* DATA */
-extern char *adventureName; /* The name of the game */
 extern char *adventureFileName;
 
 /* FUNCTIONS */

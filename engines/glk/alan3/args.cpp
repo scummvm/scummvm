@@ -32,8 +32,6 @@ namespace Glk {
 namespace Alan3 {
 
 /* PUBLIC DATA */
-/* The files and filenames */
-char *adventureName;        /* The name of the game */
 char *adventureFileName;
 
 /*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/

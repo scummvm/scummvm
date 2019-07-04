@@ -69,7 +69,6 @@ static void saveSets(Common::WriteStream *saveFile) {
 static void saveGameInfo(Common::WriteStream *saveFile) {
 	saveFile->writeUint32BE(MKTAG('A', 'S', 'A', 'V'));
 	saveFile->write(header->version, 4);
-	saveFile->write(adventureName, strlen(adventureName) + 1);
 	saveFile->writeUint32LE(header->uid);
 }
 
@@ -222,17 +221,6 @@ static void verifyGameId(CONTEXT, Common::SeekableReadStream *saveFile) {
 
 
 /*----------------------------------------------------------------------*/
-static void verifyGameName(CONTEXT, Common::SeekableReadStream *saveFile) {
-	char savedName[256];
-	int i = 0;
-
-	while ((savedName[i++] = saveFile->readByte()) != '\0');
-	if (strcmp(savedName, adventureName) != 0)
-		error(context, M_SAVENAME);
-}
-
-
-/*----------------------------------------------------------------------*/
 static void verifyCompilerVersion(CONTEXT, Common::SeekableReadStream *saveFile) {
 	char savedVersion[4];
 
@@ -261,10 +249,6 @@ bool restoreGame(Common::SeekableReadStream *saveFile) {
 
 	// Verify version of compiler/interpreter of saved game with us
 	verifyCompilerVersion(ctx, saveFile);
-	if (ctx._break) return false;
-
-	// Verify name of game 
-	verifyGameName(ctx, saveFile);
 	if (ctx._break) return false;
 
 	// Verify unique id of game
