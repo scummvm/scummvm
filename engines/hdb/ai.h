@@ -848,6 +848,12 @@ public:
 
 	void addBridgeExtend(int x, int y, int bridgeType);
 	void animateBridges();
+	void addToFairystones(int index, int tileX, int tileY, int sourceOrDest);
+	int checkFairystones(int tileX, int tileY);
+	void getFairystonesSrc(int index, int *tileX, int *tileY) {
+		*tileX = _fairystones[index].srcX;
+		*tileY = _fairystones[index].srcY;
+	}
 
 	AIEntity *playerCollision(int topBorder, int bottomBorder, int leftBorder, int rightBorder);
 	bool checkPlayerTileCollision(int x, int y);
