@@ -758,6 +758,10 @@ int Picture::drawMasked(int x, int y) {
 	return 0;
 }
 
+void Picture::free() {
+	_surface.free();
+}
+
 Tile::Tile() : _flags(0), _name("") {
 	_surface.create(32, 32, g_hdb->_format);
 }
@@ -810,6 +814,10 @@ int Tile::drawMasked(int x, int y) {
 		return 1;
 	}
 	return 0;
+}
+
+void Tile::free() {
+	_surface.free();
 }
 
 }
