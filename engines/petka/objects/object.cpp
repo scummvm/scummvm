@@ -151,7 +151,11 @@ void QMessageObject::processMessage(const QMessage &msg) {
 	case kStop:
 		g_vm->getQSystem()->_cursor.get()->show(msg.arg1);
 		g_vm->getQSystem()->_star.get()->_isActive = msg.arg1;
+	case kShow:
+		show(true);
+		break;
 	case kHide:
+		show(false);
 		break;
 	case kZBuffer:
 		_updateZ = msg.arg1;
