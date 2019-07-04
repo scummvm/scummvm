@@ -236,6 +236,24 @@ void AI::animateBridges() {
 	}
 }
 
+void AI::addToFairystones(int index, int tileX, int tileY, int sourceOrDest) {
+	if (!sourceOrDest) {
+		_fairystones[index].srcX = tileX;
+		_fairystones[index].srcY = tileY;
+	} else {
+		_fairystones[index].destX = tileX;
+		_fairystones[index].destY = tileY;
+	}
+}
+
+int AI::checkFairystones(int tileX, int tileY) {
+	int i;
+	for (i = 0; i < kMaxFairystones; i++)
+		if (_fairystones[i].destX == tileX && _fairystones[i].destY == tileY)
+			return i;
+	return -1;
+}
+
 // Add an action location to the list of possible actions
 // Each action must be paired with another of the same number
 void AI::addToActionList(int actionIndex, int x, int y, char *luaFuncInt, char *luaFuncUse) {
