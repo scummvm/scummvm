@@ -1753,8 +1753,131 @@ void aiGoodFairyAction(AIEntity *e) {
 		e->sequence = 20;
 }
 
+void aiBadFairyInit(AIEntity *e) {
+	e->aiAction = aiBadFairyAction;
+	e->sequence = 20;
+	e->blinkFrames = e->goalX = 0;
+}
+
+void aiBadFairyInit2(AIEntity *e) {
+	e->draw = g_hdb->_ai->getStandFrameDir(e);
+}
+
 void aiBadFairyAction(AIEntity *e) {
-	warning("STUB: AI: aiBadFairyAction required");
+	AIState	state[5] = {STATE_NONE, STATE_MOVEUP, STATE_MOVEDOWN, STATE_MOVELEFT, STATE_MOVERIGHT};
+	int	xvAhead[5] = {9, 0, 0,-1, 1}, yvAhead[5] = {9,-1, 1, 0, 0};
+	int xv, yv;
+	int	result;
+	AIEntity *hit;
+
+	if (e->sequence) {
+		e->sequence--;
+
+		// look around...
+		switch (e->sequence) {
+		case 19:
+			e->state = STATE_MOVEDOWN;
+			break;
+		case 0:
+			{
+				// Create a GATE PUDDLE?
+				if (e->onScreen && (g_hdb->_rnd->getRandomNumber(100) > 90) && g_hdb->getActionMode() && (g_hdb->_ai->getGatePuddles() < kMaxGatePuddles)) {
+					AIDir opposite[] = {DIR_NONE, DIR_DOWN, DIR_UP, DIR_RIGHT, DIR_LEFT};
+
+					if (e->onScreen)
+						g_hdb->_sound->playSound(SND_BADFAIRY_SPELL);
+
+					e->sequence = 30;
+					e->state = STATE_MOVEUP;
+					g_hdb->_ai->spawn(AI_GATEPUDDLE, opposite[e->dir], e->tileX, e->tileY, NULL, NULL, NULL, DIR_NONE, e->level, 0, 0, 1);
+					g_hdb->_ai->addAnimateTarget(e->x, e->y, 0, 7, ANIM_NORMAL, false, false, TELEPORT_FLASH);
+					g_hdb->_ai->addGatePuddle(1);
+					if (e->onScreen)
+						g_hdb->_sound->playSound(SND_GATEPUDDLE_SPAWN);
+					return;
+				}
+
+				int	tries = 4;
+				do {
+					// pick a random direction, then a random # of tiles in that direction
+					int	rnd = g_hdb->_rnd->getRandomNumber(4) + 1;
+					AIDir d = (AIDir)rnd;
+					int	walk = g_hdb->_rnd->getRandomNumber(5) + 1;
+					AIEntity *p = g_hdb->_ai->getPlayer();
+
+					e->dir = d;
+					e->state = state[d];
+					xv = xvAhead[d] * walk;
+					if (e->tileX + xv < 1)
+						xv = -e->tileX + 1;
+					if (e->tileX + xv > g_hdb->_map->_width)
+						xv = g_hdb->_map->_width - e->tileX - 1;
+
+					yv = yvAhead[d] * walk;
+					if (e->tileY + yv < 1)
+						yv = -e->tileY + 1;
+					if (e->tileY + yv > g_hdb->_map->_height)
+						yv = g_hdb->_map->_height - e->tileY - 1;
+
+					e->value1 = xvAhead[d];
+					e->value2 = yvAhead[d];
+					e->moveSpeed = kPlayerMoveSpeed;
+					if (!g_hdb->getActionMode())
+						e->moveSpeed >>= 1;
+
+					hit = g_hdb->_ai->legalMoveOverWater(e->tileX + e->value1, e->tileY + e->value2, e->level, &result);
+					uint32 bg_flags = g_hdb->_map->getMapBGTileFlags(e->tileX + e->value1, e->tileY + e->value2);
+					if (hit == p && !g_hdb->_ai->playerDead()) {
+						g_hdb->_ai->killPlayer(DEATH_FRIED);
+						hit = NULL;
+					}
+
+					if (!hit && result && !(bg_flags & kFlagSpecial)) {
+						g_hdb->_ai->setEntityGoal(e, e->tileX + xv, e->tileY + yv);
+						g_hdb->_ai->animateEntity(e);
+						if (e->onScreen && !g_hdb->_rnd->getRandomNumber(20))
+							g_hdb->_sound->playSound(SND_BADFAIRY_AMBIENT);
+						return;
+					}
+					tries--;		// don't lock the system if the player gets the fairy cornered
+				} while (!result && tries);
+
+				// couldn't find a place to move so just sit here for a sec & try again
+				e->dir = DIR_NONE;
+				e->state = STATE_MOVEDOWN;
+				e->sequence = 1;
+				e->value1 = e->value2 = e->xVel = e->yVel = 0;
+			}
+		}
+		g_hdb->_ai->animEntFrames(e);
+		return;
+	}
+
+	// in the process of moving around...
+	if (e->goalX) {
+		// hit the player?
+		if (hitPlayer(e->x, e->y)) {
+			g_hdb->_ai->killPlayer(DEATH_FRIED);
+			g_hdb->_sound->playSound(SND_MBOT_DEATH);
+			return;
+		}
+
+		// did we run into a wall, entity, water, slime etc?
+		// if so, pick a new direction!
+		if (onEvenTile(e->x, e->y)) {
+			hit = g_hdb->_ai->legalMoveOverWater(e->tileX + e->value1, e->tileY + e->value2, e->level, &result);
+			uint32 bg_flags = g_hdb->_map->getMapBGTileFlags(e->tileX + e->value1, e->tileY + e->value2);
+			if (!result || (hit && hit->type != AI_GUY) || (bg_flags & kFlagSpecial)) {
+				g_hdb->_ai->stopEntity(e);
+				e->state = STATE_MOVEDOWN;
+				e->sequence = 20;
+				return;
+			}
+		}
+		g_hdb->_ai->animateEntity(e);
+	} else
+		// if not, start looking around!
+		e->sequence = 20;
 }
 
 void aiGatePuddleAction(AIEntity *e) {
@@ -1807,14 +1930,6 @@ void aiFatFrogInit(AIEntity *e) {
 
 void aiFatFrogInit2(AIEntity *e) {
 	warning("STUB: AI: aiFatFrogInit2 required");
-}
-
-void aiBadFairyInit(AIEntity *e) {
-	warning("STUB: AI: aiBadFairyInit required");
-}
-
-void aiBadFairyInit2(AIEntity *e) {
-	warning("STUB: AI: aiBadFairyInit2 required");
 }
 
 void aiGatePuddleInit(AIEntity *e) {
