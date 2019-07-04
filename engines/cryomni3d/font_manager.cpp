@@ -201,9 +201,9 @@ bool FontManager::displayBlockText(const Common::String &text,
 					_blockPos.x += _spaceWidth;
 				} else {
 					double sp = (word_i + 1) * spaceWidthPerWord - spaceConsumed;
-					_blockPos.x += sp;
-					spaceConsumed += sp;
-					remainingSpace -= sp;
+					_blockPos.x += int16(sp);
+					spaceConsumed += uint(sp);
+					remainingSpace -= uint(sp);
 				}
 			}
 			if (_blockPos.y + _lineHeight + getFontMaxHeight() >= _blockRect.bottom) {

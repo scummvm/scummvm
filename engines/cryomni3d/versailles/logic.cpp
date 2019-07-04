@@ -2679,7 +2679,7 @@ IMG_CB(88003) {
 	// Dispatch to the correct state
 	if (_gameVariables[GameVariables::kBombState] >= 1 &&
 	        _gameVariables[GameVariables::kBombState] <= 5) {
-		FixedImgCallback callback;
+		FixedImgCallback callback = nullptr;
 		switch (_gameVariables[GameVariables::kBombState]) {
 		case 1:
 			callback = &CryOmni3DEngine_Versailles::img_88003b;

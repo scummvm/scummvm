@@ -76,7 +76,7 @@ void HLZDecoder::decodeFrameInPlace(Common::SeekableReadStream &stream, uint32 s
 	bool eof = false;
 	bool checkSize = (size != (uint32) - 1);
 	byte *orig = dst;
-	uint32 reg;
+	uint32 reg = 0;
 	int regBits = 0;
 #define GETREG() getReg(stream, &size, &reg, &regBits)
 

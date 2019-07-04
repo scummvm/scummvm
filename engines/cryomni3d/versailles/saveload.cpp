@@ -134,7 +134,8 @@ void CryOmni3DEngine_Versailles::saveGame(bool visit, uint saveNum,
 	// Write save name
 	char saveNameC[kSaveDescriptionLen];
 	memset(saveNameC, 0, sizeof(saveNameC));
-	strncpy(saveNameC, saveName.c_str(), sizeof(saveNameC));
+	// Silence -Wstringop-truncation using parentheses, we don't have to have a null-terminated string here
+	(strncpy(saveNameC, saveName.c_str(), sizeof(saveNameC)));
 	out->write(saveNameC, sizeof(saveNameC));
 
 	// dummy values

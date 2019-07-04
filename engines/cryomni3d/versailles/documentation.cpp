@@ -1081,11 +1081,11 @@ Common::String Versailles_Documentation::docAreaHandleCastleMap() {
 		Common::Rect areaPos2;
 
 		Area(const Common::Rect &areaPos_, const char *record_, bool fillArea_ = true,
-		     uint messageId_ = -1) :
+		     uint messageId_ = uint(-1)) :
 			areaPos(areaPos_), record(record_), fillArea(fillArea_), messageId(messageId_) { }
 		Area(const Common::Rect &areaPos_, const Common::Rect &areaPos1_,
 		     const Common::Rect &areaPos2_, const char *record_, bool fillArea_ = true,
-		     uint messageId_ = -1) :
+		     uint messageId_ = uint(-1)) :
 			areaPos(areaPos_), areaPos1(areaPos1_), areaPos2(areaPos2_),
 			record(record_), fillArea(fillArea_), messageId(messageId_) { }
 	} areas[] = {

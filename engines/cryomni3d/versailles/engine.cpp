@@ -551,7 +551,7 @@ void CryOmni3DEngine_Versailles::syncOmni3DSettings() {
 void CryOmni3DEngine_Versailles::syncSoundSettings() {
 	CryOmni3DEngine::syncSoundSettings();
 
-	int soundVolumeMusic = ConfMan.getInt("music_volume") / _musicVolumeFactor;
+	int soundVolumeMusic = int(ConfMan.getInt("music_volume") / _musicVolumeFactor);
 
 	bool mute = false;
 	if (ConfMan.hasKey("mute")) {
@@ -1359,13 +1359,13 @@ void CryOmni3DEngine_Versailles::animateWarpTransition(const Transition *transit
 		// We devide by 5 to slow down movement for modern CPUs
 		int deltaAlphaI;
 		if (deltaAlpha < M_PI) {
-			deltaAlphaI = -(deltaAlpha * 512. / 5.);
+			deltaAlphaI = int(-(deltaAlpha * 512. / 5.));
 		} else {
-			deltaAlphaI = (2.*M_PI - deltaAlpha) * 512. / 5.;
+			deltaAlphaI = int((2.*M_PI - deltaAlpha) * 512. / 5.);
 		}
 
 		double deltaBeta = -srcBeta - _omni3dMan.getBeta();
-		int deltaBetaI = -(deltaBeta * 512. / 5.);
+		int deltaBetaI = int(-(deltaBeta * 512. / 5.));
 
 		if (_omni3dSpeed > 0) {
 			deltaAlphaI <<= 2;
