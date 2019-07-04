@@ -1880,8 +1880,126 @@ void aiBadFairyAction(AIEntity *e) {
 		e->sequence = 20;
 }
 
+void aiGatePuddleInit(AIEntity *e) {
+	e->aiAction = aiGatePuddleAction;
+	e->value1 = 50;
+}
+
+void aiGatePuddleInit2(AIEntity *e) {
+}
+
 void aiGatePuddleAction(AIEntity *e) {
-	warning("STUB: AI: aiGatePuddleAction required");
+	int	xva[5] = {9, 0, 0,-1, 1}, yva[5] = {9,-1, 1, 0, 0};
+	AIEntity *p = g_hdb->_ai->getPlayer();
+
+	if (e->goalX) {
+		g_hdb->_ai->animateEntity(e);
+		if (hitPlayer(e->x, e->y)) {
+			int		i;
+			for (i = 0; i < kMaxTeleporters; i++) {
+				if (g_hdb->_ai->_teleporters[i].anim1 == 2) {	// PANIC ZONE?
+					p->tileX = g_hdb->_ai->_teleporters[i].x1;
+					p->tileY = g_hdb->_ai->_teleporters[i].y1;
+					p->x = p->tileX * kTileWidth;
+					p->y = p->tileY * kTileHeight;
+					p->xVel = p->yVel = 0;
+					p->goalX = p->goalY = 0;
+					p->animFrame = 0;
+					p->drawXOff = p->drawYOff = 0;
+					p->dir = g_hdb->_ai->_teleporters[i].dir1;
+					p->level = g_hdb->_ai->_teleporters[i].level1;
+					g_hdb->_ai->addAnimateTarget(p->x, p->y, 0, 7, ANIM_NORMAL, false, false, TELEPORT_FLASH);
+					g_hdb->_sound->playSound(SND_TELEPORT);
+					g_hdb->_ai->clearWaypoints();
+					g_hdb->_window->startPanicZone();
+					g_hdb->_map->centerMapXY(p->x + 16, p->y + 16);
+					switch (p->dir) {
+					case DIR_UP:
+						g_hdb->_ai->setEntityGoal(p, p->tileX, p->tileY - 1);
+						break;
+					case DIR_DOWN:
+						g_hdb->_ai->setEntityGoal(p, p->tileX, p->tileY + 1);
+						break;
+					case DIR_LEFT:
+						g_hdb->_ai->setEntityGoal(p, p->tileX - 1, p->tileY);
+						break;
+					case DIR_RIGHT:
+						g_hdb->_ai->setEntityGoal(p, p->tileX + 1, p->tileY);
+						break;
+					case DIR_NONE:
+						break;
+					}
+					g_hdb->_ai->_playerEmerging = true;
+					break;
+				} else if (g_hdb->_ai->_teleporters[i].anim2 == 2) {	// PANIC ZONE?
+					p->tileX = g_hdb->_ai->_teleporters[i].x2;
+					p->tileY = g_hdb->_ai->_teleporters[i].y2;
+					p->x = p->tileX * kTileWidth;
+					p->y = p->tileY * kTileHeight;
+					p->xVel = p->yVel = 0;
+					p->goalX = p->goalY = 0;
+					p->animFrame = 0;
+					p->drawXOff = p->drawYOff = 0;
+					p->dir = g_hdb->_ai->_teleporters[i].dir2;
+					p->level = g_hdb->_ai->_teleporters[i].level2;
+					g_hdb->_ai->addAnimateTarget(p->x, p->y, 0, 7, ANIM_NORMAL, false, false, TELEPORT_FLASH);
+					g_hdb->_sound->playSound(SND_TELEPORT);
+					g_hdb->_ai->clearWaypoints();
+					g_hdb->_window->startPanicZone();
+					g_hdb->_map->centerMapXY(p->x + 16, p->y + 16);
+					switch (p->dir) {
+					case DIR_UP:
+						g_hdb->_ai->setEntityGoal(p, p->tileX, p->tileY - 1);
+						break;
+					case DIR_DOWN:
+						g_hdb->_ai->setEntityGoal(p, p->tileX, p->tileY + 1);
+						break;
+					case DIR_LEFT:
+						g_hdb->_ai->setEntityGoal(p, p->tileX - 1, p->tileY);
+						break;
+					case DIR_RIGHT:
+						g_hdb->_ai->setEntityGoal(p, p->tileX + 1, p->tileY);
+						break;
+					}
+					g_hdb->_ai->_playerEmerging = true;
+					break;
+				}
+			}
+		}
+	} else {
+		int rnd = g_hdb->_rnd->getRandomNumber(4) + 1;
+		int move_ok = 0, nx, ny;
+
+		e->dir = (AIDir)rnd;
+		nx = e->tileX + xva[e->dir];
+		ny = e->tileY + yva[e->dir];
+		AIEntity *hit = g_hdb->_ai->legalMoveOverWater(nx, ny, e->level, &move_ok);
+		if (hit == p)
+			hit = NULL;
+
+		if (!hit && move_ok) {
+			uint32	bg_flags = g_hdb->_map->getMapBGTileFlags(nx, ny);
+			// Gate Puddles can't go over METAL!!! It's in their genes...
+			if (!(bg_flags & kFlagMetal)) {
+				if (e->onScreen)
+					g_hdb->_sound->playSound(SND_GATEPUDDLE_AMBIENT);
+
+				g_hdb->_ai->setEntityGoal(e, nx, ny);
+				e->state = STATE_MOVEDOWN;
+				g_hdb->_ai->animateEntity(e);
+			}
+		}
+
+		// can only move 50 spaces or collisions
+		e->value1--;
+		if (!e->value1) {
+			g_hdb->_ai->addGatePuddle(-1);
+			g_hdb->_ai->addAnimateTarget(e->x, e->y, 0, 7, ANIM_NORMAL, false, false, TELEPORT_FLASH);
+			if (e->onScreen)
+				g_hdb->_sound->playSound(SND_GATEPUDDLE_DISSIPATE);
+			g_hdb->_ai->removeEntity(e);
+		}
+	}
 }
 
 void aiIcePuffSnowballAction(AIEntity *e) {
@@ -1930,14 +2048,6 @@ void aiFatFrogInit(AIEntity *e) {
 
 void aiFatFrogInit2(AIEntity *e) {
 	warning("STUB: AI: aiFatFrogInit2 required");
-}
-
-void aiGatePuddleInit(AIEntity *e) {
-	warning("STUB: AI: aiGatePuddleInit required");
-}
-
-void aiGatePuddleInit2(AIEntity *e) {
-	warning("STUB: AI: aiGatePuddleInit2 required");
 }
 
 void aiIcePuffInit(AIEntity *e) {
