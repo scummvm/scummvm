@@ -1264,7 +1264,19 @@ void aiDiverterInit2(AIEntity *e) {
 }
 
 void aiDiverterAction(AIEntity *e) {
-	warning("STUB: AI: aiDiverterAction required");
+	if (e->goalX) {
+		g_hdb->_ai->animateEntity(e);
+		warning("STUB: Set Laser Rescan to true");
+
+		// have to reset the state because we might have been moved...
+		switch (e->dir2) {
+		case DIR_DOWN: e->state = STATE_DIVERTER_BL; e->draw = e->standdownGfx[0]; break;
+		case DIR_UP: e->state = STATE_DIVERTER_BR; e->draw = e->standupGfx[0]; break;
+		case DIR_LEFT: e->state = STATE_DIVERTER_TL; e->draw = e->standleftGfx[0]; break;
+		case DIR_RIGHT: e->state = STATE_DIVERTER_TR; e->draw = e->standrightGfx[0]; break;
+		case DIR_NONE: break;
+		}
+	}
 }
 
 void aiDiverterDraw(AIEntity *e, int mx, int my) {
