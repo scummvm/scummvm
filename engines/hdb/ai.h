@@ -41,6 +41,7 @@ enum {
 	kMaxLuaEnts = 50,
 	kMaxCallbacks = 20,
 	kMaxFairystones = 5,
+	kMaxGatePuddles = 8,
 	kMaxBridges = 10,
 	kDelay5Seconds = 5 * kGameFPS,
 	kPlayerMoveSpeed = 4,
@@ -1031,6 +1032,15 @@ public:
 		return &_deliveries[which];
 	}
 	bool completeDelivery(const char *id);
+
+	// Gate Puddles
+	int _gatePuddles;
+	void addGatePuddle(int amount) {
+		_gatePuddles += amount;
+	}
+	int getGatePuddles() {
+		return _gatePuddles;
+	}
 
 	// Player Variables
 	bool _playerDead;
