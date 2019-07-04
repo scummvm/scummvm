@@ -630,7 +630,8 @@ static void sayNegative(CONTEXT, int instance) {
 	} else {
 		bool flag;
 		FUNC1(sayInheritedNegativeForm, flag, instances[instance].parent)
-		CALL1(sayInstance, instance)
+		if (!flag)
+			CALL1(sayInstance, instance)
 	}
 }
 

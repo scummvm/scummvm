@@ -26,9 +26,20 @@ namespace Glk {
 namespace Alan3 {
 
 void AttributeEntry::synchronize(Common::Serializer &s) {
-	s.syncAsSint32LE(code);
-	s.syncAsSint32LE(value);
-	s.syncAsSint32LE(id);
+	// We have to do some annoying temporary copy of the fields to get around gcc
+	// errors about getting references to fields of packed structures
+	Aint c = code;
+	Aptr v = value;
+	Aaddr i = id;
+	s.syncAsSint32LE(c);
+	s.syncAsSint32LE(v);
+	s.syncAsSint32LE(i);
+
+	if (s.isLoading()) {
+		code = c;
+		value = v;
+		id = i;
+	}
 }
 
 } // End of namespace Alan3
