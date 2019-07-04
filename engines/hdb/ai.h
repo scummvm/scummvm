@@ -40,6 +40,7 @@ enum {
 	kMaxAutoActions = 30,
 	kMaxLuaEnts = 50,
 	kMaxCallbacks = 20,
+	kMaxFairystones = 5,
 	kMaxBridges = 10,
 	kDelay5Seconds = 5 * kGameFPS,
 	kPlayerMoveSpeed = 4,
@@ -715,6 +716,13 @@ struct Callback {
 	Callback() : type(NO_FUNCTION), x(0), y(0), delay(0) {}
 };
 
+struct Fairystone {
+	uint16 srcX, srcY;
+	uint16 destX, destY;
+
+	Fairystone() : srcX(0), srcY(0), destX(0), destY(0) {}
+};
+
 struct Bridge {
 	uint16 x, y;
 	AIDir dir;
@@ -1211,6 +1219,8 @@ public:
 	AutoAction _autoActions[kMaxAutoActions];
 
 	Callback _callbacks[kMaxCallbacks];
+
+	Fairystone _fairystones[kMaxFairystones];
 
 	Bridge _bridges[kMaxBridges];
 	int _numBridges;
