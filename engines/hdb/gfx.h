@@ -219,6 +219,7 @@ public:
 	Graphics::Surface load(Common::SeekableReadStream *stream);
 	int draw(int x, int y);
 	int drawMasked(int x, int y);
+	void free();
 
 	uint _width, _height;
 
@@ -241,6 +242,7 @@ public:
 	Graphics::Surface load(Common::SeekableReadStream *stream);
 	int draw(int x, int y);
 	int drawMasked(int x, int y);
+	void free();
 
 	uint32 _flags;
 
