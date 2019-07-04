@@ -217,8 +217,8 @@ public:
 	~Picture();
 
 	Graphics::Surface load(Common::SeekableReadStream *stream);
-	void draw(int x, int y);
-	void drawMasked(int x, int y);
+	int draw(int x, int y);
+	int drawMasked(int x, int y);
 
 	uint _width, _height;
 
@@ -239,8 +239,8 @@ public:
 	~Tile();
 
 	Graphics::Surface load(Common::SeekableReadStream *stream);
-	void draw(int x, int y);
-	void drawMasked(int x, int y);
+	int draw(int x, int y);
+	int drawMasked(int x, int y);
 
 	uint32 _flags;
 

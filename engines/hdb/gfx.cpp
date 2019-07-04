@@ -732,7 +732,7 @@ Graphics::Surface Picture::load(Common::SeekableReadStream *stream) {
 	return _surface;
 }
 
-void Picture::draw(int x, int y) {
+int Picture::draw(int x, int y) {
 	g_hdb->_gfx->_globalSurface.blitFrom(_surface, Common::Point(x, y));
 
 	Common::Rect clip(_surface.getBounds());
@@ -740,10 +740,12 @@ void Picture::draw(int x, int y) {
 	clip.clip(g_hdb->_gfx->_globalSurface.getBounds());
 	if (!clip.isEmpty()) {
 		g_system->copyRectToScreen(g_hdb->_gfx->_globalSurface.getBasePtr(clip.left, clip.top), g_hdb->_gfx->_globalSurface.pitch, clip.left, clip.top, clip.width(), clip.height());
+		return 1;
 	}
+	return 0;
 }
 
-void Picture::drawMasked(int x, int y) {
+int Picture::drawMasked(int x, int y) {
 	g_hdb->_gfx->_globalSurface.transBlitFrom(_surface, Common::Point(x, y), 0xf81f);
 
 	Common::Rect clip(_surface.getBounds());
@@ -751,7 +753,9 @@ void Picture::drawMasked(int x, int y) {
 	clip.clip(g_hdb->_gfx->_globalSurface.getBounds());
 	if (!clip.isEmpty()) {
 		g_system->copyRectToScreen(g_hdb->_gfx->_globalSurface.getBasePtr(clip.left, clip.top), g_hdb->_gfx->_globalSurface.pitch, clip.left, clip.top, clip.width(), clip.height());
+		return 1;
 	}
+	return 0;
 }
 
 Tile::Tile() : _flags(0), _name("") {
@@ -782,7 +786,7 @@ Graphics::Surface Tile::load(Common::SeekableReadStream *stream) {
 	return _surface;
 }
 
-void Tile::draw(int x, int y) {
+int Tile::draw(int x, int y) {
 	g_hdb->_gfx->_globalSurface.blitFrom(_surface, Common::Point(x, y));
 
 	Common::Rect clip(_surface.getBounds());
@@ -790,10 +794,12 @@ void Tile::draw(int x, int y) {
 	clip.clip(g_hdb->_gfx->_globalSurface.getBounds());
 	if (!clip.isEmpty()) {
 		g_system->copyRectToScreen(g_hdb->_gfx->_globalSurface.getBasePtr(clip.left, clip.top), g_hdb->_gfx->_globalSurface.pitch, clip.left, clip.top, clip.width(), clip.height());
+		return 1;
 	}
+	return 0;
 }
 
-void Tile::drawMasked(int x, int y) {
+int Tile::drawMasked(int x, int y) {
 	g_hdb->_gfx->_globalSurface.transBlitFrom(_surface, Common::Point(x, y), 0xf81f);
 
 	Common::Rect clip(_surface.getBounds());
@@ -801,7 +807,9 @@ void Tile::drawMasked(int x, int y) {
 	clip.clip(g_hdb->_gfx->_globalSurface.getBounds());
 	if (!clip.isEmpty()) {
 		g_system->copyRectToScreen(g_hdb->_gfx->_globalSurface.getBasePtr(clip.left, clip.top), g_hdb->_gfx->_globalSurface.pitch, clip.left, clip.top, clip.width(), clip.height());
+		return 1;
 	}
+	return 0;
 }
 
 }
