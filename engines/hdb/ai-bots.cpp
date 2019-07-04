@@ -533,7 +533,12 @@ void aiPushBotAction(AIEntity *e) {
 				e1->state = e->state;
 				e1->moveSpeed = e->moveSpeed;
 				g_hdb->_ai->setEntityGoal(e1, nx2, ny2);
-				warning("STUB: aiPushBotAction: Switch Case for Sound");
+				switch (e1->type) {
+				case AI_CRATE: g_hdb->_sound->playSound(SND_CRATE_SLIDE); break;
+				case AI_HEAVYBARREL: case AI_BOOMBARREL: g_hdb->_sound->playSound(SND_HEAVY_SLIDE); break;
+				case AI_LIGHTBARREL: g_hdb->_sound->playSound(SND_LIGHT_SLIDE); break;
+				default: break;
+				}
 			} else {
 				if (e->onScreen)
 					g_hdb->_sound->playSound(SND_PUSHBOT_STRAIN);
@@ -1226,12 +1231,130 @@ void aiLaserDraw(AIEntity *e, int mx, int my) {
 	warning("STUB: AI: aiLaserDraw required");
 }
 
+void aiDiverterInit(AIEntity *e) {
+	e->aiDraw = aiDiverterDraw;
+	e->aiAction = aiDiverterAction;
+	e->moveSpeed = kPlayerMoveSpeed << 1;
+	e->dir2 = e->dir;
+}
+
+void aiDiverterInit2(AIEntity *e) {
+	e->movedownGfx[0] = e->standdownGfx[0];
+	e->moveupGfx[0] = e->standupGfx[0];
+	e->moveleftGfx[0] = e->standleftGfx[0];
+	e->moverightGfx[0] = e->standrightGfx[0];
+	e->movedownFrames =
+		e->moveupFrames =
+		e->moveleftFrames =
+		e->moverightFrames = 1;
+
+	// this is to handle loadgames...
+	AIDir d = e->dir2;
+	if (e->dir2 == DIR_NONE)
+		d = e->dir;
+	switch (d) {
+	case DIR_DOWN: e->state = STATE_DIVERTER_BL; e->draw = e->standdownGfx[0]; break;
+	case DIR_UP: e->state = STATE_DIVERTER_BR; e->draw = e->standupGfx[0]; break;
+	case DIR_LEFT: e->state = STATE_DIVERTER_TL; e->draw = e->standleftGfx[0]; break;
+	case DIR_RIGHT: e->state = STATE_DIVERTER_TR; e->draw = e->standrightGfx[0]; break;
+	case DIR_NONE: break;
+	}
+
+	warning("STUB: Set Laser Rescan to true");
+}
+
 void aiDiverterAction(AIEntity *e) {
 	warning("STUB: AI: aiDiverterAction required");
 }
 
 void aiDiverterDraw(AIEntity *e, int mx, int my) {
-	warning("STUB: AI: aiDiverterDraw required");
+	int		i;
+	if (!e->value1 && !e->value2)
+		return;
+
+	int	frame = e->movedownFrames & 3;
+	int onScreen = 0;
+	switch (e->dir2) {
+	case DIR_UP:
+		if (e->tileY == e->value1 && e->int2) {	// going down or right?
+			for (i = e->value1 + 1; i < e->value2; i++)
+				onScreen += gfxLaserbeamUD[frame]->drawMasked(e->x - mx, i * kTileHeight - my);
+			onScreen += gfxLaserbeamUDTop[frame]->drawMasked(e->x - mx, i * kTileHeight - my);
+			if (onScreen) {
+				g_hdb->_sound->playSoundEx(SND_LASER_LOOP, kLaserChannel, true);
+				warning("STUB: Set Laser onScreen to true");
+			}
+		} else {
+			for (i = e->value1 + 1; i < e->value2; i++)
+				onScreen += gfxLaserbeamLR[frame]->drawMasked(i * kTileWidth - mx, e->y - my);
+			onScreen += gfxLaserbeamLRLeft[frame]->drawMasked(i * kTileWidth - mx, e->y - my);
+			if (onScreen) {
+				g_hdb->_sound->playSoundEx(SND_LASER_LOOP, kLaserChannel, true);
+				warning("STUB: Set Laser onScreen to true");
+			}
+		}
+		break;
+	case DIR_DOWN:
+		if (e->tileY == e->value1 && e->int2) {	// going down or left?
+			for (i = e->value1 + 1; i < e->value2; i++)
+				onScreen += gfxLaserbeamUD[frame]->drawMasked(e->x - mx, i * kTileHeight - my);
+			onScreen += gfxLaserbeamUDTop[frame]->drawMasked(e->x - mx, i * kTileHeight - my);
+			if (onScreen) {
+				g_hdb->_sound->playSoundEx(SND_LASER_LOOP, kLaserChannel, true);
+				warning("STUB: Set Laser onscreen to true");
+			}
+		} else {
+			for (i = e->value1 - 1; i > e->value2; i--)
+				onScreen += gfxLaserbeamLR[frame]->drawMasked(i * kTileWidth - mx, e->y - my);
+			onScreen += gfxLaserbeamLRRight[frame]->drawMasked(i * kTileWidth - mx, e->y - my);
+			if (onScreen) {
+				g_hdb->_sound->playSoundEx(SND_LASER_LOOP, kLaserChannel, true);
+				warning("STUB: Set Laser onscreen to true");
+			}
+		}
+		break;
+	case DIR_LEFT:
+		if (e->tileY == e->value1 && e->int2) {	// going up or left?
+			for (i = e->value1 - 1; i > e->value2; i--)
+				onScreen += gfxLaserbeamUD[frame]->drawMasked(e->x - mx, i * kTileHeight - my);
+			onScreen += gfxLaserbeamUDBottom[frame]->drawMasked(e->x - mx, i * kTileHeight - my);
+			if (onScreen) {
+				g_hdb->_sound->playSoundEx(SND_LASER_LOOP, kLaserChannel, true);
+				warning("STUB: Set Laser onscreen to true");
+			}
+		} else {
+			for (i = e->value1 - 1; i > e->value2; i--)
+				onScreen += gfxLaserbeamLR[frame]->drawMasked(i * kTileWidth - mx, e->y - my);
+			onScreen += gfxLaserbeamLRRight[frame]->drawMasked(i * kTileWidth - mx, e->y - my);
+			if (onScreen) {
+				g_hdb->_sound->playSoundEx(SND_LASER_LOOP, kLaserChannel, true);
+				warning("STUB: Set Laser onscreen to true");
+			}
+		}
+		break;
+	case DIR_RIGHT:
+		if (e->tileY == e->value1 && e->int2) {	// going up or right?
+			for (i = e->value1 - 1; i > e->value2; i--)
+				onScreen += gfxLaserbeamUD[frame]->drawMasked(e->x - mx, i * kTileHeight - my);
+			onScreen += gfxLaserbeamUDBottom[frame]->drawMasked(e->x - mx, i * kTileHeight - my);
+			if (onScreen) {
+				g_hdb->_sound->playSoundEx(SND_LASER_LOOP, kLaserChannel, true);
+				warning("STUB: Set Laser onscreen to true");
+			}
+		} else {
+			for (i = e->value1 + 1; i < e->value2; i++)
+				onScreen += gfxLaserbeamLR[frame]->drawMasked(i * kTileWidth - mx, e->y - my);
+			onScreen += gfxLaserbeamLRLeft[frame]->drawMasked(i * kTileWidth - mx, e->y - my);
+			if (onScreen) {
+				g_hdb->_sound->playSoundEx(SND_LASER_LOOP, kLaserChannel, true);
+				warning("STUB: Set Laser onscreen to true");
+			}
+		}
+		break;
+	case DIR_NONE:
+		break;
+	}
+	e->movedownFrames++;
 }
 
 void aiMeerkatDraw(AIEntity *e, int mx, int my) {
@@ -1304,14 +1427,6 @@ void aiLaserInit(AIEntity *e) {
 
 void aiLaserInit2(AIEntity *e) {
 	warning("STUB: AI: aiLaserInit2 required");
-}
-
-void aiDiverterInit(AIEntity *e) {
-	warning("STUB: AI: aiDiverterInit required");
-}
-
-void aiDiverterInit2(AIEntity *e) {
-	warning("STUB: AI: aiDiverterInit2 required");
 }
 
 void aiMeerkatInit(AIEntity *e) {
