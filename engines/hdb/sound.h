@@ -25,6 +25,14 @@
 
 namespace HDB {
 
+enum {
+	kMaxSNDChannels = 32,
+	kSNDFrequency = 22050,
+	kLaserChannel = kMaxSNDChannels - 1,
+	kMusicChannel = kMaxSNDChannels - 2,
+	kVoiceChannel = kMaxSNDChannels - 5
+};
+
 enum SoundType {
 	SONG_NONE,
 	SND_GUI_INPUT,
@@ -1382,6 +1390,7 @@ public:
 	bool init();
 
 	bool playSound(int index);
+	bool playSoundEx(int index, int channel, bool loop);
 	bool playVoice(int index, int actor);
 
 	void markSoundCacheFreeable();
