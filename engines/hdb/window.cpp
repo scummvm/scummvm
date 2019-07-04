@@ -109,7 +109,7 @@ void Window::drawPause() {
 		_gfxPausePlaque->drawMasked(480 / 2 - _gfxPausePlaque->_width / 2, kPauseY);
 }
 
-void Window::checkPause(uint x, uint y) {
+void Window::checkPause(int x, int y) {
 	if (x >= 480 / 2 - _gfxPausePlaque->_width / 2 && 480 / 2 + _gfxPausePlaque->_width / 2 > x && y >= kPauseY && y < kPauseY + _gfxPausePlaque->_height) {
 		g_hdb->togglePause();
 		g_hdb->_sound->playSound(SND_POP);
@@ -880,6 +880,131 @@ void Window::checkDlvSelect(int x, int y) {
 		if (value < amt)
 			setSelectedDelivery(value);
 	}
+}
+
+void Window::loadPanicZoneGfx() {
+	_pzInfo.gfxPanic = g_hdb->_gfx->loadPic(PANIC_PANIC);
+	_pzInfo.gfxZone	= g_hdb->_gfx->loadPic(PANIC_ZONE);
+	_pzInfo.gfxFace[0] = g_hdb->_gfx->loadPic(PANIC_POINTER1);
+	_pzInfo.gfxFace[1] = g_hdb->_gfx->loadPic(PANIC_POINTER2);
+	_pzInfo.gfxNumber[0] = g_hdb->_gfx->loadPic(PANIC_NUM0);
+	_pzInfo.gfxNumber[1] = g_hdb->_gfx->loadPic(PANIC_NUM1);
+	_pzInfo.gfxNumber[2] = g_hdb->_gfx->loadPic(PANIC_NUM2);
+	_pzInfo.gfxNumber[3] = g_hdb->_gfx->loadPic(PANIC_NUM3);
+	_pzInfo.gfxNumber[4] = g_hdb->_gfx->loadPic(PANIC_NUM4);
+	_pzInfo.gfxNumber[5] = g_hdb->_gfx->loadPic(PANIC_NUM5);
+	_pzInfo.gfxNumber[6] = g_hdb->_gfx->loadPic(PANIC_NUM6);
+	_pzInfo.gfxNumber[7] = g_hdb->_gfx->loadPic(PANIC_NUM7);
+	_pzInfo.gfxNumber[8] = g_hdb->_gfx->loadPic(PANIC_NUM8);
+	_pzInfo.gfxNumber[9] = g_hdb->_gfx->loadPic(PANIC_NUM9);
+}
+
+void Window::drawPanicZone() {
+	int xx, yy;
+
+	if (!_pzInfo.active)
+		return;
+
+	switch (_pzInfo.sequence) {
+		// Wait before displaying PANIC ZONE
+	case PANICZONE_TIMER:
+		_pzInfo.timer--;
+		if (!_pzInfo.timer) {
+			_pzInfo.sequence++;
+			g_hdb->_sound->playSound(SND_PANIC);
+		}
+		break;
+
+		// Move PANIC ZONE to screen center
+	case PANICZONE_START:
+		xx = g_hdb->_rnd->getRandomNumber(10) - 5;
+		yy = g_hdb->_rnd->getRandomNumber(10) - 5;
+		_pzInfo.x1 += _pzInfo.xv;
+		_pzInfo.y1++;
+		_pzInfo.x2 += _pzInfo.yv;
+		_pzInfo.y2--;
+		if (_pzInfo.x1 > kPanicXStop) {
+			_pzInfo.timer = 30;
+			_pzInfo.sequence++;
+		}
+		_pzInfo.gfxPanic->drawMasked(_pzInfo.x1 + xx, _pzInfo.y1 + yy);
+		_pzInfo.gfxZone->drawMasked(_pzInfo.x2 + yy, _pzInfo.y2 + xx);
+		break;
+
+	case PANICZONE_TITLESTOP:
+		xx = g_hdb->_rnd->getRandomNumber(10) - 5;
+		yy = g_hdb->_rnd->getRandomNumber(10) - 5;
+		_pzInfo.gfxPanic->drawMasked(_pzInfo.x1 + xx, _pzInfo.y1 + yy);
+		_pzInfo.gfxZone->drawMasked(_pzInfo.x2 + yy, _pzInfo.y2 + xx);
+		_pzInfo.timer--;
+		if (!_pzInfo.timer) {
+			_pzInfo.sequence++;
+		}
+		break;
+
+	case PANICZONE_BLASTOFF:
+		xx = g_hdb->_rnd->getRandomNumber(10) - 5;
+		yy = g_hdb->_rnd->getRandomNumber(10) - 5;
+		_pzInfo.y1 -= 10;
+		_pzInfo.y2 += 10;
+		_pzInfo.gfxPanic->drawMasked(_pzInfo.x1 + xx, _pzInfo.y1 + yy);
+		_pzInfo.gfxZone->drawMasked(_pzInfo.x2 + yy, _pzInfo.y2 + xx);
+		if (_pzInfo.y1 < -_pzInfo.gfxPanic->_height &&
+			_pzInfo.y2 > kScreenHeight) {
+			g_hdb->_sound->playSound(SND_PANIC_COUNT);
+			_pzInfo.sequence++;
+			_pzInfo.timer = 30 + g_hdb->getTime();
+		}
+		break;
+
+	case PANICZONE_COUNTDOWN:
+		{
+			static int last_seconds = 0, seconds = 0;
+			_pzInfo.gfxFace[seconds & 1]->drawMasked(kPanicZoneFaceX, kPanicZoneFaceY);
+
+			// make knocking timer sound
+			if (last_seconds != seconds)
+				g_hdb->_sound->playSound(SND_PANIC_COUNT);
+
+			last_seconds = seconds;
+			seconds = _pzInfo.timer - g_hdb->getTime();
+			if (seconds >= 10) {
+				_pzInfo.gfxNumber[seconds / 10]->drawMasked(kPanicZoneFaceX, kPanicZoneFaceY + 32);
+				_pzInfo.gfxNumber[seconds % 10]->drawMasked(kPanicZoneFaceX + 16, kPanicZoneFaceY + 32);
+			} else
+				_pzInfo.gfxNumber[seconds]->drawMasked(kPanicZoneFaceX + 8, kPanicZoneFaceY + 32);
+
+			// time until death!
+			if (!seconds) {
+				// dead
+				g_hdb->_ai->killPlayer(DEATH_PANICZONE);
+				_pzInfo.active = false;
+				return;
+			}
+		}
+	break;
+	}
+}
+
+void Window::startPanicZone() {
+	_pzInfo.active = true;
+	_pzInfo.sequence = PANICZONE_TIMER;
+
+	// load PANIC ZONE gfx if they aren't loaded
+	if (!_pzInfo.gfxPanic)
+		loadPanicZoneGfx();
+
+	_pzInfo.x1 = -(_pzInfo.gfxPanic->_width + 5);
+	_pzInfo.y1 = (kScreenHeight / 4) - (_pzInfo.gfxPanic->_height >> 1);
+	_pzInfo.x2 = 480 + (_pzInfo.gfxZone->_width >> 1);
+	_pzInfo.y2 = (kScreenHeight / 4) * 3 - (_pzInfo.gfxZone->_height >> 1);
+	_pzInfo.xv = 10;			// horizontal speed
+	_pzInfo.yv = -12;			// vertical speed
+	_pzInfo.timer = 30;			// 30 seconds to get out!
+}
+
+void Window::stopPanicZone() {
+	_pzInfo.active = false;
 }
 
 void Window::textOut(const char *text, int x, int y, int timer) {

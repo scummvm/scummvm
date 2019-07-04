@@ -221,7 +221,7 @@ public:
 	int drawMasked(int x, int y);
 	void free();
 
-	uint _width, _height;
+	int _width, _height;
 
 	char *getName() { return _name; }
 

@@ -40,9 +40,22 @@ enum {
 	kDlvItemSpaceY = (kTileHeight * 2 + 16),
 	kDlvItemPerLine = 3,
 	kDlvItemTextY = (kScreenHeight - 30),
+	kPanicXStop = 480 / 3,
+	kPanicZoneFaceX = 480 - 32,
+	kPanicZoneFaceY = 5,
 	kNumCrazy = 37,
 	kTextOutCenterX = ((kScreenWidth - kTileWidth * 5) / 2),
 	kPauseY = (kScreenHeight / 2 - 64)
+};
+
+enum PZValue {
+	PANICZONE_TIMER,
+	PANICZONE_START,
+	PANICZONE_TITLESTOP,
+	PANICZONE_BLASTOFF,
+	PANICZONE_COUNTDOWN,
+
+	PANICZONE_END
 };
 
 struct DialogInfo {
@@ -126,7 +139,29 @@ struct DlvsInfo {
 	uint32 delay1, delay2, delay3;
 	bool go1, go2, go3;
 
-	DlvsInfo() : x(0), y(0), width(0), height(0), active(false), selected(0), animate(false), delay1(0), delay2(0), delay3(0), go1(false), go2(false), go3(false) {}
+	DlvsInfo() : x(0), y(0), width(0), height(0), active(false), selected(0), 
+		animate(false), delay1(0), delay2(0), delay3(0), go1(false), go2(false), go3(false) {}
+};
+
+struct PanicZone {
+	bool active;
+	int sequence;
+	int timer;
+	int x1, y1;
+	int x2, y2;
+	int xv, yv;		// for both
+	int numberTime;
+	int numberTimeMaster;
+	int numberValue;
+	Picture *gfxPanic, *gfxZone;
+	Picture *gfxFace[2];
+	Picture *gfxNumber[10];
+
+	PanicZone() : active(false), sequence(0), timer(0), x1(0), y1(0), x2(0), y2(0), xv(0), yv(0),
+		numberTime(0), numberTimeMaster(0), numberValue(0), gfxPanic(NULL), gfxZone(NULL) {
+		memset(&gfxFace, 0, sizeof(gfxFace));
+		memset(&gfxNumber, 0, sizeof(gfxNumber));
+	}
 };
 
 struct TOut {
@@ -150,7 +185,7 @@ public:
 
 	// Pause Functions
 	void drawPause();
-	void checkPause(uint x, uint y);
+	void checkPause(int x, int y);
 
 	// Dialog Functions
 
@@ -214,6 +249,15 @@ public:
 	}
 	void checkDlvSelect(int x, int y);
 
+	// Panic Zone Functions
+	void loadPanicZoneGfx();
+	void drawPanicZone();
+	void startPanicZone();
+	void stopPanicZone();
+	bool inPanicZone() {
+		return _pzInfo.active;
+	}
+
 	// TextOut functions
 	void textOut(const char *text, int x, int y, int timer);
 	void centerTextOut(const char *text, int y, int timer);
@@ -239,6 +283,8 @@ private:
 	InvWinInfo _invWinInfo;
 	Common::Array<TOut *> _textOutList;
 	DlvsInfo _dlvsInfo;
+
+	PanicZone _pzInfo, _tempPzInfo;
 
 	char _msgQueueStr[kMaxMsgQueue][128];
 	int _msgQueueWait[kMaxMsgQueue];
