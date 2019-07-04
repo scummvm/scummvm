@@ -222,6 +222,11 @@ public:
 		return (_textOutList.size());
 	}
 	void closeTextOut();
+
+	Tile *getGemGfx() {
+		return _gemGfx;
+	}
+
 private:
 
 	DialogInfo _dialogInfo;
