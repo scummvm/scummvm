@@ -71,7 +71,7 @@ private:
 	bool _systemInit;
 
 	bool registerExtensions();
-	bool executeChunk(Common::String &chunk, uint chunkSize, const Common::String &chunkName) const;
+	bool executeChunk(Common::String &chunk, const Common::String &chunkName) const;
 	void stripComments(char *chunk);
 	void addPatches(Common::String &chunk, const char *scriptName);
 };
