@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2019-07-04 23:28+0200\n"
 "PO-Revision-Date: 2019-07-05 08:37+0000\n"
-"Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
+"Last-Translator: Le Philousophe <lephilousophe@gmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
 "Language: fr_FR\n"
@@ -1880,11 +1880,11 @@ msgstr "Une fois par jour"
 
 #: common/updates.cpp:60
 msgid "Weekly"
-msgstr "Une fois pas semaine"
+msgstr "Une fois par semaine"
 
 #: common/updates.cpp:62
 msgid "Monthly"
-msgstr "Une fois pas mois"
+msgstr "Une fois par mois"
 
 #: common/updates.cpp:64
 msgid "<Bad value>"
