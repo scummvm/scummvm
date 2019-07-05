@@ -300,7 +300,7 @@ bool AI::completeDelivery(const char *id) {
 			for (; i < _numDeliveries; i++)
 				memcpy(&_deliveries[i], &_deliveries[i + 1], sizeof(_deliveries[0]));
 			_numDeliveries--;
-			warning("STUB: Play Voice: GUY_COMPLETED");
+			g_hdb->_sound->playVoice(GUY_COMPLETED, 1);
 			return true;
 		}
 	return false;
