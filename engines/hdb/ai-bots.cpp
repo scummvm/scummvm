@@ -1960,6 +1960,8 @@ void aiGatePuddleAction(AIEntity *e) {
 					case DIR_RIGHT:
 						g_hdb->_ai->setEntityGoal(p, p->tileX + 1, p->tileY);
 						break;
+					case DIR_NONE:
+						break;
 					}
 					g_hdb->_ai->_playerEmerging = true;
 					break;
@@ -2105,9 +2107,9 @@ void aiIcePuffAction(AIEntity *e) {
 		case 12: e->draw = e->blinkGfx[2]; break;	// peek - blinking
 		case  8: e->draw = e->blinkGfx[1]; break;	// peek - looking
 		case  4: e->draw = e->blinkGfx[0]; break;	// peek - looking
-		case  3: 
-			if (e->onScreen && !g_hdb->_rnd->getRandomNumber(6)) 
-				g_hdb->_sound->playSound(SND_ICEPUFF_WARNING); 
+		case  3:
+			if (e->onScreen && !g_hdb->_rnd->getRandomNumber(6))
+				g_hdb->_sound->playSound(SND_ICEPUFF_WARNING);
 			break;
 		case  0: e->draw = e->blinkGfx[3];			// underground
 			e->sequence = 30;
