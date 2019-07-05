@@ -1551,12 +1551,335 @@ void aiMeerkatLookAround(AIEntity *e) {
 	g_hdb->_ai->animEntFrames(e);
 }
 
+void aiFatFrogInit(AIEntity *e) {
+	e->aiAction = aiFatFrogAction;
+}
+
+void aiFatFrogInit2(AIEntity *e) {
+	e->draw = g_hdb->_ai->getStandFrameDir(e);
+	// load tongue tiles
+	switch (e->dir) {
+	case DIR_DOWN:
+		if (!g_hdb->_ai->_tileFroglickMiddleUD) {
+			g_hdb->_ai->_tileFroglickMiddleLR = g_hdb->_gfx->loadTile(TILE_FFTONGUE_UD_MIDDLE);
+			g_hdb->_ai->_tileFroglickWiggleUD[0] = g_hdb->_gfx->loadTile(TILE_FFTONGUE_UD_WIGGLE_L);
+			g_hdb->_ai->_tileFroglickWiggleUD[1] = g_hdb->_gfx->loadTile(TILE_FFTONGUE_UD_WIGGLE_M);
+			g_hdb->_ai->_tileFroglickWiggleUD[2] = g_hdb->_gfx->loadTile(TILE_FFTONGUE_UD_WIGGLE_R);
+		}
+		e->state = STATE_STANDDOWN;
+		break;
+	case DIR_LEFT:
+		if (!g_hdb->_ai->_tileFroglickMiddleLR)
+			g_hdb->_ai->_tileFroglickMiddleLR = g_hdb->_gfx->loadTile(TILE_FFTONGUE_LR_MIDDLE);
+
+		if (!g_hdb->_ai->_tileFroglickWiggleLeft[0]) {
+			g_hdb->_ai->_tileFroglickWiggleLeft[0] = g_hdb->_gfx->loadTile(TILE_FFTONGUE_L_WIGGLE_U);
+			g_hdb->_ai->_tileFroglickWiggleLeft[1] = g_hdb->_gfx->loadTile(TILE_FFTONGUE_L_WIGGLE_M);
+			g_hdb->_ai->_tileFroglickWiggleLeft[2] = g_hdb->_gfx->loadTile(TILE_FFTONGUE_L_WIGGLE_D);
+		}
+		e->state = STATE_STANDLEFT;
+		break;
+	case DIR_RIGHT:
+		if (!g_hdb->_ai->_tileFroglickMiddleLR)
+			g_hdb->_ai->_tileFroglickMiddleLR = g_hdb->_gfx->loadTile(TILE_FFTONGUE_LR_MIDDLE);
+
+		if (!g_hdb->_ai->_tileFroglickWiggleRight[0]) {
+			g_hdb->_ai->_tileFroglickWiggleRight[0] = g_hdb->_gfx->loadTile(TILE_FFTONGUE_R_WIGGLE_U);
+			g_hdb->_ai->_tileFroglickWiggleRight[1] = g_hdb->_gfx->loadTile(TILE_FFTONGUE_R_WIGGLE_M);
+			g_hdb->_ai->_tileFroglickWiggleRight[2] = g_hdb->_gfx->loadTile(TILE_FFTONGUE_R_WIGGLE_D);
+		}
+		e->state = STATE_STANDRIGHT;
+		break;
+	default:
+		break;
+	}
+}
+
 void aiFatFrogAction(AIEntity *e) {
-	warning("STUB: AI: aiFatFrogAction required");
+	AIEntity *p = g_hdb->_ai->getPlayer();
+
+	switch (e->state) {
+		//-------------------------------------------------------------------
+		// WAITING TO ATTACK
+		//-------------------------------------------------------------------
+	case STATE_STANDDOWN:
+		e->draw = e->standdownGfx[e->animFrame];
+		// is player within 2 tiles below fatfrog?
+		if (p->tileX == e->tileX && p->tileY - e->tileY < 3 && p->tileY > e->tileY) {
+			e->state = STATE_LICKDOWN;
+			e->animDelay = e->animCycle << 2;
+			e->animFrame = 0;
+		}
+		// cycle animation frames
+		if (e->animDelay-- > 0)
+			return;
+		e->animDelay = e->animCycle << 2;
+		e->animFrame++;
+		if (e->animFrame == e->standdownFrames)
+			e->animFrame = 0;
+		if (!g_hdb->_rnd->getRandomNumber(30) && e->onScreen)
+			g_hdb->_sound->playSound(SND_FROG_RIBBIT1);
+		break;
+
+	case STATE_STANDLEFT:
+		e->draw = e->standleftGfx[e->animFrame];
+		// is player within 2 tiles below fatfrog?
+		if (p->tileY == e->tileY && e->tileX - p->tileX < 3 && p->tileX < e->tileX) {
+			e->state = STATE_LICKLEFT;
+			e->animDelay = e->animCycle << 2;
+			e->animFrame = 0;
+		}
+		// cycle animation frames
+		if (e->animDelay-- > 0)
+			return;
+		e->animDelay = e->animCycle << 2;
+		e->animFrame++;
+		if (e->animFrame == e->standleftFrames)
+			e->animFrame = 0;
+		if (!g_hdb->_rnd->getRandomNumber(30) && e->onScreen)
+			g_hdb->_sound->playSound(SND_FROG_RIBBIT2);
+		break;
+
+	case STATE_STANDRIGHT:
+		e->draw = e->standrightGfx[e->animFrame];
+		// is player within 2 tiles below fatfrog?
+		if (p->tileY == e->tileY && p->tileX - e->tileX < 3 && p->tileX > e->tileX) {
+			e->state = STATE_LICKRIGHT;
+			e->animDelay = e->animCycle << 2;
+			e->animFrame = 0;
+		}
+		// cycle animation frames
+		if (e->animDelay-- > 0)
+			return;
+		e->animDelay = e->animCycle << 2;
+		e->animFrame++;
+		if (e->animFrame == e->standrightFrames)
+			e->animFrame = 0;
+		if (!g_hdb->_rnd->getRandomNumber(30) && e->onScreen)
+			g_hdb->_sound->playSound(SND_FROG_RIBBIT2);
+		break;
+
+		//-------------------------------------------------------------------
+		// LICK ATTACK
+		//-------------------------------------------------------------------
+	case STATE_LICKDOWN:
+		e->draw = e->movedownGfx[e->animFrame];
+		// ready to start licking?
+		if (e->animFrame == e->movedownFrames - 1 && !e->value1) {
+			e->value1 = 1;
+			e->aiDraw = aiFatFrogTongueDraw;
+			g_hdb->_sound->playSound(SND_FROG_LICK);
+		} else if (e->animFrame == e->movedownFrames - 1 && e->value1) {
+			// animate licking
+
+			// check player death
+			if (((p->tileX == e->tileX && p->tileY == e->tileY + 1) ||					// in front of frog + 1 tile!?
+				(e->value1 > 3 && p->tileX == e->tileX && p->tileY < e->tileY + 3)) &&	// in front of frog + 2 tiles!?
+				g_hdb->_ai->playerDead() == false)
+				g_hdb->_ai->killPlayer(DEATH_NORMAL);
+
+			e->value1++;
+			if (e->value1 == 14) {
+				e->animFrame = e->value1 = 0;
+				e->aiDraw = NULL;
+				e->state = STATE_STANDDOWN;
+			}
+		} else {
+			// animate pre-licking
+			// cycle animation frames
+			if (e->animDelay-- > 0)
+				return;
+			e->animDelay = e->animCycle;
+			e->animFrame++;
+		}
+		break;
+
+	case STATE_LICKLEFT:
+		e->draw = e->moveleftGfx[e->animFrame];
+		// ready to start licking?
+		if (e->animFrame == e->moveleftFrames - 1 && !e->value1) {
+			e->value1 = 1;
+			e->aiDraw = aiFatFrogTongueDraw;
+			g_hdb->_sound->playSound(SND_FROG_LICK);
+		} else if (e->animFrame == e->moveleftFrames - 1 && e->value1) {
+			// animate licking
+
+			// check player death
+			if (((p->tileY == e->tileY && p->tileX == e->tileX - 1) ||					// in front of frog + 1 tile!?
+				(e->value1 > 3 && p->tileY == e->tileY && p->tileX > e->tileX - 3)) &&	// in front of frog + 2 tiles!?
+				g_hdb->_ai->playerDead() == false)
+				g_hdb->_ai->killPlayer(DEATH_NORMAL);
+
+			e->value1++;
+			if (e->value1 == 14) {
+				e->animFrame = e->value1 = 0;
+				e->aiDraw = NULL;
+				e->state = STATE_STANDLEFT;
+			}
+		} else {
+			// animate pre-licking
+			// cycle animation frames
+			if (e->animDelay-- > 0)
+				return;
+			e->animDelay = e->animCycle;
+			e->animFrame++;
+		}
+		break;
+
+	case STATE_LICKRIGHT:
+		e->draw = e->moverightGfx[e->animFrame];
+		// ready to start licking?
+		if (e->animFrame == e->moverightFrames - 1 && !e->value1) {
+			e->value1 = 1;
+			e->aiDraw = aiFatFrogTongueDraw;
+			g_hdb->_sound->playSound(SND_FROG_LICK);
+		} else if (e->animFrame == e->moverightFrames - 1 && e->value1) {
+			// animate licking
+			// check player death
+			//
+			if (((p->tileY == e->tileY && p->tileX == e->tileX + 1) ||					// in front of frog + 1 tile!?
+				(e->value1 > 3 && p->tileY == e->tileY && p->tileX < e->tileX + 3)) &&	// in front of frog + 2 tiles!?
+				g_hdb->_ai->playerDead() == false)
+				g_hdb->_ai->killPlayer(DEATH_NORMAL);
+
+			e->value1++;
+			if (e->value1 == 14) {
+				e->animFrame = e->value1 = 0;
+				e->aiDraw = NULL;
+				e->state = STATE_STANDRIGHT;
+			}
+		} else {
+			// animate pre-licking
+			// cycle animation frames
+			if (e->animDelay-- > 0)
+				return;
+			e->animDelay = e->animCycle;
+			e->animFrame++;
+		}
+		break;
+	}
 }
 
 void aiFatFrogTongueDraw(AIEntity *e, int mx, int my) {
-	warning("STUB: AI: aiFatFrogTongueDraw required");
+	int	nx, ny;
+
+	switch (e->state) {
+	case STATE_LICKDOWN:
+		switch (e->value1) {
+		case 1:
+		case 2:
+		case 3:
+		case 13:
+		case 14:
+			nx = e->x;
+			ny = e->y + 32;
+			g_hdb->_ai->_tileFroglickWiggleUD[1]->drawMasked(nx - mx, ny - my);
+			break;
+		case 4:
+		case 7:
+		case 10:
+			nx = e->x;
+			ny = e->y + 32;
+			g_hdb->_ai->_tileFroglickMiddleUD->drawMasked(nx - mx, ny - my);
+			g_hdb->_ai->_tileFroglickWiggleUD[0]->drawMasked(nx - mx, ny + 32 - my);
+			break;
+		case 5:
+		case 8:
+		case 11:
+			nx = e->x;
+			ny = e->y + 32;
+			g_hdb->_ai->_tileFroglickMiddleUD->drawMasked(nx - mx, ny - my);
+			g_hdb->_ai->_tileFroglickWiggleUD[1]->drawMasked(nx - mx, ny + 32 - my);
+			break;
+		case 6:
+		case 9:
+		case 12:
+			nx = e->x;
+			ny = e->y + 32;
+			g_hdb->_ai->_tileFroglickMiddleUD->drawMasked(nx - mx, ny - my);
+			g_hdb->_ai->_tileFroglickWiggleUD[2]->drawMasked(nx - mx, ny + 32 - my);
+			break;
+		}
+		break;
+
+	case STATE_LICKLEFT:
+		switch (e->value1) {
+		case 1:
+		case 2:
+		case 3:
+		case 13:
+		case 14:
+			nx = e->x - 32;
+			ny = e->y;
+			g_hdb->_ai->_tileFroglickWiggleLeft[1]->drawMasked(nx - mx, ny - my);
+			break;
+		case 4:
+		case 7:
+		case 10:
+			nx = e->x - 32;
+			ny = e->y;
+			g_hdb->_ai->_tileFroglickMiddleLR->drawMasked(nx - mx, ny - my);
+			g_hdb->_ai->_tileFroglickWiggleLeft[0]->drawMasked(nx - 32 - mx, ny - my);
+			break;
+		case 5:
+		case 8:
+		case 11:
+			nx = e->x - 32;
+			ny = e->y;
+			g_hdb->_ai->_tileFroglickMiddleLR->drawMasked(nx - mx, ny - my);
+			g_hdb->_ai->_tileFroglickWiggleLeft[1]->drawMasked(nx - 32 - mx, ny - my);
+			break;
+		case 6:
+		case 9:
+		case 12:
+			nx = e->x - 32;
+			ny = e->y;
+			g_hdb->_ai->_tileFroglickMiddleLR->drawMasked(nx - mx, ny - my);
+			g_hdb->_ai->_tileFroglickWiggleLeft[2]->drawMasked(nx - 32 - mx, ny - my);
+			break;
+		}
+		break;
+
+	case STATE_LICKRIGHT:
+		switch (e->value1) {
+		case 1:
+		case 2:
+		case 3:
+		case 13:
+		case 14:
+			nx = e->x + 32;
+			ny = e->y;
+			g_hdb->_ai->_tileFroglickWiggleRight[1]->drawMasked(nx - 32 - mx, ny - my);
+			break;
+		case 4:
+		case 7:
+		case 10:
+			nx = e->x + 32;
+			ny = e->y;
+			g_hdb->_ai->_tileFroglickMiddleLR->drawMasked(nx - mx, ny - my);
+			g_hdb->_ai->_tileFroglickWiggleRight[0]->drawMasked(nx + 32 - mx, ny - my);
+			break;
+		case 5:
+		case 8:
+		case 11:
+			nx = e->x + 32;
+			ny = e->y;
+			g_hdb->_ai->_tileFroglickMiddleLR->drawMasked(nx - mx, ny - my);
+			g_hdb->_ai->_tileFroglickWiggleRight[1]->drawMasked(nx + 32 - mx, ny - my);
+			break;
+		case 6:
+		case 9:
+		case 12:
+			nx = e->x + 32;
+			ny = e->y;
+			g_hdb->_ai->_tileFroglickMiddleLR->drawMasked(nx - mx, ny - my);
+			g_hdb->_ai->_tileFroglickWiggleRight[2]->drawMasked(nx + 32 - mx, ny - my);
+			break;
+		}
+		break;
+	default:
+		break;
+	}
 }
 
 void aiGoodFairyInit(AIEntity *e) {
@@ -2483,28 +2806,12 @@ void aiDragonDraw(AIEntity *e, int mx, int my) {
 	}
 }
 
-void aiListenBotInit(AIEntity *e) {
-	warning("STUB: AI: aiListenBotInit required");
-}
-
-void aiListenBotInit2(AIEntity *e) {
-	warning("STUB: AI: aiListenBotInit2 required");
-}
-
 void aiLaserInit(AIEntity *e) {
 	warning("STUB: AI: aiLaserInit required");
 }
 
 void aiLaserInit2(AIEntity *e) {
 	warning("STUB: AI: aiLaserInit2 required");
-}
-
-void aiFatFrogInit(AIEntity *e) {
-	warning("STUB: AI: aiFatFrogInit required");
-}
-
-void aiFatFrogInit2(AIEntity *e) {
-	warning("STUB: AI: aiFatFrogInit2 required");
 }
 
 } // End of Namespace
