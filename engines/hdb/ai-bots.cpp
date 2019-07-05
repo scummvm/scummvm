@@ -2222,8 +2222,65 @@ void aiIcePuffAction(AIEntity *e) {
 	}
 }
 
+void aiBuzzflyInit(AIEntity *e) {
+	e->aiAction = aiBuzzflyAction;
+	e->sequence = 0;
+
+	g_hdb->_ai->findPath(e);
+}
+
+void aiBuzzflyInit2(AIEntity *e) {
+	int		i;
+	e->draw = g_hdb->_ai->getStandFrameDir(e);
+	for (i = 0; i < e->movedownFrames; i++)
+	{
+		e->standdownGfx[i] = e->movedownGfx[i];
+		e->standupGfx[i] = e->moveupGfx[i];
+		e->standleftGfx[i] = e->moveleftGfx[i];
+		e->standrightGfx[i] = e->moverightGfx[i];
+	}
+	e->standdownFrames = e->movedownFrames;
+	e->standupFrames = e->moveupFrames;
+	e->standleftFrames = e->moveleftFrames;
+	e->standrightFrames = e->moverightFrames;
+}
+
 void aiBuzzflyAction(AIEntity *e) {
-	warning("STUB: AI: aiBuzzflyAction required");
+	if (!e->goalX) {
+		switch (e->sequence) {
+		case 0:
+		case 1:
+		case 2:
+		case 3:
+		case 4:
+			if (!e->animFrame && e->animDelay == e->animCycle)
+				e->sequence++;
+
+			e->draw = e->standdownGfx[e->animFrame];
+
+			// cycle animation frames
+			if (e->animDelay-- > 0)
+				return;
+			e->animDelay = e->animCycle;
+			e->animFrame++;
+			if (e->animFrame == e->standdownFrames)
+				e->animFrame = 0;
+
+			break;
+
+		case 5:
+			g_hdb->_ai->findPath(e);
+			if (e->onScreen)
+				g_hdb->_sound->playSound(SND_BUZZFLY_FLY);
+			e->sequence = 0;
+		}
+	} else {
+		g_hdb->_ai->animateEntity(e);
+		if (g_hdb->_ai->checkPlayerCollision(e->x, e->y, 6) && !g_hdb->_ai->playerDead()) {
+			g_hdb->_sound->playSound(SND_BUZZFLY_STING);
+			g_hdb->_ai->killPlayer(DEATH_GRABBED);
+		}
+	}
 }
 
 void aiDragonAction(AIEntity *e) {
@@ -2256,14 +2313,6 @@ void aiFatFrogInit(AIEntity *e) {
 
 void aiFatFrogInit2(AIEntity *e) {
 	warning("STUB: AI: aiFatFrogInit2 required");
-}
-
-void aiBuzzflyInit(AIEntity *e) {
-	warning("STUB: AI: aiBuzzflyInit required");
-}
-
-void aiBuzzflyInit2(AIEntity *e) {
-	warning("STUB: AI: aiBuzzflyInit2 required");
 }
 
 void aiDragonInit(AIEntity *e) {
