@@ -213,7 +213,7 @@ public:
 
 	char *lastMapname() { return _lastMapname; }
 
-	void changeLevel(char *name) {
+	void changeLevel(const char *name) {
 		strcpy(_changeMapname, name);
 		_changeLevel = true;
 	}

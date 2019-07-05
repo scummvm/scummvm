@@ -957,7 +957,7 @@ static int startMap(lua_State *L) {
 	g_hdb->_lua->checkParameters("startMap", 1);
 
 	lua_pop(L, 1);
-	g_hdb->changeLevel((char *)string);
+	g_hdb->changeLevel(string);
 
 	return 0;
 }
