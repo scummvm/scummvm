@@ -44,6 +44,11 @@ bool Sound::playVoice(int index, int actor) {
 	return true;
 }
 
+bool Sound::stopChannel(int channel) {
+	debug(9, "STUB: Stop Channel");
+	return true;
+}
+
 void Sound::markSoundCacheFreeable() {
 	warning("STUB: Sound::markSoundCacheFreeable() ");
 }
