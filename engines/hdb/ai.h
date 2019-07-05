@@ -418,13 +418,13 @@ struct AIEntity {
 
 	union {
 		uint16 blinkFrames;
-		uint16 int1;
+		int16 int1;
 	};
 	Tile *blinkGfx[kMaxAnimFrames];
 
 	union {
 		uint16 special1Frames;
-		uint16 int2;
+		int16 int2;
 	};
 	Tile *special1Gfx[kMaxAnimFrames];
 
