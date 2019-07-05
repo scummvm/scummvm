@@ -98,6 +98,9 @@ bool AI::cacheEntGfx(AIEntity *e, bool init) {
 				Common::Array<const char *> *gfxFiles = g_hdb->_fileMan->findFiles(list[j].name, TYPE_TILE32);
 				uint32 size;
 
+				if (gfxFiles->size() == 0)
+					warning("AI::cacheEntGfx: no files for %s", list[j].name);
+
 				for (Common::Array<const char *>::iterator it = gfxFiles->begin(); it != gfxFiles->end(); it++) {
 					size = g_hdb->_fileMan->getLength((*it), TYPE_TILE32);
 

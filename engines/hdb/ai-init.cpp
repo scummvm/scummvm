@@ -35,43 +35,43 @@ AIStateDef none[] = {
 };
 
 AIStateDef guy[] = {
-	{ STATE_BLINK,		"ent_guy_blink" },
-	{ STATE_STANDDOWN,	"ent_guy_standdown" },
-	{ STATE_STANDUP,	"ent_guy_standup" },
-	{ STATE_STANDLEFT,	"ent_guy_standleft" },
-	{ STATE_STANDRIGHT,	"ent_guy_standright" },
-	{ STATE_MOVEDOWN,	"ent_guy_walkdown" },
-	{ STATE_MOVEUP,		"ent_guy_walkup" },
-	{ STATE_MOVELEFT,	"ent_guy_walkleft" },
-	{ STATE_MOVERIGHT,	"ent_guy_walkright" },
-	{ STATE_PUSHDOWN,	"ent_guy_pushdown" },
-	{ STATE_PUSHUP,		"ent_guy_pushup" },
-	{ STATE_PUSHLEFT,	"ent_guy_pushleft" },
-	{ STATE_PUSHRIGHT,	"ent_guy_pushright" },
-	{ STATE_GRABDOWN,	"ent_guy_getdown" },
-	{ STATE_GRABUP,		"ent_guy_getup" },
-	{ STATE_GRABLEFT,	"ent_guy_getleft" },
-	{ STATE_GRABRIGHT,	"ent_guy_getright" },
-	{ STATE_PLUMMET,		"ent_guy_plummet" },
-	{ STATE_ATK_STUN_DOWN,	"ent_guy_stundown" },
-	{ STATE_ATK_STUN_UP,	"ent_guy_stunup" },
-	{ STATE_ATK_STUN_LEFT,	"ent_guy_stunleft" },
-	{ STATE_ATK_STUN_RIGHT,	"ent_guy_stunright" },
-	{ STATE_ATK_SLUG_DOWN,	"ent_guy_slingdown" },
-	{ STATE_ATK_SLUG_UP,	"ent_guy_slingup" },
-	{ STATE_ATK_SLUG_LEFT,	"ent_guy_slingleft" },
-	{ STATE_ATK_SLUG_RIGHT,	"ent_guy_slingright" },
-	{ STATE_DYING,		"ent_guy_die" },
-	{ STATE_HORRIBLE1,	"ent_guy_horrible1" },
-	{ STATE_HORRIBLE2,	"ent_guy_horrible2" },
-	{ STATE_HORRIBLE3,	"ent_guy_horrible3" },
-	{ STATE_HORRIBLE4,	"ent_guy_horrible4" },
-	{ STATE_GOODJOB,	"ent_guy_goodjob" },
-	{ STATE_ENDSTATES, "" }
+	{ STATE_BLINK,          GROUP_ENT_GUY_BLINK },
+	{ STATE_STANDDOWN,      GROUP_ENT_GUY_STANDDOWN },
+	{ STATE_STANDUP,        GROUP_ENT_GUY_STANDUP },
+	{ STATE_STANDLEFT,      GROUP_ENT_GUY_STANDLEFT },
+	{ STATE_STANDRIGHT,     GROUP_ENT_GUY_STANDRIGHT },
+	{ STATE_MOVEDOWN,       GROUP_ENT_GUY_WALKDOWN },
+	{ STATE_MOVEUP,         GROUP_ENT_GUY_WALKUP },
+	{ STATE_MOVELEFT,       GROUP_ENT_GUY_WALKLEFT },
+	{ STATE_MOVERIGHT,      GROUP_ENT_GUY_WALKRIGHT },
+	{ STATE_PUSHDOWN,       GROUP_ENT_GUY_PUSHDOWN },
+	{ STATE_PUSHUP,         GROUP_ENT_GUY_PUSHUP },
+	{ STATE_PUSHLEFT,       GROUP_ENT_GUY_PUSHLEFT },
+	{ STATE_PUSHRIGHT,      GROUP_ENT_GUY_PUSHRIGHT },
+	{ STATE_GRABDOWN,       GROUP_ENT_GUY_GETDOWN },
+	{ STATE_GRABUP,         GROUP_ENT_GUY_GETUP },
+	{ STATE_GRABLEFT,       GROUP_ENT_GUY_GETLEFT },
+	{ STATE_GRABRIGHT,      GROUP_ENT_GUY_GETRIGHT },
+	{ STATE_PLUMMET,        GROUP_ENT_GUY_PLUMMET },
+	{ STATE_ATK_STUN_DOWN,  GROUP_ENT_GUY_STUNDOWN },
+	{ STATE_ATK_STUN_UP,    GROUP_ENT_GUY_STUNUP },
+	{ STATE_ATK_STUN_LEFT,  GROUP_ENT_GUY_STUNLEFT },
+	{ STATE_ATK_STUN_RIGHT, GROUP_ENT_GUY_STUNRIGHT },
+	{ STATE_ATK_SLUG_DOWN,  GROUP_ENT_GUY_SLINGDOWN },
+	{ STATE_ATK_SLUG_UP,    GROUP_ENT_GUY_SLINGUP },
+	{ STATE_ATK_SLUG_LEFT,  GROUP_ENT_GUY_SLINGLEFT },
+	{ STATE_ATK_SLUG_RIGHT, GROUP_ENT_GUY_SLINGRIGHT },
+	{ STATE_DYING,          GROUP_ENT_GUY_DIE },
+	{ STATE_HORRIBLE1,      GROUP_ENT_GUY_HORRIBLE1 },
+	{ STATE_HORRIBLE2,      GROUP_ENT_GUY_HORRIBLE2 },
+	{ STATE_HORRIBLE3,      GROUP_ENT_GUY_HORRIBLE3 },
+	{ STATE_HORRIBLE4,      GROUP_ENT_GUY_HORRIBLE4 },
+	{ STATE_GOODJOB,        GROUP_ENT_GUY_GOODJOB },
+	{ STATE_ENDSTATES, "" }                            // end of list indicator
 };
 
 AIStateDef gemAttack[] = {
-	{ STATE_MOVEDOWN, "ent_gem_white_sit" },
+	{ STATE_MOVEDOWN,       GROUP_ENT_GEM_WHITE_SIT },
 	{ STATE_ENDSTATES, "" }
 };
 
@@ -80,224 +80,225 @@ AIStateDef slugAttack[] = {
 };
 
 AIStateDef dolly[] = {
-	{ STATE_MOVEDOWN,	"ent_sergeant_walkdown" },
-	{ STATE_MOVEUP,		"ent_sergeant_walkup" },
-	{ STATE_MOVELEFT,	"ent_sergeant_walkleft" },
-	{ STATE_MOVERIGHT,	"ent_sergeant_walkright" },
-	{ STATE_DOLLYUSERIGHT, "ent_sergeant_userright" },
-	{ STATE_KISSRIGHT,	"ent_sergeant_kissright" },
-	{ STATE_KISSLEFT,	"ent_sergeant_kissleft" },
-	{ STATE_ANGRY,		"ent_sergeant_angry"},
-	{ STATE_LAUGH,		"ent_sergeant_laugh" },
-	{ STATE_PANIC,		"ent_sergeant_panic" },
+	{ STATE_MOVEDOWN,       GROUP_ENT_DOLLY_WALKDOWN },
+	{ STATE_MOVEUP,         GROUP_ENT_DOLLY_WALKUP },
+	{ STATE_MOVELEFT,       GROUP_ENT_DOLLY_WALKLEFT },
+	{ STATE_MOVERIGHT,      GROUP_ENT_DOLLY_WALKRIGHT },
+	{ STATE_DOLLYUSERIGHT, GROUP_ENT_DOLLY_USERIGHT },
+	{ STATE_KISSRIGHT,      GROUP_ENT_DOLLY_KISSRIGHT },
+	{ STATE_KISSLEFT,       GROUP_ENT_DOLLY_KISSLEFT },
+	{ STATE_ANGRY,          GROUP_ENT_DOLLY_ANGRY },
+	{ STATE_LAUGH,          GROUP_ENT_DOLLY_LAUGH },
+	{ STATE_PANIC,          GROUP_ENT_DOLLY_PANIC },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef sergeant[] = {
-	{ STATE_STANDDOWN,	"ent_sergeant_standdown" },
-	{ STATE_STANDUP,	"ent_sergeant_standup" },
-	{ STATE_STANDLEFT,	"ent_sergeant_standleft" },
-	{ STATE_STANDRIGHT,	"ent_sergeant_standright" },
-	{ STATE_YELL,		"ent_sergeant_yell" },
-	{ STATE_MOVEDOWN,	"ent_sergeant_walkdown" },
-	{ STATE_MOVEUP,		"ent_sergeant_walkup" },
-	{ STATE_MOVELEFT,	"ent_sergeant_walkleft" },
-	{ STATE_MOVERIGHT,	"ent_sergeant_walkright" },
+	{ STATE_STANDDOWN,      GROUP_ENT_SERGEANT_STANDDOWN },
+	{ STATE_STANDUP,        GROUP_ENT_SERGEANT_STANDUP },
+	{ STATE_STANDLEFT,      GROUP_ENT_SERGEANT_STANDLEFT },
+	{ STATE_STANDRIGHT,     GROUP_ENT_SERGEANT_STANDRIGHT },
+	{ STATE_YELL,           GROUP_ENT_SERGEANT_YELL },
+	{ STATE_MOVEDOWN,       GROUP_ENT_SERGEANT_WALKDOWN },
+	{ STATE_MOVEUP,         GROUP_ENT_SERGEANT_WALKUP },
+	{ STATE_MOVELEFT,       GROUP_ENT_SERGEANT_WALKLEFT },
+	{ STATE_MOVERIGHT,      GROUP_ENT_SERGEANT_WALKRIGHT },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef spacedude[] = {
-	{ STATE_MOVEDOWN,	"ent_spacedude_walkdown" },
-	{ STATE_MOVEUP,		"ent_spacedude_walkup" },
-	{ STATE_MOVELEFT,	"ent_spacedude_walkleft" },
-	{ STATE_MOVERIGHT,	"ent_spacedude_walkright" },
+	{ STATE_MOVEDOWN,       GROUP_ENT_SPACEDUDE_WALKDOWN },
+	{ STATE_MOVEUP,         GROUP_ENT_SPACEDUDE_WALKUP },
+	{ STATE_MOVELEFT,       GROUP_ENT_SPACEDUDE_WALKLEFT },
+	{ STATE_MOVERIGHT,      GROUP_ENT_SPACEDUDE_WALKRIGHT },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef chicken[] = {
-	{ STATE_STANDDOWN,	"ent_chicken_standdown" },
-	{ STATE_STANDUP,		"ent_chicken_standup" },
-	{ STATE_STANDLEFT,	"ent_chicken_standleft" },
-	{ STATE_STANDRIGHT,	"ent_chicken_standright" },
-	{ STATE_MOVEDOWN,	"ent_chicken_walkdown" },
-	{ STATE_MOVEUP,		"ent_chicken_walkup" },
-	{ STATE_MOVELEFT,	"ent_chicken_walkleft" },
-	{ STATE_MOVERIGHT,	"ent_chicken_walkright" },
+	{ STATE_STANDDOWN,      GROUP_ENT_CHICKEN_STANDDOWN },
+	{ STATE_STANDUP,        GROUP_ENT_CHICKEN_STANDUP },
+	{ STATE_STANDLEFT,      GROUP_ENT_CHICKEN_STANDLEFT },
+	{ STATE_STANDRIGHT,     GROUP_ENT_CHICKEN_STANDRIGHT },
+	{ STATE_MOVEDOWN,       GROUP_ENT_CHICKEN_WALKDOWN },
+	{ STATE_MOVEUP,         GROUP_ENT_CHICKEN_WALKUP },
+	{ STATE_MOVELEFT,       GROUP_ENT_CHICKEN_WALKLEFT },
+	{ STATE_MOVERIGHT,      GROUP_ENT_CHICKEN_WALKRIGHT },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef vortexian[] = {
-	{ STATE_STANDDOWN, "ent_vortexian_standdown" },
+	{ STATE_STANDDOWN,      GROUP_ENT_VORTEXIAN_STANDDOWN },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef maintBot[] = {
-	{ STATE_STANDDOWN,	"ent_maintbot_standdown" },
-	{ STATE_STANDUP,	"ent_maintbot_standup" },
-	{ STATE_STANDLEFT,	"ent_maintbot_standleft" },
-	{ STATE_STANDRIGHT,	"ent_maintbot_standright" },
-	{ STATE_MOVEDOWN,	"ent_maintbot_walkdown" },
-	{ STATE_MOVEUP,		"ent_maintbot_walkup" },
-	{ STATE_MOVELEFT,	"ent_maintbot_walkleft" },
-	{ STATE_MOVERIGHT,	"ent_maintbot_walkright" },
-	{ STATE_USEDOWN,	"ent_maintbot_usedown" },
-	{ STATE_USEUP,		"ent_maintbot_useup" },
-	{ STATE_USELEFT,	"ent_maintbot_useleft" },
-	{ STATE_USERIGHT,	"ent_maintbot_useright" },
+	{ STATE_STANDDOWN,      GROUP_ENT_MAINTBOT_STANDDOWN },
+	{ STATE_STANDUP,        GROUP_ENT_MAINTBOT_STANDUP },
+	{ STATE_STANDLEFT,      GROUP_ENT_MAINTBOT_STANDLEFT },
+	{ STATE_STANDRIGHT,     GROUP_ENT_MAINTBOT_STANDRIGHT },
+	{ STATE_MOVEDOWN,       GROUP_ENT_MAINTBOT_WALKDOWN },
+	{ STATE_MOVEUP,         GROUP_ENT_MAINTBOT_WALKUP },
+	{ STATE_MOVELEFT,       GROUP_ENT_MAINTBOT_WALKLEFT },
+	{ STATE_MOVERIGHT,      GROUP_ENT_MAINTBOT_WALKRIGHT },
+	{ STATE_USEDOWN,        GROUP_ENT_MAINTBOT_USEDOWN },
+	{ STATE_USEUP,          GROUP_ENT_MAINTBOT_USEUP },
+	{ STATE_USELEFT,        GROUP_ENT_MAINTBOT_USELEFT },
+	{ STATE_USERIGHT,       GROUP_ENT_MAINTBOT_USERIGHT },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef scientist[] = {
-	{ STATE_BLINK,		"ent_scientist_blink" },
-	{ STATE_STANDDOWN,	"ent_scientist_standdown" },
-	{ STATE_STANDUP,	"ent_scientist_standup" },
-	{ STATE_STANDLEFT,	"ent_scientist_standleft" },
-	{ STATE_STANDRIGHT,	"ent_scientist_standright" },
-	{ STATE_MOVEDOWN,	"ent_scientist_walkdown" },
-	{ STATE_MOVEUP,		"ent_scientist_walkup" },
-	{ STATE_MOVELEFT,	"ent_scientist_walkleft" },
-	{ STATE_MOVERIGHT,	"ent_scientist_walkright" },
+	{ STATE_BLINK,          GROUP_ENT_SCIENTIST_BLINK },
+	{ STATE_STANDDOWN,      GROUP_ENT_SCIENTIST_STANDDOWN },
+	{ STATE_STANDUP,        GROUP_ENT_SCIENTIST_STANDUP },
+	{ STATE_STANDLEFT,      GROUP_ENT_SCIENTIST_STANDLEFT },
+	{ STATE_STANDRIGHT,     GROUP_ENT_SCIENTIST_STANDRIGHT },
+	{ STATE_MOVEDOWN,       GROUP_ENT_SCIENTIST_WALKDOWN },
+	{ STATE_MOVEUP,         GROUP_ENT_SCIENTIST_WALKUP },
+	{ STATE_MOVELEFT,       GROUP_ENT_SCIENTIST_WALKLEFT },
+	{ STATE_MOVERIGHT,      GROUP_ENT_SCIENTIST_WALKRIGHT },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef worker[] = {
-	{ STATE_BLINK,		"ent_worker_blink" },
-	{ STATE_STANDDOWN,	"ent_worker_standdown" },
-	{ STATE_STANDUP,	"ent_worker_standup" },
-	{ STATE_STANDLEFT,	"ent_worker_standleft" },
-	{ STATE_STANDRIGHT,	"ent_worker_standright" },
-	{ STATE_MOVEDOWN,	"ent_worker_walkdown" },
-	{ STATE_MOVEUP,		"ent_worker_walkup" },
-	{ STATE_MOVELEFT,	"ent_worker_walkleft" },
-	{ STATE_MOVERIGHT,	"ent_worker_walkright" },
+	{ STATE_BLINK,          GROUP_ENT_WORKER_BLINK },
+	{ STATE_STANDDOWN,      GROUP_ENT_WORKER_STANDDOWN },
+	{ STATE_STANDUP,        GROUP_ENT_WORKER_STANDUP },
+	{ STATE_STANDLEFT,      GROUP_ENT_WORKER_STANDLEFT },
+	{ STATE_STANDRIGHT,     GROUP_ENT_WORKER_STANDRIGHT },
+	{ STATE_MOVEDOWN,       GROUP_ENT_WORKER_WALKDOWN },
+	{ STATE_MOVEUP,         GROUP_ENT_WORKER_WALKUP },
+	{ STATE_MOVELEFT,       GROUP_ENT_WORKER_WALKLEFT },
+	{ STATE_MOVERIGHT,      GROUP_ENT_WORKER_WALKRIGHT },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef deadWorker[] = {
-	{ STATE_STANDDOWN, "ent_dead_worker_sit" },
+	{ STATE_STANDDOWN,      GROUP_ENT_DEAD_WORKER_SIT },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef accountant[] = {
-	{ STATE_STANDDOWN,	"ent_accountant_standdown" },
-	{ STATE_STANDUP,	"ent_accountant_standup" },
-	{ STATE_STANDLEFT,	"ent_accountant_standleft" },
-	{ STATE_STANDRIGHT,	"ent_accountant_standright" },
+	{ STATE_STANDDOWN,      GROUP_ENT_ACCOUNTANT_STANDDOWN },
+	{ STATE_STANDUP,        GROUP_ENT_ACCOUNTANT_STANDUP },
+	{ STATE_STANDLEFT,      GROUP_ENT_ACCOUNTANT_STANDLEFT },
+	{ STATE_STANDRIGHT,     GROUP_ENT_ACCOUNTANT_STANDRIGHT },
 	{ STATE_ENDSTATES, "" }
 };
 
 // Enemies
 
 AIStateDef pushBot[] = {
-	{ STATE_MOVEDOWN,	"ent_pushbot_walkdown" },
-	{ STATE_MOVEUP,		"ent_pushbot_walkup" },
-	{ STATE_MOVELEFT,	"ent_pushbot_walkleft" },
-	{ STATE_MOVERIGHT,	"ent_pushbot_walkright" },
+	{ STATE_MOVEDOWN,       GROUP_ENT_PUSHBOT_WALKDOWN },
+	{ STATE_MOVEUP,         GROUP_ENT_PUSHBOT_WALKUP },
+	{ STATE_MOVELEFT,       GROUP_ENT_PUSHBOT_WALKLEFT },
+	{ STATE_MOVERIGHT,      GROUP_ENT_PUSHBOT_WALKRIGHT },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef rightBot[] = {
-	{ STATE_MOVEDOWN,	"ent_rightbot_walkdown" },
-	{ STATE_MOVEUP,		"ent_rightbot_walkup" },
-	{ STATE_MOVELEFT,	"ent_rightbot_walkleft" },
-	{ STATE_MOVERIGHT,	"ent_rightbot_walkright" },
+	{ STATE_MOVEDOWN,       GROUP_ENT_RIGHTBOT_WALKDOWN },
+	{ STATE_MOVEUP,         GROUP_ENT_RIGHTBOT_WALKUP },
+	{ STATE_MOVELEFT,       GROUP_ENT_RIGHTBOT_WALKLEFT },
+	{ STATE_MOVERIGHT,      GROUP_ENT_RIGHTBOT_WALKRIGHT },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef omniBot[] = {
-	{ STATE_MOVEDOWN,	"ent_omnibot_walkdown" },
-	{ STATE_MOVEUP,		"ent_omnibot_walkup" },
-	{ STATE_MOVELEFT,	"ent_omnibot_walkleft" },
-	{ STATE_MOVERIGHT,	"ent_omnibot_walkright" },
+	{ STATE_MOVEDOWN,       GROUP_ENT_OMNIBOT_WALKDOWN },
+	{ STATE_MOVEUP,         GROUP_ENT_OMNIBOT_WALKUP },
+	{ STATE_MOVELEFT,       GROUP_ENT_OMNIBOT_WALKLEFT },
+	{ STATE_MOVERIGHT,      GROUP_ENT_OMNIBOT_WALKRIGHT },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef laser[] = {
-	{ STATE_STANDDOWN,	"ent_laser_down" },
-	{ STATE_STANDUP,	"ent_laser_up" },
-	{ STATE_STANDLEFT,	"ent_laser_left" },
-	{ STATE_STANDRIGHT,	"ent_laser_right" },
+	{ STATE_STANDRIGHT,     GROUP_ENT_LASER_RIGHT },
+	{ STATE_STANDLEFT,      GROUP_ENT_LASER_LEFT },
+	{ STATE_STANDUP,        GROUP_ENT_LASER_UP },
+	{ STATE_STANDDOWN,      GROUP_ENT_LASER_DOWN },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef diverter[] = {
-	{ STATE_DIVERTER_BL,	"ent_deflectorbl_sit" },
-	{ STATE_DIVERTER_BR,	"ent_deflectorbr_sit" },
-	{ STATE_DIVERTER_TL,	"ent_deflectortl_sit" },
-	{ STATE_DIVERTER_TR,	"ent_deflectortr_sit" },
+	{ STATE_DIVERTER_BL,    GROUP_ENT_DEFLECTORBL_SIT },
+	{ STATE_DIVERTER_BR,    GROUP_ENT_DEFLECTORBR_SIT },
+	{ STATE_DIVERTER_TL,    GROUP_ENT_DEFLECTORTL_SIT },
+	{ STATE_DIVERTER_TR,    GROUP_ENT_DEFLECTORTR_SIT },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef turnBot[] = {
-	{ STATE_MOVEDOWN,	"ent_turnbot_walkdown" },
-	{ STATE_MOVEUP,		"ent_turnbot_walkup" },
-	{ STATE_MOVELEFT,	"ent_turnbot_walkleft" },
-	{ STATE_MOVERIGHT,	"ent_turnbot_walkright" },
+	{ STATE_MOVEDOWN,       GROUP_ENT_TURNBOT_WALKDOWN },
+	{ STATE_MOVEUP,         GROUP_ENT_TURNBOT_WALKUP },
+	{ STATE_MOVELEFT,       GROUP_ENT_TURNBOT_WALKLEFT },
+	{ STATE_MOVERIGHT,      GROUP_ENT_TURNBOT_WALKRIGHT },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef deadEye[] = {
-	{ STATE_MOVEDOWN,	"ent_deadeye_walkdown" },
-	{ STATE_MOVEUP,		"ent_deadeye_walkup" },
-	{ STATE_MOVELEFT,	"ent_deadeye_walkleft" },
-	{ STATE_MOVERIGHT,	"ent_deadeye_walkright" },
+	{ STATE_MOVEDOWN,       GROUP_ENT_DEADEYE_WALKDOWN },
+	{ STATE_MOVEUP,         GROUP_ENT_DEADEYE_WALKUP },
+	{ STATE_MOVELEFT,       GROUP_ENT_DEADEYE_WALKLEFT },
+	{ STATE_MOVERIGHT,      GROUP_ENT_DEADEYE_WALKRIGHT },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef meerkat[] = {
-	{ STATE_MEER_MOVE,		"ent_meerkat_dirtmove" },
-	{ STATE_MEER_APPEAR,	"ent_meerkat_appear" },
-	{ STATE_MEER_BITE,		"ent_meerkat_bite" },
-	{ STATE_MEER_DISAPPEAR, "ent_meerkat_disappear" },
-	{ STATE_MEER_LOOK,		"ent_meerkat_look" },
+	{ STATE_MEER_MOVE,      GROUP_ENT_MEERKAT_DIRTMOVE },
+	{ STATE_MEER_APPEAR,    GROUP_ENT_MEERKAT_APPEAR },
+	{ STATE_MEER_BITE,      GROUP_ENT_MEERKAT_BITE },
+	{ STATE_MEER_DISAPPEAR, GROUP_ENT_MEERKAT_DISAPPEAR },
+	{ STATE_MEER_LOOK,      GROUP_ENT_MEERKAT_LOOK },
+	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef goodFairy[] = {
-	{ STATE_MOVEDOWN,	"ent_goodfairy_walkdown" },
-	{ STATE_MOVEUP,		"ent_goodfairy_walkup" },
-	{ STATE_MOVELEFT,	"ent_goodfairy_walkleft" },
-	{ STATE_MOVERIGHT,	"ent_goodfairy_walkright" },
+	{ STATE_MOVEDOWN,       GROUP_ENT_GOODFAIRY_WALKDOWN },
+	{ STATE_MOVEUP,         GROUP_ENT_GOODFAIRY_WALKUP },
+	{ STATE_MOVELEFT,       GROUP_ENT_GOODFAIRY_WALKLEFT },
+	{ STATE_MOVERIGHT,      GROUP_ENT_GOODFAIRY_WALKRIGHT },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef badFairy[] = {
-	{ STATE_MOVEDOWN,	"ent_badfairy_walkdown" },
-	{ STATE_MOVEUP,		"ent_badfairy_walkup" },
-	{ STATE_MOVELEFT,	"ent_badfairy_walkleft" },
-	{ STATE_MOVERIGHT,	"ent_badfairy_walkright" },
+	{ STATE_MOVEDOWN,       GROUP_ENT_BADFAIRY_WALKDOWN },
+	{ STATE_MOVEUP,         GROUP_ENT_BADFAIRY_WALKUP },
+	{ STATE_MOVELEFT,       GROUP_ENT_BADFAIRY_WALKLEFT },
+	{ STATE_MOVERIGHT,      GROUP_ENT_BADFAIRY_WALKRIGHT },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef gatePuddle[] = {
-	{ STATE_MOVEDOWN, "ent_gatepuddle_standdown"},
+	{ STATE_MOVEDOWN,       GROUP_ENT_GATEPUDDLE_STANDDOWN },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef icePuff[] = {
-	{ STATE_ICEP_PEEK,			"ent_icepuff_peek" },
-	{ STATE_ICEP_APPEAR,		"ent_icepuff_appear" },
-	{ STATE_ICEP_THROWDOWN,		"ent_icepuff_throwdown" },
-	{ STATE_ICEP_THROWRIGHT,	"ent_icepuff_throwright" },
-	{ STATE_ICEP_THROWLEFT,		"ent_icepuff_throwleft" },
-	{ STATE_ICEP_DISAPPEAR,		"ent_icepuff_disappear" },
+	{ STATE_ICEP_PEEK,      GROUP_ENT_ICEPUFF_PEEK },
+	{ STATE_ICEP_APPEAR,    GROUP_ENT_ICEPUFF_APPEAR },
+	{ STATE_ICEP_THROWDOWN, GROUP_ENT_ICEPUFF_THROWDOWN },
+	{ STATE_ICEP_THROWRIGHT,GROUP_ENT_ICEPUFF_THROWRIGHT },
+	{ STATE_ICEP_THROWLEFT, GROUP_ENT_ICEPUFF_THROWLEFT },
+	{ STATE_ICEP_DISAPPEAR, GROUP_ENT_ICEPUFF_DISAPPEAR },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef buzzfly[] = {
-	{ STATE_MOVEDOWN,	"ent_buzzfly_walkdown" },
-	{ STATE_MOVEUP,		"ent_buzzfly_walkup" },
-	{ STATE_MOVELEFT,	"ent_buzzfly_walkleft" },
-	{ STATE_MOVERIGHT,	"ent_buzzfly_walkright" },
+	{ STATE_MOVEDOWN,      GROUP_ENT_BUZZFLY_WALKDOWN },
+	{ STATE_MOVEUP,        GROUP_ENT_BUZZFLY_WALKUP },
+	{ STATE_MOVELEFT,      GROUP_ENT_BUZZFLY_WALKLEFT },
+	{ STATE_MOVERIGHT,     GROUP_ENT_BUZZFLY_WALKRIGHT },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef fatFrog[] = {
-	{ STATE_STANDDOWN,	"ent_fatfrog_standdown" },
-	{ STATE_STANDLEFT,	"ent_fatfrog_standleft" },
-	{ STATE_STANDRIGHT,	"ent_fatfrog_standright" },
-	{ STATE_LICKDOWN,	"ent_fatfrog_lickdown" },
-	{ STATE_LICKLEFT,	"ent_fatfrog_lickleft" },
-	{ STATE_LICKRIGHT,	"ent_fatfrog_lickright" },
+	{ STATE_STANDDOWN,              GROUP_ENT_FATFROG_STANDDOWN },
+	{ STATE_STANDLEFT,              GROUP_ENT_FATFROG_STANDLEFT },
+	{ STATE_STANDRIGHT,             GROUP_ENT_FATFROG_STANDRIGHT },
+	{ STATE_LICKDOWN,               GROUP_ENT_FATFROG_LICKDOWN },
+	{ STATE_LICKLEFT,               GROUP_ENT_FATFROG_LICKLEFT },
+	{ STATE_LICKRIGHT,              GROUP_ENT_FATFROG_LICKRIGHT },
 	{ STATE_ENDSTATES, "" }
 };
 
@@ -305,142 +306,126 @@ AIStateDef dragon[] = {
 	{ STATE_ENDSTATES, "" }
 };
 
+// These are in the demo
+
 AIStateDef omniBotMissile[] = {
-	{ STATE_MOVEDOWN, "ent_omnibot_missile"},
+	{ STATE_MOVEDOWN,       GROUP_ENT_OMNIBOT_MISSILE },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef fourFirer[] = {
-	{ STATE_STANDDOWN,	"ent_four_laser_down" },
-	{ STATE_STANDUP,	"ent_four_laser_up" },
-	{ STATE_STANDLEFT,	"ent_four_laser_left" },
-	{ STATE_STANDRIGHT,	"ent_four_laser_right" },
+	{ STATE_STANDDOWN,      GROUP_ENT_FOUR_LASER_DOWN },
+	{ STATE_STANDUP,        GROUP_ENT_FOUR_LASER_UP },
+	{ STATE_STANDLEFT,      GROUP_ENT_FOUR_LASER_LEFT },
+	{ STATE_STANDRIGHT,     GROUP_ENT_FOUR_LASER_RIGHT },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef railRider[] = {
-	{ STATE_STANDDOWN,	"ent_railrider_standdown" },
-	{ STATE_STANDUP,	"ent_railrider_standup" },
-	{ STATE_MOVEDOWN,	"ent_railrider_walkdown" },
-	{ STATE_MOVEUP,		"ent_railrider_walkup" },
-	{ STATE_MOVELEFT,	"ent_railrider_walkleft" },
-	{ STATE_MOVERIGHT,	"ent_railrider_walkright" },
+	{ STATE_STANDDOWN,      GROUP_ENT_RAILRIDER_STANDDOWN },
+	{ STATE_STANDUP,        GROUP_ENT_RAILRIDER_STANDUP },
+	{ STATE_MOVEDOWN,       GROUP_ENT_RAILRIDER_WALKDOWN },
+	{ STATE_MOVEUP,         GROUP_ENT_RAILRIDER_WALKUP },
+	{ STATE_MOVELEFT,       GROUP_ENT_RAILRIDER_WALKLEFT },
+	{ STATE_MOVERIGHT,      GROUP_ENT_RAILRIDER_WALKRIGHT },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef shockBot[] = {
-	{ STATE_MOVEDOWN, "ent_shockbot_walk" },
-	{ STATE_SHOCKING, "ent_shock_spark_sit" },
+	{ STATE_MOVEDOWN,       GROUP_ENT_SHOCKBOT_WALK },
+	{ STATE_SHOCKING,       GROUP_SHOCK_SPARK_SIT },
 	{ STATE_ENDSTATES, "" }
 };
 
 // Pushables
 
 AIStateDef crate[] = {
-	{ STATE_STANDDOWN,	"ent_crate_sit" },
-	{ STATE_FLOATING,	"ent_crate_float" },
+	{ STATE_STANDDOWN,      GROUP_ENT_CRATE_SIT },
+	{ STATE_FLOATING,       GROUP_ENT_CRATE_FLOAT },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef barrelLight[] = {
-	{ STATE_STANDDOWN,	"ent_barrel_light_sit" },
-	{ STATE_FLOATING,	"ent_barrel_light_float" },
-	{ STATE_MELTED,		"ent_barrel_light_melt" },
+	{ STATE_FLOATING,       GROUP_ENT_BARREL_LIGHT_FLOAT },
+	{ STATE_MELTED,         GROUP_ENT_BARREL_LIGHT_MELT },
+	{ STATE_STANDDOWN,      GROUP_ENT_BARREL_LIGHT_SIT },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef barrelHeavy[] = {
-	{ STATE_STANDDOWN,	"ent_barrel_heavy_sit" },
-	{ STATE_FLOATING,	"ent_barrel_heavy_float" },
-	{ STATE_MELTED,		"ent_barrel_heavy_melt" },
+	{ STATE_FLOATING,       GROUP_ENT_BARREL_HEAVY_FLOAT },
+	{ STATE_MELTED,         GROUP_ENT_BARREL_HEAVY_MELT },
+	{ STATE_STANDDOWN,      GROUP_ENT_BARREL_HEAVY_SIT },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef barrelExplode[] = {
-	{ STATE_STANDDOWN,	"ent_barrel_explode_sit" },
-	{ STATE_EXPLODING,	"explosion_boom_sit" },
+	{ STATE_EXPLODING,      GROUP_EXPLOSION_BOOM_SIT },
+	{ STATE_STANDDOWN,      GROUP_ENT_BARREL_EXPLODE_SIT },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef frogStatue[] = {
-	{ STATE_STANDDOWN,	"ent_frogstatue_sit" },
+	{ STATE_STANDDOWN,      GROUP_ENT_FROGSTATUE_SIT },
 	{ STATE_ENDSTATES, "" }
 };
 
 // Weapons
 
 AIStateDef club[] = {
-	{ STATE_STANDDOWN,	"ent_club_sit" },
+	{ STATE_STANDDOWN,      GROUP_ENT_CLUB_SIT },
 	{ STATE_ENDSTATES, "" }
 };
+
 AIStateDef roboStunner[] = {
-	{ STATE_STANDDOWN,	"ent_robostunner_sit" },
+	{ STATE_STANDDOWN,      GROUP_ENT_ROBOSTUNNER_SIT },
 	{ STATE_ENDSTATES, "" }
 };
+
 AIStateDef slugSlinger[] = {
-	{ STATE_STANDDOWN,	"ent_slugslinger_sit" },
+	{ STATE_STANDDOWN,      GROUP_ENT_SLUGSLINGER_SIT },
 	{ STATE_ENDSTATES, "" }
 };
 
 // Items
 
 AIStateDef itemChicken[] = {
-	{ STATE_STANDDOWN, "ent_chicken_standdown" },
+	{ STATE_STANDDOWN,      GROUP_ENT_CHICKEN_STANDDOWN },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef envelopeWhite[] = {
-	{ STATE_STANDDOWN, "ent_envelope_white_sit" },
+	{ STATE_STANDDOWN,      GROUP_ENT_ENVELOPE_WHITE_SIT },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef envelopeBlue[] = {
-	{ STATE_STANDDOWN, "ent_envelope_blue_sit" },
+	{ STATE_STANDDOWN,      GROUP_ENT_ENVELOPE_BLUE_SIT },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef envelopeRed[] = {
-	{ STATE_STANDDOWN, "ent_envelope_red_sit" },
-	{ STATE_ENDSTATES, "" }
-};
-
-AIStateDef envelopeGreen[] = {
-	{ STATE_STANDDOWN, "ent_envelope_green_sit" },
+	{ STATE_STANDDOWN,      GROUP_ENT_ENVELOPE_RED_SIT },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef transceiver[] = {
-	{ STATE_STANDDOWN, "ent_transceiver_sit" },
+	{ STATE_STANDDOWN,      GROUP_ENT_TRANSCEIVER_SIT },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef cell[] = {
-	{ STATE_STANDDOWN, "ent_cell_sit" },
+	{ STATE_STANDDOWN,      GROUP_ENT_CELL_SIT },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef gooCup[] = {
-	{ STATE_STANDDOWN, "ent_goo_cup_sit" },
+	{ STATE_STANDDOWN,      GROUP_ENT_GOO_CUP_SIT },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef gemWhite[] = {
-	{ STATE_STANDDOWN, "ent_gem_white_sit" },
-	{ STATE_ENDSTATES, "" }
-};
-
-AIStateDef gemBlue[] = {
-	{ STATE_STANDDOWN, "ent_gem_blue_sit" },
-	{ STATE_ENDSTATES, "" }
-};
-
-AIStateDef gemRed[] = {
-	{ STATE_STANDDOWN, "ent_gem_red_sit" },
-	{ STATE_ENDSTATES, "" }
-};
-
-AIStateDef gemGreen[] = {
-	{ STATE_STANDDOWN, "ent_gem_green_sit" },
+	{ STATE_STANDDOWN,      GROUP_ENT_GEM_WHITE_SIT },
 	{ STATE_ENDSTATES, "" }
 };
 
@@ -449,128 +434,148 @@ AIStateDef cabKey[] = {
 	{ STATE_ENDSTATES, "" }
 };
 
+AIStateDef envelopeGreen[] = {
+	{ STATE_STANDDOWN,      GROUP_ENT_ENVELOPE_GREEN_SIT },
+	{ STATE_ENDSTATES, "" }
+};
+
 AIStateDef teaCup[] = {
-	{ STATE_STANDDOWN, "ent_teacup_sit" },
+	{ STATE_STANDDOWN,      GROUP_ENT_TEACUP_SIT },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef cookie[] = {
-	{ STATE_STANDDOWN, "ent_cookie_sit" },
+	{ STATE_STANDDOWN,      GROUP_ENT_COOKIE_SIT },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef burger[] = {
-	{ STATE_STANDDOWN, "ent_burger_sit" },
+	{ STATE_STANDDOWN,      GROUP_ENT_BURGER_SIT },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef pda[] = {
-	{ STATE_STANDDOWN, "ent_pda_sit" },
+	{ STATE_STANDDOWN,      GROUP_ENT_PDA_SIT },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef book[] = {
-	{ STATE_STANDDOWN, "ent_book_sit" },
+	{ STATE_STANDDOWN,      GROUP_ENT_BOOK_SIT },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef clipboard[] = {
-	{ STATE_STANDDOWN, "ent_clipboard_sit" },
+	{ STATE_STANDDOWN,      GROUP_ENT_CLIPBOARD_SIT },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef note[] = {
-	{ STATE_STANDDOWN, "ent_note_sit" },
+	{ STATE_STANDDOWN,      GROUP_ENT_NOTE_SIT },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef keycardWhite[] = {
-	{ STATE_STANDDOWN, "ent_keycard_white_sit" },
+	{ STATE_STANDDOWN,      GROUP_ENT_KEYCARD_WHITE_SIT },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef keycardBlue[] = {
-	{ STATE_STANDDOWN, "ent_keycard_blue_sit" },
+	{ STATE_STANDDOWN,      GROUP_ENT_KEYCARD_BLUE_SIT },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef keycardRed[] = {
-	{ STATE_STANDDOWN, "ent_keycard_red_sit" },
+	{ STATE_STANDDOWN,      GROUP_ENT_KEYCARD_RED_SIT },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef keycardGreen[] = {
-	{ STATE_STANDDOWN, "ent_keycard_green_sit" },
+	{ STATE_STANDDOWN,      GROUP_ENT_KEYCARD_GREEN_SIT },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef keycardPurple[] = {
-	{ STATE_STANDDOWN, "ent_keycard_purple_sit" },
+	{ STATE_STANDDOWN,      GROUP_ENT_KEYCARD_PURPLE_SIT },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef keycardBlack[] = {
-	{ STATE_STANDDOWN, "ent_keycard_black_sit" },
+	{ STATE_STANDDOWN,      GROUP_ENT_KEYCARD_BLACK_SIT },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef magicEgg[] = {
-	{ STATE_STANDDOWN, "ent_magic_egg_sit" },
+	{ STATE_STANDDOWN,      GROUP_ENT_MAGIC_EGG_SIT },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef iceBlock[] = {
-	{ STATE_STANDDOWN, "ent_ice_block_sit" },
+	{ STATE_STANDDOWN,      GROUP_ENT_ICE_BLOCK_SIT },
+	{ STATE_ENDSTATES, "" }
+};
+
+AIStateDef gemBlue[] = {
+	{ STATE_STANDDOWN,      GROUP_ENT_GEM_BLUE_SIT },
+	{ STATE_ENDSTATES, "" }
+};
+
+AIStateDef gemRed[] = {
+	{ STATE_STANDDOWN,      GROUP_ENT_GEM_RED_SIT },
+	{ STATE_ENDSTATES, "" }
+};
+
+AIStateDef gemGreen[] = {
+	{ STATE_STANDDOWN,      GROUP_ENT_GEM_GREEN_SIT },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef dollyTool1[] = {
-	{ STATE_STANDDOWN, "ent_dolly_tool1_sit" },
+	{ STATE_STANDDOWN,      GROUP_ENT_DOLLY_TOOL1_SIT },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef dollyTool2[] = {
-	{ STATE_STANDDOWN, "ent_dolly_tool2_sit" },
+	{ STATE_STANDDOWN,      GROUP_ENT_DOLLY_TOOL2_SIT },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef dollyTool3[] = {
-	{ STATE_STANDDOWN, "ent_dolly_tool3_sit" },
+	{ STATE_STANDDOWN,      GROUP_ENT_DOLLY_TOOL3_SIT },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef dollyTool4[] = {
-	{ STATE_STANDDOWN, "ent_dolly_tool4_sit" },
+	{ STATE_STANDDOWN,      GROUP_ENT_DOLLY_TOOL4_SIT },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef seed[] = {
-	{ STATE_STANDDOWN, "ent_seed_sit" },
+	{ STATE_STANDDOWN,      GROUP_ENT_SEED_SIT },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef soda[] = {
-	{ STATE_STANDDOWN, "ent_soda_sit" },
+	{ STATE_STANDDOWN,      GROUP_ENT_SODA_SIT },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef router[] = {
-	{ STATE_STANDDOWN, "ent_router_sit" },
+	{ STATE_STANDDOWN,      GROUP_ENT_ROUTER_SIT },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef slicer[] = {
-	{ STATE_STANDDOWN, "ent_slicer_sit" },
+	{ STATE_STANDDOWN,      GROUP_ENT_SLICER_SIT },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef package[] = {
-	{ STATE_STANDDOWN, "ent_package_sit" },
+	{ STATE_STANDDOWN,      GROUP_ENT_PACKAGE_SIT },
 	{ STATE_ENDSTATES, "" }
 };
 
 AIStateDef monkeystone[] = {
-	{ STATE_STANDDOWN, "ent_monkeystone_sit" },
+	{ STATE_STANDDOWN,      GROUP_ENT_MONKEYSTONE_SIT },
 	{ STATE_ENDSTATES, "" }
 };
 
@@ -773,7 +778,7 @@ bool AI::init() {
 	_kcHolderBlackOn	= g_hdb->_gfx->getTileIndex("t32_kcholder_black_on");
 
 	// icepuff snowball
-	_icepSnowballGfxDown = _icepSnowballGfxLeft = 
+	_icepSnowballGfxDown = _icepSnowballGfxLeft =
 		_icepSnowballGfxRight = NULL;
 
 	// Frogglick
@@ -903,7 +908,7 @@ void AI::restartSystem() {
 		_gfxDragonBreathe[0]->free();
 		_gfxDragonBreathe[1]->free();
 		_gfxDragonBreathe[2]->free();
-		_gfxDragonBreathe[0] = _gfxDragonBreathe[1] = 
+		_gfxDragonBreathe[0] = _gfxDragonBreathe[1] =
 			_gfxDragonBreathe[2] = NULL;
 	}
 
