@@ -1260,13 +1260,13 @@ void aiDiverterInit2(AIEntity *e) {
 	case DIR_NONE: break;
 	}
 
-	warning("STUB: Set Laser Rescan to true");
+	g_hdb->_ai->_laserRescan = true;
 }
 
 void aiDiverterAction(AIEntity *e) {
 	if (e->goalX) {
 		g_hdb->_ai->animateEntity(e);
-		warning("STUB: Set Laser Rescan to true");
+		g_hdb->_ai->_laserRescan = true;
 
 		// have to reset the state because we might have been moved...
 		switch (e->dir2) {
@@ -1294,7 +1294,7 @@ void aiDiverterDraw(AIEntity *e, int mx, int my) {
 			onScreen += g_hdb->_ai->_gfxLaserbeamUDTop[frame]->drawMasked(e->x - mx, i * kTileHeight - my);
 			if (onScreen) {
 				g_hdb->_sound->playSoundEx(SND_LASER_LOOP, kLaserChannel, true);
-				warning("STUB: Set Laser onScreen to true");
+				g_hdb->_ai->_laserOnScreen = true;
 			}
 		} else {
 			for (i = e->value1 + 1; i < e->value2; i++)
@@ -1302,7 +1302,7 @@ void aiDiverterDraw(AIEntity *e, int mx, int my) {
 			onScreen += g_hdb->_ai->_gfxLaserbeamLRLeft[frame]->drawMasked(i * kTileWidth - mx, e->y - my);
 			if (onScreen) {
 				g_hdb->_sound->playSoundEx(SND_LASER_LOOP, kLaserChannel, true);
-				warning("STUB: Set Laser onScreen to true");
+				g_hdb->_ai->_laserOnScreen = true;
 			}
 		}
 		break;
@@ -1313,7 +1313,7 @@ void aiDiverterDraw(AIEntity *e, int mx, int my) {
 			onScreen += g_hdb->_ai->_gfxLaserbeamUDTop[frame]->drawMasked(e->x - mx, i * kTileHeight - my);
 			if (onScreen) {
 				g_hdb->_sound->playSoundEx(SND_LASER_LOOP, kLaserChannel, true);
-				warning("STUB: Set Laser onscreen to true");
+				g_hdb->_ai->_laserOnScreen = true;
 			}
 		} else {
 			for (i = e->value1 - 1; i > e->value2; i--)
@@ -1321,7 +1321,7 @@ void aiDiverterDraw(AIEntity *e, int mx, int my) {
 			onScreen += g_hdb->_ai->_gfxLaserbeamLRRight[frame]->drawMasked(i * kTileWidth - mx, e->y - my);
 			if (onScreen) {
 				g_hdb->_sound->playSoundEx(SND_LASER_LOOP, kLaserChannel, true);
-				warning("STUB: Set Laser onscreen to true");
+				g_hdb->_ai->_laserOnScreen = true;
 			}
 		}
 		break;
@@ -1332,7 +1332,7 @@ void aiDiverterDraw(AIEntity *e, int mx, int my) {
 			onScreen += g_hdb->_ai->_gfxLaserbeamUDBottom[frame]->drawMasked(e->x - mx, i * kTileHeight - my);
 			if (onScreen) {
 				g_hdb->_sound->playSoundEx(SND_LASER_LOOP, kLaserChannel, true);
-				warning("STUB: Set Laser onscreen to true");
+				g_hdb->_ai->_laserOnScreen = true;
 			}
 		} else {
 			for (i = e->value1 - 1; i > e->value2; i--)
@@ -1340,7 +1340,7 @@ void aiDiverterDraw(AIEntity *e, int mx, int my) {
 			onScreen += g_hdb->_ai->_gfxLaserbeamLRRight[frame]->drawMasked(i * kTileWidth - mx, e->y - my);
 			if (onScreen) {
 				g_hdb->_sound->playSoundEx(SND_LASER_LOOP, kLaserChannel, true);
-				warning("STUB: Set Laser onscreen to true");
+				g_hdb->_ai->_laserOnScreen = true;
 			}
 		}
 		break;
@@ -1351,7 +1351,7 @@ void aiDiverterDraw(AIEntity *e, int mx, int my) {
 			onScreen += g_hdb->_ai->_gfxLaserbeamUDBottom[frame]->drawMasked(e->x - mx, i * kTileHeight - my);
 			if (onScreen) {
 				g_hdb->_sound->playSoundEx(SND_LASER_LOOP, kLaserChannel, true);
-				warning("STUB: Set Laser onscreen to true");
+				g_hdb->_ai->_laserOnScreen = true;
 			}
 		} else {
 			for (i = e->value1 + 1; i < e->value2; i++)
@@ -1359,7 +1359,7 @@ void aiDiverterDraw(AIEntity *e, int mx, int my) {
 			onScreen += g_hdb->_ai->_gfxLaserbeamLRLeft[frame]->drawMasked(i * kTileWidth - mx, e->y - my);
 			if (onScreen) {
 				g_hdb->_sound->playSoundEx(SND_LASER_LOOP, kLaserChannel, true);
-				warning("STUB: Set Laser onscreen to true");
+				g_hdb->_ai->_laserOnScreen = true;
 			}
 		}
 		break;
