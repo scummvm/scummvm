@@ -1576,7 +1576,7 @@ bool LuaScript::executeMPC(Common::SeekableReadStream *stream, const char *name,
 
 	addPatches(chunkString, scriptName);
 
-	if (!executeChunk(chunkString, chunkString.size(), name)) {
+	if (!executeChunk(chunkString, name)) {
 		delete[] chunk;
 
 		return false;
@@ -1610,7 +1610,7 @@ bool LuaScript::executeFile(const Common::String &filename) {
 
 	addPatches(fileDataString, filename.c_str());
 
-	if (!executeChunk(fileDataString, fileDataString.size(), filename)) {
+	if (!executeChunk(fileDataString, filename)) {
 		delete[] fileData;
 		delete file;
 
@@ -1623,14 +1623,14 @@ bool LuaScript::executeFile(const Common::String &filename) {
 	return true;
 }
 
-bool LuaScript::executeChunk(Common::String &chunk, uint chunkSize, const Common::String &chunkName) const {
+bool LuaScript::executeChunk(Common::String &chunk, const Common::String &chunkName) const {
 
 	if (!_systemInit) {
 		return false;
 	}
 
 	// Compile Chunk
-	if (luaL_loadbuffer(_state, chunk.c_str(), chunkSize, chunkName.c_str())) {
+	if (luaL_loadbuffer(_state, chunk.c_str(), chunk.size(), chunkName.c_str())) {
 		error("Couldn't compile \"%s\": %s", chunkName.c_str(), lua_tostring(_state, -1));
 		lua_pop(_state, -1);
 
