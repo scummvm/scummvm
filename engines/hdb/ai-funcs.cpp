@@ -529,7 +529,9 @@ AIEntity *AI::findEntity(int x, int y) {
 		}
 	}
 
-	warning("STUB: findEntity: Check for Laser");
+	if (g_hdb->_map->laserBeamExist(x, y))
+		return &_dummyLaser;
+
 	return NULL;
 }
 
@@ -546,7 +548,9 @@ AIEntity *AI::findEntityIgnore(int x, int y, AIEntity *ignore) {
 		}
 	}
 
-	warning("STUB: findEntityIgnore: Check for Laser");
+	if (g_hdb->_map->laserBeamExist(x, y) && ignore->type != AI_LASERBEAM)
+		return &_dummyLaser;
+
 	return NULL;
 }
 
@@ -563,7 +567,9 @@ AIEntity *AI::findEntityType(AIType type, int x, int y) {
 		}
 	}
 
-	warning("STUB: findEntityType: Check for Laser");
+	if (g_hdb->_map->laserBeamExist(x, y) && type == AI_LASERBEAM)
+		return &_dummyLaser;
+
 	return NULL;
 }
 
@@ -770,7 +776,9 @@ void AI::initAllEnts() {
 		_deliveries[i].itemGfx = g_hdb->_gfx->getTileGfx(_deliveries[i].itemGfxName, -1);
 		_deliveries[i].destGfx = g_hdb->_gfx->getTileGfx(_deliveries[i].destGfxName, -1);
 	}
-	warning("STUB: initAllEnts: LaserScan required");
+
+	// do a quick LaserScan to fill the laserbeam matrix!
+	laserScan();
 }
 
 void AI::killPlayer(Death method) {
@@ -783,7 +791,9 @@ void AI::killPlayer(Death method) {
 	_playerInvisible = false;
 	_playerDead = true;
 
-	warning("STUB: killPlayer: Close Dialogs");
+	g_hdb->_window->closeDialog();
+	g_hdb->_window->closeDialogChoice();
+	g_hdb->_window->stopPanicZone();
 
 	switch (method) {
 	case DEATH_NORMAL:
@@ -817,7 +827,9 @@ void AI::killPlayer(Death method) {
 		break;
 	}
 
-	warning("STUB: killPlayer: Stop Music");
+	// sound.StopMusic();
+	if (!g_hdb->_sound->getMusicVolume())
+		g_hdb->_sound->playSound(SND_TRY_AGAIN);
 }
 
 void AI::stunEnemy(AIEntity *e, int time) {
