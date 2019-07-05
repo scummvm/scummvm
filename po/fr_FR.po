@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2019-07-04 23:28+0200\n"
-"PO-Revision-Date: 2019-06-22 10:59+0000\n"
-"Last-Translator: Purple T <ZEONK@hotmail.com>\n"
+"PO-Revision-Date: 2019-07-05 08:37+0000\n"
+"Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
 "Language: fr_FR\n"
@@ -3185,7 +3185,7 @@ msgstr "Mode d'étirement"
 
 #: engines/bladerunner/detection.cpp:49
 msgid "Game will add laughter after actor's line or narration"
-msgstr ""
+msgstr "Le jeu ajoute des rires après chaque réplique et narration"
 
 #: engines/bladerunner/detection.cpp:57
 #, fuzzy
@@ -3194,7 +3194,7 @@ msgstr "Mode d'étirement"
 
 #: engines/bladerunner/detection.cpp:58
 msgid "Game will shrink the actors and make their voices high pitched"
-msgstr ""
+msgstr "Le jeu rétrécit les acteurs et rend leurs voix aiguës"
 
 #: engines/cge/detection.cpp:105 engines/cge2/detection.cpp:111
 msgid "Color Blind Mode"
@@ -5328,7 +5328,7 @@ msgstr "Armure plus durable"
 msgid "Armor won't break until character is at -80HP, rather than merely -10HP"
 msgstr ""
 "L'armure ne se brisera pas avant que le personnage ne soit à -80HP, au lieu "
-"de -10HP"
+"de seulement -10HP"
 
 #: engines/zvision/detection_tables.h:61
 msgid "Double FPS"
