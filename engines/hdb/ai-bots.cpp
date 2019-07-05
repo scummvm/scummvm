@@ -24,6 +24,13 @@
 
 namespace HDB {
 
+//-------------------------------------------------------------------
+//
+//	OMNIBOT : This guy moves on a path and if he sees the player
+//		directly ahead, he will shoot at him
+//
+//-------------------------------------------------------------------
+
 void aiOmniBotInit(AIEntity *e) {
 	if (e->value1 == 1)
 		e->aiAction = aiOmniBotMove;
@@ -129,6 +136,13 @@ void aiOmniBotAction(AIEntity *e) {
 		e->sequence--;
 }
 
+//-------------------------------------------------------------------
+//
+//	OMNIBOT MISSILE : Used by the FOURFIRER and OMNIBOT, this deadly
+//		missile flies through the air, killing anything it hits
+//
+//-------------------------------------------------------------------
+
 void aiOmniBotMissileInit(AIEntity *e) {
 	e->state = STATE_MOVEDOWN;
 	e->aiAction = aiOmniBotMissileAction;
@@ -168,6 +182,13 @@ void aiOmniBotMissileAction(AIEntity *e) {
 			g_hdb->_ai->removeEntity(e);
 		}
 }
+
+//-------------------------------------------------------------------
+//
+//	TURNBOT : Moves straight ahead until it hits a wall, then turns
+//		right and continues.
+//
+//-------------------------------------------------------------------
 
 void aiTurnBotInit(AIEntity *e) {
 	e->aiAction = aiTurnBotAction;
@@ -219,6 +240,13 @@ void aiTurnBotAction(AIEntity *e) {
 	if (e->onScreen && onEvenTile(e->x, e->y) && g_hdb->_ai->checkPlayerCollision(e->x, e->y, 0) && !g_hdb->_ai->playerDead())
 		g_hdb->_ai->killPlayer(DEATH_NORMAL);
 }
+
+//-------------------------------------------------------------------
+//
+//	SHOCKBOT : Moves on a path, electrifying all tiles surrounding it
+//		that are METAL.  Will pause when changing directions.
+//
+//-------------------------------------------------------------------
 
 void aiShockBotInit(AIEntity *e) {
 	g_hdb->_ai->findPath(e);
@@ -290,6 +318,14 @@ void aiShockBotShock(AIEntity *e, int mx, int my) {
 		}
 	}
 }
+
+//-------------------------------------------------------------------
+//
+//	RIGHTBOT
+//
+//	Rules: Follows the right-hand wall.  That's it!
+//
+//-------------------------------------------------------------------
 
 void aiRightBotInit(AIEntity *e) {
 	e->moveSpeed = kPlayerMoveSpeed;
@@ -468,6 +504,15 @@ void aiRightBotAction(AIEntity *e) {
 	}
 }
 
+//-------------------------------------------------------------------
+//
+//	PUSHBOT : Very simple, this guy goes forward and pushes anything in his
+//		path all the way until it can't go any further.  Then, he turns 180
+//		degress and comes back until he can't go any further.  Then... he
+//		turns 180 degrees and does it all over again!
+//
+//-------------------------------------------------------------------
+
 void aiPushBotInit(AIEntity *e) {
 	if (e->value1 != 1)
 		e->aiAction = aiPushBotAction;
@@ -565,6 +610,13 @@ void aiPushBotAction(AIEntity *e) {
 		g_hdb->_ai->animateEntity(e);
 	}
 }
+
+//-------------------------------------------------------------------
+//
+//	RAILRIDER : crazy green goopy dude -- he gives you rides on his
+//		special track!
+//
+//-------------------------------------------------------------------
 
 void aiRailRiderInit(AIEntity *e) {
 	if (e->type == AI_RAILRIDER_ON) {
@@ -804,6 +856,13 @@ void aiRailRiderOnAction(AIEntity *e) {
 	}
 }
 
+//-------------------------------------------------------------------
+//
+//	MAINTBOT : This little fella likes to cause trouble!  He just jubs
+//		around the map and looks for stuff to press.  Touch him and you die.
+//
+//-------------------------------------------------------------------
+
 void aiMaintBotInit(AIEntity *e) {
 	// value1 field determines whether the "MMM!" sound plays
 	// 1 means NO
@@ -962,6 +1021,13 @@ void aiMaintBotAction(AIEntity *e) {
 	}
 }
 
+//-------------------------------------------------------------------
+//
+//	FOURFIRER : This bot turns and fires in the direction it's facing,
+//		but only if the player is visible
+//
+//-------------------------------------------------------------------
+
 void aiFourFirerInit(AIEntity *e) {
 	e->value1 = 0;
 	e->aiAction = aiFourFirerAction;
@@ -1031,6 +1097,14 @@ void aiFourFirerAction(AIEntity *e) {
 			g_hdb->_ai->killPlayer(DEATH_FRIED);
 	}
 }
+
+//-------------------------------------------------------------------
+//
+//	DEADEYE : Crazy attack dog with Chompie(tm) sounds!  Will sit in one spot
+//		looking around, then run in a random direction and distance.  If, while
+//		scanning, Deadeye sees the player, he goes nuts and attacks!
+//
+//-------------------------------------------------------------------
 
 void aiDeadEyeInit(AIEntity *e) {
 	e->sequence = 64;
@@ -1222,6 +1296,12 @@ void aiDeadEyeAction(AIEntity *e) {
 		// If not, start looking around
 		e->sequence = 64;
 }
+
+//-------------------------------------------------------------------
+//
+//	LASER
+//
+//-------------------------------------------------------------------
 
 void aiLaserInit(AIEntity *e) {
 	e->aiDraw = aiLaserDraw;
@@ -1433,6 +1513,12 @@ void aiLaserDraw(AIEntity *e, int mx, int my) {
 	e->movedownFrames++;
 }
 
+//-------------------------------------------------------------------
+//
+//	DIVERTER
+//
+//-------------------------------------------------------------------
+
 void aiDiverterInit(AIEntity *e) {
 	e->aiDraw = aiDiverterDraw;
 	e->aiAction = aiDiverterAction;
@@ -1570,6 +1656,13 @@ void aiDiverterDraw(AIEntity *e, int mx, int my) {
 	}
 	e->movedownFrames++;
 }
+
+//-------------------------------------------------------------------
+//
+//	MEERKAT : nutty little groundhog dude that will bite Guy if he's on
+//		his mound.  That blows 1-5 gems outta Guy!
+//
+//-------------------------------------------------------------------
 
 void aiMeerkatInit(AIEntity *e) {
 	e->state = STATE_NONE;
@@ -1752,6 +1845,13 @@ void aiMeerkatAction(AIEntity *e) {
 void aiMeerkatLookAround(AIEntity *e) {
 	g_hdb->_ai->animEntFrames(e);
 }
+
+//-------------------------------------------------------------------
+//
+//	FATFROG : Just sits in place and blasts out his tongue if you're 
+//		within range.
+//
+//-------------------------------------------------------------------
 
 void aiFatFrogInit(AIEntity *e) {
 	e->aiAction = aiFatFrogAction;
@@ -2084,6 +2184,12 @@ void aiFatFrogTongueDraw(AIEntity *e, int mx, int my) {
 	}
 }
 
+//-------------------------------------------------------------------
+//
+//	GOODFAIRY
+//
+//-------------------------------------------------------------------
+
 void aiGoodFairyInit(AIEntity *e) {
 	e->aiAction = aiGoodFairyAction;
 	e->sequence = 20;
@@ -2278,6 +2384,12 @@ void aiGoodFairyAction(AIEntity *e) {
 		e->sequence = 20;
 }
 
+//-------------------------------------------------------------------
+//
+//	BADFAIRY
+//
+//-------------------------------------------------------------------
+
 void aiBadFairyInit(AIEntity *e) {
 	e->aiAction = aiBadFairyAction;
 	e->sequence = 20;
@@ -2405,6 +2517,12 @@ void aiBadFairyAction(AIEntity *e) {
 		e->sequence = 20;
 }
 
+//-------------------------------------------------------------------
+//
+//	BADFAIRY's GATE PUDDLE!
+//
+//-------------------------------------------------------------------
+
 void aiGatePuddleInit(AIEntity *e) {
 	e->aiAction = aiGatePuddleAction;
 	e->value1 = 50;
@@ -2528,6 +2646,19 @@ void aiGatePuddleAction(AIEntity *e) {
 		}
 	}
 }
+
+//-------------------------------------------------------------------
+//
+//	ICEPUFF : Little icy dude peeks out of the ground and pops up and
+//		throws a snowball at you if he sees you....then he blasts back
+//		into the snow and hides for a while....
+//
+// Variables used specially:
+//	value1, value2	: x,y of snowball
+//	dir2			: direction of snowball. DIR_NONE = no snowball
+//	sequence	: timer for peeking
+//
+//-------------------------------------------------------------------
 
 void aiIcePuffSnowballInit(AIEntity *e) {
 	// which direction are we throwing in? Load the graphic if we need to
@@ -2749,6 +2880,13 @@ void aiIcePuffAction(AIEntity *e) {
 	}
 }
 
+//-------------------------------------------------------------------
+//
+//	BUZZFLY : Simply flies around on paths.... kills you if you touch him.
+//		He pauses at corners, too.
+//
+//-------------------------------------------------------------------
+
 void aiBuzzflyInit(AIEntity *e) {
 	e->aiAction = aiBuzzflyAction;
 	e->sequence = 0;
@@ -2809,6 +2947,12 @@ void aiBuzzflyAction(AIEntity *e) {
 		}
 	}
 }
+
+//-------------------------------------------------------------------
+//
+//	DRAGON
+//
+//-------------------------------------------------------------------
 
 void aiDragonInit(AIEntity *e) {
 	AIEntity *block;
