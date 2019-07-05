@@ -348,6 +348,14 @@ void AI::processCines() {
 			}
 			complete = true;
 			break;
+		case C_PLAYSOUND:
+			g_hdb->_sound->playSound((int)_cine[i]->start);
+			complete = true;
+			break;
+		case C_PLAYVOICE:
+			g_hdb->_sound->playVoice((int)_cine[i]->x, (int)_cine[i]->y);
+			complete = true;
+			break;
 		case C_FADEIN:
 			if (!_cine[i]->start) {
 				g_hdb->_gfx->setFade(true, (bool)_cine[i]->end, _cine[i]->speed);
@@ -692,6 +700,21 @@ void AI::cineUse(const char *entName) {
 	CineCommand *cmd = new CineCommand;
 	cmd->string = entName;
 	cmd->cmdType = C_USEENTITY;
+	_cine.push_back(cmd);
+}
+
+void AI::cinePlaySound(int index) {
+	CineCommand *cmd = new CineCommand;
+	cmd->start = index;
+	cmd->cmdType = C_PLAYSOUND;
+	_cine.push_back(cmd);
+}
+
+void AI::cinePlayVoice(int index, int actor) {
+	CineCommand *cmd = new CineCommand;
+	cmd->x = index;
+	cmd->y = actor;
+	cmd->cmdType = C_PLAYVOICE;
 	_cine.push_back(cmd);
 }
 

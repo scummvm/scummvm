@@ -970,6 +970,8 @@ public:
 	void cineCenterTextOut(const char *text, int y, int timer);
 	void cineMoveMaskedPic(const char *id, const char *pic, int x1, int y1, int x2, int y2, int speed);
 	void cineUse(const char *entName);
+	void cinePlaySound(int index);
+	void cinePlayVoice(int index, int actor);
 	void cineFadeIn(bool isBlack, int steps);
 	void cineFadeOut(bool isBlack, int steps);
 	void cineClearForeground(int x, int y);
