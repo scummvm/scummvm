@@ -250,7 +250,7 @@ void Input::updateMouseButtons(int l, int m, int r) {
 		if (_mouseX > (kScreenWidth - 32 * 5) && _mouseY < 240) {
 			g_hdb->_window->checkInvSelect(_mouseX, _mouseY);
 		} else if (_mouseX > (kScreenWidth - 32 * 5) && _mouseY >= 240) {
-			warning("STUB: updateMouseButtons: checkDeliveriesSelect() required");
+			g_hdb->_window->checkDlvSelect(_mouseX, _mouseY);
 		} else {
 			if (g_hdb->getPause() && g_hdb->getGameState() == GAME_PLAY) {
 				g_hdb->_window->checkPause(_mouseX, _mouseY);
