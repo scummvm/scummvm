@@ -1003,12 +1003,12 @@ static int centerTextOut(lua_State *L) {
 }
 
 static int turnOnSnow(lua_State *L) {
-	warning("STUB: TURN ON SNOW");
+	g_hdb->_gfx->turnOnSnow();
 	return 0;
 }
 
 static int turnOffSnow(lua_State *L) {
-	warning("STUB: TURN OFF SNOW");
+	g_hdb->_gfx->turnOffSnow();
 	return 0;
 }
 
