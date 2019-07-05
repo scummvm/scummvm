@@ -69,7 +69,7 @@ enum CryOmni3DGameType {
 
 enum CryOmni3DGameFeatures {
 	GF_VERSAILLES_NUMERICFONTS             = (1 << 0), // Fonts are font01.crf, ...
-	GF_VERSAILLES_AUDIOPADDING             = (1 << 1), // Audio files have underscore padding before extension
+	GF_VERSAILLES_AUDIOPADDING             = (1 << 1)  // Audio files have underscore padding before extension
 };
 
 struct CryOmni3DGameDescription;
