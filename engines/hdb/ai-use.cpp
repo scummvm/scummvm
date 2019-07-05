@@ -147,7 +147,7 @@ bool AI::useSwitchOn(AIEntity *e, int x, int y, int targetX, int targetY, int of
 }
 
 bool AI::useSwitch2(AIEntity *e, int x, int y, int targetX, int targetY) {
-	int i = 10;
+	// int i = 10; // unused
 	return true;
 }
 

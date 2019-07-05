@@ -590,7 +590,7 @@ void Window::closeMsg() {
 
 void Window::drawInventory() {
 	int baseX, drawX, drawY;
-	static uint32 timer = g_hdb->getTimeSlice() + 300;
+	// static uint32 timer = g_hdb->getTimeSlice() + 300; // unused
 	AIEntity *e, *sel;
 	char string[8];
 	int gems, mstones;
@@ -712,7 +712,7 @@ void Window::openDeliveries(bool animate) {
 void Window::drawDeliveries() {
 	int baseX, drawX, drawY;
 	DlvEnt *d;
-	static uint32 timer = g_hdb->getTimeSlice() + 300;
+	//static uint32 timer = g_hdb->getTimeSlice() + 300; //unused
 
 	int crazySounds[kNumCrazy] = {
 		SND_GUI_INPUT,
