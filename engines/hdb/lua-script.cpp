@@ -173,7 +173,14 @@ static int cineFadeOutWhite(lua_State *L) {
 }
 
 static int cineStartMap(lua_State *L) {
-	warning("STUB: CINE START MAP");
+	const char *mapName = lua_tostring(L, 1);
+
+	g_hdb->_lua->checkParameters("cineStartMap", 1);
+
+	lua_pop(L, 1);
+
+	g_hdb->_ai->cineStartMap(mapName);
+
 	return 0;
 }
 
