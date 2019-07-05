@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef TOWNS_MIDI_H
-#define TOWNS_MIDI_H
+#ifndef IMUSE_DRV_FMTOWNS_H
+#define IMUSE_DRV_FMTOWNS_H
 
 #include "audio/softsynth/fmtowns_pc98/towns_audio.h"
 #include "audio/mididrv.h"

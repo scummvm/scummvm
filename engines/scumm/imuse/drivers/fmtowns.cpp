@@ -20,7 +20,7 @@
  *
  */
 
-#include "audio/softsynth/fmtowns_pc98/towns_midi.h"
+#include "engines/scumm/imuse/drivers/fmtowns.h"
 #include "audio/softsynth/fmtowns_pc98/towns_pc98_fmsynth.h"
 #include "common/textconsole.h"
 #include "common/system.h"

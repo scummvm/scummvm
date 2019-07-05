@@ -20,7 +20,7 @@
  *
  */
 
-#include "scumm/imuse/mac_m68k.h"
+#include "scumm/imuse/drivers/mac_m68k.h"
 
 #include "common/util.h"
 #include "common/macresman.h"

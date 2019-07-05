@@ -76,9 +76,10 @@
 #include "scumm/he/cup_player_he.h"
 #include "scumm/util.h"
 #include "scumm/verbs.h"
-#include "scumm/imuse/pcspk.h"
-#include "scumm/imuse/mac_m68k.h"
+#include "scumm/imuse/drivers/pcspk.h"
+#include "scumm/imuse/drivers/mac_m68k.h"
 #include "scumm/imuse/drivers/amiga.h"
+#include "scumm/imuse/drivers/fmtowns.h"
 
 #include "backends/audiocd/audiocd.h"
 
@@ -2001,7 +2002,9 @@ void ScummEngine::setupMusic(int midi) {
 			nativeMidiDriver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
 
 		if (!useOnlyNative) {
-			if (_sound->_musicType == MDT_ADLIB || _sound->_musicType == MDT_TOWNS || multi_midi) {
+			if (_sound->_musicType == MDT_TOWNS) {
+				adlibMidiDriver = new MidiDriver_TOWNS(_mixer);
+			} else if (_sound->_musicType == MDT_ADLIB || multi_midi) {
 				adlibMidiDriver = MidiDriver::createMidi(MidiDriver::detectDevice(_sound->_musicType == MDT_TOWNS ? MDT_TOWNS : MDT_ADLIB));
 				adlibMidiDriver->property(MidiDriver::PROP_OLD_ADLIB, (_game.features & GF_SMALL_HEADER) ? 1 : 0);
 				// Try to use OPL3 mode for Sam&Max when possible.

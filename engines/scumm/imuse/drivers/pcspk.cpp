@@ -20,7 +20,7 @@
  *
  */
 
-#include "scumm/imuse/pcspk.h"
+#include "scumm/imuse/drivers/pcspk.h"
 
 #include "common/util.h"
 
