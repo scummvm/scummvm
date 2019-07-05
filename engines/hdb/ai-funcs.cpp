@@ -1835,6 +1835,7 @@ void AI::entityFace(const char *luaName, int dir) {
 
 void AI::moveEnts() {
 	static int frameDelay = kAnimFrameDelay;
+	static int startLaserSound = false;
 	AIEntity *e;
 
 	if (frameDelay-- > 0)
@@ -1875,8 +1876,19 @@ void AI::moveEnts() {
 		}
 	}
 
-	debug(9, "STUB: moveEnts: Laser Rescan");
-	debug(9, "STUB: moveEnts: Laser Looping Sound Channel");
+	// if lasers need to rescan, do it here only
+	if (_laserRescan) {
+		_laserRescan = false;
+		laserScan();
+	}
+
+	// handle the constant laser looping sound channel
+	if (_laserOnScreen)
+		startLaserSound = true;
+	if (!_laserOnScreen && startLaserSound) {
+		startLaserSound = 0;
+		g_hdb->_sound->stopChannel(kLaserChannel);
+	}
 }
 
 bool AI::findPath(AIEntity *e) {
