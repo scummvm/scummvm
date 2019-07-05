@@ -56,6 +56,7 @@ public:
 
 	bool executeMPC(Common::SeekableReadStream *stream, const char *name, const char *scriptName, int32 length);
 	bool executeFile(const Common::String &filename);
+	bool executeChunk(Common::String &chunk, const Common::String &chunkName) const;
 	void checkParameters(const char *func, int params);
 
 	const char *getStringOffStack();
@@ -71,7 +72,6 @@ private:
 	bool _systemInit;
 
 	bool registerExtensions();
-	bool executeChunk(Common::String &chunk, const Common::String &chunkName) const;
 	void stripComments(char *chunk);
 	void addPatches(Common::String &chunk, const char *scriptName);
 };
