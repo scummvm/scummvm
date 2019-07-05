@@ -107,6 +107,7 @@ public:
 	bool isFadeActive() { return _fadeInfo.active; }
 	bool isFadeStaying() { return _fadeInfo.stayFaded; }
 	void turnOffFade() { _fadeInfo.active = _fadeInfo.stayFaded = false; }
+	void turnOnSnow();
 	void turnOffSnow() { _snowInfo.active = false; }
 
 	Picture *loadPic(const char *picName);
