@@ -214,6 +214,8 @@ void AI::animateBridges() {
 				done = true;
 			}
 			break;
+		case DIR_NONE:
+			break;
 		}
 
 		// is this bridge done extending one chunk?
