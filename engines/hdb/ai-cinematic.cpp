@@ -104,6 +104,22 @@ void AI::processCines() {
 			if (func[0])
 				g_hdb->_lua->callFunction(func, 0);
 			break;
+		case C_STARTMAP:
+			cineFreeGfx();			// free all gfx alloc'ed during cine
+			_cineActive = false;
+			_playerLock = false;
+			_cameraLock = false;
+			g_hdb->_window->setInfobarDark(0);
+			g_hdb->_gfx->setPointerState(1);
+			_cine.resize(0);
+			_numCineFreeList = 0;
+			_numCineBlitList = 0;
+			// if cine is aborted and an abort function was specified, call it
+			if (_cineAborted && _cineAbortFunc)
+				g_hdb->_lua->callFunction(_cineAbortFunc, 0);
+			g_hdb->changeMap(_cine[i]->title);
+			return;
+			break;
 		case C_LOCKPLAYER:
 			_playerLock = true;
 			complete = true;
@@ -488,6 +504,13 @@ void AI::cineStop(const char *funcNext) {
 	CineCommand *cmd = new CineCommand;
 	cmd->cmdType = C_STOPCINE;
 	cmd->title = funcNext;
+	_cine.push_back(cmd);
+}
+
+void AI::cineStartMap(const char *mapName) {
+	CineCommand *cmd = new CineCommand;
+	cmd->cmdType = C_STARTMAP;
+	cmd->title = mapName;
 	_cine.push_back(cmd);
 }
 
