@@ -34,6 +34,8 @@
 #include "hdb/console.h"
 #include "hdb/menu.h"
 
+#define CHEAT_PATCHES 1
+
 namespace HDB {
 
 HDBGame* g_hdb;
@@ -163,13 +165,6 @@ bool HDBGame::restartMap() {
 	_lua->init();
 	_lua->loadLua(_currentLuaName);
 
-	// Cheat/workarounds
-	if (!strcmp(_currentLuaName, "MAP00.LUA")) {
-		Common::String patch("KillTrigger( \"mannyquest\" )");
-
-		_lua->executeChunk(patch, "MAP00 patch");
-	}
-
 	_sound->markSoundCacheFreeable();
 	_map->restartSystem();
 
@@ -177,6 +172,15 @@ bool HDBGame::restartMap() {
 		return false;
 
 	_ai->initAnimInfo();
+
+	// Cheat/workarounds
+#if CHEAT_PATCHES
+	if (!strcmp(_currentLuaName, "MAP00.LUA")) {
+		Common::String patch("KillTrigger( \"mannyquest\" )");
+
+		_lua->executeChunk(patch, "MAP00 patch");
+	}
+#endif
 
 	// if there are Secret Stars here, stick the variable in Lua
 	if (!_menu->_starWarp && getStarsMonkeystone7() == STARS_MONKEYSTONE_7)
