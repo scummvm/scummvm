@@ -1392,6 +1392,7 @@ public:
 	bool playSound(int index);
 	bool playSoundEx(int index, int channel, bool loop);
 	bool playVoice(int index, int actor);
+	bool stopChannel(int channel);
 
 	void markSoundCacheFreeable();
 };
