@@ -56,7 +56,7 @@ bool AI::addToInventory(AIEntity *e) {
 	}
 
 	if (_numInventory >= kMaxInventory) {
-		warning("STUB: addToInventory: Inventory full message");
+		g_hdb->_window->openMessageBar("Your inventory is full.", 5);
 		return false;
 	}
 
