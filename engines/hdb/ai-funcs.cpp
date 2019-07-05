@@ -2044,6 +2044,19 @@ void AI::clearDiverters() {
 	}
 }
 
+void AI::laserScan() {
+	AIEntity *e;
+
+	clearDiverters();
+	g_hdb->_map->clearLaserBeams();
+
+	for (uint i = 0; i < _ents->size(); i++) {
+		e = _ents->operator[](i);
+		if (e->type == AI_LASER)
+			aiLaserAction(e);
+	}
+}
+
 void AI::floatEntity(AIEntity *e, AIState state) {
 	for (Common::Array<AIEntity *>::iterator it = _ents->begin(); it != _ents->end(); it++) {
 		if (e == *it) {

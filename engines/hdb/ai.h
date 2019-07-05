@@ -837,6 +837,7 @@ public:
 	bool checkPlayerTileCollision(int x, int y);
 	bool checkPlayerCollision(int x, int y, int border);
 	void clearDiverters();
+	void laserScan();
 
 	// List functions
 	void addToActionList(int actionIndex, int x, int y, char *funcLuaInit, char *funcLuaUse);
