@@ -192,6 +192,17 @@ void Gfx::updateFade() {
 	debug(9, "STUB: Gfx::updateFade incomplete");
 }
 
+void Gfx::turnOnSnow() {
+	int		i;
+	_snowInfo.active = true;
+	for (i = 0; i < MAX_SNOW; i++) {
+		_snowInfo.x[i] = g_hdb->_rnd->getRandomNumber(kScreenWidth);
+		_snowInfo.y[i] = g_hdb->_rnd->getRandomNumber(kScreenHeight);
+		_snowInfo.yv[i] = g_hdb->_rnd->getRandomNumber(3) + 1;
+		_snowInfo.xvindex[i] = g_hdb->_rnd->getRandomNumber(MAX_SNOW_XV);
+	}
+}
+
 Picture *Gfx::loadPic(const char *picName) {
 	Picture *pic = new Picture;
 	Common::SeekableReadStream *stream = g_hdb->_fileMan->findFirstData(picName, TYPE_PIC);
