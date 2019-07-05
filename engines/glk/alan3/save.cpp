@@ -66,7 +66,7 @@ void syncGame(Common::Serializer &s) {
 	current.synchronize(s);
 
 	// Attributes area
-	for (Aint i = 0; i < header->attributesAreaSize; ++i)
+	for (Aint i = 0; i < header->attributesAreaSize / 3; ++i)
 		attributes[i].synchronize(s);
 
 	// Admin data

@@ -424,10 +424,12 @@ void output(const char *original) {
 		if (lastCharOf(str) != ' ')
 			needSpace = TRUE;
 	}
+
 	if (needSpace)
 		capitalize = strchr("!?.", str[strlen(str) - 1]) != 0;
+
 	anyOutput = TRUE;
-	free(copy);
+	delete[] copy;
 }
 
 
