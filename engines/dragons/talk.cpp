@@ -31,6 +31,7 @@
 #include "dragonimg.h"
 #include "dragonobd.h"
 #include "scene.h"
+#include "font.h"
 
 namespace Dragons {
 
@@ -42,7 +43,7 @@ void Talk::init() {
 
 }
 
-char *Talk::loadText(uint32 textIndex) {
+void Talk::loadText(uint32 textIndex, uint16 *textBuffer, uint16 bufferLength) {
 	char filename[13] = "drag0000.txt";
 	uint32 fileNo = (textIndex >> 0xc) & 0xffff;
 	uint32 fileOffset = textIndex & 0xfff;
@@ -52,8 +53,9 @@ char *Talk::loadText(uint32 textIndex) {
 	byte *data = _bigfileArchive->load(filename, size);
 	debug("DIALOG: %s, %d", filename, fileOffset);
 	printWideText(data + 10 + fileOffset);
+
+	copyTextToBuffer(textBuffer, data + 10 + fileOffset, bufferLength);
 	delete data;
-	return NULL; //TODO fix me
 }
 
 void Talk::printWideText(byte *text) {
@@ -68,7 +70,7 @@ void Talk::printWideText(byte *text) {
 }
 
 void
-Talk::FUN_8003239c(char *dialog, int16 x, int16 y, int32 param_4, uint16 param_5, Actor *actor, uint16 startSequenceId,
+Talk::FUN_8003239c(uint16 *dialog, int16 x, int16 y, int32 param_4, uint16 param_5, Actor *actor, uint16 startSequenceId,
 				   uint16 endSequenceId, uint32 textId) {
 	//TODO 0x800323a4
 
@@ -78,7 +80,7 @@ Talk::FUN_8003239c(char *dialog, int16 x, int16 y, int32 param_4, uint16 param_5
 
 	actor->updateSequence(startSequenceId);
 	_vm->_sound->playSpeech(textId);
-	conversation_related_maybe(NULL /*TODO &dialog[10]*/, (int)x, (int)y,param_4 & 0xffff, (uint)param_5, textId, uVar4 & 0xffff);
+	conversation_related_maybe(dialog, (int)x, (int)y,param_4 & 0xffff, (uint)param_5, textId, uVar4 & 0xffff);
 
 	actor->updateSequence(endSequenceId);
 }
@@ -87,7 +89,7 @@ void
 Talk::conversation_related_maybe(uint16 *dialogText, uint16 x, uint16 y, uint16 param_4, int16 param_5, uint32 textId,
 								 int16 param_7) {
 	//TODO display dialog text here while we wait for audio stream to complete.
-
+	_vm->_fontManager->addText(x, y, dialogText, wideStrLen(dialogText), 0);
 	while (_vm->isFlagSet(ENGINE_FLAG_8000)) {
 		_vm->waitForFrames(1);
 	}
@@ -164,6 +166,26 @@ void Talk::displayDialogAroundActor(Actor *actor, uint16 param_2, uint16 *dialog
 			(dialogText,(ushort)((int)(((uint)actor->x_pos - _vm->_scene->_camera.x) * 0x10000) >> 0x13),
 			 (short)((int)((((uint)actor->y_pos - (uint)actor->frame->yOffset) - (uint)_vm->_scene->_camera.y) * 0x10000) >> 0x13) - 3,
 			 param_2,1,textIndex);
+}
+
+void Talk::copyTextToBuffer(uint16 *destBuffer, byte *src, uint32 destBufferLength) {
+	for(int i = 0; i < destBufferLength - 1; i++) {
+		destBuffer[i] = READ_LE_UINT16(src);
+		src += 2;
+		if(destBuffer[i] == 0) {
+			return;
+		}
+	}
+
+	destBuffer[destBufferLength - 1] = 0;
+}
+
+uint32 Talk::wideStrLen(uint16 *text) {
+	int i = 0;
+	while(text[i] != 0) {
+		i++;
+	}
+	return i;
 }
 
 

@@ -15,6 +15,7 @@ MODULE_OBJS := \
     dragonrms.o \
     dragonvar.o \
 	dragons.o \
+	font.o \
 	inventory.o \
 	saveload.o \
 	scene.o \

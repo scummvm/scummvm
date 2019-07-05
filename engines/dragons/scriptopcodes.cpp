@@ -796,13 +796,15 @@ void ScriptOpcodes::opUnk11FlickerTalk(ScriptOpCall &scriptOpCall) {
 		}
 	}
 	// TODO sVar1 = findTextToDtSpeechIndex(textIndex);
-	char *dialog = _vm->_talk->loadText(textIndex);
+	uint16 dialog[2048];
+	dialog[0] = 0;
+	_vm->_talk->loadText(textIndex, dialog, 2048);
 
 //	pcVar2 = (char *)0x0;
 //	if (((unkFlags1 & 1) == 0) && (((engine_flags_maybe & 0x1000) == 0 || (sVar1 == -1)))) {
 //		pcVar2 = load_string_from_dragon_txt(textIndex,acStack2016);
 //	}
-	_vm->_talk->displayDialogAroundINI(iniId, NULL, textIndex); //TODO need to pass dialog here (pcVar2). not NULL
+	_vm->_talk->displayDialogAroundINI(iniId, dialog, textIndex); //TODO need to pass dialog here (pcVar2). not NULL
 	if (iniId == 0) {
 		if (!_vm->isFlagSet(ENGINE_FLAG_2000000)) {
 			if (_vm->getCurrentSceneId() != 0x32) {
@@ -864,11 +866,13 @@ void ScriptOpcodes::opCodeActorTalk(ScriptOpCall &scriptOpCall) {
 
 	//TODO implement actor talk.
 
-	char *dialog = NULL;
+	uint16 dialog[2048];
+	dialog[0] = 0;
+
 	int sVar2 = -1; //TODO FUN_8001ca48(textIndex);
 
 	if (!_vm->isUnkFlagSet(1) && (!_vm->isFlagSet(ENGINE_FLAG_1000_TEXT_ENABLED) || sVar2 == -1)) {
-		dialog = _vm->_talk->loadText(textIndex);
+		_vm->_talk->loadText(textIndex, dialog, 2048);
 	}
 
 	ushort uVar1;

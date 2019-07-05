@@ -36,6 +36,7 @@
 #include "dragonrms.h"
 #include "dragonvar.h"
 #include "dragons.h"
+#include "font.h"
 #include "inventory.h"
 #include "scene.h"
 #include "screen.h"
@@ -67,6 +68,7 @@ DragonsEngine::DragonsEngine(OSystem *syst) : Engine(syst) {
 	_cursor = new Cursor(this);
 	_talk = NULL;
 	_sound = new Sound(this);
+	_fontManager = NULL;
 
 	_leftMouseButtonUp = false;
 	_rightMouseButtonUp = false;
@@ -119,6 +121,7 @@ Common::Error DragonsEngine::run() {
 	_dragonRMS = new DragonRMS(_bigfileArchive, _dragonOBD);
 	_dragonVAR = new DragonVAR(_bigfileArchive);
 	_dragonINIResource = new DragonINIResource(_bigfileArchive);
+	_fontManager = new FontManager(this, _screen, _bigfileArchive);
 	ActorResourceLoader *actorResourceLoader = new ActorResourceLoader(_bigfileArchive);
 	_actorManager = new ActorManager(actorResourceLoader);
 	_scriptOpcodes = new ScriptOpcodes(this, _dragonFLG);
@@ -143,6 +146,7 @@ Common::Error DragonsEngine::run() {
 	delete _dragonIMG;
 	delete _dragonRMS;
 	delete _dragonVAR;
+	delete _fontManager;
 	delete _bigfileArchive;
 	delete _screen;
 

@@ -347,4 +347,8 @@ void Cursor::setActorFlag400() {
 	_actor->setFlag(ACTOR_FLAG_400);
 }
 
+byte *Cursor::getPalette() {
+	return _actor->_actorResource->getPalette();
+}
+
 } // End of namespace Dragons

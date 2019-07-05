@@ -109,6 +109,7 @@ class DragonOBD;
 class DragonRMS;
 class DragonVAR;
 class DragonINIResource;
+class FontManager;
 class Inventory;
 class Scene;
 class Screen;
@@ -127,6 +128,7 @@ public:
 	DragonRMS *_dragonRMS;
 	ActorManager *_actorManager;
 	DragonINIResource *_dragonINIResource;
+	FontManager *_fontManager;
 	ScriptOpcodes *_scriptOpcodes;
 	Scene *_scene;
 	uint16 data_800633fa;
