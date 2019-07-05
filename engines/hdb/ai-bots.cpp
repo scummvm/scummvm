@@ -1223,12 +1223,214 @@ void aiDeadEyeAction(AIEntity *e) {
 		e->sequence = 64;
 }
 
+void aiLaserInit(AIEntity *e) {
+	e->aiDraw = aiLaserDraw;
+	e->value1 = e->value2 = 0;		// start & end of laser beam
+}
+
+void aiLaserInit2(AIEntity *e) {
+	e->draw = g_hdb->_ai->getStandFrameDir(e);
+	if (!g_hdb->_ai->_gfxLaserbeamUD[0]) {
+		char name[64];
+		int	i;
+		for (i = 0; i < 4; i++) {
+			sprintf(name, FORCEFIELD_UD"0%d", i + 1);
+			g_hdb->_ai->_gfxLaserbeamUD[i] = g_hdb->_gfx->loadTile(name);
+			sprintf(name, FORCESPLASH_TOP"0%d", i + 1);
+			g_hdb->_ai->_gfxLaserbeamUDTop[i] = g_hdb->_gfx->loadTile(name);
+			sprintf(name, FORCESPLASH_BTM"0%d", i + 1);
+			g_hdb->_ai->_gfxLaserbeamUDBottom[i] = g_hdb->_gfx->loadTile(name);
+			sprintf(name, FORCEFIELD_LR"0%d", i + 1);
+			g_hdb->_ai->_gfxLaserbeamLR[i] = g_hdb->_gfx->loadTile(name);
+			sprintf(name, FORCESPLASH_LEFT"0%d", i + 1);
+			g_hdb->_ai->_gfxLaserbeamLRLeft[i] = g_hdb->_gfx->loadTile(name);
+			sprintf(name, FORCESPLASH_RIGHT"0%d", i + 1);
+			g_hdb->_ai->_gfxLaserbeamLRRight[i] = g_hdb->_gfx->loadTile(name);
+		}
+	}
+}
+
 void aiLaserAction(AIEntity *e) {
-	warning("STUB: AI: aiLaserAction required");
+	int	xva[] = {9,0,0,-1,1}, yva[] = {9,-1,1,0,0};
+	int	nx, ny, moveOK;
+	AIEntity *hit;
+
+	hit = e;
+	do {
+		if (hit->type != AI_DIVERTER) {
+			hit->int1 = xva[hit->dir];
+			hit->int2 = yva[hit->dir];
+
+			nx = hit->tileX;
+			ny = hit->tileY;
+			if (hit->dir == DIR_UP || hit->dir == DIR_DOWN)
+				hit->value1 = ny;
+			else
+				hit->value1 = nx;
+		} else {
+			nx = hit->tileX;
+			ny = hit->tileY;
+			// diverter is on y-plane?
+			if (hit->tileX == e->tileX) {
+				hit->value1 = nx;
+				hit->int2 = 0;
+				switch (hit->dir2) {
+				case DIR_UP: hit->int1 = 1; break;
+				case DIR_DOWN: hit->int1 = -1; break;
+				case DIR_LEFT: hit->int1 = -1; break;
+				case DIR_RIGHT: hit->int1 = 1; break;
+				case DIR_NONE: break;
+				}
+			} else {
+				// diverter is on x-plane
+				hit->value1 = ny;
+				hit->int1 = 0;
+				switch (hit->dir2) {
+				case DIR_UP: hit->int2 = 1; break;
+				case DIR_DOWN: hit->int2 = 1; break;
+				case DIR_LEFT: hit->int2 = -1; break;
+				case DIR_RIGHT: hit->int2 = -1; break;
+				case DIR_NONE: break;
+				}
+			}
+		}
+		e = hit;
+
+		//
+		// scan for all legal moves
+		//
+		do {
+			nx += e->int1;
+			ny += e->int2;
+			hit = g_hdb->_ai->legalMoveOverWater(nx, ny, e->level, &moveOK);
+			g_hdb->_map->setLaserBeam(nx, ny, 1);
+			if (hit && hit->type != AI_LASERBEAM) {
+				//
+				// hit player = death
+				//
+				if (hit == g_hdb->_ai->getPlayer() && onEvenTile(hit->x, hit->y) && !g_hdb->_ai->playerDead())
+					g_hdb->_ai->killPlayer(DEATH_FRIED);
+				else if (hit->type == AI_BOOMBARREL && hit->state != STATE_EXPLODING && onEvenTile(hit->x, hit->y)) {
+					// hit BOOM BARREL = explodes
+
+					aiBarrelExplode(hit);
+					aiBarrelBlowup(hit, nx, ny);
+				} else if (hit->type == AI_LIGHTBARREL || hit->type == AI_HEAVYBARREL || hit->type == AI_CRATE) {
+					// hit LIGHT/HEAVY BARREL = blocking
+					moveOK = 0;
+				} else if (hit->type == AI_DIVERTER) {
+					// hit a diverter?
+					moveOK = 0;
+				} else if (onEvenTile(hit->x, hit->y) && hit != g_hdb->_ai->getPlayer()) {
+					switch (hit->type) {
+					case AI_VORTEXIAN:		// cannot kill Vortexians!
+						continue;
+
+					case AI_BOOMBARREL:
+						if (hit->state == STATE_EXPLODING)
+							continue;
+						break;
+					case AI_LASER:
+						g_hdb->_ai->_laserRescan = true;
+						break;
+
+					case ITEM_KEYCARD_WHITE:
+					case ITEM_KEYCARD_BLUE:
+					case ITEM_KEYCARD_RED:
+					case ITEM_KEYCARD_GREEN:
+					case ITEM_KEYCARD_PURPLE:
+					case ITEM_KEYCARD_BLACK:
+					case ITEM_CABKEY:
+						g_hdb->_window->centerTextOut("CARD DESTROYED!", 306, 5 * 60);
+						g_hdb->_sound->playSound(SND_QUEST_FAILED);
+						break;
+					default:
+						break;
+					}
+					g_hdb->_ai->removeEntity(hit);
+					g_hdb->_ai->addAnimateTarget(nx * kTileWidth,
+						ny * kTileHeight, 0, 3, ANIM_NORMAL, false, false, GROUP_EXPLOSION_BOOM_SIT);
+					g_hdb->_sound->playSound(SND_BARREL_EXPLODE);
+				}
+			}
+		} while (moveOK);
+
+		if (e->int2) {
+			e->value2 = ny;
+			// check for hitting the BACK of a Diverter.  It stops the laser.
+			if (hit && hit->type == AI_DIVERTER) {
+				if (e->int2 < 0 && hit->state != STATE_DIVERTER_BL && hit->state != STATE_DIVERTER_BR)
+					hit = NULL;
+				else if (e->int2 > 0 && hit->state != STATE_DIVERTER_TL && hit->state != STATE_DIVERTER_TR)
+					hit = NULL;
+			}
+		} else {
+			e->value2 = nx;
+			// check for hitting the BACK of a Diverter.  It stops the laser.
+			if (hit && hit->type == AI_DIVERTER) {
+				if (e->int1 < 0 && hit->state != STATE_DIVERTER_BR && hit->state != STATE_DIVERTER_TR)
+					hit = NULL;
+				else if (e->int1 > 0 && hit->state != STATE_DIVERTER_TL && hit->state != STATE_DIVERTER_BL)
+					hit = NULL;
+			}
+		}
+	} while (hit && hit->type == AI_DIVERTER);
 }
 
 void aiLaserDraw(AIEntity *e, int mx, int my) {
-	warning("STUB: AI: aiLaserDraw required");
+	int	i;
+	int	frame = e->movedownFrames & 3;
+	int onScreen = 0;
+
+	switch (e->dir) {
+	case DIR_UP:
+	{
+		for (i = e->value1 - 1; i > e->value2; i--)
+			onScreen += g_hdb->_ai->_gfxLaserbeamUD[frame]->drawMasked(e->x - mx, i*kTileWidth - my);
+		onScreen += g_hdb->_ai->_gfxLaserbeamUDBottom[frame & 3]->drawMasked(e->x - mx, i*kTileWidth - my);
+		if (onScreen) {
+			g_hdb->_sound->playSoundEx(SND_LASER_LOOP, kLaserChannel, true);
+			g_hdb->_ai->_laserOnScreen = true;
+		}
+	}
+		break;
+	case DIR_DOWN:
+	{
+		for (i = e->value1 + 1; i < e->value2; i++)
+			onScreen += g_hdb->_ai->_gfxLaserbeamUD[frame]->drawMasked(e->x - mx, i*kTileWidth - my);
+		onScreen += g_hdb->_ai->_gfxLaserbeamUDBottom[frame]->drawMasked(e->x - mx, i*kTileWidth - my);
+		if (onScreen) {
+			g_hdb->_sound->playSoundEx(SND_LASER_LOOP, kLaserChannel, true);
+			g_hdb->_ai->_laserOnScreen = true;
+		}
+	}
+		break;
+	case DIR_LEFT:
+	{
+		for (i = e->value1 - 1; i > e->value2; i--)
+			onScreen += g_hdb->_ai->_gfxLaserbeamLR[frame]->drawMasked(i*kTileWidth - mx, e->y - my);
+		onScreen += g_hdb->_ai->_gfxLaserbeamLRRight[frame]->drawMasked(i*kTileWidth - mx, e->y - my);
+		if (onScreen) {
+			g_hdb->_sound->playSoundEx(SND_LASER_LOOP, kLaserChannel, true);
+			g_hdb->_ai->_laserOnScreen = true;
+		}
+	}
+		break;
+	case DIR_RIGHT:
+	{
+		for (i = e->value1 + 1; i < e->value2; i++)
+			onScreen += g_hdb->_ai->_gfxLaserbeamLR[frame]->drawMasked(i*kTileWidth - mx, e->y - my);
+		onScreen += g_hdb->_ai->_gfxLaserbeamLRLeft[frame]->drawMasked(i*kTileWidth - mx, e->y - my);
+		if (onScreen) {
+			g_hdb->_sound->playSoundEx(SND_LASER_LOOP, kLaserChannel, true);
+			g_hdb->_ai->_laserOnScreen = true;
+		}
+	}
+		break;
+	default:
+		break;
+	}
+	e->movedownFrames++;
 }
 
 void aiDiverterInit(AIEntity *e) {
@@ -2804,14 +3006,6 @@ void aiDragonDraw(AIEntity *e, int mx, int my) {
 		g_hdb->_ai->_gfxDragonBreathe[e->animFrame & 1]->drawMasked(e->x - 32 - mx, e->y - 96 - my);
 		break;
 	}
-}
-
-void aiLaserInit(AIEntity *e) {
-	warning("STUB: AI: aiLaserInit required");
-}
-
-void aiLaserInit2(AIEntity *e) {
-	warning("STUB: AI: aiLaserInit2 required");
 }
 
 } // End of Namespace
