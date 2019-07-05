@@ -2283,12 +2283,202 @@ void aiBuzzflyAction(AIEntity *e) {
 	}
 }
 
+void aiDragonInit(AIEntity *e) {
+	AIEntity *block;
+
+	e->state = STATE_STANDDOWN;
+	e->sequence = 0;	// 0 = sleeping
+	e->aiAction = aiDragonAction;
+	e->aiDraw = aiDragonDraw;
+	e->animCycle = 10;		// time between flaps
+
+	// need to save the dragon's coords and type in the blocking entity for gem-hit-blocking detection
+	block = spawnBlocking(e->tileX - 1, e->tileY, e->level);
+	block->value1 = (int)AI_DRAGON;
+	sprintf(block->luaFuncUse, "%03d%03d", e->tileX, e->tileY);
+	block = spawnBlocking(e->tileX + 1, e->tileY, e->level);
+	block->value1 = (int)AI_DRAGON;
+	sprintf(block->luaFuncUse, "%03d%03d", e->tileX, e->tileY);
+	block = spawnBlocking(e->tileX - 1, e->tileY - 1, e->level);
+	block->value1 = (int)AI_DRAGON;
+	sprintf(block->luaFuncUse, "%03d%03d", e->tileX, e->tileY);
+	block = spawnBlocking(e->tileX + 1, e->tileY - 1, e->level);
+	block->value1 = (int)AI_DRAGON;
+	sprintf(block->luaFuncUse, "%03d%03d", e->tileX, e->tileY);
+	block = spawnBlocking(e->tileX - 1, e->tileY - 2, e->level);
+	block->value1 = (int)AI_DRAGON;
+	sprintf(block->luaFuncUse, "%03d%03d", e->tileX, e->tileY);
+	block = spawnBlocking(e->tileX + 1, e->tileY - 2, e->level);
+	block->value1 = (int)AI_DRAGON;
+	sprintf(block->luaFuncUse, "%03d%03d", e->tileX, e->tileY);
+}
+
+void aiDragonInit2(AIEntity *e) {
+	e->draw = NULL;
+	if (!g_hdb->_ai->_gfxDragonAsleep) {
+		g_hdb->_ai->_gfxDragonAsleep = g_hdb->_gfx->loadPic(DRAGON_ASLEEP);
+		g_hdb->_ai->_gfxDragonFlap[0] = g_hdb->_gfx->loadPic(DRAGON_FLAP1);
+		g_hdb->_ai->_gfxDragonFlap[1] = g_hdb->_gfx->loadPic(DRAGON_FLAP2);
+		g_hdb->_ai->_gfxDragonBreathe[0] = g_hdb->_gfx->loadPic(DRAGON_BREATHE_START);
+		g_hdb->_ai->_gfxDragonBreathe[1] = g_hdb->_gfx->loadPic(DRAGON_BREATHING_1);
+		g_hdb->_ai->_gfxDragonBreathe[2] = g_hdb->_gfx->loadPic(DRAGON_BREATHING_2);
+	}
+}
+
+void aiDragonWake(AIEntity *e) {
+	e->sequence = 1;	// woke up, start flapping and breathing!
+	e->animFrame = 0;
+	e->animDelay = e->animCycle;
+}
+
+void aiDragonUse(AIEntity *e) {
+	aiDragonWake(e);
+}
+
 void aiDragonAction(AIEntity *e) {
-	warning("STUB: AI: aiDragonAction required");
+	AIEntity *p = g_hdb->_ai->getPlayer();
+
+	switch (e->sequence) {
+		// Sleeping, waiting for the player to wake him up
+	case 0:
+		if (e->onScreen &&
+			p->tileX >= e->tileX - 1 &&
+			p->tileX <= e->tileX + 1 &&
+			p->tileY <= e->tileY + 1 &&
+			p->tileY >= e->tileY - 3) {
+			if ((p->state >= STATE_ATK_CLUB_UP &&
+				p->state <= STATE_ATK_SLUG_RIGHT) || g_hdb->_window->inPanicZone()) {
+				aiDragonWake(e);
+				if (e->onScreen)
+					g_hdb->_sound->playSound(SND_DRAGON_WAKE);
+			}
+		}
+		break;
+
+		// Woke up - flapping wings 3 times!
+	case 1:
+		e->animDelay--;
+
+		if (e->animDelay < 1) {
+			if (e->onScreen)
+				g_hdb->_sound->playSound(SND_DRAGON_WAKE);
+			e->animDelay = e->animCycle;
+			e->animFrame++;
+			if (e->animFrame >= 8) {
+				e->animFrame = 0;
+				e->sequence = 2;
+				e->animCycle = 2;
+			}
+		}
+		break;
+
+		// Start breathing fire!
+	case 2:
+		e->animDelay--;
+
+		if (e->onScreen)
+			g_hdb->_sound->playSound(SND_DRAGON_BREATHEFIRE);
+		if (e->animDelay < 1) {
+			e->animDelay = e->animCycle;
+			e->animFrame++;
+			if (e->animFrame >= 1) {
+				e->animFrame = 0;
+				e->sequence = 3;
+				e->animCycle = 2;		// time between flaps
+			}
+		}
+
+		break;
+
+		// Breathing fire!
+	case 3:
+		{
+			if (hitPlayer(e->x, e->y + 32)) {
+				g_hdb->_ai->killPlayer(DEATH_FRIED);
+				return;
+			}
+
+			// whatever entity is in front of the dragon is gettin' USED!
+			AIEntity *hit = g_hdb->_ai->findEntity(e->tileX, e->tileY + 1);
+			if (hit) {
+				switch (hit->type) {
+				case AI_CHICKEN:
+					g_hdb->_ai->addAnimateTarget(hit->tileX * kTileWidth, hit->tileY * kTileHeight, 0, 2, ANIM_NORMAL, false, false, GROUP_ENT_CHICKEN_DIE);
+					g_hdb->_sound->playSound(SND_CHICKEN_DEATH);
+					g_hdb->_ai->removeEntity(hit);
+					e->sequence = 4;
+					break;
+				case AI_MAGIC_EGG:
+				case AI_ICE_BLOCK:
+					aiMagicEggUse(hit);
+					break;
+				default:
+					if (hit->aiUse)
+						hit->aiUse(hit);
+					if (hit->luaFuncUse[0])
+						g_hdb->_lua->callFunction(hit->luaFuncUse, 0);
+				}
+			}
+
+			e->animDelay--;
+
+			if (e->animDelay < 1) {
+				if (e->onScreen && !(e->animFrame & 7))
+					g_hdb->_sound->playSound(SND_DRAGON_BREATHEFIRE);
+
+				e->animDelay = e->animCycle;
+				e->animFrame++;
+				if (e->animFrame >= 30) {
+					e->animFrame = 0;
+					e->sequence = 4;
+					e->animCycle = 10;		// time between flaps
+				}
+			}
+		}
+
+		break;
+
+	// Done burning - flapping wings 3 times
+	case 4:
+		e->animDelay--;
+
+		if (e->animDelay < 1) {
+			e->animDelay = e->animCycle;
+			e->animFrame++;
+			if (e->animFrame >= 8) {
+				e->animFrame = 0;
+				e->sequence = 0;
+				if (e->onScreen)
+					g_hdb->_sound->playSound(SND_DRAGON_FALLASLEEP);
+			}
+		}
+		break;
+	}
 }
 
 void aiDragonDraw(AIEntity *e, int mx, int my) {
-	warning("STUB: AI: aiDragonDraw required");
+	switch (e->sequence) {
+		// sleeping
+	case 0:
+		g_hdb->_ai->_gfxDragonAsleep->drawMasked(e->x - 32 - mx, e->y - 96 - my);
+		break;
+		// flapping 3 times
+	case 1:
+		g_hdb->_ai->_gfxDragonFlap[e->animFrame & 1]->drawMasked(e->x - 32 - mx, e->y - 96 - my);
+		break;
+		// start breathing (very short)
+	case 2:
+		g_hdb->_ai->_gfxDragonBreathe[0]->drawMasked(e->x - 32 - mx, e->y - 96 - my);
+		break;
+		// breathing
+	case 3:
+		g_hdb->_ai->_gfxDragonBreathe[(e->animFrame & 1) + 1]->drawMasked(e->x - 32 - mx, e->y - 96 - my);
+		break;
+		// flapping 3 times
+	case 4:
+		g_hdb->_ai->_gfxDragonBreathe[e->animFrame & 1]->drawMasked(e->x - 32 - mx, e->y - 96 - my);
+		break;
+	}
 }
 
 void aiListenBotInit(AIEntity *e) {
@@ -2313,22 +2503,6 @@ void aiFatFrogInit(AIEntity *e) {
 
 void aiFatFrogInit2(AIEntity *e) {
 	warning("STUB: AI: aiFatFrogInit2 required");
-}
-
-void aiDragonInit(AIEntity *e) {
-	warning("STUB: AI: aiDragonInit required");
-}
-
-void aiDragonInit2(AIEntity *e) {
-	warning("STUB: AI: aiDragonInit2 required");
-}
-
-void aiDragonWake(AIEntity *e) {
-	warning("STUB: AI: aiDragonWake required");
-}
-
-void aiDragonUse(AIEntity *e) {
-	warning("STUB: AI: aiDragonUse required");
 }
 
 } // End of Namespace
