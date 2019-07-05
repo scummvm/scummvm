@@ -286,7 +286,6 @@ void aiPlayerAction(AIEntity *e) {
 					warning("STUB: Play MetalorFlesh SND");
 					break;
 				default:
-					warning("aiPlayerAction: DIR_NONE found");
 					break;
 				}
 			}
@@ -1492,9 +1491,11 @@ void aiPdaInit2(AIEntity *e) {
 	e->draw = e->standdownGfx[0];
 }
 
+#if 0
 void aiCellUse(AIEntity *e) {
-	warning("STUB: AI: aiCellUse required");
+	g_hdb->_window->openMessageBar("You got the Energy Cell!", kMsgDelay);
 }
+#endif
 
 void aiCellInit2(AIEntity *e) {
 	e->draw = e->standdownGfx[0];
@@ -1549,7 +1550,7 @@ void aiTransceiverAction(AIEntity *e) {
 
 #if 0
 void aiTransceiverUse(AIEntity *e) {
-	warning("STUB: AI: aiTransceiverUse required");
+	g_hdb->_window->openMessageBar("You got the Transceiver!", kMsgDelay);
 }
 #endif
 
