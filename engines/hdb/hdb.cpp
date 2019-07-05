@@ -163,6 +163,13 @@ bool HDBGame::restartMap() {
 	_lua->init();
 	_lua->loadLua(_currentLuaName);
 
+	// Cheat/workarounds
+	if (!strcmp(_currentLuaName, "MAP00.LUA")) {
+		Common::String patch("KillTrigger( \"mannyquest\" )");
+
+		_lua->executeChunk(patch, "MAP00 patch");
+	}
+
 	_sound->markSoundCacheFreeable();
 	_map->restartSystem();
 
