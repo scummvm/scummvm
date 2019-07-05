@@ -794,7 +794,10 @@ bool AI::checkTeleportList(AIEntity *e, int x, int y) {
 			}
 
 			// PANIC ZONE Teleports?
-			warning("STUB: checkTeleporterList: Toggle Panic Zone");
+			if (anim2 >= 2)
+				g_hdb->_window->startPanicZone();
+			else
+				g_hdb->_window->stopPanicZone();
 
 			// Is there an attack gem still floating around?
 			for (Common::Array<AIEntity *>::iterator it = _ents->begin(); it != _ents->end(); it++) {
@@ -849,7 +852,7 @@ void AI::addToTriggerList(char *luaFuncInit, char *luaFuncUse, int x, int y, int
 		strcpy(t->luaFuncUse, luaFuncUse);
 
 	if (!t->luaFuncUse[0])
-		warning("STUB: addToTriggerList: Open MessageBar");
+		g_hdb->_window->openMessageBar("Trigger without USE!", 10);
 
 	if (t->luaFuncInit[0]) {
 		g_hdb->_lua->pushFunction(t->luaFuncInit);
