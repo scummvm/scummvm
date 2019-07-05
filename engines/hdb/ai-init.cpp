@@ -786,6 +786,9 @@ bool AI::init() {
 	// laser beam
 	_gfxLaserbeamUD[0] = _gfxLaserbeamUD[1] = _gfxLaserbeamLR[0] = _gfxLaserbeamLR[1] = NULL;
 
+	_laserRescan = false;
+	_laserOnScreen = false;
+
 	_dummyPlayer.type = AI_GUY;
 	_dummyLaser.type = AI_LASERBEAM;
 	strcpy(_dummyPlayer.entityName, "Virtual Player");

@@ -1209,6 +1209,9 @@ public:
 
 	TeleInfo _teleporters[kMaxTeleporters];
 	int _numTeleporters;
+	// Virtual Player
+	AIEntity _dummyPlayer, _dummyLaser;
+	bool _laserRescan, _laserOnScreen;
 
 	AutoAction _autoActions[kMaxAutoActions];
 
@@ -1222,9 +1225,6 @@ public:
 	Common::Array<ArrowPath *> *_arrowPaths;
 	Common::Array<HereT *> *_hereList;
 	Common::Array<Trigger *> *_triggerList;
-
-	// Virtual Player
-	AIEntity _dummyPlayer, _dummyLaser;
 
 	char _youGotBuffer[32];	// For printing the text of entities that are removed
 

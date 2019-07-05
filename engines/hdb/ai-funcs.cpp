@@ -923,7 +923,7 @@ void AI::animateEntity(AIEntity *e) {
 					e->touchpWait = kPlayerTouchPWait;
 				}
 			}
-			warning("STUB: animateEntity: Set laser_rescan to true");
+			_laserRescan = true;
 			break;
 		default:
 			debug(9, "animateEntity: Unintended Type");
@@ -1157,7 +1157,8 @@ void AI::animateEntity(AIEntity *e) {
 			case AI_MAGIC_EGG:
 			case AI_ICE_BLOCK:
 			case AI_DIVERTER:
-				warning("STUB: animateEntity: Set _laserRescan to true");
+				if (g_hdb->_map->laserBeamExist(e->tileX, e->tileY))
+					_laserRescan = true;
 				break;
 			default:
 				debug(9, "animateEntity: Unintended State");
