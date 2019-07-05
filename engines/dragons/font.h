@@ -19,52 +19,55 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
-#ifndef DRAGONS_CURSOR_H
-#define DRAGONS_CURSOR_H
+#ifndef DRAGONS_FONT_H
+#define DRAGONS_FONT_H
 
-#include "common/system.h"
-#include "scriptopcodes.h"
+#include <common/scummsys.h>
+#include <common/stream.h>
+#include <graphics/surface.h>
+#include <common/rect.h>
 
 namespace Dragons {
 
-class Actor;
-class ActorManager;
 class DragonsEngine;
-class DragonINIResource;
+class BigfileArchive;
+class Screen;
 
-class Cursor {
+class Font {
+private:
+	uint32 _size;
+	uint16 *_map;
+	byte *_pixels;
 public:
-	int16 data_800728b0_cursor_seqID;
-	uint16 _iniUnderCursor;
-	int32 _sequenceID;
-	int16 data_80072890;
-	int16 _x;
-	int16 _y;
-	int16 data_8007283c;
-	int16 _cursorActivationSeqOffset;
-	uint16 iniItemInHand;
+	Font(Common::SeekableReadStream &stream, uint32 mapSize, uint32 pixelSize);
+	~Font();
+	Graphics::Surface *render(uint16 *text, uint16 length, byte *palette);
+};
+
+struct ScreenTextEntry {
+	Common::Point position;
+	Graphics::Surface *surface;
+};
+
+class FontManager {
 private:
 	DragonsEngine *_vm;
-	Actor *_actor;
-
+	Font *_fonts[3];
+	Screen *_screen;
+	Common::List<ScreenTextEntry*> _screenTexts;
+	byte *_palettes;
 
 public:
-	Cursor(DragonsEngine *vm);
-	void init(ActorManager *actorManager, DragonINIResource *dragonINIResource);
-	void update();
-	void updateSequenceID(int16 sequenceID);
-	void updateVisibility();
-	void updatePosition(int16 x, int16 y);
-	int16 updateINIUnderCursor();
-	int16 executeScript(ScriptOpCall &scriptOpCall, uint16 unkFlag);
-	void selectPreviousCursor();
-	void selectNextCursor();
-	void setActorFlag400();
-	byte *getPalette();
+	FontManager(DragonsEngine *vm, Screen *screen, BigfileArchive *bigfileArchive);
+	~FontManager();
+	void addText(int16 x, int16 y, uint16 *text, uint16 length, uint8 fontType);
+	void draw();
+	void clearText();
 private:
-	int16 updateIniFromScene();
+	Font *loadFont(uint16 index, Common::SeekableReadStream &stream);
+	void loadPalettes();
 };
 
 } // End of namespace Dragons
 
-#endif //DRAGONS_CURSOR_H
+#endif //DRAGONS_FONT_H

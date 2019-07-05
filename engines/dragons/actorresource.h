@@ -73,6 +73,7 @@ public:
 	byte *getSequenceData(int16 sequenceId);
 	byte *getSequenceDataAtOffset(uint32 offset);
 	const char *getFilename();
+	byte *getPalette();
 
 private:
 	void writePixelBlock(byte *pixels, byte *data, byte *palette);

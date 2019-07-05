@@ -26,6 +26,7 @@
 #include "cursor.h"
 #include "dragonini.h"
 #include "dragonimg.h"
+#include "font.h"
 #include "inventory.h"
 #include "screen.h"
 #include "actorresource.h"
@@ -328,7 +329,7 @@ void Scene::draw() {
 			}
 		}
 
-		for (uint16 i = 0; i < DRAGONS_ENGINE_NUM_ACTORS; i++) {
+		for (int16 i = DRAGONS_ENGINE_NUM_ACTORS - 1; i >= 0; i--) {
 			Actor *actor = _actorManager->getActor(i);
 			if (actor->x_pos == -100 && actor->y_pos == 100) {
 				actor->priorityLayer = 0;
@@ -359,6 +360,7 @@ void Scene::draw() {
 			}
 		}
 	}
+	_vm->_fontManager->draw();
 }
 
 int16 Scene::getPriorityAtPosition(Common::Point pos) {

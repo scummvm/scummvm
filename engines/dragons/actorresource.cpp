@@ -190,4 +190,8 @@ byte *ActorResource::getSequenceDataAtOffset(uint32 offset) {
 	return &_data[offset];
 }
 
+byte *ActorResource::getPalette() {
+	return _palette;
+}
+
 } // End of namespace Dragons
