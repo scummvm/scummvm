@@ -2002,16 +2002,224 @@ void aiGatePuddleAction(AIEntity *e) {
 	}
 }
 
+void aiIcePuffSnowballInit(AIEntity *e) {
+	// which direction are we throwing in? Load the graphic if we need to
+	switch (e->dir) {
+	case DIR_DOWN:
+		e->value1 = e->x + 12;
+		e->value2 = e->y + 32;
+		break;
+	case DIR_LEFT:
+		e->value1 = e->x - 4;
+		e->value2 = e->y + 16;
+		break;
+	case DIR_RIGHT:
+		e->value1 = e->x + 32;
+		e->value2 = e->y + 16;
+		break;
+	default:
+		break;
+	}
+	e->aiDraw = aiIcePuffSnowballDraw;
+}
+
 void aiIcePuffSnowballAction(AIEntity *e) {
-	warning("STUB: AI: aiIcePuffSnowballAction required");
+	int	result, speed;
+	AIEntity *hit = NULL;
+
+	// check for hit BEFORE moving so snowball is closer to object
+	// NOTE: Need to do logic in this draw routine just in case the ICEPUFF gets stunned!
+	hit = g_hdb->_ai->legalMoveOverWater(e->value1 / kTileWidth, e->value2 / kTileHeight, e->level, &result);
+	if (hit && hit->type == AI_GUY && !g_hdb->_ai->playerDead()) {
+		g_hdb->_ai->killPlayer(DEATH_NORMAL);
+		g_hdb->_ai->addAnimateTarget(hit->x, hit->y, 0, 3, ANIM_NORMAL, false, false, GROUP_WATER_SPLASH_SIT);
+		result = 0; // fall thru...
+	}
+
+	// hit something solid - kill the snowball
+	if (!result) {
+		e->dir2 = DIR_NONE;
+		e->aiDraw = NULL;
+		return;
+	}
+
+	speed = kPlayerMoveSpeed;
+	if (!g_hdb->getActionMode())
+		speed >>= 1;
+
+	switch (e->dir2) {
+	case DIR_DOWN:  e->value2 += speed; break;
+	case DIR_LEFT:  e->value1 -= speed; break;
+	case DIR_RIGHT: e->value1 += speed; break;
+	default: break;
+	}
 }
 
 void aiIcePuffSnowballDraw(AIEntity *e, int mx, int my) {
-	warning("STUB: AI: aiIcePuffSnowballDraw required");
+	// did we throw a snowball?  make it move!
+	if (e->dir2 != DIR_NONE)
+		aiIcePuffSnowballAction(e);
+
+	switch (e->dir2) {
+	case DIR_DOWN:
+		if (!g_hdb->_ai->_icepSnowballGfxDown)
+			g_hdb->_ai->_icepSnowballGfxDown = g_hdb->_gfx->loadPic(ICEPUFF_SNOWBALL_DOWN);
+		g_hdb->_ai->_icepSnowballGfxDown->drawMasked(e->value1 - mx, e->value2 - my);
+		break;
+	case DIR_LEFT:
+		if (!g_hdb->_ai->_icepSnowballGfxLeft)
+			g_hdb->_ai->_icepSnowballGfxLeft = g_hdb->_gfx->loadPic(ICEPUFF_SNOWBALL_LEFT);
+		g_hdb->_ai->_icepSnowballGfxLeft->drawMasked(e->value1 - mx, e->value2 - my);
+		break;
+	case DIR_RIGHT:
+		if (!g_hdb->_ai->_icepSnowballGfxRight)
+			g_hdb->_ai->_icepSnowballGfxRight = g_hdb->_gfx->loadPic(ICEPUFF_SNOWBALL_RIGHT);
+		g_hdb->_ai->_icepSnowballGfxRight->drawMasked(e->value1 - mx, e->value2 - my);
+		break;
+	default:
+		break;
+	}
+}
+
+void aiIcePuffInit(AIEntity *e) {
+	// PEEK - but no head up yet
+	e->sequence = 30;				// timed sequence for peeking
+	e->state = STATE_ICEP_PEEK;			// start in PEEK mode
+	e->dir2 = DIR_NONE;					// no snowball out
+	e->aiAction = aiIcePuffAction;
+}
+
+void aiIcePuffInit2(AIEntity *e) {
+	e->draw = e->blinkGfx[3];	// empty frame
 }
 
 void aiIcePuffAction(AIEntity *e) {
-	warning("STUB: AI: aiIcePuffAction required");
+	AIEntity *p = g_hdb->_ai->getPlayer();
+
+	switch (e->state) {
+	case STATE_ICEP_PEEK:
+		e->sequence--;
+		switch (e->sequence) {
+		case 20: e->draw = e->blinkGfx[0]; break;	// underground
+		case 16: e->draw = e->blinkGfx[1]; break;	// peek - looking
+		case 12: e->draw = e->blinkGfx[2]; break;	// peek - blinking
+		case  8: e->draw = e->blinkGfx[1]; break;	// peek - looking
+		case  4: e->draw = e->blinkGfx[0]; break;	// peek - looking
+		case  3: 
+			if (e->onScreen && !g_hdb->_rnd->getRandomNumber(6)) 
+				g_hdb->_sound->playSound(SND_ICEPUFF_WARNING); 
+			break;
+		case  0: e->draw = e->blinkGfx[3];			// underground
+			e->sequence = 30;
+			break;
+		}
+
+		// can we see the player? (and no snowball is out)
+		if (e->sequence <= 20 && !g_hdb->_ai->playerDead() && e->onScreen) {
+			if (p->tileX == e->tileX && p->tileY > e->tileY && e->dir2 == DIR_NONE) {
+				e->dir = DIR_DOWN;
+				e->state = STATE_ICEP_APPEAR;
+				e->animFrame = 0;
+				if (e->onScreen)
+					g_hdb->_sound->playSound(SND_ICEPUFF_APPEAR);
+			} else if (p->tileY == e->tileY && e->dir2 == DIR_NONE) {
+				p->tileX < e->tileX ? e->dir = DIR_LEFT : e->dir = DIR_RIGHT;
+				e->state = STATE_ICEP_APPEAR;
+				e->animFrame = 0;
+				if (e->onScreen)
+					g_hdb->_sound->playSound(SND_ICEPUFF_APPEAR);
+			}
+		}
+		break;
+
+	case STATE_ICEP_APPEAR:
+		e->draw = e->standupGfx[e->animFrame];
+
+		// cycle animation frames
+		if (e->animDelay-- > 0)
+			return;
+		e->animDelay = e->animCycle;
+
+		e->animFrame++;
+		if (e->animFrame == e->standupFrames) {
+			e->animFrame = 0;
+			switch (e->dir) {
+			case DIR_DOWN: e->state = STATE_ICEP_THROWDOWN; g_hdb->_sound->playSound(SND_ICEPUFF_THROW); break;
+			case DIR_LEFT: e->state = STATE_ICEP_THROWLEFT;g_hdb->_sound->playSound(SND_ICEPUFF_THROW);  break;
+			case DIR_RIGHT: e->state = STATE_ICEP_THROWRIGHT; g_hdb->_sound->playSound(SND_ICEPUFF_THROW); break;
+			default: break;
+			}
+		}
+		break;
+
+	case STATE_ICEP_THROWDOWN:
+		e->draw = e->standdownGfx[e->animFrame];
+
+		// cycle animation frames
+		if (e->animDelay-- > 0)
+			return;
+		e->animDelay = e->animCycle;
+
+		e->animFrame++;
+		if (e->animFrame == e->standdownFrames && e->state != STATE_ICEP_DISAPPEAR) {
+			e->dir2 = e->dir;				// dir2 = direction snowball is moving
+			aiIcePuffSnowballInit(e);	// throw it!
+			e->animFrame = 0;
+			e->state = STATE_ICEP_DISAPPEAR;
+		} else if (e->animFrame == e->special1Frames) {
+			e->state = STATE_ICEP_PEEK;
+			e->draw = e->blinkGfx[3];
+			e->sequence = g_hdb->_rnd->getRandomNumber(100) + 30;
+		}
+		break;
+
+	case STATE_ICEP_THROWLEFT:
+		e->draw = e->standleftGfx[e->animFrame];
+
+		// cycle animation frames
+		if (e->animDelay-- > 0)
+			return;
+		e->animDelay = e->animCycle;
+
+		e->animFrame++;
+		if (e->animFrame == e->standdownFrames && e->state != STATE_ICEP_DISAPPEAR) {
+			e->dir2 = e->dir;				// dir2 = direction snowball is moving
+			aiIcePuffSnowballInit(e);	// throw it!
+			e->animFrame = 0;
+			e->state = STATE_ICEP_DISAPPEAR;
+		} else if (e->animFrame == e->special1Frames) {
+			e->state = STATE_ICEP_PEEK;
+			e->draw = e->blinkGfx[3];
+			e->sequence = g_hdb->_rnd->getRandomNumber(100) + 30;
+		}
+		break;
+
+	case STATE_ICEP_THROWRIGHT:
+		e->draw = e->standrightGfx[e->animFrame];
+
+		// cycle animation frames
+		if (e->animDelay-- > 0)
+			return;
+		e->animDelay = e->animCycle;
+
+		e->animFrame++;
+		if (e->animFrame == e->standdownFrames && e->state != STATE_ICEP_DISAPPEAR) {
+			e->dir2 = e->dir;				// dir2 = direction snowball is moving
+			aiIcePuffSnowballInit(e);	// throw it!
+			e->animFrame = 0;
+			e->state = STATE_ICEP_DISAPPEAR;
+		} else if (e->animFrame == e->special1Frames) {
+			e->state = STATE_ICEP_PEEK;
+			e->draw = e->blinkGfx[3];
+			e->sequence = g_hdb->_rnd->getRandomNumber(100) + 30;
+		}
+		break;
+
+	case STATE_ICEP_DISAPPEAR:
+		e->draw = e->special1Gfx[e->animFrame];
+	default:
+		break;
+	}
 }
 
 void aiBuzzflyAction(AIEntity *e) {
@@ -2048,14 +2256,6 @@ void aiFatFrogInit(AIEntity *e) {
 
 void aiFatFrogInit2(AIEntity *e) {
 	warning("STUB: AI: aiFatFrogInit2 required");
-}
-
-void aiIcePuffInit(AIEntity *e) {
-	warning("STUB: AI: aiIcePuffInit required");
-}
-
-void aiIcePuffInit2(AIEntity *e) {
-	warning("STUB: AI: aiIcePuffInit2 required");
 }
 
 void aiBuzzflyInit(AIEntity *e) {
