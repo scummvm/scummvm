@@ -34,7 +34,7 @@
 #include "hdb/console.h"
 #include "hdb/menu.h"
 
-#define CHEAT_PATCHES 1
+#define CHEAT_PATCHES 0
 
 namespace HDB {
 
