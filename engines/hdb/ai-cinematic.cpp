@@ -469,13 +469,14 @@ Picture *AI::cineFindInBlitList(const char *name) {
 
 void AI::cineRemoveFromBlitList(const char *name) {
 	for (int i = 0; i < _numCineBlitList; i++) {
-		if (Common::matchString(_cineBlitList[i]->id, name, true))
+		if (Common::matchString(_cineBlitList[i]->id, name, true)) {
 			delete _cineBlitList[i];
 			for (; i < _numCineBlitList - 1; i++)
 				_cineBlitList[i] = _cineBlitList[i + 1];
 			_numCineBlitList--;
 			_cineBlitList[_numCineBlitList] = NULL;
 			return;
+		}
 	}
 }
 
