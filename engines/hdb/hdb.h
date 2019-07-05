@@ -152,7 +152,7 @@ public:
 	bool restartMap();
 	bool startMap(const char *name);
 
-	void changeMap(char *name) {
+	void changeMap(const char *name) {
 		strcpy(_changeMapname, name);
 		_changeLevel = true;
 	}

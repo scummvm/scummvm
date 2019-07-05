@@ -950,6 +950,7 @@ public:
 	void cineFreeGfx();
 	void cineStart(bool abortable, const char *abortFunc);
 	void cineStop(const char *funcNext);
+	void cineStartMap(const char *mapName);
 	void cineLockPlayer();
 	void cineUnlockPlayer();
 	void cineSetCamera(int x, int y);
