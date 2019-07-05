@@ -241,12 +241,25 @@ static int cineWaitUntilDone(lua_State *L) {
 }
 
 static int cinePlaySound(lua_State *L) {
-	warning("STUB: CINE PLAY SOUND");
+	double index = lua_tonumber(L, 1);
+
+	g_hdb->_lua->checkParameters("cinePlaySound", 1);
+
+	lua_pop(L, 1);
+
+	g_hdb->_ai->cinePlaySound((int)index);
 	return 0;
 }
 
 static int cinePlayVoice(lua_State *L) {
-	warning("STUB: CINE PLAY VOICE");
+	double	index = lua_tonumber(L, 1);
+	double	actor = lua_tonumber(L, 2);
+
+	g_hdb->_lua->checkParameters("cinePlayVoice", 2);
+
+	lua_pop(L, 2);
+
+	g_hdb->_ai->cinePlayVoice((int)index, (int)actor);
 	return 0;
 }
 
