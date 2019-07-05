@@ -2033,6 +2033,16 @@ bool AI::checkPlayerCollision(int x, int y, int border) {
 	return (x > (_player->x - 32 + border) && x < (_player->x - 32 - border) && y >(_player->y - 32 + border) && y < (_player->y - 32 - border));
 }
 
+void AI::clearDiverters() {
+	AIEntity *e;
+
+	for (uint i = 0; i < _ents->size(); i++) {
+		e = _ents->operator[](i);
+		if (e->type == AI_DIVERTER)
+			e->value1 = e->value2 = 0;
+	}
+}
+
 void AI::floatEntity(AIEntity *e, AIState state) {
 	for (Common::Array<AIEntity *>::iterator it = _ents->begin(); it != _ents->end(); it++) {
 		if (e == *it) {

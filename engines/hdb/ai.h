@@ -836,6 +836,7 @@ public:
 	AIEntity *playerCollision(int topBorder, int bottomBorder, int leftBorder, int rightBorder);
 	bool checkPlayerTileCollision(int x, int y);
 	bool checkPlayerCollision(int x, int y, int border);
+	void clearDiverters();
 
 	// List functions
 	void addToActionList(int actionIndex, int x, int y, char *funcLuaInit, char *funcLuaUse);
