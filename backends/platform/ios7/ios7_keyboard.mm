@@ -36,7 +36,9 @@
 }
 
 - (id)initWithKeyboard:(SoftKeyboard *)keyboard;
-- (void)updateToolbarSize;
+- (void)dealloc;
+- (void)attachAccessoryView;
+- (void)detachAccessoryView;
 
 @end
 
@@ -54,7 +56,7 @@
 	//item.leadingBarButtonGroups = @[];
 	//item.trailingBarButtonGroups = @[];
 
-	toolbar = [[[UIToolbar alloc] initWithFrame:CGRectMake(0.0f, 0.0f, 0.0f, 0.0f)] autorelease];
+	toolbar = [[UIToolbar alloc] initWithFrame:CGRectMake(0.0f, 0.0f, 0.0f, 0.0f)];
 	toolbar.barTintColor = keyboard.backgroundColor;
 	toolbar.tintColor = keyboard.tintColor;
 	toolbar.translucent = NO;
@@ -106,11 +108,28 @@
 	return self;
 }
 
-- (void)updateToolbarSize {
+-(void)dealloc {
+	[toolbar release];
+	[scrollView release];
+	[super dealloc];
+}
+
+- (void)attachAccessoryView {
+	self.inputAccessoryView.hidden = NO;
+	// Alternatively we could add/remove instead of show/hide the inpute accessory view
+//	self.inputAccessoryView = scrollView;
+//	[self reloadInputViews];
 	// We need at least a width of 768 pt for the toolbar. If we add more buttons this may need to be increased.
 	toolbar.frame = CGRectMake(0, 0, MAX(768, [[UIScreen mainScreen] bounds].size.width), toolbar.frame.size.height);
 	toolbar.bounds = toolbar.frame;
 	scrollView.contentSize = toolbar.frame.size;
+}
+
+- (void)detachAccessoryView {
+	self.inputAccessoryView.hidden = YES;
+	// Alternatively we could add/remove instead of show/hide the inpute accessory view
+//	self.inputAccessoryView = nil;
+//	[self reloadInputViews];
 }
 
 - (NSArray *)keyCommands {
@@ -227,7 +246,13 @@
 	inputDelegate = nil;
 	inputView = [[TextInputHandler alloc] initWithKeyboard:self];
 	inputView.delegate = self;
+	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(prepareKeyboard:) name:UIKeyboardWillShowNotification object:nil];
 	return self;
+}
+
+- (void)dealloc {
+	[[NSNotificationCenter defaultCenter] removeObserver:self];
+	[super dealloc];
 }
 
 - (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text {
@@ -258,8 +283,22 @@
 	[inputDelegate handleMainMenuKey];
 }
 
+- (void)prepareKeyboard:(NSNotification *)notification {
+	// Check if a hardware keyboard is connected, and only show the accessory view if there isn't one.
+	// If there is a hardware keyboard, the software one will only contains the text assistance bar
+	// and will be small (less than 100 pt, but use a bit more in case it changes with future iOS versions).
+	// This only works with iOS 9 and above. For ealier version the keyboard size is fixed and instead it
+	// only shows part of the keyboard (which could be detected with the origin position, but that would
+	// depend on the current orientation and screen resolution).
+	NSDictionary* info = [notification userInfo];
+	CGRect keyboardEndFrame = [[info objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue];
+	if (keyboardEndFrame.size.height < 140)
+		[inputView detachAccessoryView];
+	else
+		[inputView attachAccessoryView];
+}
+
 - (void)showKeyboard {
-	[inputView updateToolbarSize];
 	[inputView becomeFirstResponder];
 }
 

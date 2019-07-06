@@ -34,11 +34,13 @@
 }
 
 - (id)initWithFrame:(CGRect)frame;
+- (void)dealloc;
 - (UITextView *)inputView;
 - (void)setInputDelegate:(id)delegate;
 - (void)handleKeyPress:(unichar)c;
 - (void)handleMainMenuKey;
 
+- (void)prepareKeyboard:(NSNotification *)notification;
 - (void)showKeyboard;
 - (void)hideKeyboard;
 
