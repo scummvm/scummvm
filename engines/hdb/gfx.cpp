@@ -138,15 +138,51 @@ bool Gfx::init() {
 }
 
 void Gfx::save(Common::OutSaveFile *out) {
+	int i;
+
 	out->writeSint32LE(_currentSky);
-	out->write(&_fadeInfo, sizeof(_fadeInfo));
-	out->write(&_snowInfo, sizeof(_snowInfo));
+
+	out->writeByte(_fadeInfo.active);
+	out->writeByte(_fadeInfo.stayFaded);
+	out->writeByte(_fadeInfo.isBlack);
+	out->writeSint32LE(_fadeInfo.speed);
+	out->writeByte(_fadeInfo.isFadeIn);
+	out->writeSint32LE(_fadeInfo.curStep);
+
+	out->writeByte(_snowInfo.active);
+	for (i = 0; i < MAX_SNOW; i++)
+		warning("STUB: Save Double Value");
+	for (i = 0; i < MAX_SNOW; i++)
+		warning("STUB: Save Double Value");
+	for (i = 0; i < MAX_SNOW; i++)
+		warning("STUB: Save Double Value");
+	for (i = 0; i < MAX_SNOW; i++)
+		out->writeSint32LE(_snowInfo.xvindex[i]);
 }
 
 void Gfx::loadSaveFile(Common::InSaveFile *in) {
+	int i;
+
 	_currentSky = in->readSint32LE();
-	in->read(&_fadeInfo, sizeof(_fadeInfo));
-	in->read(&_snowInfo, sizeof(_snowInfo));
+
+	_fadeInfo.active = in->readByte();
+	_fadeInfo.stayFaded = in->readByte();
+	_fadeInfo.isBlack = in->readByte();
+	_fadeInfo.speed = in->readSint32LE();
+	_fadeInfo.isFadeIn = in->readByte();
+	_fadeInfo.curStep = in->readSint32LE();
+
+	_snowInfo.active = in->readByte();
+
+	for (i = 0; i < MAX_SNOW; i++)
+		warning("STUB: Load Double Value");
+	for (i = 0; i < MAX_SNOW; i++)
+		warning("STUB: Load Double Value");
+	for (i = 0; i < MAX_SNOW; i++)
+		warning("STUB: Load Double Value");
+	for (i = 0; i < MAX_SNOW; i++)
+		_snowInfo.xvindex[i] = in->readSint32LE();
+
 	setSky(_currentSky);
 	turnOffSnow();
 	if (_snowInfo.active)
