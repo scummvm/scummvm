@@ -102,6 +102,18 @@ struct GameDescriptor {
 	}
 };
 
+/**
+ * Derived game descriptor class to simplifying setting up needed properties
+ */
+class GlkDetectedGame : public DetectedGame {
+public:
+	GlkDetectedGame(const char *gameId, const char *gameDesc, const Common::String &filename);
+	GlkDetectedGame(const char *gameId, const char *gameDesc, const Common::String &filename,
+		Common::Language lang);
+	GlkDetectedGame(const char *gameId, const char *gameDesc, const Common::String &filename,
+		const Common::String &md5, size_t filesize);
+};
+
 } // End of namespace Glk
 
 #endif
