@@ -47,7 +47,6 @@ private:
 	bool vm_exited_cleanly;
 	uint gamefile_start, gamefile_len;
 	char *init_err, *init_err2;
-	UnicharHandler stream_unichar_handler, glkio_unichar_han_ptr;
 	CharHandler stream_char_handler;
 
 	byte *memmap;
@@ -143,6 +142,8 @@ private:
 	const operandlist_t *fast_operandlist[0x80];
 
 	/**@}*/
+
+	UnicharHandler stream_unichar_handler, glkio_unichar_han_ptr;
 
 	/**
 	 * \defgroup serial fields
