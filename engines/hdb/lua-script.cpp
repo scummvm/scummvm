@@ -1415,7 +1415,7 @@ bool LuaScript::initScript(Common::SeekableReadStream *stream, const char *scrip
 	}
 
 	// set the last mapname as a global
-	lua_pushstring(_state, g_hdb->lastMapname());
+	lua_pushstring(_state, g_hdb->lastMapName());
 	lua_setglobal(_state, "LASTMAP");
 
 	// Set the lowest printable line
