@@ -169,6 +169,8 @@ Common::OutSaveFile *DefaultSaveFileManager::openForSaving(const Common::String 
 
 	// Open the file for saving.
 	Common::WriteStream *const sf = fileNode.createWriteStream();
+	if (!sf)
+		return nullptr;
 	Common::OutSaveFile *const result = new Common::OutSaveFile(compress ? Common::wrapCompressedWriteStream(sf) : sf);
 
 	// Add file to cache now that it exists.
