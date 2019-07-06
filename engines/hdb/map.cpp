@@ -65,8 +65,11 @@ void Map::save(Common::OutSaveFile *out) {
 	// Save out all Level2 Gratings and AnimCycle
 
 	out->writeSint32LE(_numGratings);
-	for (i = 0; i < _numGratings; i++)
-		out->write(_gratings[i], sizeof(_gratings[0]));
+	for (i = 0; i < _numGratings; i++) {
+		out->writeUint16LE(_gratings[i]->x);
+		out->writeUint16LE(_gratings[i]->y);
+		out->writeUint16LE(_gratings[i]->tile);
+	}
 
 	out->writeSint32LE(_animCycle);
 
@@ -104,11 +107,16 @@ void Map::save(Common::OutSaveFile *out) {
 	}
 
 	// save map data
-	out->write(_background, sizeof(int32) * _width * _height);
-	out->write(_foreground, sizeof(int32) * _width * _height);
-	out->write(_mapExplosions, sizeof(byte) * _width * _height);
-	out->write(_mapExpBarrels, sizeof(byte) * _width * _height);
-	out->write(_mapLaserBeams, sizeof(byte) * _width * _height);
+	for (i = 0; i < _width * _height; i++)
+		out->writeSint32LE(_background[i]);
+	for (i = 0; i < _width * _height; i++)
+		out->writeSint32LE(_foreground[i]);
+	for (i = 0; i < _width * _height; i++)
+		out->writeByte(_mapExplosions[i]);
+	for (i = 0; i < _width * _height; i++)
+		out->writeByte(_mapExpBarrels[i]);
+	for (i = 0; i < _width * _height; i++)
+		out->writeByte(_mapLaserBeams[i]);
 }
 
 void Map::loadSaveFile(Common::InSaveFile *in) {
@@ -129,8 +137,11 @@ void Map::loadSaveFile(Common::InSaveFile *in) {
 	// Load All level2 gratings and animCycle
 
 	_numGratings = in->readSint32LE();
-	for (i = 0; i < _numGratings; i++)
-		in->read(_gratings[i], sizeof(_gratings[0]));
+	for (i = 0; i < _numGratings; i++) {
+		_gratings[i]->x = in->readUint16LE();
+		_gratings[i]->y = in->readUint16LE();
+		_gratings[i]->tile = in->readUint16LE();
+	}
 
 	_animCycle = in->readSint32LE();
 
@@ -168,11 +179,17 @@ void Map::loadSaveFile(Common::InSaveFile *in) {
 	}
 
 	// load map data
-	in->read(_background, sizeof(int32) * _width * _height);
-	in->read(_foreground, sizeof(int32) * _width * _height);
-	in->read(_mapExplosions, sizeof(byte) * _width * _height);
-	in->read(_mapExpBarrels, sizeof(byte) * _width * _height);
-	in->read(_mapLaserBeams, sizeof(byte) * _width * _height);
+
+	for (i = 0; i < _width * _height; i++)
+		_background[i] = in->readSint32LE();
+	for (i = 0; i < _width * _height; i++)
+		_foreground[i] = in->readSint32LE();
+	for (i = 0; i < _width * _height; i++)
+		_mapExplosions[i] = in->readByte();
+	for (i = 0; i < _width * _height; i++)
+		_mapExpBarrels[i] = in->readByte();
+	for (i = 0; i < _width * _height; i++)
+		_mapLaserBeams[i] = in->readByte();
 }
 
 int Map::loadTiles() {
