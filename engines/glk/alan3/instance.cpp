@@ -289,10 +289,13 @@ bool isAt(int instance, int other, ATrans trans) {
 		switch (trans) {
 		case DIRECT:
 			return admin[instance].location == other;
+
 		case INDIRECT:
 			if (curr == other)
 				return FALSE;
 			curr = admin[curr].location;
+			// fall through
+
 		case TRANSITIVE:
 			while (curr != 0) {
 				if (curr == other)
@@ -302,6 +305,7 @@ bool isAt(int instance, int other, ATrans trans) {
 			}
 			return FALSE;
 		}
+
 		syserr("Unexpected value in switch in isAt() for location");
 		return FALSE;
 	} else if (isALocation(other)) {
@@ -309,11 +313,10 @@ bool isAt(int instance, int other, ATrans trans) {
 		switch (trans) {
 		case DIRECT:
 			return admin[instance].location == other;
-		case INDIRECT: {
+		case INDIRECT:
 			if (admin[instance].location == other)
 				return FALSE;   /* Directly, so not Indirectly */
-			/* Fall through to transitive handling of the location */
-		}
+			// fall through
 		case TRANSITIVE: {
 			int location = locationOf(instance);
 			int curr = other;

@@ -125,7 +125,7 @@ void GlkIO::setStyle(int style) {
 }
 
 void GlkIO::statusLine(CONTEXT) {
-	uint32 glkWidth;
+	uint glkWidth;
 	char line[100];
 	int pcol = col;
 

@@ -254,6 +254,8 @@ static void depexec(Aword v) {
 					break;
 				case I_DEPCASE:
 					instructionString = "DEPCASE";
+					// fall through
+
 				case I_DEPELSE:
 					if (lev == 1) {
 						if (traceInstructionOption)
