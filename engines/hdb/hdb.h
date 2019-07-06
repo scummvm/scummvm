@@ -48,10 +48,6 @@
 #include "hdb/sound.h"
 #include "hdb/window.h"
 
-#define MAX_SNDCACHE_MEM	0x400000	// 4Mb of sounds in memory
-#define MAX_TILES_CACHED	3500		// Max no of tiles in memory at once
-#define GFX_CACHE_LIMIT		0x800000
-
 struct ADGameDescription;
 
 namespace HDB {
@@ -211,7 +207,10 @@ public:
 		return _timeSlice - _prevTimeSlice;
 	}
 
-	char *lastMapname() { return _lastMapname; }
+	char *lastMapName() { return _lastMapname; }
+	char *currentMapName() { return _currentMapname; }
+	char *getInMapName() { return _inMapName; }
+	void setInMapName(const char *name);
 
 	void changeLevel(const char *name) {
 		strcpy(_changeMapname, name);
@@ -252,6 +251,8 @@ private:
 
 	char _currentLuaName[64];
 	char _lastLuaName[64];
+
+	char _inMapName[32];	// Name Inside Map file
 
 	int32 _monkeystone7;
 	int32 _monkeystone14;
