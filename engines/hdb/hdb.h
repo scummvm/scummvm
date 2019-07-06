@@ -30,6 +30,7 @@
 #include "common/events.h"
 #include "common/str.h"
 #include "common/random.h"
+#include "common/savefile.h"
 #include "graphics/surface.h"
 
 #include "gui/debugger.h"
@@ -144,6 +145,8 @@ public:
 	// Game related members;
 
 	bool init();
+	void save(Common::OutSaveFile *out);
+	void load(Common::InSaveFile *in);
 
 	bool restartMap();
 	bool startMap(const char *name);
