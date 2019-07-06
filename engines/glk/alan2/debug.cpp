@@ -319,7 +319,9 @@ void debug() {
 			break;
 		}
 		case 'X':
-			dbgflg = FALSE;       /* Fall through to 'G' */
+			dbgflg = FALSE;
+			restoreInfo();
+			return;
 		case 'G':
 			restoreInfo();
 			return;

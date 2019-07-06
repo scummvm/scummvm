@@ -97,15 +97,6 @@ int paglen, pagwidth;
 Boolean needsp = FALSE;
 Boolean skipsp = FALSE;
 
-/* Restart jump buffer */
-//jmp_buf restart_label;
-
-
-/* PRIVATE DATA */
-//static jmp_buf jmpbuf;        /* Error return long jump buffer */
-
-
-
 /*======================================================================
 
   terminate()
@@ -1017,12 +1008,7 @@ static void eventchk() {
 
 \*----------------------------------------------------------------------*/
 
-
 Common::SeekableReadStream *codfil;
-char codfnm[256];
-static char txtfnm[256];
-static char logfnm[256];
-
 
 /*----------------------------------------------------------------------
 
@@ -1373,8 +1359,8 @@ static void movactor(CONTEXT) {
 static void openFiles() {
 	// If logging open log file
 	if (logflg) {
-		sprintf(logfnm, "%s.log", advnam);
-		logfil = g_system->getSavefileManager()->openForSaving(logfnm);
+		Common::String filename = Common::String::format("%s.log", advnam);
+		logfil = g_system->getSavefileManager()->openForSaving(filename);
 
 		logflg = logfil != nullptr;
 	}

@@ -82,7 +82,6 @@ extern Common::SeekableReadStream *codfil;
 
 /* File names */
 extern const char *advnam;
-extern char codfnm[256];
 
 /* Screen formatting info */
 extern int col, lin;

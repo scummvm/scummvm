@@ -71,8 +71,6 @@ bool Alan2::initialize() {
 
 	// Set up the code file to point to the already opened game file
 	codfil = &_gameFile;
-	strncpy(codfnm, getFilename().c_str(), 255);
-	codfnm[255] = '\0';
 
 	if (_gameFile.size() < 8) {
 		GUIErrorMessage(_("This is too short to be a valid Alan2 file."));
