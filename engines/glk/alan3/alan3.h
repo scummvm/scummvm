@@ -71,7 +71,7 @@ public:
 	 * Save the game. The passed write stream represents access to the UMem chunk
 	 * in the Quetzal save file that will be created
 	 */
-	virtual Common::Error writeGameData(Common::WriteStream *ws) override;;
+	virtual Common::Error writeGameData(Common::WriteStream *ws) override;
 };
 
 extern Alan3 *g_vm;
