@@ -427,9 +427,85 @@ void HDBGame::setTargetXY(int x, int y) {
 }
 
 bool HDBGame::saveSlot(int slot) {
-	warning("STUB: HDBGame::saveSlot(%d)", slot);
+
+	// If no map is loaded, don't try to save
+	if (!g_hdb->_map->isLoaded())
+		return false;
+
+	Common::OutSaveFile *out;
+
+	Common::String saveFileName = Common::String::format("%s.%03d", _targetName.c_str(), slot);
+	if (!(out = _saveFileMan->openForSaving(saveFileName)))
+		error("Unable to open save file");
+
+	warning("STUB: Save MetaData");
+	Graphics::saveThumbnail(*out);
+
+	// Actual Save Data
+	saveGame(out);
+#if 0
+	_lua->save(out, saveFileName);
+#endif
+
+	out->finalize();
+	if (out->err())
+		warning("Can't wrtie file '%s'. (Disk full?)", saveFileName.c_str());
+
+	delete out;
 
 	return true;
+}
+
+bool HDBGame::loadSlot(int slot) {
+	Common::InSaveFile *in;
+
+	Common::String saveFileName = Common::String::format("%s.%03d", _targetName.c_str(), slot);
+	if (!(in = _saveFileMan->openForLoading(saveFileName))) {
+		warning("missing savegame file %s", saveFileName.c_str());
+		if (g_hdb->_map->isLoaded())
+			g_hdb->setGameState(GAME_PLAY);
+		return false;
+	}
+
+	warning("STUB: Load MetaData");
+	Graphics::skipThumbnail(*in);
+
+	// Actual Save Data
+	loadGame(in);
+
+	delete in;
+
+	return true;
+}
+
+void HDBGame::saveGame(Common::OutSaveFile *out) {
+
+	// Save Map Name
+	out->write(_inMapName, 32);
+
+	// Save Map Object Data
+	_map->save(out);
+
+	// Save Window Object Data
+	_window->save(out);
+
+	// Save Gfx Object Data
+	_gfx->save(out);
+
+	// Save Sound Object Data
+	_sound->save(out);
+
+	// Save Game Object Data
+	save(out);
+
+	// Save AI Object Data
+#if 0
+	_ai->save(out);
+#endif
+}
+
+void HDBGame::loadGame(Common::InSaveFile *in) {
+	warning("STUB: Add loadGame()");
 }
 
 // PLAYER is trying to use this entity
