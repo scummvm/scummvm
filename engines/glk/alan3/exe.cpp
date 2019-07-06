@@ -205,7 +205,7 @@ void quitGame(CONTEXT) {
 
 	current.location = where(HERO, DIRECT);
 	para();
-	while (TRUE) {
+	while (!g_vm->shouldQuit()) {
 		col = 1;
 		CALL0(g_io->statusLine)
 		printMessage(M_QUITACTION);

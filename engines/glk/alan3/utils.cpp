@@ -49,8 +49,10 @@ void terminate(CONTEXT, int code) {
 
 	stopTranscript();
 
-	if (memory)
+	if (memory) {
 		deallocate(memory);
+		memory = nullptr;
+	}
 
 	g_io->glk_exit();
 	LONG_JUMP
