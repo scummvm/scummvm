@@ -34,7 +34,8 @@ namespace Alan3 {
 GlkIO *g_io;
 
 GlkIO::GlkIO(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gameDesc),
-		glkMainWin(nullptr), glkStatusWin(nullptr), onStatusLine(false), _saveSlot(-1) {
+		glkMainWin(nullptr), glkStatusWin(nullptr), onStatusLine(false), _saveSlot(-1),
+		_soundChannel(nullptr) {
 	g_io = this;
 }
 
@@ -92,14 +93,12 @@ void GlkIO::playSound(int sound) {
 		return;
 
 #ifdef GLK_MODULE_SOUND
-	static schanid_t soundChannel = NULL;
-
 	if (glk_gestalt(gestalt_Sound, 0) == 1) {
-		if (soundChannel == NULL)
-			soundChannel = glk_schannel_create(0);
-		if (soundChannel != NULL) {
-			glk_schannel_stop(soundChannel);
-			(void)glk_schannel_play(soundChannel, sound);
+		if (_soundChannel == nullptr)
+			_soundChannel = glk_schannel_create(0);
+		if (_soundChannel) {
+			glk_schannel_stop(_soundChannel);
+			(void)glk_schannel_play(_soundChannel, sound);
 		}
 	}
 #endif

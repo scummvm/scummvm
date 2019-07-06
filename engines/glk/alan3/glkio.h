@@ -34,6 +34,7 @@ class GlkIO : public GlkAPI {
 private:
 	winid_t glkMainWin;
 	winid_t glkStatusWin;
+	schanid_t _soundChannel;
 	int _saveSlot;
 public:
 	bool onStatusLine;
