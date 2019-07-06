@@ -26,9 +26,42 @@
 namespace HDB {
 
 bool Menu::init() {
-	_starWarp = 0;
+//	_starWarp = 0;
+	_titleActive = false;
+	_menuActive = false;
+	_optionsActive = false;
+	_gamefilesActive = false;
+	_newgameActive = false;
+	_warpActive = false;
+	_optionsScrolling = false;
+	_optionsScrollX = kMenuX;
+	_rocketX = kMRocketX;
+	_sayHDB = false;
 
-	warning("STUB: Menu::init()");
+	_nebulaY = 0;		// Used as a flag
+	_fStars[0].y = 0;	// Used as a flag
+
+	_keyAssignUp = Common::KEYCODE_UP;
+	_keyAssignDown = Common::KEYCODE_DOWN;
+	_keyAssignLeft = Common::KEYCODE_LEFT;
+	_keyAssignRight = Common::KEYCODE_RIGHT;
+	_keyAssignUse = Common::KEYCODE_RETURN;
+
+	_gCheckEmpty = g_hdb->_gfx->loadPic(G_CHECK_EMPTY);
+	_gCheckOff = g_hdb->_gfx->loadPic(G_CHECK_OFF);
+	_gCheckOn = g_hdb->_gfx->loadPic(G_CHECK_ON);
+	_gCheckLeft = g_hdb->_gfx->loadPic(G_CHECK_LEFT);
+	_gCheckRight = g_hdb->_gfx->loadPic(G_CHECK_RIGHT);
+
+	_contArrowUp = g_hdb->_gfx->loadPic(CTRL_ARROWUP);
+	_contArrowDown = g_hdb->_gfx->loadPic(CTRL_ARROWDN);
+	_contArrowLeft = g_hdb->_gfx->loadPic(CTRL_ARROWLEFT);
+	_contArrowRight = g_hdb->_gfx->loadPic(CTRL_ARROWRIGHT);
+	_contAssign = g_hdb->_gfx->loadPic(CTRL_ASSIGN);
+
+	_waitingForKey = false;
+	_warpPlaque = g_hdb->_gfx->loadPic(WARP_PLAQUE);
+	_hdbLogoScreen = g_hdb->_gfx->loadPic(TITLESCREEN);
 
 	return true;
 }
