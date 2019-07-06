@@ -74,6 +74,8 @@ public:
 	Map();
 	~Map();
 
+	void save(Common::OutSaveFile *out);
+	void loadSaveFile(Common::InSaveFile *in);
 	void restartSystem();
 
 	int loadTiles();

@@ -48,6 +48,133 @@ Map::~Map() {
 	}
 }
 
+void Map::save(Common::OutSaveFile *out) {
+
+	int i, count;
+
+	// Save Map Dimensions and Offsets
+	out->writeSint32LE(_mapX);
+	out->writeSint32LE(_mapY);
+	out->writeSint32LE(_width);
+	out->writeSint32LE(_height);
+	out->writeSint32LE(_mapTileX);
+	out->writeSint32LE(_mapTileY);
+	out->writeSint32LE(_mapTileXOff);
+	out->writeSint32LE(_mapTileYOff);
+
+	// Save out all Level2 Gratings and AnimCycle
+
+	out->writeSint32LE(_numGratings);
+	for (i = 0; i < _numGratings; i++)
+		out->write(_gratings[i], sizeof(_gratings[0]));
+
+	out->writeSint32LE(_animCycle);
+
+	// find out how many SLOW, MEDIUM & FAST bg tile anims there are and save them all out
+	out->writeUint32LE(_listBGAnimSlow.size());
+	for (i = 0; (uint)i < _listBGAnimSlow.size(); i++) {
+		out->writeUint32LE(_listBGAnimSlow[i]);
+	}
+
+	out->writeUint32LE(_listBGAnimMedium.size());
+	for (i = 0; (uint)i < _listBGAnimMedium.size(); i++) {
+		out->writeUint32LE(_listBGAnimMedium[i]);
+	}
+
+	out->writeUint32LE(_listBGAnimFast.size());
+	for (i = 0; (uint)i < _listBGAnimFast.size(); i++) {
+		out->writeUint32LE(_listBGAnimFast[i]);
+	}
+
+	// find out how many SLOW, MEDIUM & FAST fg tile anims there are and save them all out
+
+	out->writeUint32LE(_listFGAnimSlow.size());
+	for (i = 0; (uint)i < _listFGAnimSlow.size(); i++) {
+		out->writeUint32LE(_listFGAnimSlow[i]);
+	}
+
+	out->writeUint32LE(_listFGAnimMedium.size());
+	for (i = 0; (uint)i < _listFGAnimMedium.size(); i++) {
+		out->writeUint32LE(_listFGAnimMedium[i]);
+	}
+
+	out->writeUint32LE(_listFGAnimFast.size());
+	for (i = 0; (uint)i < _listFGAnimFast.size(); i++) {
+		out->writeUint32LE(_listFGAnimFast[i]);
+	}
+
+	// save map data
+	out->write(_background, sizeof(int32) * _width * _height);
+	out->write(_foreground, sizeof(int32) * _width * _height);
+	out->write(_mapExplosions, sizeof(byte) * _width * _height);
+	out->write(_mapExpBarrels, sizeof(byte) * _width * _height);
+	out->write(_mapLaserBeams, sizeof(byte) * _width * _height);
+}
+
+void Map::loadSaveFile(Common::InSaveFile *in) {
+	int i, count;
+
+	restartSystem();
+
+	// Load Map Dimensions and Offsets
+	_mapX = in->readSint32LE();
+	_mapY = in->readSint32LE();
+	_width = in->readSint32LE();
+	_height = in->readSint32LE();
+	_mapTileX = in->readSint32LE();
+	_mapTileY = in->readSint32LE();
+	_mapTileXOff = in->readSint32LE();
+	_mapTileYOff = in->readSint32LE();
+
+	// Load All level2 gratings and animCycle
+
+	_numGratings = in->readSint32LE();
+	for (i = 0; i < _numGratings; i++)
+		in->read(_gratings[i], sizeof(_gratings[0]));
+
+	_animCycle = in->readSint32LE();
+
+	// find out how many SLOW, MEDIUM & FAST bg tile anims there are and load them all out
+	_listBGAnimSlow.resize(in->readUint32LE());
+	for (i = 0; (uint)i < _listBGAnimSlow.size(); i++) {
+		_listBGAnimSlow[i] = in->readUint32LE();
+	}
+
+	_listBGAnimMedium.resize(in->readUint32LE());
+	for (i = 0; (uint)i < _listBGAnimMedium.size(); i++) {
+		_listBGAnimMedium[i] = in->readUint32LE();
+	}
+
+	_listBGAnimFast.resize(in->readUint32LE());
+	for (i = 0; (uint)i < _listBGAnimFast.size(); i++) {
+		_listBGAnimFast[i] = in->readUint32LE();
+	}
+
+	// find out how many SLOW, MEDIUM & FAST fg tile anims there are and load them all out
+
+	_listFGAnimSlow.resize(in->readUint32LE());
+	for (i = 0; (uint)i < _listFGAnimSlow.size(); i++) {
+		_listFGAnimSlow[i] = in->readUint32LE();
+	}
+
+	_listFGAnimMedium.resize(in->readUint32LE());
+	for (i = 0; (uint)i < _listFGAnimMedium.size(); i++) {
+		_listFGAnimMedium[i] = in->readUint32LE();
+	}
+
+	_listFGAnimFast.resize(in->readUint32LE());
+	for (i = 0; (uint)i < _listFGAnimFast.size(); i++) {
+		_listFGAnimFast[i] = in->readUint32LE();
+	}
+
+	// load map data
+	in->read(_background, sizeof(int32) * _width * _height);
+	in->read(_foreground, sizeof(int32) * _width * _height);
+	in->read(_mapExplosions, sizeof(byte) * _width * _height);
+	in->read(_mapExpBarrels, sizeof(byte) * _width * _height);
+	in->read(_mapLaserBeams, sizeof(byte) * _width * _height);
+}
+
 int Map::loadTiles() {
 
 	int tile, temp;
