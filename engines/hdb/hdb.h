@@ -32,6 +32,7 @@
 #include "common/random.h"
 #include "common/savefile.h"
 #include "graphics/surface.h"
+#include "graphics/thumbnail.h"
 
 #include "gui/debugger.h"
 #include "engines/engine.h"
@@ -157,6 +158,9 @@ public:
 	}
 
 	bool saveSlot(int slot);
+	bool loadSlot(int slot);
+	void saveGame(Common::OutSaveFile *out);
+	void loadGame(Common::InSaveFile *in);
 
 	void saveWhenReady(int slot) {
 		_saveInfo.active = true;
