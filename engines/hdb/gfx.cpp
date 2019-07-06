@@ -137,6 +137,22 @@ bool Gfx::init() {
 	return true;
 }
 
+void Gfx::save(Common::OutSaveFile *out) {
+	out->writeSint32LE(_currentSky);
+	out->write(&_fadeInfo, sizeof(_fadeInfo));
+	out->write(&_snowInfo, sizeof(_snowInfo));
+}
+
+void Gfx::loadSaveFile(Common::InSaveFile *in) {
+	_currentSky = in->readSint32LE();
+	in->read(&_fadeInfo, sizeof(_fadeInfo));
+	in->read(&_snowInfo, sizeof(_snowInfo));
+	setSky(_currentSky);
+	turnOffSnow();
+	if (_snowInfo.active)
+		turnOnSnow();
+}
+
 void Gfx::fillScreen(uint32 color) {
 	_globalSurface.fillRect(Common::Rect(kScreenWidth, kScreenHeight), color);
 	g_system->fillScreen(color);
