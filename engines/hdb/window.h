@@ -178,6 +178,8 @@ class Window {
 public:
 
 	bool init();
+	void save(Common::OutSaveFile *out);
+	void loadSaveFile(Common::InSaveFile *in);
 	void restartSystem();
 	void setInfobarDark(int value);
 
