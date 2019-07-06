@@ -145,7 +145,7 @@ public:
 	int _mapTileX, _mapTileY; // Tile Coordinates of Map
 	int _mapTileXOff, _mapTileYOff; // Tile Coordinates Offset (0-31)
 
-	Foreground *_gratings[kMaxGratings], *_foregrounds[kMaxForegrounds];
+	Foreground _gratings[kMaxGratings], _foregrounds[kMaxForegrounds];
 	int _numGratings, _numForegrounds;
 
 	int _animCycle;	// Tile Animation Counter
