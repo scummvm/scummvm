@@ -744,10 +744,11 @@ void run(void) {
 	Stack theStack = NULL;
 	Context ctx;
 
+	openFiles();
+	load(ctx);			// Load program
+
 	do {
 		ctx.clear();
-		openFiles();
-		load(ctx);			// Load program
 		if (ctx._break)
 			break;
 
@@ -765,23 +766,15 @@ void run(void) {
 		while (!g_vm->shouldQuit()) {
 			if (!(ctx._break && ctx._label == "forfeit")) {
 				if (ctx._break) {
-					assert(ctx._label == "return");
-#ifdef TODO
-					// Return here if error during execution
-					switch (setjmp(returnLabel)) {
-					case NO_JUMP_RETURN:
-						break;
-					case ERROR_RETURN:
+					assert(ctx._label.hasPrefix("return"));
+
+					if (ctx._label == "returnError") {
 						forgetGameState();
 						forceNewPlayerInput();
-						break;
-					case UNDO_RETURN:
+					} else if (ctx._label == "returnUndo") {
 						forceNewPlayerInput();
-						break;
-					default:
-						syserr("Unexpected longjmp() return value");
 					}
-#endif
+
 					ctx.clear();
 				} else {
 					if (debugOption)

@@ -54,13 +54,6 @@ Common::SeekableReadStream *textFile;
 // PUBLIC DATA - formerly method statics
 bool printFlag;				// Printing already?
 
-/* Long jump buffers */
-// TODO move to longjump.c? or error.c, and abstract them into functions?
-//jmp_buf restartLabel;       /* Restart long jump return point */
-//jmp_buf returnLabel;        /* Error (or undo) long jump return point */
-//jmp_buf forfeitLabel;       /* Player forfeit by an empty command */
-
-
 /* PRIVATE CONSTANTS */
 
 #define WIDTH 80
@@ -192,7 +185,7 @@ static void sayUndoneCommand(char *words) {
 
 
 /*======================================================================*/
-void undo(void) {
+void undo(CONTEXT) {
 	forgetGameState();
 	if (anySavedState()) {
 		recallGameState();
@@ -200,68 +193,73 @@ void undo(void) {
 	} else {
 		printMessage(M_NO_UNDO);
 	}
-#ifdef TODO
-	longjmp(returnLabel, UNDO_RETURN);
-#else
-	syserr("TODO: undo longjmp");
-#endif
+
+	LONG_JUMP_LABEL("returnUndo")
 }
 
 
 /*======================================================================*/
-void quitGame(void) {
-#ifdef TODO
+void quitGame(CONTEXT) {
 	char buf[80];
+	bool flag;
 
 	current.location = where(HERO, DIRECT);
 	para();
 	while (TRUE) {
 		col = 1;
-		statusline();
+		CALL0(g_io->statusLine)
 		printMessage(M_QUITACTION);
 
-		if (!readline(buf)) terminate(0);
-		if (strcasecmp(buf, "restart") == 0)
-			longjmp(restartLabel, TRUE);
-		else if (strcasecmp(buf, "restore") == 0) {
-			restore();
+		FUNC2(g_io->readLine, flag, buf, 80)
+		if (!flag)
+			CALL1(terminate, 0)
+
+		if (strcasecmp(buf, "restart") == 0) {
+			LONG_JUMP_LABEL("restart")
+
+		} else if (strcasecmp(buf, "restore") == 0) {
+			g_vm->loadGame();
 			return;
+
 		} else if (strcasecmp(buf, "quit") == 0) {
-			terminate(0);
+			CALL1(terminate, 0)
+
 		} else if (strcasecmp(buf, "undo") == 0) {
 			if (gameStateChanged) {
 				rememberCommands();
 				rememberGameState();
-				undo();
+				CALL0(undo)
 			} else {
 				if (anySavedState()) {
 					recallGameState();
 					sayUndoneCommand(playerWordsAsCommandString());
-				} else
+				} else {
 					printMessage(M_NO_UNDO);
-				longjmp(returnLabel, UNDO_RETURN);
+				}
+
+				LONG_JUMP_LABEL("returnUndo")
 			}
 		}
 	}
-#endif
+
 	syserr("Fallthrough in QUIT");
 }
 
 
 
 /*======================================================================*/
-void restartGame(void) {
-#ifdef TODO
+void restartGame(CONTEXT) {
 	Aint previousLocation = current.location;
 	current.location = where(HERO, DIRECT);
 	para();
-	if (confirm(M_REALLY)) {
-		longjmp(restartLabel, TRUE);
+
+	bool flag;
+	FUNC1(confirm, flag, M_REALLY)
+	if (flag) {
+		LONG_JUMP_LABEL("restart")
 	}
+
 	current.location = previousLocation;
-#else
-	syserr("TODO: restartGame");
-#endif
 }
 
 

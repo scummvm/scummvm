@@ -745,7 +745,7 @@ static void readCommand(CONTEXT, char buf[], size_t maxLen) {
 		FUNC2(g_io->readLine, flag, buf, maxLen)
 		if (!flag) {
 			newline();
-			quitGame();
+			CALL0(quitGame)
 		}
 		lin = 1;
 		c = buf[0];

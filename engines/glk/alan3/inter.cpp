@@ -590,7 +590,7 @@ void interpret(CONTEXT, Aaddr adr) {
 			case I_QUIT: {
 				if (traceInstructionOption)
 					printf("QUIT\t\t\t\t\t\t");
-				quitGame();
+				CALL0(quitGame)
 				break;
 			}
 			case I_LOOK: {
@@ -602,19 +602,19 @@ void interpret(CONTEXT, Aaddr adr) {
 			case I_SAVE: {
 				if (traceInstructionOption)
 					printf("SAVE\t\t\t\t\t\t");
-				g_vm->saveGame();
+				(void)g_vm->saveGame();
 				break;
 			}
 			case I_RESTORE: {
 				if (traceInstructionOption)
 					printf("RESTORE\t\t\t\t\t\t");
-				g_vm->loadGame();
+				(void)g_vm->loadGame();
 				break;
 			}
 			case I_RESTART: {
 				if (traceInstructionOption)
 					printf("RESTART\t\t\t\t\t\t");
-				restartGame();
+				CALL0(restartGame)
 				break;
 			}
 

@@ -151,7 +151,7 @@ static void getLine(CONTEXT) {
 		FUNC2(g_io->readLine, flag, buf, 255);
 		if (!flag) {
 			newline();
-			quitGame();
+			CALL0(quitGame)
 		}
 
 		getPageSize();
@@ -179,7 +179,7 @@ static void getLine(CONTEXT) {
 				token = gettoken(NULL);
 				if (token != NULL) /* More tokens? */
 					CALL1(error, M_WHAT)
-				undo();
+				CALL0(undo)
 			}
 		}
 	} while (token == NULL);

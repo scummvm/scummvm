@@ -96,36 +96,33 @@ static void executeCommand(CONTEXT, int verb, Parameter parameters[]) {
 */
 void action(CONTEXT, int verb, Parameter parameters[], Parameter multipleMatches[]) {
 	int multiplePosition;
-#ifdef TODO
 	char marker[10];
-#endif
 
 	multiplePosition = findMultiplePosition(parameters);
 	if (multiplePosition != -1) {
-#ifdef TODO
-		jmp_buf savedReturnLabel;
-		memcpy(savedReturnLabel, returnLabel, sizeof(returnLabel));
 		sprintf(marker, "($%d)", multiplePosition + 1); /* Prepare a printout with $1/2/3 */
 		for (int i = 0; !isEndOfArray(&multipleMatches[i]); i++) {
 			copyParameter(&parameters[multiplePosition], &multipleMatches[i]);
 			setGlobalParameters(parameters); /* Need to do this here since the marker use them */
 			output(marker);
-			// TODO: if execution for one parameter aborts we should return here, not to top level
-			if (setjmp(returnLabel) == NO_JUMP_RETURN)
-				executeCommand(verb, parameters);
+
+			// WARNING: The original did a temporary grabbing of the returnLabel setjmp point here.
+			// Which is why I manually check the context return instead of using the CALL macro
+			executeCommand(context, verb, parameters);
+			if (context._break && context._label.hasPrefix("return"))
+				context._break = false;
+			if (context._break)
+				return;
+			
 			if (multipleMatches[i + 1].instance != EOD)
 				para();
 		}
-		memcpy(returnLabel, savedReturnLabel, sizeof(returnLabel));
+
 		parameters[multiplePosition].instance = 0;
-#else
-		syserr("TODO: action");
-#endif
 	} else {
 		setGlobalParameters(parameters);
 		CALL2(executeCommand, verb, parameters)
 	}
-
 }
 
 } // End of namespace Alan3

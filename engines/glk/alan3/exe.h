@@ -47,10 +47,6 @@ namespace Alan3 {
 extern Common::SeekableReadStream *textFile;		// The text and message file
 extern bool printFlag;
 
-/* Long jump buffer for restart, errors and undo */
-//extern jmp_buf returnLabel;
-
-
 /* FUNCTIONS */
 extern void sys(Aword fpos, Aword len);
 extern void sayInteger(int val);
@@ -61,9 +57,9 @@ extern char *getStringFromFile(Aword fpos, Aword len);
 extern void print(Aword fpos, Aword len);
 extern void score(Aword sc);
 extern void visits(Aword v);
-extern void undo(void);
-extern void quitGame(void);
-extern void restartGame(void);
+extern void undo(CONTEXT);
+extern void quitGame(CONTEXT);
+extern void restartGame(CONTEXT);
 
 extern void use(CONTEXT, int act, int scr);
 extern void stop(int act);
