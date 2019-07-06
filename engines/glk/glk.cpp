@@ -89,6 +89,9 @@ void GlkEngine::initialize() {
 	_sounds = new Sounds();
 	_streams = new Streams();
 	_windows = new Windows(_screen);
+
+	// Setup mixer
+	syncSoundSettings();
 }
 
 Screen *GlkEngine::createScreen() {
@@ -246,6 +249,13 @@ Common::Error GlkEngine::saveGameState(int slot, const Common::String &desc) {
 
 	file->close();
 	return errCode;
+}
+
+void GlkEngine::syncSoundSettings() {
+	Engine::syncSoundSettings();
+
+	int volume = ConfMan.getBool("sfx_mute") ? 0 : CLIP(ConfMan.getInt("sfx_volume"), 0, 255);
+	_mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, volume);
 }
 
 void GlkEngine::beep() {

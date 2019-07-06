@@ -58,20 +58,20 @@ namespace Glk {
 
 GlkDetectedGame::GlkDetectedGame(const char *gameId, const char *gameDesc, const Common::String &filename) :
 		DetectedGame(gameId, gameDesc, Common::EN_ANY, Common::kPlatformUnknown) {
-	setGUIOptions(GUIO4(GUIO_NOSPEECH, GUIO_NOSFX, GUIO_NOMUSIC, GUIO_NOSUBTITLES));
+	setGUIOptions(GUIO3(GUIO_NOSPEECH, GUIO_NOMUSIC, GUIO_NOSUBTITLES));
 	addExtraEntry("filename", filename);
 }
 
 GlkDetectedGame::GlkDetectedGame(const char *gameId, const char *gameDesc, const Common::String &filename,
 		Common::Language lang) : DetectedGame(gameId, gameDesc, lang, Common::kPlatformUnknown) {
-	setGUIOptions(GUIO4(GUIO_NOSPEECH, GUIO_NOSFX, GUIO_NOMUSIC, GUIO_NOSUBTITLES));
+	setGUIOptions(GUIO3(GUIO_NOSPEECH, GUIO_NOMUSIC, GUIO_NOSUBTITLES));
 	addExtraEntry("filename", filename);
 }
 
 GlkDetectedGame::GlkDetectedGame(const char *gameId, const char *gameDesc, const Common::String &filename,
 		const Common::String &md5, size_t filesize) :
 		DetectedGame(gameId, gameDesc, Common::UNK_LANG, Common::kPlatformUnknown) {
-	setGUIOptions(GUIO4(GUIO_NOSPEECH, GUIO_NOSFX, GUIO_NOMUSIC, GUIO_NOSUBTITLES));
+	setGUIOptions(GUIO3(GUIO_NOSPEECH, GUIO_NOMUSIC, GUIO_NOSUBTITLES));
 	addExtraEntry("filename", filename);
 
 	canBeAdded = true;

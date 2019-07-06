@@ -209,6 +209,11 @@ public:
 	virtual Common::Error writeGameData(Common::WriteStream *ws) = 0;
 
 	/**
+	 * Updates sound settings
+	 */
+	virtual void syncSoundSettings() override;
+
+	/**
 	 * Generate a beep
 	 */
 	void beep();
