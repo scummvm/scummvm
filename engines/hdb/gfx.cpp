@@ -237,6 +237,38 @@ Tile *Gfx::loadTile(const char *tileName) {
 	return tile;
 }
 
+void Gfx::savePic(Picture *pic, Common::OutSaveFile *out) {
+	if (pic == NULL) {
+		for (int i = 0; i < 64; i++)
+			out->writeByte(0);
+	} else {
+		out->write(pic->getName(), 64);
+	}
+}
+
+void Gfx::saveTile(Tile *tile, Common::OutSaveFile *out) {
+	if (tile == NULL) {
+		for (int i = 0; i < 64; i++)
+			out->writeByte(0);
+	} else {
+		out->write(tile->getName(), 64);
+	}
+}
+
+void Gfx::loadPicSave(Picture *pic, Common::InSaveFile *in) {
+	delete pic;
+	char readName[64];
+	in->read(readName, 64);
+	pic = loadPic(readName);
+}
+
+void Gfx::loadTileSave(Tile *tile, Common::InSaveFile *in) {
+	delete tile;
+	char readName[64];
+	in->read(readName, 64);
+	tile = loadTile(readName);
+}
+
 Tile *Gfx::getTile(int index) {
 
 	if (index < 0 || index > _numTiles) {
