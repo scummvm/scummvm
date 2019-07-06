@@ -58,6 +58,7 @@ HDBGame::HDBGame(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst
 
 	_currentMapname[0] = _currentLuaName[0] = 0;
 	_lastMapname[0] = _lastLuaName[0] = 0;
+	_inMapName[0] = 0;
 
 	_monkeystone7 = STARS_MONKEYSTONE_7_FAKE;
 	_monkeystone14 = STARS_MONKEYSTONE_14_FAKE;
@@ -650,6 +651,58 @@ void HDBGame::useEntity(AIEntity *e) {
 	if (e->type == AI_HEAVYBARREL) {
 		g_hdb->_sound->playSound(SND_GUY_UHUH);
 	}
+}
+
+struct {
+	const char *fName, *printName;
+} mapNames[] = {
+	{	"MAP00",			"HDS Colby Jack" },
+	{	"MAP01",			"Servandrones, Inc." },
+	{	"MAP02",			"Pushbot Storage" },
+	{	"MAP03",			"Rightbot Problems" },
+	{	"MAP04",			"Shockbot Secrets" },
+	{	"MAP05",			"The Drain Pain" },
+	{	"MAP06",			"Energy Column Tower" },
+	{	"MAP07",			"Water Supply Systems" },
+	{	"MAP08",			"Food Supply Systems" },
+	{	"MAP09",			"Purple Storage Room" },
+	{	"MAP10",			"Back On The Jack" },
+	{	"MAP11",			"Bridia" },
+	{	"MAP12",			"BEAL Offices" },
+	{	"MAP13",			"BEAL Labs" },
+	{	"MAP14",			"Earthen Plain" },
+	{	"MAP15",			"Fatfrog Swamp" },
+	{	"MAP16",			"Fatfrog Deeps" },
+	{	"MAP17",			"Glacier West" },
+	{	"MAP18",			"Glacier East" },
+	{	"MAP19",			"Mystery Pizza Factory" },
+	{	"MAP20",			"Colby Jack Attack" },
+	{	"MAP21",			"Pharitale" },
+	{	"MAP22",			"Happy Meadow" },
+	{	"MAP23",			"Water Caves" },
+	{	"MAP24",			"Rocky Crag" },
+	{	"MAP25",			"Dragon Deeps" },
+	{	"MAP26",			"Lower Dragon Deeps" },
+	{	"MAP27",			"Ice Dragon Valley" },
+	{	"MAP28",			"Faerie Glade" },
+	{	"MAP29",			"Palace In The Clouds" },
+	{	"MAP30",			"Monkeystone Star Zone" },
+};
+
+void HDBGame::setInMapName(const char *name) {
+	int i = 0;
+
+	while (mapNames[i].fName) {
+		if (!scumm_stricmp(name, mapNames[i].fName)) {
+			memset(&_inMapName, 0, 32);
+			strcpy(_inMapName, mapNames[i].printName);
+			return;
+		}
+		i++;
+	}
+
+	memset(&_inMapName, 0, 32);
+	strcpy(_inMapName, name);
 }
 
 Common::Error HDBGame::run() {
