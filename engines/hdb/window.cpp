@@ -89,6 +89,76 @@ bool Window::init() {
 	return true;
 }
 
+void Window::save(Common::OutSaveFile *out) {
+
+	int i;
+
+	// Save out the various window and game state info
+
+	// clear out gfx ptrs in _pzInfo struct before writing...
+	memcpy(&_tempPzInfo, &_pzInfo, sizeof(_pzInfo));
+	for (i = 0; i < 10; i++) {
+		_tempPzInfo.gfxNumber[i] = NULL;
+		if (i < 2)
+			_tempPzInfo.gfxFace[i] = NULL;
+	}
+	_tempPzInfo.gfxPanic = _tempPzInfo.gfxZone = NULL;
+
+	out->write(&_tempPzInfo, sizeof(_pzInfo));
+	out->write(&_dialogInfo, sizeof(_dialogInfo));
+	out->writeSint32LE(_dialogDelay);
+	out->write(&_dialogChoiceInfo, sizeof(_dialogChoiceInfo));
+	out->write(&_msgInfo, sizeof(_msgInfo));
+	out->write(&_msgQueueStr, sizeof(char) * 128 * kMaxMsgQueue);
+	out->write(&_msgQueueWait, sizeof(int) * kMaxMsgQueue);
+	out->writeSint32LE(_numMsgQueue);
+	out->write(&_invWinInfo, sizeof(_invWinInfo));
+	out->write(&_dlvsInfo, sizeof(_dlvsInfo));
+	debug(9, "STUB: Save Try Again data");
+
+	out->writeUint32LE(_textOutList.size());
+	for (i = 0; (uint)i < _textOutList.size(); i++) {
+		out->write(_textOutList[i], sizeof(TOut));
+	}
+
+	out->write(&_infobarDimmed, sizeof(_infobarDimmed));
+
+}
+
+void Window::loadSaveFile(Common::InSaveFile *in) {
+
+	int i;
+
+	// Clear out everything
+	restartSystem();
+
+	// Load out various Window and Game State Info
+	in->read(&_pzInfo, sizeof(_pzInfo));
+	in->read(&_dialogInfo, sizeof(_dialogInfo));
+	_dialogDelay = in->readSint32LE();
+	if (_dialogDelay)
+		_dialogDelay = g_system->getMillis() + 1000;
+
+	in->read(&_dialogChoiceInfo, sizeof(_dialogChoiceInfo));
+	_dialogChoiceInfo.timeout = g_system->getMillis() + 1000;
+
+	in->read(&_msgInfo, sizeof(_msgInfo));
+	in->read(&_msgQueueStr, sizeof(char) * 128 * kMaxMsgQueue);
+	in->read(&_msgQueueWait, sizeof(int) * kMaxMsgQueue);
+	_numMsgQueue = in->readSint32LE();
+	in->read(&_invWinInfo, sizeof(_invWinInfo));
+	in->read(&_dlvsInfo, sizeof(_dlvsInfo));
+	debug(9, "STUB: Load Try Again data");
+
+	_textOutList.resize(in->readUint32LE());
+	for (i = 0; (uint)i < _textOutList.size(); i++) {
+		in->read(_textOutList[i], sizeof(TOut));
+		_textOutList[i]->timer = g_system->getMillis() + 1000;
+	}
+
+	in->read(&_infobarDimmed, sizeof(_infobarDimmed));
+}
+
 void Window::restartSystem() {
 	_numMsgQueue = 0;
 	_msgInfo.active = false;
