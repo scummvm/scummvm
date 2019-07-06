@@ -56,7 +56,7 @@ void error(CONTEXT, MsgKind msgno) { /* IN - The error message number */
 		/* Print an error message and longjmp to main loop. */
 		if (msgno != NO_MSG)
 			printMessage(msgno);
-		LONG_JUMP_LABEL("return");
+		LONG_JUMP_LABEL("returnError");
 	}
 }
 
