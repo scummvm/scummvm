@@ -78,24 +78,13 @@ bool AdvSysMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &
 		while (p->_md5 && p->_filesize != filesize && md5 != p->_md5)
 			++p;
 
-		if (p->_filesize) {
+		if (!p->_gameId) {
+			const PlainGameDescriptor &desc = ADVSYS_GAME_LIST[0];
+			gameList.push_back(GlkDetectedGame(desc.gameId, desc.description, filename, md5, filesize));
+		} else {
 			// Found a match
 			PlainGameDescriptor gameDesc = findGame(p->_gameId);
-			DetectedGame gd(p->_gameId, gameDesc.description, Common::EN_ANY, Common::kPlatformUnknown);
-			gd.addExtraEntry("filename", file->getName());
-
-			gameList.push_back(gd);
-		} else {
-			const PlainGameDescriptor &desc = ADVSYS_GAME_LIST[0];
-			DetectedGame gd(desc.gameId, desc.description, Common::UNK_LANG, Common::kPlatformUnknown);
-			gd.canBeAdded = true;
-			gd.hasUnknownFiles = true;
-			FileProperties fp;
-			fp.md5 = md5;
-			fp.size = filesize;
-			gd.matchedFiles[file->getName()] = fp;
-
-			gameList.push_back(gd);
+			gameList.push_back(GlkDetectedGame(p->_gameId, gameDesc.description, filename));
 		}
 	}
 

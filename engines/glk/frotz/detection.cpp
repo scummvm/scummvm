@@ -114,29 +114,21 @@ bool FrotzMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &g
 				(filesize != p->_filesize && isBlorb)))
 			++p;
 
-		DetectedGame gd;
 		if (!p->_gameId) {
 			// Generic .dat/.zip files don't get reported as matches unless they have a known md5
 			if (filename.hasSuffixIgnoreCase(".dat") || filename.hasSuffixIgnoreCase(".zip") || emptyBlorb)
 				continue;
 
 			const PlainGameDescriptor &desc = ZCODE_GAME_LIST[0];
-			gd = DetectedGame(desc.gameId, desc.description, Common::UNK_LANG, Common::kPlatformUnknown);
-			gd.canBeAdded = true;
-			gd.hasUnknownFiles = true;
-			FileProperties fp;
-			fp.md5 = md5;
-			fp.size = filesize;
-			gd.matchedFiles[filename] = fp;
-
+			gameList.push_back(GlkDetectedGame(desc.gameId, desc.description, filename, md5, filesize));
 		} else {
 			GameDescriptor gameDesc = findGame(p->_gameId);
-			gd = DetectedGame(p->_gameId, gameDesc._description, p->_language, Common::kPlatformUnknown, p->_extra);
+			DetectedGame gd = DetectedGame(p->_gameId, gameDesc._description, p->_language, Common::kPlatformUnknown, p->_extra);
 			gd.setGUIOptions(p->_guiOptions);
-		}
 
-		gd.addExtraEntry("filename", filename);
-		gameList.push_back(gd);
+			gd.addExtraEntry("filename", filename);
+			gameList.push_back(gd);
+		}
 	}
 
 	return !gameList.empty();

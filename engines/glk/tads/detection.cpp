@@ -107,21 +107,13 @@ bool TADSMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &ga
 		DetectedGame gd;
 		if (!p->_gameId) {
 			const GameDescriptor &desc = tadsVersion == 2 ? TADS2_GAME_LIST[0] : TADS3_GAME_LIST[0];
-			gd = DetectedGame(desc._gameId, desc._description, Common::UNK_LANG, Common::kPlatformUnknown);
-			gd.canBeAdded = true;
-			gd.hasUnknownFiles = true;
-			FileProperties fp;
-			fp.md5 = md5;
-			fp.size = filesize;
-			gd.matchedFiles[filename] = fp;
-
+			gameList.push_back(GlkDetectedGame(desc._gameId, desc._description, filename, md5, filesize));
 		} else {
 			PlainGameDescriptor gameDesc = findGame(p->_gameId);
 			gd = DetectedGame(p->_gameId, gameDesc.description, p->_language, Common::kPlatformUnknown, p->_extra);
+			gd.addExtraEntry("filename", filename);
+			gameList.push_back(gd);
 		}
-
-		gd.addExtraEntry("filename", filename);
-		gameList.push_back(gd);
 	}
 
 	return !gameList.empty();

@@ -71,24 +71,13 @@ bool Alan2MetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &g
 		while (p->_gameId && (md5 != p->_md5 || filesize != p->_filesize))
 			++p;
 
-		DetectedGame gd;
 		if (!p->_gameId) {
 			const PlainGameDescriptor &desc = ALAN2_GAME_LIST[0];
-			gd = DetectedGame(desc.gameId, desc.description, Common::UNK_LANG, Common::kPlatformUnknown);
-			gd.canBeAdded = true;
-			gd.hasUnknownFiles = true;
-			FileProperties fp;
-			fp.md5 = md5;
-			fp.size = filesize;
-			gd.matchedFiles[filename] = fp;
-
+			gameList.push_back(GlkDetectedGame(desc.gameId, desc.description, filename, md5, filesize));
 		} else {
 			PlainGameDescriptor gameDesc = findGame(p->_gameId);
-			gd = DetectedGame(p->_gameId, gameDesc.description, Common::EN_ANY, Common::kPlatformUnknown);
+			gameList.push_back(GlkDetectedGame(p->_gameId, gameDesc.description, filename));
 		}
-
-		gd.addExtraEntry("filename", filename);
-		gameList.push_back(gd);
 	}
 
 	return !gameList.empty();
