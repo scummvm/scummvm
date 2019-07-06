@@ -96,7 +96,21 @@ void Window::save(Common::OutSaveFile *out) {
 	// Save out the various window and game state info
 
 	// clear out gfx ptrs in _pzInfo struct before writing...
-	memcpy(&_tempPzInfo, &_pzInfo, sizeof(_pzInfo));
+
+	// Copy, clear and save Panic Zone Info
+	_tempPzInfo.active = _pzInfo.active;
+	_tempPzInfo.sequence = _pzInfo.sequence;
+	_tempPzInfo.timer = _pzInfo.timer;
+	_tempPzInfo.x1 = _pzInfo.x1;
+	_tempPzInfo.y1 = _pzInfo.y1;
+	_tempPzInfo.x2 = _pzInfo.x2;
+	_tempPzInfo.y2 = _pzInfo.y2;
+	_tempPzInfo.xv = _pzInfo.xv;
+	_tempPzInfo.yv = _pzInfo.yv;
+	_tempPzInfo.numberTime = _pzInfo.numberTime;
+	_tempPzInfo.numberTimeMaster = _pzInfo.numberTimeMaster;
+	_tempPzInfo.numberValue = _pzInfo.numberValue;
+
 	for (i = 0; i < 10; i++) {
 		_tempPzInfo.gfxNumber[i] = NULL;
 		if (i < 2)
@@ -104,25 +118,121 @@ void Window::save(Common::OutSaveFile *out) {
 	}
 	_tempPzInfo.gfxPanic = _tempPzInfo.gfxZone = NULL;
 
-	out->write(&_tempPzInfo, sizeof(_pzInfo));
-	out->write(&_dialogInfo, sizeof(_dialogInfo));
-	out->writeSint32LE(_dialogDelay);
-	out->write(&_dialogChoiceInfo, sizeof(_dialogChoiceInfo));
-	out->write(&_msgInfo, sizeof(_msgInfo));
-	out->write(&_msgQueueStr, sizeof(char) * 128 * kMaxMsgQueue);
-	out->write(&_msgQueueWait, sizeof(int) * kMaxMsgQueue);
-	out->writeSint32LE(_numMsgQueue);
-	out->write(&_invWinInfo, sizeof(_invWinInfo));
-	out->write(&_dlvsInfo, sizeof(_dlvsInfo));
-	debug(9, "STUB: Save Try Again data");
-
-	out->writeUint32LE(_textOutList.size());
-	for (i = 0; (uint)i < _textOutList.size(); i++) {
-		out->write(_textOutList[i], sizeof(TOut));
+	out->writeByte(_tempPzInfo.active);
+	out->writeSint32LE(_tempPzInfo.sequence);
+	out->writeSint32LE(_tempPzInfo.timer);
+	out->writeSint32LE(_tempPzInfo.x1);
+	out->writeSint32LE(_tempPzInfo.y1);
+	out->writeSint32LE(_tempPzInfo.x2);
+	out->writeSint32LE(_tempPzInfo.y2);
+	out->writeSint32LE(_tempPzInfo.xv);
+	out->writeSint32LE(_tempPzInfo.yv);
+	out->writeSint32LE(_tempPzInfo.numberTime);
+	out->writeSint32LE(_tempPzInfo.numberTimeMaster);
+	out->writeSint32LE(_tempPzInfo.numberValue);
+	g_hdb->_gfx->savePic(_tempPzInfo.gfxPanic, out);
+	g_hdb->_gfx->savePic(_tempPzInfo.gfxZone, out);
+	for (i = 0; i < 10; i++) {
+		g_hdb->_gfx->savePic(_tempPzInfo.gfxNumber[i], out);
+		if (i < 2)
+			g_hdb->_gfx->savePic(_tempPzInfo.gfxFace[i], out);
 	}
 
-	out->write(&_infobarDimmed, sizeof(_infobarDimmed));
+	// Save Dialog Info
+	out->write(_dialogInfo.title, 64);
+	out->writeSint32LE(_dialogInfo.tileIndex);
+	out->write(_dialogInfo.string, 160);
+	out->writeByte(_dialogInfo.active);
+	out->writeSint32LE(_dialogInfo.x);
+	out->writeSint32LE(_dialogInfo.y);
+	out->writeSint32LE(_dialogInfo.width);
+	out->writeSint32LE(_dialogInfo.height);
+	out->writeSint32LE(_dialogInfo.titleWidth);
+	g_hdb->_gfx->savePic(_dialogInfo.gfx, out);
+	out->writeSint32LE(_dialogInfo.more);
+	out->writeSint32LE(_dialogInfo.el);
+	out->writeSint32LE(_dialogInfo.er);
+	out->writeSint32LE(_dialogInfo.et);
+	out->writeSint32LE(_dialogInfo.eb);
+	out->write(_dialogInfo.luaMore, 64);
 
+	// Save Dialog Delay
+	out->writeSint32LE(_dialogDelay);
+
+	// Save Dialog Choice Info
+	out->write(_dialogChoiceInfo.title, 64);
+	out->write(_dialogChoiceInfo.text, 160);
+	out->write(_dialogChoiceInfo.func, 64);
+	out->writeByte(_dialogChoiceInfo.active);
+	out->writeSint32LE(_dialogChoiceInfo.x);
+	out->writeSint32LE(_dialogChoiceInfo.y);
+	out->writeSint32LE(_dialogChoiceInfo.width);
+	out->writeSint32LE(_dialogChoiceInfo.height);
+	out->writeSint32LE(_dialogChoiceInfo.textHeight);
+	out->writeSint32LE(_dialogChoiceInfo.titleWidth);
+	out->writeSint32LE(_dialogChoiceInfo.el);
+	out->writeSint32LE(_dialogChoiceInfo.er);
+	out->writeSint32LE(_dialogChoiceInfo.et);
+	out->writeSint32LE(_dialogChoiceInfo.eb);
+	out->writeUint32LE(_dialogChoiceInfo.timeout);
+	out->writeSint32LE(_dialogChoiceInfo.selection);
+	out->writeSint32LE(_dialogChoiceInfo.numChoices);
+
+	for (i = 0; i < 10; i++) {
+		out->write(_dialogChoiceInfo.choices[i], 64);
+	}
+
+	// Save Msg Info
+	out->writeByte(_msgInfo.active);
+	out->write(_msgInfo.title, 128);
+	out->writeSint32LE(_msgInfo.timer);
+	out->writeSint32LE(_msgInfo.x);
+	out->writeSint32LE(_msgInfo.y);
+	out->writeSint32LE(_msgInfo.width);
+	out->writeSint32LE(_msgInfo.height);
+
+	for (i = 0; i < kMaxMsgQueue; i++)
+		out->write(_msgQueueStr[i], 128);
+	for (i = 0; i < kMaxMsgQueue; i++)
+		out->writeSint32LE(_msgQueueWait[i]);
+	out->writeSint32LE(_numMsgQueue);
+
+	// Save Inventory Info
+	out->writeSint32LE(_invWinInfo.x);
+	out->writeSint32LE(_invWinInfo.y);
+	out->writeSint32LE(_invWinInfo.width);
+	out->writeSint32LE(_invWinInfo.height);
+	out->writeSint32LE(_invWinInfo.selection);
+	out->writeByte(_invWinInfo.active);
+
+	// Save Deliveries Info
+	out->writeSint32LE(_dlvsInfo.x);
+	out->writeSint32LE(_dlvsInfo.y);
+	out->writeSint32LE(_dlvsInfo.width);
+	out->writeSint32LE(_dlvsInfo.height);
+	out->writeByte(_dlvsInfo.active);
+	out->writeSint32LE(_dlvsInfo.selected);
+	out->writeByte(_dlvsInfo.animate);
+	out->writeUint32LE(_dlvsInfo.delay1);
+	out->writeUint32LE(_dlvsInfo.delay2);
+	out->writeUint32LE(_dlvsInfo.delay3);
+	out->writeByte(_dlvsInfo.go1);
+	out->writeByte(_dlvsInfo.go2);
+	out->writeByte(_dlvsInfo.go3);
+
+	// Save Try Again Info
+	debug(9, "STUB: Save Try Again data");
+
+	// Save TextOut Info
+	out->writeUint32LE(_textOutList.size());
+	for (i = 0; (uint)i < _textOutList.size(); i++) {
+		out->write(_textOutList[i]->text, 128);
+		out->writeSint32LE(_textOutList[i]->x);
+		out->writeSint32LE(_textOutList[i]->y);
+		out->writeUint32LE(_textOutList[i]->timer);
+	}
+
+	out->writeSint32LE(_infobarDimmed);
 }
 
 void Window::loadSaveFile(Common::InSaveFile *in) {
@@ -133,30 +243,110 @@ void Window::loadSaveFile(Common::InSaveFile *in) {
 	restartSystem();
 
 	// Load out various Window and Game State Info
+
+	// Load Panic Zone Info
 	in->read(&_pzInfo, sizeof(_pzInfo));
-	in->read(&_dialogInfo, sizeof(_dialogInfo));
+
+	// Load Dialog Info
+	in->read(_dialogInfo.title, 64);
+	_dialogInfo.tileIndex = in->readSint32LE();
+	in->read(_dialogInfo.string, 160);
+	_dialogInfo.active = in->readByte();
+	_dialogInfo.x = in->readSint32LE();
+	_dialogInfo.y = in->readSint32LE();
+	_dialogInfo.width = in->readSint32LE();
+	_dialogInfo.height = in->readSint32LE();
+	_dialogInfo.titleWidth = in->readSint32LE();
+	g_hdb->_gfx->loadPicSave(_dialogInfo.gfx, in);
+	_dialogInfo.more = in->readSint32LE();
+	_dialogInfo.el = in->readSint32LE();
+	_dialogInfo.er = in->readSint32LE();
+	_dialogInfo.et = in->readSint32LE();
+	_dialogInfo.eb = in->readSint32LE();
+	in->read(_dialogInfo.luaMore, 64);
+
+	// Load Dialog Delay
 	_dialogDelay = in->readSint32LE();
 	if (_dialogDelay)
 		_dialogDelay = g_system->getMillis() + 1000;
 
-	in->read(&_dialogChoiceInfo, sizeof(_dialogChoiceInfo));
+	// Load Dialog Choice Info
+	in->read(_dialogChoiceInfo.title, 64);
+	in->read(_dialogChoiceInfo.text, 160);
+	in->read(_dialogChoiceInfo.func, 64);
+	_dialogChoiceInfo.active = in->readByte();
+	_dialogChoiceInfo.x = in->readSint32LE();
+	_dialogChoiceInfo.y = in->readSint32LE();
+	_dialogChoiceInfo.width = in->readSint32LE();
+	_dialogChoiceInfo.height = in->readSint32LE();
+	_dialogChoiceInfo.textHeight = in->readSint32LE();
+	_dialogChoiceInfo.titleWidth = in->readSint32LE();
+	_dialogChoiceInfo.el = in->readSint32LE();
+	_dialogChoiceInfo.er = in->readSint32LE();
+	_dialogChoiceInfo.et = in->readSint32LE();
+	_dialogChoiceInfo.eb = in->readSint32LE();
+	_dialogChoiceInfo.timeout = in->readUint32LE();
+	_dialogChoiceInfo.selection = in->readSint32LE();
+	_dialogChoiceInfo.numChoices = in->readSint32LE();
+	for (i = 0; i < 10; i++)
+		in->read(_dialogChoiceInfo.choices[i], 64);
+
 	_dialogChoiceInfo.timeout = g_system->getMillis() + 1000;
 
-	in->read(&_msgInfo, sizeof(_msgInfo));
-	in->read(&_msgQueueStr, sizeof(char) * 128 * kMaxMsgQueue);
-	in->read(&_msgQueueWait, sizeof(int) * kMaxMsgQueue);
+	// Load Msg Info
+	_msgInfo.active = in->readByte();
+	in->read(_msgInfo.title, 128);
+	_msgInfo.timer = in->readSint32LE();
+	_msgInfo.x = in->readSint32LE();
+	_msgInfo.y = in->readSint32LE();
+	_msgInfo.width = in->readSint32LE();
+	_msgInfo.height = in->readSint32LE();
+
+	for (i = 0; i < kMaxMsgQueue; i++)
+		in->read(_msgQueueStr[i], 128);
+	for (i = 0; i < kMaxMsgQueue; i++)
+		_msgQueueWait[i] = in->readSint32LE();
+
 	_numMsgQueue = in->readSint32LE();
-	in->read(&_invWinInfo, sizeof(_invWinInfo));
-	in->read(&_dlvsInfo, sizeof(_dlvsInfo));
+
+	// Load Inventory Info
+	_invWinInfo.x = in->readSint32LE();
+	_invWinInfo.y = in->readSint32LE();
+	_invWinInfo.width = in->readSint32LE();
+	_invWinInfo.height = in->readSint32LE();
+	_invWinInfo.selection = in->readSint32LE();
+	_invWinInfo.active = in->readByte();
+
+	// Load Deliveries Info
+	_dlvsInfo.x = in->readSint32LE();
+	_dlvsInfo.y = in->readSint32LE();
+	_dlvsInfo.width = in->readSint32LE();
+	_dlvsInfo.height = in->readSint32LE();
+	_dlvsInfo.active = in->readByte();
+	_dlvsInfo.selected = in->readSint32LE();
+	_dlvsInfo.animate = in->readByte();
+	_dlvsInfo.delay1 = in->readUint32LE();
+	_dlvsInfo.delay2 = in->readUint32LE();
+	_dlvsInfo.delay3 = in->readUint32LE();
+	_dlvsInfo.go1 = in->readByte();
+	_dlvsInfo.go2 = in->readByte();
+	_dlvsInfo.go3 = in->readByte();
+
+	// Load Try Again Info
 	debug(9, "STUB: Load Try Again data");
 
+	// Load Textout Info
 	_textOutList.resize(in->readUint32LE());
 	for (i = 0; (uint)i < _textOutList.size(); i++) {
-		in->read(_textOutList[i], sizeof(TOut));
+		in->read(_textOutList[i]->text, 128);
+		_textOutList[i]->x = in->readSint32LE();
+		_textOutList[i]->y = in->readSint32LE();
+		_textOutList[i]->timer = in->readUint32LE();
 		_textOutList[i]->timer = g_system->getMillis() + 1000;
 	}
 
-	in->read(&_infobarDimmed, sizeof(_infobarDimmed));
+	// Load Infobar Info
+	_infobarDimmed = in->readSint32LE();
 }
 
 void Window::restartSystem() {
