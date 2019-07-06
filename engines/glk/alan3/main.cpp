@@ -825,10 +825,10 @@ void run(void) {
 						}
 					}
 				}
-
-				if (ctx._break && ctx._label == "restart")
-					break;
 			}
+
+			if (ctx._break && ctx._label == "restart")
+				break;
 		}
 	} while (!g_vm->shouldQuit() && ctx._label == "restart");
 }
