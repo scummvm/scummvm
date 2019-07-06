@@ -39,8 +39,10 @@ PairWindow::PairWindow(Windows *windows, uint method, Window *key, uint size) :
 }
 
 PairWindow::~PairWindow() {
-	for (uint idx = 0; idx < _children.size(); ++idx)
+	for (uint idx = 0; idx < _children.size(); ++idx) {
+		_children[idx]->_parent = nullptr;
 		delete _children[idx];
+	}
 }
 
 void PairWindow::rearrange(const Rect &box) {
