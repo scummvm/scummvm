@@ -33,9 +33,7 @@ namespace Alan3 {
  */
 class Alan3 : public GlkIO {
 public:
-	bool vm_exited_cleanly;
 	Common::String _advName;
-	bool _pendingLook;
 private:
 	/**
 	 * Initialization
@@ -73,7 +71,7 @@ public:
 	 * Save the game. The passed write stream represents access to the UMem chunk
 	 * in the Quetzal save file that will be created
 	 */
-	virtual Common::Error writeGameData(Common::WriteStream *ws) override;
+	virtual Common::Error writeGameData(Common::WriteStream *ws) override;;
 };
 
 extern Alan3 *g_vm;

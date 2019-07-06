@@ -62,21 +62,21 @@ void GlkIO::print(const char *fmt, ...) {
 
 	va_list argp;
 	va_start(argp, fmt);
+	Common::String str = Common::String::vformat(fmt, argp);
+	va_end(argp);
+
 	if (glkMainWin) {
-		char buf[1024]; /* FIXME: buf size should be foolproof */
-		vsprintf(buf, fmt, argp);
-		glk_put_string(buf);
+		glk_put_string(str.c_str());
 	} else {
 		// assume stdio is available in this case only
-		Common::String str = Common::String::vformat(fmt, argp);
-		warning(fmt, argp);
+		warning("%s", str.c_str());
 	}
-
-	va_end(argp);
 }
 
 void GlkIO::showImage(int image, int align) {
 	uint ecode;
+	if (_saveSlot != -1)
+		return;
 
 	if ((glk_gestalt(gestalt_Graphics, 0) == 1) &&
 		(glk_gestalt(gestalt_DrawImage, wintype_TextBuffer) == 1)) {
@@ -88,6 +88,9 @@ void GlkIO::showImage(int image, int align) {
 }
 
 void GlkIO::playSound(int sound) {
+	if (_saveSlot != -1)
+		return;
+
 #ifdef GLK_MODULE_SOUND
 	static schanid_t soundChannel = NULL;
 
@@ -127,8 +130,7 @@ void GlkIO::statusLine(CONTEXT) {
 	char line[100];
 	int pcol = col;
 
-	if (!statusLineOption) return;
-	if (glkStatusWin == NULL)
+	if (!statusLineOption || _saveSlot != -1 || glkStatusWin == nullptr)
 		return;
 
 	glk_set_window(glkStatusWin);
@@ -171,7 +173,13 @@ bool GlkIO::readLine(CONTEXT, char *buffer, size_t maxLen) {
 	static frefid_t commandFileRef;
 	static strid_t commandFile;
 
-	if (readingCommands) {
+	if (_saveSlot != -1) {
+		// Return a "restore" command
+		forcePrint("> ");
+		forcePrint("restore\n");
+		strcpy(buffer, "restore");
+
+	} else if (readingCommands) {
 		if (glk_get_line_stream(commandFile, buffer, maxLen) == 0) {
 			glk_stream_close(commandFile, NULL);
 			readingCommands = FALSE;
@@ -180,6 +188,7 @@ bool GlkIO::readLine(CONTEXT, char *buffer, size_t maxLen) {
 			printf(buffer);
 			glk_set_style(style_Normal);
 		}
+
 	} else {
 		glk_request_line_event(glkMainWin, buffer, maxLen, 0);
 
@@ -212,6 +221,16 @@ bool GlkIO::readLine(CONTEXT, char *buffer, size_t maxLen) {
 			buffer[event.val1] = 0;
 	}
 	return TRUE;
+}
+
+Common::Error GlkIO::loadGame() {
+	if (_saveSlot != -1) {
+		int saveSlot = _saveSlot;
+		_saveSlot = -1;
+		return loadGameState(saveSlot);
+	} else {
+		return GlkAPI::loadGame();
+	}
 }
 
 } // End of namespace Alan3

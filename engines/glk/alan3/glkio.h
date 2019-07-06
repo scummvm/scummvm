@@ -48,7 +48,17 @@ public:
 	 */
 	GlkIO(OSystem *syst, const GlkGameDescription &gameDesc);
 
-	void print(const char *, ...);
+	/**
+	 * Print a string to the window
+	 */
+	void print(const char *fmt, ...);
+
+	/**
+	 * Outputs a string to the window, even during startup
+	 */
+	void forcePrint(const char *str) {
+		glk_put_string(str);
+	}
 
 	void showImage(int image, int align);
 
@@ -66,9 +76,15 @@ public:
 
 	void flowBreak() {
 		/* Make a new paragraph, i.e one empty line (one or two newlines). */
-		if (glk_gestalt(gestalt_Graphics, 0) == 1)
+		if (_saveSlot == -1 && glk_gestalt(gestalt_Graphics, 0) == 1)
 			glk_window_flow_break(glkMainWin);
 	}
+
+	/**
+	 * If a savegame was selected to be loaded from the launcher, then load it.
+	 * Otherwise, prompt the user for a savegame to load, and then load it
+	 */
+	Common::Error loadGame();
 };
 
 extern GlkIO *g_io;

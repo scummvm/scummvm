@@ -41,8 +41,7 @@ namespace Alan3 {
 
 Alan3 *g_vm = nullptr;
 
-Alan3::Alan3(OSystem *syst, const GlkGameDescription &gameDesc) : GlkIO(syst, gameDesc),
-	vm_exited_cleanly(false), _pendingLook(false) {
+Alan3::Alan3(OSystem *syst, const GlkGameDescription &gameDesc) : GlkIO(syst, gameDesc) {
 	g_vm = this;
 
 	// main

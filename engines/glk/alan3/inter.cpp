@@ -21,6 +21,7 @@
  */
 
 #include "glk/alan3/inter.h"
+#include "glk/alan3/alan3.h"
 #include "glk/alan3/current.h"
 #include "glk/alan3/exe.h"
 #include "glk/alan3/syserr.h"
