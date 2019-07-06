@@ -29,6 +29,14 @@ bool Sound::init() {
 	return true;
 }
 
+void Sound::save(Common::OutSaveFile *out) {
+	warning("STUB: Sound::save()");
+}
+
+void Sound::loadSaveFile(Common::InSaveFile *in) {
+	warning("STUB: Sound::loadSaveFile()");
+}
+
 bool Sound::playSound(int index) {
 	debug(9, "STUB: Play Sound");
 	return true;

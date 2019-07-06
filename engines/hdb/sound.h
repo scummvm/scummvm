@@ -1388,6 +1388,8 @@ class Sound {
 public:
 
 	bool init();
+	void save(Common::OutSaveFile *out);
+	void loadSaveFile(Common::InSaveFile *in);
 	int getMusicVolume() {
 		debug(9, "STUB: Add Music System Variables");
 		return 1;
