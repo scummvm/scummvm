@@ -984,61 +984,47 @@ void Map::addFGTileAnimation(int x, int y) {
 }
 
 void Map::removeBGTileAnimation(int x, int y) {
-	int i = y * _width + x;
+	uint idx = y * _width + x;
 
-	Tile *tile = g_hdb->_gfx->getTile(_background[i]);
-	if (!tile)
-		return;
-	uint32 flags = tile->_flags;
+	for (uint i = 0; i < _listBGAnimFast.size(); i++)
+		if (_listBGAnimFast[i] == idx) {
+			_listBGAnimFast.remove_at(i);
+			return;
+		}
 
-	if (flags & kFlagAnimFast) {
-		for (Common::Array<uint32>::iterator it = _listBGAnimFast.begin(); it!=_listBGAnimFast.end(); it++)
-			if ((uint)i == (*it)) {
-				_listBGAnimFast.erase(it);
-				break;
-			}
-	} else if (flags & kFlagAnimSlow) {
-		for (Common::Array<uint32>::iterator it = _listBGAnimSlow.begin(); it != _listBGAnimSlow.end(); it++)
-			if ((uint)i == (*it)) {
-				_listBGAnimSlow.erase(it);
-				break;
-			}
-	} else if (flags & kFlagAnimMedium) {
-		for (Common::Array<uint32>::iterator it = _listBGAnimMedium.begin(); it != _listBGAnimMedium.end(); it++)
-			if ((uint)i == (*it)) {
-				_listBGAnimMedium.erase(it);
-				break;
-			}
-	}
+	for (uint i = 0; i < _listBGAnimSlow.size(); i++)
+		if (_listBGAnimSlow[i] == idx) {
+			_listBGAnimSlow.remove_at(i);
+			return;
+		}
+
+	for (uint i = 0; i < _listBGAnimMedium.size(); i++)
+		if (_listBGAnimMedium[i] == idx) {
+			_listBGAnimMedium.remove_at(i);
+			return;
+		}
 }
 
 void Map::removeFGTileAnimation(int x, int y) {
-	int i = y * _width + x;
+	uint idx = y * _width + x;
 
-	Tile *tile = g_hdb->_gfx->getTile(_foreground[i]);
-	if (!tile)
-		return;
-	uint32 flags = tile->_flags;
+	for (uint i = 0; i < _listFGAnimFast.size(); i++)
+		if (_listFGAnimFast[i] == idx) {
+			_listFGAnimFast.remove_at(i);
+			return;
+		}
 
-	if (flags & kFlagAnimFast) {
-		for (Common::Array<uint32>::iterator it = _listFGAnimFast.begin(); it!=_listFGAnimFast.end(); it++)
-			if ((uint)i == (*it)) {
-				_listFGAnimFast.erase(it);
-				break;
-			}
-	} else if (flags & kFlagAnimSlow) {
-		for (Common::Array<uint32>::iterator it = _listFGAnimSlow.begin(); it != _listFGAnimSlow.end(); it++)
-			if ((uint)i == (*it)) {
-				_listFGAnimSlow.erase(it);
-				break;
-			}
-	} else if (flags & kFlagAnimMedium) {
-		for (Common::Array<uint32>::iterator it = _listFGAnimMedium.begin(); it != _listFGAnimMedium.end(); it++)
-			if ((uint)i == (*it)) {
-				_listFGAnimMedium.erase(it);
-				break;
-			}
-	}
+	for (uint i = 0; i < _listFGAnimSlow.size(); i++)
+		if (_listFGAnimSlow[i] == idx) {
+			_listFGAnimSlow.remove_at(i);
+			return;
+		}
+
+	for (uint i = 0; i < _listFGAnimMedium.size(); i++)
+		if (_listFGAnimMedium[i] == idx) {
+			_listFGAnimMedium.remove_at(i);
+			return;
+		}
 }
 
 void Map::getMapXY(int *x, int *y) {
