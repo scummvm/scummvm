@@ -28,24 +28,9 @@ Map::Map() {
 	_mapLoaded = false;
 
 	_animCycle = 0;
-
-	for (int i = 0; i < kMaxGratings; i++) {
-		_gratings[i] = new Foreground;
-	}
-
-	for (int i = 0; i < kMaxForegrounds; i++) {
-		_foregrounds[i] = new Foreground;
-	}
 }
 
 Map::~Map() {
-	for (int i = 0; i < kMaxGratings; i++) {
-		delete _gratings[i];
-	}
-
-	for (int i = 0; i < kMaxForegrounds; i++) {
-		delete _foregrounds[i];
-	}
 }
 
 void Map::save(Common::OutSaveFile *out) {
@@ -66,9 +51,9 @@ void Map::save(Common::OutSaveFile *out) {
 
 	out->writeSint32LE(_numGratings);
 	for (i = 0; i < _numGratings; i++) {
-		out->writeUint16LE(_gratings[i]->x);
-		out->writeUint16LE(_gratings[i]->y);
-		out->writeUint16LE(_gratings[i]->tile);
+		out->writeUint16LE(_gratings[i].x);
+		out->writeUint16LE(_gratings[i].y);
+		out->writeUint16LE(_gratings[i].tile);
 	}
 
 	out->writeSint32LE(_animCycle);
@@ -138,9 +123,9 @@ void Map::loadSaveFile(Common::InSaveFile *in) {
 
 	_numGratings = in->readSint32LE();
 	for (i = 0; i < _numGratings; i++) {
-		_gratings[i]->x = in->readUint16LE();
-		_gratings[i]->y = in->readUint16LE();
-		_gratings[i]->tile = in->readUint16LE();
+		_gratings[i].x = in->readUint16LE();
+		_gratings[i].y = in->readUint16LE();
+		_gratings[i].tile = in->readUint16LE();
 	}
 
 	_animCycle = in->readSint32LE();
@@ -830,16 +815,16 @@ void Map::draw() {
 
 					if ((fTile->_flags & kFlagGrating) && (_numGratings < kMaxGratings)) {
 						// Check for Gratings Flag
-						_gratings[_numGratings]->x = screenX;
-						_gratings[_numGratings]->y = screenY;
-						_gratings[_numGratings]->tile = tileIndex;
+						_gratings[_numGratings].x = screenX;
+						_gratings[_numGratings].y = screenY;
+						_gratings[_numGratings].tile = tileIndex;
 						if (_numGratings < kMaxGratings)
 							_numGratings++;
 					} else if ((fTile->_flags & kFlagForeground)) {
 						// Check for Foregrounds Flag
-						_foregrounds[_numForegrounds]->x = screenX;
-						_foregrounds[_numForegrounds]->y = screenY;
-						_foregrounds[_numForegrounds]->tile = tileIndex;
+						_foregrounds[_numForegrounds].x = screenX;
+						_foregrounds[_numForegrounds].y = screenY;
+						_foregrounds[_numForegrounds].tile = tileIndex;
 						if (_numForegrounds < kMaxForegrounds)
 							_numForegrounds++;
 					} else {
@@ -900,7 +885,7 @@ void Map::drawEnts() {
 
 void Map::drawGratings() {
 	for (int i = 0; i < _numGratings; i++) {
-		g_hdb->_gfx->getTile(_gratings[i]->tile)->drawMasked(_gratings[i]->x, _gratings[i]->y);
+		g_hdb->_gfx->getTile(_gratings[i].tile)->drawMasked(_gratings[i].x, _gratings[i].y);
 	}
 
 	debug(8, "Gratings Count: %d", _numGratings);
@@ -908,7 +893,7 @@ void Map::drawGratings() {
 
 void Map::drawForegrounds() {
 	for (int i = 0; i < _numForegrounds; i++) {
-		g_hdb->_gfx->getTile(_foregrounds[i]->tile)->drawMasked(_foregrounds[i]->x, _foregrounds[i]->y);
+		g_hdb->_gfx->getTile(_foregrounds[i].tile)->drawMasked(_foregrounds[i].x, _foregrounds[i].y);
 	}
 
 	debug(8, "Foregrounds Count: %d", _numForegrounds);
