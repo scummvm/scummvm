@@ -21,6 +21,7 @@
  */
 
 #include "glk/blorb.h"
+#include "common/memstream.h"
 
 namespace Glk {
 
@@ -64,16 +65,31 @@ const Common::ArchiveMemberPtr Blorb::getMember(const Common::String &name) cons
 
 Common::SeekableReadStream *Blorb::createReadStreamForMember(const Common::String &name) const {
 	for (uint idx = 0; idx < _chunks.size(); ++idx) {
-		if (_chunks[idx]._filename.equalsIgnoreCase(name)) {
+		const ChunkEntry &ce = _chunks[idx];
+
+		if (ce._filename.equalsIgnoreCase(name)) {
 			Common::File f;
 			if ((!_filename.empty() && !f.open(_filename)) ||
 					(_filename.empty() && !f.open(_fileNode)))
 				error("Reading failed");
 
-			f.seek(_chunks[idx]._offset);
-			Common::SeekableReadStream *result = f.readStream(_chunks[idx]._size);
-			f.close();
+			f.seek(ce._offset);
+			Common::SeekableReadStream *result;
+			
+			if (ce._id == ID_FORM) {
+				// AIFF chunks need to be wrapped in a FORM chunk for ScummVM decoder
+				byte *sound = (byte *)malloc(ce._size + 8);
+				WRITE_BE_UINT32(sound, MKTAG('F', 'O', 'R', 'M'));
+				WRITE_BE_UINT32(sound + 4, 0);
+				f.read(sound + 8, ce._size);
+				assert(READ_BE_UINT32(sound + 8) == ID_AIFF);
 
+				result = new Common::MemoryReadStream(sound, ce._size + 8, DisposeAfterUse::YES);
+			} else {
+				result = f.readStream(ce._size);
+			}
+
+			f.close();
 			return result;
 		}
 	}
