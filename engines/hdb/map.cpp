@@ -50,7 +50,7 @@ Map::~Map() {
 
 void Map::save(Common::OutSaveFile *out) {
 
-	int i, count;
+	int i;
 
 	// Save Map Dimensions and Offsets
 	out->writeSint32LE(_mapX);
@@ -112,7 +112,7 @@ void Map::save(Common::OutSaveFile *out) {
 }
 
 void Map::loadSaveFile(Common::InSaveFile *in) {
-	int i, count;
+	int i;
 
 	restartSystem();
 
