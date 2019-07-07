@@ -60,7 +60,7 @@ bool AI::addToInventory(AIEntity *e) {
 		return false;
 	}
 
-	_inventory[_numInventory].ent = e;
+	_inventory[_numInventory].ent = *e;
 	_numInventory++;
 
 	// If weapon, ready it
@@ -106,7 +106,7 @@ void AI::clearInventory() {
 AIEntity *AI::getInvItem(int which) {
 	if (which >= _numInventory)
 		return NULL;
-	return _inventory[which].ent;
+	return &_inventory[which].ent;
 }
 
 int AI::queryInventory(const char *string) {
@@ -124,7 +124,7 @@ int AI::queryInventory(const char *string) {
 
 	count = 0;
 	for (i = _numInventory - 1; i >= 0; i--)
-		if (_inventory[i].ent->entityName && strstr(_inventory[i].ent->entityName, string))
+		if (_inventory[i].ent.entityName && strstr(_inventory[i].ent.entityName, string))
 			count++;
 
 	return count;
@@ -153,7 +153,7 @@ bool AI::removeInvItem(const char *string, int amount) {
 		found = 0;
 
 		for (i = _numInventory - 1; i >= 0; i--)
-			if (_inventory[i].ent->entityName && strstr(_inventory[i].ent->entityName, string)) {
+			if (_inventory[i].ent.entityName && strstr(_inventory[i].ent.entityName, string)) {
 				j = i;
 				memset(&_inventory[j], 0, sizeof(InvEnt));
 				while (j < _numInventory - 1) {
@@ -191,7 +191,7 @@ int AI::queryInventoryType(AIType which) {
 
 	count = 0;
 	for (i = 0; i < _numInventory; i++)
-		if (_inventory[i].ent->type == which)
+		if (_inventory[i].ent.type == which)
 			count++;
 
 	return count;
@@ -219,7 +219,7 @@ bool AI::removeInvItemType(AIType which, int amount) {
 		found = 0;
 
 		for (i = 0; i < _numInventory; i++)
-			if (_inventory[i].ent->type == which) {
+			if (_inventory[i].ent.type == which) {
 				j = i;
 				memset(&_inventory[j], 0, sizeof(InvEnt));
 				while (j < _numInventory - 1) {
@@ -258,7 +258,7 @@ bool AI::addItemToInventory(AIType type, int amount, const char *funcInit, const
 
 void AI::keepInvItem(AIType type) {
 	for (int i = 0; i < _numInventory; i++)
-		if (_inventory[i].ent->type == type)
+		if (_inventory[i].ent.type == type)
 			_inventory[i].keep = 1;
 }
 
