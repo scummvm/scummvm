@@ -499,9 +499,9 @@ void HDBGame::saveGame(Common::OutSaveFile *out) {
 	save(out);
 
 	// Save AI Object Data
-#if 0
+
 	_ai->save(out);
-#endif
+
 }
 
 void HDBGame::loadGame(Common::InSaveFile *in) {
