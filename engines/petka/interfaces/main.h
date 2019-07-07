@@ -42,6 +42,8 @@ public:
 
 	const BGInfo *findBGInfo(int id) const;
 
+	void unloadRoom(bool fromSave);
+
 public:
 	Common::Array<BGInfo> _bgs;
 	int _roomId;
