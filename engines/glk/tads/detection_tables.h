@@ -29,7 +29,19 @@ namespace TADS {
 
 const PlainGameDescriptor TADS2_GAME_LIST[] = {
 	{ "tads2", "TADS 2 Game" },
+
+	// TADS 2 - Free games
 	{ "oncefuture", "Once and Future" },
+
+	// TADS 2 - Adventions games
+	{ "ccr", "Colossal Cave Revisited" },
+	{ "legendlives", "The Legend Lives!" },
+	{ "rylvania", "The Horror of Rylvania" },
+	{ "u0", "Unnkulia Zero: The Search for Amanda" },
+	{ "uhalf", "Unnkulia One-Half: The Salesman Triumphant" },
+	{ "uu1", "Unnkulian Underworld: The Unknown Unventure" },
+	{ "uu2", "Unnkulian Unventure II: The Secret of Acme" },
+
 	{ nullptr, nullptr }
 };
 
@@ -38,12 +50,22 @@ const PlainGameDescriptor TADS3_GAME_LIST[] = {
 	{ nullptr, nullptr }
 };
 
-#define ENTRY0(ID, MD5, FILESIZE) { ID, "", MD5, FILESIZE, Common::EN_ANY }
-#define TABLE_END_MARKER { nullptr, nullptr, nullptr, 0, Common::EN_ANY }
-
 const GlkDetectionEntry TADS_GAMES[] = {
-	ENTRY0("oncefuture", "4ed995d0784520ca6f0ec5391d92f4d8", 909993),
-	TABLE_END_MARKER
+	// TADS 2 - Free games
+
+	// TADS 2 - Commercial games
+	DT_ENTRY0("oncefuture", "4ed995d0784520ca6f0ec5391d92f4d8", 909993),
+
+	// TADS 2 - Adventions games
+	DT_ENTRY0("ccr", "2da7dba524075aed0167ae02e6484a32", 291305),
+	DT_ENTRY0("legendlives", "03a651ef3d904dbef6a80cd2c041423c", 622989),
+	DT_ENTRY0("rylvania", "98027d23f0da0e38c02f1326a2357713", 302903),
+	DT_ENTRY1("u0", "Demo", "d9615e08336cc0d50984cdc0879f2006", 500949),
+	DT_ENTRY0("uhalf", "80c18f27f656d7e83d1f3f8075115720", 242269),
+	DT_ENTRY0("uu1", "705b91f9e54c591e361d6c2e15bff8ef", 367506),
+	DT_ENTRY0("uu2", "69a4f7cd914bd32bd7a3bef5c68f9f3a", 400113),
+
+	DT_END_MARKER
 };
 
 } // End of namespace Frotz
