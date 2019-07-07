@@ -236,25 +236,25 @@ void ManagedSurface::blitFrom(const Surface &src, const Common::Rect &srcRect,
 	addDirtyRect(Common::Rect(0, 0, this->w, this->h));
 }
 
-void ManagedSurface::transBlitFrom(const Surface &src, uint transColor, bool flipped, uint overrideColor) {
+void ManagedSurface::transBlitFrom(const Surface &src, uint transColor, bool flipped, uint overrideColor, uint srcAlpha) {
 	transBlitFrom(src, Common::Rect(0, 0, src.w, src.h), Common::Rect(0, 0, this->w, this->h),
 		transColor, flipped, overrideColor);
 }
 
 void ManagedSurface::transBlitFrom(const Surface &src, const Common::Point &destPos,
-		uint transColor, bool flipped, uint overrideColor) {
+		uint transColor, bool flipped, uint overrideColor, uint srcAlpha) {
 	transBlitFrom(src, Common::Rect(0, 0, src.w, src.h), Common::Rect(destPos.x, destPos.y,
 		destPos.x + src.w, destPos.y + src.h), transColor, flipped, overrideColor);
 }
 
 void ManagedSurface::transBlitFrom(const Surface &src, const Common::Rect &srcRect,
-		const Common::Point &destPos, uint transColor, bool flipped, uint overrideColor) {
+		const Common::Point &destPos, uint transColor, bool flipped, uint overrideColor, uint srcAlpha) {
 	transBlitFrom(src, srcRect, Common::Rect(destPos.x, destPos.y,
 		destPos.x + srcRect.width(), destPos.y + srcRect.height()), transColor, flipped, overrideColor);
 }
 
 template<typename TSRC, typename TDEST>
-void transBlit(const Surface &src, const Common::Rect &srcRect, Surface &dest, const Common::Rect &destRect, TSRC transColor, bool flipped, uint overrideColor) {
+void transBlit(const Surface &src, const Common::Rect &srcRect, Surface &dest, const Common::Rect &destRect, TSRC transColor, bool flipped, uint overrideColor, uint srcAlpha) {
 	int scaleX = SCALE_THRESHOLD * srcRect.width() / destRect.width();
 	int scaleY = SCALE_THRESHOLD * srcRect.height() / destRect.height();
 	const Graphics::PixelFormat &srcFormat = src.format;
@@ -279,13 +279,17 @@ void transBlit(const Surface &src, const Common::Rect &srcRect, Surface &dest, c
 			if (srcVal == transColor)
 				continue;
 
-			if (srcFormat == destFormat) {
+			if (srcFormat == destFormat && srcAlpha == 0xff) {
 				// Matching formats, so we can do a straight copy
 				destLine[xCtr] = overrideColor ? overrideColor : srcVal;
 			} else {
 				// Otherwise we have to manually decode and re-encode each pixel
 				srcFormat.colorToARGB(srcVal, aSrc, rSrc, gSrc, bSrc);
 				destFormat.colorToRGB(destLine[xCtr], rDest, gDest, bDest);
+
+				if (srcAlpha != 0xff) {
+					aSrc = aSrc * srcAlpha / 255;
+				}
 
 				if (aSrc == 0) {
 					// Completely transparent, so skip
@@ -311,11 +315,11 @@ void transBlit(const Surface &src, const Common::Rect &srcRect, Surface &dest, c
 
 #define HANDLE_BLIT(SRC_BYTES, DEST_BYTES, SRC_TYPE, DEST_TYPE) \
 	if (src.format.bytesPerPixel == SRC_BYTES && format.bytesPerPixel == DEST_BYTES) \
-		transBlit<SRC_TYPE, DEST_TYPE>(src, srcRect, _innerSurface, destRect, transColor, flipped, overrideColor); \
+		transBlit<SRC_TYPE, DEST_TYPE>(src, srcRect, _innerSurface, destRect, transColor, flipped, overrideColor, srcAlpha); \
 	else
 
 void ManagedSurface::transBlitFrom(const Surface &src, const Common::Rect &srcRect,
-	const Common::Rect &destRect, uint transColor, bool flipped, uint overrideColor) {
+	const Common::Rect &destRect, uint transColor, bool flipped, uint overrideColor, uint srcAlpha) {
 	if (src.w == 0 || src.h == 0 || destRect.width() == 0 || destRect.height() == 0)
 		return;
 
