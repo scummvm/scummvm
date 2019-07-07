@@ -69,7 +69,7 @@ void QMessageObject::processMessage(const QMessage &msg) {
 		}
 		for (uint j = 0; j < r.messages.size(); ++j) {
 			QMessage &rMsg = r.messages[j];
-			if (r.opcode == kCheck && g_vm->getQSystem()->findObject(rMsg.objId)->_status != rMsg.arg1) {
+			if (rMsg.opcode == kCheck && g_vm->getQSystem()->findObject(rMsg.objId)->_status != rMsg.arg1) {
 				break;
 			}
 			if (rMsg.opcode == kIf &&
