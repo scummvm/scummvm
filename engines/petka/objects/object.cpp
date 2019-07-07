@@ -333,7 +333,7 @@ void QObject::update(int time) {
 		return;
 	_time += time;
 	FlicDecoder *flc = g_vm->resMgr()->loadFlic(_resourceId);
-	if (flc) {
+	if (flc && flc->getFrameCount() != 1) {
 		while (_time > flc->getDelay()) {
 			if (_sound && _hasSound && flc->getCurFrame() == 0) {
 				_startSound = true;
