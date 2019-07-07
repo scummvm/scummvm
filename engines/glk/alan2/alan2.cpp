@@ -161,7 +161,7 @@ static void syncEventQueue(Common::Serializer &s) {
 	EvtqElem *arr = eventq;
 
 	if (s.isLoading()) {
-		for (i = 0; arr[i - 1].time; ++i)
+		for (i = 0; arr[i - 1].time != 0; ++i)
 			arr[i].synchronize(s);
 		etop = i - 1;
 	} else {
