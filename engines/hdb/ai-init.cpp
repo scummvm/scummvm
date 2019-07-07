@@ -981,6 +981,377 @@ void AI::restartSystem() {
 	_gatePuddles = 0;
 }
 
+void AI::save(Common::OutSaveFile *out) {
+	int i;
+
+	// Misc Variables
+	out->writeByte(_playerInvisible);
+	out->writeByte(_playerOnIce);
+	out->writeByte(_playerEmerging);
+	out->writeByte(_playerRunning);
+	warning("STUB: Save whether weapon is selected");
+
+	// Save Teleporters
+	for (i = 0; i < kMaxTeleporters; i++) {
+		out->writeUint16LE(_teleporters[i].x1);
+		out->writeUint16LE(_teleporters[i].y1);
+		out->writeUint16LE(_teleporters[i].x2);
+		out->writeUint16LE(_teleporters[i].y2);
+		out->writeUint32LE((int)_teleporters[i].dir1);
+		out->writeUint32LE((int)_teleporters[i].dir2);
+		out->writeUint16LE(_teleporters[i].level1);
+		out->writeUint16LE(_teleporters[i].level2);
+		out->writeUint16LE(_teleporters[i].usable1);
+		out->writeUint16LE(_teleporters[i].usable2);
+		out->writeUint16LE(_teleporters[i].anim1);
+		out->writeUint16LE(_teleporters[i].anim2);
+		out->write(_teleporters[i].luaFuncUse1, 32);
+		out->write(_teleporters[i].luaFuncUse2, 32);
+	}
+	out->writeSint32LE(_numTeleporters);
+
+	// Save Laser Data
+	out->writeByte(_laserRescan);
+	out->writeByte(_laserOnScreen);
+
+	// Save Persistent Data
+	out->writeSint32LE(_numGems);
+	out->writeSint32LE(_numGooCups);
+	out->writeSint32LE(_numMonkeystones);
+
+	// Save Inventory
+	for (i = 0; i < kMaxInventory; i++) {
+		out->writeUint16LE(_inventory[i].keep);
+		warning("STUB: Save Inventory Item");
+	}
+	out->writeUint32LE(_numInventory);
+
+	// Save Deliveries
+	for (i = 0; i < kMaxDeliveries; i++) {
+		out->write(_deliveries[i].itemTextName, 32);
+		out->write(_deliveries[i].itemGfxName, 32);
+		warning("STUB: Save _deliveries[i].itemGfx");
+		out->write(_deliveries[i].destTextName, 32);
+		out->write(_deliveries[i].destGfxName, 32);
+		warning("STUB: Save _deliveries[i].destGfx");
+		out->write(_deliveries[i].id, 32);
+	}
+	out->writeUint32LE(_numDeliveries);
+
+	// Save Waypoints
+	for (i = 0; i < kMaxWaypoints; i++) {
+		out->writeSint32LE(_waypoints[i].x);
+		out->writeSint32LE(_waypoints[i].y);
+		out->writeSint32LE(_waypoints[i].level);
+	}
+	out->writeUint32LE(_numWaypoints);
+
+	// Save Bridges
+	for (i = 0; i < kMaxBridges; i++) {
+		out->writeUint16LE(_bridges[i].x);
+		out->writeUint16LE(_bridges[i].y);
+		out->writeSint32LE((int)_bridges[i].dir);
+		out->writeUint16LE(_bridges[i].delay);
+		out->writeUint16LE(_bridges[i].anim);
+	}
+	out->writeUint32LE(_numBridges);
+
+	// Save Lua List
+	for (i = 0; i < kMaxLuaEnts; i++) {
+		out->writeUint16LE(_luaList[i].x);
+		out->writeUint16LE(_luaList[i].y);
+		out->writeUint16LE(_luaList[i].value1);
+		out->writeUint16LE(_luaList[i].value2);
+		out->write(_luaList[i].luaFuncInit, 32);
+		out->write(_luaList[i].luaFuncAction, 32);
+		out->write(_luaList[i].luaFuncUse, 32);
+	}
+	out->writeUint32LE(_numLuaList);
+
+	// Save Auto Actions
+	for (i = 0; i < kMaxAutoActions; i++) {
+		out->writeUint16LE(_autoActions[i].x);
+		out->writeUint16LE(_autoActions[i].y);
+		out->writeByte(_autoActions[i].activated);
+		out->write(_autoActions[i].luaFuncInit, 32);
+		out->write(_autoActions[i].luaFuncUse, 32);
+		out->write(_autoActions[i].entityName, 32);
+	}
+
+	// Save Actions
+	for (i = 0; i < kMaxActions; i++) {
+		out->writeUint16LE(_actions[i].x1);
+		out->writeUint16LE(_actions[i].y1);
+		out->writeUint16LE(_actions[i].x2);
+		out->writeUint16LE(_actions[i].y2);
+		out->write(_actions[i].luaFuncInit, 32);
+		out->write(_actions[i].luaFuncUse, 32);
+		out->write(_actions[i].entityName, 32);
+	}
+
+	// Save Fairystones
+	for (i = 0; i < kMaxFairystones; i++) {
+		out->writeUint16LE(_fairystones[i].srcX);
+		out->writeUint16LE(_fairystones[i].srcY);
+		out->writeUint16LE(_fairystones[i].destX);
+		out->writeUint16LE(_fairystones[i].destY);
+	}
+
+	// Save Callbacks
+	for (i = 0; i < kMaxCallbacks; i++) {
+		out->writeSint32LE((int)_callbacks[i].type);
+		out->writeUint16LE(_callbacks[i].x);
+		out->writeUint16LE(_callbacks[i].y);
+		out->writeUint16LE(_callbacks[i].delay);
+	}
+
+	// Save Gatepuddles
+	out->writeSint32LE(_gatePuddles);
+
+	// Save AnimTargets
+	out->writeUint32LE(_animTargets.size());
+	for (i = 0; (uint)i < _animTargets.size(); i++) {
+		out->writeUint16LE(_animTargets[i]->x);
+		out->writeUint16LE(_animTargets[i]->y);
+		out->writeUint16LE(_animTargets[i]->start);
+		out->writeUint16LE(_animTargets[i]->end);
+		out->writeSint16LE(_animTargets[i]->vel);
+		out->writeUint16LE(_animTargets[i]->animCycle);
+		out->writeUint16LE(_animTargets[i]->animFrame);
+		out->writeByte(_animTargets[i]->killAuto);
+		out->writeByte(_animTargets[i]->inMap);
+		warning("STUB: Save _animTargets[i].gfxList");
+	}
+
+	// Save ArrowPaths
+	out->writeUint32LE(_arrowPaths->size());
+	for (i = 0; (uint)i < _arrowPaths->size(); i++) {
+		out->writeUint16LE(_arrowPaths->operator[](i)->type);
+		out->writeSint32LE((int)_arrowPaths->operator[](i)->dir);
+		out->writeUint16LE(_arrowPaths->operator[](i)->tileX);
+		out->writeUint16LE(_arrowPaths->operator[](i)->tileY);
+	}
+
+	// Save HereT List
+	out->writeUint32LE(_hereList->size());
+	for (i = 0; (uint)i < _hereList->size(); i++) {
+		out->writeUint16LE(_hereList->operator[](i)->x);
+		out->writeUint16LE(_hereList->operator[](i)->y);
+		out->write(_hereList->operator[](i)->entName, 32);
+	}
+
+	// Save Triggers
+	out->writeUint32LE(_triggerList->size());
+	for (i = 0; (uint)i < _triggerList->size(); i++) {
+		out->write(_triggerList->operator[](i)->id, 32);
+		out->writeUint16LE(_triggerList->operator[](i)->x);
+		out->writeUint16LE(_triggerList->operator[](i)->y);
+		out->writeUint16LE(_triggerList->operator[](i)->value1);
+		out->writeUint16LE(_triggerList->operator[](i)->value2);
+		out->write(_triggerList->operator[](i)->luaFuncInit, 32);
+		out->write(_triggerList->operator[](i)->luaFuncUse, 32);
+	}
+
+	// Save Floats
+	out->writeUint32LE(_floats->size());
+	for (i = 0; (uint)i < _floats->size(); i++) {
+		warning("STUB: Save Float Entity");
+	}
+
+	// Save Ents
+	out->writeUint32LE(_ents->size());
+	for (i = 0; (uint)i < _ents->size(); i++) {
+		warning("STUB: Save Ent Entity");
+	}
+}
+
+void AI::loadSaveFile(Common::InSaveFile *in) {
+	int i;
+
+	// Clean everything out
+	restartSystem();
+
+	// Misc Variables
+	_playerInvisible = in->readByte();
+	_playerOnIce = in->readByte();
+	_playerEmerging = in->readByte();
+	_playerRunning = in->readByte();
+	warning("STUB: Load whether weapon is selected or not");
+
+	// Load Teleporters
+	for (i = 0; i < kMaxTeleporters; i++) {
+		_teleporters[i].x1 = in->readUint16LE();
+		_teleporters[i].y1 = in->readUint16LE();
+		_teleporters[i].x2 = in->readUint16LE();
+		_teleporters[i].y2 = in->readUint16LE();
+		_teleporters[i].dir1 = (AIDir)in->readUint32LE();
+		_teleporters[i].dir2 = (AIDir)in->readUint32LE();
+		_teleporters[i].level1 = in->readUint16LE();
+		_teleporters[i].level2 = in->readUint16LE();
+		_teleporters[i].usable1 = in->readUint16LE();
+		_teleporters[i].usable2 = in->readUint16LE();
+		_teleporters[i].anim1 = in->readUint16LE();
+		_teleporters[i].anim2 = in->readUint16LE();
+		in->read(_teleporters[i].luaFuncUse1, 32);
+		in->read(_teleporters[i].luaFuncUse2, 32);
+	}
+	_numTeleporters = in->readSint32LE();
+
+	// Load Laser Data
+	_laserRescan = in->readByte();
+	_laserOnScreen = in->readByte();
+
+	// Load Persistent Data
+	_numGems = in->readSint32LE();
+	_numGooCups = in->readSint32LE();
+	_numMonkeystones = in->readSint32LE();
+
+	// Load Inventory
+	for (i = 0; i < kMaxInventory; i++) {
+		_inventory[i].keep = in->readUint16LE();
+		warning("STUB: Load Inventory Item");
+	}
+	_numInventory = in->readUint32LE();
+
+	// Load Deliveries
+	for (i = 0; i < kMaxDeliveries; i++) {
+		in->read(_deliveries[i].itemTextName, 32);
+		in->read(_deliveries[i].itemGfxName, 32);
+		warning("STUB: Load _deliveries[i].itemGfx");
+		in->read(_deliveries[i].destTextName, 32);
+		in->read(_deliveries[i].destGfxName, 32);
+		warning("STUB: Load _deliveries[i].destGfx");
+		in->read(_deliveries[i].id, 32);
+	}
+	_numDeliveries = in->readUint32LE();
+
+	// Load Waypoints
+	for (i = 0; i < kMaxWaypoints; i++) {
+		_waypoints[i].x = in->readSint32LE();
+		_waypoints[i].y = in->readSint32LE();
+		_waypoints[i].level = in->readSint32LE();
+	}
+	_numWaypoints = in->readUint32LE();
+
+	// Load Bridges
+	for (i = 0; i < kMaxBridges; i++) {
+		_bridges[i].x = in->readUint16LE();
+		_bridges[i].y = in->readUint16LE();
+		_bridges[i].dir = (AIDir)in->readSint32LE();
+		_bridges[i].delay = in->readUint16LE();
+		_bridges[i].anim = in->readUint16LE();
+	}
+	_numBridges = in->readUint32LE();
+
+	// Load Lua List
+	for (i = 0; i < kMaxLuaEnts; i++) {
+		_luaList[i].x = in->readUint16LE();
+		_luaList[i].y = in->readUint16LE();
+		_luaList[i].value1 = in->readUint16LE();
+		_luaList[i].value2 = in->readUint16LE();
+		in->read(_luaList[i].luaFuncInit, 32);
+		in->read(_luaList[i].luaFuncAction, 32);
+		in->read(_luaList[i].luaFuncUse, 32);
+	}
+	_numLuaList = in->readUint32LE();
+
+	// Load Auto Actions
+	for (i = 0; i < kMaxAutoActions; i++) {
+		_autoActions[i].x = in->readUint16LE();
+		_autoActions[i].y = in->readUint16LE();
+		_autoActions[i].activated = in->readByte();
+		in->read(_autoActions[i].luaFuncInit, 32);
+		in->read(_autoActions[i].luaFuncUse, 32);
+		in->read(_autoActions[i].entityName, 32);
+	}
+
+	// Load Actions
+	for (i = 0; i < kMaxActions; i++) {
+		_actions[i].x1 = in->readUint16LE();
+		_actions[i].y1 = in->readUint16LE();
+		_actions[i].x2 = in->readUint16LE();
+		_actions[i].y2 = in->readUint16LE();
+		in->read(_actions[i].luaFuncInit, 32);
+		in->read(_actions[i].luaFuncUse, 32);
+		in->read(_actions[i].entityName, 32);
+	}
+
+	// Load Fairystones
+	for (i = 0; i < kMaxFairystones; i++) {
+		_fairystones[i].srcX = in->readUint16LE();
+		_fairystones[i].srcY = in->readUint16LE();
+		_fairystones[i].destX = in->readUint16LE();
+		_fairystones[i].destY = in->readUint16LE();
+	}
+
+	// Load Callbacks
+	for (i = 0; i < kMaxCallbacks; i++) {
+		_callbacks[i].type = (CallbackType)in->readSint32LE();
+		_callbacks[i].x = in->readUint16LE();
+		_callbacks[i].y = in->readUint16LE();
+		_callbacks[i].delay = in->readUint16LE();
+	}
+
+	// Load Gatepuddles
+	_gatePuddles = in->readSint32LE();
+
+	// Load AnimTargets
+	_animTargets.resize(in->readUint32LE());
+	for (i = 0; (uint)i < _animTargets.size(); i++) {
+		_animTargets[i]->x = in->readUint16LE();
+		_animTargets[i]->y = in->readUint16LE();
+		_animTargets[i]->start = in->readUint16LE();
+		_animTargets[i]->end = in->readUint16LE();
+		_animTargets[i]->vel = in->readSint16LE();
+		_animTargets[i]->animCycle = in->readUint16LE();
+		_animTargets[i]->animFrame = in->readUint16LE();
+		_animTargets[i]->killAuto = in->readByte();
+		_animTargets[i]->inMap = in->readByte();
+		warning("STUB: Load _animTargets[i].gfxList");
+	}
+
+	// Load ArrowPaths
+	_arrowPaths->resize(in->readUint32LE());
+	for (i = 0; (uint)i < _arrowPaths->size(); i++) {
+		_arrowPaths->operator[](i)->type = in->readUint16LE();
+		_arrowPaths->operator[](i)->dir = (AIDir)in->readSint32LE();
+		_arrowPaths->operator[](i)->tileX = in->readUint16LE();
+		_arrowPaths->operator[](i)->tileY = in->readUint16LE();
+	}
+
+	// Load HereT List
+	_hereList->resize(in->readUint32LE());
+	for (i = 0; (uint)i < _hereList->size(); i++) {
+		_hereList->operator[](i)->x = in->readUint16LE();
+		_hereList->operator[](i)->y = in->readUint16LE();
+		in->read(_hereList->operator[](i)->entName, 32);
+	}
+
+	// Load Triggers
+	_triggerList->resize(in->readUint32LE());
+	for (i = 0; (uint)i < _triggerList->size(); i++) {
+		in->read(_triggerList->operator[](i)->id, 32);
+		_triggerList->operator[](i)->x = in->readUint16LE();
+		_triggerList->operator[](i)->y = in->readUint16LE();
+		_triggerList->operator[](i)->value1 = in->readUint16LE();
+		_triggerList->operator[](i)->value2 = in->readUint16LE();
+		in->read(_triggerList->operator[](i)->luaFuncInit, 32);
+		in->read(_triggerList->operator[](i)->luaFuncUse, 32);
+	}
+
+	// Load Floats
+	_floats->resize(in->readUint32LE());
+	for (i = 0; (uint)i < _floats->size(); i++) {
+		warning("STUB: Load Float Entity");
+	}
+
+	// Load Ents
+	_ents->resize(in->readUint32LE());
+	for (i = 0; (uint)i < _ents->size(); i++) {
+		warning("STUB: Load Ent Entity");
+	}
+}
+
 void AI::initAnimInfo() {
 	if (g_hdb->_map->checkOneTileExistInRange(_useSwitchOff, 2))
 		g_hdb->_gfx->getTile(_useSwitchOn);
