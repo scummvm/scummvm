@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-07-04 23:28+0200\n"
+"POT-Creation-Date: 2019-07-07 16:33+0200\n"
 "PO-Revision-Date: 2019-07-01 07:15+0000\n"
 "Last-Translator: scootergrisen <scootergrisen@gmail.com>\n"
 "Language-Team: Danish <https://translations.scummvm.org/projects/scummvm/"
@@ -2483,25 +2483,25 @@ msgid "Disable power off"
 msgstr "Deaktivér slukning"
 
 #: backends/platform/ios7/ios7_osys_events.cpp:315
-#: backends/platform/ios7/ios7_osys_events.cpp:437
+#: backends/platform/ios7/ios7_osys_events.cpp:443
 #: backends/platform/iphone/osys_events.cpp:300
 msgid "Mouse-click-and-drag mode enabled."
 msgstr "Musens klik-og-træk-tilstand aktiveret."
 
 #: backends/platform/ios7/ios7_osys_events.cpp:317
-#: backends/platform/ios7/ios7_osys_events.cpp:439
+#: backends/platform/ios7/ios7_osys_events.cpp:445
 #: backends/platform/iphone/osys_events.cpp:302
 msgid "Mouse-click-and-drag mode disabled."
 msgstr "Musens klik-og-træk-tilstand deaktiveret."
 
 #: backends/platform/ios7/ios7_osys_events.cpp:328
-#: backends/platform/ios7/ios7_osys_events.cpp:458
+#: backends/platform/ios7/ios7_osys_events.cpp:464
 #: backends/platform/iphone/osys_events.cpp:313
 msgid "Touchpad mode enabled."
 msgstr "Pegepladetilstand aktiveret."
 
 #: backends/platform/ios7/ios7_osys_events.cpp:330
-#: backends/platform/ios7/ios7_osys_events.cpp:460
+#: backends/platform/ios7/ios7_osys_events.cpp:466
 #: backends/platform/iphone/osys_events.cpp:315
 msgid "Touchpad mode disabled."
 msgstr "Pegepladetilstand deaktiveret."
@@ -3229,11 +3229,11 @@ msgstr "Jeg kender ikke til ordet \"%s\".\n"
 msgid "I don't understand.\n"
 msgstr "Det forstår jeg ikke.\n"
 
-#: engines/glk/alan2/alan2.cpp:78
+#: engines/glk/alan2/alan2.cpp:76
 msgid "This is too short to be a valid Alan2 file."
 msgstr "Det er for kort til at være en gyldig Alan2-fil."
 
-#: engines/glk/alan2/alan2.cpp:83
+#: engines/glk/alan2/alan2.cpp:81
 msgid "This is not a valid Alan2 file."
 msgstr "Det er ikke en gyldig Alan2-fil."
 

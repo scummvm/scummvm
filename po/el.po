@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-07-04 23:28+0200\n"
+"POT-Creation-Date: 2019-07-07 16:33+0200\n"
 "PO-Revision-Date: 2019-03-06 11:42+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -2527,25 +2527,25 @@ msgid "Disable power off"
 msgstr "Απενεργοποίηση σβησίματος"
 
 #: backends/platform/ios7/ios7_osys_events.cpp:315
-#: backends/platform/ios7/ios7_osys_events.cpp:437
+#: backends/platform/ios7/ios7_osys_events.cpp:443
 #: backends/platform/iphone/osys_events.cpp:300
 msgid "Mouse-click-and-drag mode enabled."
 msgstr "Ενεργοποίηση λειτουργίας ποντικιού click-and-drag."
 
 #: backends/platform/ios7/ios7_osys_events.cpp:317
-#: backends/platform/ios7/ios7_osys_events.cpp:439
+#: backends/platform/ios7/ios7_osys_events.cpp:445
 #: backends/platform/iphone/osys_events.cpp:302
 msgid "Mouse-click-and-drag mode disabled."
 msgstr "Απενεργοποίηση λειτουργίας ποντικιού click-and-drag."
 
 #: backends/platform/ios7/ios7_osys_events.cpp:328
-#: backends/platform/ios7/ios7_osys_events.cpp:458
+#: backends/platform/ios7/ios7_osys_events.cpp:464
 #: backends/platform/iphone/osys_events.cpp:313
 msgid "Touchpad mode enabled."
 msgstr "Λειτουργία Touchpad ενεργοποιημένη."
 
 #: backends/platform/ios7/ios7_osys_events.cpp:330
-#: backends/platform/ios7/ios7_osys_events.cpp:460
+#: backends/platform/ios7/ios7_osys_events.cpp:466
 #: backends/platform/iphone/osys_events.cpp:315
 msgid "Touchpad mode disabled."
 msgstr "Λειτουργία Touchpad απενεργοποιημένη."
@@ -3278,12 +3278,12 @@ msgstr ""
 msgid "I don't understand.\n"
 msgstr "Δεν καταλαβαίνω την εντολή σου. "
 
-#: engines/glk/alan2/alan2.cpp:78
+#: engines/glk/alan2/alan2.cpp:76
 #, fuzzy
 msgid "This is too short to be a valid Alan2 file."
 msgstr "Αυτό είναι πολύ σύντομο για να είναι έγκυρο αρχείο Glulx."
 
-#: engines/glk/alan2/alan2.cpp:83
+#: engines/glk/alan2/alan2.cpp:81
 #, fuzzy
 msgid "This is not a valid Alan2 file."
 msgstr "Αυτό δεν είναι ένα έγκυρο αρχείο Glulx."

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-07-04 23:28+0200\n"
+"POT-Creation-Date: 2019-07-07 16:33+0200\n"
 "PO-Revision-Date: 2019-07-07 14:33+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -2511,25 +2511,25 @@ msgid "Disable power off"
 msgstr "Désactiver l'extinction"
 
 #: backends/platform/ios7/ios7_osys_events.cpp:315
-#: backends/platform/ios7/ios7_osys_events.cpp:437
+#: backends/platform/ios7/ios7_osys_events.cpp:443
 #: backends/platform/iphone/osys_events.cpp:300
 msgid "Mouse-click-and-drag mode enabled."
 msgstr "Mode souris cliquer-et-déplacer activé."
 
 #: backends/platform/ios7/ios7_osys_events.cpp:317
-#: backends/platform/ios7/ios7_osys_events.cpp:439
+#: backends/platform/ios7/ios7_osys_events.cpp:445
 #: backends/platform/iphone/osys_events.cpp:302
 msgid "Mouse-click-and-drag mode disabled."
 msgstr "Mode souris cliquer-et-déplacer désactivé."
 
 #: backends/platform/ios7/ios7_osys_events.cpp:328
-#: backends/platform/ios7/ios7_osys_events.cpp:458
+#: backends/platform/ios7/ios7_osys_events.cpp:464
 #: backends/platform/iphone/osys_events.cpp:313
 msgid "Touchpad mode enabled."
 msgstr "Mode touchpad activé."
 
 #: backends/platform/ios7/ios7_osys_events.cpp:330
-#: backends/platform/ios7/ios7_osys_events.cpp:460
+#: backends/platform/ios7/ios7_osys_events.cpp:466
 #: backends/platform/iphone/osys_events.cpp:315
 msgid "Touchpad mode disabled."
 msgstr "Mode touchpad désactivé."
@@ -3261,11 +3261,11 @@ msgstr "Je ne connais pas le mot \"%s\".\n"
 msgid "I don't understand.\n"
 msgstr "Je ne comprends pas.\n"
 
-#: engines/glk/alan2/alan2.cpp:78
+#: engines/glk/alan2/alan2.cpp:76
 msgid "This is too short to be a valid Alan2 file."
 msgstr "C'est trop court pour être un fichier Alan2 valide."
 
-#: engines/glk/alan2/alan2.cpp:83
+#: engines/glk/alan2/alan2.cpp:81
 msgid "This is not a valid Alan2 file."
 msgstr "Ce n'est pas un fichier Alan2 valide."
 

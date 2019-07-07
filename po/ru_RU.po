@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-07-04 23:28+0200\n"
+"POT-Creation-Date: 2019-07-07 16:33+0200\n"
 "PO-Revision-Date: 2018-12-18 21:54+0000\n"
 "Last-Translator: Alex ASP <hshunt@questzone.ru>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
@@ -2494,25 +2494,25 @@ msgid "Disable power off"
 msgstr "Запретить выключение"
 
 #: backends/platform/ios7/ios7_osys_events.cpp:315
-#: backends/platform/ios7/ios7_osys_events.cpp:437
+#: backends/platform/ios7/ios7_osys_events.cpp:443
 #: backends/platform/iphone/osys_events.cpp:300
 msgid "Mouse-click-and-drag mode enabled."
 msgstr "Режим мыши \"нажать-и-тянуть\" включён."
 
 #: backends/platform/ios7/ios7_osys_events.cpp:317
-#: backends/platform/ios7/ios7_osys_events.cpp:439
+#: backends/platform/ios7/ios7_osys_events.cpp:445
 #: backends/platform/iphone/osys_events.cpp:302
 msgid "Mouse-click-and-drag mode disabled."
 msgstr "Режим мыши \"нажать-и-тянуть\" выключен."
 
 #: backends/platform/ios7/ios7_osys_events.cpp:328
-#: backends/platform/ios7/ios7_osys_events.cpp:458
+#: backends/platform/ios7/ios7_osys_events.cpp:464
 #: backends/platform/iphone/osys_events.cpp:313
 msgid "Touchpad mode enabled."
 msgstr "Режим тачпада включён."
 
 #: backends/platform/ios7/ios7_osys_events.cpp:330
-#: backends/platform/ios7/ios7_osys_events.cpp:460
+#: backends/platform/ios7/ios7_osys_events.cpp:466
 #: backends/platform/iphone/osys_events.cpp:315
 msgid "Touchpad mode disabled."
 msgstr "Режим тачпада выключен."
@@ -3241,12 +3241,12 @@ msgstr ""
 msgid "I don't understand.\n"
 msgstr "Я не понимаю вашу команду. "
 
-#: engines/glk/alan2/alan2.cpp:78
+#: engines/glk/alan2/alan2.cpp:76
 #, fuzzy
 msgid "This is too short to be a valid Alan2 file."
 msgstr "Файл слишком короткий, чтобы быть правильным Glulx-файлом."
 
-#: engines/glk/alan2/alan2.cpp:83
+#: engines/glk/alan2/alan2.cpp:81
 #, fuzzy
 msgid "This is not a valid Alan2 file."
 msgstr "Это неправильный Glulx-файл."
