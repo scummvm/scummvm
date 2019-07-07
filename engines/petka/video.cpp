@@ -34,6 +34,7 @@ namespace Petka {
 VideoSystem::VideoSystem() :
 	_shake(false), _shift(false), _shakeTime(0), _time(0) {
 	makeAllDirty();
+	_time = g_system->getMillis();
 }
 
 static bool objCmp(QVisibleObject *&l, QVisibleObject *&r) {
@@ -115,6 +116,10 @@ void VideoSystem::addDirtyRectFromMsk(Common::Point pos, FlicDecoder &flc) {
 
 void VideoSystem::makeAllDirty() {
 	addDirtyRect(Common::Rect(640, 480));
+}
+
+void VideoSystem::updateTime() {
+	_time = g_system->getMillis();
 }
 
 }

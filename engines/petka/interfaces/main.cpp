@@ -106,6 +106,7 @@ void InterfaceMain::loadRoom(int id, bool fromSave) {
 	}
 	if (!fromSave)
 		g_vm->getQSystem()->addMessageForAllObjects(kInitBG, 0, 0, 0, 0, room);
+	g_vm->videoSystem()->updateTime();
 }
 
 const BGInfo *InterfaceMain::findBGInfo(int id) const {
