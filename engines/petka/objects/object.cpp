@@ -59,6 +59,48 @@ QMessageObject::QMessageObject() {
 	_reaction = nullptr;
 }
 
+static void processSavedReaction(QReaction **reaction, QMessageObject *obj) {
+	QReaction *r = *reaction;
+	for (uint i = 0; i < r->messages.size(); ++i) {
+		QMessage &msg = r->messages[i];
+		if (msg.opcode == kCheck && g_vm->getQSystem()->findObject(msg.objId)->_status != msg.arg1) {
+			break;
+		}
+		g_vm->getQSystem()->addMessage(msg.objId, msg.opcode, msg.arg1, msg.arg2, msg.arg3, 0, obj);
+		bool processed = true;
+		switch (msg.opcode) {
+		case kDialog:
+			break;
+		case kPlay: {
+			QMessageObject *obj = g_vm->getQSystem()->findObject(msg.objId);
+			obj->_reaction = new QReaction();
+			obj->_reactionResId = msg.arg1;
+			for (uint j = i + 1; j < r->messages.size(); ++j) {
+				obj->_reaction->messages.push_back(r->messages[j]);
+			}
+			break;
+		}
+		case kWalk:
+		case kWalkTo:
+		case kWalkVich:
+			break;
+		default:
+			processed = false;
+			break;
+		}
+		if (processed)
+			break;
+	}
+	if (*reaction != r) {
+		delete r;
+		return;
+	}
+	if (*reaction) {
+		delete *reaction;
+		*reaction = nullptr;
+	}
+}
+
 void QMessageObject::processMessage(const QMessage &msg) {
 	for (uint i = 0; i < _reactions.size(); ++i) {
 		QReaction &r = _reactions[i];
@@ -83,16 +125,28 @@ void QMessageObject::processMessage(const QMessage &msg) {
 			}
 			g_vm->getQSystem()->addMessage(rMsg.objId, rMsg.opcode, rMsg.arg1, rMsg.arg2, rMsg.arg3, rMsg.unk,
 										   rMsg.sender);
-
+			bool processed = true;
 			switch (rMsg.opcode) {
-			case kPlay:
+			case kPlay: {
+				QMessageObject *obj = g_vm->getQSystem()->findObject(rMsg.objId);
+				delete obj->_reaction;
+				obj->_reaction = new QReaction();
+				obj->_reactionResId = rMsg.arg1;
+				for (uint z = j + 1; z < r.messages.size(); ++z) {
+					obj->_reaction->messages.push_back(r.messages[z]);
+				}
 				break;
+			}
 			case kWalk:
 			case kWalkTo:
 				break;
 			case kWalkVich:
 				break;
+			default:
+				processed = false;
 			}
+			if (processed)
+				break;
 		}
 	}
 
@@ -137,6 +191,11 @@ void QMessageObject::processMessage(const QMessage &msg) {
 		}
 		_notLoopedSound = msg.arg2 != 5;
 		break;
+	case kEnd:
+		if (_reaction && _reactionResId == msg.arg1) {
+			processSavedReaction(&_reaction, this);
+		}
+ 		break;
 	case kStatus:
 		_status = (int8)msg.arg1;
 		break;

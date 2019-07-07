@@ -77,6 +77,7 @@ public:
 	int32 _dialogColor;
 	Common::Array<QReaction> _reactions;
 	QReaction *_reaction;
+	int16 _reactionResId;
 };
 
 
