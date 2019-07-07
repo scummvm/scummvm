@@ -100,7 +100,7 @@ bool TADSMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &ga
 			continue;
 
 		// Check for known games
-		const TADSGameDescription *p = TADS_GAMES;
+		const GlkDetectionEntry *p = TADS_GAMES;
 		while (p->_gameId && p->_md5 && (md5 != p->_md5 || filesize != p->_filesize))
 			++p;
 

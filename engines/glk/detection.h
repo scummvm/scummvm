@@ -114,6 +114,17 @@ public:
 		const Common::String &md5, size_t filesize);
 };
 
+/**
+ * Game detection entry
+ */
+struct GlkDetectionEntry {
+	const char *const _gameId;
+	const char *const _extra;
+	const char *const _md5;
+	size_t _filesize;
+	Common::Language _language;
+};
+
 } // End of namespace Glk
 
 #endif

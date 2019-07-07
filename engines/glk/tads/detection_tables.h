@@ -27,17 +27,6 @@
 namespace Glk {
 namespace TADS {
 
-/**
- * Game description
- */
-struct TADSGameDescription {
-	const char *const _gameId;
-	const char *const _extra;
-	const char *const _md5;
-	size_t _filesize;
-	Common::Language _language;
-};
-
 const PlainGameDescriptor TADS2_GAME_LIST[] = {
 	{ "tads2", "TADS 2 Game" },
 	{ "oncefuture", "Once and Future" },
@@ -52,7 +41,7 @@ const PlainGameDescriptor TADS3_GAME_LIST[] = {
 #define ENTRY0(ID, MD5, FILESIZE) { ID, "", MD5, FILESIZE, Common::EN_ANY }
 #define TABLE_END_MARKER { nullptr, nullptr, nullptr, 0, Common::EN_ANY }
 
-const TADSGameDescription TADS_GAMES[] = {
+const GlkDetectionEntry TADS_GAMES[] = {
 	ENTRY0("oncefuture", "4ed995d0784520ca6f0ec5391d92f4d8", 909993),
 	TABLE_END_MARKER
 };
