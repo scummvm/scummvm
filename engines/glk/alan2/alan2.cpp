@@ -158,14 +158,18 @@ static void syncObjects(Common::Serializer &s) {
 
 static void syncEventQueue(Common::Serializer &s) {
 	int i;
-	if (s.isSaving()) {
-		eventq[etop].time = 0;        // Mark the top
-		for (i = 0; i <= etop; ++i)
-			eventq[i].synchronize(s);
-	} else {
-		for (i = 0; eventq[i - 1].time; ++i)
-			eventq[i].synchronize(s);
+	EvtqElem *arr = eventq;
+
+	if (s.isLoading()) {
+		for (i = 0; arr[i - 1].time; ++i)
+			arr[i].synchronize(s);
 		etop = i - 1;
+	} else {
+		// Mark the top
+		arr[etop].time = 0;
+
+		for (i = 0; i <= etop; ++i)
+			arr[i].synchronize(s);
 	}
 }
 
