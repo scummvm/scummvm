@@ -69,41 +69,14 @@ void InterfaceMain::start() {
 }
 
 void InterfaceMain::loadRoom(int id, bool fromSave) {
-	QSystem *sys = g_vm->getQSystem();
 	stop();
-	QObjectBG *room = (QObjectBG *)sys->findObject(_roomId);
-	if (room) {
-		if (!fromSave)
-			sys->addMessageForAllObjects(kLeaveBG, 0, 0, 0, 0, room);
-		g_vm->resMgr()->clearUnneeded();
-		g_vm->soundMgr()->removeSoundsWithType(Audio::Mixer::kSFXSoundType);
-		const BGInfo *info = findBGInfo(room->_id);
-		if (info) {
-			for (uint i = 0; i < _objs.size();) {
-				bool removed = false;
-				if (_roomId == ((QMessageObject *) _objs[i])->_id) {
-					_objs.remove_at(i);
-					removed = true;
-				} else {
-					for (uint j = 0; j < info->attachedObjIds.size(); ++j) {
-						if (info->attachedObjIds[j] == ((QMessageObject *) _objs[i])->_id) {
-							g_vm->soundMgr()->removeSound(g_vm->resMgr()->findSoundName(_objs[i]->_resourceId));
-							_objs.remove_at(i);
-							removed = true;
-							break;
-						}
-					}
-				}
-				if (!removed)
-					++i;
-			}
-		}
-	}
-
-
+	if (_roomId == id)
+		return;
+	unloadRoom(fromSave);
 	_roomId = id;
 	const BGInfo *info = findBGInfo(id);
-	room = (QObjectBG *)sys->findObject(info->objId);
+	QSystem *sys = g_vm->getQSystem();
+	QObjectBG *room = (QObjectBG *)sys->findObject(id);
 	g_vm->resMgr()->loadBitmap(room->_resourceId);
 	_objs.push_back(room);
 	for (uint i = 0; i < info->attachedObjIds.size(); ++i) {
@@ -135,6 +108,41 @@ const BGInfo *InterfaceMain::findBGInfo(int id) const {
 			return &_bgs[i];
 	}
 	return nullptr;
+}
+
+void InterfaceMain::unloadRoom(bool fromSave) {
+	if (_roomId == -1)
+		return;
+	QSystem *sys = g_vm->getQSystem();
+	QObjectBG *room = (QObjectBG *) sys->findObject(_roomId);
+	if (room) {
+		if (!fromSave)
+			sys->addMessageForAllObjects(kLeaveBG, 0, 0, 0, 0, room);
+		g_vm->resMgr()->clearUnneeded();
+		g_vm->soundMgr()->removeSoundsWithType(Audio::Mixer::kSFXSoundType);
+		const BGInfo *info = findBGInfo(_roomId);
+		if (!info)
+			return;
+		for (uint i = 0; i < _objs.size();) {
+			bool removed = false;
+			if (_roomId == ((QMessageObject *) _objs[i])->_id) {
+				_objs.remove_at(i);
+				removed = true;
+			} else {
+				for (uint j = 0; j < info->attachedObjIds.size(); ++j) {
+					if (info->attachedObjIds[j] == ((QMessageObject *) _objs[i])->_id) {
+						QMessageObject *o = (QMessageObject *) _objs.remove_at(i);
+						g_vm->soundMgr()->removeSound(g_vm->resMgr()->findSoundName(o->_resourceId));
+						o->_sound = nullptr;
+						removed = true;
+						break;
+					}
+				}
+			}
+			if (!removed)
+				++i;
+		}
+	}
 }
 
 } // End of namespace Petka
