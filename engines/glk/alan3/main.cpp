@@ -22,7 +22,6 @@
 
 #include "glk/alan3/main.h"
 #include "glk/alan3/alan_version.h"
-#include "glk/alan3/args.h"
 #include "glk/alan3/class.h"
 #include "glk/alan3/compatibility.h"
 #include "glk/alan3/container.h"
@@ -309,7 +308,7 @@ void checkVersion(ACodeHeader *hdr) {
 	/* Check version of .ACD file */
 	if (debugOption && !regressionTestOption) {
 		printf("<Version of '%s' is %d.%d%s%d!>\n",
-		       adventureFileName,
+		       g_vm->getFilename().c_str(),
 		       (int)hdr->version[0],
 		       (int)hdr->version[1],
 		       decodeState(hdr->version[3]),
@@ -377,7 +376,7 @@ static void checkDebug(CONTEXT) {
 	/* Make sure he can't debug if not allowed! */
 	if (!header->debug) {
 		if (debugOption | traceSectionOption | traceInstructionOption) {
-			printf("<Sorry, '%s' is not compiled for debug! Exiting.>\n", adventureFileName);
+			printf("<Sorry, '%s' is not compiled for debug! Exiting.>\n", g_vm->getFilename().c_str());
 			CALL1(terminate, 0)
 		}
 		para();

@@ -55,7 +55,6 @@ MODULE_OBJS := \
 	alan3/alan3.o \
 	alan3/alan_version.o \
 	alan3/alt_info.o \
-	alan3/args.o \
 	alan3/attribute.o \
 	alan3/checkentry.o \
 	alan3/class.o \
