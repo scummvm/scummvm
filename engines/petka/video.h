@@ -33,6 +33,7 @@ class VideoSystem {
 public:
 	VideoSystem();
 
+	void updateTime();
 	void update();
 	void makeAllDirty();
 	void addDirtyRect(const Common::Rect &rect);
