@@ -71,7 +71,7 @@ void QObjectCursor::update(int time) {
 		return;
 	FlicDecoder *flc = g_vm->resMgr()->loadFlic(_resourceId);
 	_time += time;
-	while (flc && _time > flc->getDelay()) {
+	while (flc && _time >= flc->getDelay()) {
 		flc->setFrame(-1);
 		Common::Rect dirty(flc->getBounds());
 		dirty.translate(_x, _y);
