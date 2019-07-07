@@ -59,6 +59,7 @@ bool Sound::isPlaying() {
 
 void Sound::stop() {
 	g_system->getMixer()->stopHandle(_handle);
+	_stream->seek(0, SEEK_SET);
 }
 
 void Sound::setBalance(uint16 x, uint16 width) {
