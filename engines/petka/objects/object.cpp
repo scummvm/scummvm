@@ -161,7 +161,11 @@ void QMessageObject::processMessage(const QMessage &msg) {
 		_updateZ = msg.arg1;
 		_z = (msg.arg2 != -1) ? msg.arg2 : _z;
 		break;
+	case kActive:
+		_isActive = msg.arg1;
+		break;
 	case kPassive:
+		_isActive = false;
 		break;
 	}
 
