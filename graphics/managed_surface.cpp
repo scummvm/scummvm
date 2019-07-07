@@ -284,7 +284,7 @@ void transBlit(const Surface &src, const Common::Rect &srcRect, Surface &dest, c
 				destLine[xCtr] = overrideColor ? overrideColor : srcVal;
 			} else {
 				// Otherwise we have to manually decode and re-encode each pixel
-				srcFormat.colorToARGB(*srcLine, aSrc, rSrc, gSrc, bSrc);
+				srcFormat.colorToARGB(srcVal, aSrc, rSrc, gSrc, bSrc);
 				destFormat.colorToRGB(destLine[xCtr], rDest, gDest, bDest);
 
 				if (aSrc == 0) {
