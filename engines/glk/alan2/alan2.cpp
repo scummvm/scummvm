@@ -161,8 +161,11 @@ static void syncEventQueue(Common::Serializer &s) {
 	EvtqElem *arr = eventq;
 
 	if (s.isLoading()) {
-		for (i = 0; arr[i - 1].time != 0; ++i)
+		i = 0;
+		do {
 			arr[i].synchronize(s);
+			i++;
+		} while (arr[i - 1].time != 0);
 		etop = i - 1;
 	} else {
 		// Mark the top
