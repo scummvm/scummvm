@@ -808,8 +808,8 @@ int Picture::draw(int x, int y) {
 	return 0;
 }
 
-int Picture::drawMasked(int x, int y) {
-	g_hdb->_gfx->_globalSurface.transBlitFrom(_surface, Common::Point(x, y), 0xf81f);
+int Picture::drawMasked(int x, int y, int alpha) {
+	g_hdb->_gfx->_globalSurface.transBlitFrom(_surface, Common::Point(x, y), 0xf81f, false, 0, alpha & 0xff);
 
 	Common::Rect clip(_surface.getBounds());
 	clip.moveTo(x, y);
@@ -866,8 +866,8 @@ int Tile::draw(int x, int y) {
 	return 0;
 }
 
-int Tile::drawMasked(int x, int y) {
-	g_hdb->_gfx->_globalSurface.transBlitFrom(_surface, Common::Point(x, y), 0xf81f);
+int Tile::drawMasked(int x, int y, int alpha) {
+	g_hdb->_gfx->_globalSurface.transBlitFrom(_surface, Common::Point(x, y), 0xf81f, false, 0, alpha & 0xff);
 
 	Common::Rect clip(_surface.getBounds());
 	clip.moveTo(x, y);
