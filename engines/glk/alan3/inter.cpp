@@ -763,7 +763,7 @@ void interpret(CONTEXT, Aaddr adr) {
 			case I_SETSIZE: {
 				Set *set = (Set *)fromAptr(pop(stack));
 				if (traceInstructionOption)
-					printf("SETSIZE\t%7ld\t\t", (long)set);
+					printf("SETSIZE\t%7p\t\t", set);
 				push(stack, setSize(set));
 				if (traceInstructionOption)
 					traceIntegerTopValue();
@@ -773,7 +773,7 @@ void interpret(CONTEXT, Aaddr adr) {
 				Set *set = (Set *)fromAptr(pop(stack));
 				Aint index = pop(stack);
 				if (traceInstructionOption)
-					printf("SETMEMB\t%7ld, %7ld", (long)set, (long)index);
+					printf("SETMEMB\t%7p, %7ld", set, (long)index);
 				push(stack, getSetMember(set, index));
 				if (traceInstructionOption)
 					traceIntegerTopValue();
