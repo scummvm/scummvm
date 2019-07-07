@@ -90,12 +90,18 @@ void InterfaceMain::loadRoom(int id, bool fromSave) {
 	}
 	if (sys->_musicId != room->_musicId) {
 		g_vm->soundMgr()->removeSound(g_vm->resMgr()->findSoundName(sys->_musicId));
-		g_vm->soundMgr()->addSound(g_vm->resMgr()->findSoundName(room->_musicId), Audio::Mixer::kMusicSoundType)->play(true);
+		Sound *sound = g_vm->soundMgr()->addSound(g_vm->resMgr()->findSoundName(room->_musicId), Audio::Mixer::kMusicSoundType);
+		if (sound) {
+			sound->play(true);
+		}
 		sys->_musicId = room->_musicId;
 	}
 	if (sys->_fxId != room->_fxId) {
 		g_vm->soundMgr()->removeSound(g_vm->resMgr()->findSoundName(sys->_fxId));
-		g_vm->soundMgr()->addSound(g_vm->resMgr()->findSoundName(room->_fxId), Audio::Mixer::kSFXSoundType)->play(true);
+		Sound *sound = g_vm->soundMgr()->addSound(g_vm->resMgr()->findSoundName(room->_fxId), Audio::Mixer::kMusicSoundType);
+		if (sound) {
+			sound->play(true);
+		}
 		sys->_fxId = room->_fxId;
 	}
 	if (!fromSave)
