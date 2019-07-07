@@ -385,12 +385,10 @@ static void checkDebug(CONTEXT) {
 		traceInstructionOption = FALSE;
 		tracePushOption = FALSE;
 	}
-#ifdef TODO
-	if (debugOption || regressionTestOption) /* If debugging... */
-		srand(1);           /* ... use no randomization */
-	else
-		srand(time(0));     /* Else seed random generator */
-#endif
+
+	// If debugging, use no randomization
+	if (debugOption || regressionTestOption)
+		g_vm->setRandomNumberSeed(1);
 }
 
 

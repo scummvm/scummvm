@@ -222,6 +222,11 @@ public:
 	 * Get a random number
 	 */
 	uint getRandomNumber(uint max) { return _random.getRandomNumber(max); }
+
+	/**
+	 * Set a random number seed
+	 */
+	void setRandomNumberSeed(uint seed) { _random.setSeed(seed); }
 };
 
 extern GlkEngine *g_vm;
