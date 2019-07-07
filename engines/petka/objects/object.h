@@ -36,6 +36,7 @@ public:
 	virtual void update(int time) {};
 	virtual void updateZ() {};
 	virtual void show(bool v) {};
+	virtual void setPos(int x, int y) {};
 	virtual bool isInPoint(int x, int y) { return false; }
 
 public:
@@ -89,6 +90,7 @@ public:
 	void update(int time) override;
 	void updateZ() override;
 	bool isInPoint(int x, int y) override;
+	void setPos(int x, int y) override;
 	void show(bool v) override;
 };
 

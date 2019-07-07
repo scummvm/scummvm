@@ -156,6 +156,9 @@ void QMessageObject::processMessage(const QMessage &msg) {
 		g_vm->playVideo(g_vm->openFile(videoName, false));
 		break;
 	}
+	case kSetPos:
+		setPos(msg.arg1, msg.arg2);
+		break;
 	case kSet:
 	case kPlay:
 		if (dynamic_cast<QObjectBG *>(this)) {
@@ -349,6 +352,16 @@ void QObject::update(int time) {
 			}
 			_time -= flc->getDelay();
 		}
+	}
+}
+
+void QObject::setPos(int x, int y) {
+	FlicDecoder *flc = g_vm->resMgr()->loadFlic(_resourceId);
+	if (flc) {
+		g_vm->videoSystem()->addDirtyRectFromMsk(Common::Point(_x, _y), *flc);
+		g_vm->videoSystem()->addDirtyRectFromMsk(Common::Point(x, y), *flc);
+		_x = x;
+		_y = y;
 	}
 }
 

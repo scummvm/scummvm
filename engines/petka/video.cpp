@@ -104,6 +104,15 @@ void VideoSystem::addDirtyRect(Common::Point pos, FlicDecoder &flc) {
 	addDirtyRect(rect);
 }
 
+void VideoSystem::addDirtyRectFromMsk(Common::Point pos, FlicDecoder &flc) {
+	const Common::Array<Common::Rect> &rects = flc.getMskRects();
+	for (uint i = 0; i < rects.size(); ++i) {
+		Common::Rect r = rects[i];
+		r.translate(pos.x, pos.y);
+		_rects.push_back(r);
+	}
+}
+
 void VideoSystem::makeAllDirty() {
 	addDirtyRect(Common::Rect(640, 480));
 }
