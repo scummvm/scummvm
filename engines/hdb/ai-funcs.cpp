@@ -1714,8 +1714,7 @@ void AI::drawEnts(int x, int y, int w, int h) {
 			switch (e->type) {
 			case AI_VORTEXIAN:
 				if (e->draw)
-					e->draw->drawMasked(e->x - x + e->drawXOff, e->y - y + e->drawYOff);
-				debug(9, "STUB: AI::drawEnts: Replace Masked Blitting with Alpha Masked Blitting");
+					e->draw->drawMasked(e->x - x + e->drawXOff, e->y - y + e->drawYOff, e->value2 & 0xff);
 				break;
 			case AI_GUY: // Draw Player Last
 				break;

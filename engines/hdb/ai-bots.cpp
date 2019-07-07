@@ -1685,8 +1685,7 @@ void aiMeerkatInit2(AIEntity *e) {
 
 void aiMeerkatDraw(AIEntity *e, int mx, int my) {
 	char word[3];
-	debug(9, "FIXME: Replace MaskedBlitting with AlphaMaskedBlitting");
-	g_hdb->_window->getGemGfx()->drawMasked(e->value1 - mx, e->value2 - my);
+	g_hdb->_window->getGemGfx()->drawMasked(e->value1 - mx, e->value2 - my, 255 - e->blinkFrames * 16);
 	g_hdb->_gfx->setCursor(e->value1 + 12 - mx, e->value2 - 8 - my);
 	word[2] = 0;
 	if (!e->special1Frames) {
@@ -1848,7 +1847,7 @@ void aiMeerkatLookAround(AIEntity *e) {
 
 //-------------------------------------------------------------------
 //
-//	FATFROG : Just sits in place and blasts out his tongue if you're 
+//	FATFROG : Just sits in place and blasts out his tongue if you're
 //		within range.
 //
 //-------------------------------------------------------------------
