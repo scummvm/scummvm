@@ -114,10 +114,6 @@ public:
 
 	Picture *loadPic(const char *picName);
 	Tile *loadTile(const char *tileName);
-	void savePic(Picture *pic, Common::OutSaveFile *out);
-	void saveTile(Tile *tile, Common::OutSaveFile *out);
-	void loadPicSave(Picture *pic, Common::InSaveFile *in);
-	void loadTileSave(Tile *tile, Common::InSaveFile *in);
 
 	Tile *getTile(int index);
 	void cacheTileSequence(int index, int count);

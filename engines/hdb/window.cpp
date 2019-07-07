@@ -98,18 +98,7 @@ void Window::save(Common::OutSaveFile *out) {
 	// clear out gfx ptrs in _pzInfo struct before writing...
 
 	// Copy, clear and save Panic Zone Info
-	_tempPzInfo.active = _pzInfo.active;
-	_tempPzInfo.sequence = _pzInfo.sequence;
-	_tempPzInfo.timer = _pzInfo.timer;
-	_tempPzInfo.x1 = _pzInfo.x1;
-	_tempPzInfo.y1 = _pzInfo.y1;
-	_tempPzInfo.x2 = _pzInfo.x2;
-	_tempPzInfo.y2 = _pzInfo.y2;
-	_tempPzInfo.xv = _pzInfo.xv;
-	_tempPzInfo.yv = _pzInfo.yv;
-	_tempPzInfo.numberTime = _pzInfo.numberTime;
-	_tempPzInfo.numberTimeMaster = _pzInfo.numberTimeMaster;
-	_tempPzInfo.numberValue = _pzInfo.numberValue;
+	memcpy(&_tempPzInfo, &_pzInfo, sizeof(_pzInfo));
 
 	for (i = 0; i < 10; i++) {
 		_tempPzInfo.gfxNumber[i] = NULL;
@@ -130,13 +119,6 @@ void Window::save(Common::OutSaveFile *out) {
 	out->writeSint32LE(_tempPzInfo.numberTime);
 	out->writeSint32LE(_tempPzInfo.numberTimeMaster);
 	out->writeSint32LE(_tempPzInfo.numberValue);
-	g_hdb->_gfx->savePic(_tempPzInfo.gfxPanic, out);
-	g_hdb->_gfx->savePic(_tempPzInfo.gfxZone, out);
-	for (i = 0; i < 10; i++) {
-		g_hdb->_gfx->savePic(_tempPzInfo.gfxNumber[i], out);
-		if (i < 2)
-			g_hdb->_gfx->savePic(_tempPzInfo.gfxFace[i], out);
-	}
 
 	// Save Dialog Info
 	out->write(_dialogInfo.title, 64);
@@ -148,7 +130,6 @@ void Window::save(Common::OutSaveFile *out) {
 	out->writeSint32LE(_dialogInfo.width);
 	out->writeSint32LE(_dialogInfo.height);
 	out->writeSint32LE(_dialogInfo.titleWidth);
-	g_hdb->_gfx->savePic(_dialogInfo.gfx, out);
 	out->writeSint32LE(_dialogInfo.more);
 	out->writeSint32LE(_dialogInfo.el);
 	out->writeSint32LE(_dialogInfo.er);
@@ -257,7 +238,6 @@ void Window::loadSaveFile(Common::InSaveFile *in) {
 	_dialogInfo.width = in->readSint32LE();
 	_dialogInfo.height = in->readSint32LE();
 	_dialogInfo.titleWidth = in->readSint32LE();
-	g_hdb->_gfx->loadPicSave(_dialogInfo.gfx, in);
 	_dialogInfo.more = in->readSint32LE();
 	_dialogInfo.el = in->readSint32LE();
 	_dialogInfo.er = in->readSint32LE();
