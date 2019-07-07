@@ -581,9 +581,9 @@ struct AnimTarget {
 
 struct InvEnt {
 	uint16 keep;
-	AIEntity *ent;
+	AIEntity ent;
 
-	InvEnt() : keep(0), ent(NULL) {}
+	InvEnt() : keep(0) {}
 };
 
 struct DlvEnt {
@@ -1013,10 +1013,10 @@ public:
 		return _numInventory;
 	}
 	AIType getInvItemType(int which) {
-		return _inventory[which].ent->type;
+		return _inventory[which].ent.type;
 	}
 	Tile *getInvItemGfx(int which) {
-		return _inventory[which].ent->standdownGfx[0];
+		return _inventory[which].ent.standdownGfx[0];
 	}
 
 	AIEntity *getInvItem(int which);

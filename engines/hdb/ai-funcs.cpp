@@ -739,7 +739,7 @@ void AI::initAllEnts() {
 
 	int i;
 	for (i = 0; i < _numInventory; i++) {
-		AIEntity *temp = _inventory[i].ent;
+		AIEntity *temp = &_inventory[i].ent;
 
 		// Clear out all ptrs in entity before writing
 		for (int j = 0; j < kMaxAnimFrames; j++) {
