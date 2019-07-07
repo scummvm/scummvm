@@ -151,11 +151,11 @@ void Gfx::save(Common::OutSaveFile *out) {
 
 	out->writeByte(_snowInfo.active);
 	for (i = 0; i < MAX_SNOW; i++)
-		warning("STUB: Save Double Value");
+		out->writeDoubleLE(_snowInfo.x[i]);
 	for (i = 0; i < MAX_SNOW; i++)
-		warning("STUB: Save Double Value");
+		out->writeDoubleLE(_snowInfo.y[i]);
 	for (i = 0; i < MAX_SNOW; i++)
-		warning("STUB: Save Double Value");
+		out->writeDoubleLE(_snowInfo.yv[i]);
 	for (i = 0; i < MAX_SNOW; i++)
 		out->writeSint32LE(_snowInfo.xvindex[i]);
 }
@@ -175,11 +175,11 @@ void Gfx::loadSaveFile(Common::InSaveFile *in) {
 	_snowInfo.active = in->readByte();
 
 	for (i = 0; i < MAX_SNOW; i++)
-		warning("STUB: Load Double Value");
+		_snowInfo.x[i] = in->readDoubleLE();
 	for (i = 0; i < MAX_SNOW; i++)
-		warning("STUB: Load Double Value");
+		_snowInfo.y[i] = in->readDoubleLE();
 	for (i = 0; i < MAX_SNOW; i++)
-		warning("STUB: Load Double Value");
+		_snowInfo.yv[i] = in->readDoubleLE();
 	for (i = 0; i < MAX_SNOW; i++)
 		_snowInfo.xvindex[i] = in->readSint32LE();
 
