@@ -80,12 +80,12 @@ bool Magnetic::is_gamefile_valid() {
 	}
 
 	// We support version 2.0 through 3.1.*
-	version = _gameFile.readUint32BE();
-	if (version < 0x20000) {
+	uint32 vers = _gameFile.readUint32BE();
+	if (vers < 0x20000) {
 		GUIErrorMessage(_("This Glulx file is too old a version to execute."));
 		return false;
 	}
-	if (version >= 0x30200) {
+	if (vers >= 0x30200) {
 		GUIErrorMessage(_("This Glulx file is too new a version to execute."));
 		return false;
 	}

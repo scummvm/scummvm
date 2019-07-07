@@ -49,7 +49,7 @@ void Glulxe::stream_set_iosys(uint mode, uint rock) {
 	switch (mode) {
 	default:
 		mode = 0;
-	/* ...and fall through to next case (no-op I/O). */
+		// fall through
 	case iosys_None:
 		rock = 0;
 		stream_char_handler = &Glulxe::nopio_char_han;

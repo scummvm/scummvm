@@ -1018,7 +1018,7 @@ void os_xlat_html4(unsigned int html4_char, char *result, size_t result_len) {
 		case 339:                                            /* oe ligature */
 			strcpy(result, "oe"); return;
 		case 159:                                                   /* Yuml */
-			result[0] = (char)255;
+			result[0] = (char)255; return;
 		case 376:                                        /* Y with diaresis */
 			result[0] = 'Y'; break;
 		case 352:                                           /* S with caron */

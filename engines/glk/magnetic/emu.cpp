@@ -25,8 +25,8 @@
 namespace Glk {
 namespace Magnetic {
 
-static const char *no_hints = "[Hints are not available.]\n";
-static const char *not_supported = "[This function is not supported.]\n";
+//static const char *no_hints = "[Hints are not available.]\n";
+//static const char *not_supported = "[This function is not supported.]\n";
 
 int Magnetic::ms_init(bool restarting) {
 	byte header[42];

@@ -432,12 +432,6 @@ public:
 	 * Display a warning in the error window, and then continue.
 	 */
 	void nonfatal_warning_handler(const char *str, const char *arg, bool useVal, int val);
-#define fatal_error(s)  (fatal_error_handler((s), nullptr, false, 0))
-#define fatal_error_2(s1, s2)  (fatal_error_handler((s1), (s2), false, 0))
-#define fatal_error_i(s, v)  (fatal_error_handler((s), nullptr, true, (v)))
-#define nonfatal_warning(s) (nonfatal_warning_handler((s), nullptr, false, 0))
-#define nonfatal_warning_2(s1, s2) (nonfatal_warning_handler((s1), (s2), false, 0))
-#define nonfatal_warning_i(s, v) (nonfatal_warning_handler((s), nullptr, true, (v)))
 
 	/**
 	 * \defgroup Files access methods
@@ -987,6 +981,13 @@ public:
 };
 
 extern Glulxe *g_vm;
+
+#define fatal_error(s)  (fatal_error_handler((s), nullptr, false, 0))
+#define fatal_error_2(s1, s2)  (fatal_error_handler((s1), (s2), false, 0))
+#define fatal_error_i(s, v)  (fatal_error_handler((s), nullptr, true, (v)))
+#define nonfatal_warning(s) (nonfatal_warning_handler((s), nullptr, false, 0))
+#define nonfatal_warning_2(s1, s2) (nonfatal_warning_handler((s1), (s2), false, 0))
+#define nonfatal_warning_i(s, v) (nonfatal_warning_handler((s), nullptr, true, (v)))
 
 } // End of namespace Glulxe
 } // End of namespace Glk

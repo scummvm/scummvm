@@ -138,6 +138,7 @@ static void readTemporaryHeader(CONTEXT, ACodeHeader *tmphdr) {
 
 
 /*----------------------------------------------------------------------*/
+#ifdef SCUMM_LITTLE_ENDIAN
 static void reverseMemory() {
 	if (debugOption || traceSectionOption || traceInstructionOption)
 		output("<Hmm, this is a little-endian machine, fixing byte ordering....");
@@ -145,7 +146,7 @@ static void reverseMemory() {
 	if (debugOption || traceSectionOption || traceInstructionOption)
 		output("OK.>$n");
 }
-
+#endif
 
 /*----------------------------------------------------------------------*/
 static void setupHeader(ACodeHeader tmphdr) {

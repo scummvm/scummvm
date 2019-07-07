@@ -86,7 +86,8 @@ bool Magnetic::is_blank(uint16 line, uint16 width) const {
 byte *Magnetic::ms_extract1(byte pic, uint16 * w, uint16 * h, uint16 * pal) {
 	byte *table, *data, bit, val, *buffer;
 	uint16 tablesize, count;
-	uint32 i, j, datasize, upsize, offset;
+	uint32 i, j, upsize, offset;
+	//uint32 datasize;
 
 	offset = READ_LE_UINT32(gfx_data + 4 * pic);
 	buffer = gfx_data + offset - 8;
@@ -97,7 +98,7 @@ byte *Magnetic::ms_extract1(byte pic, uint16 * w, uint16 * h, uint16 * pal) {
 	h[0] = READ_LE_UINT16(buffer + 6);
 
 	tablesize = READ_LE_UINT16(buffer + 0x3c);
-	datasize = READ_LE_UINT32(buffer + 0x3e);
+	//datasize = READ_LE_UINT32(buffer + 0x3e);
 	table = buffer + 0x42;
 	data = table + tablesize * 2 + 2;
 	upsize = h[0] * w[0];
@@ -193,8 +194,9 @@ byte *Magnetic::ms_extract2(const char *name, uint16 *w, uint16 *h, uint16 *pal,
 		anim_data = gfx2_buf + 48 + main_pic.data_size;
 		if ((anim_data[0] != 0xD0) || (anim_data[1] != 0x5E)) {
 			byte *current;
-			uint16 frame_count, command_count;
+			uint16 frame_count;
 			uint16 value1, value2;
+			//uint16 command_count;
 
 			if (is_anim != 0)
 				*is_anim = 1;
@@ -261,7 +263,7 @@ byte *Magnetic::ms_extract2(const char *name, uint16 *w, uint16 *h, uint16 *pal,
 			}
 
 			// Get the command sequence table
-			command_count = READ_LE_UINT16(current);
+			//command_count = READ_LE_UINT16(current);
 			command_table = current + 2;
 
 			for (i = 0; i < MAX_POSITIONS; i++)

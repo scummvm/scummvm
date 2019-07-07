@@ -105,9 +105,7 @@ char *qasgets(char *buf, int bufl) {
                 /* return the command */
                 return buf;
             }
-        }
-        else if (c == EOF )
-        {
+        } else if ((int)c == EOF) {
             /* end of file - close the script and return eof */
             qasclose();
             return 0;
