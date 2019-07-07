@@ -262,9 +262,6 @@ void Player_Towns_v1::startSound(int sound) {
 		// type (255 instead of 1).
 		// It doesn't sound great but we'll enable it to have music at all in this scene.
 		// See Trac#1873 and Trac#10561.
-		//
-		// TODO: Check if playback of this can be improved somehow (maybe there's something else
-		// off with the data for which we can add a workaround?).
 		playEuphonyTrack(sound, ptr + 6);
 
 	} else if (type == 2) {
