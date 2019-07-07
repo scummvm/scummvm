@@ -124,56 +124,63 @@ void syncVal(Common::Serializer &s, uint32 *fld) {
 	s.syncAsUint32LE(v);
 }
 
-void Alan2::synchronizeSave(Common::Serializer &s) {
-	AtrElem *atr;
-	Aword i;
-
-	// Sync current values
-	cur.synchronize(s);
-
-	// Save actors
-	for (i = ACTMIN; i <= ACTMAX; ++i) {
+static void syncActors(Common::Serializer &s) {
+	for (uint i = ACTMIN; i <= ACTMAX; ++i) {
 		syncVal(s, &acts[i - ACTMIN].loc);
 		syncVal(s, &acts[i - ACTMIN].script);
 		syncVal(s, &acts[i - ACTMIN].step);
 		syncVal(s, &acts[i - ACTMIN].count);
 
 		if (acts[i - ACTMIN].atrs) {
-			for (atr = (AtrElem *)addrTo(acts[i - ACTMIN].atrs); !endOfTable(atr); ++atr)
+			for (AtrElem *atr = (AtrElem *)addrTo(acts[i - ACTMIN].atrs); !endOfTable(atr); ++atr)
 				syncVal(s, &atr->val);
 		}
 	}
+}
 
-	// Sync locations
-	for (i = LOCMIN; i <= LOCMAX; ++i) {
+static void syncLocations(Common::Serializer &s) {
+	for (uint i = LOCMIN; i <= LOCMAX; ++i) {
 		syncVal(s, &locs[i - LOCMIN].describe);
 		if (locs[i - LOCMIN].atrs)
-			for (atr = (AtrElem *)addrTo(locs[i - LOCMIN].atrs); !endOfTable(atr); atr++)
+			for (AtrElem *atr = (AtrElem *)addrTo(locs[i - LOCMIN].atrs); !endOfTable(atr); atr++)
 				syncVal(s, &atr->val);
 	}
+}
 
-	// Sync objects
-	for (i = OBJMIN; i <= OBJMAX; ++i) {
+static void syncObjects(Common::Serializer &s) {
+	for (uint i = OBJMIN; i <= OBJMAX; ++i) {
 		syncVal(s, &objs[i - OBJMIN].loc);
 		if (objs[i - OBJMIN].atrs)
-			for (atr = (AtrElem *)addrTo(objs[i - OBJMIN].atrs); !endOfTable(atr); atr++)
+			for (AtrElem *atr = (AtrElem *)addrTo(objs[i - OBJMIN].atrs); !endOfTable(atr); atr++)
 				syncVal(s, &atr->val);
 	}
+}
 
-	// Sync the event queue
+static void syncEventQueue(Common::Serializer &s) {
 	if (s.isSaving()) {
 		eventq[etop].time = 0;        // Mark the top
-		for (i = 0; i <= (Aword)etop; ++i)
+		for (int i = 0; i <= etop; ++i)
 			eventq[i].synchronize(s);
 	} else {
 		for (etop = 0; eventq[etop - 1].time; ++etop)
 			eventq[etop].synchronize(s);
 		--etop;
 	}
+}
 
-	// Sync scores
-	for (i = 0; scores[i] != EOD; i++)
+static void syncScores(Common::Serializer &s) {
+	for (int i = 0; scores[i] != EOD; i++)
 		syncVal(s, &scores[i]);
+}
+
+void Alan2::synchronizeSave(Common::Serializer &s) {
+	// Sync various savegame data
+	cur.synchronize(s);
+	syncActors(s);
+	syncLocations(s);
+	syncObjects(s);
+	syncEventQueue(s);
+	syncScores(s);
 }
 
 } // End of namespace Alan2
