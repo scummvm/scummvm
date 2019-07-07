@@ -389,6 +389,12 @@ void  OSystem_iOS7::handleEvent_keyPressed(Common::Event &event, int keyPressed)
 	int ascii = keyPressed;
 	//printf("key: %i\n", keyPressed);
 
+	// Map LF character to Return key/CR character
+	if (keyPressed == 10) {
+		keyPressed = Common::KEYCODE_RETURN;
+		ascii = Common::ASCII_RETURN;
+	}
+
 	event.type = Common::EVENT_KEYDOWN;
 	_queuedInputEvent.type = Common::EVENT_KEYUP;
 
