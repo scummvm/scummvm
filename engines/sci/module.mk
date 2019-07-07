@@ -13,6 +13,7 @@ MODULE_OBJS := \
 	engine/file.o \
 	engine/gc.o \
 	engine/guest_additions.o \
+	engine/hoyle5poker.o \
 	engine/kernel.o \
 	engine/kevent.o \
 	engine/kfile.o \

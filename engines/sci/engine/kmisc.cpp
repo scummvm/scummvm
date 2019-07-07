@@ -36,6 +36,7 @@
 #endif
 #include "sci/graphics/maciconbar.h"
 #include "sci/console.h"
+#include "sci/engine/hoyle5poker.h"
 
 namespace Sci {
 
@@ -710,11 +711,8 @@ reg_t kWinDLL(EngineState *s, int argc, reg_t *argv) {
 		if (dllName == "PENGIN16.DLL") {
 			// Poker engine logic for Hoyle 5
 			// This is originally a call to the Watcom function InvokeIndirectFunction()
-			// TODO: we need to reverse the logic in PENGIN16.DLL and call it directly
-			//SciArray *data = s->_segMan->lookupArray(argv[2]);
-			warning("The Poker game logic has not been implemented yet");
-			showScummVMDialog("The Poker game logic has not been implemented yet");
-			return NULL_REG;
+			SciArray *data = s->_segMan->lookupArray(argv[2]);
+			return hoyle5PokerEngine(data);
 		} else {
 			error("kWinDLL: Unknown DLL to invoke: %s", dllName.c_str());
 			return NULL_REG;
