@@ -179,7 +179,7 @@ void QMessageObject::processMessage(const QMessage &msg) {
 			flc = g_vm->resMgr()->loadFlic(msg.arg1);
 			flc->setFrame(1);
 			_time = 0;
-			if (_notLoopedSound) {
+			if (!_notLoopedSound) {
 				g_vm->soundMgr()->removeSound(g_vm->resMgr()->findSoundName(_resourceId));
 			}
 			_resourceId = msg.arg1;
