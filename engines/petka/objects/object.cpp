@@ -168,7 +168,7 @@ void QMessageObject::processMessage(const QMessage &msg) {
 			_resourceId = msg.arg1;
 			_notLoopedSound = msg.arg2 != 5;
 		} else {
-			_sound = g_vm->soundMgr()->addSound(g_vm->resMgr()->findSoundName(_resourceId), Audio::Mixer::kSFXSoundType);
+			_sound = g_vm->soundMgr()->addSound(g_vm->resMgr()->findSoundName(msg.arg1), Audio::Mixer::kSFXSoundType);
 			_hasSound = _sound != nullptr;
 			_startSound = false;
 			FlicDecoder *flc = g_vm->resMgr()->loadFlic(_resourceId);
