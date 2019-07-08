@@ -11,5 +11,5 @@ TOOL_EXECUTABLE := create_supernova
 # Include common rules
 include $(srcdir)/rules.mk
 
-include $(srcdir)/devtools/create_supernova2/create_image/module.mk
-.PHONY: $(srcdir)/devtools/create_supernova2/create_image/module.mk
+include $(srcdir)/devtools/create_supernova/create_image/module.mk
+.PHONY: $(srcdir)/devtools/create_supernova/create_image/module.mk
