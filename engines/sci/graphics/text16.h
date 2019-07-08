@@ -90,6 +90,8 @@ private:
 	int _codeColorsCount;
 	uint16 *_codeColors;
 
+	bool _useEarlyGetLongestTextCalculations;
+
 	Common::Rect _codeRefTempRect;
 	CodeRefRectArray _codeRefRects;
 };
