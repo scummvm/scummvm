@@ -7,22 +7,25 @@ if [ -e dependencies/.done ] ; then
 	exit 0;
 fi
 
-mkdir -p dependencies
-prefix=$(pwd)/dependencies
+dot_travis=$(dirname "$0")
+. "$dot_travis"/android-set-environment
 
-echo ">>> Building libjpeg-turbo"
+prefix=$(pwd)/dependencies/
+mkdir -p $prefix
+
+echo ">>> Building libjpeg-turbo for $CROSS_HOST"
 git clone --depth 1 -b pie-release https://android.googlesource.com/platform/external/libjpeg-turbo
 pushd libjpeg-turbo
 autoreconf -fiv
-./configure --host=$CROSS_HOST --prefix=$prefix --with-sysroot=$ANDROID_NDK/sysroot && make -j4 install
+./configure --host=$CROSS_HOST --prefix=$prefix --without-turbojpeg --disable-shared && make -j4 install || false
 popd
 
-echo ">>> Building freetype"
+echo ">>> Building freetype for $CROSS_HOST"
 git clone --depth 1 -b pie-release https://android.googlesource.com/platform/external/freetype
 pushd freetype
 sh autogen.sh
-./configure --host=$CROSS_HOST --with-harfbuzz=no --with-bzip2=no --with-png=no --prefix=$prefix --with-sysroot=$ANDROID_NDK/sysroot && make -j4 install
+./configure --host=$CROSS_HOST --with-harfbuzz=no --with-bzip2=no --with-png=no --prefix=$prefix --disable-shared && make -j4 install || false
 popd
-cp -p .travis/android-freetype-config dependencies/bin/freetype-config
+cp -p .travis/android-freetype-config $prefix/bin/freetype-config
 
 touch dependencies/.done

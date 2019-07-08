@@ -1,0 +1,7 @@
+#!/bin/sh
+set -e
+here=$(dirname "$0")
+. "$here"/android-set-environment
+./configure --enable-all-engines --enable-static --enable-opengl-shaders --with-jpeg-prefix=dependencies --with-freetype2-prefix=dependencies --host=${ANDROID_TARGET}
+make -j4 libresidualvm.so
+TERM=dumb make androidrelease

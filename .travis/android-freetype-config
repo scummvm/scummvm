@@ -1,6 +1,6 @@
 #!/bin/sh
 
-root=$TRAVIS_BUILD_DIR/dependencies
+root=$(realpath $(dirname $0)/..)
 
 for flag in "$@"; do
 	case "$flag" in
