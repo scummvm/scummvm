@@ -1086,17 +1086,40 @@ static int startMap(lua_State *L) {
 }
 
 static int saveGlobal(lua_State *L) {
-	warning("STUB: SAVE GLOBAL");
+	const char *global = lua_tostring(L, 1);
+	int type;
+
+	g_hdb->_lua->checkParameters("saveGlobal", 1);
+
+	lua_pop(L, 1);
+
+	lua_getglobal(L, global);
+	type = lua_type(L, 1);
+	if (type == LUA_TNUMBER) {
+		double value = lua_tonumber(L, 1);
+		g_hdb->_lua->saveGlobalNumber(global, value);
+	} else if (type == LUA_TSTRING) {
+		const char *string = lua_tostring(L, 1);
+		g_hdb->_lua->saveGlobalString(global, string);
+	}
+
 	return 0;
 }
 
 static int loadGlobal(lua_State *L) {
-	warning("STUB: LOAD GLOBAL");
+	const char *global = lua_tostring(L, 1);
+
+	g_hdb->_lua->checkParameters("loadGlobal", 1);
+
+	lua_pop(L, 1);
+
+	g_hdb->_lua->loadGlobal(global);
+
 	return 0;
 }
 
 static int purgeGlobals(lua_State *L) {
-	warning("STUB: PURGE GLOBALS");
+	g_hdb->_lua->purgeGlobals();
 	return 0;
 }
 
