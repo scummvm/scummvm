@@ -88,12 +88,13 @@ matrix:
         - make osxsnap
         - mkdir artifacts && cp -r ResidualVM-snapshot.dmg artifacts
     - os: linux
+      name: "Android ARM64"
       language: android
-      android:
+      android: &android
         components:
-          - tools-25.2.5
-          - platform-tools-28.0.2
-          - build-tools-28.0.3
+          - tools-26.1.1
+          - platform-tools
+          - build-tools
           - android-26
       env:
         - ANDROID_TARGET=android-arm64-v8a
@@ -101,41 +102,39 @@ matrix:
         - ANDROID_LEVEL=26
         - ANDROID_SDK=${ANDROID_HOME}
         - ANDROID_NDK=${ANDROID_HOME}/ndk-bundle
-        - PATH=${ANDROID_NDK}:${ANDROID_NDK}/toolchains/llvm/prebuilt/linux-x86_64/bin:${PATH}
-        - CC=${CROSS_HOST}${ANDROID_LEVEL}-clang
-        - CXX=${CROSS_HOST}${ANDROID_LEVEL}-clang++
-        - AR=${CROSS_HOST}-ar
-        - RANLIB=${CROSS_HOST}-ranlib
-        - CXXFLAGS=-Wno-inconsistent-missing-override
-      before_install:
+      before_install: &android-before-install
         - mkdir -p $ANDROID_HOME/licenses
         - echo -e "\n24333f8a63b6825ea9c5514f83c2829b004d1fee" > $ANDROID_HOME/licenses/android-sdk-license
-      install:
+      install: &android-install
         - echo y | sdkmanager ndk-bundle >/dev/null 2>&1
         - ./.travis/build-android-deps.sh
-      before_cache:
+      before_cache: &android-before-cache
         - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
         - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
-      cache:
+      cache: &android-cache
         directories:
           - $HOME/.gradle/caches/
           - $HOME/.gradle/wrapper/
           - $TRAVIS_BUILD_DIR/dependencies
-      script:
-        - >-
-          ./configure
-          --enable-all-engines
-          --enable-static
-          --enable-opengl-shaders
-          --with-jpeg-prefix=dependencies
-          --with-freetype2-prefix=dependencies
-          --host=${ANDROID_TARGET}
-          &&
-          make -j4 libresidualvm.so
-          &&
-          TERM=dumb make androidrelease
-      before_deploy:
+      script: &android-script .travis/android-build
+      before_deploy: &android-before-deploy
         - mkdir artifacts && cp android/build/outputs/apk/release/ResidualVM-release-unsigned.apk artifacts
+    - os: linux
+      name: "Android ARM"
+      language: android
+      android: *android
+      env:
+        - ANDROID_TARGET=android-arm-v7a
+        - CROSS_HOST=armv7a-linux-androideabi
+        - ANDROID_LEVEL=26
+        - ANDROID_SDK=${ANDROID_HOME}
+        - ANDROID_NDK=${ANDROID_HOME}/ndk-bundle
+      before_install: *android-before-install
+      install: *android-install
+      before_cache: *android-before-cache
+      cache: *android-cache
+      script: *android-script
+      before_deploy: *android-before-deploy
 
 deploy:
   provider: script
