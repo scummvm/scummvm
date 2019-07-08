@@ -273,6 +273,8 @@ public:
 		return _gemGfx;
 	}
 
+	PanicZone _pzInfo, _tempPzInfo;
+
 private:
 
 	DialogInfo _dialogInfo;
@@ -285,8 +287,6 @@ private:
 	InvWinInfo _invWinInfo;
 	Common::Array<TOut *> _textOutList;
 	DlvsInfo _dlvsInfo;
-
-	PanicZone _pzInfo, _tempPzInfo;
 
 	char _msgQueueStr[kMaxMsgQueue][128];
 	int _msgQueueWait[kMaxMsgQueue];
