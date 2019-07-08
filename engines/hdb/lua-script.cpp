@@ -47,6 +47,8 @@ struct ScriptPatch {
 	{"GLOBAL.LUA", "if type(v) == 'userdata' or type(v) == 'function' then return end", "if type(v) == 'userdata' or type(v) == 'function' or i == 'package' then return end" }, // Line 16
 	{"GLOBAL.LUA", "for npcname,npcdata in npcs do", "for npcname,npcdata in pairs(npcs) do"}, // Line 66
 	{"GLOBAL.LUA", "for dlgname,dlgdata in npcdata.dialog do", "for dlgname,dlgdata in pairs(npcdata.dialog) do"}, // Line 67
+	{"GLOBAL.LUA", "s = format( \"npcs.%s.dialog.%s.counter", "s = string.format( \"npcs.%s.dialog.%s.counter"}, // Line 68
+	{"GLOBAL.LUA", "s = format( \"npcs.%s.dialog.%s.finished = ", "s = string.format( \"npcs.%s.dialog.%s.finished = "}, // line 70
 	{"MAP00.LUA", "tempfunc = function() emptybed_use( %x, %y, %v1, %v2 ) end", "tempfunc = function() emptybed_use(x, y, v1, v2) end"},
 	{"MAP00.LUA", "if( getn( beds ) == 0 ) then", "if( #beds == 0 ) then"},
 	{"MAP01.LUA", "if( covert_index < getn(covert_dialog) ) then", "if( covert_index < #covert_dialog ) then"},
