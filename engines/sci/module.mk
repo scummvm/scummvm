@@ -13,7 +13,6 @@ MODULE_OBJS := \
 	engine/file.o \
 	engine/gc.o \
 	engine/guest_additions.o \
-	engine/hoyle5poker.o \
 	engine/kernel.o \
 	engine/kevent.o \
 	engine/kfile.o \
@@ -84,6 +83,7 @@ MODULE_OBJS := \
 
 ifdef ENABLE_SCI32
 MODULE_OBJS += \
+	engine/hoyle5poker.o \
 	engine/kgraphics32.o \
 	graphics/celobj32.o \
 	graphics/controls32.o \
