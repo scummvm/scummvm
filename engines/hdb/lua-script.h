@@ -37,12 +37,28 @@ enum {
 	kCameraYOff = (32 * 2 + 16)		// 2.50 Tiles Extra
 };
 
+struct Global {
+	char	global[32];			// name of global variable
+	int		valueOrString;	// value = 0, string = 1
+	double	value;				// value
+	char	string[32];			// string
+
+	Global() : valueOrString(0), value(0) {
+		global[0] = 0;
+		string[0] = 0;
+	}
+};
+
 class LuaScript {
 public:
 	LuaScript();
 	~LuaScript();
 
 	bool loadLua(const char *name);
+	void saveGlobalNumber(const char *global, double value);
+	void saveGlobalString(const char *global, const char *string);
+	void loadGlobal(const char *global);
+	void purgeGlobals();
 
 	bool init();
 	bool initScript(Common::SeekableReadStream *stream, const char *scriptName, int32 length);
@@ -74,6 +90,8 @@ private:
 	bool registerExtensions();
 	void stripComments(char *chunk);
 	void addPatches(Common::String &chunk, const char *scriptName);
+
+	Common::Array<Global *> _globals;
 };
 
 void lua_printstack(lua_State *L);

@@ -86,6 +86,64 @@ bool LuaScript::loadLua(const char *name) {
 	return true;
 }
 
+void LuaScript::saveGlobalNumber(const char *global, double value) {
+	// see if global already exists; if so, overwrite it.
+	for (uint i = 0; i < _globals.size(); i++) {
+		if (!scumm_stricmp(global, _globals[i]->global)) {
+			_globals[i]->valueOrString = 0;
+			_globals[i]->value = value;
+			return;
+		}
+	}
+
+	Global *g = new Global;
+	strcpy(g->global, global);
+	g->valueOrString = 0;
+	g->value = value;
+
+	_globals.push_back(g);
+}
+
+void LuaScript::saveGlobalString(const char *global, const char *string) {
+	if (!string)
+		return;
+
+	// see if global already exists; if so, overwrite it.
+	for (uint i = 0; i < _globals.size(); i++) {
+		if (!scumm_stricmp(global, _globals[i]->global)) {
+			_globals[i]->valueOrString = 1;
+			strcpy(_globals[i]->string, string);
+			return;
+		}
+	}
+
+	Global *g = new Global;
+	strcpy(g->global, global);
+	g->valueOrString = 1;
+	strcpy(g->string, string);
+
+	_globals.push_back(g);
+}
+
+void LuaScript::loadGlobal(const char *global) {
+	for (uint i = 0; i < _globals.size(); i++) {
+		if (!scumm_stricmp(global, _globals[i]->global)) {
+			if (_globals[i]->valueOrString) {
+				lua_pushstring(_state, _globals[i]->string);
+				lua_setglobal(_state, _globals[i]->global);
+			} else {
+				lua_pushnumber(_state, _globals[i]->value);
+				lua_setglobal(_state, _globals[i]->global);
+			}
+			return;
+		}
+	}
+}
+
+void LuaScript::purgeGlobals() {
+	_globals.clear();
+}
+
 void LuaScript::setLuaGlobalValue(const char *name, int value) {
 	if (!_state)
 		return;
