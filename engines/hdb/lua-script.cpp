@@ -44,6 +44,9 @@ struct ScriptPatch {
 	{"GLOBAL.LUA", "for i,v in globals() do", "for i,v in pairs(_G) do"},
 	{"GLOBAL.LUA", "return gsub( s, \"\\n\", \"\\\\\\n\" )", "return string.gsub( s, \"\\n\", \"\\\\\\n\" )"},
 	{"GLOBAL.LUA", "for i,v in t do", "for i,v in pairs(t) do"},
+	{"GLOBAL.LUA", "if type(v) == 'userdata' or type(v) == 'function' then return end", "if type(v) == 'userdata' or type(v) == 'function' or i == 'package' then return end" }, // Line 16
+	{"GLOBAL.LUA", "for npcname,npcdata in npcs do", "for npcname,npcdata in pairs(npcs) do"}, // Line 66
+	{"GLOBAL.LUA", "for dlgname,dlgdata in npcdata.dialog do", "for dlgname,dlgdata in pairs(npcdata.dialog) do"}, // Line 67
 	{"MAP00.LUA", "tempfunc = function() emptybed_use( %x, %y, %v1, %v2 ) end", "tempfunc = function() emptybed_use(x, y, v1, v2) end"},
 	{"MAP00.LUA", "if( getn( beds ) == 0 ) then", "if( #beds == 0 ) then"},
 	{"MAP01.LUA", "if( covert_index < getn(covert_dialog) ) then", "if( covert_index < #covert_dialog ) then"},
@@ -1224,6 +1227,7 @@ static int write(lua_State *L) {
 	lua_pop(L, 2);
 
 	out->write(data, strlen(data));
+	debugN(3, "%s", data);
 
 	return 0;
 }
