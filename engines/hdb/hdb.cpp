@@ -435,7 +435,6 @@ bool HDBGame::saveSlot(int slot) {
 	Common::OutSaveFile *out;
 
 	Common::String saveFileName = Common::String::format("%s.%03d", _targetName.c_str(), slot);
-	Common::String saveLuaName = Common::String::format("%s.l.%03d", _targetName.c_str(), slot);
 	if (!(out = _saveFileMan->openForSaving(saveFileName)))
 		error("Unable to open save file");
 
@@ -444,11 +443,11 @@ bool HDBGame::saveSlot(int slot) {
 
 	// Actual Save Data
 	saveGame(out);
-	_lua->save(out, saveLuaName.c_str());
+	_lua->save(out, _targetName.c_str(), slot);
 
 	out->finalize();
 	if (out->err())
-		warning("Can't wrtie file '%s'. (Disk full?)", saveFileName.c_str());
+		warning("Can't write file '%s'. (Disk full?)", saveFileName.c_str());
 
 	delete out;
 
