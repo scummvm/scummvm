@@ -28,9 +28,9 @@ matrix:
           "export PATH=/usr/$CROSS_HOST/bin:$PATH;
            cd /buildbot/build &&
            ../code/configure --host=$CROSS_HOST &&
-           make -j4 crosswin32dist"
+           make -j4"
       before_deploy:
-        - mkdir artifacts && cp -r build/ResidualVMWin32 artifacts
+        - mkdir artifacts && cp -r build/residualvm.exe artifacts
     - os: linux
       dist: xenial
       addons:
@@ -65,6 +65,7 @@ matrix:
     - os: osx
       addons:
         homebrew:
+          update: true
           packages:
             - sdl2
             - sdl2_net
