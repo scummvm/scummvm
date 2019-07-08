@@ -553,7 +553,7 @@ bool GameFeatures::supportsSpeechWithSubtitles() const {
 	case GID_LAURABOW2:
 	case GID_KQ6:
 #ifdef ENABLE_SCI32
-	// TODO: Hoyle5, SCI3
+	// TODO: SCI3
 	case GID_GK1:
 	case GID_KQ7:
 	case GID_LSL6HIRES:
@@ -598,7 +598,7 @@ MessageTypeSyncStrategy GameFeatures::getMessageTypeSyncStrategy() const {
 
 #ifdef ENABLE_SCI32
 	switch (g_sci->getGameId()) {
-	// TODO: Hoyle5, SCI3
+	// TODO: SCI3
 	case GID_GK1:
 	case GID_PQ4:
 	case GID_QFG4:
