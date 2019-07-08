@@ -344,11 +344,11 @@ bool AI::cacheEntGfx(AIEntity *e, bool init) {
 							e->standrightGfx[e->standrightFrames] = gfx;
 							e->standrightFrames++;
 							break;
-							// DOLLY states
-							// angry[4] = standright[4]
-							// kissright[4]/kissleft[4] = standleft[8]
-							// panic[4]/laugh[4] = standdown[8]
-							// dollyuseright[5] = special1[5]
+						// DOLLY states
+						// angry[4] = standright[4]
+						// kissright[4]/kissleft[4] = standleft[8]
+						// panic[4]/laugh[4] = standdown[8]
+						// dollyuseright[5] = special1[5]
 						case STATE_ANGRY:
 							e->standrightGfx[e->standrightFrames] = gfx;
 							e->standrightFrames++;
@@ -374,13 +374,13 @@ bool AI::cacheEntGfx(AIEntity *e, bool init) {
 							e->special1Frames++;
 							break;
 
-							// SARGE yelling
+						// SARGE yelling
 						case STATE_YELL:
 							e->special1Gfx[e->special1Frames] = gfx;
 							e->special1Frames++;
 							break;
 						default:
-							warning("AI-FUNCS: cacheEntGfx: Unintended State");
+							// no op
 							break;
 						}
 					} else {
