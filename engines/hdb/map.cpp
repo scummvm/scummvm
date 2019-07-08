@@ -28,6 +28,8 @@ Map::Map() {
 	_mapLoaded = false;
 
 	_animCycle = 0;
+
+	_numForegrounds = _numGratings = 0;
 }
 
 Map::~Map() {
