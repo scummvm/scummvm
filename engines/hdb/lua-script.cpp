@@ -144,6 +144,52 @@ void LuaScript::purgeGlobals() {
 	_globals.clear();
 }
 
+void LuaScript::save(Common::OutSaveFile *out, const char *fName) {
+	out->writeUint32LE(_globals.size());
+
+	// Save Globals
+	for (uint i = 0; i < _globals.size(); i++) {
+		out->write(_globals[i]->global, 32);
+		out->writeSint32LE(_globals[i]->valueOrString);
+		out->writeDoubleLE(_globals[i]->value);
+		out->write(_globals[i]->string, 32);
+	}
+
+	// Delete Lua Save File
+	Common::InSaveFile *inLua = g_system->getSavefileManager()->openForLoading(fName);
+	if (inLua)
+		delete inLua;
+
+	lua_getglobal(_state, "SaveState");
+	lua_pushstring(_state, fName);
+	if (lua_pcall(_state, 0, 0, -2)) {
+		error("An error occured while saving \"%s\": %s.", fName, lua_tostring(_state, -1));
+		lua_pop(_state, -1);
+	}
+}
+
+void LuaScript::loadSaveFile(Common::InSaveFile *in, const char *fName) {
+	// Clear out all globals
+	_globals.clear();
+
+	// Start reading globals
+	_globals.resize(in->readUint32LE());
+	for (uint i = 0; i < _globals.size(); i++) {
+		in->read(_globals[i]->global, 32);
+		_globals[i]->valueOrString = in->readSint32LE();
+		_globals[i]->value = in->readDoubleLE();
+		in->read(_globals[i]->string, 32);
+	}
+
+	lua_getglobal(_state, "LoadState");
+	lua_pushstring(_state, fName);
+	if (lua_pcall(_state, 0, 0, -2)) {
+		error("An error occured while loading \"%s\": %s.", fName, lua_tostring(_state, -1));
+		lua_pop(_state, -1);
+	}
+
+}
+
 void LuaScript::setLuaGlobalValue(const char *name, int value) {
 	if (!_state)
 		return;

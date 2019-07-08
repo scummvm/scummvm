@@ -59,6 +59,8 @@ public:
 	void saveGlobalString(const char *global, const char *string);
 	void loadGlobal(const char *global);
 	void purgeGlobals();
+	void save(Common::OutSaveFile *out, const char *fName);
+	void loadSaveFile(Common::InSaveFile *in, const char *fName);
 
 	bool init();
 	bool initScript(Common::SeekableReadStream *stream, const char *scriptName, int32 length);
