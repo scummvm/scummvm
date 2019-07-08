@@ -5095,63 +5095,6 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 
 #endif // ENABLE_SCI32
 
-	// The Dating Pool - English DOSBox
-	// Work in progress - uncomment this with proper hashes and such when it's done.
-	//{ "catdate", "", {
-	//	{"resource.aud", 0, "586a461c5f0560a03807d1929e23ba51", 11567},
-	//	{"resource.000", 0, "094b9d3c841fe60076f06cdef3fb1383", 1467949},
-	//	{"resource.map", 0, "a62d355ea262b39c36228fbd84b874b4", 1538},
-	//	AD_LISTEND},
-	//	Common::EN_ANY, Common::kPlatformDOS, 0, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI) },
-
-	// The Dating Pool - English DOSBox Interactive Demo
-	// Kafuka release, catdate-onedaydemo-2015.zip: old branding, old title, old music, zipper, hand.
-	{ "catdate", "Demo", {
-		{"resource.000", 0, "af28393cf5ae59e98203067f5eb87e2b", 1038935},
-		{"resource.map", 0, "6f788e0ec2b4a6110e9bbb639ca7ee74", 1378},
-		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformDOS, ADGF_DEMO, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI) },
-
-	// The Dating Pool - English DOSBox Interactive Demo
-	// Kafuka release, catdate-onedaydemo-2016.zip: new branding, old title, zipper, hand.
-	{ "catdate", "Demo", {
-		{"resource.000", 0, "4d6f521253ec67d0f1bd38c29c91c806", 915197},
-		{"resource.map", 0, "9f44b144d8986a3676fb5114b819ec02", 1303},
-		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformDOS, ADGF_DEMO, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI) },
-
-	// The Dating Pool - English DOSBox Interactive Demo
-	// Release status unknown: new title, cocktail, paw, remapped shadow
-	{ "catdate", "Demo", {
-		{"resource.000", 0, "755e12d325420acc7a06474d75002ba8", 1153508},
-		{"resource.map", 0, "80ae0fc1bc60b815c65eda86a23157bc", 1318},
-		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformDOS, ADGF_DEMO, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI) },
-
-	// The Dating Pool - English DOSBox Interactive Demo
-	// Itch.IO release: bug fixes
-	{ "catdate", "Demo", {
-		{"resource.000", 0, "755e12d325420acc7a06474d75002ba8", 1044647},
-		{"resource.map", 0, "1442c3599b5f41755e4318db8d68da51", 1318},
-		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformDOS, ADGF_DEMO, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI) },
-
-	// The Dating Pool - English DOSBox Interactive Demo
-	// Itch.IO 2018 release: bug fixes, polish, new content at end
-	{ "catdate", "Demo", {
-		{"resource.000", 0, "094b9d3c841fe60076f06cdef3fb1383", 1467849},
-		{"resource.map", 0, "750e0f01ca54ac0ea49cff2753e1ae65", 1263},
-		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformDOS, ADGF_DEMO, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI) },
-
-	// The Dating Pool - English DOSBox Interactive Demo
-	// Itch.IO 2019 release: more bug fixes and polish
-	{ "catdate", "Demo", {
-		{"resource.000", 0, "094b9d3c841fe60076f06cdef3fb1383", 1555073},
-		{"resource.map", 0, "1f7b68ed422eadbf373cc8611bc56f94", 1393},
-		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformDOS, ADGF_DEMO, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI) },
-
 	// SCI Fanmade Games
 	FANMADE("120 Degrees Below Zero", "57f6135bd073802215c9b97f32d6aea3", 504, "03adf530a34557dfc20f848c9572f4d0", 320749),
 	FANMADE("Al Pond: Island Quest 2", "4cba6a5a4c8f66f21935ed78b0511a92", 870, "876587dc9a5ec569287a3dc4b29139d8", 613769),
@@ -5201,6 +5144,18 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 	FANMADE("Text Views Demo", "ad0485a96470566517f184ff5dd049f8", 372, "727b946b37588ed334737732c55007c4", 115788),
 	FANMADE("The Black Cauldron Demo", "5e1ff2833c7f33ebcfa456ba836e2067", 2592, "2f8e6264d2db91bb54982ab8aa18b3b4", 1881839),
 	FANMADE("The Black Cauldron Final", "cbb4705f0cd73760996e5b27aae54f6a", 2484, "fc3bcaa7783b91bb78faefa345c6b3d9", 1677293),
+	// Kafuka release, catdate-onedaydemo-2015.zip: old branding, old title, old music, zipper, hand.
+	FANMADE("The Dating Pool Demo (2015)", "6f788e0ec2b4a6110e9bbb639ca7ee74", 1378, "af28393cf5ae59e98203067f5eb87e2b", 1038935),
+	// Kafuka release, catdate-onedaydemo-2016.zip: new branding, old title, zipper, hand.
+	FANMADE("The Dating Pool Demo (2016)", "9f44b144d8986a3676fb5114b819ec02", 1303, "4d6f521253ec67d0f1bd38c29c91c806", 915197),
+	// Release status unknown: new title, cocktail, paw, remapped shadow.
+	FANMADE("The Dating Pool Demo (Unknown)", "80ae0fc1bc60b815c65eda86a23157bc", 1318, "755e12d325420acc7a06474d75002ba8", 1153508),
+	// Itch.IO release: bug fixes
+	FANMADE("The Dating Pool Demo (Itch.IO)", "1442c3599b5f41755e4318db8d68da51", 1318, "755e12d325420acc7a06474d75002ba8", 1044647),
+	// Itch.IO 2018 release: bug fixes, polish, new content at end
+	FANMADE("The Dating Pool Demo (Itch.IO 2018)", "750e0f01ca54ac0ea49cff2753e1ae65", 1263, "094b9d3c841fe60076f06cdef3fb1383", 1467849),
+	// Itch.IO 2019 release: more bug fixes and polish
+	FANMADE("The Dating Pool Demo (Itch.IO 2019)", "1f7b68ed422eadbf373cc8611bc56f94", 1393, "094b9d3c841fe60076f06cdef3fb1383", 1555073),
 	FANMADE("The Farm Nightmare", "fb6cbfddaa7c055e2c3d8cf4c683a7db", 906, "50655e8b8925f717e698e08f006f40be", 338303),
 	FANMADE("The Gem Scenario", "ef5f61f4d2c6d31122d3e2baf89ad976", 642, "2f16be390dd90c3d7ca1c8a594ac0bfa", 244794),
 	FANMADE("The Legend of the Lost Jewel", "ba1bca315e3818c5626eda51bcfbcccf", 636, "9b0736d69924af0cff32a0f78db96855", 300398),

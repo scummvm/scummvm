@@ -210,10 +210,7 @@ enum SciGameId {
 	GID_SQ5,
 	GID_SQ6,
 	GID_TORIN,
-
-	GID_CATDATE,
-
-	GID_FANMADE	// FIXME: Do we really need/want this?
+	GID_FANMADE
 };
 
 /**

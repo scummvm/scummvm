@@ -209,8 +209,7 @@ static const GameIdStrToEnum s_gameIdStrToEnum[] = {
 	{ "qfg4",            GID_QFG4 },
 	{ "qfg4demo",        GID_QFG4DEMO },
 	{ "rama",            GID_RAMA },
-	{ "catdate",         GID_CATDATE },
-	{ "sci-fanmade",     GID_FANMADE },	// FIXME: Do we really need/want this?
+	{ "sci-fanmade",     GID_FANMADE },
 	{ "shivers",         GID_SHIVERS },
 	//{ "shivers2",        GID_SHIVERS2 },	// Not SCI
 	{ "slater",          GID_SLATER },
