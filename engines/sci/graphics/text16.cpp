@@ -25,6 +25,7 @@
 #include "graphics/primitives.h"
 
 #include "sci/sci.h"
+#include "sci/engine/features.h"
 #include "sci/engine/state.h"
 #include "sci/graphics/cache.h"
 #include "sci/graphics/coordadjuster.h"
@@ -50,6 +51,7 @@ void GfxText16::init() {
 	_codeFontsCount = 0;
 	_codeColors = NULL;
 	_codeColorsCount = 0;
+	_useEarlyGetLongestTextCalculations = g_sci->_features->useEarlyGetLongestTextCalculations();
 }
 
 GuiResourceId GfxText16::GetFontId() {
@@ -250,6 +252,14 @@ int16 GfxText16::GetLongest(const char *&textPtr, int16 maxWidth, GuiResourceId 
 		if (tempWidth > maxWidth)
 			break;
 
+		// the previous greater than test was originally a greater than or equals when
+		//  no space character had been reached yet
+		if (_useEarlyGetLongestTextCalculations) {
+			if (lastSpaceCharCount == 0 && tempWidth == maxWidth) {
+				break;
+			}
+		}
+
 		// still fits, remember width
 		curWidth = tempWidth;
 
@@ -273,7 +283,7 @@ int16 GfxText16::GetLongest(const char *&textPtr, int16 maxWidth, GuiResourceId 
 	} else {
 		// Break without spaces found, we split the very first word - may also be Kanji/Japanese
 		if (curChar > 0xFF) {
-			// current charracter is Japanese
+			// current character is Japanese
 
 			// PC-9801 SCI actually added the last character, which shouldn't fit anymore, still onto the
 			//  screen in case maxWidth wasn't fully reached with the last character
@@ -329,6 +339,14 @@ int16 GfxText16::GetLongest(const char *&textPtr, int16 maxWidth, GuiResourceId 
 				// Happens in Castle of Dr. Brain PC-98 in room 120, when looking inside the mirror
 				// (game mentions Mixed Up Fairy Tales and uses English letters for that)
 				textPtr += 2;
+			}
+		} else {
+			// Add a character to the count for games whose interpreter would count the
+			//  character that exceeded the width if a space hadn't been reached yet.
+			//  Fixes #10000 where the notebook in LB1 room 786 displays "INCOMPLETE" with
+			//  a width that's too short which would have otherwise wrapped the last "E".
+			if (_useEarlyGetLongestTextCalculations) {
+				curCharCount++; textPtr++;
 			}
 		}
 

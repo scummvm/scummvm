@@ -245,6 +245,8 @@ public:
 	 */
 	PseudoMouseAbilityType detectPseudoMouseAbility();
 
+	bool useEarlyGetLongestTextCalculations() const;
+
 private:
 	reg_t getDetectionAddr(const Common::String &objName, Selector slc, int methodNum = -1);
 
