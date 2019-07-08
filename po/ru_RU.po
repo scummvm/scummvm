@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-07-07 16:33+0200\n"
+"POT-Creation-Date: 2019-07-08 19:28+0200\n"
 "PO-Revision-Date: 2018-12-18 21:54+0000\n"
 "Last-Translator: Alex ASP <hshunt@questzone.ru>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
@@ -2273,11 +2273,11 @@ msgstr "Минимальная громкость"
 msgid "Decreasing Volume"
 msgstr "Уменьшение громкости"
 
-#: backends/events/maemosdl/maemosdl-events.cpp:180
+#: backends/events/maemosdl/maemosdl-events.cpp:181
 msgid "Clicking Enabled"
 msgstr "Щелчки включены"
 
-#: backends/events/maemosdl/maemosdl-events.cpp:180
+#: backends/events/maemosdl/maemosdl-events.cpp:181
 msgid "Clicking Disabled"
 msgstr "Щелчки выключены"
 
@@ -2517,11 +2517,11 @@ msgstr "Режим тачпада включён."
 msgid "Touchpad mode disabled."
 msgstr "Режим тачпада выключен."
 
-#: backends/platform/maemo/maemo.cpp:206
+#: backends/platform/maemo/maemo.cpp:205
 msgid "Click Mode"
 msgstr "Режим щелчка"
 
-#: backends/platform/maemo/maemo.cpp:212
+#: backends/platform/maemo/maemo.cpp:211
 #: backends/platform/symbian/src/SymbianActions.cpp:42
 #: backends/platform/tizen/form.cpp:274
 #: backends/platform/wince/CEActionsPocket.cpp:60
@@ -2529,11 +2529,11 @@ msgstr "Режим щелчка"
 msgid "Left Click"
 msgstr "Левый щелчок"
 
-#: backends/platform/maemo/maemo.cpp:215
+#: backends/platform/maemo/maemo.cpp:214
 msgid "Middle Click"
 msgstr "Средний щелчок"
 
-#: backends/platform/maemo/maemo.cpp:218
+#: backends/platform/maemo/maemo.cpp:217
 #: backends/platform/symbian/src/SymbianActions.cpp:43
 #: backends/platform/tizen/form.cpp:266
 #: backends/platform/wince/CEActionsSmartphone.cpp:44
@@ -3610,12 +3610,12 @@ msgid "Move Right"
 msgstr "Идти вправо"
 
 #: engines/kyra/engine/eobcommon.cpp:356 engines/kyra/engine/lol.cpp:485
-#: engines/pegasus/pegasus.cpp:2514
+#: engines/pegasus/pegasus.cpp:2515
 msgid "Turn Left"
 msgstr "Поворот налево"
 
 #: engines/kyra/engine/eobcommon.cpp:357 engines/kyra/engine/lol.cpp:486
-#: engines/pegasus/pegasus.cpp:2515
+#: engines/pegasus/pegasus.cpp:2516
 msgid "Turn Right"
 msgstr "Поворот направо"
 
@@ -4022,35 +4022,35 @@ msgstr ""
 msgid "Invalid file name for saving"
 msgstr "Неверное имя файла для записи"
 
-#: engines/pegasus/pegasus.cpp:2512
+#: engines/pegasus/pegasus.cpp:2513
 msgid "Up/Zoom In/Move Forward/Open Doors"
 msgstr "Вверх/Увел. масштаб/Вперёд/Открыть двери"
 
-#: engines/pegasus/pegasus.cpp:2513
+#: engines/pegasus/pegasus.cpp:2514
 msgid "Down/Zoom Out"
 msgstr "Вниз/Уменьш. масштаб"
 
-#: engines/pegasus/pegasus.cpp:2516
+#: engines/pegasus/pegasus.cpp:2517
 msgid "Display/Hide Inventory Tray"
 msgstr "Показать/Спрятать инвентарь"
 
-#: engines/pegasus/pegasus.cpp:2517
+#: engines/pegasus/pegasus.cpp:2518
 msgid "Display/Hide Biochip Tray"
 msgstr "Показать/Спрятать биочип"
 
-#: engines/pegasus/pegasus.cpp:2518
+#: engines/pegasus/pegasus.cpp:2519
 msgid "Action/Select"
 msgstr "Действие/Выбор"
 
-#: engines/pegasus/pegasus.cpp:2519
+#: engines/pegasus/pegasus.cpp:2520
 msgid "Toggle Center Data Display"
 msgstr "Включить показ данных в центре экрана"
 
-#: engines/pegasus/pegasus.cpp:2520
+#: engines/pegasus/pegasus.cpp:2521
 msgid "Display/Hide Info Screen"
 msgstr "Показать/Спрятать инфоэкран"
 
-#: engines/pegasus/pegasus.cpp:2521
+#: engines/pegasus/pegasus.cpp:2522
 msgid "Display/Hide Pause Menu"
 msgstr "Показать/Спрятать меню паузы"
 

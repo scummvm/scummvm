@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-07-07 16:33+0200\n"
+"POT-Creation-Date: 2019-07-08 19:28+0200\n"
 "PO-Revision-Date: 2018-08-06 21:33+0000\n"
 "Last-Translator: Alexandre Folle de Menezes <afmenez@terra.com.br>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
@@ -2320,11 +2320,11 @@ msgstr "Volume mínimo"
 msgid "Decreasing Volume"
 msgstr "Diminuindo Volume"
 
-#: backends/events/maemosdl/maemosdl-events.cpp:180
+#: backends/events/maemosdl/maemosdl-events.cpp:181
 msgid "Clicking Enabled"
 msgstr "Clicando Habilitado"
 
-#: backends/events/maemosdl/maemosdl-events.cpp:180
+#: backends/events/maemosdl/maemosdl-events.cpp:181
 msgid "Clicking Disabled"
 msgstr "Clicando Desabilitado"
 
@@ -2571,11 +2571,11 @@ msgstr "Modo Touchpad ligado."
 msgid "Touchpad mode disabled."
 msgstr "Modo Touchpad desligado."
 
-#: backends/platform/maemo/maemo.cpp:206
+#: backends/platform/maemo/maemo.cpp:205
 msgid "Click Mode"
 msgstr ""
 
-#: backends/platform/maemo/maemo.cpp:212
+#: backends/platform/maemo/maemo.cpp:211
 #: backends/platform/symbian/src/SymbianActions.cpp:42
 #: backends/platform/tizen/form.cpp:274
 #: backends/platform/wince/CEActionsPocket.cpp:60
@@ -2583,12 +2583,12 @@ msgstr ""
 msgid "Left Click"
 msgstr "Clique com o botão esquerdo"
 
-#: backends/platform/maemo/maemo.cpp:215
+#: backends/platform/maemo/maemo.cpp:214
 #, fuzzy
 msgid "Middle Click"
 msgstr "Item do meio na esquerda"
 
-#: backends/platform/maemo/maemo.cpp:218
+#: backends/platform/maemo/maemo.cpp:217
 #: backends/platform/symbian/src/SymbianActions.cpp:43
 #: backends/platform/tizen/form.cpp:266
 #: backends/platform/wince/CEActionsSmartphone.cpp:44
@@ -3670,13 +3670,13 @@ msgid "Move Right"
 msgstr "Direita"
 
 #: engines/kyra/engine/eobcommon.cpp:356 engines/kyra/engine/lol.cpp:485
-#: engines/pegasus/pegasus.cpp:2514
+#: engines/pegasus/pegasus.cpp:2515
 #, fuzzy
 msgid "Turn Left"
 msgstr "Desligar"
 
 #: engines/kyra/engine/eobcommon.cpp:357 engines/kyra/engine/lol.cpp:486
-#: engines/pegasus/pegasus.cpp:2515
+#: engines/pegasus/pegasus.cpp:2516
 #, fuzzy
 msgid "Turn Right"
 msgstr "Cursor para a direita"
@@ -4073,36 +4073,36 @@ msgstr ""
 msgid "Invalid file name for saving"
 msgstr ""
 
-#: engines/pegasus/pegasus.cpp:2512
+#: engines/pegasus/pegasus.cpp:2513
 msgid "Up/Zoom In/Move Forward/Open Doors"
 msgstr ""
 
-#: engines/pegasus/pegasus.cpp:2513
+#: engines/pegasus/pegasus.cpp:2514
 #, fuzzy
 msgid "Down/Zoom Out"
 msgstr "Zoom para cima"
 
-#: engines/pegasus/pegasus.cpp:2516
+#: engines/pegasus/pegasus.cpp:2517
 msgid "Display/Hide Inventory Tray"
 msgstr ""
 
-#: engines/pegasus/pegasus.cpp:2517
+#: engines/pegasus/pegasus.cpp:2518
 msgid "Display/Hide Biochip Tray"
 msgstr ""
 
-#: engines/pegasus/pegasus.cpp:2518
+#: engines/pegasus/pegasus.cpp:2519
 msgid "Action/Select"
 msgstr ""
 
-#: engines/pegasus/pegasus.cpp:2519
+#: engines/pegasus/pegasus.cpp:2520
 msgid "Toggle Center Data Display"
 msgstr ""
 
-#: engines/pegasus/pegasus.cpp:2520
+#: engines/pegasus/pegasus.cpp:2521
 msgid "Display/Hide Info Screen"
 msgstr ""
 
-#: engines/pegasus/pegasus.cpp:2521
+#: engines/pegasus/pegasus.cpp:2522
 msgid "Display/Hide Pause Menu"
 msgstr ""
 

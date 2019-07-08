@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-07-07 16:33+0200\n"
+"POT-Creation-Date: 2019-07-08 19:28+0200\n"
 "PO-Revision-Date: 2019-07-01 07:15+0000\n"
 "Last-Translator: scootergrisen <scootergrisen@gmail.com>\n"
 "Language-Team: Danish <https://translations.scummvm.org/projects/scummvm/"
@@ -2262,11 +2262,11 @@ msgstr "Minimal lydstyrke"
 msgid "Decreasing Volume"
 msgstr "Sænker lydstyrke"
 
-#: backends/events/maemosdl/maemosdl-events.cpp:180
+#: backends/events/maemosdl/maemosdl-events.cpp:181
 msgid "Clicking Enabled"
 msgstr "Klik aktiveret"
 
-#: backends/events/maemosdl/maemosdl-events.cpp:180
+#: backends/events/maemosdl/maemosdl-events.cpp:181
 msgid "Clicking Disabled"
 msgstr "Klik deaktiveret"
 
@@ -2506,11 +2506,11 @@ msgstr "Pegepladetilstand aktiveret."
 msgid "Touchpad mode disabled."
 msgstr "Pegepladetilstand deaktiveret."
 
-#: backends/platform/maemo/maemo.cpp:206
+#: backends/platform/maemo/maemo.cpp:205
 msgid "Click Mode"
 msgstr "Kliktilstand"
 
-#: backends/platform/maemo/maemo.cpp:212
+#: backends/platform/maemo/maemo.cpp:211
 #: backends/platform/symbian/src/SymbianActions.cpp:42
 #: backends/platform/tizen/form.cpp:274
 #: backends/platform/wince/CEActionsPocket.cpp:60
@@ -2518,11 +2518,11 @@ msgstr "Kliktilstand"
 msgid "Left Click"
 msgstr "Venstreklik"
 
-#: backends/platform/maemo/maemo.cpp:215
+#: backends/platform/maemo/maemo.cpp:214
 msgid "Middle Click"
 msgstr "Midterklik"
 
-#: backends/platform/maemo/maemo.cpp:218
+#: backends/platform/maemo/maemo.cpp:217
 #: backends/platform/symbian/src/SymbianActions.cpp:43
 #: backends/platform/tizen/form.cpp:266
 #: backends/platform/wince/CEActionsSmartphone.cpp:44
@@ -3594,12 +3594,12 @@ msgid "Move Right"
 msgstr "Flyt til højre"
 
 #: engines/kyra/engine/eobcommon.cpp:356 engines/kyra/engine/lol.cpp:485
-#: engines/pegasus/pegasus.cpp:2514
+#: engines/pegasus/pegasus.cpp:2515
 msgid "Turn Left"
 msgstr "Drej til venstre"
 
 #: engines/kyra/engine/eobcommon.cpp:357 engines/kyra/engine/lol.cpp:486
-#: engines/pegasus/pegasus.cpp:2515
+#: engines/pegasus/pegasus.cpp:2516
 msgid "Turn Right"
 msgstr "Drej til højre"
 
@@ -4035,35 +4035,35 @@ msgstr ""
 msgid "Invalid file name for saving"
 msgstr "Ugyldigt filnavn til at gemme"
 
-#: engines/pegasus/pegasus.cpp:2512
+#: engines/pegasus/pegasus.cpp:2513
 msgid "Up/Zoom In/Move Forward/Open Doors"
 msgstr "Op/forstør/flyt fremad/åbn døre"
 
-#: engines/pegasus/pegasus.cpp:2513
+#: engines/pegasus/pegasus.cpp:2514
 msgid "Down/Zoom Out"
 msgstr "Ned/forminsk"
 
-#: engines/pegasus/pegasus.cpp:2516
+#: engines/pegasus/pegasus.cpp:2517
 msgid "Display/Hide Inventory Tray"
 msgstr "Vis/skjul inventarbakke"
 
-#: engines/pegasus/pegasus.cpp:2517
+#: engines/pegasus/pegasus.cpp:2518
 msgid "Display/Hide Biochip Tray"
 msgstr "Vis/skjul Biochip bakke"
 
-#: engines/pegasus/pegasus.cpp:2518
+#: engines/pegasus/pegasus.cpp:2519
 msgid "Action/Select"
 msgstr "Handling/vælg"
 
-#: engines/pegasus/pegasus.cpp:2519
+#: engines/pegasus/pegasus.cpp:2520
 msgid "Toggle Center Data Display"
 msgstr "Center datavisning til/fra"
 
-#: engines/pegasus/pegasus.cpp:2520
+#: engines/pegasus/pegasus.cpp:2521
 msgid "Display/Hide Info Screen"
 msgstr "Vis/skjul Info skærm"
 
-#: engines/pegasus/pegasus.cpp:2521
+#: engines/pegasus/pegasus.cpp:2522
 msgid "Display/Hide Pause Menu"
 msgstr "Vis/skjul Pause menu"
 
