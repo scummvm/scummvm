@@ -1402,16 +1402,202 @@ void AI::save(Common::OutSaveFile *out) {
 		out->write(_triggerList->operator[](i)->luaFuncUse, 32);
 	}
 
+	AIEntity *e, temp;
+	char funcString[32];
+	const char *lookUp;
+
 	// Save Floats
 	out->writeUint32LE(_floats->size());
 	for (i = 0; (uint)i < _floats->size(); i++) {
-		warning("STUB: Save Float Entity");
+		e = _floats->operator[](i);
+		memcpy(&temp, e, sizeof(AIEntity));
+
+		// Write out 32-char names for the function ptrs we have in the entity struct
+		lookUp = funcLookUp(e->aiAction);
+		memset(&funcString, 0, 32);
+		if (!lookUp && e->aiAction)
+			error("AI::save: No matching ACTION function for func-string");
+		if (lookUp)
+			strcpy(funcString, lookUp);
+		out->write(funcString, 32);
+
+		lookUp = funcLookUp(e->aiUse);
+		memset(&funcString, 0, 32);
+		if (!lookUp && e->aiUse)
+			error("AI::save: No matching USE function for func-string");
+		if (lookUp)
+			strcpy(funcString, lookUp);
+		out->write(funcString, 32);
+
+		lookUp = funcLookUp(e->aiInit);
+		memset(&funcString, 0, 32);
+		if (!lookUp && e->aiInit)
+			error("AI::save: No matching INIT function for func-string");
+		if (lookUp)
+			strcpy(funcString, lookUp);
+		out->write(funcString, 32);
+
+		lookUp = funcLookUp(e->aiInit2);
+		memset(&funcString, 0, 32);
+		if (!lookUp && e->aiInit2)
+			error("AI::save: No matching INIT2 function for func-string");
+		if (lookUp)
+			strcpy(funcString, lookUp);
+		out->write(funcString, 32);
+
+		lookUp = funcLookUp((FuncPtr)e->aiDraw);
+		memset(&funcString, 0, 32);
+		if (!lookUp && e->aiDraw)
+			error("AI::save: No matching DRAW function for func-string");
+		if (lookUp)
+			strcpy(funcString, lookUp);
+		out->write(funcString, 32);
+
+		// Clear out all ptrs in Entity before writing it out
+		for (j = 0; j < kMaxAnimFrames; j++)
+			temp.blinkGfx[j] = temp.movedownGfx[j] = temp.moveupGfx[j] = temp.moveleftGfx[j] =
+				temp.moverightGfx[j] = temp.standdownGfx[j] = temp.standupGfx[j] = temp.standleftGfx[j] =
+				temp.standrightGfx[j] = temp.special1Gfx[j] = NULL;
+
+		temp.blinkFrames = temp.movedownFrames = temp.moveupFrames = temp.moveleftFrames =
+			temp.moverightFrames = temp.standdownFrames = temp.standupFrames = temp.standleftFrames =
+			temp.standrightFrames = temp.special1Frames = 0;
+
+		temp.draw = NULL;
+		temp.aiDraw = NULL;
+		temp.aiAction = temp.aiInit = temp.aiUse = NULL;
+
+		// Save AIEntity
+		out->writeSint32LE((int)temp.type);
+		out->writeSint32LE((int)temp.state);
+		out->writeSint32LE((int)temp.dir);
+		out->write(temp.luaFuncInit, 32);
+		out->write(temp.luaFuncAction, 32);
+		out->write(temp.luaFuncUse, 32);
+		out->writeUint16LE(temp.level);
+		out->writeUint16LE(temp.value1);
+		out->writeUint16LE(temp.value2);
+		out->writeSint32LE((int)temp.dir2);
+		out->writeUint16LE(temp.x);
+		out->writeUint16LE(temp.y);
+		out->writeSint16LE(temp.drawXOff);
+		out->writeSint16LE(temp.drawYOff);
+		out->writeUint16LE(temp.onScreen);
+		out->writeUint16LE(temp.moveSpeed);
+		out->writeSint16LE(temp.xVel);
+		out->writeSint16LE(temp.yVel);
+		out->writeUint16LE(temp.tileX);
+		out->writeUint16LE(temp.tileY);
+		out->writeUint16LE(temp.goalX);
+		out->writeUint16LE(temp.goalY);
+		out->writeUint16LE(temp.touchpX);
+		out->writeUint16LE(temp.touchpY);
+		out->writeUint16LE(temp.touchpTile);
+		out->writeUint16LE(temp.touchpWait);
+		out->writeUint16LE(temp.stunnedWait);
+		out->writeSint16LE(temp.sequence);
+		out->write(temp.entityName, 32);
+		out->write(temp.printedName, 32);
+		out->writeUint16LE(temp.animFrame);
+		out->writeUint16LE(temp.animDelay);
+		out->writeUint16LE(temp.animCycle);
 	}
 
 	// Save Ents
 	out->writeUint32LE(_ents->size());
 	for (i = 0; (uint)i < _ents->size(); i++) {
-		warning("STUB: Save Ent Entity");
+		e = _floats->operator[](i);
+		memcpy(&temp, e, sizeof(AIEntity));
+
+		// Write out 32-char names for the function ptrs we have in the entity struct
+		lookUp = funcLookUp(e->aiAction);
+		memset(&funcString, 0, 32);
+		if (!lookUp && e->aiAction)
+			error("AI::save: No matching ACTION function for func-string");
+		if (lookUp)
+			strcpy(funcString, lookUp);
+		out->write(funcString, 32);
+
+		lookUp = funcLookUp(e->aiUse);
+		memset(&funcString, 0, 32);
+		if (!lookUp && e->aiUse)
+			error("AI::save: No matching USE function for func-string");
+		if (lookUp)
+			strcpy(funcString, lookUp);
+		out->write(funcString, 32);
+
+		lookUp = funcLookUp(e->aiInit);
+		memset(&funcString, 0, 32);
+		if (!lookUp && e->aiInit)
+			error("AI::save: No matching INIT function for func-string");
+		if (lookUp)
+			strcpy(funcString, lookUp);
+		out->write(funcString, 32);
+
+		lookUp = funcLookUp(e->aiInit2);
+		memset(&funcString, 0, 32);
+		if (!lookUp && e->aiInit2)
+			error("AI::save: No matching INIT2 function for func-string");
+		if (lookUp)
+			strcpy(funcString, lookUp);
+		out->write(funcString, 32);
+
+		lookUp = funcLookUp((FuncPtr)e->aiDraw);
+		memset(&funcString, 0, 32);
+		if (!lookUp && e->aiDraw)
+			error("AI::save: No matching DRAW function for func-string");
+		if (lookUp)
+			strcpy(funcString, lookUp);
+		out->write(funcString, 32);
+
+		// Clear out all ptrs in Entity before writing it out
+		for (j = 0; j < kMaxAnimFrames; j++)
+			temp.blinkGfx[j] = temp.movedownGfx[j] = temp.moveupGfx[j] = temp.moveleftGfx[j] =
+			temp.moverightGfx[j] = temp.standdownGfx[j] = temp.standupGfx[j] = temp.standleftGfx[j] =
+			temp.standrightGfx[j] = temp.special1Gfx[j] = NULL;
+
+		temp.blinkFrames = temp.movedownFrames = temp.moveupFrames = temp.moveleftFrames =
+			temp.moverightFrames = temp.standdownFrames = temp.standupFrames = temp.standleftFrames =
+			temp.standrightFrames = temp.special1Frames = 0;
+
+		temp.draw = NULL;
+		temp.aiDraw = NULL;
+		temp.aiAction = temp.aiInit = temp.aiUse = NULL;
+
+		// Save AIEntity
+		out->writeSint32LE((int)temp.type);
+		out->writeSint32LE((int)temp.state);
+		out->writeSint32LE((int)temp.dir);
+		out->write(temp.luaFuncInit, 32);
+		out->write(temp.luaFuncAction, 32);
+		out->write(temp.luaFuncUse, 32);
+		out->writeUint16LE(temp.level);
+		out->writeUint16LE(temp.value1);
+		out->writeUint16LE(temp.value2);
+		out->writeSint32LE((int)temp.dir2);
+		out->writeUint16LE(temp.x);
+		out->writeUint16LE(temp.y);
+		out->writeSint16LE(temp.drawXOff);
+		out->writeSint16LE(temp.drawYOff);
+		out->writeUint16LE(temp.onScreen);
+		out->writeUint16LE(temp.moveSpeed);
+		out->writeSint16LE(temp.xVel);
+		out->writeSint16LE(temp.yVel);
+		out->writeUint16LE(temp.tileX);
+		out->writeUint16LE(temp.tileY);
+		out->writeUint16LE(temp.goalX);
+		out->writeUint16LE(temp.goalY);
+		out->writeUint16LE(temp.touchpX);
+		out->writeUint16LE(temp.touchpY);
+		out->writeUint16LE(temp.touchpTile);
+		out->writeUint16LE(temp.touchpWait);
+		out->writeUint16LE(temp.stunnedWait);
+		out->writeSint16LE(temp.sequence);
+		out->write(temp.entityName, 32);
+		out->write(temp.printedName, 32);
+		out->writeUint16LE(temp.animFrame);
+		out->writeUint16LE(temp.animDelay);
+		out->writeUint16LE(temp.animCycle);
 	}
 }
 
@@ -1623,17 +1809,171 @@ void AI::loadSaveFile(Common::InSaveFile *in) {
 		in->read(_triggerList->operator[](i)->luaFuncUse, 32);
 	}
 
+	AIEntity *e;
+	char funcString[32];
+	FuncPtr init, init2, use, action;
+	EntFuncPtr draw;
+
 	// Load Floats
 	_floats->resize(in->readUint32LE());
 	for (i = 0; (uint)i < _floats->size(); i++) {
-		warning("STUB: Load Float Entity");
+		e = new AIEntity;
+		action = init = init2 = use = NULL;
+		draw = NULL;
+
+		// Read 32-char names for the function ptrs we have in entity struct
+		in->read(funcString, 32);
+		if (funcString[0])
+			action = funcLookUp(funcString);
+
+		in->read(funcString, 32);
+		if (funcString[0])
+			use = funcLookUp(funcString);
+
+		in->read(funcString, 32);
+		if (funcString[0])
+			init = funcLookUp(funcString);
+
+		in->read(funcString, 32);
+		if (funcString[0])
+			init2 = funcLookUp(funcString);
+
+		in->read(funcString, 32);
+		if (funcString[0])
+			draw = (EntFuncPtr)funcLookUp(funcString);
+
+		// Load AIEntity
+		e->type = (AIType)in->readSint32LE();
+		e->state = (AIState)in->readSint32LE();
+		e->dir = (AIDir)in->readSint32LE();
+		in->read(e->luaFuncInit, 32);
+		in->read(e->luaFuncAction, 32);
+		in->read(e->luaFuncUse, 32);
+		e->level = in->readUint16LE();
+		e->value1 = in->readUint16LE();
+		e->value2 = in->readUint16LE();
+		e->dir2 = (AIDir)in->readSint32LE();
+		e->x = in->readUint16LE();
+		e->y = in->readUint16LE();
+		e->drawXOff = in->readSint16LE();
+		e->drawYOff = in->readSint16LE();
+		e->onScreen = in->readUint16LE();
+		e->moveSpeed = in->readUint16LE();
+		e->xVel = in->readSint16LE();
+		e->yVel = in->readSint16LE();
+		e->tileX = in->readUint16LE();
+		e->tileY = in->readUint16LE();
+		e->goalX = in->readUint16LE();
+		e->goalY = in->readUint16LE();
+		e->touchpX = in->readUint16LE();
+		e->touchpY = in->readUint16LE();
+		e->touchpTile = in->readUint16LE();
+		e->touchpWait = in->readUint16LE();
+		e->stunnedWait = in->readUint16LE();
+		e->sequence = in->readSint16LE();
+		in->read(e->entityName, 32);
+		in->read(e->printedName, 32);
+		e->animFrame = in->readUint16LE();
+		e->animDelay = in->readUint16LE();
+		e->animCycle = in->readUint16LE();
+
+		e->aiAction = action;
+		e->aiInit = init;
+		e->aiInit2 = init2;
+		e->aiUse = use;
+		e->aiDraw = draw;
+
+		// Cache All Entity Graphics
+		cacheEntGfx(e, false);
+
+		// Push Float
+		_floats->push_back(e);
 	}
 
 	// Load Ents
 	_ents->resize(in->readUint32LE());
 	for (i = 0; (uint)i < _ents->size(); i++) {
-		warning("STUB: Load Ent Entity");
+		e = new AIEntity;
+		action = init = init2 = use = NULL;
+		draw = NULL;
+
+		// Read 32-char names for the function ptrs we have in entity struct
+		in->read(funcString, 32);
+		if (funcString[0])
+			action = funcLookUp(funcString);
+
+		in->read(funcString, 32);
+		if (funcString[0])
+			use = funcLookUp(funcString);
+
+		in->read(funcString, 32);
+		if (funcString[0])
+			init = funcLookUp(funcString);
+
+		in->read(funcString, 32);
+		if (funcString[0])
+			init2 = funcLookUp(funcString);
+
+		in->read(funcString, 32);
+		if (funcString[0])
+			draw = (EntFuncPtr)funcLookUp(funcString);
+
+		// Load AIEntity
+		e->type = (AIType)in->readSint32LE();
+		e->state = (AIState)in->readSint32LE();
+		e->dir = (AIDir)in->readSint32LE();
+		in->read(e->luaFuncInit, 32);
+		in->read(e->luaFuncAction, 32);
+		in->read(e->luaFuncUse, 32);
+		e->level = in->readUint16LE();
+		e->value1 = in->readUint16LE();
+		e->value2 = in->readUint16LE();
+		e->dir2 = (AIDir)in->readSint32LE();
+		e->x = in->readUint16LE();
+		e->y = in->readUint16LE();
+		e->drawXOff = in->readSint16LE();
+		e->drawYOff = in->readSint16LE();
+		e->onScreen = in->readUint16LE();
+		e->moveSpeed = in->readUint16LE();
+		e->xVel = in->readSint16LE();
+		e->yVel = in->readSint16LE();
+		e->tileX = in->readUint16LE();
+		e->tileY = in->readUint16LE();
+		e->goalX = in->readUint16LE();
+		e->goalY = in->readUint16LE();
+		e->touchpX = in->readUint16LE();
+		e->touchpY = in->readUint16LE();
+		e->touchpTile = in->readUint16LE();
+		e->touchpWait = in->readUint16LE();
+		e->stunnedWait = in->readUint16LE();
+		e->sequence = in->readSint16LE();
+		in->read(e->entityName, 32);
+		in->read(e->printedName, 32);
+		e->animFrame = in->readUint16LE();
+		e->animDelay = in->readUint16LE();
+		e->animCycle = in->readUint16LE();
+
+		e->aiAction = action;
+		e->aiInit = init;
+		e->aiInit2 = init2;
+		e->aiUse = use;
+		e->aiDraw = draw;
+
+		// Cache All Entity Graphics
+		cacheEntGfx(e, false);
+
+		// Push Entity
+		_ents->push_back(e);
+
+		if (e->type == AI_GUY)
+			_player = e;
 	}
+
+	// Cache-in all animating tiles
+	initAnimInfo();
+
+	// Set the Player weapon
+	warning("STUB: Set the Player weapon");
 }
 
 void AI::initAnimInfo() {
