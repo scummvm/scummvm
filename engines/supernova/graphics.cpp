@@ -93,13 +93,19 @@ bool MSNImage::init(int filenumber) {
 
 bool MSNImage::loadPbmFromEngineDataFile() {
 	Common::String name;
-	if (_vm->_MSPart == 2)
-		return false;
-	if (_filenumber == 1)
-		name = "IMG1";
-	else if (_filenumber == 2)
-		name = "IMG2";
-	else
+	if (_vm->_MSPart == 2) {
+		if (_filenumber == 38)
+			name = "IMG3";
+		else
+			return false;
+	} else if (_vm->_MSPart == 1) {
+		if (_filenumber == 1)
+			name = "IMG1";
+		else if (_filenumber == 2)
+			name = "IMG2";
+		else
+			return false;
+	} else
 		return false;
 	Common::SeekableReadStream *stream = _vm->getBlockFromDatFile(name);
 	if (stream == nullptr)

@@ -354,6 +354,7 @@ void writeMS2(File &outputFile) {
 	// Other languages
 	const char **l = &lang[0];
 	while(*l) {
+		writeImage(outputFile, "img3", *l);
 		writeDatafile(outputFile, 15, *l, 2);
 		writeDatafile(outputFile, 28, *l, 2);
 		writeStrings(outputFile, *l, 2);
