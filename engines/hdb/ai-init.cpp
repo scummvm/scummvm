@@ -1370,7 +1370,6 @@ void AI::save(Common::OutSaveFile *out) {
 		out->writeUint16LE(_animTargets[i]->animFrame);
 		out->writeByte(_animTargets[i]->killAuto);
 		out->writeByte(_animTargets[i]->inMap);
-		warning("STUB: Save _animTargets[i].gfxList");
 	}
 
 	// Save ArrowPaths
@@ -1506,7 +1505,7 @@ void AI::save(Common::OutSaveFile *out) {
 	// Save Ents
 	out->writeUint32LE(_ents->size());
 	for (i = 0; (uint)i < _ents->size(); i++) {
-		e = _floats->operator[](i);
+		e = _ents->operator[](i);
 		memcpy(&temp, e, sizeof(AIEntity));
 
 		// Write out 32-char names for the function ptrs we have in the entity struct
@@ -1777,7 +1776,7 @@ void AI::loadSaveFile(Common::InSaveFile *in) {
 		_animTargets[i]->animFrame = in->readUint16LE();
 		_animTargets[i]->killAuto = in->readByte();
 		_animTargets[i]->inMap = in->readByte();
-		warning("STUB: Load _animTargets[i].gfxList");
+		memset(_animTargets[i]->gfxList, 0, kMaxAnimTFrames);
 	}
 
 	// Load ArrowPaths
