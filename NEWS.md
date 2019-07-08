@@ -61,6 +61,7 @@ For a more comprehensive changelog of the latest experimental code, see:
      for this to take effect when using compressed audio.
    - Fixed an issue in the wig maker room in the German version of SPY Fox 3: Operation Ozone
      which makes the game completable.
+   - Added sound driver for the Amiga versions of Monkey Island 2 and Indiana Jones and the Fate of Atlantis
 
  Sherlock:
    - Fixed crash in Spanish version talking to lady in Tailor shop
