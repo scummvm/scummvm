@@ -541,6 +541,10 @@ struct AIEntity {
 	}
 };
 
+// Structs for Function Table Lookup for SaveGames
+typedef void(*FuncPtr)(AIEntity *);
+typedef void(*EntFuncPtr)(AIEntity *, int, int);
+
 struct AIEntTypeInfo {
 	AIType type;
 	const char *luaName;
@@ -549,7 +553,13 @@ struct AIEntTypeInfo {
 	void (*initFunc2)(AIEntity *e);
 };
 
+struct FuncLookUp {
+	void(*function)(AIEntity *e);
+	const char *funcName;
+};
+
 extern AIEntTypeInfo aiEntList[];
+extern FuncLookUp aiFuncList[];
 
 struct AIEntLevel2 {
 	uint16 x;
@@ -783,6 +793,8 @@ public:
 	bool init();
 	void clearPersistent();
 	void restartSystem();
+	const char *funcLookUp(void(*function)(AIEntity *e));
+	FuncPtr funcLookUp(const char *function);
 	void save(Common::OutSaveFile *out);
 	void loadSaveFile(Common::InSaveFile *in);
 	void initAnimInfo();
