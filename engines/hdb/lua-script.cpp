@@ -162,10 +162,8 @@ void LuaScript::save(Common::OutSaveFile *out, const char *fName) {
 
 	lua_getglobal(_state, "SaveState");
 	lua_pushstring(_state, fName);
-	if (lua_pcall(_state, 0, 0, -2)) {
-		error("An error occured while saving \"%s\": %s.", fName, lua_tostring(_state, -1));
-		lua_pop(_state, -1);
-	}
+
+	lua_call(_state, 1, 0);
 }
 
 void LuaScript::loadSaveFile(Common::InSaveFile *in, const char *fName) {
@@ -181,13 +179,14 @@ void LuaScript::loadSaveFile(Common::InSaveFile *in, const char *fName) {
 		in->read(_globals[i]->string, 32);
 	}
 
+	// Error handling function to be executed after the function is put on the stack
+	lua_rawgeti(_state, LUA_REGISTRYINDEX, _pcallErrorhandlerRegistryIndex);
+	lua_insert(_state, -2);
+
 	lua_getglobal(_state, "LoadState");
 	lua_pushstring(_state, fName);
-	if (lua_pcall(_state, 0, 0, -2)) {
-		error("An error occured while loading \"%s\": %s.", fName, lua_tostring(_state, -1));
-		lua_pop(_state, -1);
-	}
 
+	lua_call(_state, 1, 0);
 }
 
 void LuaScript::setLuaGlobalValue(const char *name, int value) {
