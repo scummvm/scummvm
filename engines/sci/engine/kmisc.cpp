@@ -36,7 +36,9 @@
 #endif
 #include "sci/graphics/maciconbar.h"
 #include "sci/console.h"
+#ifdef ENABLE_SCI32
 #include "sci/engine/hoyle5poker.h"
+#endif
 
 namespace Sci {
 
