@@ -41,6 +41,9 @@ struct ScriptPatch {
 	{"GLOBAL.LUA", "if( getglobal( \"map\"..tostring(v1)..\"_complete\" ) ) then", "if( _G[\"map\"..tostring(v1)..\"_complete\"] ) then"},
 	{"GLOBAL.LUA", "closefunc = getglobal( npcdef.codename..\"_use\" )", "closefunc = _G[npcdef.codename..\"_use\"]"},
 	{"GLOBAL.LUA", "strsub(", "string.sub("}, // line 15
+	{"GLOBAL.LUA", "for i,v in globals() do", "for i,v in pairs(_G) do"},
+	{"GLOBAL.LUA", "return gsub( s, \"\\n\", \"\\\\\\n\" )", "return string.gsub( s, \"\\n\", \"\\\\\\n\" )"},
+	{"GLOBAL.LUA", "for i,v in t do", "for i,v in pairs(t) do"},
 	{"MAP00.LUA", "tempfunc = function() emptybed_use( %x, %y, %v1, %v2 ) end", "tempfunc = function() emptybed_use(x, y, v1, v2) end"},
 	{"MAP00.LUA", "if( getn( beds ) == 0 ) then", "if( #beds == 0 ) then"},
 	{"MAP01.LUA", "if( covert_index < getn(covert_dialog) ) then", "if( covert_index < #covert_dialog ) then"},
@@ -144,7 +147,7 @@ void LuaScript::purgeGlobals() {
 	_globals.clear();
 }
 
-void LuaScript::save(Common::OutSaveFile *out, const char *fName) {
+void LuaScript::save(Common::OutSaveFile *out, const char *targetName, int slot) {
 	out->writeUint32LE(_globals.size());
 
 	// Save Globals
@@ -155,14 +158,11 @@ void LuaScript::save(Common::OutSaveFile *out, const char *fName) {
 		out->write(_globals[i]->string, 32);
 	}
 
-	// Delete Lua Save File
-	Common::InSaveFile *inLua = g_system->getSavefileManager()->openForLoading(fName);
-	if (inLua)
-		delete inLua;
-
+	Common::String saveLuaName = Common::String::format("%s.l.%03d", targetName, slot);
+	lua_printstack(_state);
 	lua_getglobal(_state, "SaveState");
-	lua_pushstring(_state, fName);
 
+	lua_pushstring(_state, saveLuaName.c_str());
 	lua_call(_state, 1, 0);
 }
 
@@ -1191,6 +1191,57 @@ static int playVoice(lua_State *L) {
 	return 0;
 }
 
+static int openFile(lua_State *L) {
+
+	const char *fName = lua_tostring(L, 1);
+	const char *mode = lua_tostring(L, 2);
+
+	g_hdb->_lua->checkParameters("openFile", 2);
+
+	lua_pop(L, 2);
+
+	if (!scumm_stricmp(mode, "wt")) {
+		// Delete Lua Save File
+		Common::InSaveFile *inLua = g_system->getSavefileManager()->openForLoading(fName);
+		if (inLua)
+			delete inLua;
+
+		Common::OutSaveFile *outLua = g_system->getSavefileManager()->openForSaving(fName);
+		if (!outLua)
+			error("Cannot open %s", fName);
+		lua_pushlightuserdata(L, outLua);
+	}
+
+	return 1;
+}
+
+static int write(lua_State *L) {
+	Common::OutSaveFile *out = (Common::OutSaveFile *)lua_topointer(L, 1);
+	const char *data = lua_tostring(L, 2);
+
+	g_hdb->_lua->checkParameters("write", 2);
+
+	lua_pop(L, 2);
+
+	out->write(data, strlen(data));
+
+	return 0;
+}
+
+static int closeFile(lua_State *L) {
+	Common::OutSaveFile *out = (Common::OutSaveFile *)lua_topointer(L, 1);
+
+	g_hdb->_lua->checkParameters("closeFile", 1);
+
+	lua_pop(L, 1);
+
+	out->finalize();
+
+	delete out;
+
+	return 0;
+}
+
 /*
 	Lua Initialization Code
 */
@@ -1490,6 +1541,10 @@ struct FuncInit {
 	{  "Cine_TextOut",			cineTextOut			},
 	{  "Cine_CenterTextOut",	cineCenterTextOut	},
 	{  "Cine_PlayVoice",		cinePlayVoice		},
+
+	{	"openfile",				openFile,			},
+	{	"write",				write,			},
+	{	"closefile",			closeFile,			},
 	{ NULL, NULL }
 };
 
