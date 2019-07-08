@@ -1235,7 +1235,7 @@ void AI::restartSystem() {
 }
 
 void AI::save(Common::OutSaveFile *out) {
-	int i;
+	int i, j;
 
 	// Misc Variables
 	out->writeByte(_playerInvisible);
@@ -1275,7 +1275,6 @@ void AI::save(Common::OutSaveFile *out) {
 	// Save Inventory
 	for (i = 0; i < kMaxInventory; i++) {
 		out->writeUint16LE(_inventory[i].keep);
-		warning("STUB: Save Inventory Item");
 	}
 	out->writeUint32LE(_numInventory);
 
@@ -1283,10 +1282,8 @@ void AI::save(Common::OutSaveFile *out) {
 	for (i = 0; i < kMaxDeliveries; i++) {
 		out->write(_deliveries[i].itemTextName, 32);
 		out->write(_deliveries[i].itemGfxName, 32);
-		warning("STUB: Save _deliveries[i].itemGfx");
 		out->write(_deliveries[i].destTextName, 32);
 		out->write(_deliveries[i].destGfxName, 32);
-		warning("STUB: Save _deliveries[i].destGfx");
 		out->write(_deliveries[i].id, 32);
 	}
 	out->writeUint32LE(_numDeliveries);
@@ -1419,7 +1416,7 @@ void AI::save(Common::OutSaveFile *out) {
 }
 
 void AI::loadSaveFile(Common::InSaveFile *in) {
-	int i;
+	int i, j;
 
 	// Clean everything out
 	restartSystem();
@@ -1462,7 +1459,6 @@ void AI::loadSaveFile(Common::InSaveFile *in) {
 	// Load Inventory
 	for (i = 0; i < kMaxInventory; i++) {
 		_inventory[i].keep = in->readUint16LE();
-		warning("STUB: Load Inventory Item");
 	}
 	_numInventory = in->readUint32LE();
 
@@ -1470,10 +1466,8 @@ void AI::loadSaveFile(Common::InSaveFile *in) {
 	for (i = 0; i < kMaxDeliveries; i++) {
 		in->read(_deliveries[i].itemTextName, 32);
 		in->read(_deliveries[i].itemGfxName, 32);
-		warning("STUB: Load _deliveries[i].itemGfx");
 		in->read(_deliveries[i].destTextName, 32);
 		in->read(_deliveries[i].destGfxName, 32);
-		warning("STUB: Load _deliveries[i].destGfx");
 		in->read(_deliveries[i].id, 32);
 	}
 	_numDeliveries = in->readUint32LE();
@@ -1547,6 +1541,43 @@ void AI::loadSaveFile(Common::InSaveFile *in) {
 
 	// Load Gatepuddles
 	_gatePuddles = in->readSint32LE();
+
+	// Cache Gfx for Panic Zone, if needed
+	for (i = 0; i < _numTeleporters; i++)
+		if ((_teleporters[i].anim1 == 2) ||
+			(_teleporters[i].anim2 == 2) &&
+			!g_hdb->_window->_pzInfo.gfxPanic) {
+			g_hdb->_window->loadPanicZoneGfx();
+			break;
+		}
+
+	// Cache Graphics for Inventory and Deliveries
+	for (i = 0; i < _numInventory; i++) {
+		AIEntity *temp = &_inventory[i].ent;
+
+		// Clear out all ptrs in entity before writing out
+
+		for (j = 0; j < kMaxAnimFrames; j++)
+			temp->blinkGfx[j] = temp->movedownGfx[j] = temp->moveupGfx[j] =
+			temp->moveleftGfx[j] = temp->moverightGfx[j] = temp->standdownGfx[j] =
+			temp->standupGfx[j] = temp->standleftGfx[j] = temp->standrightGfx[j] =
+			temp->special1Gfx[j] = NULL;
+
+		temp->blinkFrames = temp->movedownFrames = temp->moveupFrames = temp->moveleftFrames =
+			temp->moverightFrames = temp->standdownFrames = temp->standupFrames = temp->standleftFrames =
+			temp->standrightFrames = 0;
+
+		temp->draw = NULL;
+		temp->aiDraw = NULL;
+		temp->aiAction = temp->aiInit = temp->aiUse = NULL;
+
+		cacheEntGfx(temp, false);
+	}
+
+	for (i = 0; i < _numDeliveries; i++) {
+		_deliveries[i].itemGfx = g_hdb->_gfx->getTileGfx(_deliveries[i].itemGfxName, -1);
+		_deliveries[i].destGfx = g_hdb->_gfx->getTileGfx(_deliveries[i].destGfxName, -1);
+	}
 
 	// Load AnimTargets
 	_animTargets.resize(in->readUint32LE());
