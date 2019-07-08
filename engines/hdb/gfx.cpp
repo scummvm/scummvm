@@ -70,7 +70,7 @@ bool Gfx::init() {
 		_tLookupArray[index].skyIndex = 0;
 		_tLookupArray[index].animIndex = index;
 		// Check if the loaded Tile is a Sky Tile
-		if (((Common::String)tileData[index]).contains("sky") && (skyIndex < kMaxSkies)) {
+		if (strstr(tileData[index], "sky") && (skyIndex < kMaxSkies)) {
 			_tLookupArray[index].skyIndex = skyIndex + 1;
 			_skyTiles[skyIndex] = index;
 			skyIndex++;
@@ -103,14 +103,15 @@ bool Gfx::init() {
 
 	// Init Sky Data
 	_currentSky = 0;
-	_tileSkyStars = getTileIndex("t32_sky_stars");
-	_tileSkyStarsLeft = getTileIndex("t32_sky_stars_left_slow");
-	_tileSkyClouds = getTileIndex("t32_sky_clouds"); // Not completely sure about this filename.
+	_tileSkyStars = getTileIndex(TILE_SKY_STARS);
+	_tileSkyStarsLeft = getTileIndex(TILE_SKY_STARS_LEFT_SLOW);
+	_tileSkyClouds = getTileIndex(TILE_SKY_CLOUDS); // Not completely sure about this filename.
 	_skyClouds = NULL;
 
 	/*
 		TODO: Setup Gamma Table
 	*/
+	warning("STUB: Gfx::init() gamma missing");
 
 	// Load Mouse Pointer and Display Cursor
 	_mousePointer[0] = loadPic(PIC_MOUSE_CURSOR1);
@@ -459,11 +460,11 @@ void Gfx::setSky(int skyIndex) {
 	if (tileIndex == _tileSkyStars) {
 		setup3DStars();
 		return;
-	} else if (skyIndex == _tileSkyStarsLeft) {
+	} else if (tileIndex == _tileSkyStarsLeft) {
 		setup3DStarsLeft();
 		return;
-	} else if (skyIndex == _tileSkyStars) {
-		_skyClouds = getPicture("cloudy_skies");
+	} else if (tileIndex == _tileSkyClouds) {
+		_skyClouds = getPicture(CLOUDY_SKIES);
 		return;
 	}
 }
@@ -514,11 +515,9 @@ void Gfx::drawSky() {
 
 	if (tile == _tileSkyStars) {
 		draw3DStars();
-	}
-	else if (tile == _tileSkyStarsLeft) {
+	} else if (tile == _tileSkyStarsLeft) {
 		draw3DStarsLeft();
-	}
-	else if (tile == _tileSkyClouds) {
+	} else if (tile == _tileSkyClouds) {
 		static int offset = 0, wait = 0;
 		for (int j = -64; j < kScreenHeight; j += 64) {
 			for (int i = -64; i < kScreenWidth; i += 64) {
