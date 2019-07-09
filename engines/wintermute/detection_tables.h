@@ -606,6 +606,10 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("mirage", "",
 		WME_ENTRY1s("data.dcp", "d230b0b99c0aa77b9ecd094d8ee5573b", 17844056), Common::EN_ANY, ADGF_UNSTABLE, WME_1_8_11),
 
+	// Night Train Demo
+	WME_WINENTRY("nighttrain", "Demo",
+		WME_ENTRY1s("data.dcp", "5a027ef84b083a730c9a4c85ec1d3a32", 131760816), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_1),
+
 	// Oknytt
 	// TODO: Engine version WME_1_9_3 is just a guess, need to check this
 	WME_WINENTRY("oknytt", "Version 1.0",
@@ -653,10 +657,6 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Open Quest
 	WME_WINENTRY("openquest", "",
 		WME_ENTRY1s("data.dcp", "16893e3fc15a211a49654ae66f684f28", 82281736), Common::EN_ANY, ADGF_UNSTABLE | GF_LOWSPEC_ASSETS, LATEST_VERSION),
-
-	// Night Train Demo
-	WME_WINENTRY("nighttrain", "",
-		WME_ENTRY1s("data.dcp", "5a027ef84b083a730c9a4c85ec1d3a32", 131760816), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, LATEST_VERSION),
 
 	// Paintaria
 	WME_WINENTRY("paintaria", "",
