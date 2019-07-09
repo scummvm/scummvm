@@ -656,7 +656,7 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Open Quest
 	WME_WINENTRY("openquest", "",
-		WME_ENTRY1s("data.dcp", "16893e3fc15a211a49654ae66f684f28", 82281736), Common::EN_ANY, ADGF_UNSTABLE | GF_LOWSPEC_ASSETS, LATEST_VERSION),
+		WME_ENTRY1s("data.dcp", "16893e3fc15a211a49654ae66f684f28", 82281736), Common::EN_ANY, ADGF_UNSTABLE | GF_LOWSPEC_ASSETS, WME_1_9_1),
 
 	// Paintaria
 	WME_WINENTRY("paintaria", "",
