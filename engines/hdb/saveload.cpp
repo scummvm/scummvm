@@ -24,7 +24,7 @@
 
 namespace HDB {
 
-Common::Error HDBGame::saveGameState(int slot) {
+Common::Error HDBGame::saveGameState(int slot, const Common::String &desc) {
 
 	// If no map is loaded, don't try to save
 	if (!g_hdb->_map->isLoaded())

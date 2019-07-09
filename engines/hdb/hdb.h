@@ -157,7 +157,7 @@ public:
 		_changeLevel = true;
 	}
 
-	Common::Error saveGameState(int slot);
+	Common::Error saveGameState(int slot, const Common::String &desc);
 	Common::Error loadGameState(int slot);
 	void saveGame(Common::OutSaveFile *out);
 	void loadGame(Common::InSaveFile *in);
