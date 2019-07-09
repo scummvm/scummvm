@@ -60,6 +60,8 @@ HDBGame::HDBGame(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst
 	_lastMapname[0] = _lastLuaName[0] = 0;
 	_inMapName[0] = 0;
 
+	_timePlayed = _timeSlice = _prevTimeSlice = _timeSeconds = _tiempo = 0;
+
 	_monkeystone7 = STARS_MONKEYSTONE_7_FAKE;
 	_monkeystone14 = STARS_MONKEYSTONE_14_FAKE;
 	_monkeystone21 = STARS_MONKEYSTONE_21_FAKE;
@@ -250,6 +252,9 @@ bool HDBGame::startMap(const char *name) {
 }
 
 void HDBGame::paint() {
+
+	_tiempo = g_system->getMillis();
+
 	switch (_gameState) {
 	case GAME_TITLE:
 		debug(9, "STUB: MENU::DrawTitle required");
@@ -866,6 +871,9 @@ Common::Error HDBGame::run() {
 				saveGameState(_saveInfo.slot);
 				_saveInfo.active = false;
 			}
+
+			// calculate time spent ONLY in the game...
+			_timePlayed += g_system->getMillis() - _tiempo;
 		}
 
 		// Update Timer that's NOT used for in-game Timing

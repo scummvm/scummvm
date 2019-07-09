@@ -202,15 +202,15 @@ public:
 		_timePlayed = _timeSeconds = 0;
 	}
 
-	uint16 getTime() {
+	uint32 getTime() {
 		return _timePlayed / 1000;
 	}
 
-	uint16 getTimeSlice() {
+	uint32 getTimeSlice() {
 		return _timeSlice;
 	}
 
-	uint16 getTimeSliceDelta() {
+	uint32 getTimeSliceDelta() {
 		return _timeSlice - _prevTimeSlice;
 	}
 
@@ -243,6 +243,8 @@ private:
 	uint32 _timePlayed;
 	uint32 _timeSlice, _prevTimeSlice;
 	uint32 _timeSeconds;
+
+	uint32 _tiempo;
 
 	Console *_console;
 
