@@ -396,30 +396,30 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Dirty Split (Czech)
 	WME_WINENTRY("dirtysplit", "",
 		WME_ENTRY2s("czech.dcp", "08a71446467cf8f9444cfea446b46ad6", 127697934,
-					"data.dcp", "8b4b81b718bf65f30a67fc0b1e329eb5", 88577623), Common::CZ_CZE, ADGF_UNSTABLE, LATEST_VERSION),
+					"data.dcp", "8b4b81b718bf65f30a67fc0b1e329eb5", 88577623), Common::CZ_CZE, ADGF_UNSTABLE, WME_1_8_5),
 
 	// Dirty Split (English)
 	WME_WINENTRY("dirtysplit", "",
-		WME_ENTRY1s("data.dcp", "8f3dae199361ece0f59fb20cfff6eed3", 88577621), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+		WME_ENTRY1s("data.dcp", "8f3dae199361ece0f59fb20cfff6eed3", 88577621), Common::EN_ANY, ADGF_UNSTABLE, WME_1_8_5),
 
 	// Dirty Split (French)
 	WME_WINENTRY("dirtysplit", "",
 		WME_ENTRY2s("french.dcp", "a0508dedebd0fe478d0158fa4c2a1136", 125534323,
-					"data.dcp", "e6d70c7f5d181b761cfcf974adf9186a", 88577623), Common::FR_FRA, ADGF_UNSTABLE, LATEST_VERSION),
+					"data.dcp", "e6d70c7f5d181b761cfcf974adf9186a", 88577623), Common::FR_FRA, ADGF_UNSTABLE, WME_1_8_5),
 
 	// Dirty Split (German)
 	WME_WINENTRY("dirtysplit", "",
-		WME_ENTRY1s("data.dcp", "139d8a25579e969f8b37d20e6e3de5f9", 92668291), Common::DE_DEU, ADGF_UNSTABLE, LATEST_VERSION),
+		WME_ENTRY1s("data.dcp", "139d8a25579e969f8b37d20e6e3de5f9", 92668291), Common::DE_DEU, ADGF_UNSTABLE, WME_1_8_5),
 
 	// Dirty Split (Italian)
 	WME_WINENTRY("dirtysplit", "",
 		WME_ENTRY2s("italian.dcp", "8108807fbd8af70be1ec452d0fd1131b", 125513726,
-					"data.dcp", "35a150e22af274185883fdbb142c6fb1", 88577623), Common::IT_ITA, ADGF_UNSTABLE, LATEST_VERSION),
+					"data.dcp", "35a150e22af274185883fdbb142c6fb1", 88577623), Common::IT_ITA, ADGF_UNSTABLE, WME_1_8_5),
 
 	// Dirty Split (Spanish)
 	WME_WINENTRY("dirtysplit", "",
 		WME_ENTRY2s("spanish.dcp", "b3982c0a5e85b42e1e38240fef004aa4", 164428596,
-					"data.dcp", "63766d6c68b9f00b632ea1736fc8a95c", 88577621), Common::ES_ESP, ADGF_UNSTABLE, LATEST_VERSION),
+					"data.dcp", "63766d6c68b9f00b632ea1736fc8a95c", 88577621), Common::ES_ESP, ADGF_UNSTABLE, WME_1_8_5),
 
 	// Des Reves Elastiques Avec Mille Insectes Nommes Georges
 	WME_WINENTRY("dreaming", "",
