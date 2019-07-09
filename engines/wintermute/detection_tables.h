@@ -329,11 +329,11 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Chivalry is Not Dead
 	WME_WINENTRY("chivalry", "",
-		WME_ENTRY1s("data.dcp", "ebd0915d9a12df5224be22f53bb23eb6", 7278306), Common::EN_ANY, ADGF_NO_FLAGS, LATEST_VERSION),
+		WME_ENTRY1s("data.dcp", "ebd0915d9a12df5224be22f53bb23eb6", 7278306), Common::EN_ANY, ADGF_NO_FLAGS, WME_1_8_0),
 
 	// Chivalry is Not Dead (Version from deirdrakai.com)
 	WME_WINENTRY("chivalry", "",
-		WME_ENTRY1s("data.dcp", "ae6d91b9517f4d2851a8ad94c96951c8", 7278302), Common::EN_ANY, ADGF_NO_FLAGS, LATEST_VERSION),
+		WME_ENTRY1s("data.dcp", "ae6d91b9517f4d2851a8ad94c96951c8", 7278302), Common::EN_ANY, ADGF_NO_FLAGS, WME_1_8_0),
 
 	// Conspiracao Dumont
 	WME_WINENTRY("conspiracao", "",
