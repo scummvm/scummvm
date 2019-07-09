@@ -2031,7 +2031,7 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Vsevolod Prologue (Demo)
 	WME_WINENTRY("vsevolod", "Prologue",
-		WME_ENTRY1s("data.dcp", "f2dcffd2692dbfcc9371fa1a87970fe7", 388669493), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, LATEST_VERSION),
+		WME_ENTRY1s("data.dcp", "f2dcffd2692dbfcc9371fa1a87970fe7", 388669493), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_1),
 
 	// War
 	WME_WINENTRY("war", "",
