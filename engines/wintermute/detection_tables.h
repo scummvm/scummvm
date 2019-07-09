@@ -193,7 +193,7 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Actual Destination
 	WME_WINENTRY("actualdest", "",
-		WME_ENTRY1s("data.dcp", "6926f44b26f21ceb1d840eaab9aeb510", 9081740), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+		WME_ENTRY1s("data.dcp", "6926f44b26f21ceb1d840eaab9aeb510", 9081740), Common::EN_ANY, ADGF_UNSTABLE, WME_1_8_11),
 
 	// Alimardan's Mischief (Steam, August 2017)
 	WME_WINENTRY("alimardan1", "",
