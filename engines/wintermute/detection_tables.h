@@ -442,9 +442,10 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("dreamcat", "",
 		WME_ENTRY1s("data.dcp","189bd4eef29034f4ff4ed30120eaac4e", 7758040), Common::EN_ANY, ADGF_UNSTABLE | GF_LOWSPEC_ASSETS, WME_1_9_1),
 
-	// Dreamscape
-	WME_WINENTRY("dreamscape", "",
-		WME_ENTRY1s("data.dcp", "7a5752ed4446c862be9f02d7932acf54", 17034377), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+	// Dreamscape (Beta)
+	// NOTE: Package is called "Dreamland.rar", however game title is "Dreamscape"
+	WME_WINENTRY("dreamscape", "Beta",
+		WME_ENTRY1s("data.dcp", "7a5752ed4446c862be9f02d7932acf54", 17034377), Common::EN_ANY, ADGF_UNSTABLE, WME_1_8_11),
 
 	// Escape from the Mansion
 	WME_WINENTRY("escapemansion", "Beta 1",
