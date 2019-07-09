@@ -1206,11 +1206,6 @@ static int openFile(lua_State *L) {
 	lua_pop(L, 2);
 
 	if (!scumm_stricmp(mode, "wt")) {
-		// Delete Lua Save File
-		Common::InSaveFile *inLua = g_system->getSavefileManager()->openForLoading(fName);
-		if (inLua)
-			delete inLua;
-
 		Common::OutSaveFile *outLua = g_system->getSavefileManager()->openForSaving(fName);
 		if (!outLua)
 			error("Cannot open %s", fName);
