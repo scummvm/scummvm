@@ -167,14 +167,23 @@ void Map::loadSaveFile(Common::InSaveFile *in) {
 
 	// load map data
 
+	_background = new int16[_width * _height];
 	for (i = 0; i < _width * _height; i++)
 		_background[i] = in->readSint32LE();
+
+	_foreground = new int16[_width * _height];
 	for (i = 0; i < _width * _height; i++)
 		_foreground[i] = in->readSint32LE();
+
+	_mapExplosions = new byte[_width * _height];
 	for (i = 0; i < _width * _height; i++)
 		_mapExplosions[i] = in->readByte();
+
+	_mapExpBarrels = new byte[_width * _height];
 	for (i = 0; i < _width * _height; i++)
 		_mapExpBarrels[i] = in->readByte();
+
+	_mapLaserBeams = new byte[_width * _height];
 	for (i = 0; i < _width * _height; i++)
 		_mapLaserBeams[i] = in->readByte();
 }
