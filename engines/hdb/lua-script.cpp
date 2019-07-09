@@ -1215,6 +1215,8 @@ static int openFile(lua_State *L) {
 		if (!outLua)
 			error("Cannot open %s", fName);
 		lua_pushlightuserdata(L, outLua);
+	} else {
+		error("LUA openFile: Unsupported mode '%s'", mode);
 	}
 
 	return 1;
@@ -1229,7 +1231,6 @@ static int write(lua_State *L) {
 	lua_pop(L, 2);
 
 	out->write(data, strlen(data));
-	debugN(3, "%s", data);
 
 	return 0;
 }
@@ -1244,6 +1245,23 @@ static int closeFile(lua_State *L) {
 	out->finalize();
 
 	delete out;
+
+	return 0;
+}
+
+static int dofile(lua_State *L) {
+	const char *fName = lua_tostring(L, 1);
+
+	g_hdb->_lua->checkParameters("dofile", 1);
+
+	lua_pop(L, 1);
+
+	Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(fName);
+
+	if (!in)
+		error("Lua dofile: cannot open file '%s'", fName);
+
+	delete in;
 
 	return 0;
 }
@@ -1549,8 +1567,9 @@ struct FuncInit {
 	{  "Cine_PlayVoice",		cinePlayVoice		},
 
 	{	"openfile",				openFile,			},
-	{	"write",				write,			},
+	{	"write",				write,				},
 	{	"closefile",			closeFile,			},
+	{	"dofile",				dofile,				},
 	{ NULL, NULL }
 };
 
