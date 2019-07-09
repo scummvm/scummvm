@@ -2058,6 +2058,9 @@ void aiFatFrogAction(AIEntity *e) {
 			e->animFrame++;
 		}
 		break;
+	default:
+		// no op
+		break;
 	}
 }
 
