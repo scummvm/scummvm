@@ -1256,7 +1256,20 @@ static int dofile(lua_State *L) {
 	if (!in)
 		error("Lua dofile: cannot open file '%s'", fName);
 
+	int length = in->size();
+	char *chunk = new char[length + 1];
+	in->read((void *)chunk, length);
+
+	chunk[length] = '\0'; // be on the safe side
+
+	Common::String chunkString(chunk);
+	delete[] chunk;
+
 	delete in;
+
+	if (!g_hdb->_lua->executeChunk(chunkString, fName)) {
+		return 0;
+	}
 
 	return 0;
 }
