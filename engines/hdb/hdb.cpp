@@ -137,7 +137,7 @@ void HDBGame::save(Common::OutSaveFile *out) {
 	out->write(_inMapName, 32);
 }
 
-void HDBGame::load(Common::InSaveFile *in) {
+void HDBGame::loadSaveFile(Common::InSaveFile *in) {
 	in->read(_currentMapname, 64);
 	in->read(_lastMapname, 64);
 	in->read(_currentLuaName, 64);
@@ -499,11 +499,36 @@ void HDBGame::saveGame(Common::OutSaveFile *out) {
 	// Save AI Object Data
 
 	_ai->save(out);
-
 }
 
 void HDBGame::loadGame(Common::InSaveFile *in) {
-	warning("STUB: Add loadGame()");
+	// Load Map Name
+	in->read(_inMapName, 32);
+
+	g_hdb->_sound->stopMusic();
+	_timeSeconds = 0;
+	_timePlayed = 0;
+
+	// Load Map Object Data
+	_map->loadSaveFile(in);
+
+	// Load Window Object Data
+	_window->loadSaveFile(in);
+
+	// Load Gfx Object Data
+	_gfx->loadSaveFile(in);
+
+	// Load Sound Object Data
+	_sound->loadSaveFile(in);
+
+	// Load Game Object Data
+	loadSaveFile(in);
+
+	// Load AI Object Data
+
+	_ai->loadSaveFile(in);
+
+	_gfx->turnOffFade();
 }
 
 // PLAYER is trying to use this entity
