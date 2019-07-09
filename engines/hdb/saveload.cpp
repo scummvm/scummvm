@@ -78,32 +78,42 @@ Common::Error HDBGame::loadGameState(int slot) {
 }
 
 void HDBGame::saveGame(Common::OutSaveFile *out) {
+	debug(1, "HDBGame::saveGame: start at %u", out->pos());
 
 	// Save Map Name and Time
 	out->writeUint32LE(_timeSeconds + (_timePlayed / 1000));
 	out->write(_inMapName, 32);
 
+	debug(1, "HDBGame::saveGame: map at %u", out->pos());
 	// Save Map Object Data
 	_map->save(out);
 
 	// Save Window Object Data
+	debug(1, "HDBGame::saveGame: window at %u", out->pos());
 	_window->save(out);
 
 	// Save Gfx Object Data
+	debug(1, "HDBGame::saveGame: gfx at %u", out->pos());
 	_gfx->save(out);
 
 	// Save Sound Object Data
+	debug(1, "HDBGame::saveGame: sound at %u", out->pos());
 	_sound->save(out);
 
 	// Save Game Object Data
+	debug(1, "HDBGame::saveGame: game object at %u", out->pos());
 	save(out);
 
 	// Save AI Object Data
-
+	debug(1, "HDBGame::saveGame: ai at %u", out->pos());
 	_ai->save(out);
+
+	debug(1, "HDBGame::saveGame: end at %u", out->pos());
 }
 
 void HDBGame::loadGame(Common::InSaveFile *in) {
+	debug(1, "HDBGame::loadGame: start at %u", in->pos());
+
 	// Load Map Name and Time
 	_timeSeconds = in->readUint32LE();;
 	_timePlayed = 0;
@@ -112,23 +122,30 @@ void HDBGame::loadGame(Common::InSaveFile *in) {
 	g_hdb->_sound->stopMusic();
 
 	// Load Map Object Data
+	debug(1, "HDBGame::loadGame: map at %u", in->pos());
 	_map->loadSaveFile(in);
 
 	// Load Window Object Data
+	debug(1, "HDBGame::loadGame: window at %u", in->pos());
 	_window->loadSaveFile(in);
 
 	// Load Gfx Object Data
+	debug(1, "HDBGame::loadGame: gfx at %u", in->pos());
 	_gfx->loadSaveFile(in);
 
 	// Load Sound Object Data
+	debug(1, "HDBGame::loadGame: sound at %u", in->pos());
 	_sound->loadSaveFile(in);
 
 	// Load Game Object Data
+	debug(1, "HDBGame::loadGame: game object at %u", in->pos());
 	loadSaveFile(in);
 
 	// Load AI Object Data
-
+	debug(1, "HDBGame::loadGame: ai at %u", in->pos());
 	_ai->loadSaveFile(in);
+
+	debug(1, "HDBGame::loadGame: end at %u", in->pos());
 
 	_gfx->turnOffFade();
 }
