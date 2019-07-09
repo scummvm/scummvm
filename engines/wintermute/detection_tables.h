@@ -527,19 +527,27 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// James Peris: No License Nor Control (English)
 	WME_WINENTRY("jamesperis", "",
-		WME_ENTRY1s("data.dcp", "a420961e170cb7d168a0d2bae2fe5218", 225294032), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+		WME_ENTRY1s("data.dcp", "a420961e170cb7d168a0d2bae2fe5218", 225294032), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_1),
 
 	// James Peris: No License Nor Control (Spanish)
 	WME_WINENTRY("jamesperis", "",
-		WME_ENTRY1s("data.dcp", "a420961e170cb7d168a0d2bae2fe5218", 225294032), Common::ES_ESP, ADGF_UNSTABLE, LATEST_VERSION),
+		WME_ENTRY1s("data.dcp", "a420961e170cb7d168a0d2bae2fe5218", 225294032), Common::ES_ESP, ADGF_UNSTABLE, WME_1_9_1),
+
+	// James Peris: No License Nor Control (English)
+	WME_WINENTRY("jamesperis", "",
+		WME_ENTRY1s("data.dcp", "d6049dfb5dbe812bae1e96924a012500", 225299340), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_1),
+
+	// James Peris: No License Nor Control (Spanish)
+	WME_WINENTRY("jamesperis", "",
+		WME_ENTRY1s("data.dcp", "d6049dfb5dbe812bae1e96924a012500", 225299340), Common::ES_ESP, ADGF_UNSTABLE, WME_1_9_1),
 
 	// James Peris: No License Nor Control (Demo) (English)
 	WME_WINENTRY("jamesperis", "Demo",
-		WME_ENTRY1s("data.dcp", "edb9f9c7a08993c1e28f4e477b5f9830", 116113507), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, LATEST_VERSION),
+		WME_ENTRY1s("data.dcp", "edb9f9c7a08993c1e28f4e477b5f9830", 116113507), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_1),
 
 	// James Peris: No License Nor Control (Demo) (Spanish)
 	WME_WINENTRY("jamesperis", "Demo",
-		WME_ENTRY1s("data.dcp", "edb9f9c7a08993c1e28f4e477b5f9830", 116113507), Common::ES_ESP, ADGF_UNSTABLE | ADGF_DEMO, LATEST_VERSION),
+		WME_ENTRY1s("data.dcp", "edb9f9c7a08993c1e28f4e477b5f9830", 116113507), Common::ES_ESP, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_1),
 
 	// J.U.L.I.A. (English)
 	WME_WINENTRY("julia", "",
