@@ -130,6 +130,8 @@ public:
 	bool init();
 
 	void startTitle();
+	void startMenu();
+	void freeMenu();
 
 	void fillSavegameSlots();
 

@@ -76,6 +76,14 @@ void Menu::startTitle() {
 
 }
 
+void Menu::startMenu() {
+	debug(9, "STUB: Start Menu");
+}
+
+void Menu::freeMenu() {
+	debug(9, "STUB: Free Menu");
+}
+
 void Menu::fillSavegameSlots() {
 	warning("STUB: PMenu::fillSavegameSlots()");
 }
