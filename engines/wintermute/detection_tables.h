@@ -2054,9 +2054,10 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("Zilm", "1.0",
 		WME_ENTRY1s("data.dcp", "098dffaf03d8adbb4cb5633e4733e63c", 351726), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
 
-	// Zbang! The Game
+	// Zbang! The Game (Demo)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
 	WME_WINENTRY("zbang", "0.89",
-		WME_ENTRY1s("data.dcp", "db9101f08d12ab95c81042d154bb0ea8", 7210044), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_7_0),
+		WME_ENTRY1s("data.dcp", "db9101f08d12ab95c81042d154bb0ea8", 7210044), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_7_1),
 	{
 		AD_TABLE_END_MARKER,
 		LATEST_VERSION
