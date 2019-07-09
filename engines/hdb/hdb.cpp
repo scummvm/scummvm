@@ -244,7 +244,7 @@ bool HDBGame::startMap(const char *name) {
 	//
 	if (!scumm_strnicmp(name, "map", 3) && scumm_stricmp(name, "map30")) {
 		_menu->fillSavegameSlots();
-		saveSlot(0);          // we ignore the slot parameter in everything else since we just keep saving...
+		saveGameState(0);          // we ignore the slot parameter in everything else since we just keep saving...
 	}
 	return true;
 }
@@ -424,111 +424,6 @@ void HDBGame::setTargetXY(int x, int y) {
 		_ai->addWaypoint(px, py, x, y, p->level);
 		break;
 	}
-}
-
-bool HDBGame::saveSlot(int slot) {
-
-	// If no map is loaded, don't try to save
-	if (!g_hdb->_map->isLoaded())
-		return false;
-
-	Common::OutSaveFile *out;
-
-	Common::String saveFileName = Common::String::format("%s.%03d", _targetName.c_str(), slot);
-	if (!(out = _saveFileMan->openForSaving(saveFileName)))
-		error("Unable to open save file");
-
-	warning("STUB: Save MetaData");
-	Graphics::saveThumbnail(*out);
-
-	// Actual Save Data
-	saveGame(out);
-	_lua->save(out, _targetName.c_str(), slot);
-
-	out->finalize();
-	if (out->err())
-		warning("Can't write file '%s'. (Disk full?)", saveFileName.c_str());
-
-	delete out;
-
-	return true;
-}
-
-bool HDBGame::loadSlot(int slot) {
-	Common::InSaveFile *in;
-
-	Common::String saveFileName = Common::String::format("%s.%03d", _targetName.c_str(), slot);
-	if (!(in = _saveFileMan->openForLoading(saveFileName))) {
-		warning("missing savegame file %s", saveFileName.c_str());
-		if (g_hdb->_map->isLoaded())
-			g_hdb->setGameState(GAME_PLAY);
-		return false;
-	}
-
-	warning("STUB: Load MetaData");
-	Graphics::skipThumbnail(*in);
-
-	// Actual Save Data
-	loadGame(in);
-
-	delete in;
-
-	return true;
-}
-
-void HDBGame::saveGame(Common::OutSaveFile *out) {
-
-	// Save Map Name
-	out->write(_inMapName, 32);
-
-	// Save Map Object Data
-	_map->save(out);
-
-	// Save Window Object Data
-	_window->save(out);
-
-	// Save Gfx Object Data
-	_gfx->save(out);
-
-	// Save Sound Object Data
-	_sound->save(out);
-
-	// Save Game Object Data
-	save(out);
-
-	// Save AI Object Data
-
-	_ai->save(out);
-}
-
-void HDBGame::loadGame(Common::InSaveFile *in) {
-	// Load Map Name
-	in->read(_inMapName, 32);
-
-	g_hdb->_sound->stopMusic();
-	_timeSeconds = 0;
-	_timePlayed = 0;
-
-	// Load Map Object Data
-	_map->loadSaveFile(in);
-
-	// Load Window Object Data
-	_window->loadSaveFile(in);
-
-	// Load Gfx Object Data
-	_gfx->loadSaveFile(in);
-
-	// Load Sound Object Data
-	_sound->loadSaveFile(in);
-
-	// Load Game Object Data
-	loadSaveFile(in);
-
-	// Load AI Object Data
-
-	_ai->loadSaveFile(in);
-
-	_gfx->turnOffFade();
 }
 
 // PLAYER is trying to use this entity
@@ -968,7 +863,7 @@ Common::Error HDBGame::run() {
 				_sound->playSound(SND_VORTEX_SAVE);
 				_ai->stopEntity(e);
 				_menu->fillSavegameSlots();
-				saveSlot(_saveInfo.slot);
+				saveGameState(_saveInfo.slot);
 				_saveInfo.active = false;
 			}
 		}

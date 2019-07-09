@@ -157,8 +157,8 @@ public:
 		_changeLevel = true;
 	}
 
-	bool saveSlot(int slot);
-	bool loadSlot(int slot);
+	Common::Error saveGameState(int slot);
+	Common::Error loadGameState(int slot);
 	void saveGame(Common::OutSaveFile *out);
 	void loadGame(Common::InSaveFile *in);
 

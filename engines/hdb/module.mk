@@ -20,6 +20,7 @@ MODULE_OBJS := \
 	map.o \
 	menu.o \
 	sound.o \
+	saveload.o \
 	window.o
 
 MODULE_DIRS += \
