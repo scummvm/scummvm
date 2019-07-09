@@ -776,7 +776,11 @@ Common::Error HDBGame::run() {
 
 		startMap(mapname);
 	} else {
-		startMap("MAP00");
+		if (ConfMan.hasKey("save_slot")) {
+			loadGameState(ConfMan.getInt("save_slot"));
+		} else {
+			startMap("MAP00");
+		}
 	}
 
 	//_window->openDialog("Sgt. Filibuster", 0, "You address me as 'sarge' or 'sergeant' or get your snappin' teeth kicked in! Got me?", 0, NULL);
