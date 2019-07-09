@@ -1975,7 +1975,7 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// The Box
 	WME_WINENTRY("thebox", "",
-		WME_ENTRY1s("data.dcp", "ec5f0c7e8174e307701447b53afe7e2f", 108372483), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+		WME_ENTRY1s("data.dcp", "ec5f0c7e8174e307701447b53afe7e2f", 108372483), Common::EN_ANY, ADGF_UNSTABLE, WME_1_8_11),
 
 	// The Kite (Version 1.1)
 	WME_WINENTRY("thekite", "Version 1.1",
