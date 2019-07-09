@@ -162,12 +162,22 @@ void HDBGame::changeGameState() {
 
 	switch (_gameState) {
 	case GAME_TITLE:
+		_menu->startMenu();
 		_gameState = GAME_MENU;
 		break;
 	case GAME_MENU:
+		_menu->freeMenu();
+		_sound->stopMusic();
+		_sound->clearPersistent();
+		_ai->clearPersistent();
+		_timePlayed = 0;
+		_timeSeconds = 0;
+		if (!startMap("CINE_INTRO"))
+			error("Can't load CINE_INTRO");
 		_gameState = GAME_PLAY;
 		break;
 	case GAME_PLAY:
+		_menu->startMenu();
 		_gameState = GAME_MENU;
 		break;
 	case GAME_LOADING:
