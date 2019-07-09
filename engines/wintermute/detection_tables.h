@@ -1971,7 +1971,7 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// The Ancient Mark - Episode 1
 	WME_WINENTRY("theancientmark1", "",
-		WME_ENTRY1s("data.dcp", "ca04c26f03b2bd307368b306b297ddd7", 364664692), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+		WME_ENTRY1s("data.dcp", "ca04c26f03b2bd307368b306b297ddd7", 364664692), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_1),
 
 	// The Box
 	WME_WINENTRY("thebox", "",
