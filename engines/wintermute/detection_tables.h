@@ -221,7 +221,7 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Beyond the Threshold
 	WME_WINENTRY("bthreshold", "",
-		WME_ENTRY1s("data.dcp", "d49bf9ccb2e74507447c82d6ad3e2bc4", 12773712), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+		WME_ENTRY1s("data.dcp", "d49bf9ccb2e74507447c82d6ad3e2bc4", 12773712), Common::EN_ANY, ADGF_UNSTABLE, WME_1_7_94),
 
 	// Bickadoodle
 	WME_WINENTRY("bickadoodle", "",
