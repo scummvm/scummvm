@@ -1862,7 +1862,7 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Rosemary
 	WME_WINENTRY("rosemary", "",
-		WME_ENTRY1s("data.dcp", "4f2631138bd4d27587d9043f8aeff3df", 29483643), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+		WME_ENTRY1s("data.dcp", "4f2631138bd4d27587d9043f8aeff3df", 29483643), Common::EN_ANY, ADGF_UNSTABLE, WME_1_8_6),
 
 	// Securanote
 	WME_PLATENTRY("securanote", "",
