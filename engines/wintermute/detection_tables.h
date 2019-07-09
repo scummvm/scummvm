@@ -484,9 +484,9 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("four", "",
 		WME_ENTRY1s("data.dcp", "ec05cd5e37c9a524053b8859635a4234", 62599855), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_1),
 
-	// Framed
-	WME_WINENTRY("framed", "",
-		WME_ENTRY1s("data.dcp", "e7259fb36f2c6f9f28242291e0c3de98", 34690568), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+	// Framed (Beta)
+	WME_WINENTRY("framed", "Beta",
+		WME_ENTRY1s("data.dcp", "e7259fb36f2c6f9f28242291e0c3de98", 34690568), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_8_11),
 
 	// Ghost in the Sheet
 	WME_WINENTRY("ghostsheet", "",
