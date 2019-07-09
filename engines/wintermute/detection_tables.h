@@ -1963,11 +1963,11 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Tanya Grotter and the Magical Double Bass
 	WME_WINENTRY("tanya1", "",
-		WME_ENTRY1s("data.dcp", "035bbdaff078cc4053ecf4b518c0d0fd", 1007507786), Common::RU_RUS, ADGF_UNSTABLE, LATEST_VERSION),
+		WME_ENTRY1s("data.dcp", "035bbdaff078cc4053ecf4b518c0d0fd", 1007507786), Common::RU_RUS, ADGF_UNSTABLE, WME_1_8_0),
 
 	// Tanya Grotter and the Disappearing Floor
 	WME_WINENTRY("tanya2", "",
-		WME_ENTRY1s("data.dcp", "9c15f14990f630177e063da885d03e6d", 936959767), Common::RU_RUS, ADGF_UNSTABLE, LATEST_VERSION),
+		WME_ENTRY1s("data.dcp", "9c15f14990f630177e063da885d03e6d", 936959767), Common::RU_RUS, ADGF_UNSTABLE, WME_1_8_3),
 
 	// The Ancient Mark - Episode 1
 	WME_WINENTRY("theancientmark1", "",
