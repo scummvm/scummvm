@@ -28,14 +28,15 @@ namespace Sci {
 #define GUIO_STD16_UNDITHER GUIO5(GUIO_NOSPEECH, GAMEOPTION_EGA_UNDITHER, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)
 #define GUIO_STD16_SPEECH GUIO3(GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)
 
-#define FANMADE_L(name, resMapMd5, resMapSize, resMd5, resSize, lang) \
+#define FANMADE_L(name, resMapMd5, resMapSize, resMd5, resSize, resVol, lang) \
 	{"sci-fanmade", name, { \
 		{"resource.map", 0, resMapMd5, resMapSize}, \
-		{"resource.001", 0, resMd5, resSize}, \
+		{resVol, 0, resMd5, resSize}, \
 		AD_LISTEND}, lang, Common::kPlatformDOS, 0, GUIO_STD16 \
 	}
 
-#define FANMADE(name, resMapMd5, resMapSize, resMd5, resSize) FANMADE_L(name, resMapMd5, resMapSize, resMd5, resSize, Common::EN_ANY)
+#define FANMADE(name, resMapMd5, resMapSize, resMd5, resSize) FANMADE_L(name, resMapMd5, resMapSize, resMd5, resSize, "resource.001", Common::EN_ANY)
+#define FANMADE11(name, resMapMd5, resMapSize, resMd5, resSize) FANMADE_L(name, resMapMd5, resMapSize, resMd5, resSize, "resource.000", Common::EN_ANY)
 
 // Game descriptions
 static const struct ADGameDescription SciGameDescriptions[] = {
@@ -5101,7 +5102,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 	FANMADE("Al Pond 2: Island Quest", "9625372e710d1a95d2027b48f9e325af", 1506, "a0f9aa65b9bf3d8703adff5a621f243c", 889843),
 	FANMADE("Al Pond 2: Island Quest (Updated)", "64be277cdcc6aafce7d9f26e88ad31a8", 1500, "571547228a212d63315f0c114cf48d54", 885241),
 	FANMADE("Another DG Game: I Want My C64 Back", "4a8ca7ca2abd18899ef856f47665e2e9", 588, "12ff558d20c72e42cc6adb408f34d6d8", 150513),
-	FANMADE_L("Another DG Game: I Want My C64 Back", "13dc1d9ebc57daf8895412eee5e39fea", 576, "e2ad60b3a280171429db5c85f158f84a", 141697, Common::FR_FRA),
+	FANMADE_L("Another DG Game: I Want My C64 Back", "13dc1d9ebc57daf8895412eee5e39fea", 576, "e2ad60b3a280171429db5c85f158f84a", 141697, "resource.001", Common::FR_FRA),
 	FANMADE("Aquarius: An Aquatic Experience", "2e23bc3b82f22a454be202ea593fb478", 480, "01555c8de683d25405bda270aa1ff014", 272372),
 	FANMADE("Betrayed Alliance 1.0", "b1f43f496a83cb8503f290a838b26242", 4062, "e637255aae6191ee92b9e843ad276288", 2367197),
 	FANMADE("Betrayed Alliance 1.1", "bb776e42e93f8b98006d6481fb73a588", 4080, "ad7bcfa11f914f23ddbe32723700391e", 2391020),
@@ -5114,7 +5115,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 	FANMADE("Dr. Jummybummy's Space Adventure 2", "6ae6cb7de423f51736d9487b4ca0c6da", 810, "26e5b563f578e104d79689f36568b7cf", 394670),
 	FANMADE("Edy Oliver into the Cave of Whistling Skulls Demo", "eba0a0e86768ee3f14e78fecbc5af011", 2388, "4f6eab79a0f7980960eed101ab8122ad", 2601551),
 	FANMADE("Footsteps Sound Demo", "d9dabee6e1550b1fdb793f442f227738", 372, "06561df40dea49c6e84184e0ba6f19cb", 114212),
-	FANMADE_L("Grostesteing: Plus Mechant que Jamais", "ec9a97ccb134f69249f6ea8b16c13d8e", 1500, "b869f5f11bfe2ab5f67f4f0c618f2ce1", 464657, Common::FR_FRA), // FIXME: Accent
+	FANMADE_L("Grostesteing: Plus Mechant que Jamais", "ec9a97ccb134f69249f6ea8b16c13d8e", 1500, "b869f5f11bfe2ab5f67f4f0c618f2ce1", 464657, "resource.001", Common::FR_FRA), // FIXME: Accent
 	FANMADE("Humanoid Demo", "97d8331293a6d57e8bad58c1efc89a63", 624, "fb354b9abe64011b12159e45d724633f", 452320),
 	FANMADE("Island of Secrets Demo 0.3", "61279176c3e4530fec9b578877aecda7", 504, "7f4ed7a81b86bea22c62bc98e6d9ec39", 197790),
 	FANMADE("Jim's Quest 1: The Phantom Thesis", "0af50be1d3f0cb77a09137709a76ef4f", 960, "9c042c136548b20d9183495668e03526", 496446),
@@ -5145,17 +5146,17 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 	FANMADE("The Black Cauldron Demo", "5e1ff2833c7f33ebcfa456ba836e2067", 2592, "2f8e6264d2db91bb54982ab8aa18b3b4", 1881839),
 	FANMADE("The Black Cauldron Final", "cbb4705f0cd73760996e5b27aae54f6a", 2484, "fc3bcaa7783b91bb78faefa345c6b3d9", 1677293),
 	// Kafuka release, catdate-onedaydemo-2015.zip: old branding, old title, old music, zipper, hand.
-	FANMADE("The Dating Pool Demo (2015)", "6f788e0ec2b4a6110e9bbb639ca7ee74", 1378, "af28393cf5ae59e98203067f5eb87e2b", 1038935),
+	FANMADE11("The Dating Pool Demo (2015)", "6f788e0ec2b4a6110e9bbb639ca7ee74", 1378, "af28393cf5ae59e98203067f5eb87e2b", 1038935),
 	// Kafuka release, catdate-onedaydemo-2016.zip: new branding, old title, zipper, hand.
-	FANMADE("The Dating Pool Demo (2016)", "9f44b144d8986a3676fb5114b819ec02", 1303, "4d6f521253ec67d0f1bd38c29c91c806", 915197),
+	FANMADE11("The Dating Pool Demo (2016)", "9f44b144d8986a3676fb5114b819ec02", 1303, "4d6f521253ec67d0f1bd38c29c91c806", 915197),
 	// Release status unknown: new title, cocktail, paw, remapped shadow.
-	FANMADE("The Dating Pool Demo (Unknown)", "80ae0fc1bc60b815c65eda86a23157bc", 1318, "755e12d325420acc7a06474d75002ba8", 1153508),
+	FANMADE11("The Dating Pool Demo (Unknown)", "80ae0fc1bc60b815c65eda86a23157bc", 1318, "755e12d325420acc7a06474d75002ba8", 1153508),
 	// Itch.IO release: bug fixes
-	FANMADE("The Dating Pool Demo (Itch.IO)", "1442c3599b5f41755e4318db8d68da51", 1318, "755e12d325420acc7a06474d75002ba8", 1044647),
+	FANMADE11("The Dating Pool Demo (Itch.IO)", "1442c3599b5f41755e4318db8d68da51", 1318, "755e12d325420acc7a06474d75002ba8", 1044647),
 	// Itch.IO 2018 release: bug fixes, polish, new content at end
-	FANMADE("The Dating Pool Demo (Itch.IO 2018)", "750e0f01ca54ac0ea49cff2753e1ae65", 1263, "094b9d3c841fe60076f06cdef3fb1383", 1467849),
+	FANMADE11("The Dating Pool Demo (Itch.IO 2018)", "750e0f01ca54ac0ea49cff2753e1ae65", 1263, "094b9d3c841fe60076f06cdef3fb1383", 1467849),
 	// Itch.IO 2019 release: more bug fixes and polish
-	FANMADE("The Dating Pool Demo (Itch.IO 2019)", "1f7b68ed422eadbf373cc8611bc56f94", 1393, "094b9d3c841fe60076f06cdef3fb1383", 1555073),
+	FANMADE11("The Dating Pool Demo (Itch.IO 2019)", "1f7b68ed422eadbf373cc8611bc56f94", 1393, "094b9d3c841fe60076f06cdef3fb1383", 1555073),
 	FANMADE("The Farm Nightmare", "fb6cbfddaa7c055e2c3d8cf4c683a7db", 906, "50655e8b8925f717e698e08f006f40be", 338303),
 	FANMADE("The Gem Scenario", "ef5f61f4d2c6d31122d3e2baf89ad976", 642, "2f16be390dd90c3d7ca1c8a594ac0bfa", 244794),
 	FANMADE("The Legend of the Lost Jewel", "ba1bca315e3818c5626eda51bcfbcccf", 636, "9b0736d69924af0cff32a0f78db96855", 300398),
