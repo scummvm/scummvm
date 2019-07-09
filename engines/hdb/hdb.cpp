@@ -256,7 +256,7 @@ bool HDBGame::startMap(const char *name) {
 	//
 	if (!scumm_strnicmp(name, "map", 3) && scumm_stricmp(name, "map30")) {
 		_menu->fillSavegameSlots();
-		saveGameState(0);          // we ignore the slot parameter in everything else since we just keep saving...
+		saveGameState(0, Common::String::format("Autosave %s", name)); // we ignore the slot parameter in everything else since we just keep saving...
 	}
 	return true;
 }
@@ -878,7 +878,7 @@ Common::Error HDBGame::run() {
 				_sound->playSound(SND_VORTEX_SAVE);
 				_ai->stopEntity(e);
 				_menu->fillSavegameSlots();
-				saveGameState(_saveInfo.slot);
+				saveGameState(_saveInfo.slot, "FIXME"); // Add here date/level name // TODO
 				_saveInfo.active = false;
 			}
 
