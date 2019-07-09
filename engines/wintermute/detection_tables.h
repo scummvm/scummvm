@@ -208,7 +208,7 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Alimardan Meets Merlin
 	WME_WINENTRY("alimardan2", "",
 		WME_ENTRY2s("language.dcp", "0cbb7e1e84a342782c24938af4da1402", 686580,
-					"data.dcp", "e3ffb5d177737a57bb391995d9361055", 413397623), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+					"data.dcp", "e3ffb5d177737a57bb391995d9361055", 413397623), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
 
 	// Basis Octavus
 	WME_WINENTRY("basisoctavus", "",
