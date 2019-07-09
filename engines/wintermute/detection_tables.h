@@ -241,7 +241,7 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Book of Gron Part One
 	WME_WINENTRY("bookofgron", "",
-		WME_ENTRY1s("data.dcp", "e61b2ebee044a82fa0f8ca0fce2c8946", 83129531), Common::RU_RUS, ADGF_UNSTABLE, LATEST_VERSION),
+		WME_ENTRY1s("data.dcp", "e61b2ebee044a82fa0f8ca0fce2c8946", 83129531), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_1),
 
 	// Carol Reed 4 - East Side Story (English)
 	WME_WINENTRY("carolreed4", "",
