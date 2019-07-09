@@ -147,7 +147,7 @@ public:
 
 	bool init();
 	void save(Common::OutSaveFile *out);
-	void load(Common::InSaveFile *in);
+	void loadSaveFile(Common::InSaveFile *in);
 
 	bool restartMap();
 	bool startMap(const char *name);

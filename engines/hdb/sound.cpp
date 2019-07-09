@@ -57,6 +57,10 @@ bool Sound::stopChannel(int channel) {
 	return true;
 }
 
+void Sound::stopMusic() {
+	debug(9, "STUB: Stop Music");
+}
+
 void Sound::markSoundCacheFreeable() {
 	warning("STUB: Sound::markSoundCacheFreeable() ");
 }
