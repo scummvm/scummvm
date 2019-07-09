@@ -677,9 +677,9 @@ static const WMEGameDescription gameDescriptions[] = {
 		WME_ENTRY2s("english.dcp", "7fa6149bb44574109668ce585d6c41c9", 9282608,
 					"data.dcp", "a69994c463ff5fcc6fe1800662f5b7d0", 34581370), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_1),
 
-	// Project: Doom
-	WME_WINENTRY("projectdoom", "",
-		WME_ENTRY1s("data.dcp", "d5894b65a40706845434b99870bcab92", 99223761), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+	// Project: Doom (Beta)
+	WME_WINENTRY("projectdoom", "Beta",
+		WME_ENTRY1s("data.dcp", "d5894b65a40706845434b99870bcab92", 99223761), Common::EN_ANY, ADGF_UNSTABLE, WME_1_8_11),
 
 	// Project Joe
 	WME_WINENTRY("projectjoe", "",
