@@ -36,7 +36,6 @@ Common::Error HDBGame::saveGameState(int slot) {
 	if (!(out = _saveFileMan->openForSaving(saveFileName)))
 		error("Unable to open save file");
 
-	warning("STUB: Save MetaData");
 	Graphics::saveThumbnail(*out);
 
 	// Actual Save Data
@@ -63,7 +62,6 @@ Common::Error HDBGame::loadGameState(int slot) {
 		return Common::kReadingFailed;
 	}
 
-	warning("STUB: Load MetaData");
 	Graphics::skipThumbnail(*in);
 
 	// Actual Save Data
@@ -76,7 +74,8 @@ Common::Error HDBGame::loadGameState(int slot) {
 
 void HDBGame::saveGame(Common::OutSaveFile *out) {
 
-	// Save Map Name
+	// Save Map Name and Time
+	out->writeUint32LE(_timeSeconds + (_timePlayed / 1000));
 	out->write(_inMapName, 32);
 
 	// Save Map Object Data
@@ -100,12 +99,12 @@ void HDBGame::saveGame(Common::OutSaveFile *out) {
 }
 
 void HDBGame::loadGame(Common::InSaveFile *in) {
-	// Load Map Name
+	// Load Map Name and Time
+	_timeSeconds = in->readUint32LE();;
+	_timePlayed = 0;
 	in->read(_inMapName, 32);
 
 	g_hdb->_sound->stopMusic();
-	_timeSeconds = 0;
-	_timePlayed = 0;
 
 	// Load Map Object Data
 	_map->loadSaveFile(in);
