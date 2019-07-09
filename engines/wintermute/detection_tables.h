@@ -674,9 +674,9 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("projectjoe", "",
 		WME_ENTRY1s("data.dcp", "ada3c08542901295076b5349e655e73f", 160780037), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, LATEST_VERSION),
 
-	// Project Lonely Robot
-	WME_WINENTRY("lonelyrobot", "beta",
-		WME_ENTRY1s("data.dcp", "a0cf7ad5bab957416dcda454e9f28ef0", 3420120), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, LATEST_VERSION),
+	// Project Lonely Robot (Beta)
+	WME_WINENTRY("lonelyrobot", "Beta",
+		WME_ENTRY1s("data.dcp", "a0cf7ad5bab957416dcda454e9f28ef0", 3420120), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_0),
 
 	// Rebecca Carlson Mystery 01 - Silent Footsteps
 	WME_WINENTRY("rebeccacarlson1", "",
