@@ -656,8 +656,8 @@ static const WMEGameDescription gameDescriptions[] = {
 		WME_ENTRY1s("data.dcp", "dc2e1682227716099b6acaf5cbce104d", 1676301), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_2_44),
 
 	// One Helluva Day (Demo) (multi-language)
-	WME_WINENTRY("onehelluvaday", "",
-		WME_ENTRY1s("data.dcp", "144e23fca7c1c54103dad9c1342de2b6", 229963509), Common::UNK_LANG, ADGF_UNSTABLE | ADGF_DEMO, LATEST_VERSION),
+	WME_WINENTRY("onehelluvaday", "Demo",
+		WME_ENTRY1s("data.dcp", "144e23fca7c1c54103dad9c1342de2b6", 229963509), Common::UNK_LANG, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_3),
 
 	// Open Quest
 	WME_WINENTRY("openquest", "",
