@@ -454,15 +454,15 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Escape from the Mansion
 	WME_WINENTRY("escapemansion", "Beta 1",
-		WME_ENTRY1s("data.dcp", "d8e348b2312cc36a929cad75f12e0b3a", 21452380), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+		WME_ENTRY1s("data.dcp", "d8e348b2312cc36a929cad75f12e0b3a", 21452380), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_1),
 
 	// Escape from the Mansion
 	WME_WINENTRY("escapemansion", "Beta 2",
-		WME_ENTRY1s("data.dcp", "ded5fa6c5f2afdaf2cafb53e52cd3dd8", 21455763), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+		WME_ENTRY1s("data.dcp", "ded5fa6c5f2afdaf2cafb53e52cd3dd8", 21455763), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_1),
 
 	// Escape from the Mansion
 	WME_WINENTRY("escapemansion", "1.3",
-		WME_ENTRY1s("data.dcp", "1e5d231b56c8a228cd15cb690f50253e", 29261972), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+		WME_ENTRY1s("data.dcp", "1e5d231b56c8a228cd15cb690f50253e", 29261972), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_1),
 
 	// Four
 	WME_WINENTRY("four", "",
