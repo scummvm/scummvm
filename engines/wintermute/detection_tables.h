@@ -211,8 +211,9 @@ static const WMEGameDescription gameDescriptions[] = {
 					"data.dcp", "e3ffb5d177737a57bb391995d9361055", 413397623), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
 
 	// Basis Octavus
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
 	WME_WINENTRY("basisoctavus", "",
-		WME_ENTRY1s("data.dcp", "021ef97f8f49ec33f83beae0d6e38f08", 49336909), Common::CZ_CZE, ADGF_UNSTABLE, LATEST_VERSION),
+		WME_ENTRY1s("data.dcp", "021ef97f8f49ec33f83beae0d6e38f08", 49336909), Common::CZ_CZE, ADGF_UNSTABLE, WME_1_9_1),
 
 	// Boredom of Agustin Cordes
 	WME_WINENTRY("agustin", "",
