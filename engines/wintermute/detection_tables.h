@@ -671,10 +671,11 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("pigeons", "",
 		WME_ENTRY1s("data.dcp", "9143a5b6ff8206aefe3c4c643add3ec7", 2611100), Common::EN_ANY, ADGF_UNSTABLE, WME_1_8_1),
 
-	// Pizza Morgana
-	WME_WINENTRY("pizzamorgana", "",
+	// Pizza Morgana (Demo)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("pizzamorgana", "Demo",
 		WME_ENTRY2s("english.dcp", "7fa6149bb44574109668ce585d6c41c9", 9282608,
-					"data.dcp", "a69994c463ff5fcc6fe1800662f5b7d0", 34581370), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_0),
+					"data.dcp", "a69994c463ff5fcc6fe1800662f5b7d0", 34581370), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_1),
 
 	// Project: Doom
 	WME_WINENTRY("projectdoom", "",
