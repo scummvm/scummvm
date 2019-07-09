@@ -404,7 +404,6 @@ bool AI::cacheEntGfx(AIEntity *e, bool init) {
 							_clubRightFrames++;
 							break;
 						default:
-							warning("AI-FUNCS: cacheEntGfx: Unintended State");
 							break;
 						}
 					}
