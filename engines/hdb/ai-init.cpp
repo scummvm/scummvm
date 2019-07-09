@@ -1729,8 +1729,8 @@ void AI::loadSaveFile(Common::InSaveFile *in) {
 
 	// Cache Gfx for Panic Zone, if needed
 	for (i = 0; i < _numTeleporters; i++)
-		if ((_teleporters[i].anim1 == 2) ||
-			(_teleporters[i].anim2 == 2) &&
+		if (((_teleporters[i].anim1 == 2) ||
+			 (_teleporters[i].anim2 == 2)) &&
 			!g_hdb->_window->_pzInfo.gfxPanic) {
 			g_hdb->_window->loadPanicZoneGfx();
 			break;
