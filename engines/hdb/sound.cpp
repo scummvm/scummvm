@@ -37,6 +37,10 @@ void Sound::loadSaveFile(Common::InSaveFile *in) {
 	warning("STUB: Sound::loadSaveFile()");
 }
 
+void Sound::clearPersistent() {
+	warning("STUB: Sound::clearPersistent()");
+}
+
 bool Sound::playSound(int index) {
 	debug(9, "STUB: Play Sound");
 	return true;
