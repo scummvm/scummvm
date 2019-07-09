@@ -1780,12 +1780,17 @@ void AI::loadSaveFile(Common::InSaveFile *in) {
 	}
 
 	// Load ArrowPaths
-	_arrowPaths->resize(in->readUint32LE());
-	for (i = 0; (uint)i < _arrowPaths->size(); i++) {
-		_arrowPaths->operator[](i)->type = in->readUint16LE();
-		_arrowPaths->operator[](i)->dir = (AIDir)in->readSint32LE();
-		_arrowPaths->operator[](i)->tileX = in->readUint16LE();
-		_arrowPaths->operator[](i)->tileY = in->readUint16LE();
+
+	uint32 arrowPathSIze = in->readUint32LE();
+	for (i = 0; (uint)i < arrowPathSIze; i++) {
+		ArrowPath *arrowPath = new ArrowPath;
+
+		arrowPath->type = in->readUint16LE();
+		arrowPath->dir = (AIDir)in->readSint32LE();
+		arrowPath->tileX = in->readUint16LE();
+		arrowPath->tileY = in->readUint16LE();
+
+		_arrowPaths->push_back(arrowPath);
 	}
 
 	// Load HereT List
@@ -1797,15 +1802,19 @@ void AI::loadSaveFile(Common::InSaveFile *in) {
 	}
 
 	// Load Triggers
-	_triggerList->resize(in->readUint32LE());
-	for (i = 0; (uint)i < _triggerList->size(); i++) {
-		in->read(_triggerList->operator[](i)->id, 32);
-		_triggerList->operator[](i)->x = in->readUint16LE();
-		_triggerList->operator[](i)->y = in->readUint16LE();
-		_triggerList->operator[](i)->value1 = in->readUint16LE();
-		_triggerList->operator[](i)->value2 = in->readUint16LE();
-		in->read(_triggerList->operator[](i)->luaFuncInit, 32);
-		in->read(_triggerList->operator[](i)->luaFuncUse, 32);
+	uint32 tsize = in->readUint32LE();
+	for (i = 0; (uint)i < tsize; i++) {
+		Trigger *t = new Trigger;
+
+		in->read(t->id, 32);
+		t->x = in->readUint16LE();
+		t->y = in->readUint16LE();
+		t->value1 = in->readUint16LE();
+		t->value2 = in->readUint16LE();
+		in->read(t->luaFuncInit, 32);
+		in->read(t->luaFuncUse, 32);
+
+		_triggerList->push_back(t);
 	}
 
 	AIEntity *e;
@@ -1814,8 +1823,8 @@ void AI::loadSaveFile(Common::InSaveFile *in) {
 	EntFuncPtr draw;
 
 	// Load Floats
-	_floats->resize(in->readUint32LE());
-	for (i = 0; (uint)i < _floats->size(); i++) {
+	uint32 fsize = in->readUint32LE();
+	for (i = 0; (uint)i < fsize; i++) {
 		e = new AIEntity;
 		action = init = init2 = use = NULL;
 		draw = NULL;
@@ -1890,8 +1899,8 @@ void AI::loadSaveFile(Common::InSaveFile *in) {
 	}
 
 	// Load Ents
-	_ents->resize(in->readUint32LE());
-	for (i = 0; (uint)i < _ents->size(); i++) {
+	uint32 esize = in->readUint32LE();
+	for (i = 0; (uint)i < esize; i++) {
 		e = new AIEntity;
 		action = init = init2 = use = NULL;
 		draw = NULL;
