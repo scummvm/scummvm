@@ -85,7 +85,7 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"rhiannon",        "Rhiannon: Curse of the four Branches"},
 	{"ritter",          "1 1/2 Ritter: Auf der Suche nach der hinreissenden Herzelinde"},
 	{"rosemary",        "Rosemary"},
-	{"satanandson",     "Satan and Son"},
+	{"satanandsons",    "Satan and Sons"},
 	{"securanote",      "Securanote"},
 	{"shaban",          "Shaban"},
 	{"shinestar",       "The Shine of a Star"},
@@ -1778,9 +1778,9 @@ static const WMEGameDescription gameDescriptions[] = {
 		WME_ENTRY2s("data.dcp", "5ac416cee605d3a30f4d59687b1cdab2", 364260278,
 				"string3.tab", "e9d0e6341e8994be5fa6d70d39ac630b", 813982), Common::RU_RUS, ADGF_UNSTABLE, WME_1_8_6),
 
-	// Satan and Son
-	WME_WINENTRY("satanandson", "",
-		WME_ENTRY1s("data.dcp", "16a6ba8174b697bbba9299619d1e20c4", 67539054), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, LATEST_VERSION),
+	// Satan and Sons (Demo)
+	WME_WINENTRY("satanandsons", "Demo",
+		WME_ENTRY1s("data.dcp", "16a6ba8174b697bbba9299619d1e20c4", 67539054), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_3_2),
 
 	// Rosemary
 	WME_WINENTRY("rosemary", "",
