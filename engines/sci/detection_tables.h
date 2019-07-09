@@ -27,6 +27,8 @@ namespace Sci {
 #define GUIO_STD16 GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)
 #define GUIO_STD16_UNDITHER GUIO5(GUIO_NOSPEECH, GAMEOPTION_EGA_UNDITHER, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)
 #define GUIO_STD16_SPEECH GUIO3(GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)
+#define GUIO_STD16_MAC GUIO3(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_FB01_MIDI)
+#define GUIO_STD16_MAC_UNDITHER GUIO4(GUIO_NOSPEECH, GAMEOPTION_EGA_UNDITHER, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_FB01_MIDI)
 
 #define FANMADE_L(name, resMapMd5, resMapSize, resMd5, resSize, resVol, lang) \
 	{"sci-fanmade", name, { \
@@ -80,7 +82,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.002", 0, "e1a6b6f1060f60be9dcb6d28ad7a2a20", 1168310},
 		{"resource.003", 0, "6c3d1bb26ad532c94046bc9ac49b5ff4", 891295},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformMacintosh, 0, GUIO_STD16	},
+		Common::EN_ANY, Common::kPlatformMacintosh, 0, GUIO_STD16_MAC },
 
 	// Castle of Dr. Brain - English DOS Non-Interactive Demo
 	// SCI interpreter version 1.000.005
@@ -707,7 +709,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"Data1", 0, "ef7cbd62727989818f1cfae69c9fd61d", 3038492},
 		{"Data2", 0, "2424b418f7d52c385cea4701f529c69a", 4721732},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK, GUIO_STD16	},
+		Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK, GUIO_STD16_MAC },
 
 	// Fun Seeker's Guide - English DOS
 	// SCI interpreter version 0.000.506
@@ -745,7 +747,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 #define GUIO_GK1_CD_WIN GUIO3(GUIO_LINKSPEECHTOSFX, \
                               GAMEOPTION_ORIGINAL_SAVELOAD, \
                               GAMEOPTION_HQ_VIDEO)
-#define GUIO_GK1_MAC    GUIO_GK1_FLOPPY
+#define GUIO_GK1_MAC    GUIO1(GUIO_NOSPEECH)
 
 	// Gabriel Knight - English DOS Floppy
 	// SCI interpreter version 2.000.000
@@ -1084,7 +1086,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.map", 0, "1af1d3aa3cf564f93477c9f87e53f495", 1728},
 		{"resource.001", 0, "b73b8131669d69d41a326415e4519138", 482882},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformMacintosh, 0, GUIO_STD16_UNDITHER	},
+		Common::EN_ANY, Common::kPlatformMacintosh, 0, GUIO_STD16_MAC_UNDITHER },
 
 	// Hoyle 3 - English Amiga (from www.back2roots.org)
 	// Executable scanning reports "1.005.000"
@@ -1164,7 +1166,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"Data1", 0, "99575fae4579540a314bbedd72d51e8c", 7682887},
 		{"Data2", 0, "7d4bf5bdf3c02edbf35cb8471c84ec13", 1539134},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK, GUIO_STD16	},
+		Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK, GUIO_STD16_MAC },
 
 #ifdef ENABLE_SCI32
 #define GUIO_HOYLE5 GUIO5(GUIO_NOMIDI, \
@@ -1731,7 +1733,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.006", 0, "3d22904a374c192f51e5665b74364133", 1264079},
 		{"resource.007", 0, "ffe17e23d5833a79f3695addfc149a56", 1361965},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformMacintosh, 0, GUIO_STD16	},
+		Common::EN_ANY, Common::kPlatformMacintosh, 0, GUIO_STD16_MAC },
 
 	// King's Quest 5 - FM-Towns (supplied by abevi in bug report #3038720)
 	{"kq5", "", {
@@ -1843,7 +1845,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"Data1", 0, "a183fc0c22fcbd9be4c8800d974b5599", 3892124},
 		{"Data2", 0, "b3722460dfd3097a1fbaf99a21ad8ea5", 15031272},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK, GUIO_STD16	},
+		Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK, GUIO_STD16_MAC },
 
 #ifdef ENABLE_SCI32
 
@@ -2198,7 +2200,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.001", 0, "aa6f153f70f1e32d1bde465fff08eecf", 1137418},
 		{"resource.002", 0, "b22c616aa789ebef990290c7ffd86548", 1097477},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformMacintosh, 0, GUIO_STD16	},
+		Common::EN_ANY, Common::kPlatformMacintosh, 0, GUIO_STD16_MAC },
 
 	// Larry 1 VGA Remake - English DOS Non-Interactive Demo
 	// SCI interpreter version 1.000.084
@@ -2561,7 +2563,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.006", 0, "dda27ce00682aa76198dac124bbbe334", 1110043},
 		{"resource.007", 0, "ac443fae1285fb359bf2b2bc6a7301ae", 989801},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformMacintosh, 0, GUIO_STD16	},
+		Common::EN_ANY, Common::kPlatformMacintosh, 0, GUIO_STD16_MAC },
 
 	// Larry 5 - German DOS (from Tobis87)
 	// SCI interpreter version T.A00.196
@@ -3904,7 +3906,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"Data1", 0, "106527ff8756e4e1a795d63d23e8b833", 1752358},
 		{"Data2", 0, "5cdd92033231159c6e9c71d43e9f194d", 6574746},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK, GUIO_STD16	},
+		Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK, GUIO_STD16_MAC },
 
 	// Quest for Glory 2 - English Amiga
 	// Game version 1.109
@@ -4372,7 +4374,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.003", 0, "ae46e195e66df5a131917f0aa80b5669", 1242794},
 		{"resource.004", 0, "91d58a9eb2187c38424990afe4c12bc6", 1250949},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformMacintosh, 0, GUIO_STD16	},
+		Common::EN_ANY, Common::kPlatformMacintosh, 0, GUIO_STD16_MAC },
 
 	// Space Quest 1 VGA Remake - English Non-Interactive Demo (from FRG)
 	// SCI interpreter version 1.000.181
@@ -4528,7 +4530,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.002", 0, "0d8dfe42683b46f3131823233a91ce6a", 794072},
 		{"resource.003", 0, "0d8dfe42683b46f3131823233a91ce6a", 776536},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformMacintosh, 0, GUIO_STD16_UNDITHER	},
+		Common::EN_ANY, Common::kPlatformMacintosh, 0, GUIO_STD16_MAC_UNDITHER },
 
 	// Space Quest 3 - German DOS (from Tobis87, also includes english language)
 	// SCI interpreter version 0.000.453 (?)
@@ -4542,7 +4544,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.006", 0, "9107c2aa5398e28b5c5406df13491f85", 320643},
 		{"resource.007", 0, "9107c2aa5398e28b5c5406df13491f85", 344287},
 		AD_LISTEND},
-		Common::DE_DEU, Common::kPlatformDOS, ADGF_ADDENGLISH, GUIO_STD16_UNDITHER	},
+		Common::DE_DEU, Common::kPlatformDOS, ADGF_ADDENGLISH, GUIO_STD16_MAC_UNDITHER },
 
 	// Space Quest 3 v1.052 - German DOS (supplied by markcoolio in bug report #2723860, also includes english language)
 	// Executable scanning reports "S.old.114"
@@ -4791,7 +4793,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.005", 0, "869d16cab6641c80b06f4dcee18f86bc", 1426228},
 		{"resource.006", 0, "91d23407bc0447a3722fbeb952d7edee", 1402451},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformMacintosh, 0, GUIO_STD16	},
+		Common::EN_ANY, Common::kPlatformMacintosh, 0, GUIO_STD16_MAC },
 
 	// Space Quest 4 - Russian DOS
 	// Executable scanning reports "1.000.753", VERSION file reports "1.994"
