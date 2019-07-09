@@ -67,6 +67,11 @@ Common::Error HDBGame::loadGameState(int slot) {
 	// Actual Save Data
 	loadGame(in);
 
+	_lua->loadLua(_currentLuaName); // load the Lua code FIRST! (if no file, it's ok)
+
+	saveFileName = Common::String::format("%s.l.%03d", _targetName.c_str(), slot);
+	_lua->loadSaveFile(in, saveFileName.c_str());
+
 	delete in;
 
 	return Common::kNoError;
