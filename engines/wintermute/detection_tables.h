@@ -1979,39 +1979,39 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// The Kite (Version 1.1)
 	WME_WINENTRY("thekite", "Version 1.1",
-		WME_ENTRY1s("data.dcp", "92d29428f464469bda2d81b03d4d5c3e", 47332296), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+		WME_ENTRY1s("data.dcp", "92d29428f464469bda2d81b03d4d5c3e", 47332296), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_1),
 
 	// The Kite (Version 1.2.e) (English)
 	WME_WINENTRY("thekite", "Version 1.2.e",
-		WME_ENTRY1s("data.dcp", "92451578b1bdd2b32a1db592a4f6d5fc", 47360539), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+		WME_ENTRY1s("data.dcp", "92451578b1bdd2b32a1db592a4f6d5fc", 47360539), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_1),
 
 	// The Kite (Version 1.2.i) (Italian)
 	WME_WINENTRY("thekite", "Version 1.2.i",
-		WME_ENTRY1s("data.dcp", "d3435b106a1b3b4c1df8ad596d271586", 47509274), Common::IT_ITA, ADGF_UNSTABLE, LATEST_VERSION),
+		WME_ENTRY1s("data.dcp", "d3435b106a1b3b4c1df8ad596d271586", 47509274), Common::IT_ITA, ADGF_UNSTABLE, WME_1_9_1),
 
 	// The Kite (Version 1.2.r) (Russian)
 	WME_WINENTRY("thekite", "Version 1.2.r",
-		WME_ENTRY1s("data.dcp", "d531e097dd884737469da014ed882cde", 47554582), Common::RU_RUS, ADGF_UNSTABLE, LATEST_VERSION),
+		WME_ENTRY1s("data.dcp", "d531e097dd884737469da014ed882cde", 47554582), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_1),
 
 	// The Kite (Version 1.3.e) (English)
 	WME_WINENTRY("thekite", "Version 1.3.e",
-		WME_ENTRY1s("data.dcp", "9761827b51370263b7623721545d7627", 47382987), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+		WME_ENTRY1s("data.dcp", "9761827b51370263b7623721545d7627", 47382987), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_1),
 
 	// The Kite (Version 1.4.e) (English)
 	WME_WINENTRY("thekite", "Version 1.4.e",
-		WME_ENTRY1s("data.dcp", "b7b72a291c614ad45ae6a4e9c8d55f97", 47240677), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+		WME_ENTRY1s("data.dcp", "b7b72a291c614ad45ae6a4e9c8d55f97", 47240677), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_1),
 
 	// The Kite (Version 1.4.f) (French)
 	WME_WINENTRY("thekite", "Version 1.4.f",
-		WME_ENTRY1s("data.dcp", "a1e2e8a1a0c54b2bd3f7a3b628e9483c", 47341826), Common::FR_FRA, ADGF_UNSTABLE, LATEST_VERSION),
+		WME_ENTRY1s("data.dcp", "a1e2e8a1a0c54b2bd3f7a3b628e9483c", 47341826), Common::FR_FRA, ADGF_UNSTABLE, WME_1_9_1),
 
 	// The Kite (Version 1.4.i) (Italian)
 	WME_WINENTRY("thekite", "Version 1.4.i",
-		WME_ENTRY1s("data.dcp", "69a58ff96306ec80114e0c4b3339a405", 47312894), Common::IT_ITA, ADGF_UNSTABLE, LATEST_VERSION),
+		WME_ENTRY1s("data.dcp", "69a58ff96306ec80114e0c4b3339a405", 47312894), Common::IT_ITA, ADGF_UNSTABLE, WME_1_9_1),
 
 	// The Kite (Version 1.4.r) (Russian)
 	WME_WINENTRY("thekite", "Version 1.4.r",
-		WME_ENTRY1s("data.dcp", "16618c3488b07fae5d00fb94c408d2b8", 47472358), Common::RU_RUS, ADGF_UNSTABLE, LATEST_VERSION),
+		WME_ENTRY1s("data.dcp", "16618c3488b07fae5d00fb94c408d2b8", 47472358), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_1),
 
 	// Fairy Tales About Toshechka and Boshechka
 	WME_WINENTRY("tib", "",
