@@ -226,7 +226,25 @@ void Window::loadSaveFile(Common::InSaveFile *in) {
 	// Load out various Window and Game State Info
 
 	// Load Panic Zone Info
-	in->read(&_pzInfo, sizeof(_pzInfo));
+	for (i = 0; i < 10; i++) {
+		_pzInfo.gfxNumber[i] = NULL;
+		if (i < 2)
+			_pzInfo.gfxFace[i] = NULL;
+	}
+	_pzInfo.gfxPanic = _pzInfo.gfxZone = NULL;
+
+	_pzInfo.active = in->readByte();
+	_pzInfo.sequence = in->readSint32LE();
+	_pzInfo.timer = in->readSint32LE();
+	_pzInfo.x1 = in->readSint32LE();
+	_pzInfo.y1 = in->readSint32LE();
+	_pzInfo.x2 = in->readSint32LE();
+	_pzInfo.y2 = in->readSint32LE();
+	_pzInfo.xv = in->readSint32LE();
+	_pzInfo.yv = in->readSint32LE();
+	_pzInfo.numberTime = in->readSint32LE();
+	_pzInfo.numberTimeMaster = in->readSint32LE();
+	_pzInfo.numberValue = in->readSint32LE();
 
 	// Load Dialog Info
 	in->read(_dialogInfo.title, 64);
