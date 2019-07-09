@@ -440,7 +440,7 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Dreamcat
 	WME_WINENTRY("dreamcat", "",
-		WME_ENTRY1s("data.dcp","189bd4eef29034f4ff4ed30120eaac4e", 7758040), Common::EN_ANY, ADGF_UNSTABLE | GF_LOWSPEC_ASSETS, LATEST_VERSION),
+		WME_ENTRY1s("data.dcp","189bd4eef29034f4ff4ed30120eaac4e", 7758040), Common::EN_ANY, ADGF_UNSTABLE | GF_LOWSPEC_ASSETS, WME_1_9_1),
 
 	// Dreamscape
 	WME_WINENTRY("dreamscape", "",
