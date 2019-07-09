@@ -216,7 +216,7 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Boredom of Agustin Cordes
 	WME_WINENTRY("agustin", "",
-		WME_ENTRY1s("data.dcp", "abb79c16c9b92e9b06525a4c7c3f5861", 2461949), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+		WME_ENTRY1s("data.dcp", "abb79c16c9b92e9b06525a4c7c3f5861", 2461949), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
 
 	// Beyond the Threshold
 	WME_WINENTRY("bthreshold", "",
