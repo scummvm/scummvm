@@ -129,9 +129,12 @@ public:
 
 	bool init();
 
-	void startTitle();
 	void startMenu();
+	void changeToMenu();	// Changing from Intro to Menu
+	void drawMenu();
 	void freeMenu();
+	void startTitle();
+	void drawTitle();
 
 	void fillSavegameSlots();
 

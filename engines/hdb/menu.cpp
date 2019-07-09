@@ -66,6 +66,22 @@ bool Menu::init() {
 	return true;
 }
 
+void Menu::startMenu() {
+	debug(9, "STUB: Start Menu");
+}
+
+void Menu::changeToMenu() {
+	warning("STUB: Change To Menu");
+}
+
+void Menu::drawMenu() {
+	warning("STUB: Draw Menu");
+}
+
+void Menu::freeMenu() {
+	debug(9, "STUB: Free Menu");
+}
+
 void Menu::startTitle() {
 	// REMOVE: Putting this here since Menu hasn't been implemented yet.
 	// Defaults the game into Action Mode
@@ -76,12 +92,8 @@ void Menu::startTitle() {
 
 }
 
-void Menu::startMenu() {
-	debug(9, "STUB: Start Menu");
-}
-
-void Menu::freeMenu() {
-	debug(9, "STUB: Free Menu");
+void Menu::drawTitle() {
+	warning("STUB: Draw Title");
 }
 
 void Menu::fillSavegameSlots() {
