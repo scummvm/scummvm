@@ -499,11 +499,11 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Hamlet or the last game without MMORPG features, shaders and product placement
 	WME_WINENTRY("hamlet", "",
-		WME_ENTRY1s("data.dcp", "f624add957a77c9930529fb28cc2450f", 88183022), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+		WME_ENTRY1s("data.dcp", "f624add957a77c9930529fb28cc2450f", 88183022), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_1),
 
 	// Hamlet or the last game without MMORPG features, shaders and product placement
 	WME_WINENTRY("hamlet", "",
-		WME_ENTRY1s("data.dcp", "74130d3c13f4a8caa2aafb9ee23f2639", 88184289), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+		WME_ENTRY1s("data.dcp", "74130d3c13f4a8caa2aafb9ee23f2639", 88184289), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_1),
 
 	// Helga Deep In Trouble (Czech)
 	WME_WINENTRY("helga", "",
