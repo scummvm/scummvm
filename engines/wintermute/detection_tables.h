@@ -433,11 +433,11 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// The Driller Incident (English)
 	WME_WINENTRY("driller", "",
-		WME_ENTRY1s("data.dcp","9cead7a85244263e0a5ff8f69dd7a1fc", 13671792), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+		WME_ENTRY1s("data.dcp","9cead7a85244263e0a5ff8f69dd7a1fc", 13671792), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_1),
 
 	// The Driller Incident (Russian)
 	WME_WINENTRY("driller", "",
-		WME_ENTRY1s("data.dcp","5bec2442339dd1ecf221873fff704617", 13671830), Common::RU_RUS, ADGF_UNSTABLE, LATEST_VERSION),
+		WME_ENTRY1s("data.dcp","5bec2442339dd1ecf221873fff704617", 13671830), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_1),
 
 	// Dr. Bohus
 	WME_WINENTRY("drbohus", "",
