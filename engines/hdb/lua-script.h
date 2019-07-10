@@ -80,6 +80,9 @@ public:
 	const char *getStringOffStack();
 
 	void setLuaGlobalValue(const char *name, int value);
+	bool isValid() {
+		return _systemInit;
+	}
 
 private:
 	lua_State *_state;

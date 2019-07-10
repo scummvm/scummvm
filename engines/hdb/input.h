@@ -61,6 +61,16 @@ public:
 		return _mouseY;
 	}
 
+	void assignKey(int whichKey, Common::KeyCode keyPressed) {
+		switch (whichKey) {
+		case 0: _keyUp = keyPressed; return;
+		case 1: _keyDown = keyPressed; return;
+		case 2: _keyLeft = keyPressed; return;
+		case 3: _keyRight = keyPressed; return;
+		case 4: _keyUse = keyPressed; return;
+		}
+	}
+
 private:
 
 	uint16 _buttons;	// Flags for buttons
