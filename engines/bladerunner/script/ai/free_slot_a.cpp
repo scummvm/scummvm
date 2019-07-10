@@ -230,11 +230,11 @@ void AIScriptFreeSlotA::OtherAgentEnteredThisScene(int otherActorId) {
 void AIScriptFreeSlotA::OtherAgentExitedThisScene(int otherActorId) {
 #if !BLADERUNNER_ORIGINAL_BUGS
 	if (otherActorId == kActorMcCoy && Actor_Query_Goal_Number(kActorFreeSlotA) == kGoalFreeSlotAGone) {
-		if (Global_Variable_Query(kVariableChapter == 4)) {
+		if (Global_Variable_Query(kVariableChapter) == 4) {
 			Game_Flag_Reset(kFlagRatWalkingAround);
 			Game_Flag_Reset(kFlagUG15BridgeWillBreak);
 			Actor_Set_Goal_Number(kActorFreeSlotA, kGoalFreeSlotADefault);
-		} else if (Global_Variable_Query(kVariableChapter == 5)) {
+		} else if (Global_Variable_Query(kVariableChapter) == 5) {
 			Non_Player_Actor_Combat_Mode_Off(kActorFreeSlotA);
 			Actor_Set_Goal_Number(kActorFreeSlotA, kGoalFreeSlotAAct5Default);
 		}

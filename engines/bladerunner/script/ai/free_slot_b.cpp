@@ -173,9 +173,9 @@ void AIScriptFreeSlotB::OtherAgentEnteredThisScene(int otherActorId) {
 void AIScriptFreeSlotB::OtherAgentExitedThisScene(int otherActorId) {
 #if !BLADERUNNER_ORIGINAL_BUGS
 	if (otherActorId == kActorMcCoy && Actor_Query_Goal_Number(kActorFreeSlotB) == kGoalFreeSlotBGone) {
-		if (Global_Variable_Query(kVariableChapter == 4)) {
+		if (Global_Variable_Query(kVariableChapter) == 4) {
 			Actor_Set_Goal_Number(kActorFreeSlotB, kGoalFreeSlotBAct4Default);
-		} else if (Global_Variable_Query(kVariableChapter == 5)) {
+		} else if (Global_Variable_Query(kVariableChapter) == 5) {
 			Non_Player_Actor_Combat_Mode_Off(kActorFreeSlotB);
 			Actor_Set_Goal_Number(kActorFreeSlotB, kGoalFreeSlotBAct5Default);
 		}
