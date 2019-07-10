@@ -1249,7 +1249,7 @@ enum Outtakes {
 	kOuttakeEnd7 = 26,
 	kOuttakeTyrellBuildingFly = 27,
 	kOuttakeWestwood = 28,
-	kOuttakeFlyThrough = 29,        // Act 1
+	kOuttakeFlyThrough = 29,        // Act 1 - Original: unused - has no sound
 	kOuttakeAway1 = 30,             // Act 2, 3
 	kOuttakeAway2 = 31,             // Act 1
 	kOuttakeAscent = 32,            // Act 1, 4, 5 - Original: unused

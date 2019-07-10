@@ -308,6 +308,10 @@ void SceneScriptMA01::PlayerWalkedOut() {
 		if (Global_Variable_Query(kVariableChapter) == 1) {
 			Outtake_Play(kOuttakeTowards2, true, -1);
 			Outtake_Play(kOuttakeInside1,  true, -1);
+//			// Commented out - Has no sound - TODO can we use external SFX for it?
+//			if (_vm->_cutContent) {
+//				Outtake_Play(kOuttakeFlyThrough,  true, -1);
+//			}
 			Outtake_Play(kOuttakeTowards1, true, -1);
 		}
 #if BLADERUNNER_ORIGINAL_BUGS
