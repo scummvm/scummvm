@@ -604,7 +604,7 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Mirage
 	WME_WINENTRY("mirage", "",
-		WME_ENTRY1s("data.dcp", "d230b0b99c0aa77b9ecd094d8ee5573b", 17844056), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+		WME_ENTRY1s("data.dcp", "d230b0b99c0aa77b9ecd094d8ee5573b", 17844056), Common::EN_ANY, ADGF_UNSTABLE, WME_1_8_11),
 
 	// Oknytt
 	// TODO: Engine version WME_1_9_3 is just a guess, need to check this
