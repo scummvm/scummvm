@@ -342,6 +342,13 @@ void SceneScriptCT12::PlayerWalkedOut() {
 		Game_Flag_Reset(kFlagMcCoyInChinaTown);
 		Game_Flag_Set(kFlagMcCoyInUnderground);
 	}
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+	// this enforces existing awry saved games from having a bad flag value
+	else {
+		Game_Flag_Set(kFlagMcCoyInChinaTown);
+	}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 }
 
 void SceneScriptCT12::DialogueQueueFlushed(int a1) {

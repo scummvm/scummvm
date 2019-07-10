@@ -389,7 +389,7 @@ void SceneScriptTB02::PlayerWalkedOut() {
 	    && !Game_Flag_Query(kFlagMcCoyInTyrellBuilding)
 	) {
 		// Acts 2, 3 - use a spinner fly-through transition
-		Outtake_Play(kOuttakeTowards3, true, -1);  // available in Acts 1, 2, 3
+		Outtake_Play(kOuttakeTowards3, true, -1); // available in Acts 1, 2, 3
 	}
 #endif // BLADERUNNER_ORIGINAL_BUGS
 }

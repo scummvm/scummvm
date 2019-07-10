@@ -192,6 +192,8 @@ void SceneScriptCT08::PlayerWalkedIn() {
 		Game_Flag_Reset(kFlagCT06toCT08);
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
+		// The player is now (teleported) in Chinatown (CT08) but the flag was not set here
+		Game_Flag_Set(kFlagMcCoyInChinaTown);
 		// if player clicked through fast enough in BB roof encounter, the fight music would be (auto-)saved here
 		// and would be restored when loading the auto-save
 		Music_Stop(0);
