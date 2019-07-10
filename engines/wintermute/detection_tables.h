@@ -391,7 +391,7 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// DFAF Adventure
 	WME_WINENTRY("dfafadventure", "",
-		WME_ENTRY1s("data.dcp","5704ebef961176f647742aa66bd09352", 10083417), Common::EN_ANY, ADGF_UNSTABLE | GF_LOWSPEC_ASSETS, LATEST_VERSION),
+		WME_ENTRY1s("data.dcp","5704ebef961176f647742aa66bd09352", 10083417), Common::EN_ANY, ADGF_UNSTABLE | GF_LOWSPEC_ASSETS, WME_1_9_1),
 
 	// Dirty Split (Czech)
 	WME_WINENTRY("dirtysplit", "",
