@@ -691,7 +691,11 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Rebecca Carlson Mystery 01 - Silent Footsteps
 	WME_WINENTRY("rebeccacarlson1", "",
-		WME_ENTRY1s("data.dcp", "5fac4824b7ffdaee982dc18a45428182", 773144334), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+		WME_ENTRY1s("data.dcp", "5fac4824b7ffdaee982dc18a45428182", 773144334), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Rebecca Carlson Mystery 01 - Silent Footsteps (Demo)
+	WME_WINENTRY("rebeccacarlson1", "Demo",
+		WME_ENTRY1s("data.dcp", "a46c41edb1ae5e19a3e0fc5cac3ce83b", 212698165), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_3),
 
 	// Reversion: The Escape Version 1.0
 	WME_WINENTRY("reversion1", "Version 1.0",
