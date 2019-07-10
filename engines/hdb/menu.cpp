@@ -66,6 +66,91 @@ bool Menu::init() {
 	return true;
 }
 
+void Menu::readConfig() {
+	warning("STUB: readConfig: Music Config not implemented");
+
+	if (ConfMan.hasKey(CONFIG_MSTONE7)) {
+		g_hdb->setStarsMonkeystone7(ConfMan.getInt(CONFIG_MSTONE7));
+	} else {
+		ConfMan.setInt(CONFIG_MSTONE7, STARS_MONKEYSTONE_7_FAKE);
+	}
+
+	if (ConfMan.hasKey(CONFIG_MSTONE14)) {
+		g_hdb->setStarsMonkeystone14(ConfMan.getInt(CONFIG_MSTONE14));
+	} else {
+		ConfMan.setInt(CONFIG_MSTONE14, STARS_MONKEYSTONE_14_FAKE);
+	}
+
+	if (ConfMan.hasKey(CONFIG_MSTONE21)) {
+		g_hdb->setStarsMonkeystone21(ConfMan.getInt(CONFIG_MSTONE21));
+	} else {
+		ConfMan.setInt(CONFIG_MSTONE21, STARS_MONKEYSTONE_21_FAKE);
+	}
+
+	if (ConfMan.hasKey(CONFIG_KEY_UP)) {
+		_keyAssignUp = (Common::KeyCode)ConfMan.getInt(CONFIG_KEY_UP);
+		g_hdb->_input->assignKey(0, _keyAssignUp);
+	} else {
+		ConfMan.setInt(CONFIG_KEY_UP, _keyAssignUp);
+	}
+
+	if (ConfMan.hasKey(CONFIG_KEY_DOWN)) {
+		_keyAssignDown = (Common::KeyCode)ConfMan.getInt(CONFIG_KEY_DOWN);
+		g_hdb->_input->assignKey(1, _keyAssignDown);
+	} else {
+		ConfMan.setInt(CONFIG_KEY_DOWN, _keyAssignDown);
+	}
+
+	if (ConfMan.hasKey(CONFIG_KEY_LEFT)) {
+		_keyAssignLeft = (Common::KeyCode)ConfMan.getInt(CONFIG_KEY_LEFT);
+		g_hdb->_input->assignKey(2, _keyAssignLeft);
+	} else {
+		ConfMan.setInt(CONFIG_KEY_LEFT, _keyAssignLeft);
+	}
+
+	if (ConfMan.hasKey(CONFIG_KEY_RIGHT)) {
+		_keyAssignRight = (Common::KeyCode)ConfMan.getInt(CONFIG_KEY_RIGHT);
+		g_hdb->_input->assignKey(3, _keyAssignRight);
+	} else {
+		ConfMan.setInt(CONFIG_KEY_RIGHT, _keyAssignRight);
+	}
+
+	if (ConfMan.hasKey(CONFIG_KEY_USE)) {
+		_keyAssignUse = (Common::KeyCode)ConfMan.getInt(CONFIG_KEY_USE);
+		g_hdb->_input->assignKey(4, _keyAssignUse);
+	} else {
+		ConfMan.setInt(CONFIG_KEY_USE, _keyAssignUse);
+	}
+
+	if (ConfMan.hasKey(CONFIG_CHEAT)) {
+		g_hdb->setCheatingOn();
+	}
+
+	ConfMan.flushToDisk();
+}
+
+void Menu::writeConfig() {
+	warning("STUB: writeConfig: Music Config not implemented");
+
+	int value;
+
+	value = g_hdb->getStarsMonkeystone7();
+	ConfMan.setInt(CONFIG_MSTONE7, value);
+	value = g_hdb->getStarsMonkeystone14();
+	ConfMan.setInt(CONFIG_MSTONE14, value);
+	value = g_hdb->getStarsMonkeystone21();
+	ConfMan.setInt(CONFIG_MSTONE21, value);
+
+	ConfMan.setInt(CONFIG_KEY_UP, _keyAssignUp);
+	ConfMan.setInt(CONFIG_KEY_DOWN, _keyAssignDown);
+	ConfMan.setInt(CONFIG_KEY_LEFT, _keyAssignLeft);
+	ConfMan.setInt(CONFIG_KEY_RIGHT, _keyAssignRight);
+	ConfMan.setInt(CONFIG_KEY_USE, _keyAssignUse);
+
+	if (g_hdb->getCheatingOn())
+		ConfMan.set(CONFIG_CHEAT, "1");
+}
+
 void Menu::startMenu() {
 	debug(9, "STUB: Start Menu");
 }

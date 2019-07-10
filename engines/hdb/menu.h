@@ -32,7 +32,30 @@ namespace HDB {
 #define STARS_MONKEYSTONE_21		0x77ace3	// <same> for the Monkeystone #21
 #define STARS_MONKEYSTONE_21_FAKE	0x3548fe	// fake value that means it hasn't been unlocked
 
+#define	CONFIG_MUSICVOL		"music_volume"
+#define	CONFIG_SOUNDVOL		"sound_volume"
+#define	CONFIG_MSTONE7		"hdb_memory_heap"
+#define	CONFIG_MSTONE14		"lua_stack_offset"
+#define	CONFIG_MSTONE21		"fmod_mix_timer"
+#define	CONFIG_SOUNDCACHE	"sound_cache_max"
+#define	CONFIG_GFXCACHE		"gfx_cache_max"
+#define	CONFIG_CHEAT		"hypercheat"
+
+#define	CONFIG_KEY_UP		"keyup"
+#define	CONFIG_KEY_DOWN		"keydown"
+#define	CONFIG_KEY_LEFT		"keyleft"
+#define	CONFIG_KEY_RIGHT	"keyright"
+#define	CONFIG_KEY_USE		"keyuse"
+#define	CONFIG_VOICES		"voices"
+
 enum {
+	kStarRedX = 70,
+	kStarRedY = 20,
+	kStarGreenX = 70,
+	kStarGreenY = 100,
+	kStarBlueX = 70,
+	kStarBlueY = 180,
+
 	kMenuX = 48 * 8,
 	kMenuY = 80,
 
@@ -128,6 +151,9 @@ class Menu {
 public:
 
 	bool init();
+
+	void readConfig();
+	void writeConfig();
 
 	void startMenu();
 	void changeToMenu();	// Changing from Intro to Menu
