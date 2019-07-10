@@ -572,11 +572,11 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Kulivocko (Czech)
 	WME_WINENTRY("kulivocko", "",
-		WME_ENTRY1s("data.dcp", "44306dc470e9b27474043932eccee02f", 155106392), Common::CZ_CZE, ADGF_UNSTABLE, LATEST_VERSION),
+		WME_ENTRY1s("data.dcp", "44306dc470e9b27474043932eccee02f", 155106392), Common::CZ_CZE, ADGF_UNSTABLE, WME_1_9_1),
 
 	// Kulivocko (Czech) (Demo)
 	WME_WINENTRY("kulivocko", "Demo",
-		WME_ENTRY1s("data.dcp", "63b164bdfadecbb0deb5da691afb8154", 48362234), Common::CZ_CZE, ADGF_UNSTABLE | ADGF_DEMO, LATEST_VERSION),
+		WME_ENTRY1s("data.dcp", "63b164bdfadecbb0deb5da691afb8154", 48362234), Common::CZ_CZE, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_1),
 
 	// Life In 3 Minutes
 	WME_WINENTRY("lifein3minutes", "",
