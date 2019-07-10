@@ -2017,9 +2017,9 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("tib", "",
 		WME_ENTRY1s("data.dcp", "87d296ef3f46570ed18f000d3885db77", 340264526), Common::RU_RUS, ADGF_UNSTABLE, LATEST_VERSION),
 
-	// The Trader of Stories
+	// The Trader of Stories (Demo)
 	WME_WINENTRY("tradestory", "Demo",
-		WME_ENTRY1s("data.dcp", "0a0b51191636cc8ead89b905281c3218", 40401902), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, LATEST_VERSION),
+		WME_ENTRY1s("data.dcp", "0a0b51191636cc8ead89b905281c3218", 40401902), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_0),
 
 	// the white chamber (Version 1.7 - Definitive Edition) (built 2008.06.26) (multi-language)
 	WME_WINENTRY("twc", "Definitive Edition",
