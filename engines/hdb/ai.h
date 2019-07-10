@@ -539,6 +539,9 @@ struct AIEntity {
 			moverightGfx[i] = new Tile;
 		}
 	}
+
+	void save(Common::OutSaveFile *out);
+	void load(Common::InSaveFile *in);
 };
 
 // Structs for Function Table Lookup for SaveGames

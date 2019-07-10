@@ -187,4 +187,158 @@ void HDBGame::loadSaveFile(Common::InSaveFile *in) {
 	in->read(_inMapName, 32);
 }
 
+void AIEntity::save(Common::OutSaveFile *out) {
+	char funcString[32];
+	const char *lookUp;
+
+
+	// Write out 32-char names for the function ptrs we have in the entity struct
+	lookUp = g_hdb->_ai->funcLookUp(aiAction);
+	memset(&funcString, 0, 32);
+	if (!lookUp && aiAction)
+		error("AIEntity::save: No matching ACTION function for func-string");
+	if (lookUp)
+		strcpy(funcString, lookUp);
+	out->write(funcString, 32);
+
+	lookUp = g_hdb->_ai->funcLookUp(aiUse);
+	memset(&funcString, 0, 32);
+	if (!lookUp && aiUse)
+		error("AIEntity::save: No matching USE function for func-string");
+	if (lookUp)
+		strcpy(funcString, lookUp);
+	out->write(funcString, 32);
+
+	lookUp = g_hdb->_ai->funcLookUp(aiInit);
+	memset(&funcString, 0, 32);
+	if (!lookUp && aiInit)
+		error("AIEntity::save: No matching INIT function for func-string");
+	if (lookUp)
+		strcpy(funcString, lookUp);
+	out->write(funcString, 32);
+
+	lookUp = g_hdb->_ai->funcLookUp(aiInit2);
+	memset(&funcString, 0, 32);
+	if (!lookUp && aiInit2)
+		error("AIEntity::save: No matching INIT2 function for func-string");
+	if (lookUp)
+		strcpy(funcString, lookUp);
+	out->write(funcString, 32);
+
+	lookUp = g_hdb->_ai->funcLookUp((FuncPtr)aiDraw);
+	memset(&funcString, 0, 32);
+	if (!lookUp && aiDraw)
+		error("AIEntity::save: No matching DRAW function for func-string");
+	if (lookUp)
+		strcpy(funcString, lookUp);
+	out->write(funcString, 32);
+
+	// Save AIEntity
+	out->writeSint32LE((int)type);
+	out->writeSint32LE((int)state);
+	out->writeSint32LE((int)dir);
+	out->write(luaFuncInit, 32);
+	out->write(luaFuncAction, 32);
+	out->write(luaFuncUse, 32);
+	out->writeUint16LE(level);
+	out->writeUint16LE(value1);
+	out->writeUint16LE(value2);
+	out->writeSint32LE((int)dir2);
+	out->writeUint16LE(x);
+	out->writeUint16LE(y);
+	out->writeSint16LE(drawXOff);
+	out->writeSint16LE(drawYOff);
+	out->writeUint16LE(onScreen);
+	out->writeUint16LE(moveSpeed);
+	out->writeSint16LE(xVel);
+	out->writeSint16LE(yVel);
+	out->writeUint16LE(tileX);
+	out->writeUint16LE(tileY);
+	out->writeUint16LE(goalX);
+	out->writeUint16LE(goalY);
+	out->writeUint16LE(touchpX);
+	out->writeUint16LE(touchpY);
+	out->writeUint16LE(touchpTile);
+	out->writeUint16LE(touchpWait);
+	out->writeUint16LE(stunnedWait);
+	out->writeSint16LE(sequence);
+	out->write(entityName, 32);
+	out->write(printedName, 32);
+	out->writeUint16LE(animFrame);
+	out->writeUint16LE(animDelay);
+	out->writeUint16LE(animCycle);
+}
+
+void AIEntity::load(Common::InSaveFile *in) {
+	char funcString[32];
+	FuncPtr init, init2, use, action;
+	EntFuncPtr drawf;
+
+	action = init = init2 = use = NULL;
+	drawf = NULL;
+
+	// Read 32-char names for the function ptrs we have in entity struct
+	in->read(funcString, 32);
+	if (funcString[0])
+		action = g_hdb->_ai->funcLookUp(funcString);
+
+	in->read(funcString, 32);
+	if (funcString[0])
+		use = g_hdb->_ai->funcLookUp(funcString);
+
+	in->read(funcString, 32);
+	if (funcString[0])
+		init = g_hdb->_ai->funcLookUp(funcString);
+
+	in->read(funcString, 32);
+	if (funcString[0])
+		init2 = g_hdb->_ai->funcLookUp(funcString);
+
+	in->read(funcString, 32);
+	if (funcString[0])
+		drawf = (EntFuncPtr)g_hdb->_ai->funcLookUp(funcString);
+
+	// Load AIEntity
+	type = (AIType)in->readSint32LE();
+	state = (AIState)in->readSint32LE();
+	dir = (AIDir)in->readSint32LE();
+	in->read(luaFuncInit, 32);
+	in->read(luaFuncAction, 32);
+	in->read(luaFuncUse, 32);
+	level = in->readUint16LE();
+	value1 = in->readUint16LE();
+	value2 = in->readUint16LE();
+	dir2 = (AIDir)in->readSint32LE();
+	x = in->readUint16LE();
+	y = in->readUint16LE();
+	drawXOff = in->readSint16LE();
+	drawYOff = in->readSint16LE();
+	onScreen = in->readUint16LE();
+	moveSpeed = in->readUint16LE();
+	xVel = in->readSint16LE();
+	yVel = in->readSint16LE();
+	tileX = in->readUint16LE();
+	tileY = in->readUint16LE();
+	goalX = in->readUint16LE();
+	goalY = in->readUint16LE();
+	touchpX = in->readUint16LE();
+	touchpY = in->readUint16LE();
+	touchpTile = in->readUint16LE();
+	touchpWait = in->readUint16LE();
+	stunnedWait = in->readUint16LE();
+	sequence = in->readSint16LE();
+	in->read(entityName, 32);
+	in->read(printedName, 32);
+	animFrame = in->readUint16LE();
+	animDelay = in->readUint16LE();
+	animCycle = in->readUint16LE();
+
+	aiAction = action;
+	aiInit = init;
+	aiInit2 = init2;
+	aiUse = use;
+	aiDraw = drawf;
+}
+
+
 } // End of Namespace
