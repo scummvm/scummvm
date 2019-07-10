@@ -161,12 +161,12 @@ public:
 	void readConfig();
 	void writeConfig();
 
+	bool startTitle();
+	void drawTitle();
 	void startMenu();
 	void changeToMenu();	// Changing from Intro to Menu
 	void drawMenu();
 	void freeMenu();
-	void startTitle();
-	void drawTitle();
 
 	void fillSavegameSlots();
 

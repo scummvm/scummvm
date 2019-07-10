@@ -167,18 +167,227 @@ void Menu::freeMenu() {
 	debug(9, "STUB: Free Menu");
 }
 
-void Menu::startTitle() {
-	// REMOVE: Putting this here since Menu hasn't been implemented yet.
+char nebulaNames[kNebulaCount][32] = {
+	BACKSCROLL_PLANET1,
+	BACKSCROLL_PLANET2,
+	BACKSCROLL_PLANET3,
+	BACKSCROLL_PLANET4,
+	BACKSCROLL_PLANET5,
+	BACKSCROLL_GALAXY1,
+	BACKSCROLL_GALAXY2
+};
+
+bool Menu::startTitle() {
 	// Defaults the game into Action Mode
+	warning("REMOVE: Putting this here since Menu hasn't been implemented yet");
 	g_hdb->setActionMode(1);
 	g_hdb->setGameState(GAME_PLAY);
 
-	warning("STUB: Menu::startTitle()");
+	int i;
 
+	readConfig();
+
+	_titleScreen = g_hdb->_gfx->loadPic(MONKEYLOGOSCREEN);
+	if (!_titleScreen)
+		return false;
+
+	_oohOohGfx = g_hdb->_gfx->loadPic(MONKEYLOGO_OOHOOH);
+	_rocketMain = g_hdb->_gfx->loadPic(MENU_ROCKETSHIP1);
+	_rocketSecond = g_hdb->_gfx->loadPic(MENU_ROCKETSHIP2);
+	_rocketEx1 = g_hdb->_gfx->loadPic(MENU_EXHAUST1);
+	_rocketEx2 = g_hdb->_gfx->loadPic(MENU_EXHAUST2);
+	_titleLogo = g_hdb->_gfx->loadPic(TITLELOGO);
+
+	for (i = 0; i < kNebulaCount; i++)
+		_nebulaGfx[i] = g_hdb->_gfx->loadPic(nebulaNames[i]);
+
+	_titleCycle = 1;	// 1 = Waiting for OOH OOH
+
+	_titleDelay = g_system->getMillis() + 1000 * TITLE_DELAY1;
+
+	g_hdb->_sound->stopMusic();
+	_introSong = SONG_TITLE;
+	_titleSong = SONG_MENU;
+	g_hdb->_sound->startMusic(_introSong);
+
+	return _titleActive = true;
 }
 
 void Menu::drawTitle() {
-	warning("STUB: Draw Title");
+	static int	line;
+	static uint32 time;
+
+	//sound.UpdateMusic();
+
+	if (!_titleActive)
+		return;
+
+	//-------------------------------------------------------------------
+	// draw special gfx
+	//-------------------------------------------------------------------
+	switch (_titleCycle) {
+	case 1:
+	case 3:
+		// draw entire screen
+		_titleScreen->draw(0, 0);
+		break;
+
+	case 2:
+		// draw entire screen & ooh ooh
+		_titleScreen->draw(0, 0);
+		_oohOohGfx->draw(kOohOhhX, kOohOhhY);
+		break;
+
+	case 4: // fadeout monkeystone logo
+		_titleScreen->draw(0, 0);
+		break;
+
+	case 5: // fadein HDB title screen
+	case 6: // wait
+	case 7: // fadeout HDB title screen
+		_hdbLogoScreen->draw(0, 0);
+		break;
+
+		// draw the rocket & exhaust until it stops
+	case 8:
+		g_hdb->_gfx->draw3DStars();
+
+		// draw nebula
+		_nebulaGfx[_nebulaWhich]->draw(_nebulaX, _nebulaY);
+		_nebulaY += _nebulaYVel;
+		if (_nebulaY > kScreenHeight + (kScreenHeight / 2)) {
+			_nebulaWhich = g_hdb->_rnd->getRandomNumber(kNebulaCount);
+			_nebulaX = g_hdb->_rnd->getRandomNumber(kScreenWidth) + 10;
+			_nebulaY = -11 * 8;
+			_nebulaYVel = g_hdb->_rnd->getRandomNumber(4) + 1;
+			if (_nebulaWhich > 4)		// galaxy?
+				_nebulaYVel = 1;
+		}
+
+		// draw rocket
+		_rocketMain->drawMasked(kMRocketX, _rocketY);
+		_rocketSecond->drawMasked(kMRocketX + 40, _rocketY + kMRocketYBottom);
+
+		// exhaust
+		if (_rocketEx < 5) {
+			_rocketEx1->drawMasked(kMRocketX + kMRocketEXHX, _rocketY + kMRocketYBottom);
+			_rocketEx2->drawMasked(kMRocketX + kMRocketEXHX2, _rocketY + kMRocketYBottom);
+		} else if (_rocketEx >= 5 && _rocketEx < 10) {
+			_rocketEx2->drawMasked(kMRocketX + kMRocketEXHX, _rocketY + kMRocketYBottom);
+			_rocketEx1->drawMasked(kMRocketX + kMRocketEXHX2, _rocketY + kMRocketYBottom);
+		} else {
+			_rocketEx = 0;
+			_rocketEx1->drawMasked(kMRocketX + kMRocketEXHX, _rocketY + kMRocketYBottom);
+			_rocketEx2->drawMasked(kMRocketX + kMRocketEXHX2, _rocketY + kMRocketYBottom);
+		}
+		_rocketEx++;
+
+		// title logo
+		_titleLogo->drawMasked(centerPic(_titleLogo), _rocketY + kMTitleY);
+
+		break;
+	}
+
+	// timer countdown...
+	if (_titleDelay > g_system->getMillis())
+		return;
+
+	//-------------------------------------------------------------------
+	// change title state...
+	//-------------------------------------------------------------------
+	switch (_titleCycle) {
+		//-------------------------------------------------------------------
+		// MONKEYSTONE LOGO
+		//-------------------------------------------------------------------
+		// time to OOH OOH
+	case 1:
+		_titleDelay = (uint32)(g_system->getMillis() + 1000 * TITLE_DELAY2);
+		g_hdb->_sound->playSound(SND_MONKEY_OOHOOH);
+		_titleCycle++;
+		break;
+
+		// delay after OOH OOH
+	case 2:
+		_titleDelay = g_system->getMillis() + 1000 * TITLE_DELAY3;
+		_titleCycle++;
+		break;
+
+		// done with delay; set up the fadeout...
+	case 3:
+		time = g_hdb->getTimeSliceDelta();
+		g_hdb->_gfx->setFade(false, false, kScreenFade / time); // FADEOUT
+		_titleCycle++;
+		g_hdb->_sound->stopMusic();
+	break;
+
+	// wait for fadeout, then start music
+	case 4:
+		if (g_hdb->_gfx->isFadeActive())
+			break;
+
+		g_hdb->_gfx->setFade(true, false, kScreenFade / time); // FADEIN
+		g_hdb->_sound->startMusic(_titleSong);
+		_titleCycle++;
+	break;
+
+		//-------------------------------------------------------------------
+		// HDB TITLE SCREEN
+		//-------------------------------------------------------------------
+		// wait for fadein to stop
+	case 5:
+		if (g_hdb->_gfx->isFadeActive())
+			break;
+		_titleDelay = g_system->getMillis() + 5000;
+		_titleCycle++;
+		break;
+
+		// set fadeout to stars
+	case 6:
+		g_hdb->_gfx->setFade(false, false, kScreenFade / time);		// FADEOUT
+		_titleCycle++;
+		break;
+
+		// get rocket ready
+	case 7:
+		if (g_hdb->_gfx->isFadeActive())
+			break;
+		g_hdb->_gfx->turnOffFade();
+		g_hdb->_gfx->fillScreen(0);
+		{
+			_titleCycle++;
+			_rocketY = kScreenHeight;	// ycoord
+			_rocketYVel = -1;		// yspeed
+			_rocketEx = 0;			// exhaust toggle
+			g_hdb->_gfx->setup3DStars();	// setup the star info
+
+			_nebulaWhich = g_hdb->_rnd->getRandomNumber(kNebulaCount);
+			_nebulaX = g_hdb->_rnd->getRandomNumber(kScreenWidth) + 10;
+			_nebulaY = -11 * 8;
+			_nebulaYVel = g_hdb->_rnd->getRandomNumber(10) + 2;
+			if (_nebulaWhich > 4)		// galaxy?
+				_nebulaYVel = 1;
+		}
+		break;
+
+		// move rocket up the screen!
+	case 8:
+		_titleDelay = 1;
+
+		_rocketY += _rocketYVel;
+		if (_rocketY < kMRocketY) {
+			_rocketY = kMRocketY;
+			_titleCycle = 12;
+			_titleDelay = 1;
+		}
+
+		break;
+
+		// shut down title....start up menu!
+	case 12:
+		_titleActive = false;
+		g_hdb->changeGameState();
+		break;
+	}
 }
 
 void Menu::fillSavegameSlots() {
