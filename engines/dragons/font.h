@@ -38,8 +38,9 @@ private:
 	uint32 _size;
 	uint16 *_map;
 	byte *_pixels;
+	uint32 _numChars;
 public:
-	Font(Common::SeekableReadStream &stream, uint32 mapSize, uint32 pixelSize);
+	Font(Common::SeekableReadStream &stream, uint32 mapSize, uint32 pixelOffset, uint32 pixelSize);
 	~Font();
 	Graphics::Surface *render(uint16 *text, uint16 length, byte *palette);
 };
