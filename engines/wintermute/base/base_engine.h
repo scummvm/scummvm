@@ -81,6 +81,7 @@ enum WMETargetExecutable {
 	WME_1_8_11, // DEAD:CODE 2009
 	WME_1_9_0,  // DEAD:CODE 2009, released as "1.9.0 beta"
 	WME_1_9_1,  // DEAD:CODE 2010
+	WME_1_9_2,  // DEAD:CODE 2010
 	WME_1_9_3,  // DEAD:CODE 2012, released as "1.10.1 beta"
 	WME_LITE,
 	LATEST_VERSION

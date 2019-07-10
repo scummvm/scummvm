@@ -1876,9 +1876,55 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_PLATENTRY("securanote", "",
 		WME_ENTRY1s("data.dcp", "5213d3e59b9e95b7fbd5c56f7de5341a", 2625554), Common::EN_ANY, Common::kPlatformIOS, ADGF_UNSTABLE, WME_LITE),
 
-	// Shaban
+	// Shaban (English)
+	// TODO: add checksum of localization.txt
 	WME_WINENTRY("shaban", "",
-		WME_ENTRY1s("data.dcp", "35f702ca9baabc5c620e0be230195c8a", 755388466), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+		WME_ENTRY1s("data.dcp", "35f702ca9baabc5c620e0be230195c8a", 755388466), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_2),
+
+	// Shaban (Russian)
+	WME_WINENTRY("shaban", "",
+		WME_ENTRY2s("data.dcp", "e5636aa0244ed749eeaa5f820330e6e3", 755730897,
+					"localization.txt", "519f041b1ebf0c72c455d9747f9b12d2", 7412), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_2),
+
+	// Shaban (English) (Demo)
+	WME_WINENTRY("shaban", "Demo",
+		WME_ENTRY2s("data.dcp", "7586c35bc43d06553a10e18a5a576fcc", 338067285,
+					"localization.txt", "16b02da5787e433dd0461b0ad855380c", 5844), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_2),
+
+	// Shaban (German) (Demo)
+	WME_WINENTRY("shaban", "Demo",
+		WME_ENTRY2s("data.dcp", "044d4ad8b9a079a99892fd7f7673076c", 181051276,
+					"localization.txt", "2d20495860b7abd1c9190d425021ca5c", 6329), Common::DE_DEU, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_2),
+
+	// Shaban (Spanish) (Demo)
+	WME_WINENTRY("shaban", "Demo",
+		WME_ENTRY2s("data.dcp", "044d4ad8b9a079a99892fd7f7673076c", 181051276,
+					"localization.txt", "bb5ece9c042b031838549a2de215dc9c", 6233), Common::ES_ESP, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_2),
+
+	// Shaban (French) (Demo)
+	WME_WINENTRY("shaban", "Demo",
+		WME_ENTRY2s("data.dcp", "044d4ad8b9a079a99892fd7f7673076c", 181051276,
+					"localization.txt", "8f43b60d735ceee0fdb49cd86291596d", 6274), Common::FR_FRA, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_2),
+
+	// Shaban (Italian) (Demo)
+	WME_WINENTRY("shaban", "Demo",
+		WME_ENTRY2s("data.dcp", "044d4ad8b9a079a99892fd7f7673076c", 181051276,
+					"localization.txt", "ffc7629568700d030602c9b065e27ce4", 5841), Common::IT_ITA, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_2),
+
+	// Shaban (Japanese) (Demo)
+	WME_WINENTRY("shaban", "Demo",
+		WME_ENTRY2s("data.dcp", "044d4ad8b9a079a99892fd7f7673076c", 181051276,
+					"localization.txt", "cc1e9eb0ed1e78ff84439a4fdfa9cbf5", 6816), Common::JA_JPN, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_2),
+
+	// Shaban (Dutch) (Demo)
+	WME_WINENTRY("shaban", "Demo",
+		WME_ENTRY2s("data.dcp", "044d4ad8b9a079a99892fd7f7673076c", 181051276,
+					"localization.txt", "ce2330fad0157b4ad247d72e812cb8a0", 5806), Common::NL_NLD, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_2),
+
+	// Shaban (Portuguese) (Demo)
+	WME_WINENTRY("shaban", "Demo",
+		WME_ENTRY2s("data.dcp", "044d4ad8b9a079a99892fd7f7673076c", 181051276,
+					"localization.txt", "e69948ef75907fa591f4062b05470012", 5919), Common::PT_BRA, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_2),
 
 	// The Shine of a Star
 	WME_WINENTRY("shinestar", "",
