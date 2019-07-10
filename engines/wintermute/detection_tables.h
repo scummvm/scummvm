@@ -669,7 +669,7 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Pigeons in the Park
 	WME_WINENTRY("pigeons", "",
-		WME_ENTRY1s("data.dcp", "9143a5b6ff8206aefe3c4c643add3ec7", 2611100), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+		WME_ENTRY1s("data.dcp", "9143a5b6ff8206aefe3c4c643add3ec7", 2611100), Common::EN_ANY, ADGF_UNSTABLE, WME_1_8_1),
 
 	// Pizza Morgana
 	WME_WINENTRY("pizzamorgana", "",
