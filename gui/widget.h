@@ -31,6 +31,8 @@
 #include "graphics/surface.h"
 #include "gui/object.h"
 #include "gui/ThemeEngine.h"
+#include "common/text-to-speech.h"
+#include "common/system.h"
 
 namespace GUI {
 
@@ -218,7 +220,7 @@ public:
 
 	void handleMouseUp(int x, int y, int button, int clickCount);
 	void handleMouseDown(int x, int y, int button, int clickCount);
-	void handleMouseEntered(int button)	{ if (_duringPress) { setFlags(WIDGET_PRESSED); } else { setFlags(WIDGET_HILITED); } markAsDirty(); }
+	void handleMouseEntered(int button)	{ g_system->getTextToSpeechManager()->say(_label); if (_duringPress) { setFlags(WIDGET_PRESSED); } else { setFlags(WIDGET_HILITED); } markAsDirty(); }
 	void handleMouseLeft(int button)	{ clearFlags(WIDGET_HILITED | WIDGET_PRESSED); markAsDirty(); }
 
 	void setHighLighted(bool enable);
