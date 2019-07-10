@@ -1395,6 +1395,14 @@ public:
 		debug(9, "STUB: Add Music System Variables");
 		return 1;
 	}
+	int getSFXVolume() {
+		debug(9, "STUB: Add Music System Variables");
+		return 1;
+	}
+	int getVoiceStatus() {
+		debug(9, "STUB: Add Music System Variables");
+		return 1;
+	}
 
 	bool playSound(int index);
 	bool playSoundEx(int index, int channel, bool loop);
