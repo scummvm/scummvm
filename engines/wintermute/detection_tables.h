@@ -61,6 +61,7 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"dreamscape",      "Dreamscape"},
 	{"erinmyers",       "The Death of Erin Myers"},
 	{"escapemansion",   "Escape from the Mansion"},
+	{"findinghope",     "Finding Hope"},
 	{"four",            "Four"},
 	{"framed",          "Framed"},
 	{"ghostsheet",      "Ghost in the Sheet"},
@@ -463,6 +464,15 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Escape from the Mansion
 	WME_WINENTRY("escapemansion", "1.3",
 		WME_ENTRY1s("data.dcp", "1e5d231b56c8a228cd15cb690f50253e", 29261972), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_1),
+
+	// Finding Hope (English)
+	WME_WINENTRY("findinghope", "",
+		WME_ENTRY1s("data.dcp", "d7c3857b622e038781bf42abd3c64962", 110247769), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_1),
+
+	// Finding Hope (Russian)
+	// NOTE: this game distribution contained unpacked game files instead of usual game.dcp package
+	WME_WINENTRY("findinghope", "",
+		WME_ENTRY1s("default.game", "57db79e9de62b9d1c7a335822f6242ff", 742), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_1),
 
 	// Four
 	WME_WINENTRY("four", "",
