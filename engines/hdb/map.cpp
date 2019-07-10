@@ -186,6 +186,10 @@ void Map::loadSaveFile(Common::InSaveFile *in) {
 	_mapLaserBeams = new byte[_width * _height];
 	for (i = 0; i < _width * _height; i++)
 		_mapLaserBeams[i] = in->readByte();
+
+	// load all the map's tiles (cache)
+	loadTiles();
+	_mapLoaded = true;
 }
 
 int Map::loadTiles() {
