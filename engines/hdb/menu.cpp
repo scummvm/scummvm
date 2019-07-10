@@ -26,7 +26,8 @@
 namespace HDB {
 
 bool Menu::init() {
-//	_starWarp = 0;
+	_starWarp = 0;
+	_rocketEx = 0;
 	_titleActive = false;
 	_menuActive = false;
 	_optionsActive = false;
@@ -152,30 +153,554 @@ void Menu::writeConfig() {
 }
 
 void Menu::startMenu() {
-	debug(9, "STUB: Start Menu");
+	int	i;
+
+	// stuff that gets loaded-in at Title Screen
+	if (!_titleLogo) {
+		_titleLogo = g_hdb->_gfx->loadPic(TITLELOGO);
+		for (i = 0; i < kNebulaCount; i++)
+			_nebulaGfx[i] = g_hdb->_gfx->loadPic(nebulaNames[i]);
+
+		_rocketMain = g_hdb->_gfx->loadPic(MENU_ROCKETSHIP1);
+		_rocketSecond = g_hdb->_gfx->loadPic(MENU_ROCKETSHIP2);
+		_rocketEx1 = g_hdb->_gfx->loadPic(MENU_EXHAUST1);
+		_rocketEx2 = g_hdb->_gfx->loadPic(MENU_EXHAUST2);
+	}
+	//
+	// menu-only stuff
+	//
+	_newGfx = g_hdb->_gfx->loadPic(MENU_NEWGAME);
+	_loadGfx = g_hdb->_gfx->loadPic(MENU_LOADGAME);
+	_optionsGfx = g_hdb->_gfx->loadPic(MENU_OPTIONS);
+	_quitGfx = g_hdb->_gfx->loadPic(MENU_QUIT);
+	_resumeGfx = g_hdb->_gfx->loadPic(MENU_RESUME);
+	_slotGfx = g_hdb->_gfx->loadPic(GAMEFILE_SLOT);
+	_menuBackoutGfx = g_hdb->_gfx->loadPic(MENU_BACK);
+	_menuBackspaceGfx = g_hdb->_gfx->loadPic(MENU_BACKSPACE);
+	_controlButtonGfx = g_hdb->_gfx->loadPic(MENU_CONTROLS);
+	_controlsGfx = g_hdb->_gfx->loadPic(PIC_CONTROLSSCREEN);
+
+	_vortexian[0] = g_hdb->_gfx->loadTile(GROUP_ENT_VORTEXIAN_STANDDOWN"01");
+	_vortexian[1] = g_hdb->_gfx->loadTile(GROUP_ENT_VORTEXIAN_STANDDOWN"02");
+	_vortexian[2] = g_hdb->_gfx->loadTile(GROUP_ENT_VORTEXIAN_STANDDOWN"03");
+
+	_modeLoadGfx = g_hdb->_gfx->loadPic(MENU_LOAD);
+	_modeSaveGfx = g_hdb->_gfx->loadPic(MENU_SAVE);
+
+	_modePuzzleGfx = g_hdb->_gfx->loadPic(MODE_PUZZLE);
+	_modeActionGfx = g_hdb->_gfx->loadPic(MODE_ACTION);
+
+	_sliderLeft = g_hdb->_gfx->loadPic(MENU_SLIDER_LEFT);
+	_sliderMid = g_hdb->_gfx->loadPic(MENU_SLIDER_MID);
+	_sliderRight = g_hdb->_gfx->loadPic(MENU_SLIDER_RIGHT);
+	_sliderKnob = g_hdb->_gfx->loadPic(MENU_SLIDER_KNOB);
+
+	_starRedGfx[0] = g_hdb->_gfx->loadPic(SECRETSTAR_RED1);
+	_starRedGfx[1] = g_hdb->_gfx->loadPic(SECRETSTAR_RED2);
+	_starGreenGfx[0] = g_hdb->_gfx->loadPic(SECRETSTAR_GREEN1);
+	_starGreenGfx[1] = g_hdb->_gfx->loadPic(SECRETSTAR_GREEN2);
+	_starBlueGfx[0] = g_hdb->_gfx->loadPic(SECRETSTAR_BLUE1);
+	_starBlueGfx[1] = g_hdb->_gfx->loadPic(SECRETSTAR_BLUE2);
+
+	// setup menu falling stars
+	_star[0] = g_hdb->_gfx->loadPic(STAR_1);
+	_star[1] = g_hdb->_gfx->loadPic(STAR_2);
+	_star[2] = g_hdb->_gfx->loadPic(STAR_3);
+
+	_versionGfx = g_hdb->_gfx->loadPic(MENU_VERSION_NUMBER);
+
+	_warpGfx = g_hdb->_gfx->loadPic(MENU_WARP);
+
+	// if we're popping back into menu, don't init this
+	if (!_fStars[0].y) {
+		for (i = 0; i < kMaxStars; i++) {
+			_fStars[i].y = -30;
+			_fStars[i].x = g_hdb->_rnd->getRandomNumber(kScreenWidth);
+			_fStars[i].speed = g_hdb->_rnd->getRandomNumber(5) + 1;
+			_fStars[i].anim = g_hdb->_rnd->getRandomNumber(3);
+			_fStars[i].delay = 5;
+		}
+	}
+
+	_quitScreen = NULL;
+
+	// did we skip the intro?
+	if (!_nebulaY) {
+		g_hdb->_gfx->setup3DStars();	// setup the star info
+
+		_nebulaWhich = g_hdb->_rnd->getRandomNumber(kNebulaCount);
+		_nebulaX = g_hdb->_rnd->getRandomNumber(kScreenWidth) + 10;
+		_nebulaY = -20;
+		_nebulaYVel = g_hdb->_rnd->getRandomNumber(10) + 2;
+	}
+
+	_optionsScrollX = kMenuX;
+	_oBannerY = -48;
+	_rocketY = kMRocketY;
+	_rocketX = kMRocketX;
+	_menuActive = true;
+	_clickDelay = 30;
+
+	fillSavegameSlots();
+
+	// did we already say "HYPERSPACE DELIVERY BOY!" ??
+	// if not, this is a great time to check for Copy Protection!
+	if (_sayHDB == false) {
+		g_hdb->_sound->playSound(SND_HDB);
+		_sayHDB = true;
+	}
 }
 
 void Menu::changeToMenu() {
-	warning("STUB: Change To Menu");
+	if (!g_hdb->_sound->songPlaying(_titleSong)) {
+		g_hdb->_sound->stopMusic();
+		g_hdb->_sound->startMusic(_titleSong);
+	}
 }
 
 void Menu::drawMenu() {
-	warning("STUB: Draw Menu");
+	// DEC the counter...
+	if (_clickDelay)
+		_clickDelay--;
+
+	//	sound.UpdateMusic();		// fading in/out
+	g_hdb->_gfx->turnOffFade();			// heh
+
+	//-------------------------------------------------------------------
+	// Draw the MAIN MENU
+	//-------------------------------------------------------------------
+	if (_menuActive) {
+		drawRocketAndSelections();
+
+		// draw version #
+		_versionGfx->drawMasked(kScreenWidth - 6 * 8, kScreenHeight - 8);
+
+		//
+		// see if the Options/GameFiles menu has scrolled off
+		//
+		if (_optionsScrolling) {
+			_optionsScrollX += _optionsXV;
+			_rocketX += -_optionsXV;
+			_oBannerY += _optionsXV / 3;
+			_optionsXV += 3;
+			if (_optionsScrollX > kScreenWidth + 10) {
+				switch (_nextScreen) {
+				case 0: _optionsActive = true; break;
+				case 1: _gamefilesActive = 1; break;
+				case 2: _newgameActive = true; break;
+				}
+
+				_oBannerY = 0;
+				_optionsScrolling = false;
+				_menuActive = false;
+			}
+		}
+
+		//
+		// Draw the Secret Stars! (tm)
+		//
+		if (g_hdb->getStarsMonkeystone7() == STARS_MONKEYSTONE_7 ||
+			g_hdb->getStarsMonkeystone14() == STARS_MONKEYSTONE_14 ||
+			g_hdb->getStarsMonkeystone21() == STARS_MONKEYSTONE_21) {
+			static int anim = 0, angler = 0, angleb = 90, angleg = 180;
+			static uint32 anim_time;
+
+			if (g_hdb->getStarsMonkeystone7() == STARS_MONKEYSTONE_7)
+				_starRedGfx[anim]->drawMasked(
+					kStarRedX + (int)(5 * g_hdb->_gfx->getCos(angler)),
+					kStarRedY + (int)(5 * g_hdb->_gfx->getSin(angler))
+				);
+			if (g_hdb->getStarsMonkeystone14() == STARS_MONKEYSTONE_14)
+				_starGreenGfx[anim]->drawMasked(
+					kStarGreenX + (int)(5 * g_hdb->_gfx->getCos(angleg)),
+					kStarGreenY + (int)(5 * g_hdb->_gfx->getSin(angleg))
+				);
+			if (g_hdb->getStarsMonkeystone21() == STARS_MONKEYSTONE_21)
+				_starBlueGfx[anim]->drawMasked(
+					kStarBlueX + (int)(5 * g_hdb->_gfx->getCos(angleb)),
+					kStarBlueY + (int)(5 * g_hdb->_gfx->getSin(angleb))
+				);
+
+			angler += 10; if (angler > 359) angler = 0;
+			angleg += 10; if (angleg > 359) angleg = 0;
+			angleb += 10; if (angleb > 359) angleb = 0;
+
+			if (anim_time < g_hdb->getTimeSlice()) {
+				anim_time = g_hdb->getTimeSlice() + 500;
+				anim = 1 - anim;
+			}
+		}
+
+		//#ifndef HDB_DEMO
+		//
+		// Draw WARP
+		//
+		if (g_hdb->getCheatingOn() && _warpGfx)
+			_warpGfx->drawMasked(0, kScreenHeight - _warpGfx->_height);
+		//#endif
+	} else if (_newgameActive) {
+		//-------------------------------------------------------------------
+		// Draw the NEWGAME menu
+		//-------------------------------------------------------------------
+		g_hdb->_gfx->draw3DStars();
+
+		//
+		// see if the Options menu has scrolled back on
+		//
+		if (_optionsScrolling) {
+			_optionsScrollX += _optionsXV;
+			_rocketX += -_optionsXV;
+			_oBannerY += _optionsXV / 3;
+			_optionsXV -= 3;
+			if (_optionsScrollX < kMenuX) {
+				_optionsScrollX = kMenuX;
+				_rocketX = kMRocketX;
+				_oBannerY = -48;
+				_optionsScrolling = false;
+				_newgameActive = false;
+				_menuActive = true;
+			}
+
+			drawRocketAndSelections();
+		} else {
+			drawNebula();
+			_newGfx->drawMasked(centerPic(_newGfx), _oBannerY);
+
+			_modePuzzleGfx->drawMasked(kNewGameX, kModePuzzleY);
+			_modePuzzleGfx->drawMasked(kNewGameX, kModeActionY);
+
+			g_hdb->_gfx->setCursor(kNewGameX2, kModePuzzleY - 10);
+			g_hdb->_gfx->drawText("PUZZLE MODE");
+			g_hdb->_gfx->setCursor(kNewGameX2, kModePuzzleY + 10);
+			g_hdb->_gfx->drawText("In this mode, the focus");
+			g_hdb->_gfx->setCursor(kNewGameX2, kModePuzzleY + 22);
+			g_hdb->_gfx->drawText("is on solving puzzles and");
+			g_hdb->_gfx->setCursor(kNewGameX2, kModePuzzleY + 34);
+			g_hdb->_gfx->drawText("avoiding enemies.");
+
+			g_hdb->_gfx->setCursor(kNewGameX2, kModeActionY - 10);
+			g_hdb->_gfx->drawText("ACTION MODE");
+			g_hdb->_gfx->setCursor(kNewGameX2, kModeActionY + 10);
+			g_hdb->_gfx->drawText("In this mode, the focus");
+			g_hdb->_gfx->setCursor(kNewGameX2, kModeActionY + 22);
+			g_hdb->_gfx->drawText("is on solving puzzles and");
+			g_hdb->_gfx->setCursor(kNewGameX2, kModeActionY + 34);
+			g_hdb->_gfx->drawText("attacking enemies!");
+
+			// title logo
+			_titleLogo->drawMasked(centerPic(_titleLogo), _rocketY + kMTitleY);
+			_menuBackoutGfx->drawMasked(kBackoutX, kBackoutY);
+		}
+	} else if (_optionsActive) {
+		//-------------------------------------------------------------------
+		// Draw the OPTIONS menu
+		//-------------------------------------------------------------------
+		g_hdb->_gfx->draw3DStars();
+
+		//
+		// see if the Options menu has scrolled back on
+		//
+		if (_optionsScrolling) {
+			_optionsScrollX += _optionsXV;
+			_rocketX += -_optionsXV;
+			_oBannerY += _optionsXV / 3;
+			_optionsXV -= 3;
+			if (_optionsScrollX < kMenuX) {
+				_optionsScrollX = kMenuX;
+				_rocketX = kMRocketX;
+				_oBannerY = -48;
+				_optionsScrolling = false;
+				_optionsActive = false;
+				_menuActive = true;
+			}
+
+			drawRocketAndSelections();
+		} else if (_optionsActive == 1) {
+			//
+			// Options menu content
+			//
+			static	int		hand_off, hand_yvel = 1;
+
+			drawNebula();
+			_optionsGfx->drawMasked(centerPic(_optionsGfx), _oBannerY);
+
+			g_hdb->_gfx->setCursor(kOptionsX + kOptionSPC, kOptionsY);
+			if (!g_hdb->_sound->getMusicVolume())
+				g_hdb->_gfx->drawText("Music OFF");
+			else
+				g_hdb->_gfx->drawText("Music Volume");
+
+			drawSlider(kOptionsX, kOptionsY + 20, g_hdb->_sound->getMusicVolume());
+
+			g_hdb->_gfx->setCursor(kOptionsX + kOptionSPC, kOptionsY + kOptionLineSPC * 2);
+			if (!g_hdb->_sound->getSFXVolume())
+				g_hdb->_gfx->drawText("Sound Effects OFF");
+			else
+				g_hdb->_gfx->drawText("Sound Effects Volume");
+
+			drawSlider(kOptionsX, kOptionsY + kOptionLineSPC * 2 + 20, g_hdb->_sound->getSFXVolume());
+
+			// Voices ON or OFF
+			drawToggle(kOptionsX, kOptionsY + kOptionLineSPC * 4 + 20, g_hdb->_sound->getVoiceStatus());
+
+			if (!g_hdb->isVoiceless()) {
+				g_hdb->_gfx->setCursor(kOptionsX + kOptionSPC + 24, kOptionsY + kOptionLineSPC * 4 + 24);
+				if (!g_hdb->_sound->getVoiceStatus())
+					g_hdb->_gfx->drawText("Voice Dialogue OFF");
+				else
+					g_hdb->_gfx->drawText("Voice Dialogue ON");
+			}
+
+
+			// title logo
+			_titleLogo->drawMasked(centerPic(_titleLogo), _rocketY + kMTitleY);
+			_menuBackoutGfx->drawMasked(kBackoutX, kBackoutY);
+			_controlButtonGfx->drawMasked(centerPic(_controlButtonGfx), kMControlsY);
+		} else if (_optionsActive == 2) {
+			//
+			// Draw CONTROLS screen
+			//
+				controlsDraw();
+				return;
+		}
+	} else if (_gamefilesActive) {
+		//-------------------------------------------------------------------
+		//	DRAW GAMEFILES MENU
+		//-------------------------------------------------------------------
+		int		i;
+
+		g_hdb->_gfx->draw3DStars();
+		//
+		// see if the Options menu has scrolled back on
+		//
+		if (_optionsScrolling) {
+			_optionsScrollX += _optionsXV;
+			_rocketX += -_optionsXV;
+			_oBannerY += _optionsXV / 3;
+			_optionsXV -= 3;
+			if (_optionsScrollX < kMenuX) {
+				_optionsScrollX = kMenuX;
+				_rocketX = kMRocketX;
+				_oBannerY = -48;
+				_optionsScrolling = false;
+				_gamefilesActive = false;
+				_menuActive = true;
+			}
+
+			drawRocketAndSelections();
+		} else {
+			static int	anim = 0;
+			static	uint32 anim_time = 0;
+
+			drawNebula();
+			_titleLogo->drawMasked(centerPic(_titleLogo), _rocketY + kMTitleY);
+			// CHOOSE SLOT screen
+			_modeLoadGfx->drawMasked(centerPic(_modeLoadGfx), _oBannerY);
+			_menuBackoutGfx->drawMasked(kBackoutX, kBackoutY);
+
+
+			if (_saveGames[0].seconds) {
+				_vortexian[anim]->drawMasked(kVortSaveX, kVortSaveY);
+			}
+			if (anim_time < g_hdb->getTimeSlice()) {
+				anim_time = g_hdb->getTimeSlice() + 50;
+				anim++;
+				if (anim > 2)
+					anim = 0;
+			}
+
+			for (i = 0; i < kNumSaveSlots; i++) {
+				char	buff[16];
+				int		seconds = _saveGames[i].seconds;
+
+				_slotGfx->drawMasked(kSaveSlotX - 8, i * 32 + (kSaveSlotY - 4));
+				if (seconds || _saveGames[i].mapName[0]) {
+
+					g_hdb->_gfx->setTextEdges(0, kScreenWidth + 60, 0, kScreenHeight);
+					g_hdb->_gfx->setCursor(kSaveSlotX, i * 32 + kSaveSlotY);
+					g_hdb->_gfx->drawText(_saveGames[i].mapName);
+
+					g_hdb->_gfx->setCursor(kSaveSlotX + 180, i * 32 + kSaveSlotY);
+					sprintf(buff, "%02d:%02d", seconds / 3600, (seconds / 60) % 60);
+					g_hdb->_gfx->drawText(buff);
+				}
+			}
+		}
+	} else if (_warpActive) {
+		//-------------------------------------------------------------------
+		//	DRAW WARP MENU
+		//-------------------------------------------------------------------
+		int		i;
+		char	string[32];
+
+		g_hdb->_gfx->draw3DStars();
+		drawNebula();
+		drawWarpScreen();
+		// title logo
+		_titleLogo->drawMasked(centerPic(_titleLogo), _rocketY + kMTitleY);
+		_menuBackoutGfx->drawMasked(kWarpBackoutX, kWarpBackoutY);
+
+		for (i = 0; i < 10; i++) {
+			sprintf(string, "Map %2d", i);
+			g_hdb->_gfx->setCursor(kWarpX + 4, i * 16 + kWarpY);
+			g_hdb->_gfx->drawText(string);
+		}
+		for (i = 0; i < 10; i++) {
+			sprintf(string, "Map %d", i + 10);
+			g_hdb->_gfx->setCursor(kWarpX + 80, i * 16 + kWarpY);
+			g_hdb->_gfx->drawText(string);
+		}
+		for (i = 0; i < 10; i++) {
+			sprintf(string, "Map %d", i + 20);
+			g_hdb->_gfx->setCursor(kWarpX + 160, i * 16 + kWarpY);
+			g_hdb->_gfx->drawText(string);
+		}
+
+		if (_warpActive > 1) {
+			g_hdb->_gfx->setCursor(kWarpX + 60, kWarpY + 164);
+			sprintf(string, "Warping to MAP%d", _warpActive - 2);
+			g_hdb->_gfx->centerPrint(string);
+		}
+	} else if (_quitActive) {
+		//-------------------------------------------------------------------
+		//	DRAW QUIT SCREEN
+		//-------------------------------------------------------------------
+		g_hdb->_gfx->draw3DStars();
+		drawNebula();
+		{
+			if (!_quitScreen)
+				_quitScreen = g_hdb->_gfx->loadPic(PIC_QUITSCREEN);
+			_quitScreen->drawMasked(kQuitX, kQuitY);
+		}
+	}
 }
 
 void Menu::freeMenu() {
-	debug(9, "STUB: Free Menu");
-}
+	int		i;
 
-char nebulaNames[kNebulaCount][32] = {
-	BACKSCROLL_PLANET1,
-	BACKSCROLL_PLANET2,
-	BACKSCROLL_PLANET3,
-	BACKSCROLL_PLANET4,
-	BACKSCROLL_PLANET5,
-	BACKSCROLL_GALAXY1,
-	BACKSCROLL_GALAXY2
-};
+	// title sequence stuff
+	if (_titleScreen)
+		_titleScreen->free();
+	_titleScreen = NULL;
+	if (_oohOohGfx)
+		_oohOohGfx->free();
+	_oohOohGfx = NULL;
+
+	if (_newGfx)
+		_newGfx->free();
+	_newGfx = NULL;
+	if (_loadGfx)
+		_loadGfx->free();
+	_loadGfx = NULL;
+	if (_optionsGfx)
+		_optionsGfx->free();
+	_optionsGfx = NULL;
+	if (_quitGfx)
+		_quitGfx->free();
+	_quitGfx = NULL;
+	if (_resumeGfx)
+		_resumeGfx->free();
+	_resumeGfx = NULL;
+	if (_slotGfx)
+		_slotGfx->free();
+	_slotGfx = NULL;
+	if (_rocketMain)
+		_rocketMain->free();
+	_rocketMain = NULL;
+	if (_rocketSecond)
+		_rocketSecond->free();
+	_rocketSecond = NULL;
+	if (_rocketEx1)
+		_rocketEx1->free();
+	_rocketEx1 = NULL;
+	if (_rocketEx2)
+		_rocketEx2->free();
+	_rocketEx2 = NULL;
+	if (_titleLogo)
+		_titleLogo->free();
+	_titleLogo = NULL;
+
+	if (_hdbLogoScreen)
+		_hdbLogoScreen->free();
+	_hdbLogoScreen = NULL;
+
+	if (_nebulaGfx[0])
+		for (i = 0; i < kNebulaCount; i++) {
+			_nebulaGfx[i]->free();
+			_nebulaGfx[i] = NULL;
+		}
+
+	if (_sliderLeft)
+		_sliderLeft->free();
+	_sliderLeft = NULL;
+	if (_sliderMid)
+		_sliderMid->free();
+	_sliderMid = NULL;
+	if (_sliderRight)
+		_sliderRight->free();
+	_sliderRight = NULL;
+	if (_sliderKnob)
+		_sliderKnob->free();
+	_sliderKnob = NULL;
+	if (_modePuzzleGfx)
+		_modePuzzleGfx->free();
+	_modePuzzleGfx = NULL;
+	if (_modeActionGfx)
+		_modeActionGfx->free();
+	_modeActionGfx = NULL;
+	if (_modeLoadGfx)
+		_modeLoadGfx->free();
+	_modeLoadGfx = NULL;
+	if (_modeSaveGfx)
+		_modeSaveGfx->free();
+	_modeSaveGfx = NULL;
+	if (_menuBackoutGfx)
+		_menuBackoutGfx->free();
+	_menuBackoutGfx = NULL;
+
+	if (_controlButtonGfx)
+		_controlButtonGfx->free();
+	_controlButtonGfx = NULL;
+
+	if (_controlsGfx)
+		_controlsGfx->free();
+	_controlsGfx = NULL;
+
+	if (_vortexian[0]) {
+		_vortexian[0]->free();
+		_vortexian[1]->free();
+		_vortexian[2]->free();
+		_vortexian[0] = _vortexian[1] = _vortexian[2] = NULL;
+	}
+
+	if (_star[0]) {
+		_star[0]->free();
+		_star[1]->free();
+		_star[2]->free();
+		_star[0] = _star[1] = _star[2] = NULL;
+	}
+
+	// secret stars
+	if (_starRedGfx[0]) {
+		_starRedGfx[0]->free();
+		_starRedGfx[1]->free();
+		_starGreenGfx[0]->free();
+		_starGreenGfx[1]->free();
+		_starBlueGfx[0]->free();
+		_starBlueGfx[1]->free();
+		_starRedGfx[0] = _starRedGfx[1] = NULL;
+		_starGreenGfx[0] = _starGreenGfx[1] = NULL;
+		_starBlueGfx[0] = _starBlueGfx[1] = NULL;
+	}
+
+	if (_versionGfx)
+		_versionGfx->free();
+	_versionGfx = NULL;
+
+	if (_warpGfx)
+		_warpGfx->free();
+	_warpGfx = NULL;
+}
 
 bool Menu::startTitle() {
 	// Defaults the game into Action Mode
@@ -411,6 +936,38 @@ void Menu::fillSavegameSlots() {
 		}
 		_saveGames[i].fileSlot = i + 1;
 	}
+}
+
+void Menu::processInput(int x, int y) {
+	warning("STUB: Menu: processInput");
+}
+
+void Menu::controlsInput(int x, int y) {
+	warning("STUB: Menu: controlsInput");
+}
+
+void Menu::controlsDraw() {
+	warning("STUB: Menu: controlsDraw");
+}
+
+void Menu::drawNebula() {
+	warning("STUB: Menu: drawNebula");
+}
+
+void Menu::drawRocketAndSelections() {
+	warning("STUB: Menu: drawRocketAndSelections");
+}
+
+void Menu::drawSlider(int x, int y, int offset) {
+	warning("STUB: Menu: drawSlider");
+}
+
+void Menu::drawToggle(int x, int y, bool flag) {
+	warning("STUB: Menu: drawToggle");
+}
+
+void Menu::drawWarpScreen() {
+	warning("STUB: Menu: drawWarpScreen");
 }
 
 } // End of Namespace
