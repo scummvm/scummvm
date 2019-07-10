@@ -508,22 +508,22 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Helga Deep In Trouble (Czech)
 	WME_WINENTRY("helga", "",
 		WME_ENTRY2s("data.dcp", "25cb955a60b58326f2eeda1ce288fb37", 183251259,
-					"data.dcp", "25cb955a60b58326f2eeda1ce288fb37", 183251259), Common::CZ_CZE, ADGF_UNSTABLE, LATEST_VERSION),
+					"data.dcp", "25cb955a60b58326f2eeda1ce288fb37", 183251259), Common::CZ_CZE, ADGF_UNSTABLE, WME_1_9_3),
 
 	// Helga Deep In Trouble (English)
 	WME_WINENTRY("helga", "",
 		WME_ENTRY2s("english.dcp", "bfa136b21bdbc7d8691c0770a6d40bc3", 135931,
-					"data.dcp", "25cb955a60b58326f2eeda1ce288fb37", 183251259), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+					"data.dcp", "25cb955a60b58326f2eeda1ce288fb37", 183251259), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
 
 	// Helga Deep In Trouble (Demo) (Czech)
 	WME_WINENTRY("helga", "Demo",
 		WME_ENTRY2s("data.dcp", "45134ed93bc391edf148b79cdcbf2a09", 154266028,
-					"data.dcp", "45134ed93bc391edf148b79cdcbf2a09", 154266028), Common::CZ_CZE, ADGF_UNSTABLE | ADGF_DEMO, LATEST_VERSION),
+					"data.dcp", "45134ed93bc391edf148b79cdcbf2a09", 154266028), Common::CZ_CZE, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_3),
 
 	// Helga Deep In Trouble (Demo) (English)
 	WME_WINENTRY("helga", "Demo",
 		WME_ENTRY2s("english.dcp", "b3a93e678f0ef97200f691cd1724643f", 135864,
-					"data.dcp", "45134ed93bc391edf148b79cdcbf2a09", 154266028), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, LATEST_VERSION),
+					"data.dcp", "45134ed93bc391edf148b79cdcbf2a09", 154266028), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_3),
 
 	// James Peris: No License Nor Control (English)
 	WME_WINENTRY("jamesperis", "",
