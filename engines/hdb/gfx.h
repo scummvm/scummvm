@@ -144,6 +144,7 @@ public:
 	void drawText(const char *string);
 	void getDimensions(const char *string, int *pixelsWide, int *lines);
 	int stringLength(const char *string);
+	void centerPrint(const char *string);
 	void setTextEdges(int left, int right, int top, int bottom);
 	void getTextEdges(int *left, int *right, int *top, int *bottom);
 	void setKernLead(int kern, int lead);
