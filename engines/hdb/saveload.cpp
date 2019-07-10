@@ -160,4 +160,24 @@ void HDBGame::loadGame(Common::InSaveFile *in) {
 	_gfx->turnOffFade();
 }
 
+void HDBGame::save(Common::OutSaveFile *out) {
+	out->write(_currentMapname, 64);
+	out->write(_lastMapname, 64);
+	out->write(_currentLuaName, 64);
+	out->writeSint32LE(_actionMode);
+	out->writeByte(_changeLevel);
+	out->write(_changeMapname, 64);
+	out->write(_inMapName, 32);
+}
+
+void HDBGame::loadSaveFile(Common::InSaveFile *in) {
+	in->read(_currentMapname, 64);
+	in->read(_lastMapname, 64);
+	in->read(_currentLuaName, 64);
+	_actionMode = in->readSint32LE();
+	_changeLevel = in->readByte();
+	in->read(_changeMapname, 64);
+	in->read(_inMapName, 32);
+}
+
 } // End of Namespace
