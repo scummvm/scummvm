@@ -158,7 +158,7 @@ Talk::displayDialogAroundPoint(uint16 *dialogText, uint16 x, uint16 y, uint16 pa
 //		if (dialogText == (uint16_t *)0x0) {
 //			dialogText = (uint16_t *)local_58;
 //		}
-		conversation_related_maybe(dialogText + 5,x,y,param_4,param_5,textId,0); // sVar3); TODO I think this is audio status
+		conversation_related_maybe(dialogText,x,y,param_4,param_5,textId,0); // sVar3); TODO I think this is audio status
 }
 
 void Talk::displayDialogAroundActor(Actor *actor, uint16 param_2, uint16 *dialogText, uint32 textIndex) {

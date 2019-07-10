@@ -31,7 +31,7 @@
 
 namespace Dragons {
 
-Font::Font(Common::SeekableReadStream &stream, uint32 mapSize, uint32 pixelSize) {
+Font::Font(Common::SeekableReadStream &stream, uint32 mapSize, uint32 pixelOffset, uint32 pixelSize) {
 	_size = mapSize / 2;
 	_map = (uint16 *)malloc(mapSize);
 	if (!_map) {
@@ -46,8 +46,9 @@ Font::Font(Common::SeekableReadStream &stream, uint32 mapSize, uint32 pixelSize)
 	if (!_pixels) {
 		error("Allocating memory for font pixels.");
 	}
-
+	stream.seek(pixelOffset);
 	stream.read(_pixels, pixelSize);
+	_numChars = pixelSize / 64;
 }
 
 Font::~Font() {
@@ -55,16 +56,12 @@ Font::~Font() {
 	free(_pixels);
 }
 
-void writePixelBlock(byte *pixels, byte *data, byte *palette) {
-	pixels[2] = palette[data[1] * 2];
-	pixels[3] = palette[data[1] * 2 + 1];
-	pixels[4] = palette[data[2] * 2];
-	pixels[5] = palette[data[2] * 2 + 1];
-	pixels[6] = palette[data[3] * 2];
-	pixels[7] = palette[data[3] * 2 + 1];
+uint16 mapChar(uint16 in) {
+	if (in >= 97) {
+		return in - 0x23;
+	}
+	return in - 0x20;
 }
-
-
 Graphics::Surface *Font::render(uint16 *text, uint16 length, byte *palette) {
 	Graphics::Surface *surface = new Graphics::Surface();
 	Graphics::PixelFormat pixelFormat16(2, 5, 5, 5, 1, 10, 5, 0, 15); //TODO move this to a better location.
@@ -74,11 +71,12 @@ Graphics::Surface *Font::render(uint16 *text, uint16 length, byte *palette) {
 	for (int i = 0; i < length; i++) {
 		byte *pixels = (byte *)surface->getPixels();
 		pixels += i * 8 * 2;
-		byte *data = _pixels + i * 64; //(_map[text[i] + 5] ) * 64;
+		debug("char: %d size: %d %d", (text[i] - 0x20), _numChars, (30 + i));
+		byte *data = _pixels + mapChar(text[i]) * 64;
 		for (int y = 0; y < 8; y++) {
 			for (int x = 0; x < 8; x++) {
-				pixels[x * 2] = palette[(data[0]+2) * 2];
-				pixels[x * 2 + 1] = palette[(data[0]+2) * 2 + 1];
+				pixels[x * 2] = palette[(data[0]) * 2];
+				pixels[x * 2 + 1] = palette[(data[0]) * 2 + 1];
 				data++;
 			}
 			pixels += surface->pitch;
@@ -115,7 +113,7 @@ void FontManager::addText(int16 x, int16 y, uint16 *text, uint16 length, uint8 f
 	byte *palette = _vm->_cursor->getPalette();
 	ScreenTextEntry *screenTextEntry = new ScreenTextEntry();
 	screenTextEntry->position = Common::Point(x, y);
-	screenTextEntry->surface = _fonts[fontType]->render(text, length, palette);
+	screenTextEntry->surface = _fonts[fontType]->render(text, length, _palettes); //palette);
 
 	_screenTexts.push_back(screenTextEntry);
 
@@ -157,27 +155,47 @@ Font *FontManager::loadFont(uint16 index, Common::SeekableReadStream &stream) {
 	fd.skip(4); //unk
 
 	fd.skip(16); //filename
-//	uint32 pixelsOffset = fd.readUint32LE();
+	uint32 pixelsOffset = fd.readUint32LE();
 	uint32 pixelsSize = fd.readUint32LE();
 
 	fd.close();
 
 	stream.seek(mapOffset);
-	return new Font(stream, mapSize, pixelsSize);
+	return new Font(stream, mapSize, pixelsOffset, pixelsSize);
+}
+
+uint16 packColor(uint8 r, uint8 g, uint8 b) {
+	return (r / 8) << 10 | (g / 8) << 5 | (b / 8);
 }
 
 void FontManager::loadPalettes() {
-	Common::File fd;
-	if (!fd.open("dragon.exe")) {
-		error("Failed to open dragon.exe");
-	}
-	fd.seek(0x5336c); //TODO handle other game variants
+//	Common::File fd;
+//	if (!fd.open("dragon.exe")) {
+//		error("Failed to open dragon.exe");
+//	}
+//	fd.seek(0x5336c); //TODO handle other game variants
+//
+//	_palettes = (byte *)malloc(256 * 2 * 4);
+//	fd.read(_palettes, 256 * 2 * 4);
+//
+//	_palettes[2 * 256 + 0x21] = 0x80; //HACK make this color transparent
+//	fd.close();
 
-	_palettes = (byte *)malloc(256 * 2 * 4);
-	fd.read(_palettes, 256 * 2 * 4);
+	//TODO where does original set its palette???
+	_palettes = (byte *)malloc(0x200);
+	memset(_palettes, 0, 0x200);
+	WRITE_LE_INT16(&_palettes[0], 0x8000);
 
-	_palettes[2 * 256 + 0x21] = 0x80; //HACK make this color transparent
-	fd.close();
+//	WRITE_LE_INT16(&_palettes[0x11 * 2], packColor(95, 95, 95));
+	WRITE_LE_INT16(&_palettes[0x10 * 2], packColor(0, 0, 0) | 0x8000);
+	WRITE_LE_INT16(&_palettes[0x11 * 2], packColor(254, 255, 0));
+	WRITE_LE_INT16(&_palettes[0x12 * 2], packColor(95, 95, 95));
+	WRITE_LE_INT16(&_palettes[0x13 * 2], packColor(175, 175, 175));
+
+	WRITE_LE_INT16(&_palettes[0x20 * 2], packColor(0, 0, 0) | 0x8000);
+	WRITE_LE_INT16(&_palettes[0x21 * 2], packColor(254, 255, 0));
+	WRITE_LE_INT16(&_palettes[0x22 * 2], packColor(95, 95, 95));
+	WRITE_LE_INT16(&_palettes[0x23 * 2], packColor(175, 175, 175));
 }
 
 } // End of namespace Dragons
