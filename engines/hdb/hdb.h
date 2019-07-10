@@ -31,6 +31,7 @@
 #include "common/str.h"
 #include "common/random.h"
 #include "common/savefile.h"
+#include "common/config-manager.h"
 #include "graphics/surface.h"
 #include "graphics/thumbnail.h"
 
@@ -235,6 +236,13 @@ public:
 	void setStarsMonkeystone14(int32 value) { _monkeystone14 = value; }
 	void setStarsMonkeystone21(int32 value) { _monkeystone21 = value; }
 
+	void setCheatingOn() {
+		_cheating = true;
+	}
+	bool getCheatingOn() {
+		return _cheating;
+	}
+
 	bool _gameShutdown;
 	Graphics::PixelFormat _format;
 
@@ -254,6 +262,7 @@ private:
 	GameState _gameState;
 	int _actionMode; // 0 or 1
 	int _pauseFlag;
+	bool _cheating;
 
 	char _currentMapname[64];
 	char _lastMapname[64];
@@ -274,7 +283,6 @@ private:
 		bool active;
 		int  slot;
 	} _saveInfo, _loadInfo;
-
 
 };
 

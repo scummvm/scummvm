@@ -56,6 +56,8 @@ HDBGame::HDBGame(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst
 	_window = new Window;
 	_rnd = new Common::RandomSource("hdb");
 
+	_cheating = false;
+
 	_currentMapname[0] = _currentLuaName[0] = 0;
 	_lastMapname[0] = _lastLuaName[0] = 0;
 	_inMapName[0] = 0;
@@ -232,6 +234,8 @@ bool HDBGame::restartMap() {
 
 	_ai->getPlayerXY(&x, &y);
 	_map->centerMapXY(x + 16, y + 16);
+
+	warning("STUB: Cheating - Lua Validation");
 
 	return true;
 }
