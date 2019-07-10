@@ -233,6 +233,15 @@ public:
 		return &_targetName;
 	}
 
+	bool isVoiceless() {
+		/*
+			FIXME: Add hyperspace-nv.mpc to gameDescriptions[] 
+			in detection.cpp, and add a flag check for it.
+			Until then, the voiceless version is unsupported.
+		*/
+		return false;
+	}
+
 	char *lastMapName() { return _lastMapname; }
 	char *currentMapName() { return _currentMapname; }
 	char *getInMapName() { return _inMapName; }
