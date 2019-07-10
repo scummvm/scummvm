@@ -54,6 +54,10 @@
 #ifdef HAS_POSIX_SPAWN
 #include <spawn.h>
 #endif
+
+#ifdef USE_LINUX_TTS
+#include "backends/text-to-speech/linux/linux-text-to-speech.h"
+#endif
 extern char **environ;
 
 OSystem_POSIX::OSystem_POSIX(Common::String baseConfigName)
@@ -78,6 +82,11 @@ void OSystem_POSIX::initBackend() {
 	// Create the savefile manager
 	if (_savefileManager == 0)
 		_savefileManager = new POSIXSaveFileManager();
+
+#ifdef USE_LINUX_TTS
+	// Initialize Text to Speech manager
+	_textToSpeechManager = new LinuxTextToSpeechManager();
+#endif
 
 	// Invoke parent implementation of this method
 	OSystem_SDL::initBackend();
