@@ -424,7 +424,7 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Des Reves Elastiques Avec Mille Insectes Nommes Georges
 	WME_WINENTRY("dreaming", "",
-		WME_ENTRY1s("data.dcp", "4af26d97ea063fc1277ce30ae431de90", 8804073), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+		WME_ENTRY1s("data.dcp", "4af26d97ea063fc1277ce30ae431de90", 8804073), Common::EN_ANY, ADGF_UNSTABLE, WME_1_8_6),
 
 	// The Driller Incident (English)
 	WME_WINENTRY("driller", "",
