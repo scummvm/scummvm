@@ -1275,6 +1275,7 @@ void AI::save(Common::OutSaveFile *out) {
 	// Save Inventory
 	for (i = 0; i < kMaxInventory; i++) {
 		out->writeUint16LE(_inventory[i].keep);
+		_inventory[i].ent.save(out);
 	}
 	out->writeUint32LE(_numInventory);
 
@@ -1464,6 +1465,7 @@ void AI::loadSaveFile(Common::InSaveFile *in) {
 	// Load Inventory
 	for (i = 0; i < kMaxInventory; i++) {
 		_inventory[i].keep = in->readUint16LE();
+		_inventory[i].ent.load(in);
 	}
 	_numInventory = in->readUint32LE();
 
