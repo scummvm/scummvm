@@ -343,8 +343,8 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("chivalry", "",
 		WME_ENTRY1s("data.dcp", "ae6d91b9517f4d2851a8ad94c96951c8", 7278302), Common::EN_ANY, ADGF_NO_FLAGS, WME_1_8_0),
 
-	// Conspiracao Dumont
-	WME_WINENTRY("conspiracao", "",
+	// Conspiracao Dumont (Demo)
+	WME_WINENTRY("conspiracao", "Demo",
 		WME_ENTRY1s("ConspiracaoDumont.exe", "106f3f2c8f18bb5ffffeed634ace256c", 32908032), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, LATEST_VERSION),
 
 	// Corrosion: Cold Winter Waiting
@@ -613,7 +613,6 @@ static const WMEGameDescription gameDescriptions[] = {
 		WME_ENTRY1s("data.dcp", "5a027ef84b083a730c9a4c85ec1d3a32", 131760816), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_1),
 
 	// Oknytt
-	// TODO: Engine version WME_1_9_3 is just a guess, need to check this
 	WME_WINENTRY("oknytt", "Version 1.0",
 		WME_ENTRY1s("data.dcp", "6456cf8f429905c83f07509f9da536dd", 109502959), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
 
@@ -682,8 +681,8 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("projectdoom", "Beta",
 		WME_ENTRY1s("data.dcp", "d5894b65a40706845434b99870bcab92", 99223761), Common::EN_ANY, ADGF_UNSTABLE, WME_1_8_11),
 
-	// Project Joe
-	WME_WINENTRY("projectjoe", "",
+	// Project Joe (Demo)
+	WME_WINENTRY("projectjoe", "Demo",
 		WME_ENTRY1s("data.dcp", "ada3c08542901295076b5349e655e73f", 160780037), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, LATEST_VERSION),
 
 	// Project Lonely Robot (Beta)
