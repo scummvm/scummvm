@@ -482,7 +482,7 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Four
 	WME_WINENTRY("four", "",
-		WME_ENTRY1s("data.dcp", "ec05cd5e37c9a524053b8859635a4234", 62599855), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+		WME_ENTRY1s("data.dcp", "ec05cd5e37c9a524053b8859635a4234", 62599855), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_1),
 
 	// Framed
 	WME_WINENTRY("framed", "",
