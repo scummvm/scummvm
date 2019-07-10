@@ -56,6 +56,16 @@ bool Sound::playVoice(int index, int actor) {
 	return true;
 }
 
+bool Sound::startMusic(SoundType song) {
+	warning("STUB: Start Music");
+	return true;
+}
+
+bool Sound::songPlaying(SoundType song) {
+	warning("STUB: Check if Song is playing");
+	return true;
+}
+
 bool Sound::stopChannel(int channel) {
 	debug(9, "STUB: Stop Channel");
 	return true;
