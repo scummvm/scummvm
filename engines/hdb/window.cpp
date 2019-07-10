@@ -334,13 +334,17 @@ void Window::loadSaveFile(Common::InSaveFile *in) {
 	debug(9, "STUB: Load Try Again data");
 
 	// Load Textout Info
-	_textOutList.resize(in->readUint32LE());
-	for (i = 0; (uint)i < _textOutList.size(); i++) {
-		in->read(_textOutList[i]->text, 128);
-		_textOutList[i]->x = in->readSint32LE();
-		_textOutList[i]->y = in->readSint32LE();
-		_textOutList[i]->timer = in->readUint32LE();
-		_textOutList[i]->timer = g_system->getMillis() + 1000;
+	uint32 tsize = in->readUint32LE();
+	for (i = 0; (uint)i < tsize; i++) {
+		TOut *t = new TOut;
+
+		in->read(t->text, 128);
+		t->x = in->readSint32LE();
+		t->y = in->readSint32LE();
+		t->timer = in->readUint32LE();
+		t->timer = g_system->getMillis() + 1000;
+
+		_textOutList.push_back(t);
 	}
 
 	// Load Infobar Info
