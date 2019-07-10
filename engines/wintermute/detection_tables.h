@@ -665,7 +665,7 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Paintaria
 	WME_WINENTRY("paintaria", "",
-		WME_ENTRY1s("data.dcp", "354c08440c98150ff0d4008dd2865880", 48326040), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+		WME_ENTRY1s("data.dcp", "354c08440c98150ff0d4008dd2865880", 48326040), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_1),
 
 	// Pigeons in the Park
 	WME_WINENTRY("pigeons", "",
