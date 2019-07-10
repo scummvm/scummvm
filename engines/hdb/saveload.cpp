@@ -62,6 +62,8 @@ Common::Error HDBGame::loadGameState(int slot) {
 		return Common::kReadingFailed;
 	}
 
+	_window->closeAll();
+
 	Graphics::skipThumbnail(*in);
 
 	// Actual Save Data
@@ -73,6 +75,14 @@ Common::Error HDBGame::loadGameState(int slot) {
 	_lua->loadSaveFile(in, saveFileName.c_str());
 
 	delete in;
+
+	// center the player on the screen
+	int x, y;
+	_ai->getPlayerXY(&x, &y);
+	_map->centerMapXY(x + 16, y + 16);
+
+	if (!_ai->cinematicsActive())
+		_gfx->turnOffFade();
 
 	return Common::kNoError;
 }
