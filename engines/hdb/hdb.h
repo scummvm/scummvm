@@ -31,6 +31,8 @@
 #include "common/str.h"
 #include "common/random.h"
 #include "common/savefile.h"
+#include "common/sinetables.h"
+#include "common/cosinetables.h"
 #include "common/config-manager.h"
 #include "graphics/surface.h"
 #include "graphics/thumbnail.h"

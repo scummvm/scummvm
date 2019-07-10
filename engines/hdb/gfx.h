@@ -151,6 +151,15 @@ public:
 	void setCursor(int x, int y);
 	void getCursor(int *x, int *y);
 
+	// Trig Functions
+
+	double getSin(int index) {
+		return _sines->at(index);
+	}
+	double getCos(int index) {
+		return _cosines->at(index);
+	}
+
 private:
 	int _numTiles;
 	TileLookup *_tLookupArray;
@@ -211,6 +220,8 @@ private:
 
 	bool _systemInit;
 
+	Common::SineTable *_sines;
+	Common::CosineTable *_cosines;
 };
 
 class Picture {
