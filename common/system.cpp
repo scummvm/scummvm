@@ -31,6 +31,7 @@
 #include "common/updates.h"
 #include "common/dialogs.h"
 #include "common/textconsole.h"
+#include "common/text-to-speech.h"
 
 #include "backends/audiocd/default/default-audiocd.h"
 #include "backends/fs/fs-factory.h"
@@ -48,6 +49,9 @@ OSystem::OSystem() {
 #endif
 #if defined(USE_UPDATES)
 	_updateManager = nullptr;
+#endif
+#if defined(USE_TTS)
+	_textToSpeechManager = nullptr;
 #endif
 #if defined(USE_SYSDIALOGS)
 	_dialogManager = nullptr;
@@ -74,6 +78,11 @@ OSystem::~OSystem() {
 #if defined(USE_UPDATES)
 	delete _updateManager;
 	_updateManager = nullptr;
+#endif
+
+#if defined(USE_TTS)
+	delete _textToSpeechManager;
+	_textToSpeechManager = 0;
 #endif
 
 #if defined(USE_SYSDIALOGS)

@@ -166,6 +166,8 @@ _updates=no
 _libunity=auto
 _dialogs=auto
 _iconv=auto
+_tts=auto
+_linux_tts=no
 # Default option behavior yes/no
 _debug_build=auto
 _release_build=auto
@@ -1250,6 +1252,8 @@ for ac_option in $@; do
 	--disable-updates)            _updates=no            ;;
 	--enable-libunity)            _libunity=yes          ;;
 	--disable-libunity)           _libunity=no           ;;
+	--enable-tts)                 _tts=yes               ;;
+	--disable-tts)                _tts=no                ;;
 	--enable-bink)                _bink=yes              ;;
 	--disable-bink)               _bink=no               ;;
 	--opengl-mode=*)
@@ -5355,6 +5359,26 @@ else
 	esac
 fi
 define_in_config_if_yes $_dialogs 'USE_SYSDIALOGS'
+
+#
+# Check whether to build TTS integration support
+#
+echo_n "Building text-to-speech integration support... "
+if test "$_tts" = "no"; then
+	echo "no"
+else
+	case $_host_os in
+	linux*)
+		echo "linux"
+		_tts=yes
+		_linux_tts=yes
+		;;
+	*)
+		;;
+	esac
+fi
+define_in_config_if_yes $_tts 'USE_TTS'
+define_in_config_if_yes $_linux_tts 'USE_LINUX_TTS'
 
 #
 # Check whether to build Bink video support

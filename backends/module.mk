@@ -344,5 +344,10 @@ MODULE_OBJS += \
 	saves/recorder/recorder-saves.o
 endif
 
+ifdef USE_LINUX_TTS
+MODULE_OBJS += \
+	text-to-speech/linux/linux-text-to-speech.o
+endif
+
 # Include common rules
 include $(srcdir)/rules.mk

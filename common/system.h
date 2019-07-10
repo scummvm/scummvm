@@ -49,6 +49,9 @@ class TaskbarManager;
 #if defined(USE_UPDATES)
 class UpdateManager;
 #endif
+#if defined(USE_TTS)
+class TextToSpeechManager;
+#endif
 #if defined(USE_SYSDIALOGS)
 class DialogManager;
 #endif
@@ -182,6 +185,15 @@ protected:
 	 * @note _updateManager is deleted by the OSystem destructor.
 	 */
 	Common::UpdateManager *_updateManager;
+#endif
+
+#if defined(USE_TTS)
+	/**
+	 * No default value is provided for _textToSpeechManager by OSystem.
+	 *
+	 * @note _textToSpeechManager is deleted by the OSystem destructor.
+	 */
+	Common::TextToSpeechManager *_textToSpeechManager;
 #endif
 
 #if defined(USE_SYSDIALOGS)
@@ -1322,6 +1334,17 @@ public:
 	 */
 	virtual Common::UpdateManager *getUpdateManager() {
 		return _updateManager;
+	}
+#endif
+
+#if defined(USE_TTS)
+	/**
+	 * Returns the TextToSpeechManager, used to handle text to speech features.
+	 *
+	 * @return the TextToSpeechManager for the current architecture
+	 */
+	virtual Common::TextToSpeechManager *getTextToSpeechManager() {
+		return _textToSpeechManager;
 	}
 #endif
 
