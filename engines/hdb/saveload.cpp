@@ -38,6 +38,11 @@ Common::Error HDBGame::saveGameState(int slot, const Common::String &desc) {
 
 	Graphics::saveThumbnail(*out);
 
+	memset(&_saveHeader, 0, sizeof(Save));
+	strcpy(_saveHeader.saveID, saveFileName.c_str());
+	_saveHeader.seconds = _timeSeconds + (_timePlayed / 1000);
+	strcpy(_saveHeader.mapName, _inMapName);
+
 	// Actual Save Data
 	saveGame(out);
 	_lua->save(out, _targetName.c_str(), slot);
@@ -91,7 +96,7 @@ void HDBGame::saveGame(Common::OutSaveFile *out) {
 	debug(1, "HDBGame::saveGame: start at %u", out->pos());
 
 	// Save Map Name and Time
-	out->writeUint32LE(_timeSeconds + (_timePlayed / 1000));
+	out->writeUint32LE(_saveHeader.seconds);
 	out->write(_inMapName, 32);
 
 	debug(1, "HDBGame::saveGame: map at %u", out->pos());
@@ -130,6 +135,8 @@ void HDBGame::loadGame(Common::InSaveFile *in) {
 	in->read(_inMapName, 32);
 
 	g_hdb->_sound->stopMusic();
+	_saveHeader.seconds = _timeSeconds;
+	strcpy(_saveHeader.mapName, _inMapName);
 
 	// Load Map Object Data
 	debug(1, "HDBGame::loadGame: map at %u", in->pos());

@@ -114,6 +114,18 @@ enum Flag {
 	kFlagPlummet		= 0x8000000
 };
 
+struct Save {
+	char saveID[12];
+	int fileSlot;
+	char mapName[32];
+	uint32 seconds;
+
+	Save() : fileSlot(0), seconds(0) {
+		saveID[0] = 0;
+		mapName[0] = 0;
+	}
+};
+
 class HDBGame : public Engine {
 public:
 	HDBGame(OSystem *syst, const ADGameDescription *gameDesc);
@@ -217,6 +229,10 @@ public:
 		return _timeSlice - _prevTimeSlice;
 	}
 
+	const Common::String *getTargetName() {
+		return &_targetName;
+	}
+
 	char *lastMapName() { return _lastMapname; }
 	char *currentMapName() { return _currentMapname; }
 	char *getInMapName() { return _inMapName; }
@@ -245,6 +261,7 @@ public:
 		return _cheating;
 	}
 
+	Save _saveHeader;
 	bool _gameShutdown;
 	Graphics::PixelFormat _format;
 
