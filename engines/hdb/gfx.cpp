@@ -732,6 +732,20 @@ int Gfx::stringLength(const char *string) {
 	return w;
 }
 
+void Gfx::centerPrint(const char *string) {
+	int totalWidth = 0, i;
+
+	for (i = 0; i < (int)strlen(string); i++) {
+		if (string[i] == ' ')
+			totalWidth += kFontSpace;
+		else if (string[i] != '\n')
+			totalWidth += _charInfoBlocks[string[i]]->width;
+	}
+
+	setCursor(kScreenWidth / 2 - totalWidth / 2, _cursorX);
+	drawText(string);
+}
+
 void Gfx::setTextEdges(int left, int right, int top, int bottom) {
 	_eLeft = left;
 	_eRight = right;
