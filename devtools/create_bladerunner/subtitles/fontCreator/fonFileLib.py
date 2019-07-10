@@ -52,9 +52,8 @@ if 	(not osLibFound) \
 
 from struct import *
 
-my_module_version = "0.80"
-my_module_name = "fonFileLib"
-
+MY_MODULE_VERSION = "0.80"
+MY_MODULE_NAME = "fonFileLib"
 
 class FonHeader:
 	maxEntriesInTableOfDetails = -1			# this is probably always the number of entries in table of details, but it won't work for the corrupted TAHOMA18.FON file
@@ -259,33 +258,49 @@ class fonFile:
 #
 if __name__ == '__main__':
 	#	 main()
-	print "[Debug] Running %s as main module" % (my_module_name)
-	# assumes a file of name TAHOMA24.FON in same directory
-	inFONFile = None
-	#inFONFileName =  'TAHOMA24.FON'		# USED IN CREDIT END-TITLES and SCORERS BOARD AT POLICE STATION
-	#inFONFileName =  'TAHOMA18.FON'		# USED IN CREDIT END-TITLES
-	#inFONFileName =  '10PT.FON'			# BLADE RUNNER UNUSED FONT?
-	#inFONFileName =  'KIA6PT.FON'			# BLADE RUNNER MAIN FONT
-	inFONFileName =  'SUBTLS_E.FON'			# Subtitles font custom
-
 	errorFound = False
-	try:
-		print "[Info] Opening %s" % (inFONFileName)
-		inFONFile = open(os.path.join('.',inFONFileName), 'rb')
-	except:
+	# By default assumes a file of name SUBTLS_E.FON in same directory
+	# otherwise tries to use the first command line argument as input file
+	# 'TAHOMA24.FON'   # USED IN CREDIT END-TITLES and SCORERS BOARD AT POLICE STATION
+	# 'TAHOMA18.FON'   # USED IN CREDIT END-TITLES
+	# '10PT.FON'       # BLADE RUNNER UNUSED FONT -  Probably font for reporting system errors
+	# 'KIA6PT.FON'     # BLADE RUNNER MAIN FONT
+	# 'SUBTLS_E.FON'   # OUR EXTRA FONT USED FOR SUBTITLES
+	inFONFile = None
+	inFONFileName =  'SUBTLS_E.FON'    # Subtitles font custom
+
+	if len(sys.argv[1:])  > 0 \
+		and os.path.isfile(os.path.join('.', sys.argv[1])) \
+		and len(sys.argv[1]) >= 5 \
+		and sys.argv[1][-3:].upper() == 'FON':
+		inFONFileName = sys.argv[1]
+		print "[Info] Attempting to use %s as input FON file..." % (inFONFileName)
+	elif os.path.isfile(os.path.join('.', inFONFileName)):
+		print "[Info] Using default %s as input FON file..." % (inFONFileName)
+	else:
+		print "[Error] No valid input file argument was specified and default input file %s is missing." % (inFONFileName)
 		errorFound = True
-		print "[Error] Unexpected event:", sys.exc_info()[0]
-		raise
+	
 	if not errorFound:
-		allOfFonFileInBuffer = inFONFile.read()
-		fonFileInstance = fonFile()
-		if (fonFileInstance.loadFonFile(allOfFonFileInBuffer, len(allOfFonFileInBuffer), inFONFileName)):
-			print "[Info] Font file (FON) was loaded successfully!"
-			fonFileInstance.outputFonToPNG()
-		else:
-			print "[Error] Error while loading Font file (FON)!"
-		inFONFile.close()
+		try:
+			print "[Info] Opening %s" % (inFONFileName)
+			inFONFile = open(os.path.join('.',inFONFileName), 'rb')
+		except:
+			errorFound = True
+			print "[Error] Unexpected event:", sys.exc_info()[0]
+			raise
+		if not errorFound:
+			allOfFonFileInBuffer = inFONFile.read()
+			fonFileInstance = fonFile(True)
+			if fonFileInstance.m_traceModeEnabled:
+				print "[Debug] Running %s (%s) as main module" % (MY_MODULE_NAME, MY_MODULE_VERSION)
+			if (fonFileInstance.loadFonFile(allOfFonFileInBuffer, len(allOfFonFileInBuffer), inFONFileName)):
+				print "[Info] Font file (FON) was loaded successfully!"
+				fonFileInstance.outputFonToPNG()
+			else:
+				print "[Error] Error while loading Font file (FON)!"
+			inFONFile.close()
 else:
 	#debug
-	#print "[Debug] Running	 %s imported from another module" % (my_module_name)
+	#print "[Debug] Running	 %s imported from another module" % (MY_MODULE_NAME)
 	pass

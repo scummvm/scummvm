@@ -372,32 +372,43 @@ class audFile:
 #		
 if __name__ == '__main__':
 	#	 main()
-	# (by default) assumes a file of name 000000.AUD in same directory
+	errorFound = False
+	# By default assumes a file of name 000000.AUD in same directory
 	# otherwise tries to use the first command line argument as input file
 	inAUDFile = None
 	inAUDFileName = '00000000.AUD'
+	
 	if len(sys.argv[1:])  > 0 \
 		and os.path.isfile(os.path.join('.', sys.argv[1])) \
-		and len(sys.argv[1]) > 5 \
-		and sys.argv[1][-3:] == 'AUD':
+		and len(sys.argv[1]) >= 5 \
+		and sys.argv[1][-3:].upper() == 'AUD':
 		inAUDFileName = sys.argv[1]
-	print "[Info] Using %s as input AUD file..." % (inAUDFileName)	
-	
-	errorFound = False
-	try:
-		inAUDFile = open(os.path.join('.', inAUDFileName), 'rb')
-	except:
+		print "[Info] Attempting to use %s as input AUD file..." % (inAUDFileName)
+	elif os.path.isfile(os.path.join('.', inAUDFileName)):
+		print "[Info] Using default %s as input AUD file..." % (inAUDFileName)
+	else:
+		print "[Error] No valid input file argument was specified and default input file %s is missing." % (inAUDFileName)
 		errorFound = True
-		print "[Error] Unexpected event:", sys.exc_info()[0]
-		raise
-	if not errorFound:	
-		allOfAudFileInBuffer = inAUDFile.read()
-		audFileInstance = audFile(True)
-		if audFileInstance.m_traceModeEnabled:
-			print "[Debug] Running %s (%s) as main module" % (MY_MODULE_NAME, MY_MODULE_VERSION)
-		audFileInstance.loadAudFile(allOfAudFileInBuffer, len(allOfAudFileInBuffer), inAUDFileName)
-		audFileInstance.export_as_wav(allOfAudFileInBuffer, './tmp.wav')
-		inAUDFile.close()
+	
+	if not errorFound:
+		try:
+			print "[Info] Opening %s" % (inAUDFileName)
+			inAUDFile = open(os.path.join('.', inAUDFileName), 'rb')
+		except:
+			errorFound = True
+			print "[Error] Unexpected event:", sys.exc_info()[0]
+			raise
+		if not errorFound:	
+			allOfAudFileInBuffer = inAUDFile.read()
+			audFileInstance = audFile(True)
+			if audFileInstance.m_traceModeEnabled:
+				print "[Debug] Running %s (%s) as main module" % (MY_MODULE_NAME, MY_MODULE_VERSION)
+			if audFileInstance.loadAudFile(allOfAudFileInBuffer, len(allOfAudFileInBuffer), inAUDFileName):
+				print "[Info] Audio file (AUD) loaded successfully!"
+				audFileInstance.export_as_wav(allOfAudFileInBuffer, './tmp.wav')
+			else:
+				print "[Error] Error while loading Audio file (AUD)!"
+			inAUDFile.close()
 else:
 	#debug
 	#print "[Debug] Running %s (%s) imported from another module" % (MY_MODULE_NAME, MY_MODULE_VERSION)

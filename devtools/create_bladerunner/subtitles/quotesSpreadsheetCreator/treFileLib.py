@@ -110,13 +110,14 @@ class treFile:
 				# This works ok.
 				#
 				allTextsFound = treBytesBuff[currOffset:].split('\x00')
-				## check "problematic" character cases:
-				if self.m_traceModeEnabled:
-					if  currOffset == 5982 or currOffset == 6050 or currOffset == 2827  or currOffset == 2880:
-						print "[Debug] Offs: %d\tFound String: %s" % ( currOffset,''.join(allTextsFound[0]) )
+				### check "problematic" character cases:
+				##if self.m_traceModeEnabled:
+				##	if  currOffset == 5982 or currOffset == 6050 or currOffset == 2827  or currOffset == 2880:
+				##		print "[Debug] Offs: %d\tFound String: %s" % ( currOffset,''.join(allTextsFound[0]) )
 				(theId, stringOfIdx) = self.stringEntriesLst[idx]
 				self.stringEntriesLst[idx] = (theId, ''.join(allTextsFound[0]))
-				#print "[Debug] ID: %d\tFound String: %s" % ( theId,''.join(allTextsFound[0]) )
+				if self.m_traceModeEnabled:
+					print "[Trace] ID: %d\tFound String: %s" % ( theId,''.join(allTextsFound[0]) )
 			return True
   		except:
 			print "[Error] Loading Text Resource %s failed!" % (self.simpleTextResourceFileName)
@@ -129,38 +130,42 @@ class treFile:
 #
 if __name__ == '__main__':
 	#	 main()
-	# (by default) assumes a file of name ACTORS.TRE in same directory
+	errorFound = False
+	# By default assumes a file of name ACTORS.TRE in same directory
 	# otherwise tries to use the first command line argument as input file
 	inTREFile = None
 	inTREFileName =  'ACTORS.TRE'
 	
 	if len(sys.argv[1:])  > 0 \
 		and os.path.isfile(os.path.join('.', sys.argv[1])) \
-		and len(sys.argv[1]) > 5 \
-		and sys.argv[1][-3:] == 'TRE':
+		and len(sys.argv[1]) >= 5 \
+		and sys.argv[1][-3:].upper() == 'TRE':
 		inTREFileName = sys.argv[1]
-	print "[Info] Using %s as input TRE file..." % (inTREFileName)	
-
-	errorFound = False
-	
-	try:
-		print "[Info] Opening %s" % (inTREFileName)
-		inTREFile = open(os.path.join('.',inTREFileName), 'rb')
-	except:
+		print "[Info] Attempting to use %s as input TRE file..." % (inTREFileName)
+	elif os.path.isfile(os.path.join('.', inTREFileName)):
+		print "[Info] Using default %s as input TRE file..." % (inTREFileName)
+	else:
+		print "[Error] No valid input file argument was specified and default input file %s is missing." % (inTREFileName)
 		errorFound = True
-		print "[Error] Unexpected event: ", sys.exc_info()[0]
-		raise
+	
 	if not errorFound:
-		allOfTreFileInBuffer = inTREFile.read()
-		treFileInstance = treFile(True)
-		if treFileInstance.m_traceModeEnabled:
-			print "[Debug] Running %s (%s) as main module" % (MY_MODULE_NAME, MY_MODULE_VERSION)
-
-		if (treFileInstance.loadTreFile(allOfTreFileInBuffer, len(allOfTreFileInBuffer, inTREFileName))):
-			print "[Info] Text Resource file loaded successfully!"
-		else:
-			print "[Error] Error while loading Text Resource file!"
-		inTREFile.close()
+		try:
+			print "[Info] Opening %s" % (inTREFileName)
+			inTREFile = open(os.path.join('.',inTREFileName), 'rb')
+		except:
+			errorFound = True
+			print "[Error] Unexpected event: ", sys.exc_info()[0]
+			raise
+		if not errorFound:
+			allOfTreFileInBuffer = inTREFile.read()
+			treFileInstance = treFile(True)
+			if treFileInstance.m_traceModeEnabled:
+				print "[Debug] Running %s (%s) as main module" % (MY_MODULE_NAME, MY_MODULE_VERSION)
+			if treFileInstance.loadTreFile(allOfTreFileInBuffer, len(allOfTreFileInBuffer), inTREFileName):
+				print "[Info] Text Resource file loaded successfully!"
+			else:
+				print "[Error] Error while loading Text Resource file!"
+			inTREFile.close()
 else:
 	#debug
 	#print "[Debug] Running %s (%s) imported from another module" % (MY_MODULE_NAME, MY_MODULE_VERSION)
