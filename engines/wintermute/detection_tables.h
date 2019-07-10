@@ -1928,7 +1928,7 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// The Shine of a Star
 	WME_WINENTRY("shinestar", "",
-		WME_ENTRY1s("data.dcp", "f05abe9e2427a5e4f73648fa09c4ba8e", 94113060), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+		WME_ENTRY1s("data.dcp", "f05abe9e2427a5e4f73648fa09c4ba8e", 94113060), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_1),
 
 	// Sofia's Debt (English)
 	WME_WINENTRY("sofiasdebt", "",
