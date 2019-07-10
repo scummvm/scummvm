@@ -44,7 +44,7 @@ struct ScriptPatch {
 	{"GLOBAL.LUA", "for i,v in globals() do", "for i,v in pairs(_G) do"},
 	{"GLOBAL.LUA", "return gsub( s, \"\\n\", \"\\\\\\n\" )", "return string.gsub( s, \"\\n\", \"\\\\\\n\" )"},
 	{"GLOBAL.LUA", "for i,v in t do", "for i,v in pairs(t) do"},
-	{"GLOBAL.LUA", "if type(v) == 'userdata' or type(v) == 'function' then return end", "if type(v) == 'userdata' or type(v) == 'function' or i == 'package' or i == 'os' or i == 'io' or i == 'sctrings' then return end" }, // Line 16
+	{"GLOBAL.LUA", "if type(v) == 'userdata' or type(v) == 'function' then return end", "if type(v) == 'userdata' or type(v) == 'function' or i == 'package' or i == 'os' or i == 'io' or i == 'string' or i == 'table' then return end" }, // Line 16
 	{"GLOBAL.LUA", "for npcname,npcdata in npcs do", "for npcname,npcdata in pairs(npcs) do"}, // Line 66
 	{"GLOBAL.LUA", "for dlgname,dlgdata in npcdata.dialog do", "for dlgname,dlgdata in pairs(npcdata.dialog) do"}, // Line 67
 	{"GLOBAL.LUA", "s = format( \"npcs.%s.dialog.%s.counter", "s = string.format( \"npcs.%s.dialog.%s.counter"}, // Line 68
