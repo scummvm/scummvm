@@ -20,52 +20,28 @@
  *
  */
 
-#ifndef BACKENDS_TEXT_TO_SPEECH_LINUX_H
-#define BACKENDS_TEXT_TO_SPEECH_LINUX_H
-
-#include "common/scummsys.h"
-
-#if defined(USE_LINUX_TTS)
 
 #include "common/text-to-speech.h"
-#include "common/str.h"
+#if defined(USE_TTS)
 
-class LinuxTextToSpeechManager : public Common::TextToSpeechManager {
-public:
-	enum SpeechState {
-		READY,
-		PAUSED,
-		SPEAKING
-	};
+namespace Common {
+TextToSpeechManager::TextToSpeechManager() {
+	_ttsState = new TTSState;
+	_ttsState->_pitch = 0;
+	_ttsState->_volume = 0;
+	_ttsState->_rate = 0;
+	_ttsState->_activeVoice = nullptr;
+	_ttsState->_next = nullptr;
+}
 
-	LinuxTextToSpeechManager();
-	virtual ~LinuxTextToSpeechManager();
+TextToSpeechManager::~TextToSpeechManager() {
+	TTSState *tmp = _ttsState;
+	while (tmp != nullptr) {
+		tmp = _ttsState->_next;
+		delete _ttsState;
+		_ttsState = tmp;
+	}
+}
 
-	virtual bool say(Common::String str);
-
-	virtual bool stop();
-	virtual bool pause();
-	virtual bool resume();
-
-	virtual bool isSpeaking();
-	
-	virtual void setVoice(Common::TTSVoice *voice);
-
-	virtual void setRate(int rate);
-
-	virtual void setPitch(int pitch);
-
-	virtual void setVolume(int volume);
-
-	virtual void setLanguage(Common::String language);
-
-	void updateState(SpeechState state);
-
-private:
-	virtual void updateVoices();
-	SpeechState _speechState;
-};
-
+}
 #endif
-
-#endif // BACKENDS_UPDATES_LINUX_H

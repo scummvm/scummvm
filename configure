@@ -5379,6 +5379,7 @@ else
 fi
 define_in_config_if_yes $_tts 'USE_TTS'
 define_in_config_if_yes $_linux_tts 'USE_LINUX_TTS'
+append_var LIBS '-lspeechd'
 
 #
 # Check whether to build Bink video support

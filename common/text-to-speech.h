@@ -23,9 +23,51 @@
 #ifndef BACKENDS_TEXT_TO_SPEECH_ABSTRACT_H
 #define BACKENDS_TEXT_TO_SPEECH_ABSTRACT_H
 
+#include "common/scummsys.h"
+
 #if defined(USE_TTS)
 
+#include "common/array.h"
+#include "common/debug.h"
 namespace Common {
+
+class TTSVoice {
+	friend class TextToSpeechManager;
+
+	public:
+		enum Gender {
+			MALE,
+			FEMALE,
+			UNKNOWN
+		};
+
+	public:
+		TTSVoice()
+			: _gender(UNKNOWN)
+			, _data(nullptr) {}
+		TTSVoice(Gender gender, void *data) 
+			: _gender(gender)
+			, _data(data) {}
+		~TTSVoice() { debug("%d", * (int *)_data); if (_data != nullptr) free(_data); }
+		Gender getGender() { return _gender; };
+		void setGender(Gender gender) { _gender = gender; };
+		void setData(void *data) { _data = data; };
+		void *getData() { return _data; };
+
+	protected:
+		Gender _gender;
+		void *_data;
+};
+
+struct TTSState {
+	int _rate;
+	int _pitch;
+	int _volume;
+	String _language;
+	TTSVoice *_activeVoice;
+	Array<TTSVoice> _availaibleVoices;
+	TTSState *_next;
+};
 
 /**
  * The TextToSpeechManager allows speech synthesis.
@@ -33,9 +75,38 @@ namespace Common {
  */
 class TextToSpeechManager {
 public:
-	TextToSpeechManager() {}
-	virtual ~TextToSpeechManager() {}
+	TextToSpeechManager();
+	virtual ~TextToSpeechManager();
 
+	virtual bool say(String str) { return false; }
+
+	virtual bool stop() { return false; }
+	virtual bool pause() { return false; }
+	virtual bool resume() { return false; }
+
+	virtual bool isSpeaking() { return false; }
+	
+	virtual void setVoice(TTSVoice *voice) {}
+	TTSVoice getVoice() { return *(_ttsState->_activeVoice); }
+
+	virtual void setRate(int rate) {}
+	int getRate() { return _ttsState->_rate; }
+
+	virtual void setPitch(int pitch) {}
+	int getPitch() { return _ttsState->_pitch; }
+
+	virtual void setVolume(int volume) {}
+	int getVolume() { return _ttsState->_volume; }
+
+	virtual void setLanguage(String language) {}
+	String getLanguage() { return _ttsState->_language; }
+
+	Array<TTSVoice> getVoicesArray() { return _ttsState->_availaibleVoices; }
+
+protected:
+	TTSState *_ttsState;
+
+	virtual void updateVoices() {};
 };
 
 } // End of namespace Common

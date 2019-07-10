@@ -99,5 +99,10 @@ MODULE_OBJS += \
 	lua/scummvm_file.o
 endif
 
+ifdef USE_TTS
+MODULE_OBJS += \
+	text-to-speech.o
+endif
+
 # Include common rules
 include $(srcdir)/rules.mk
