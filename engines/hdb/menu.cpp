@@ -1025,15 +1025,45 @@ void Menu::drawRocketAndSelections() {
 }
 
 void Menu::drawSlider(int x, int y, int offset) {
-	warning("STUB: Menu: drawSlider");
+	int	i, x1;
+
+	x1 = x;
+
+	_sliderLeft->drawMasked(x, y);
+	x += _sliderLeft->_width;
+
+	for (i = 0; i < 12; i++) {
+		_sliderMid->draw(x, y);
+		x += _sliderMid->_width;
+	}
+
+	_sliderRight->drawMasked(x, y);
+	_sliderKnob->drawMasked(x1 + (offset * 200) / 256, y + 2);
 }
 
 void Menu::drawToggle(int x, int y, bool flag) {
-	warning("STUB: Menu: drawToggle");
+	int	i, x1;
+
+	x1 = x;
+
+	_gCheckLeft->drawMasked(x, y);
+	x += _gCheckLeft->_width;
+
+	for (i = 0; i < 12; i++) {
+		_gCheckEmpty->draw(x, y);
+		x += _gCheckEmpty->_width;
+	}
+
+	_gCheckRight->drawMasked(x, y);
+
+	if (!flag)
+		_gCheckOff->drawMasked(x1 + _sliderLeft->_width, y);
+	else
+		_gCheckOn->drawMasked(x1 + _sliderLeft->_width, y);
 }
 
 void Menu::drawWarpScreen() {
-	warning("STUB: Menu: drawWarpScreen");
+	_warpPlaque->drawMasked(centerPic(_warpPlaque), 64);
 }
 
 } // End of Namespace
