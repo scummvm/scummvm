@@ -100,7 +100,7 @@ enum {
 
 	kVortSaveX = 200 - 44,
 	kVortSaveTextX = kVortSaveX + 40,
-	kVortSaveTextY = 72,
+	kVortSaveY = 72,
 	kSaveSlotX = 200,
 	kSaveSlotY = 80,
 
@@ -144,7 +144,10 @@ enum {
 
 	kScreenFade = 512,
 	kNebulaCount = 7,
-	kMaxStars = 10
+	kMaxStars = 10,
+
+	kOptionSPC = 16,
+	kOptionLineSPC = 32
 };
 
 struct Star {
@@ -167,6 +170,18 @@ public:
 	void changeToMenu();	// Changing from Intro to Menu
 	void drawMenu();
 	void freeMenu();
+
+	void processInput(int x, int y);	// this is where the items are clicked!
+	void controlsInput(int x, int y);	// take mouse input and pass through to menu
+	void controlsDraw();
+	void drawNebula();
+	void drawRocketAndSelections();		// draw the background stuff
+	void drawSlider(int x, int y, int offset);
+	void drawToggle(int x, int y, bool flag);
+	void drawWarpScreen();
+	void saveSong(SoundType song) {
+		_resumeSong = song;
+	}
 
 	void fillSavegameSlots();
 
@@ -213,6 +228,16 @@ public:
 	SoundType _introSong, _titleSong;
 
 	Star _fStars[kMaxStars];
+
+	char nebulaNames[kNebulaCount][32] = {
+		BACKSCROLL_PLANET1,
+		BACKSCROLL_PLANET2,
+		BACKSCROLL_PLANET3,
+		BACKSCROLL_PLANET4,
+		BACKSCROLL_PLANET5,
+		BACKSCROLL_GALAXY1,
+		BACKSCROLL_GALAXY2
+	};
 };
 
 } // End of Namespace
