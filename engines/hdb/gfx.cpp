@@ -29,11 +29,15 @@ Gfx::Gfx() {
 	_gfxCache = new Common::Array<GfxCache *>;
 	_globalSurface.create(kScreenWidth, kScreenHeight, g_hdb->_format);
 	_pointerDisplayable = 1;
+	_sines = new Common::SineTable(360);
+	_cosines = new Common::CosineTable(360);
 	_systemInit = false;
 }
 
 Gfx::~Gfx() {
 	delete _gfxCache;
+	delete _sines;
+	delete _cosines;
 	_globalSurface.free();
 }
 
