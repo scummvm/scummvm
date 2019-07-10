@@ -951,11 +951,77 @@ void Menu::controlsDraw() {
 }
 
 void Menu::drawNebula() {
-	warning("STUB: Menu: drawNebula");
+	// draw nebula
+	_nebulaGfx[_nebulaWhich]->draw(_nebulaX, _nebulaY);
+	_nebulaY += _nebulaYVel;
+
+	if (_nebulaY > kScreenHeight + (kScreenHeight / 2)) {
+		_nebulaWhich = g_hdb->_rnd->getRandomNumber(kNebulaCount);
+		_nebulaX = g_hdb->_rnd->getRandomNumber(kScreenWidth) + 10;
+		_nebulaY = -11 * 8;
+		_nebulaYVel = g_hdb->_rnd->getRandomNumber(4) + 1;
+		if (_nebulaWhich > 4)		// galaxy?
+			_nebulaYVel = 1;
+	}
+
+	//
+	// draw the falling stars
+	//
+	int		i;
+
+	for (i = 0; i < kMaxStars; i++) {
+		_fStars[i].y += _fStars[i].speed;
+		if (_fStars[i].y > kScreenHeight) {
+			_fStars[i].y = (g_hdb->_rnd->getRandomNumber(30) + 30) * -1;
+			_fStars[i].speed = g_hdb->_rnd->getRandomNumber(5) + 1;
+		}
+		if (_fStars[i].delay-- < 1) {
+			_fStars[i].delay = 5;
+			_fStars[i].anim = (_fStars[i].anim + 1) % 3;
+		}
+		_star[_fStars[i].anim]->drawMasked(_fStars[i].x, _fStars[i].y);
+	}
 }
 
 void Menu::drawRocketAndSelections() {
-	warning("STUB: Menu: drawRocketAndSelections");
+	g_hdb->_gfx->draw3DStars();
+	drawNebula();
+
+	// top-down/up scrolling stuff
+	switch (_nextScreen) {
+	case 0: _optionsGfx->drawMasked(centerPic(_optionsGfx), _oBannerY); break;
+	case 1: _modeLoadGfx->drawMasked(centerPic(_modeLoadGfx), _oBannerY); break;
+	case 2: _newGfx->drawMasked(centerPic(_newGfx), _oBannerY); break;
+	}
+
+	// menu items
+	_newGfx->drawMasked(_optionsScrollX, kMenuY);
+	_modeLoadGfx->drawMasked(_optionsScrollX, kMenuY + kMLoadY);
+	_optionsGfx->drawMasked(_optionsScrollX, kMenuY + kMOptionsY);
+	_quitGfx->drawMasked(_optionsScrollX, kMenuY + kMQuitY);
+	if (g_hdb->_map->isLoaded() || _saveGames[5].seconds)
+		_resumeGfx->drawMasked(_optionsScrollX, kMenuY + kMResumeY);
+
+	// draw rocket
+	_rocketMain->drawMasked(_rocketX, _rocketY);
+	_rocketSecond->drawMasked(_rocketX + 40, _rocketY + kMRocketYBottom);
+
+	// exhaust
+	if (_rocketEx < 5) {
+		_rocketEx1->drawMasked(kMRocketX + kMRocketEXHX, _rocketY + kMRocketYBottom);
+		_rocketEx2->drawMasked(kMRocketX + kMRocketEXHX2, _rocketY + kMRocketYBottom);
+	} else if (_rocketEx >= 5 && _rocketEx < 10) {
+		_rocketEx2->drawMasked(kMRocketX + kMRocketEXHX, _rocketY + kMRocketYBottom);
+		_rocketEx1->drawMasked(kMRocketX + kMRocketEXHX2, _rocketY + kMRocketYBottom);
+	} else {
+		_rocketEx = 0;
+		_rocketEx1->drawMasked(kMRocketX + kMRocketEXHX, _rocketY + kMRocketYBottom);
+		_rocketEx2->drawMasked(kMRocketX + kMRocketEXHX2, _rocketY + kMRocketYBottom);
+	}
+	_rocketEx++;
+
+	// title logo
+	_titleLogo->drawMasked(centerPic(_titleLogo), _rocketY + kMTitleY);
 }
 
 void Menu::drawSlider(int x, int y, int offset) {
