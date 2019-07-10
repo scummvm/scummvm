@@ -182,7 +182,26 @@ void Menu::drawTitle() {
 }
 
 void Menu::fillSavegameSlots() {
-	warning("STUB: PMenu::fillSavegameSlots()");
+	int i;
+	int max = kNumSaveSlots;
+
+	Common::InSaveFile *in;
+	Common::String saveGameFile;
+
+	for (i = 0; i < max; i++) {
+		saveGameFile = Common::String::format("%s.%03d", g_hdb->getTargetName()->c_str(), i);
+		in = g_system->getSavefileManager()->openForLoading(saveGameFile);
+
+		if (!in) {
+			memset(&_saveGames[i], 0, sizeof(Save));
+		} else {
+			strcpy(_saveGames[i].saveID, saveGameFile.c_str());
+			_saveGames[i].seconds = in->readUint32LE();
+			in->read(_saveGames[i].mapName, 32);
+			delete in;
+		}
+		_saveGames[i].fileSlot = i + 1;
+	}
 }
 
 } // End of Namespace

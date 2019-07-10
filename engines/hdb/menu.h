@@ -48,6 +48,12 @@ namespace HDB {
 #define	CONFIG_KEY_USE		"keyuse"
 #define	CONFIG_VOICES		"voices"
 
+#define	TITLE_DELAY1		2				// time to wait before OOH OOH
+#define	TITLE_DELAY2		0.5				// time to spend doing OOH OOH
+#define	TITLE_DELAY3		1				// time to wait before ending title
+
+#define centerPic(x)	(kScreenWidth / 2 - x->_width / 2)
+
 enum {
 	kStarRedX = 70,
 	kStarRedY = 20,
@@ -164,13 +170,15 @@ public:
 
 	void fillSavegameSlots();
 
+	Save _saveGames[kNumSaveSlots + 1];
+
 	int _starWarp;
 	int _titleCycle;
 	uint32 _titleDelay;
 	bool _titleActive;
 	SoundType _resumeSong;	// the song that was playing before entering the Options screen
 
-	Picture *_ohhOhhGfx;
+	Picture *_oohOohGfx;
 	Picture *_titleScreen, *_titleLogo, *_hdbLogoScreen, *_menuBackoutGfx, *_controlButtonGfx, *_controlsGfx, *_menuBackspaceGfx;
 
 	int _rocketY, _rocketYVel, _rocketEx;	// Rocket Vars
