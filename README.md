@@ -439,6 +439,7 @@ supported games can be found here:
 | Tony Tough and the Night of Roasted Moths                           | \[tony\]        |
 | Touche: The Adventures of the Fifth Musketeer                       | \[touche\]      |
 | U.F.O.s / Gnap: Der Schurke aus dem All                             | \[gnap\]        |
+| Versailles: 1685                                                    | \[versailles\]  |
 | Voyeur                                                              | \[voyeur\]      |
 | Zork: Grand Inquisitor                                              | \[zgi\]         |
 | Zork Nemesis: The Forbidden Lands                                   | \[znemesis\]    |
@@ -702,6 +703,7 @@ Games that require additional data:
   - Kyrandia Series (kyra.dat)
   - Lands of Lore Series (kyra.dat)
   - Lure of the Temptress (lure.dat)
+  - Versailles 1685 (cryomni3d.dat)
 
 The most up to date list of Engine data files can be found in our [source code repository](https://github.com/scummvm/scummvm/tree/master/dists/engine-data)
 
@@ -1471,6 +1473,7 @@ Engines which currently support returning to the Launcher are:
     CINE
     COMPOSER
     CRUISE
+    CRYOMNI3D
     DRACI
     DRASCULA
     GOB
@@ -1974,6 +1977,7 @@ Engines which currently support `--list-saves` are:
   - CGE
   - CINE
   - CRUISE
+  - CRYOMNI3D
   - DRACI
   - GROOVIE
   - HUGO
@@ -2011,6 +2015,7 @@ Engines which currently support `--save-slot` / `-x are`:
   - CGE
   - CINE
   - CRUISE
+  - CRYOMNI3D
   - DRACI
   - GROOVIE
   - HUGO
