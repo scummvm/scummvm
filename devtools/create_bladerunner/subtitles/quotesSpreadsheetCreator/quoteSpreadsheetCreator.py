@@ -4,7 +4,7 @@ sysLibFound = False
 try:
 	import sys 
 except ImportError:
-	print "[Error] sys python library is required to be installed!" 
+	print ("[Error] sys python library is required to be installed!")
 else:
 	sysLibFound = True
 
