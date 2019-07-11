@@ -402,14 +402,16 @@ bool AIScriptClovis::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 			Global_Variable_Increment(kVariableReplicantsSurvivorsAtMoonbus, 1);
 			Actor_Set_At_XYZ(kActorClovis, 45.0f, -41.52f, -85.0f, 750);
 		} else {
-			Actor_Set_At_XYZ(kActorClovis, 84.85f, -50.56f, -68.87f, 800);
-			Actor_Face_Heading(kActorClovis, 1022, false);
 #if BLADERUNNER_ORIGINAL_BUGS
+			Actor_Set_At_XYZ(kActorClovis, 84.85f, -50.56f, -68.87f, 800);
 #else
 			// same as kGoalClovisKP07LayDown
 			// Actor_Set_Targetable(kActorClovis, true) is already done above
 			Game_Flag_Set(kFlagClovisLyingDown);
+			// prevent Clovis rotating while lying on the bed when McCoy enters KP07
+			Actor_Set_At_XYZ(kActorClovis, 84.85f, -50.56f, -68.87f, 1022);
 #endif // BLADERUNNER_ORIGINAL_BUGS
+			Actor_Face_Heading(kActorClovis, 1022, false);
 		}
 		someAnim();
 		return true;
@@ -532,7 +534,12 @@ bool AIScriptClovis::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		return true;
 
 	case kGoalClovisKP07LayDown:
+#if BLADERUNNER_ORIGINAL_BUGS
 		Actor_Set_At_XYZ(kActorClovis, 84.85f, -50.56f, -68.87f, 800);
+#else
+		// prevent Clovis rotating while lying on the bed when McCoy enters KP07
+		Actor_Set_At_XYZ(kActorClovis, 84.85f, -50.56f, -68.87f, 1022);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		Actor_Face_Heading(kActorClovis, 1022, false);
 		Actor_Set_Targetable(kActorClovis, true);
 		Game_Flag_Set(kFlagClovisLyingDown);
