@@ -527,7 +527,7 @@ bool AIScriptLucy::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 	case kGoalLucyUG01RunAway:
 		AI_Movement_Track_Flush(kActorLucy);
 		AI_Movement_Track_Append_Run(kActorLucy, 545, 0);
-		AI_Movement_Track_Append(kActorLucy, 33, 0);
+		AI_Movement_Track_Append(kActorLucy, 33, 0); // kSetFreeSlotA
 		AI_Movement_Track_Repeat(kActorLucy);
 		break;
 

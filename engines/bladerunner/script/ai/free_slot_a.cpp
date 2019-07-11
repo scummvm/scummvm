@@ -610,13 +610,24 @@ void AIScriptFreeSlotA::goToRandomUGxx() {
 	switch (Random_Query(1, 14)) {
 	case 1:
 		// kSetUG01
+#if BLADERUNNER_ORIGINAL_BUGS
 		AI_Movement_Track_Append(kActorFreeSlotA, 450, 1);
 		AI_Movement_Track_Append(kActorFreeSlotA, 451, 5);
 		AI_Movement_Track_Append(kActorFreeSlotA, 450, 0);
 		break;
-
+#else
+		// Don't put rats in UG01 when Lucy is also here
+		if (!Actor_Query_In_Set(kActorLucy, kSetUG01)) {
+			AI_Movement_Track_Append(kActorFreeSlotA, 450, 1);
+			AI_Movement_Track_Append(kActorFreeSlotA, 451, 5);
+			AI_Movement_Track_Append(kActorFreeSlotA, 450, 0);
+			break;
+		}
+#endif // BLADERUNNER_ORIGINAL_BUGS
+		// fall through
 	case 2:
 		// kSetUG01
+#if BLADERUNNER_ORIGINAL_BUGS
 		World_Waypoint_Set(463, kSetUG01, 144.98f, -50.13f, -175.75f);
 		World_Waypoint_Set(464, kSetUG01, 105.6f,  -50.13f, -578.46f);
 		World_Waypoint_Set(465, kSetUG01,  62.0f,  -50.13f, -574.0f);
@@ -625,7 +636,20 @@ void AIScriptFreeSlotA::goToRandomUGxx() {
 		AI_Movement_Track_Append(kActorFreeSlotA, 465, 5);
 		AI_Movement_Track_Append(kActorFreeSlotA, 463, 5);
 		break;
-
+#else
+		// Don't put rats in UG01 when Lucy is also here
+		if (!Actor_Query_In_Set(kActorLucy, kSetUG01)) {
+			World_Waypoint_Set(463, kSetUG01, 144.98f, -50.13f, -175.75f);
+			World_Waypoint_Set(464, kSetUG01, 105.6f,  -50.13f, -578.46f);
+			World_Waypoint_Set(465, kSetUG01,  62.0f,  -50.13f, -574.0f);
+			AI_Movement_Track_Append(kActorFreeSlotA, 463, 1);
+			AI_Movement_Track_Append(kActorFreeSlotA, 464, 1);
+			AI_Movement_Track_Append(kActorFreeSlotA, 465, 5);
+			AI_Movement_Track_Append(kActorFreeSlotA, 463, 5);
+			break;
+		}
+#endif // BLADERUNNER_ORIGINAL_BUGS
+		// fall through
 	case 3:
 		// kSetUG04
 		AI_Movement_Track_Append(kActorFreeSlotA, 446, 15);
