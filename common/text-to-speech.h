@@ -63,7 +63,7 @@ struct TTSState {
 	int _pitch;
 	int _volume;
 	String _language;
-	TTSVoice *_activeVoice;
+	int _activeVoice;
 	Array<TTSVoice> _availaibleVoices;
 	TTSState *_next;
 };
@@ -87,8 +87,8 @@ public:
 	virtual bool isPaused() { return false; }
 	virtual bool isReady() { return false; }
 	
-	virtual void setVoice(TTSVoice *voice) {}
-	TTSVoice getVoice() { return *(_ttsState->_activeVoice); }
+	virtual void setVoice(unsigned index) {}
+	TTSVoice getVoice() { return _ttsState->_availaibleVoices[_ttsState->_activeVoice]; }
 
 	virtual void setRate(int rate) {}
 	int getRate() { return _ttsState->_rate; }
@@ -103,6 +103,9 @@ public:
 	String getLanguage() { return _ttsState->_language; }
 
 	Array<TTSVoice> getVoicesArray() { return _ttsState->_availaibleVoices; }
+
+	void pushState();
+	bool popState();
 
 protected:
 	TTSState *_ttsState;

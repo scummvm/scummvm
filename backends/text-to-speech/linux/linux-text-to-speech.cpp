@@ -82,8 +82,9 @@ LinuxTextToSpeechManager::LinuxTextToSpeechManager()
 	_connection->callback_pause = speech_pause_callback;
 	spd_set_notification_on(_connection, SPD_PAUSE);
 
-	setLanguage(Common::String("cs"));
 	updateVoices();
+	_ttsState->_activeVoice = 0;
+	setLanguage(Common::String("en"));
 }
 
 LinuxTextToSpeechManager::~LinuxTextToSpeechManager() {
@@ -134,12 +135,14 @@ bool LinuxTextToSpeechManager::isReady() {
 	return _speechState == READY;
 }
 
-void LinuxTextToSpeechManager::setVoice(Common::TTSVoice *voice) {
+void LinuxTextToSpeechManager::setVoice(unsigned index) {
 	if (_speechState == BROKEN)
 		return;
-	assert(voice != nullptr && voice->getData() != nullptr);
-	spd_set_voice_type(_connection, *(SPDVoiceType *)(voice->getData()));
-	_ttsState->_activeVoice = voice;
+	debug("%d < %d", index, _ttsState->_availaibleVoices.size());
+	assert(index < _ttsState->_availaibleVoices.size());
+	Common::TTSVoice voice = _ttsState->_availaibleVoices[index];
+	spd_set_voice_type(_connection, *(SPDVoiceType *)(voice.getData()));
+	_ttsState->_activeVoice = index;
 }
 
 void LinuxTextToSpeechManager::setRate(int rate) {
@@ -171,8 +174,7 @@ void LinuxTextToSpeechManager::setLanguage(Common::String language) {
 		return;
 	spd_set_language(_connection, language.c_str());
 	_ttsState->_language = language;
-	if (_ttsState->_activeVoice)
-		setVoice(_ttsState->_activeVoice);
+	setVoice(_ttsState->_activeVoice);
 }
 
 void LinuxTextToSpeechManager::updateVoices() {
