@@ -26,6 +26,7 @@ namespace HDB {
 
 Gfx::Gfx() {
 	_tLookupArray = NULL;
+	_starsInfo.active = false;
 	_gfxCache = new Common::Array<GfxCache *>;
 	_globalSurface.create(kScreenWidth, kScreenHeight, g_hdb->_format);
 	_pointerDisplayable = 1;
@@ -778,6 +779,76 @@ void Gfx::setCursor(int x, int y) {
 void Gfx::getCursor(int *x, int *y) {
 	*x = _cursorX;
 	*y = _cursorY;
+}
+
+void Gfx::turnOnBonusStars(int which) {
+	int	i;
+	_starsInfo.active = true;
+	for (i = 0; i < 10; i++)
+		_starsInfo.starAngle[i] = (36 * (i + 1)) - 10;
+	if (!_starsInfo.gfx[0]) {
+		switch (which) {
+		case 0:		// Red Star
+			_starsInfo.gfx[0] = loadPic(SECRETSTAR_RED1);
+			_starsInfo.gfx[1] = loadPic(SECRETSTAR_RED2);
+			break;
+		case 1:		// Green Star
+			_starsInfo.gfx[0] = loadPic(SECRETSTAR_GREEN1);
+			_starsInfo.gfx[1] = loadPic(SECRETSTAR_GREEN2);
+			break;
+		case 2:		// Blue Star
+			_starsInfo.gfx[0] = loadPic(SECRETSTAR_BLUE1);
+			_starsInfo.gfx[1] = loadPic(SECRETSTAR_BLUE2);
+			break;
+		}
+	}
+
+	_starsInfo.radius = 0;
+	_starsInfo.angleSpeed = 25;
+	_starsInfo.timer = g_hdb->getTimeSlice() + 500;
+	_starsInfo.anim = 0;
+	_starsInfo.totalTime = g_hdb->getTimeSlice() + 5000;		// 5 seconds long
+	g_hdb->_sound->playSound(SND_MONKEYSTONE_SECRET_STAR);
+}
+
+void Gfx::drawBonusStars() {
+	int		i, w, h;
+
+	if (!_starsInfo.active)
+		return;
+
+	if (_starsInfo.timer < g_hdb->getTimeSlice()) {
+		_starsInfo.timer = g_hdb->getTimeSlice() + 500;
+		_starsInfo.anim = 1 - _starsInfo.anim;
+	}
+
+	w = _starsInfo.gfx[0]->_width / 2;
+	h = _starsInfo.gfx[0]->_height / 2;
+
+	for (i = 0; i < 10; i++) {
+		_starsInfo.gfx[_starsInfo.anim]->drawMasked(
+			(int)(480 / 2 + ((float)_starsInfo.radius / 2)) + (int)((double)_starsInfo.radius * _cosines->at(_starsInfo.starAngle[i]) - w),
+			(480 / 2) + (int)((double)_starsInfo.radius * _sines->at(_starsInfo.starAngle[i]) - h)
+		);
+
+		int angle = (int)(_starsInfo.starAngle[i] + _starsInfo.angleSpeed);
+		if (angle >= 360)
+			angle = 0;
+		_starsInfo.starAngle[i] = angle;
+	}
+
+	_starsInfo.radius++;
+	_starsInfo.angleSpeed -= 0.25;
+	if (_starsInfo.angleSpeed < 15)
+		_starsInfo.angleSpeed = 15;
+
+	// timed out?
+	if (_starsInfo.totalTime < g_hdb->getTimeSlice()) {
+		_starsInfo.active = false;
+		_starsInfo.gfx[0]->free();
+		_starsInfo.gfx[1]->free();
+		_starsInfo.gfx[0] = _starsInfo.gfx[1] = 0;
+	}
 }
 
 Picture::Picture() : _width(0), _height(0), _name("") {
