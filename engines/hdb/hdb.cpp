@@ -251,10 +251,10 @@ void HDBGame::paint() {
 
 	switch (_gameState) {
 	case GAME_TITLE:
-		debug(9, "STUB: MENU::DrawTitle required");
+		_menu->drawTitle();
 		break;
 	case GAME_MENU:
-		warning("STUB: MENU::DrawMenu required");
+		_menu->drawMenu();
 		break;
 	case GAME_PLAY:
 		_gfx->drawPointer();
