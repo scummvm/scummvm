@@ -66,7 +66,7 @@ void Input::setButtons(uint16 b) {
 		}
 
 		if (g_hdb->getGameState() == GAME_TITLE)
-			warning("STUB: setButtons: changeToMenu() required");
+			g_hdb->_menu->changeToMenu();
 		g_hdb->_sound->playSound(SND_MENU_BACKOUT);
 		g_hdb->changeGameState();
 	}
@@ -120,11 +120,11 @@ void Input::stylusDown(int x, int y) {
 
 	switch (gs) {
 	case GAME_TITLE:
-		warning("STUB: Menu: changeToMenu required");
+		g_hdb->_menu->changeToMenu();
 		g_hdb->changeGameState();
 		break;
 	case GAME_MENU:
-		warning("STUB: Menu: processInput required");
+		g_hdb->_menu->processInput(x, y);
 		break;
 	case GAME_PLAY:
 		// Is Player Dead? Click on TRY AGAIN
@@ -207,7 +207,7 @@ void Input::stylusMove(int x, int y) {
 		warning("STUB: stylusMove: Add GetDebug() check");
 		break;
 	case GAME_MENU:
-		warning("STUB: stylusMove: Menu::processInput() required");
+		g_hdb->_menu->processInput(x, y);
 		break;
 	default:
 		break;
