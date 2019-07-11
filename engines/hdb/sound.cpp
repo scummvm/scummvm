@@ -75,6 +75,16 @@ void Sound::stopMusic() {
 	debug(9, "STUB: Stop Music");
 }
 
+bool Sound::freeSound(int index) {
+	debug(9, "STUB: Free Sound");
+	return true;
+}
+
+SoundType Sound::whatSongIsPlaying() {
+	debug(9, "STUB: whatSongIsPlaying");
+	return SONG_NONE;
+}
+
 void Sound::markSoundCacheFreeable() {
 	warning("STUB: Sound::markSoundCacheFreeable() ");
 }

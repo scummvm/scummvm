@@ -348,8 +348,10 @@ void Input::updateKeys(Common::Event event, bool keyDown) {
 		if (keyDown) {
 			buttons |= kButtonA;
 			g_hdb->_gfx->showPointer(true);
+			warning("STUB: changetoMenu");
 		} else {
 			buttons &= ~kButtonA;
+			warning("STUB: changetoMenu");
 		}
 	} else if (event.kbd.keycode == _keyDebug) {
 		if (keyDown) {
