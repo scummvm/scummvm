@@ -488,7 +488,7 @@ void Gfx::setup3DStarsLeft() {
 	for (int i = 0; i < kNum3DStars; i++) {
 		_stars3DSlow[i].x = g_hdb->_rnd->getRandomNumber(kScreenWidth);
 		_stars3DSlow[i].y = g_hdb->_rnd->getRandomNumber(kScreenHeight);
-		_stars3DSlow[i].speed = ((double) (1 + g_hdb->_rnd->getRandomNumber(5))) / 6.0;
+		_stars3DSlow[i].speed = ((double) (1 + g_hdb->_rnd->getRandomNumber(4))) / 6.0;
 		_stars3DSlow[i].color = (int) (_stars3DSlow[i].speed * 4.00);
 	}
 }
