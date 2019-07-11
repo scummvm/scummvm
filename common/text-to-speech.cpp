@@ -30,7 +30,8 @@ TextToSpeechManager::TextToSpeechManager() {
 	_ttsState->_pitch = 0;
 	_ttsState->_volume = 0;
 	_ttsState->_rate = 0;
-	_ttsState->_activeVoice = nullptr;
+	_ttsState->_activeVoice = 0;
+	_ttsState->_language = "en";
 	_ttsState->_next = nullptr;
 }
 
@@ -44,6 +45,38 @@ TextToSpeechManager::~TextToSpeechManager() {
 		delete _ttsState;
 		_ttsState = tmp;
 	}
+}
+
+void TextToSpeechManager::pushState() {
+	TTSState *newState = new TTSState;
+	newState->_pitch = _ttsState->_pitch;
+	newState->_volume = _ttsState->_volume;
+	newState->_rate = _ttsState->_rate;
+	newState->_activeVoice = _ttsState->_activeVoice;
+	newState->_language = _ttsState->_language;
+	newState->_next = _ttsState;
+	_ttsState = newState;
+	updateVoices();
+}
+
+bool TextToSpeechManager::popState() {
+	if (_ttsState->_next == nullptr)
+		return true;
+
+	for (TTSVoice *i = _ttsState->_availaibleVoices.begin(); i < _ttsState->_availaibleVoices.end(); i++) {
+		free(i->_data);
+	}
+
+	TTSState *oldState = _ttsState;
+	_ttsState = _ttsState->_next;
+
+	delete oldState;
+
+	setLanguage(_ttsState->_language);
+	setPitch(_ttsState->_pitch);
+	setVolume(_ttsState->_volume);
+	setRate(_ttsState->_rate);
+	return false;
 }
 
 }
