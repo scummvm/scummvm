@@ -161,6 +161,11 @@ public:
 		return _cosines->at(index);
 	}
 
+	// Bonus star functions
+
+	void turnOnBonusStars(int which);
+	void drawBonusStars();
+
 private:
 	int _numTiles;
 	TileLookup *_tLookupArray;
@@ -204,6 +209,16 @@ private:
 	int _tileSkyClouds; // Index of sky_stars tile
 	Picture *_starField[4];
 	Picture *_skyClouds;
+
+	struct {
+		bool active;
+		int starAngle[10];
+		Picture *gfx[2];
+		uint32 timer;
+		int anim, radius;
+		double angleSpeed;
+		uint32 totalTime;
+	} _starsInfo;
 
 	// Cursor
 	int _cursorX, _cursorY;
