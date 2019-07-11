@@ -21,6 +21,7 @@
  */
 
 #include "hdb/hdb.h"
+#include "hdb/menu.h"
 
 namespace HDB {
 
@@ -348,10 +349,10 @@ void Input::updateKeys(Common::Event event, bool keyDown) {
 		if (keyDown) {
 			buttons |= kButtonA;
 			g_hdb->_gfx->showPointer(true);
-			warning("STUB: changetoMenu");
+			g_hdb->_menu->setMenuKey(1);
 		} else {
 			buttons &= ~kButtonA;
-			warning("STUB: changetoMenu");
+			g_hdb->_menu->setMenuKey(0);
 		}
 	} else if (event.kbd.keycode == _keyDebug) {
 		if (keyDown) {
