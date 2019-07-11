@@ -491,11 +491,11 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Ghost in the Sheet
 	WME_WINENTRY("ghostsheet", "",
 		WME_ENTRY2s("english.dcp", "e6d0aad2c89996bcabe416105a3d6d3a", 12221017,
-					"data.dcp", "b2f8b05328e4881e15e98e845b63f451", 168003), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+					"data.dcp", "b2f8b05328e4881e15e98e845b63f451", 168003), Common::EN_ANY, ADGF_UNSTABLE, WME_1_8_0),
 
 	// Ghost in the Sheet (Demo)
 	WME_WINENTRY("ghostsheet", "Demo",
-		WME_ENTRY1s("data.dcp", "dc1f6595f412ac25a52eaf47dad4ab81", 169083), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, LATEST_VERSION),
+		WME_ENTRY1s("data.dcp", "dc1f6595f412ac25a52eaf47dad4ab81", 169083), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_8_0),
 
 	// Hamlet or the last game without MMORPG features, shaders and product placement
 	WME_WINENTRY("hamlet", "",
