@@ -299,8 +299,11 @@ bool Map::load(Common::SeekableReadStream *stream) {
 	*/
 
 	_mapExplosions = new byte[_width * _height];
+	memset(_mapExplosions, 0, sizeof(_mapExplosions));
 	_mapExpBarrels = new byte[_width * _height];
+	memset(_mapExpBarrels, 0, sizeof(_mapExpBarrels));
 	_mapLaserBeams = new byte[_width * _height];
+	memset(_mapLaserBeams, 0, sizeof(_mapLaserBeams));
 
 	int sky = loadTiles();
 	g_hdb->_gfx->setSky(sky);
