@@ -209,7 +209,6 @@ void Input::stylusMove(int x, int y) {
 		warning("STUB: stylusMove: Menu::processInput() required");
 		break;
 	default:
-		debug(9, "stylusMove: Unintended GameState");
 		break;
 	}
 }
@@ -284,9 +283,22 @@ void Input::updateMouseButtons(int l, int m, int r) {
 void Input::updateKeys(Common::Event event, bool keyDown) {
 
 	debug(9, "STUB: updateKeys: Check for Quit key");
-	debug(9, "STUB: updateKeys: Check for Pause key");
 
 	uint16 buttons = getButtons();
+
+	// PAUSE key pressed?
+	{
+		static int	current = 0, last = 0;
+		last = current;
+		if (keyDown && event.kbd.keycode == Common::KEYCODE_p && g_hdb->getGameState() == GAME_PLAY) {
+			current = 1;
+			if (!last) {
+				g_hdb->togglePause();
+				g_hdb->_sound->playSound(SND_POP);
+			}
+		} else
+			current = 0;
+	}
 
 	if (!g_hdb->getPause()) {
 		if (event.kbd.keycode == _keyUp) {
