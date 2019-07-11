@@ -47,10 +47,10 @@ ifdef DIST_FILES_ENGINEDATA
 	$(CP) $(DIST_FILES_ENGINEDATA) $(gcw0_bundle)/engine-data/
 endif
 ifdef DIST_FILES_NETWORKING
-	$(CP) $(DIST_FILES_NETWORKING) $(gcw0_name)/
+	$(CP) $(DIST_FILES_NETWORKING) $(gcw0_bundle)/
 endif
 ifdef DIST_FILES_VKEYBD
-	$(CP) $(DIST_FILES_VKEYBD) $(gcw0_name)/
+	$(CP) $(DIST_FILES_VKEYBD) $(gcw0_bundle)/
 endif
 ifdef DYNAMIC_MODULES
 	$(MKDIR) $(gcw0_bundle)/plugins
