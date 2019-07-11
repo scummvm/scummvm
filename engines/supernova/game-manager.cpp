@@ -192,7 +192,6 @@ void GameManager::initState() {
 		_rowsStart[i] = 0;
 	}
 
-	_prevImgId = 0;
 	_dead = false;
 }
 

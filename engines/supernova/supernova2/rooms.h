@@ -107,9 +107,6 @@ public:
 	virtual void onEntrance();
 	virtual void animation();
 	virtual bool interact(Action verb, Object &obj1, Object &obj2);
-
-private:
-	bool _paid;
 };
 
 class Kiosk : public Room2 {
