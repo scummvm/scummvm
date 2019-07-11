@@ -38,6 +38,9 @@ TextToSpeechManager::~TextToSpeechManager() {
 	TTSState *tmp = _ttsState;
 	while (tmp != nullptr) {
 		tmp = _ttsState->_next;
+		for (TTSVoice *i = _ttsState->_availaibleVoices.begin(); i < _ttsState->_availaibleVoices.end(); i++) {
+			free(i->_data);
+		}
 		delete _ttsState;
 		_ttsState = tmp;
 	}

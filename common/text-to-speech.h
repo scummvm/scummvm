@@ -48,7 +48,6 @@ class TTSVoice {
 		TTSVoice(Gender gender, void *data) 
 			: _gender(gender)
 			, _data(data) {}
-		~TTSVoice() { debug("%d", * (int *)_data); if (_data != nullptr) free(_data); }
 		Gender getGender() { return _gender; };
 		void setGender(Gender gender) { _gender = gender; };
 		void setData(void *data) { _data = data; };
