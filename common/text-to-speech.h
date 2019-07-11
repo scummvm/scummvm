@@ -84,6 +84,8 @@ public:
 	virtual bool resume() { return false; }
 
 	virtual bool isSpeaking() { return false; }
+	virtual bool isPaused() { return false; }
+	virtual bool isReady() { return false; }
 	
 	virtual void setVoice(TTSVoice *voice) {}
 	TTSVoice getVoice() { return *(_ttsState->_activeVoice); }
