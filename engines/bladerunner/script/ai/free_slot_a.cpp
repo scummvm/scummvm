@@ -685,7 +685,12 @@ void AIScriptFreeSlotA::goToRandomUGxx() {
 
 	case 7:
 		// kSetUG07 or kSetFreeSlotG
+#if BLADERUNNER_ORIGINAL_BUGS
 		if (Actor_Query_In_Set(kActorClovis, kSetUG07)) {
+			// this check is not very effective since Clovis
+			// will spawn in the set when McCoy goes to the downwards exit
+			// at which point a rat may already be in the set and that could
+			// make them collide with Clovis' path
 			AI_Movement_Track_Append(kActorFreeSlotA, 39, 10); // kSetFreeSlotG
 		} else {
 			World_Waypoint_Set(463, kSetUG07,  -88.78f, -12.21f, -184.08f);
@@ -696,11 +701,23 @@ void AIScriptFreeSlotA::goToRandomUGxx() {
 			// TODO: A bug? the waypoint 465 is created but is unused
 		}
 		break;
-
+#else
+		// Don't put rats in UG07 after the UG18 Guzza scene
+		// since Clovis may be there too and that does not work well
+		if (!Game_Flag_Query(kFlagUG18GuzzaScene)) {
+			World_Waypoint_Set(463, kSetUG07,  -88.78f, -12.21f, -184.08f);
+			World_Waypoint_Set(464, kSetUG07,  250.0f,  -12.21f, -342.0f);
+			World_Waypoint_Set(465, kSetUG07, -164.78f, -12.21f, -832.08f);
+			AI_Movement_Track_Append(kActorFreeSlotA, 463, 5);
+			AI_Movement_Track_Append(kActorFreeSlotA, 464, 1);
+			// TODO: A bug? the waypoint 465 is created but is unused
+			break;
+		}
+#endif // BLADERUNNER_ORIGINAL_BUGS
+		// fall through
 	case 8:
 		// kSetUG07
-		// TODO a bug? Maybe also check here if Clovis is in the set
-		// like in case 7
+#if BLADERUNNER_ORIGINAL_BUGS
 		World_Waypoint_Set(463, kSetUG07,  -88.78f, -12.21f, -184.08f);
 		World_Waypoint_Set(464, kSetUG07,  250.0f,  -12.21f, -342.0f);
 		World_Waypoint_Set(465, kSetUG07, -164.78f, -12.21f, -832.08f);
@@ -708,11 +725,23 @@ void AIScriptFreeSlotA::goToRandomUGxx() {
 		AI_Movement_Track_Append(kActorFreeSlotA, 463, 1);
 		// TODO: A bug? the waypoint 465 is created but is unused
 		break;
-
+#else
+		// Don't put rats in UG07 after the UG18 Guzza scene
+		// since Clovis may be there too and that does not work well
+		if (!Game_Flag_Query(kFlagUG18GuzzaScene)) {
+			World_Waypoint_Set(463, kSetUG07,  -88.78f, -12.21f, -184.08f);
+			World_Waypoint_Set(464, kSetUG07,  250.0f,  -12.21f, -342.0f);
+			World_Waypoint_Set(465, kSetUG07, -164.78f, -12.21f, -832.08f);
+			AI_Movement_Track_Append(kActorFreeSlotA, 464, 5);
+			AI_Movement_Track_Append(kActorFreeSlotA, 463, 1);
+			// TODO: A bug? the waypoint 465 is created but is unused
+			break;
+		}
+#endif // BLADERUNNER_ORIGINAL_BUGS
+		// fall through
 	case 9:
 		// kSetUG07
-		// TODO a bug? Maybe also check here if Clovis is in the set
-		// like in case 7
+#if BLADERUNNER_ORIGINAL_BUGS
 		World_Waypoint_Set(463, kSetUG07,  -88.78f, -12.21f, -184.08f);
 		World_Waypoint_Set(464, kSetUG07,  250.0f,  -12.21f, -342.0f);
 		World_Waypoint_Set(465, kSetUG07, -164.78f, -12.21f, -832.08f);
@@ -720,11 +749,23 @@ void AIScriptFreeSlotA::goToRandomUGxx() {
 		AI_Movement_Track_Append(kActorFreeSlotA, 465, 1);
 		// TODO: A bug? the waypoint 463 is created but is unused
 		break;
-
+#else
+		// Don't put rats in UG07 after the UG18 Guzza scene
+		// since Clovis may be there too and that does not work well
+		if (!Game_Flag_Query(kFlagUG18GuzzaScene)) {
+			World_Waypoint_Set(463, kSetUG07,  -88.78f, -12.21f, -184.08f);
+			World_Waypoint_Set(464, kSetUG07,  250.0f,  -12.21f, -342.0f);
+			World_Waypoint_Set(465, kSetUG07, -164.78f, -12.21f, -832.08f);
+			AI_Movement_Track_Append(kActorFreeSlotA, 464, 5);
+			AI_Movement_Track_Append(kActorFreeSlotA, 465, 1);
+			// TODO: A bug? the waypoint 463 is created but is unused
+			break;
+		}
+#endif // BLADERUNNER_ORIGINAL_BUGS
+		// fall through
 	case 10:
 		// kSetUG07
-		// TODO a bug? Maybe also check here if Clovis is in the set
-		// like in case 7
+#if BLADERUNNER_ORIGINAL_BUGS
 		World_Waypoint_Set(463, kSetUG07,  -88.78f, -12.21f, -184.08f);
 		World_Waypoint_Set(464, kSetUG07,  250.0f,  -12.21f, -342.0f);
 		World_Waypoint_Set(465, kSetUG07, -164.78f, -12.21f, -832.08f);
@@ -732,7 +773,20 @@ void AIScriptFreeSlotA::goToRandomUGxx() {
 		AI_Movement_Track_Append(kActorFreeSlotA, 464, 1);
 		// TODO: A bug? the waypoint 463 is created but is unused
 		break;
-
+#else
+		// Don't put rats in UG07 after the UG18 Guzza scene
+		// since Clovis may be there too and that does not work well
+		if (!Game_Flag_Query(kFlagUG18GuzzaScene)) {
+			World_Waypoint_Set(463, kSetUG07,  -88.78f, -12.21f, -184.08f);
+			World_Waypoint_Set(464, kSetUG07,  250.0f,  -12.21f, -342.0f);
+			World_Waypoint_Set(465, kSetUG07, -164.78f, -12.21f, -832.08f);
+			AI_Movement_Track_Append(kActorFreeSlotA, 465, 5);
+			AI_Movement_Track_Append(kActorFreeSlotA, 464, 1);
+			// TODO: A bug? the waypoint 463 is created but is unused
+			break;
+		}
+#endif // BLADERUNNER_ORIGINAL_BUGS
+		// fall through
 	case 11:
 		// kSetUG09
 		World_Waypoint_Set(463, kSetUG09,   91.0f, 156.94f, -498.0f);

@@ -788,8 +788,8 @@ bool AIScriptOfficerGrayford::GoalChanged(int currentGoalNumber, int newGoalNumb
 				// fall through
 
 			case 6:
-#if BLADERUNNER_ORIGINAL_BUGS
 				// kSetUG07 -> kSetFreeSlotC
+#if BLADERUNNER_ORIGINAL_BUGS
 				// debug("gray 8-6 kSetUG07 -> kSetFreeSlotC");
 				AI_Movement_Track_Append(kActorOfficerGrayford, 415, 0);
 				AI_Movement_Track_Append_With_Facing(kActorOfficerGrayford, 416, 0, 620);

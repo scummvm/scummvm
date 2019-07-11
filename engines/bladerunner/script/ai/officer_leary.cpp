@@ -539,8 +539,8 @@ bool AIScriptOfficerLeary::GoalChanged(int currentGoalNumber, int newGoalNumber)
 				// fall through
 
 			case 6:
-#if BLADERUNNER_ORIGINAL_BUGS
 				// kSetUG07 -> kSetFreeSlotC
+#if BLADERUNNER_ORIGINAL_BUGS
 				// debug("leary 8-6 kSetUG07 -> kSetFreeSlotC");
 				AI_Movement_Track_Append(kActorOfficerLeary, 415, 0);
 				AI_Movement_Track_Append_With_Facing(kActorOfficerLeary, 416, 0, 620);
@@ -553,7 +553,6 @@ bool AIScriptOfficerLeary::GoalChanged(int currentGoalNumber, int newGoalNumber)
 				// Don't put police in UG07 after the UG18 Guzza scene
 				// since Clovis may be there too and that does not work well
 				if (!Game_Flag_Query(kFlagUG18GuzzaScene)) {
-					// kSetUG07 -> kSetFreeSlotC
 					// debug("leary 8-6 kSetUG07 -> kSetFreeSlotC");
 					AI_Movement_Track_Append(kActorOfficerLeary, 415, 0);
 					AI_Movement_Track_Append_With_Facing(kActorOfficerLeary, 416, 0, 620);
