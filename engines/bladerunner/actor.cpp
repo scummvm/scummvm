@@ -1298,9 +1298,17 @@ bool Actor::findEmptyPositionAround(const Vector3 &startPosition, const Vector3 
 			}
 		} else { // looks like a bug as it might not find anything when there is no walkbox at this angle
 			facingLeft += 20;
+#if BLADERUNNER_ORIGINAL_BUGS
 			if (facingLeft > 1024) {
 				facingLeft -= 1024;
 			}
+#else
+			// if facingLeft + 20 == 1024 then it could cause the assertion fault
+			// in common/sinetables.cpp for SineTable::at(int index) -> assert((index >= 0) && (index < _nPoints))
+			if (facingLeft >= 1024) {
+				facingLeft -= 1024;
+			}
+#endif
 			facingLeftCounter += 20;
 		}
 
