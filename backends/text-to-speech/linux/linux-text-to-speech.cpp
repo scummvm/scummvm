@@ -87,7 +87,7 @@ LinuxTextToSpeechManager::LinuxTextToSpeechManager()
 }
 
 LinuxTextToSpeechManager::~LinuxTextToSpeechManager() {
-	spd_close(_connection);
+	//spd_close(_connection);
 }
 
 void LinuxTextToSpeechManager::updateState(LinuxTextToSpeechManager::SpeechState state) {
