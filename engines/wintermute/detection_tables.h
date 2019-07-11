@@ -1930,9 +1930,18 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("shinestar", "",
 		WME_ENTRY1s("data.dcp", "f05abe9e2427a5e4f73648fa09c4ba8e", 94113060), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
 
-	// Sofia's Debt
+	// Sofia's Debt (English)
 	WME_WINENTRY("sofiasdebt", "",
-		WME_ENTRY1s("SD.exe", "e9515f9ba1a2925bb6733476a826a650", 9915047), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+		WME_ENTRY1s("SD.exe", "e9515f9ba1a2925bb6733476a826a650", 9915047), Common::EN_ANY, ADGF_UNSTABLE, WME_1_1_39),
+
+	// Sofia's Debt (English)
+	WME_WINENTRY("sofiasdebt", "",
+		WME_ENTRY1s("Sofia's Debt.exe", "e9515f9ba1a2925bb6733476a826a650", 9915047), Common::EN_ANY, ADGF_UNSTABLE, WME_1_1_39),
+
+	// Sofia's Debt (Spanish)
+	// NOTE: dcp is bundled at the end of executable, so the file header checksum is the same, but the size is different
+	WME_WINENTRY("sofiasdebt", "",
+		WME_ENTRY1s("La Deuda de Sofia.exe", "e9515f9ba1a2925bb6733476a826a650", 9844976), Common::ES_ESP, ADGF_UNSTABLE, WME_1_1_39),
 
 	// Space Invaders (Demo)
 	WME_WINENTRY("spaceinvaders", "Demo",
