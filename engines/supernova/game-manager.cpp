@@ -293,6 +293,52 @@ void GameManager::processInput(Common::KeyState &state) {
 	default:
 		break;
 	}
+	if (_vm->_improved && _guiEnabled) {
+		switch (state.keycode) {
+		case Common::KEYCODE_1:
+			resetInputState();
+			_inputVerb = ACTION_WALK;
+			break;
+		case Common::KEYCODE_2:
+			resetInputState();
+			_inputVerb = ACTION_LOOK;
+			break;
+		case Common::KEYCODE_3:
+			resetInputState();
+			_inputVerb = ACTION_TAKE;
+			break;
+		case Common::KEYCODE_4:
+			resetInputState();
+			_inputVerb = ACTION_OPEN;
+			break;
+		case Common::KEYCODE_5:
+			resetInputState();
+			_inputVerb = ACTION_CLOSE;
+			break;
+		case Common::KEYCODE_6:
+			resetInputState();
+			_inputVerb = ACTION_PRESS;
+			break;
+		case Common::KEYCODE_7:
+			resetInputState();
+			_inputVerb = ACTION_PULL;
+			break;
+		case Common::KEYCODE_8:
+			resetInputState();
+			_inputVerb = ACTION_USE;
+			break;
+		case Common::KEYCODE_9:
+			resetInputState();
+			_inputVerb = ACTION_TALK;
+			break;
+		case Common::KEYCODE_0:
+			resetInputState();
+			_inputVerb = ACTION_GIVE;
+			break;
+		default:
+			break;
+		}
+	}
 }
 
 void GameManager::resetInputState() {
