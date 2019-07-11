@@ -1949,7 +1949,17 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Space Madness
 	WME_WINENTRY("spacemadness", "1.0.2",
-		WME_ENTRY1s("data.dcp", "b9b83135dc7a9e1b4b5f50195dbeb630", 39546622), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+		WME_ENTRY1s("data.dcp", "b9b83135dc7a9e1b4b5f50195dbeb630", 39546622), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_1),
+
+	// Space Madness (Demo) (English)
+	WME_WINENTRY("spacemadness", "Demo",
+		WME_ENTRY2s("data.dcp", "5c88a51d010ad24225dee432ed38b238", 25987377,
+					"lang-english.dcp", "1e224f3f50cc9c1f91a4aedae1700788", 586837), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_1),
+
+	// Space Madness (Demo) (German)
+	WME_WINENTRY("spacemadness", "Demo",
+		WME_ENTRY2s("data.dcp", "5c88a51d010ad24225dee432ed38b238", 25987377,
+					"lang-german.dcp", "78d06de2b4a8c68517eb6df3ded86d82", 1524330), Common::DE_DEU, ADGF_UNSTABLE, WME_1_9_1),
 
 	// Tanya Grotter and the Magical Double Bass
 	WME_WINENTRY("tanya1", "",
