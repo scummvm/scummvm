@@ -25,6 +25,13 @@
 
 #include "common/system.h"
 
+#define STARS_MONKEYSTONE_7			0xfe257d	// magic value in the config file for the unlocking of the Monkeystone secret #7
+#define STARS_MONKEYSTONE_7_FAKE	0x11887e	// fake value that means it hasn't been unlocked
+#define STARS_MONKEYSTONE_14		0x3341fe	// <same> for the Monkeystone #14
+#define STARS_MONKEYSTONE_14_FAKE	0x1cefd0	// fake value that means it hasn't been unlocked
+#define STARS_MONKEYSTONE_21		0x77ace3	// <same> for the Monkeystone #21
+#define STARS_MONKEYSTONE_21_FAKE	0x3548fe	// fake value that means it hasn't been unlocked
+
 namespace HDB {
 
 enum {
