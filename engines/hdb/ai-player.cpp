@@ -21,6 +21,7 @@
  */
 
 #include "hdb/hdb.h"
+#include "hdb/menu.h"
 
 namespace HDB {
 
@@ -1589,7 +1590,24 @@ void aiMonkeystoneUse(AIEntity *e) {
 	g_hdb->_window->openMessageBar(monkBuff, kMsgDelay);
 
 	// have we unlocked a secret star(tm)???
-	warning("STUB: Set Secret Stars");
+	if (val == 7) {
+		g_hdb->_window->openMessageBar("Red Star is Ready!", kMsgDelay * 2);
+		g_hdb->setStarsMonkeystone7(STARS_MONKEYSTONE_7);
+		g_hdb->_menu->writeConfig();
+		g_hdb->_gfx->turnOnBonusStars(0);
+	}
+	if (val == 14) {
+		g_hdb->_window->openMessageBar("Green Star is GO!", kMsgDelay * 2);
+		g_hdb->setStarsMonkeystone14(STARS_MONKEYSTONE_14);
+		g_hdb->_menu->writeConfig();
+		g_hdb->_gfx->turnOnBonusStars(1);
+	}
+	if (val == 21) {
+		g_hdb->_window->openMessageBar("Blue Star is Born!", kMsgDelay * 2);
+		g_hdb->setStarsMonkeystone21(STARS_MONKEYSTONE_21);
+		g_hdb->_menu->writeConfig();
+		g_hdb->_gfx->turnOnBonusStars(2);
+	}
 }
 
 void aiGemAction(AIEntity *e) {
