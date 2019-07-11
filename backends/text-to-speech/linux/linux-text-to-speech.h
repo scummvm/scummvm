@@ -35,7 +35,8 @@ public:
 	enum SpeechState {
 		READY,
 		PAUSED,
-		SPEAKING
+		SPEAKING,
+		BROKEN
 	};
 
 	LinuxTextToSpeechManager();
@@ -48,6 +49,8 @@ public:
 	virtual bool resume();
 
 	virtual bool isSpeaking();
+	virtual bool isPaused();
+	virtual bool isReady();
 	
 	virtual void setVoice(Common::TTSVoice *voice);
 

@@ -67,7 +67,7 @@ LinuxTextToSpeechManager::LinuxTextToSpeechManager()
 	: _speechState(READY) {
 	_connection = spd_open("ScummVM", "main", NULL, SPD_MODE_THREADED);
 	if (_connection == 0) {
-		debug("couldn't open");
+		_speechState = BROKEN;
 		return;
 	}
 
@@ -82,12 +82,13 @@ LinuxTextToSpeechManager::LinuxTextToSpeechManager()
 	_connection->callback_pause = speech_pause_callback;
 	spd_set_notification_on(_connection, SPD_PAUSE);
 
-	setLanguage(Common::String("en"));
+	setLanguage(Common::String("cs"));
 	updateVoices();
 }
 
 LinuxTextToSpeechManager::~LinuxTextToSpeechManager() {
-	//spd_close(_connection);
+	if (_connection != 0)
+		spd_close(_connection);
 }
 
 void LinuxTextToSpeechManager::updateState(LinuxTextToSpeechManager::SpeechState state) {
@@ -95,6 +96,8 @@ void LinuxTextToSpeechManager::updateState(LinuxTextToSpeechManager::SpeechState
 }
 
 bool LinuxTextToSpeechManager::say(Common::String str) {
+	if (_speechState == BROKEN)
+		return true;
 	if (isSpeaking())
 		stop();
 	return spd_say(_connection, SPD_MESSAGE, str.c_str()) == -1;
@@ -102,54 +105,70 @@ bool LinuxTextToSpeechManager::say(Common::String str) {
 }
 
 bool LinuxTextToSpeechManager::stop() {
-	if (_speechState == READY)
-		return false;
+	if (_speechState == READY || _speechState == BROKEN)
+		return true;
 	return spd_cancel(_connection) == -1;
 }
 
 bool LinuxTextToSpeechManager::pause() {
-	if (_speechState == READY || _speechState == PAUSED)
-		return false;
+	if (_speechState == READY || _speechState == PAUSED || _speechState == BROKEN)
+		return true;
 	return spd_pause(_connection) == -1;
 }
 
 bool LinuxTextToSpeechManager::resume() {
-	if (_speechState == READY || _speechState == SPEAKING)
-		return false;
+	if (_speechState == READY || _speechState == SPEAKING || _speechState == BROKEN)
+		return true;
 	return spd_resume(_connection) == -1;
 }
 
 bool LinuxTextToSpeechManager::isSpeaking() {
-	if (_speechState == SPEAKING)
-		return true;
-	return false;
+	return _speechState == SPEAKING;
+}
+
+bool LinuxTextToSpeechManager::isPaused() {
+	return _speechState == PAUSED;
+}
+
+bool LinuxTextToSpeechManager::isReady() {
+	return _speechState == READY;
 }
 
 void LinuxTextToSpeechManager::setVoice(Common::TTSVoice *voice) {
+	if (_speechState == BROKEN)
+		return;
 	assert(voice != nullptr && voice->getData() != nullptr);
 	spd_set_voice_type(_connection, *(SPDVoiceType *)(voice->getData()));
 	_ttsState->_activeVoice = voice;
 }
 
 void LinuxTextToSpeechManager::setRate(int rate) {
+	if (_speechState == BROKEN)
+		return;
 	assert(rate >= -100 && rate <= 100);
 	spd_set_voice_rate(_connection, rate);
 	_ttsState->_rate = rate;
 }
 
 void LinuxTextToSpeechManager::setPitch(int pitch) {
+	if (_speechState == BROKEN)
+		return;
 	assert(pitch >= -100 && pitch <= 100);
 	spd_set_voice_pitch(_connection, pitch);
 	_ttsState->_pitch = pitch;
 }
 
 void LinuxTextToSpeechManager::setVolume(int volume) {
+	if (_speechState == BROKEN)
+		return;
 	assert(volume >= -100 && volume <= 100);
 	spd_set_volume(_connection, volume);
 	_ttsState->_volume = volume;
 }
 
 void LinuxTextToSpeechManager::setLanguage(Common::String language) {
+	if (_speechState == BROKEN)
+		return;
 	spd_set_language(_connection, language.c_str());
 	_ttsState->_language = language;
 	if (_ttsState->_activeVoice)
@@ -157,6 +176,8 @@ void LinuxTextToSpeechManager::setLanguage(Common::String language) {
 }
 
 void LinuxTextToSpeechManager::updateVoices() {
+	if (_speechState == BROKEN)
+		return;
 	/* just use these voices:
 	   SPD_MALE1, SPD_MALE2, SPD_MALE3,
 	   SPD_FEMALE1, SPD_FEMALE2, SPD_FEMALE3,
