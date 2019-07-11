@@ -80,6 +80,23 @@ void SceneScriptKP07::InitializeScene() {
 			Actor_Set_At_XYZ(kActorLuther, -47.0f, 0.0f, 151.0f, 531);
 		}
 	}
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+	// Additional fix for saves with bad state (goal 513) for Clovis
+	// which resulted in him standing, clipping through his moonbus bed
+	// when McCoy is not helping the Replicants
+	else {
+		// McCoy is not helping the Replicants
+		if (Actor_Query_Goal_Number(kActorClovis) == kGoalClovisKP07Wait
+			&& !Game_Flag_Query(kFlagClovisLyingDown)) {
+			// this goal set is only for the purpose of switch Clovis goal out of kGoalClovisKP07Wait
+			Actor_Set_Goal_Number(kActorClovis, kGoalClovisStartChapter5);
+			// And explicitly switching back to kGoalClovisKP07Wait in order
+			// to trigger the bug-fixed GoalChanged() case in his AI
+			Actor_Set_Goal_Number(kActorClovis, kGoalClovisKP07Wait);
+		}
+	}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 
 	Ambient_Sounds_Add_Looping_Sound(kSfxCOMPBED1,  7, 1, 1);
 	Ambient_Sounds_Add_Looping_Sound(kSfxMOONBED2, 52, 1, 1);
