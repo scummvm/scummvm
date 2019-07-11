@@ -1945,7 +1945,7 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Space Invaders (Demo)
 	WME_WINENTRY("spaceinvaders", "Demo",
-		WME_ENTRY1s("data.dcp", "3f27adefdf72f2c1601cf555c80a509f", 1308361), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, LATEST_VERSION),
+		WME_ENTRY1s("data.dcp", "3f27adefdf72f2c1601cf555c80a509f", 1308361), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_3),
 
 	// Space Madness
 	WME_WINENTRY("spacemadness", "1.0.2",
