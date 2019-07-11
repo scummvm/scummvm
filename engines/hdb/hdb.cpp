@@ -167,6 +167,10 @@ void HDBGame::changeGameState() {
 	}
 }
 
+void HDBGame::start() {
+	_gameState = GAME_TITLE;
+}
+
 bool HDBGame::restartMap() {
 	if (!_currentMapname[0])
 		return false;
@@ -728,6 +732,8 @@ Common::Error HDBGame::run() {
 	// Initializes Graphics
 	initGraphics(kScreenWidth, kScreenHeight, &_format);
 	_console = new Console();
+
+	start();
 
 #if 0
 	Common::SeekableReadStream *titleStream = _fileMan->findFirstData("monkeylogoscreen", TYPE_PIC);
