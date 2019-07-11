@@ -341,11 +341,26 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Corrosion: Cold Winter Waiting
 	WME_WINENTRY("corrosion", "",
-		WME_ENTRY1s("data.dcp", "ae885b1a8faa0b27f43c0e8f0df02fc9", 525931618), Common::EN_ANY, ADGF_NO_FLAGS, LATEST_VERSION),
+		WME_ENTRY1s("data.dcp", "ae885b1a8faa0b27f43c0e8f0df02fc9", 525931618), Common::EN_ANY, ADGF_NO_FLAGS, WME_1_9_1),
 
 	// Corrosion: Cold Winter Waiting (Enhanced Edition)
 	WME_WINENTRY("corrosion", "Enhanced Edition",
-		WME_ENTRY1s("data.dcp", "eeeb63910f6fc6ad1fe9c06db0b0ea2c", 643363346), Common::EN_ANY, ADGF_NO_FLAGS, LATEST_VERSION),
+		WME_ENTRY1s("data.dcp", "eeeb63910f6fc6ad1fe9c06db0b0ea2c", 643363346), Common::EN_ANY, ADGF_NO_FLAGS, WME_1_9_1),
+
+	// Corrosion: Cold Winter Waiting (Enhanced Edition) (v1.2.0)
+	WME_WINENTRY("corrosion", "Enhanced Edition v1.2.0",
+		WME_ENTRY2s("data.dcp", "d14d3c858026b1422a2a420e9a49fd16", 643372377,
+					"steam_001.dcp", "e5ee8fcadec5dcc24484300c77017bd0", 41986), Common::EN_ANY, ADGF_NO_FLAGS, WME_1_9_1),
+
+	// Corrosion: Cold Winter Waiting (Enhanced Edition) (v1.2.1)
+	WME_WINENTRY("corrosion", "Enhanced Edition v1.2.1",
+		WME_ENTRY2s("data.dcp", "1d3e4d97f135d61c6532b3bc08272156", 643363379,
+					"steam_001.dcp", "c69ca653d0b630302afece19c5e9b52a", 42039), Common::EN_ANY, ADGF_NO_FLAGS, WME_1_9_1),
+
+	// Corrosion: Cold Winter Waiting (Enhanced Edition) (v1.2.2)
+	WME_WINENTRY("corrosion", "Enhanced Edition v1.2.2",
+		WME_ENTRY2s("data.dcp", "1d3e4d97f135d61c6532b3bc08272156", 643363379,
+					"steam_001.dcp", "e10b58c16e9487cfaf395c3b88ca1fd1", 42049), Common::EN_ANY, ADGF_NO_FLAGS, WME_1_9_1),
 
 	// Dead City (Czech)
 	WME_WINENTRY("deadcity", "",
