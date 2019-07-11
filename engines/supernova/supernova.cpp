@@ -438,14 +438,6 @@ void SupernovaEngine::showHelpScreen2() {
 	paletteFadeOut();
 	setCurrentImage(27);
 	renderImage(0);
-	renderBox(10, 70, 192, 100, kColorWhite35);
-	renderText(kStringHelpOverview1, 15, 80, kColorWhite99);
-	renderText(kStringHelpOverview2, 15, 92, kColorWhite99);
-	renderText(kStringHelpOverview3, 15, 104, kColorWhite99);
-	renderText(kStringHelpOverview4, 15, 116, kColorWhite99);
-	renderText(kStringHelpOverview5, 15, 128, kColorWhite99);
-	renderText(kStringHelpOverview6, 15, 140, kColorWhite99);
-	renderText(kStringHelpOverview7, 15, 152, kColorWhite99);
 	paletteFadeIn();
 	_gm->getKeyInput();
 

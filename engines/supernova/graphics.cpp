@@ -121,6 +121,8 @@ bool MSNImage::loadFromEngineDataFile() {
 	} else if (_vm->_MSPart == 2) {
 		if (_filenumber == 15)
 			name = "M015";
+		else if (_filenumber == 27)
+			name = "M027";
 		else if (_filenumber == 28)
 			name = "M028";
 		else
