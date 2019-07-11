@@ -356,6 +356,7 @@ void writeMS2(File &outputFile) {
 	while(*l) {
 		writeImage(outputFile, "img3", *l);
 		writeDatafile(outputFile, 15, *l, 2);
+		writeDatafile(outputFile, 27, *l, 2);
 		writeDatafile(outputFile, 28, *l, 2);
 		writeStrings(outputFile, *l, 2);
 		writeDocFile(outputFile, "inf", *l, 2);
