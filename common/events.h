@@ -110,7 +110,7 @@ struct JoystickState {
 	 * Some of the button indices match well-known game controller
 	 * buttons. See JoystickButton.
 	 */
-	byte button;
+	int8 button;
 };
 
 /**
