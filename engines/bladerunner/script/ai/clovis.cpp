@@ -404,6 +404,12 @@ bool AIScriptClovis::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		} else {
 			Actor_Set_At_XYZ(kActorClovis, 84.85f, -50.56f, -68.87f, 800);
 			Actor_Face_Heading(kActorClovis, 1022, false);
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+			// same as kGoalClovisKP07LayDown
+			// Actor_Set_Targetable(kActorClovis, true) is already done above
+			Game_Flag_Set(kFlagClovisLyingDown);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		}
 		someAnim();
 		return true;
@@ -525,7 +531,7 @@ bool AIScriptClovis::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		}
 		return true;
 
-	case 518:
+	case kGoalClovisKP07LayDown:
 		Actor_Set_At_XYZ(kActorClovis, 84.85f, -50.56f, -68.87f, 800);
 		Actor_Face_Heading(kActorClovis, 1022, false);
 		Actor_Set_Targetable(kActorClovis, true);
