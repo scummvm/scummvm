@@ -528,7 +528,7 @@ Common::Error SupernovaEngine::showTextReader(const char *extension) {
 			filename = Common::String::format("ms2.%s", extension);
 
 		if (!file.open(filename)) {
-			GUIErrorMessageFormat(_("Unable to find '%s' in game folder or the engine data file."), filename);
+			GUIErrorMessageFormat(_("Unable to find '%s' in game folder or the engine data file."), filename.c_str());
 			return Common::kReadingFailed;
 		}
 		stream = file.readStream(file.size());

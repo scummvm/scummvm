@@ -128,9 +128,6 @@ public:
 	void securityEntrance();
 	void pressureAlarmCount();
 	void pressureAlarmEntrance();
-
-private:
-	int _prevImgId;
 };
 
 }

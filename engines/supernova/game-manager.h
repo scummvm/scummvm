@@ -199,9 +199,6 @@ public:
 	void reply(const char *text, int aus1, int aus2);
 	void mousePosDialog(int x, int y);
 	virtual void takeMoney(int amount);
-
-private:
-	int _prevImgId;
 };
 
 }
