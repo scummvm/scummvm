@@ -2015,7 +2015,7 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Fairy Tales About Toshechka and Boshechka
 	WME_WINENTRY("tib", "",
-		WME_ENTRY1s("data.dcp", "87d296ef3f46570ed18f000d3885db77", 340264526), Common::RU_RUS, ADGF_UNSTABLE, LATEST_VERSION),
+		WME_ENTRY1s("data.dcp", "87d296ef3f46570ed18f000d3885db77", 340264526), Common::RU_RUS, ADGF_UNSTABLE, WME_1_7_2),
 
 	// The Trader of Stories (Demo)
 	WME_WINENTRY("tradestory", "Demo",
