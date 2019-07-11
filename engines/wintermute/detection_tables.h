@@ -2039,7 +2039,11 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Wilma Tetris
 	WME_WINENTRY("wtetris", "",
-		WME_ENTRY1s("data.dcp", "946e3a0496e6c12fb344c9ed861ff015", 2780093), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+		WME_ENTRY1s("data.dcp", "946e3a0496e6c12fb344c9ed861ff015", 2780093), Common::EN_ANY, ADGF_UNSTABLE, WME_1_1_39),
+
+	// Wilma Tetris
+	WME_WINENTRY("wtetris", "",
+		WME_ENTRY1s("wtetris.exe", "fb89ec8c4fa2279120a8939449c0bda9", 3918669), Common::EN_ANY, ADGF_UNSTABLE, WME_1_1_39),
 
 	// Zilm: A Game of Reflex 1.0
 	WME_WINENTRY("Zilm", "1.0",
