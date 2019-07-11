@@ -185,6 +185,13 @@ public:
 
 	void fillSavegameSlots();
 
+	void setMenuKey(int status) {
+		_menuKey = status;
+	}
+	int getMenuKey() {
+		return _menuKey;
+	}
+
 	Save _saveGames[kNumSaveSlots + 1];
 
 	int _starWarp;
@@ -238,6 +245,8 @@ public:
 		BACKSCROLL_GALAXY1,
 		BACKSCROLL_GALAXY2
 	};
+
+	int _menuKey;
 };
 
 } // End of Namespace
