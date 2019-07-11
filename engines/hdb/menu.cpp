@@ -940,7 +940,309 @@ void Menu::fillSavegameSlots() {
 }
 
 void Menu::processInput(int x, int y) {
-	warning("STUB: Menu: processInput");
+	// do not enter if clicking too fast
+	if (_clickDelay)
+		return;
+	_clickDelay = 3;
+
+	//-------------------------------------------------------------------
+	//	MAIN MENU INPUT
+	//-------------------------------------------------------------------
+	if (_menuActive) {
+		int	resume = getMenuKey();
+		// quit game?
+		if (x >= kMenuX && x < kMenuX + kMenuItemWidth &&
+			y >= kMenuY + kMQuitY && y < kMenuY + kMQuitY + kMenuItemHeight) {
+			g_hdb->_sound->playSound(SND_BYE);
+			_quitTimer = g_hdb->getTimeSlice() + 1000;
+			_quitActive = true;
+			_menuActive = false;
+			return;
+		} else if (x >= kMenuX && x < kMenuX + kMenuItemWidth &&
+			y >= kMenuY && y < kMenuY + kMenuItemHeight) {
+			// new game?
+			_optionsScrolling = true;
+			_optionsXV = 5;
+			g_hdb->_sound->playSound(SND_MENU_ACCEPT);
+			g_hdb->_sound->freeSound(SND_HDB);
+			_nextScreen = 2;
+		} else if (x >= kMenuX && x < kMenuX + kMenuItemWidth &&
+			y >= kMenuY + kMLoadY && y < kMenuY + kMLoadY + kMenuItemHeight) {
+			// game files?
+				_optionsScrolling = true;
+				_optionsXV = 5;
+				g_hdb->_sound->playSound(SND_MENU_ACCEPT);
+				_nextScreen = 1;
+		} else if (x >= kMenuX && x < kMenuX + kMenuItemWidth &&
+			y >= kMenuY + kMOptionsY && y < kMenuY + kMOptionsY + kMenuItemHeight) {
+			// options?
+			SoundType temp;
+			temp = g_hdb->_sound->whatSongIsPlaying();
+			if (temp != SONG_NONE)
+				_resumeSong = temp;
+			_optionsScrolling = true;
+			_optionsXV = 5;
+			_nextScreen = 0;
+			g_hdb->_sound->playSound(SND_MENU_ACCEPT);
+		} else if (((x >= kMenuX && x < kMenuX + kMenuItemWidth &&
+			y >= kMenuY + kMResumeY && y < kMenuY + kMResumeY + kMenuItemHeight) || resume) &&
+			(true == g_hdb->_map->isLoaded() || _saveGames[5].seconds)) {
+			// resume game? ( must be playing already or have an autosave )
+			g_hdb->_sound->playSound(SND_POP);
+			freeMenu();
+			// if we're on the secret level, RESUME will load the autosave...
+			if (g_hdb->_map->isLoaded() && scumm_strnicmp(g_hdb->currentMapName(), "map30", 5))
+				g_hdb->setGameState(GAME_PLAY);
+			else {
+				if (g_hdb->loadGameState(kAutoSaveSlot).getCode() == Common::kNoError) {
+					g_hdb->setGameState(GAME_PLAY);
+				}
+			}
+		} else if (g_hdb->getStarsMonkeystone7() == STARS_MONKEYSTONE_7 ||
+			g_hdb->getStarsMonkeystone14() == STARS_MONKEYSTONE_14 ||
+			g_hdb->getStarsMonkeystone21() == STARS_MONKEYSTONE_21) {
+			// Secret Stars! (tm)
+			if (x >= kStarRedX && x <= kStarRedX + _starRedGfx[0]->_width &&
+				y >= kStarRedY && y <= kStarRedY + _starRedGfx[0]->_height &&
+				g_hdb->getStarsMonkeystone7() == STARS_MONKEYSTONE_7) {
+				_optionsActive = false;
+				g_hdb->setGameState(GAME_PLAY);
+				if (scumm_strnicmp(g_hdb->currentMapName(), "map30", 5))	// don't save if we're already on 30!
+					g_hdb->saveGameState(kAutoSaveSlot, "FIXME"); // Add here date/level name // TODO
+				_starWarp = 0;
+				g_hdb->_sound->playSound(SND_MONKEYSTONE_SECRET_STAR);
+				g_hdb->startMap("map30");
+			} else if (x >= kStarGreenX && x <= kStarGreenX + _starGreenGfx[0]->_width &&
+				y >= kStarGreenY && y <= kStarGreenY + _starGreenGfx[0]->_height &&
+				g_hdb->getStarsMonkeystone14() == STARS_MONKEYSTONE_14) {
+				_optionsActive = false;
+				g_hdb->setGameState(GAME_PLAY);
+				if (scumm_strnicmp(g_hdb->currentMapName(), "map30", 5))	// don't save if we're already on 30!
+					g_hdb->saveGameState(kAutoSaveSlot, "FIXME"); // Add here date/level name // TODO
+				_starWarp = 1;
+				g_hdb->_sound->playSound(SND_MONKEYSTONE_SECRET_STAR);
+				g_hdb->startMap("map30");
+
+			} else if (x >= kStarBlueX && x <= kStarBlueX + _starBlueGfx[0]->_width &&
+				y >= kStarBlueY && y <= kStarBlueY + _starBlueGfx[0]->_height &&
+				g_hdb->getStarsMonkeystone21() == STARS_MONKEYSTONE_21) {
+				_optionsActive = false;
+				g_hdb->setGameState(GAME_PLAY);
+				if (scumm_strnicmp(g_hdb->currentMapName(), "map30", 5))	// don't save if we're already on 30!
+					g_hdb->saveGameState(kAutoSaveSlot, "FIXME"); // Add here date/level name // TODO
+				_starWarp = 2;
+				g_hdb->_sound->playSound(SND_MONKEYSTONE_SECRET_STAR);
+				g_hdb->startMap("map30");
+			}
+		}
+		// secret warp menu? (click on nebula!)
+		int		open;
+		if (!g_hdb->getCheatingOn())
+			open = (x >= _nebulaX && x < _nebulaX + 16 && y >= _nebulaY && y < _nebulaY + 16);
+		else
+			open = (y > kMenuExitY && x < kMenuExitXLeft);
+
+		if (open) {
+
+			g_hdb->_sound->playSound(SND_MONKEYSTONE_SECRET_STAR);
+
+			_menuActive = false;
+			_warpActive = true;
+			_clickDelay = 30;
+		}
+	} else if (_newgameActive) {
+		//-------------------------------------------------------------------
+		//	NEWGAME INPUT
+		//-------------------------------------------------------------------
+		int	xit = getMenuKey();
+
+		if (y >= kMenuExitY || y < kMenuExitYTop || xit) {
+			_optionsScrolling = true;
+			_optionsXV = -5;
+			g_hdb->_sound->playSound(SND_MENU_BACKOUT);
+		}
+
+		// PUZZLE MODE area
+		if (y >= kModePuzzleY - 10 && y <= kModeActionY - 10) {
+			g_hdb->setActionMode(0);
+			g_hdb->_sound->playSound(SND_MENU_ACCEPT);
+			_newgameActive = false;
+			g_hdb->changeGameState();
+			// that's it!  the Game Loop takes over from here...
+		} else if (y >= kModeActionY - 10 && y <= kMenuExitY) {
+			// ACTION MODE area
+			g_hdb->setActionMode(1);
+			g_hdb->_sound->playSound(SND_MENU_ACCEPT);
+			_newgameActive = false;
+			g_hdb->changeGameState();
+		}
+	} else if (_optionsActive) {
+		//-------------------------------------------------------------------
+		//	OPTIONS INPUT
+		//-------------------------------------------------------------------
+		int	offset, oldVol;
+
+		int	xit = getMenuKey();
+
+		//
+		// Controls screen
+		//
+		if (_optionsActive == 2) {
+			controlsInput(x, y);
+			return;
+		}
+
+		// Slider 1
+		if (x >= 0 && x <= kOptionsX + 200 &&
+			y >= kOptionsY + 20 && y <= kOptionsY + 36) {
+			oldVol = g_hdb->_sound->getMusicVolume();
+			if (x < kOptionsX) {
+				if (oldVol) {
+					g_hdb->_sound->stopMusic();
+					g_hdb->_sound->setMusicVolume(0);
+					g_hdb->_sound->playSound(SND_GUI_INPUT);
+				}
+			} else {
+				offset = ((x - kOptionsX) * 256) / 200;
+				g_hdb->_sound->setMusicVolume(offset);
+				if (!oldVol)
+					g_hdb->_sound->startMusic(_resumeSong);
+			}
+		} else if (x >= 0 && x <= kOptionsX + 200 &&
+			y >= kOptionsY + kOptionLineSPC * 2 + 20 && y <= kOptionsY + kOptionLineSPC * 2 + 36) {
+			// Slider 2
+			if (x >= kOptionsX)
+				offset = ((x - kOptionsX) * 256) / 200;
+			else
+				offset = 0;
+			g_hdb->_sound->setSFXVolume(offset);
+			g_hdb->_sound->playSound(SND_MENU_SLIDER);
+		} else if (x >= kOptionsX && x <= kOptionsX + 200 &&
+			y >= kOptionsY + kOptionLineSPC * 4 + 24 && y <= kOptionsY + kOptionLineSPC * 4 + 40) {
+			// Voices ON/OFF
+			if (!g_hdb->isVoiceless()) {
+				int value = g_hdb->_sound->getVoiceStatus();
+				value ^= 1;
+				g_hdb->_sound->setVoiceStatus(value);
+				g_hdb->_sound->playSound(SND_GUI_INPUT);
+			}
+		} else if (y >= kMenuExitY || y < kMenuExitYTop || xit) {
+			g_hdb->_sound->playSound(SND_MENU_BACKOUT);
+			_optionsScrolling = true;
+			_optionsXV = -5;
+		} else if (x >= (kScreenWidth / 2 - _controlButtonGfx->_width / 2) && x < (kScreenWidth / 2 + _controlButtonGfx->_width / 2) &&
+			y >= kMControlsY && y < kMControlsY + _controlButtonGfx->_height) {
+			// CONTROLS BUTTON!
+			_optionsActive = 2;
+			_clickDelay = 20;
+			g_hdb->_sound->playSound(SND_POP);
+		}
+	} else if (_gamefilesActive) {
+		//-------------------------------------------------------------------
+		//	GAMEFILES INPUT
+		//-------------------------------------------------------------------
+		int	xit = getMenuKey();
+
+		if (y >= kMenuExitY + 15 || y < kMenuExitYTop || xit) {
+			_optionsScrolling = true;
+			_optionsXV = -5;
+			g_hdb->_sound->playSound(SND_MENU_BACKOUT);
+		}
+
+		int		i;
+		for (i = 0; i < kNumSaveSlots; i++)
+			if (y >= (i * 32 + kSaveSlotY - 4) && y <= (i * 32 + kSaveSlotY + 24))
+				break;
+		if (i >= kNumSaveSlots)
+			return;
+
+		_saveSlot = i;
+
+		// LOAD GAME!
+		{
+			// clicked on empty slot?
+			if (!_saveGames[i].seconds && !_saveGames[i].mapName[0]) {
+				g_hdb->_sound->playSound(SND_MENU_BACKOUT);
+				return;
+			}
+
+			g_hdb->_sound->playSound(SND_MENU_ACCEPT);
+			if (g_hdb->loadGameState(_saveSlot).getCode() == Common::kNoError) {
+				_gamefilesActive = false;
+
+				freeMenu();
+				g_hdb->setGameState(GAME_PLAY);
+				// if we're at the very start of the level, re-init the level
+				if (!_saveGames[i].seconds) {
+					g_hdb->_lua->callFunction("level_loaded", 0); // call "level_loaded" Lua function, if it exists
+					if (!g_hdb->_ai->cinematicsActive())
+						g_hdb->_gfx->turnOffFade();
+				}
+			}
+		}
+	} else if (_warpActive) {
+		//-------------------------------------------------------------------
+		//	WARP INPUT
+		//-------------------------------------------------------------------
+		int		map;
+
+		int	xit = getMenuKey();
+
+		if (y >= kMenuExitY && x < kMenuExitXLeft || xit) {
+			_menuActive = true;
+			_warpActive = false;
+			g_hdb->_sound->playSound(SND_MENU_BACKOUT);
+			_clickDelay = 10;
+		} else if (y >= kWarpY && y < kWarpY + 160) {
+			char	string[16];
+
+			if (x > kWarpX + 160)
+				map = 20;
+			else
+				if (x > kWarpX + 80)
+					map = 10;
+				else
+					map = 0;
+
+			map += (y - kWarpY) / 16;
+
+			_warpActive = map + 2;
+			g_hdb->paint();
+			debug(9, "STUB: Add Debug check");
+			_warpActive = 0;
+
+			if (map < 10)
+				sprintf(string, "MAP0%d", map);
+			else
+				sprintf(string, "MAP%d", map);
+			freeMenu();
+			g_hdb->setGameState(GAME_PLAY);
+			g_hdb->_sound->stopMusic();
+			g_hdb->_ai->clearPersistent();
+			g_hdb->resetTimer();
+			g_hdb->_sound->playSound(SND_POP);
+			g_hdb->startMap(string);
+		}
+	} else if (_quitActive) {
+		//-------------------------------------------------------------------
+		//	QUIT INPUT
+		//-------------------------------------------------------------------
+		int	xit = getMenuKey();
+
+		if ((x >= kQuitNoX1 && x <= kQuitNoX2 && y > kQuitNoY1 && y < kQuitNoY2 && _quitTimer < g_hdb->getTimeSlice()) || xit) {
+			g_hdb->_sound->playSound(SND_MENU_BACKOUT);
+			_quitScreen->free();
+			_quitScreen = NULL;
+
+			_menuActive = true;
+			_quitActive = 0;
+		} else if (_quitTimer < g_hdb->getTimeSlice()) {
+			if (x >= kQuitYesX1 && x <= kQuitYesX2 && y > kQuitYesY1 && y < kQuitYesY2) {
+				writeConfig();
+				warning("STUB: End game: Call Destroy()");
+			}
+		}
+	}
 }
 
 void Menu::controlsInput(int x, int y) {
