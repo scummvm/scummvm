@@ -47,10 +47,10 @@ ifdef DIST_FILES_ENGINEDATA
 	$(CP) $(DIST_FILES_ENGINEDATA) $(gcw0_bundle)/engine-data/
 endif
 ifdef DIST_FILES_NETWORKING
-	$(CP) $(DIST_FILES_NETWORKING) $(gcw0_bundle)/
+	$(CP) $(DIST_FILES_NETWORKING) $(gcw0_name)/
 endif
 ifdef DIST_FILES_VKEYBD
-	$(CP) $(DIST_FILES_VKEYBD) $(gcw0_bundle)/
+	$(CP) $(DIST_FILES_VKEYBD) $(gcw0_name)/
 endif
 ifdef DYNAMIC_MODULES
 	$(MKDIR) $(gcw0_bundle)/plugins
@@ -66,7 +66,7 @@ endif
 	echo >> $(gcw0_bundle)/README.man.txt
 	echo '[General README]' >> $(gcw0_bundle)/README.man.txt
 	echo >> $(gcw0_bundle)/README.man.txt
-	cat $(srcdir)/README | sed -e 's/\[/⟦/g' -e 's/\]/⟧/g' -e '/^1\.1)/,$$ s/^[0-9][0-9]*\.[0-9][0-9]*.*/\[&\]/' >> $(gcw0_bundle)/README.man.txt
+	cat $(srcdir)/README.md | sed -e 's/\[/⟦/g' -e 's/\]/⟧/g' -e '/^1\.1)/,$$ s/^[0-9][0-9]*\.[0-9][0-9]*.*/\[&\]/' >> $(gcw0_bundle)/README.man.txt
 
 
 #	$(CP) GeneralUser\ GS\ FluidSynth\ v1.44.sf2 $(gcw0_bundle)/
