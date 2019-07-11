@@ -1829,23 +1829,31 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Rhiannon: Curse of the four Branches
 	WME_WINENTRY("rhiannon", "",
-		WME_ENTRY1s("data.dcp", "870f348900b735f1cc79c0608ce32b0e", 1046169851), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+		WME_ENTRY1s("data.dcp", "870f348900b735f1cc79c0608ce32b0e", 1046169851), Common::EN_ANY, ADGF_UNSTABLE, WME_1_8_6),
 
 	// Rhiannon: Curse of the four Branches (English PC DVD)
 	WME_WINENTRY("rhiannon", "DVD",
-		WME_ENTRY1s("data.dcp", "6736bbc921bb6ce5161b3ad095a97bd4", 1053441028), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+		WME_ENTRY1s("data.dcp", "6736bbc921bb6ce5161b3ad095a97bd4", 1053441028), Common::EN_ANY, ADGF_UNSTABLE, WME_1_8_6),
 
 	// Rhiannon: Curse of the four Branches (Premium Edition)
 	WME_WINENTRY("rhiannon", "Premium Edition",
-		WME_ENTRY1s("data.dcp", "8debcadeda038f43d9ca9b97d827e7f3", 928484275), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+		WME_ENTRY1s("data.dcp", "8debcadeda038f43d9ca9b97d827e7f3", 928484275), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_1),
 
 	// Rhiannon: Curse of The Four Branches (Demo: Chapter 1)
 	WME_WINENTRY("rhiannon", "Demo: Chapter 1",
-		WME_ENTRY1s("data.dcp", "d3b6ad94e9a8b29ca3cbda96c8857bd6", 72680676), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, LATEST_VERSION),
+		WME_ENTRY1s("data.dcp", "d3b6ad94e9a8b29ca3cbda96c8857bd6", 72680676), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_8_6),
 
 	// Rhiannon: Curse of The Four Branches (Demo: Chapter 5)
 	WME_WINENTRY("rhiannon", "Demo: Chapter 5",
-		WME_ENTRY1s("data.dcp", "88be3fa1389889b2079e54d780803a75", 88644508), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, LATEST_VERSION),
+		WME_ENTRY1s("data.dcp", "88be3fa1389889b2079e54d780803a75", 88644508), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_8_6),
+
+	// Rhiannon: Curse of The Four Branches (Demo 1)
+	WME_WINENTRY("rhiannon", "Demo 1",
+		WME_ENTRY1s("data.dcp", "5ee8d6684c374032a6baab4e40333c77", 95651432), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_8_6),
+
+	// Rhiannon: Curse of The Four Branches (Demo 2)
+	WME_WINENTRY("rhiannon", "Demo 2",
+		WME_ENTRY1s("data.dcp", "52f111205bf294e8630652981eb31c3d", 79687595), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_8_6),
 
 	// 1 1/2 Ritter: Auf der Suche nach der hinreissenden Herzelinde (German)
 	WME_WINENTRY("ritter", "",
