@@ -905,9 +905,6 @@ AI::AI() {
 	_triggerList = new Common::Array<Trigger *>;
 	_hereList = new Common::Array<HereT *>;
 
-	warning("REMOVE: Remove for final. Used here due to lack of a MENU");
-	_numGems = _numGooCups = _numMonkeystones = _numInventory = _numDeliveries = 0;
-
 	_stunAnim = 0;
 	_stunTimer = g_system->getMillis();
 }
@@ -1031,7 +1028,7 @@ bool AI::init() {
 }
 
 void AI::clearPersistent() {
-	_numGems = _numGooCups = _numMonkeystones = 0;
+	_numGems = _numGooCups = _numMonkeystones = _numInventory = _numDeliveries = 0;
 }
 
 const char *AI::funcLookUp(void(*function)(AIEntity *e)) {

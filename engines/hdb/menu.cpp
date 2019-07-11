@@ -704,11 +704,6 @@ void Menu::freeMenu() {
 }
 
 bool Menu::startTitle() {
-	// Defaults the game into Action Mode
-	warning("REMOVE: Putting this here since Menu hasn't been implemented yet");
-	g_hdb->setActionMode(1);
-	g_hdb->setGameState(GAME_PLAY);
-
 	int i;
 
 	readConfig();
