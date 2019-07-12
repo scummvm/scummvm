@@ -100,10 +100,12 @@ bool QSystem::init() {
 	Common::INIFile castIni;
 	Common::INIFile bgsIni;
 
-	// fails because ini is broken for Russian letters
-	namesIni.loadFromStream(*namesStream);
-	castIni.loadFromStream(*castStream);
-	bgsIni.loadFromStream(*bgsStream);
+	if (namesStream)
+		namesIni.loadFromStream(*namesStream); // fails because ini is broken for Russian letters
+	if (castStream)
+		castIni.loadFromStream(*castStream);
+	if (bgsStream)
+		bgsIni.loadFromStream(*bgsStream);
 
 	uint32 objsCount = stream->readUint32LE();
 	uint32 bgsCount = stream->readUint32LE();
