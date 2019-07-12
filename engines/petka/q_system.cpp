@@ -76,7 +76,7 @@ static void readObject(QMessageObject &obj, Common::SeekableReadStream &stream,
 		}
 	}
 
-	namesIni.getKey(obj._name, "all", obj._nameOnScreen);
+	//namesIni.getKey(obj._name, "all", obj._nameOnScreen);
 
 	Common::String rgbString;
 	if (castIni.getKey(obj._name, "all", rgbString)) {
@@ -100,8 +100,10 @@ bool QSystem::init() {
 	Common::INIFile castIni;
 	Common::INIFile bgsIni;
 
+	/*
 	if (namesStream)
-		namesIni.loadFromStream(*namesStream); // fails because ini is broken for Russian letters
+		namesIni.loadFromStream(*namesStream); //fails because ini is broken for Russian letters
+	*/
 	if (castStream)
 		castIni.loadFromStream(*castStream);
 	if (bgsStream)
