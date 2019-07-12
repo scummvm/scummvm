@@ -805,20 +805,11 @@ Common::Error HDBGame::run() {
 
 	if (ConfMan.hasKey("boot_param")) {
 		char mapname[10];
-		int level = 0;
-
 		int arg = ConfMan.getInt("boot_param");
+		int actionMode = MIN(arg / 100, 1);
+		int level = MIN(arg % 100, 30);
 
-		if (arg < 0 || arg > 130 || (30 < arg && arg < 100)) {
-			setActionMode(0);
-			level = 1;
-		} else if (100 <= arg && arg <= 130) {
-			setActionMode(1);
-			level = arg - 100;
-		} else if (0 <= arg && arg <= 30) {
-			setActionMode(0);
-			level = arg;
-		}
+		setActionMode(actionMode);
 
 		debug("Starting level %d in %s", level, getActionMode() ? "Action Mode" : "Puzzle Mode");
 
