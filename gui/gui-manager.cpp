@@ -74,6 +74,10 @@ GuiManager::GuiManager() : _redrawStatus(kRedrawDisabled), _stateIsSaved(false),
 	TransMan.setLanguage(ConfMan.get("gui_language").c_str());
 #endif // USE_TRANSLATION
 
+#ifdef USE_TTS
+	initTextToSpeech();
+#endif // USE_TTS
+
 	ConfMan.registerDefault("gui_theme", "scummremastered");
 	Common::String themefile(ConfMan.get("gui_theme"));
 
@@ -618,5 +622,16 @@ void GuiManager::setLastMousePos(int16 x, int16 y) {
 	_lastMousePosition.y = y;
 	_lastMousePosition.time = _system->getMillis(true);
 }
+
+#ifdef USE_TTS
+void GuiManager::initTextToSpeech() {
+	int voice;
+	if(ConfMan.hasKey("tts_voice"))
+		voice = ConfMan.getInt("tts_voice", "scummvm");
+	else
+		voice = 0;
+	g_system->getTextToSpeechManager()->setVoice(voice);
+}
+#endif
 
 } // End of namespace GUI

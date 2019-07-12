@@ -39,6 +39,7 @@
 #include "common/translation.h"
 #include "common/updates.h"
 #include "common/util.h"
+#include "common/text-to-speech.h"
 
 #include "audio/mididrv.h"
 #include "audio/musicplugin.h"
@@ -1527,6 +1528,7 @@ GlobalOptionsDialog::GlobalOptionsDialog(LauncherDialog *launcher)
 #ifdef USE_TTS
 	_enableTTS = false;
 	_ttsCheckbox = 0;
+	_ttsVoiceSelectionPopUp = 0;
 #endif
 }
 
@@ -1796,6 +1798,18 @@ void GlobalOptionsDialog::build() {
 		_ttsCheckbox->setState(ConfMan.getBool("tts_enabled", _domain));
 	else
 		_ttsCheckbox->setState(false);
+
+	_ttsVoiceSelectionPopUp = new PopUpWidget(tab, "GlobalOptions_Accessibility.TTSVoiceSelection");
+	Common::Array<Common::TTSVoice> voices = g_system->getTextToSpeechManager()->getVoicesArray();
+
+	for(unsigned i = 0; i < voices.size(); i++) {
+		_ttsVoiceSelectionPopUp->appendEntry(voices[i].getDescription(), i);
+	}
+
+	if (ConfMan.hasKey("tts_voice"))
+		_ttsVoiceSelectionPopUp->setSelectedTag(ConfMan.getInt("tts_voice", _domain)) ;
+	else
+		_ttsVoiceSelectionPopUp->setSelectedTag(0);
 
 #endif // USE_TTS
 
@@ -2136,6 +2150,9 @@ void GlobalOptionsDialog::apply() {
 	}
 #ifdef USE_TTS
 	ConfMan.setBool("tts_enabled", _ttsCheckbox->getState(), _domain);
+	int selectedVoice = _ttsVoiceSelectionPopUp->getSelectedTag();
+	ConfMan.setInt("tts_voice", selectedVoice, _domain);
+	g_system->getTextToSpeechManager()->setVoice(selectedVoice);
 #endif
 
 	if (isRebuildNeeded) {
