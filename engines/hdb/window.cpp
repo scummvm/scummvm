@@ -28,49 +28,50 @@ bool Window::init() {
 
 	warning("STUB: Window::init: Incomplete");
 
-	_gfxTL = g_hdb->_gfx->loadPic("menu_back_topleft");
-	_gfxTM = g_hdb->_gfx->loadPic("menu_back_top");
-	_gfxTR = g_hdb->_gfx->loadPic("menu_back_topright");
+	_gfxTL = g_hdb->_gfx->loadPic(MENU_BACK_TOPLEFT);
+	_gfxTM = g_hdb->_gfx->loadPic(MENU_BACK_TOP);
+	_gfxTR = g_hdb->_gfx->loadPic(MENU_BACK_TOPRIGHT);
 
-	_gfxL = g_hdb->_gfx->loadPic("menu_back_left");
-	_gfxM = g_hdb->_gfx->loadPic("menu_back_middle");
-	_gfxR = g_hdb->_gfx->loadPic("menu_back_right");
+	_gfxL = g_hdb->_gfx->loadPic(MENU_BACK_LEFT);
+	_gfxM = g_hdb->_gfx->loadPic(MENU_BACK_MIDDLE);
+	_gfxR = g_hdb->_gfx->loadPic(MENU_BACK_RIGHT);
 
-	_gfxBL = g_hdb->_gfx->loadPic("menu_back_btmleft");
-	_gfxBM = g_hdb->_gfx->loadPic("menu_back_bottom");
-	_gfxBR = g_hdb->_gfx->loadPic("menu_back_btmright");
+	_gfxBL = g_hdb->_gfx->loadPic(MENU_BACK_BTMLEFT);
+	_gfxBM = g_hdb->_gfx->loadPic(MENU_BACK_BOTTOM);
+	_gfxBR = g_hdb->_gfx->loadPic(MENU_BACK_BTMRIGHT);
 
-	_gfxTitleL = g_hdb->_gfx->loadPic("menu_title_left");
-	_gfxTitleM = g_hdb->_gfx->loadPic("menu_title_mid");
-	_gfxTitleR = g_hdb->_gfx->loadPic("menu_title_right");
+	_gfxTitleL = g_hdb->_gfx->loadPic(MENU_TITLE_LEFT);
+	_gfxTitleM = g_hdb->_gfx->loadPic(MENU_TITLE_MID);
+	_gfxTitleR = g_hdb->_gfx->loadPic(MENU_TITLE_RIGHT);
 
-	_gGfxTL = g_hdb->_gfx->loadPic("g_menu_back_topleft");
-	_gGfxTM = g_hdb->_gfx->loadPic("g_menu_back_top");
-	_gGfxTR = g_hdb->_gfx->loadPic("g_menu_back_topright");
+	_gGfxTL = g_hdb->_gfx->loadPic(G_MENU_BACK_TOPLEFT);
+	_gGfxTM = g_hdb->_gfx->loadPic(G_MENU_BACK_TOP);
+	_gGfxTR = g_hdb->_gfx->loadPic(G_MENU_BACK_TOPRIGHT);
 
-	_gGfxL = g_hdb->_gfx->loadPic("g_menu_back_left");
-	_gGfxM = g_hdb->_gfx->loadPic("g_menu_back_middle");
-	_gGfxR = g_hdb->_gfx->loadPic("g_menu_back_right");
+	_gGfxL = g_hdb->_gfx->loadPic(G_MENU_BACK_LEFT);
+	_gGfxM = g_hdb->_gfx->loadPic(G_MENU_BACK_MIDDLE);
+	_gGfxR = g_hdb->_gfx->loadPic(G_MENU_BACK_RIGHT);
 
-	_gGfxBL = g_hdb->_gfx->loadPic("g_menu_back_btmleft");
-	_gGfxBM = g_hdb->_gfx->loadPic("g_menu_back_bottom");
-	_gGfxBR = g_hdb->_gfx->loadPic("g_menu_back_btmright");
+	_gGfxBL = g_hdb->_gfx->loadPic(G_MENU_BACK_BTMLEFT);
+	_gGfxBM = g_hdb->_gfx->loadPic(G_MENU_BACK_BOTTOM);
+	_gGfxBR = g_hdb->_gfx->loadPic(G_MENU_BACK_BTMRIGHT);
 
-	_gGfxTitleL = g_hdb->_gfx->loadPic("g_menu_title_left");
-	_gGfxTitleM = g_hdb->_gfx->loadPic("g_menu_title_mid");
-	_gGfxTitleR = g_hdb->_gfx->loadPic("g_menu_title_right");
+	_gGfxTitleL = g_hdb->_gfx->loadPic(G_MENU_TITLE_LEFT);
+	_gGfxTitleM = g_hdb->_gfx->loadPic(G_MENU_TITLE_MID);
+	_gGfxTitleR = g_hdb->_gfx->loadPic(G_MENU_TITLE_RIGHT);
 
-	_gfxIndent = g_hdb->_gfx->loadPic("menu_delivery_indentation");
-	_gfxArrowTo = g_hdb->_gfx->loadPic("menu_arrow_deliverto");
+	_gfxIndent = g_hdb->_gfx->loadPic(MENU_DELIVERY_INDENTATION);
+	_gfxArrowTo = g_hdb->_gfx->loadPic(MENU_ARROW_DELIVERTO);
 
 	_gfxTry = _gfxAgain = NULL; // They will be loaded when needed
 
-	_gfxInvSelect = g_hdb->_gfx->loadPic("inventory_normal");
-	_gfxHandright = g_hdb->_gfx->loadPic("menu_hand_pointright");
+	_gfxInvSelect = g_hdb->_gfx->loadPic(INVENTORY_NORMAL);
+	_gfxHandright = g_hdb->_gfx->loadPic(MENU_HAND_POINTRIGHT);
 
-	_gfxInfobar = g_hdb->_gfx->loadPic("pic_infobar");
-	_gfxDarken = g_hdb->_gfx->loadPic("screen_darken");
-	_gfxPausePlaque = g_hdb->_gfx->loadPic("pause_plaque");
+	_gfxInfobar = g_hdb->_gfx->loadPic(PIC_INFOBAR);
+	_gfxDarken = g_hdb->_gfx->loadPic(SCREEN_DARKEN);
+	_gfxPausePlaque = g_hdb->_gfx->loadPic(PAUSE_PLAQUE);
+	_mstoneGfx = g_hdb->_gfx->loadPic(MINI_MSTONE);
 
 	_infobarDimmed = 0;
 
