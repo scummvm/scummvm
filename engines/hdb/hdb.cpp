@@ -755,7 +755,6 @@ Common::Error HDBGame::run() {
 	tile->load(tileStream);
 #endif
 
-#if 0
 	if (ConfMan.hasKey("boot_param")) {
 		char mapname[10];
 		int level = ConfMan.getInt("boot_param");
@@ -766,11 +765,12 @@ Common::Error HDBGame::run() {
 		snprintf(mapname, 10, "MAP%02d", level);
 
 		startMap(mapname);
+
+		_gameState = GAME_PLAY;
 	} else {
-		if (!ConfMan.hasKey("save_slot") || (loadGameState(ConfMan.getInt("save_slot")).getCode() != Common::kNoError))
-			startMap("MAP00");
+		if (ConfMan.hasKey("save_slot") && loadGameState(ConfMan.getInt("save_slot")).getCode() == Common::kNoError)
+			_gameState = GAME_PLAY;
 	}
-#endif
 
 	//_window->openDialog("Sgt. Filibuster", 0, "You address me as 'sarge' or 'sergeant' or get your snappin' teeth kicked in! Got me?", 0, NULL);
 
