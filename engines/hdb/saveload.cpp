@@ -196,7 +196,7 @@ void AIEntity::save(Common::OutSaveFile *out) {
 	lookUp = g_hdb->_ai->funcLookUp(aiAction);
 	memset(&funcString, 0, 32);
 	if (!lookUp && aiAction)
-		error("AIEntity::save: No matching ACTION function for func-string");
+		error("AIEntity::save: No matching ACTION function for func-string for %s entity", AIType2Str(type));
 	if (lookUp)
 		strcpy(funcString, lookUp);
 	out->write(funcString, 32);
@@ -204,7 +204,7 @@ void AIEntity::save(Common::OutSaveFile *out) {
 	lookUp = g_hdb->_ai->funcLookUp(aiUse);
 	memset(&funcString, 0, 32);
 	if (!lookUp && aiUse)
-		error("AIEntity::save: No matching USE function for func-string");
+		error("AIEntity::save: No matching USE function for func-string for %s entity", AIType2Str(type));
 	if (lookUp)
 		strcpy(funcString, lookUp);
 	out->write(funcString, 32);
@@ -212,7 +212,7 @@ void AIEntity::save(Common::OutSaveFile *out) {
 	lookUp = g_hdb->_ai->funcLookUp(aiInit);
 	memset(&funcString, 0, 32);
 	if (!lookUp && aiInit)
-		error("AIEntity::save: No matching INIT function for func-string");
+		error("AIEntity::save: No matching INIT function for func-string for %s entity", AIType2Str(type));
 	if (lookUp)
 		strcpy(funcString, lookUp);
 	out->write(funcString, 32);
@@ -220,7 +220,7 @@ void AIEntity::save(Common::OutSaveFile *out) {
 	lookUp = g_hdb->_ai->funcLookUp(aiInit2);
 	memset(&funcString, 0, 32);
 	if (!lookUp && aiInit2)
-		error("AIEntity::save: No matching INIT2 function for func-string");
+		error("AIEntity::save: No matching INIT2 function for func-string for %s entity", AIType2Str(type));
 	if (lookUp)
 		strcpy(funcString, lookUp);
 	out->write(funcString, 32);
@@ -228,7 +228,7 @@ void AIEntity::save(Common::OutSaveFile *out) {
 	lookUp = g_hdb->_ai->funcLookUp((FuncPtr)aiDraw);
 	memset(&funcString, 0, 32);
 	if (!lookUp && aiDraw)
-		error("AIEntity::save: No matching DRAW function for func-string");
+		error("AIEntity::save: No matching DRAW function for func-string for %s entity", AIType2Str(type));
 	if (lookUp)
 		strcpy(funcString, lookUp);
 	out->write(funcString, 32);
