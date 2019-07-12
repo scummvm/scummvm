@@ -287,6 +287,11 @@ public:
 	bool _gameShutdown;
 	Graphics::PixelFormat _format;
 
+	Picture *_progressGfx, *_progressMarkGfx;
+	Picture *_loadingScreenGfx, *_logoGfx;
+	bool _progressActive;
+	int _progressCurrent, _progressXOffset, _progressMax;
+
 private:
 
 	uint32 _timePlayed;
@@ -305,12 +310,7 @@ private:
 
 	// Misc Variables
 	int _pauseFlag;
-
 	bool _cheating;
-	Picture *_progressGfx, *_progressMarkGfx;
-	Picture *_loadingScreenGfx, *_logoGfx;
-	bool _progressActive;
-	int _progressCurrent, _progressXOffset, _progressMax;
 
 	char _currentMapname[64];
 	char _lastMapname[64];

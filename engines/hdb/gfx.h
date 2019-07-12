@@ -257,12 +257,12 @@ public:
 
 	char *getName() { return _name; }
 
-private:
+	Graphics::ManagedSurface *getSurface() { return &_surface; }
 
+private:
 	char _name[64];
 
 	Graphics::ManagedSurface _surface;
-
 };
 
 class Tile {

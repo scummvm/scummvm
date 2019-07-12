@@ -203,9 +203,18 @@ void Gfx::updateVideo() {
 
 	updateFade();
 	g_hdb->checkProgress();
-	debug(9, "STUB: Gfx::updateVideo incomplete");
 
-	warning("STUB: Blit the Backbuffer to the primary surface");
+	if (!g_hdb->_progressGfx)
+		return;
+
+	int left = kScreenWidth / 2 - g_hdb->_progressGfx->_width / 2;
+
+	Common::Rect clip(g_hdb->_progressGfx->getSurface()->getBounds());
+	clip.moveTo(left, kProgressY);
+	clip.clip(g_hdb->_gfx->_globalSurface.getBounds());
+	if (!clip.isEmpty()) {
+		g_system->copyRectToScreen(g_hdb->_gfx->_globalSurface.getBasePtr(clip.left, clip.top), g_hdb->_gfx->_globalSurface.pitch, clip.left, clip.top, clip.width(), clip.height());
+	}
 
 	while (g_system->getMillis() - timer < 16) {};
 }
