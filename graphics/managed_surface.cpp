@@ -238,19 +238,19 @@ void ManagedSurface::blitFrom(const Surface &src, const Common::Rect &srcRect,
 
 void ManagedSurface::transBlitFrom(const Surface &src, uint transColor, bool flipped, uint overrideColor) {
 	transBlitFrom(src, Common::Rect(0, 0, src.w, src.h), Common::Rect(0, 0, this->w, this->h),
-		transColor, false, overrideColor);
+		transColor, flipped, overrideColor);
 }
 
 void ManagedSurface::transBlitFrom(const Surface &src, const Common::Point &destPos,
 		uint transColor, bool flipped, uint overrideColor) {
 	transBlitFrom(src, Common::Rect(0, 0, src.w, src.h), Common::Rect(destPos.x, destPos.y,
-		destPos.x + src.w, destPos.y + src.h), transColor, false, overrideColor);
+		destPos.x + src.w, destPos.y + src.h), transColor, flipped, overrideColor);
 }
 
 void ManagedSurface::transBlitFrom(const Surface &src, const Common::Rect &srcRect,
 		const Common::Point &destPos, uint transColor, bool flipped, uint overrideColor) {
 	transBlitFrom(src, srcRect, Common::Rect(destPos.x, destPos.y,
-		destPos.x + srcRect.width(), destPos.y + srcRect.height()), transColor, false, overrideColor);
+		destPos.x + srcRect.width(), destPos.y + srcRect.height()), transColor, flipped, overrideColor);
 }
 
 template<typename TSRC, typename TDEST>
