@@ -198,9 +198,16 @@ void Gfx::fillScreen(uint32 color) {
 }
 
 void Gfx::updateVideo() {
+
+	uint32 timer = g_system->getMillis();
+
 	updateFade();
 	g_hdb->checkProgress();
 	debug(9, "STUB: Gfx::updateVideo incomplete");
+
+	warning("STUB: Blit the Backbuffer to the primary surface");
+
+	while (g_system->getMillis() - timer < 16) {};
 }
 
 void Gfx::drawPointer() {
