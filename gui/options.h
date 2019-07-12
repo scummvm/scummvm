@@ -223,6 +223,7 @@ private:
 
 	CheckboxWidget *_muteCheckbox;
 
+
 protected:
 	//
 	// Game GUI options
@@ -354,6 +355,13 @@ protected:
 #endif // USE_SDL_NET
 
 #endif // USE_CLOUD
+	//
+	// Accessibility controls
+	//
+#ifdef USE_TTS
+	bool _enableTTS;
+	CheckboxWidget *_ttsCheckbox;
+#endif
 };
 
 } // End of namespace GUI

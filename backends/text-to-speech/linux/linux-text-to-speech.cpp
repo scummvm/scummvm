@@ -138,7 +138,6 @@ bool LinuxTextToSpeechManager::isReady() {
 void LinuxTextToSpeechManager::setVoice(unsigned index) {
 	if (_speechState == BROKEN)
 		return;
-	debug("%d < %d", index, _ttsState->_availaibleVoices.size());
 	assert(index < _ttsState->_availaibleVoices.size());
 	Common::TTSVoice voice = _ttsState->_availaibleVoices[index];
 	spd_set_voice_type(_connection, *(SPDVoiceType *)(voice.getData()));
