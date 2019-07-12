@@ -130,14 +130,11 @@ bool Gfx::init() {
 	_showCursor = true;
 
 	// Load all 4 levels of star colors
-	_starField[0] = getPicture("pic_star64");
-	_starField[1] = getPicture("pic_star128");
-	_starField[2] = getPicture("pic_star192");
-	_starField[3] = getPicture("pic_star256");
-
-	/*
-		TODO: Load the snowflake
-	*/
+	_starField[0] = getPicture(PIC_STAR64);
+	_starField[1] = getPicture(PIC_STAR128);
+	_starField[2] = getPicture(PIC_STAR192);
+	_starField[3] = getPicture(PIC_STAR256);
+	_snowflake = getPicture(PIC_SNOWFLAKE);
 
 	_systemInit = true;
 	return true;
@@ -629,7 +626,21 @@ void Gfx::drawSky() {
 }
 
 void Gfx::drawSnow() {
-	debug(9, "STUB: Gfx::drawSnow()");
+	int		i;
+	if (_snowInfo.active == false)
+		return;
+
+	for (i = 0; i < MAX_SNOW; i++) {
+		_snowflake->drawMasked((int)_snowInfo.x[i], (int)_snowInfo.y[i]);
+		_snowInfo.x[i] += _snowXVList[_snowInfo.xvindex[i]++];
+		_snowInfo.y[i] += _snowInfo.yv[i];
+		if (_snowInfo.xvindex[i] == MAX_SNOW_XV)
+			_snowInfo.xvindex[i] = 0;
+		if (_snowInfo.x[i] < 0)
+			_snowInfo.x[i] = kScreenWidth - 1;
+		if (_snowInfo.y[i] > kScreenHeight - 1)
+			_snowInfo.y[i] = 0;
+	}
 }
 
 int Gfx::animateTile(int tileIndex) {
