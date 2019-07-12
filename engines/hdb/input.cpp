@@ -188,7 +188,6 @@ void Input::stylusDown(int x, int y) {
 		g_hdb->setTargetXY(worldX, worldY);
 		break;
 	case GAME_LOADING:
-		debug(9, "stylusDown: GAME_LOADING found");
 		break;
 	}
 }
