@@ -30,6 +30,11 @@ Map::Map() {
 	_animCycle = 0;
 
 	_numForegrounds = _numGratings = 0;
+
+	_mapExplosions = NULL;
+	_mapExpBarrels = NULL;
+	_mapLaserBeams = NULL;
+
 }
 
 Map::~Map() {
@@ -214,6 +219,14 @@ int Map::loadTiles() {
 
 void Map::restartSystem() {
 	warning("STUB: Map::restartSystem()");
+
+	free(_mapExplosions);
+	free(_mapExpBarrels);
+	free(_mapLaserBeams);
+
+	_mapExplosions = NULL;
+	_mapExpBarrels = NULL;
+	_mapLaserBeams = NULL;
 }
 
 bool Map::loadMap(char *name) {
@@ -298,12 +311,9 @@ bool Map::load(Common::SeekableReadStream *stream) {
 		TODO: Set the InMapName once its setup
 	*/
 
-	_mapExplosions = new byte[_width * _height];
-	memset(_mapExplosions, 0, sizeof(_mapExplosions));
-	_mapExpBarrels = new byte[_width * _height];
-	memset(_mapExpBarrels, 0, sizeof(_mapExpBarrels));
-	_mapLaserBeams = new byte[_width * _height];
-	memset(_mapLaserBeams, 0, sizeof(_mapLaserBeams));
+	_mapExplosions = (byte *)calloc(_width * _height, 1);
+	_mapExpBarrels = (byte *)calloc(_width * _height, 1);
+	_mapLaserBeams = (byte *)calloc(_width * _height, 1);
 
 	int sky = loadTiles();
 	g_hdb->_gfx->setSky(sky);
