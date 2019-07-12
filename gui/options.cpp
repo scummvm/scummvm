@@ -425,6 +425,7 @@ void OptionsDialog::build() {
 		_subSpeedSlider->setValue(speed);
 		_subSpeedLabel->setValue(speed);
 	}
+
 }
 
 void OptionsDialog::clean() {
@@ -1523,6 +1524,10 @@ GlobalOptionsDialog::GlobalOptionsDialog(LauncherDialog *launcher)
 	_serverWasRunning = false;
 #endif
 #endif
+#ifdef USE_TTS
+	_enableTTS = false;
+	_ttsCheckbox = 0;
+#endif
 }
 
 GlobalOptionsDialog::~GlobalOptionsDialog() {
@@ -1778,6 +1783,21 @@ void GlobalOptionsDialog::build() {
 	addNetworkControls(tab, "GlobalOptions_Network.", g_system->getOverlayWidth() <= 320);
 #endif // USE_SDL_NET
 #endif // USE_CLOUD
+
+	//Accessibility
+#ifdef USE_TTS
+	if (g_system->getOverlayWidth() > 320)
+		tab->addTab(_("Accessibility"));
+	else
+		tab->addTab(_c("Accessibility", "lowres"));
+	_ttsCheckbox = new CheckboxWidget(tab, "GlobalOptions_Accessibility.TTSCheckbox",
+			_("Use Text to speech"), _("Will read text in gui on mouse over."));
+	if (ConfMan.hasKey("ttsEnabled"))
+		_ttsCheckbox->setState(ConfMan.getBool("ttsEnabled", _domain));
+	else
+		_ttsCheckbox->setState(false);
+
+#endif // USE_TTS
 
 	// Activate the first tab
 	tab->setActiveTab(0);
@@ -2114,6 +2134,9 @@ void GlobalOptionsDialog::apply() {
 		MessageDialog error(errorMessage);
 		error.runModal();
 	}
+#ifdef USE_TTS
+	ConfMan.setBool("ttsEnabled", _ttsCheckbox->getState(), _domain);
+#endif
 
 	if (isRebuildNeeded) {
 		rebuild();
