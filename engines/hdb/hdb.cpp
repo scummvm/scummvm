@@ -259,7 +259,7 @@ void HDBGame::paint() {
 		break;
 	case GAME_MENU:
 		_menu->drawMenu();
-		break;
+		// fall through
 	case GAME_PLAY:
 		_gfx->drawPointer();
 		break;
