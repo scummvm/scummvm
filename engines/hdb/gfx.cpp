@@ -330,7 +330,8 @@ void Gfx::updateFade() {
 			return;
 		}
 
-		debug(9, "STUB: DirectX Flip");
+		g_system->updateScreen();
+		g_system->delayMillis(1000 / kGameFPS);
 
 	} while (_fadeInfo.active);
 
