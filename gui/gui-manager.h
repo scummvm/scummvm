@@ -176,6 +176,8 @@ protected:
 
 	void giveFocusToDialog(Dialog *dialog);
 	void setLastMousePos(int16 x, int16 y);
+
+	void initTextToSpeech();
 };
 
 } // End of namespace GUI

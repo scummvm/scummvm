@@ -361,6 +361,7 @@ protected:
 #ifdef USE_TTS
 	bool _enableTTS;
 	CheckboxWidget *_ttsCheckbox;
+	PopUpWidget *_ttsVoiceSelectionPopUp;
 #endif
 };
 

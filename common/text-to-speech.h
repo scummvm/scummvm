@@ -44,18 +44,22 @@ class TTSVoice {
 	public:
 		TTSVoice()
 			: _gender(UNKNOWN)
-			, _data(nullptr) {}
-		TTSVoice(Gender gender, void *data) 
+			, _data(nullptr)
+			, _description("") {}
+		TTSVoice(Gender gender, void *data, String description) 
 			: _gender(gender)
-			, _data(data) {}
+			, _data(data)
+			, _description(description) {}
 		Gender getGender() { return _gender; };
 		void setGender(Gender gender) { _gender = gender; };
 		void setData(void *data) { _data = data; };
 		void *getData() { return _data; };
+		String getDescription() { return _description; };
 
 	protected:
 		Gender _gender;
 		void *_data;
+		String _description;
 };
 
 struct TTSState {
