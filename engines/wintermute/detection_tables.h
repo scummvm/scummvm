@@ -53,6 +53,7 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"darkfallls",      "Dark Fall: Lost Souls"},
 	{"deadcity",        "Dead City"},
 	{"dfafadventure",   "DFAF Adventure"},
+	{"drbohus",         "Dr. Bohus"},
 	{"dreamcat",        "Dreamcat"},
 	{"dreaming",        "Des Reves Elastiques Avec Mille Insectes Nommes Georges"},
 	{"driller",         "The Driller Incident"},
@@ -432,6 +433,10 @@ static const WMEGameDescription gameDescriptions[] = {
 	// The Driller Incident (Russian)
 	WME_WINENTRY("driller", "",
 		WME_ENTRY1s("data.dcp","5bec2442339dd1ecf221873fff704617", 13671830), Common::RU_RUS, ADGF_UNSTABLE, LATEST_VERSION),
+
+	// Dr. Bohus
+	WME_WINENTRY("drbohus", "",
+		WME_ENTRY1s("data.dcp","a79e640ea15f7ca36addc08ab7b1db49", 59344013), Common::CZ_CZE, ADGF_UNSTABLE, WME_1_2_43),
 
 	// Dreamcat
 	WME_WINENTRY("dreamcat", "",
