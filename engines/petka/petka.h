@@ -38,6 +38,7 @@ class SeekableReadStream;
 namespace Petka {
 
 class Console;
+class BigDialogue;
 class FileMgr;
 class SoundMgr;
 class QManager;
@@ -77,6 +78,7 @@ private:
 	Common::ScopedPtr<SoundMgr> _soundMgr;
 	Common::ScopedPtr<QSystem> _qsystem;
 	Common::ScopedPtr<VideoSystem> _vsys;
+	Common::ScopedPtr<BigDialogue> _dialogMan;
 	const ADGameDescription *_desc;
 
 	Common::RandomSource _rnd;
