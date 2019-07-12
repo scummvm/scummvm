@@ -105,6 +105,7 @@ static const char *const selectorNameTable[] = {
 	"handsOff",     // system selector
 	"handsOn",      // system selector
 	"localize",     // Freddy Pharkas
+	"roomFlags",    // Iceman
 	"put",          // Police Quest 1 VGA
 	"changeState",  // Quest For Glory 1 VGA, QFG4
 	"hide",         // Quest For Glory 1 VGA, QFG4
@@ -215,6 +216,7 @@ enum ScriptPatcherSelectors {
 	SELECTOR_handsOff,
 	SELECTOR_handsOn,
 	SELECTOR_localize,
+	SELECTOR_roomFlags,
 	SELECTOR_put,
 	SELECTOR_changeState,
 	SELECTOR_hide,
@@ -2693,6 +2695,128 @@ static const SciScriptPatcherEntry gk2Signatures[] = {
 };
 
 #endif
+
+// When spotting the destroyer, timing problems prevent completing the bridge
+//  scene at fast game speeds.
+//
+// In the control room, room 25, ego and the captain go to the bridge, room 28,
+//  where they spot ships in an effectively automatic scene. When this completes
+//  they return to the control room, the captain falls, and the player regains
+//  control of ego and has to walk to the control panel. This entire sequence
+//  has to be completed within 400 game cycles or the destroyer kills the sub,
+//  but the bridge timing is in wall time and has at least 25 seconds of delays,
+//  which at faster speeds is longer than 400 cycles. The bridge also animates
+//  during messages, causing the timer to run while reading, so even at slower
+//  speeds the game can illogically end before the ships are revealed.
+//
+// There are several problems here but the real bug is that the timer starts
+//  before the player has control. We fix this by disabling the timer during the
+//  bridge and resetting it to 120 game cycles when the player regains control.
+//  This preserves the original timer duration in the control room, where the
+//  real timed action is, and is compatible with existing saved games. When the
+//  timer expires, subMarineScript:changeState(9) no longer ends the game if
+//  subMarine:roomFlags flag 2 isn't set, which captainfallsScript sets at the
+//  same time that it now calls subMarineScript:changeState(8).
+//
+// Applies to: All versions
+// Responsible methods: subMarineScript:changeState, captainfallsScript:changeState
+// Fixes bug #11017
+static const uint16 icemanDestroyerTimer1Signature[] = {
+	0x30, SIG_UINT16(0x0022),           // bnt 0022 [ state 8 ]
+	SIG_ADDTOOFFSET(+0x1f),
+	SIG_MAGICDWORD,
+	0x32, SIG_UINT16(0x0074),           // jmp 0074 [ end of method ]
+	0x3c,                               // dup
+	0x35, 0x08,                         // ldi 08
+	0x1a,                               // eq?
+	0x30, SIG_UINT16(0x0008),           // bnt 0008 [ state 9 ]
+	0x34, SIG_UINT16(0x0190),           // ldi 0190
+	0x65, 0x10,                         // aTop cycles [ cycles = 400 ]
+	0x32, SIG_UINT16(0x0065),           // jmp 0065 [ end of method ]
+	0x3c,                               // dup
+	0x35, 0x09,                         // ldi 09
+	0x1a,                               // eq?
+	0x30, SIG_UINT16(0x0023),           // bnt 0023 [ state 15 ]
+	0x8f, 0x00,                         // lsp 00
+	0x35, 0x02,                         // ldi 02
+	0x22,                               // lt?      [ didn't reach control panel? ]
+	0x30, SIG_UINT16(0x0014),           // bnt 0014 [ skip death if reached control panel ]
+	SIG_END
+};
+
+static const uint16 icemanDestroyerTimer1Patch[] = {
+	0x30, PATCH_UINT16(0x001f),         // bnt 001f [ state 8 ]
+	PATCH_ADDTOOFFSET(+0x1f),
+	0x3c,                               // dup
+	0x35, 0x08,                         // ldi 08
+	0x1a,                               // eq?
+	0x31, 0x04,                         // bnt 04 [ state 9 ]
+	0x35, 0x78,                         // ldi 78
+	0x65, 0x10,                         // aTop cycles [ cycles = 120 ]
+	0x3c,                               // dup
+	0x35, 0x09,                         // ldi 09
+	0x1a,                               // eq?
+	0x31, 0x2c,                         // bnt 2c [ state 15 ]
+	0x38, PATCH_SELECTOR16(roomFlags),  // pushi roomFlags
+	0x76,                               // push0
+	0x63, 0x08,                         // pToa client
+	0x4a, 0x04,                         // send 04 [ subMarine roomFlags? ]
+	0x7a,                               // push2  [ flag 2 set when captain falls ]
+	0x12,                               // and    [ has captain fallen? ]
+	0x31, 0x19,                         // bnt 19 [ skip death if captain hasn't fallen ]
+	0x8f, 0x00,                         // lsp 00
+	0x22,                               // lt?    [ didn't reach control panel? ]
+	0x31, 0x14,                         // bnt 14 [ skip death if reached control panel ]
+	PATCH_END
+};
+
+static const uint16 icemanDestroyerTimer2Signature[] = {
+	// print four messages
+	0x7a,                               // push2
+	0x38, SIG_UINT16(0x0187),           // pushi 0187
+	SIG_MAGICDWORD,
+	0x7a,                               // push2
+	0x47, 0xff, 0x00, 0x04,             // calle proc255_0 [ print 391 2 ]
+	SIG_ADDTOOFFSET(+20),               // [ print 391 3, print 391 4 ]
+	0x7a,                               // push2
+	0x38, SIG_UINT16(0x0187),           // pushi 0187
+	0x39, 0x05,                         // pushi 05
+	0x47, 0xff, 0x00, 0x04,             // calle proc255_0 [ print 391 5 ]
+	SIG_END,
+};
+
+static const uint16 icemanDestroyerTimer2Patch[] = {
+	// print four messages using a loop
+	0x35, 0x02,                         // ldi 02
+	0xa7, 0x01,                         // sap 01
+	0x8f, 0x01,                         // lsp 01
+	0x35, 0x05,                         // ldi 05
+	0x24,                               // le?    [ loop while 2 <= param1 <= 5 ]
+	0x31, 0x0e,                         // bnt 0e [ exit loop ]
+	0x7a,                               // push2
+	0x38, PATCH_UINT16(0x0187),         // pushi 0187
+	0x8f, 0x01,                         // lsp 01
+	0x47, 0xff, 0x00, 0x04,             // calle proc255_0 [ print 391 param1 ]
+	0xcf, 0x01,                         // +sp 01 [ increment and push param1 ]
+	0x33, 0xed,                         // jmp ed [ continue loop ]
+	// reset subMarineScript timer
+	0x39, PATCH_SELECTOR8(script),      // pushi script
+	0x76,                               // push0
+	0x51, 0x5c,                         // class subMarine
+	0x4a, 0x04,                         // send 04 [ subMarine script? ]
+	0x39, PATCH_SELECTOR8(changeState), // pushi changeState
+	0x78,                               // push1
+	0x39, 0x08,                         // pushi 08
+	0x4a, 0x06,                         // send 06 [ subMarineScript changeState: 8 ]
+	PATCH_END
+};
+
+//         script, description,                                       signature                                      patch
+static const SciScriptPatcherEntry icemanSignatures[] = {
+	{ true,   314, "destroyer timer (1/2)",                        1, icemanDestroyerTimer1Signature,                icemanDestroyerTimer1Patch },
+	{ true,   391, "destroyer timer (2/2)",                        1, icemanDestroyerTimer2Signature,                icemanDestroyerTimer2Patch },
+	SCI_SIGNATUREENTRY_TERMINATOR
+};
 
 // ===========================================================================
 // At least during the harpy scene, export 29 of script 0 is called and has an
@@ -14987,6 +15111,9 @@ void ScriptPatcher::processScript(uint16 scriptNr, SciSpan<byte> scriptData) {
 		signatureTable = gk2Signatures;
 		break;
 #endif
+	case GID_ICEMAN:
+		signatureTable = icemanSignatures;
+		break;
 	case GID_KQ5:
 		signatureTable = kq5Signatures;
 		break;
