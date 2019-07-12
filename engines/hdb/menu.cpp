@@ -153,6 +153,17 @@ void Menu::writeConfig() {
 		ConfMan.set(CONFIG_CHEAT, "1");
 }
 
+static const char nebulaNames[kNebulaCount][32] = {
+	BACKSCROLL_PLANET1,
+	BACKSCROLL_PLANET2,
+	BACKSCROLL_PLANET3,
+	BACKSCROLL_PLANET4,
+	BACKSCROLL_PLANET5,
+	BACKSCROLL_GALAXY1,
+	BACKSCROLL_GALAXY2
+};
+
+
 void Menu::startMenu() {
 	int	i;
 
@@ -1183,7 +1194,7 @@ void Menu::processInput(int x, int y) {
 
 		int	xit = getMenuKey();
 
-		if (y >= kMenuExitY && x < kMenuExitXLeft || xit) {
+		if ((y >= kMenuExitY && x < kMenuExitXLeft) || xit) {
 			_menuActive = true;
 			_warpActive = false;
 			g_hdb->_sound->playSound(SND_MENU_BACKOUT);

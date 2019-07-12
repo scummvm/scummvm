@@ -229,16 +229,6 @@ public:
 
 	Star _fStars[kMaxStars];
 
-	char nebulaNames[kNebulaCount][32] = {
-		BACKSCROLL_PLANET1,
-		BACKSCROLL_PLANET2,
-		BACKSCROLL_PLANET3,
-		BACKSCROLL_PLANET4,
-		BACKSCROLL_PLANET5,
-		BACKSCROLL_GALAXY1,
-		BACKSCROLL_GALAXY2
-	};
-
 	int _menuKey;
 };
 
