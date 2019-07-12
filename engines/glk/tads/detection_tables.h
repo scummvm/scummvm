@@ -203,6 +203,7 @@ const PlainGameDescriptor TADS2_GAME_LIST[] = {
 const PlainGameDescriptor TADS3_GAME_LIST[] = {
 	{ "tads3", "TADS 3 Game" },
 
+	// English games
 	{ "allhope", "All Hope Abandon" },
 	{ "blightedisle", "Blighted Isle" },
 	{ "combatdemo", "TADS 3 Combat Demos" },
@@ -251,6 +252,18 @@ const PlainGameDescriptor TADS3_GAME_LIST[] = {
 	{ "writingonthewall", "The Writing on the Wall" },
 	{ "wutheringheights", "Wuthering Heights" },
 	{ "youmatched", "It's a Match!" },
+
+	// Czech games
+	{ "exoter", "Exoter" },
+
+	// German games
+	{ "pionierin", "Die Pionierin und die Tragödie des telematischen Typewriters" },
+
+	// Italian games
+	{ "remerook", "La missione di Kyle Remerook" },
+
+	// Spanish games
+	{ "verla", "No Quiero Verla" },
 
 	{ nullptr, nullptr }
 };
@@ -433,6 +446,9 @@ const GlkDetectionEntry TADS_GAMES[] = {
 	DT_ENTRY0("uu1", "705b91f9e54c591e361d6c2e15bff8ef", 367506),
 	DT_ENTRY0("uu2", "69a4f7cd914bd32bd7a3bef5c68f9f3a", 400113),
 
+	// TADS 2 - Russian
+	DT_ENTRYL0("ditchday", Common::RU_RUS, "30743db95826c38a4e683f44dc5fe2d2", 206234),
+
 	// TADS 3 - English
 	DT_ENTRY0("allhope", "1e842218ad6eeacb2d284ad34adbeaaa", 1816249),
 	DT_ENTRY1("allhope", "WebUI", "c65cff5c63cfecad3d8c922f0086816f", 2434146),
@@ -459,6 +475,7 @@ const GlkDetectionEntry TADS_GAMES[] = {
 	DT_ENTRY0("it", "aae7a1a7eb812ef216406875df1035bc", 1161138),
 	DT_ENTRY1("it", "WebUI", "e69e00d227df2ea9179bb3bc20d779c9", 1589779),
 	DT_ENTRY0("korenvliet", "4ab26eb23354a000f66b77bcbb820be4", 719957),
+	DT_ENTRY0("korenvliet", "9c91716c269e268938c5051dbfc07f33", 1311919),
 	DT_ENTRY0("lookaroundthecorner", "c9ac24c941c39ef57b23a55ed36f844d", 664271),
 	DT_ENTRY1("lookaroundthecorner", "WebUI", "5e7d1e0c7f93662fb455972797795f15", 1079205),
 	DT_ENTRY0("lydiasheart", "aa92fa47c4e04e90d358e9cfd50de671", 2620069),
@@ -474,6 +491,7 @@ const GlkDetectionEntry TADS_GAMES[] = {
 	DT_ENTRY0("recluse", "c41b5ab77e458f38c487dc1a1e0778f2", 1073030),
 	DT_ENTRY0("returntoditchday", "47577d2001035ac30332bdb5ad9bcf3c", 2141661),
 	DT_ENTRY0("ribosoperation", "7ce5c5c74b5adecc8520a99e720a6a0d", 718057),
+	DT_ENTRY0("ribosoperation", "19b7227f381f4e9491f3e2b7d9bccb59", 714946),
 	DT_ENTRY0("saturnschild", "2644265c684d153777dc8477e9e51ce9", 2321035),
 	DT_ENTRY1("saturnschild", "WebUI", "67b0926a6b96a37a88e4564e3481f386", 2795440),
 	DT_ENTRY0("sawesome", "558a930adf7995b566d901719cb90041", 1227313),
@@ -502,6 +520,21 @@ const GlkDetectionEntry TADS_GAMES[] = {
 	DT_ENTRY0("wutheringheights", "0d2042689bdf63e719b77485d591f1fe", 1083215),
 	DT_ENTRY0("youmatched", "63007bd45363f5ddbcc2e4fe4a1a52de", 1621574),
 	DT_ENTRY1("youmatched", "WebUI", "055efcc37f945071ea2486a207703951", 2050047),
+
+	// TADS 3 - CZech
+	DT_ENTRYL0("exoter", Common::CZ_CZE, "02b93382a19cd69f3cb67a12073f4795", 1487144),
+	DT_ENTRYL0("exoter", Common::CZ_CZE, "865db2452b38f96035841f04e314c2c6", 1489600),
+	DT_ENTRYL0("exoter", Common::CZ_CZE, "956f93c8c8b5270d75501039ef825429", 1074752),
+		
+	// TADS 3 - German
+	DT_ENTRYL0("pionierin", Common::DE_DEU, "9f899c9826204184c09f7088acfa8cce", 1293016),
+	DT_ENTRYL0("pionierin", Common::DE_DEU, "11b10b38003dda7e7c0c43bac3ce67d0", 928810),
+
+	// TADS 3 - Italian
+	DT_ENTRYL0("remerook", Common::IT_ITA, "218f1ad01f58f93a610ba91f626b5fb5", 1166951),
+
+	// TADS 3 - Spanish
+	DT_ENTRYL0("verla", Common::ES_ESP, "751eaee6249e4acec9b7ace03bb80fb4", 1118875),
 
 	DT_END_MARKER
 };
