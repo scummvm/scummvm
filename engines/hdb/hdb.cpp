@@ -763,7 +763,7 @@ Common::Error HDBGame::run() {
 			level = 1;
 
 		snprintf(mapname, 10, "MAP%02d", level);
-
+		_ai->clearPersistent();
 		startMap(mapname);
 
 		_gameState = GAME_PLAY;
