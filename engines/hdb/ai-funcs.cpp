@@ -940,7 +940,6 @@ void AI::animateEntity(AIEntity *e) {
 			_laserRescan = true;
 			break;
 		default:
-			debug(9, "animateEntity: Unintended Type");
 			break;
 		}
 
@@ -983,7 +982,6 @@ void AI::animateEntity(AIEntity *e) {
 						hit = NULL;
 						break;
 					default:
-						debug(9, "animateEntity: Unintended type");
 						break;
 					}
 				if ((!hit && moveOK) || (bgTileFlags & kFlagPlayerDie))
@@ -995,7 +993,6 @@ void AI::animateEntity(AIEntity *e) {
 				}
 				break;
 			default:
-				debug(9, "animateEntity: Unintended type");
 				break;
 			}
 		} else if (e == _player)
@@ -1019,7 +1016,7 @@ void AI::animateEntity(AIEntity *e) {
 				case DIR_DOWN:	yv = 1;		break;
 				case DIR_LEFT:	xv = -1;	break;
 				case DIR_RIGHT: xv = 1;		break;
-				case DIR_NONE:	warning("animateEntity: DIR_NONE found"); break;
+				case DIR_NONE:	break;
 				}
 
 				bgTileFlags = g_hdb->_map->getMapBGTileFlags(e->tileX + xv, e->tileY + yv);
@@ -1076,7 +1073,6 @@ void AI::animateEntity(AIEntity *e) {
 				yOff = 0;
 				break;
 			case DIR_NONE:
-				warning("AI-FUNCS: animateEntity: DIR_NONE found");
 				break;
 			}
 			if ((e->tileX + xOff == _waypoints[_numWaypoints - 1].x &&
@@ -1148,7 +1144,7 @@ void AI::animateEntity(AIEntity *e) {
 						case DIR_DOWN:	e->goalY = ny;  e->xVel = 0; e->yVel =  kPlayerMoveSpeed; e->state = STATE_MOVEDOWN; break;
 						case DIR_LEFT:	e->goalX = nx;  e->yVel = 0; e->xVel = -kPlayerMoveSpeed; e->state = STATE_MOVELEFT; break;
 						case DIR_RIGHT: e->goalX = nx;  e->yVel = 0; e->xVel =  kPlayerMoveSpeed; e->state = STATE_MOVERIGHT; break;
-						case DIR_NONE:	warning("animateEntity: DIR_NONE found"); break;
+						case DIR_NONE:	break;
 						}
 						if (_playerRunning) {
 							e->xVel = e->xVel << 1;
@@ -1175,7 +1171,7 @@ void AI::animateEntity(AIEntity *e) {
 					_laserRescan = true;
 				break;
 			default:
-				debug(9, "animateEntity: Unintended State");
+				break;
 			}
 
 			// Checking at the Destination
@@ -1224,7 +1220,7 @@ void AI::animateEntity(AIEntity *e) {
 					case DIR_DOWN:	yv = 1; break;
 					case DIR_LEFT:	xv = -1; break;
 					case DIR_RIGHT: xv = 1; break;
-					case DIR_NONE:	warning("animateEntity: DIR_NONE found"); break;
+					case DIR_NONE:	break;
 					}
 
 					hit = findEntityIgnore(e->tileX + xv, e->tileY + yv, &_dummyLaser);
