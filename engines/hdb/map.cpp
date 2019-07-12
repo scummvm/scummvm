@@ -572,8 +572,11 @@ bool Map::load(Common::SeekableReadStream *stream) {
 	};
 
 	// Scan all icons and init all Entities
-	warning("STUB: Map::load: SetupProgressBar");
+	g_hdb->setupProgressBar(_iconNum);
 	for (int i = 0; i < _iconNum; i++) {
+
+		g_hdb->makeProgress();
+
 		// Don't spawn Action Mode Entities in Puzzle Mode
 		if (!g_hdb->getActionMode()) {
 			switch (aiInfo[_iconList[i].icon].type) {
@@ -587,7 +590,7 @@ bool Map::load(Common::SeekableReadStream *stream) {
 			case ITEM_SLUGSLINGER:
 				continue;
 			default:
-				warning("MAP-LOADER: load: Unintended Type");
+				break;
 			}
 		}
 

@@ -199,6 +199,7 @@ void Gfx::fillScreen(uint32 color) {
 
 void Gfx::updateVideo() {
 	updateFade();
+	g_hdb->checkProgress();
 	debug(9, "STUB: Gfx::updateVideo incomplete");
 }
 
