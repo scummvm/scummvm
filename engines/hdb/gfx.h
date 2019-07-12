@@ -166,20 +166,6 @@ public:
 	void turnOnBonusStars(int which);
 	void drawBonusStars();
 
-	// Macro to convert RGB into 16-bit
-	uint16 rgbTo565(int r, int g, int b) {
-		return (uint16) (
-			((r & 0xf8) << 8) |
-			((g & 0xfc) << 3) |
-			((b & 0xf8) >> 3)
-		);
-	}
-
-	// Macros to get RGB from 565 short
-#define	getR( x )	( ( x & 0xf800 ) >> 8 )
-#define	getG( x )	( ( x & 0x07e0 ) >> 3 )
-#define	getB( x )	( ( x & 0x001f ) << 3 )
-
 private:
 	int _numTiles;
 	TileLookup *_tLookupArray;

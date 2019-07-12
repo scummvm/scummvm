@@ -243,7 +243,7 @@ void Gfx::setFade(bool fadeIn, bool black, int steps) {
 }
 
 void Gfx::updateFade() {
-	uint r, g, b;
+	uint8 r, g, b;
 	static int waitAFrame = 0;
 
 	if (!_fadeInfo.active && !_fadeInfo.stayFaded)
@@ -271,11 +271,11 @@ void Gfx::updateFade() {
 				for (int x = 0; x < kScreenWidth; x++) {
 					value = *ptr;
 					if (value) {
-						*ptr = rgbTo565(
-							(getR(value) * _fadeInfo.curStep) >> 8,
-							(getG(value) * _fadeInfo.curStep) >> 8,
-							(getB(value) * _fadeInfo.curStep) >> 8
-						);
+						g_hdb->_format.colorToRGB(value, r, g, b);
+						r = (r * _fadeInfo.curStep) >> 8;
+						g = (g * _fadeInfo.curStep) >> 8;
+						b = (b * _fadeInfo.curStep) >> 8;
+						*ptr = g_hdb->_format.RGBToColor(r, g, b);
 					}
 					ptr++;
 				}
@@ -287,13 +287,11 @@ void Gfx::updateFade() {
 				ptr = (uint16 *)fadeBuffer1.getBasePtr(0, y);
 				for (int x = 0; x < kScreenWidth; x++) {
 					value = *ptr;
-					r = getR(value);
-					g = getG(value);
-					b = getB(value);
+					g_hdb->_format.colorToRGB(value, r, g, b);
 					r += (255 - r) * (256 - _fadeInfo.curStep) / 256;
 					g += (255 - g) * (256 - _fadeInfo.curStep) / 256;
 					b += (255 - b) * (256 - _fadeInfo.curStep) / 256;
-					*ptr = rgbTo565(r, g, b);
+					*ptr = g_hdb->_format.RGBToColor(r, g, b);
 					ptr++;
 				}
 			}
