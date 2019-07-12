@@ -157,5 +157,5 @@ const ScottGame SCOTT_GAMES[] = {
 	{ nullptr, nullptr, 0 }
 };
 
-} // End of namespace Frotz
+} // End of namespace Scott
 } // End of namespace Glk

@@ -539,5 +539,5 @@ const GlkDetectionEntry TADS_GAMES[] = {
 	DT_END_MARKER
 };
 
-} // End of namespace Frotz
+} // End of namespace TADS
 } // End of namespace Glk
