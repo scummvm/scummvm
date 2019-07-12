@@ -200,6 +200,18 @@ public:
 	void setTargetXY(int x, int y);
 	void useEntity(AIEntity *e);
 
+	void setupProgressBar(int maxCount);
+	void drawProgressBar();
+	void makeProgress() {
+		_progressCurrent++;
+		drawProgressBar();
+	}
+	void checkProgress();
+	void stopProgress() {
+		_progressActive = false;
+	}
+	void drawLoadingScreen();
+
 	int getActionMode() {
 		return _actionMode;
 	}
@@ -290,8 +302,15 @@ private:
 	bool _systemInit;
 	GameState _gameState;
 	int _actionMode; // 0 or 1
+
+	// Misc Variables
 	int _pauseFlag;
+
 	bool _cheating;
+	Picture *_progressGfx, *_progressMarkGfx;
+	Picture *_loadingScreenGfx, *_logoGfx;
+	bool _progressActive;
+	int _progressCurrent, _progressXOffset, _progressMax;
 
 	char _currentMapname[64];
 	char _lastMapname[64];

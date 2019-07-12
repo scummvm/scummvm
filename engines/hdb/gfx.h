@@ -42,7 +42,8 @@ enum {
 	kAnimFrameDelay = kGameFPS / 30,
 	kAnimSlowFrames = kAnimFrameDelay * 10,
 	kAnimMediumFrames = kAnimFrameDelay * 6,
-	kAnimFastFrames = kAnimFrameDelay * 2
+	kAnimFastFrames = kAnimFrameDelay * 2,
+	kProgressY = (kScreenHeight - 64)
 };
 
 class Tile;

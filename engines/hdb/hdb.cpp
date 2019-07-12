@@ -118,6 +118,10 @@ bool HDBGame::init() {
 
 	_menu->init();
 
+	_progressGfx = _gfx->loadPic(PIC_LOADBAR);
+	_progressMarkGfx = _gfx->loadPic(PIC_LOADSTAR);
+	_logoGfx = NULL;
+
 	_changeLevel = false;
 	_changeMapname[0] = 0;
 	_loadInfo.active = _saveInfo.active = false;
@@ -127,6 +131,7 @@ bool HDBGame::init() {
 	_gameShutdown = false;
 	_pauseFlag = 0;
 	_systemInit = true;
+	_loadingScreenGfx = _gfx->loadPic(PIC_LOADSCREEN);
 
 	return true;
 }
@@ -264,7 +269,17 @@ void HDBGame::paint() {
 		_gfx->drawPointer();
 		break;
 	case GAME_LOADING:
-		warning("STUB: Gfx::DrawLoadingScreen required");
+		// clear video, then draw HDB logo
+		drawLoadingScreen();
+
+		// if the graphic has never been loaded, load it now and leave it in memory
+		if (!_logoGfx)
+			_logoGfx = _gfx->loadPic(TITLELOGO);
+		_logoGfx->drawMasked(kScreenWidth / 2 - _logoGfx->_width / 2, 10);
+
+		int	x = kScreenWidth / 2 - _progressGfx->_width / 2;
+		int pixels = _progressGfx->_width - _progressMarkGfx->_width;
+		_progressXOffset = (int)(((double)pixels / _progressMax) * (double)_progressCurrent) + x;
 		break;
 	}
 
@@ -668,6 +683,38 @@ void HDBGame::useEntity(AIEntity *e) {
 	if (e->type == AI_HEAVYBARREL) {
 		g_hdb->_sound->playSound(SND_GUY_UHUH);
 	}
+}
+
+void HDBGame::setupProgressBar(int maxCount) {
+	_progressMax = maxCount;
+	_progressCurrent = 0;
+	_progressActive = true;
+}
+
+void HDBGame::drawProgressBar() {
+	if (!_progressActive)
+		return;
+
+	GameState temp = _gameState;
+	_gameState = GAME_LOADING;
+	_gameState = temp;
+}
+
+void HDBGame::checkProgress() {
+	int x, i;
+
+	if (!_progressActive)
+		return;
+
+	x = kScreenWidth / 2 - _progressGfx->_width / 2;
+	_progressGfx->drawMasked(x, kProgressY);
+	for (i = x; i < _progressXOffset; i += _progressMarkGfx->_width)
+		_progressMarkGfx->drawMasked(i, kProgressY);
+	_progressMarkGfx->drawMasked(_progressXOffset, kProgressY);
+}
+
+void HDBGame::drawLoadingScreen() {
+	_loadingScreenGfx->draw(0, 0);
 }
 
 struct {
