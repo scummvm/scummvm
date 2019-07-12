@@ -625,6 +625,9 @@ void Gfx::drawSky() {
 	}
 }
 
+static const int snowXVList[13] = {0, -1, -1, -2, -2, -1, 0, 0, 0, -1, -2, -1, 0};
+
+
 void Gfx::drawSnow() {
 	int		i;
 	if (_snowInfo.active == false)
@@ -632,7 +635,7 @@ void Gfx::drawSnow() {
 
 	for (i = 0; i < MAX_SNOW; i++) {
 		_snowflake->drawMasked((int)_snowInfo.x[i], (int)_snowInfo.y[i]);
-		_snowInfo.x[i] += _snowXVList[_snowInfo.xvindex[i]++];
+		_snowInfo.x[i] += snowXVList[_snowInfo.xvindex[i]++];
 		_snowInfo.y[i] += _snowInfo.yv[i];
 		if (_snowInfo.xvindex[i] == MAX_SNOW_XV)
 			_snowInfo.xvindex[i] = 0;

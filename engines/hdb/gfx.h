@@ -195,8 +195,6 @@ private:
 		int     xvindex[MAX_SNOW];
 	} _snowInfo;
 
-	int _snowXVList[13] = {0, -1, -1, -2, -2, -1, 0, 0, 0, -1, -2, -1, 0};
-
 	struct {
 		int x, y, speed;
 		uint16 color;
