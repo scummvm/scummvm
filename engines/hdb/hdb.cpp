@@ -697,6 +697,7 @@ void HDBGame::drawProgressBar() {
 
 	GameState temp = _gameState;
 	_gameState = GAME_LOADING;
+	paint();
 	_gameState = temp;
 }
 
