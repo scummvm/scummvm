@@ -46,7 +46,7 @@ TabWidget::TabWidget(GuiObject *boss, const String &name)
 }
 
 void TabWidget::init() {
-	setFlags(WIDGET_ENABLED);
+	setFlags(WIDGET_ENABLED | WIDGET_TRACK_MOUSE);
 	_type = kTabWidget;
 	_activeTab = -1;
 	_firstVisibleTab = 0;
@@ -71,6 +71,7 @@ void TabWidget::init() {
 	int y = _butTP - _tabHeight;
 	_navLeft = new ButtonWidget(this, x, y, _butW, _butH, "<", 0, kCmdLeft);
 	_navRight = new ButtonWidget(this, x + _butW + 2, y, _butW, _butH, ">", 0, kCmdRight);
+	_lastRead = -1;
 }
 
 TabWidget::~TabWidget() {
@@ -214,6 +215,30 @@ void TabWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 	// If a tab was clicked, switch to that pane
 	if (tabID <= _lastVisibleTab)
 		setActiveTab(tabID);
+}
+
+void TabWidget::handleMouseMoved(int x, int y, int button) {
+	assert(y < _tabHeight);
+
+	if (x < 0)
+		return;
+
+	// Determine which tab the mouse is on
+	int tabID;
+	for (tabID = _firstVisibleTab; tabID <= _lastVisibleTab; ++tabID) {
+		x -= _tabs[tabID]._tabWidth;
+		if (x < 0)
+			break;
+	}
+
+	if (tabID <= _lastVisibleTab) {
+		if (tabID != _lastRead) {
+			read(_tabs[tabID].title);
+			_lastRead = tabID;
+		}
+	}
+	else 
+		_lastRead = -1;
 }
 
 bool TabWidget::handleKeyDown(Common::KeyState state) {

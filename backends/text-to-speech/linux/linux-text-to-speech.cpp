@@ -160,12 +160,16 @@ void LinuxTextToSpeechManager::setPitch(int pitch) {
 	_ttsState->_pitch = pitch;
 }
 
-void LinuxTextToSpeechManager::setVolume(int volume) {
+void LinuxTextToSpeechManager::setVolume(unsigned volume) {
 	if (_speechState == BROKEN)
 		return;
-	assert(volume >= -100 && volume <= 100);
-	spd_set_volume(_connection, volume);
+	assert(volume <= 100);
+	spd_set_volume(_connection, (volume - 50) * 2);
 	_ttsState->_volume = volume;
+}
+
+int LinuxTextToSpeechManager::getVolume() {
+	return (_ttsState->_volume - 50) * 2;
 }
 
 void LinuxTextToSpeechManager::setLanguage(Common::String language) {

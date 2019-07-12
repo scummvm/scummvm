@@ -256,6 +256,19 @@ Common::String Widget::cleanupHotkey(const Common::String &label) {
 	return res;
 }
 
+void Widget::read(Common::String str) {
+#ifdef USE_TTS
+	if (ConfMan.hasKey("tts_enabled", "scummvm") &&
+			ConfMan.getBool("tts_enabled", "scummvm")) {
+		int volume = (ConfMan.getInt("speech_volume", "scummvm") * 100) / 256;
+		if (ConfMan.hasKey("mute", "scummvm") && ConfMan.getBool("mute", "scummvm"))
+			volume = 0;
+		g_system->getTextToSpeechManager()->setVolume(volume);
+		g_system->getTextToSpeechManager()->say(str);
+	}
+#endif
+}
+
 #pragma mark -
 
 StaticTextWidget::StaticTextWidget(GuiObject *boss, int x, int y, int w, int h, const Common::String &text, Graphics::TextAlign align, const char *tooltip, ThemeEngine::FontStyle font)

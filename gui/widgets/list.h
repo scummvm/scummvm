@@ -84,6 +84,8 @@ protected:
 
 	ThemeEngine::FontColor _editColor;
 
+	int				_lastRead;
+
 public:
 	ListWidget(Dialog *boss, const String &name, const char *tooltip = 0, uint32 cmd = 0);
 	ListWidget(Dialog *boss, int x, int y, int w, int h, const char *tooltip = 0, uint32 cmd = 0);
@@ -125,6 +127,8 @@ public:
 	virtual void handleMouseDown(int x, int y, int button, int clickCount);
 	virtual void handleMouseUp(int x, int y, int button, int clickCount);
 	virtual void handleMouseWheel(int x, int y, int direction);
+	virtual void handleMouseMoved(int x, int y, int button);
+	virtual void handleMouseLeft(int button);
 	virtual bool handleKeyDown(Common::KeyState state);
 	virtual bool handleKeyUp(Common::KeyState state);
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);

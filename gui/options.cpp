@@ -1792,8 +1792,8 @@ void GlobalOptionsDialog::build() {
 		tab->addTab(_c("Accessibility", "lowres"));
 	_ttsCheckbox = new CheckboxWidget(tab, "GlobalOptions_Accessibility.TTSCheckbox",
 			_("Use Text to speech"), _("Will read text in gui on mouse over."));
-	if (ConfMan.hasKey("ttsEnabled"))
-		_ttsCheckbox->setState(ConfMan.getBool("ttsEnabled", _domain));
+	if (ConfMan.hasKey("tts_enabled"))
+		_ttsCheckbox->setState(ConfMan.getBool("tts_enabled", _domain));
 	else
 		_ttsCheckbox->setState(false);
 
@@ -2135,7 +2135,7 @@ void GlobalOptionsDialog::apply() {
 		error.runModal();
 	}
 #ifdef USE_TTS
-	ConfMan.setBool("ttsEnabled", _ttsCheckbox->getState(), _domain);
+	ConfMan.setBool("tts_enabled", _ttsCheckbox->getState(), _domain);
 #endif
 
 	if (isRebuildNeeded) {

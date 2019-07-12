@@ -96,8 +96,8 @@ public:
 	virtual void setPitch(int pitch) {}
 	int getPitch() { return _ttsState->_pitch; }
 
-	virtual void setVolume(int volume) {}
-	int getVolume() { return _ttsState->_volume; }
+	virtual void setVolume(unsigned volume) {}
+	virtual int getVolume() { return _ttsState->_volume; }
 
 	virtual void setLanguage(String language) {}
 	String getLanguage() { return _ttsState->_language; }
