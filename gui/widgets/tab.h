@@ -60,6 +60,7 @@ protected:
 
 	ButtonWidget *_navLeft, *_navRight;
 	bool _navButtonsVisible;
+	int _lastRead;
 
 public:
 	TabWidget(GuiObject *boss, int x, int y, int w, int h);
@@ -102,6 +103,8 @@ public:
 	}
 
 	virtual void handleMouseDown(int x, int y, int button, int clickCount) override;
+	virtual void handleMouseMoved(int x, int y, int button);
+	virtual void handleMouseLeft(int button) { _lastRead = -1; };
 	virtual bool handleKeyDown(Common::KeyState state) override;
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
 	virtual int getFirstVisible() const;

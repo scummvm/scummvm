@@ -45,6 +45,8 @@ protected:
 	int			_leftPadding;
 	int			_rightPadding;
 
+	int			_lastRead;
+
 public:
 	PopUpDialog(PopUpWidget *boss, int clickX, int clickY);
 
@@ -53,6 +55,7 @@ public:
 	void handleMouseUp(int x, int y, int button, int clickCount) override;
 	void handleMouseWheel(int x, int y, int direction) override;	// Scroll through entries with scroll wheel
 	void handleMouseMoved(int x, int y, int button) override;	// Redraw selections depending on mouse position
+	void handleMouseLeft(int button) override;	
 	void handleKeyDown(Common::KeyState state) override;	// Scroll through entries with arrow keys etc.
 
 protected:
@@ -64,6 +67,7 @@ protected:
 
 	void moveUp();
 	void moveDown();
+	void read(Common::String);
 };
 
 PopUpDialog::PopUpDialog(PopUpWidget *boss, int clickX, int clickY)
@@ -145,6 +149,8 @@ PopUpDialog::PopUpDialog(PopUpWidget *boss, int clickX, int clickY)
 	// Remember original mouse position
 	_clickX = clickX - _x;
 	_clickY = clickY - _y;
+
+	_lastRead = -1;
 }
 
 void PopUpDialog::drawDialog(DrawLayer layerToDraw) {
@@ -207,6 +213,27 @@ void PopUpDialog::handleMouseMoved(int x, int y, int button) {
 
 	// ...and update the selection accordingly
 	setSelection(item);
+	if (_lastRead != item) {
+		read(_popUpBoss->_entries[item].name);
+		_lastRead = item;
+	}
+}
+
+void PopUpDialog::handleMouseLeft(int button) {
+	_lastRead = -1;
+}
+
+void PopUpDialog::read(Common::String str) {
+#ifdef USE_TTS
+	if (ConfMan.hasKey("tts_enabled", "scummvm") &&
+			ConfMan.getBool("tts_enabled", "scummvm")) {
+		int volume = (ConfMan.getInt("speech_volume", "scummvm") * 100) / 256;
+		if (ConfMan.hasKey("mute", "scummvm") && ConfMan.getBool("mute", "scummvm"))
+			volume = 0;
+		g_system->getTextToSpeechManager()->setVolume(volume);
+		g_system->getTextToSpeechManager()->say(str);
+	}
+#endif
 }
 
 void PopUpDialog::handleKeyDown(Common::KeyState state) {

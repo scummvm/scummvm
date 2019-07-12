@@ -58,7 +58,8 @@ public:
 
 	virtual void setPitch(int pitch);
 
-	virtual void setVolume(int volume);
+	virtual void setVolume(unsigned volume);
+	virtual int getVolume();
 
 	virtual void setLanguage(Common::String language);
 

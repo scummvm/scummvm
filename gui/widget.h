@@ -33,6 +33,7 @@
 #include "gui/ThemeEngine.h"
 #include "common/text-to-speech.h"
 #include "common/system.h"
+#include "common/config-manager.h"
 
 namespace GUI {
 
@@ -168,6 +169,8 @@ public:
 
 	virtual bool containsWidget(Widget *) const { return false; }
 
+	void read(Common::String str);
+
 protected:
 	void updateState(int oldFlags, int newFlags);
 
@@ -195,9 +198,11 @@ public:
 	StaticTextWidget(GuiObject *boss, const Common::String &name, const Common::String &text, const char *tooltip = 0, ThemeEngine::FontStyle font = ThemeEngine::kFontStyleBold);
 	void setValue(int value);
 	void setLabel(const Common::String &label);
+	void handleMouseEntered(int button)	{ readLabel(); }
 	const Common::String &getLabel() const		{ return _label; }
 	void setAlign(Graphics::TextAlign align);
 	Graphics::TextAlign getAlign() const		{ return _align; }
+	void readLabel() { read(_label); }
 
 protected:
 	void drawWidget();
@@ -220,7 +225,7 @@ public:
 
 	void handleMouseUp(int x, int y, int button, int clickCount);
 	void handleMouseDown(int x, int y, int button, int clickCount);
-	void handleMouseEntered(int button)	{ g_system->getTextToSpeechManager()->say(_label); if (_duringPress) { setFlags(WIDGET_PRESSED); } else { setFlags(WIDGET_HILITED); } markAsDirty(); }
+	void handleMouseEntered(int button)	{ readLabel(); if (_duringPress) { setFlags(WIDGET_PRESSED); } else { setFlags(WIDGET_HILITED); } markAsDirty(); }
 	void handleMouseLeft(int button)	{ clearFlags(WIDGET_HILITED | WIDGET_PRESSED); markAsDirty(); }
 
 	void setHighLighted(bool enable);
@@ -265,7 +270,7 @@ public:
 	CheckboxWidget(GuiObject *boss, const Common::String &name, const Common::String &label, const char *tooltip = 0, uint32 cmd = 0, uint8 hotkey = 0);
 
 	void handleMouseUp(int x, int y, int button, int clickCount);
-	virtual void handleMouseEntered(int button)	{ setFlags(WIDGET_HILITED); markAsDirty(); }
+	virtual void handleMouseEntered(int button)	{ readLabel(); setFlags(WIDGET_HILITED); markAsDirty(); }
 	virtual void handleMouseLeft(int button)	{ clearFlags(WIDGET_HILITED); markAsDirty(); }
 
 	void setState(bool state);
@@ -311,7 +316,7 @@ public:
 	RadiobuttonWidget(GuiObject *boss, const Common::String &name, RadiobuttonGroup *group, int value, const Common::String &label, const char *tooltip = 0, uint8 hotkey = 0);
 
 	void handleMouseUp(int x, int y, int button, int clickCount);
-	virtual void handleMouseEntered(int button)	{ setFlags(WIDGET_HILITED); markAsDirty(); }
+	virtual void handleMouseEntered(int button)	{ readLabel(); setFlags(WIDGET_HILITED); markAsDirty(); }
 	virtual void handleMouseLeft(int button)	{ clearFlags(WIDGET_HILITED); markAsDirty(); }
 
 	void setState(bool state, bool setGroup = true);
