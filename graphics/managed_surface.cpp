@@ -250,7 +250,7 @@ void ManagedSurface::transBlitFrom(const Surface &src, const Common::Point &dest
 void ManagedSurface::transBlitFrom(const Surface &src, const Common::Rect &srcRect,
 		const Common::Point &destPos, uint transColor, bool flipped, uint overrideColor) {
 	transBlitFrom(src, srcRect, Common::Rect(destPos.x, destPos.y,
-		destPos.x + src.w, destPos.y + src.h), transColor, false, overrideColor);
+		destPos.x + srcRect.width(), destPos.y + srcRect.height()), transColor, false, overrideColor);
 }
 
 template<typename TSRC, typename TDEST>
