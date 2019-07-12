@@ -246,8 +246,98 @@ void Gfx::setFade(bool fadeIn, bool black, int steps) {
 }
 
 void Gfx::updateFade() {
-	_fadeInfo.active = false;
-	debug(9, "STUB: Gfx::updateFade incomplete");
+	uint r, g, b;
+	static int waitAFrame = 0;
+
+	if (!_fadeInfo.active && !_fadeInfo.stayFaded)
+		return;
+
+	Graphics::ManagedSurface fadeBuffer1, fadeBuffer2;
+	fadeBuffer1.create(kScreenWidth, kScreenHeight, g_hdb->_format);
+	fadeBuffer2.create(kScreenWidth, kScreenHeight, g_hdb->_format);
+
+	fadeBuffer2.blitFrom(_globalSurface);
+
+	do {
+		// Copy pristine copy of background to modification buffer
+		fadeBuffer1.blitFrom(fadeBuffer2);
+
+		// do the actual alphablending
+
+		uint16 *ptr, value;
+
+		if (!_fadeInfo.isBlack) {
+			// Black Fade
+
+			for (int y = 0; y < kScreenHeight; y++) {
+				ptr = (uint16 *)fadeBuffer1.getBasePtr(0, y);
+				for (int x = 0; x < kScreenWidth; x++) {
+					value = *ptr;
+					if (value) {
+						*ptr = rgbTo565(
+							(getR(value) * _fadeInfo.curStep) >> 8,
+							(getG(value) * _fadeInfo.curStep) >> 8,
+							(getB(value) * _fadeInfo.curStep) >> 8
+						);
+					}
+					ptr++;
+				}
+			}
+		} else {
+			// White Fade
+
+			for (int y = 0; y < kScreenHeight; y++) {
+				ptr = (uint16 *)fadeBuffer1.getBasePtr(0, y);
+				for (int x = 0; x < kScreenWidth; x++) {
+					value = *ptr;
+					r = getR(value);
+					g = getG(value);
+					b = getB(value);
+					r += (255 - r) * (256 - _fadeInfo.curStep) / 256;
+					g += (255 - g) * (256 - _fadeInfo.curStep) / 256;
+					b += (255 - b) * (256 - _fadeInfo.curStep) / 256;
+					*ptr = rgbTo565(r, g, b);
+					ptr++;
+				}
+			}
+		}
+
+		_globalSurface.blitFrom(fadeBuffer1);
+
+		// step the fading values to the next one and
+		// see if we're done yet
+		if (_fadeInfo.isFadeIn) {
+			if (_fadeInfo.active)
+				_fadeInfo.curStep += _fadeInfo.speed;
+
+			if (_fadeInfo.curStep > 255) {
+				_fadeInfo.curStep = 255;
+				_fadeInfo.active = false;
+				_fadeInfo.stayFaded = false;
+			}
+		} else {
+			if (_fadeInfo.active == true)
+				_fadeInfo.curStep -= _fadeInfo.speed;
+
+			if (_fadeInfo.curStep < 1) {
+				_fadeInfo.curStep = 0;
+				_fadeInfo.active = false;
+				_fadeInfo.stayFaded = false;
+			}
+		}
+
+		// make sure we wait one frame at least - some logic in the game
+		// doesn't draw the frame immediately
+		if (!waitAFrame) {
+			waitAFrame++;
+			return;
+		}
+
+		debug(9, "STUB: DirectX Flip");
+
+	} while (_fadeInfo.active);
+
+	waitAFrame = 0;			// reset counter
 }
 
 void Gfx::turnOnSnow() {
