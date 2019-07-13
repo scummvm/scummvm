@@ -1264,7 +1264,7 @@ void AI::save(Common::OutSaveFile *out) {
 	out->writeByte(_playerOnIce);
 	out->writeByte(_playerEmerging);
 	out->writeByte(_playerRunning);
-	warning("STUB: Save whether weapon is selected");
+	out->writeSint32LE((int)_weaponSelected);
 
 	// Save Teleporters
 	for (i = 0; i < kMaxTeleporters; i++) {
@@ -1454,7 +1454,7 @@ void AI::loadSaveFile(Common::InSaveFile *in) {
 	_playerOnIce = in->readByte();
 	_playerEmerging = in->readByte();
 	_playerRunning = in->readByte();
-	warning("STUB: Load whether weapon is selected or not");
+	_weaponSelected = (AIType)in->readSint32LE();
 
 	// Load Teleporters
 	for (i = 0; i < kMaxTeleporters; i++) {
@@ -1698,7 +1698,13 @@ void AI::loadSaveFile(Common::InSaveFile *in) {
 	initAnimInfo();
 
 	// Set the Player weapon
-	warning("STUB: Set the Player weapon");
+	if (_weaponSelected != AI_NONE) {
+		int slot = queryInventoryTypeSlot(_weaponSelected);
+		if (slot != -1) {
+			Tile *gfx = getInvItemGfx(slot);
+			setPlayerWeapon(_weaponSelected, gfx);
+		}
+	}
 }
 
 void AI::initAnimInfo() {
