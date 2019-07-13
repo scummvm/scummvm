@@ -1140,6 +1140,9 @@ public:
 	uint16		_slugAttackFrames;
 	Picture		*_slugAttackGfx[kMaxAnimFrames];
 
+	Tile		*_weaponSelGfx;
+	AIType		_weaponSelected;
+
 	// Player Resources and Deliveries
 
 	int _numGems;

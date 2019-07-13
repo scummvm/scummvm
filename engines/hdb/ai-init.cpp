@@ -1058,35 +1058,72 @@ FuncPtr AI::funcLookUp(const char *function) {
 }
 
 void AI::restartSystem() {
-	warning("STUB: AI::restartSystem incomplete");
-
-	// Clear Player
+	/// init special player vars
 	_player = NULL;
-	_playerDead = false;
-	_playerInvisible = false;
-	_playerOnIce = false;
-	_playerEmerging = false;
+
+	// Clear the Action list
+	memset(_actions, 0, sizeof(_actions));
+
+	// Clear Teleporter list
+	memset(_teleporters, 0, sizeof(_teleporters));
+	_numTeleporters = 0;
+
+	// Clear the Auto-Action list
+	memset(_autoActions, 0, sizeof(_autoActions));
+
+	// Clear the Callback List
+	memset(_callbacks, 0, sizeof(_callbacks));
+
+	// Clear the Entity List
+	_ents->clear();
+
+	// Clear the Floats List
+	_floats->clear();
+
+	// Clear the Lua List
+	memset(_luaList, 0, sizeof(_luaList));
+	_numLuaList = 0;
+
+	// Clear Anim Targets List
+	_animTargets.clear();
+
+	// Clear ArrowPath List
+	_arrowPaths->clear();
+
+	// Clear Trigger List
+	_triggerList->clear();
+
+	// Clear Here List
+	_hereList->clear();
+
+	// Clear Bridges
+	memset(&_bridges[0], 0, sizeof(_bridges));
+	_numBridges = 0;
+
+	// Clear waypoints
+	memset(&_waypoints[0], 0, sizeof(_waypoints));
+	_numWaypoints = 0;
 
 	// Clean up Player Graphics Storage
-	memset(_horrible1Gfx, NULL, kMaxDeathFrames * sizeof(Tile *));
-	memset(_horrible2Gfx, NULL, kMaxDeathFrames * sizeof(Tile *));
-	memset(_horrible3Gfx, NULL, kMaxDeathFrames * sizeof(Tile *));
-	memset(_horrible4Gfx, NULL, kMaxDeathFrames * sizeof(Tile *));
-	memset(_plummetGfx, NULL, kMaxDeathFrames * sizeof(Tile *));
-	memset(_dyingGfx, NULL, kMaxDeathFrames * sizeof(Tile *));
+	memset(_horrible1Gfx, 0, sizeof(_horrible1Gfx));
+	memset(_horrible2Gfx, 0, sizeof(_horrible2Gfx));
+	memset(_horrible3Gfx, 0, sizeof(_horrible3Gfx));
+	memset(_horrible4Gfx, 0, sizeof(_horrible4Gfx));
+	memset(_plummetGfx, 0, sizeof(_plummetGfx));
+	memset(_dyingGfx, 0, sizeof(_dyingGfx));
 
-	memset(_pushdownGfx, NULL, kMaxAnimFrames * sizeof(Tile *));
-	memset(_pushupGfx, NULL, kMaxAnimFrames * sizeof(Tile *));
-	memset(_pushleftGfx, NULL, kMaxAnimFrames * sizeof(Tile *));
-	memset(_pushrightGfx, NULL, kMaxAnimFrames * sizeof(Tile *));
-	memset(_stunDownGfx, NULL, kMaxAnimFrames * sizeof(Tile *));
-	memset(_stunUpGfx, NULL, kMaxAnimFrames * sizeof(Tile *));
-	memset(_stunLeftGfx, NULL, kMaxAnimFrames * sizeof(Tile *));
-	memset(_stunRightGfx, NULL, kMaxAnimFrames * sizeof(Tile *));
-	memset(_slugDownGfx, NULL, kMaxAnimFrames * sizeof(Tile *));
-	memset(_slugUpGfx, NULL, kMaxAnimFrames * sizeof(Tile *));
-	memset(_slugLeftGfx, NULL, kMaxAnimFrames * sizeof(Tile *));
-	memset(_slugRightGfx, NULL, kMaxAnimFrames * sizeof(Tile *));
+	memset(_pushdownGfx, 0, sizeof(_pushdownGfx));
+	memset(_pushupGfx, 0, sizeof(_pushupGfx));
+	memset(_pushleftGfx, 0, sizeof(_pushleftGfx));
+	memset(_pushrightGfx, 0, sizeof(_pushrightGfx));
+	memset(_stunDownGfx, 0, sizeof(_stunDownGfx));
+	memset(_stunUpGfx, 0, sizeof(_stunUpGfx));
+	memset(_stunLeftGfx, 0, sizeof(_stunLeftGfx));
+	memset(_stunRightGfx, 0, sizeof(_stunRightGfx));
+	memset(_slugDownGfx, 0, sizeof(_slugDownGfx));
+	memset(_slugUpGfx, 0, sizeof(_slugUpGfx));
+	memset(_slugLeftGfx, 0, sizeof(_slugLeftGfx));
+	memset(_slugRightGfx, 0, sizeof(_slugRightGfx));
 
 	_horrible1Frames = _horrible2Frames = _horrible3Frames = _horrible4Frames = 0;
 	_plummetFrames = _dyingFrames = 0;
@@ -1101,10 +1138,24 @@ void AI::restartSystem() {
 		_clubRightFrames = 3;
 	}
 
-	memset(_clubDownGfx, NULL, kMaxAnimFrames * sizeof(Tile *));
-	memset(_clubUpGfx, NULL, kMaxAnimFrames * sizeof(Tile *));
-	memset(_clubLeftGfx, NULL, kMaxAnimFrames * sizeof(Tile *));
-	memset(_clubRightGfx, NULL, kMaxAnimFrames * sizeof(Tile *));
+	memset(_clubDownGfx, 0, sizeof(_clubDownGfx));
+	memset(_clubUpGfx, 0, sizeof(_clubUpGfx));
+	memset(_clubLeftGfx, 0, sizeof(_clubLeftGfx));
+	memset(_clubRightGfx, 0, sizeof(_clubRightGfx));
+
+	if (_weaponSelGfx)
+		_weaponSelGfx->free();
+
+	_playerDead = false;
+	_playerInvisible = false;
+	_playerOnIce = false;
+	_playerEmerging = false;
+
+	_weaponSelected = AI_NONE;
+	_weaponSelGfx = NULL;
+
+	// Clear Cinematic System
+	_cineActive = _cameraLock = _playerLock = _cineAborted = false;
 
 	int i;
 	if (_icepSnowballGfxDown) {
@@ -1162,6 +1213,24 @@ void AI::restartSystem() {
 			_gfxDragonBreathe[2] = NULL;
 	}
 
+	// PANIC ZONE gfx - see ya!
+	if (g_hdb->_window->_pzInfo.gfxPanic) {
+		g_hdb->_window->_pzInfo.gfxPanic->free();
+		g_hdb->_window->_pzInfo.gfxPanic = NULL;
+		g_hdb->_window->_pzInfo.gfxZone->free();
+		g_hdb->_window->_pzInfo.gfxZone = NULL;
+		g_hdb->_window->_pzInfo.gfxFace[0]->free();
+		g_hdb->_window->_pzInfo.gfxFace[0] = NULL;
+		g_hdb->_window->_pzInfo.gfxFace[1]->free();
+		g_hdb->_window->_pzInfo.gfxFace[1] = NULL;
+
+		for (i = 0; i < 10; i++) {
+			g_hdb->_window->_pzInfo.gfxNumber[i]->free();
+			g_hdb->_window->_pzInfo.gfxNumber[i] = NULL;
+		}
+	}
+	g_hdb->_window->_pzInfo.active = false;
+
 	// laser beams
 	if (_gfxLaserbeamUD[0]) {
 		for (i = 0; i < 4; i++) {
@@ -1180,52 +1249,6 @@ void AI::restartSystem() {
 			_gfxLaserbeamLRRight[i] = NULL;
 		}
 	}
-
-	// Clear the Action list
-	memset(_actions, 0, sizeof(_actions));
-
-	// Clear Teleporter list
-	memset(_teleporters, 0, sizeof(_teleporters));
-	_numTeleporters = 0;
-
-	// Clear the Auto-Action list
-	memset(_autoActions, 0, sizeof(_autoActions));
-
-	// Clear the Callback List
-	memset(_callbacks, 0, sizeof(_callbacks));
-
-	// Clear the Entity List
-	_ents->clear();
-
-	// Clear the Floats List
-	_floats->clear();
-
-	// Clear the Lua List
-	memset(_luaList, 0, sizeof(_luaList));
-	_numLuaList = 0;
-
-	// Clear Anim Targets List
-	_animTargets.clear();
-
-	// Clear ArrowPath List
-	_arrowPaths->clear();
-
-	// Clear Trigger List
-	_triggerList->clear();
-
-	// Clear Here List
-	_hereList->clear();
-
-	// Clear Cinematic System
-	_cineActive = _cameraLock = _playerLock = _cineAborted = false;
-
-	// Clear waypoints
-	memset(&_waypoints[0], 0, sizeof(_waypoints));
-	_numWaypoints = 0;
-
-	// Clear Bridges
-	memset(&_bridges[0], 0, sizeof(_bridges));
-	_numBridges = 0;
 
 	// No Gate Puddles
 	_gatePuddles = 0;
