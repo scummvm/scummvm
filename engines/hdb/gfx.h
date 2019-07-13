@@ -122,6 +122,8 @@ public:
 	Picture *getPicture(const char *name);
 
 	void emptyGfxCaches();
+	void markTileCacheFreeable();
+	void markGfxCacheFreeable();
 
 	// Returns: true->Tile, false->Pic
 	bool selectGfxType(const char *name);

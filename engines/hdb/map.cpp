@@ -217,7 +217,22 @@ int Map::loadTiles() {
 }
 
 void Map::restartSystem() {
-	warning("STUB: Map::restartSystem()");
+	_listBGAnimFast.clear();
+	_listBGAnimMedium.clear();
+	_listBGAnimSlow.clear();
+	_listFGAnimFast.clear();
+	_listFGAnimMedium.clear();
+	_listFGAnimSlow.clear();
+
+	delete _background;
+	_background = NULL;
+	delete _foreground;
+	_foreground = NULL;
+	delete _iconList;
+	_iconList = NULL;
+
+	_width = _height = 0;
+	_animCycle = 0;
 
 	free(_mapExplosions);
 	free(_mapExpBarrels);
@@ -226,6 +241,10 @@ void Map::restartSystem() {
 	_mapExplosions = NULL;
 	_mapExpBarrels = NULL;
 	_mapLaserBeams = NULL;
+
+	// mark all in-memory tiles as being in memory, but able to be freed
+	g_hdb->_gfx->markTileCacheFreeable();
+	g_hdb->_gfx->markGfxCacheFreeable();
 
 	_mapLoaded = false;
 }
