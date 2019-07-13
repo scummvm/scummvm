@@ -2324,7 +2324,58 @@ void AI::movePlayer(uint16 buttons) {
 
 		if (g_hdb->getActionMode() && ((hit && attackable) || !hit)) {
 			// Attack
-			warning("STUB: movePlayer: Attack!");
+			if (_weaponSelected != AI_NONE && onEvenTile(_player->x, _player->y)) {
+				switch (_weaponSelected) {
+				case ITEM_CLUB: {
+					AIState club[5] = {STATE_NONE, STATE_ATK_CLUB_UP, STATE_ATK_CLUB_DOWN, STATE_ATK_CLUB_LEFT, STATE_ATK_CLUB_RIGHT};
+					_player->state = club[_player->dir];
+					_player->animFrame = 0;
+					_player->animDelay = _player->animCycle;
+					g_hdb->_sound->playSound(SND_CLUB_MISS);
+				}
+				break;
+
+				case ITEM_ROBOSTUNNER: {
+					// it costs 1 gem to attack!
+					if (!amt) {
+						g_hdb->_sound->playSound(SND_CELLHOLDER_USE_REJECT);
+						g_hdb->_window->openMessageBar("Recharging...", 1);
+						setGemAmount(1);
+						return;
+					}
+					setGemAmount(amt - 1);
+
+					AIState stun[5] = {STATE_NONE, STATE_ATK_STUN_UP, STATE_ATK_STUN_DOWN, STATE_ATK_STUN_LEFT, STATE_ATK_STUN_RIGHT};
+					_player->state = stun[_player->dir];
+					_player->animFrame = 0;
+					_player->animDelay = _player->animCycle;
+					_player->sequence = 1;
+				}
+				break;
+
+				case ITEM_SLUGSLINGER: {
+					// it costs 1 gem to attack!
+					if (!amt) {
+						g_hdb->_sound->playSound(SND_CELLHOLDER_USE_REJECT);
+						g_hdb->_window->openMessageBar("Recharging...", 1);
+						setGemAmount(1);
+						return;
+					}
+					setGemAmount(amt - 1);
+
+					AIState slug[5] = {STATE_NONE, STATE_ATK_SLUG_UP, STATE_ATK_SLUG_DOWN, STATE_ATK_SLUG_LEFT, STATE_ATK_SLUG_RIGHT};
+					_player->state = slug[_player->dir];
+					_player->animFrame = 0;
+					_player->animDelay = _player->animCycle;
+					spawn(AI_SLUG_ATTACK, _player->dir, _player->tileX, _player->tileY,
+						NULL, NULL, NULL, DIR_NONE, _player->level, 0, 0, 1);
+				}
+				break;
+
+				default:
+					break;
+				}	// switch
+			}
 			return;
 		}
 
