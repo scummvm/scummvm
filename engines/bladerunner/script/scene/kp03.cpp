@@ -117,8 +117,14 @@ bool SceneScriptKP03::ClickedOn3DObject(const char *objectName, bool combatMode)
 				Game_Flag_Reset(kFlagKP03BombActive);
 				Scene_Loop_Set_Default(kKP03MainLoopBombNoWire);
 				Scene_Loop_Start_Special(kSceneLoopModeOnce, kKP03MainLoopBombInactive, false);
+				if (_vm->_cutContent) {
+					Actor_Voice_Over(1100, kActorVoiceOver); // I'd been lucky this time.
+				}
 				Actor_Voice_Over(1110, kActorVoiceOver);
 				Actor_Voice_Over(1120, kActorVoiceOver);
+				if (_vm->_cutContent) {
+					Actor_Voice_Over(1130, kActorVoiceOver); // One false step and...
+				}
 			} else {
 				Actor_Face_Object(kActorMcCoy, "BRACK MID", true);
 				Actor_Says(kActorMcCoy, 8580, 13);

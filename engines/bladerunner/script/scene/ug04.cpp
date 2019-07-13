@@ -162,6 +162,29 @@ void SceneScriptUG04::PlayerWalkedIn() {
 #endif
 		Game_Flag_Reset(kFlagUG06toUG04);
 	}
+	if (_vm->_cutContent
+	    && !Game_Flag_Query(kFlagUG04DispatchOnHoodooRats)
+	    && !Game_Flag_Query(kFlagMcCoyCommentsOnHoodooRats)
+	) {
+		if (Random_Query(0, 2) == 1) {
+			Game_Flag_Set(kFlagUG04DispatchOnHoodooRats);
+			ADQ_Add_Pause(Random_Query(0, 1) * 1000);
+			ADQ_Add(kActorDispatcher, 340, kAnimationModeTalk); // Southern Kipple Unit 2 LA.
+			if (Random_Query(0, 1) == 0) {
+				// Leary responds
+				ADQ_Add(kActorOfficerLeary, 240, kAnimationModeTalk); // LA, South Kipple Unit 2. Go ahead.
+				ADQ_Add(kActorDispatcher, 350, kAnimationModeTalk);
+				ADQ_Add(kActorDispatcher, 360, kAnimationModeTalk);
+				ADQ_Add(kActorOfficerLeary, 250, kAnimationModeTalk);
+			} else {
+				// Grayford responds
+				ADQ_Add(kActorOfficerGrayford, 520, kAnimationModeTalk); // LA, South Kipple Unit 2. Go ahead.
+				ADQ_Add(kActorDispatcher, 350, kAnimationModeTalk);
+				ADQ_Add(kActorDispatcher, 360, kAnimationModeTalk);
+				ADQ_Add(kActorOfficerGrayford, 530, kAnimationModeTalk);
+			}
+		}
+	}
 }
 
 void SceneScriptUG04::PlayerWalkedOut() {

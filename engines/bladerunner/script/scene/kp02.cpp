@@ -148,6 +148,13 @@ void SceneScriptKP02::PlayerWalkedIn() {
 	) {
 		Actor_Set_Goal_Number(kActorSteele, 450);
 	}
+
+	if (_vm->_cutContent && !Game_Flag_Query(kFlagKP02DispatchOnToxicKipple)) {
+		Game_Flag_Set(kFlagKP02DispatchOnToxicKipple);
+		ADQ_Add_Pause(Random_Query(0, 1) * 1000);
+		ADQ_Add(kActorDispatcher, 300, kAnimationModeTalk);
+		ADQ_Add(kActorDispatcher, 310, kAnimationModeTalk);
+	}
 	//return false;
 }
 

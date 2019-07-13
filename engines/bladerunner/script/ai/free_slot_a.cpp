@@ -210,10 +210,17 @@ void AIScriptFreeSlotA::ReceivedClue(int clueId, int fromActorId) {
 void AIScriptFreeSlotA::ClickedByPlayer() {
 	if (Actor_Query_Goal_Number(kActorFreeSlotA) == kGoalFreeSlotAGone) {
 		Actor_Face_Actor(kActorMcCoy, kActorFreeSlotA, true);
-		if (Random_Query(1, 2) == 1) {
-			Actor_Says(kActorMcCoy, 8655, 16);
+		if (_vm->_cutContent && !Game_Flag_Query(kFlagMcCoyCommentsOnHoodooRats)) {
+			Game_Flag_Set(kFlagMcCoyCommentsOnHoodooRats);
+			Actor_Voice_Over(1060, kActorVoiceOver);  // Hoodoo rats
+			Actor_Voice_Over(1080, kActorVoiceOver);
+			Actor_Voice_Over(1090, kActorVoiceOver);
 		} else {
-			Actor_Says(kActorMcCoy, 8665, 16);
+			if (Random_Query(1, 2) == 1) {
+				Actor_Says(kActorMcCoy, 8655, 16);
+			} else {
+				Actor_Says(kActorMcCoy, 8665, 16);
+			}
 		}
 	}
 	//return false;

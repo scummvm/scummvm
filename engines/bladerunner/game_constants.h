@@ -1108,19 +1108,19 @@ enum Flags {
 	kFlagMcCoyFreedOfAccusations = 666,
 	// 667 is never used
 	// 668 is never used
-	// 669 is never used
+	kFlagKP02DispatchOnToxicKipple = 669, // Re-purposed. Original: 669 is never used
 	kFlagCallWithGuzza = 670,
 	kFlagUG18GuzzaScene = 671,
 	kFlagMA07toPS14 = 672,
 	kFlagPS14toMA07 = 673,
 	kFlagKP01Entered = 674,
-	// 675 is never used
+	kFlagUG04DispatchOnHoodooRats = 675, // Re-purposed. Original: 675 is never used
 	kFlagUG15RatShot = 676,
 	kFlagUG15BridgeWillBreak = 677,
 	kFlagChapter2Intro = 678,
 	kFlagChapter3Intro = 679,
 	kFlagChapter4Intro = 680,
-	// 681 is never used
+	kFlagMcCoyCommentsOnHoodooRats = 681, // Re-purposed. Original: 681 is never used
 	kFlagUG15BridgeBroken = 682,
 	kFlagUG05TalkToPolice = 683,
 	kFlagHF05PoliceAttacked = 684,
@@ -2489,7 +2489,7 @@ enum GoalOfficerGrayford {
 	kGoalOfficerGrayfordStopPatrolToTalkToMcCoyAtDR04 = 106,
 	kGoalOfficerGrayfordLeavesWithMorajiCorpseDR04 = 110,
 	kGoalOfficerGrayfordArrestMcCoyInTB03Act4 = 399, // TB02_TB03
-	kGoalOfficerGrayfordStopAndTalkDR04 = 199, // this is used temporarily to make him stop and talk while at UG04 (Moraji's death scene)
+	kGoalOfficerGrayfordStopAndTalkDR04 = 199, // this is used temporarily to make him stop and talk while at DR04 (Moraji's death scene)
 	kGoalOfficerGrayfordStartOfAct4 = 300,
 	kGoalOfficerGrayfordHuntingAroundAct4 = 305,
 	kGoalOfficerGrayfordPrepareToHuntAroundAct4 = 306,
