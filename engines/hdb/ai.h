@@ -992,6 +992,9 @@ public:
 	void cineDialog(const char *title, const char *string, int seconds);
 	void cineTextOut(const char *text, int x, int y, int timer);
 	void cineCenterTextOut(const char *text, int y, int timer);
+	void cineDrawPic(const char *id, const char *pic, int x, int y);
+	void cineDrawMaskedPic(const char *id, const char *pic, int x, int y);
+	void cineMovePic(const char *id, const char *pic, int x1, int y1, int x2, int y2, int speed);
 	void cineMoveMaskedPic(const char *id, const char *pic, int x1, int y1, int x2, int y2, int speed);
 	void cineUse(const char *entName);
 	void cinePlaySound(int index);

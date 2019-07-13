@@ -65,6 +65,7 @@ static const char *cineTypeStr[] = {
 void AI::processCines() {
 
 	AIEntity *e;
+	Picture *p;
 	bool complete, bailOut;
 
 	if (!_cineActive) {
@@ -311,6 +312,49 @@ void AI::processCines() {
 					complete = true;
 			}
 			break;
+		case C_DRAWPIC:
+
+			if ((p = cineFindInBlitList(_cine[i]->id)) == NULL) {
+				p = g_hdb->_gfx->loadPic(_cine[i]->string);
+				cineAddToFreeList(p);
+				cineAddToBlitList(_cine[i]->id, p, (int)_cine[i]->x, (int)_cine[i]->y, false);
+			}
+			_cine[i]->pic = p;
+			_cine[i]->pic->draw((int)_cine[i]->x, (int)_cine[i]->y);
+			complete = true;
+			break;
+		case C_DRAWMASKEDPIC:
+
+			if ((p = cineFindInBlitList(_cine[i]->id)) == NULL) {
+				p = g_hdb->_gfx->loadPic(_cine[i]->string);
+				cineAddToFreeList(p);
+				cineAddToBlitList(_cine[i]->id, p, (int)_cine[i]->x, (int)_cine[i]->y, true);
+			}
+			_cine[i]->pic = p;
+			_cine[i]->pic->drawMasked((int)_cine[i]->x, (int)_cine[i]->y);
+			complete = true;
+			break;
+
+		case C_MOVEPIC:
+			if (!_cine[i]->start) {
+				Picture *pic = cineFindInBlitList(_cine[i]->id);
+				if (!pic) {
+					pic = g_hdb->_gfx->loadPic(_cine[i]->string);
+					cineAddToFreeList(pic);
+				} else
+					cineRemoveFromBlitList(_cine[i]->id);
+				_cine[i]->pic = pic;
+				_cine[i]->start = 1;
+			}
+
+			cineRemoveFromBlitList(_cine[i]->id);
+			_cine[i]->x += _cine[i]->xv;
+			_cine[i]->y += _cine[i]->yv;
+			cineAddToBlitList(_cine[i]->id, _cine[i]->pic, (int)_cine[i]->x, (int)_cine[i]->y, false);
+			if (abs((int)(_cine[i]->x - _cine[i]->x2)) <= 1 && abs((int)(_cine[i]->y - _cine[i]->y2)) <= 1)
+				complete = true;
+			break;
+
 		case C_MOVEMASKEDPIC:
 			if (!_cine[i]->start) {
 				Picture *pic = cineFindInBlitList(_cine[i]->id);
@@ -330,6 +374,7 @@ void AI::processCines() {
 			if (abs((int)(_cine[i]->x - _cine[i]->x2)) <= 1 && abs((int)(_cine[i]->y - _cine[i]->y2)) <= 1)
 				complete = true;
 			break;
+
 		case C_USEENTITY:
 			for (Common::Array<AIEntity *>::iterator it = _ents->begin(); it != _ents->end(); it++) {
 				if ((*it)->entityName && Common::matchString((*it)->entityName, _cine[i]->string, true)) {
@@ -673,6 +718,57 @@ void AI::cineCenterTextOut(const char *text, int y, int timer) {
 	cmd->end = timer;
 	cmd->start = 0;
 	cmd->cmdType = C_CENTERTEXTOUT;
+	_cine.push_back(cmd);
+}
+
+void AI::cineDrawPic(const char *id, const char *pic, int x, int y) {
+	if (!pic || !id) {
+		warning("cineDrawPic: Missing ID or PIC");
+		return;
+	}
+
+	CineCommand *cmd = new CineCommand;
+	cmd->x = x;
+	cmd->y = y;
+	cmd->string = pic;
+	cmd->id = id;
+	cmd->cmdType = C_DRAWPIC;
+	_cine.push_back(cmd);
+}
+
+void AI::cineDrawMaskedPic(const char *id, const char *pic, int x, int y) {
+	if (!pic || !id) {
+		warning("cineDrawMaskedPic: Missing ID or PIC");
+		return;
+	}
+
+	CineCommand *cmd = new CineCommand;
+	cmd->x = x;
+	cmd->y = y;
+	cmd->string = pic;
+	cmd->id = id;
+	cmd->cmdType = C_DRAWMASKEDPIC;
+	_cine.push_back(cmd);
+}
+
+void AI::cineMovePic(const char *id, const char *pic, int x1, int y1, int x2, int y2, int speed) {
+	if (!pic || !id) {
+		warning("cineMovePic: Missing ID or PIC");
+		return;
+	}
+
+	CineCommand *cmd = new CineCommand;
+	cmd->x = x1;
+	cmd->y = y1;
+	cmd->x2 = x2;
+	cmd->y2 = y2;
+	cmd->speed = speed;
+	cmd->xv = ((double)(x2-x1)) / (double)speed;
+	cmd->yv = ((double)(y2-y1)) / (double)speed;
+	cmd->start = 0;
+	cmd->string = pic;
+	cmd->id = id;
+	cmd->cmdType = C_MOVEPIC;
 	_cine.push_back(cmd);
 }
 
