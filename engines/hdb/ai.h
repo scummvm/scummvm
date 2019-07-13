@@ -986,6 +986,7 @@ public:
 	void cineMoveEntity(const char *entName, int x, int y, int level, int speed);
 	void cineSpawnEntity(AIType t, AIDir d, int x, int y, const char *func_init, const char *func_action,
 					const char *func_use, AIDir d2, int level, int value1, int value2);
+	void cineRemoveEntity(const char *entName);
 	void cineAnimEntity(const char *entName, AIState state, int loop);
 	void cineSetAnimFrame(const char *entName, AIState state, int frame);
 	void cineEntityFace(const char *luaName, double dir);

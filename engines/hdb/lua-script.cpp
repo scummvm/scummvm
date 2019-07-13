@@ -395,7 +395,13 @@ static int cineSetEntity(lua_State *L) {
 }
 
 static int cineRemoveEntity(lua_State *L) {
-	warning("STUB: CINE REMOVE ENTITY");
+	const char *entName = lua_tostring(L, 1);
+
+	g_hdb->_lua->checkParameters("cineRemoveEntity", 1);
+
+	lua_pop(L, 1);
+
+	g_hdb->_ai->cineRemoveEntity(entName);
 	return 0;
 }
 
