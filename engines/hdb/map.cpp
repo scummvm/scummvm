@@ -34,7 +34,6 @@ Map::Map() {
 	_mapExplosions = NULL;
 	_mapExpBarrels = NULL;
 	_mapLaserBeams = NULL;
-
 }
 
 Map::~Map() {
@@ -227,6 +226,8 @@ void Map::restartSystem() {
 	_mapExplosions = NULL;
 	_mapExpBarrels = NULL;
 	_mapLaserBeams = NULL;
+
+	_mapLoaded = false;
 }
 
 bool Map::loadMap(char *name) {
@@ -242,10 +243,6 @@ bool Map::loadMap(char *name) {
 }
 
 bool Map::load(Common::SeekableReadStream *stream) {
-	if (_mapLoaded) {
-		return false;
-	}
-
 	debug(5, "map stream size: %d(%x)", stream->size(), stream->size());
 
 	// Load MSM data header
