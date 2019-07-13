@@ -1043,7 +1043,7 @@ void Window::drawDeliveries() {
 					if (!_dlvsInfo.go2) {
 						_dlvsInfo.go2 = true;
 						_dlvsInfo.delay2 = g_hdb->getTimeSlice() + 500;
-						g_hdb->_sound->playSound(crazySounds[g_hdb->_rnd->getRandomNumber(kNumCrazy)]);
+						g_hdb->_sound->playSound(crazySounds[g_hdb->_rnd->getRandomNumber(kNumCrazy - 1)]);
 					}
 				}
 			}
@@ -1057,7 +1057,7 @@ void Window::drawDeliveries() {
 					if (!_dlvsInfo.go3) {
 						_dlvsInfo.go3 = true;
 						_dlvsInfo.delay3 = g_hdb->getTimeSlice() + 500;
-						g_hdb->_sound->playSound(crazySounds[g_hdb->_rnd->getRandomNumber(kNumCrazy)]);
+						g_hdb->_sound->playSound(crazySounds[g_hdb->_rnd->getRandomNumber(kNumCrazy - 1)]);
 					}
 				}
 			}
@@ -1071,7 +1071,7 @@ void Window::drawDeliveries() {
 					g_hdb->_gfx->drawText("to ");
 					g_hdb->_gfx->drawText(d->destTextName);
 
-					g_hdb->_sound->playSound(crazySounds[g_hdb->_rnd->getRandomNumber(kNumCrazy)]);
+					g_hdb->_sound->playSound(crazySounds[g_hdb->_rnd->getRandomNumber(kNumCrazy - 1)]);
 					_dlvsInfo.animate = false;
 				}
 			}
@@ -1180,8 +1180,8 @@ void Window::drawPanicZone() {
 
 		// Move PANIC ZONE to screen center
 	case PANICZONE_START:
-		xx = g_hdb->_rnd->getRandomNumber(10) - 5;
-		yy = g_hdb->_rnd->getRandomNumber(10) - 5;
+		xx = g_hdb->_rnd->getRandomNumber(9) - 5;
+		yy = g_hdb->_rnd->getRandomNumber(9) - 5;
 		_pzInfo.x1 += _pzInfo.xv;
 		_pzInfo.y1++;
 		_pzInfo.x2 += _pzInfo.yv;
@@ -1195,8 +1195,8 @@ void Window::drawPanicZone() {
 		break;
 
 	case PANICZONE_TITLESTOP:
-		xx = g_hdb->_rnd->getRandomNumber(10) - 5;
-		yy = g_hdb->_rnd->getRandomNumber(10) - 5;
+		xx = g_hdb->_rnd->getRandomNumber(9) - 5;
+		yy = g_hdb->_rnd->getRandomNumber(9) - 5;
 		_pzInfo.gfxPanic->drawMasked(_pzInfo.x1 + xx, _pzInfo.y1 + yy);
 		_pzInfo.gfxZone->drawMasked(_pzInfo.x2 + yy, _pzInfo.y2 + xx);
 		_pzInfo.timer--;
@@ -1206,8 +1206,8 @@ void Window::drawPanicZone() {
 		break;
 
 	case PANICZONE_BLASTOFF:
-		xx = g_hdb->_rnd->getRandomNumber(10) - 5;
-		yy = g_hdb->_rnd->getRandomNumber(10) - 5;
+		xx = g_hdb->_rnd->getRandomNumber(9) - 5;
+		yy = g_hdb->_rnd->getRandomNumber(9) - 5;
 		_pzInfo.y1 -= 10;
 		_pzInfo.y2 += 10;
 		_pzInfo.gfxPanic->drawMasked(_pzInfo.x1 + xx, _pzInfo.y1 + yy);
