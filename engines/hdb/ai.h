@@ -1005,6 +1005,7 @@ public:
 	void cineClearForeground(int x, int y);
 	void cineSetBackground(int x, int y, int index);
 	void cineSetForeground(int x, int y, int index);
+	void cineFunction(const char *func);
 
 	// Waypoint & Movement Functions
 	void lookAtXY(int x, int y);
