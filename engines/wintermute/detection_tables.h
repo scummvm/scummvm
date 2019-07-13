@@ -61,6 +61,7 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"dreamscape",      "Dreamscape"},
 	{"erinmyers",       "The Death of Erin Myers"},
 	{"escapemansion",   "Escape from the Mansion"},
+	{"facenoir",        "Face Noir"},
 	{"findinghope",     "Finding Hope"},
 	{"four",            "Four"},
 	{"framed",          "Framed"},
@@ -464,6 +465,11 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Escape from the Mansion
 	WME_WINENTRY("escapemansion", "1.3",
 		WME_ENTRY1s("data.dcp", "1e5d231b56c8a228cd15cb690f50253e", 29261972), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_1),
+
+	// Face Noir
+	// NOTE: This is a 2.5D game that is out of ScummVM scope	
+	WME_WINENTRY("facenoir", "",
+		WME_ENTRY1s("data.dcp", "e162db79d9091faa1d670fc5cdcb4ba9", 555549627), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_1),
 
 	// Finding Hope (English)
 	WME_WINENTRY("findinghope", "",
