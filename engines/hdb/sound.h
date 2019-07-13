@@ -1417,9 +1417,12 @@ public:
 	bool playSoundEx(int index, int channel, bool loop);
 	bool playVoice(int index, int actor);
 	bool startMusic(SoundType song);
+	bool fadeInMusic(SoundType song, int ramp);
+	void fadeOutMusic(int ramp);
+	void stopMusic();
 	bool songPlaying(SoundType song);
 	bool stopChannel(int channel);
-	void stopMusic();
+	int registerSound(const char *name);
 	bool freeSound(int index);
 
 	SoundType whatSongIsPlaying();
