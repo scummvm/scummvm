@@ -1220,7 +1220,8 @@ void Menu::processInput(int x, int y) {
 
 			_warpActive = map + 2;
 			g_hdb->paint();
-			debug(9, "STUB: Add Debug check");
+			if (g_hdb->getDebug())
+				g_hdb->_gfx->updateVideo();
 			_warpActive = 0;
 
 			if (map < 10)
