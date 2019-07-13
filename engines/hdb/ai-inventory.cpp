@@ -197,6 +197,18 @@ int AI::queryInventoryType(AIType which) {
 	return count;
 }
 
+int AI::queryInventoryTypeSlot(AIType which) {
+	int i;
+
+	if (!_numInventory)
+		return 0;
+
+	for (i = 0; i < _numInventory; i++)
+		if (_inventory[i].ent.type == which)
+			return i;
+	return -1;
+}
+
 bool AI::removeInvItemType(AIType which, int amount) {
 	int		i, j, found;
 
