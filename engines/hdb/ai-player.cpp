@@ -599,7 +599,7 @@ void aiChickenAction(AIEntity *e) {
 
 	if (g_hdb->_map->checkEntOnScreen(e) && !delay) {
 		g_hdb->_sound->playSound(SND_CHICKEN_AMBIENT);
-		delay = g_hdb->_rnd->getRandomNumber(128) + 160;
+		delay = g_hdb->_rnd->getRandomNumber(127) + 160;
 		aiChickenUse(e);
 	}
 
