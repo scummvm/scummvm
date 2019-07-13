@@ -50,6 +50,7 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"chivalry",        "Chivalry is Not Dead"},
 	{"conspiracao",     "Conspiracao Dumont"},
 	{"corrosion",       "Corrosion: Cold Winter Waiting"},
+	{"darkfallls",      "Dark Fall: Lost Souls"},
 	{"deadcity",        "Dead City"},
 	{"dfafadventure",   "DFAF Adventure"},
 	{"dreamcat",        "Dreamcat"},
@@ -361,6 +362,12 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("corrosion", "Enhanced Edition v1.2.2",
 		WME_ENTRY2s("data.dcp", "1d3e4d97f135d61c6532b3bc08272156", 643363379,
 					"steam_001.dcp", "e10b58c16e9487cfaf395c3b88ca1fd1", 42049), Common::EN_ANY, ADGF_NO_FLAGS, WME_1_9_1),
+
+	// Dark Fall: Lost Souls
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("darkfallls", "",
+		WME_ENTRY2s("actors.dcp", "170c7ade10edd7ff6d24b16f2eecd818", 453328582,
+					"stageplay.dcp", "ed67b4d6e35c19597241eb1d863aa315", 226453373), Common::EN_ANY, ADGF_UNSTABLE, WME_1_8_10),
 
 	// Dead City (Czech)
 	WME_WINENTRY("deadcity", "",
