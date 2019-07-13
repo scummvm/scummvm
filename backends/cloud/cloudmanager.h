@@ -227,9 +227,6 @@ public:
 	/** Returns whether there are any requests running. */
 	bool isWorking() const;
 
-	/** Returns whether LocalWebserver is available to use for auth. */
-	static bool couldUseLocalServer();
-
 	///// SavesSyncRequest-related /////
 
 	/** Returns whether there is a SavesSyncRequest running. */

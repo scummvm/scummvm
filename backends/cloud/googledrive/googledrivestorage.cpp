@@ -105,11 +105,7 @@ void GoogleDriveStorage::getAccessToken(BoolCallback callback, Networking::Error
 	}
 	request->addPostField("client_id=" + Common::String(KEY));
 	request->addPostField("client_secret=" + Common::String(SECRET));
-	if (Cloud::CloudManager::couldUseLocalServer()) {
-		request->addPostField("&redirect_uri=http%3A%2F%2Flocalhost%3A12345");
-	} else {
-		request->addPostField("&redirect_uri=https%3A%2F%2Fwww.scummvm.org/c/code");
-	}
+	request->addPostField("&redirect_uri=https%3A%2F%2Fwww.scummvm.org/c/code");
 	addRequest(request);
 }
 

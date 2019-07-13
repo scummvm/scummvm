@@ -336,14 +336,6 @@ bool CloudManager::isWorking() const {
 	return false;
 }
 
-bool CloudManager::couldUseLocalServer() {
-#ifdef USE_SDL_NET
-	return Networking::LocalWebserver::getPort() == Networking::LocalWebserver::DEFAULT_SERVER_PORT;
-#else
-	return false;
-#endif
-}
-
 ///// SavesSyncRequest-related /////
 
 bool CloudManager::isSyncing() const {
