@@ -174,6 +174,8 @@ void HDBGame::changeGameState() {
 
 void HDBGame::start() {
 	_gameState = GAME_TITLE;
+
+	_debugFlag = 0;
 }
 
 bool HDBGame::restartMap() {
