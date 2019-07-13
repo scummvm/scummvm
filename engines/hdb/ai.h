@@ -899,6 +899,19 @@ public:
 
 	void movePlayer(uint16 buttons);
 	void playerUse();
+	void setPlayerWeapon(AIType w, Tile *gfx) {
+		_weaponSelected = w;
+		_weaponGfx = gfx;
+	}
+	AIType getPlayerWeapon() {
+		return _weaponSelected;
+	}
+	Tile *getPlayerWeaponGfx() {
+		return _weaponGfx;
+	}
+	Tile *getPlayerWeaponSelGfx() {
+		return _weaponSelGfx;
+	}
 
 	AIEntity *getPlayer() {
 		if (!_player)
@@ -1146,6 +1159,7 @@ public:
 	Picture		*_slugAttackGfx[kMaxAnimFrames];
 
 	Tile		*_weaponSelGfx;
+	Tile		*_weaponGfx;
 	AIType		_weaponSelected;
 
 	// Player Resources and Deliveries
