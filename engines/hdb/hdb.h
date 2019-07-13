@@ -316,6 +316,8 @@ private:
 	int _pauseFlag;
 	bool _cheating;
 	int _debugFlag;
+	Tile *_debugLogo;
+	int _dx, _dy;	// DEBUG : for dragging map
 
 	char _currentMapname[64];
 	char _lastMapname[64];
