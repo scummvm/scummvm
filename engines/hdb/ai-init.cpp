@@ -1153,6 +1153,7 @@ void AI::restartSystem() {
 	_playerEmerging = false;
 
 	_weaponSelected = AI_NONE;
+	_weaponGfx = NULL;
 	_weaponSelGfx = NULL;
 
 	// Clear Cinematic System

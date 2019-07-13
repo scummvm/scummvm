@@ -55,56 +55,34 @@ void aiPlayerInit(AIEntity *e) {
 
 void aiPlayerInit2(AIEntity *e) {
 	if (!g_hdb->_ai->_clubUpGfx[0]) {
-		warning("STUB: weapon_sel_gfx uninitialized");
-		g_hdb->_ai->_clubUpGfx[0] = new Picture;
-		g_hdb->_ai->_clubUpGfx[0]->load(g_hdb->_fileMan->findFirstData("clubup1", TYPE_PIC));
-		g_hdb->_ai->_clubUpGfx[1] = new Picture;
-		g_hdb->_ai->_clubUpGfx[1]->load(g_hdb->_fileMan->findFirstData("clubup2", TYPE_PIC));
-		g_hdb->_ai->_clubUpGfx[2] = new Picture;
-		g_hdb->_ai->_clubUpGfx[2]->load(g_hdb->_fileMan->findFirstData("clubup3", TYPE_PIC));
-		g_hdb->_ai->_clubUpGfx[3] = new Picture;
-		g_hdb->_ai->_clubUpGfx[3]->load(g_hdb->_fileMan->findFirstData("clubup3", TYPE_PIC));
+		g_hdb->_ai->_weaponSelGfx = g_hdb->_gfx->loadTile(TILE_WEAPON_EQUIPPED);
+		g_hdb->_ai->_clubUpGfx[0] = g_hdb->_gfx->loadPic(CLUBUP1);
+		g_hdb->_ai->_clubUpGfx[1] = g_hdb->_gfx->loadPic(CLUBUP2);
+		g_hdb->_ai->_clubUpGfx[2] = g_hdb->_gfx->loadPic(CLUBUP3);
+		g_hdb->_ai->_clubUpGfx[3] = g_hdb->_gfx->loadPic(CLUBUP3);
 
-		g_hdb->_ai->_clubDownGfx[0] = new Picture;
-		g_hdb->_ai->_clubDownGfx[0]->load(g_hdb->_fileMan->findFirstData("clubdown1", TYPE_PIC));
-		g_hdb->_ai->_clubDownGfx[1] = new Picture;
-		g_hdb->_ai->_clubDownGfx[1]->load(g_hdb->_fileMan->findFirstData("clubdown2", TYPE_PIC));
-		g_hdb->_ai->_clubDownGfx[2] = new Picture;
-		g_hdb->_ai->_clubDownGfx[2]->load(g_hdb->_fileMan->findFirstData("clubdown3", TYPE_PIC));
-		g_hdb->_ai->_clubDownGfx[3] = new Picture;
-		g_hdb->_ai->_clubDownGfx[3]->load(g_hdb->_fileMan->findFirstData("clubdown3", TYPE_PIC));
+		g_hdb->_ai->_clubDownGfx[0] = g_hdb->_gfx->loadPic(CLUBDOWN1);
+		g_hdb->_ai->_clubDownGfx[1] = g_hdb->_gfx->loadPic(CLUBDOWN2);
+		g_hdb->_ai->_clubDownGfx[2] = g_hdb->_gfx->loadPic(CLUBDOWN3);
+		g_hdb->_ai->_clubDownGfx[3] = g_hdb->_gfx->loadPic(CLUBDOWN3);
 
-		g_hdb->_ai->_clubLeftGfx[0] = new Picture;
-		g_hdb->_ai->_clubLeftGfx[0]->load(g_hdb->_fileMan->findFirstData("clubleft1", TYPE_PIC));
-		g_hdb->_ai->_clubLeftGfx[1] = new Picture;
-		g_hdb->_ai->_clubLeftGfx[1]->load(g_hdb->_fileMan->findFirstData("clubleft2", TYPE_PIC));
-		g_hdb->_ai->_clubLeftGfx[2] = new Picture;
-		g_hdb->_ai->_clubLeftGfx[2]->load(g_hdb->_fileMan->findFirstData("clubleft3", TYPE_PIC));
-		g_hdb->_ai->_clubLeftGfx[3] = new Picture;
-		g_hdb->_ai->_clubLeftGfx[3]->load(g_hdb->_fileMan->findFirstData("clubleft3", TYPE_PIC));
+		g_hdb->_ai->_clubLeftGfx[0] = g_hdb->_gfx->loadPic(CLUBLEFT1);
+		g_hdb->_ai->_clubLeftGfx[1] = g_hdb->_gfx->loadPic(CLUBLEFT2);
+		g_hdb->_ai->_clubLeftGfx[2] = g_hdb->_gfx->loadPic(CLUBLEFT3);
+		g_hdb->_ai->_clubLeftGfx[3] = g_hdb->_gfx->loadPic(CLUBLEFT3);
 
-		g_hdb->_ai->_clubRightGfx[0] = new Picture;
-		g_hdb->_ai->_clubRightGfx[0]->load(g_hdb->_fileMan->findFirstData("clubright1", TYPE_PIC));
-		g_hdb->_ai->_clubRightGfx[1] = new Picture;
-		g_hdb->_ai->_clubRightGfx[1]->load(g_hdb->_fileMan->findFirstData("clubright2", TYPE_PIC));
-		g_hdb->_ai->_clubRightGfx[2] = new Picture;
-		g_hdb->_ai->_clubRightGfx[2]->load(g_hdb->_fileMan->findFirstData("clubright3", TYPE_PIC));
-		g_hdb->_ai->_clubRightGfx[3] = new Picture;
-		g_hdb->_ai->_clubRightGfx[3]->load(g_hdb->_fileMan->findFirstData("clubright3", TYPE_PIC));
+		g_hdb->_ai->_clubRightGfx[0] = g_hdb->_gfx->loadPic(CLUBRIGHT1);
+		g_hdb->_ai->_clubRightGfx[1] = g_hdb->_gfx->loadPic(CLUBRIGHT2);
+		g_hdb->_ai->_clubRightGfx[2] = g_hdb->_gfx->loadPic(CLUBRIGHT3);
+		g_hdb->_ai->_clubRightGfx[3] = g_hdb->_gfx->loadPic(CLUBRIGHT3);
 
-		g_hdb->_ai->_clubUpFrames = 4;
-		g_hdb->_ai->_clubDownFrames = 4;
-		g_hdb->_ai->_clubLeftFrames = 4;
-		g_hdb->_ai->_clubRightFrames = 4;
+		g_hdb->_ai->_clubUpFrames = g_hdb->_ai->_clubDownFrames =
+			g_hdb->_ai->_clubLeftFrames = g_hdb->_ai->_clubRightFrames = 4;
 
-		g_hdb->_ai->_slugAttackGfx[0] = new Picture;
-		g_hdb->_ai->_slugAttackGfx[0]->load(g_hdb->_fileMan->findFirstData("slug_shot1", TYPE_PIC));
-		g_hdb->_ai->_slugAttackGfx[1] = new Picture;
-		g_hdb->_ai->_slugAttackGfx[1]->load(g_hdb->_fileMan->findFirstData("slug_shot2", TYPE_PIC));
-		g_hdb->_ai->_slugAttackGfx[2] = new Picture;
-		g_hdb->_ai->_slugAttackGfx[2]->load(g_hdb->_fileMan->findFirstData("slug_shot3", TYPE_PIC));
-		g_hdb->_ai->_slugAttackGfx[3] = new Picture;
-		g_hdb->_ai->_slugAttackGfx[3]->load(g_hdb->_fileMan->findFirstData("slug_shot4", TYPE_PIC));
+		g_hdb->_ai->_slugAttackGfx[0] = g_hdb->_gfx->loadPic(SLUG_SHOT1);
+		g_hdb->_ai->_slugAttackGfx[1] = g_hdb->_gfx->loadPic(SLUG_SHOT2);
+		g_hdb->_ai->_slugAttackGfx[2] = g_hdb->_gfx->loadPic(SLUG_SHOT3);
+		g_hdb->_ai->_slugAttackGfx[3] = g_hdb->_gfx->loadPic(SLUG_SHOT4);
 
 		int32 size = g_hdb->_fileMan->getLength("shock_spark_sit01", TYPE_TILE32);
 		g_hdb->_ai->_stunLightningGfx[0] = g_hdb->_gfx->getTileGfx("shock_spark_sit01", size);
