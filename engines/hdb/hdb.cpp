@@ -940,7 +940,7 @@ Common::Error HDBGame::run() {
 			_window->drawInventory();
 			_window->drawMessageBar();
 			_window->drawDeliveries();
-			debug(9, "STUB: Draw Try Again");
+			_window->drawTryAgain();
 			_window->drawPanicZone();
 			_window->drawTextOut();
 			_window->drawPause();

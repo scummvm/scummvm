@@ -45,7 +45,10 @@ enum {
 	kPanicZoneFaceY = 5,
 	kNumCrazy = 37,
 	kTextOutCenterX = ((kScreenWidth - kTileWidth * 5) / 2),
-	kPauseY = (kScreenHeight / 2 - 64)
+	kPauseY = (kScreenHeight / 2 - 64),
+	kTryY1 = (kScreenHeight >> 2),	// TRY
+	kTryY2 = (kTryY1 + 32),			// AGAIN
+	kTryRestartY = ((kScreenHeight >> 2) * 3)	// (ok)
 };
 
 enum PZValue {
@@ -164,6 +167,15 @@ struct PanicZone {
 	}
 };
 
+struct TryAgainInfo {
+	double y1, y2;
+	double yv1, yv2;
+	double yv1v, yv2v;
+	double x1, x2;
+
+	TryAgainInfo() : y1(0), y2(0), yv1(0), yv2(0), yv1v(0), yv2v(0), x1(0), x2(0) {}
+};
+
 struct TOut {
 	char text[128];
 	int x, y;
@@ -255,6 +267,10 @@ public:
 	}
 	void checkDlvSelect(int x, int y);
 
+	// Try Again Functions
+	void drawTryAgain();
+	void clearTryAgain();
+
 	// Panic Zone Functions
 	void loadPanicZoneGfx();
 	void drawPanicZone();
@@ -291,6 +307,8 @@ private:
 	InvWinInfo _invWinInfo;
 	Common::Array<TOut *> _textOutList;
 	DlvsInfo _dlvsInfo;
+
+	TryAgainInfo _tryAgainInfo;
 
 	char _msgQueueStr[kMaxMsgQueue][128];
 	int _msgQueueWait[kMaxMsgQueue];
