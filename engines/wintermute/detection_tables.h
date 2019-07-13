@@ -69,6 +69,7 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"hamlet",          "Hamlet or the last game without MMORPG features, shaders and product placement"},
 	{"helga",           "Helga Deep In Trouble"},
 	{"jamesperis",      "James Peris: No License Nor Control"},
+	{"knossos",         "K'NOSSOS"},
 	{"kulivocko",       "Kulivocko"},
 	{"lifein3minutes",  "Life In 3 Minutes"},
 	{"lonelyrobot",     "Project Lonely Robot"},
@@ -564,6 +565,10 @@ static const WMEGameDescription gameDescriptions[] = {
 	// J.U.L.I.A. (English) (Greenlight Demo)
 	WME_WINENTRY("julia", "Greenlight Demo",
 		WME_ENTRY1s("data.dcp", "4befd448d36b0dae9c3ab1aa7cb8b78d", 7271886), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, LATEST_VERSION),
+
+	// K'NOSSOS (Alpha Demo)
+	WME_WINENTRY("knossos", "Alpha Demo",
+		WME_ENTRY1s("K'NOSSOS.exe", "694e488cc99bb78d2fe906f82d3ee9e1", 867516208), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_3),
 
 	// Kulivocko (Czech)
 	WME_WINENTRY("kulivocko", "",
