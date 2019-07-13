@@ -2053,7 +2053,9 @@ bool AI::checkPlayerTileCollision(int x, int y) {
 }
 
 bool AI::checkPlayerCollision(int x, int y, int border) {
-	debug(9, "STUB: checkPlayerCollison: g_hdb->getDebug() required");
+	if (g_hdb->getDebug() == 2 || !_player)
+		return false;
+
 	return (x > (_player->x - 32 + border) && x < (_player->x - 32 - border) && y >(_player->y - 32 + border) && y < (_player->y - 32 - border));
 }
 
