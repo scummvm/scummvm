@@ -66,6 +66,7 @@ void AI::processCines() {
 
 	AIEntity *e;
 	Picture *p;
+	const char *title;
 	bool complete, bailOut;
 
 	if (!_cineActive) {
@@ -106,6 +107,7 @@ void AI::processCines() {
 				g_hdb->_lua->callFunction(func, 0);
 			break;
 		case C_STARTMAP:
+			title = _cine[i]->title;
 			cineFreeGfx();			// free all gfx alloc'ed during cine
 			_cineActive = false;
 			_playerLock = false;
@@ -118,7 +120,7 @@ void AI::processCines() {
 			// if cine is aborted and an abort function was specified, call it
 			if (_cineAborted && _cineAbortFunc)
 				g_hdb->_lua->callFunction(_cineAbortFunc, 0);
-			g_hdb->changeMap(_cine[i]->title);
+			g_hdb->changeMap(title);
 			return;
 			break;
 		case C_LOCKPLAYER:
