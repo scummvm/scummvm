@@ -1065,6 +1065,7 @@ public:
 	int queryInventory(const char *string);
 	bool removeInvItem(const char *string, int amount);
 	int queryInventoryType(AIType which);
+	int queryInventoryTypeSlot(AIType which);
 	bool removeInvItemType(AIType which, int amount);
 	bool addItemToInventory(AIType type, int amount, const char *funcInit, const char *funcAction, const char *funcUse);
 	void keepInvItem(AIType type);
