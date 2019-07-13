@@ -461,7 +461,7 @@ static int cineDrawPic(lua_State *L) {
 	const char *id = lua_tostring(L, 1);
 	const char *pic = lua_tostring(L, 2);
 	double x = lua_tonumber(L, 3);
-	double y = lua_tonumber(L, 3);
+	double y = lua_tonumber(L, 4);
 
 	g_hdb->_lua->checkParameters("cineDrawPic", 4);
 
@@ -478,7 +478,7 @@ static int cineDrawMaskedPic(lua_State *L) {
 	const char *id = lua_tostring(L, 1);
 	const char *pic = lua_tostring(L, 2);
 	double x = lua_tonumber(L, 3);
-	double y = lua_tonumber(L, 3);
+	double y = lua_tonumber(L, 4);
 
 	g_hdb->_lua->checkParameters("cineDrawMaskedPic", 4);
 
