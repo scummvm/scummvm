@@ -454,6 +454,32 @@ void HDBGame::setTargetXY(int x, int y) {
 	}
 }
 
+void HDBGame::startMoveMap(int x, int y) {
+	_dx = x;
+	_dy = y;
+}
+
+void HDBGame::moveMap(int x, int y) {
+	int	ox, oy;
+
+	g_hdb->_map->getMapXY(&ox, &oy);
+
+	ox += (_dx - x) / 8;
+	oy += (_dy - y) / 8;
+
+	if (ox < 0)
+		ox = 0;
+	else if (ox > g_hdb->_map->mapPixelWidth() - 240)
+		ox = g_hdb->_map->mapPixelWidth() - 240;
+
+	if (oy < 0)
+		oy = 0;
+	else if (oy > g_hdb->_map->mapPixelHeight() - 320)
+			oy = g_hdb->_map->mapPixelHeight() - 320;
+
+	g_hdb->_map->setMapXY(ox, oy);
+}
+
 // PLAYER is trying to use this entity
 void HDBGame::useEntity(AIEntity *e) {
 	warning("STUB: HDBGame::useEntity incomplete");

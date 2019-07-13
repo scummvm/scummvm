@@ -95,6 +95,12 @@ public:
 			return true;
 		return false;
 	}
+	int mapPixelWidth() {
+		return _width * kTileWidth;
+	}
+	int mapPixelHeight() {
+		return _height * kTileHeight;
+	}
 
 	uint32 getMapBGTileFlags(int x, int y);
 	uint32 getMapFGTileFlags(int x, int y);
