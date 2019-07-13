@@ -110,6 +110,7 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"war",             "War"},
 	{"vsevolod",        "Vsevolod"},
 	{"wintermute",      "Wintermute engine game"},
+	{"wmedemo",         "Wintermute Engine Technology Demo"},
 	{"wtetris",         "Wilma Tetris"},
 	{"zilm",            "Zilm: A Game of Reflex"},
 	{"zbang",           "Zbang! The Game"},
@@ -2036,6 +2037,10 @@ static const WMEGameDescription gameDescriptions[] = {
 	// War
 	WME_WINENTRY("war", "",
 		WME_ENTRY1s("data.dcp", "003e317cda6d0137bbd5e5d7f089ee4d", 32591890), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+
+	// Wintermute Engine Technology Demo (1.2)
+	WME_WINENTRY("wmedemo", "1.2",
+		WME_ENTRY1s("data.dcp", "511f447de05211a4dc979fafce74c046", 6031195), Common::EN_ANY, ADGF_UNSTABLE, WME_1_7_0),
 
 	// Wilma Tetris
 	WME_WINENTRY("wtetris", "",
