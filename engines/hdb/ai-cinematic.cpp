@@ -449,6 +449,10 @@ void AI::processCines() {
 			g_hdb->_map->addFGTileAnimation((int)_cine[i]->x, (int)_cine[i]->y);
 			complete = true;
 			break;
+		case C_FUNCTION:
+			g_hdb->_lua->callFunction(_cine[i]->title, 0);
+			complete = true;
+			break;
 		default:
 			warning("STUB: AI::PROCESSCINES incomplete for %d", _cine[i]->cmdType);
 			break;
@@ -869,6 +873,13 @@ void AI::cineSetForeground(int x, int y, int index) {
 	cmd->y = y;
 	cmd->start = index;
 	cmd->cmdType = C_SET_FG;
+	_cine.push_back(cmd);
+}
+
+void AI::cineFunction(const char *func) {
+	CineCommand *cmd = new CineCommand;
+	cmd->title = func;
+	cmd->cmdType = C_FUNCTION;
 	_cine.push_back(cmd);
 }
 

@@ -602,7 +602,14 @@ static int cineSetBackground(lua_State *L) {
 }
 
 static int cineFunction(lua_State *L) {
-	warning("STUB: CINE FUNCTION");
+	const char *func = lua_tostring(L, 1);
+
+	g_hdb->_lua->checkParameters("cineFunction", 1);
+
+	lua_pop(L, 1);
+
+	g_hdb->_ai->cineFunction(func);
+
 	return 0;
 }
 
