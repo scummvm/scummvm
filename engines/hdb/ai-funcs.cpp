@@ -1647,6 +1647,7 @@ void AI::animEntFrames(AIEntity *e) {
 
 void AI::drawEnts(int x, int y, int w, int h) {
 
+	int debugFlag = g_hdb->getDebug();
 	static int stunAnim = 0;
 	static uint32 stunTimer = g_hdb->getTimeSlice();
 
@@ -1730,6 +1731,8 @@ void AI::drawEnts(int x, int y, int w, int h) {
 						debugN(5, "at %d %d", e->x, e->y);
 
 						e->draw->drawMasked(e->x - x + e->drawXOff, e->y - y + e->drawYOff);
+					} else if (debugFlag) {
+						_debugQMark->drawMasked(e->x - x, e->y - y);
 					} else {
 						debugN(5, "no draw function");
 					}
@@ -1759,7 +1762,7 @@ void AI::drawEnts(int x, int y, int w, int h) {
 }
 
 void AI::drawLevel2Ents() {
-	int debugging = g_hdb->getDebug();
+	int debugFlag = g_hdb->getDebug();
 
 	for (int i = 0; i < _numLevel2Ents; i++) {
 		// call custom drawing code?
@@ -1771,7 +1774,7 @@ void AI::drawLevel2Ents() {
 			debug(5, "AI::drawLevel2Ents: tile '%s' at %d,%d", _entsLevel2[i].draw->getName(), _entsLevel2[i].x, _entsLevel2[i].y);
 
 			_entsLevel2[i].draw->drawMasked(_entsLevel2[i].x, _entsLevel2[i].y);
-		} else if (debugging) {
+		} else if (debugFlag) {
 			_debugQMark->drawMasked(_entsLevel2[i].x, _entsLevel2[i].y );
 		}
 
