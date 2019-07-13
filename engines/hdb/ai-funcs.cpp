@@ -1759,7 +1759,7 @@ void AI::drawEnts(int x, int y, int w, int h) {
 }
 
 void AI::drawLevel2Ents() {
-	int debugging = 0; //game.GetDebug(); // FIXME
+	int debugging = g_hdb->getDebug();
 
 	for (int i = 0; i < _numLevel2Ents; i++) {
 		// call custom drawing code?
