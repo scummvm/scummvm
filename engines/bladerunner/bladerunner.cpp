@@ -374,7 +374,6 @@ Common::Error BladeRunnerEngine::run() {
 		//  else {
 		// 	newGame(kGameDifficultyMedium);
 		// }
-
 		gameLoop();
 
 		_mouse->disable();

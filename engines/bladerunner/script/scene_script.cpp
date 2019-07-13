@@ -182,7 +182,10 @@ bool SceneScript::mouseClick(int x, int y) {
 	_inScriptCounter++;
 	_mouseX = x;
 	_mouseY = y;
-	bool result = _currentScript->MouseClick(x, y);
+	bool result = false;
+	if (_currentScript != nullptr) {
+		result = _currentScript->MouseClick(x, y);
+	}
 	_vm->_runningActorId = -1;
 	_inScriptCounter--;
 	_mouseX = -1;
