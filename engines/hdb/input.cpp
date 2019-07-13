@@ -72,7 +72,22 @@ void Input::setButtons(uint16 b) {
 	}
 
 	// Debug Mode Cycling
-	debug(9, "STUB: setButtons: Check and set Debug Mode");
+	if ((_buttons & kButtonExit) && g_hdb->getCheatingOn()) {
+		int	debugFlag = g_hdb->getDebug();
+		debugFlag++;
+		if (debugFlag > 2)
+			debugFlag = 0;
+		g_hdb->setDebug(debugFlag);
+
+		if (debugFlag == 2)
+			g_hdb->_ai->clearWaypoints();
+
+		if (!debugFlag && g_hdb->getGameState() == GAME_PLAY) {
+			int	x, y;
+			g_hdb->_ai->getPlayerXY(&x, &y);
+			g_hdb->_map->centerMapXY(x + 16, y + 16);	// point to center of player
+		}
+	}
 
 	if (g_hdb->getGameState() == GAME_PLAY) {
 		// Is Player Dead? Click on TRY AGAIN
