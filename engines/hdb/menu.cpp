@@ -126,6 +126,7 @@ void Menu::readConfig() {
 
 	if (ConfMan.hasKey(CONFIG_CHEAT)) {
 		g_hdb->setCheatingOn();
+		debug("Cheating enabled");
 	}
 
 	ConfMan.flushToDisk();

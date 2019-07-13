@@ -471,7 +471,7 @@ void AI::stopEntity(AIEntity *e) {
 		e->state = STATE_FLOATING;
 		return;
 	default:
-		warning("AI-FUNCS: stopEntity: Unintended State");
+		break;
 	}
 
 	if (e->type != AI_DIVERTER) {
@@ -501,7 +501,7 @@ void AI::stopEntity(AIEntity *e) {
 				e->state = STATE_NONE;
 			break;
 		default:
-			warning("AI-FUNCS: stopEntity: DIR_NONE");
+			break;
 		}
 	}
 }
