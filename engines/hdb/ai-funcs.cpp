@@ -2046,7 +2046,9 @@ AIEntity *AI::playerCollision(int topBorder, int bottomBorder, int leftBorder, i
 }
 
 bool AI::checkPlayerTileCollision(int x, int y) {
-	debug(9, "STUB: checkPlayerTileCollison: g_hdb->getDebug() required");
+	if (g_hdb->getDebug() == 2)
+		return false;
+
 	return (_player->tileX == x && _player->tileY == y);
 }
 
