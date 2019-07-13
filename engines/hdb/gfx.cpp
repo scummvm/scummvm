@@ -618,7 +618,7 @@ void Gfx::draw3DStarsLeft() {
 	for (int i = 0; i < kNum3DStars; i++) {
 		_starField[_stars3DSlow[i].color]->drawMasked((int)_stars3DSlow[i].x, (int)_stars3DSlow[i].y);
 		_stars3DSlow[i].x -= _stars3DSlow[i].speed;
-		if (_stars3DSlow[i].x < kScreenWidth) {
+		if (_stars3DSlow[i].x < 0) {
 			_stars3DSlow[i].x = kScreenWidth - 1;
 		}
 	}
