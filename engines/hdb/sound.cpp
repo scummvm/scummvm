@@ -61,6 +61,16 @@ bool Sound::startMusic(SoundType song) {
 	return true;
 }
 
+bool Sound::fadeInMusic(SoundType song, int ramp) {
+	warning("STUB: Fade In Music");
+	return true;
+}
+
+void Sound::fadeOutMusic(int ramp) {
+	warning("STUB: Fade Out Music");
+	return;
+}
+
 bool Sound::songPlaying(SoundType song) {
 	warning("STUB: Check if Song is playing");
 	return true;
@@ -73,6 +83,11 @@ bool Sound::stopChannel(int channel) {
 
 void Sound::stopMusic() {
 	debug(9, "STUB: Stop Music");
+}
+
+int Sound::registerSound(const char *name) {
+	debug(9, "STUB: Register Sound");
+	return 0;
 }
 
 bool Sound::freeSound(int index) {
