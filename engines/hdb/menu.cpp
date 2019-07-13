@@ -227,9 +227,9 @@ void Menu::startMenu() {
 	if (!_fStars[0].y) {
 		for (i = 0; i < kMaxStars; i++) {
 			_fStars[i].y = -30;
-			_fStars[i].x = g_hdb->_rnd->getRandomNumber(kScreenWidth);
-			_fStars[i].speed = g_hdb->_rnd->getRandomNumber(5) + 1;
-			_fStars[i].anim = g_hdb->_rnd->getRandomNumber(3);
+			_fStars[i].x = g_hdb->_rnd->getRandomNumber(kScreenWidth - 1);
+			_fStars[i].speed = g_hdb->_rnd->getRandomNumber(4) + 1;
+			_fStars[i].anim = g_hdb->_rnd->getRandomNumber(2);
 			_fStars[i].delay = 5;
 		}
 	}
@@ -240,10 +240,10 @@ void Menu::startMenu() {
 	if (!_nebulaY) {
 		g_hdb->_gfx->setup3DStars();	// setup the star info
 
-		_nebulaWhich = g_hdb->_rnd->getRandomNumber(kNebulaCount);
-		_nebulaX = g_hdb->_rnd->getRandomNumber(kScreenWidth) + 10;
+		_nebulaWhich = g_hdb->_rnd->getRandomNumber(kNebulaCount - 1);
+		_nebulaX = g_hdb->_rnd->getRandomNumber(kScreenWidth - 1) + 10;
 		_nebulaY = -20;
-		_nebulaYVel = g_hdb->_rnd->getRandomNumber(10) + 2;
+		_nebulaYVel = g_hdb->_rnd->getRandomNumber(9) + 2;
 	}
 
 	_optionsScrollX = kMenuX;
@@ -788,10 +788,10 @@ void Menu::drawTitle() {
 		_nebulaGfx[_nebulaWhich]->draw(_nebulaX, _nebulaY);
 		_nebulaY += _nebulaYVel;
 		if (_nebulaY > kScreenHeight + (kScreenHeight / 2)) {
-			_nebulaWhich = g_hdb->_rnd->getRandomNumber(kNebulaCount);
-			_nebulaX = g_hdb->_rnd->getRandomNumber(kScreenWidth) + 10;
+			_nebulaWhich = g_hdb->_rnd->getRandomNumber(kNebulaCount - 1);
+			_nebulaX = g_hdb->_rnd->getRandomNumber(kScreenWidth - 1) + 10;
 			_nebulaY = -11 * 8;
-			_nebulaYVel = g_hdb->_rnd->getRandomNumber(4) + 1;
+			_nebulaYVel = g_hdb->_rnd->getRandomNumber(3) + 1;
 			if (_nebulaWhich > 4)		// galaxy?
 				_nebulaYVel = 1;
 		}
@@ -892,10 +892,10 @@ void Menu::drawTitle() {
 			_rocketEx = 0;			// exhaust toggle
 			g_hdb->_gfx->setup3DStars();	// setup the star info
 
-			_nebulaWhich = g_hdb->_rnd->getRandomNumber(kNebulaCount);
-			_nebulaX = g_hdb->_rnd->getRandomNumber(kScreenWidth) + 10;
+			_nebulaWhich = g_hdb->_rnd->getRandomNumber(kNebulaCount - 1);
+			_nebulaX = g_hdb->_rnd->getRandomNumber(kScreenWidth - 1) + 10;
 			_nebulaY = -11 * 8;
-			_nebulaYVel = g_hdb->_rnd->getRandomNumber(10) + 2;
+			_nebulaYVel = g_hdb->_rnd->getRandomNumber(9) + 2;
 			if (_nebulaWhich > 4)		// galaxy?
 				_nebulaYVel = 1;
 		}
@@ -1265,10 +1265,10 @@ void Menu::drawNebula() {
 	_nebulaY += _nebulaYVel;
 
 	if (_nebulaY > kScreenHeight + (kScreenHeight / 2)) {
-		_nebulaWhich = g_hdb->_rnd->getRandomNumber(kNebulaCount);
-		_nebulaX = g_hdb->_rnd->getRandomNumber(kScreenWidth) + 10;
+		_nebulaWhich = g_hdb->_rnd->getRandomNumber(kNebulaCount - 1);
+		_nebulaX = g_hdb->_rnd->getRandomNumber(kScreenWidth - 1) + 10;
 		_nebulaY = -11 * 8;
-		_nebulaYVel = g_hdb->_rnd->getRandomNumber(4) + 1;
+		_nebulaYVel = g_hdb->_rnd->getRandomNumber(3) + 1;
 		if (_nebulaWhich > 4)		// galaxy?
 			_nebulaYVel = 1;
 	}
@@ -1281,8 +1281,8 @@ void Menu::drawNebula() {
 	for (i = 0; i < kMaxStars; i++) {
 		_fStars[i].y += _fStars[i].speed;
 		if (_fStars[i].y > kScreenHeight) {
-			_fStars[i].y = (g_hdb->_rnd->getRandomNumber(30) + 30) * -1;
-			_fStars[i].speed = g_hdb->_rnd->getRandomNumber(5) + 1;
+			_fStars[i].y = (g_hdb->_rnd->getRandomNumber(29) + 30) * -1;
+			_fStars[i].speed = g_hdb->_rnd->getRandomNumber(4) + 1;
 		}
 		if (_fStars[i].delay-- < 1) {
 			_fStars[i].delay = 5;
