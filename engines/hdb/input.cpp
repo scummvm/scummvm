@@ -173,7 +173,17 @@ void Input::stylusDown(int x, int y) {
 			return;
 
 		// Check for map dragging in debug Mode and place player there
-		warning("STUB: stylusDown: Check for Map dragging in Debug Mode");
+		if ((GAME_PLAY == g_hdb->getGameState()) && g_hdb->getDebug() == 2) {
+			int		mx, my;
+
+			g_hdb->_map->getMapXY(&mx, &my);
+			mx = ((mx + _stylusDownY) / kTileWidth) * kTileWidth;
+			my = ((my + _stylusDownY) / kTileHeight) * kTileHeight;
+			g_hdb->_ai->setPlayerXY(mx, my);
+
+			g_hdb->startMoveMap(x, y);
+			return;
+		}
 
 		// Clicked in the world
 		g_hdb->_map->getMapXY(&worldX, &worldY);
@@ -218,7 +228,8 @@ void Input::stylusMove(int x, int y) {
 
 	switch (g_hdb->getGameState()) {
 	case GAME_PLAY:
-		warning("STUB: stylusMove: Add GetDebug() check");
+		if (g_hdb->getDebug() == 2)
+			g_hdb->moveMap(x, y);
 		break;
 	case GAME_MENU:
 		g_hdb->_menu->processInput(x, y);
