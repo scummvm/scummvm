@@ -1022,6 +1022,7 @@ bool AI::init() {
 	_dummyLaser.type = AI_LASERBEAM;
 	strcpy(_dummyPlayer.entityName, "Virtual Player");
 	_playerRunning = false;
+	_weaponSelGfx = NULL;
 
 	restartSystem();
 	return true;
