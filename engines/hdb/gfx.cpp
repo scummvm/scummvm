@@ -198,9 +198,6 @@ void Gfx::fillScreen(uint32 color) {
 }
 
 void Gfx::updateVideo() {
-
-	uint32 timer = g_system->getMillis();
-
 	updateFade();
 	g_hdb->checkProgress();
 
@@ -215,8 +212,6 @@ void Gfx::updateVideo() {
 	if (!clip.isEmpty()) {
 		g_system->copyRectToScreen(g_hdb->_gfx->_globalSurface.getBasePtr(clip.left, clip.top), g_hdb->_gfx->_globalSurface.pitch, clip.left, clip.top, clip.width(), clip.height());
 	}
-
-	while (g_system->getMillis() - timer < 16) {};
 }
 
 void Gfx::drawPointer() {
