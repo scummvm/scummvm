@@ -118,6 +118,7 @@ bool HDBGame::init() {
 
 	_menu->init();
 
+	_debugLogo = _gfx->loadTile("icon_debug_logo");
 	_progressGfx = _gfx->loadPic(PIC_LOADBAR);
 	_progressMarkGfx = _gfx->loadPic(PIC_LOADSTAR);
 	_logoGfx = NULL;
@@ -283,6 +284,13 @@ void HDBGame::paint() {
 		int pixels = _progressGfx->_width - _progressMarkGfx->_width;
 		_progressXOffset = (int)(((double)pixels / _progressMax) * (double)_progressCurrent) + x;
 		break;
+	}
+
+	// Draw FPS on Screen in Debug Mode
+	if (_debugFlag == 1) {
+		debug(9, "STUB: Requires StartTiming() and EndTiming()");
+	} else if (_debugFlag == 2) {
+		_debugLogo->drawMasked(kScreenWidth - 32, 0);
 	}
 
 	_gfx->updateVideo();
