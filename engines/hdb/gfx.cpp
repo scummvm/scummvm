@@ -406,7 +406,7 @@ Tile *Gfx::getTile(int index) {
 }
 
 void Gfx::emptyGfxCaches() {
-	warning("STUB: mptyGfxCaches()");
+	// We have plenty of memory, so do not do it
 }
 
 void Gfx::cacheTileSequence(int tileIndex, int count) {
@@ -508,6 +508,15 @@ Tile *Gfx::getTileGfx(const char *name, int32 size) {
 	_gfxCache->push_back(gc);
 
 	return gc->tileGfx;
+}
+
+void Gfx::markGfxCacheFreeable() {
+	for (Common::Array<GfxCache *>::iterator it = _gfxCache->begin(); it != _gfxCache->end(); it++)
+		(*it)->loaded = -1;
+}
+
+void Gfx::markTileCacheFreeable() {
+	// we have plenty of memory, so do not do it
 }
 
 Picture *Gfx::getPicGfx(const char *name, int32 size) {
