@@ -59,6 +59,7 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"driller",         "The Driller Incident"},
 	{"dirtysplit",      "Dirty Split"},
 	{"dreamscape",      "Dreamscape"},
+	{"erinmyers",       "The Death of Erin Myers"},
 	{"escapemansion",   "Escape from the Mansion"},
 	{"four",            "Four"},
 	{"framed",          "Framed"},
@@ -446,6 +447,10 @@ static const WMEGameDescription gameDescriptions[] = {
 	// NOTE: Package is called "Dreamland.rar", however game title is "Dreamscape"
 	WME_WINENTRY("dreamscape", "Beta",
 		WME_ENTRY1s("data.dcp", "7a5752ed4446c862be9f02d7932acf54", 17034377), Common::EN_ANY, ADGF_UNSTABLE, WME_1_8_11),
+
+	// The Death of Erin Myers
+	WME_WINENTRY("erinmyers", "",
+		WME_ENTRY1s("data.dcp", "beebf574c043ebeedf23ac8df6e1f988", 245235110), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_1),
 
 	// Escape from the Mansion
 	WME_WINENTRY("escapemansion", "Beta 1",
