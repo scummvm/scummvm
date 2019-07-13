@@ -68,9 +68,9 @@ bool AI::addToInventory(AIEntity *e) {
 	case ITEM_CLUB:
 	case ITEM_ROBOSTUNNER:
 	case ITEM_SLUGSLINGER:
-		warning("STUB: addToInventory: Ready weapon");
+		g_hdb->_window->chooseWeapon(e->type);
 	default:
-		warning("AI-INVENTORY: addToInventory: Unintended Type");
+		break;
 	}
 
 	printYouGotMsg(e->printedName);
