@@ -1201,6 +1201,36 @@ void Window::checkDlvSelect(int x, int y) {
 	}
 }
 
+void Window::drawTryAgain() {
+	if (!g_hdb->_ai->playerDead())
+		return;
+
+	if (NULL == _gfxTry) {
+		_gfxTry = g_hdb->_gfx->loadPic(GAME_TRY);
+		_gfxAgain = g_hdb->_gfx->loadPic(GAME_AGAIN);
+		_gfxLevelRestart = g_hdb->_gfx->loadPic(GAME_TA_LEVELRESTART);
+
+		_tryAgainInfo.y1 = kTryY1;
+		_tryAgainInfo.y2 = kTryY2;
+		_tryAgainInfo.x1 = 480 / 2 - _gfxTry->_width / 2;;
+		_tryAgainInfo.x2 = 480 / 2 - _gfxAgain->_width / 2;
+	}
+
+	int xv = g_hdb->_rnd->getRandomNumber(3) - 2, yv = g_hdb->_rnd->getRandomNumber(3) - 2;
+
+	_gfxTry->drawMasked((int)_tryAgainInfo.x1 + xv, (int)_tryAgainInfo.y1 + yv);
+	_gfxAgain->drawMasked((int)_tryAgainInfo.x2 + yv, (int)_tryAgainInfo.y2 + xv);
+	_gfxLevelRestart->drawMasked((int)(480 / 2 - _gfxLevelRestart->_width + xv), kTryRestartY + yv);
+}
+
+void Window::clearTryAgain() {
+	_gfxTry->free();
+	_gfxAgain->free();
+	_gfxLevelRestart->free();
+
+	_gfxTry = _gfxAgain = _gfxLevelRestart = NULL;
+}
+
 void Window::loadPanicZoneGfx() {
 	_pzInfo.gfxPanic = g_hdb->_gfx->loadPic(PANIC_PANIC);
 	_pzInfo.gfxZone	= g_hdb->_gfx->loadPic(PANIC_ZONE);

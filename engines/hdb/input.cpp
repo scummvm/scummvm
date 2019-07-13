@@ -92,7 +92,13 @@ void Input::setButtons(uint16 b) {
 	if (g_hdb->getGameState() == GAME_PLAY) {
 		// Is Player Dead? Click on TRY AGAIN
 		if (g_hdb->_ai->playerDead()) {
-			warning("STUB: TRY AGAIN is onscreen");
+			// TRY AGAIN is onscreen...
+			if (_buttons & kButtonB) {
+				if (g_hdb->loadGameState(kAutoSaveSlot).getCode() == Common::kNoError) {
+					g_hdb->_window->clearTryAgain();
+					g_hdb->setGameState(GAME_PLAY);
+				}
+			}
 			return;
 		}
 
@@ -144,7 +150,12 @@ void Input::stylusDown(int x, int y) {
 	case GAME_PLAY:
 		// Is Player Dead? Click on TRY AGAIN
 		if (g_hdb->_ai->playerDead()) {
-			warning("STUB: TRY AGAIN is onscreen");
+			if (y >= kTryRestartY && y <= kTryRestartY + 24) {
+				if (g_hdb->loadGameState(kAutoSaveSlot).getCode() == Common::kNoError) {
+					g_hdb->_window->clearTryAgain();
+					g_hdb->setGameState(GAME_PLAY);
+				}
+			}
 			return;
 		}
 
