@@ -78,6 +78,7 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"mirage",          "Mirage"},
 	{"nighttrain",      "Night Train"},
 	{"oknytt",          "Oknytt"},
+	{"one",             "One"},
 	{"onehelluvaday",   "One Helluva Day"},
 	{"openquest",       "Open Quest"},
 	{"paintaria",       "Paintaria"},
@@ -649,6 +650,10 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("oknytt", "Version 1.13",
 		WME_ENTRY2s("spanish.dcp", "10c46152cb29581671f3b6b7c229c957", 319406572,
 					"d_sounds.dcp", "7d04dff8ca11174486bd4b7a80fdcabb", 154943401), Common::ES_ESP, ADGF_UNSTABLE, WME_1_9_3),
+
+	// One (Demo)
+	WME_WINENTRY("one", "Demo",
+		WME_ENTRY1s("data.dcp", "dc2e1682227716099b6acaf5cbce104d", 1676301), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_2_44),
 
 	// One Helluva Day (Demo) (multi-language)
 	WME_WINENTRY("onehelluvaday", "",
