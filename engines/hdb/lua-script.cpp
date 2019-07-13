@@ -1706,9 +1706,8 @@ void debugHook(lua_State *L, lua_Debug *ar) {
 }
 
 bool LuaScript::initScript(Common::SeekableReadStream *stream, const char *scriptName, int32 length) {
-
 	if (_systemInit) {
-		return false;
+		lua_close(_state);
 	}
 
 	// Initialize Lua Environment
