@@ -467,13 +467,17 @@ void Menu::drawMenu() {
 			// title logo
 			_titleLogo->drawMasked(centerPic(_titleLogo), _rocketY + kMTitleY);
 			_menuBackoutGfx->drawMasked(kBackoutX, kBackoutY);
-			_controlButtonGfx->drawMasked(centerPic(_controlButtonGfx), kMControlsY);
+
+			// Ignore Controls Screen Button
+			//_controlButtonGfx->drawMasked(centerPic(_controlButtonGfx), kMControlsY);
 		} else if (_optionsActive == 2) {
 			//
 			// Draw CONTROLS screen
 			//
-				controlsDraw();
-				return;
+
+			// Ignore Controls Assignment
+			//controlsDraw();
+			return;
 		}
 	} else if (_gamefilesActive) {
 		//-------------------------------------------------------------------
@@ -1139,9 +1143,11 @@ void Menu::processInput(int x, int y) {
 		} else if (x >= (kScreenWidth / 2 - _controlButtonGfx->_width / 2) && x < (kScreenWidth / 2 + _controlButtonGfx->_width / 2) &&
 			y >= kMControlsY && y < kMControlsY + _controlButtonGfx->_height) {
 			// CONTROLS BUTTON!
-			_optionsActive = 2;
-			_clickDelay = 20;
-			g_hdb->_sound->playSound(SND_POP);
+
+			// Ignore Controls Button
+			//_optionsActive = 2;
+			//_clickDelay = 20;
+			//g_hdb->_sound->playSound(SND_POP);
 		}
 	} else if (_gamefilesActive) {
 		//-------------------------------------------------------------------
