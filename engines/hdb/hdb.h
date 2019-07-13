@@ -222,6 +222,7 @@ public:
 	void togglePause() {
 		_pauseFlag ^= 1;
 	}
+
 	int getPause() {
 		return _pauseFlag;
 	}
@@ -246,9 +247,12 @@ public:
 		return &_targetName;
 	}
 
+	int getDebug() { return _debugFlag; }
+	void setDebug(int flag) { _debugFlag = flag; }
+
 	bool isVoiceless() {
 		/*
-			FIXME: Add hyperspace-nv.mpc to gameDescriptions[] 
+			FIXME: Add hyperspace-nv.mpc to gameDescriptions[]
 			in detection.cpp, and add a flag check for it.
 			Until then, the voiceless version is unsupported.
 		*/
@@ -311,6 +315,7 @@ private:
 	// Misc Variables
 	int _pauseFlag;
 	bool _cheating;
+	int _debugFlag;
 
 	char _currentMapname[64];
 	char _lastMapname[64];
