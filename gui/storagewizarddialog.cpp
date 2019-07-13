@@ -73,12 +73,6 @@ StorageWizardDialog::StorageWizardDialog(uint32 storageId):
 	// Initialy the code is empty, so disable the connect button
 	_connectWidget->setEnabled(false);
 
-	if (Cloud::CloudManager::couldUseLocalServer()) {
-		// hide fields and even the button if local webserver is on
-		_returnLine1->setLabel(_("You will be directed to ScummVM's page where"));
-		_returnLine2->setLabel(_("you should allow it to access your storage."));
-	}
-
 	_picture = new GraphicsWidget(container, "GlobalOptions_Cloud_ConnectionWizard_Container.Picture");
 #ifndef DISABLE_FANCY_THEMES
 	if (g_gui.theme()->supportsImages()) {
@@ -130,24 +124,9 @@ void StorageWizardDialog::open() {
 			return;
 		}
 	}
-
-#ifdef USE_SDL_NET
-	if (Cloud::CloudManager::couldUseLocalServer()) {
-		_stopServerOnClose = !LocalServer.isRunning();
-		LocalServer.start(true); // using "minimal mode" (no "/files", "/download", etc available)
-		LocalServer.indexPageHandler().setTarget(this);
-	}
-#endif
 }
 
 void StorageWizardDialog::close() {
-#ifdef USE_SDL_NET
-	if (Cloud::CloudManager::couldUseLocalServer()) {
-		if (_stopServerOnClose)
-			LocalServer.stopOnIdle();
-		LocalServer.indexPageHandler().setTarget(nullptr);
-	}
-#endif
 	Dialog::close();
 }
 
@@ -155,6 +134,19 @@ void StorageWizardDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 	switch (cmd) {
 	case kCodeBoxCmd: {
 		Common::String code, message;
+
+		if (_storageId == Cloud::kStorageDropboxId) {
+			// new handling
+			code = _codeWidget[0]->getEditString();
+
+			bool ok = (code.size() > 0);
+			message = ""; // (ok ? _("All OK!") : "");
+
+			_connectWidget->setEnabled(ok);
+			_messageWidget->setLabel(message);
+			return;
+		}
+		
 		uint32 correctFields = 0;
 		for (uint32 i = 0; i < CODE_FIELDS; ++i) {
 			Common::String subcode = _codeWidget[i]->getEditString();
@@ -236,6 +228,18 @@ void StorageWizardDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		break;
 	}
 	case kConnectCmd: {
+		if (_storageId == Cloud::kStorageDropboxId) {
+			// new handling
+			Common::String code = _codeWidget[0]->getEditString();
+			if (code.size() == 0)
+				return;
+
+			CloudMan.connectStorage(_storageId, code);
+			setResult(1);
+			close();
+			return;
+		}
+
 		Common::String code;
 		for (uint32 i = 0; i < CODE_FIELDS; ++i) {
 			Common::String subcode = _codeWidget[i]->getEditString();
@@ -283,9 +287,9 @@ void StorageWizardDialog::containerWidgetsReflow() {
 	if (_returnLine1) _returnLine1->setVisible(true);
 	if (_returnLine2) _returnLine2->setVisible(true);
 
-	bool showFields = (!Cloud::CloudManager::couldUseLocalServer());
+	bool showFields = true; // TODO: remove this const
 	for (uint32 i = 0; i < CODE_FIELDS; ++i)
-		_codeWidget[i]->setVisible(showFields);
+		_codeWidget[i]->setVisible(showFields && (_storageId != Cloud::kStorageDropboxId || i < 1)); // show only one field for Dropbox
 	_messageWidget->setVisible(showFields);
 
 	// left column / first bottom row
@@ -312,7 +316,7 @@ Common::String StorageWizardDialog::getUrl() const {
 	Common::String url = "https://www.scummvm.org/c/";
 	switch (_storageId) {
 	case Cloud::kStorageDropboxId:
-		url += "db";
+		url = "https://cloud.scummvm.org/";
 		break;
 	case Cloud::kStorageOneDriveId:
 		url += "od";
@@ -324,9 +328,6 @@ Common::String StorageWizardDialog::getUrl() const {
 		url += "bx";
 		break;
 	}
-
-	if (Cloud::CloudManager::couldUseLocalServer())
-		url += "s";
 
 	return url;
 }

@@ -42,28 +42,8 @@
 namespace Cloud {
 namespace Dropbox {
 
-#define DROPBOX_OAUTH2_TOKEN "https://api.dropboxapi.com/oauth2/token"
+#define DROPBOX_OAUTH2_TOKEN "https://scummvm.org/admin/cloud/cloud/dropbox/token/"
 #define DROPBOX_API_FILES_DOWNLOAD "https://content.dropboxapi.com/2/files/download"
-
-char *DropboxStorage::KEY = nullptr; //can't use CloudConfig there yet, loading it on instance creation/auth
-char *DropboxStorage::SECRET = nullptr;
-
-void DropboxStorage::loadKeyAndSecret() {
-#ifdef ENABLE_RELEASE
-	KEY = RELEASE_DROPBOX_KEY;
-	SECRET = RELEASE_DROPBOX_SECRET;
-#else
-	Common::String k = ConfMan.get("DROPBOX_KEY", ConfMan.kCloudDomain);
-	KEY = new char[k.size() + 1];
-	memcpy(KEY, k.c_str(), k.size());
-	KEY[k.size()] = 0;
-
-	k = ConfMan.get("DROPBOX_SECRET", ConfMan.kCloudDomain);
-	SECRET = new char[k.size() + 1];
-	memcpy(SECRET, k.c_str(), k.size());
-	SECRET[k.size()] = 0;
-#endif
-}
 
 DropboxStorage::DropboxStorage(Common::String accessToken, Common::String userId): _token(accessToken), _uid(userId) {}
 
@@ -74,20 +54,12 @@ DropboxStorage::DropboxStorage(Common::String code) {
 DropboxStorage::~DropboxStorage() {}
 
 void DropboxStorage::getAccessToken(Common::String code) {
-	if (!KEY || !SECRET)
-		loadKeyAndSecret();
 	Networking::JsonCallback callback = new Common::Callback<DropboxStorage, Networking::JsonResponse>(this, &DropboxStorage::codeFlowComplete);
 	Networking::ErrorCallback errorCallback = new Common::Callback<DropboxStorage, Networking::ErrorResponse>(this, &DropboxStorage::codeFlowFailed);
-	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(callback, errorCallback, DROPBOX_OAUTH2_TOKEN);
-	request->addPostField("code=" + code);
-	request->addPostField("grant_type=authorization_code");
-	request->addPostField("client_id=" + Common::String(KEY));
-	request->addPostField("client_secret=" + Common::String(SECRET));
-	if (Cloud::CloudManager::couldUseLocalServer()) {
-		request->addPostField("&redirect_uri=http%3A%2F%2Flocalhost%3A12345%2F");
-	} else {
-		request->addPostField("&redirect_uri=https%3A%2F%2Fwww.scummvm.org/c/code");
-	}
+
+	Common::String url = Common::String(DROPBOX_OAUTH2_TOKEN) + code;
+	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(callback, errorCallback, url);
+
 	addRequest(request);
 }
 
@@ -177,8 +149,6 @@ Networking::Request *DropboxStorage::info(StorageInfoCallback callback, Networki
 Common::String DropboxStorage::savesDirectoryPath() { return "/saves/"; }
 
 DropboxStorage *DropboxStorage::loadFromConfig(Common::String keyPrefix) {
-	loadKeyAndSecret();
-
 	if (!ConfMan.hasKey(keyPrefix + "access_token", ConfMan.kCloudDomain)) {
 		warning("DropboxStorage: no access_token found");
 		return nullptr;
