@@ -428,6 +428,12 @@ void AI::processCines() {
 			break;
 		}
 		break;
+		case C_REMOVEENTITY:
+			e = locateEntity(_cine[i]->string);
+			if (e)
+				removeEntity(e);
+			complete = true;
+			break;
 		case C_CLEAR_FG:
 			g_hdb->_map->setMapFGTileIndex((int)_cine[i]->x, (int)_cine[i]->y, -1);
 			g_hdb->_map->removeFGTileAnimation((int)_cine[i]->x, (int)_cine[i]->y);
@@ -684,6 +690,13 @@ void AI::cineSpawnEntity(AIType t, AIDir d, int x, int y, const char *func_init,
 	cmd->delay = value1;
 	cmd->speed = value2;
 
+	_cine.push_back(cmd);
+}
+
+void AI::cineRemoveEntity(const char *entName) {
+	CineCommand *cmd = new CineCommand;
+	cmd->string = entName;
+	cmd->cmdType = C_REMOVEENTITY;
 	_cine.push_back(cmd);
 }
 
