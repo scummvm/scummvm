@@ -379,6 +379,37 @@ void Window::checkPause(int x, int y) {
 	}
 }
 
+void Window::drawWeapon() {
+}
+
+void Window::chooseWeapon(AIType wType) {
+	static	AIType lastWeaponSelected = AI_NONE;
+	Tile *gfx;
+	int	slot = g_hdb->_ai->queryInventoryTypeSlot(wType);
+
+	g_hdb->_sound->playSound(SND_MENU_SLIDER);
+
+	if (!g_hdb->getActionMode())
+		return;
+
+	gfx = g_hdb->_ai->getInvItemGfx(slot);
+
+	switch (wType) {
+	case ITEM_CLUB:
+	case ITEM_ROBOSTUNNER:
+	case ITEM_SLUGSLINGER:
+		g_hdb->_ai->setPlayerWeapon(wType, gfx);
+		if (wType == lastWeaponSelected)
+			return;
+		lastWeaponSelected = wType;
+		g_hdb->_sound->playSound(SND_MENU_ACCEPT);
+		return;
+	default:
+		break;
+	}
+	g_hdb->_sound->playSound(SND_CELLHOLDER_USE_REJECT);
+}
+
 void Window::closeAll() {
 	closeDialog();
 	closeDialogChoice();
@@ -450,8 +481,16 @@ void Window::drawDialog() {
 	_gfxBR->drawMasked(_gfxBL->_width + _gfxBM->_width, _gfxTL->_height + _gfxL->_height);
 #endif
 
-	if (g_hdb->getActionMode())
-		debug(9, "STUB: drawDialog: Draw Player Weapon");
+	if (g_hdb->getActionMode()) {
+		Tile *gfx2 = g_hdb->_ai->getPlayerWeaponGfx();
+		if (gfx2) {
+			int xOff = 40 * _pzInfo.active;
+			Tile *gfx = g_hdb->_ai->getPlayerWeaponSelGfx();
+			gfx->drawMasked(kWeaponX - xOff - 1, kWeaponY);
+			gfx2->drawMasked(kWeaponX - xOff, kWeaponY);
+			drawWeapon();
+		}
+	}
 
 	if (!_dialogInfo.active)
 		return;
@@ -939,10 +978,27 @@ void Window::checkInvSelect(int x, int y) {
 		_invWinInfo.selection = yc * kInvItemPerLine + xc;
 
 		// If this is a weapon, choose it
-		warning("STUB: checkInvSelect: ChooseWeapon() required");
+		AIType t = g_hdb->_ai->getInvItemType(_invWinInfo.selection);
+		switch (t) {
+		case ITEM_CLUB:
+		case ITEM_ROBOSTUNNER:
+		case ITEM_SLUGSLINGER:
+			chooseWeapon(t);
+			if (t == ITEM_CLUB)
+				g_hdb->_sound->playSound(SND_GET_CLUB);
+			else if (t == ITEM_ROBOSTUNNER)
+				g_hdb->_sound->playSound(SND_GET_STUNNER);
+			else if (t == ITEM_SLUGSLINGER)
+				g_hdb->_sound->playSound(SND_GET_SLUG);
+			return;
+		default:
+			break;
+		}
 
 		g_hdb->_sound->playSound(SND_POP);
 	}
+
+	return;
 }
 
 void Window::openDeliveries(bool animate) {

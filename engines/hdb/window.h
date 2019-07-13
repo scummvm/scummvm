@@ -189,6 +189,10 @@ public:
 	void drawPause();
 	void checkPause(int x, int y);
 
+	// Weapon Functions
+	void drawWeapon();
+	void chooseWeapon(AIType wType);
+
 	// Dialog Functions
 
 	void openDialog(const char *title, int tileIndex, const char *string, int more, const char *luaMore);
