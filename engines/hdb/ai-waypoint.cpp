@@ -523,14 +523,51 @@ Tile *AI::getStandFrameDir(AIEntity *e) {
 			return e->moverightGfx[0];
 		break;
 	case DIR_NONE:
-		warning("AI-WAYPOINT: getStandFrameDir: DIR_NONE found");
 		break;
 	}
 	return e->standdownGfx[0];
 }
 
 void AI::drawWayPoints() {
-	debug(9, "STUB: AI::drawWayPoints()");
+	int	i;
+	int	mapX, mapY;
+	static int anim = 0;
+	static uint32 delay = g_hdb->getTimeSlice();
+	static int alpha = 255;
+	static int aVel = -4;
+
+	g_hdb->_map->getMapXY(&mapX, &mapY);
+
+	for (i = 0; i < _numWaypoints; i++) {
+		int	x = _waypoints[i].x * kTileWidth;
+		int	y = _waypoints[i].y * kTileHeight;
+
+		if (x > mapX - 32 && (x < (mapX + kScreenWidth)) &&
+			y > mapY - 32 && (y < (mapY + kScreenHeight)))
+			_waypointGfx[anim]->drawMasked(x - mapX, y - mapY, alpha);
+	}
+
+	// vary the alpha blending
+	alpha = (alpha + aVel);
+	if (alpha < 64) {
+		alpha = 64;
+		aVel = -aVel;
+	}
+
+	if (alpha > 200) {
+		alpha = 200;
+		aVel = -aVel;
+	}
+
+	// don't animate every single game frame...
+	if (delay > g_hdb->getTimeSlice())
+		return;
+	delay = g_hdb->getTimeSlice() + 100;
+
+	// cycle the waypoint gfx animation
+	anim++;
+	if (anim == 4)
+		anim = 0;
 }
 
 } // End of Namespace
