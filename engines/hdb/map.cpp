@@ -34,6 +34,10 @@ Map::Map() {
 	_mapExplosions = NULL;
 	_mapExpBarrels = NULL;
 	_mapLaserBeams = NULL;
+
+	_background = NULL;
+	_foreground = NULL;
+	_iconList = NULL;
 }
 
 Map::~Map() {
