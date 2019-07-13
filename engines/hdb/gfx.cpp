@@ -354,10 +354,10 @@ void Gfx::turnOnSnow() {
 	int		i;
 	_snowInfo.active = true;
 	for (i = 0; i < MAX_SNOW; i++) {
-		_snowInfo.x[i] = g_hdb->_rnd->getRandomNumber(kScreenWidth);
-		_snowInfo.y[i] = g_hdb->_rnd->getRandomNumber(kScreenHeight);
-		_snowInfo.yv[i] = g_hdb->_rnd->getRandomNumber(3) + 1;
-		_snowInfo.xvindex[i] = g_hdb->_rnd->getRandomNumber(MAX_SNOW_XV);
+		_snowInfo.x[i] = g_hdb->_rnd->getRandomNumber(kScreenWidth - 1);
+		_snowInfo.y[i] = g_hdb->_rnd->getRandomNumber(kScreenHeight - 1);
+		_snowInfo.yv[i] = g_hdb->_rnd->getRandomNumber(2) + 1;
+		_snowInfo.xvindex[i] = g_hdb->_rnd->getRandomNumber(MAX_SNOW_XV - 1);
 	}
 }
 
@@ -585,9 +585,9 @@ void Gfx::setSky(int skyIndex) {
 
 void Gfx::setup3DStars() {
 	for (int i = 0; i < kNum3DStars; i++) {
-		_stars3D[i].x = g_hdb->_rnd->getRandomNumber(kScreenWidth);
-		_stars3D[i].y = g_hdb->_rnd->getRandomNumber(kScreenHeight);
-		_stars3D[i].speed = g_hdb->_rnd->getRandomNumber(256);
+		_stars3D[i].x = g_hdb->_rnd->getRandomNumber(kScreenWidth - 1);
+		_stars3D[i].y = g_hdb->_rnd->getRandomNumber(kScreenHeight - 1);
+		_stars3D[i].speed = g_hdb->_rnd->getRandomNumber(255);
 		_stars3D[i].speed >>= 1;
 		_stars3D[i].color = _stars3D[i].speed / 64;
 	}
@@ -595,8 +595,8 @@ void Gfx::setup3DStars() {
 
 void Gfx::setup3DStarsLeft() {
 	for (int i = 0; i < kNum3DStars; i++) {
-		_stars3DSlow[i].x = g_hdb->_rnd->getRandomNumber(kScreenWidth);
-		_stars3DSlow[i].y = g_hdb->_rnd->getRandomNumber(kScreenHeight);
+		_stars3DSlow[i].x = g_hdb->_rnd->getRandomNumber(kScreenWidth - 1);
+		_stars3DSlow[i].y = g_hdb->_rnd->getRandomNumber(kScreenHeight - 1);
 		_stars3DSlow[i].speed = ((double) (1 + g_hdb->_rnd->getRandomNumber(4))) / 6.0;
 		_stars3DSlow[i].color = (int) (_stars3DSlow[i].speed * 4.00);
 	}
