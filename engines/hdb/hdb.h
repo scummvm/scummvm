@@ -196,6 +196,8 @@ public:
 	}
 	void changeGameState();
 	void paint();
+	void moveMap(int x, int y);	// Get Stylus Coords and Scroll
+	void startMoveMap(int x, int y);	// Start Dragging Map
 
 	void setTargetXY(int x, int y);
 	void useEntity(AIEntity *e);
