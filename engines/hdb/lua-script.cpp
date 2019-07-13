@@ -1100,37 +1100,85 @@ static int killTrigger(lua_State *L) {
 }
 
 static int startMusic(lua_State *L) {
-	warning("STUB: START MUSIC");
+	bool error;
+
+	double song = lua_tonumber(L, 1);
+	int s1 = (int)song;
+
+	g_hdb->_lua->checkParameters("startMusic", 1);
+
+	lua_pop(L, 1);
+	error = g_hdb->_sound->startMusic((SoundType)s1);
+
 	return 0;
 }
 
 static int fadeInMusic(lua_State *L) {
-	warning("STUB: FADE IN MUSIC");
+	bool error;
+
+	double song = lua_tonumber(L, 1);
+	int s1 = (int)song;
+	int ramp = (int)lua_tonumber(L, 2);
+	if (!ramp)
+		ramp = 1;
+
+	g_hdb->_lua->checkParameters("fadeInMusic", 2);
+
+	lua_pop(L, 2);
+	error = g_hdb->_sound->fadeInMusic((SoundType)s1, ramp);
+
 	return 0;
 }
 
 static int stopMusic(lua_State *L) {
-	warning("STUB: STOP MUSIC");
+	g_hdb->_sound->stopMusic();
 	return 0;
 }
 
 static int fadeOutMusic(lua_State *L) {
-	warning("STUB: FADE OUT MUSIC");
+	int ramp = (int)lua_tonumber(L, 1);
+	if (!ramp)
+		ramp = 1;
+
+	g_hdb->_lua->checkParameters("fadeOutMusic", 1);
+
+	lua_pop(L, 1);
+	g_hdb->_sound->fadeOutMusic(ramp);
+
 	return 0;
 }
 
 static int registerSound(lua_State *L) {
-	warning("STUB: REGISTER SOUND");
-	return 0;
+	const char *name = lua_tostring(L, 1);
+
+	g_hdb->_lua->checkParameters("registerSound", 1);
+
+	lua_pop(L, 1);
+	int index = g_hdb->_sound->registerSound(name);
+	lua_pushnumber(L, index);
+
+	return 1;
 }
 
 static int playSound(lua_State *L) {
-	warning("STUB: PLAY SOUND");
+	int index = (int)lua_tonumber(L, 1);
+
+	g_hdb->_lua->checkParameters("playSound", 1);
+
+	lua_pop(L, 1);
+	g_hdb->_sound->playSound(index);
+
 	return 0;
 }
 
 static int freeSound(lua_State *L) {
-	warning("STUB: FREE SOUND");
+	int index = (int)lua_tonumber(L, 1);
+
+	g_hdb->_lua->checkParameters("freeSound", 1);
+
+	lua_pop(L, 1);
+	g_hdb->_sound->freeSound(index);
+
 	return 0;
 }
 
@@ -1247,7 +1295,14 @@ static int setPointerState(lua_State *L) {
 }
 
 static int playVoice(lua_State *L) {
-	warning("STUB: PLAY VOICE");
+	double index = lua_tonumber(L, 1);
+	double actor = lua_tonumber(L, 2);
+
+	g_hdb->_lua->checkParameters("playVoice", 2);
+
+	lua_pop(L, 2);
+
+	g_hdb->_sound->playVoice((int)index, (int)actor);
 	return 0;
 }
 
