@@ -766,6 +766,11 @@ static const WMEGameDescription gameDescriptions[] = {
 		WME_ENTRY2s("xlanguage_it.dcp", "a1f4199079b75ee10cded41f05b45d5f", 5386424,
 					"data.dcp", "9ebb12f6fd7c038d079f81beb3bd96d5", 254185907), Common::IT_ITA, ADGF_UNSTABLE, WME_1_9_3),
 
+	// Reversion: The Escape Version 1.3 (Latvian)
+	WME_WINENTRY("reversion1", "Version 1.3",
+		WME_ENTRY2s("xlanguage_lv.dcp", "351e8226a2a86dd15b8568b9d695a3c0", 4959028,
+					"data.dcp", "9ebb12f6fd7c038d079f81beb3bd96d5", 254185907), Common::LV_LAT, ADGF_UNSTABLE, WME_1_9_3),
+
 	// Reversion: The Escape Version 1.3 (Portuguese)
 	WME_WINENTRY("reversion1", "Version 1.3",
 		WME_ENTRY2s("xlanguage_pt.dcp", "3d653debd37e56756a79401e1004c4d2", 4149165,
