@@ -158,6 +158,17 @@ int WintermuteEngine::init() {
 		}
 	#endif
 
+	// check dependencies for games with FoxTail subengine
+	#if not defined(ENABLE_FOXTAIL)
+		if (BaseEngine::isFoxTailCheck(_gameDescription->targetExecutable)) {
+			GUI::MessageDialog dialog(_("This game requires the FoxTail subengine, which is not compiled in."));
+			dialog.runModal();
+			delete _game;
+			_game = nullptr;
+			return false;
+		}
+	#endif
+
 	Common::ArchiveMemberList actors3d;
 	if (BaseEngine::instance().getFileManager()->listMatchingMembers(actors3d, "*.act3d")) {
 		GUI::MessageDialog dialog(
