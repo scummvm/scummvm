@@ -918,21 +918,15 @@ AI::~AI() {
 }
 
 bool AI::init() {
-	warning("STUB: AI::init incomplete");
 
-	_debugQMark = new Tile;
-	_debugQMark->load(g_hdb->_fileMan->findFirstData("icon_question_mark", TYPE_ICON32));
+	_debugQMark = g_hdb->_gfx->loadTile("icon_question_mark");
 
 	// Clear Waypoint list and load Waypoint graphics
 	_numWaypoints = 0;
-	_waypointGfx[0] = new Tile;
-	_waypointGfx[0]->load(g_hdb->_fileMan->findFirstData("icon_waypoint_select1", TYPE_ICON32));
-	_waypointGfx[1] = new Tile;
-	_waypointGfx[1]->load(g_hdb->_fileMan->findFirstData("icon_waypoint_select2", TYPE_ICON32));
-	_waypointGfx[2] = new Tile;
-	_waypointGfx[2]->load(g_hdb->_fileMan->findFirstData("icon_waypoint_select3", TYPE_ICON32));
-	_waypointGfx[3] = new Tile;
-	_waypointGfx[3]->load(g_hdb->_fileMan->findFirstData("icon_waypoint_select4", TYPE_ICON32));
+	_waypointGfx[0] = g_hdb->_gfx->loadTile("icon_waypoint_select1");
+	_waypointGfx[1] = g_hdb->_gfx->loadTile("icon_waypoint_select2");
+	_waypointGfx[2] = g_hdb->_gfx->loadTile("icon_waypoint_select3");
+	_waypointGfx[3] = g_hdb->_gfx->loadTile("icon_waypoint_select4");
 
 	// Setup Vars to reference SPECIAL Map Tiles
 	_useSwitchOff	= g_hdb->_gfx->getTileIndex("anim_t32_switch_off01");
@@ -1021,6 +1015,7 @@ bool AI::init() {
 	_dummyPlayer.type = AI_GUY;
 	_dummyLaser.type = AI_LASERBEAM;
 	strcpy(_dummyPlayer.entityName, "Virtual Player");
+	_numDeliveries = 0;
 	_playerRunning = false;
 	_weaponSelGfx = NULL;
 
@@ -1059,7 +1054,7 @@ FuncPtr AI::funcLookUp(const char *function) {
 }
 
 void AI::restartSystem() {
-	/// init special player vars
+	// init special player vars
 	_player = NULL;
 
 	// Clear the Action list
