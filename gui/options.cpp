@@ -2149,19 +2149,20 @@ void GlobalOptionsDialog::apply() {
 		error.runModal();
 	}
 #ifdef USE_TTS
-	bool ttsCheckboxChanged = _ttsCheckbox->getState() &&
-			(!ConfMan.hasKey("tts_enabled") || !ConfMan.getBool("tts_enabled"));
-	bool languageChanged = (newLang != oldLang);
-	if (ttsCheckboxChanged || languageChanged) {
-#if defined(USE_TRANSLATION) && defined(USE_LINUX_TTS)
-		if (ConfMan.get("gui_language") != "C")
-			warning("TTS on linux is supported only for english");
-#endif
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (newLang != oldLang) {
+		if (newLang == "C")
+			ttsMan->setLanguage("en");
+		else {
+			Common::String guiLang = newLang;
+			guiLang.setChar('\0', 2);
+			ttsMan->setLanguage(guiLang);
+		}
 	}
 	ConfMan.setBool("tts_enabled", _ttsCheckbox->getState(), _domain);
 	int selectedVoice = _ttsVoiceSelectionPopUp->getSelectedTag();
 	ConfMan.setInt("tts_voice", selectedVoice, _domain);
-	g_system->getTextToSpeechManager()->setVoice(selectedVoice);
+	ttsMan->setVoice(selectedVoice);
 #endif
 
 	if (isRebuildNeeded) {
