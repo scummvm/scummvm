@@ -482,7 +482,6 @@ void HDBGame::moveMap(int x, int y) {
 
 // PLAYER is trying to use this entity
 void HDBGame::useEntity(AIEntity *e) {
-	warning("STUB: HDBGame::useEntity incomplete");
 
 	AIEntity *p, temp;
 	bool added;

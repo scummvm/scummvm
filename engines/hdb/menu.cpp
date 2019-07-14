@@ -1260,11 +1260,9 @@ void Menu::processInput(int x, int y) {
 }
 
 void Menu::controlsInput(int x, int y) {
-	warning("STUB: Menu: controlsInput");
 }
 
 void Menu::controlsDraw() {
-	warning("STUB: Menu: controlsDraw");
 }
 
 void Menu::drawNebula() {
