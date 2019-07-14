@@ -31,10 +31,10 @@ namespace Cloud {
 namespace Dropbox {
 
 class DropboxStorage: public Cloud::Storage {
-	Common::String _token, _uid;
+	Common::String _token;
 
 	/** This private constructor is called from loadFromConfig(). */
-	DropboxStorage(Common::String token, Common::String uid);
+	DropboxStorage(Common::String token, bool unused);
 
 	void getAccessToken(Common::String code);
 	void codeFlowComplete(Networking::JsonResponse response);
