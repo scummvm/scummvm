@@ -45,6 +45,7 @@ namespace Scumm {
 IMuseInternal::IMuseInternal() :
 	_native_mt32(false),
 	_enable_gs(false),
+	_isAmiga(false),
 	_midi_adlib(NULL),
 	_midi_native(NULL),
 	_sysex(NULL),
@@ -479,6 +480,10 @@ uint32 IMuseInternal::property(int prop, uint32 value) {
 			_native_mt32 = true;
 			initGM(_midi_native);
 		}
+		break;
+
+	case IMuse::PROP_AMIGA:
+		_isAmiga = (value > 0);
 		break;
 
 	case IMuse::PROP_LIMIT_PLAYERS:

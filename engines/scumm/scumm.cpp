@@ -2039,6 +2039,8 @@ void ScummEngine::setupMusic(int midi) {
 			}
 			if (_sound->_musicType == MDT_PCSPK)
 				_imuse->property(IMuse::PROP_PC_SPEAKER, 1);
+			if (_sound->_musicType == MDT_AMIGA)
+				_imuse->property(IMuse::PROP_AMIGA, 1);
 		}
 	}
 }

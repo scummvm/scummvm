@@ -372,6 +372,7 @@ struct Part : public Common::Serializable {
 
 private:
 	void sendPitchBend();
+	void sendTranspose();
 	void sendPanPosition(uint8 value);
 	void sendEffectLevel(uint8 value);
 };
@@ -399,6 +400,7 @@ class IMuseInternal : public IMuse {
 protected:
 	bool _native_mt32;
 	bool _enable_gs;
+	bool _isAmiga;
 	MidiDriver *_midi_adlib;
 	MidiDriver *_midi_native;
 	TimerCallbackInfo _timer_info_adlib;
