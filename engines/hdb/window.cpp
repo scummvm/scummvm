@@ -26,8 +26,6 @@ namespace HDB {
 
 bool Window::init() {
 
-	warning("STUB: Window::init: Incomplete");
-
 	_gfxTL = g_hdb->_gfx->loadPic(MENU_BACK_TOPLEFT);
 	_gfxTM = g_hdb->_gfx->loadPic(MENU_BACK_TOP);
 	_gfxTR = g_hdb->_gfx->loadPic(MENU_BACK_TOPRIGHT);
@@ -203,7 +201,14 @@ void Window::save(Common::OutSaveFile *out) {
 	out->writeByte(_dlvsInfo.go3);
 
 	// Save Try Again Info
-	debug(9, "STUB: Save Try Again data");
+	out->writeDoubleLE(_tryAgainInfo.y1);
+	out->writeDoubleLE(_tryAgainInfo.y2);
+	out->writeDoubleLE(_tryAgainInfo.yv1);
+	out->writeDoubleLE(_tryAgainInfo.yv2);
+	out->writeDoubleLE(_tryAgainInfo.yv1v);
+	out->writeDoubleLE(_tryAgainInfo.yv2v);
+	out->writeDoubleLE(_tryAgainInfo.x1);
+	out->writeDoubleLE(_tryAgainInfo.x2);
 
 	// Save TextOut Info
 	out->writeUint32LE(_textOutList.size());
@@ -332,7 +337,14 @@ void Window::loadSaveFile(Common::InSaveFile *in) {
 	_dlvsInfo.go3 = in->readByte();
 
 	// Load Try Again Info
-	debug(9, "STUB: Load Try Again data");
+	_tryAgainInfo.y1 = in->readDoubleLE();
+	_tryAgainInfo.y2 = in->readDoubleLE();
+	_tryAgainInfo.yv1 = in->readDoubleLE();
+	_tryAgainInfo.yv2 = in->readDoubleLE();
+	_tryAgainInfo.yv1v = in->readDoubleLE();
+	_tryAgainInfo.yv2v = in->readDoubleLE();
+	_tryAgainInfo.x1 = in->readDoubleLE();
+	_tryAgainInfo.x2 = in->readDoubleLE();
 
 	// Load Textout Info
 	uint32 tsize = in->readUint32LE();
@@ -359,7 +371,7 @@ void Window::restartSystem() {
 	_dialogChoiceInfo.active = false;
 	_invWinInfo.active = false;
 	_dialogDelay = _invWinInfo.selection = 0;
-	_gemGfx = g_hdb->_gfx->loadTile("ent_gem_white_sit01");
+	_gemGfx = g_hdb->_gfx->loadTile(GEM_WHITE_GFX);
 	_infobarDimmed = 0;
 }
 
