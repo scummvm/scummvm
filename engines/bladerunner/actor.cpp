@@ -1181,7 +1181,7 @@ void Actor::speechPlay(int sentenceId, bool voiceOver) {
 		pan = (75 * (2 *  CLIP<int>(screenPosition.x, 0, 640) - 640)) / 640; // map [0..640] to [-75..75]
 	}
 
-	_vm->_subtitles->getInGameSubsText(_id, sentenceId);
+	_vm->_subtitles->loadInGameSubsText(_id, sentenceId);
 	_vm->_subtitles->show();
 
 	_vm->_audioSpeech->playSpeech(name, pan);

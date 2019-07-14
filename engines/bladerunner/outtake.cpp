@@ -83,7 +83,7 @@ void OuttakePlayer::play(const Common::String &name, bool noLocalization, int co
 		}
 
 		if (frame >= 0) {
-			_vm->_subtitles->getOuttakeSubsText(resNameNoVQASuffix, frame);
+			_vm->_subtitles->loadOuttakeSubsText(resNameNoVQASuffix, frame);
 			_vm->_subtitles->tickOuttakes(_vm->_surfaceFront);
 			_vm->blitToScreen(_vm->_surfaceFront);
 		}
