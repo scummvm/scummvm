@@ -324,6 +324,9 @@ bool BaseFileManager::hasFile(const Common::String &filename) {
 		int slot = atoi(filename.c_str() + 9);
 		return pm.getSaveExists(slot);
 	}
+	if (sfmFileExists(filename)) {
+		return true;
+	}
 	if (diskFileExists(filename)) {
 		return true;
 	}
@@ -392,6 +395,11 @@ Common::SeekableReadStream *BaseFileManager::openFileRaw(const Common::String &f
 			ret = saveThumbFile->getMemStream();
 		}
 		delete saveThumbFile;
+		return ret;
+	}
+
+	ret = openSfmFile(filename);
+	if (ret) {
 		return ret;
 	}
 

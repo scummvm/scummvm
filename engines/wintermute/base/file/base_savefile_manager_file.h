@@ -33,7 +33,9 @@
 
 namespace Wintermute {
 
+Common::SeekableReadStream *openSfmFile(const Common::String &filename);
 Common::WriteStream *openSfmFileForWrite(const Common::String &filename);
+bool sfmFileExists(const Common::String &filename);
 
 } // End of namespace Wintermute
 
