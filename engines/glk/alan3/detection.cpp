@@ -67,7 +67,7 @@ bool Alan3MetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &g
 		gameFile.close();
 
 		// Check for known games
-		const Alan3GameDescription *p = ALAN3_GAMES;
+		const GlkDetectionEntry *p = ALAN3_GAMES;
 		while (p->_gameId && (md5 != p->_md5 || filesize != p->_filesize))
 			++p;
 

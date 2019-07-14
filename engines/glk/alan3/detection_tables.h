@@ -27,17 +27,6 @@
 namespace Glk {
 namespace Alan3 {
 
-/**
- * Game description
- */
-struct Alan3GameDescription {
-	const char *const _gameId;
-	const char *const _extra;
-	const char *const _md5;
-	size_t _filesize;
-	Common::Language _language;
-};
-
 const PlainGameDescriptor ALAN3_GAME_LIST[] = {
 	{ "alan3", "Alan3 Game" },
 
@@ -51,18 +40,15 @@ const PlainGameDescriptor ALAN3_GAME_LIST[] = {
 	{ nullptr, nullptr }
 };
 
-#define ENTRY0(ID, MD5, FILESIZE) { ID, nullptr, MD5, FILESIZE, Common::EN_ANY }
-#define TABLE_END_MARKER { nullptr, nullptr, nullptr, 0, Common::EN_ANY }
+const GlkDetectionEntry ALAN3_GAMES[] = {
+	DT_ENTRY0("christmasparty", "86b87969d124c213632398980ec87c23", 94892),
+	DT_ENTRY0("deadleaves", "7c228698507508043d1d3938695e28cd", 90139),
+	DT_ENTRY0("fishmess", "e9952cfbe2adef5dcef82abd57661f60", 312561),
+	DT_ENTRY0("hwmurders", "abadbb15faf7f0b7324222fdea6bd495", 213539),
+	DT_ENTRY0("misguided", "cc2c6e724d599e731efa9b7a34ae4f51", 672613),
+	DT_ENTRY0("room206", "eb5711ecfad102ee4d9fda7fcb3ddf78", 364156),
 
-const Alan3GameDescription ALAN3_GAMES[] = {
-	ENTRY0("christmasparty", "86b87969d124c213632398980ec87c23", 94892),
-	ENTRY0("deadleaves", "7c228698507508043d1d3938695e28cd", 90139),
-	ENTRY0("fishmess", "e9952cfbe2adef5dcef82abd57661f60", 312561),
-	ENTRY0("hwmurders", "abadbb15faf7f0b7324222fdea6bd495", 213539),
-	ENTRY0("misguided", "cc2c6e724d599e731efa9b7a34ae4f51", 672613),
-	ENTRY0("room206", "eb5711ecfad102ee4d9fda7fcb3ddf78", 364156),
-
-	TABLE_END_MARKER
+	DT_END_MARKER
 };
 
 } // End of namespace Alan3
