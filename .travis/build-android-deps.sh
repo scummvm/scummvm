@@ -23,6 +23,6 @@ pushd freetype
 sh autogen.sh
 ./configure --host=$CROSS_HOST --with-harfbuzz=no --with-bzip2=no --with-png=no --prefix=$prefix --with-sysroot=$ANDROID_NDK/sysroot && make -j4 install
 popd
-cp -p .travis/freetype-config dependencies/bin
+cp -p .travis/android-freetype-config dependencies/bin/freetype-config
 
 touch dependencies/.done
