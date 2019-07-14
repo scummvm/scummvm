@@ -121,7 +121,6 @@ const PlainGameDescriptor TADS2_GAME_LIST[] = {
 	{ "nbdemo", "The Singular, and Historically Inaccurate, Misadventures of Nobeard" },
 	{ "ninjaburger", "Ninja Burger" },
 	{ "ntts", "No Time To Squeal" },
-	{ "oncefuture", "Once and Future" },
 	{ "onefootdown", "One Foot Down" },
 	{ "onegotaway", "The One That Got Away" },
 	{ "pasttense", "Past Tense" },
@@ -435,7 +434,7 @@ const GlkDetectionEntry TADS_GAMES[] = {
 	DT_ENTRY0("zerosum", "286ede6ac6deaa588d98252ad9207013", 296769),
 
 	// TADS 2 - Commercial games
-	DT_ENTRY0("oncefuture", "4ed995d0784520ca6f0ec5391d92f4d8", 909993),
+	DT_ENTRY0("onceandfuture", "4ed995d0784520ca6f0ec5391d92f4d8", 909993),
 
 	// TADS 2 - Adventions games
 	DT_ENTRY0("ccr", "2da7dba524075aed0167ae02e6484a32", 291305),
