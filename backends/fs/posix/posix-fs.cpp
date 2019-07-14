@@ -91,13 +91,13 @@ POSIXFilesystemNode::POSIXFilesystemNode(const Common::String &p) {
 #endif
 
 	// Expand "~/" to the value of the HOME env variable
-	if (p.hasPrefix("~/")) {
+	if (p.hasPrefix("~/") || p == "~") {
 		const char *home = getenv("HOME");
 		if (home != NULL && strlen(home) < MAXPATHLEN) {
 			_path = home;
-			// Skip over the tilda.  We know that p contains at least
-			// two chars, so this is safe:
-			_path += p.c_str() + 1;
+			// Skip over the tilda.
+			if (p.size() > 1)
+				_path += p.c_str() + 1;
 		}
 	} else {
 		_path = p;
