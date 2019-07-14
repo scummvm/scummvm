@@ -27,15 +27,6 @@
 namespace Glk {
 namespace AdvSys {
 
-/**
- * Game descriptor for Scott Adams games
- */
-struct AdvSysGame {
-	const char *_md5;
-	const char *_gameId;
-	int32 _filesize;
-};
-
 const PlainGameDescriptor ADVSYS_GAME_LIST[] = {
 	{ "advsys", "AdvSys Game" },
 
@@ -49,15 +40,15 @@ const PlainGameDescriptor ADVSYS_GAME_LIST[] = {
 	{ nullptr, nullptr }
 };
 
-const AdvSysGame ADVSYS_GAMES[] = {
-	{ "2246a2686a07c714868680eaf980ece9", "bustedadvsys", 79091 },
-	{ "120d7041dfa000c9a313a8b0ae9cef33", "starshipcolumbus", 76032 },
-	{ "746963e82552f95b5e743fe24ecd1ec3", "elves87", 77947 },
-	{ "892217ab8d902a732e82c55efd22931d", "keytotime", 24941 },
-	{ "3a2a3cc24709ff3272f3a15d09b5e63e", "onehand", 95762 },
-	{  "e55fff2ac51a8a16b979541e8d3210d8", "pirating", 29529 },
+const GlkDetectionEntry ADVSYS_GAMES[] = {
+	DT_ENTRY0("bustedadvsys", "2246a2686a07c714868680eaf980ece9", 79091),
+	DT_ENTRY0("starshipcolumbus", "120d7041dfa000c9a313a8b0ae9cef33", 76032),
+	DT_ENTRY0("elves87", "746963e82552f95b5e743fe24ecd1ec3", 77947),
+	DT_ENTRY0("keytotime", "892217ab8d902a732e82c55efd22931d", 24941),
+	DT_ENTRY0("onehand", "3a2a3cc24709ff3272f3a15d09b5e63e", 95762),
+	DT_ENTRY0("pirating", "e55fff2ac51a8a16b979541e8d3210d8", 29529),
 
-	{ nullptr, nullptr, 0 }
+	DT_END_MARKER
 };
 
 } // End of namespace AdvSys

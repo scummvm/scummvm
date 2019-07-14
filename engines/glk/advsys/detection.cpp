@@ -71,10 +71,10 @@ bool AdvSysMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &
 
 		gameFile.seek(0);
 		Common::String md5 = Common::computeStreamMD5AsString(gameFile, 5000);
-		int32 filesize = gameFile.size();
+		uint32 filesize = gameFile.size();
 
 		// Scan through the AdvSys game list for a match
-		const AdvSysGame *p = ADVSYS_GAMES;
+		const GlkDetectionEntry *p = ADVSYS_GAMES;
 		while (p->_md5 && p->_filesize != filesize && md5 != p->_md5)
 			++p;
 
