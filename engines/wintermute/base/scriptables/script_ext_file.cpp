@@ -815,9 +815,8 @@ bool SXFile::persist(BasePersistenceManager *persistMgr) {
 	return STATUS_OK;
 }
 
-// Should replace fopen(..., "wb+") and fopen(..., "w+")
 Common::WriteStream *SXFile::openForWrite(const Common::String &filename, bool binary) {
-	error("SXFile::openForWrite - WriteFiles not supported");
+	return BaseFileManager::getEngineInstance()->openFileForWrite(_filename);
 }
 
 // Should replace fopen(..., "ab+") and fopen(..., "a+")

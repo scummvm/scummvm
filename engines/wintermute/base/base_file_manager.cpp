@@ -29,6 +29,7 @@
 #include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/base/base_persistence_manager.h"
 #include "engines/wintermute/base/file/base_disk_file.h"
+#include "engines/wintermute/base/file/base_savefile_manager_file.h"
 #include "engines/wintermute/base/file/base_save_thumb_file.h"
 #include "engines/wintermute/base/file/base_package.h"
 #include "engines/wintermute/base/base_engine.h"
@@ -355,6 +356,17 @@ Common::SeekableReadStream *BaseFileManager::openFile(const Common::String &file
 
 
 //////////////////////////////////////////////////////////////////////////
+Common::WriteStream *BaseFileManager::openFileForWrite(const Common::String &filename) {
+	if (strcmp(filename.c_str(), "") == 0) {
+		return nullptr;
+	}
+	debugC(kWintermuteDebugFileAccess, "Open file %s for write", filename.c_str());
+
+	return openFileForWriteRaw(filename);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
 bool BaseFileManager::closeFile(Common::SeekableReadStream *File) {
 	for (uint32 i = 0; i < _openFiles.size(); i++) {
 		if (_openFiles[i] == File) {
@@ -396,6 +408,19 @@ Common::SeekableReadStream *BaseFileManager::openFileRaw(const Common::String &f
 	if (!_detectionMode) {
 		ret = _resources->createReadStreamForMember(filename);
 	}
+	if (ret) {
+		return ret;
+	}
+
+	debugC(kWintermuteDebugFileAccess ,"BFileManager::OpenFileRaw - Failed to open %s", filename.c_str());
+	return nullptr;
+}
+
+//////////////////////////////////////////////////////////////////////////
+Common::WriteStream *BaseFileManager::openFileForWriteRaw(const Common::String &filename) {
+	Common::WriteStream *ret = nullptr;
+
+	ret = openSfmFileForWrite(filename);
 	if (ret) {
 		return ret;
 	}
