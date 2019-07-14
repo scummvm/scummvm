@@ -258,6 +258,10 @@ Common::String Widget::cleanupHotkey(const Common::String &label) {
 
 void Widget::read(Common::String str) {
 #ifdef USE_TTS
+#if defined(USE_LINUX_TTS) && defined(USE_TRANSLATION)
+	if (ConfMan.get("gui_language") != "C")
+		return;
+#endif
 	if (ConfMan.hasKey("tts_enabled", "scummvm") &&
 			ConfMan.getBool("tts_enabled", "scummvm")) {
 		int volume = (ConfMan.getInt("speech_volume", "scummvm") * 100) / 256;
