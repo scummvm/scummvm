@@ -23,6 +23,7 @@
 #include <common/debug.h>
 #include "bigfile.h"
 #include "actor.h"
+#include "cursor.h"
 #include "actorresource.h"
 #include "talk.h"
 #include "sound.h"
@@ -32,6 +33,7 @@
 #include "dragonobd.h"
 #include "scene.h"
 #include "font.h"
+#include "scriptopcodes.h"
 
 namespace Dragons {
 
@@ -51,7 +53,7 @@ void Talk::loadText(uint32 textIndex, uint16 *textBuffer, uint16 bufferLength) {
 	sprintf(filename, "drag%04d.txt", fileNo);
 	uint32 size;
 	byte *data = _bigfileArchive->load(filename, size);
-	debug("DIALOG: %s, %d", filename, fileOffset);
+	debug("DIALOG: %s, %s, %d", filename, data, fileOffset);
 	printWideText(data + 10 + fileOffset);
 
 	copyTextToBuffer(textBuffer, data + 10 + fileOffset, bufferLength);
@@ -93,6 +95,7 @@ Talk::conversation_related_maybe(uint16 *dialogText, uint16 x, uint16 y, uint16 
 	while (_vm->isFlagSet(ENGINE_FLAG_8000)) {
 		_vm->waitForFrames(1);
 	}
+	_vm->_fontManager->clearText();
 }
 
 
@@ -186,6 +189,130 @@ uint32 Talk::wideStrLen(uint16 *text) {
 		i++;
 	}
 	return i;
+}
+
+void Talk::addTalkDialogEntry(TalkDialogEntry *talkDialogEntry) {
+	_dialogEntries.push_back(talkDialogEntry);
+}
+
+void callMaybeResetData() {
+	//TODO do we need this?
+}
+
+bool Talk::talkToActor(ScriptOpCall &scriptOpCall) {
+	uint16 numEntries;
+
+	uint16_t sequenceId;
+	TalkDialogEntry *selectedDialogText;
+	uint iniId;
+	ScriptOpCall local_1d20;
+	short local_990 [5];
+	byte auStack2438 [390];
+	short local_800 [1000];
+
+	bool isFlag8Set = _vm->isFlagSet(ENGINE_FLAG_8);
+	bool isFlag100Set = _vm->isFlagSet(ENGINE_FLAG_100);
+
+	_vm->clearFlags(ENGINE_FLAG_8);
+	Actor *flickerActor = _vm->_dragonINIResource->getFlickerRecord()->actor;
+
+	//TODO clear entries;
+	_vm->_scriptOpcodes->loadTalkDialogEntries(scriptOpCall);
+	numEntries = _dialogEntries.size();
+	if (numEntries == 0) {
+		return 0;
+	}
+	_vm->setFlags(ENGINE_FLAG_100);
+	do {
+		callMaybeResetData();
+		int numActiveDialogEntries = 0;
+		for (Common::List<TalkDialogEntry*>::iterator it = _dialogEntries.begin(); it != _dialogEntries.end(); it++) {
+			if (!(*it)->flags & 1) {
+				numActiveDialogEntries++;
+			}
+		}
+		if (numActiveDialogEntries == 0) {
+			//TODO logic from LAB_80029bc0 reset cursor
+			exitTalkMenu(isFlag8Set, isFlag100Set);
+			return 1;
+		}
+
+		selectedDialogText = displayTalkDialogMenu();
+		if (selectedDialogText == NULL) {
+			callMaybeResetData();
+			exitTalkMenu(isFlag8Set, isFlag100Set);
+			return 1;
+		}
+		_vm->clearFlags(ENGINE_FLAG_8);
+		strcpy((char *)local_990,selectedDialogText->dialogText);
+//		UTF16ToUTF16Z(auStack2438,selectedDialogText->dialogText + 10);
+//		load_string_from_dragon_txt(selectedDialogText->textIndex1,(char *)local_800);
+//		if (local_990[0] != 0) {
+//			flickerActor->setFlag(ACTOR_FLAG_2000);
+//			sequenceId = flickerActor->_sequenceID;
+//			playSoundFromTxtIndex(selectedDialogText->textIndex);
+//			if (flickerActor->_sequenceID2 != -1) {
+//				flickerActor->updateSequence(flickerActor->_sequenceID2 + 0x10);
+//			}
+//			displayDialogAroundINI(0,(uint8_t *)local_990,selectedDialogText->textIndex);
+//			flickerActor->updateSequence(sequenceId);
+//			flickerActor->clearFlag(ACTOR_FLAG_2000);
+//		}
+		if ((selectedDialogText->flags & 2) == 0) {
+			selectedDialogText->flags = selectedDialogText->flags | 1;
+		}
+		callMaybeResetData();
+		if (local_800[0] != 0) {
+			if (selectedDialogText->field_26c == -1) {
+//				displayDialogAroundINI
+//						((uint)dragon_ini_index_under_active_cursor,(uint8_t *)local_800,
+//						 selectedDialogText->textIndex1);
+			}
+			else {
+				iniId = _vm->_cursor->_iniUnderCursor; //dragon_ini_index_under_active_cursor;
+				if (selectedDialogText->iniId != 0) {
+					iniId = selectedDialogText->iniId;
+				}
+				Actor *iniActor = _vm->_dragonINIResource->getRecord(iniId - 1)->actor;
+				sequenceId = iniActor->_sequenceID;
+//				playSoundFromTxtIndex(selectedDialogText->textIndex1);
+//				iniActor->updateSequence(selectedDialogText->field_26c);
+//				displayDialogAroundINI(iniId,(uint8_t *)local_800,selectedDialogText->textIndex1);
+//				iniActor->updateSequence(sequenceId);
+			}
+		}
+		local_1d20._code = selectedDialogText->scriptCodeStartPtr;
+		local_1d20._codeEnd = selectedDialogText->scriptCodeEndPtr;
+		_vm->_scriptOpcodes->runScript(local_1d20);
+		if (_vm->_scriptOpcodes->_data_80071f5c != 0) break;
+		local_1d20._code = selectedDialogText->scriptCodeStartPtr;
+		local_1d20._codeEnd = selectedDialogText->scriptCodeEndPtr;
+		talkToActor(local_1d20);
+
+	} while (_vm->_scriptOpcodes->_data_80071f5c == 0);
+	_vm->_scriptOpcodes->_data_80071f5c--;
+//	LAB_80029bc0:
+//	actors[0].x_pos = cursor_x_var;
+//	actors[0].y_pos = cursor_y_var;
+	exitTalkMenu(isFlag8Set, isFlag100Set);
+	return 1;
+}
+
+TalkDialogEntry *Talk::displayTalkDialogMenu() {
+	return *_dialogEntries.begin();
+}
+
+void Talk::exitTalkMenu(bool isFlag8Set, bool isFlag100Set) {
+	_vm->clearFlags(ENGINE_FLAG_8);
+	_vm->clearFlags(ENGINE_FLAG_100);
+
+	if (isFlag8Set) {
+		_vm->setFlags(ENGINE_FLAG_8);
+	}
+	if (isFlag100Set) {
+		_vm->setFlags(ENGINE_FLAG_100);
+	}
+
 }
 
 

@@ -65,7 +65,8 @@ public:
 	bool runScript4(ScriptOpCall &scriptOpCall);
 	void execOpcode(ScriptOpCall &scriptOpCall);
 	void executeScriptLoop(ScriptOpCall &scriptOpCall);
-	int16 FUN_800297d8(ScriptOpCall &scriptOpCall);
+	void loadTalkDialogEntries(ScriptOpCall &scriptOpCall);
+
 	int16 _data_80071f5c;
 	int16 _data_800728c0;
 protected:
@@ -83,6 +84,7 @@ protected:
 	// Opcodes
 	void opUnk1(ScriptOpCall &scriptOpCall);
 	void opUnk2(ScriptOpCall &scriptOpCall);
+	void opUnk3(ScriptOpCall &scriptOpCall);
 	void opExecuteScript(ScriptOpCall &scriptOpCall); //op 4
 	void opActorSetSequenceID2(ScriptOpCall &scriptOpCall); //op 5
 	void opUnk6(ScriptOpCall &scriptOpCall);
