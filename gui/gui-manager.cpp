@@ -625,6 +625,10 @@ void GuiManager::setLastMousePos(int16 x, int16 y) {
 
 #ifdef USE_TTS
 void GuiManager::initTextToSpeech() {
+#if defined(USE_TRANSLATION) && defined(USE_LINUX_TTS)
+	if(ConfMan.hasKey("gui_language") && ConfMan.get("gui_language") != "C")
+		warning("TTS on linux is supported only for english");
+#endif
 	int voice;
 	if(ConfMan.hasKey("tts_voice"))
 		voice = ConfMan.getInt("tts_voice", "scummvm");

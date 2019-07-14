@@ -101,6 +101,7 @@ bool LinuxTextToSpeechManager::say(Common::String str) {
 		return true;
 	if (isSpeaking())
 		stop();
+	debug("say: %s", str.c_str());
 	return spd_say(_connection, SPD_MESSAGE, str.c_str()) == -1;
 
 }
