@@ -65,6 +65,10 @@ void speech_pause_callback(size_t msg_id, size_t client_id, SPDNotificationType 
 
 LinuxTextToSpeechManager::LinuxTextToSpeechManager()
 	: _speechState(READY) {
+	init();
+}
+
+void LinuxTextToSpeechManager::init() {
 	_connection = spd_open("ScummVM", "main", NULL, SPD_MODE_THREADED);
 	if (_connection == 0) {
 		_speechState = BROKEN;
@@ -103,7 +107,14 @@ bool LinuxTextToSpeechManager::say(Common::String str) {
 	if (isSpeaking())
 		stop();
 	debug("say: %s", str.c_str());
-	return spd_say(_connection, SPD_MESSAGE, str.c_str()) == -1;
+	if(spd_say(_connection, SPD_MESSAGE, str.c_str()) == -1) {
+		//restart the connection
+		if (_connection != 0)
+			spd_close(_connection);
+		init();
+		return true;
+	}
+	return false;
 
 }
 
