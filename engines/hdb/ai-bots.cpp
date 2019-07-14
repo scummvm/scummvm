@@ -894,7 +894,7 @@ void aiMaintBotAction(AIEntity *e) {
 			switch (e->sequence) {
 			case 50:
 				if (e->onScreen && !e->int1) {
-					if (g_hdb->_rnd->getRandomNumber(2) & 1)
+					if (g_hdb->_rnd->getRandomNumber(1))
 						g_hdb->_sound->playSound(SND_MBOT_HMMM2);
 					else
 						g_hdb->_sound->playSound(SND_MBOT_HMMM);
@@ -974,11 +974,11 @@ void aiMaintBotAction(AIEntity *e) {
 				break;
 			// Decide direction and GO
 			case 0:
-				int dir = (g_hdb->_rnd->getRandomNumber(4)) + 1;
+				int dir = (g_hdb->_rnd->getRandomNumber(3)) + 1;
 				e->dir = dirList[dir];
 				g_hdb->_ai->findPath(e);
 				if (e->onScreen)
-					g_hdb->_sound->playSound(whistles[g_hdb->_rnd->getRandomNumber(3)]);
+					g_hdb->_sound->playSound(whistles[g_hdb->_rnd->getRandomNumber(2)]);
 				break;
 			}
 		}
@@ -1009,7 +1009,7 @@ void aiMaintBotAction(AIEntity *e) {
 				return;
 			} else if (ar->type == 1) {
 				g_hdb->_ai->findPath(e);
-				g_hdb->_sound->playSound(whistles[g_hdb->_rnd->getRandomNumber(3)]);
+				g_hdb->_sound->playSound(whistles[g_hdb->_rnd->getRandomNumber(2)]);
 			} else {
 				e->sequence = 64;
 				e->dir2 = e->dir;
@@ -1132,7 +1132,7 @@ void aiDeadEyeWalkInPlace(AIEntity *e) {
 	case 30:
 	case 20:
 	case 10:
-		dir = (AIDir)(g_hdb->_rnd->getRandomNumber(4) + 1);
+		dir = (AIDir)(g_hdb->_rnd->getRandomNumber(3) + 1);
 		s = state[dir];
 		e->dir = dir;
 		e->state = s;
@@ -1223,7 +1223,7 @@ void aiDeadEyeAction(AIEntity *e) {
 		case 30:
 		case 20:
 		case 10:
-			dir = (AIDir)(g_hdb->_rnd->getRandomNumber(4)+1);
+			dir = (AIDir)(g_hdb->_rnd->getRandomNumber(3)+1);
 			s = state[dir];
 			e->dir = dir;
 			e->state = s;
@@ -1237,8 +1237,8 @@ void aiDeadEyeAction(AIEntity *e) {
 			break;
 		case 0:
 			// Pick a random direction and random number of tiles in that direction
-			dir = (AIDir)(g_hdb->_rnd->getRandomNumber(4) + 1);
-			int walk = g_hdb->_rnd->getRandomNumber(5) + 1;
+			dir = (AIDir)(g_hdb->_rnd->getRandomNumber(3) + 1);
+			int walk = g_hdb->_rnd->getRandomNumber(4) + 1;
 			int xv, yv;
 
 			e->dir = dir;
@@ -1790,7 +1790,7 @@ void aiMeerkatAction(AIEntity *e) {
 			e->blinkFrames = 0;		// index into movement table...
 
 			// figure # of gems to take
-			e->special1Frames = g_hdb->_rnd->getRandomNumber(5) + 1;
+			e->special1Frames = g_hdb->_rnd->getRandomNumber(4) + 1;
 			int	amt = g_hdb->_ai->getGemAmount();
 			if (amt - e->special1Frames < 0)
 				e->special1Frames = amt;
@@ -1918,7 +1918,7 @@ void aiFatFrogAction(AIEntity *e) {
 		e->animFrame++;
 		if (e->animFrame == e->standdownFrames)
 			e->animFrame = 0;
-		if (!g_hdb->_rnd->getRandomNumber(30) && e->onScreen)
+		if (!g_hdb->_rnd->getRandomNumber(29) && e->onScreen)
 			g_hdb->_sound->playSound(SND_FROG_RIBBIT1);
 		break;
 
@@ -1937,7 +1937,7 @@ void aiFatFrogAction(AIEntity *e) {
 		e->animFrame++;
 		if (e->animFrame == e->standleftFrames)
 			e->animFrame = 0;
-		if (!g_hdb->_rnd->getRandomNumber(30) && e->onScreen)
+		if (!g_hdb->_rnd->getRandomNumber(29) && e->onScreen)
 			g_hdb->_sound->playSound(SND_FROG_RIBBIT2);
 		break;
 
@@ -1956,7 +1956,7 @@ void aiFatFrogAction(AIEntity *e) {
 		e->animFrame++;
 		if (e->animFrame == e->standrightFrames)
 			e->animFrame = 0;
-		if (!g_hdb->_rnd->getRandomNumber(30) && e->onScreen)
+		if (!g_hdb->_rnd->getRandomNumber(29) && e->onScreen)
 			g_hdb->_sound->playSound(SND_FROG_RIBBIT2);
 		break;
 
@@ -2220,11 +2220,11 @@ void aiGoodFairyAction(AIEntity *e) {
 		case 0:
 			{
 				// Create a GEM?
-				if (g_hdb->_rnd->getRandomNumber(100) > 98) {
+				if (g_hdb->_rnd->getRandomNumber(99) > 98) {
 					int	spawnOK;
 
 					// spawn a gem in a random direction
-					int	d = g_hdb->_rnd->getRandomNumber(4) + 1;
+					int	d = g_hdb->_rnd->getRandomNumber(3) + 1;
 					xv = xvAhead[d];
 					yv = yvAhead[d];
 
@@ -2251,9 +2251,9 @@ void aiGoodFairyAction(AIEntity *e) {
 				int	tries = 4;
 				do {
 					// pick a random direction, then a random # of tiles in that direction
-					int	 rnd = g_hdb->_rnd->getRandomNumber(4) + 1;
+					int	 rnd = g_hdb->_rnd->getRandomNumber(3) + 1;
 					AIDir d = (AIDir)rnd;
-					int	 walk = g_hdb->_rnd->getRandomNumber(5) + 1;
+					int	 walk = g_hdb->_rnd->getRandomNumber(4) + 1;
 					AIEntity *p = g_hdb->_ai->getPlayer();
 
 					// if player is within 3 tiles, move closer
@@ -2319,7 +2319,7 @@ void aiGoodFairyAction(AIEntity *e) {
 					uint32 bg_flags = g_hdb->_map->getMapBGTileFlags(e->tileX + e->value1, e->tileY + e->value2);
 					if (result && !hit && !(bg_flags & kFlagSpecial)) {
 						g_hdb->_ai->setEntityGoal(e, e->tileX + xv, e->tileY + yv);
-						if (e->onScreen && !g_hdb->_rnd->getRandomNumber(30))
+						if (e->onScreen && !g_hdb->_rnd->getRandomNumber(29))
 							g_hdb->_sound->playSound(SND_GOOD_FAERIE_AMBIENT);
 						g_hdb->_ai->animateEntity(e);
 						return;
@@ -2420,7 +2420,7 @@ void aiBadFairyAction(AIEntity *e) {
 		case 0:
 			{
 				// Create a GATE PUDDLE?
-				if (e->onScreen && (g_hdb->_rnd->getRandomNumber(100) > 90) && g_hdb->getActionMode() && (g_hdb->_ai->getGatePuddles() < kMaxGatePuddles)) {
+				if (e->onScreen && (g_hdb->_rnd->getRandomNumber(99) > 90) && g_hdb->getActionMode() && (g_hdb->_ai->getGatePuddles() < kMaxGatePuddles)) {
 					AIDir opposite[] = {DIR_NONE, DIR_DOWN, DIR_UP, DIR_RIGHT, DIR_LEFT};
 
 					if (e->onScreen)
@@ -2439,9 +2439,9 @@ void aiBadFairyAction(AIEntity *e) {
 				int	tries = 4;
 				do {
 					// pick a random direction, then a random # of tiles in that direction
-					int	rnd = g_hdb->_rnd->getRandomNumber(4) + 1;
+					int	rnd = g_hdb->_rnd->getRandomNumber(3) + 1;
 					AIDir d = (AIDir)rnd;
-					int	walk = g_hdb->_rnd->getRandomNumber(5) + 1;
+					int	walk = g_hdb->_rnd->getRandomNumber(4) + 1;
 					AIEntity *p = g_hdb->_ai->getPlayer();
 
 					e->dir = d;
@@ -2474,7 +2474,7 @@ void aiBadFairyAction(AIEntity *e) {
 					if (!hit && result && !(bg_flags & kFlagSpecial)) {
 						g_hdb->_ai->setEntityGoal(e, e->tileX + xv, e->tileY + yv);
 						g_hdb->_ai->animateEntity(e);
-						if (e->onScreen && !g_hdb->_rnd->getRandomNumber(20))
+						if (e->onScreen && !g_hdb->_rnd->getRandomNumber(19))
 							g_hdb->_sound->playSound(SND_BADFAIRY_AMBIENT);
 						return;
 					}
@@ -2614,7 +2614,7 @@ void aiGatePuddleAction(AIEntity *e) {
 			}
 		}
 	} else {
-		int rnd = g_hdb->_rnd->getRandomNumber(4) + 1;
+		int rnd = g_hdb->_rnd->getRandomNumber(3) + 1;
 		int move_ok = 0, nx, ny;
 
 		e->dir = (AIDir)rnd;
@@ -2766,7 +2766,7 @@ void aiIcePuffAction(AIEntity *e) {
 		case  8: e->draw = e->blinkGfx[1]; break;	// peek - looking
 		case  4: e->draw = e->blinkGfx[0]; break;	// peek - looking
 		case  3:
-			if (e->onScreen && !g_hdb->_rnd->getRandomNumber(6))
+			if (e->onScreen && !g_hdb->_rnd->getRandomNumber(5))
 				g_hdb->_sound->playSound(SND_ICEPUFF_WARNING);
 			break;
 		case  0: e->draw = e->blinkGfx[3];			// underground
@@ -2829,7 +2829,7 @@ void aiIcePuffAction(AIEntity *e) {
 		} else if (e->animFrame == e->special1Frames) {
 			e->state = STATE_ICEP_PEEK;
 			e->draw = e->blinkGfx[3];
-			e->sequence = g_hdb->_rnd->getRandomNumber(100) + 30;
+			e->sequence = g_hdb->_rnd->getRandomNumber(99) + 30;
 		}
 		break;
 
@@ -2850,7 +2850,7 @@ void aiIcePuffAction(AIEntity *e) {
 		} else if (e->animFrame == e->special1Frames) {
 			e->state = STATE_ICEP_PEEK;
 			e->draw = e->blinkGfx[3];
-			e->sequence = g_hdb->_rnd->getRandomNumber(100) + 30;
+			e->sequence = g_hdb->_rnd->getRandomNumber(99) + 30;
 		}
 		break;
 
@@ -2871,7 +2871,7 @@ void aiIcePuffAction(AIEntity *e) {
 		} else if (e->animFrame == e->special1Frames) {
 			e->state = STATE_ICEP_PEEK;
 			e->draw = e->blinkGfx[3];
-			e->sequence = g_hdb->_rnd->getRandomNumber(100) + 30;
+			e->sequence = g_hdb->_rnd->getRandomNumber(99) + 30;
 		}
 		break;
 
