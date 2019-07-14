@@ -42,10 +42,10 @@
 namespace Cloud {
 namespace Dropbox {
 
-#define DROPBOX_OAUTH2_TOKEN "https://scummvm.org/admin/cloud/cloud/dropbox/token/"
+#define DROPBOX_OAUTH2_TOKEN "https://cloud.scummvm.org/dropbox/token/"
 #define DROPBOX_API_FILES_DOWNLOAD "https://content.dropboxapi.com/2/files/download"
 
-DropboxStorage::DropboxStorage(Common::String accessToken, Common::String userId): _token(accessToken), _uid(userId) {}
+DropboxStorage::DropboxStorage(Common::String accessToken, bool unused): _token(accessToken) {}
 
 DropboxStorage::DropboxStorage(Common::String code) {
 	getAccessToken(code);
@@ -79,14 +79,12 @@ void DropboxStorage::codeFlowComplete(Networking::JsonResponse response) {
 	}
 
 	Common::JSONObject result = json->asObject();
-	if (!Networking::CurlJsonRequest::jsonContainsString(result, "access_token", "DropboxStorage::codeFlowComplete") ||
-		!Networking::CurlJsonRequest::jsonContainsString(result, "uid", "DropboxStorage::codeFlowComplete")) {
-		warning("DropboxStorage: bad response, no token/uid passed");
+	if (!Networking::CurlJsonRequest::jsonContainsString(result, "access_token", "DropboxStorage::codeFlowComplete")) {
+		warning("DropboxStorage: bad response, no token passed");
 		debug(9, "%s", json->stringify(true).c_str());
 		CloudMan.removeStorage(this);
 	} else {
 		_token = result.getVal("access_token")->asString();
-		_uid = result.getVal("uid")->asString();
 		ConfMan.removeKey("dropbox_code", ConfMan.kCloudDomain);
 		CloudMan.replaceStorage(this, kStorageDropboxId);
 		ConfMan.flushToDisk();
@@ -103,7 +101,6 @@ void DropboxStorage::codeFlowFailed(Networking::ErrorResponse error) {
 
 void DropboxStorage::saveConfig(Common::String keyPrefix) {
 	ConfMan.set(keyPrefix + "access_token", _token, ConfMan.kCloudDomain);
-	ConfMan.set(keyPrefix + "user_id", _uid, ConfMan.kCloudDomain);
 }
 
 Common::String DropboxStorage::name() const {
@@ -154,15 +151,8 @@ DropboxStorage *DropboxStorage::loadFromConfig(Common::String keyPrefix) {
 		return nullptr;
 	}
 
-	if (!ConfMan.hasKey(keyPrefix + "user_id", ConfMan.kCloudDomain)) {
-		warning("DropboxStorage: no user_id found");
-		return nullptr;
-	}
-
 	Common::String accessToken = ConfMan.get(keyPrefix + "access_token", ConfMan.kCloudDomain);
-	Common::String userId = ConfMan.get(keyPrefix + "user_id", ConfMan.kCloudDomain);
-
-	return new DropboxStorage(accessToken, userId);
+	return new DropboxStorage(accessToken, true);
 }
 
 } // End of namespace Dropbox
