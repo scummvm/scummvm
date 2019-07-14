@@ -31,6 +31,8 @@
 #include "common/translation.h"
 #include "common/debug.h"
 #include "common/system.h"
+#include "common/ustr.h"
+#include "common/config-manager.h"
 SPDConnection *_connection;
 
 void speech_begin_callback(size_t msg_id, size_t client_id, SPDNotificationType state){
@@ -104,6 +106,10 @@ void LinuxTextToSpeechManager::updateState(LinuxTextToSpeechManager::SpeechState
 bool LinuxTextToSpeechManager::say(Common::String str) {
 	if (_speechState == BROKEN)
 		return true;
+	//Convert string, that might have foreign characters to UTF-8
+	if (ConfMan.get("gui_language") != "C") {
+		str = Common::convertUtf32ToUtf8(Common::convertToU32String(str.c_str(), Common::kWindows1250)).c_str();
+	}
 	if (isSpeaking())
 		stop();
 	debug("say: %s", str.c_str());
