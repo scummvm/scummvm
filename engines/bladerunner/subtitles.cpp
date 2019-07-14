@@ -25,7 +25,11 @@
 #include "bladerunner/font.h"
 #include "bladerunner/text_resource.h"
 #include "bladerunner/audio_speech.h"
+
 #include "common/debug.h"
+
+#include "graphics/font.h"
+#include "graphics/fonts/ttf.h"
 
 namespace BladeRunner {
 
@@ -101,7 +105,7 @@ Subtitles::Subtitles(BladeRunnerEngine *vm) {
 	for (int i = 0; i < kMaxTextResourceEntries; i++) {
 		_vqaSubsTextResourceEntries[i] = nullptr;
 	}
-	_subsFont = nullptr;
+	_font = nullptr;
 	reset();
 }
 
@@ -109,26 +113,74 @@ Subtitles::Subtitles(BladeRunnerEngine *vm) {
 * Subtitles Destructor
 */
 Subtitles::~Subtitles() {
-	// delete any resource entries in the _vqaSubsTextResourceEntries table
-	// and close any open text resource files
-	for (int i = 0; i != kMaxTextResourceEntries; ++i) {
-		if (_vqaSubsTextResourceEntries[i] != nullptr) {
-			delete _vqaSubsTextResourceEntries[i];
-			_vqaSubsTextResourceEntries[i] = nullptr;
-		}
-	}
-
-	if (_subsFont != nullptr) {
-		delete _subsFont;
-		_subsFont = nullptr;
-	}
+	reset();
 }
 
 //
 // Init is kept separated from constructor to allow not loading up resources if subtitles system is disabled
 //
 void Subtitles::init(void) {
-	_subtitlesSystemActive = true;
+	// Loading subtitles versioning info if available
+	TextResource *versionTxtResource = new TextResource(_vm);
+	if ( versionTxtResource->open(SUBTITLES_VERSION_TRENAME, false)) {
+		_subtitlesInfo.credits = versionTxtResource->getText((uint32)0);
+		_subtitlesInfo.versionStr = versionTxtResource->getText((uint32)1);
+		_subtitlesInfo.dateOfCompile = versionTxtResource->getText((uint32)2);
+		_subtitlesInfo.languageMode = versionTxtResource->getText((uint32)3);
+		Common::String fontType = versionTxtResource->getText((uint32)4);
+		_subtitlesInfo.fontName = versionTxtResource->getText((uint32)5);
+
+		if (fontType.equalsIgnoreCase("ttf")) {
+			_subtitlesInfo.fontType = Subtitles::kSubtitlesFontTypeTTF;
+		} else {
+			_subtitlesInfo.fontType = Subtitles::kSubtitlesFontTypeInternal;
+		}
+
+		if ( _subtitlesInfo.fontName.empty()) {
+			_subtitlesInfo.fontName = "SUBTLS_E.FON";
+		}
+
+		debug("Subtitles version info: v%s (%s) %s by: %s",
+		       _subtitlesInfo.versionStr.c_str(),
+		       _subtitlesInfo.dateOfCompile.c_str(),
+		       _subtitlesInfo.languageMode.c_str(),
+		       _subtitlesInfo.credits.c_str());
+
+		delete versionTxtResource;
+		versionTxtResource = nullptr;
+	} else {
+		debug("Subtitles version info: N/A");
+	}
+
+	//
+	// Initializing/Loading Subtitles Fonts
+	if (_subtitlesInfo.fontType == Subtitles::kSubtitlesFontTypeInternal) {
+		// Use TAHOMA18.FON (is corrupted in places)
+		// 10PT or TAHOMA24 or KIA6PT  have all caps glyphs (and also are too big or too small) so they are not appropriate.
+		_font = Font::load(_vm, _subtitlesInfo.fontName, -1, true);
+		_useUTF8 = false;
+	} else if (_subtitlesInfo.fontType == Subtitles::kSubtitlesFontTypeTTF) {
+#if defined(USE_FREETYPE2)
+		Common::ScopedPtr<Common::SeekableReadStream> stream(_vm->getResourceStream(_subtitlesInfo.fontName));
+		// Common::ScopedPtr<Common::SeekableReadStream> stream(SearchMan.createReadStreamForMember("NotoSansCJKsc-Medium.otf"));
+
+		_font = Graphics::loadTTFFont(*stream, 18);
+		_useUTF8 = true;
+#else
+		warning("Subtitles require a TTF font but this ScummVM build doesn't support it.");
+		return;
+#endif
+	}
+
+	if (_font) {
+		debug("Subtitles font '%s' was loaded successfully.", _subtitlesInfo.fontName.c_str());
+	} else {
+		warning("Subtitles font '%s' could not be loaded.", _subtitlesInfo.fontName.c_str());
+		return;
+	}
+	//Done - Initializing/Loading Subtitles Fonts
+	//
+
 	//
 	// Loading text resources
 	for (int i = 0; i < kMaxTextResourceEntries; i++) {
@@ -149,49 +201,16 @@ void Subtitles::init(void) {
 	}
 	// Done - Loading text resources
 	//
-	// Initializing/Loading Subtitles Fonts
-	_subsFont = Font::load(_vm, SUBTITLES_FONT_FILENAME_EXTERNAL, -1, true);
-	// Use TAHOMA18.FON (is corrupted in places)
-	// 10PT or TAHOMA24 or KIA6PT  have all caps glyphs (and also are too big or too small) so they are not appropriate.
-	if (_subsFont) { // Color setting does not seem to affect the TAHOMA fonts or does it affect the black outline since we give 0 here?
-		_subsFontsLoaded = true;
-	} else {
-		_subsFontsLoaded = false;
-	}
 
-	//Done - Initializing/Loading Subtitles Fonts
 	//
 	// calculate the Screen Y position of the subtitle lines
 	// getTextHeight("") returns the maxHeight of the font glyphs regardless of the actual text parameter
 	//  debug("Max height %d", _subsFont->getTextHeight(""));
-	if (_subsFontsLoaded) {
-		for (int i = 0; i < kMaxNumOfSubtitlesLines; ++i) {
-			_subtitleLineScreenY[i] = 479 - kSubtitlesBottomYOffsetPx - ((kMaxNumOfSubtitlesLines - i) * (_subsFont->getFontHeight() + 1));
-		}
+	for (int i = 0; i < kMaxNumOfSubtitlesLines; ++i) {
+		_subtitleLineScreenY[i] = 479 - kSubtitlesBottomYOffsetPx - ((kMaxNumOfSubtitlesLines - i) * (_font->getFontHeight() + 1));
 	}
 
-	// Loading subtitles versioning info if available
-	TextResource *versionTxtResource = new TextResource(_vm);
-	if ( versionTxtResource->open(SUBTITLES_VERSION_TRENAME, false)) {
-		_subtitlesInfo.credits = versionTxtResource->getText((uint32)0);
-		_subtitlesInfo.versionStr = versionTxtResource->getText((uint32)1);
-		_subtitlesInfo.dateOfCompile = versionTxtResource->getText((uint32)2);
-		_subtitlesInfo.languageMode = versionTxtResource->getText((uint32)3);
-		debug("Subtitles version info: v%s (%s) %s by: %s",
-		       _subtitlesInfo.versionStr.c_str(),
-		       _subtitlesInfo.dateOfCompile.c_str(),
-		       _subtitlesInfo.languageMode.c_str(),
-		       _subtitlesInfo.credits.c_str());
-		if (isSubsFontsLoaded()) {
-			debug("Subtitles font was loaded successfully.");
-		} else {
-			debug("Subtitles font could not be loaded.");
-		}
-		delete versionTxtResource;
-		versionTxtResource = nullptr;
-	} else {
-		debug("Subtitles version info: N/A");
-	}
+	_subtitlesSystemActive = true;
 }
 
 Subtitles::SubtitlesInfo Subtitles::getSubtitlesInfo() const {
@@ -368,7 +387,7 @@ void Subtitles::tick(Graphics::Surface &s) {
 * Draw method for drawing the subtitles on the display surface
 */
 void Subtitles::draw(Graphics::Surface &s) {
-	if (!_isVisible || _currentSubtitleTextFull.empty() || !_subsFontsLoaded) {
+	if (!_subtitlesSystemActive || !_isVisible || _currentSubtitleTextFull.empty()) {
 		return;
 	}
 	if (_subtitlesQuoteChanged) {
@@ -389,7 +408,20 @@ void Subtitles::draw(Graphics::Surface &s) {
 	}
 
 	for (int i = 0, j = startingLineFromTop; i < _currentSubtitleLines; ++i, ++j) {
-		_subsFont->drawString(&s, _subtitleLineQuote[i], _subtitleLineScreenX[i], _subtitleLineScreenY[j], s.w, 0);
+		Common::U32String text = _useUTF8 ? convertUtf8ToUtf32(_subtitleLineQuote[i]) : _subtitleLineQuote[i];
+		switch (_subtitlesInfo.fontType) {
+			case Subtitles::kSubtitlesFontTypeInternal:
+				// shadow/outline is part of the font color data
+				_font->drawString(&s, text, _subtitleLineScreenX[i], _subtitleLineScreenY[j], s.w, 0);
+				break;
+			case Subtitles::kSubtitlesFontTypeTTF:
+				_font->drawString(&s, text, _subtitleLineScreenX[i] - 1, _subtitleLineScreenY[j] - 1, s.w, s.format.RGBToColor(  0,   0,   0));
+				_font->drawString(&s, text, _subtitleLineScreenX[i] + 1, _subtitleLineScreenY[j] - 1, s.w, s.format.RGBToColor(  0,   0,   0));
+				_font->drawString(&s, text, _subtitleLineScreenX[i] - 1, _subtitleLineScreenY[j] + 1, s.w, s.format.RGBToColor(  0,   0,   0));
+				_font->drawString(&s, text, _subtitleLineScreenX[i] + 1, _subtitleLineScreenY[j] + 1, s.w, s.format.RGBToColor(  0,   0,   0));
+				_font->drawString(&s, text, _subtitleLineScreenX[i]    , _subtitleLineScreenY[j]    , s.w, s.format.RGBToColor(255, 255, 255));
+				break;
+		}
 	}
 }
 
@@ -418,9 +450,8 @@ void Subtitles::draw(Graphics::Surface &s) {
 * TODO: somehow merge with graphics/font.cpp -> wordWrapTextImpl ?
 */
 void Subtitles::calculatePosition() {
-
 	// wOrig is in pixels, origQuoteNumOfChars is num of chars in string
-	int wOrig = _subsFont->getStringWidth(_currentSubtitleTextFull) + 2; // +2 to account for left/ right shadow pixels (or for good measure)
+	int wOrig = _font->getStringWidth(_currentSubtitleTextFull) + 2; // +2 to account for left/ right shadow pixels (or for good measure)
 	int origQuoteNumOfChars = _currentSubtitleTextFull.size();
 	int tmpCharIndex = 0;
 	bool drawSingleLineQuote = false;
@@ -466,7 +497,7 @@ void Subtitles::calculatePosition() {
 		//
 		// Check widths and set starting X positions per line
 		for (int k = 0; k < _currentSubtitleLines; ++k) {
-			tmpLineWidth[k] = _subsFont->getStringWidth(_subtitleLineQuote[k]) + 2;
+			tmpLineWidth[k] = _font->getStringWidth(_subtitleLineQuote[k]) + 2;
 			_subtitleLineScreenX[k] = (639 - tmpLineWidth[k]) / 2;
 			_subtitleLineScreenX[k] = CLIP(_subtitleLineScreenX[k], 0, 639 - tmpLineWidth[k]);
 		}
@@ -496,7 +527,7 @@ void Subtitles::calculatePosition() {
 					}
 					_subtitleLineQuote[0] += '\0';
 //                    debug(" Line 0 quote %s", _subtitleLineQuote[0].c_str());
-					tmpLineWidth[0] = _subsFont->getStringWidth(_subtitleLineQuote[0]) + 2; // check the width of the first segment of the quote
+					tmpLineWidth[0] = _font->getStringWidth(_subtitleLineQuote[0]) + 2; // check the width of the first segment of the quote
 					if (tmpLineWidth[0] > kMaxWidthPerLineToAutoSplitThresholdPx && linesToSplitInto < kMaxNumOfSubtitlesLines) {
 						// we exceed max width so we reset process by trying to split into more lines
 						continue; // re-try the For-loop with increased linesToSplitInto by 1
@@ -521,7 +552,7 @@ void Subtitles::calculatePosition() {
 						//
 						// Check widths and set starting X positions per line
 						for (int j = 0; j < _currentSubtitleLines; ++j) {
-							tmpLineWidth[j] = _subsFont->getStringWidth(_subtitleLineQuote[j]) + 2;
+							tmpLineWidth[j] = _font->getStringWidth(_subtitleLineQuote[j]) + 2;
 							_subtitleLineScreenX[j] = (639 - tmpLineWidth[j]) / 2;
 							_subtitleLineScreenX[j] = CLIP(_subtitleLineScreenX[j], 0, 639 - tmpLineWidth[j]);
 						}
@@ -582,12 +613,11 @@ void Subtitles::reset() {
 		_gameSubsResourceEntriesFound[i] = false;
 	}
 
-	if (_subsFont != nullptr) {
-		delete _subsFont;
-		_subsFont = nullptr;
+	if (_font != nullptr) {
+		delete _font;
+		_font = nullptr;
 	}
-
-	_subsFontsLoaded = false;
+	_useUTF8 = false;
 }
 
 } // End of namespace BladeRunner

@@ -26,17 +26,15 @@
 #include "bladerunner/bladerunner.h"
 
 #include "common/str.h"
-#include "graphics/surface.h"
 
-#include "common/file.h"
-#include "common/substream.h"
-
+namespace Graphics {
+class Font;
+}
 
 namespace BladeRunner {
 
 class BladeRunnerEngine;
 class TextResource;
-class Font;
 
 class Subtitles {
 	friend class Debugger;
@@ -54,16 +52,25 @@ class Subtitles {
 
 	BladeRunnerEngine *_vm;
 
+	enum SubtitlesFontType {
+		kSubtitlesFontTypeInternal,
+		kSubtitlesFontTypeTTF
+	};
+
 	struct SubtitlesInfo {
-		Common::String versionStr;
-		Common::String dateOfCompile;
-		Common::String languageMode;
-		Common::String credits;
+		Common::String    versionStr;
+		Common::String    dateOfCompile;
+		Common::String    languageMode;
+		Common::String    credits;
+		SubtitlesFontType fontType;
+		Common::String    fontName;
 	};
 
 	SubtitlesInfo  _subtitlesInfo;
-	TextResource *_vqaSubsTextResourceEntries[kMaxTextResourceEntries];
-	Font         *_subsFont;
+	TextResource  *_vqaSubsTextResourceEntries[kMaxTextResourceEntries];
+
+	Graphics::Font *_font;
+	bool            _useUTF8;
 
 	bool           _isVisible;
 	bool           _forceShowWhenNoSpeech;
@@ -76,7 +83,6 @@ class Subtitles {
 	bool           _subtitlesQuoteChanged;
 
 	bool _gameSubsResourceEntriesFound[kMaxTextResourceEntries]; // false if a TRE file did not open successfully
-	bool _subsFontsLoaded;                                       // false if external fonts did not load
 	bool _subtitlesSystemActive;                                 // true if the whole subtitles subsystem should be disabled (due to missing required resources)
 
 public:
@@ -84,7 +90,6 @@ public:
 	~Subtitles();
 
 	bool isSystemActive() const { return _subtitlesSystemActive; }
-	bool isSubsFontsLoaded() const { return _subsFontsLoaded; }
 
 	void init();
 	SubtitlesInfo getSubtitlesInfo() const;

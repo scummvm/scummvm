@@ -1295,8 +1295,8 @@ bool Debugger::cmdSubtitle(int argc, const char **argv) {
 			            _vm->_subtitles->getSubtitlesInfo().dateOfCompile.c_str(),
 			            _vm->_subtitles->getSubtitlesInfo().languageMode.c_str(),
 			            _vm->_subtitles->getSubtitlesInfo().credits.c_str());
-			debugPrintf("Subtitles fonts loaded: %s\n",
-			            _vm->_subtitles->isSubsFontsLoaded()? "True":"False");
+			debugPrintf("Subtitles font loaded: %s\n",
+			            _vm->_subtitles->getSubtitlesInfo().fontName.c_str());
 
 		} else if (subtitleText == "reset") {
 			_vm->_subtitles->setGameSubsText("", false);

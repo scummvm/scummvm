@@ -476,6 +476,7 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 	_surfaceBack.create(640, 480, screenPixelFormat());
 
 	_time = new Time(this);
+
 	// Try to load the SUBTITLES.MIX first, before Startup.MIX
 	// allows overriding any identically named resources (such as the original font files and as a bonus also the TRE files for the UI and dialogue menu)
 	_subtitles = new Subtitles(this);
