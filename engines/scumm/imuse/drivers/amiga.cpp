@@ -85,7 +85,6 @@ private:
 
 	uint8 _id;
 	uint8 _note;
-	int8 _transpose;
 	bool _sustain;
 
 	IMuseDriver_Amiga *_driver;
@@ -309,7 +308,6 @@ void SoundChannel_Amiga::ctrl_sustain(bool sustainToggle) {
 }
 
 void SoundChannel_Amiga::transposePitchBend(int8 transpose, int16 pitchBend) {
-	//_transpose = transpose;
 	const Instrument_Amiga::Samples *s = &_instruments[_ioUnit.program].samples[_ioUnit.block];
 	_driver->setChannelPeriod(_id, calculatePeriod(((_note + transpose) << 7) + pitchBend, s->baseNote, s->rate));
 }
