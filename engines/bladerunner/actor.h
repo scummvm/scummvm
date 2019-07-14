@@ -128,6 +128,7 @@ public:
 	void setAtXYZ(const Vector3 &pos, int facing, bool setFacing = true, bool moving = false, bool retired = false);
 	void setAtWaypoint(int waypointId, int angle, int unknown, bool retired);
 
+	int  getId() const { return _id; };
 	float getX() const;
 	float getY() const;
 	float getZ() const;

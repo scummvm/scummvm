@@ -158,6 +158,11 @@ void Combat::shoot(int actorId, Vector3 &to, int screenX) {
 		if (actor->inCombat()) {
 			actor->combatModeOff();
 		}
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+		// make sure the dead enemy won't pick a pending movement track and re-spawn
+		actor->_movementTrack->flush();
+#endif
 		actor->stopWalking(false);
 		actor->changeAnimationMode(kAnimationModeDie, false);
 
