@@ -85,7 +85,7 @@ void KIASectionDiagnostic::draw(Graphics::Surface &surface) {
 
 			const char *text = _text->getText(i);
 			if (text) {
-				_vm->_mainFont->drawColor(text, surface, 320 - _vm->_mainFont->getTextWidth(text) / 2, y, surface.format.RGBToColor(kTextColors[colorIndex].r, kTextColors[colorIndex].g, kTextColors[colorIndex].b));
+				_vm->_mainFont->drawString(&surface, text, 320 - _vm->_mainFont->getStringWidth(text) / 2, y, surface.w, surface.format.RGBToColor(kTextColors[colorIndex].r, kTextColors[colorIndex].g, kTextColors[colorIndex].b));
 			}
 		}
 	}

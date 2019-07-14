@@ -119,7 +119,6 @@ Subtitles::~Subtitles() {
 	}
 
 	if (_subsFont != nullptr) {
-		_subsFont->close();
 		delete _subsFont;
 		_subsFont = nullptr;
 	}
@@ -151,11 +150,10 @@ void Subtitles::init(void) {
 	// Done - Loading text resources
 	//
 	// Initializing/Loading Subtitles Fonts
-	_subsFont = new Font(_vm);
+	_subsFont = Font::load(_vm, SUBTITLES_FONT_FILENAME_EXTERNAL, -1, true);
 	// Use TAHOMA18.FON (is corrupted in places)
 	// 10PT or TAHOMA24 or KIA6PT  have all caps glyphs (and also are too big or too small) so they are not appropriate.
-	if (_subsFont ->open(SUBTITLES_FONT_FILENAME_EXTERNAL, 640, 480, -1, 0, 0)) { // Color setting does not seem to affect the TAHOMA fonts or does it affect the black outline since we give 0 here?
-		_subsFont->setSpacing(-1, 0);
+	if (_subsFont) { // Color setting does not seem to affect the TAHOMA fonts or does it affect the black outline since we give 0 here?
 		_subsFontsLoaded = true;
 	} else {
 		_subsFontsLoaded = false;
@@ -168,7 +166,7 @@ void Subtitles::init(void) {
 	//  debug("Max height %d", _subsFont->getTextHeight(""));
 	if (_subsFontsLoaded) {
 		for (int i = 0; i < kMaxNumOfSubtitlesLines; ++i) {
-			_subtitleLineScreenY[i] = 479 - kSubtitlesBottomYOffsetPx - ((kMaxNumOfSubtitlesLines - i) * (_subsFont->getTextHeight("") + 1));
+			_subtitleLineScreenY[i] = 479 - kSubtitlesBottomYOffsetPx - ((kMaxNumOfSubtitlesLines - i) * (_subsFont->getFontHeight() + 1));
 		}
 	}
 
@@ -209,8 +207,7 @@ int Subtitles::getIdxForSubsTreName(const Common::String &treName) const {
 	for (int i = 0; i < kMaxTextResourceEntries; ++i) {
 		if (!strcmp(SUBTITLES_FILENAME_PREFIXES[i], "WSTLGO") || !strcmp(SUBTITLES_FILENAME_PREFIXES[i], "BRLOGO")) {
 			tmpConstructedFileName = Common::String(SUBTITLES_FILENAME_PREFIXES[i]) + "_E"; // Only English versions of these exist
-		}
-		else {
+		} else {
 			tmpConstructedFileName = Common::String(SUBTITLES_FILENAME_PREFIXES[i]) + "_" + _vm->_languageCode;
 		}
 		if (tmpConstructedFileName == treName) {
@@ -392,7 +389,7 @@ void Subtitles::draw(Graphics::Surface &s) {
 	}
 
 	for (int i = 0, j = startingLineFromTop; i < _currentSubtitleLines; ++i, ++j) {
-		_subsFont->draw(_subtitleLineQuote[i], s, _subtitleLineScreenX[i], _subtitleLineScreenY[j]);
+		_subsFont->drawString(&s, _subtitleLineQuote[i], _subtitleLineScreenX[i], _subtitleLineScreenY[j], s.w, 0);
 	}
 }
 
@@ -423,7 +420,7 @@ void Subtitles::draw(Graphics::Surface &s) {
 void Subtitles::calculatePosition() {
 
 	// wOrig is in pixels, origQuoteNumOfChars is num of chars in string
-	int wOrig = _subsFont->getTextWidth(_currentSubtitleTextFull) + 2; // +2 to account for left/ right shadow pixels (or for good measure)
+	int wOrig = _subsFont->getStringWidth(_currentSubtitleTextFull) + 2; // +2 to account for left/ right shadow pixels (or for good measure)
 	int origQuoteNumOfChars = _currentSubtitleTextFull.size();
 	int tmpCharIndex = 0;
 	bool drawSingleLineQuote = false;
@@ -469,7 +466,7 @@ void Subtitles::calculatePosition() {
 		//
 		// Check widths and set starting X positions per line
 		for (int k = 0; k < _currentSubtitleLines; ++k) {
-			tmpLineWidth[k] = _subsFont->getTextWidth(_subtitleLineQuote[k]) + 2;
+			tmpLineWidth[k] = _subsFont->getStringWidth(_subtitleLineQuote[k]) + 2;
 			_subtitleLineScreenX[k] = (639 - tmpLineWidth[k]) / 2;
 			_subtitleLineScreenX[k] = CLIP(_subtitleLineScreenX[k], 0, 639 - tmpLineWidth[k]);
 		}
@@ -499,7 +496,7 @@ void Subtitles::calculatePosition() {
 					}
 					_subtitleLineQuote[0] += '\0';
 //                    debug(" Line 0 quote %s", _subtitleLineQuote[0].c_str());
-					tmpLineWidth[0] = _subsFont->getTextWidth(_subtitleLineQuote[0]) + 2; // check the width of the first segment of the quote
+					tmpLineWidth[0] = _subsFont->getStringWidth(_subtitleLineQuote[0]) + 2; // check the width of the first segment of the quote
 					if (tmpLineWidth[0] > kMaxWidthPerLineToAutoSplitThresholdPx && linesToSplitInto < kMaxNumOfSubtitlesLines) {
 						// we exceed max width so we reset process by trying to split into more lines
 						continue; // re-try the For-loop with increased linesToSplitInto by 1
@@ -524,7 +521,7 @@ void Subtitles::calculatePosition() {
 						//
 						// Check widths and set starting X positions per line
 						for (int j = 0; j < _currentSubtitleLines; ++j) {
-							tmpLineWidth[j] = _subsFont->getTextWidth(_subtitleLineQuote[j]) + 2;
+							tmpLineWidth[j] = _subsFont->getStringWidth(_subtitleLineQuote[j]) + 2;
 							_subtitleLineScreenX[j] = (639 - tmpLineWidth[j]) / 2;
 							_subtitleLineScreenX[j] = CLIP(_subtitleLineScreenX[j], 0, 639 - tmpLineWidth[j]);
 						}
@@ -586,7 +583,6 @@ void Subtitles::reset() {
 	}
 
 	if (_subsFont != nullptr) {
-		_subsFont->close();
 		delete _subsFont;
 		_subsFont = nullptr;
 	}

@@ -214,7 +214,7 @@ void UIImagePicker::draw(Graphics::Surface &surface) {
 
 		if (_vm->_debugger->_viewUI) {
 			surface.frameRect(img.rect, surface.format.RGBToColor(255, 255, 255));
-			_vm->_mainFont->drawColor(Common::String::format("%d", i), surface, (img.rect.left + img.rect.right) / 2, (img.rect.top + img.rect.bottom) / 2, surface.format.RGBToColor(255, 255, 255));
+			_vm->_mainFont->drawString(&surface, Common::String::format("%d", i), (img.rect.left + img.rect.right) / 2, (img.rect.top + img.rect.bottom) / 2, surface.w, surface.format.RGBToColor(255, 255, 255));
 		}
 	}
 }
@@ -239,8 +239,8 @@ void UIImagePicker::drawTooltip(Graphics::Surface &surface, int x, int y) {
 		return;
 	}
 
-	int width = _vm->_mainFont->getTextWidth(tooltip) + 1;
-	int height = _vm->_mainFont->getTextHeight(tooltip) + 1;
+	int width = _vm->_mainFont->getStringWidth(tooltip) + 1;
+	int height = _vm->_mainFont->getFontHeight() + 1;
 
 	Common::Rect rect;
 	rect.left = x - ((width / 2) + 1);
@@ -267,7 +267,7 @@ void UIImagePicker::drawTooltip(Graphics::Surface &surface, int x, int y) {
 
 	surface.fillRect(rect, surface.format.RGBToColor(0, 0, 0));
 	surface.frameRect(rect, surface.format.RGBToColor(255, 255, 255));
-	_vm->_mainFont->drawColor(tooltip, surface, rect.left + 2, rect.top, surface.format.RGBToColor(255, 255, 255));
+	_vm->_mainFont->drawString(&surface, tooltip, rect.left + 2, rect.top, surface.w, surface.format.RGBToColor(255, 255, 255));
 }
 
 bool UIImagePicker::handleMouseAction(int x, int y, bool down, bool up, bool ignore) {

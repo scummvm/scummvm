@@ -175,7 +175,7 @@ void KIASectionSuspects::draw(Graphics::Surface &surface) {
 	}
 	if (_suspectPhotoShapeId == 14 || _suspectPhotoShapeId == 13) {
 		text = _vm->_textKIA->getText(49);
-		_vm->_mainFont->drawColor(text, surface, 190 - _vm->_mainFont->getTextWidth(text) / 2, 201, surface.format.RGBToColor(255, 255, 255));
+		_vm->_mainFont->drawString(&surface, text, 190 - _vm->_mainFont->getStringWidth(text) / 2, 201, surface.w, surface.format.RGBToColor(255, 255, 255));
 	}
 
 	_whereaboutsCheckBox->setChecked(_whereaboutsFilter);
@@ -186,14 +186,14 @@ void KIASectionSuspects::draw(Graphics::Surface &surface) {
 
 	_uiContainer->draw(surface);
 
-	_vm->_mainFont->drawColor(_vm->_textKIA->getText(0),  surface, 300, 162, surface.format.RGBToColor(232, 240, 248));
-	_vm->_mainFont->drawColor(_vm->_textKIA->getText(46), surface, 142, 248, surface.format.RGBToColor(232, 240, 248));
-	_vm->_mainFont->drawColor(_vm->_textKIA->getText(47), surface, 142, 308, surface.format.RGBToColor(232, 240, 248));
-	_vm->_mainFont->drawColor(_vm->_textKIA->getText(14), surface, 154, 319, surface.format.RGBToColor(72, 104, 152));
-	_vm->_mainFont->drawColor(_vm->_textKIA->getText(15), surface, 154, 329, surface.format.RGBToColor(96, 120, 184));
-	_vm->_mainFont->drawColor(_vm->_textKIA->getText(16), surface, 154, 339, surface.format.RGBToColor(112, 144, 216));
-	_vm->_mainFont->drawColor(_vm->_textKIA->getText(17), surface, 154, 349, surface.format.RGBToColor(96, 120, 184));
-	_vm->_mainFont->drawColor(_vm->_textKIA->getText(48), surface, 154, 359, surface.format.RGBToColor(72, 104, 152));
+	_vm->_mainFont->drawString(&surface, _vm->_textKIA->getText(0),  300, 162, surface.w, surface.format.RGBToColor(232, 240, 248));
+	_vm->_mainFont->drawString(&surface, _vm->_textKIA->getText(46), 142, 248, surface.w, surface.format.RGBToColor(232, 240, 248));
+	_vm->_mainFont->drawString(&surface, _vm->_textKIA->getText(47), 142, 308, surface.w, surface.format.RGBToColor(232, 240, 248));
+	_vm->_mainFont->drawString(&surface, _vm->_textKIA->getText(14), 154, 319, surface.w, surface.format.RGBToColor(72, 104, 152));
+	_vm->_mainFont->drawString(&surface, _vm->_textKIA->getText(15), 154, 329, surface.w, surface.format.RGBToColor(96, 120, 184));
+	_vm->_mainFont->drawString(&surface, _vm->_textKIA->getText(16), 154, 339, surface.w, surface.format.RGBToColor(112, 144, 216));
+	_vm->_mainFont->drawString(&surface, _vm->_textKIA->getText(17), 154, 349, surface.w, surface.format.RGBToColor(96, 120, 184));
+	_vm->_mainFont->drawString(&surface, _vm->_textKIA->getText(48), 154, 359, surface.w, surface.format.RGBToColor(72, 104, 152));
 
 
 	surface.fillRect(Common::Rect(120, 134, 250, 145), 0);
@@ -219,7 +219,7 @@ void KIASectionSuspects::draw(Graphics::Surface &surface) {
 		}
 	}
 
-	_vm->_mainFont->drawColor(text, surface, 185 - _vm->_mainFont->getTextWidth(text) / 2, 136, surface.format.RGBToColor(136, 168, 248));
+	_vm->_mainFont->drawString(&surface, text, 185 - _vm->_mainFont->getStringWidth(text) / 2, 136, surface.w, surface.format.RGBToColor(136, 168, 248));
 
 	_buttons->draw(surface);
 	_buttons->drawTooltip(surface, _mouseX, _mouseY);

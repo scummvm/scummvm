@@ -53,9 +53,9 @@ void UIInputBox::draw(Graphics::Surface &surface) {
 	}
 
 	int rectHalfWidth = (_rect.right + _rect.left) / 2;
-	int textHalfWidth = _vm->_mainFont->getTextWidth(_text) / 2;
+	int textHalfWidth = _vm->_mainFont->getStringWidth(_text) / 2;
 
-	_vm->_mainFont->drawColor(_text, surface, rectHalfWidth - textHalfWidth, _rect.top, surface.format.RGBToColor(152, 112, 56));
+	_vm->_mainFont->drawString(&surface, _text, rectHalfWidth - textHalfWidth, _rect.top, surface.w, surface.format.RGBToColor(152, 112, 56));
 
 	if (_cursorIsVisible) {
 		surface.vLine(textHalfWidth + rectHalfWidth + 2, _rect.top, _rect.bottom - 1, surface.format.RGBToColor(248, 240, 232));

@@ -28,8 +28,7 @@
 
 namespace BladeRunner {
 
-Font::Font(BladeRunnerEngine *vm) {
-	_vm = vm;
+Font::Font() {
 	reset();
 }
 
@@ -37,45 +36,43 @@ Font::~Font() {
 	close();
 }
 
-bool Font::open(const Common::String &fileName, int screenWidth, int screenHeight, int spacing1, int spacing2, uint16 color) {
-	reset();
+Font* Font::load(BladeRunnerEngine *vm, const Common::String &fileName, int spacing, bool useFontColor) {
+	Font *font = new Font();
+	font->_spacing = spacing;
+	font->_useFontColor = useFontColor;
 
-	_screenWidth = screenWidth;
-	_screenHeight = screenHeight;
-	_spacing1 = spacing1;
-	_spacing2 = spacing2;
-	_defaultColor = color;
-	_color = color;
-
-	Common::ScopedPtr<Common::SeekableReadStream> stream(_vm->getResourceStream(fileName));
+	Common::ScopedPtr<Common::SeekableReadStream> stream(vm->getResourceStream(fileName));
 	if (!stream) {
 		warning("Font::open failed to open '%s'", fileName.c_str());
-		return false;
+		delete font;
+		return nullptr;
 	}
 
-	_characterCount = stream->readUint32LE();
-	_maxWidth = stream->readUint32LE();
-	_maxHeight = stream->readUint32LE();
-	_dataSize = stream->readUint32LE();
-	_data = new uint16[_dataSize];
-	if (!_data) {
+	font->_characterCount = stream->readUint32LE();
+	font->_maxWidth = stream->readUint32LE();
+	font->_maxHeight = stream->readUint32LE();
+	font->_dataSize = stream->readUint32LE();
+	font->_data = new uint16[font->_dataSize];
+	if (!font->_data) {
 		warning("Font::open failed to allocate font buffer");
-		return false;
+		delete font;
+		return nullptr;
 	}
 
-	for (int i = 0; i < _characterCount; i++) {
-		_characters[i].x = stream->readUint32LE();
-		_characters[i].y = stream->readUint32LE();
-		_characters[i].width = stream->readUint32LE();
-		_characters[i].height = stream->readUint32LE();
-		_characters[i].dataOffset = stream->readUint32LE();
+	font->_characters.resize(font->_characterCount);
+	for (uint32 i = 0; i < font->_characterCount; i++) {
+		font->_characters[i].x = stream->readUint32LE();
+		font->_characters[i].y = stream->readUint32LE();
+		font->_characters[i].width = stream->readUint32LE();
+		font->_characters[i].height = stream->readUint32LE();
+		font->_characters[i].dataOffset = stream->readUint32LE();
 	}
 
-	for (int i = 0; i < _dataSize; i++) {
-		_data[i] = stream->readUint16LE();
+	for (int i = 0; i < font->_dataSize; i++) {
+		font->_data[i] = stream->readUint16LE();
 	}
 
-	return true;
+	return font;
 }
 
 void Font::close() {
@@ -83,68 +80,6 @@ void Font::close() {
 		delete[] _data;
 	}
 	reset();
-}
-
-void Font::setSpacing(int spacing1, int spacing2) {
-	if (_data) {
-		_spacing1 = spacing1;
-		_spacing2 = spacing2;
-	}
-}
-
-void Font::setColor(uint16 color) {
-	_color = color;
-}
-
-void Font::draw(const Common::String &text, Graphics::Surface &surface, int x, int y) const {
-	if (!_data) {
-		return;
-	}
-
-	x = CLIP(x, 0, _screenWidth - getTextWidth(text) + 1);
-	y = CLIP(y, 0, _screenHeight - _maxHeight);
-
-	const uint8 *character = (const uint8 *)text.c_str();
-	while (*character != 0) {
-		drawCharacter(*character, surface, x, y);
-		x += _spacing1 + _characters[*character + 1].width;
-		character++;
-	}
-
-}
-
-void Font::drawColor(const Common::String &text, Graphics::Surface &surface, int x, int y, uint16 color) {
-	setColor(color);
-	draw(text, surface, x, y);
-}
-
-void Font::drawNumber(int num, Graphics::Surface &surface, int x, int y) const {
-	char buffer[20];
-
-	snprintf(buffer, 20, "%d", num);
-
-	draw(buffer, surface, x, y);
-}
-
-int Font::getTextWidth(const Common::String &text) const {
-	const uint8 *character = (const uint8 *)text.c_str();
-
-	if (!_data) {
-		return 0;
-	}
-	int totalWidth = 0;
-	if (*character == 0) {
-		return 0;
-	}
-	while (*character != 0) {
-		totalWidth += _spacing1 + _characters[*character + 1].width;
-		character++;
-	}
-	return totalWidth - _spacing1;
-}
-
-int Font::getTextHeight(const Common::String &text) const {
-	return _maxHeight;
 }
 
 void Font::reset() {
@@ -155,26 +90,40 @@ void Font::reset() {
 	_dataSize = 0;
 	_screenWidth = 0;
 	_screenHeight = 0;
-	_spacing1 = 0;
-	_spacing2 = 0;
-	_color = screenPixelFormat().RGBToColor(255, 255, 255);
+	_spacing = 0;
+	_useFontColor = false;
 	_intersperse = 0;
 
-	memset(_characters, 0, 256 * sizeof(Character));
+	_characters.clear();
 }
 
-void Font::drawCharacter(const uint8 character, Graphics::Surface &surface, int x, int y) const {
-	uint8 characterIndex = character + 1;
-	if (x < 0 || x >= _screenWidth || y < 0 || y >= _screenHeight || !_data || characterIndex >= _characterCount) {
+int Font::getFontHeight() const {
+	return _maxHeight;
+}
+
+int Font::getMaxCharWidth() const {
+	return _maxWidth;
+}
+
+int Font::getCharWidth(uint32 chr) const {
+	if (chr >= _characterCount) {
+		return 0;
+	}
+	return _characters[chr + 1].width + _spacing;
+}
+
+void Font::drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const {
+	uint32 characterIndex = chr + 1;
+	if (x < 0 || x >= dst->w || y < 0 || y >= dst->h || !_data || characterIndex >= _characterCount) {
 		return;
 	}
 
-	uint16 *dstPtr = (uint16 *)surface.getBasePtr(x + _characters[characterIndex].x, y + _characters[characterIndex].y);
+	uint16 *dstPtr = (uint16 *)dst->getBasePtr(x + _characters[characterIndex].x, y + _characters[characterIndex].y);
 	uint16 *srcPtr = &_data[_characters[characterIndex].dataOffset];
 	int width = _characters[characterIndex].width;
 	int height = _characters[characterIndex].height;
 	if (_intersperse && y & 1) {
-		dstPtr += surface.pitch / 2;
+		dstPtr += dst->pitch / 2;
 	}
 
 	int endY = height + y - 1;
@@ -191,28 +140,28 @@ void Font::drawCharacter(const uint8 character, Graphics::Surface &surface, int 
 		return;
 	}
 
-	while (currentY <= endY && currentY < _screenHeight) {
+	while (currentY <= endY && currentY < dst->h) {
 		int currentX = x;
 		int endX = width + x - 1;
-		while (currentX <= endX && currentX < _screenWidth) {
+		while (currentX <= endX && currentX < dst->w) {
 			uint8 a, r, g, b;
 			gameDataPixelFormat().colorToARGB(*srcPtr, a, r, g, b);
-			if (!a) {
-				if (_color == _defaultColor) {
+			if (!a) { // Alpha is inversed
+				if (_useFontColor) {
 					// Ignore the alpha in the output as it is inversed in the input
-					*dstPtr = surface.format.RGBToColor(r, g, b);
+					*dstPtr = dst->format.RGBToColor(r, g, b);
 				} else {
-					*dstPtr = _color;
+					*dstPtr = (uint16)color;
 				}
 			}
 			dstPtr++;
 			srcPtr++;
 			currentX++;
 		}
-		dstPtr += surface.pitch / 2 - width;
+		dstPtr += dst->pitch / 2 - width;
 		if (_intersperse) {
 			srcPtr += width;
-			dstPtr += surface.pitch / 2;
+			dstPtr += dst->pitch / 2;
 			currentY++;
 		}
 		currentY++;

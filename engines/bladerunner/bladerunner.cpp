@@ -629,9 +629,7 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 
 	_scores = new Scores(this);
 
-	_mainFont = new Font(this);
-	_mainFont->open("KIA6PT.FON", 640, 480, -1, 0, _surfaceFront.format.RGBToColor(72, 72, 104));
-	_mainFont->setSpacing(1, 0);
+	_mainFont = Font::load(this, "KIA6PT.FON", 1, false);
 
 	for (int i = 0; i != 43; ++i) {
 		Shape *shape = new Shape(this);
@@ -738,11 +736,8 @@ void BladeRunnerEngine::shutdown() {
 	}
 	_shapes.clear();
 
-	if (_mainFont) {
-		_mainFont->close();
-		delete _mainFont;
-		_mainFont = nullptr;
-	}
+	delete _mainFont;
+	_mainFont = nullptr;
 
 	delete _scores;
 	_scores = nullptr;

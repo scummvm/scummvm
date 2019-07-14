@@ -101,8 +101,6 @@ void ESPER::open(Graphics::Surface *surface) {
 
 	_viewportNext = _viewport;
 
-	_vm->_mainFont->setColor(surface->format.RGBToColor(0, 0, 248));
-
 	_shapeButton = new Shape(_vm);
 	if (!_shapeButton->open("ESPBUTTN.SHP", 0)) {
 		return;
@@ -1026,13 +1024,13 @@ void ESPER::drawVideoFrame(Graphics::Surface &surface) {
 
 void ESPER::drawTextCoords(Graphics::Surface &surface) {
 	if (_vm->_language == Common::RU_RUS) {
-		_vm->_mainFont->drawColor(Common::String::format("gh %04.0f", _zoom / _zoomMin * 2.0f  ), surface, 155, 364, surface.format.RGBToColor(0, 0, 255));
-		_vm->_mainFont->drawColor(Common::String::format("dh %04d",   12 * _viewport.top  +  98), surface, 260, 364, surface.format.RGBToColor(0, 0, 255));
-		_vm->_mainFont->drawColor(Common::String::format("uh %04d",   12 * _viewport.left + 167), surface, 364, 364, surface.format.RGBToColor(0, 0, 255));
+		_vm->_mainFont->drawString(&surface, Common::String::format("gh %04.0f", _zoom / _zoomMin * 2.0f  ), 155, 364, surface.w, surface.format.RGBToColor(0, 0, 255));
+		_vm->_mainFont->drawString(&surface, Common::String::format("dh %04d",   12 * _viewport.top  +  98), 260, 364, surface.w, surface.format.RGBToColor(0, 0, 255));
+		_vm->_mainFont->drawString(&surface, Common::String::format("uh %04d",   12 * _viewport.left + 167), 364, 364, surface.w, surface.format.RGBToColor(0, 0, 255));
 	} else {
-		_vm->_mainFont->drawColor(Common::String::format("ZM %04.0f", _zoom / _zoomMin * 2.0f  ), surface, 155, 364, surface.format.RGBToColor(0, 0, 255));
-		_vm->_mainFont->drawColor(Common::String::format("NS %04d",   12 * _viewport.top  +  98), surface, 260, 364, surface.format.RGBToColor(0, 0, 255));
-		_vm->_mainFont->drawColor(Common::String::format("EW %04d",   12 * _viewport.left + 167), surface, 364, 364, surface.format.RGBToColor(0, 0, 255));
+		_vm->_mainFont->drawString(&surface, Common::String::format("ZM %04.0f", _zoom / _zoomMin * 2.0f  ), 155, 364, surface.w, surface.format.RGBToColor(0, 0, 255));
+		_vm->_mainFont->drawString(&surface, Common::String::format("NS %04d",   12 * _viewport.top  +  98), 260, 364, surface.w, surface.format.RGBToColor(0, 0, 255));
+		_vm->_mainFont->drawString(&surface, Common::String::format("EW %04d",   12 * _viewport.left + 167), 364, 364, surface.w, surface.format.RGBToColor(0, 0, 255));
 	}
 }
 

@@ -142,7 +142,7 @@ void KIASectionCrimes::draw(Graphics::Surface &surface) {
 	}
 	if (_suspectPhotoShapeId == 14 || _suspectPhotoShapeId == 13) {
 		text = _vm->_textKIA->getText(49);
-		_vm->_mainFont->drawColor(text, surface, 201 - _vm->_mainFont->getTextWidth(text) / 2, 218, surface.format.RGBToColor(255, 255, 255));
+		_vm->_mainFont->drawString(&surface, text, 201 - _vm->_mainFont->getStringWidth(text) / 2, 218, surface.w, surface.format.RGBToColor(255, 255, 255));
 	}
 
 	surface.fillRect(Common::Rect(120, 134, 250, 145), 0);
@@ -158,7 +158,7 @@ void KIASectionCrimes::draw(Graphics::Surface &surface) {
 		text = _vm->_textCrimes->getText(_crimeSelected);
 	}
 
-	_vm->_mainFont->drawColor(text, surface, 185 - _vm->_mainFont->getTextWidth(text) / 2, 136, surface.format.RGBToColor(136, 168, 255));
+	_vm->_mainFont->drawString(&surface, text, 185 - _vm->_mainFont->getStringWidth(text) / 2, 136, surface.w, surface.format.RGBToColor(136, 168, 255));
 
 	surface.fillRect(Common::Rect(136, 304, 266, 315), 0);
 	surface.hLine(136, 303, 266, surface.format.RGBToColor(48, 40, 40));
@@ -182,7 +182,7 @@ void KIASectionCrimes::draw(Graphics::Surface &surface) {
 			text = generatedText;
 		}
 	}
-	_vm->_mainFont->drawColor(text, surface, 201 - _vm->_mainFont->getTextWidth(text) / 2, 306, surface.format.RGBToColor(136, 168, 255));
+	_vm->_mainFont->drawString(&surface, text, 201 - _vm->_mainFont->getStringWidth(text) / 2, 306, surface.w, surface.format.RGBToColor(136, 168, 255));
 
 	_uiContainer->draw(surface);
 	_buttons->draw(surface);

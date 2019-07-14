@@ -2221,7 +2221,7 @@ void Debugger::drawSceneObjects() {
 					color = _vm->_surfaceFront.format.RGBToColor(255, 0, 0);
 					drawBBox(a, b, _vm->_view, &_vm->_surfaceFront, color);
 					_vm->_surfaceFront.frameRect(sceneObject->screenRectangle, color);
-					_vm->_mainFont->drawColor(_vm->_textActorNames->getText(sceneObject->id - kSceneObjectOffsetActors), _vm->_surfaceFront, pos.x, pos.y, color);
+					_vm->_mainFont->drawString(&_vm->_surfaceFront, _vm->_textActorNames->getText(sceneObject->id - kSceneObjectOffsetActors), pos.x, pos.y, _vm->_surfaceFront.w, color);
 				}
 				break;
 			case kSceneObjectTypeItem:
@@ -2233,7 +2233,7 @@ void Debugger::drawSceneObjects() {
 					drawBBox(a, b, _vm->_view, &_vm->_surfaceFront, color);
 					sprintf(itemText, "item %i", sceneObject->id - kSceneObjectOffsetItems);
 					_vm->_surfaceFront.frameRect(sceneObject->screenRectangle, color);
-					_vm->_mainFont->drawColor(itemText, _vm->_surfaceFront, pos.x, pos.y, color);
+					_vm->_mainFont->drawString(&_vm->_surfaceFront, itemText, pos.x, pos.y, _vm->_surfaceFront.w, color);
 				}
 				break;
 			case kSceneObjectTypeObject:
@@ -2246,7 +2246,7 @@ void Debugger::drawSceneObjects() {
 					}
 					drawBBox(a, b, _vm->_view, &_vm->_surfaceFront, color);
 					_vm->_surfaceFront.frameRect(sceneObject->screenRectangle, color);
-					_vm->_mainFont->drawColor(_vm->_scene->objectGetName(sceneObject->id - kSceneObjectOffsetObjects), _vm->_surfaceFront, pos.x, pos.y, color);
+					_vm->_mainFont->drawString(&_vm->_surfaceFront, _vm->_scene->objectGetName(sceneObject->id - kSceneObjectOffsetObjects), pos.x, pos.y, _vm->_surfaceFront.w, color);
 				}
 				break;
 			}
@@ -2283,7 +2283,7 @@ void Debugger::drawLights() {
 
 			_vm->_surfaceFront.drawLine(posOriginT.x, posOriginT.y, posTargetT.x, posTargetT.y, color);
 
-			_vm->_mainFont->drawColor(light->_name, _vm->_surfaceFront, posOriginT.x, posOriginT.y, color);
+			_vm->_mainFont->drawString(&_vm->_surfaceFront, light->_name, posOriginT.x, posOriginT.y, _vm->_surfaceFront.w, color);
 		}
 	}
 }
@@ -2319,7 +2319,7 @@ void Debugger::drawFogs() {
 			// TODO: draw line only for cone fogs, draw boxes or circles for the other types
 			_vm->_surfaceFront.drawLine(posOriginT.x, posOriginT.y, posTargetT.x, posTargetT.y, color);
 
-			_vm->_mainFont->drawColor(fog->_name, _vm->_surfaceFront, posOriginT.x, posOriginT.y, color);
+			_vm->_mainFont->drawString(&_vm->_surfaceFront, fog->_name, posOriginT.x, posOriginT.y, _vm->_surfaceFront.w, color);
 		}
 		fog = fog->_next;
 	}
@@ -2371,7 +2371,7 @@ void Debugger::drawWaypoints() {
 				Vector3 spos = _vm->_view->calculateScreenPosition(pos);
 				char waypointText[40];
 				sprintf(waypointText, "waypoint %i", i);
-				_vm->_mainFont->drawColor(waypointText, _vm->_surfaceFront, spos.x, spos.y, color);
+				_vm->_mainFont->drawString(&_vm->_surfaceFront, waypointText, spos.x, spos.y, _vm->_surfaceFront.w, color);
 			}
 		}
 	}
@@ -2393,7 +2393,7 @@ void Debugger::drawWaypoints() {
 				Vector3 spos = _vm->_view->calculateScreenPosition(pos);
 				char coverText[40];
 				sprintf(coverText, "cover %i", i);
-				_vm->_mainFont->drawColor(coverText, _vm->_surfaceFront, spos.x, spos.y, color);
+				_vm->_mainFont->drawString(&_vm->_surfaceFront, coverText, spos.x, spos.y, _vm->_surfaceFront.w, color);
 			}
 		}
 	}
@@ -2415,7 +2415,7 @@ void Debugger::drawWaypoints() {
 				Vector3 spos = _vm->_view->calculateScreenPosition(pos);
 				char fleeText[40];
 				sprintf(fleeText, "flee %i", i);
-				_vm->_mainFont->drawColor(fleeText, _vm->_surfaceFront, spos.x, spos.y, color);
+				_vm->_mainFont->drawString(&_vm->_surfaceFront, fleeText, spos.x, spos.y, _vm->_surfaceFront.w, color);
 			}
 		}
 	}
@@ -2433,7 +2433,7 @@ void Debugger::drawWalkboxes() {
 				Vector3 end = _vm->_view->calculateScreenPosition(walkbox->vertices[(j + 1) % walkbox->vertexCount]);
 				_vm->_surfaceFront.drawLine(start.x, start.y, end.x, end.y, _vm->_surfaceFront.format.RGBToColor(255, 255, 0));
 				Vector3 pos = _vm->_view->calculateScreenPosition(0.5 * (walkbox->vertices[j] + walkbox->vertices[(j + 1) % walkbox->vertexCount]));
-				_vm->_mainFont->drawColor(walkbox->name, _vm->_surfaceFront, pos.x, pos.y, _vm->_surfaceFront.format.RGBToColor(255, 255, 0));
+				_vm->_mainFont->drawString(&_vm->_surfaceFront, walkbox->name, pos.x, pos.y, _vm->_surfaceFront.w, _vm->_surfaceFront.format.RGBToColor(255, 255, 0));
 			}
 		}
 	}

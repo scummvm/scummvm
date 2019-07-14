@@ -55,13 +55,8 @@ void EndCredits::show() {
 
 	_vm->_music->play(_vm->_gameInfo->getMusicTrack(kMusicCredits), 100, 0, 2, -1, 0, 3);
 
-	Font *fontBig = new Font(_vm);
-	fontBig->open("TAHOMA24.FON", 640, 480, -1, 0, 0);
-	fontBig->setSpacing(1, 0);
-
-	Font *fontSmall = new Font(_vm);
-	fontSmall->open("TAHOMA18.FON", 640, 480, -1, 0, 0);
-	fontSmall->setSpacing(1, 0);
+	Font *fontBig = Font::load(_vm, "TAHOMA24.FON", 1, true);
+	Font *fontSmall = Font::load(_vm, "TAHOMA18.FON", 1, true);
 
 	TextResource *textResource = new TextResource(_vm);
 	textResource->open("ENDCRED");
@@ -141,10 +136,10 @@ void EndCredits::show() {
 				if (font == fontBig) {
 					x = 280;
 				} else {
-					x = 270 - font->getTextWidth(s);
+					x = 270 - font->getStringWidth(s);
 				}
 
-				font->draw(s, _vm->_surfaceFront, x, y);
+				font->drawString(&_vm->_surfaceFront, s, x, y, _vm->_surfaceFront.w, 0);
 			}
 		}
 

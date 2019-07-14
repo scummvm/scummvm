@@ -381,7 +381,7 @@ void DialogueMenu::draw(Graphics::Surface &s) {
 		_shapes[1].draw(s, x1, y);
 		_shapes[4].draw(s, x2, y);
 		uint16 color = s.format.RGBToColor((_items[i].colorIntensity / 2) * (256 / 32), (_items[i].colorIntensity / 2) * (256 / 32), _items[i].colorIntensity * (256 / 32));
-		_vm->_mainFont->drawColor(_items[i].text, s, x, y, color);
+		_vm->_mainFont->drawString(&s, _items[i].text, x, y, s.w, color);
 		y += kLineHeight;
 	}
 	for (; x != x2; ++x) {
@@ -407,7 +407,7 @@ const char *DialogueMenu::getText(int id) const {
 void DialogueMenu::calculatePosition(int unusedX, int unusedY) {
 	_maxItemWidth = 0;
 	for (int i = 0; i != _listSize; ++i) {
-		_maxItemWidth = MAX(_maxItemWidth, _vm->_mainFont->getTextWidth(_items[i].text));
+		_maxItemWidth = MAX(_maxItemWidth, _vm->_mainFont->getStringWidth(_items[i].text));
 	}
 	_maxItemWidth += 2;
 
