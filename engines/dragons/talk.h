@@ -24,6 +24,7 @@
 #define DRAGONS_TALK_H
 
 #include <common/str.h>
+#include "scriptopcodes.h"
 
 namespace Dragons {
 
@@ -31,10 +32,26 @@ class BigfileArchive;
 class Actor;
 class DragonsEngine;
 
+struct TalkDialogEntry {
+	char dialogText[600];
+	uint32 textIndex;
+	uint32 textIndex1;
+	byte *scriptCodeStartPtr;
+	byte *scriptCodeEndPtr;
+	uint16 flags;
+	uint8 xPosMaybe;
+	uint8 yPosMaybe;
+	int16 field_26c;
+	uint16 iniId;
+};
+
+
 class Talk {
 private:
 	DragonsEngine *_vm;
 	BigfileArchive *_bigfileArchive;
+	Common::List<TalkDialogEntry*> _dialogEntries;
+
 public:
 	Talk(DragonsEngine *vm, BigfileArchive *bigfileArchive);
 	void init();
@@ -49,10 +66,15 @@ public:
 
 	void conversation_related_maybe(uint16 *dialogText, uint16 x, uint16 y, uint16 param_4, int16 param_5, uint32 textId, int16 param_7);
 
+	void addTalkDialogEntry(TalkDialogEntry *talkDialogEntry);
+
+	bool talkToActor(ScriptOpCall &scriptOpCall);
+
 private:
 	void copyTextToBuffer(uint16 *destBuffer, byte *src, uint32 destBufferLength);
 	uint32 wideStrLen(uint16 *text);
-
+	TalkDialogEntry *displayTalkDialogMenu();
+	void exitTalkMenu(bool isFlag8Set, bool isFlag100Set);
 };
 
 } // End of namespace Dragons

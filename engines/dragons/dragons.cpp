@@ -1021,7 +1021,7 @@ void DragonsEngine::works_with_obd_data_1() {
 		if (_cursor->data_800728b0_cursor_seqID == 3) {
 			local_58._code = pvVar7;
 			local_58._codeEnd = pvVar8;
-			uVar5 = _scriptOpcodes->FUN_800297d8(local_58);
+			uVar5 = _talk->talkToActor(local_58);
 			uVar4 = uVar4 | uVar5;
 		}
 		if (((uVar4 & 0xffff) == 0) && ((uVar6 & 0xfffd) == 0)) {

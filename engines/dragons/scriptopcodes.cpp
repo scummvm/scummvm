@@ -93,7 +93,7 @@ void ScriptOpcodes::initOpcodes() {
 	// Register opcodes
 	OPCODE(1, opUnk1);
 	OPCODE(2, opUnk2); //dialog related
-
+	OPCODE(3, opUnk3); //dialog related
 	OPCODE(4,  opExecuteScript);
 	OPCODE(5,  opActorSetSequenceID2);
 	OPCODE(6,  opUnk6);
@@ -112,7 +112,6 @@ void ScriptOpcodes::initOpcodes() {
 	OPCODE(0x13, opUnk13PropertiesRelated);
 	OPCODE(0x14, opUnk14PropertiesRelated);
 	OPCODE(0x15, opUnk15PropertiesRelated);
-
 	OPCODE(0x16, opUnk16);
 	OPCODE(0x17, opUnk17);
 	OPCODE(0x18, opUnk18);
@@ -209,10 +208,6 @@ void ScriptOpcodes::executeScriptLoop(ScriptOpCall &scriptOpCall) {
 	}
 }
 
-int16 ScriptOpcodes::FUN_800297d8(ScriptOpCall &scriptOpCall) {
-	error("FUN_800297d8"); //TODO
-}
-
 // Opcodes
 
 void ScriptOpcodes::opUnk1(ScriptOpCall &scriptOpCall) {
@@ -233,18 +228,39 @@ void ScriptOpcodes::opUnk1(ScriptOpCall &scriptOpCall) {
 
 void ScriptOpcodes::opUnk2(ScriptOpCall &scriptOpCall) {
 	ARG_INT16(field0);
-	ARG_INT16(field2);
-	ARG_INT16(field4);
-	ARG_INT16(field6);
-	ARG_INT16(field8);
+	ARG_UINT32(field2);
+	ARG_UINT32(field6);
 	ARG_INT16(fieldA);
 	ARG_INT16(fieldC);
 	ARG_INT16(fieldE);
 
 	if (scriptOpCall._field8 == 2) {
 		//TODO do something here.
+		TalkDialogEntry *talkDialogEntry = new TalkDialogEntry();
+
+		_vm->_talk->loadText(field2, (uint16 *)(&talkDialogEntry->dialogText[10]), 295);
+
+		talkDialogEntry->textIndex = field2;
+		talkDialogEntry->textIndex1 = field6;
+		talkDialogEntry->scriptCodeStartPtr = scriptOpCall._code;
+		talkDialogEntry->flags = 0;
+		talkDialogEntry->scriptCodeEndPtr = scriptOpCall._code + fieldA;
+		if ((field0 & 0x8000U) != 0) {
+			talkDialogEntry->flags = 2;
+		}
+		talkDialogEntry->field_26c = fieldC;
+		talkDialogEntry->iniId = fieldE;
+		_vm->_talk->addTalkDialogEntry(talkDialogEntry);
 	}
 	scriptOpCall._code += fieldA;
+}
+
+void ScriptOpcodes::opUnk3(ScriptOpCall &scriptOpCall) {
+	ARG_INT16(field0);
+	ARG_INT16(field2);
+	if (scriptOpCall._field8 == 0) {
+		_data_80071f5c = field2;
+	}
 }
 
 void ScriptOpcodes::opExecuteScript(ScriptOpCall &scriptOpCall) {
@@ -1066,17 +1082,27 @@ void ScriptOpcodes::opUnk17(ScriptOpCall &scriptOpCall) {
 
 void ScriptOpcodes::opUnk18(ScriptOpCall &scriptOpCall) {
 	ARG_INT16(field0);
-	ARG_INT16(field2);
-	ARG_INT16(field4);
-	ARG_INT16(field6);
-	ARG_INT16(field8);
+	ARG_UINT32(field2);
+	ARG_INT16(x);
+	ARG_INT16(y);
 	ARG_INT16(fieldA);
 
 	if (scriptOpCall._field8 != 0) {
 		return;
 	}
-	//TODO implement me!
-	error("opUnk18");
+
+	uint16 dialog[2000];
+	dialog[0] = 0;
+	_vm->_talk->loadText(field2, dialog, 2000);
+
+//	if (((unkFlags1 & 1) == 0) && (((engine_flags_maybe & 0x1000) == 0 || (sVar1 == -1)))) {
+//		dialogText = (uint8_t *)load_string_from_dragon_txt(offset,acStack2016);
+//	}
+
+	if (fieldA != 0) {
+		fieldA = READ_LE_INT16(_vm->_dragonOBD->getFromOpt(fieldA - 1) + 6);
+	}
+	_vm->_talk->displayDialogAroundPoint(dialog,x,y,fieldA,1,field2);
 }
 
 void ScriptOpcodes::opUnk1B(ScriptOpCall &scriptOpCall) {
@@ -1207,6 +1233,14 @@ void ScriptOpcodes::opCode_Unk7(ScriptOpCall &scriptOpCall) {
 		}
 	}
 	ini->sceneId = sceneId;
+}
+
+void ScriptOpcodes::loadTalkDialogEntries(ScriptOpCall &scriptOpCall) {
+	scriptOpCall._field8 = 2;
+	scriptOpCall._result = 0;
+	_data_80071f5c = 0;
+	executeScriptLoop(scriptOpCall);
+
 }
 
 } // End of namespace Dragons
