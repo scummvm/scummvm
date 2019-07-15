@@ -501,7 +501,7 @@ void GameManager1::telomat(int nr) {
 			_vm->renderRoom(*_currentRoom);
 			_vm->paletteBrightness();
 			_vm->renderMessage(kStringTelomat17, kMessageTop, name2[i]);
-			waitOnInput(_messageDuration);
+			wait(_messageDuration, true);
 			_vm->removeMessage();
 			if (_state._nameSeen[nr]) {
 				Common::String string = _vm->getGameString(kStringTelomat2);
@@ -513,7 +513,7 @@ void GameManager1::telomat(int nr) {
 
 			switch (dialog(3, rows1, dial1, 1)) {
 			case 1: _vm->renderMessage(kStringTelomat18, kMessageTop);
-				waitOnInput(_messageDuration);
+				wait(_messageDuration, true);
 				_vm->removeMessage();
 				if ((_state._destination == 255) && !_rooms[BCORRIDOR]->isSectionVisible(7)) {
 					_state._eventTime = _time + ticksToMsec(150);
@@ -523,7 +523,7 @@ void GameManager1::telomat(int nr) {
 				}
 				break;
 			case 0: _vm->renderMessage(kStringTelomat19, kMessageTop);
-				waitOnInput(_messageDuration);
+				wait(_messageDuration, true);
 				_vm->removeMessage();
 				if (dialog(4, rows2, dial2, 0) != 3) {
 					wait(10);
@@ -688,7 +688,7 @@ void GameManager1::supernovaEvent() {
 	CursorMan.showMouse(false);
 	if (_currentRoom->getId() <= CAVE) {
 		_vm->renderMessage(kStringSupernova1);
-		waitOnInput(_messageDuration);
+		wait(_messageDuration, true);
 		_vm->removeMessage();
 		_vm->paletteFadeOut();
 		changeRoom(MEETUP);
@@ -701,7 +701,7 @@ void GameManager1::supernovaEvent() {
 		_vm->paletteFadeIn();
 	}
 	_vm->renderMessage(kStringSupernova2);
-	waitOnInput(_messageDuration);
+	wait(_messageDuration, true);
 	_vm->removeMessage();
 	_vm->setCurrentImage(26);
 	_vm->renderImage(0);
@@ -714,23 +714,23 @@ void GameManager1::supernovaEvent() {
 
 	if (_currentRoom->getId() == GLIDER) {
 		_vm->renderMessage(kStringSupernova3);
-		waitOnInput(_messageDuration);
+		wait(_messageDuration, true);
 		_vm->removeMessage();
 		_vm->_screen->setGuiBrightness(0);
 		_vm->paletteBrightness();
 		_vm->renderRoom(*_currentRoom);
 		_vm->paletteFadeIn();
 		_vm->renderMessage(kStringSupernova4, kMessageTop);
-		waitOnInput(_messageDuration);
+		wait(_messageDuration, true);
 		_vm->removeMessage();
 		_vm->renderMessage(kStringSupernova5, kMessageTop);
-		waitOnInput(_messageDuration);
+		wait(_messageDuration, true);
 		_vm->removeMessage();
 		_vm->renderMessage(kStringSupernova6, kMessageTop);
-		waitOnInput(_messageDuration);
+		wait(_messageDuration, true);
 		_vm->removeMessage();
 		_vm->renderMessage(kStringSupernova7, kMessageTop);
-		waitOnInput(_messageDuration);
+		wait(_messageDuration, true);
 		_vm->removeMessage();
 		changeRoom(MEETUP2);
 		_rooms[MEETUP2]->setSectionVisible(1, true);
@@ -740,7 +740,7 @@ void GameManager1::supernovaEvent() {
 		_inventory.remove(*(_rooms[ROGER]->getObject(8)));
 	} else {
 		_vm->renderMessage(kStringSupernova8);
-		waitOnInput(_messageDuration);
+		wait(_messageDuration, true);
 		_vm->removeMessage();
 		_vm->_screen->setGuiBrightness(0);
 		_vm->paletteBrightness();
@@ -1164,10 +1164,10 @@ bool GameManager1::genericInteract(Action verb, Object &obj1, Object &obj2) {
 		saveTime();
 
 		_vm->renderMessage(kStringGenericInteract_10);
-		waitOnInput(_messageDuration);
+		wait(_messageDuration, true);
 		_vm->removeMessage();
 		_vm->renderMessage(kStringGenericInteract_11);
-		waitOnInput(_messageDuration);
+		wait(_messageDuration, true);
 		_vm->removeMessage();
 		_vm->setCurrentImage(2);
 		_vm->renderImage(0);
@@ -1368,7 +1368,7 @@ bool GameManager1::genericInteract(Action verb, Object &obj1, Object &obj2) {
 		_vm->renderMessage(kStringGenericInteract_30);
 	else if ((verb == ACTION_LOOK) && (obj1._id == BOOK2)) {
 		_vm->renderMessage(kStringGenericInteract_31);
-		waitOnInput(_messageDuration);
+		wait(_messageDuration, true);
 		_vm->removeMessage();
 		_vm->renderMessage(kStringGenericInteract_32);
 	} else

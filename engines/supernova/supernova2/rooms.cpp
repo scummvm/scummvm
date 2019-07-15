@@ -233,7 +233,6 @@ bool Intro2::tvDialogue() {
 
 	if(!_gm->talk(8, 6, 7, kMessageLeft, kStringIntroTV2))
 		return false;
-	debug("%d", _vm->shouldQuit());
 
 	_vm->renderImage(10);
 
@@ -483,7 +482,7 @@ bool Street::interact(Action verb, Object &obj1, Object &obj2) {
 	} else if (verb == ACTION_WALK && obj1._id == REAR_STREET) {
 		Common::String text = _vm->getGameString(kStringOnlyShop);
 		_vm->renderMessage(text);
-		_gm->waitOnInput((text.size() + 20) * _vm->_textSpeed / 10);
+		_gm->wait((text.size() + 20) * _vm->_textSpeed / 10, true);
 		_vm->removeMessage();
 		return false;
 	} else 
@@ -595,7 +594,7 @@ bool Cabin2::interact(Action verb, Object &obj1, Object &obj2) {
 				_vm->_screen->setViewportBrightness(255);
 				Common::String text = _vm->getGameString(kStringWillPassOut);
 				_vm->renderMessage(text);
-				_gm->waitOnInput((text.size() + 20) * _vm->_textSpeed / 10);
+				_gm->wait((text.size() + 20) * _vm->_textSpeed / 10, true);
 				_vm->removeMessage();
 				_vm->paletteFadeOut();
 				_vm->saveGame(kSleepAutosaveSlot, "autosave");
@@ -1021,19 +1020,19 @@ bool Checkout::interact(Action verb, Object &obj1, Object &obj2) {
 					_gm->dialog(3, _gm->_dials, dialStage1, 0);
 					_gm->dialog(2, _gm->_dials, dialStage2, 0);
 					_vm->renderMessage(kStringCheckout20, 100, 70);
-					_gm->waitOnInput(_gm->_messageDuration);
+					_gm->wait(_gm->_messageDuration, true);
 					_vm->removeMessage();
 					_vm->renderMessage(kStringCheckout21, 200, 40);
-					_gm->waitOnInput(_gm->_messageDuration);
+					_gm->wait(_gm->_messageDuration, true);
 					_vm->removeMessage();
 					_gm->say(kStringCheckout22);
 					_gm->dialog(3, _gm->_dials, dialStage3, 0);
 					_vm->renderMessage(kStringCheckout23, 120, 70);
-					_gm->waitOnInput(_gm->_messageDuration);
+					_gm->wait(_gm->_messageDuration, true);
 					_vm->removeMessage();
 					_gm->say(kStringCheckout24);
 					_vm->renderMessage(kStringCheckout25, 40, 100);
-					_gm->waitOnInput(_gm->_messageDuration);
+					_gm->wait(_gm->_messageDuration, true);
 					_vm->removeMessage();
 					_gm->dialog(2, _gm->_dials, dialStage4, 0);
 					_vm->playSound(kAudioStage1);
@@ -1064,10 +1063,10 @@ bool Checkout::interact(Action verb, Object &obj1, Object &obj2) {
 					_vm->removeMessage();
 					_vm->playSound(kAudioStage2);
 					_vm->renderMessage(kStringCheckout26, 180, 50);
-					_gm->waitOnInput(_gm->_messageDuration);
+					_gm->wait(_gm->_messageDuration, true);
 					_vm->removeMessage();
 					_vm->renderMessage(kStringCheckout28, 50, 110);
-					_gm->waitOnInput(_gm->_messageDuration);
+					_gm->wait(_gm->_messageDuration, true);
 					_vm->removeMessage();
 					_gm->say(kStringCheckout29);
 					_vm->renderRoom(*this);
@@ -1080,7 +1079,7 @@ bool Checkout::interact(Action verb, Object &obj1, Object &obj2) {
 				}
 			} else {
 				_vm->renderMessage(kStringCheckout32);
-				_gm->waitOnInput(_gm->_messageDuration);
+				_gm->wait(_gm->_messageDuration, true);
 				_vm->removeMessage();
 				_vm->renderMessage(kStringCheckout33);
 			}
@@ -1382,22 +1381,22 @@ void Checkout::appearance() {
 	_vm->_screen->setGuiBrightness(255);
 	_vm->paletteBrightness();
 	_vm->renderMessage(kStringAppearance22);
-	_gm->waitOnInput(_gm->_messageDuration);
+	_gm->wait(_gm->_messageDuration, true);
 	_vm->removeMessage();
 	_vm->renderMessage(kStringAppearance23);
-	_gm->waitOnInput(_gm->_messageDuration);
+	_gm->wait(_gm->_messageDuration, true);
 	_vm->removeMessage();
 	_vm->renderMessage(kStringAppearance24);
-	_gm->waitOnInput(_gm->_messageDuration);
+	_gm->wait(_gm->_messageDuration, true);
 	_vm->removeMessage();
 	_vm->renderMessage(kStringAppearance25);
-	_gm->waitOnInput(_gm->_messageDuration);
+	_gm->wait(_gm->_messageDuration, true);
 	_vm->removeMessage();
 	_vm->renderMessage(kStringAppearance26);
-	_gm->waitOnInput(_gm->_messageDuration);
+	_gm->wait(_gm->_messageDuration, true);
 	_vm->removeMessage();
 	_vm->renderMessage(kStringAppearance27);
-	_gm->waitOnInput(_gm->_messageDuration);
+	_gm->wait(_gm->_messageDuration, true);
 	_vm->removeMessage();
 	_vm->_screen->setViewportBrightness(0);
 	_vm->_screen->setGuiBrightness(0);
@@ -1429,16 +1428,16 @@ void Checkout::appearance() {
 	_vm->_screen->setGuiBrightness(255);
 	_vm->paletteBrightness();
 	_vm->renderMessage(kStringAppearance28);
-	_gm->waitOnInput(_gm->_messageDuration);
+	_gm->wait(_gm->_messageDuration, true);
 	_vm->removeMessage();
 	_vm->renderMessage(kStringAppearance29);
-	_gm->waitOnInput(_gm->_messageDuration);
+	_gm->wait(_gm->_messageDuration, true);
 	_vm->removeMessage();
 	_vm->renderMessage(kStringAppearance30);
-	_gm->waitOnInput(_gm->_messageDuration);
+	_gm->wait(_gm->_messageDuration, true);
 	_vm->removeMessage();
 	_vm->renderMessage(kStringAppearance31);
-	_gm->waitOnInput(_gm->_messageDuration);
+	_gm->wait(_gm->_messageDuration, true);
 	_vm->removeMessage();
 	_gm->changeRoom(SHIP);
 	_gm->_state._dark = true;
@@ -1601,7 +1600,7 @@ bool Elevator2::interact(Action verb, Object &obj1, Object &obj2) {
 				_gm->wait(3);
 				_vm->renderImage(1 + kSectionInvert);
 				_vm->renderMessage(kStringElevator12);
-				_gm->waitOnInput(_gm->_messageDuration);
+				_gm->wait(_gm->_messageDuration, true);
 				_vm->removeMessage();
 				_vm->renderImage(1);
 				_gm->wait(3);
@@ -1617,7 +1616,7 @@ bool Elevator2::interact(Action verb, Object &obj1, Object &obj2) {
 				_vm->_system->fillScreen(kColorBlack);
 				_vm->_screen->setViewportBrightness(255);
 				_vm->renderMessage(kStringElevator14);
-				_gm->waitOnInput(_gm->_messageDuration);
+				_gm->wait(_gm->_messageDuration, true);
 				_vm->removeMessage();
 				_vm->_screen->setViewportBrightness(0);
 				_vm->setCurrentImage(26);
@@ -1723,7 +1722,7 @@ void Elevator2::jobDescription() {
 	_gm->reply(kStringElevator32, 1, 1 + kSectionInvert);
 	_vm->setCurrentImage(30);
 	_vm->renderImage(0);
-	_gm->waitOnInput(72);
+	_gm->wait(72, true);
 	_gm->reply(kStringElevator33, 0, 0);
 	_gm->reply(kStringElevator34, 0, 0);
 	_gm->reply(kStringElevator35, 0, 0);
@@ -1767,7 +1766,7 @@ void Elevator2::jobDescription() {
 	_vm->_system->fillScreen(kColorBlack);
 	_vm->_screen->setViewportBrightness(255);
 	_vm->renderMessage(kStringElevator55);
-	_gm->waitOnInput(_gm->_messageDuration);
+	_gm->wait(_gm->_messageDuration, true);
 	_vm->removeMessage();
 	_vm->_screen->setViewportBrightness(0);
 	_gm->_state._tipsy = false;
@@ -1783,10 +1782,10 @@ void Elevator2::jobDescription() {
 	_vm->renderImage(0);
 	_vm->paletteFadeIn();
 	_vm->renderMessage(kStringElevator56);
-	_gm->waitOnInput(_gm->_messageDuration);
+	_gm->wait(_gm->_messageDuration, true);
 	_vm->removeMessage();
 	_vm->renderMessage(kStringElevator57);
-	_gm->waitOnInput(_gm->_messageDuration);
+	_gm->wait(_gm->_messageDuration, true);
 	_vm->removeMessage();
 	_vm->renderMessage(kStringElevator58);
 	_gm->drawGUI();
@@ -1836,7 +1835,7 @@ bool Apartment::interact(Action verb, Object &obj1, Object &obj2) {
 			_vm->playSound(kAudioSuccess2);
 		} else {
 			_vm->renderMessage(kStringApartment3);
-			_gm->waitOnInput(_gm->_messageDuration);
+			_gm->wait(_gm->_messageDuration, true);
 			_vm->removeMessage();
 			_vm->renderMessage(kStringApartment4);
 		}
@@ -2035,27 +2034,27 @@ bool Ship::interact(Action verb, Object &obj1, Object &obj2) {
 		_vm->renderImage(0);
 		_gm->wait(16);
 		_vm->renderMessage(kStringShip7, kMessageRight);
-		_gm->waitOnInput(_gm->_messageDuration);
+		_gm->wait(_gm->_messageDuration, true);
 		_vm->removeMessage();
 		_gm->reply(kStringShip8, 1, 1 + kSectionInvert);
 		_vm->renderMessage(kStringShip9, kMessageRight);
-		_gm->waitOnInput(_gm->_messageDuration);
+		_gm->wait(_gm->_messageDuration, true);
 		_vm->removeMessage();
 		_gm->reply(kStringShip10, 1, 1 + kSectionInvert);
 		_gm->reply(kStringShip11, 1, 1 + kSectionInvert);
 		_gm->reply(kStringShip12, 1, 1 + kSectionInvert);
 		_gm->reply(kStringShip13, 1, 1 + kSectionInvert);
 		_vm->renderMessage(kStringShip14, kMessageRight);
-		_gm->waitOnInput(_gm->_messageDuration);
+		_gm->wait(_gm->_messageDuration, true);
 		_vm->removeMessage();
 		_gm->reply(kStringShip15, 1, 1 + kSectionInvert);
 		_vm->renderMessage(kStringShip16, kMessageRight);
-		_gm->waitOnInput(_gm->_messageDuration);
+		_gm->wait(_gm->_messageDuration, true);
 		_vm->removeMessage();
 		_gm->reply(kStringAha, 1, 1 + kSectionInvert);
 		_gm->reply(kStringShip17, 1, 1 + kSectionInvert);
 		_vm->renderMessage(kStringShip18, kMessageRight);
-		_gm->waitOnInput(_gm->_messageDuration);
+		_gm->wait(_gm->_messageDuration, true);
 		_vm->removeMessage();
 		_gm->reply(kStringShip19, 1, 1 + kSectionInvert);
 		_gm->wait(16);
@@ -2120,7 +2119,7 @@ void Ship::outro() {
 	do {
 		volume = _vm->_sound->getVolume() - 10;
 		_vm->_sound->setVolume(volume);
-		_gm->waitOnInput(1);
+		_gm->wait(1, true);
 	} while (volume > 10 && !_vm->shouldQuit());
 	Common::Event event;
 	event.type = Common::EVENT_RTL;
@@ -2280,7 +2279,7 @@ void PyrEntrance::animation() {
 	if (_gm->_state._pyraS == 8 && _gm->_state._pyraZ == 5) {
 		if (g_system->getMillis() >= _waitTime) { // around 1 minute
 			_vm->renderMessage(kStringPyramid4);
-			_gm->waitOnInput(_gm->_messageDuration);
+			_gm->wait(_gm->_messageDuration, true);
 			_vm->removeMessage();
 			_gm->_state._pyraZ++;
 			_gm->_state._pyraDirection = 0;
@@ -3773,14 +3772,14 @@ void Museum::onEntrance() {
 		_gm->_state._alarmOn = false;
 		_gm->_state._haste = false;
 		_vm->renderMessage(kStringMuseum1);
-		_gm->waitOnInput(_gm->_messageDuration);
+		_gm->wait(_gm->_messageDuration, true);
 		_gm->_state._sirenOn = false;
 		_vm->stopSound();
 		_vm->paletteFadeOut();
 		_vm->_system->fillScreen(kColorBlack);
 		_vm->_screen->setViewportBrightness(255);
 		_vm->renderMessage(kStringMuseum2);
-		_gm->waitOnInput(_gm->_messageDuration);
+		_gm->wait(_gm->_messageDuration, true);
 		_vm->removeMessage();
 		_vm->_screen->setViewportBrightness(0);
 		_vm->setCurrentImage(26);
@@ -3825,7 +3824,7 @@ bool Museum::interact(Action verb, Object &obj1, Object &obj2) {
 				}
 			} else 
 				_vm->renderMessage(kStringMuseum12);
-			_gm->waitOnInput(_gm->_messageDuration);
+			_gm->wait(_gm->_messageDuration, true);
 			_vm->removeMessage();
 			_vm->paletteFadeOut();
 			_vm->_system->fillScreen(kColorBlack);
@@ -3833,7 +3832,7 @@ bool Museum::interact(Action verb, Object &obj1, Object &obj2) {
 			_vm->_screen->setGuiBrightness(255);
 			_vm->_screen->paletteBrightness();
 			_vm->renderMessage(kStringMuseum13);
-			_gm->waitOnInput(_gm->_messageDuration);
+			_gm->wait(_gm->_messageDuration, true);
 			_vm->removeMessage();
 			_vm->_screen->setViewportBrightness(0);
 			_vm->_screen->setGuiBrightness(0);

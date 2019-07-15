@@ -164,11 +164,8 @@ public:
 	void initGui();
 	virtual bool canSaveGameStateCurrently();
 	virtual bool genericInteract(Action verb, Object &obj1, Object &obj2);
-	Common::EventType getMouseInput();
-	int getKeyInput();
-	void getInput();
-	void wait(int ticks);
-	void waitOnInput(int ticks);
+	void getInput(bool onlyKeys = false);
+	void wait(int ticks, bool checkInput = false);
 	bool waitOnInput(int ticks, Common::KeyCode &keycode);
 	void screenShake();
 	virtual void roomBrightness();

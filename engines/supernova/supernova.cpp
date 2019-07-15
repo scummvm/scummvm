@@ -417,7 +417,7 @@ void SupernovaEngine::showHelpScreen1() {
 	renderText(kStringHelpOverview6, 105, 155, kColorWhite99);
 	renderText(kStringHelpOverview7, 105, 165, kColorWhite99);
 	paletteFadeIn();
-	_gm->getKeyInput();
+	_gm->getInput(true);
 
 	paletteFadeOut();
 
@@ -435,7 +435,7 @@ void SupernovaEngine::showHelpScreen2() {
 	setCurrentImage(27);
 	renderImage(0);
 	paletteFadeIn();
-	_gm->getKeyInput();
+	_gm->getInput(true);
 
 	paletteFadeOut();
 
@@ -559,7 +559,7 @@ Common::Error SupernovaEngine::showTextReader(const char *extension) {
 				break;
 			_screen->renderText(line, 6, y, kColorWhite99);
 		}
-		_gm->getKeyInput();
+		_gm->getInput(true);
 		switch (_gm->_key.keycode) {
 		case Common::KEYCODE_ESCAPE:
 			exitReader = true;
