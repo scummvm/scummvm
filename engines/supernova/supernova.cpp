@@ -96,14 +96,10 @@ SupernovaEngine::SupernovaEngine(OSystem *syst)
 		_MSPart = 1;
 	else if (ConfMan.get("gameid") == "msn2")
 		_MSPart = 2;
-	else if (ConfMan.get("gameid") == "msn1-i") {
-		_MSPart = 1;
-		_improved = true;
-	} else if (ConfMan.get("gameid") == "msn2-i") {
-		_MSPart = 2;
-		_improved = true;
-	} else
+	else
 		_MSPart = 0;
+
+	_improved = ConfMan.getBool("improved");
 	DebugMan.addDebugChannel(kDebugGeneral, "general", "Supernova general debug channel");
 }
 

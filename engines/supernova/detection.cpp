@@ -22,7 +22,9 @@
 
 #include "base/plugins.h"
 #include "common/file.h"
+#include "common/gui_options.h"
 #include "common/savefile.h"
+#include "common/translation.h"
 #include "common/system.h"
 #include "graphics/thumbnail.h"
 #include "engines/advancedDetector.h"
@@ -31,11 +33,23 @@
 
 #define GAMEOPTION_IMPROVED GUIO_GAMEOPTIONS1
 
+static const ADExtraGuiOptionsMap optionsList[] = {
+	{
+		GAMEOPTION_IMPROVED,
+		{
+			_s("Improved mode"),
+			_s("Removes some repetitive actions, adds possibility to change verbs by keyboard"),
+			"improved",
+			false
+		}
+	},
+
+	AD_EXTRA_GUI_OPTIONS_TERMINATOR
+};
+
 static const PlainGameDescriptor supernovaGames[] = {
 	{"msn1", "Mission Supernova 1"},
 	{"msn2", "Mission Supernova 2"},
-	{"msn1-i", "Mission Supernova 1 improved"},
-	{"msn2-i", "Mission Supernova 2 improved"},
 	{nullptr, nullptr}
 };
 
@@ -49,28 +63,10 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::DE_DEU,
 		Common::kPlatformDOS,
 		ADGF_UNSTABLE,
-		GUIO1(GUIO_NONE)
-	},
-	{
-		"msn1",
-		nullptr,
-		AD_ENTRY1s("msn_data.000", "f64f16782a86211efa919fbae41e7568", 24163),
-		Common::EN_ANY,
-		Common::kPlatformDOS,
-		ADGF_UNSTABLE,
-		GUIO1(GUIO_NONE)
-	},
-	{
-		"msn1-i",
-		nullptr,
-		AD_ENTRY1s("msn_data.000", "f64f16782a86211efa919fbae41e7568", 24163),
-		Common::DE_DEU,
-		Common::kPlatformDOS,
-		ADGF_UNSTABLE,
 		GUIO1(GAMEOPTION_IMPROVED)
 	},
 	{
-		"msn1-i",
+		"msn1",
 		nullptr,
 		AD_ENTRY1s("msn_data.000", "f64f16782a86211efa919fbae41e7568", 24163),
 		Common::EN_ANY,
@@ -86,28 +82,10 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::DE_DEU,
 		Common::kPlatformDOS,
 		ADGF_UNSTABLE,
-		GUIO1(GUIO_NONE)
-	},
-	{
-		"msn2",
-		nullptr,
-		AD_ENTRY1s("ms2_data.000", "e595610cba4a6d24a763e428d05cc83f", 24805),
-		Common::EN_ANY,
-		Common::kPlatformDOS,
-		ADGF_UNSTABLE,
-		GUIO1(GUIO_NONE)
-	},
-	{
-		"msn2-i",
-		nullptr,
-		AD_ENTRY1s("ms2_data.000", "e595610cba4a6d24a763e428d05cc83f", 24805),
-		Common::DE_DEU,
-		Common::kPlatformDOS,
-		ADGF_UNSTABLE,
 		GUIO1(GAMEOPTION_IMPROVED)
 	},
 	{
-		"msn2-i",
+		"msn2",
 		nullptr,
 		AD_ENTRY1s("ms2_data.000", "e595610cba4a6d24a763e428d05cc83f", 24805),
 		Common::EN_ANY,
@@ -121,7 +99,7 @@ static const ADGameDescription gameDescriptions[] = {
 
 class SupernovaMetaEngine: public AdvancedMetaEngine {
 public:
-	SupernovaMetaEngine() : AdvancedMetaEngine(Supernova::gameDescriptions, sizeof(ADGameDescription), supernovaGames) {
+	SupernovaMetaEngine() : AdvancedMetaEngine(Supernova::gameDescriptions, sizeof(ADGameDescription), supernovaGames, optionsList) {
 //		_singleId = "supernova";
 	}
 
