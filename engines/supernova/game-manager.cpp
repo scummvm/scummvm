@@ -591,7 +591,7 @@ void GameManager::say(const char *text) {
 	_vm->renderBox(0, 141, 320, numRows * 10 - 1, kColorWhite25);
 	for (uint r = 0; r < numRows; ++r)
 		_vm->renderText(row[r], 1, 142 + r * 10, kColorDarkGreen);
-	waitOnInput((t.size() + 20) * _vm->_textSpeed / 10);
+	wait((t.size() + 20) * _vm->_textSpeed / 10, true);
 	_vm->renderBox(0, 138, 320, 62, kColorBlack);
 }
 
@@ -608,12 +608,12 @@ void GameManager::reply(const char *text, int aus1, int aus2) {
 	for (int z = (strlen(text) + 20) * _vm->_textSpeed / 40; z > 0; --z) {
 		if (aus1)
 			_vm->renderImage(aus1);
-		waitOnInput(2);
+		wait(2, true);
 		if (_keyPressed || _mouseClicked)
 			z = 1;
 		if (aus2)
 			_vm->renderImage(aus2);
-		waitOnInput(2);
+		wait(2, true);
 		if (_keyPressed || _mouseClicked)
 			z = 1;
 	}
@@ -718,33 +718,10 @@ void GameManager::drawInventory() {
 	}
 }
 
-int GameManager::getKeyInput() {
+void GameManager::getInput(bool onlyKeys) {
 	while (!_vm->shouldQuit()) {
 		updateEvents();
-		if (_keyPressed) {
-			return _key.ascii;
-		}
-		g_system->updateScreen();
-		g_system->delayMillis(_vm->_delay);
-	}
-	return 0;
-}
-
-Common::EventType GameManager::getMouseInput() {
-	while (!_vm->shouldQuit()) {
-		updateEvents();
-		if (_mouseClicked)
-			return _mouseClickType;
-		g_system->updateScreen();
-		g_system->delayMillis(_vm->_delay);
-	}
-	return Common::EVENT_INVALID;
-}
-
-void GameManager::getInput() {
-	while (!_vm->shouldQuit()) {
-		updateEvents();
-		if (_mouseClicked || _keyPressed)
+		if ((_mouseClicked && !onlyKeys) || _keyPressed)
 			break;
 		g_system->updateScreen();
 		g_system->delayMillis(_vm->_delay);
@@ -768,22 +745,16 @@ void GameManager::changeRoom(RoomId id) {
 	}
 }
 
-void GameManager::wait(int ticks) {
+void GameManager::wait(int ticks, bool checkInput) {
 	int32 end = _time + ticksToMsec(ticks);
+	bool inputEvent = false;
 	do {
 		g_system->delayMillis(_vm->_delay);
 		updateEvents();
 		g_system->updateScreen();
-	} while (_time < end && !_vm->shouldQuit());
-}
-
-void GameManager::waitOnInput(int ticks) {
-	int32 end = _time + ticksToMsec(ticks);
-	do {
-		g_system->delayMillis(_vm->_delay);
-		updateEvents();
-		g_system->updateScreen();
-	} while (_time < end && !_vm->shouldQuit() && !_keyPressed && !_mouseClicked);
+		if (checkInput)
+			inputEvent = _keyPressed || _mouseClicked;
+	} while (_time < end && !_vm->shouldQuit() && !inputEvent);
 }
 
 bool GameManager::waitOnInput(int ticks, Common::KeyCode &keycode) {
@@ -897,7 +868,7 @@ void GameManager::edit(Common::String &input, int x, int y, uint length) {
 			_vm->renderBox(_vm->_screen->getTextCursorPos().x, y - 1, 1, 9, kColorWhite99);
 		}
 
-		getKeyInput();
+		getInput(true);
 		if (_vm->shouldQuit())
 			break;
 		switch (_key.keycode) {

@@ -475,7 +475,7 @@ bool GameManager2::genericInteract(Action verb, Object &obj1, Object &obj2) {
 				   _currentRoom == _rooms[CITY2]) {
 			Common::String t = _vm->getGameString(kStringTaxiArrives);
 			_vm->renderMessage(t);
-			waitOnInput((t.size() + 20) * _vm->_textSpeed / 10);
+			wait((t.size() + 20) * _vm->_textSpeed / 10, true);
 			_vm->removeMessage();
 			taxi();
 		} else
@@ -578,7 +578,7 @@ bool GameManager2::genericInteract(Action verb, Object &obj1, Object &obj2) {
 		_vm->setCurrentImage(30);
 		_vm->renderImage(0);
 		//karte_an = true
-		waitOnInput(100000);
+		wait(100000, true);
 		//karte_an = false
 		_vm->removeMessage();
 		_vm->renderRoom(*_currentRoom);
@@ -757,7 +757,7 @@ void GameManager2::taxiUnknownDestination() {
 	_vm->renderImage(0);
 	_vm->renderImage(1);
 	_vm->renderImage(4);
-	waitOnInput(_vm->_textSpeed * 3);
+	wait(_vm->_textSpeed * 3, true);
 	_vm->renderImage(invertSection(4));
 	_vm->renderImage(0);
 	_vm->renderImage(1);
@@ -774,7 +774,7 @@ void GameManager2::taxiPayment(int price, int destination) {
 	} else if (_state._money < price) {
 		Common::String t = _vm->getGameString(kStringNotEnoughMoney);
 		_vm->renderMessage(t);
-		waitOnInput((t.size() + 20) * _vm->_textSpeed / 10);
+		wait((t.size() + 20) * _vm->_textSpeed / 10, true);
 		_vm->removeMessage();
 		leaveTaxi();
 	} else {
@@ -790,7 +790,7 @@ void GameManager2::taxiPayment(int price, int destination) {
 		_vm->playSound(kAudioTaxiLeaving);
 		while(_vm->_sound->isPlaying())
 			wait(1);
-		waitOnInput((t.size() + 20) * _vm->_textSpeed / 10);
+		wait((t.size() + 20) * _vm->_textSpeed / 10, true);
 		_vm->removeMessage();
 
 		_vm->paletteFadeOut();
@@ -804,7 +804,7 @@ void GameManager2::taxiPayment(int price, int destination) {
 		_vm->playSound(kAudioTaxiArriving);
 		while(_vm->_sound->isPlaying())
 			wait(1);
-		waitOnInput((t2.size() + 20) * _vm->_textSpeed / 10);
+		wait((t2.size() + 20) * _vm->_textSpeed / 10, true);
 		_vm->removeMessage();
 		_vm->paletteFadeOut();
 
@@ -883,7 +883,7 @@ void GameManager2::taxi() {
 				else {
 					Common::String t = _vm->getGameString(kStringCheater);
 					_vm->renderMessage(t);
-					waitOnInput((t.size() + 20) * _vm->_textSpeed / 10);
+					wait((t.size() + 20) * _vm->_textSpeed / 10, true);
 					_vm->removeMessage();
 
 					leaveTaxi();
@@ -978,7 +978,7 @@ bool GameManager2::talkRest(int mod1, int mod2, int rest) {
 
 void GameManager2::pyramidEnd() {
 	_vm->renderMessage(kStringPyramid0);
-	waitOnInput(_messageDuration);
+	wait(_messageDuration, true);
 	_vm->removeMessage();
 	_vm->paletteFadeOut();
 	_vm->loadGame(kSleepAutosaveSlot);
@@ -1278,7 +1278,7 @@ void GameManager2::caught() {
 void GameManager2::caught2() {
 	_vm->renderMessage(kStringMuseum8);
 	_vm->playSound(kAudioCaught);
-	waitOnInput(_messageDuration);
+	wait(_messageDuration, true);
 	_vm->removeMessage();
 	_state._sirenOn = false;
 	_mapOn = false;
@@ -1359,7 +1359,7 @@ bool GameManager2::crackDoor(int time) {
 	if (_dead)
 		return false;
 	if (_state._alarmOn != _alarmBefore) {
-		waitOnInput(_messageDuration);
+		wait(_messageDuration, true);
 		_vm->removeMessage();
 		_vm->renderMessage(kStringMuseum16);
 	}
