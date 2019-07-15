@@ -105,7 +105,7 @@ void OneDriveTokenRefresher::finishJson(Common::JSONValue *json) {
 
 			pause();
 			delete json;
-			_parentStorage->getAccessToken(new Common::Callback<OneDriveTokenRefresher, Storage::BoolResponse>(this, &OneDriveTokenRefresher::tokenRefreshed));
+			_parentStorage->refreshAccessToken(new Common::Callback<OneDriveTokenRefresher, Storage::BoolResponse>(this, &OneDriveTokenRefresher::tokenRefreshed));
 			return;
 		}
 	}

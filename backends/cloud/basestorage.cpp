@@ -87,6 +87,7 @@ void BaseStorage::codeFlowComplete(Networking::JsonResponse response) {
 		debug(9, "%s", json->stringify(true).c_str());
 		CloudMan.removeStorage(this);
 	} else {
+		debug(9, "%s", json->stringify(true).c_str()); // TODO: remove before commit
 		_token = result.getVal("access_token")->asString();
 		CloudMan.replaceStorage(this, storageIndex());
 		ConfMan.flushToDisk();
