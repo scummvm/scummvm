@@ -23,22 +23,27 @@
 #ifndef BACKENDS_CLOUD_DROPBOX_STORAGE_H
 #define BACKENDS_CLOUD_DROPBOX_STORAGE_H
 
-#include "backends/cloud/storage.h"
+#include "backends/cloud/basestorage.h"
 #include "common/callback.h"
 #include "backends/networking/curl/curljsonrequest.h"
 
 namespace Cloud {
 namespace Dropbox {
 
-class DropboxStorage: public Cloud::Storage {
-	Common::String _token;
-
+class DropboxStorage: public Cloud::BaseStorage {
 	/** This private constructor is called from loadFromConfig(). */
 	DropboxStorage(Common::String token, bool unused);
 
-	void getAccessToken(Common::String code);
-	void codeFlowComplete(Networking::JsonResponse response);
-	void codeFlowFailed(Networking::ErrorResponse error);
+protected:
+	/**
+	 * @return "dropbox"
+	 */
+	virtual Common::String cloudProvider();
+
+	/**
+	 * @return kStorageDropboxId
+	 */
+	virtual uint32 storageIndex();
 
 public:
 	/** This constructor uses OAuth code flow to get tokens. */
