@@ -60,6 +60,7 @@ Programmcodes finden Sie auf Englisch unter:
      neu erstellen, damit diese Fehlerkorrektur auch bei komprimierten Audiodateien greift.
    - Fehler in der deutschen Version von SPY Fox 3: Operation Ozone korrigiert. Das Spiel kann
      nun komplett durchgespielt werden.
+   - Sound-Treiber für die Amiga-Versionen von Monkey Island 2 und Indiana Jones and the Fate of Atlantis hinzugefügt.
 
  Sherlock:
    - Absturz in der spanischen Version behoben, der auftritt, wenn mit der Dame im Geschäft des 
