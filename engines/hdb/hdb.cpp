@@ -118,7 +118,7 @@ bool HDBGame::init() {
 
 	_menu->init();
 
-	_debugLogo = _gfx->loadTile("icon_debug_logo");
+	_debugLogo = _gfx->loadIcon("icon_debug_logo");
 	_progressGfx = _gfx->loadPic(PIC_LOADBAR);
 	_progressMarkGfx = _gfx->loadPic(PIC_LOADSTAR);
 	_logoGfx = NULL;

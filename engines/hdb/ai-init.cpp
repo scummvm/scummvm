@@ -919,14 +919,14 @@ AI::~AI() {
 
 bool AI::init() {
 
-	_debugQMark = g_hdb->_gfx->loadTile("icon_question_mark");
+	_debugQMark = g_hdb->_gfx->loadIcon("icon_question_mark");
 
 	// Clear Waypoint list and load Waypoint graphics
 	_numWaypoints = 0;
-	_waypointGfx[0] = g_hdb->_gfx->loadTile("icon_waypoint_select1");
-	_waypointGfx[1] = g_hdb->_gfx->loadTile("icon_waypoint_select2");
-	_waypointGfx[2] = g_hdb->_gfx->loadTile("icon_waypoint_select3");
-	_waypointGfx[3] = g_hdb->_gfx->loadTile("icon_waypoint_select4");
+	_waypointGfx[0] = g_hdb->_gfx->loadIcon("icon_waypoint_select1");
+	_waypointGfx[1] = g_hdb->_gfx->loadIcon("icon_waypoint_select2");
+	_waypointGfx[2] = g_hdb->_gfx->loadIcon("icon_waypoint_select3");
+	_waypointGfx[3] = g_hdb->_gfx->loadIcon("icon_waypoint_select4");
 
 	// Setup Vars to reference SPECIAL Map Tiles
 	_useSwitchOff	= g_hdb->_gfx->getTileIndex("anim_t32_switch_off01");
