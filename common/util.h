@@ -220,6 +220,18 @@ bool isCntrl(int c);
  */
 bool isGraph(int c);
 
+
+/**
+ * Represent bytes size of a file as a number with floating point and
+ * largest suitable units. For example, 1474560 bytes as 1.4 MB.
+ * 
+ * @param bytes		size in bytes to be represented
+ * @param unitsOut	(out-parameter) string with units
+ * @note			use _() to translate units correctly
+ * @return			string with a floating point number representing given size
+ */
+Common::String getHumanReadableBytes(uint64 bytes, Common::String &unitsOut);
+
 } // End of namespace Common
 
 #endif
