@@ -323,7 +323,7 @@ void GfxTransitions::fadeOut() {
 			}
 		}
 		g_system->getPaletteManager()->setPalette(workPalette + 3, 1, tillColorNr);
-		g_sci->getEngineState()->wait(2);
+		g_sci->getEngineState()->sleep(2);
 	}
 }
 
@@ -337,7 +337,7 @@ void GfxTransitions::fadeIn() {
 
 	for (stepNr = 0; stepNr <= 100; stepNr += 10) {
 		_palette->kernelSetIntensity(1, tillColorNr + 1, stepNr, true);
-		g_sci->getEngineState()->wait(2);
+		g_sci->getEngineState()->sleep(2);
 	}
 }
 

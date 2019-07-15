@@ -608,13 +608,13 @@ void GfxScreen::kernelShakeScreen(uint16 shakeCount, uint16 directions) {
 			setVerticalShakePos(10);
 		// TODO: horizontal shakes
 		g_system->updateScreen();
-		g_sci->getEngineState()->wait(3);
+		g_sci->getEngineState()->sleep(3);
 
 		if (directions & kShakeVertical)
 			setVerticalShakePos(0);
 
 		g_system->updateScreen();
-		g_sci->getEngineState()->wait(3);
+		g_sci->getEngineState()->sleep(3);
 	}
 }
 

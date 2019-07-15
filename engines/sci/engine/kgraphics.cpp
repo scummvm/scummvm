@@ -394,9 +394,9 @@ reg_t kTextSize(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kWait(EngineState *s, int argc, reg_t *argv) {
-	int sleep_time = argv[0].toUint16();
+	uint16 ticks = argv[0].toUint16();
 
-	const int delta = s->wait(sleep_time);
+	const uint16 delta = s->wait(ticks);
 
 	if (g_sci->_guestAdditions->kWaitHook()) {
 		return NULL_REG;
