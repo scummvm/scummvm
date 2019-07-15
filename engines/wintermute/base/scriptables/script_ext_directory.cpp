@@ -29,6 +29,7 @@
 #include "engines/wintermute/base/scriptables/script_ext_directory.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
 #include "engines/wintermute/base/scriptables/script_value.h"
+#include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/persistent.h"
 
 namespace Wintermute {
@@ -65,9 +66,14 @@ bool SXDirectory::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSt
 		stack->correctParams(1);
 		const char *path = stack->pop()->getString();
 
-		warning("Directory.Create is not implemented! Returning false...");
+		if (BaseEngine::instance().getGameId() == "hamlet") {
+			// No need to actually create anything since "gamelet.save" is stored at SavefileManager
+			stack->pushBool(true);
+		} else {
+			warning("Directory.Create is not implemented! Returning false...");
+			stack->pushBool(false);
+		}
 
-		stack->pushBool(false);
 		return STATUS_OK;
 	}
 
