@@ -115,6 +115,7 @@ public:
 
 	Picture *loadPic(const char *picName);
 	Tile *loadTile(const char *tileName);
+	Tile *loadIcon(const char *tileName);
 
 	Tile *getTile(int index);
 	void cacheTileSequence(int index, int count);
