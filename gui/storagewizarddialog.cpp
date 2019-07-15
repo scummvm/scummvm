@@ -60,8 +60,7 @@ StorageWizardDialog::StorageWizardDialog(uint32 storageId):
 
 	_returnLine1 = new StaticTextWidget(container, "GlobalOptions_Cloud_ConnectionWizard_Container.ReturnLine1", _("Obtain the code from the storage, enter it"));
 	_returnLine2 = new StaticTextWidget(container, "GlobalOptions_Cloud_ConnectionWizard_Container.ReturnLine2", _("in the following field and press 'Connect':"));
-	for (uint32 i = 0; i < CODE_FIELDS; ++i)
-		_codeWidget[i] = new EditTextWidget(container, "GlobalOptions_Cloud_ConnectionWizard_Container.CodeBox" + Common::String::format("%d", i+1), "", 0, kCodeBoxCmd);
+	_codeWidget = new EditTextWidget(container, "GlobalOptions_Cloud_ConnectionWizard_Container.CodeBox1", "", 0, kCodeBoxCmd);
 	_messageWidget = new StaticTextWidget(container, "GlobalOptions_Cloud_ConnectionWizard_Container.MessageLine", "");
 
 	// Buttons
@@ -121,7 +120,6 @@ void StorageWizardDialog::open() {
 
 		if (doClose) {
 			close();
-			return;
 		}
 	}
 }
@@ -133,67 +131,10 @@ void StorageWizardDialog::close() {
 void StorageWizardDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {
 	case kCodeBoxCmd: {
-		Common::String code, message;
-
-		if (_storageId == Cloud::kStorageDropboxId || _storageId == Cloud::kStorageOneDriveId) {
-			// new handling
-			code = _codeWidget[0]->getEditString();
-
-			bool ok = (code.size() > 0);
-			message = ""; // (ok ? _("All OK!") : "");
-
-			_connectWidget->setEnabled(ok);
-			_messageWidget->setLabel(message);
-			return;
-		}
-		
-		uint32 correctFields = 0;
-		for (uint32 i = 0; i < CODE_FIELDS; ++i) {
-			Common::String subcode = _codeWidget[i]->getEditString();
-			if (subcode.size() == 0) {
-				++correctFields;
-				continue;
-			}
-			bool correct = correctChecksum(subcode);
-			if (correct) {
-				code += subcode;
-				code.deleteLastChar();
-				++correctFields;
-			} else {
-				if (i == correctFields) { //first incorrect field
-					message += Common::String::format("#%d", i + 1);
-				} else {
-					message += Common::String::format(", #%d", i + 1);
-				}
-			}
-		}
-
-		if (message.size() > 0) {
-			Common::String messageTemplate;
-			if (CODE_FIELDS - correctFields == 1)
-				messageTemplate = _("Field %s has a mistake in it.");
-			else
-				messageTemplate = _("Fields %s have mistakes in them.");
-			message = Common::String::format(messageTemplate.c_str(), message.c_str());
-		}
-
-		bool ok = false;
-		if (correctFields == CODE_FIELDS && code.size() > 0) {
-			//the last 3 chars must be an encoded crc16
-			if (code.size() > 3) {
-				uint32 size = code.size();
-				uint32 gotcrc = decodeHashchar(code[size - 3]) | (decodeHashchar(code[size - 2]) << 6) | (decodeHashchar(code[size - 1]) << 12);
-				code.erase(size - 3);
-				uint32 crc = crc16(code);
-				ok = (crc == gotcrc);
-			}
-			if (ok)
-				message = _("All OK!");
-			else
-				message = _("Invalid code");
-		}
+		Common::String code = _codeWidget->getEditString();
+		bool ok = (code.size() > 0);
 		_connectWidget->setEnabled(ok);
-		_messageWidget->setLabel(message);
+		_messageWidget->setLabel("");
 		break;
 	}
 	case kOpenUrlCmd: {
@@ -206,21 +147,8 @@ void StorageWizardDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 	case kPasteCodeCmd: {
 		if (g_system->hasTextInClipboard()) {
 			Common::String message = g_system->getTextFromClipboard();
-			for (uint32 i = 0; i < CODE_FIELDS; ++i) {
-				if (message.empty()) break;
-				Common::String subcode = "";
-				for (uint32 j = 0; j < message.size(); ++j) {
-					if (message[j] == ' ') {
-						message.erase(0, j+1);
-						break;
-					}
-					subcode += message[j];
-					if (j+1 == message.size()) {
-						message = "";
-						break;
-					}
-				}
-				_codeWidget[i]->setEditString(subcode);
+			if (!message.empty()) {
+				_codeWidget->setEditString(message);
 			}
 			handleCommand(sender, kCodeBoxCmd, data);
 			g_gui.scheduleTopDialogRedraw();
@@ -228,32 +156,13 @@ void StorageWizardDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		break;
 	}
 	case kConnectCmd: {
-		if (_storageId == Cloud::kStorageDropboxId || _storageId == Cloud::kStorageOneDriveId) {
-			// new handling
-			Common::String code = _codeWidget[0]->getEditString();
-			if (code.size() == 0)
-				return;
-
-			CloudMan.connectStorage(_storageId, code);
-			setResult(1);
-			close();
+		Common::String code = _codeWidget->getEditString();
+		if (code.size() == 0)
 			return;
-		}
 
-		Common::String code;
-		for (uint32 i = 0; i < CODE_FIELDS; ++i) {
-			Common::String subcode = _codeWidget[i]->getEditString();
-			if (subcode.size() == 0)
-				continue;
-			code += subcode;
-			code.deleteLastChar();
-		}
-		if (code.size() > 3) {
-			code.erase(code.size() - 3);
-			CloudMan.connectStorage(_storageId, code);
-			setResult(1);
-			close();
-		}
+		CloudMan.connectStorage(_storageId, code);
+		setResult(1);
+		close();
 		break;
 	}
 #ifdef USE_SDL_NET
@@ -286,11 +195,9 @@ void StorageWizardDialog::containerWidgetsReflow() {
 	if (_urlLineWidget) _urlLineWidget->setVisible(true);
 	if (_returnLine1) _returnLine1->setVisible(true);
 	if (_returnLine2) _returnLine2->setVisible(true);
-
-	bool showFields = true; // TODO: remove this const
-	for (uint32 i = 0; i < CODE_FIELDS; ++i)
-		_codeWidget[i]->setVisible(showFields && ((_storageId != Cloud::kStorageDropboxId && _storageId != Cloud::kStorageOneDriveId) || i < 1)); // show only one field for Dropbox
-	_messageWidget->setVisible(showFields);
+	
+	_codeWidget->setVisible(true);
+	_messageWidget->setVisible(true);
 
 	// left column / first bottom row
 	if (_picture) {
@@ -301,62 +208,17 @@ void StorageWizardDialog::containerWidgetsReflow() {
 		_openUrlWidget->setVisible(visible);
 	}
 	if (_pasteCodeWidget) {
-		bool visible = showFields && g_system->hasFeature(OSystem::kFeatureClipboardSupport);
+		bool visible = g_system->hasFeature(OSystem::kFeatureClipboardSupport);
 		_pasteCodeWidget->setVisible(visible);
 	}
 
 	// bottom row
 	if (_cancelWidget) _cancelWidget->setVisible(true);
-	if (_connectWidget) {
-		_connectWidget->setVisible(showFields);
-	}
+	if (_connectWidget) _connectWidget->setVisible(true);
 }
 
 Common::String StorageWizardDialog::getUrl() const {
-	Common::String url = "https://www.scummvm.org/c/";
-	switch (_storageId) {
-	case Cloud::kStorageDropboxId:
-	case Cloud::kStorageOneDriveId:
-		url = "https://cloud.scummvm.org/";
-		break;
-	case Cloud::kStorageGoogleDriveId:
-		url += "gd";
-		break;
-	case Cloud::kStorageBoxId:
-		url += "bx";
-		break;
-	}
-
-	return url;
-}
-
-int StorageWizardDialog::decodeHashchar(char c) {
-	const char HASHCHARS[65] = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ?!";
-	for (uint32 i = 0; i < 64; ++i)
-		if (c == HASHCHARS[i])
-			return i;
-	return -1;
-}
-
-bool StorageWizardDialog::correctChecksum(Common::String s) {
-	if (s.size() == 0)
-		return false; //no last char
-	int providedChecksum = decodeHashchar(s.lastChar());
-	int calculatedChecksum = 0x2A; //any initial value would do, but it must equal to the one used on the page where these checksums were generated
-	for (uint32 i = 0; i < s.size()-1; ++i) {
-		calculatedChecksum = calculatedChecksum ^ s[i];
-	}
-	return providedChecksum == (calculatedChecksum % 64);
-}
-
-uint32 StorageWizardDialog::crc16(Common::String s) { //"CRC16_CCITT_FALSE"
-	uint32 crc = 0xFFFF, x;
-	for (uint32 i = 0; i < s.size(); ++i) {
-		x = ((crc >> 8) ^ s[i]) & 0xFF;
-		x ^= x >> 4;
-		crc = ((crc << 8) ^ (x << 12) ^ (x << 5) ^ x) & 0xFFFF;
-	}
-	return crc;
+	return "https://cloud.scummvm.org/";
 }
 
 } // End of namespace GUI

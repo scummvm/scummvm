@@ -41,7 +41,6 @@ enum StorageWizardDialogCommands {
 #endif
 
 class StorageWizardDialog : public Dialog {
-	static const uint32 CODE_FIELDS = 8;
 	uint32 _storageId;
 
 	StaticTextWidget *_headlineWidget;
@@ -49,7 +48,7 @@ class StorageWizardDialog : public Dialog {
 	StaticTextWidget *_urlLineWidget;
 	StaticTextWidget *_returnLine1;
 	StaticTextWidget *_returnLine2;
-	EditTextWidget *_codeWidget[CODE_FIELDS];
+	EditTextWidget *_codeWidget;
 	StaticTextWidget *_messageWidget;
 
 	GraphicsWidget *_picture;
@@ -70,29 +69,6 @@ class StorageWizardDialog : public Dialog {
 	/** Return short scummvm.org URL for user to navigate to. */
 	Common::String getUrl() const;
 
-	/**
-	 * Return the value corresponding to the given character.
-	 *
-	 * There is a value corresponding to each of 64 selected
-	 * printable characters (0-9, A-Z, a-z, ? and !).
-	 *
-	 * When given another character, -1 is returned.
-	 */
-	int decodeHashchar(char c);
-
-	/**
-	 * Return whether checksum is correct.
-	 *
-	 * The last character of the string is treated as
-	 * the checksum of all the others (decoded with
-	 * decodeHashchar()).
-	 *
-	 * Checksum = (c[0] ^ c[1] ^ ...) % 64
-	 */
-	bool correctChecksum(Common::String s);
-
-	/** The "CRC16_CCITT_FALSE" CRC-16 algorithm. */
-	uint32 crc16(Common::String s);
 public:
 	StorageWizardDialog(uint32 storageId);
 
