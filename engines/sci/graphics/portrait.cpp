@@ -301,7 +301,7 @@ void Portrait::doit(Common::Point position, uint16 resourceId, uint16 noun, uint
 		// Wait till syncTime passed, then show specific animation bitmap
 		if (timerPosition > 0) {
 			do {
-				g_sci->getEngineState()->wait(1);
+				g_sci->getEngineState()->sleep(1);
 				curEvent = _event->getSciEvent(kSciEventAny);
 				if (curEvent.type == kSciEventMousePress ||
 					(curEvent.type == kSciEventKeyDown && curEvent.character == kSciKeyEsc) ||
@@ -324,7 +324,7 @@ void Portrait::doit(Common::Point position, uint16 resourceId, uint16 noun, uint
 				timerPositionWithin += raveLipSyncTicks;
 
 				do {
-					g_sci->getEngineState()->wait(1);
+					g_sci->getEngineState()->sleep(1);
 					curEvent = _event->getSciEvent(kSciEventAny);
 					if (curEvent.type == kSciEventMousePress ||
 						(curEvent.type == kSciEventKeyDown && curEvent.character == kSciKeyEsc) ||
@@ -383,7 +383,7 @@ void Portrait::doit(Common::Point position, uint16 resourceId, uint16 noun, uint
 
 		// Wait till syncTime passed, then show specific animation bitmap
 		do {
-			g_sci->getEngineState()->wait(1);
+			g_sci->getEngineState()->sleep(1);
 			curEvent = _event->getSciEvent(kSciEventAny);
 			if (curEvent.type == kSciEventMousePress ||
 				(curEvent.type == kSciEventKeyboard && curEvent.data == kSciKeyEsc) ||
