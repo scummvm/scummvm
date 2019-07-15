@@ -85,7 +85,6 @@ void DropboxStorage::codeFlowComplete(Networking::JsonResponse response) {
 		CloudMan.removeStorage(this);
 	} else {
 		_token = result.getVal("access_token")->asString();
-		ConfMan.removeKey("dropbox_code", ConfMan.kCloudDomain);
 		CloudMan.replaceStorage(this, kStorageDropboxId);
 		ConfMan.flushToDisk();
 	}
