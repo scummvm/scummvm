@@ -32,6 +32,13 @@
 
 class WindowsTextToSpeechManager : public Common::TextToSpeechManager {
 public:
+	enum SpeechState {
+		READY,
+		PAUSED,
+		SPEAKING,
+		BROKEN
+	};
+
 	WindowsTextToSpeechManager();
 	virtual ~WindowsTextToSpeechManager();
 
@@ -60,6 +67,7 @@ private:
 	void init();
 	virtual void updateVoices();
 	void createVoice(int typeNumber, Common::TTSVoice::Gender, char *description);
+	SpeechState _speechState;
 };
 
 #endif
