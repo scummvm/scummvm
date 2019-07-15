@@ -198,14 +198,11 @@ void SceneScriptRC02::dialogueWithRunciter() {
 	) {
 		DM_Add_To_List_Never_Repeat_Once_Selected(20, 6, 4, 5); // REFERENCE
 	}
-	if ((_vm->_cutContent
+	if (_vm->_cutContent
 	     && (!Game_Flag_Query(kFlagRC02RunciterVKChosen)
-	         && (!Actor_Clue_Query(kActorMcCoy, kClueVKRunciterHuman) && !Actor_Clue_Query(kActorMcCoy, kClueVKRunciterReplicant))))
-	    || !_vm->_cutContent
-	) {
-		if (_vm->_cutContent) {
-			Dialogue_Menu_Clear_Never_Repeat_Was_Selected_Flag(200);
-		}
+	         && (!Actor_Clue_Query(kActorMcCoy, kClueVKRunciterHuman) && !Actor_Clue_Query(kActorMcCoy, kClueVKRunciterReplicant)))
+	){
+		Dialogue_Menu_Clear_Never_Repeat_Was_Selected_Flag(200);
 		DM_Add_To_List_Never_Repeat_Once_Selected(200, -1, 3, 6); // VOIGT-KAMPFF
 	}
 	Dialogue_Menu_Add_DONE_To_List(30); // DONE
