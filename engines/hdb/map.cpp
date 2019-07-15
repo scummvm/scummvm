@@ -323,13 +323,7 @@ bool Map::load(Common::SeekableReadStream *stream) {
 		_iconList[i].value2 = stream->readUint16LE();
 	}
 
-	/*
-		TODO: Add the InfoList when it comes up
-	*/
-
-	/*
-		TODO: Set the InMapName once its setup
-	*/
+	g_hdb->setInMapName(_name);
 
 	_mapExplosions = (byte *)calloc(_width * _height, 1);
 	_mapExpBarrels = (byte *)calloc(_width * _height, 1);

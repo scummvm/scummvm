@@ -142,15 +142,6 @@ bool HDBGame::init() {
 	return true;
 }
 
-/*
-	Changes the current GameState to the next one.
-	Game State Transitions are deterministic: each state can
-	only a particular state. The next state is held in gameState.
-
-	TODO: All the functionality hasn't been implemented yet since
-	their subsystems are incomplete. This section needs to be periodically
-	updated as soon as the subsytems are improved.
-*/
 void HDBGame::changeGameState() {
 
 	switch (_gameState) {
