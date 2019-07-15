@@ -219,9 +219,7 @@ protected:
 	// Player part
 	void hook_clear();
 	void uninit_parts();
-	byte *parse_midi(byte *s);
 	void part_set_transpose(uint8 chan, byte relative, int8 b);
-	void parse_sysex(byte *p, uint len);
 	void maybe_jump(byte cmd, uint track, uint beat, uint tick);
 	void maybe_set_transpose(byte *data);
 	void maybe_part_onoff(byte *data);
@@ -240,7 +238,6 @@ protected:
 	// Sequencer part
 	int start_seq_sound(int sound, bool reset_vars = true);
 	void loadStartParameters(int sound);
-	int query_param(int param);
 
 public:
 	IMuseInternal *_se;
@@ -352,7 +349,6 @@ struct Part : public Common::Serializable {
 	void off();
 	void set_instrument(uint b);
 	void set_instrument(byte *data);
-	void set_instrument_pcspk(byte *data);
 	void load_global_instrument(byte b);
 
 	void set_transpose(int8 transpose);
@@ -503,7 +499,6 @@ protected:
 	int set_volchan_entry(uint a, uint b);
 	int set_channel_volume(uint chan, uint vol);
 	void update_volumes();
-	void reset_tick();
 
 	int set_volchan(int sound, int volchan);
 
