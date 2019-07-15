@@ -87,11 +87,6 @@ HDBGame::~HDBGame() {
 	DebugMan.clearAllDebugChannels();
 }
 
-bool HDBGame::hasFeature(Engine::EngineFeature f) const {
-	warning("FIXME: quitGame() exits the application, instead of RTL");
-	return (f == kSupportsRTL);
-}
-
 bool HDBGame::init() {
 	/*
 		Game Subsystem Initializations
