@@ -38,6 +38,7 @@
 #include "common/textconsole.h"
 #include "common/translation.h"
 #include "common/updates.h"
+#include "common/util.h"
 
 #include "audio/mididrv.h"
 #include "audio/musicplugin.h"
@@ -2340,7 +2341,9 @@ void GlobalOptionsDialog::setupCloudTab() {
 	if (_storageUsedSpaceDesc) _storageUsedSpaceDesc->setVisible(shown);
 	if (_storageUsedSpace) {
 		uint64 usedSpace = CloudMan.getStorageUsedSpace(_selectedStorageIndex);
-		_storageUsedSpace->setLabel(Common::String::format(_("%llu bytes"), usedSpace));
+		Common::String usedSpaceNumber, usedSpaceUnits;
+		usedSpaceNumber = Common::getHumanReadableBytes(usedSpace, usedSpaceUnits);
+		_storageUsedSpace->setLabel(Common::String::format("%s %s", usedSpaceNumber.c_str(), _(usedSpaceUnits.c_str())));
 		_storageUsedSpace->setVisible(shown);
 	}
 	if (_storageLastSyncDesc) _storageLastSyncDesc->setVisible(shown);

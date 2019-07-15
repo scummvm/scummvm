@@ -163,4 +163,43 @@ bool isGraph(int c) {
 	return isgraph((byte)c);
 }
 
+
+#pragma mark -
+
+
+Common::String getHumanReadableBytes(uint64 bytes, Common::String &unitsOut) {
+	Common::String result = Common::String::format("%lu", bytes);
+	unitsOut = "B";
+
+	if (bytes >= 1024) {
+		bytes /= 1024;
+		result = Common::String::format("%lu", bytes);
+		unitsOut = "KB";
+	}
+
+	double floating = bytes;
+
+	if (bytes >= 1024) {
+		bytes /= 1024;
+		floating /= 1024.0;
+		unitsOut = "MB";
+	}
+
+	if (bytes >= 1024) {
+		bytes /= 1024;
+		floating /= 1024.0;
+		unitsOut = "GB";
+	}
+
+	if (bytes >= 1024) { // woah
+		bytes /= 1024;
+		floating /= 1024.0;
+		unitsOut = "TB";
+	}
+
+	// print one digit after floating point
+	result = Common::String::format("%.1f", floating);
+	return result;
+}
+
 } // End of namespace Common
