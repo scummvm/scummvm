@@ -33,6 +33,11 @@
 namespace Cloud {
 namespace Id {
 
+IdStorage::IdStorage() {}
+
+IdStorage::IdStorage(Common::String token, Common::String refreshToken):
+	BaseStorage(token, refreshToken) {}
+
 IdStorage::~IdStorage() {}
 
 void IdStorage::printFiles(FileArrayResponse response) {

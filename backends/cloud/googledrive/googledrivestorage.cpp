@@ -43,49 +43,25 @@
 namespace Cloud {
 namespace GoogleDrive {
 
-#define GOOGLEDRIVE_OAUTH2_TOKEN "https://accounts.google.com/o/oauth2/token"
 #define GOOGLEDRIVE_API_FILES_ALT_MEDIA "https://www.googleapis.com/drive/v3/files/%s?alt=media"
 #define GOOGLEDRIVE_API_FILES "https://www.googleapis.com/drive/v3/files"
 #define GOOGLEDRIVE_API_ABOUT "https://www.googleapis.com/drive/v3/about?fields=storageQuota,user"
 
-char *GoogleDriveStorage::KEY = nullptr; //can't use CloudConfig there yet, loading it on instance creation/auth
-char *GoogleDriveStorage::SECRET = nullptr;
-
-void GoogleDriveStorage::loadKeyAndSecret() {
-#ifdef ENABLE_RELEASE
-	KEY = RELEASE_GOOGLE_DRIVE_KEY;
-	SECRET = RELEASE_GOOGLE_DRIVE_SECRET;
-#else
-	Common::String k = ConfMan.get("GOOGLE_DRIVE_KEY", ConfMan.kCloudDomain);
-	KEY = new char[k.size() + 1];
-	memcpy(KEY, k.c_str(), k.size());
-	KEY[k.size()] = 0;
-
-	k = ConfMan.get("GOOGLE_DRIVE_SECRET", ConfMan.kCloudDomain);
-	SECRET = new char[k.size() + 1];
-	memcpy(SECRET, k.c_str(), k.size());
-	SECRET[k.size()] = 0;
-#endif
-}
-
 GoogleDriveStorage::GoogleDriveStorage(Common::String token, Common::String refreshToken):
-	_token(token), _refreshToken(refreshToken) {}
+	IdStorage(token, refreshToken) {}
 
 GoogleDriveStorage::GoogleDriveStorage(Common::String code) {
-	getAccessToken(
-		new Common::Callback<GoogleDriveStorage, BoolResponse>(this, &GoogleDriveStorage::codeFlowComplete),
-		new Common::Callback<GoogleDriveStorage, Networking::ErrorResponse>(this, &GoogleDriveStorage::codeFlowFailed),
-		code
-	);
+	getAccessToken(code);
 }
 
 GoogleDriveStorage::~GoogleDriveStorage() {}
 
-void GoogleDriveStorage::getAccessToken(BoolCallback callback, Networking::ErrorCallback errorCallback, Common::String code) {
-	if (!KEY || !SECRET) loadKeyAndSecret();
-	bool codeFlow = (code != "");
+Common::String GoogleDriveStorage::cloudProvider() { return "gdrive"; }
 
-	if (!codeFlow && _refreshToken == "") {
+uint32 GoogleDriveStorage::storageIndex() { return kStorageGoogleDriveId; }
+
+void GoogleDriveStorage::refreshAccessToken(BoolCallback callback, Networking::ErrorCallback errorCallback) {
+	if (_refreshToken == "") {
 		warning("GoogleDriveStorage: no refresh token available to get new access token.");
 		if (callback)
 			(*callback)(BoolResponse(nullptr, false));
@@ -95,17 +71,9 @@ void GoogleDriveStorage::getAccessToken(BoolCallback callback, Networking::Error
 	Networking::JsonCallback innerCallback = new Common::CallbackBridge<GoogleDriveStorage, BoolResponse, Networking::JsonResponse>(this, &GoogleDriveStorage::tokenRefreshed, callback);
 	if (errorCallback == nullptr)
 		errorCallback = getErrorPrintingCallback();
-	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(innerCallback, errorCallback, GOOGLEDRIVE_OAUTH2_TOKEN);
-	if (codeFlow) {
-		request->addPostField("code=" + code);
-		request->addPostField("grant_type=authorization_code");
-	} else {
-		request->addPostField("refresh_token=" + _refreshToken);
-		request->addPostField("grant_type=refresh_token");
-	}
-	request->addPostField("client_id=" + Common::String(KEY));
-	request->addPostField("client_secret=" + Common::String(SECRET));
-	request->addPostField("&redirect_uri=https%3A%2F%2Fwww.scummvm.org/c/code");
+
+	Common::String url = "https://cloud.scummvm.org/gdrive/refresh/" + _refreshToken; // TODO: subject to change
+	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(innerCallback, errorCallback, url);
 	addRequest(request);
 }
 
@@ -145,23 +113,6 @@ void GoogleDriveStorage::tokenRefreshed(BoolCallback callback, Networking::JsonR
 	}
 	delete json;
 	delete callback;
-}
-
-void GoogleDriveStorage::codeFlowComplete(BoolResponse response) {
-	if (!response.value) {
-		warning("GoogleDriveStorage: failed to get access token through code flow");
-		CloudMan.removeStorage(this);
-		return;
-	}
-
-	CloudMan.replaceStorage(this, kStorageGoogleDriveId);
-	ConfMan.flushToDisk();
-}
-
-void GoogleDriveStorage::codeFlowFailed(Networking::ErrorResponse error) {
-	debug(9, "GoogleDriveStorage: code flow failed (%s, %ld):", (error.failed ? "failed" : "interrupted"), error.httpResponseCode);
-	debug(9, "%s", error.response.c_str());
-	CloudMan.removeStorage(this);
 }
 
 void GoogleDriveStorage::saveConfig(Common::String keyPrefix) {
@@ -320,8 +271,6 @@ Networking::Request *GoogleDriveStorage::info(StorageInfoCallback callback, Netw
 Common::String GoogleDriveStorage::savesDirectoryPath() { return "scummvm/saves/"; }
 
 GoogleDriveStorage *GoogleDriveStorage::loadFromConfig(Common::String keyPrefix) {
-	loadKeyAndSecret();
-
 	if (!ConfMan.hasKey(keyPrefix + "access_token", ConfMan.kCloudDomain)) {
 		warning("GoogleDriveStorage: no access_token found");
 		return nullptr;
