@@ -116,6 +116,11 @@ bool HDBMetaEngine::hasFeature(MetaEngineFeature f) const {
 		(f == kSupportsLoadingDuringStartup);
 }
 
+bool HDB::HDBGame::hasFeature(Engine::EngineFeature f) const {
+	warning("FIXME: quitGame() exits the application, instead of RTL");
+	return (f == kSupportsRTL);
+}
+
 int HDBMetaEngine::getMaximumSaveSlot() const { return 9; }
 
 bool HDBMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
