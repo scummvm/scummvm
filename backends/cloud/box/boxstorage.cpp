@@ -55,57 +55,7 @@ Common::String BoxStorage::cloudProvider() { return "box"; }
 
 uint32 BoxStorage::storageIndex() { return kStorageBoxId; }
 
-void BoxStorage::refreshAccessToken(BoolCallback callback, Networking::ErrorCallback errorCallback) {
-	if (_refreshToken == "") {
-		warning("BoxStorage: no refresh token available to get new access token.");
-		if (callback) (*callback)(BoolResponse(nullptr, false));
-		return;
-	}
-
-	Networking::JsonCallback innerCallback = new Common::CallbackBridge<BoxStorage, BoolResponse, Networking::JsonResponse>(this, &BoxStorage::tokenRefreshed, callback);
-	if (errorCallback == nullptr)
-		errorCallback = getErrorPrintingCallback();
-
-	Common::String url = "https://cloud.scummvm.org/box/refresh/" + _refreshToken; // TODO: subject to change
-	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(innerCallback, errorCallback, url);
-	addRequest(request);
-}
-
-void BoxStorage::tokenRefreshed(BoolCallback callback, Networking::JsonResponse response) {
-	Common::JSONValue *json = response.value;
-	if (!json) {
-		warning("BoxStorage: got NULL instead of JSON");
-		if (callback)
-			(*callback)(BoolResponse(nullptr, false));
-		delete callback;
-		return;
-	}
-
-	if (!Networking::CurlJsonRequest::jsonIsObject(json, "BoxStorage")) {
-		if (callback)
-			(*callback)(BoolResponse(nullptr, false));
-		delete json;
-		delete callback;
-		return;
-	}
-
-	Common::JSONObject result = json->asObject();
-	if (!Networking::CurlJsonRequest::jsonContainsString(result, "access_token", "BoxStorage") ||
-		!Networking::CurlJsonRequest::jsonContainsString(result, "refresh_token", "BoxStorage")) {
-		warning("BoxStorage: bad response, no token passed");
-		debug(9, "%s", json->stringify().c_str());
-		if (callback)
-			(*callback)(BoolResponse(nullptr, false));
-	} else {
-		_token = result.getVal("access_token")->asString();
-		_refreshToken = result.getVal("refresh_token")->asString();
-		CloudMan.save(); //ask CloudManager to save our new refreshToken
-		if (callback)
-			(*callback)(BoolResponse(nullptr, true));
-	}
-	delete json;
-	delete callback;
-}
+bool BoxStorage::needsRefreshToken() { return true; }
 
 void BoxStorage::saveConfig(Common::String keyPrefix) {
 	ConfMan.set(keyPrefix + "access_token", _token, ConfMan.kCloudDomain);

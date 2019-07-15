@@ -45,6 +45,8 @@ protected:
 	 */
 	virtual uint32 storageIndex();
 
+	virtual bool needsRefreshToken();
+
 public:
 	/** This constructor uses OAuth code flow to get tokens. */
 	DropboxStorage(Common::String code);

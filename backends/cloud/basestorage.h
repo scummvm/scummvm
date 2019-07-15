@@ -64,10 +64,24 @@ protected:
 	 */
 	virtual uint32 storageIndex() = 0;
 
+	/**
+	 * Return whether storage needs refresh_token to work.
+	 */
+	virtual bool needsRefreshToken() = 0;
+
+private:
+	void tokenRefreshed(BoolCallback callback, Networking::JsonResponse response);
+
 public:
 	BaseStorage();
 	BaseStorage(Common::String token, Common::String refreshToken);
 	virtual ~BaseStorage();
+
+	/**
+	 * Gets new access_token. Pass a callback, so you could
+	 * continue your work when new token is available.
+	 */
+	virtual void refreshAccessToken(BoolCallback callback, Networking::ErrorCallback errorCallback = nullptr);
 };
 
 } // End of namespace Cloud

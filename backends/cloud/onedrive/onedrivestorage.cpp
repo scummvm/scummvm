@@ -42,7 +42,7 @@ namespace OneDrive {
 #define ONEDRIVE_API_SPECIAL_APPROOT_ID "https://api.onedrive.com/v1.0/drive/special/approot:/"
 #define ONEDRIVE_API_SPECIAL_APPROOT "https://api.onedrive.com/v1.0/drive/special/approot"
 
-OneDriveStorage::OneDriveStorage(Common::String token,  Common::String refreshToken):
+OneDriveStorage::OneDriveStorage(Common::String token, Common::String refreshToken):
 	BaseStorage(token, refreshToken) {}
 
 OneDriveStorage::OneDriveStorage(Common::String code) {
@@ -55,59 +55,7 @@ Common::String OneDriveStorage::cloudProvider() { return "onedrive"; }
 
 uint32 OneDriveStorage::storageIndex() { return kStorageOneDriveId; }
 
-void OneDriveStorage::refreshAccessToken(BoolCallback callback, Networking::ErrorCallback errorCallback) {
-	if (_refreshToken == "") {
-		warning("OneDriveStorage: no refresh token available to get new access token.");
-		if (callback)
-			(*callback)(BoolResponse(nullptr, false));
-		return;
-	}
-
-	Networking::JsonCallback innerCallback = new Common::CallbackBridge<OneDriveStorage, BoolResponse, Networking::JsonResponse>(this, &OneDriveStorage::tokenRefreshed, callback);
-	if (errorCallback == nullptr)
-		errorCallback = getErrorPrintingCallback();
-
-	Common::String url = "https://cloud.scummvm.org/onedrive/refresh/" + _refreshToken; // TODO: subject to change
-	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(innerCallback, errorCallback, url);
-	addRequest(request);
-}
-
-void OneDriveStorage::tokenRefreshed(BoolCallback callback, Networking::JsonResponse response) {
-	Common::JSONValue *json = response.value;
-	if (!json) {
-		warning("OneDriveStorage: got NULL instead of JSON");
-		if (callback)
-			(*callback)(BoolResponse(nullptr, false));
-		delete callback;
-		return;
-	}
-
-	if (!Networking::CurlJsonRequest::jsonIsObject(json, "OneDriveStorage")) {
-		if (callback)
-			(*callback)(BoolResponse(nullptr, false));
-		delete json;
-		delete callback;
-		return;
-	}
-
-	Common::JSONObject result = json->asObject();
-	if (!Networking::CurlJsonRequest::jsonContainsString(result, "access_token", "OneDriveStorage") ||
-		!Networking::CurlJsonRequest::jsonContainsString(result, "user_id", "OneDriveStorage") ||
-		!Networking::CurlJsonRequest::jsonContainsString(result, "refresh_token", "OneDriveStorage")) {
-		warning("OneDriveStorage: bad response, no token or user_id passed");
-		debug(9, "%s", json->stringify().c_str());
-		if (callback)
-			(*callback)(BoolResponse(nullptr, false));
-	} else {
-		_token = result.getVal("access_token")->asString();
-		_refreshToken = result.getVal("refresh_token")->asString();
-		CloudMan.save(); //ask CloudManager to save our new refreshToken
-		if (callback)
-			(*callback)(BoolResponse(nullptr, true));
-	}
-	delete json;
-	delete callback;
-}
+bool OneDriveStorage::needsRefreshToken() { return true; }
 
 void OneDriveStorage::saveConfig(Common::String keyPrefix) {
 	ConfMan.set(keyPrefix + "access_token", _token, ConfMan.kCloudDomain);

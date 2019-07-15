@@ -56,60 +56,7 @@ Common::String GoogleDriveStorage::cloudProvider() { return "gdrive"; }
 
 uint32 GoogleDriveStorage::storageIndex() { return kStorageGoogleDriveId; }
 
-void GoogleDriveStorage::refreshAccessToken(BoolCallback callback, Networking::ErrorCallback errorCallback) {
-	if (_refreshToken == "") {
-		warning("GoogleDriveStorage: no refresh token available to get new access token.");
-		if (callback)
-			(*callback)(BoolResponse(nullptr, false));
-		return;
-	}
-
-	Networking::JsonCallback innerCallback = new Common::CallbackBridge<GoogleDriveStorage, BoolResponse, Networking::JsonResponse>(this, &GoogleDriveStorage::tokenRefreshed, callback);
-	if (errorCallback == nullptr)
-		errorCallback = getErrorPrintingCallback();
-
-	Common::String url = "https://cloud.scummvm.org/gdrive/refresh/" + _refreshToken; // TODO: subject to change
-	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(innerCallback, errorCallback, url);
-	addRequest(request);
-}
-
-void GoogleDriveStorage::tokenRefreshed(BoolCallback callback, Networking::JsonResponse response) {
-	Common::JSONValue *json = response.value;
-	if (!json) {
-		warning("GoogleDriveStorage: got NULL instead of JSON");
-		if (callback)
-			(*callback)(BoolResponse(nullptr, false));
-		delete callback;
-		return;
-	}
-
-	if (!Networking::CurlJsonRequest::jsonIsObject(json, "GoogleDriveStorage")) {
-		if (callback)
-			(*callback)(BoolResponse(nullptr, false));
-		delete json;
-		delete callback;
-		return;
-	}
-
-	Common::JSONObject result = json->asObject();
-	if (!Networking::CurlJsonRequest::jsonContainsString(result, "access_token", "GoogleDriveStorage")) {
-		warning("GoogleDriveStorage: bad response, no token passed");
-		debug(9, "%s", json->stringify().c_str());
-		if (callback)
-			(*callback)(BoolResponse(nullptr, false));
-	} else {
-		_token = result.getVal("access_token")->asString();
-		if (!Networking::CurlJsonRequest::jsonContainsString(result, "refresh_token", "GoogleDriveStorage"))
-			warning("GoogleDriveStorage: no refresh_token passed");
-		else
-			_refreshToken = result.getVal("refresh_token")->asString();
-		CloudMan.save(); //ask CloudManager to save our new refreshToken
-		if (callback)
-			(*callback)(BoolResponse(nullptr, true));
-	}
-	delete json;
-	delete callback;
-}
+bool GoogleDriveStorage::needsRefreshToken() { return true; }
 
 void GoogleDriveStorage::saveConfig(Common::String keyPrefix) {
 	ConfMan.set(keyPrefix + "access_token", _token, ConfMan.kCloudDomain);

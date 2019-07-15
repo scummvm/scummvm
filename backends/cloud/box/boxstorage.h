@@ -33,8 +33,6 @@ class BoxStorage: public Id::IdStorage {
 	/** This private constructor is called from loadFromConfig(). */
 	BoxStorage(Common::String token, Common::String refreshToken);
 
-	void tokenRefreshed(BoolCallback callback, Networking::JsonResponse response);
-
 	/** Constructs StorageInfo based on JSON response from cloud. */
 	void infoInnerCallback(StorageInfoCallback outerCallback, Networking::JsonResponse json);
 
@@ -50,6 +48,8 @@ protected:
 	 * @return kStorageBoxId
 	 */
 	virtual uint32 storageIndex();
+
+	virtual bool needsRefreshToken();
 
 public:
 	/** This constructor uses OAuth code flow to get tokens. */
@@ -103,12 +103,6 @@ public:
 	static BoxStorage *loadFromConfig(Common::String keyPrefix);
 
 	virtual Common::String getRootDirectoryId();
-
-	/**
-	 * Gets new access_token. Pass a callback, so you could
-	 * continue your work when new token is available.
-	 */
-	void refreshAccessToken(BoolCallback callback, Networking::ErrorCallback errorCallback = nullptr);
 
 	Common::String accessToken() const { return _token; }
 };
