@@ -23,6 +23,7 @@ ifdef USE_CLOUD
 
 ifdef USE_LIBCURL
 MODULE_OBJS += \
+	cloud/basestorage.o \
 	cloud/cloudicon.o \
 	cloud/cloudmanager.o \
 	cloud/iso8601.o \

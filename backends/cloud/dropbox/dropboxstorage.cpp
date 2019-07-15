@@ -42,61 +42,19 @@
 namespace Cloud {
 namespace Dropbox {
 
-#define DROPBOX_OAUTH2_TOKEN "https://cloud.scummvm.org/dropbox/token/"
 #define DROPBOX_API_FILES_DOWNLOAD "https://content.dropboxapi.com/2/files/download"
 
-DropboxStorage::DropboxStorage(Common::String accessToken, bool unused): _token(accessToken) {}
+DropboxStorage::DropboxStorage(Common::String accessToken, bool unused): BaseStorage(accessToken, "") {}
 
-DropboxStorage::DropboxStorage(Common::String code) {
+DropboxStorage::DropboxStorage(Common::String code): BaseStorage() {
 	getAccessToken(code);
 }
 
 DropboxStorage::~DropboxStorage() {}
 
-void DropboxStorage::getAccessToken(Common::String code) {
-	Networking::JsonCallback callback = new Common::Callback<DropboxStorage, Networking::JsonResponse>(this, &DropboxStorage::codeFlowComplete);
-	Networking::ErrorCallback errorCallback = new Common::Callback<DropboxStorage, Networking::ErrorResponse>(this, &DropboxStorage::codeFlowFailed);
+Common::String DropboxStorage::cloudProvider() { return "dropbox"; }
 
-	Common::String url = Common::String(DROPBOX_OAUTH2_TOKEN) + code;
-	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(callback, errorCallback, url);
-
-	addRequest(request);
-}
-
-void DropboxStorage::codeFlowComplete(Networking::JsonResponse response) {
-	Common::JSONValue *json = (Common::JSONValue *)response.value;
-	if (json == nullptr) {
-		debug(9, "DropboxStorage::codeFlowComplete: got NULL instead of JSON!");
-		CloudMan.removeStorage(this);
-		return;
-	}
-
-	if (!json->isObject()) {
-		debug(9, "DropboxStorage::codeFlowComplete: Passed JSON is not an object!");
-		CloudMan.removeStorage(this);
-		delete json;
-		return;
-	}
-
-	Common::JSONObject result = json->asObject();
-	if (!Networking::CurlJsonRequest::jsonContainsString(result, "access_token", "DropboxStorage::codeFlowComplete")) {
-		warning("DropboxStorage: bad response, no token passed");
-		debug(9, "%s", json->stringify(true).c_str());
-		CloudMan.removeStorage(this);
-	} else {
-		_token = result.getVal("access_token")->asString();
-		CloudMan.replaceStorage(this, kStorageDropboxId);
-		ConfMan.flushToDisk();
-	}
-
-	delete json;
-}
-
-void DropboxStorage::codeFlowFailed(Networking::ErrorResponse error) {
-	debug(9, "DropboxStorage: code flow failed (%s, %ld):", (error.failed ? "failed" : "interrupted"), error.httpResponseCode);
-	debug(9, "%s", error.response.c_str());
-	CloudMan.removeStorage(this);
-}
+uint32 DropboxStorage::storageIndex() { return kStorageDropboxId; }
 
 void DropboxStorage::saveConfig(Common::String keyPrefix) {
 	ConfMan.set(keyPrefix + "access_token", _token, ConfMan.kCloudDomain);
