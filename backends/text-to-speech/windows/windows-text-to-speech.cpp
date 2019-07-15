@@ -41,15 +41,30 @@
 #include "common/ustr.h"
 #include "common/config-manager.h"
 
-WindowsTextToSpeechManager::WindowsTextToSpeechManager() {
-	debug("hi");
+ISpVoice *_voice;
+
+WindowsTextToSpeechManager::WindowsTextToSpeechManager()
+	: _speechState(BROKEN){
 	init();
 }
 
 void WindowsTextToSpeechManager::init() {
+	if (FAILED(::CoInitialize(NULL)))
+		return;
+
+	HRESULT hr = CoCreateInstance(CLSID_SpVoice, NULL, CLSCTX_ALL, IID_ISpVoice, (void **)&_voice);
+	if (!SUCCEEDED(hr)) {
+		warning("Could not initialize TTS voice");
+		return;
+	}
+	updateVoices();
+	_speechState = READY;
 }
 
 WindowsTextToSpeechManager::~WindowsTextToSpeechManager() {
+	if (_voice)
+		_voice->Release();
+	::CoUninitialize();
 }
 
 bool WindowsTextToSpeechManager::say(Common::String str) {
