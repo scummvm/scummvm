@@ -170,6 +170,8 @@ public:
 	void turnOnBonusStars(int which);
 	void drawBonusStars();
 
+	void drawDebugInfo(Tile *_debugLogo, int fps);
+
 private:
 	int _numTiles;
 	TileLookup *_tLookupArray;
