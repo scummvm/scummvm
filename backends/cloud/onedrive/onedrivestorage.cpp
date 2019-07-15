@@ -154,7 +154,6 @@ void OneDriveStorage::codeFlowComplete(BoolResponse response) {
 		return;
 	}
 
-	ConfMan.removeKey("onedrive_code", ConfMan.kCloudDomain);
 	CloudMan.replaceStorage(this, kStorageOneDriveId);
 	ConfMan.flushToDisk();
 }

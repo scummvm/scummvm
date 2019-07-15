@@ -154,7 +154,6 @@ void GoogleDriveStorage::codeFlowComplete(BoolResponse response) {
 		return;
 	}
 
-	ConfMan.removeKey("googledrive_code", ConfMan.kCloudDomain);
 	CloudMan.replaceStorage(this, kStorageGoogleDriveId);
 	ConfMan.flushToDisk();
 }
