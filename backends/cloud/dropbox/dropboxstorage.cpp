@@ -52,6 +52,8 @@ Common::String DropboxStorage::cloudProvider() { return "dropbox"; }
 
 uint32 DropboxStorage::storageIndex() { return kStorageDropboxId; }
 
+bool DropboxStorage::needsRefreshToken() { return false; }
+
 void DropboxStorage::saveConfig(Common::String keyPrefix) {
 	ConfMan.set(keyPrefix + "access_token", _token, ConfMan.kCloudDomain);
 }

@@ -41,7 +41,7 @@ void BaseStorage::getAccessToken(Common::String code) {
 	Networking::JsonCallback callback = new Common::Callback<BaseStorage, Networking::JsonResponse>(this, &BaseStorage::codeFlowComplete);
 	Networking::ErrorCallback errorCallback = new Common::Callback<BaseStorage, Networking::ErrorResponse>(this, &BaseStorage::codeFlowFailed);
 
-	Common::String url = Common::String::format("https://cloud.scummvm.org/%s/%s", cloudProvider().c_str(), code.c_str());
+	Common::String url = Common::String::format("https://cloud.scummvm.org/%s/token/%s", cloudProvider().c_str(), code.c_str());
 	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(callback, errorCallback, url);
 
 	addRequest(request);
@@ -82,16 +82,32 @@ void BaseStorage::codeFlowComplete(Networking::JsonResponse response) {
 		return;
 	}
 
-	if (!Networking::CurlJsonRequest::jsonContainsString(result, "access_token", "BaseStorage::codeFlowComplete")) {
-		warning("BaseStorage: bad response, no 'access_token' attribute passed");
+	if (!Networking::CurlJsonRequest::jsonContainsObject(result, "oauth", "BaseStorage::codeFlowComplete")) {
+		warning("BaseStorage: bad response, no 'oauth' attribute passed");
 		debug(9, "%s", json->stringify(true).c_str());
 		CloudMan.removeStorage(this);
-	} else {
-		debug(9, "%s", json->stringify(true).c_str()); // TODO: remove before commit
-		_token = result.getVal("access_token")->asString();
-		CloudMan.replaceStorage(this, storageIndex());
-		ConfMan.flushToDisk();
+		delete json;
+		return;
 	}
+
+	Common::JSONObject oauth = result.getVal("oauth")->asObject();
+	bool requiresRefreshToken = needsRefreshToken();
+	if (!Networking::CurlJsonRequest::jsonContainsString(oauth, "access_token", "BaseStorage::codeFlowComplete") ||
+		!Networking::CurlJsonRequest::jsonContainsString(oauth, "refresh_token", "BaseStorage::codeFlowComplete", !requiresRefreshToken)) {
+		warning("BaseStorage: bad response, no 'access_token' or 'refresh_token' attribute passed");
+		debug(9, "%s", json->stringify(true).c_str());
+		CloudMan.removeStorage(this);
+		delete json;
+		return;
+	}
+
+	debug(9, "%s", json->stringify(true).c_str()); // TODO: remove before commit
+	_token = oauth.getVal("access_token")->asString();
+	if (requiresRefreshToken) {
+		_refreshToken = oauth.getVal("refresh_token")->asString();
+	}
+	CloudMan.replaceStorage(this, storageIndex());
+	ConfMan.flushToDisk();
 
 	delete json;
 }
@@ -100,6 +116,99 @@ void BaseStorage::codeFlowFailed(Networking::ErrorResponse error) {
 	debug(9, "BaseStorage: code flow failed (%s, %ld):", (error.failed ? "failed" : "interrupted"), error.httpResponseCode);
 	debug(9, "%s", error.response.c_str());
 	CloudMan.removeStorage(this);
+}
+
+void BaseStorage::refreshAccessToken(BoolCallback callback, Networking::ErrorCallback errorCallback) {
+	if (_refreshToken == "") {
+		warning("BaseStorage: no refresh token available to get new access token.");
+		if (callback) (*callback)(BoolResponse(nullptr, false));
+		return;
+	}
+
+	Networking::JsonCallback innerCallback = new Common::CallbackBridge<BaseStorage, BoolResponse, Networking::JsonResponse>(this, &BaseStorage::tokenRefreshed, callback);
+	if (errorCallback == nullptr)
+		errorCallback = getErrorPrintingCallback();
+
+	Common::String url = Common::String::format("https://cloud.scummvm.org/%s/refresh?code=%s", cloudProvider().c_str(), _refreshToken.c_str());
+	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(innerCallback, errorCallback, url);
+	addRequest(request);
+}
+
+void BaseStorage::tokenRefreshed(BoolCallback callback, Networking::JsonResponse response) {
+	Common::JSONValue *json = response.value;
+	if (json == nullptr) {
+		debug(9, "BaseStorage::tokenRefreshed: got NULL instead of JSON!");
+		if (callback)
+			(*callback)(BoolResponse(nullptr, false));
+		delete callback;
+		return;
+	}
+
+	if (!json->isObject()) {
+		debug(9, "BaseStorage::tokenRefreshed: passed JSON is not an object!");
+		if (callback)
+			(*callback)(BoolResponse(nullptr, false));
+		delete json;
+		delete callback;
+		return;
+	}
+
+	Common::JSONObject result = json->asObject();
+	if (!Networking::CurlJsonRequest::jsonContainsAttribute(result, "error", "BaseStorage::tokenRefreshed")) {
+		warning("BaseStorage: bad response, no 'error' attribute passed");
+		debug(9, "%s", json->stringify(true).c_str());
+		if (callback)
+			(*callback)(BoolResponse(nullptr, false));
+		delete json;
+		delete callback;
+		return;
+	}
+
+	if (result.getVal("error")->asBool()) {
+		Common::String errorMessage = "{error: true}, message is missing";
+		if (Networking::CurlJsonRequest::jsonContainsString(result, "message", "BaseStorage::tokenRefreshed")) {
+			errorMessage = result.getVal("message")->asString();
+		}
+		warning("BaseStorage: response says error occurred: %s", errorMessage.c_str());
+		if (callback)
+			(*callback)(BoolResponse(nullptr, false));
+		delete json;
+		delete callback;
+		return;
+	}
+
+	if (!Networking::CurlJsonRequest::jsonContainsObject(result, "oauth", "BaseStorage::tokenRefreshed")) {
+		warning("BaseStorage: bad response, no 'oauth' attribute passed");
+		debug(9, "%s", json->stringify(true).c_str());
+		if (callback)
+			(*callback)(BoolResponse(nullptr, false));
+		delete json;
+		delete callback;
+		return;
+	}
+
+	Common::JSONObject oauth = result.getVal("oauth")->asObject();
+	bool requiresRefreshToken = needsRefreshToken(); // TODO: it seems Google Drive might not send new refresh token, and still accept old one
+	if (!Networking::CurlJsonRequest::jsonContainsString(oauth, "access_token", "BaseStorage::tokenRefreshed") ||
+		!Networking::CurlJsonRequest::jsonContainsString(oauth, "refresh_token", "BaseStorage::tokenRefreshed", !requiresRefreshToken)) {
+		warning("BaseStorage: bad response, no 'access_token' or 'refresh_token' attribute passed");
+		debug(9, "%s", json->stringify(true).c_str());
+		if (callback)
+			(*callback)(BoolResponse(nullptr, false));
+		delete json;
+		delete callback;
+		return;
+	}
+
+	_token = oauth.getVal("access_token")->asString();
+	if (requiresRefreshToken) {
+		_refreshToken = oauth.getVal("refresh_token")->asString();
+	}
+	CloudMan.save(); //ask CloudManager to save our new access_token and refresh_token
+	if (callback)
+		(*callback)(BoolResponse(nullptr, true));
+	delete json;
+	delete callback;
 }
 
 } // End of namespace Cloud

@@ -33,8 +33,6 @@ class OneDriveStorage: public Cloud::BaseStorage {
 	/** This private constructor is called from loadFromConfig(). */
 	OneDriveStorage(Common::String token, Common::String refreshToken);
 
-	void tokenRefreshed(BoolCallback callback, Networking::JsonResponse response);
-
 	/** Constructs StorageInfo based on JSON response from cloud. */
 	void infoInnerCallback(StorageInfoCallback outerCallback, Networking::JsonResponse json);
 
@@ -50,6 +48,8 @@ protected:
 	 * @return kStorageOneDriveId
 	 */
 	virtual uint32 storageIndex();
+
+	virtual bool needsRefreshToken();
 
 public:
 	/** This constructor uses OAuth code flow to get tokens. */
@@ -100,12 +100,6 @@ public:
 	 * @return pointer to the newly created OneDriveStorage or 0 if some problem occured.
 	 */
 	static OneDriveStorage *loadFromConfig(Common::String keyPrefix);
-
-	/**
-	 * Gets new access_token. Pass a callback, so you could
-	 * continue your work when new token is available.
-	 */
-	void refreshAccessToken(BoolCallback callback, Networking::ErrorCallback errorCallback = nullptr);
 
 	Common::String accessToken() const { return _token; }
 };
