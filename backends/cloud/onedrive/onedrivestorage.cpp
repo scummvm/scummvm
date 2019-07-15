@@ -43,49 +43,24 @@
 namespace Cloud {
 namespace OneDrive {
 
-#define ONEDRIVE_OAUTH2_TOKEN "https://login.live.com/oauth20_token.srf"
 #define ONEDRIVE_API_SPECIAL_APPROOT_ID "https://api.onedrive.com/v1.0/drive/special/approot:/"
 #define ONEDRIVE_API_SPECIAL_APPROOT "https://api.onedrive.com/v1.0/drive/special/approot"
 
-char *OneDriveStorage::KEY = nullptr; //can't use CloudConfig there yet, loading it on instance creation/auth
-char *OneDriveStorage::SECRET = nullptr;
-
-void OneDriveStorage::loadKeyAndSecret() {
-#ifdef ENABLE_RELEASE
-	KEY = RELEASE_ONEDRIVE_KEY;
-	SECRET = RELEASE_ONEDRIVE_SECRET;
-#else
-	Common::String k = ConfMan.get("ONEDRIVE_KEY", ConfMan.kCloudDomain);
-	KEY = new char[k.size() + 1];
-	memcpy(KEY, k.c_str(), k.size());
-	KEY[k.size()] = 0;
-
-	k = ConfMan.get("ONEDRIVE_SECRET", ConfMan.kCloudDomain);
-	SECRET = new char[k.size() + 1];
-	memcpy(SECRET, k.c_str(), k.size());
-	SECRET[k.size()] = 0;
-#endif
-}
-
-OneDriveStorage::OneDriveStorage(Common::String token, Common::String uid, Common::String refreshToken):
-	_token(token), _uid(uid), _refreshToken(refreshToken) {}
+OneDriveStorage::OneDriveStorage(Common::String token,  Common::String refreshToken):
+	BaseStorage(token, refreshToken) {}
 
 OneDriveStorage::OneDriveStorage(Common::String code) {
-	getAccessToken(
-		new Common::Callback<OneDriveStorage, BoolResponse>(this, &OneDriveStorage::codeFlowComplete),
-		new Common::Callback<OneDriveStorage, Networking::ErrorResponse>(this, &OneDriveStorage::codeFlowFailed),
-		code
-	);
+	getAccessToken(code);
 }
 
 OneDriveStorage::~OneDriveStorage() {}
 
-void OneDriveStorage::getAccessToken(BoolCallback callback, Networking::ErrorCallback errorCallback, Common::String code) {
-	if (!KEY || !SECRET)
-		loadKeyAndSecret();
-	bool codeFlow = (code != "");
+Common::String OneDriveStorage::cloudProvider() { return "onedrive"; }
 
-	if (!codeFlow && _refreshToken == "") {
+uint32 OneDriveStorage::storageIndex() { return kStorageOneDriveId; }
+
+void OneDriveStorage::refreshAccessToken(BoolCallback callback, Networking::ErrorCallback errorCallback) {
+	if (_refreshToken == "") {
 		warning("OneDriveStorage: no refresh token available to get new access token.");
 		if (callback)
 			(*callback)(BoolResponse(nullptr, false));
@@ -95,17 +70,9 @@ void OneDriveStorage::getAccessToken(BoolCallback callback, Networking::ErrorCal
 	Networking::JsonCallback innerCallback = new Common::CallbackBridge<OneDriveStorage, BoolResponse, Networking::JsonResponse>(this, &OneDriveStorage::tokenRefreshed, callback);
 	if (errorCallback == nullptr)
 		errorCallback = getErrorPrintingCallback();
-	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(innerCallback, errorCallback, ONEDRIVE_OAUTH2_TOKEN);
-	if (codeFlow) {
-		request->addPostField("code=" + code);
-		request->addPostField("grant_type=authorization_code");
-	} else {
-		request->addPostField("refresh_token=" + _refreshToken);
-		request->addPostField("grant_type=refresh_token");
-	}
-	request->addPostField("client_id=" + Common::String(KEY));
-	request->addPostField("client_secret=" + Common::String(SECRET));
-	request->addPostField("&redirect_uri=https%3A%2F%2Fwww.scummvm.org/c/code");
+
+	Common::String url = "https://cloud.scummvm.org/onedrive/refresh/" + _refreshToken; // TODO: subject to change
+	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(innerCallback, errorCallback, url);
 	addRequest(request);
 }
 
@@ -137,7 +104,6 @@ void OneDriveStorage::tokenRefreshed(BoolCallback callback, Networking::JsonResp
 			(*callback)(BoolResponse(nullptr, false));
 	} else {
 		_token = result.getVal("access_token")->asString();
-		_uid = result.getVal("user_id")->asString();
 		_refreshToken = result.getVal("refresh_token")->asString();
 		CloudMan.save(); //ask CloudManager to save our new refreshToken
 		if (callback)
@@ -147,26 +113,8 @@ void OneDriveStorage::tokenRefreshed(BoolCallback callback, Networking::JsonResp
 	delete callback;
 }
 
-void OneDriveStorage::codeFlowComplete(BoolResponse response) {
-	if (!response.value) {
-		warning("OneDriveStorage: failed to get access token through code flow");
-		CloudMan.removeStorage(this);
-		return;
-	}
-
-	CloudMan.replaceStorage(this, kStorageOneDriveId);
-	ConfMan.flushToDisk();
-}
-
-void OneDriveStorage::codeFlowFailed(Networking::ErrorResponse error) {
-	debug(9, "OneDriveStorage: code flow failed (%s, %ld):", (error.failed ? "failed" : "interrupted"), error.httpResponseCode);
-	debug(9, "%s", error.response.c_str());
-	CloudMan.removeStorage(this);
-}
-
 void OneDriveStorage::saveConfig(Common::String keyPrefix) {
 	ConfMan.set(keyPrefix + "access_token", _token, ConfMan.kCloudDomain);
-	ConfMan.set(keyPrefix + "user_id", _uid, ConfMan.kCloudDomain);
 	ConfMan.set(keyPrefix + "refresh_token", _refreshToken, ConfMan.kCloudDomain);
 }
 
@@ -295,15 +243,8 @@ Networking::Request *OneDriveStorage::info(StorageInfoCallback callback, Network
 Common::String OneDriveStorage::savesDirectoryPath() { return "saves/"; }
 
 OneDriveStorage *OneDriveStorage::loadFromConfig(Common::String keyPrefix) {
-	loadKeyAndSecret();
-
 	if (!ConfMan.hasKey(keyPrefix + "access_token", ConfMan.kCloudDomain)) {
 		warning("OneDriveStorage: no access_token found");
-		return nullptr;
-	}
-
-	if (!ConfMan.hasKey(keyPrefix + "user_id", ConfMan.kCloudDomain)) {
-		warning("OneDriveStorage: no user_id found");
 		return nullptr;
 	}
 
@@ -313,9 +254,8 @@ OneDriveStorage *OneDriveStorage::loadFromConfig(Common::String keyPrefix) {
 	}
 
 	Common::String accessToken = ConfMan.get(keyPrefix + "access_token", ConfMan.kCloudDomain);
-	Common::String userId = ConfMan.get(keyPrefix + "user_id", ConfMan.kCloudDomain);
 	Common::String refreshToken = ConfMan.get(keyPrefix + "refresh_token", ConfMan.kCloudDomain);
-	return new OneDriveStorage(accessToken, userId, refreshToken);
+	return new OneDriveStorage(accessToken, refreshToken);
 }
 
 } // End of namespace OneDrive

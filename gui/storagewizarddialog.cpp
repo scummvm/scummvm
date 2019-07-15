@@ -135,7 +135,7 @@ void StorageWizardDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 	case kCodeBoxCmd: {
 		Common::String code, message;
 
-		if (_storageId == Cloud::kStorageDropboxId) {
+		if (_storageId == Cloud::kStorageDropboxId || _storageId == Cloud::kStorageOneDriveId) {
 			// new handling
 			code = _codeWidget[0]->getEditString();
 
@@ -228,7 +228,7 @@ void StorageWizardDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		break;
 	}
 	case kConnectCmd: {
-		if (_storageId == Cloud::kStorageDropboxId) {
+		if (_storageId == Cloud::kStorageDropboxId || _storageId == Cloud::kStorageOneDriveId) {
 			// new handling
 			Common::String code = _codeWidget[0]->getEditString();
 			if (code.size() == 0)
@@ -289,7 +289,7 @@ void StorageWizardDialog::containerWidgetsReflow() {
 
 	bool showFields = true; // TODO: remove this const
 	for (uint32 i = 0; i < CODE_FIELDS; ++i)
-		_codeWidget[i]->setVisible(showFields && (_storageId != Cloud::kStorageDropboxId || i < 1)); // show only one field for Dropbox
+		_codeWidget[i]->setVisible(showFields && ((_storageId != Cloud::kStorageDropboxId && _storageId != Cloud::kStorageOneDriveId) || i < 1)); // show only one field for Dropbox
 	_messageWidget->setVisible(showFields);
 
 	// left column / first bottom row
@@ -316,10 +316,8 @@ Common::String StorageWizardDialog::getUrl() const {
 	Common::String url = "https://www.scummvm.org/c/";
 	switch (_storageId) {
 	case Cloud::kStorageDropboxId:
-		url = "https://cloud.scummvm.org/";
-		break;
 	case Cloud::kStorageOneDriveId:
-		url += "od";
+		url = "https://cloud.scummvm.org/";
 		break;
 	case Cloud::kStorageGoogleDriveId:
 		url += "gd";
