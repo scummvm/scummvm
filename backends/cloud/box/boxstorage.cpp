@@ -35,10 +35,6 @@
 #include "common/debug.h"
 #include "common/json.h"
 
-#ifdef ENABLE_RELEASE
-#include "dists/clouds/cloud_keys.h"
-#endif
-
 namespace Cloud {
 namespace Box {
 
