@@ -379,6 +379,15 @@ Tile *Gfx::loadTile(const char *tileName) {
 	return tile;
 }
 
+Tile *Gfx::loadIcon(const char *tileName) {
+	Tile *tile = new Tile;
+	Common::SeekableReadStream *stream = g_hdb->_fileMan->findFirstData(tileName, TYPE_ICON32);
+	if (!stream)
+		return NULL;
+	tile->load(stream);
+	return tile;
+}
+
 Tile *Gfx::getTile(int index) {
 
 	if (index < 0 || index > _numTiles) {
