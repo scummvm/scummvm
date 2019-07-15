@@ -1745,10 +1745,7 @@ bool LuaScript::initScript(Common::SeekableReadStream *stream, const char *scrip
 	lua_pushnumber(_state, 480 - 14);
 	lua_setglobal(_state, "BOTTOM_Y");
 
-	/*
-		TODO: Load the sound names and entity
-		spawn names into Lua once they are implemented.
-	*/
+	warning("STUB: Stick Sound Names into Lua");
 
 	// Set the Entity Spawn Names  in Lua
 	int j = 0;
