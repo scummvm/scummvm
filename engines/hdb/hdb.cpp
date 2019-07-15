@@ -288,7 +288,7 @@ void HDBGame::paint() {
 
 	// Draw FPS on Screen in Debug Mode
 	if (_debugFlag == 1) {
-		debug(9, "STUB: Requires StartTiming() and EndTiming()");
+		_gfx->drawDebugInfo(_debugLogo, _frames.size());
 	} else if (_debugFlag == 2) {
 		_debugLogo->drawMasked(kScreenWidth - 32, 0);
 	}
@@ -973,6 +973,11 @@ Common::Error HDBGame::run() {
 		paint();
 
 		g_system->updateScreen();
+		if (g_hdb->getDebug()) {
+			g_hdb->_frames.push_back(g_system->getMillis());
+			while (g_hdb->_frames[0] < g_system->getMillis() - 1000)
+				g_hdb->_frames.remove_at(0);
+		}
 		g_system->delayMillis(1000 / kGameFPS);
 	}
 

@@ -298,6 +298,9 @@ public:
 	bool _progressActive;
 	int _progressCurrent, _progressXOffset, _progressMax;
 
+	// FPS Variables
+	Common::Array<uint32> _frames;
+
 private:
 
 	uint32 _timePlayed;

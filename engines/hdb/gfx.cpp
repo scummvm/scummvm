@@ -343,6 +343,11 @@ void Gfx::updateFade() {
 		g_system->copyRectToScreen(_globalSurface.getBasePtr(0, 0), _globalSurface.pitch, 0, 0, _globalSurface.w, _globalSurface.h);
 
 		g_system->updateScreen();
+		if (g_hdb->getDebug()) {
+			g_hdb->_frames.push_back(g_system->getMillis());
+			while (g_hdb->_frames[0] < g_system->getMillis() - 1000)
+				g_hdb->_frames.remove_at(0);
+		}
 		g_system->delayMillis(1000 / kGameFPS);
 
 	} while (_fadeInfo.active);
