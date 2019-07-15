@@ -986,6 +986,32 @@ void Gfx::drawBonusStars() {
 	}
 }
 
+void Gfx::drawDebugInfo(Tile *_debugLogo, int fps) {
+	int x, y;
+	AIEntity *p;
+	char buff[64];
+
+	_debugLogo->drawMasked(kScreenWidth - 32, 0);
+
+	// Draw  FPS
+	setCursor(0, 0);
+	sprintf(buff, "FPS: %d", fps);
+	drawText(buff);
+
+	// Draw Player Info
+	setCursor(0, 16);
+	g_hdb->_ai->getPlayerXY(&x, &y);
+	sprintf(buff, "Player X: %d, Y: %d", x / kTileWidth, y / kTileHeight);
+	drawText(buff);
+
+	setCursor(0, 32);
+	p = g_hdb->_ai->getPlayer();
+	if (p) {
+		sprintf(buff, "Player height level: %d", p->level);
+		drawText(buff);
+	}
+}
+
 Picture::Picture() : _width(0), _height(0), _name("") {
 	_surface.create(_width, _height, g_hdb->_format);
 }
