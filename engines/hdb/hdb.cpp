@@ -87,6 +87,11 @@ HDBGame::~HDBGame() {
 	DebugMan.clearAllDebugChannels();
 }
 
+bool HDBGame::hasFeature(Engine::EngineFeature f) const {
+	warning("FIXME: quitGame() exits the application, instead of RTL");
+	return (f == kSupportsRTL);
+}
+
 bool HDBGame::init() {
 	/*
 		Game Subsystem Initializations
@@ -871,9 +876,6 @@ Common::Error HDBGame::run() {
 		Common::Event event;
 		while (g_system->getEventManager()->pollEvent(event)) {
 			switch (event.type) {
-			case Common::EVENT_QUIT:
-			case Common::EVENT_RTL:
-				break;
 			case Common::EVENT_MOUSEMOVE:
 				_input->updateMouse(event.mouse.x, event.mouse.y);
 				break;

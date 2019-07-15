@@ -131,6 +131,8 @@ public:
 	HDBGame(OSystem *syst, const ADGameDescription *gameDesc);
 	~HDBGame();
 
+	virtual bool hasFeature(Engine::EngineFeature f) const;
+
 	virtual Common::Error run();
 
 	// Detection related members;

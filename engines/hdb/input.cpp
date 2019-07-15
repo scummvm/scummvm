@@ -319,7 +319,10 @@ void Input::updateMouseButtons(int l, int m, int r) {
 
 void Input::updateKeys(Common::Event event, bool keyDown) {
 
-	debug(9, "STUB: updateKeys: Check for Quit key");
+	if (keyDown && event.kbd.keycode == _keyQuit) {
+		g_hdb->quitGame();
+		return;
+	}
 
 	uint16 buttons = getButtons();
 

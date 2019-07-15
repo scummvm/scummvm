@@ -1253,7 +1253,7 @@ void Menu::processInput(int x, int y) {
 		} else if (_quitTimer < g_hdb->getTimeSlice()) {
 			if (x >= kQuitYesX1 && x <= kQuitYesX2 && y > kQuitYesY1 && y < kQuitYesY2) {
 				writeConfig();
-				warning("STUB: End game: Call Destroy()");
+				g_hdb->quitGame();
 			}
 		}
 	}
