@@ -1885,8 +1885,26 @@ void LuaScript::invokeLuaFunction(char *luaFunc, int x, int y, int value1, int v
 
 	lua_getglobal(_state, luaFunc);
 	type = lua_type(_state, 1);
+
+#if 0
+	if (!strcmp(luaFunc, "ferretbed_use")) {
+		const char *t = lua_typename(_state, type);
+		warning("type: %s", t);
+		Common::String a("print(ferretbed_init(50, 30, 0, 0))");
+
+		executeChunk(a, "debug");
+
+//		a = "print('woo') for i,v in pairs(_G) do if type(v) == 'function' then print(i) end end";
+//		a = "print(ferretbed_use())";
+
+		executeChunk(a, "debug");
+
+		lua_printstack(_state);
+	}
+#endif
+
 	if (type != LUA_TFUNCTION) {
-		warning("Function '%s' doesn't exist", luaFunc);
+		warning("Function '%s' doesn't exist (%d)", luaFunc, type);
 	} else {
 		lua_pushnumber(_state, x);
 		lua_pushnumber(_state, y);
