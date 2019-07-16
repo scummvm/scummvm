@@ -2025,6 +2025,11 @@ void LuaScript::addPatches(Common::String &chunk, const char *scriptName) {
 
 	if (applied)
 		debug(1, "Applied %d patches to %s", applied, scriptName);
+
+	if (gDebugLevel > 3) {
+		warning(">>>>>>>>>>> SCRIPT: %s", scriptName);
+		chunk += "\nfor i,v in pairs(_G) do if type(v) == 'function' then print(i) end end";
+	}
 }
 
 void LuaScript::checkParameters(const char *func, int params) {
