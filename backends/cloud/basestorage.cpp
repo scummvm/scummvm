@@ -48,67 +48,68 @@ void BaseStorage::getAccessToken(Common::String code) {
 }
 
 void BaseStorage::codeFlowComplete(Networking::JsonResponse response) {
+	bool success = true;
+
 	Common::JSONValue *json = (Common::JSONValue *)response.value;
 	if (json == nullptr) {
 		debug(9, "BaseStorage::codeFlowComplete: got NULL instead of JSON!");
-		CloudMan.removeStorage(this);
-		return;
+		success = false;
 	}
 
-	if (!json->isObject()) {
+	if (success && !json->isObject()) {
 		debug(9, "BaseStorage::codeFlowComplete: passed JSON is not an object!");
-		CloudMan.removeStorage(this);
-		delete json;
-		return;
+		success = false;
 	}
 
-	Common::JSONObject result = json->asObject();
-	if (!Networking::CurlJsonRequest::jsonContainsAttribute(result, "error", "BaseStorage::codeFlowComplete")) {
-		warning("BaseStorage: bad response, no 'error' attribute passed");
-		debug(9, "%s", json->stringify(true).c_str());
-		CloudMan.removeStorage(this);
-		delete json;
-		return;
+	Common::JSONObject result;
+	if (success) {
+		result = json->asObject();
+		if (!Networking::CurlJsonRequest::jsonContainsAttribute(result, "error", "BaseStorage::codeFlowComplete")) {
+			warning("BaseStorage: bad response, no 'error' attribute passed");
+			debug(9, "%s", json->stringify(true).c_str());
+			success = false;
+		}
 	}
 
-	if (result.getVal("error")->asBool()) {
+	if (success && result.getVal("error")->asBool()) {
 		Common::String errorMessage = "{error: true}, message is missing";
 		if (Networking::CurlJsonRequest::jsonContainsString(result, "message", "BaseStorage::codeFlowComplete")) {
 			errorMessage = result.getVal("message")->asString();
 		}
 		warning("BaseStorage: response says error occurred: %s", errorMessage.c_str());
-		CloudMan.removeStorage(this);
-		delete json;
-		return;
+		success = false;
 	}
 
-	if (!Networking::CurlJsonRequest::jsonContainsObject(result, "oauth", "BaseStorage::codeFlowComplete")) {
+	if (success && !Networking::CurlJsonRequest::jsonContainsObject(result, "oauth", "BaseStorage::codeFlowComplete")) {
 		warning("BaseStorage: bad response, no 'oauth' attribute passed");
 		debug(9, "%s", json->stringify(true).c_str());
-		CloudMan.removeStorage(this);
-		delete json;
-		return;
+		success = false;
 	}
 
-	Common::JSONObject oauth = result.getVal("oauth")->asObject();
+	Common::JSONObject oauth;
 	bool requiresRefreshToken = needsRefreshToken();
-	if (!Networking::CurlJsonRequest::jsonContainsString(oauth, "access_token", "BaseStorage::codeFlowComplete") ||
-		!Networking::CurlJsonRequest::jsonContainsString(oauth, "refresh_token", "BaseStorage::codeFlowComplete", !requiresRefreshToken)) {
-		warning("BaseStorage: bad response, no 'access_token' or 'refresh_token' attribute passed");
-		debug(9, "%s", json->stringify(true).c_str());
+	if (success) {
+		oauth = result.getVal("oauth")->asObject();
+		if (!Networking::CurlJsonRequest::jsonContainsString(oauth, "access_token", "BaseStorage::codeFlowComplete") ||
+			!Networking::CurlJsonRequest::jsonContainsString(oauth, "refresh_token", "BaseStorage::codeFlowComplete", !requiresRefreshToken)) {
+			warning("BaseStorage: bad response, no 'access_token' or 'refresh_token' attribute passed");
+			debug(9, "%s", json->stringify(true).c_str());
+			success = false;
+		}
+	}
+
+	if (success) {
+		debug(9, "%s", json->stringify(true).c_str()); // TODO: remove when done testing against cloud.scummvm.org
+		_token = oauth.getVal("access_token")->asString();
+		if (requiresRefreshToken) {
+			_refreshToken = oauth.getVal("refresh_token")->asString();
+		}
+		CloudMan.replaceStorage(this, storageIndex());
+		ConfMan.flushToDisk();
+	}
+
+	if (!success)
 		CloudMan.removeStorage(this);
-		delete json;
-		return;
-	}
-
-	debug(9, "%s", json->stringify(true).c_str()); // TODO: remove when done testing against cloud.scummvm.org
-	_token = oauth.getVal("access_token")->asString();
-	if (requiresRefreshToken) {
-		_refreshToken = oauth.getVal("refresh_token")->asString();
-	}
-	CloudMan.replaceStorage(this, storageIndex());
-	ConfMan.flushToDisk();
-
 	delete json;
 }
 
@@ -135,80 +136,68 @@ void BaseStorage::refreshAccessToken(BoolCallback callback, Networking::ErrorCal
 }
 
 void BaseStorage::tokenRefreshed(BoolCallback callback, Networking::JsonResponse response) {
+	bool success = true;
+
 	Common::JSONValue *json = response.value;
 	if (json == nullptr) {
 		debug(9, "BaseStorage::tokenRefreshed: got NULL instead of JSON!");
-		if (callback)
-			(*callback)(BoolResponse(nullptr, false));
-		delete callback;
-		return;
+		success = false;
 	}
 
-	if (!json->isObject()) {
+	if (success && !json->isObject()) {
 		debug(9, "BaseStorage::tokenRefreshed: passed JSON is not an object!");
-		if (callback)
-			(*callback)(BoolResponse(nullptr, false));
-		delete json;
-		delete callback;
-		return;
+		success = false;
 	}
 
-	Common::JSONObject result = json->asObject();
-	if (!Networking::CurlJsonRequest::jsonContainsAttribute(result, "error", "BaseStorage::tokenRefreshed")) {
-		warning("BaseStorage: bad response, no 'error' attribute passed");
-		debug(9, "%s", json->stringify(true).c_str());
-		if (callback)
-			(*callback)(BoolResponse(nullptr, false));
-		delete json;
-		delete callback;
-		return;
+	Common::JSONObject result;
+	if (success) {
+		result = json->asObject();
+		if (!Networking::CurlJsonRequest::jsonContainsAttribute(result, "error", "BaseStorage::tokenRefreshed")) {
+			warning("BaseStorage: bad response, no 'error' attribute passed");
+			debug(9, "%s", json->stringify(true).c_str());
+			success = false;
+		}
 	}
 
-	if (result.getVal("error")->asBool()) {
+	if (success && result.getVal("error")->asBool()) {
 		Common::String errorMessage = "{error: true}, message is missing";
 		if (Networking::CurlJsonRequest::jsonContainsString(result, "message", "BaseStorage::tokenRefreshed")) {
 			errorMessage = result.getVal("message")->asString();
 		}
 		warning("BaseStorage: response says error occurred: %s", errorMessage.c_str());
-		if (callback)
-			(*callback)(BoolResponse(nullptr, false));
-		delete json;
-		delete callback;
-		return;
+		success = false;
 	}
 
-	if (!Networking::CurlJsonRequest::jsonContainsObject(result, "oauth", "BaseStorage::tokenRefreshed")) {
+	if (success && !Networking::CurlJsonRequest::jsonContainsObject(result, "oauth", "BaseStorage::tokenRefreshed")) {
 		warning("BaseStorage: bad response, no 'oauth' attribute passed");
 		debug(9, "%s", json->stringify(true).c_str());
-		if (callback)
-			(*callback)(BoolResponse(nullptr, false));
-		delete json;
-		delete callback;
-		return;
+		success = false;
 	}
 
-	Common::JSONObject oauth = result.getVal("oauth")->asObject();
+	Common::JSONObject oauth;
 	bool requiresRefreshToken = !canReuseRefreshToken();
-	if (!Networking::CurlJsonRequest::jsonContainsString(oauth, "access_token", "BaseStorage::tokenRefreshed") ||
-		!Networking::CurlJsonRequest::jsonContainsString(oauth, "refresh_token", "BaseStorage::tokenRefreshed", !requiresRefreshToken)) {
-		warning("BaseStorage: bad response, no 'access_token' or 'refresh_token' attribute passed");
-		debug(9, "%s", json->stringify(true).c_str());
-		if (callback)
-			(*callback)(BoolResponse(nullptr, false));
-		delete json;
-		delete callback;
-		return;
+	if (success) {
+		oauth = result.getVal("oauth")->asObject();		
+		if (!Networking::CurlJsonRequest::jsonContainsString(oauth, "access_token", "BaseStorage::tokenRefreshed") ||
+			!Networking::CurlJsonRequest::jsonContainsString(oauth, "refresh_token", "BaseStorage::tokenRefreshed", !requiresRefreshToken)) {
+			warning("BaseStorage: bad response, no 'access_token' or 'refresh_token' attribute passed");
+			debug(9, "%s", json->stringify(true).c_str());
+			success = false;
+		}
 	}
 
-	debug(9, "%s", json->stringify(true).c_str()); // TODO: remove when done testing against cloud.scummvm.org
+	if (success) {
+		debug(9, "%s", json->stringify(true).c_str()); // TODO: remove when done testing against cloud.scummvm.org
 
-	_token = oauth.getVal("access_token")->asString();
-	if (requiresRefreshToken) {
-		_refreshToken = oauth.getVal("refresh_token")->asString();
+		_token = oauth.getVal("access_token")->asString();
+		if (requiresRefreshToken) {
+			_refreshToken = oauth.getVal("refresh_token")->asString();
+		}
+		CloudMan.save(); //ask CloudManager to save our new access_token and refresh_token
 	}
-	CloudMan.save(); //ask CloudManager to save our new access_token and refresh_token
+
 	if (callback)
-		(*callback)(BoolResponse(nullptr, true));
+		(*callback)(BoolResponse(nullptr, success));
 	delete json;
 	delete callback;
 }
