@@ -56,8 +56,6 @@ static const GameSettings madeSettings[] = {
 
 MadeEngine::MadeEngine(OSystem *syst, const MadeGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
 
-	const GameSettings *g;
-
 	_eventNum = 0;
 	_eventMouseX = _eventMouseY = 0;
 	_eventKey = 0;
