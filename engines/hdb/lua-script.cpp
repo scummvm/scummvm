@@ -1594,7 +1594,7 @@ struct NumberInit {
 	{ STATE_DOLLYUSERIGHT,	"STATE_DOLLYUSERIGHT"	},
 	{ STATE_YELL,			"STATE_YELL"			},
 
-	{ NULL, NULL }
+	{ STATE_NONE, NULL }
 };
 
 struct FuncInit {
