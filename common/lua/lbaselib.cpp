@@ -5,6 +5,8 @@
 */
 
 
+#define FORBIDDEN_SYMBOL_EXCEPTION_fputs
+#define FORBIDDEN_SYMBOL_EXCEPTION_stdout
 
 #include "common/util.h"
 
@@ -37,8 +39,11 @@ static int luaB_print (lua_State *L) {
     if (s == NULL)
       return luaL_error(L, LUA_QL("tostring") " must return a string to "
                            LUA_QL("print"));
+    if (i>1) fputs("\t", stdout);
+    fputs(s, stdout);
     lua_pop(L, 1);  /* pop result */
   }
+  fputs("\n", stdout);
   return 0;
 }
 
