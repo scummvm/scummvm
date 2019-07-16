@@ -398,7 +398,7 @@ bool AI::traceStraightPath(int x1, int y1, int *x2, int *y2, int *level) {
 			// if it's blocking, is it rad or plasma? (might be melted stuff on it)
 			if (!ok) {
 				ok = ((flags & kFlagPlasmaFloor) == kFlagPlasmaFloor) +
-					((flags & kFlagPlasmaFloor) == kFlagRadFloor);
+					((flags & kFlagRadFloor) == kFlagRadFloor);
 				e = findEntity(x1, y1);
 				if (e && g_hdb->_ai->walkThroughEnt(e->type))
 					entOK = 1;
