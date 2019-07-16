@@ -168,6 +168,7 @@ _dialogs=auto
 _iconv=auto
 _tts=auto
 _linux_tts=no
+_windows_tts=no
 # Default option behavior yes/no
 _debug_build=auto
 _release_build=auto
@@ -5374,6 +5375,13 @@ else
 		_linux_tts=yes
 		define_in_config_if_yes $_linux_tts 'USE_LINUX_TTS'
 		append_var LIBS '-lspeechd'
+		;;
+	mingw*)
+		echo "win32"
+		_tts=yes
+		_windows_tts=yes
+		define_in_config_if_yes $_windows_tts 'USE_WINDOWS_TTS'
+		append_var LIBS '-lsapi -lole32'
 		;;
 	*)
 		echo "no"

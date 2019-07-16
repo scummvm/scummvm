@@ -227,11 +227,8 @@ void PopUpDialog::read(Common::String str) {
 #ifdef USE_TTS
 	if (ConfMan.hasKey("tts_enabled", "scummvm") &&
 			ConfMan.getBool("tts_enabled", "scummvm")) {
-		int volume = (ConfMan.getInt("speech_volume", "scummvm") * 100) / 256;
-		if (ConfMan.hasKey("mute", "scummvm") && ConfMan.getBool("mute", "scummvm"))
-			volume = 0;
-		g_system->getTextToSpeechManager()->setVolume(volume);
-		g_system->getTextToSpeechManager()->say(str);
+		Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+		ttsMan->say(str);
 	}
 #endif
 }
