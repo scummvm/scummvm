@@ -197,6 +197,8 @@ bool HDBGame::restartMap() {
 		Common::String patch("KillTrigger( \"mannyquest\" )");
 
 		_lua->executeChunk(patch, "MAP00 patch");
+
+		_ai->addItemToInventory(ITEM_CELL, 1, 0, 0, 0);
 	}
 #endif
 
