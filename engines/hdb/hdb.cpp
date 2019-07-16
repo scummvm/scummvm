@@ -744,7 +744,7 @@ void HDBGame::drawLoadingScreen() {
 	_loadingScreenGfx->draw(0, 0);
 }
 
-struct {
+struct MapName {
 	const char *fName, *printName;
 } mapNames[] = {
 	{	"MAP00",			"HDS Colby Jack" },
