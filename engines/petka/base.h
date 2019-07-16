@@ -99,7 +99,7 @@ class QMessageObject;
 struct QMessage {
 	uint16 objId;
 	uint16 opcode;
-	int16 arg1;
+	uint16 arg1;
 	int16 arg2;
 	int16 arg3;
 	QMessageObject *sender;

@@ -36,6 +36,8 @@
 
 namespace Petka {
 
+Sound *g_trackedSound = nullptr;
+
 InterfaceMain::InterfaceMain() {
 	Common::ScopedPtr<Common::SeekableReadStream> stream(g_vm->openFile("backgrnd.bg", true));
 	if (!stream)

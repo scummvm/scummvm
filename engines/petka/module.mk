@@ -1,6 +1,7 @@
 MODULE := engines/petka
 
 MODULE_OBJS = \
+    big_dialogue.o \
     detection.o \
     file_mgr.o \
     flc.o \
@@ -9,6 +10,7 @@ MODULE_OBJS = \
     q_system.o \
     sound.o \
     video.o \
+    interfaces/dialog_interface.o \
     interfaces/interface.o \
     interfaces/main.o \
     interfaces/panel.o \
