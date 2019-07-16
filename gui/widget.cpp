@@ -260,7 +260,10 @@ void Widget::read(Common::String str) {
 #ifdef USE_TTS
 	if (ConfMan.hasKey("tts_enabled", "scummvm") &&
 			ConfMan.getBool("tts_enabled", "scummvm")) {
-		g_system->getTextToSpeechManager()->say(str);
+		Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+		if (ttsMan == nullptr)
+			return;
+		ttsMan->say(str);
 	}
 #endif
 }

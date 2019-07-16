@@ -1800,7 +1800,10 @@ void GlobalOptionsDialog::build() {
 		_ttsCheckbox->setState(false);
 
 	_ttsVoiceSelectionPopUp = new PopUpWidget(tab, "GlobalOptions_Accessibility.TTSVoiceSelection");
-	Common::Array<Common::TTSVoice> voices = g_system->getTextToSpeechManager()->getVoicesArray();
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	Common::Array<Common::TTSVoice> voices;
+	if (ttsMan != nullptr)
+		voices = ttsMan->getVoicesArray();
 
 	for(unsigned i = 0; i < voices.size(); i++) {
 		_ttsVoiceSelectionPopUp->appendEntry(voices[i].getDescription(), i);

@@ -626,6 +626,8 @@ void GuiManager::setLastMousePos(int16 x, int16 y) {
 #ifdef USE_TTS
 void GuiManager::initTextToSpeech() {
 	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (ttsMan == nullptr)
+		return;
 #ifdef USE_TRANSLATION
 	Common::String currentLanguage = TransMan.getCurrentLanguage();
 	if (currentLanguage != "C") {
