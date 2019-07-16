@@ -1,4 +1,5 @@
 engines/sci/detection.cpp
+engines/sci/sound/drivers/fb01.cpp
 engines/sci/engine/guest_additions.cpp
 engines/sci/engine/kfile.cpp
 engines/sci/engine/kgraphics.cpp
