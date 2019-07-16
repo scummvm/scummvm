@@ -360,7 +360,10 @@ void DefaultSaveFileManager::saveTimestamps(Common::HashMap<Common::String, uint
 	}
 
 	for (Common::HashMap<Common::String, uint32>::iterator i = timestamps.begin(); i != timestamps.end(); ++i) {
-		Common::String data = i->_key + Common::String::format(" %u\n", i->_value);
+		uint32 v = i->_value;
+		if (v < 1) v = 1; // 0 timestamp is treated as EOF up there, so we should never save zeros
+
+		Common::String data = i->_key + Common::String::format(" %u\n", v);
 		if (f.write(data.c_str(), data.size()) != data.size()) {
 			warning("DefaultSaveFileManager: failed to write timestamps data into '%s'", filename.c_str());
 			return;
