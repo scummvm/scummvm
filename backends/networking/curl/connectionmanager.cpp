@@ -151,7 +151,8 @@ void ConnectionManager::interateRequests() {
 	_addedRequestsMutex.unlock();
 
 	//call handle() of all running requests (so they can do their work)
-	debug(9, "handling %d request(s)", _requests.size());
+	if (_frame % DEBUG_PRINT_PERIOD == 0)
+		debug(9, "handling %d request(s)", _requests.size());
 	for (Common::Array<RequestWithCallback>::iterator i = _requests.begin(); i != _requests.end();) {
 		Request *request = i->request;
 		if (request) {
