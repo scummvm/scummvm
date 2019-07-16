@@ -721,6 +721,7 @@ void aiRailRiderOnAction(AIEntity *e) {
 	case -1:
 		if (!p->goalX)
 			e->sequence = 1; // Boarded yet?
+		// fallthrough
 	// Cycle Animation Frames
 	case 3:
 		if (e->animDelay-- > 0)
@@ -740,6 +741,7 @@ void aiRailRiderOnAction(AIEntity *e) {
 		g_hdb->_sound->playSound(SND_RAILRIDER_TASTE);
 		e->sequence = 2;
 		e->value1 = 0;
+		// fallthrough
 
 	// New RailRider gfx
 	// Move the RailRider
