@@ -54,6 +54,8 @@ uint32 DropboxStorage::storageIndex() { return kStorageDropboxId; }
 
 bool DropboxStorage::needsRefreshToken() { return false; }
 
+bool DropboxStorage::canReuseRefreshToken() { return false; }
+
 void DropboxStorage::saveConfig(Common::String keyPrefix) {
 	ConfMan.set(keyPrefix + "access_token", _token, ConfMan.kCloudDomain);
 }

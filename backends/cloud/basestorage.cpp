@@ -101,7 +101,7 @@ void BaseStorage::codeFlowComplete(Networking::JsonResponse response) {
 		return;
 	}
 
-	debug(9, "%s", json->stringify(true).c_str()); // TODO: remove before commit
+	debug(9, "%s", json->stringify(true).c_str()); // TODO: remove when done testing against cloud.scummvm.org
 	_token = oauth.getVal("access_token")->asString();
 	if (requiresRefreshToken) {
 		_refreshToken = oauth.getVal("refresh_token")->asString();
@@ -188,7 +188,7 @@ void BaseStorage::tokenRefreshed(BoolCallback callback, Networking::JsonResponse
 	}
 
 	Common::JSONObject oauth = result.getVal("oauth")->asObject();
-	bool requiresRefreshToken = needsRefreshToken(); // TODO: it seems Google Drive might not send new refresh token, and still accept old one
+	bool requiresRefreshToken = !canReuseRefreshToken();
 	if (!Networking::CurlJsonRequest::jsonContainsString(oauth, "access_token", "BaseStorage::tokenRefreshed") ||
 		!Networking::CurlJsonRequest::jsonContainsString(oauth, "refresh_token", "BaseStorage::tokenRefreshed", !requiresRefreshToken)) {
 		warning("BaseStorage: bad response, no 'access_token' or 'refresh_token' attribute passed");
@@ -199,6 +199,8 @@ void BaseStorage::tokenRefreshed(BoolCallback callback, Networking::JsonResponse
 		delete callback;
 		return;
 	}
+
+	debug(9, "%s", json->stringify(true).c_str()); // TODO: remove when done testing against cloud.scummvm.org
 
 	_token = oauth.getVal("access_token")->asString();
 	if (requiresRefreshToken) {

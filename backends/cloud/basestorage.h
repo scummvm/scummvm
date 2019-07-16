@@ -69,6 +69,11 @@ protected:
 	 */
 	virtual bool needsRefreshToken() = 0;
 
+	/**
+	 * Return whether to expect new refresh_token on refresh.
+	 */
+	virtual bool canReuseRefreshToken() = 0;
+
 private:
 	void tokenRefreshed(BoolCallback callback, Networking::JsonResponse response);
 
