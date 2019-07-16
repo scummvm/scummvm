@@ -50,8 +50,6 @@ protected:
 template <class T>
 class GraphicsMan_v1 : public GraphicsMan {
 public:
-	using GraphicsMan::_bounds;
-
 	GraphicsMan_v1<T>(T &display) : _display(display) { this->setBounds(Common::Rect(280, 160)); }
 
 	void drawLine(const Common::Point &p1, const Common::Point &p2, byte color) const override;
@@ -72,11 +70,6 @@ private:
 template <class T>
 class GraphicsMan_v2 : public GraphicsMan_v1<T> {
 public:
-	using GraphicsMan::_bounds;
-	using GraphicsMan_v1<T>::_display;
-	using GraphicsMan_v1<T>::drawLine;
-	using GraphicsMan_v1<T>::putPixel;
-
 	GraphicsMan_v2<T>(T &display) : GraphicsMan_v1<T>(display), _color(0) { }
 	void drawPic(Common::SeekableReadStream &pic, const Common::Point &pos) override;
 
@@ -104,12 +97,6 @@ private:
 template <class T>
 class GraphicsMan_v3 : public GraphicsMan_v2<T> {
 public:
-	using GraphicsMan::_bounds;
-	using GraphicsMan_v1<T>::_display;
-	using GraphicsMan_v2<T>::canFillAt;
-	using GraphicsMan_v2<T>::fillRow;
-	using GraphicsMan_v2<T>::getPatternColor;
-
 	GraphicsMan_v3<T>(T &display) : GraphicsMan_v2<T>(display) { }
 
 private:
@@ -164,7 +151,7 @@ void GraphicsMan_v1<T>::drawLine(const Common::Point &p1, const Common::Point &p
 
 template <class T>
 void GraphicsMan_v1<T>::putPixel(const Common::Point &p, byte color) const {
-	if (_bounds.contains(p))
+	if (this->_bounds.contains(p))
 		_display.putPixel(p, color);
 }
 
@@ -345,10 +332,10 @@ void GraphicsMan_v2<T>::drawCorners(Common::SeekableReadStream &pic, bool yFirst
 
 		n = b + _offset.x;
 
-		putPixel(p, _color);
+		this->putPixel(p, _color);
 
 		n <<= 1;
-		drawLine(p, Common::Point(n, p.y), _color);
+		this->drawLine(p, Common::Point(n, p.y), _color);
 		p.x = n;
 
 doYStep:
@@ -357,11 +344,11 @@ doYStep:
 
 		n = b + _offset.y;
 
-		putPixel(p, _color);
-		drawLine(p, Common::Point(p.x, n), _color);
+		this->putPixel(p, _color);
+		this->drawLine(p, Common::Point(p.x, n), _color);
 
-		putPixel(Common::Point(p.x + 1, p.y), _color);
-		drawLine(Common::Point(p.x + 1, p.y), Common::Point(p.x + 1, n), _color);
+		this->putPixel(Common::Point(p.x + 1, p.y), _color);
+		this->drawLine(Common::Point(p.x + 1, p.y), Common::Point(p.x + 1, n), _color);
 
 		p.y = n;
 	}
@@ -374,7 +361,7 @@ void GraphicsMan_v2<T>::drawRelativeLines(Common::SeekableReadStream &pic) {
 	if (!readPoint(pic, p1))
 		return;
 
-	putPixel(p1, _color);
+	this->putPixel(p1, _color);
 
 	while (true) {
 		Common::Point p2(p1);
@@ -397,7 +384,7 @@ void GraphicsMan_v2<T>::drawRelativeLines(Common::SeekableReadStream &pic) {
 		else
 			p2.y += l;
 
-		drawLine(p1, p2, _color);
+		this->drawLine(p1, p2, _color);
 		p1 = p2;
 	}
 }
@@ -409,7 +396,7 @@ void GraphicsMan_v2<T>::drawAbsoluteLines(Common::SeekableReadStream &pic) {
 	if (!readPoint(pic, p1))
 		return;
 
-	putPixel(p1, _color);
+	this->putPixel(p1, _color);
 
 	while (true) {
 		Common::Point p2;
@@ -417,28 +404,28 @@ void GraphicsMan_v2<T>::drawAbsoluteLines(Common::SeekableReadStream &pic) {
 		if (!readPoint(pic, p2))
 			return;
 
-		drawLine(p1, p2, _color);
+		this->drawLine(p1, p2, _color);
 		p1 = p2;
 	}
 }
 
 template <class T>
 bool GraphicsMan_v2<T>::canFillAt(const Common::Point &p, const bool stopBit) {
-	return _display.getPixelBit(p) != stopBit && _display.getPixelBit(Common::Point(p.x + 1, p.y)) != stopBit;
+	return this->_display.getPixelBit(p) != stopBit && this->_display.getPixelBit(Common::Point(p.x + 1, p.y)) != stopBit;
 }
 
 template <class T>
 void GraphicsMan_v2<T>::fillRowLeft(Common::Point p, const byte pattern, const bool stopBit) {
 	byte color = getPatternColor(p, pattern);
 
-	while (--p.x >= _bounds.left) {
+	while (--p.x >= this->_bounds.left) {
 		if ((p.x % 7) == 6) {
 			color = getPatternColor(p, pattern);
-			_display.setPixelPalette(p, color);
+			this->_display.setPixelPalette(p, color);
 		}
-		if (_display.getPixelBit(p) == stopBit)
+		if (this->_display.getPixelBit(p) == stopBit)
 			break;
-		_display.setPixelBit(p, color);
+		this->_display.setPixelBit(p, color);
 	}
 }
 
@@ -446,34 +433,34 @@ template <class T>
 void GraphicsMan_v2<T>::fillRow(Common::Point p, const byte pattern, const bool stopBit) {
 	// Set pixel at p and palette
 	byte color = getPatternColor(p, pattern);
-	_display.setPixelPalette(p, color);
-	_display.setPixelBit(p, color);
+	this->_display.setPixelPalette(p, color);
+	this->_display.setPixelBit(p, color);
 
 	// Fill left of p
 	fillRowLeft(p, pattern, stopBit);
 
 	// Fill right of p
-	while (++p.x < _bounds.right) {
+	while (++p.x < this->_bounds.right) {
 		if ((p.x % 7) == 0) {
 			color = getPatternColor(p, pattern);
 			// Palette is set before the first bit is tested
-			_display.setPixelPalette(p, color);
+			this->_display.setPixelPalette(p, color);
 		}
-		if (_display.getPixelBit(p) == stopBit)
+		if (this->_display.getPixelBit(p) == stopBit)
 			break;
-		_display.setPixelBit(p, color);
+		this->_display.setPixelBit(p, color);
 	}
 }
 
 template <class T>
 void GraphicsMan_v2<T>::fillAt(Common::Point p, const byte pattern) {
-	const bool stopBit = !_display.getPixelBit(p);
+	const bool stopBit = !this->_display.getPixelBit(p);
 
 	// Move up into the open space above p
-	while (--p.y >= _bounds.top && canFillAt(p, stopBit)) {}
+	while (--p.y >= this->_bounds.top && canFillAt(p, stopBit)) {}
 
 	// Then fill by moving down
-	while (++p.y < _bounds.bottom && canFillAt(p, stopBit))
+	while (++p.y < this->_bounds.bottom && canFillAt(p, stopBit))
 		fillRow(p, pattern, stopBit);
 }
 
@@ -490,7 +477,7 @@ void GraphicsMan_v2<T>::fill(Common::SeekableReadStream &pic) {
 		if (!readPoint(pic, p))
 			return;
 
-		if (_bounds.contains(p))
+		if (this->_bounds.contains(p))
 			fillAt(p, pattern);
 	}
 }
@@ -567,37 +554,37 @@ void GraphicsMan_v2<T>::drawPic(Common::SeekableReadStream &pic, const Common::P
 
 template <class T>
 void GraphicsMan_v3<T>::fillRowLeft(Common::Point p, const byte pattern, const bool stopBit) {
-	byte color = getPatternColor(p, pattern);
+	byte color = this->getPatternColor(p, pattern);
 
-	while (--p.x >= _bounds.left) {
+	while (--p.x >= this->_bounds.left) {
 		// In this version, when moving left, it no longer sets the palette first
-		if (!_display.getPixelBit(p))
+		if (!this->_display.getPixelBit(p))
 			return;
 		if ((p.x % 7) == 6) {
-			color = getPatternColor(p, pattern);
-			_display.setPixelPalette(p, color);
+			color = this->getPatternColor(p, pattern);
+			this->_display.setPixelPalette(p, color);
 		}
-		_display.setPixelBit(p, color);
+		this->_display.setPixelBit(p, color);
 	}
 }
 
 template <class T>
 void GraphicsMan_v3<T>::fillAt(Common::Point p, const byte pattern) {
 	// If the row at p cannot be filled, we do nothing
-	if (!canFillAt(p))
+	if (!this->canFillAt(p))
 			return;
 
-	fillRow(p, pattern);
+	this->fillRow(p, pattern);
 
 	Common::Point q(p);
 
 	// Fill up from p
-	while (--q.y >= _bounds.top && canFillAt(q))
-		fillRow(q, pattern);
+	while (--q.y >= this->_bounds.top && this->canFillAt(q))
+		this->fillRow(q, pattern);
 
 	// Fill down from p
-	while (++p.y < _bounds.bottom && canFillAt(p))
-		fillRow(p, pattern);
+	while (++p.y < this->_bounds.bottom && this->canFillAt(p))
+		this->fillRow(p, pattern);
 }
 
 } // End of namespace Adl
