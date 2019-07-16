@@ -90,6 +90,7 @@ void SavesSyncRequest::directoryListedCallback(Storage::ListDirectoryResponse re
 	//determine which files to download and which files to upload
 	Common::Array<StorageFile> &remoteFiles = response.value;
 	uint64 totalSize = 0;
+	debug(9, "SavesSyncRequest decisions:");
 	for (uint32 i = 0; i < remoteFiles.size(); ++i) {
 		StorageFile &file = remoteFiles[i];
 		if (file.isDirectory())
@@ -101,6 +102,7 @@ void SavesSyncRequest::directoryListedCallback(Storage::ListDirectoryResponse re
 		Common::String name = file.name();
 		if (!_localFilesTimestamps.contains(name)) {
 			_filesToDownload.push_back(file);
+			debug(9, "- downloading file %s, because it is not present on local", name.c_str());
 		} else {
 			localFileNotAvailableInCloud[name] = false;
 
@@ -113,6 +115,13 @@ void SavesSyncRequest::directoryListedCallback(Storage::ListDirectoryResponse re
 				_filesToUpload.push_back(file.name());
 			else
 				_filesToDownload.push_back(file);
+
+			if (_localFilesTimestamps[name] == DefaultSaveFileManager::INVALID_TIMESTAMP)
+				debug(9, "- uploading file %s, because it is has invalid timestamp", name.c_str());
+			else if (_localFilesTimestamps[name] > file.timestamp())
+				debug(9, "- uploading file %s, because it is %d seconds newer than remote\n\tlocal = %d; \tremote = %d", name.c_str(), _localFilesTimestamps[name] - file.timestamp(), _localFilesTimestamps[name], file.timestamp());
+			else
+				debug(9, "- downloading file %s, because it is %d seconds older than remote\n\tlocal = %d; \tremote = %", name.c_str(), file.timestamp() - _localFilesTimestamps[name], _localFilesTimestamps[name], file.timestamp());
 		}
 	}
 
@@ -122,17 +131,20 @@ void SavesSyncRequest::directoryListedCallback(Storage::ListDirectoryResponse re
 	for (Common::HashMap<Common::String, bool>::iterator i = localFileNotAvailableInCloud.begin(); i != localFileNotAvailableInCloud.end(); ++i) {
 		if (i->_key == DefaultSaveFileManager::TIMESTAMPS_FILENAME)
 			continue;
-		if (i->_value)
+		if (i->_value) {
 			_filesToUpload.push_back(i->_key);
+			debug(9, "- uploading file %s, because it is not present on remote", i->_key.c_str());
+		}
 	}
 
 	debug(9, (_filesToDownload.size() > 0 ? "\nSavesSyncRequest: download files:" : "\nSavesSyncRequest: nothing to download"));
 	for (uint32 i = 0; i < _filesToDownload.size(); ++i) {
-		debug(9, "%s", _filesToDownload[i].name().c_str());
+		debug(9, " %s", _filesToDownload[i].name().c_str());
 	}
-	debug(9, (_filesToUpload.size() > 0 ? "\nSavesSyncRequest: upload files:" : "\nSavesSyncRequest: nothing to upload"));
+	if (_filesToDownload.size() > 0) debug(9, "");
+	debug(9, (_filesToUpload.size() > 0 ? "SavesSyncRequest: upload files:" : "SavesSyncRequest: nothing to upload"));
 	for (uint32 i = 0; i < _filesToUpload.size(); ++i) {
-		debug(9, "%s", _filesToUpload[i].c_str());
+		debug(9, " %s", _filesToUpload[i].c_str());
 	}
 	_totalFilesToHandle = _filesToDownload.size() + _filesToUpload.size();
 
@@ -206,7 +218,7 @@ void SavesSyncRequest::directoryListedErrorCallback(Networking::ErrorResponse er
 	Common::String dir = _storage->savesDirectoryPath();
 	if (dir.lastChar() == '/')
 		dir.deleteLastChar();
-	debug(9, "SavesSyncRequest: creating %s", dir.c_str());
+	debug(9, "\nSavesSyncRequest: creating %s", dir.c_str());
 	_workingRequest = _storage->createDirectory(
 		dir,
 		new Common::Callback<SavesSyncRequest, Storage::BoolResponse>(this, &SavesSyncRequest::directoryCreatedCallback),
@@ -254,7 +266,7 @@ void SavesSyncRequest::downloadNextFile() {
 
 	sendCommand(GUI::kSavesSyncProgressCmd, (int)(getDownloadingProgress() * 100));
 
-	debug(9, "SavesSyncRequest: downloading %s (%d %%)", _currentDownloadingFile.name().c_str(), (int)(getProgress() * 100));
+	debug(9, "\nSavesSyncRequest: downloading %s (%d %%)", _currentDownloadingFile.name().c_str(), (int)(getProgress() * 100));
 	_workingRequest = _storage->downloadById(
 		_currentDownloadingFile.id(),
 		DefaultSaveFileManager::concatWithSavesPath(_currentDownloadingFile.name()),
@@ -305,7 +317,7 @@ void SavesSyncRequest::uploadNextFile() {
 	_currentUploadingFile = _filesToUpload.back();
 	_filesToUpload.pop_back();
 
-	debug(9, "SavesSyncRequest: uploading %s (%d %%)", _currentUploadingFile.c_str(), (int)(getProgress() * 100));
+	debug(9, "\nSavesSyncRequest: uploading %s (%d %%)", _currentUploadingFile.c_str(), (int)(getProgress() * 100));
 	if (_storage->uploadStreamSupported()) {
 		_workingRequest = _storage->upload(
 			_storage->savesDirectoryPath() + _currentUploadingFile,
