@@ -874,8 +874,9 @@ void AI::stunEnemy(AIEntity *e, int time) {
 		case AI_BOOMBARREL:
 			g_hdb->_sound->playSound(SND_CLUB_HIT_METAL);
 			break;
-		case AI_CHICKEN:	// Fall through
+		case AI_CHICKEN:
 			g_hdb->_sound->playSound(SND_CHICKEN_DEATH);
+			// fallthrough
 		default:
 			warning("STUB: stunEnemy: MetalOrFleshSnd");
 			break;
