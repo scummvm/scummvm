@@ -186,10 +186,6 @@ void LuaScript::loadSaveFile(Common::InSaveFile *in, const char *fName) {
 		in->read(_globals[i]->string, 32);
 	}
 
-	// Error handling function to be executed after the function is put on the stack
-	lua_rawgeti(_state, LUA_REGISTRYINDEX, _pcallErrorhandlerRegistryIndex);
-	lua_insert(_state, -2);
-
 	lua_getglobal(_state, "LoadState");
 	lua_pushstring(_state, fName);
 
