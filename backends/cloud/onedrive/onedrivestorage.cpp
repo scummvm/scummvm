@@ -57,6 +57,8 @@ uint32 OneDriveStorage::storageIndex() { return kStorageOneDriveId; }
 
 bool OneDriveStorage::needsRefreshToken() { return true; }
 
+bool OneDriveStorage::canReuseRefreshToken() { return false; }
+
 void OneDriveStorage::saveConfig(Common::String keyPrefix) {
 	ConfMan.set(keyPrefix + "access_token", _token, ConfMan.kCloudDomain);
 	ConfMan.set(keyPrefix + "refresh_token", _refreshToken, ConfMan.kCloudDomain);

@@ -57,6 +57,8 @@ uint32 BoxStorage::storageIndex() { return kStorageBoxId; }
 
 bool BoxStorage::needsRefreshToken() { return true; }
 
+bool BoxStorage::canReuseRefreshToken() { return false; }
+
 void BoxStorage::saveConfig(Common::String keyPrefix) {
 	ConfMan.set(keyPrefix + "access_token", _token, ConfMan.kCloudDomain);
 	ConfMan.set(keyPrefix + "refresh_token", _refreshToken, ConfMan.kCloudDomain);

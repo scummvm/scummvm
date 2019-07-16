@@ -58,6 +58,8 @@ uint32 GoogleDriveStorage::storageIndex() { return kStorageGoogleDriveId; }
 
 bool GoogleDriveStorage::needsRefreshToken() { return true; }
 
+bool GoogleDriveStorage::canReuseRefreshToken() { return true; }
+
 void GoogleDriveStorage::saveConfig(Common::String keyPrefix) {
 	ConfMan.set(keyPrefix + "access_token", _token, ConfMan.kCloudDomain);
 	ConfMan.set(keyPrefix + "refresh_token", _refreshToken, ConfMan.kCloudDomain);

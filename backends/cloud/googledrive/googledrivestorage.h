@@ -54,6 +54,8 @@ protected:
 
 	virtual bool needsRefreshToken();
 
+	virtual bool canReuseRefreshToken();
+
 public:
 	/** This constructor uses OAuth code flow to get tokens. */
 	GoogleDriveStorage(Common::String code);
