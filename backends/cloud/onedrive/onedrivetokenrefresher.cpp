@@ -94,7 +94,7 @@ void OneDriveTokenRefresher::finishJson(Common::JSONValue *json) {
 					irrecoverable = false;
 			}
 
-			if (code == "unauthenticated")
+			if (code == "unauthenticated" || code == "InvalidAuthenticationToken")
 				irrecoverable = false;
 
 			if (irrecoverable) {
@@ -112,6 +112,30 @@ void OneDriveTokenRefresher::finishJson(Common::JSONValue *json) {
 
 	//notify user of success
 	CurlJsonRequest::finishJson(json);
+}
+
+void OneDriveTokenRefresher::finishError(Networking::ErrorResponse error) {
+	bool irrecoverable = error.interrupted || error.failed;
+	if (error.failed) {
+		Common::JSONValue *value = Common::JSON::parse(error.response.c_str());
+
+		//somehow OneDrive returns JSON with '.' in unexpected places, try fixing it
+		if (!value) {
+			Common::String fixedResponse = error.response;
+			for (uint32 i = 0; i < fixedResponse.size(); ++i) {
+				if (fixedResponse[i] == '.')
+					fixedResponse.replace(i, 1, " ");
+			}
+			value = Common::JSON::parse(fixedResponse.c_str());
+		}
+
+		if (value) {
+			finishJson(value);
+			return;
+		}
+	}
+
+	Request::finishError(error); //call closest base class's method
 }
 
 void OneDriveTokenRefresher::setHeaders(Common::Array<Common::String> &headers) {

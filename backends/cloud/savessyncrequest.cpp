@@ -126,11 +126,11 @@ void SavesSyncRequest::directoryListedCallback(Storage::ListDirectoryResponse re
 			_filesToUpload.push_back(i->_key);
 	}
 
-	debug(9, "\nSavesSyncRequest: download files:");
+	debug(9, (_filesToDownload.size() > 0 ? "\nSavesSyncRequest: download files:" : "\nSavesSyncRequest: nothing to download"));
 	for (uint32 i = 0; i < _filesToDownload.size(); ++i) {
 		debug(9, "%s", _filesToDownload[i].name().c_str());
 	}
-	debug(9, "\nSavesSyncRequest: upload files:");
+	debug(9, (_filesToUpload.size() > 0 ? "\nSavesSyncRequest: upload files:" : "\nSavesSyncRequest: nothing to upload"));
 	for (uint32 i = 0; i < _filesToUpload.size(); ++i) {
 		debug(9, "%s", _filesToUpload[i].c_str());
 	}
@@ -145,9 +145,22 @@ void SavesSyncRequest::directoryListedErrorCallback(Networking::ErrorResponse er
 	if (_ignoreCallback)
 		return;
 
+	if (error.failed) debug(9, "%s", error.response.c_str());
+
 	bool irrecoverable = error.interrupted || error.failed;
 	if (error.failed) {
 		Common::JSONValue *value = Common::JSON::parse(error.response.c_str());
+
+		// somehow OneDrive returns JSON with '.' in unexpected places, try fixing it
+		if (!value) {
+			Common::String fixedResponse = error.response;
+			for (uint32 i = 0; i < fixedResponse.size(); ++i) {
+				if (fixedResponse[i] == '.')
+					fixedResponse.replace(i, 1, " ");
+			}
+			value = Common::JSON::parse(fixedResponse.c_str());
+		}
+
 		if (value) {
 			if (value->isObject()) {
 				Common::JSONObject object = value->asObject();
@@ -174,11 +187,13 @@ void SavesSyncRequest::directoryListedErrorCallback(Networking::ErrorResponse er
 			delete value;
 		}
 
-		//Google Drive and Box-related ScummVM-based error
+		//Google Drive, Box and OneDrive-related ScummVM-based error
 		if (error.response.contains("subdirectory not found")) {
 			irrecoverable = false; //base "/ScummVM/" folder not found
 		} else if (error.response.contains("no such file found in its parent directory")) {
 			irrecoverable = false; //"Saves" folder within "/ScummVM/" not found
+		} else if (error.response.contains("itemNotFound") && error.response.contains("Item does not exist")) {
+			irrecoverable = false; //"saves" folder within application folder is not found
 		}
 	}
 
