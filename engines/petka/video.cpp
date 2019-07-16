@@ -22,10 +22,12 @@
 
 #include "common/system.h"
 
+#include "petka/sound.h"
 #include "petka/flc.h"
 #include "petka/petka.h"
 #include "petka/q_system.h"
-#include "petka/interfaces/interface.h"
+#include "petka/interfaces/main.h"
+#include "petka/interfaces/dialog_interface.h"
 #include "petka/objects/object.h"
 #include "petka/video.h"
 
@@ -47,6 +49,10 @@ void VideoSystem::update() {
 	if (interface) {
 		for (uint i = 0; i < interface->_objs.size(); ++i) {
 			interface->_objs[i]->update(time - _time);
+		}
+
+		if ((g_trackedSound && !g_trackedSound->isPlaying()) || !g_trackedSound) {
+			g_vm->getQSystem()->_mainInterface->_dialog.sub_4155D0(-1);
 		}
 
 		for (uint i = 0; i < interface->_objs.size(); ++i) {
