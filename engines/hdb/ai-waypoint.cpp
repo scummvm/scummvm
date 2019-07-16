@@ -39,7 +39,7 @@ void AI::addWaypoint(int px, int py, int x, int y, int level) {
 	int ny = y;
 	if (!_numWaypoints) {
 		// if player is already moving and this is the first waypoint, forget it.
-		// player is using the keyboard and must be fully stopped before laying 
+		// player is using the keyboard and must be fully stopped before laying
 		// the first waypoint
 		if (_player->goalX)
 			return;
@@ -327,7 +327,7 @@ void AI::addWaypoint(int px, int py, int x, int y, int level) {
 		if (nx == px && ny == py)
 			return;
 
-		// make sure potential waypoint isn't on other waypoints!			
+		// make sure potential waypoint isn't on other waypoints!
 		for (i = 0; i < _numWaypoints; i++)
 			if (_waypoints[i].x == nx && _waypoints[i].y == ny)
 				return;
@@ -429,7 +429,7 @@ bool AI::traceStraightPath(int x1, int y1, int *x2, int *y2, int *level) {
 				// if it's blocking, is it rad or plasma? (might be melted stuff on it)
 				if (!ok) {
 					ok = ((flags & kFlagPlasmaFloor) == kFlagPlasmaFloor) +
-						((flags & kFlagPlasmaFloor) == kFlagRadFloor);
+						((flags & kFlagRadFloor) == kFlagRadFloor);
 					e = findEntity(x1, y1);
 					if (e && g_hdb->_ai->walkThroughEnt(e->type))
 						entOK = 1;
