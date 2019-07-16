@@ -39,8 +39,8 @@
 namespace Cloud {
 namespace OneDrive {
 
-#define ONEDRIVE_API_SPECIAL_APPROOT_ID "https://api.onedrive.com/v1.0/drive/special/approot:/"
-#define ONEDRIVE_API_SPECIAL_APPROOT "https://api.onedrive.com/v1.0/drive/special/approot"
+#define ONEDRIVE_API_SPECIAL_APPROOT_ID "https://graph.microsoft.com/v1.0/drive/special/approot:/"
+#define ONEDRIVE_API_SPECIAL_APPROOT "https://graph.microsoft.com/v1.0/drive/special/approot"
 
 OneDriveStorage::OneDriveStorage(Common::String token, Common::String refreshToken):
 	BaseStorage(token, refreshToken) {}
@@ -136,7 +136,7 @@ void OneDriveStorage::fileInfoCallback(Networking::NetworkReadStreamCallback out
 	}
 
 	Common::JSONObject result = response.value->asObject();
-	if (!Networking::CurlJsonRequest::jsonContainsString(result, "@content.downloadUrl", "OneDriveStorage::fileInfoCallback")) {
+	if (!Networking::CurlJsonRequest::jsonContainsString(result, "@microsoft.graph.downloadUrl", "OneDriveStorage::fileInfoCallback")) {
 		warning("OneDriveStorage: downloadUrl not found in passed JSON");
 		debug(9, "%s", response.value->stringify().c_str());
 		if (outerCallback)
@@ -146,7 +146,7 @@ void OneDriveStorage::fileInfoCallback(Networking::NetworkReadStreamCallback out
 		return;
 	}
 
-	const char *url = result.getVal("@content.downloadUrl")->asString().c_str();
+	const char *url = result.getVal("@microsoft.graph.downloadUrl")->asString().c_str();
 	if (outerCallback)
 		(*outerCallback)(Networking::NetworkReadStreamResponse(
 			response.request,
@@ -158,28 +158,33 @@ void OneDriveStorage::fileInfoCallback(Networking::NetworkReadStreamCallback out
 }
 
 Networking::Request *OneDriveStorage::listDirectory(Common::String path, ListDirectoryCallback callback, Networking::ErrorCallback errorCallback, bool recursive) {
+	debug(9, "OneDrive: `ls \"%s\"`", path.c_str());
 	return addRequest(new OneDriveListDirectoryRequest(this, path, callback, errorCallback, recursive));
 }
 
 Networking::Request *OneDriveStorage::upload(Common::String path, Common::SeekableReadStream *contents, UploadCallback callback, Networking::ErrorCallback errorCallback) {
+	debug(9, "OneDrive: `upload \"%s\"`", path.c_str());
 	return addRequest(new OneDriveUploadRequest(this, path, contents, callback, errorCallback));
 }
 
 Networking::Request *OneDriveStorage::streamFileById(Common::String path, Networking::NetworkReadStreamCallback outerCallback, Networking::ErrorCallback errorCallback) {
+	debug(9, "OneDrive: `download \"%s\"`", path.c_str());
 	Common::String url = ONEDRIVE_API_SPECIAL_APPROOT_ID + ConnMan.urlEncode(path);
 	Networking::JsonCallback innerCallback = new Common::CallbackBridge<OneDriveStorage, Networking::NetworkReadStreamResponse, Networking::JsonResponse>(this, &OneDriveStorage::fileInfoCallback, outerCallback);
 	Networking::CurlJsonRequest *request = new OneDriveTokenRefresher(this, innerCallback, errorCallback, url.c_str());
-	request->addHeader("Authorization: Bearer " + _token);
+	request->addHeader("Authorization: bearer " + _token);
 	return addRequest(request);
 }
 
 Networking::Request *OneDriveStorage::createDirectory(Common::String path, BoolCallback callback, Networking::ErrorCallback errorCallback) {
+	debug(9, "OneDrive: `mkdir \"%s\"`", path.c_str());
 	if (!errorCallback)
 		errorCallback = getErrorPrintingCallback();
 	return addRequest(new OneDriveCreateDirectoryRequest(this, path, callback, errorCallback));
 }
 
 Networking::Request *OneDriveStorage::info(StorageInfoCallback callback, Networking::ErrorCallback errorCallback) {
+	debug(9, "OneDrive: `info`");
 	Networking::JsonCallback innerCallback = new Common::CallbackBridge<OneDriveStorage, StorageInfoResponse, Networking::JsonResponse>(this, &OneDriveStorage::infoInnerCallback, callback);
 	Networking::CurlJsonRequest *request = new OneDriveTokenRefresher(this, innerCallback, errorCallback, ONEDRIVE_API_SPECIAL_APPROOT);
 	request->addHeader("Authorization: bearer " + _token);
