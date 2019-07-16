@@ -412,113 +412,80 @@ bool AI::activateAction(AIEntity *e, int x, int y, int targetX, int targetY) {
 		tileIndex = g_hdb->_map->getMapBGTileIndex(x, y);
 
 	// Check which tile is going to activate
-	if ( tileIndex == _useSwitchOff || tileIndex == _useSwitchOff + 1 )
-		success = useSwitch( e, x, y, targetX, targetY, _useSwitchOn );
-	else
-	if ( tileIndex == _useSwitchOn )
-		success = useSwitchOn( e, x, y, targetX, targetY, _useSwitchOff );
-	else
+	if (tileIndex == _useSwitchOff || tileIndex == _useSwitchOff + 1)
+		success = useSwitch(e, x, y, targetX, targetY, _useSwitchOn);
+	else if (tileIndex == _useSwitchOn)
+		success = useSwitchOn(e, x, y, targetX, targetY, _useSwitchOff);
 	//-------------------------------------------------------------------
-	if ( tileIndex == _useHandswitchOff || tileIndex == _useHandswitchOff + 1 )
-		success = useSwitch( e, x, y, targetX, targetY, _useHandswitchOn );
-	else
-	if ( tileIndex == _useHandswitchOn )
-		success = useSwitchOn( e, x, y, targetX, targetY, _useHandswitchOff );
-	else
+	else if (tileIndex == _useHandswitchOff || tileIndex == _useHandswitchOff + 1)
+		success = useSwitch(e, x, y, targetX, targetY, _useHandswitchOn);
+	else if (tileIndex == _useHandswitchOn)
+		success = useSwitchOn(e, x, y, targetX, targetY, _useHandswitchOff);
 	//-------------------------------------------------------------------
-	if ( tileIndex == _kcHolderWhiteOff || tileIndex == _kcHolderWhiteOff + 1 )
-		success = useLockedSwitch( e, x, y, targetX, targetY, _kcHolderWhiteOn, ITEM_KEYCARD_WHITE, "I need a White Keycard." );
-	else
-	if ( tileIndex == _kcHolderWhiteOn )
-		success = useLockedSwitchOn( e, x, y, targetX, targetY, _kcHolderWhiteOff, ITEM_KEYCARD_WHITE );
-	else
-	if ( tileIndex == _kcHolderBlueOff || tileIndex == _kcHolderBlueOff + 1 )
-		success = useLockedSwitch( e, x, y, targetX, targetY, _kcHolderBlueOn, ITEM_KEYCARD_BLUE, "I need a Blue Keycard." );
-	else
-	if ( tileIndex == _kcHolderBlueOn )
-		success = useLockedSwitchOn( e, x, y, targetX, targetY, _kcHolderBlueOff, ITEM_KEYCARD_BLUE );
-	else
-	if ( tileIndex == _kcHolderRedOff || tileIndex == _kcHolderRedOff + 1 )
-		success = useLockedSwitch( e, x, y, targetX, targetY, _kcHolderRedOn, ITEM_KEYCARD_RED, "I need a Red Keycard." );
-	else
-	if ( tileIndex == _kcHolderRedOn )
-		success = useLockedSwitchOn( e, x, y, targetX, targetY, _kcHolderRedOff, ITEM_KEYCARD_RED );
-	else
-	if ( tileIndex == _kcHolderGreenOff || tileIndex == _kcHolderGreenOff + 1 )
-		success = useLockedSwitch( e, x, y, targetX, targetY, _kcHolderGreenOn, ITEM_KEYCARD_GREEN, "I need a Green Keycard." );
-	else
-	if ( tileIndex == _kcHolderGreenOn )
-		success = useLockedSwitchOn( e, x, y, targetX, targetY, _kcHolderGreenOff, ITEM_KEYCARD_GREEN );
-	else
-	if ( tileIndex == _kcHolderPurpleOff || tileIndex == _kcHolderPurpleOff + 1 )
-		success = useLockedSwitch( e, x, y, targetX, targetY, _kcHolderPurpleOn, ITEM_KEYCARD_PURPLE, "I need a Purple Keycard." );
-	else
-	if ( tileIndex == _kcHolderPurpleOn )
-		success = useLockedSwitchOn( e, x, y, targetX, targetY, _kcHolderPurpleOff, ITEM_KEYCARD_PURPLE );
-	else
-	if ( tileIndex == _kcHolderBlackOff || tileIndex == _kcHolderBlackOff + 1 )
-		success = useLockedSwitch( e, x, y, targetX, targetY, _kcHolderBlackOn, ITEM_KEYCARD_BLACK, "I need a Black Keycard." );
-	else
-	if ( tileIndex == _kcHolderBlackOn )
-		success = useLockedSwitchOn( e, x, y, targetX, targetY, _kcHolderBlackOff, ITEM_KEYCARD_BLACK );
-	else
+	else if (tileIndex == _kcHolderWhiteOff || tileIndex == _kcHolderWhiteOff + 1)
+		success = useLockedSwitch(e, x, y, targetX, targetY, _kcHolderWhiteOn, ITEM_KEYCARD_WHITE, "I need a White Keycard.");
+	else if (tileIndex == _kcHolderWhiteOn)
+		success = useLockedSwitchOn(e, x, y, targetX, targetY, _kcHolderWhiteOff, ITEM_KEYCARD_WHITE);
+	else if (tileIndex == _kcHolderBlueOff || tileIndex == _kcHolderBlueOff + 1)
+		success = useLockedSwitch(e, x, y, targetX, targetY, _kcHolderBlueOn, ITEM_KEYCARD_BLUE, "I need a Blue Keycard.");
+	else if (tileIndex == _kcHolderBlueOn)
+		success = useLockedSwitchOn(e, x, y, targetX, targetY, _kcHolderBlueOff, ITEM_KEYCARD_BLUE);
+	else if (tileIndex == _kcHolderRedOff || tileIndex == _kcHolderRedOff + 1)
+		success = useLockedSwitch(e, x, y, targetX, targetY, _kcHolderRedOn, ITEM_KEYCARD_RED, "I need a Red Keycard.");
+	else if (tileIndex == _kcHolderRedOn)
+		success = useLockedSwitchOn(e, x, y, targetX, targetY, _kcHolderRedOff, ITEM_KEYCARD_RED);
+	else if (tileIndex == _kcHolderGreenOff || tileIndex == _kcHolderGreenOff + 1)
+		success = useLockedSwitch(e, x, y, targetX, targetY, _kcHolderGreenOn, ITEM_KEYCARD_GREEN, "I need a Green Keycard.");
+	else if (tileIndex == _kcHolderGreenOn)
+		success = useLockedSwitchOn(e, x, y, targetX, targetY, _kcHolderGreenOff, ITEM_KEYCARD_GREEN);
+	else if (tileIndex == _kcHolderPurpleOff || tileIndex == _kcHolderPurpleOff + 1)
+		success = useLockedSwitch(e, x, y, targetX, targetY, _kcHolderPurpleOn, ITEM_KEYCARD_PURPLE, "I need a Purple Keycard.");
+	else if (tileIndex == _kcHolderPurpleOn)
+		success = useLockedSwitchOn(e, x, y, targetX, targetY, _kcHolderPurpleOff, ITEM_KEYCARD_PURPLE);
+	else if (tileIndex == _kcHolderBlackOff || tileIndex == _kcHolderBlackOff + 1)
+		success = useLockedSwitch(e, x, y, targetX, targetY, _kcHolderBlackOn, ITEM_KEYCARD_BLACK, "I need a Black Keycard.");
+	else if (tileIndex == _kcHolderBlackOn)
+		success = useLockedSwitchOn(e, x, y, targetX, targetY, _kcHolderBlackOff, ITEM_KEYCARD_BLACK);
 	//-------------------------------------------------------------------
-	if ( tileIndex == _useSwitch2Off || tileIndex == _useSwitch2Off + 1 )
-		success = useSwitch2( e, x, y, targetX, targetY );
-	else
-	if ( tileIndex == _useHolderEmpty || tileIndex == _useHolderEmpty + 1 )
-		success = useCellHolder( e, x, y, targetX, targetY );
-	else
+	else if (tileIndex == _useSwitch2Off || tileIndex == _useSwitch2Off + 1)
+		success = useSwitch2(e, x, y, targetX, targetY);
+	else if (tileIndex == _useHolderEmpty || tileIndex == _useHolderEmpty + 1)
+		success = useCellHolder(e, x, y, targetX, targetY);
 	//-------------------------------------------------------------------
-	if ( tileIndex == _targetDoorN || tileIndex == _targetDoorN + 3 )
-		success = useAutoDoorOpenClose( e, x, y );
-	else
-	if ( tileIndex == _targetDoorP || tileIndex == _targetDoorP + 3 )
-		success = useDoorOpenCloseBot( e, x, y );
-	else
-	if ( tileIndex == _targetDoorS || tileIndex == _targetDoorS + 3 )
-		success = useDoorOpenCloseBot( e, x, y );
-	else
-	if ( tileIndex == _targetDoorNv || tileIndex == _targetDoorNv + 3 )
-		success = useAutoDoorOpenClose( e, x, y );
-	else
-	if ( tileIndex == _targetDoorPv || tileIndex == _targetDoorPv + 3 )
-		success = useDoorOpenCloseBot( e, x, y );
-	else
-	if ( tileIndex == _targetDoorSv || tileIndex == _targetDoorSv + 3 )
-		success = useDoorOpenCloseBot( e, x, y );
-	else
+	else if (tileIndex == _targetDoorN || tileIndex == _targetDoorN + 3)
+		success = useAutoDoorOpenClose(e, x, y);
+	else if (tileIndex == _targetDoorP || tileIndex == _targetDoorP + 3)
+		success = useDoorOpenCloseBot(e, x, y);
+	else if (tileIndex == _targetDoorS || tileIndex == _targetDoorS + 3)
+		success = useDoorOpenCloseBot(e, x, y);
+	else if (tileIndex == _targetDoorNv || tileIndex == _targetDoorNv + 3)
+		success = useAutoDoorOpenClose(e, x, y);
+	else if (tileIndex == _targetDoorPv || tileIndex == _targetDoorPv + 3)
+		success = useDoorOpenCloseBot(e, x, y);
+	else if (tileIndex == _targetDoorSv || tileIndex == _targetDoorSv + 3)
+		success = useDoorOpenCloseBot(e, x, y);
 	//-------------------------------------------------------------------
-	if ( tileIndex == _targetDoorN || tileIndex == _targetDoor2N + 3 )
-		success = useAutoDoorOpenClose( e, x, y );
-	else
-	if ( tileIndex == _targetDoorP || tileIndex == _targetDoor2P + 3 )
-		success = useDoorOpenCloseBot( e, x, y );
-	else
-	if ( tileIndex == _targetDoorS || tileIndex == _targetDoor2S + 3 )
-		success = useDoorOpenCloseBot( e, x, y );
-	else
-	if ( tileIndex == _targetDoorNv || tileIndex == _targetDoor2Nv + 3 )
-		success = useAutoDoorOpenClose( e, x, y );
-	else
-	if ( tileIndex == _targetDoorPv || tileIndex == _targetDoor2Pv + 3 )
-		success = useDoorOpenCloseBot( e, x, y );
-	else
-	if ( tileIndex == _targetDoorSv || tileIndex == _targetDoor2Sv + 3 )
-		success = useDoorOpenCloseBot( e, x, y );
-	else
+	else if (tileIndex == _targetDoorN || tileIndex == _targetDoor2N + 3)
+		success = useAutoDoorOpenClose(e, x, y);
+	else if (tileIndex == _targetDoorP || tileIndex == _targetDoor2P + 3)
+		success = useDoorOpenCloseBot(e, x, y);
+	else if (tileIndex == _targetDoorS || tileIndex == _targetDoor2S + 3)
+		success = useDoorOpenCloseBot(e, x, y);
+	else if (tileIndex == _targetDoorNv || tileIndex == _targetDoor2Nv + 3)
+		success = useAutoDoorOpenClose(e, x, y);
+	else if (tileIndex == _targetDoorPv || tileIndex == _targetDoor2Pv + 3)
+		success = useDoorOpenCloseBot(e, x, y);
+	else if (tileIndex == _targetDoorSv || tileIndex == _targetDoor2Sv + 3)
+		success = useDoorOpenCloseBot(e, x, y);
 	//-------------------------------------------------------------------
-	if ( tileIndex == _touchplateOff )
-		success = useTouchplate( e, x, y, targetX, targetY, _touchplateOn );
-	else
-	if ( tileIndex == _touchplateOn )
-		success = useTouchplateOn( e, x, y, targetX, targetY, _touchplateOff );
-	else
-	if ( tileIndex == _templeTouchpOff )
-		success = useTouchplate( e, x, y, targetX, targetY, _templeTouchpOn );
-	else
-	if ( tileIndex == _templeTouchpOn )
-		success = useTouchplateOn( e, x, y, targetX, targetY, _templeTouchpOff );
+	else if (tileIndex == _touchplateOff)
+		success = useTouchplate(e, x, y, targetX, targetY, _touchplateOn);
+	else if (tileIndex == _touchplateOn)
+		success = useTouchplateOn(e, x, y, targetX, targetY, _touchplateOff);
+	else if (tileIndex == _templeTouchpOff)
+		success = useTouchplate(e, x, y, targetX, targetY, _templeTouchpOn);
+	else if (tileIndex == _templeTouchpOn)
+		success = useTouchplateOn(e, x, y, targetX, targetY, _templeTouchpOff);
 
 	return success;
 }
