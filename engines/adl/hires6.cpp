@@ -44,23 +44,23 @@ public:
 
 private:
 	// AdlEngine
-	void gameLoop();
-	void setupOpcodeTables();
-	void runIntro();
-	void init();
-	void initGameState();
-	void showRoom();
+	void gameLoop() override;
+	void setupOpcodeTables() override;
+	void runIntro() override;
+	void init() override;
+	void initGameState() override;
+	void showRoom() override;
 	int goDirection(ScriptEnv &e, Direction dir) override;
-	Common::String formatVerbError(const Common::String &verb) const;
-	Common::String formatNounError(const Common::String &verb, const Common::String &noun) const;
-	void loadState(Common::ReadStream &stream);
-	void saveState(Common::WriteStream &stream);
+	Common::String formatVerbError(const Common::String &verb) const override;
+	Common::String formatNounError(const Common::String &verb, const Common::String &noun) const override;
+	void loadState(Common::ReadStream &stream) override;
+	void saveState(Common::WriteStream &stream) override;
 
 	// AdlEngine_v2
-	void printString(const Common::String &str);
+	void printString(const Common::String &str) override;
 
 	// Engine
-	bool canSaveGameStateCurrently();
+	bool canSaveGameStateCurrently() override;
 
 	int o_fluteSound(ScriptEnv &e);
 

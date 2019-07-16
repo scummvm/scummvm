@@ -54,10 +54,10 @@ public:
 
 	GraphicsMan_v1<T>(T &display) : _display(display) { this->setBounds(Common::Rect(280, 160)); }
 
-	virtual void drawLine(const Common::Point &p1, const Common::Point &p2, byte color) const override;
-	virtual void drawShape(Common::ReadStream &shape, Common::Point &pos, byte rotation = 0, byte scaling = 1, byte color = 0x7f) const override;
-	virtual void drawPic(Common::SeekableReadStream &pic, const Common::Point &pos) override;
-	virtual void clearScreen() const override;
+	void drawLine(const Common::Point &p1, const Common::Point &p2, byte color) const override;
+	void drawShape(Common::ReadStream &shape, Common::Point &pos, byte rotation = 0, byte scaling = 1, byte color = 0x7f) const override;
+	void drawPic(Common::SeekableReadStream &pic, const Common::Point &pos) override;
+	void clearScreen() const override;
 
 protected:
 	T &_display;
@@ -78,7 +78,7 @@ public:
 	using GraphicsMan_v1<T>::putPixel;
 
 	GraphicsMan_v2<T>(T &display) : GraphicsMan_v1<T>(display), _color(0) { }
-	void drawPic(Common::SeekableReadStream &pic, const Common::Point &pos);
+	void drawPic(Common::SeekableReadStream &pic, const Common::Point &pos) override;
 
 protected:
 	bool canFillAt(const Common::Point &p, const bool stopBit = false);
@@ -94,7 +94,7 @@ private:
 	void fill(Common::SeekableReadStream &pic);
 	virtual void fillRowLeft(Common::Point p, const byte pattern, const bool stopBit);
 	virtual void fillAt(Common::Point p, const byte pattern);
-	virtual byte getClearColor() const override { return 0xff; }
+	byte getClearColor() const override { return 0xff; }
 
 	byte _color;
 	Common::Point _offset;
@@ -113,8 +113,8 @@ public:
 	GraphicsMan_v3<T>(T &display) : GraphicsMan_v2<T>(display) { }
 
 private:
-	virtual void fillRowLeft(Common::Point p, const byte pattern, const bool stopBit) override;
-	virtual void fillAt(Common::Point p, const byte pattern) override;
+	void fillRowLeft(Common::Point p, const byte pattern, const bool stopBit) override;
+	void fillAt(Common::Point p, const byte pattern) override;
 };
 
 template <class T>

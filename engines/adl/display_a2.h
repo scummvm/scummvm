@@ -41,8 +41,8 @@ public:
 		kTextHeight = 24
 	};
 
-	virtual void init() override;
-	virtual bool saveThumbnail(Common::WriteStream &out) override;
+	void init() override;
+	bool saveThumbnail(Common::WriteStream &out) override;
 
 	// Graphics
 	uint getGfxWidth() const { return kGfxWidth; }
@@ -59,14 +59,14 @@ public:
 	void clear(byte color);
 
 	// Text
-	virtual char asciiToNative(char c) const override { return c | 0x80; }
-	virtual void printChar(char c) override;
-	virtual void showCursor(bool enable);
+	char asciiToNative(char c) const override { return c | 0x80; }
+	void printChar(char c) override;
+	void showCursor(bool enable) override;
 
 private:
 	void writeFrameBuffer(const Common::Point &p, byte color, byte mask);
-	virtual void updateTextSurface() override;
-	virtual void updateGfxSurface() override;
+	void updateTextSurface() override;
+	void updateGfxSurface() override;
 
 	void showScanlines(bool enable);
 	void drawChar(byte c, int x, int y);

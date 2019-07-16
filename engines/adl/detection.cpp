@@ -319,24 +319,24 @@ class AdlMetaEngine : public AdvancedMetaEngine {
 public:
 	AdlMetaEngine() : AdvancedMetaEngine(gameFileDescriptions, sizeof(AdlGameDescription), adlGames, optionsList) { }
 
-	const char *getName() const {
+	const char *getName() const override {
 		return "ADL";
 	}
 
-	const char *getOriginalCopyright() const {
+	const char *getOriginalCopyright() const override {
 		return "Copyright (C) Sierra On-Line";
 	}
 
-	bool hasFeature(MetaEngineFeature f) const;
-	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
-	int getMaximumSaveSlot() const { return 'O' - 'A'; }
-	SaveStateList listSaves(const char *target) const;
-	void removeSaveState(const char *target, int slot) const;
+	bool hasFeature(MetaEngineFeature f) const override;
+	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
+	int getMaximumSaveSlot() const override { return 'O' - 'A'; }
+	SaveStateList listSaves(const char *target) const override;
+	void removeSaveState(const char *target, int slot) const override;
 	ADDetectedGames detectGame(const Common::FSNode &parent, const FileMap &allFiles, Common::Language language, Common::Platform platform, const Common::String &extra) const override;
 
 	bool addFileProps(const FileMap &allFiles, Common::String fname, FilePropertiesMap &filePropsMap) const;
 
-	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const;
+	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const override;
 };
 
 bool AdlMetaEngine::hasFeature(MetaEngineFeature f) const {
