@@ -158,11 +158,11 @@ bool IMuseInternal::isMT32(int sound) {
 	case MKTAG('S', 'P', 'K', ' '):
 		return false;
 
-	case MKTAG('A', 'M', 'I', ' '): // Amiga
+	case MKTAG('A', 'M', 'I', ' '): // MI2 Amiga
 		return false;
 
-	case MKTAG('R', 'O', 'L', ' '):
-		return true;
+	case MKTAG('R', 'O', 'L', ' '): // Unfortunately FOA Amiga also uses this resource type
+		return !_isAmiga;
 
 	case MKTAG('M', 'A', 'C', ' '): // Occurs in the Mac version of FOA and MI2
 		return false;
