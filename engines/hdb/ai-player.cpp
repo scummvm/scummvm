@@ -521,6 +521,7 @@ void aiGemAttackAction(AIEntity *e) {
 				case AI_DRAGON:
 					g_hdb->_sound->playSound(SND_CLUB_HIT_FLESH);
 					aiDragonWake(hit);
+					// fallthrough
 				default:
 					g_hdb->_ai->addAnimateTarget(e->x, e->y, 0, 3, ANIM_NORMAL, false, false, GEM_FLASH);
 					g_hdb->_sound->playSound(SND_CLUB_HIT_FLESH);
