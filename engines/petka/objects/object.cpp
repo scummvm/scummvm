@@ -28,6 +28,7 @@
 #include "graphics/colormasks.h"
 #include "graphics/surface.h"
 
+#include "petka/big_dialogue.h"
 #include "petka/flc.h"
 #include "petka/sound.h"
 #include "petka/petka.h"
@@ -102,12 +103,18 @@ static void processSavedReaction(QReaction **reaction, QMessageObject *obj) {
 }
 
 void QMessageObject::processMessage(const QMessage &msg) {
+	bool reacted = false;
 	for (uint i = 0; i < _reactions.size(); ++i) {
 		QReaction &r = _reactions[i];
 		if (r.opcode != msg.opcode ||
 			(r.status != -1 && r.status != _status) ||
 			(r.senderId != -1 && r.senderId != msg.sender->_id)) {
 			continue;
+		}
+		bool res;
+		if (g_vm->getBigDialogue()->findDialog(_id, msg.opcode, &res) && res == 0) {
+			g_vm->getBigDialogue()->setDialog(_id, msg.opcode, -1);
+			g_vm->getQSystem()->_mainInterface->_dialog._sender = this;
 		}
 		for (uint j = 0; j < r.messages.size(); ++j) {
 			QMessage &rMsg = r.messages[j];
@@ -148,87 +155,98 @@ void QMessageObject::processMessage(const QMessage &msg) {
 			if (processed)
 				break;
 		}
+		reacted = true;
 	}
 
-	switch (msg.opcode) {
-	case kAvi: {
-		Common::String videoName = g_vm->resMgr()->findResourceName((uint16)msg.arg1);
-		g_vm->playVideo(g_vm->openFile(videoName, false));
-		break;
-	}
-	case kSetPos:
-		setPos(msg.arg1, msg.arg2);
-		break;
-	case kSet:
-	case kPlay:
-		if (dynamic_cast<QObjectBG *>(this)) {
+	if (reacted || !g_vm->getBigDialogue()->findDialog(_id, msg.opcode, nullptr)) {
+		switch (msg.opcode) {
+		case kAvi: {
+			Common::String videoName = g_vm->resMgr()->findResourceName((uint16) msg.arg1);
+			g_vm->playVideo(g_vm->openFile(videoName, false));
 			break;
 		}
-		if (g_vm->getQSystem()->_isIniting) {
-			_resourceId = msg.arg1;
-			_notLoopedSound = msg.arg2 != 5;
-		} else {
-			_sound = g_vm->soundMgr()->addSound(g_vm->resMgr()->findSoundName(msg.arg1), Audio::Mixer::kSFXSoundType);
-			_hasSound = _sound != nullptr;
-			_startSound = false;
-			FlicDecoder *flc = g_vm->resMgr()->loadFlic(_resourceId);
-			if (flc) {
-				g_vm->videoSystem()->addDirtyRect(Common::Point(_x, _y), *flc);
+		case kDialog:
+			g_vm->getQSystem()->_mainInterface->_dialog.start(msg.arg1, this);
+			break;
+		case kSetPos:
+			setPos(msg.arg1, msg.arg2);
+			break;
+		case kSet:
+		case kPlay:
+			if (dynamic_cast<QObjectBG *>(this)) {
+				break;
 			}
+			if (g_vm->getQSystem()->_isIniting) {
+				_resourceId = msg.arg1;
+				_notLoopedSound = msg.arg2 != 5;
+			} else {
+				_sound = g_vm->soundMgr()->addSound(g_vm->resMgr()->findSoundName(msg.arg1),
+													Audio::Mixer::kSFXSoundType);
+				_hasSound = _sound != nullptr;
+				_startSound = false;
+				FlicDecoder *flc = g_vm->resMgr()->loadFlic(_resourceId);
+				if (flc) {
+					g_vm->videoSystem()->addDirtyRect(Common::Point(_x, _y), *flc);
+				}
 
-			flc = g_vm->resMgr()->loadFlic(msg.arg1);
-			flc->setFrame(1);
-			_time = 0;
-			if (!_notLoopedSound) {
-				g_vm->soundMgr()->removeSound(g_vm->resMgr()->findSoundName(_resourceId));
+				flc = g_vm->resMgr()->loadFlic(msg.arg1);
+				flc->setFrame(1);
+				_time = 0;
+				if (!_notLoopedSound) {
+					g_vm->soundMgr()->removeSound(g_vm->resMgr()->findSoundName(_resourceId));
+				}
+				_resourceId = msg.arg1;
 			}
-			_resourceId = msg.arg1;
+			if (msg.arg2 == 1) {
+				FlicDecoder *flc = g_vm->resMgr()->loadFlic(_resourceId);
+				flc->setFrame(1);
+				g_vm->videoSystem()->makeAllDirty();
+				_time = 0;
+			} else if (msg.arg2 == 2) {
+				g_vm->resMgr()->loadFlic(_resourceId);
+			}
+			_notLoopedSound = msg.arg2 != 5;
+			break;
+		case kEnd:
+			if (_reaction && _reactionResId == msg.arg1) {
+				processSavedReaction(&_reaction, this);
+			}
+			break;
+		case kStatus:
+			_status = (int8) msg.arg1;
+			break;
+		case kOn:
+			_isActive = true;
+			show(true);
+			break;
+		case kOff:
+			_isActive = false;
+			show(false);
+			break;
+		case kStop:
+			g_vm->getQSystem()->_cursor.get()->show(msg.arg1);
+			g_vm->getQSystem()->_star.get()->_isActive = msg.arg1;
+		case kShow:
+			show(true);
+			break;
+		case kHide:
+			show(false);
+			break;
+		case kZBuffer:
+			_updateZ = msg.arg1;
+			_z = (msg.arg2 != -1) ? msg.arg2 : _z;
+			break;
+		case kActive:
+			_isActive = msg.arg1;
+			break;
+		case kPassive:
+			_isActive = false;
+			break;
 		}
-		if (msg.arg2 == 1) {
-			FlicDecoder *flc = g_vm->resMgr()->loadFlic(_resourceId);
-			flc->setFrame(1);
-			g_vm->videoSystem()->makeAllDirty();
-			_time = 0;
-		} else if (msg.arg2 == 2) {
-			g_vm->resMgr()->loadFlic(_resourceId);
-		}
-		_notLoopedSound = msg.arg2 != 5;
-		break;
-	case kEnd:
-		if (_reaction && _reactionResId == msg.arg1) {
-			processSavedReaction(&_reaction, this);
-		}
- 		break;
-	case kStatus:
-		_status = (int8)msg.arg1;
-		break;
-	case kOn:
-		_isActive = true;
-		show(true);
-		break;
-	case kOff:
-		_isActive = false;
-		show(false);
-		break;
-	case kStop:
-		g_vm->getQSystem()->_cursor.get()->show(msg.arg1);
-		g_vm->getQSystem()->_star.get()->_isActive = msg.arg1;
-	case kShow:
-		show(true);
-		break;
-	case kHide:
-		show(false);
-		break;
-	case kZBuffer:
-		_updateZ = msg.arg1;
-		_z = (msg.arg2 != -1) ? msg.arg2 : _z;
-		break;
-	case kActive:
-		_isActive = msg.arg1;
-		break;
-	case kPassive:
-		_isActive = false;
-		break;
+	} else {
+		g_vm->getBigDialogue()->setDialog(_id, msg.opcode, -1);
+		g_vm->getQSystem()->_mainInterface->_dialog._sender = this;
+		g_vm->getQSystem()->_mainInterface->_dialog.start(msg.arg1, this);
 	}
 
 }
@@ -271,8 +289,8 @@ void QObject::draw() {
 	if (_animate && _startSound) {
 		if (_sound) {
 			_sound->play(!_notLoopedSound);
-			_startSound = false;
 		}
+		_startSound = false;
 	}
 
 	Common::Rect screen(640, 480);

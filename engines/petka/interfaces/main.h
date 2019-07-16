@@ -24,6 +24,7 @@
 #define PETKA_MAIN_H
 
 #include "petka/interfaces/interface.h"
+#include "petka/interfaces/dialog_interface.h"
 
 namespace Petka {
 
@@ -31,6 +32,10 @@ struct BGInfo {
 	uint16 objId;
 	Common::Array<uint16> attachedObjIds;
 };
+
+class Sound;
+
+extern Sound *g_trackedSound;
 
 class InterfaceMain : public Interface {
 public:
@@ -45,6 +50,7 @@ public:
 	void unloadRoom(bool fromSave);
 
 public:
+	DialogInterface _dialog;
 	Common::Array<BGInfo> _bgs;
 	int _roomId;
 };

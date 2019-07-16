@@ -63,11 +63,15 @@ public:
 
 	void playVideo(Common::SeekableReadStream *stream);
 	QSystem *getQSystem() const;
+	BigDialogue *getBigDialogue() const;
 	SoundMgr *soundMgr() const;
 	QManager *resMgr() const;
+
 	VideoSystem *videoSystem() const;
 
 	Common::RandomSource &getRnd();
+	const Common::String &getSpeechPath();
+
 private:
 	void loadStores();
 

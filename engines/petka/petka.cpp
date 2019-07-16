@@ -43,6 +43,8 @@
 #include "petka/interfaces/interface.h"
 #include "petka/q_system.h"
 #include "petka/big_dialogue.h"
+#include "petka.h"
+
 
 namespace Petka {
 
@@ -218,9 +220,17 @@ void PetkaEngine::loadPart(byte part) {
 
 	_resMgr.reset(new QManager(*this));
 	_resMgr->init();
+	_dialogMan.reset(new BigDialogue());
 	_qsystem.reset(new QSystem());
 	_qsystem->init();
-	_dialogMan.reset(new BigDialogue());
+}
+
+BigDialogue *PetkaEngine::getBigDialogue() const {
+	return _dialogMan.get();
+}
+
+const Common::String &PetkaEngine::getSpeechPath() {
+	return _speechPath;
 }
 
 } // End of namespace Petka

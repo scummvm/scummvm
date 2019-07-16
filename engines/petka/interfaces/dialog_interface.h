@@ -20,68 +20,42 @@
  *
  */
 
-#ifndef PETKA_BIG_DIALOGUE_H
-#define PETKA_BIG_DIALOGUE_H
+#ifndef PETKA_DIALOG_INTERFACE_H
+#define PETKA_DIALOG_INTERFACE_H
 
-#include "common/array.h"
-#include "common/ustr.h"
+#include "common/str.h"
 
 namespace Petka {
 
-struct DlgOperation {
-	uint16 objId;
-	byte arg;
-	byte code;
-};
+class QMessageObject;
 
-struct DialogHandler {
-	uint32 startOpIndex;
-	uint32 opsCount;
-	//DlgOperation *operations;
-};
-
-struct Dialog {
-	uint16 opcode;
-	uint16 objId;
-	uint32 startHandlerIndex;
-	Common::Array<DialogHandler> handlers;
-};
-
-struct ObjectDialogs {
-	uint32 objId;
-	Common::Array<Dialog> dialogs;
-};
-
-struct SpeechInfo {
-	uint32 speakerId;
-	char soundName[16];
-	Common::U32String text;
-};
-
-class BigDialogue {
+class DialogInterface {
 public:
-	BigDialogue();
+	DialogInterface();
 
-	uint opcode();
+	void start(uint a, QMessageObject *sender);
 
-	void sub40B670(int arg);
+	void saveCursorState();
+	void restoreCursorState();
 
-	const Dialog *findDialog(uint objId, uint opcode, bool *res) const;
-	void setDialog(uint objId, uint opcode, int index);
+	void sub_4155D0(int a);
 
-	const SpeechInfo *getSpeechInfo();
+public:
+	int _field4;
+	int _field8;
+	int _fieldC;
+	int _field10;
+	int _field14;
+	int _field18;
+	int _field24;
+	Common::String _soundName;
+	int16 _savedCursorActType;
+	int16 _savedCursorId;
+	bool _wasCursorShown;
+	bool _wasCursorAnim;
+	QMessageObject *_talker;
+	QMessageObject *_sender;
 
-private:
-	void loadSpeechesInfo();
-
-private:
-	int *_ip;
-	int *_code;
-	uint _codeSize;
-	uint _startCodeIndex;
-
-	Common::Array<SpeechInfo> _speeches;
-	Common::Array<ObjectDialogs> _objDialogs;
 };
 
 } // End of namespace Petka
