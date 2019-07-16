@@ -402,26 +402,26 @@ struct AIEntity {
 	char		luaFuncInit[32];						// Lua function for Init (always called after entity's init). These are ptrs into the map header.
 	char		luaFuncAction[32];						// Lua function for Action
 	char		luaFuncUse[32];							// Lua function for Use
-	uint16		level;									// which floor level we're on
-	uint16		value1, value2;							// extra values we might need
+	int16		level;									// which floor level we're on
+	int16		value1, value2;							// extra values we might need
 	AIDir		dir2;									// this is from TED
 
-	uint16		x, y;
+	int16		x, y;
 	int16		drawXOff, drawYOff;					// might need a drawing offset
-	uint16		onScreen;								// FLAG: is this entity onscreen?
-	uint16		moveSpeed;								// movement speed of this entity
+	int16		onScreen;								// FLAG: is this entity onscreen?
+	int16		moveSpeed;								// movement speed of this entity
 	int16		xVel, yVel;								// movement values
-	uint16		tileX, tileY;
-	uint16		goalX, goalY;							// where we're trying to go - TILE COORDS
+	int16		tileX, tileY;
+	int16		goalX, goalY;							// where we're trying to go - TILE COORDS
 	int16		touchpX, touchpY, touchpTile, touchpWait;		// ACTION index a touchplate is using, which you're on
-	uint32		stunnedWait;							// if we're stunned, this is the delay before being normal again
+	int32		stunnedWait;							// if we're stunned, this is the delay before being normal again
 	int16		sequence;								// to use for specially-coded sequences
 	char		entityName[32];						// the name of the entity, as registered by the Lua init function for the entity
 	char		printedName[32];						// the name of the entity/item, the way it should be printed
 
-	uint16		animFrame;								// which frame we're on
-	uint16		animDelay;								// changes every frame; based on anim_cycle at start
-	uint16		animCycle;								// delay between frame animations
+	int16		animFrame;								// which frame we're on
+	int16		animDelay;								// changes every frame; based on anim_cycle at start
+	int16		animCycle;								// delay between frame animations
 
 	union {
 		uint16 blinkFrames;
@@ -435,28 +435,28 @@ struct AIEntity {
 	};
 	Tile *special1Gfx[kMaxAnimFrames];
 
-	uint16		standdownFrames;
+	int16		standdownFrames;
 	Tile		*standdownGfx[kMaxAnimFrames];
 
-	uint16		standupFrames;
+	int16		standupFrames;
 	Tile		*standupGfx[kMaxAnimFrames];
 
-	uint16		standleftFrames;
+	int16		standleftFrames;
 	Tile		*standleftGfx[kMaxAnimFrames];
 
-	uint16		standrightFrames;
+	int16		standrightFrames;
 	Tile		*standrightGfx[kMaxAnimFrames];
 
-	uint16		moveupFrames;
+	int16		moveupFrames;
 	Tile		*moveupGfx[kMaxAnimFrames];
 
-	uint16		movedownFrames;
+	int16		movedownFrames;
 	Tile		*movedownGfx[kMaxAnimFrames];
 
-	uint16		moveleftFrames;
+	int16		moveleftFrames;
 	Tile		*moveleftGfx[kMaxAnimFrames];
 
-	uint16		moverightFrames;
+	int16		moverightFrames;
 	Tile		*moverightGfx[kMaxAnimFrames];
 
 	AIEntity() {
