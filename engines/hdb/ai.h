@@ -413,7 +413,7 @@ struct AIEntity {
 	int16		xVel, yVel;								// movement values
 	uint16		tileX, tileY;
 	uint16		goalX, goalY;							// where we're trying to go - TILE COORDS
-	uint16		touchpX, touchpY, touchpTile, touchpWait;		// ACTION index a touchplate is using, which you're on
+	int16		touchpX, touchpY, touchpTile, touchpWait;		// ACTION index a touchplate is using, which you're on
 	uint32		stunnedWait;							// if we're stunned, this is the delay before being normal again
 	int16		sequence;								// to use for specially-coded sequences
 	char		entityName[32];						// the name of the entity, as registered by the Lua init function for the entity
