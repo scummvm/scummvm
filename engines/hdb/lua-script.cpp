@@ -86,10 +86,12 @@ bool LuaScript::loadLua(const char *name) {
 	if (luaStream == NULL) {
 		warning("The %s MPC entry can't be found", name);
 
+		_systemInit = false;
+
 		return false;
 	}
 
-	initScript(luaStream, name, luaLength);
+	_systemInit = initScript(luaStream, name, luaLength);
 
 	return true;
 }
@@ -1706,7 +1708,7 @@ void debugHook(lua_State *L, lua_Debug *ar) {
 }
 
 bool LuaScript::initScript(Common::SeekableReadStream *stream, const char *scriptName, int32 length) {
-	if (_systemInit) {
+	if (_state != NULL) {
 		lua_close(_state);
 	}
 
@@ -1717,8 +1719,6 @@ bool LuaScript::initScript(Common::SeekableReadStream *stream, const char *scrip
 		return false;
 	}
 	luaL_openlibs(_state);
-
-	_systemInit = true;
 
 	// Register Extensions
 	for (int i = 0; luaFuncs[i].luaName; i++) {
@@ -1915,11 +1915,6 @@ void LuaScript::invokeLuaFunction(char *luaFunc, int x, int y, int value1, int v
 }
 
 bool LuaScript::executeMPC(Common::SeekableReadStream *stream, const char *name, const char *scriptName, int32 length) {
-
-	if (!_systemInit) {
-		return false;
-	}
-
 	char *chunk = new char[length + 1];
 	stream->read((void *)chunk, length);
 	chunk[length] = '\0'; // be on the safe side
@@ -1946,11 +1941,6 @@ bool LuaScript::executeMPC(Common::SeekableReadStream *stream, const char *name,
 }
 
 bool LuaScript::executeFile(const Common::String &filename) {
-
-	if (!_systemInit) {
-		return false;
-	}
-
 	Common::File *file = new Common::File;
 
 	if (!file->open(filename)) {
@@ -1982,11 +1972,6 @@ bool LuaScript::executeFile(const Common::String &filename) {
 }
 
 bool LuaScript::executeChunk(Common::String &chunk, const Common::String &chunkName) const {
-
-	if (!_systemInit) {
-		return false;
-	}
-
 	// Compile Chunk
 	if (luaL_loadbuffer(_state, chunk.c_str(), chunk.size(), chunkName.c_str())) {
 		error("Couldn't compile \"%s\": %s", chunkName.c_str(), lua_tostring(_state, -1));
