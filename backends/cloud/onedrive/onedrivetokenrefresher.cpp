@@ -115,7 +115,6 @@ void OneDriveTokenRefresher::finishJson(Common::JSONValue *json) {
 }
 
 void OneDriveTokenRefresher::finishError(Networking::ErrorResponse error) {
-	bool irrecoverable = error.interrupted || error.failed;
 	if (error.failed) {
 		Common::JSONValue *value = Common::JSON::parse(error.response.c_str());
 
