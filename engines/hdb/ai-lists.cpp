@@ -520,7 +520,7 @@ bool AI::activateAction(AIEntity *e, int x, int y, int targetX, int targetY) {
 	if ( tileIndex == _templeTouchpOn )
 		success = useTouchplateOn( e, x, y, targetX, targetY, _templeTouchpOff );
 
-		return success;
+	return success;
 }
 
 bool AI::checkAutoList(AIEntity *e, int x, int y) {
