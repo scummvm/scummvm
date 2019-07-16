@@ -1962,15 +1962,16 @@ AIEntity *AI::legalMove(int tileX, int tileY, int level, int *result) {
 	uint32 fgFlags = g_hdb->_map->getMapFGTileFlags(tileX, tileY);
 	AIEntity *hit = findEntity(tileX, tileY);
 
-	if (hit && hit->state != STATE_FLOATING)
+	if (hit && hit->state != STATE_FLOATING) {
 		// If player and entity are not at the same level, are they on stairs?
 		if (hit->level != level) {
 			if (level == 1 && !(bgFlags & kFlagStairTop)) {
 				hit = NULL;
-			} else if (level == 1 && !(bgFlags & kFlagStairBot)) {
+			} else if (level == 2 && !(bgFlags & kFlagStairBot)) {
 				hit = NULL;
 			}
 		}
+	}
 
 	if (level == 1) {
 		if (bgFlags & kFlagSolid) {
