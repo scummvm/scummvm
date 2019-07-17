@@ -948,8 +948,8 @@ bool AI::init() {
 	_useSwitchOn	= g_hdb->_gfx->getTileIndex("t32_switch_on");
 	_useSwitch2Off	= g_hdb->_gfx->getTileIndex("anim_t32_1switch_off01");
 	_useSwitch2On	= g_hdb->_gfx->getTileIndex("t32_1switch_on");
-//	_useHandswitchOn	= g_hdb->_gfx->getTileIndex("t32_ship_handswitch_on");
-//	_useHandswitchOff	= g_hdb->_gfx->getTileIndex("anim_t32_ship_handswitch_off1");
+	_useHandswitchOn	= g_hdb->_gfx->getTileIndex("t32_ship_handswitch_on");
+	_useHandswitchOff	= g_hdb->_gfx->getTileIndex("anim_t32_ship_handswitch_off1");
 	_useHolderEmpty	= g_hdb->_gfx->getTileIndex("anim_t32_holder_empty1");
 	_useHolderFull	= g_hdb->_gfx->getTileIndex("t32_holder_full");
 	_useMailsorter	= g_hdb->_gfx->getTileIndex("anim_t32_mailsort1");
