@@ -928,15 +928,11 @@ void Menu::drawTitle() {
 }
 
 void Menu::fillSavegameSlots() {
-	int i;
-	int max = kNumSaveSlots;
-
-	Common::InSaveFile *in;
 	Common::String saveGameFile;
 
-	for (i = 0; i < max; i++) {
-		saveGameFile = Common::String::format("%s.%03d", g_hdb->getTargetName()->c_str(), i);
-		in = g_system->getSavefileManager()->openForLoading(saveGameFile);
+	for (int i = 0; i < kNumSaveSlots; i++) {
+		saveGameFile = g_hdb->genSaveFileName(i, false);
+		Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(saveGameFile);
 
 		if (!in) {
 			memset(&_saveGames[i], 0, sizeof(Save));

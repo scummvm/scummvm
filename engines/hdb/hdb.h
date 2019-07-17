@@ -180,6 +180,8 @@ public:
 	void saveGame(Common::OutSaveFile *out);
 	void loadGame(Common::InSaveFile *in);
 
+	Common::String genSaveFileName(uint slot, bool lua);
+
 	void saveWhenReady(int slot) {
 		_saveInfo.active = true;
 		_saveInfo.slot = slot;
