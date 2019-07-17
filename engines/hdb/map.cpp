@@ -1021,11 +1021,11 @@ void Map::addFGTileAnimation(int x, int y) {
 	uint32 flags = tile->_flags;
 
 	// FOREGROUND
-	if (flags & kFlagAnimFast) {
+	if ((flags & kFlagAnimFast) == kFlagAnimFast) {
 		_listFGAnimFast.push_back(i);
-	} else if (flags & kFlagAnimSlow) {
+	} else if ((flags & kFlagAnimSlow) == kFlagAnimSlow) {
 		_listFGAnimSlow.push_back(i);
-	} else if (flags & kFlagAnimMedium) {
+	} else if ((flags & kFlagAnimMedium) == kFlagAnimMedium) {
 		_listFGAnimMedium.push_back(i);
 	}
 }

@@ -948,7 +948,7 @@ void AI::animateEntity(AIEntity *e) {
 		bgTileFlags = g_hdb->_map->getMapBGTileFlags(e->tileX, e->tileY);
 		fgTileFlags = g_hdb->_map->getMapFGTileFlags(e->tileX, e->tileY);
 
-		if (e->level == 1 ? (bgTileFlags & kFlagIce) : ((bgTileFlags & kFlagIce) && !(fgTileFlags & kFlagGrating))) {
+		if (e->level == 1 ? ((bgTileFlags & kFlagIce) == kFlagIce) : (((bgTileFlags & kFlagIce) == kFlagIce) && !(fgTileFlags & kFlagGrating))) {
 			int xva[] = {9, 0, 0, -1, 1}, yva[] = {9, -1, 1, 0, 0};
 			int nx, ny, moveOK = 0;
 			AIEntity *hit;
@@ -1042,9 +1042,9 @@ void AI::animateEntity(AIEntity *e) {
 		bgTileFlags = g_hdb->_map->getMapBGTileFlags(cx, cy);
 		fgTileFlags = g_hdb->_map->getMapFGTileFlags(cx, cy);
 		if ((bgTileFlags & kFlagPlayerDie) && !(checkFloating(cx, cy)) && !(fgTileFlags & kFlagGrating)) {
-			if (bgTileFlags & kFlagEnergyFloor)
+			if ((bgTileFlags & kFlagEnergyFloor) == kFlagEnergyFloor)
 				killPlayer(DEATH_SHOCKED);
-			else if ((bgTileFlags & kFlagPlasmaFloor) || (bgTileFlags & kFlagRadFloor))
+			else if (((bgTileFlags & kFlagPlasmaFloor) == kFlagPlasmaFloor) || ((bgTileFlags & kFlagRadFloor) == kFlagRadFloor))
 				killPlayer(DEATH_FRIED);
 			else
 				killPlayer(DEATH_NORMAL);
@@ -1189,7 +1189,7 @@ void AI::animateEntity(AIEntity *e) {
 				// If it is a light barrel on a melting floor
 				// If it is supposed to slide across the floor
 				// If it is being pushed on a floating entity, don't float it
-				if (flags & kFlagSlime) {
+				if ((flags & kFlagSlime) == kFlagSlime) {
 					// unless its a Heavy Barrel in which case it floats in slime
 					if ((e->type == AI_CRATE || e->type == AI_HEAVYBARREL) && !checkFloating(e->tileX, e->tileY)) {
 						addAnimateTarget(e->x, e->y, 0, 3, ANIM_NORMAL, false, false, GROUP_SLIME_SPLASH_SIT);
@@ -1227,7 +1227,7 @@ void AI::animateEntity(AIEntity *e) {
 					hit = findEntityIgnore(e->tileX + xv, e->tileY + yv, &_dummyLaser);
 					if (!hit) {
 						e->state = STATE_SLIDING;
-						if (flags & kFlagAnimFast)
+						if ((flags & kFlagAnimFast) == kFlagAnimFast)
 							e->moveSpeed = kPlayerMoveSpeed << 1;
 						else if (flags & kFlagAnimSlow)
 							e->moveSpeed = kPlayerMoveSpeed >> 1;
@@ -1274,7 +1274,7 @@ void AI::animateEntity(AIEntity *e) {
 					}
 
 					if (!checkFloating(e->tileX + xv, e->tileY + yv)) {
-						if (flags & kFlagAnimFast)
+						if ((flags & kFlagAnimFast) == kFlagAnimFast)
 							e->moveSpeed = kPlayerMoveSpeed << 1;
 						else if (flags & kFlagAnimMedium)
 							e->moveSpeed = kPlayerMoveSpeed;
@@ -1319,7 +1319,7 @@ void AI::animateEntity(AIEntity *e) {
 			} else if (((flags = g_hdb->_map->getMapBGTileFlags(e->tileX, e->tileY)) & kFlagWater) && (e->type == AI_MAGIC_EGG || e->type == AI_ICE_BLOCK)) {
 				// And no foreground tile is there
 				if (g_hdb->_map->getMapFGTileIndex(e->tileX, e->tileY) < 0 && !checkFloating(e->tileX, e->tileY)) {
-					if (flags & kFlagSlime) {
+					if ((flags & kFlagSlime) == kFlagSlime) {
 						// Evaporates in Slime
 						addAnimateTarget(e->x, e->y, 0, 3, ANIM_NORMAL, false, false, GROUP_STEAM_PUFF_SIT);
 						removeEntity(e);
