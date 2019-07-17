@@ -40,6 +40,8 @@ bool Menu::init() {
 	_sayHDB = false;
 	_menuKey = 0;
 
+	_nextScreen = 0;
+
 	_nebulaY = 0;		// Used as a flag
 	_fStars[0].y = 0;	// Used as a flag
 

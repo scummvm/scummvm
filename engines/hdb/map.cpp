@@ -794,6 +794,7 @@ bool Map::load(Common::SeekableReadStream *stream) {
 	}
 
 	g_hdb->_ai->initAllEnts();
+	g_hdb->stopProgress();
 
 	_mapLoaded = true;
 
