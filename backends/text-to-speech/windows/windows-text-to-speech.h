@@ -36,7 +36,8 @@ public:
 		READY,
 		PAUSED,
 		SPEAKING,
-		BROKEN
+		BROKEN,
+		NO_VOICE
 	};
 
 	WindowsTextToSpeechManager();
@@ -63,10 +64,14 @@ public:
 
 	virtual void setLanguage(Common::String language);
 
+	virtual bool popState();
+
 private:
 	void init();
 	virtual void updateVoices();
-	void createVoice(int typeNumber, Common::TTSVoice::Gender, char *description);
+	void createVoice(void *cpVoiceToken);
+	void freeVoices();
+	Common::String lcidToLocale(Common::String lcid);
 	SpeechState _speechState;
 };
 

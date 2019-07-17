@@ -230,4 +230,25 @@ void LinuxTextToSpeechManager::updateVoices() {
 
 }
 
+bool LinuxTextToSpeechManager::popState() {
+	if (_ttsState->_next == nullptr)
+		return true;
+
+	for (Common::TTSVoice *i = _ttsState->_availaibleVoices.begin(); i < _ttsState->_availaibleVoices.end(); i++) {
+		free(i->getData());
+	}
+
+	Common::TTSState *oldState = _ttsState;
+	_ttsState = _ttsState->_next;
+
+	delete oldState;
+
+	setLanguage(_ttsState->_language);
+	setPitch(_ttsState->_pitch);
+	setVolume(_ttsState->_volume);
+	setRate(_ttsState->_rate);
+	return false;
+}
+
+
 #endif

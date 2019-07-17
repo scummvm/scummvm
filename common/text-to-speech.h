@@ -109,7 +109,7 @@ public:
 	Array<TTSVoice> getVoicesArray() { return _ttsState->_availaibleVoices; }
 
 	void pushState();
-	bool popState();
+	virtual bool popState() { return true; }
 
 protected:
 	TTSState *_ttsState;
