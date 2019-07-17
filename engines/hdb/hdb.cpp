@@ -86,6 +86,12 @@ HDBGame::~HDBGame() {
 	delete _window;
 	delete _rnd;
 
+	delete _progressGfx;
+	delete _progressMarkGfx;
+	delete _loadingScreenGfx;
+	if (_logoGfx)
+		delete _logoGfx;
+
 	DebugMan.clearAllDebugChannels();
 }
 

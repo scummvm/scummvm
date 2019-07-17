@@ -189,6 +189,8 @@ struct TOut {
 class Window {
 public:
 
+	~Window();
+
 	bool init();
 	void save(Common::OutSaveFile *out);
 	void loadSaveFile(Common::InSaveFile *in);

@@ -25,6 +25,10 @@
 
 namespace HDB {
 
+Menu::~Menu() {
+	freeMenu();
+}
+
 bool Menu::init() {
 	_starWarp = 0;
 	_rocketEx = 0;
@@ -599,125 +603,125 @@ void Menu::freeMenu() {
 
 	// title sequence stuff
 	if (_titleScreen)
-		_titleScreen->free();
+		delete _titleScreen;
 	_titleScreen = NULL;
 	if (_oohOohGfx)
-		_oohOohGfx->free();
+		delete _oohOohGfx;
 	_oohOohGfx = NULL;
 
 	if (_newGfx)
-		_newGfx->free();
+		delete _newGfx;
 	_newGfx = NULL;
 	if (_loadGfx)
-		_loadGfx->free();
+		delete _loadGfx;
 	_loadGfx = NULL;
 	if (_optionsGfx)
-		_optionsGfx->free();
+		delete _optionsGfx;
 	_optionsGfx = NULL;
 	if (_quitGfx)
-		_quitGfx->free();
+		delete _quitGfx;
 	_quitGfx = NULL;
 	if (_resumeGfx)
-		_resumeGfx->free();
+		delete _resumeGfx;
 	_resumeGfx = NULL;
 	if (_slotGfx)
-		_slotGfx->free();
+		delete _slotGfx;
 	_slotGfx = NULL;
 	if (_rocketMain)
-		_rocketMain->free();
+		delete _rocketMain;
 	_rocketMain = NULL;
 	if (_rocketSecond)
-		_rocketSecond->free();
+		delete _rocketSecond;
 	_rocketSecond = NULL;
 	if (_rocketEx1)
-		_rocketEx1->free();
+		delete _rocketEx1;
 	_rocketEx1 = NULL;
 	if (_rocketEx2)
-		_rocketEx2->free();
+		delete _rocketEx2;
 	_rocketEx2 = NULL;
 	if (_titleLogo)
-		_titleLogo->free();
+		delete _titleLogo;
 	_titleLogo = NULL;
 
 	if (_hdbLogoScreen)
-		_hdbLogoScreen->free();
+		delete _hdbLogoScreen;
 	_hdbLogoScreen = NULL;
 
 	if (_nebulaGfx[0])
 		for (i = 0; i < kNebulaCount; i++) {
-			_nebulaGfx[i]->free();
+			delete _nebulaGfx[i];
 			_nebulaGfx[i] = NULL;
 		}
 
 	if (_sliderLeft)
-		_sliderLeft->free();
+		delete _sliderLeft;
 	_sliderLeft = NULL;
 	if (_sliderMid)
-		_sliderMid->free();
+		delete _sliderMid;
 	_sliderMid = NULL;
 	if (_sliderRight)
-		_sliderRight->free();
+		delete _sliderRight;
 	_sliderRight = NULL;
 	if (_sliderKnob)
-		_sliderKnob->free();
+		delete _sliderKnob;
 	_sliderKnob = NULL;
 	if (_modePuzzleGfx)
-		_modePuzzleGfx->free();
+		delete _modePuzzleGfx;
 	_modePuzzleGfx = NULL;
 	if (_modeActionGfx)
-		_modeActionGfx->free();
+		delete _modeActionGfx;
 	_modeActionGfx = NULL;
 	if (_modeLoadGfx)
-		_modeLoadGfx->free();
+		delete _modeLoadGfx;
 	_modeLoadGfx = NULL;
 	if (_modeSaveGfx)
-		_modeSaveGfx->free();
+		delete _modeSaveGfx;
 	_modeSaveGfx = NULL;
 	if (_menuBackoutGfx)
-		_menuBackoutGfx->free();
+		delete _menuBackoutGfx;
 	_menuBackoutGfx = NULL;
 
 	if (_controlButtonGfx)
-		_controlButtonGfx->free();
+		delete _controlButtonGfx;
 	_controlButtonGfx = NULL;
 
 	if (_controlsGfx)
-		_controlsGfx->free();
+		delete _controlsGfx;
 	_controlsGfx = NULL;
 
 	if (_vortexian[0]) {
-		_vortexian[0]->free();
-		_vortexian[1]->free();
-		_vortexian[2]->free();
+		delete _vortexian[0];
+		delete _vortexian[1];
+		delete _vortexian[2];
 		_vortexian[0] = _vortexian[1] = _vortexian[2] = NULL;
 	}
 
 	if (_star[0]) {
-		_star[0]->free();
-		_star[1]->free();
-		_star[2]->free();
+		delete _star[0];
+		delete _star[1];
+		delete _star[2];
 		_star[0] = _star[1] = _star[2] = NULL;
 	}
 
 	// secret stars
 	if (_starRedGfx[0]) {
-		_starRedGfx[0]->free();
-		_starRedGfx[1]->free();
-		_starGreenGfx[0]->free();
-		_starGreenGfx[1]->free();
-		_starBlueGfx[0]->free();
-		_starBlueGfx[1]->free();
+		delete _starRedGfx[0];
+		delete _starRedGfx[1];
+		delete _starGreenGfx[0];
+		delete _starGreenGfx[1];
+		delete _starBlueGfx[0];
+		delete _starBlueGfx[1];
 		_starRedGfx[0] = _starRedGfx[1] = NULL;
 		_starGreenGfx[0] = _starGreenGfx[1] = NULL;
 		_starBlueGfx[0] = _starBlueGfx[1] = NULL;
 	}
 
 	if (_versionGfx)
-		_versionGfx->free();
+		delete _versionGfx;
 	_versionGfx = NULL;
 
 	if (_warpGfx)
-		_warpGfx->free();
+		delete _warpGfx;
 	_warpGfx = NULL;
 }
 
@@ -1243,7 +1247,7 @@ void Menu::processInput(int x, int y) {
 
 		if ((x >= kQuitNoX1 && x <= kQuitNoX2 && y > kQuitNoY1 && y < kQuitNoY2 && _quitTimer < g_hdb->getTimeSlice()) || xit) {
 			g_hdb->_sound->playSound(SND_MENU_BACKOUT);
-			_quitScreen->free();
+			delete _quitScreen;
 			_quitScreen = NULL;
 
 			_menuActive = true;
