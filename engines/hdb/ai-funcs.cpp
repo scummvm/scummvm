@@ -409,6 +409,8 @@ bool AI::cacheEntGfx(AIEntity *e, bool init) {
 					}
 				}
 				j++;
+
+				delete gfxFiles;
 			}
 
 			e->aiInit = aiEntList[i].initFunc;
