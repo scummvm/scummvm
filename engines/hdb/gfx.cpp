@@ -42,6 +42,8 @@ Gfx::~Gfx() {
 	delete _gfxCache;
 	delete _sines;
 	delete _cosines;
+	for (int i = 0; i < _fontHeader.numChars; i++)
+		_fontSurfaces[i].free();
 	_globalSurface.free();
 }
 
