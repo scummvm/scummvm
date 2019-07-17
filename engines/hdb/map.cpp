@@ -228,11 +228,11 @@ void Map::restartSystem() {
 	_listFGAnimMedium.clear();
 	_listFGAnimSlow.clear();
 
-	delete _background;
+	delete[] _background;
 	_background = NULL;
-	delete _foreground;
+	delete[] _foreground;
 	_foreground = NULL;
-	delete _iconList;
+	delete[] _iconList;
 	_iconList = NULL;
 
 	_width = _height = 0;
