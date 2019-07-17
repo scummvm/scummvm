@@ -979,8 +979,8 @@ bool AI::init() {
 	_blockpole		= g_hdb->_gfx->getTileIndex("t32_blockpole_1");
 	_useTeleporter	= g_hdb->_gfx->getTileIndex("anim_t32_teleporter1");
 
-	_useSwitchOff	= g_hdb->_gfx->getTileIndex("t32_temple_touchplate_on");
-	_useSwitchOff	= g_hdb->_gfx->getTileIndex("t32_temple_touchplate_off");
+	_templeTouchpOn	 = g_hdb->_gfx->getTileIndex("t32_temple_touchplate_on");
+	_templeTouchpOff = g_hdb->_gfx->getTileIndex("t32_temple_touchplate_off");
 
 	_kcHolderWhiteOff	= g_hdb->_gfx->getTileIndex("anim_t32_kcholder_white_off1");
 	_kcHolderWhiteOn	= g_hdb->_gfx->getTileIndex("t32_kcholder_white_on");
