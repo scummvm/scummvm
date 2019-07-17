@@ -199,7 +199,7 @@ public:
 	 *
 	 * @param rate Integer between -100 (slowest) and 100 (fastest)
 	 */
-	virtual void setRate(int rate) {}
+	virtual void setRate(int rate) { _ttsState->_rate = rate; }
 
 	/**
 	 * Returns the current speech rate
@@ -211,7 +211,7 @@ public:
 	 *
 	 * @param pitch Integer between -100 (lowest) and 100 (highest)
 	 */
-	virtual void setPitch(int pitch) {}
+	virtual void setPitch(int pitch) { _ttsState->_pitch = pitch; }
 
 	/**
 	 * Returns current speech pitch
@@ -223,7 +223,7 @@ public:
 	 *
 	 * @param volume Volume as a percentage (0 means muted, 100 means as loud as possible)
 	 */
-	virtual void setVolume(unsigned volume) {}
+	virtual void setVolume(unsigned volume) { _ttsState->_volume = volume; }
 
 	/**
 	 * Returns the current voice volume
@@ -239,7 +239,7 @@ public:
 	 * because voices are usually language specific and so it is set to some platform
 	 * specific default after switching languages.
 	 */
-	virtual void setLanguage(String language) {}
+	virtual void setLanguage(String language) { _ttsState->_language = language; }
 
 	/**
 	 * Returns the current speech language
