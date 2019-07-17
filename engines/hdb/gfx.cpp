@@ -1032,16 +1032,14 @@ void Gfx::drawDebugInfo(Tile *_debugLogo, int fps) {
 }
 
 Picture::Picture() : _width(0), _height(0), _name("") {
-	_surface = NULL;
+	_surface.create(_width, _height, g_hdb->_format);
 }
 
 Picture::~Picture() {
-	if (_surface)
-		_surface->free();
-	_surface = NULL;
+	_surface.free();
 }
 
-Graphics::ManagedSurface *Picture::load(Common::SeekableReadStream *stream) {
+Graphics::Surface Picture::load(Common::SeekableReadStream *stream) {
 	_width = stream->readUint32LE();
 	_height = stream->readUint32LE();
 	stream->read(_name, 64);
@@ -1049,14 +1047,13 @@ Graphics::ManagedSurface *Picture::load(Common::SeekableReadStream *stream) {
 	debug(8, "Picture: _width: %d, _height: %d", _width, _height);
 	debug(8, "Picture: _name: %s", _name);
 
-	_surface = new Graphics::ManagedSurface;
-	_surface->create(_width, _height, g_hdb->_format);
+	_surface.create(_width, _height, g_hdb->_format);
 	stream->readUint32LE(); // Skip Win32 Surface
 
 	uint16 *ptr;
 
 	for (int y = 0; y < _height; y++) {
-		ptr = (uint16 *)_surface->getBasePtr(0, y);
+		ptr = (uint16 *)_surface.getBasePtr(0, y);
 		for (int x = 0; x < _width; x++) {
 			*ptr = TO_LE_16(stream->readUint16LE());
 			ptr++;
@@ -1067,9 +1064,9 @@ Graphics::ManagedSurface *Picture::load(Common::SeekableReadStream *stream) {
 }
 
 int Picture::draw(int x, int y) {
-	g_hdb->_gfx->_globalSurface.blitFrom(*_surface, Common::Point(x, y));
+	g_hdb->_gfx->_globalSurface.blitFrom(_surface, Common::Point(x, y));
 
-	Common::Rect clip(_surface->getBounds());
+	Common::Rect clip(_surface.getBounds());
 	clip.moveTo(x, y);
 	clip.clip(g_hdb->_gfx->_globalSurface.getBounds());
 	if (!clip.isEmpty()) {
@@ -1080,9 +1077,9 @@ int Picture::draw(int x, int y) {
 }
 
 int Picture::drawMasked(int x, int y, int alpha) {
-	g_hdb->_gfx->_globalSurface.transBlitFrom(*_surface, Common::Point(x, y), 0xf81f, false, 0, alpha & 0xff);
+	g_hdb->_gfx->_globalSurface.transBlitFrom(_surface, Common::Point(x, y), 0xf81f, false, 0, alpha & 0xff);
 
-	Common::Rect clip(_surface->getBounds());
+	Common::Rect clip(_surface.getBounds());
 	clip.moveTo(x, y);
 	clip.clip(g_hdb->_gfx->_globalSurface.getBounds());
 	if (!clip.isEmpty()) {
@@ -1092,26 +1089,25 @@ int Picture::drawMasked(int x, int y, int alpha) {
 	return 0;
 }
 
-Tile::Tile() : _flags(0), _name(""), _surface(NULL) {}
-
-Tile::~Tile() {
-	if (_surface)
-		_surface->free();
-	_surface = NULL;
+Tile::Tile() : _flags(0), _name("") {
+	_surface.create(32, 32, g_hdb->_format);
 }
 
-Graphics::ManagedSurface *Tile::load(Common::SeekableReadStream *stream) {
+Tile::~Tile() {
+	_surface.free();
+}
+
+Graphics::Surface Tile::load(Common::SeekableReadStream *stream) {
 	_flags = stream->readUint32LE();
 	stream->read(_name, 64);
 
-	_surface = new Graphics::ManagedSurface;
-	_surface->create(32, 32, g_hdb->_format);
+	_surface.create(32, 32, g_hdb->_format);
 	stream->readUint32LE(); // Skip Win32 Surface
 
 	uint16 *ptr;
 
 	for (uint y = 0; y < 32; y++) {
-		ptr = (uint16 *)_surface->getBasePtr(0, y);
+		ptr = (uint16 *)_surface.getBasePtr(0, y);
 		for (uint x = 0; x < 32; x++) {
 			*ptr = TO_LE_16(stream->readUint16LE());
 			ptr++;
@@ -1122,9 +1118,9 @@ Graphics::ManagedSurface *Tile::load(Common::SeekableReadStream *stream) {
 }
 
 int Tile::draw(int x, int y) {
-	g_hdb->_gfx->_globalSurface.blitFrom(*_surface, Common::Point(x, y));
+	g_hdb->_gfx->_globalSurface.blitFrom(_surface, Common::Point(x, y));
 
-	Common::Rect clip(_surface->getBounds());
+	Common::Rect clip(_surface.getBounds());
 	clip.moveTo(x, y);
 	clip.clip(g_hdb->_gfx->_globalSurface.getBounds());
 	if (!clip.isEmpty()) {
@@ -1135,9 +1131,9 @@ int Tile::draw(int x, int y) {
 }
 
 int Tile::drawMasked(int x, int y, int alpha) {
-	g_hdb->_gfx->_globalSurface.transBlitFrom(*_surface, Common::Point(x, y), 0xf81f, false, 0, alpha & 0xff);
+	g_hdb->_gfx->_globalSurface.transBlitFrom(_surface, Common::Point(x, y), 0xf81f, false, 0, alpha & 0xff);
 
-	Common::Rect clip(_surface->getBounds());
+	Common::Rect clip(_surface.getBounds());
 	clip.moveTo(x, y);
 	clip.clip(g_hdb->_gfx->_globalSurface.getBounds());
 	if (!clip.isEmpty()) {
