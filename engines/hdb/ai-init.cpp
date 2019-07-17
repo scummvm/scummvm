@@ -915,10 +915,25 @@ AI::AI() {
 }
 
 AI::~AI() {
+	for (uint i = 0; i < _ents->size(); i++) {
+		delete _ents->operator[](i);
+	}
 	delete _ents;
+	for (uint i = 0; i < _floats->size(); i++) {
+		delete _floats->operator[](i);
+	}
 	delete _floats;
+	for (uint i = 0; i < _arrowPaths->size(); i++) {
+		delete _arrowPaths->operator[](i);
+	}
 	delete _arrowPaths;
+	for (uint i = 0; i < _triggerList->size(); i++) {
+		delete _triggerList->operator[](i);
+	}
 	delete _triggerList;
+	for (uint i = 0; i < _hereList->size(); i++) {
+		delete _hereList->operator[](i);
+	}
 	delete _hereList;
 
 	memset(&_inventory, 0, sizeof(InvEnt) * kMaxInventory);
@@ -930,6 +945,12 @@ AI::~AI() {
 	memset(_clubLeftGfx, 0, sizeof(_clubLeftGfx));
 	memset(_clubRightGfx, 0, sizeof(_clubRightGfx));
 	memset(_slugAttackGfx, 0, sizeof(_slugAttackGfx));
+
+	// Free AnimTargets
+
+	for (uint i = 0; i < _animTargets.size(); i++) {
+		delete _animTargets[i];
+	}
 }
 
 bool AI::init() {
