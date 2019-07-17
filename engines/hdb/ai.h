@@ -546,6 +546,57 @@ struct AIEntity {
 			moverightGfx[i] = new Tile;
 		}
 	}
+	~AIEntity() {
+		blinkFrames = 0;
+		for (int i = 0; i < kMaxAnimFrames; i++) {
+			delete blinkGfx[i];
+		}
+
+		special1Frames = 0;
+		for (int i = 0; i < kMaxAnimFrames; i++) {
+			delete special1Gfx[i];
+		}
+
+		standdownFrames = 0;
+		for (int i = 0; i < kMaxAnimFrames; i++) {
+			delete standdownGfx[i];
+		}
+
+		standupFrames = 0;
+		for (int i = 0; i < kMaxAnimFrames; i++) {
+			delete standupGfx[i];
+		}
+
+		standleftFrames = 0;
+		for (int i = 0; i < kMaxAnimFrames; i++) {
+			delete standleftGfx[i];
+		}
+
+		standrightFrames = 0;
+		for (int i = 0; i < kMaxAnimFrames; i++) {
+			delete standrightGfx[i];
+		}
+
+		movedownFrames = 0;
+		for (int i = 0; i < kMaxAnimFrames; i++) {
+			delete movedownGfx[i];
+		}
+
+		moveupFrames = 0;
+		for (int i = 0; i < kMaxAnimFrames; i++) {
+			delete moveupGfx[i];
+		}
+
+		moveleftFrames = 0;
+		for (int i = 0; i < kMaxAnimFrames; i++) {
+			delete moveleftGfx[i];
+		}
+
+		moverightFrames = 0;
+		for (int i = 0; i < kMaxAnimFrames; i++) {
+			delete moverightGfx[i];
+		}
+	}
 
 	void save(Common::OutSaveFile *out);
 	void load(Common::InSaveFile *in);
@@ -595,6 +646,12 @@ struct AnimTarget {
 	AnimTarget() : x(0), y(0), start(0), end(0), vel(0), animCycle(0), animFrame(0), killAuto(false), inMap(false) {
 		for (int i = 0; i < kMaxAnimTFrames; i++) {
 			gfxList[i] = new Tile;
+		}
+	}
+
+	~AnimTarget() {
+		for (int i = 0; i < kMaxAnimTFrames; i++) {
+			delete gfxList[i];
 		}
 	}
 };
