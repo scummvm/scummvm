@@ -5379,24 +5379,6 @@ static const uint16 laurabow1PatchLeftStairsLockupFix[] = {
 	PATCH_END
 };
 
-//	Copy Protection
-static const uint16 laurabow1SignatureCp[] = {
-	SIG_MAGICDWORD,
-	0x30, 0x48, 0x00, 0x8f, 0x01, 0x8d, 0x00, 0x35, 0x04, 0x06,
-	0x93, 0x05, 0x1e, 0x30, 0x36, 0x00, 0x8f, 0x02, 0x8d, 0x00,
-	SIG_END
-};
-
-static const uint16 laurabow1PatchCp[] = {
-	0x39, 0x00,	0xab, 0x00,	0x39, 0x00,	0xab, 0x01,	0x39, 0x00,
-	0xab, 0x35,	0x39, 0x27,	0xaf, 0x01,	0x39, 0x27,	0xaf, 0x02,
-	PATCH_GETORIGINALBYTE(0), PATCH_GETORIGINALBYTE(1), PATCH_GETORIGINALBYTE(2),
-	PATCH_GETORIGINALBYTE(3), PATCH_GETORIGINALBYTE(4), PATCH_GETORIGINALBYTE(5),
-	PATCH_GETORIGINALBYTE(6), PATCH_GETORIGINALBYTE(7), PATCH_GETORIGINALBYTE(8),
-	PATCH_GETORIGINALBYTE(9), PATCH_GETORIGINALBYTE(10),
-	PATCH_END
-};
-
 //          script, description,                                signature                                             patch
 static const SciScriptPatcherEntry laurabow1Signatures[] = {
 	{  true,     4, "easter egg view fix",                      1, laurabow1SignatureEasterEggViewFix,                laurabow1PatchEasterEggViewFix },
@@ -5409,7 +5391,6 @@ static const SciScriptPatcherEntry laurabow1Signatures[] = {
 	{  true,    58, "chapel candles persistence",               1, laurabow1SignatureChapelCandlesPersistence,        laurabow1PatchChapelCandlesPersistence },
 	{  true,   236, "tell Lilly about Gertie blocking fix 1/2", 1, laurabow1SignatureTellLillyAboutGerieBlockingFix1, laurabow1PatchTellLillyAboutGertieBlockingFix1 },
 	{  true,   236, "tell Lilly about Gertie blocking fix 2/2", 1, laurabow1SignatureTellLillyAboutGerieBlockingFix2, laurabow1PatchTellLillyAboutGertieBlockingFix2 },
-	{  true,   414, "copy protection",							1, laurabow1SignatureCp,							  laurabow1PatchCp },
 	{  true,   998, "obstacle collision lockups fix",           1, laurabow1SignatureObstacleCollisionLockupsFix,     laurabow1PatchObstacleCollisionLockupsFix },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
@@ -14663,44 +14644,6 @@ static const SciScriptPatcherEntry torinSignatures[] = {
 
 #endif
 
-
-//	Copy Protection
-static const uint16 pq2EnSignatureCp[] = {
-	SIG_MAGICDWORD,
-	0x35, 0x07, 0x12, 0xa5,
-	SIG_ADDTOOFFSET(67),
-	0x30, 0xcf, 0x00, 0x35,
-	SIG_END
-};
-
-static const uint16 pq2EnPatchCp[] = {
-	0x35, 0x00, 0x12, 0xa5,
-	PATCH_ADDTOOFFSET(67),
-	0x30, 0x00, 0x00, 0x35,
-	PATCH_END
-};
-
-static const uint16 pq2JpSignatureCp[] = {
-	SIG_MAGICDWORD,
-	0x35, 0x07, 0x12, 0xa5,
-	SIG_ADDTOOFFSET(75),
-	0x30, 0xcf, 0x00, 0x35,
-	SIG_END
-};
-
-static const uint16 pq2JpPatchCp[] = {
-	0x35, 0x00, 0x12, 0xa5,
-	PATCH_ADDTOOFFSET(75),
-	0x30, 0x00, 0x00, 0x35,
-	PATCH_END
-};
-
-static const SciScriptPatcherEntry pq2Signatures[] = {
-	{  true, 701, "copy protection", 1, pq2EnSignatureCp, pq2EnPatchCp },
-	{  true, 701, "copy protection", 1, pq2JpSignatureCp, pq2JpPatchCp },
-	SCI_SIGNATUREENTRY_TERMINATOR
-};
-
 // =================================================================================
 
 ScriptPatcher::ScriptPatcher() {
@@ -15234,9 +15177,6 @@ void ScriptPatcher::processScript(uint16 scriptNr, SciSpan<byte> scriptData) {
 #endif
 	case GID_PQ1:
 		signatureTable = pq1vgaSignatures;
-		break;
-	case GID_PQ2:
-		signatureTable = pq2Signatures;
 		break;
 	case GID_PQ3:
 		signatureTable = pq3Signatures;
