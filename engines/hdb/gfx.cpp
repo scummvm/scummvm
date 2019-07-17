@@ -39,6 +39,8 @@ Gfx::Gfx() {
 }
 
 Gfx::~Gfx() {
+	for (uint i = 0; i < _gfxCache->size(); i++)
+		delete _gfxCache->operator[](i);
 	delete _gfxCache;
 	delete _sines;
 	delete _cosines;
