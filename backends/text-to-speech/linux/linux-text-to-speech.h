@@ -70,7 +70,7 @@ public:
 private:
 	void init();
 	virtual void updateVoices();
-	void createVoice(int typeNumber, Common::TTSVoice::Gender, char *description);
+	void createVoice(int typeNumber, Common::TTSVoice::Gender, Common::TTSVoice::Age, char *description);
 	SpeechState _speechState;
 };
 

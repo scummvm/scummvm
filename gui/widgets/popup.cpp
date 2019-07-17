@@ -213,7 +213,7 @@ void PopUpDialog::handleMouseMoved(int x, int y, int button) {
 
 	// ...and update the selection accordingly
 	setSelection(item);
-	if (_lastRead != item) {
+	if (_lastRead != item && _popUpBoss->_entries.size() > 0 && item != -1) {
 		read(_popUpBoss->_entries[item].name);
 		_lastRead = item;
 	}

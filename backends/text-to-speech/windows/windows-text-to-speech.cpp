@@ -49,6 +49,7 @@ ISpAudio *_audio;
 
 WindowsTextToSpeechManager::WindowsTextToSpeechManager()
 	: _speechState(BROKEN){
+		ConfMan.setInt("tts_voice", 0);
 	init();
 }
 
@@ -268,7 +269,19 @@ void WindowsTextToSpeechManager::createVoice(void *cpVoiceToken) {
 	free(buffer);
 	CoTaskMemFree(data);
 
-	_ttsState->_availaibleVoices.push_back(Common::TTSVoice(gender, (void *) voiceToken, desc));
+	// age
+	hr = key->GetStringValue(L"Age", &data);
+	if (FAILED(hr)) {
+		voiceToken->Release();
+		warning("Could not get the age attribute for voice: %s", desc.c_str());
+		return;
+	}
+	buffer = Win32::unicodeToAnsi(data);
+	Common::TTSVoice::Age age = !strcmp(buffer, "Adult") ? Common::TTSVoice::ADULT : Common::TTSVoice::UNKNOWN_AGE;
+	free(buffer);
+	CoTaskMemFree(data);
+
+	_ttsState->_availaibleVoices.push_back(Common::TTSVoice(gender, Common::TTSVoice::ADULT, (void *) voiceToken, desc));
 }
 
 int strToInt(Common::String str) {
