@@ -33,6 +33,9 @@ Gfx::Gfx() {
 	_sines = new Common::SineTable(360);
 	_cosines = new Common::CosineTable(360);
 	_systemInit = false;
+
+	memset(&_fadeInfo, 0, sizeof(_fadeInfo));
+	memset(&_snowInfo, 0, sizeof(_snowInfo));
 }
 
 Gfx::~Gfx() {
@@ -199,10 +202,11 @@ void Gfx::fillScreen(uint32 color) {
 
 void Gfx::updateVideo() {
 	updateFade();
-	g_hdb->checkProgress();
 
 	if (!g_hdb->_progressGfx)
 		return;
+
+	g_hdb->checkProgress();
 
 	int left = kScreenWidth / 2 - g_hdb->_progressGfx->_width / 2;
 
