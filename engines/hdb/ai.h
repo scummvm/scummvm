@@ -550,51 +550,61 @@ struct AIEntity {
 		blinkFrames = 0;
 		for (int i = 0; i < kMaxAnimFrames; i++) {
 			delete blinkGfx[i];
+			blinkGfx[i] = NULL;
 		}
 
 		special1Frames = 0;
 		for (int i = 0; i < kMaxAnimFrames; i++) {
 			delete special1Gfx[i];
+			special1Gfx[i] = NULL;
 		}
 
 		standdownFrames = 0;
 		for (int i = 0; i < kMaxAnimFrames; i++) {
 			delete standdownGfx[i];
+			standdownGfx[i] = NULL;
 		}
 
 		standupFrames = 0;
 		for (int i = 0; i < kMaxAnimFrames; i++) {
 			delete standupGfx[i];
+			standupGfx[i] = NULL;
 		}
 
 		standleftFrames = 0;
 		for (int i = 0; i < kMaxAnimFrames; i++) {
 			delete standleftGfx[i];
+			standleftGfx[i] = NULL;
 		}
 
 		standrightFrames = 0;
 		for (int i = 0; i < kMaxAnimFrames; i++) {
 			delete standrightGfx[i];
+			standrightGfx[i] = NULL;
 		}
 
 		movedownFrames = 0;
 		for (int i = 0; i < kMaxAnimFrames; i++) {
 			delete movedownGfx[i];
+			movedownGfx[i] = NULL;
 		}
 
 		moveupFrames = 0;
 		for (int i = 0; i < kMaxAnimFrames; i++) {
 			delete moveupGfx[i];
+			moveupGfx[i] = NULL;
 		}
 
 		moveleftFrames = 0;
 		for (int i = 0; i < kMaxAnimFrames; i++) {
 			delete moveleftGfx[i];
+			moveleftGfx[i] = NULL;
 		}
 
 		moverightFrames = 0;
 		for (int i = 0; i < kMaxAnimFrames; i++) {
 			delete moverightGfx[i];
+			moverightGfx[i] = NULL;
 		}
 	}
 
@@ -652,6 +662,7 @@ struct AnimTarget {
 	~AnimTarget() {
 		for (int i = 0; i < kMaxAnimTFrames; i++) {
 			delete gfxList[i];
+			gfxList[i] = NULL;
 		}
 	}
 };
@@ -679,6 +690,12 @@ struct DlvEnt {
 		itemGfxName[0] = 0;
 		destTextName[0] = 0;
 		destGfxName[0] = 0;
+	}
+	~DlvEnt() {
+		delete itemGfx;
+		itemGfx = NULL;
+		delete destGfx;
+		destGfx = NULL;
 	}
 };
 

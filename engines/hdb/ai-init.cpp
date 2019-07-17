@@ -946,6 +946,31 @@ AI::~AI() {
 	memset(_clubRightGfx, 0, sizeof(_clubRightGfx));
 	memset(_slugAttackGfx, 0, sizeof(_slugAttackGfx));
 
+	// Clean up Player Graphics Storage
+	memset(_horrible1Gfx, 0, sizeof(_horrible1Gfx));
+	memset(_horrible2Gfx, 0, sizeof(_horrible2Gfx));
+	memset(_horrible3Gfx, 0, sizeof(_horrible3Gfx));
+	memset(_horrible4Gfx, 0, sizeof(_horrible4Gfx));
+	memset(_plummetGfx, 0, sizeof(_plummetGfx));
+	memset(_dyingGfx, 0, sizeof(_dyingGfx));
+
+	memset(_pushdownGfx, 0, sizeof(_pushdownGfx));
+	memset(_pushupGfx, 0, sizeof(_pushupGfx));
+	memset(_pushleftGfx, 0, sizeof(_pushleftGfx));
+	memset(_pushrightGfx, 0, sizeof(_pushrightGfx));
+	memset(_stunDownGfx, 0, sizeof(_stunDownGfx));
+	memset(_stunUpGfx, 0, sizeof(_stunUpGfx));
+	memset(_stunLeftGfx, 0, sizeof(_stunLeftGfx));
+	memset(_stunRightGfx, 0, sizeof(_stunRightGfx));
+	memset(_slugDownGfx, 0, sizeof(_slugDownGfx));
+	memset(_slugUpGfx, 0, sizeof(_slugUpGfx));
+	memset(_slugLeftGfx, 0, sizeof(_slugLeftGfx));
+	memset(_slugRightGfx, 0, sizeof(_slugRightGfx));
+
+	memset(_waypointGfx, 0, sizeof(_waypointGfx));
+	delete _debugQMark;
+	_debugQMark = NULL;
+
 	// Free AnimTargets
 
 	for (uint i = 0; i < _animTargets.size(); i++) {
