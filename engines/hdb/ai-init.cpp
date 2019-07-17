@@ -1630,7 +1630,7 @@ void AI::loadSaveFile(Common::InSaveFile *in) {
 		_animTargets[i]->animFrame = in->readUint16LE();
 		_animTargets[i]->killAuto = in->readByte();
 		_animTargets[i]->inMap = in->readByte();
-		memset(_animTargets[i]->gfxList, 0, kMaxAnimTFrames);
+		memset(_animTargets[i]->gfxList, 0, kMaxAnimTFrames * sizeof(Tile *));
 	}
 
 	// Load ArrowPaths
