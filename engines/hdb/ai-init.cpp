@@ -920,6 +920,16 @@ AI::~AI() {
 	delete _arrowPaths;
 	delete _triggerList;
 	delete _hereList;
+
+	memset(&_inventory, 0, sizeof(InvEnt) * kMaxInventory);
+
+	// Free Player Graphics
+
+	memset(_clubDownGfx, 0, sizeof(_clubDownGfx));
+	memset(_clubUpGfx, 0, sizeof(_clubUpGfx));
+	memset(_clubLeftGfx, 0, sizeof(_clubLeftGfx));
+	memset(_clubRightGfx, 0, sizeof(_clubRightGfx));
+	memset(_slugAttackGfx, 0, sizeof(_slugAttackGfx));
 }
 
 bool AI::init() {
