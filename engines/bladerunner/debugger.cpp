@@ -858,12 +858,12 @@ bool Debugger::cmdTimer(int argc, const char **argv) {
 		if (value == 0) {
 			actor->timerReset(timer);
 		} else {
-			actor->timerStart(timer, value);
+			actor->timerStart(timer, (uint32)value);
 		}
 	}
 
 	for (int i = 0; i < 7; ++i) {
-		debugPrintf("actorTimer(%i, %i) = %i ms\n", actorId, i, actor->timerLeft(i));
+		debugPrintf("actorTimer(%i, %i) = %u ms\n", actorId, i, actor->timerLeft(i));
 	}
 
 	return true;

@@ -73,7 +73,7 @@ private:
 	int     _walkboxId;
 
 	int     _cluesLimit;
-	int     _timer4RemainDefault;
+	uint32  _timer4RemainDefault;
 
 	// Flags
 	bool _isTarget;
@@ -86,14 +86,14 @@ private:
 	bool _damageAnimIfMoving;
 
 	// Movement
-	bool _movementTrackPaused;
-	int  _movementTrackNextWaypointId;
-	int  _movementTrackNextDelay; // probably not used
-	int  _movementTrackNextAngle; // probably not used
-	bool _movementTrackNextRunning;
+	bool   _movementTrackPaused;
+	int    _movementTrackNextWaypointId;
+	uint32 _movementTrackNextDelay; // probably not used
+	int    _movementTrackNextAngle; // probably not used
+	bool   _movementTrackNextRunning;
 
-	int _movementTrackWalkingToWaypointId;
-	int _movementTrackDelayOnNextWaypoint;
+	int    _movementTrackWalkingToWaypointId;
+	uint32 _movementTrackDelayOnNextWaypoint;
 
 	// Animation
 	int _width;
@@ -110,8 +110,8 @@ private:
 	int _retiredWidth;
 	int _retiredHeight;
 
-	int _timersLeft[kActorTimers];
-	int _timersLast[kActorTimers];
+	uint32 _timersLeft[kActorTimers]; // this keeps time difference, and it is stored during save() (saveInt actually saves a uint32)
+	uint32 _timersLast[kActorTimers]; // this keeps actual time, and is not stored during save(), so it can be a uint32
 
 	float _scale;
 
@@ -143,11 +143,11 @@ public:
 	void setFPS(int fps);
 	void increaseFPS();
 
-	void timerStart(int timerId, int interval);
-	void timerReset(int timerId);
-	int  timerLeft(int timerId);
-	void timersUpdate();
-	void timerUpdate(int timerId);
+	void   timerStart(int timerId, uint32 interval);
+	void   timerReset(int timerId);
+	uint32 timerLeft(int timerId);
+	void   timersUpdate();
+	void   timerUpdate(int timerId);
 
 	void movementTrackNext(bool omitAiScript);
 	void movementTrackPause();

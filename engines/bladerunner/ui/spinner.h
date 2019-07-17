@@ -54,7 +54,7 @@ class Spinner {
 
 	int                    _actorId;
 	int                    _sentenceId;
-	int                    _timeSpeakDescription;
+	uint32                 _timeSpeakDescriptionStart;
 
 public:
 	Spinner(BladeRunnerEngine *vm);

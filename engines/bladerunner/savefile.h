@@ -94,7 +94,7 @@ public:
 
 	void padBytes(int count);
 
-	void writeInt(int v);
+	void writeInt(int v); // this writes a 4 byte int (uses writeUint32LE)
 	void writeFloat(float v);
 	void writeBool(bool v);
 	void writeStringSz(const Common::String &s, uint sz);

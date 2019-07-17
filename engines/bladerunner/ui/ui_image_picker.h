@@ -50,12 +50,12 @@ class UIImagePicker {
 
 	BladeRunnerEngine *_vm;
 
-	int _isVisible;
-	int _imageCount;
-	int _hoveredImageIndex;
-	int _pressedImageIndex;
-	int _hoverStartTimestamp;
-	int _isButtonDown;
+	int    _isVisible;
+	int    _imageCount;
+	int    _hoveredImageIndex;
+	int    _pressedImageIndex;
+	uint32 _hoverStartTimestamp;
+	int    _isButtonDown;
 	Common::Array<Image> _images;
 
 	UIImagePickerCallback *_mouseInCallback;

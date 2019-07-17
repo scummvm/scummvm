@@ -36,7 +36,7 @@ class KIASectionDiagnostic : public KIASectionBase {
 
 	TextResource *_text;
 	int           _offset;
-	int           _timeLast;
+	uint32        _timeLast;
 
 public:
 	KIASectionDiagnostic(BladeRunnerEngine *vm);

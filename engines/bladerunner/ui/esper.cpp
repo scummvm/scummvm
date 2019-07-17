@@ -56,12 +56,12 @@ ESPER::ESPER(BladeRunnerEngine *vm) {
 	_regionSelectedAck  = false;
 	_isDrawingSelection = false;
 
-	_isOpen         = false;
-	_shapeButton    = nullptr;
-	_shapeThumbnail = nullptr;
-	_vqaPlayerMain  = nullptr;
-	_vqaPlayerPhoto = nullptr;
-	_script         = nullptr;
+	_isOpen             = false;
+	_shapeButton        = nullptr;
+	_shapeThumbnail     = nullptr;
+	_vqaPlayerMain      = nullptr;
+	_vqaPlayerPhoto     = nullptr;
+	_script             = nullptr;
 
 	reset();
 
@@ -363,7 +363,7 @@ void ESPER::resetData() {
 	_flash              = false;
 	_isScrolling        = false;
 
-	_timeScrollNext = 0;
+	_timeScrollNextStart = 0u;
 
 	resetPhotos();
 	resetRegions();
@@ -398,7 +398,7 @@ void ESPER::resetViewport() {
 	_zoom           = _zoomVertical;
 	_zoomMin        = _zoom;
 
-	_timeZoomOutNext = 0;
+	_timeZoomOutNextStart = 0u;
 
 	_viewportPositionX = kPhotoWidth  / 2;
 	_viewportPositionY = kPhotoHeight / 2;
@@ -416,20 +416,22 @@ void ESPER::resetSelectionRect() {
 }
 
 void ESPER::resetSelectionBlinking() {
-	_selectionBlinkingCounter  = 0;
-	_selectionBlinkingStyle    = 0;
-	_timeSelectionBlinkingNext = 0;
+	_selectionBlinkingCounter       = 0;
+	_selectionBlinkingStyle         = 0;
+	_timeSelectionBlinkingNextStart = 0u;
 }
 
 void ESPER::resetPhotoZooming() {
 	_zoomStep     = 0;
-	_timeZoomNext = 0;
+	_timeZoomNextDiff  = 0u;
+	_timeZoomNextStart = 0u;
 }
 
 void ESPER::resetPhotoOpening() {
 	_photoOpeningWidth    = _screen.left + 1;
 	_photoOpeningHeight   = _screen.top  + 1;
-	_timePhotoOpeningNext = 0;
+	_timePhotoOpeningNextDiff  = 0u;
+	_timePhotoOpeningNextStart = 0u;
 }
 
 void ESPER::updateViewport() {
@@ -523,11 +525,13 @@ void ESPER::setStatePhoto(EsperPhotoStates state) {
 	_statePhoto = state;
 }
 
-void ESPER::wait(int timeout) {
+void ESPER::wait(uint32 timeout) {
 	if (!_isWaiting) {
 		_isWaiting = true;
-		int timeEnd = timeout + _vm->_time->current();
-		while (_vm->_gameIsRunning && (_vm->_time->current() < timeEnd)) {
+//		int timeEnd = timeout + _vm->_time->current();
+		uint32  timeStart = _vm->_time->current();
+		// unsigned difference is intentional
+		while (_vm->_gameIsRunning && (_vm->_time->current() - timeStart < timeout)) {
 			_vm->gameTick();
 		}
 		_isWaiting = false;
@@ -645,16 +649,17 @@ void ESPER::draw(Graphics::Surface &surface) {
 
 void ESPER::drawPhotoOpening(Graphics::Surface &surface) {
 	bool needMoreZooming = true;
-	int timeNow = _vm->_time->current();
-	if (timeNow >= _timePhotoOpeningNext) {
+	uint32 timeNow = _vm->_time->current();
+	// unsigned difference is intentional
+	if (timeNow - _timePhotoOpeningNextStart >= _timePhotoOpeningNextDiff) {
 		_photoOpeningWidth  = MIN(_photoOpeningWidth  + 8, _screen.right  - 1);
 		_photoOpeningHeight = MIN(_photoOpeningHeight + 7, _screen.bottom - 1);
 
 		if (_photoOpeningWidth == _screen.right - 1 && _photoOpeningHeight == _screen.bottom - 1) {
 			needMoreZooming = false;
 		}
-
-		_timePhotoOpeningNext = timeNow + 20;
+		_timePhotoOpeningNextDiff  = 20u;
+		_timePhotoOpeningNextStart = timeNow;
 	}
 	copyImageScale(&_surfacePhoto, _viewport, &surface, Common::Rect(_screen.left, _screen.top, _photoOpeningWidth, _photoOpeningHeight));
 
@@ -675,15 +680,16 @@ void ESPER::drawPhotoOpening(Graphics::Surface &surface) {
 bool ESPER::drawSelectionZooming(Graphics::Surface &surface) {
 	bool zooming = false;
 	bool needMoreZooming = true;
-	int timeNow = _vm->_time->current();
-	if (timeNow > _timeSelectionZoomNext) {
+	uint32 timeNow = _vm->_time->current();
+	// unsigned difference is intentional
+	if (timeNow - _timeSelectionZoomNextStart > 150u) {
 		zooming = true;
 		_selection.left   += _selectionDelta.left;
 		_selection.top    += _selectionDelta.top;
 		_selection.right  += _selectionDelta.right;
 		_selection.bottom += _selectionDelta.bottom;
 		++_selectionZoomStep;
-		_timeSelectionZoomNext = timeNow + 150;
+		_timeSelectionZoomNextStart = timeNow;
 		if (_selectionZoomStep > kSelectionZoomSteps) {
 			needMoreZooming = false;
 			_selection.left   = _selectionTarget.left;
@@ -706,9 +712,10 @@ bool ESPER::drawSelectionZooming(Graphics::Surface &surface) {
 
 bool ESPER::drawSelectionBlinking(Graphics::Surface &surface) {
 	bool needMoreBlinking = true;
-	int timeNow = _vm->_time->current();
-	if (timeNow > _timeSelectionBlinkingNext) {
-		_timeSelectionBlinkingNext = timeNow + 100;
+	uint32 timeNow = _vm->_time->current();
+	// unsigned difference is intentional
+	if (timeNow - _timeSelectionBlinkingNextStart > 100u) {
+		_timeSelectionBlinkingNextStart = timeNow;
 		_selectionBlinkingStyle ^= 1;
 		++_selectionBlinkingCounter;
 		if (_selectionBlinkingCounter > 10) {
@@ -724,8 +731,9 @@ bool ESPER::drawSelectionBlinking(Graphics::Surface &surface) {
 }
 
 void ESPER::drawPhotoZooming(Graphics::Surface &surface) {
-	int timeNow = _vm->_time->current();
-	if ((timeNow > _timeZoomNext) && (_zoomStep < _zoomSteps)) {
+	uint32 timeNow = _vm->_time->current();
+	// unsigned difference is intentional
+	if ((timeNow - _timeZoomNextStart > _timeZoomNextDiff) && (_zoomStep < _zoomSteps)) {
 		_flash = true;
 
 		_viewportPositionXCurrent += _viewportPositionXDelta;
@@ -754,7 +762,8 @@ void ESPER::drawPhotoZooming(Graphics::Surface &surface) {
 			_viewportPositionY = _viewportPositionYTarget;
 		}
 		updateViewport();
-		_timeZoomNext = timeNow + 300;
+		_timeZoomNextDiff  = 300u;
+		_timeZoomNextStart = timeNow;
 	}
 
 	if (_zoomDelta >= 0.0f) {
@@ -764,7 +773,8 @@ void ESPER::drawPhotoZooming(Graphics::Surface &surface) {
 	}
 	drawGrid(surface);
 
-	if ((timeNow > _timeZoomNext) && (_zoomStep >= _zoomSteps)) {
+	// unsigned difference is intentional
+	if ((timeNow - _timeZoomNextStart > _timeZoomNextDiff) && (_zoomStep >= _zoomSteps)) {
 		if (_regionSelectedAck) {
 			if (!_regions[_regionSelected].name.empty()) {
 				if (_zoomDelta < 0.0f) {
@@ -772,7 +782,7 @@ void ESPER::drawPhotoZooming(Graphics::Surface &surface) {
 					_zoomDelta = (_zoom * 1.5f - _zoom) / (float)_zoomSteps; // 0.5f * _zoom ???
 				}
 				setStatePhoto(kEsperPhotoStateVideoZooming);
-				_timeZoomNext += 300;
+				_timeZoomNextDiff += 300u;
 			} else {
 				_regionSelectedAck = false;
 				_selection.left   = viewportXToScreenX(_regions[_regionSelected].rectInner.left);
@@ -792,9 +802,10 @@ void ESPER::drawPhotoZooming(Graphics::Surface &surface) {
 }
 
 void ESPER::drawPhotoSharpening(Graphics::Surface &surface) {
-	int timeNow = _vm->_time->current();
+	uint32 timeNow = _vm->_time->current();
 	bool needMoreSharpening = true;
-	if (timeNow >= _timePhotoOpeningNext) {
+	// unsigned difference is intentional
+	if (timeNow - _timePhotoOpeningNextStart >= _timePhotoOpeningNextDiff) {
 		_photoOpeningWidth  = MIN(_photoOpeningWidth  + 8, _screen.right  - 1);
 		_photoOpeningHeight = MIN(_photoOpeningHeight + 7, _screen.bottom - 1);
 
@@ -802,7 +813,8 @@ void ESPER::drawPhotoSharpening(Graphics::Surface &surface) {
 			needMoreSharpening = false;
 		}
 
-		_timePhotoOpeningNext = timeNow + 50;
+		_timePhotoOpeningNextDiff  = 50u;
+		_timePhotoOpeningNextStart = timeNow;
 	}
 
 	if (_regionSelectedAck && !_regions[_regionSelected].name.empty()) {
@@ -833,9 +845,10 @@ void ESPER::drawPhotoSharpening(Graphics::Surface &surface) {
 }
 
 void ESPER::drawPhotoZoomOut(Graphics::Surface &surface) {
-	int timeNow = _vm->_time->current();
-	if (timeNow >= _timeZoomOutNext) {
-		_timeZoomOutNext = timeNow + 300;
+	uint32 timeNow = _vm->_time->current();
+	// unsigned difference is intentional
+	if (timeNow - _timeZoomOutNextStart >= 300u) {
+		_timeZoomOutNextStart = timeNow;
 
 		if (_zoom > _zoomMin) {
 			_zoom /= 1.3f;
@@ -870,14 +883,17 @@ void ESPER::drawVideoZooming(Graphics::Surface &surface) {
 			return;
 		}
 
-		_timeZoomNext = 0;
+		_timeZoomNextDiff  = 0u;
+		_timeZoomNextStart = 0u;
 	}
 
 	bool flash = false;
 	bool advanceFrame = false;
-	int timeNow = _vm->_time->current();
-	if (timeNow > _timeZoomNext) {
-		_timeZoomNext = timeNow + 300;
+	uint32 timeNow = _vm->_time->current();
+	// unsigned difference is intentional
+	if (timeNow - _timeZoomNextStart > _timeZoomNextDiff) {
+		_timeZoomNextDiff  = 300u;
+		_timeZoomNextStart = timeNow;
 		playSound(kSfxBR031_1P, 25);
 		flash = true;
 		advanceFrame = true;
@@ -901,9 +917,11 @@ void ESPER::drawVideoZooming(Graphics::Surface &surface) {
 void ESPER::drawVideoZoomOut(Graphics::Surface &surface) {
 	bool flash = false;
 	bool advanceFrame = false;
-	int timeNow = _vm->_time->current();
-	if (timeNow > _timeZoomNext && _vqaLastFrame > 0) {
-		_timeZoomNext = timeNow + 300;
+	uint32 timeNow = _vm->_time->current();
+	// unsigned difference is intentional
+	if (timeNow - _timeZoomNextStart > _timeZoomNextDiff && _vqaLastFrame > 0) {
+		_timeZoomNextDiff  = 300u;
+		_timeZoomNextStart = timeNow;
 		playSound(kSfxBR031_1P, 25);
 		_vqaPlayerPhoto->seekToFrame(_vqaLastFrame);
 		int nextFrame = _vqaPlayerPhoto->getFrameCount() / 4;
@@ -928,7 +946,8 @@ void ESPER::drawVideoZoomOut(Graphics::Surface &surface) {
 	}
 	copyImageBlit(&_surfaceViewport, Common::Rect(0, 0, 0, 0), &surface, _screen);
 	drawGrid(surface);
-	if (timeNow > _timeZoomNext && _vqaLastFrame <= 0) {
+	// unsigned difference is intentional
+	if (timeNow - _timeZoomNextStart > _timeZoomNextDiff && _vqaLastFrame <= 0) {
 		_vqaPlayerPhoto->close();
 		delete _vqaPlayerPhoto;
 		_vqaPlayerPhoto = nullptr;
@@ -1368,11 +1387,12 @@ void ESPER::tickSound() {
 }
 
 void ESPER::tickScroll() {
-	int timeNow = _vm->_time->current();
-	if (timeNow <= _timeScrollNext) {
+	uint32 timeNow = _vm->_time->current();
+	// unsigned difference is intentional
+	if (timeNow - _timeScrollNextStart <= 300u) {
 		return;
 	}
-	_timeScrollNext = timeNow + 300;
+	_timeScrollNextStart = timeNow;
 
 	if (_scrollingDirection == 0) {
 		scrollUp();
@@ -1610,8 +1630,8 @@ void ESPER::goBack() {
 }
 
 void ESPER::prepareZoom() {
-	_selectionZoomStep     = 0;
-	_timeSelectionZoomNext = 0;
+	_selectionZoomStep          = 0;
+	_timeSelectionZoomNextStart = 0u;
 
 	_selectionTarget = _selection;
 	resetSelectionRect();

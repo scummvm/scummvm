@@ -66,7 +66,7 @@ void AudioPlayer::stopAll() {
 	}
 }
 
-void AudioPlayer::adjustVolume(int track, int volume, int delay, bool overrideVolume) {
+void AudioPlayer::adjustVolume(int track, int volume, uint32 delay, bool overrideVolume) {
 	if (track < 0 || track >= kTracks || !_tracks[track].isActive || _tracks[track].channel == -1) {
 		return;
 	}
@@ -77,16 +77,16 @@ void AudioPlayer::adjustVolume(int track, int volume, int delay, bool overrideVo
 	}
 
 	_tracks[track].volume = actualVolume;
-	_vm->_audioMixer->adjustVolume(_tracks[track].channel, actualVolume, 60 * delay);
+	_vm->_audioMixer->adjustVolume(_tracks[track].channel, actualVolume, 60u * delay);
 }
 
-void AudioPlayer::adjustPan(int track, int pan, int delay) {
+void AudioPlayer::adjustPan(int track, int pan, uint32 delay) {
 	if (track < 0 || track >= kTracks || !_tracks[track].isActive || _tracks[track].channel == -1) {
 		return;
 	}
 
 	_tracks[track].pan = pan;
-	_vm->_audioMixer->adjustPan(_tracks[track].channel, pan, 60 * delay);
+	_vm->_audioMixer->adjustPan(_tracks[track].channel, pan, 60u * delay);
 }
 
 void AudioPlayer::setVolume(int volume) {

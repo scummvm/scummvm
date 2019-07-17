@@ -23,6 +23,8 @@
 #ifndef BLADERUNNER_TIME_H
 #define BLADERUNNER_TIME_H
 
+#include "common/types.h"
+
 namespace BladeRunner {
 
 class BladeRunnerEngine;
@@ -30,18 +32,18 @@ class BladeRunnerEngine;
 class Time {
 	BladeRunnerEngine *_vm;
 
-	int _start;
+	uint32 _start;
 	int _pauseCount;
-	int _offset;
-	int _pauseStart;
+	uint32 _offset;
+	uint32 _pauseStart;
 
 public:
 	Time(BladeRunnerEngine *vm);
 
-	int  currentSystem();
-	int  current();
+	uint32  currentSystem();
+	uint32  current();
 	int  pause();
-	int  getPauseStart();
+	uint32  getPauseStart();
 	int  resume();
 	bool isLocked();
 	void resetPauseStart();

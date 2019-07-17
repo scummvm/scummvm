@@ -70,63 +70,63 @@ Actor::~Actor() {
 }
 
 void Actor::setup(int actorId) {
-	_id    = actorId;
-	_setId = -1;
+	_id             = actorId;
+	_setId          = -1;
 
-	_position     = Vector3(0.0, 0.0, 0.0);
-	_facing       = 512;
-	_targetFacing = -1;
-	_walkboxId    = -1;
+	_position       = Vector3(0.0, 0.0, 0.0);
+	_facing         = 512;
+	_targetFacing   = -1;
+	_walkboxId      = -1;
 
 	_animationId    = 0;
 	_animationFrame = 0;
 	_fps            = 15;
-	_frameMs       = 1000 / _fps;
+	_frameMs        = 1000 / _fps;
 
 	_mustReachWalkDestination = false;	// Original's _inWalkLoop. Moved here from our constructor, since it's here in the original's init()
-	_isMoving            = false;
-	_isTarget            = false;
-	_inCombat            = false;
-	_isInvisible         = false;
-	_isImmuneToObstacles = false;
-	_isRetired           = false;
+	_isMoving                 = false;
+	_isTarget                 = false;
+	_inCombat                 = false;
+	_isInvisible              = false;
+	_isImmuneToObstacles      = false;
+	_isRetired                = false;
 
-	_width         = 0;
-	_height        = 0;
-	_retiredWidth  = 0;
-	_retiredHeight = 0;
-	_scale         = 1.0f;
+	_width                    = 0;
+	_height                   = 0;
+	_retiredWidth             = 0;
+	_retiredHeight            = 0;
+	_scale                    = 1.0f;
 
-	_timer4RemainDefault = 60000;
+	_timer4RemainDefault      = 60000u;
 
 	_movementTrackWalkingToWaypointId = -1;
-	_movementTrackDelayOnNextWaypoint = -1;
+	_movementTrackDelayOnNextWaypoint = (uint32)(-1); // original was -1, int
 
 	for (int i = 0; i != kActorTimers; ++i) {
-		_timersLeft[i] = 0;
+		_timersLeft[i] = 0u;
 		_timersLast[i] = _vm->_time->current();
 	}
 	_timersLeft[kActorTimerClueExchange] = _timer4RemainDefault; // This was in original code. We need to init this timer in order to kick off periodic updates for acquireCluesByRelations
 
-	_honesty              = 50;
-	_intelligence         = 50;
-	_combatAggressiveness = 50;
-	_stability            = 50;
+	_honesty                     = 50;
+	_intelligence                = 50;
+	_combatAggressiveness        = 50;
+	_stability                   = 50;
 
-	_currentHP  = 50;
-	_maxHP      = 50;
+	_currentHP                   = 50;
+	_maxHP                       = 50;
 
-	_damageAnimIfMoving       = true;	// Set to true (like in original). And moved here from our constructor, since it's here in the original's init().
+	_damageAnimIfMoving          = true; // Set to true (like in original). And moved here from our constructor, since it's here in the original's init().
 
-	_goalNumber = -1;
+	_goalNumber                  = -1;
 
 	_movementTrackPaused         = false;
 	_movementTrackNextWaypointId = -1;
-	_movementTrackNextDelay      = -1;
+	_movementTrackNextDelay      = (uint32)(-1); // original was -1, int
 	_movementTrackNextAngle      = -1;
 	_movementTrackNextRunning    = false;
 
-	_animationMode   = -1;
+	_animationMode               = -1;
 	_screenRectangle = Common::Rect(-1, -1, -1, -1);
 
 	_animationModeCombatIdle = kAnimationModeCombatIdle;
@@ -220,18 +220,21 @@ void Actor::increaseFPS() {
 	setFPS(fps);
 }
 
-void Actor::timerStart(int timerId, int interval) {
+void Actor::timerStart(int timerId, uint32 interval) {
 	assert(timerId >= 0 && timerId < kActorTimers);
+	if ((int32)interval == -1 ) {
+		interval = 0u;
+	}
 	_timersLeft[timerId] = interval;
 	_timersLast[timerId] = _vm->_time->current();
 }
 
 void Actor::timerReset(int timerId) {
 	assert(timerId >= 0 && timerId < kActorTimers);
-	_timersLeft[timerId] = 0;
+	_timersLeft[timerId] = 0u;
 }
 
-int Actor::timerLeft(int timerId) {
+uint32 Actor::timerLeft(int timerId) {
 	assert(timerId >= 0 && timerId < kActorTimers);
 	return _timersLeft[timerId];
 }
@@ -243,16 +246,21 @@ void Actor::timersUpdate() {
 }
 
 void Actor::timerUpdate(int timerId) {
-	if (_timersLeft[timerId] == 0) {
+	if (_timersLeft[timerId] == 0u) {
 		return;
 	}
 
 	uint32 timeNow = _vm->_time->current();
-	int timeDiff = timeNow - _timersLast[timerId];
+	uint32 timeDiff = timeNow - _timersLast[timerId]; // unsigned difference is intentional
 	_timersLast[timerId] = timeNow;
-	_timersLeft[timerId] -= timeDiff;
+	// new check is safe-guard against old saves, _timersLeft should never have very big value anyway
+	if ((int32)_timersLeft[timerId] < 0 ) {
+		// this will make it 0u in the next command below
+		_timersLeft[timerId] = 0u;
+	}
+	_timersLeft[timerId] = (_timersLeft[timerId] < timeDiff) ? 0u : (_timersLeft[timerId] - timeDiff);
 
-	if (_timersLeft[timerId] <= 0) {
+	if (_timersLeft[timerId] == 0u) { // original check was <= 0
 		switch (timerId) {
 		case kActorTimerAIScriptCustomTask0:
 			// fall through
@@ -261,15 +269,15 @@ void Actor::timerUpdate(int timerId) {
 		case kActorTimerAIScriptCustomTask2:
 			if (!_vm->_aiScripts->isInsideScript() && !_vm->_sceneScript->isInsideScript()) {
 				_vm->_aiScripts->timerExpired(_id, timerId);
-				_timersLeft[timerId] = 0;
+				_timersLeft[timerId] = 0u;
 			} else {
-				_timersLeft[timerId] = 1;
+				_timersLeft[timerId] = 1u;
 			}
 			break;
 		case kActorTimerMovementTrack:
-			_timersLeft[kActorTimerMovementTrack] = 0;
+			_timersLeft[kActorTimerMovementTrack] = 0u;
 			if (_movementTrack->isPaused()) {
-				_timersLeft[kActorTimerMovementTrack] = 1;
+				_timersLeft[kActorTimerMovementTrack] = 1u;
 			} else {
 				movementTrackNext(false);
 			}
@@ -292,7 +300,7 @@ void Actor::timerUpdate(int timerId) {
 					setFPS(newFps);
 				}
 			}
-			_timersLeft[kActorTimerRunningStaminaFPS] = 200;
+			_timersLeft[kActorTimerRunningStaminaFPS] = 200u;
 			break;
 		}
 	}
@@ -302,7 +310,7 @@ void Actor::movementTrackNext(bool omitAiScript) {
 	bool hasNextMovement;
 	bool running;
 	int angle;
-	int delay;
+	uint32 delay;
 	int waypointId;
 	Vector3 waypointPosition;
 	bool arrived;
@@ -332,9 +340,9 @@ void Actor::movementTrackNext(bool omitAiScript) {
 			setAtXYZ(waypointPosition, angle, true, false, false);
 
 			if (!delay) {
-				delay = 1;
+				delay = 1u;
 			}
-			if (delay > 1) {
+			if ((int32)delay != -1 && delay > 1u) {
 				changeAnimationMode(kAnimationModeIdle, false);
 			}
 			timerStart(kActorTimerMovementTrack, delay);
@@ -372,13 +380,13 @@ void Actor::movementTrackUnpause() {
 
 void Actor::movementTrackWaypointReached() {
 	if (!_movementTrack->isPaused() && _id != kActorMcCoy) {
-		if (_movementTrackWalkingToWaypointId >= 0 && _movementTrackDelayOnNextWaypoint >= 0) {
+		if (_movementTrackWalkingToWaypointId >= 0 && (int32)(_movementTrackDelayOnNextWaypoint) != -1) { // original was _movementTrackDelayOnNextWaypoint >= 0u
 			if (!_movementTrackDelayOnNextWaypoint) {
-				_movementTrackDelayOnNextWaypoint = 1;
+				_movementTrackDelayOnNextWaypoint = 1u;
 			}
 			if (_vm->_aiScripts->reachedMovementTrackWaypoint(_id, _movementTrackWalkingToWaypointId)) {
-				int delay = _movementTrackDelayOnNextWaypoint;
-				if (delay > 1) {
+				uint32 delay = _movementTrackDelayOnNextWaypoint;
+				if (delay > 1u) {
 					changeAnimationMode(kAnimationModeIdle, false);
 					delay = _movementTrackDelayOnNextWaypoint; // todo: analyze if movement is changed in some aiscript->ChangeAnimationMode?
 				}
@@ -386,7 +394,7 @@ void Actor::movementTrackWaypointReached() {
 			}
 		}
 		_movementTrackWalkingToWaypointId = -1;
-		_movementTrackDelayOnNextWaypoint = 0;
+		_movementTrackDelayOnNextWaypoint = 0u;
 	}
 }
 
@@ -604,17 +612,17 @@ void Actor::run() {
 }
 
 bool Actor::tick(bool forceDraw, Common::Rect *screenRect) {
-	int timeLeft = 0;
+	uint32 timeLeft = 0u;
 	bool needsUpdate = false;
 	if (_fps > 0) {
 		timerUpdate(kActorTimerAnimationFrame);
 		timeLeft = timerLeft(kActorTimerAnimationFrame);
-		needsUpdate = timeLeft <= 0;
+		needsUpdate = (timeLeft == 0); // original was <= 0, with timeLeft int
 	} else if (_fps == 0) {
 		needsUpdate = false;
 	} else if (forceDraw) {
 		needsUpdate = true;
-		timeLeft = 0;
+		timeLeft = 0u;
 	}
 
 	if (needsUpdate) {
@@ -722,11 +730,11 @@ bool Actor::tick(bool forceDraw, Common::Rect *screenRect) {
 	}
 
 	if (needsUpdate) {
-		int nextFrameTime = timeLeft + _frameMs;
+		int nextFrameTime = (int)(timeLeft + _frameMs); // Should be ok
 		if (nextFrameTime <= 0) {
 			nextFrameTime = 1;
 		}
-		timerStart(kActorTimerAnimationFrame, nextFrameTime);
+		timerStart(kActorTimerAnimationFrame, (uint32)nextFrameTime);
 	}
 	if (_targetFacing >= 0) {
 		if (_targetFacing == _facing) {
@@ -1417,7 +1425,7 @@ void Actor::save(SaveFileWriteStream &f) {
 	uint32 now = _vm->_time->getPauseStart();
 	for (int i = 0; i < kActorTimers; ++i) {
 		// this effectively stores the next timeDiff to be applied to timer i (in timerUpdate)
-		f.writeInt(now - _timersLast[i]);
+		f.writeInt(now - _timersLast[i]); // Unsigned difference is intentional
 	}
 
 	int actorCount = _vm->_gameInfo->getActorCount();
@@ -1446,7 +1454,7 @@ void Actor::load(SaveFileReadStream &f) {
 	_position = f.readVector3();
 	_facing = f.readInt();
 	_targetFacing = f.readInt();
-	_timer4RemainDefault = f.readInt();
+	_timer4RemainDefault = (uint32)f.readInt();
 
 	_honesty = f.readInt();
 	_intelligence = f.readInt();
@@ -1460,7 +1468,7 @@ void Actor::load(SaveFileReadStream &f) {
 
 	_movementTrackPaused = f.readBool();
 	_movementTrackNextWaypointId = f.readInt();
-	_movementTrackNextDelay = f.readInt();
+	_movementTrackNextDelay = (uint32)f.readInt();
 	_movementTrackNextAngle = f.readInt();
 	_movementTrackNextRunning = f.readBool();
 
@@ -1480,7 +1488,7 @@ void Actor::load(SaveFileReadStream &f) {
 	_animationFrame = f.readInt();
 
 	_movementTrackWalkingToWaypointId = f.readInt();
-	_movementTrackDelayOnNextWaypoint = f.readInt();
+	_movementTrackDelayOnNextWaypoint = (uint32)f.readInt();
 
 	_screenRectangle = f.readRect();
 	_retiredWidth = f.readInt();
@@ -1491,17 +1499,17 @@ void Actor::load(SaveFileReadStream &f) {
 	_scale = f.readFloat();
 
 	for (int i = 0; i < kActorTimers; ++i) {
-		_timersLeft[i] = f.readInt();
+		_timersLeft[i] = (uint32)f.readInt();
 	}
 	// Bugfix: Special initialization case for timer 4 (kActorTimerClueExchange) when its value is restored as 0
 	// This should be harmless, but will remedy any broken save-games where the timer 4 was saved as 0.
-	if (_timersLeft[kActorTimerClueExchange] == 0) {
+	if (_timersLeft[kActorTimerClueExchange] == 0u) {
 		_timersLeft[kActorTimerClueExchange] = _timer4RemainDefault;
 	}
 
 	uint32 now = _vm->_time->getPauseStart();
 	for (int i = 0; i < kActorTimers; ++i) {
-		_timersLast[i] = now - f.readInt();
+		_timersLast[i] = now - (uint32)(f.readInt()); // we require an unsigned difference here, since _timersLast is essentially keeping time
 	}
 
 	int actorCount = _vm->_gameInfo->getActorCount();

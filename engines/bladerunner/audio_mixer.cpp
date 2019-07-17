@@ -28,7 +28,6 @@
 #include "audio/mixer.h"
 
 #include "common/timer.h"
-//#include "common/debug.h"
 
 namespace BladeRunner {
 
@@ -37,7 +36,7 @@ AudioMixer::AudioMixer(BladeRunnerEngine *vm) {
 	for (int i = 0; i < kChannels; i++) {
 		_channels[i].isPresent = false;
 	}
-	_vm->getTimerManager()->installTimerProc(timerCallback, (1000 / kUpdatesPerSecond) * 1000 , this, "BladeRunnerAudioMixerTimer");
+	_vm->getTimerManager()->installTimerProc(timerCallback, (1000 / kUpdatesPerSecond) * 1000, this, "BladeRunnerAudioMixerTimer");
 }
 
 AudioMixer::~AudioMixer() {
@@ -82,7 +81,7 @@ int AudioMixer::playMusic(Audio::RewindableAudioStream *stream, int volume, void
 	return playInChannel(kMusicChannel, Audio::Mixer::kMusicSoundType, stream, 100, false, volume, 0, endCallback, callbackData);
 }
 
-void AudioMixer::stop(int channel, int time) {
+void AudioMixer::stop(int channel, uint32 time) {
 	Common::StackLock lock(_mutex);
 
 	if (_channels[channel].isPresent) {
@@ -139,7 +138,7 @@ void AudioMixer::timerCallback(void *self) {
 	((AudioMixer *)self)->tick();
 }
 
-void AudioMixer::adjustVolume(int channel, int newVolume, int time) {
+void AudioMixer::adjustVolume(int channel, int newVolume, uint32 time) {
 	Common::StackLock lock(_mutex);
 
 	if (_channels[channel].isPresent) {
@@ -148,7 +147,7 @@ void AudioMixer::adjustVolume(int channel, int newVolume, int time) {
 	}
 }
 
-void AudioMixer::adjustPan(int channel, int newPan, int time) {
+void AudioMixer::adjustPan(int channel, int newPan, uint32 time) {
 	Common::StackLock lock(_mutex);
 
 	if (_channels[channel].isPresent) {

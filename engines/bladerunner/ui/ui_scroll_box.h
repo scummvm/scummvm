@@ -45,9 +45,9 @@ class UIScrollBox : public UIComponent {
 
 	struct Line {
 		Common::String text;
-		int lineData;
-		int flags;
-		int checkboxFrame;
+		int    lineData;
+		int    flags;
+		uint32 checkboxFrame;
 	};
 
 	int                   _selectedLineState;
@@ -75,9 +75,9 @@ class UIScrollBox : public UIComponent {
 	int                   _style;
 	bool                  _center;
 
-	int                   _timeLastScroll;
-	int                   _timeLastCheckbox;
-	int                   _timeLastHighlight;
+	uint32                _timeLastScroll;
+	uint32                _timeLastCheckbox;
+	uint32                _timeLastHighlight;
 
 	int                   _highlightFrame;
 

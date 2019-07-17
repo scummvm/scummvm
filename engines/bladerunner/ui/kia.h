@@ -78,16 +78,16 @@ class KIA {
 
 	int _transitionId;
 
-	int                _playerVqaTimeLast;
+	uint32             _playerVqaTimeLast;
 	VQAPlayer         *_playerVqaPlayer;
-	int                _playerVqaFrame;
-	int                _playerVisualizerState;
+	uint32             _playerVqaFrame;
+	uint32             _playerVisualizerState;
 	int                _playerPhotographId;
 	Shape             *_playerPhotograph;
 	int                _playerSliceModelId;
 	float              _playerSliceModelAngle;
 	Graphics::Surface  _playerImage;
-	int                _timeLast;
+	uint32             _timeLast;
 
 	ActorDialogueQueueEntry _playerActorDialogueQueue[kPlayerActorDialogueQueueCapacity];
 	int                     _playerActorDialogueQueuePosition;

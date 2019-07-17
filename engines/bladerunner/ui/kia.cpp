@@ -227,8 +227,9 @@ void KIA::tick() {
 		return;
 	}
 
-	int timeNow = _vm->_time->currentSystem();
-	int timeDiff = timeNow - _timeLast;
+	uint32 timeNow = _vm->_time->currentSystem();
+	// unsigned difference is intentional
+	uint32 timeDiff = timeNow - _timeLast;
 
 	if (_playerActorDialogueQueueSize == _playerActorDialogueQueuePosition) {
 		_playerActorDialogueState = 0;
@@ -255,22 +256,22 @@ void KIA::tick() {
 		}
 	}
 
-	int timeDiffDiv48 = (timeNow - _playerVqaTimeLast) / 48;
-	if (timeDiffDiv48 > 0) {
+	uint32 timeDiffDiv48 = (timeNow < _playerVqaTimeLast) ? 0u : (timeNow - _playerVqaTimeLast) / 48;
+	if (timeDiffDiv48 > 0u) {
 		_playerVqaTimeLast = timeNow;
 		if (_playerActorDialogueQueueSize == _playerActorDialogueQueuePosition || _playerSliceModelId != -1 || _playerPhotographId != -1 || _playerImage.getPixels() != nullptr) {
 			if (_playerVisualizerState > 0) {
-				_playerVisualizerState = MAX(_playerVisualizerState - timeDiffDiv48, 0);
+				_playerVisualizerState = (_playerVisualizerState < timeDiffDiv48) ? 0u : MAX(_playerVisualizerState - timeDiffDiv48, 0u);
 			}
 		} else {
 			if (_playerVisualizerState < 2) {
-				_playerVisualizerState = MIN(_playerVisualizerState + timeDiffDiv48, 2);
+				_playerVisualizerState = MIN(_playerVisualizerState + timeDiffDiv48, 2u);
 			}
 		}
 
 		if ( _playerSliceModelId != -1 || _playerPhotographId != -1 || _playerImage.getPixels() != nullptr) {
 			if (_playerVqaFrame < 8) {
-				int newVqaFrame  = MIN(timeDiffDiv48 + _playerVqaFrame, 8);
+				int newVqaFrame  = MIN(timeDiffDiv48 + _playerVqaFrame, 8u);
 				if (_playerVqaFrame <= 0 && newVqaFrame > 0) {
 					_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(kSfxMECHAN1), 100, 70, 70, 50, 0);
 				}
@@ -278,7 +279,7 @@ void KIA::tick() {
 			}
 		} else {
 			if (_playerVqaFrame > 0) {
-				int newVqaFrame = MAX(_playerVqaFrame - timeDiffDiv48, 0);
+				int newVqaFrame = (_playerVqaFrame < timeDiffDiv48) ? 0 : MAX(_playerVqaFrame - timeDiffDiv48, 0u);
 				if (_playerVqaFrame >= 8 && newVqaFrame < 8) {
 					_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(kSfxMECHAN1C), 100, 70, 70, 50, 0);
 				}
