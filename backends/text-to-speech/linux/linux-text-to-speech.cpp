@@ -91,7 +91,11 @@ void LinuxTextToSpeechManager::init() {
 
 	updateVoices();
 	_ttsState->_activeVoice = 0;
-	setLanguage(Common::String("en"));
+#ifdef USE_TRANSLATION
+	setLanguage(TransMan.getCurrentLanguage());
+#else
+	setLanguage("en");
+#endif
 }
 
 LinuxTextToSpeechManager::~LinuxTextToSpeechManager() {

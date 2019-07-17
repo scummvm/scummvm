@@ -51,6 +51,7 @@
 #include "common/textconsole.h"
 #include "common/tokenizer.h"
 #include "common/translation.h"
+#include "common/text-to-speech.h"
 #include "common/osd_message_queue.h"
 
 #include "gui/gui-manager.h"
@@ -260,8 +261,16 @@ static Common::Error runGame(const Plugin *plugin, OSystem &system, const Common
 	    && ConfMan.getBool("gui_use_game_language")
 	    && ConfMan.hasKey("language")) {
 		TransMan.setLanguage(ConfMan.get("language"));
+#ifdef USE_TTS
+		Common::TextToSpeechManager *ttsMan;
+		if ((ttsMan = g_system->getTextToSpeechManager()) != nullptr) {
+			Common::String language = ConfMan.get("language");
+			language.setChar(2, '\0');
+			ttsMan->setLanguage(language);
+		}
+#endif // USE_TTS
 	}
-#endif
+#endif // USE_TRANSLATION
 
 	// Initialize any game-specific keymaps
 	engine->initKeymap();
@@ -289,7 +298,15 @@ static Common::Error runGame(const Plugin *plugin, OSystem &system, const Common
 
 #ifdef USE_TRANSLATION
 	TransMan.setLanguage(previousLanguage);
-#endif
+#ifdef USE_TTS
+		Common::TextToSpeechManager *ttsMan;
+		if ((ttsMan = g_system->getTextToSpeechManager()) != nullptr) {
+			Common::String language = ConfMan.get("language");
+			language.setChar(2, '\0');
+			ttsMan->setLanguage(language);
+		}
+#endif // USE_TTS
+#endif // USE_TRANSLATION
 
 	// Return result (== 0 means no error)
 	return result;

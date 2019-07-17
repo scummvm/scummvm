@@ -632,7 +632,6 @@ void GuiManager::initTextToSpeech() {
 	Common::String currentLanguage = TransMan.getCurrentLanguage();
 	if (currentLanguage != "C") {
 		currentLanguage.setChar('\0', 2);
-		debug("%s", TransMan.getCurrentCharset().c_str());
 		ttsMan->setLanguage(currentLanguage);
 	}
 #endif
