@@ -197,21 +197,4 @@ Common::Array<const char *> *FileMan::findFiles(const char *string, DataType typ
 	return result;
 }
 
-#if 0
-MPCEntry **FileMan::findNextData(MPCIterator begin) {
-	Common::String fileString;
-
-	for (MPCIterator it = begin+1; it != _dir.end(); it++) {
-		fileString = (*it)->filename;
-		if (fileString.contains((*begin)->filename)) {
-			if ((*it)->type == (*begin)->type) {
-				return it;
-			}
-		}
-	}
-	return NULL;
-}
-
-#endif
-
 } // End of Namespace HDB
