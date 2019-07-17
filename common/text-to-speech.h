@@ -38,26 +38,37 @@ class TTSVoice {
 		enum Gender {
 			MALE,
 			FEMALE,
-			UNKNOWN
+			UNKNOWN_GENDER
+		};
+
+		enum Age {
+			CHILD,
+			ADULT,
+			UNKNOWN_AGE
 		};
 
 	public:
 		TTSVoice()
-			: _gender(UNKNOWN)
+			: _gender(UNKNOWN_GENDER)
+			, _age(UNKNOWN_AGE)
 			, _data(nullptr)
 			, _description("") {}
-		TTSVoice(Gender gender, void *data, String description) 
+		TTSVoice(Gender gender, Age age, void *data, String description) 
 			: _gender(gender)
+			, _age(age)
 			, _data(data)
 			, _description(description) {}
 		Gender getGender() { return _gender; };
 		void setGender(Gender gender) { _gender = gender; };
+		Age getAge() { return _age; };
+		void setAge(Age age) { _age = age; };
 		void setData(void *data) { _data = data; };
 		void *getData() { return _data; };
 		String getDescription() { return _description; };
 
 	protected:
 		Gender _gender;
+		Age _age;
 		void *_data;
 		String _description;
 };

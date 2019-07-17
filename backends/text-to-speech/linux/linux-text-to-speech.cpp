@@ -199,10 +199,10 @@ void LinuxTextToSpeechManager::setLanguage(Common::String language) {
 	setVoice(_ttsState->_activeVoice);
 }
 
-void LinuxTextToSpeechManager::createVoice(int typeNumber, Common::TTSVoice::Gender gender, char *description) {
+void LinuxTextToSpeechManager::createVoice(int typeNumber, Common::TTSVoice::Gender gender, Common::TTSVoice::Age age, char *description) {
 	SPDVoiceType *type = (SPDVoiceType *) malloc(sizeof(SPDVoiceType));
 	*type = static_cast<SPDVoiceType>(typeNumber);
-	_ttsState->_availaibleVoices.push_back(Common::TTSVoice(gender, (void *) type, description));
+	_ttsState->_availaibleVoices.push_back(Common::TTSVoice(gender, age, (void *) type, description));
 }
 
 void LinuxTextToSpeechManager::updateVoices() {
@@ -219,14 +219,14 @@ void LinuxTextToSpeechManager::updateVoices() {
 
 	char **voiceInfo = spd_list_voices(_connection);
 
-	createVoice(SPD_MALE1, Common::TTSVoice::MALE, voiceInfo[0]);
-	createVoice(SPD_MALE2, Common::TTSVoice::MALE, voiceInfo[1]);
-	createVoice(SPD_MALE3, Common::TTSVoice::MALE, voiceInfo[2]);
-	createVoice(SPD_FEMALE1, Common::TTSVoice::FEMALE, voiceInfo[3]);
-	createVoice(SPD_FEMALE2, Common::TTSVoice::FEMALE, voiceInfo[4]);
-	createVoice(SPD_FEMALE3, Common::TTSVoice::FEMALE, voiceInfo[5]);
-	createVoice(SPD_CHILD_MALE, Common::TTSVoice::MALE, voiceInfo[6]);
-	createVoice(SPD_CHILD_FEMALE, Common::TTSVoice::FEMALE, voiceInfo[7]);
+	createVoice(SPD_MALE1, Common::TTSVoice::MALE, Common::TTSVoice::ADULT, voiceInfo[0]);
+	createVoice(SPD_MALE2, Common::TTSVoice::MALE, Common::TTSVoice::ADULT, voiceInfo[1]);
+	createVoice(SPD_MALE3, Common::TTSVoice::MALE, Common::TTSVoice::ADULT, voiceInfo[2]);
+	createVoice(SPD_FEMALE1, Common::TTSVoice::FEMALE, Common::TTSVoice::ADULT, voiceInfo[3]);
+	createVoice(SPD_FEMALE2, Common::TTSVoice::FEMALE, Common::TTSVoice::ADULT, voiceInfo[4]);
+	createVoice(SPD_FEMALE3, Common::TTSVoice::FEMALE, Common::TTSVoice::ADULT, voiceInfo[5]);
+	createVoice(SPD_CHILD_MALE, Common::TTSVoice::MALE, Common::TTSVoice::CHILD, voiceInfo[6]);
+	createVoice(SPD_CHILD_FEMALE, Common::TTSVoice::FEMALE, Common::TTSVoice::CHILD, voiceInfo[7]);
 
 }
 

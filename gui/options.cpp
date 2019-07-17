@@ -1808,8 +1808,10 @@ void GlobalOptionsDialog::build() {
 	for(unsigned i = 0; i < voices.size(); i++) {
 		_ttsVoiceSelectionPopUp->appendEntry(voices[i].getDescription(), i);
 	}
+	if (voices.size() == 0)
+		_ttsVoiceSelectionPopUp->appendEntry("None", 0);
 
-	if (ConfMan.hasKey("tts_voice"))
+	if (ConfMan.hasKey("tts_voice") && (unsigned) ConfMan.getInt("tts_voice", _domain) < voices.size())
 		_ttsVoiceSelectionPopUp->setSelectedTag(ConfMan.getInt("tts_voice", _domain)) ;
 	else
 		_ttsVoiceSelectionPopUp->setSelectedTag(0);
