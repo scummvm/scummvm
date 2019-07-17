@@ -90,7 +90,7 @@ U32String::U32String(const char *beginP, const char *endP) : _size(0), _str(_sto
 	initWithCStr(beginP, endP - beginP);
 }
 
-U32String::U32String(const String &str) : _size(0) {
+U32String::U32String(const String &str) : _size(0), _str(_storage) {
 	initWithCStr(str.c_str(), str.size());
 }
 
@@ -423,7 +423,7 @@ void U32String::initWithCStr(const char *str, uint32 len) {
 
 	// Copy the string into the storage area
 	for (size_t idx = 0; idx < len; ++idx, ++str)
-		_str[idx] = *str;
+		_str[idx] = (byte)(*str);
 
 	_str[len] = 0;
 }
