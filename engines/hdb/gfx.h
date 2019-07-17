@@ -253,7 +253,7 @@ public:
 	Picture();
 	~Picture();
 
-	Graphics::Surface load(Common::SeekableReadStream *stream);
+	Graphics::ManagedSurface *load(Common::SeekableReadStream *stream);
 	int draw(int x, int y);
 	int drawMasked(int x, int y, int alpha = 0xff);
 
@@ -261,12 +261,12 @@ public:
 
 	char *getName() { return _name; }
 
-	Graphics::ManagedSurface *getSurface() { return &_surface; }
+	Graphics::ManagedSurface *getSurface() { return _surface; }
 
 private:
 	char _name[64];
 
-	Graphics::ManagedSurface _surface;
+	Graphics::ManagedSurface *_surface;
 };
 
 class Tile {
@@ -275,7 +275,7 @@ public:
 	Tile();
 	~Tile();
 
-	Graphics::Surface load(Common::SeekableReadStream *stream);
+	Graphics::ManagedSurface *load(Common::SeekableReadStream *stream);
 	int draw(int x, int y);
 	int drawMasked(int x, int y, int alpha = 0xff);
 
@@ -285,7 +285,7 @@ public:
 private:
 	char _name[64];
 
-	Graphics::ManagedSurface _surface;
+	Graphics::ManagedSurface *_surface;
 };
 
 } // End of Namespace HDB
