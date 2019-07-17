@@ -64,6 +64,8 @@ HDBGame::HDBGame(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst
 
 	_timePlayed = _timeSlice = _prevTimeSlice = _timeSeconds = _tiempo = 0;
 
+	_progressActive = false;
+
 	_monkeystone7 = STARS_MONKEYSTONE_7_FAKE;
 	_monkeystone14 = STARS_MONKEYSTONE_14_FAKE;
 	_monkeystone21 = STARS_MONKEYSTONE_21_FAKE;

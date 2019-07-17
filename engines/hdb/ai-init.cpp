@@ -907,6 +907,11 @@ AI::AI() {
 
 	_stunAnim = 0;
 	_stunTimer = g_system->getMillis();
+
+	_clubDownFrames = 0;
+	_clubUpFrames = 0;
+	_clubLeftFrames = 0;
+	_clubRightFrames = 0;
 }
 
 AI::~AI() {
