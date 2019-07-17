@@ -109,7 +109,7 @@ void EndCredits::show() {
 		}
 
 		uint32 timeNow = _vm->_time->currentSystem();
-		position += (double)(timeNow - timeLast) * 0.05f;
+		position += (double)(timeNow - timeLast) * 0.05f; // unsigned difference is intentional
 		timeLast = timeNow;
 
 		_vm->_surfaceFront.fillRect(Common::Rect(640, 480), 0);

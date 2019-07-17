@@ -42,9 +42,10 @@ class AmbientSounds {
 		Common::String name;
 		int32          hash;
 		int            audioPlayerTrack;
-		int            timeMin;
-		int            timeMax;
-		uint32         nextPlayTime;
+		uint32         timeMin;
+		uint32         timeMax;
+		uint32         nextPlayTimeStart;
+		uint32         nextPlayTimeDiff;
 		int            volumeMin;
 		int            volumeMax;
 		int            volume;
@@ -76,7 +77,7 @@ public:
 
 	void addSound(
 		int sfxId,
-		int timeMin, int timeMax,
+		uint32 timeMin, uint32 timeMax,
 		int volumeMin, int volumeMax,
 		int panStartMin, int panStartMax,
 		int panEndMin, int panEndMax,
@@ -87,7 +88,7 @@ public:
 
 	void addSpeech(
 		int actorId, int sentenceId,
-		int timeMin, int timeMax,
+		uint32 timeMin, uint32 timeMax,
 		int volumeMin, int volumeMax,
 		int panStartMin, int panStartMax,
 		int panEndMin, int panEndMax,
@@ -95,12 +96,12 @@ public:
 	void playSound(int sfxId, int volume, int panStart, int panEnd, int priority);
 	void playSpeech(int actorId, int sentenceId, int volume, int panStart, int panEnd, int priority);
 
-	void addLoopingSound(int sfxId, int volume, int pan, int delay);
-	void adjustLoopingSound(int sfxId, int volume, int pan, int delay);
+	void addLoopingSound(int sfxId, int volume, int pan, uint32 delay);
+	void adjustLoopingSound(int sfxId, int volume, int pan, uint32 delay);
 	// it seems there is little confusion in original code about delay parameter,
 	// sometimes it is used as boolean in same way as stopPlaying from non looping
-	void removeLoopingSound(int sfxId, int delay);
-	void removeAllLoopingSounds(int delay);
+	void removeLoopingSound(int sfxId, uint32 delay);
+	void removeAllLoopingSounds(uint32 delay);
 
 	void tick();
 
@@ -120,14 +121,14 @@ private:
 
 	void addSoundByName(
 		const Common::String &name,
-		int timeMin, int timeMax,
+		uint32 timeMin, uint32 timeMax,
 		int volumeMin, int volumeMax,
 		int panStartMin, int panStartMax,
 		int panEndMin, int panEndMax,
 		int priority, int unk);
 
 	void removeNonLoopingSoundByIndex(int index, bool stopPlaying);
-	void removeLoopingSoundByIndex(int index, int delay);
+	void removeLoopingSoundByIndex(int index, uint32 delay);
 };
 
 } // End of namespace BladeRunner

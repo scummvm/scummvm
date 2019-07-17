@@ -251,9 +251,10 @@ void KIASectionPogo::open() {
 
 void KIASectionPogo::draw(Graphics::Surface &surface) {
 	// Timing fixed for 60Hz by ScummVM team
-	int timeNow = _vm->_time->currentSystem();
+	uint32 timeNow = _vm->_time->currentSystem();
 	bool updateTimeout = false;
-	if (timeNow - _timeLast > 1000 / 60) {
+	// unsigned difference is intentional
+	if (timeNow - _timeLast > (1000u / 60u)) {
 		updateTimeout = true;
 		_timeLast = timeNow;
 	}

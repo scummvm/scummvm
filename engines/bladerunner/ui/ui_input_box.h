@@ -42,7 +42,7 @@ class UIInputBox : public UIComponent {
 
 	bool                 _cursorIsVisible;
 
-	int                  _timeLast;
+	uint32               _timeLast;
 
 public:
 	UIInputBox(BladeRunnerEngine *vm, UIComponentCallback *valueChangedCallback, void *callbackData, Common::Rect rect, int maxLength, const Common::String &text);

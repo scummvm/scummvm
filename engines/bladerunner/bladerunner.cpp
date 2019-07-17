@@ -584,7 +584,7 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 	_playerActor = _actors[_gameInfo->getPlayerId()];
 
 	_playerActor->setFPS(15);
-	_playerActor->timerStart(kActorTimerRunningStaminaFPS, 200);
+	_playerActor->timerStart(kActorTimerRunningStaminaFPS, 200u);
 
 	_policeMaze = new PoliceMaze(this);
 
@@ -1108,7 +1108,7 @@ void BladeRunnerEngine::gameTick() {
 void BladeRunnerEngine::actorsUpdate() {
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
-	int timeNow = _time->current();
+	uint32 timeNow = _time->current();
 	// Don't update actors more than 60 times per second
 	if (timeNow - _actorUpdateTimeLast < 1000 / 60) {
 		return;
@@ -1321,9 +1321,10 @@ void BladeRunnerEngine::handleMouseAction(int x, int y, bool mainButton, bool bu
 	x = CLIP(x, 0, 639);
 	y = CLIP(y, 0, 479);
 
-	int timeNow = _time->current();
+	uint32 timeNow = _time->current();
 
 	if (buttonDown) {
+		// unsigned difference is intentional
 		_mouseClickTimeDiff = timeNow - _mouseClickTimeLast;
 		_mouseClickTimeLast = timeNow;
 	}
@@ -1964,8 +1965,9 @@ void BladeRunnerEngine::playerDied() {
 	_audioSpeech->stopSpeech();
 #endif // BLADERUNNER_ORIGINAL_BUGS
 
-	int timeWaitEnd = _time->current() + 5000;
-	while (_time->current() < timeWaitEnd) {
+	uint32 timeWaitStart = _time->current();
+	// unsigned difference is intentional
+	while (_time->current() - timeWaitStart < 5000u) {
 		gameTick();
 	}
 

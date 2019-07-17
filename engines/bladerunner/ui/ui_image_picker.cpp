@@ -167,7 +167,7 @@ void UIImagePicker::activate(UIImagePickerCallback *mouseInCallback,
 	_mouseDownCallback   = mouseDownCallback;
 	_mouseUpCallback     = mouseUpCallback;
 	_callbackData        = callbackData;
-	_hoverStartTimestamp = 0;
+	_hoverStartTimestamp = 0u;
 	_isVisible           = true;
 	_hoveredImageIndex   = -1;
 	_pressedImageIndex   = -1;
@@ -180,7 +180,7 @@ void UIImagePicker::deactivate() {
 	_mouseDownCallback   = nullptr;
 	_mouseUpCallback     = nullptr;
 	_callbackData        = nullptr;
-	_hoverStartTimestamp = 0;
+	_hoverStartTimestamp = 0u;
 	_isVisible           = false;
 	_hoveredImageIndex   = -1;
 	_pressedImageIndex   = -1;
@@ -228,8 +228,8 @@ void UIImagePicker::drawTooltip(Graphics::Surface &surface, int x, int y) {
 		(_hoveredImageIndex == -1) ||
 		(_vm->_mouse->isDisabled()) ||
 		(!_images[_hoveredImageIndex].active) ||
-		(_vm->_time->current() < _hoverStartTimestamp + 1000)
-	) {
+		(_vm->_time->current() - _hoverStartTimestamp < 1000u)
+	) { // unsigned difference is intentional (time difference)
 		return;
 	}
 
@@ -352,7 +352,7 @@ void UIImagePicker::reset() {
 	_isVisible           = false;
 	_hoveredImageIndex   = -1;
 	_pressedImageIndex   = -1;
-	_hoverStartTimestamp = 0;
+	_hoverStartTimestamp = 0u;
 	_isButtonDown        = false;
 	_mouseInCallback     = nullptr;
 	_mouseOutCallback    = nullptr;

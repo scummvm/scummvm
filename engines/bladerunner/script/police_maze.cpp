@@ -120,10 +120,10 @@ void PoliceMaze::setPauseState(bool state) {
 	warning("PAUSE: %d", state);
 	_isPaused = state;
 
-	uint32 t = _vm->_time->current();
+	uint32 timeNow = _vm->_time->current();
 
 	for (int i = 0; i < kNumMazeTracks; i++) {
-		_tracks[i]->setTime(t);
+		_tracks[i]->setTime(timeNow);
 	}
 }
 
@@ -256,8 +256,8 @@ bool PoliceMazeTargetTrack::tick() {
 
 	uint32 oldTime = _time;
 	_time = _vm->_time->current();
-	int32 timeDiff = _time - oldTime;
-	_timeLeftUpdate -= timeDiff;
+	uint32 timeDiff = _time - oldTime;  // unsigned difference is intentional
+	_timeLeftUpdate = _timeLeftUpdate - (int32)timeDiff; // should be ok
 
 	if (_timeLeftUpdate > 0) {
 		return false;
@@ -265,8 +265,9 @@ bool PoliceMazeTargetTrack::tick() {
 
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
+	// here _timeLeftUpdate is <= 0
 	if (_vm->_settings->getDifficulty() > kGameDifficultyEasy) {
-		timeDiff = 0 - _timeLeftUpdate;
+		timeDiff = abs(_timeLeftUpdate);
 	}
 #endif // BLADERUNNER_ORIGINAL_BUGS
 	_timeLeftUpdate = 66; // update the target track 15 times per second
@@ -282,7 +283,7 @@ bool PoliceMazeTargetTrack::tick() {
 		if (_vm->_settings->getDifficulty() == kGameDifficultyEasy) {
 			_timeLeftWait -= timeDiff; // original behavior
 		} else {
-			_timeLeftWait -= (timeDiff + _timeLeftUpdate); // this deducts an amount >= 66
+			_timeLeftWait = _timeLeftWait - (int32)(timeDiff + _timeLeftUpdate); // this deducts an amount >= 66 // should be ok
 		}
 #endif // BLADERUNNER_ORIGINAL_BUGS
 		if (_timeLeftWait > 0) {

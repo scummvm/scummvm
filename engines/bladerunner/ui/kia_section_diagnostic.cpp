@@ -71,7 +71,7 @@ void KIASectionDiagnostic::close() {
 }
 
 void KIASectionDiagnostic::draw(Graphics::Surface &surface) {
-	int timeNow = _vm->_time->currentSystem();
+	uint32 timeNow = _vm->_time->currentSystem();
 
 	for (int i = 0; i < _text->getCount(); ++i) {
 		int y = kLineHeight * i + 366 - _offset;
@@ -91,7 +91,8 @@ void KIASectionDiagnostic::draw(Graphics::Surface &surface) {
 	}
 
 	// Timing fixed for 60Hz by ScummVM team
-	if (timeNow - _timeLast > 1000 / 60) {
+	// unsigned difference is intentional
+	if (timeNow - _timeLast > (1000u / 60u)) {
 		++_offset;
 		if (_offset > kLineHeight * _text->getCount() + 366) {
 			_offset = 0;

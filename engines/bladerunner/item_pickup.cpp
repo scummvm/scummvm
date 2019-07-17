@@ -46,7 +46,7 @@ void ItemPickup::setup(int animationId, int screenX, int screenY) {
 	_animationId = animationId;
 	_animationFrame = 0;
 	_facing = 0.0;
-	_timeLeft = 3000;
+	_timeLeft = 3000u;
 	_scale = 0;
 	_screenX = CLIP(screenX, 40, 600);
 	_screenY = CLIP(screenY, 40, 440);
@@ -68,24 +68,25 @@ void ItemPickup::reset() {
 	_facing = 0.0f;
 	_scale = 1.0f;
 	_animationFrame = 0;
-	_timeLeft = 0;
-	_timeLast = 0;
+	_timeLeft = 0u;
+	_timeLast = 0u;
 }
 
 void ItemPickup::tick() {
-	if (_timeLeft == 0) {
+	if (_timeLeft == 0u) {
 		return;
 	}
 
-	int timeNow = _vm->_time->currentSystem();
-	int timeDiff = timeNow - _timeLast;
+	uint32 timeNow = _vm->_time->currentSystem();
+	// unsigned difference is intentional
+	uint32 timeDiff = timeNow - _timeLast;
 	_timeLast = timeNow;
-	timeDiff = MIN(MIN(timeDiff, 67), _timeLeft);
-	_timeLeft -= timeDiff;
+	timeDiff = MIN(MIN<uint32>(timeDiff, 67u), _timeLeft);
+	_timeLeft = (_timeLeft < timeDiff) ? 0 : (_timeLeft - timeDiff);
 
-	if (_timeLeft >= 2000) {
+	if (_timeLeft >= 2000u) {
 		_scale = 1.0f - (((2000.0f - _timeLeft) / 1000.0f) * ((2000.0f - _timeLeft) / 1000.0f));
-	} else if (_timeLeft < 1000) {
+	} else if (_timeLeft < 1000u) {
 		_scale = 1.0f - (((1000.0f - _timeLeft) / 1000.0f) * ((1000.0f - _timeLeft) / 1000.0f));
 	} else {
 		_scale = 1.0f;
@@ -101,7 +102,7 @@ void ItemPickup::tick() {
 }
 
 void ItemPickup::draw() {
-	if (_timeLeft == 0) {
+	if (_timeLeft == 0u) {
 		return;
 	}
 

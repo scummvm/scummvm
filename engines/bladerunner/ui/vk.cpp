@@ -213,7 +213,8 @@ void VK::tick() {
 	_vm->blitToScreen(_vm->_surfaceFront);
 	_vm->_system->delayMillis(10);
 
-	if (_isClosing && _vm->_time->current() >= _timeClose && !_script->isInsideScript()) {
+	// unsigned difference is intentional
+	if (_isClosing && (_vm->_time->current() - _timeCloseStart >= 3000u) && !_script->isInsideScript()) {
 		close();
 		_vm->_mouse->enable();
 		reset();
@@ -265,8 +266,9 @@ void VK::playSpeechLine(int actorId, int sentenceId, float duration) {
 	}
 
 	if (duration > 0.0f && !_vm->_actorSpeakStopIsRequested) {
-		int timeEnd = duration * 1000.0f + _vm->_time->current();
-		while ((timeEnd > _vm->_time->current()) && _vm->_gameIsRunning) {
+		uint32  timeStart = _vm->_time->current();
+		uint32  timeUntil = duration * 1000.0f;
+		while ((_vm->_time->current() - timeStart < timeUntil) && _vm->_gameIsRunning) {
 			_vm->gameTick();
 		}
 	}
@@ -280,13 +282,13 @@ void VK::subjectReacts(int intensity, int humanResponse, int replicantResponse, 
 	humanResponse     = CLIP(humanResponse, -20, 20);
 	replicantResponse = CLIP(replicantResponse, -20, 20);
 
-	int timeNow = _vm->_time->current();
-	bool closeVK = false;
+	uint32 timeNow = _vm->_time->current();
+	bool closeVK   = false;
 
 	if (intensity > 0) {
 		_needleValueTarget = 78 * intensity / 100;
 		_needleValueDelta = (_needleValueTarget - _needleValue) / 10;
-		_timeNextNeedleStep = timeNow + 66;
+		_timeNextNeedleStepStart = timeNow;
 	}
 
 	if (humanResponse != 0) {
@@ -309,7 +311,7 @@ void VK::subjectReacts(int intensity, int humanResponse, int replicantResponse, 
 
 			if (closeVK == true) {
 				_isClosing = true;
-				_timeClose = timeNow + 3000;
+				_timeCloseStart = timeNow;
 				_vm->_mouse->disable();
 			}
 		}
@@ -340,7 +342,7 @@ void VK::subjectReacts(int intensity, int humanResponse, int replicantResponse, 
 
 			if (closeVK == true) {
 				_isClosing = true;
-				_timeClose = timeNow + 3000;
+				_timeCloseStart = timeNow;
 				_vm->_mouse->disable();
 			}
 		}
@@ -368,7 +370,7 @@ void VK::subjectReacts(int intensity, int humanResponse, int replicantResponse, 
 
 	if (closeVK == true) {
 		_isClosing = true;
-		_timeClose = timeNow + 3000;
+		_timeCloseStart = timeNow;
 		_vm->_mouse->disable();
 	}
 }
@@ -462,46 +464,49 @@ void VK::reset() {
 	_needleValueTarget       = 0;
 	_needleValueDelta        = 0;
 	_needleValueMax          = 0;
-	_timeNextNeedleStep      = 0;
-	_timeNeedleReturn        = 0;
-	_timeNextNeedleOscillate = 0;
 
-	_humanProbability       = 0;
-	_humanGauge             = 0;
-	_humanGaugeTarget       = 0;
-	_humanGaugeDelta        = 0;
-	_timeNextHumanGaugeStep = 0;
+	_timeNextNeedleStepStart      = 0u;
+	_timeNeedleReturnStart        = 0u;
+	_timeNextNeedleOscillateStart = 0u;
 
-	_replicantProbability       = 0;
-	_replicantGauge             = 0;
-	_replicantGaugeTarget       = 0;
-	_replicantGaugeDelta        = 0;
-	_timeNextReplicantGaugeStep = 0;
+	_humanProbability                = 0;
+	_humanGauge                      = 0;
+	_humanGaugeTarget                = 0;
+	_humanGaugeDelta                 = 0;
+	_timeNextHumanGaugeStepDiff      = 0u;
+	_timeNextHumanGaugeStepStart     = 0u;
+
+	_replicantProbability            = 0;
+	_replicantGauge                  = 0;
+	_replicantGaugeTarget            = 0;
+	_replicantGaugeDelta             = 0;
+	_timeNextReplicantGaugeStepDiff  = 0u;
+	_timeNextReplicantGaugeStepStart = 0u;
 
 	_anxiety = 0;
 
-	_blinkState          = 0;
-	_timeNextBlink       = 0;
-	_timeNextGaugesBlink = 0;
+	_blinkState               = 0;
+	_timeNextBlinkStart       = 0u;
+	_timeNextGaugesBlinkStart = 0u;
 
-	_isClosing = false;
-	_timeClose = 0;
+	_isClosing      = false;
+	_timeCloseStart = 0u;
 
-	_isAdjusting             = false;
-	_adjustment              = 154;
-	_adjustmentTarget        = 154;
-	_adjustmentDelta         = 0;
-	_timeNextAdjustementStep = 0;
+	_isAdjusting                  = false;
+	_adjustment                   = 154;
+	_adjustmentTarget             = 154;
+	_adjustmentDelta              = 0;
+	_timeNextAdjustementStepStart = 0u;
 
-	_eyeLineSelected      = 1;
-	_eyeLineX             = 315;
-	_eyeLineXLast         = 315;
-	_eyeLineY             = 281;
-	_eyeLineYLast         = 281;
-	_eyeLineXDelta        = 8;
-	_eyeLineYDelta        = 8;
-	_timeNextEyeLineStep  = 0;
-	_timeNextEyeLineStart = 0;
+	_eyeLineSelected           = 1;
+	_eyeLineX                  = 315;
+	_eyeLineXLast              = 315;
+	_eyeLineY                  = 281;
+	_eyeLineYLast              = 281;
+	_eyeLineXDelta             = 8;
+	_eyeLineYDelta             = 8;
+	_timeNextEyeLineStepStart  = 0u;
+	_timeNextEyeLineStart      = 0u;
 
 	_soundTrackId1 = -1;
 	_soundTrackId2 = -1;
@@ -573,14 +578,15 @@ void VK::draw() {
 
 	Graphics::Surface &surface = _vm->_surfaceFront;
 
-	int timeNow = _vm->_time->current();
+	uint32 timeNow = _vm->_time->current();
 
 	if (_isAdjusting && !_testStarted && !_vm->isMouseButtonDown()) {
 		_isAdjusting = false;
 	}
 
 	if (_vqaFrameMain >= 26) {
-		if (_isClosing && timeNow >= _timeNextGaugesBlink) {
+		// unsigned difference is intentional
+		if (_isClosing && timeNow - _timeNextGaugesBlinkStart >= 600u) {
 			if (_blinkState) {
 				_buttons->setImageShapeUp(6, nullptr);
 				_buttons->setImageShapeUp(7, nullptr);
@@ -596,12 +602,13 @@ void VK::draw() {
 				}
 				_blinkState = 1;
 			}
-			_timeNextGaugesBlink = timeNow + 600;
+			_timeNextGaugesBlinkStart = timeNow;
 		}
 
 		_buttons->draw(surface);
 
-		if (_humanGaugeDelta != 0 && timeNow >= _timeNextHumanGaugeStep) {
+		// unsigned difference is intentional
+		if (_humanGaugeDelta != 0 && timeNow - _timeNextHumanGaugeStepStart >= _timeNextHumanGaugeStepDiff) {
 			_humanGauge += _humanGaugeDelta;
 
 			if ((_humanGaugeDelta > 0 && _humanGauge >= _humanGaugeTarget)
@@ -613,17 +620,20 @@ void VK::draw() {
 				if (_humanGaugeTarget != 0) {
 					_humanGaugeTarget = 0;
 					_humanGaugeDelta = -_humanGaugeDelta;
-					_timeNextHumanGaugeStep = timeNow + 500;
+					_timeNextHumanGaugeStepDiff  = 500u;
+					_timeNextHumanGaugeStepStart = timeNow;
 				} else {
 					_humanGaugeDelta = 0;
 				}
 			} else {
-				_timeNextHumanGaugeStep = timeNow + 66;
+				_timeNextHumanGaugeStepDiff  = 66u;
+				_timeNextHumanGaugeStepStart = timeNow;
 			}
 		}
 		drawHumanGauge(surface);
 
-		if (_replicantGaugeDelta != 0 && timeNow >= _timeNextReplicantGaugeStep) {
+		// unsigned difference is intentional
+		if (_replicantGaugeDelta != 0 && timeNow - _timeNextReplicantGaugeStepStart >= _timeNextReplicantGaugeStepDiff) {
 			_replicantGauge += _replicantGaugeDelta;
 
 			if ((_replicantGaugeDelta > 0 && _replicantGauge >= _replicantGaugeTarget)
@@ -635,17 +645,20 @@ void VK::draw() {
 				if (_replicantGaugeTarget != 0) {
 					_replicantGaugeTarget = 0;
 					_replicantGaugeDelta = -_replicantGaugeDelta;
-					_timeNextReplicantGaugeStep = timeNow + 500;
+					_timeNextReplicantGaugeStepDiff  = 500u;
+					_timeNextReplicantGaugeStepStart = timeNow;
 				} else {
 					_replicantGaugeDelta = 0;
 				}
 			} else {
-				_timeNextReplicantGaugeStep = timeNow + 66;
+				_timeNextReplicantGaugeStepDiff  = 66u;
+				_timeNextReplicantGaugeStepStart = timeNow;
 			}
 		}
 		drawReplicantGauge(surface);
 
-		if (!_calibrationStarted && _vqaFrameMain >= 59 && timeNow >= _timeNextBlink) {
+		// unsigned difference is intentional
+		if (!_calibrationStarted && _vqaFrameMain >= 59 && timeNow - _timeNextBlinkStart >= 600u) {
 			if (_blinkState) {
 				_buttons->setImageShapeUp(0, nullptr);
 				_blinkState = false;
@@ -654,10 +667,11 @@ void VK::draw() {
 				_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(kSfxVKBEEP1), 50, 0, 0, 50, 0);
 				_blinkState = true;
 			}
-			_timeNextBlink = timeNow + 600;
+			_timeNextBlinkStart = timeNow;
 		}
 
-		if (_adjustmentDelta != 0 && timeNow >= _timeNextAdjustementStep) {
+		// unsigned difference is intentional
+		if (_adjustmentDelta != 0 && timeNow - _timeNextAdjustementStepStart >= 50u) {
 			if (_adjustmentDelta > 0) {
 				_adjustment += 3;
 				if (_adjustment >= _adjustmentTarget) {
@@ -675,7 +689,8 @@ void VK::draw() {
 		}
 		setAdjustmentFromMouse();
 
-		if (_calibrationStarted && !_testStarted && timeNow >= _timeNextBlink) {
+		// unsigned difference is intentional
+		if (_calibrationStarted && !_testStarted && timeNow - _timeNextBlinkStart >= 600u) {
 			if (_blinkState) {
 				_buttons->setImageShapeUp(2, nullptr);
 				_buttons->setImageShapeUp(3, nullptr);
@@ -689,10 +704,11 @@ void VK::draw() {
 
 				_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(kSfxVKBEEP2), 33, 0, 0, 50, 0);
 			}
-			_timeNextBlink = timeNow + 600;
+			_timeNextBlinkStart = timeNow;
 		}
 
-		if (_needleValueDelta != 0 && timeNow >= _timeNextNeedleStep) {
+		// unsigned difference is intentional
+		if (_needleValueDelta != 0 && (timeNow - _timeNextNeedleStepStart >= 66u)) {
 			if (_needleValueDelta > 0) {
 				_needleValue += 4;
 				if (_needleValue >= _needleValueTarget) {
@@ -701,13 +717,14 @@ void VK::draw() {
 					_needleValueDelta = -_needleValueDelta;
 					_needleValueTarget = 0;
 
-					_timeNeedleReturn = timeNow + 1800;
+					_timeNeedleReturnStart = timeNow;
 
 					if (!_testStarted) {
 						animateAdjustment(_needleValueMax + 165);
 					}
 				}
-			} else if (timeNow >= _timeNeedleReturn) {
+			} else if (timeNow - _timeNeedleReturnStart >= 1800u) {
+				// unsigned difference is intentional
 				_needleValue -= 4;
 				if (_needleValue <= _needleValueTarget) {
 					_needleValue = _needleValueTarget;
@@ -715,14 +732,15 @@ void VK::draw() {
 				}
 			}
 			_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(kSfxBR027_3P), 20, 0, 0, 50, 0);
-			_timeNextNeedleStep = timeNow + 66;
+			_timeNextNeedleStepStart = timeNow;
 		}
 
 		drawNeedle(surface);
 		drawEye(surface);
 		drawEyeCrosshair(surface, timeNow);
-		if (timeNow >= _timeNextNeedleOscillate) {
-			_timeNextNeedleOscillate = timeNow + 66;
+		// unsigned difference is intentional
+		if (timeNow - _timeNextNeedleOscillateStart >= 66u) {
+			_timeNextNeedleOscillateStart = timeNow;
 		}
 		int mouseX, mouseY;
 		_vm->_mouse->getXY(&mouseX, &mouseY);
@@ -734,7 +752,8 @@ void VK::draw() {
 
 void VK::drawNeedle(Graphics::Surface &surface) {
 	int x = _needleValue + 165;
-	if ((_vm->_time->current() >= _timeNextNeedleOscillate) && (x > 165)) {
+	// unsigned difference is intentional
+	if ((_vm->_time->current() - _timeNextNeedleOscillateStart >= 66u) && (x > 165)) {
 		x = CLIP(x + (int)_vm->_rnd.getRandomNumberRng(0, 4) - 2, 165, 245);
 	}
 
@@ -759,7 +778,7 @@ void VK::drawEye(Graphics::Surface &surface) {
 	surface.copyRectToSurface(_surfaceEye, 315, 281, Common::Rect(0, 0, _surfaceEye.w, _surfaceEye.h));
 }
 
-void VK::drawEyeCrosshair(Graphics::Surface &surface, int timeNow) {
+void VK::drawEyeCrosshair(Graphics::Surface &surface, uint32 timeNow) {
 	surface.drawLine(315,                                        _eyeLineY,     486,                                        _eyeLineY,     surface.format.RGBToColor(16, 16, 64));
 	surface.drawLine(315,                                        _eyeLineY - 1, 486,                                        _eyeLineY - 1, surface.format.RGBToColor(16, 16, 64));
 	surface.drawLine(315,                                        _eyeLineY,     _vm->_rnd.getRandomNumberRng(10, 20) + 315, _eyeLineY,     surface.format.RGBToColor(16, 16, 80));
@@ -774,13 +793,15 @@ void VK::drawEyeCrosshair(Graphics::Surface &surface, int timeNow) {
 	surface.drawLine(_eyeLineX - 1, 396 - _vm->_rnd.getRandomNumberRng(10, 20), _eyeLineX - 1, 396,                                        surface.format.RGBToColor(16, 16, 80));
 	surface.drawLine(_eyeLineX - 1, 281,                                        _eyeLineX - 1, _vm->_rnd.getRandomNumberRng(10, 20) + 281, surface.format.RGBToColor(16, 16, 80));
 
-	if (timeNow >= _timeNextEyeLineStart) {
+	// unsigned difference is intentional
+	if (timeNow - _timeNextEyeLineStart >= 1000u) {
 		if (_eyeLineSelected) {
 			if (_eyeLineYLast != _eyeLineY) {
 				surface.drawLine(315, _eyeLineYLast, 486, _eyeLineYLast, surface.format.RGBToColor(16, 16, 32));
 			}
 			_eyeLineYLast = _eyeLineY;
-			if (timeNow >= _timeNextEyeLineStep) {
+			// unsigned difference is intentional
+			if (timeNow - _timeNextEyeLineStepStart >= 50u) {
 				_eyeLineY += _eyeLineYDelta;
 				if (_eyeLineYDelta > 0) {
 					if (_eyeLineY >= 396) {
@@ -791,16 +812,17 @@ void VK::drawEyeCrosshair(Graphics::Surface &surface, int timeNow) {
 					_eyeLineY = 281;
 					_eyeLineYDelta = -_eyeLineYDelta;
 					_eyeLineSelected = 0;
-					_timeNextEyeLineStart = timeNow + 1000;
+					_timeNextEyeLineStart = timeNow;
 				}
-				_timeNextEyeLineStep = timeNow + 50;
+				_timeNextEyeLineStepStart = timeNow;
 			}
 		} else {
 			if (_eyeLineXLast != _eyeLineX) {
 				surface.drawLine(_eyeLineXLast, 281, _eyeLineXLast, 396, surface.format.RGBToColor(16, 16, 32));
 			}
 			_eyeLineXLast = _eyeLineX;
-			if (timeNow >= _timeNextEyeLineStep) {
+			// unsigned difference is intentional
+			if (timeNow - _timeNextEyeLineStepStart >= 50u) {
 				_eyeLineX += _eyeLineXDelta;
 				if ( _eyeLineXDelta > 0) {
 					if (_eyeLineX >= 486) {
@@ -811,9 +833,9 @@ void VK::drawEyeCrosshair(Graphics::Surface &surface, int timeNow) {
 					_eyeLineX = 315;
 					_eyeLineXDelta = -_eyeLineXDelta;
 					_eyeLineSelected = 1;
-					_timeNextEyeLineStart = timeNow + 1000;
+					_timeNextEyeLineStart = timeNow;
 				}
-				_timeNextEyeLineStep = timeNow + 50;
+				_timeNextEyeLineStepStart = timeNow;
 			}
 		}
 	}
@@ -914,7 +936,7 @@ void VK::stopAdjustement() {
 void VK::animateAdjustment(int target) {
 	_adjustmentTarget = MAX(target - 4, 154);
 	_adjustmentDelta = (_adjustmentTarget - _adjustment) / 5;
-	_timeNextAdjustementStep = _vm->_time->current() + 50;
+	_timeNextAdjustementStepStart = _vm->_time->current();
 }
 
 void VK::setAdjustment(int x) {
@@ -1040,7 +1062,7 @@ void VK::askQuestion(int intensity) {
 	) {
 		_isClosing = true;
 		_vm->_mouse->disable();
-		_timeClose = _vm->_time->current() + 3000;
+		_timeCloseStart = _vm->_time->current();
 	}
 }
 

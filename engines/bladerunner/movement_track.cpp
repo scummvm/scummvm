@@ -41,17 +41,17 @@ void MovementTrack::reset() {
 	_paused = false;
 	for (int i = 0; i < kSize; i++) {
 		_entries[i].waypointId = -1;
-		_entries[i].delay = -1;
+		_entries[i].delay = (uint32)(-1);  // original was -1, int
 		_entries[i].angle = -1;
 		_entries[i].run = false;
 	}
 }
 
-int MovementTrack::append(int waypointId, int delay, bool run) {
+int MovementTrack::append(int waypointId, uint32 delay, bool run) {
 	return append(waypointId, delay, -1, run);
 }
 
-int MovementTrack::append(int waypointId, int delay, int angle, bool run) {
+int MovementTrack::append(int waypointId, uint32 delay, int angle, bool run) {
 	if (_lastIndex >= kSize) {
 		return 0;
 	}
@@ -92,7 +92,7 @@ bool MovementTrack::hasNext() const {
 	return _hasNext;
 }
 
-bool MovementTrack::next(int *waypointId, int *delay, int *angle, bool *run) {
+bool MovementTrack::next(int *waypointId, uint32 *delay, int *angle, bool *run) {
 	if (_currentIndex < _lastIndex && _hasNext) {
 		*waypointId = _entries[_currentIndex].waypointId;
 		*delay = _entries[_currentIndex].delay;
@@ -101,7 +101,7 @@ bool MovementTrack::next(int *waypointId, int *delay, int *angle, bool *run) {
 		return true;
 	} else {
 		*waypointId = -1;
-		*delay = -1;
+		*delay = (uint32)(-1); // original was -1, int
 		*angle = -1;
 		*run = false;
 		_hasNext = false;
@@ -131,7 +131,7 @@ void MovementTrack::load(SaveFileReadStream &f) {
 	for (int i = 0; i < kSize; ++i) {
 		Entry &e = _entries[i];
 		e.waypointId = f.readInt();
-		e.delay = f.readInt();
+		e.delay = (uint32)f.readInt();
 		e.angle = f.readInt();
 		e.run = f.readBool();
 	}

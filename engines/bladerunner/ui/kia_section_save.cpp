@@ -55,8 +55,8 @@ KIASectionSave::KIASectionSave(BladeRunnerEngine *vm) : KIASectionBase(vm) {
 
 	_buttons = new UIImagePicker(_vm, 3);
 
-	_timeLast = 0;
-	_timeLeft = 0;
+	_timeLast = 0u;
+	_timeLeft = 0u;
 
 	_state = kStateNormal;
 
@@ -130,7 +130,7 @@ void KIASectionSave::open() {
 
 	_hoveredLineId = -1;
 	_timeLast = _vm->_time->currentSystem();
-	_timeLeft = 800;
+	_timeLeft = 800u;
 }
 
 void KIASectionSave::close() {
@@ -185,7 +185,7 @@ void KIASectionSave::draw(Graphics::Surface &surface) {
 
 	if (selectedLineId != _hoveredLineId) {
 		if (selectedLineId >= 0 && selectedLineId < (int)_saveList.size() && _displayingLineId != selectedLineId) {
-			if (_timeLeft == 0) {
+			if (_timeLeft == 0u) {
 				SaveStateDescriptor desc = SaveFileManager::queryMetaInfos(_vm->getTargetName(), selectedLineId);
 				const Graphics::Surface *thumbnail = desc.getThumbnail();
 				if (thumbnail != nullptr) {
@@ -195,7 +195,7 @@ void KIASectionSave::draw(Graphics::Surface &surface) {
 			}
 		} else {
 			_vm->_kia->playerReset();
-			_timeLeft = 800;
+			_timeLeft = 800u;
 			_displayingLineId = -1;
 		}
 		_hoveredLineId = selectedLineId;
@@ -204,7 +204,7 @@ void KIASectionSave::draw(Graphics::Surface &surface) {
 	uint32 now = _vm->_time->currentSystem();
 	if (selectedLineId >= 0 && selectedLineId < (int)_saveList.size() && _displayingLineId != selectedLineId) {
 		if (_timeLeft) {
-			uint32 timeDiff = now - _timeLast;
+			uint32 timeDiff = now - _timeLast; // unsigned difference is intentional
 			if (timeDiff >= _timeLeft) {
 				SaveStateDescriptor desc = SaveFileManager::queryMetaInfos(_vm->getTargetName(), _saveList[selectedLineId].getSaveSlot());
 				const Graphics::Surface *thumbnail = desc.getThumbnail();
@@ -213,7 +213,7 @@ void KIASectionSave::draw(Graphics::Surface &surface) {
 					_displayingLineId = selectedLineId;
 				}
 			} else {
-				_timeLeft -= timeDiff;
+				_timeLeft = (_timeLeft < timeDiff) ? 0u : (_timeLeft - timeDiff);
 			}
 		}
 	}

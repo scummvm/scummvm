@@ -36,9 +36,9 @@ class UICheckBox : public UIComponent {
 	int                  _style;
 	int                  _isEnabled;
 	Common::Rect         _rect;
-	int                  _frame;
+	uint32               _frame;
 	int                  _isPressed;
-	uint                 _timeLast;
+	uint32               _timeLast;
 	int                  _hasFocus;
 
 public:

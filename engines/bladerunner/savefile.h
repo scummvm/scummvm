@@ -94,7 +94,7 @@ public:
 
 	void padBytes(int count);
 
-	void writeInt(int v);
+	void writeInt(int32 v); // this writes a 4 byte int (uses writeUint32LE)
 	void writeFloat(float v);
 	void writeBool(bool v);
 	void writeStringSz(const Common::String &s, uint sz);
@@ -117,7 +117,7 @@ public:
 	int32 size() const override { return _s.size(); }
 	bool seek(int32 offset, int whence = SEEK_SET) override { return _s.seek(offset, whence); }
 
-	int readInt();
+	int32 readInt();
 	float readFloat();
 	bool readBool();
 	Common::String readStringSz(uint sz);
