@@ -103,7 +103,7 @@ bool WindowsTextToSpeechManager::say(Common::String str) {
 	_audio->SetState(SPAS_STOP, 0);
 	_audio->SetState(SPAS_RUN, 0);
 	// We have to set the pitch by prepending xml code at the start of the said string;
-	Common::String pitch= Common::String::format("<pitch absmiddle=\"%d\">", _ttsState->_pitch);
+	Common::String pitch= Common::String::format("<pitch absmiddle=\"%d\">", _ttsState->_pitch / 10);
 	str.replace((uint32)0, 0, pitch);
 
 	WCHAR *strW = Win32::ansiToUnicode(str.c_str());
@@ -178,14 +178,15 @@ void WindowsTextToSpeechManager::setVoice(unsigned index) {
 void WindowsTextToSpeechManager::setRate(int rate) {
 	if(_speechState == BROKEN || _speechState == NO_VOICE)
 		return;
-	assert(rate >= -10 && rate <= 10);
-	_voice->SetRate(rate);
+	assert(rate >= -100 && rate <= 100);
+	_voice->SetRate(rate / 10);
 	_ttsState->_rate = rate;
 }
 
 void WindowsTextToSpeechManager::setPitch(int pitch) {
 	if(_speechState == BROKEN || _speechState == NO_VOICE)
 		return;
+	assert(pitch >= -100 && pitch <= 100);
 	_ttsState->_pitch = pitch;
 }
 
