@@ -41,6 +41,9 @@ Map::Map() {
 }
 
 Map::~Map() {
+	free(_mapExplosions);
+	free(_mapExpBarrels);
+	free(_mapLaserBeams);
 }
 
 void Map::save(Common::OutSaveFile *out) {

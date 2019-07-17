@@ -45,6 +45,8 @@ Gfx::~Gfx() {
 	for (uint i = 0; i < _gfxCache->size(); i++)
 		delete _gfxCache->operator[](i);
 	delete _gfxCache;
+	for (uint i = 0; i < _charInfoBlocks.size(); i++)
+		delete _charInfoBlocks[i];
 	delete _sines;
 	delete _cosines;
 	for (int i = 0; i < _fontHeader.numChars; i++)
