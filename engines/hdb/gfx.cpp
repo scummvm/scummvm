@@ -34,8 +34,11 @@ Gfx::Gfx() {
 	_cosines = new Common::CosineTable(360);
 	_systemInit = false;
 
+	_numTiles = 0;
+
 	memset(&_fadeInfo, 0, sizeof(_fadeInfo));
 	memset(&_snowInfo, 0, sizeof(_snowInfo));
+	memset(&_skyTiles, 0, sizeof(_skyTiles));
 }
 
 Gfx::~Gfx() {
@@ -574,7 +577,7 @@ int Gfx::isSky(int index) {
 	}
 
 	for (int i = 0; i < kMaxSkies; i++) {
-		if(_skyTiles[i] == index) {
+		if (_skyTiles[i] == index) {
 			return i + 1; // The skyTiles are indexed from 1. 0 => No Sky tile
 		}
 	}

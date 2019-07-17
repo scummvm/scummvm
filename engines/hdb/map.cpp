@@ -1169,7 +1169,7 @@ bool Map::checkXYOnScreen(int x, int y) {
 }
 
 bool Map::checkOneTileExistInRange(int tileIndex, int count) {
-	for (int i = 0; i < _width*_height; i++) {
+	for (int i = 0; i < _width * _height; i++) {
 		if (_background[i] >= tileIndex && _background[i] < tileIndex + count)
 			return true;
 		if (_foreground[i] >= tileIndex && _foreground[i] < tileIndex + count)
