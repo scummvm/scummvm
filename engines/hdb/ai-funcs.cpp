@@ -1883,7 +1883,7 @@ void AI::moveEnts() {
 			if (!e->stunnedWait)
 				e->aiAction(e);
 			else {
-				if (e->stunnedWait < g_hdb->getTimeSlice())
+				if (e->stunnedWait < (int32)g_hdb->getTimeSlice())
 					e->stunnedWait = 0;
 			}
 		}
