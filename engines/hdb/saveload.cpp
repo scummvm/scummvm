@@ -32,7 +32,7 @@ Common::Error HDBGame::saveGameState(int slot, const Common::String &desc) {
 
 	Common::OutSaveFile *out;
 
-	Common::String saveFileName = Common::String::format("%s.%03d", _targetName.c_str(), slot);
+	Common::String saveFileName = genSaveFileName(slot, false);
 	if (!(out = _saveFileMan->openForSaving(saveFileName)))
 		error("Unable to open save file");
 
@@ -45,7 +45,7 @@ Common::Error HDBGame::saveGameState(int slot, const Common::String &desc) {
 
 	// Actual Save Data
 	saveGame(out);
-	_lua->save(out, _targetName.c_str(), slot);
+	_lua->save(out, slot);
 
 	out->finalize();
 	if (out->err())
@@ -59,7 +59,7 @@ Common::Error HDBGame::saveGameState(int slot, const Common::String &desc) {
 Common::Error HDBGame::loadGameState(int slot) {
 	Common::InSaveFile *in;
 
-	Common::String saveFileName = Common::String::format("%s.%03d", _targetName.c_str(), slot);
+	Common::String saveFileName = genSaveFileName(slot, false);
 	if (!(in = _saveFileMan->openForLoading(saveFileName))) {
 		warning("missing savegame file %s", saveFileName.c_str());
 		if (g_hdb->_map->isLoaded())
@@ -76,7 +76,7 @@ Common::Error HDBGame::loadGameState(int slot) {
 
 	_lua->loadLua(_currentLuaName); // load the Lua code FIRST! (if no file, it's ok)
 
-	saveFileName = Common::String::format("%s.l.%03d", _targetName.c_str(), slot);
+	saveFileName = genSaveFileName(slot, true);
 	_lua->loadSaveFile(in, saveFileName.c_str());
 
 	delete in;
@@ -338,6 +338,13 @@ void AIEntity::load(Common::InSaveFile *in) {
 	aiInit2 = init2;
 	aiUse = use;
 	aiDraw = drawf;
+}
+
+Common::String HDBGame::genSaveFileName(uint slot, bool lua) {
+	if (!lua)
+		return Common::String::format("%s.%03d", _targetName.c_str(), slot);
+
+	return Common::String::format("%s.l.%03d", _targetName.c_str(), slot);
 }
 
 

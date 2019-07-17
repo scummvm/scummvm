@@ -154,7 +154,7 @@ void LuaScript::purgeGlobals() {
 	_globals.clear();
 }
 
-void LuaScript::save(Common::OutSaveFile *out, const char *targetName, int slot) {
+void LuaScript::save(Common::OutSaveFile *out, int slot) {
 	out->writeUint32LE(_globals.size());
 
 	// Save Globals
@@ -165,7 +165,7 @@ void LuaScript::save(Common::OutSaveFile *out, const char *targetName, int slot)
 		out->write(_globals[i]->string, 32);
 	}
 
-	Common::String saveLuaName = Common::String::format("%s.l.%03d", targetName, slot);
+	Common::String saveLuaName = g_hdb->genSaveFileName(slot, true);
 	lua_printstack(_state);
 	lua_getglobal(_state, "SaveState");
 
