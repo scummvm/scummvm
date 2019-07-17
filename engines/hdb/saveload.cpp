@@ -30,6 +30,21 @@ Common::Error HDBGame::saveGameState(int slot, const Common::String &desc) {
 	if (!g_hdb->_map->isLoaded())
 		return Common::kCreatingFileFailed;
 
+	// If it is autosave, push down all saves
+	if (slot == 0) {
+		Common::String nameFrom;
+		Common::String nameTo;
+		for (int i = kNumSaveSlots - 2; i >= 0; i--) {
+			nameFrom = genSaveFileName(i, false);
+			nameTo = genSaveFileName(i + 1, false);
+			_saveFileMan->renameSavefile(nameFrom, nameTo);
+
+			nameFrom = genSaveFileName(i, true);
+			nameTo = genSaveFileName(i + 1, true);
+			_saveFileMan->renameSavefile(nameFrom, nameTo);
+		}
+	}
+
 	Common::OutSaveFile *out;
 
 	Common::String saveFileName = genSaveFileName(slot, false);
