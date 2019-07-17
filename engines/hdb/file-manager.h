@@ -64,6 +64,7 @@ private:
 public:
 
 	FileMan();
+	~FileMan();
 
 	struct {
 		uint32 id;

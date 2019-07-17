@@ -31,6 +31,10 @@ FileMan::FileMan() {
 	_mpcFile = new Common::File;
 }
 
+FileMan::~FileMan() {
+	delete _mpcFile;
+}
+
 bool FileMan::openMPC(const Common::String &filename) {
 	uint32 offset;
 
