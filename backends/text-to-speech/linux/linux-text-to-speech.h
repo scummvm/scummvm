@@ -63,6 +63,8 @@ public:
 
 	virtual void setLanguage(Common::String language);
 
+	virtual bool popState();
+
 	void updateState(SpeechState state);
 
 private:

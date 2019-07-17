@@ -2161,6 +2161,7 @@ void GlobalOptionsDialog::apply() {
 			guiLang.setChar('\0', 2);
 			ttsMan->setLanguage(guiLang);
 		}
+		_ttsVoiceSelectionPopUp->setSelectedTag(0);
 	}
 	int volume = (ConfMan.getInt("speech_volume", "scummvm") * 100) / 256;
 	if (ConfMan.hasKey("mute", "scummvm") && ConfMan.getBool("mute", "scummvm"))

@@ -77,7 +77,7 @@ public:
 	uint32 getSelectedTag() const				{ return (_selectedItem >= 0) ? _entries[_selectedItem].tag : (uint32)-1; }
 //	const String& getSelectedString() const		{ return (_selectedItem >= 0) ? _entries[_selectedItem].name : String::emptyString; }
 
-	void handleMouseEntered(int button)	{ read(_entries[_selectedItem].name); setFlags(WIDGET_HILITED); markAsDirty(); }
+	void handleMouseEntered(int button)	{ if (_selectedItem != -1) read(_entries[_selectedItem].name); setFlags(WIDGET_HILITED); markAsDirty(); }
 	void handleMouseLeft(int button)	{ clearFlags(WIDGET_HILITED); markAsDirty(); }
 
 	virtual void reflowLayout();
