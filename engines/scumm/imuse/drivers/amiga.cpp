@@ -66,7 +66,7 @@ public:
 	void updateLevel();
 	void updateEnvelope();
 
-	uint8 note() const { return _note; }
+	uint8 getNote() const { return _note; }
 	SoundChannel_Amiga *next() const { return _next; }
 
 private:
@@ -504,7 +504,7 @@ void IMusePart_Amiga::send(uint32 b) {
 
 void IMusePart_Amiga::noteOff(byte note) {
 	for (SoundChannel_Amiga *cur = _out; cur; cur = cur->next()) {
-		if (note == cur->note()) {
+		if (note == cur->getNote()) {
 			if (_sustain)
 				cur->ctrl_sustain(true);
 			else
