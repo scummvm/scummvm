@@ -81,7 +81,7 @@ void ItemPickup::tick() {
 	// unsigned difference is intentional
 	uint32 timeDiff = timeNow - _timeLast;
 	_timeLast = timeNow;
-	timeDiff = MIN(MIN(timeDiff, 67u), _timeLeft);
+	timeDiff = MIN(MIN<uint32>(timeDiff, 67u), _timeLeft);
 	_timeLeft = (_timeLeft < timeDiff) ? 0 : (_timeLeft - timeDiff);
 
 	if (_timeLeft >= 2000u) {

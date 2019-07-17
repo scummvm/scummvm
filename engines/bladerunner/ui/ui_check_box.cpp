@@ -67,9 +67,9 @@ void UICheckBox::draw(Graphics::Surface &surface) {
 			_timeLast = timeNow;
 
 			if (_isChecked) {
-				_frame = MIN(_frame + frameDelta, 5u);
+				_frame = MIN<uint32>(_frame + frameDelta, 5u);
 			} else {
-				_frame = (_frame < frameDelta) ? 0 : MAX(_frame - frameDelta, 0u);
+				_frame = (_frame < frameDelta) ? 0 : MAX<uint32>(_frame - frameDelta, 0u);
 			}
 		}
 
