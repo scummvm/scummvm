@@ -998,8 +998,8 @@ void Gfx::drawBonusStars() {
 	// timed out?
 	if (_starsInfo.totalTime < g_hdb->getTimeSlice()) {
 		_starsInfo.active = false;
-		_starsInfo.gfx[0]->free();
-		_starsInfo.gfx[1]->free();
+		delete _starsInfo.gfx[0];
+		delete _starsInfo.gfx[1];
 		_starsInfo.gfx[0] = _starsInfo.gfx[1] = 0;
 	}
 }
@@ -1088,10 +1088,6 @@ int Picture::drawMasked(int x, int y, int alpha) {
 	return 0;
 }
 
-void Picture::free() {
-	_surface.free();
-}
-
 Tile::Tile() : _flags(0), _name("") {
 	_surface.create(32, 32, g_hdb->_format);
 }
@@ -1144,10 +1140,6 @@ int Tile::drawMasked(int x, int y, int alpha) {
 		return 1;
 	}
 	return 0;
-}
-
-void Tile::free() {
-	_surface.free();
 }
 
 }

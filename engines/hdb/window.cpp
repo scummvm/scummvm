@@ -24,6 +24,53 @@
 
 namespace HDB {
 
+Window::~Window() {
+	delete _gfxTL;
+	delete _gfxTM;
+	delete _gfxTR;
+
+	delete _gfxL;
+	delete _gfxM;
+	delete _gfxR;
+
+	delete _gfxBL;
+	delete _gfxBM;
+	delete _gfxBR;
+
+	delete _gfxTitleL;
+	delete _gfxTitleM;
+	delete _gfxTitleR;
+
+	delete _gGfxTL;
+	delete _gGfxTM;
+	delete _gGfxTR;
+
+	delete _gGfxL;
+	delete _gGfxM;
+	delete _gGfxR;
+
+	delete _gGfxBL;
+	delete _gGfxBM;
+	delete _gGfxBR;
+
+	delete _gGfxTitleL;
+	delete _gGfxTitleM;
+	delete _gGfxTitleR;
+
+	delete _gfxIndent;
+	delete _gfxArrowTo;
+
+	delete _gfxInvSelect;
+	delete _gfxHandright;
+
+	delete _gfxInfobar;
+	delete _gfxDarken;
+	delete _gfxPausePlaque;
+	delete _mstoneGfx;
+
+	delete _gemGfx;
+}
+
 bool Window::init() {
 
 	_gfxTL = g_hdb->_gfx->loadPic(MENU_BACK_TOPLEFT);
@@ -1236,9 +1283,9 @@ void Window::drawTryAgain() {
 }
 
 void Window::clearTryAgain() {
-	_gfxTry->free();
-	_gfxAgain->free();
-	_gfxLevelRestart->free();
+	delete _gfxTry;
+	delete _gfxAgain;
+	delete _gfxLevelRestart;
 
 	_gfxTry = _gfxAgain = _gfxLevelRestart = NULL;
 }

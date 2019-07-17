@@ -152,6 +152,8 @@ struct Star {
 class Menu {
 public:
 
+	~Menu();
+
 	bool init();
 
 	void readConfig();

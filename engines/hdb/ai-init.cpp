@@ -1155,7 +1155,7 @@ void AI::restartSystem() {
 	memset(_clubRightGfx, 0, sizeof(_clubRightGfx));
 
 	if (_weaponSelGfx)
-		_weaponSelGfx->free();
+		delete _weaponSelGfx;
 
 	_playerDead = false;
 	_playerInvisible = false;
@@ -1171,73 +1171,73 @@ void AI::restartSystem() {
 
 	int i;
 	if (_icepSnowballGfxDown) {
-		_icepSnowballGfxDown->free();
+		delete _icepSnowballGfxDown;
 		_icepSnowballGfxDown = NULL;
 	}
 	if (_icepSnowballGfxLeft) {
-		_icepSnowballGfxLeft->free();
+		delete _icepSnowballGfxLeft;
 		_icepSnowballGfxLeft = NULL;
 	}
 	if (_icepSnowballGfxRight) {
-		_icepSnowballGfxRight->free();
+		delete _icepSnowballGfxRight;
 		_icepSnowballGfxRight = NULL;
 	}
 
 	if (_tileFroglickMiddleUD) {
-		_tileFroglickMiddleUD->free();
+		delete _tileFroglickMiddleUD;
 		_tileFroglickMiddleUD = NULL;
 	}
 	if (_tileFroglickWiggleUD[0]) {
 		for (i = 0; i < 3; i++) {
-			_tileFroglickWiggleUD[i]->free();
+			delete _tileFroglickWiggleUD[i];
 			_tileFroglickWiggleUD[i] = NULL;
 		}
 	}
 
 	if (_tileFroglickMiddleLR) {
-		_tileFroglickMiddleLR->free();
+		delete _tileFroglickMiddleLR;
 		_tileFroglickMiddleLR = NULL;
 	}
 	if (_tileFroglickWiggleLeft[0]) {
 		for (i = 0; i < 3; i++) {
-			_tileFroglickWiggleLeft[i]->free();
+			delete _tileFroglickWiggleLeft[i];
 			_tileFroglickWiggleLeft[i] = NULL;
 		}
 	}
 	if (_tileFroglickWiggleRight[0]) {
 		for (i = 0; i < 3; i++) {
-			_tileFroglickWiggleRight[i]->free();
+			delete _tileFroglickWiggleRight[i];
 			_tileFroglickWiggleRight[i] = NULL;
 		}
 	}
 
 	// dragon!  see ya!
 	if (_gfxDragonAsleep) {
-		_gfxDragonAsleep->free();
+		delete _gfxDragonAsleep;
 		_gfxDragonAsleep = NULL;
-		_gfxDragonFlap[0]->free();
-		_gfxDragonFlap[1]->free();
+		delete _gfxDragonFlap[0];
+		delete _gfxDragonFlap[1];
 		_gfxDragonFlap[0] = _gfxDragonFlap[1] = NULL;
-		_gfxDragonBreathe[0]->free();
-		_gfxDragonBreathe[1]->free();
-		_gfxDragonBreathe[2]->free();
+		delete _gfxDragonBreathe[0];
+		delete _gfxDragonBreathe[1];
+		delete _gfxDragonBreathe[2];
 		_gfxDragonBreathe[0] = _gfxDragonBreathe[1] =
 			_gfxDragonBreathe[2] = NULL;
 	}
 
 	// PANIC ZONE gfx - see ya!
 	if (g_hdb->_window->_pzInfo.gfxPanic) {
-		g_hdb->_window->_pzInfo.gfxPanic->free();
+		delete g_hdb->_window->_pzInfo.gfxPanic;
 		g_hdb->_window->_pzInfo.gfxPanic = NULL;
-		g_hdb->_window->_pzInfo.gfxZone->free();
+		delete g_hdb->_window->_pzInfo.gfxZone;
 		g_hdb->_window->_pzInfo.gfxZone = NULL;
-		g_hdb->_window->_pzInfo.gfxFace[0]->free();
+		delete g_hdb->_window->_pzInfo.gfxFace[0];
 		g_hdb->_window->_pzInfo.gfxFace[0] = NULL;
-		g_hdb->_window->_pzInfo.gfxFace[1]->free();
+		delete g_hdb->_window->_pzInfo.gfxFace[1];
 		g_hdb->_window->_pzInfo.gfxFace[1] = NULL;
 
 		for (i = 0; i < 10; i++) {
-			g_hdb->_window->_pzInfo.gfxNumber[i]->free();
+			delete g_hdb->_window->_pzInfo.gfxNumber[i];
 			g_hdb->_window->_pzInfo.gfxNumber[i] = NULL;
 		}
 	}
@@ -1246,12 +1246,12 @@ void AI::restartSystem() {
 	// laser beams
 	if (_gfxLaserbeamUD[0]) {
 		for (i = 0; i < 4; i++) {
-			_gfxLaserbeamUD[i]->free();
-			_gfxLaserbeamUDTop[i]->free();
-			_gfxLaserbeamUDBottom[i]->free();
-			_gfxLaserbeamLR[i]->free();
-			_gfxLaserbeamLRLeft[i]->free();
-			_gfxLaserbeamLRRight[i]->free();
+			delete _gfxLaserbeamUD[i];
+			delete _gfxLaserbeamUDTop[i];
+			delete _gfxLaserbeamUDBottom[i];
+			delete _gfxLaserbeamLR[i];
+			delete _gfxLaserbeamLRLeft[i];
+			delete _gfxLaserbeamLRRight[i];
 
 			_gfxLaserbeamUD[i] = NULL;
 			_gfxLaserbeamUDTop[i] = NULL;
