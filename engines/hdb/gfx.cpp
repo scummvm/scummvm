@@ -58,6 +58,10 @@ Gfx::~Gfx() {
 	for (int i = 0; i < _fontHeader.numChars; i++)
 		_fontSurfaces[i].free();
 	_globalSurface.free();
+	for (int i = 0; i < _numTiles; i++) {
+		delete _tLookupArray[i].tData;
+		_tLookupArray[i].tData = NULL;
+	}
 	delete[] _tLookupArray;
 	for (int i = 0; i < 8; i++)
 		delete _mousePointer[i];
@@ -459,7 +463,7 @@ void Gfx::emptyGfxCaches() {
 
 void Gfx::cacheTileSequence(int tileIndex, int count) {
 	for (int i = tileIndex; i < tileIndex + count; i++)
-		g_hdb->_ai->_animTiles.push_back(getTile(i));
+		getTile(i);
 }
 
 int Gfx::getTileIndex(const char *name) {
