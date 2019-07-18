@@ -360,5 +360,9 @@ bool WindowsTextToSpeechManager::popState() {
 	setVoice(_ttsState->_activeVoice);
 	return false;
 }
+void WindowsTextToSpeechManager::freeVoiceData(void *data) {
+	ISpObjectToken *voiceToken = (ISpObjectToken *) data;
+	voiceToken->Release();
+}
 
 #endif

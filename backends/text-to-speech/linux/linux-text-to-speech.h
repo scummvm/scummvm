@@ -67,6 +67,8 @@ public:
 
 	void updateState(SpeechState state);
 
+	virtual void freeVoiceData(void *data);
+
 private:
 	void init();
 	virtual void updateVoices();
