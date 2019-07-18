@@ -109,5 +109,22 @@ void TextToSpeechManager::pushState() {
 	updateVoices();
 }
 
+bool TextToSpeechManager::popState() {
+	if (_ttsState->_next == nullptr)
+		return true;
+
+	Common::TTSState *oldState = _ttsState;
+	_ttsState = _ttsState->_next;
+
+	delete oldState;
+
+	setLanguage(_ttsState->_language);
+	setPitch(_ttsState->_pitch);
+	setVolume(_ttsState->_volume);
+	setRate(_ttsState->_rate);
+	setVoice(_ttsState->_activeVoice);
+	return false;
+}
+
 }
 #endif

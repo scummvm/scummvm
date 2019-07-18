@@ -347,27 +347,6 @@ void WindowsTextToSpeechManager::updateVoices() {
 		_speechState = READY;
 }
 
-bool WindowsTextToSpeechManager::popState() {
-	if (_ttsState->_next == nullptr)
-		return true;
-
-	for (Common::TTSVoice *i = _ttsState->_availaibleVoices.begin(); i < _ttsState->_availaibleVoices.end(); i++) {
-		ISpObjectToken *voiceToken = (ISpObjectToken *) i->getData();
-		voiceToken->Release();
-	}
-
-	Common::TTSState *oldState = _ttsState;
-	_ttsState = _ttsState->_next;
-
-	delete oldState;
-
-	setLanguage(_ttsState->_language);
-	setPitch(_ttsState->_pitch);
-	setVolume(_ttsState->_volume);
-	setRate(_ttsState->_rate);
-	setVoice(_ttsState->_activeVoice);
-	return false;
-}
 void WindowsTextToSpeechManager::freeVoiceData(void *data) {
 	ISpObjectToken *voiceToken = (ISpObjectToken *) data;
 	voiceToken->Release();

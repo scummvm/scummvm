@@ -259,7 +259,7 @@ public:
 	/**
 	 * Pops the TTS state
 	 */
-	virtual bool popState() { return true; }
+	bool popState();
 
 	virtual void freeVoiceData(void *data) {}
 
