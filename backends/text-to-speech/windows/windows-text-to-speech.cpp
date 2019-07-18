@@ -49,7 +49,6 @@ ISpAudio *_audio;
 
 WindowsTextToSpeechManager::WindowsTextToSpeechManager()
 	: _speechState(BROKEN){
-		ConfMan.setInt("tts_voice", 0);
 	init();
 }
 
