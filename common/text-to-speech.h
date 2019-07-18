@@ -52,16 +52,15 @@ class TTSVoice {
 		};
 
 	public:
-		TTSVoice()
-			: _gender(UNKNOWN_GENDER)
-			, _age(UNKNOWN_AGE)
-			, _data(nullptr)
-			, _description("") {}
-		TTSVoice(Gender gender, Age age, void *data, String description) 
-			: _gender(gender)
-			, _age(age)
-			, _data(data)
-			, _description(description) {}
+		TTSVoice();
+
+		TTSVoice(Gender gender, Age age, void *data, String description) ;
+
+		TTSVoice(const TTSVoice& voice);
+
+		~TTSVoice();
+
+		TTSVoice& operator=(const TTSVoice& voice);
 
 		/**
 		 * Returns the gender of the used voice.
@@ -120,6 +119,7 @@ class TTSVoice {
 		Age _age;
 		void *_data;
 		String _description;
+		int *_refCount;
 };
 
 struct TTSState {
@@ -260,6 +260,8 @@ public:
 	 * Pops the TTS state
 	 */
 	virtual bool popState() { return true; }
+
+	virtual void freeVoiceData(void *data) {}
 
 protected:
 	TTSState *_ttsState;

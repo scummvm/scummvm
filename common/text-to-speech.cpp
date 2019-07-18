@@ -22,9 +22,62 @@
 
 
 #include "common/text-to-speech.h"
+#include "common/system.h"
 #if defined(USE_TTS)
 
 namespace Common {
+
+TTSVoice::TTSVoice()
+	: _gender(UNKNOWN_GENDER)
+	, _age(UNKNOWN_AGE)
+	, _data(nullptr)
+	, _description("") {
+	_refCount = new int;
+	*_refCount = 1;
+}
+
+TTSVoice::TTSVoice(Gender gender, Age age, void *data, String description) 
+	: _gender(gender)
+	, _age(age)
+	, _data(data)
+	, _description(description) {
+	_refCount = new int;
+	*_refCount = 1;
+}
+
+TTSVoice::TTSVoice(const TTSVoice& voice)
+	: _gender(voice._gender)
+	, _age(voice._age)
+	, _data(voice._data)
+	, _refCount(voice._refCount)
+	, _description(voice._description) {
+	if (_data)
+		(*_refCount)++;
+}
+
+TTSVoice::~TTSVoice() {
+	// _data is a platform specific field and so it the
+	// way it is freed differs from platform to platform
+	if (--(*_refCount) == 0) {
+		if (_data)
+			g_system->getTextToSpeechManager()->freeVoiceData(_data);
+		delete _refCount;
+	}
+}
+
+TTSVoice& TTSVoice::operator=(const TTSVoice& voice) {
+	if (&voice != this) {
+		_gender = voice._gender;
+		_data = voice._data;
+		_age = voice._age;
+		_refCount = voice._refCount;
+		if (_data)
+			(*_refCount)++;
+		_description = voice._description;
+	}
+	return *this;
+}
+
 TextToSpeechManager::TextToSpeechManager() {
 	_ttsState = new TTSState;
 	_ttsState->_pitch = 0;
@@ -39,9 +92,6 @@ TextToSpeechManager::~TextToSpeechManager() {
 	TTSState *tmp = _ttsState;
 	while (tmp != nullptr) {
 		tmp = _ttsState->_next;
-		for (TTSVoice *i = _ttsState->_availaibleVoices.begin(); i < _ttsState->_availaibleVoices.end(); i++) {
-			free(i->_data);
-		}
 		delete _ttsState;
 		_ttsState = tmp;
 	}

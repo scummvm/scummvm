@@ -206,7 +206,8 @@ void LinuxTextToSpeechManager::setLanguage(Common::String language) {
 void LinuxTextToSpeechManager::createVoice(int typeNumber, Common::TTSVoice::Gender gender, Common::TTSVoice::Age age, char *description) {
 	SPDVoiceType *type = (SPDVoiceType *) malloc(sizeof(SPDVoiceType));
 	*type = static_cast<SPDVoiceType>(typeNumber);
-	_ttsState->_availaibleVoices.push_back(Common::TTSVoice(gender, age, (void *) type, description));
+	Common::TTSVoice voice(gender, age, (void *) type, description);
+	_ttsState->_availaibleVoices.push_back(voice);
 }
 
 void LinuxTextToSpeechManager::updateVoices() {
@@ -238,10 +239,6 @@ bool LinuxTextToSpeechManager::popState() {
 	if (_ttsState->_next == nullptr)
 		return true;
 
-	for (Common::TTSVoice *i = _ttsState->_availaibleVoices.begin(); i < _ttsState->_availaibleVoices.end(); i++) {
-		free(i->getData());
-	}
-
 	Common::TTSState *oldState = _ttsState;
 	_ttsState = _ttsState->_next;
 
@@ -252,6 +249,10 @@ bool LinuxTextToSpeechManager::popState() {
 	setVolume(_ttsState->_volume);
 	setRate(_ttsState->_rate);
 	return false;
+}
+
+void LinuxTextToSpeechManager::freeVoiceData(void *data) {
+	free(data);
 }
 
 

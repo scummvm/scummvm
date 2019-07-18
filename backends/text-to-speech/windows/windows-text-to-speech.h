@@ -66,6 +66,8 @@ public:
 
 	virtual bool popState();
 
+	virtual void freeVoiceData(void *data);
+
 private:
 	void init();
 	virtual void updateVoices();
