@@ -25,26 +25,7 @@
 
 namespace HDB {
 
-Menu::~Menu() {
-	freeMenu();
-
-	delete _gCheckEmpty;
-	delete _gCheckOff;
-	delete _gCheckOn;
-	delete _gCheckLeft;
-	delete _gCheckRight;
-
-	delete _contArrowUp;
-	delete _contArrowDown;
-	delete _contArrowLeft;
-	delete _contArrowRight;
-	delete _contAssign;
-
-	delete _warpPlaque;
-	delete _hdbLogoScreen;
-}
-
-bool Menu::init() {
+Menu::Menu() {
 	_starWarp = 0;
 	_rocketEx = 0;
 	_titleActive = false;
@@ -70,6 +51,87 @@ bool Menu::init() {
 	_keyAssignRight = Common::KEYCODE_RIGHT;
 	_keyAssignUse = Common::KEYCODE_RETURN;
 
+	_gCheckEmpty = NULL;
+	_gCheckOff = NULL;
+	_gCheckOn = NULL;
+	_gCheckLeft = NULL;
+	_gCheckRight = NULL;
+
+	_contArrowUp = NULL;
+	_contArrowDown = NULL;
+	_contArrowLeft = NULL;
+	_contArrowRight = NULL;
+	_contAssign = NULL;
+
+	_waitingForKey = false;
+	_warpPlaque = NULL;
+	_hdbLogoScreen = NULL;
+
+	_titleScreen = NULL;
+	_oohOohGfx = NULL;
+	_newGfx = NULL;
+	_loadGfx = NULL;
+	_optionsGfx = NULL;
+	_quitGfx = NULL;
+	_resumeGfx = NULL;
+	_slotGfx = NULL;
+	_rocketMain = NULL;
+	_rocketSecond = NULL;
+	_rocketEx1 = NULL;
+	_rocketEx2 = NULL;
+	_titleLogo = NULL;
+	_hdbLogoScreen = NULL;
+	for (int i = 0; i < kNebulaCount; i++)
+		_nebulaGfx[i] = NULL;
+
+	_sliderLeft = NULL;
+	_sliderMid = NULL;
+	_sliderRight = NULL;
+	_sliderKnob = NULL;
+	_modePuzzleGfx = NULL;
+	_modeActionGfx = NULL;
+	_modeLoadGfx = NULL;
+	_modeSaveGfx = NULL;
+	_menuBackoutGfx = NULL;
+	_menuBackspaceGfx = NULL;
+
+	_controlButtonGfx = NULL;
+
+	_controlsGfx = NULL;
+
+	_vortexian[0] = _vortexian[1] = _vortexian[2] = NULL;
+
+	_star[0] = _star[1] = _star[2] = NULL;
+
+	// secret stars
+	_starRedGfx[0] = _starRedGfx[1] = NULL;
+	_starGreenGfx[0] = _starGreenGfx[1] = NULL;
+	_starBlueGfx[0] = _starBlueGfx[1] = NULL;
+
+	_versionGfx = NULL;
+	_warpGfx = NULL;
+}
+
+Menu::~Menu() {
+	freeMenu();
+
+	delete _gCheckEmpty;
+	delete _gCheckOff;
+	delete _gCheckOn;
+	delete _gCheckLeft;
+	delete _gCheckRight;
+
+	delete _contArrowUp;
+	delete _contArrowDown;
+	delete _contArrowLeft;
+	delete _contArrowRight;
+	delete _contAssign;
+
+	delete _warpPlaque;
+	delete _hdbLogoScreen;
+}
+
+bool Menu::init() {
 	_gCheckEmpty = g_hdb->_gfx->loadPic(G_CHECK_EMPTY);
 	_gCheckOff = g_hdb->_gfx->loadPic(G_CHECK_OFF);
 	_gCheckOn = g_hdb->_gfx->loadPic(G_CHECK_ON);
@@ -82,7 +144,6 @@ bool Menu::init() {
 	_contArrowRight = g_hdb->_gfx->loadPic(CTRL_ARROWRIGHT);
 	_contAssign = g_hdb->_gfx->loadPic(CTRL_ASSIGN);
 
-	_waitingForKey = false;
 	_warpPlaque = g_hdb->_gfx->loadPic(WARP_PLAQUE);
 	_hdbLogoScreen = g_hdb->_gfx->loadPic(TITLESCREEN);
 
