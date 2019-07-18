@@ -42,8 +42,8 @@ namespace Dropbox {
 
 DropboxStorage::DropboxStorage(Common::String accessToken, bool unused): BaseStorage(accessToken, "") {}
 
-DropboxStorage::DropboxStorage(Common::String code): BaseStorage() {
-	getAccessToken(code);
+DropboxStorage::DropboxStorage(Common::String code, Networking::ErrorCallback cb): BaseStorage() {
+	getAccessToken(code, cb);
 }
 
 DropboxStorage::~DropboxStorage() {}
@@ -110,6 +110,10 @@ DropboxStorage *DropboxStorage::loadFromConfig(Common::String keyPrefix) {
 
 	Common::String accessToken = ConfMan.get(keyPrefix + "access_token", ConfMan.kCloudDomain);
 	return new DropboxStorage(accessToken, true);
+}
+
+void DropboxStorage::removeFromConfig(Common::String keyPrefix) {
+	ConfMan.removeKey(keyPrefix + "access_token", ConfMan.kCloudDomain);
 }
 
 } // End of namespace Dropbox

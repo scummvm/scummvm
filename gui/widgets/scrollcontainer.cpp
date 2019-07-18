@@ -74,6 +74,7 @@ void ScrollContainerWidget::recalc() {
 	h = max - min;
 
 	if (h <= _limitH) _scrolledY = 0;
+	if (_scrolledY > h - _limitH) _scrolledY = 0;
 
 	_verticalScroll->_numEntries = h;
 	_verticalScroll->_currentPos = _scrolledY;

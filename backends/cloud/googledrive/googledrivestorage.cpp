@@ -46,8 +46,8 @@ namespace GoogleDrive {
 GoogleDriveStorage::GoogleDriveStorage(Common::String token, Common::String refreshToken):
 	IdStorage(token, refreshToken) {}
 
-GoogleDriveStorage::GoogleDriveStorage(Common::String code) {
-	getAccessToken(code);
+GoogleDriveStorage::GoogleDriveStorage(Common::String code, Networking::ErrorCallback cb) {
+	getAccessToken(code, cb);
 }
 
 GoogleDriveStorage::~GoogleDriveStorage() {}
@@ -229,6 +229,11 @@ GoogleDriveStorage *GoogleDriveStorage::loadFromConfig(Common::String keyPrefix)
 	Common::String accessToken = ConfMan.get(keyPrefix + "access_token", ConfMan.kCloudDomain);
 	Common::String refreshToken = ConfMan.get(keyPrefix + "refresh_token", ConfMan.kCloudDomain);
 	return new GoogleDriveStorage(accessToken, refreshToken);
+}
+
+void GoogleDriveStorage::removeFromConfig(Common::String keyPrefix) {
+	ConfMan.removeKey(keyPrefix + "access_token", ConfMan.kCloudDomain);
+	ConfMan.removeKey(keyPrefix + "refresh_token", ConfMan.kCloudDomain);
 }
 
 Common::String GoogleDriveStorage::getRootDirectoryId() {

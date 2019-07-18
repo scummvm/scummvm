@@ -55,7 +55,7 @@ protected:
 
 public:
 	/** This constructor uses OAuth code flow to get tokens. */
-	OneDriveStorage(Common::String code);
+	OneDriveStorage(Common::String code, Networking::ErrorCallback cb);
 	virtual ~OneDriveStorage();
 
 	/**
@@ -102,6 +102,11 @@ public:
 	 * @return pointer to the newly created OneDriveStorage or 0 if some problem occured.
 	 */
 	static OneDriveStorage *loadFromConfig(Common::String keyPrefix);
+
+	/**
+	 * Remove all OneDriveStorage-related data from config.
+	 */
+	static void removeFromConfig(Common::String keyPrefix);
 
 	Common::String accessToken() const { return _token; }
 };

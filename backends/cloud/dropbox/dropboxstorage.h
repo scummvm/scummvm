@@ -51,7 +51,7 @@ protected:
 
 public:
 	/** This constructor uses OAuth code flow to get tokens. */
-	DropboxStorage(Common::String code);
+	DropboxStorage(Common::String code, Networking::ErrorCallback cb);
 	virtual ~DropboxStorage();
 
 	/**
@@ -98,6 +98,11 @@ public:
 	 * @return pointer to the newly created DropboxStorage or 0 if some problem occured.
 	 */
 	static DropboxStorage *loadFromConfig(Common::String keyPrefix);
+
+	/**
+	 * Remove all DropboxStorage-related data from config.
+	 */
+	static void removeFromConfig(Common::String keyPrefix);
 };
 
 } // End of namespace Dropbox
