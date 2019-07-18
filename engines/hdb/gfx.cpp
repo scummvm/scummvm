@@ -386,6 +386,7 @@ Picture *Gfx::loadPic(const char *picName) {
 	if (!stream)
 		return NULL;
 	pic->load(stream);
+	delete stream;
 	return pic;
 }
 
@@ -395,6 +396,7 @@ Tile *Gfx::loadTile(const char *tileName) {
 	if (!stream)
 		return NULL;
 	tile->load(stream);
+	delete stream;
 	return tile;
 }
 
@@ -404,6 +406,7 @@ Tile *Gfx::loadIcon(const char *tileName) {
 	if (!stream)
 		return NULL;
 	tile->load(stream);
+	delete stream;
 	return tile;
 }
 
@@ -424,6 +427,7 @@ Tile *Gfx::getTile(int index) {
 		Common::SeekableReadStream *stream = g_hdb->_fileMan->findFirstData(_tLookupArray[index].filename, TYPE_TILE32);
 		Tile *tile = new Tile;
 		tile->load(stream);
+		delete stream;
 		_tLookupArray[index].tData = tile;
 	}
 
@@ -455,6 +459,7 @@ Picture *Gfx::getPicture(const char *name) {
 	Common::SeekableReadStream *stream = g_hdb->_fileMan->findFirstData(name, TYPE_PIC);
 	Picture *picture = new Picture;
 	picture->load(stream);
+	delete stream;
 	return picture;
 }
 
@@ -523,6 +528,7 @@ Tile *Gfx::getTileGfx(const char *name, int32 size) {
 
 	Tile *gfxTile = new Tile;
 	gfxTile->load(stream);
+	delete stream;
 
 	gc->tileGfx = gfxTile;
 	if (size == -1)
@@ -562,6 +568,7 @@ Picture *Gfx::getPicGfx(const char *name, int32 size) {
 
 	Picture *gfxPic = new Picture;
 	gfxPic->load(stream);
+	delete stream;
 
 	gc->picGfx = gfxPic;
 	if (size == -1)
@@ -753,6 +760,7 @@ bool Gfx::loadFont(const char *string) {
 
 	// Loading _fontGfx
 	_fontGfx = stream->readUint16LE();
+	delete stream;
 
 	return true;
 }

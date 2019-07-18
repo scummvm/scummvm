@@ -66,6 +66,8 @@ LuaScript::~LuaScript() {
 	if (_state) {
 		lua_close(_state);
 	}
+	if (_globalLuaStream)
+		delete _globalLuaStream;
 }
 
 bool LuaScript::init() {
@@ -92,6 +94,7 @@ bool LuaScript::loadLua(const char *name) {
 	}
 
 	_systemInit = initScript(luaStream, name, luaLength);
+	delete luaStream;
 
 	return true;
 }

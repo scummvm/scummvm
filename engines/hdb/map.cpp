@@ -264,6 +264,7 @@ bool Map::loadMap(char *name) {
 	}
 
 	load(mapStream);
+	delete mapStream;
 
 	return true;
 }

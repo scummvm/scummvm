@@ -128,7 +128,7 @@ Common::SeekableReadStream *FileMan::findFirstData(const char *string, DataType 
 
 	// Load corresponding file into a buffer
 	_mpcFile->seek(file->offset);
-	byte *buffer = new byte[file->ulength];
+	byte *buffer = (byte *)malloc(file->ulength * sizeof(byte));
 
 	_mpcFile->read(buffer, file->ulength);
 
