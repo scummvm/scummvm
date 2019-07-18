@@ -830,6 +830,7 @@ Common::Error HDBGame::run() {
 	Common::SeekableReadStream *titleStream = _fileMan->findFirstData("monkeylogoscreen", TYPE_PIC);
 	if (titleStream == NULL) {
 		debug("The TitleScreen MPC entry can't be found.");
+		delete titleStream;
 		return Common::kReadingFailed;
 	}
 
@@ -840,6 +841,7 @@ Common::Error HDBGame::run() {
 	Common::SeekableReadStream *tileStream = _fileMan->findFirstData("t32_ground1", TYPE_TILE32);
 	if (tileStream == NULL) {
 		debug("The t32_shipwindow_lr MPC entry can't be found.");
+		delete tileStream;
 		return Common::kReadingFailed;
 	}
 

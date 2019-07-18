@@ -383,8 +383,10 @@ void Gfx::turnOnSnow() {
 Picture *Gfx::loadPic(const char *picName) {
 	Picture *pic = new Picture;
 	Common::SeekableReadStream *stream = g_hdb->_fileMan->findFirstData(picName, TYPE_PIC);
-	if (!stream)
+	if (!stream) {
+		delete stream;
 		return NULL;
+	}
 	pic->load(stream);
 	delete stream;
 	return pic;
@@ -393,8 +395,10 @@ Picture *Gfx::loadPic(const char *picName) {
 Tile *Gfx::loadTile(const char *tileName) {
 	Tile *tile = new Tile;
 	Common::SeekableReadStream *stream = g_hdb->_fileMan->findFirstData(tileName, TYPE_TILE32);
-	if (!stream)
+	if (!stream) {
+		delete stream;
 		return NULL;
+	}
 	tile->load(stream);
 	delete stream;
 	return tile;
@@ -403,8 +407,10 @@ Tile *Gfx::loadTile(const char *tileName) {
 Tile *Gfx::loadIcon(const char *tileName) {
 	Tile *tile = new Tile;
 	Common::SeekableReadStream *stream = g_hdb->_fileMan->findFirstData(tileName, TYPE_ICON32);
-	if (!stream)
+	if (!stream) {
+		delete stream;
 		return NULL;
+	}
 	tile->load(stream);
 	delete stream;
 	return tile;
@@ -709,8 +715,10 @@ int Gfx::animateTile(int tileIndex) {
 
 bool Gfx::loadFont(const char *string) {
 	Common::SeekableReadStream *stream = g_hdb->_fileMan->findFirstData(string, TYPE_FONT);
-	if (!stream)
+	if (!stream) {
+		delete stream;
 		return false;
+	}
 
 	// Loading _fontHeader
 	_fontHeader.type = (int)stream->readUint32LE();
