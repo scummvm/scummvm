@@ -418,6 +418,8 @@ void Window::restartSystem() {
 	_dialogChoiceInfo.active = false;
 	_invWinInfo.active = false;
 	_dialogDelay = _invWinInfo.selection = 0;
+	if (_gemGfx)
+		delete _gemGfx;
 	_gemGfx = g_hdb->_gfx->loadTile(GEM_WHITE_GFX);
 	_infobarDimmed = 0;
 }
