@@ -231,6 +231,8 @@ void BigDialogue::sub40B670(int arg) {
 			unk = 0;
 			break;
 		}
+		case 6:
+			return;
 		case 7:
 			if (!unk)
 				return;
