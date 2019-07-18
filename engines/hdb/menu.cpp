@@ -514,7 +514,6 @@ void Menu::drawMenu() {
 			//
 			// Options menu content
 			//
-			static	int		hand_off, hand_yvel = 1;
 
 			drawNebula();
 			_optionsGfx->drawMasked(centerPic(_optionsGfx), _oBannerY);
@@ -836,7 +835,6 @@ bool Menu::startTitle() {
 }
 
 void Menu::drawTitle() {
-	static int	line;
 	static uint32 time;
 
 	//sound.UpdateMusic();
