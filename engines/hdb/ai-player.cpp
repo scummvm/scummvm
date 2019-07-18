@@ -56,25 +56,25 @@ void aiPlayerInit(AIEntity *e) {
 void aiPlayerInit2(AIEntity *e) {
 	if (!g_hdb->_ai->_clubUpGfx[0]) {
 		g_hdb->_ai->_weaponSelGfx = g_hdb->_gfx->loadTile(TILE_WEAPON_EQUIPPED);
-		g_hdb->_ai->_clubUpGfx[0] = g_hdb->_gfx->loadPic(CLUBUP1);
-		g_hdb->_ai->_clubUpGfx[1] = g_hdb->_gfx->loadPic(CLUBUP2);
-		g_hdb->_ai->_clubUpGfx[2] = g_hdb->_gfx->loadPic(CLUBUP3);
-		g_hdb->_ai->_clubUpGfx[3] = g_hdb->_gfx->loadPic(CLUBUP3);
+		g_hdb->_ai->_clubUpGfx[0] = g_hdb->_gfx->getPicGfx(CLUBUP1, -1);
+		g_hdb->_ai->_clubUpGfx[1] = g_hdb->_gfx->getPicGfx(CLUBUP2, -1);
+		g_hdb->_ai->_clubUpGfx[2] = g_hdb->_gfx->getPicGfx(CLUBUP3, -1);
+		g_hdb->_ai->_clubUpGfx[3] = g_hdb->_gfx->getPicGfx(CLUBUP3, -1);
 
-		g_hdb->_ai->_clubDownGfx[0] = g_hdb->_gfx->loadPic(CLUBDOWN1);
-		g_hdb->_ai->_clubDownGfx[1] = g_hdb->_gfx->loadPic(CLUBDOWN2);
-		g_hdb->_ai->_clubDownGfx[2] = g_hdb->_gfx->loadPic(CLUBDOWN3);
-		g_hdb->_ai->_clubDownGfx[3] = g_hdb->_gfx->loadPic(CLUBDOWN3);
+		g_hdb->_ai->_clubDownGfx[0] = g_hdb->_gfx->getPicGfx(CLUBDOWN1, -1);
+		g_hdb->_ai->_clubDownGfx[1] = g_hdb->_gfx->getPicGfx(CLUBDOWN2, -1);
+		g_hdb->_ai->_clubDownGfx[2] = g_hdb->_gfx->getPicGfx(CLUBDOWN3, -1);
+		g_hdb->_ai->_clubDownGfx[3] = g_hdb->_gfx->getPicGfx(CLUBDOWN3, -1);
 
-		g_hdb->_ai->_clubLeftGfx[0] = g_hdb->_gfx->loadPic(CLUBLEFT1);
-		g_hdb->_ai->_clubLeftGfx[1] = g_hdb->_gfx->loadPic(CLUBLEFT2);
-		g_hdb->_ai->_clubLeftGfx[2] = g_hdb->_gfx->loadPic(CLUBLEFT3);
-		g_hdb->_ai->_clubLeftGfx[3] = g_hdb->_gfx->loadPic(CLUBLEFT3);
+		g_hdb->_ai->_clubLeftGfx[0] = g_hdb->_gfx->getPicGfx(CLUBLEFT1, -1);
+		g_hdb->_ai->_clubLeftGfx[1] = g_hdb->_gfx->getPicGfx(CLUBLEFT2, -1);
+		g_hdb->_ai->_clubLeftGfx[2] = g_hdb->_gfx->getPicGfx(CLUBLEFT3, -1);
+		g_hdb->_ai->_clubLeftGfx[3] = g_hdb->_gfx->getPicGfx(CLUBLEFT3, -1);
 
-		g_hdb->_ai->_clubRightGfx[0] = g_hdb->_gfx->loadPic(CLUBRIGHT1);
-		g_hdb->_ai->_clubRightGfx[1] = g_hdb->_gfx->loadPic(CLUBRIGHT2);
-		g_hdb->_ai->_clubRightGfx[2] = g_hdb->_gfx->loadPic(CLUBRIGHT3);
-		g_hdb->_ai->_clubRightGfx[3] = g_hdb->_gfx->loadPic(CLUBRIGHT3);
+		g_hdb->_ai->_clubRightGfx[0] = g_hdb->_gfx->getPicGfx(CLUBRIGHT1, -1);
+		g_hdb->_ai->_clubRightGfx[1] = g_hdb->_gfx->getPicGfx(CLUBRIGHT2, -1);
+		g_hdb->_ai->_clubRightGfx[2] = g_hdb->_gfx->getPicGfx(CLUBRIGHT3, -1);
+		g_hdb->_ai->_clubRightGfx[3] = g_hdb->_gfx->getPicGfx(CLUBRIGHT3, -1);
 
 		g_hdb->_ai->_clubUpFrames = g_hdb->_ai->_clubDownFrames =
 			g_hdb->_ai->_clubLeftFrames = g_hdb->_ai->_clubRightFrames = 4;
