@@ -41,6 +41,10 @@ Map::Map() {
 }
 
 Map::~Map() {
+	delete[] _background;
+	delete[] _foreground;
+	delete[] _iconList;
+
 	free(_mapExplosions);
 	free(_mapExpBarrels);
 	free(_mapLaserBeams);

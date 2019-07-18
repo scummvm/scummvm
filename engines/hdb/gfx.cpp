@@ -52,6 +52,13 @@ Gfx::~Gfx() {
 	for (int i = 0; i < _fontHeader.numChars; i++)
 		_fontSurfaces[i].free();
 	_globalSurface.free();
+	delete[] _tLookupArray;
+	for (int i = 0; i < 8; i++)
+		delete _mousePointer[i];
+	for (int i = 0; i < 4; i++)
+		delete _starField[i];
+	delete _snowflake;
+	delete _skyClouds;
 }
 
 bool Gfx::init() {
