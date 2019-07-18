@@ -24,6 +24,7 @@
 
 #include "gui/EventRecorder.h"
 #include "engines/engine.h"
+#include "specialopcodes.h"
 
 namespace Dragons {
 
@@ -165,6 +166,7 @@ private:
 	bool _leftMouseButtonUp;
 	bool _rightMouseButtonUp;
 	bool _iKeyUp;
+	void (*_sceneUpdateFunction)();
 protected:
 	virtual bool hasFeature(EngineFeature f) const;
 public:
@@ -214,6 +216,9 @@ public:
 	void loadScene(uint16 sceneId);
 
 	void reset();
+
+	void runSceneUpdaterFunction();
+	void setSceneUpdateFunction(void (*newUpdateFunction)());
 
 private:
 	bool savegame(const char *filename, const char *description);

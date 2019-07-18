@@ -60,20 +60,41 @@ protected:
 	void spcClearEngineFlag8(); // 0x14
 	void spcSetEngineFlag8(); // 0x15
 
+	void spcActivatePizzaMakerActor(); // 0x1a
+	void spcDeactivatePizzaMakerActor(); // 0x1b
+	void spcPizzaMakerActorStopWorking(); // 0x1c
+
+	void spcFlickerClearFlag0x80(); //0x36
+
+	void spcSetEngineFlag0x2000000(); // 0x3b
+	void spcClearEngineFlag0x2000000(); // 0x3c
+
 	void spcLoadScene1(); // 0x49
 	void spcUnk4e();
 	void spcUnk4f();
+	void spcCloseInventory(); // 0x50
 
 	void spcClearEngineFlag0x4000000(); // 0x53
 	void spcSetEngineFlag0x4000000(); // 0x54
 	void spcSetCursorSequenceIdToZero(); // 0x55
+
+	void spcFlickerSetFlag0x80();
+
 	void spcUnk5e();
 	void spcUnk5f();
+
+	void spcTransitionToMap(); // 0x6b
+	void spcTransitionFromMap(); // 0x6c
 
 	void spcSetCameraXToZero(); //0x7b
 private:
 	void panCamera(int16 mode);
+	void pizzaMakerStopWorking();
 };
+
+// update functions
+
+void pizzaUpdateFunction();
 
 } // End of namespace Dragons
 

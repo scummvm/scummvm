@@ -69,6 +69,7 @@ DragonsEngine::DragonsEngine(OSystem *syst) : Engine(syst) {
 	_talk = NULL;
 	_sound = new Sound(this);
 	_fontManager = NULL;
+	_sceneUpdateFunction = NULL;
 
 	_leftMouseButtonUp = false;
 	_rightMouseButtonUp = false;
@@ -203,6 +204,7 @@ void DragonsEngine::gameLoop()
 		wait();
 		updateHandler();
 		updateEvents();
+		runSceneUpdaterFunction(); //TODO is this the right place for this logic?
 
 		if (getCurrentSceneId() != 2) {
 			_sceneId1 = getCurrentSceneId();
@@ -934,6 +936,7 @@ void DragonsEngine::waitForFrames(uint16 numFrames) {
 
 		_scene->draw();
 		_screen->updateScreen();
+		runSceneUpdaterFunction();
 		updateEvents();
 	}
 }
@@ -1225,5 +1228,20 @@ void DragonsEngine::reset() {
 	memset(unkArray_uint16, 0, sizeof(unkArray_uint16));
 
 }
+
+void DragonsEngine::runSceneUpdaterFunction() {
+	if ((isFlagSet(ENGINE_FLAG_20) && (run_func_ptr_unk_countdown_timer == 0)) &&
+		(run_func_ptr_unk_countdown_timer = 1, _sceneUpdateFunction != NULL)) {
+		_sceneUpdateFunction();
+	}
+}
+
+void DragonsEngine::setSceneUpdateFunction(void (*newUpdateFunction)()) {
+	_sceneUpdateFunction = newUpdateFunction;
+}
+
+//void  (*DragonsEngine::getSceneUpdateFunction())() {
+//	return _sceneUpdateFunction ;
+//}
 
 } // End of namespace Dragons

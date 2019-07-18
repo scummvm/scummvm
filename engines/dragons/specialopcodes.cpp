@@ -25,6 +25,7 @@
 #include "dragons/dragonflg.h"
 #include "dragons/dragonini.h"
 #include "dragons/dragonobd.h"
+#include "dragons/inventory.h"
 #include "dragons/specialopcodes.h"
 #include "dragons/scene.h"
 #include "dragons/actor.h"
@@ -74,17 +75,32 @@ void SpecialOpcodes::initOpcodes() {
 	OPCODE(0x14, spcClearEngineFlag8);
 	OPCODE(0x15, spcSetEngineFlag8);
 
+	OPCODE(0x1a, spcActivatePizzaMakerActor);
+	OPCODE(0x1b, spcDeactivatePizzaMakerActor);
+	OPCODE(0x1c, spcPizzaMakerActorStopWorking);
+
+	OPCODE(0x36, spcFlickerClearFlag0x80);
+
+	OPCODE(0x3b, spcSetEngineFlag0x2000000);
+	OPCODE(0x3c, spcClearEngineFlag0x2000000);
+
 	OPCODE(0x49, spcLoadScene1);
 
 	OPCODE(0x4e, spcUnk4e);
 	OPCODE(0x4f, spcUnk4f);
+	OPCODE(0x50, spcCloseInventory);
 
 	OPCODE(0x53, spcClearEngineFlag0x4000000);
 	OPCODE(0x54, spcSetEngineFlag0x4000000);
 	OPCODE(0x55, spcSetCursorSequenceIdToZero);
 
+	OPCODE(0x5b, spcFlickerSetFlag0x80);
+
 	OPCODE(0x5e, spcUnk5e);
 	OPCODE(0x5f, spcUnk5f);
+
+	OPCODE(0x6b, spcTransitionToMap);
+	OPCODE(0x6c, spcTransitionFromMap);
 
 	OPCODE(0x7b, spcSetCameraXToZero);
 
@@ -138,6 +154,30 @@ void SpecialOpcodes::spcSetEngineFlag8() {
 	_vm->setFlags(Dragons::ENGINE_FLAG_8);
 }
 
+void SpecialOpcodes::spcActivatePizzaMakerActor() {
+	_vm->setSceneUpdateFunction(pizzaUpdateFunction);
+}
+
+void SpecialOpcodes::spcDeactivatePizzaMakerActor() {
+	_vm->setSceneUpdateFunction(NULL); //TODO only remove if currently running
+}
+
+void SpecialOpcodes::spcPizzaMakerActorStopWorking() {
+	_vm->setSceneUpdateFunction(NULL); //TODO only remove if currently running
+	pizzaMakerStopWorking();
+}
+
+void SpecialOpcodes::spcFlickerClearFlag0x80() {
+	_vm->_dragonINIResource->getFlickerRecord()->actor->clearFlag(ACTOR_FLAG_80);
+}
+
+void SpecialOpcodes::spcSetEngineFlag0x2000000() {
+	_vm->setFlags(Dragons::ENGINE_FLAG_2000000);
+}
+
+void SpecialOpcodes::spcClearEngineFlag0x2000000() {
+	_vm->clearFlags(Dragons::ENGINE_FLAG_2000000);
+}
 
 void SpecialOpcodes::spcUnk4e() {
 	panCamera(1);
@@ -145,6 +185,13 @@ void SpecialOpcodes::spcUnk4e() {
 
 void SpecialOpcodes::spcUnk4f() {
 	panCamera(2);
+}
+
+void SpecialOpcodes::spcCloseInventory() {
+	if (_vm->_inventory->getType() == 1) {
+		_vm->_inventory->closeInventory();
+		_vm->_inventory->setType(0);
+	}
 }
 
 void SpecialOpcodes::spcSetEngineFlag0x4000000() {
@@ -157,6 +204,10 @@ void SpecialOpcodes::spcClearEngineFlag0x4000000() {
 
 void SpecialOpcodes::spcSetCursorSequenceIdToZero() {
 	_vm->_cursor->_sequenceID = 0;
+}
+
+void SpecialOpcodes::spcFlickerSetFlag0x80() {
+	_vm->_dragonINIResource->getFlickerRecord()->actor->setFlag(ACTOR_FLAG_80);
 }
 
 void SpecialOpcodes::spcUnk5e() {
@@ -208,6 +259,105 @@ void SpecialOpcodes::spcSetCameraXToZero() {
 
 void SpecialOpcodes::spcLoadScene1() {
 	// TODO spcLoadScene1 knights around the table.
+}
+
+void SpecialOpcodes::spcTransitionToMap() {
+	//TODO map transition
+//	DAT_8006a422 = 0;
+//	DAT_8006a424 = 0;
+//	cursorSequenceId = 0;
+//	ContinueGame?();
+//	engine_flags_maybe = engine_flags_maybe | 0x20000000;
+//	FUN_80023b34(0,0,1);
+}
+
+void SpecialOpcodes::spcTransitionFromMap() {
+	//TODO map transition
+}
+
+void SpecialOpcodes::pizzaMakerStopWorking() {
+	Actor *actorf4 = _vm->getINI(0xf4)->actor;
+	Actor *actorf5 = _vm->getINI(0xf5)->actor;
+
+	if (actorf4->_sequenceID != 0) {
+		if (actorf4->_sequenceID == 1) {
+			actorf4->waitUntilFlag8And4AreSet();
+			actorf4->updateSequence(2);
+			actorf5->x_pos = 0x115;
+			actorf5->y_pos = 0x5c;
+			actorf5->updateSequence(7);
+			_vm->waitForFrames(0x78);
+			actorf5->updateSequence(8);
+			actorf5->waitUntilFlag8And4AreSet();
+			actorf5->x_pos = 0xff9c;
+			actorf5->y_pos = 100;
+			actorf4->updateSequence(3);
+		}
+		else {
+			if (actorf4->_sequenceID == 2) {
+				_vm->waitForFrames(0x78);
+				actorf5->updateSequence(8);
+				actorf5->waitUntilFlag8And4AreSet();
+				actorf5->x_pos = 0xff9c;
+				actorf5->y_pos = 100;
+				actorf4->updateSequence(3);
+			}
+			else {
+				if (actorf4->_sequenceID != 3) {
+					return;
+				}
+			}
+		}
+		actorf4->waitUntilFlag8And4AreSet();
+		actorf4->updateSequence(0);
+	}
+}
+
+void pizzaUpdateFunction() {
+		static int16 DAT_800634bc = 0;
+		DragonsEngine *vm = getEngine();
+
+		Actor *actorf4 = vm->getINI(0xf4)->actor;
+		Actor *actorf5 = vm->getINI(0xf5)->actor;
+
+		if (DAT_800634bc == 0) {
+			if (actorf4->isFlagSet(ACTOR_FLAG_4)) {
+				if (actorf4->_sequenceID == 0) {
+					actorf4->updateSequence(1);
+				} else {
+					if (actorf4->_sequenceID == 1) {
+						actorf4->updateSequence(2);
+						actorf5->x_pos = 0x115;
+						actorf5->y_pos = 0x5c;
+						actorf5->updateSequence(7);
+						DAT_800634bc = 0x2d;
+						return;
+					}
+					if (actorf4->_sequenceID == 2) {
+						if ((actorf5->_sequenceID == 8) &&
+							(actorf5->isFlagSet(ACTOR_FLAG_4))) {
+							actorf5->x_pos = -100;
+							actorf5->y_pos = 100;
+							actorf4->updateSequence(3);
+						} else {
+							if (actorf5->_sequenceID == 8) {
+								return;
+							}
+							actorf5->updateSequence(8);
+						}
+					} else {
+						if (actorf4->_sequenceID != 3) {
+							return;
+						}
+						actorf4->updateSequence(0);
+					}
+				}
+			}
+		}
+		else {
+			DAT_800634bc--;
+		}
+		return;
 }
 
 } // End of namespace Dragons
