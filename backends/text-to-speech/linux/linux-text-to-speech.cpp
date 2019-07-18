@@ -27,6 +27,7 @@
 
 #if defined(USE_LINUX_TTS)
 #include <speech-dispatcher/libspeechd.h>
+#include "backends/platform/sdl/sdl-sys.h"
 
 #include "common/translation.h"
 #include "common/debug.h"
@@ -107,13 +108,35 @@ void LinuxTextToSpeechManager::updateState(LinuxTextToSpeechManager::SpeechState
 	_speechState = state;
 }
 
-bool LinuxTextToSpeechManager::say(Common::String str) {
+Common::String LinuxTextToSpeechManager::strToUtf8(Common::String str, Common::String charset) {
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+
+	char *conv_text = SDL_iconv_string("UTF-8", charset.c_str(), str.c_str(), str.size() + 1);
+	Common::String result;
+	if (conv_text) {
+		result = conv_text;
+		SDL_free(conv_text);
+	}
+
+	return result;
+#else
+	return Common::String();
+#endif
+}
+
+bool LinuxTextToSpeechManager::say(Common::String str, Common::String charset) {
 	if (_speechState == BROKEN)
 		return true;
-	//Convert string, that might have foreign characters to UTF-8
-	if (ConfMan.get("gui_language") != "C") {
-		str = Common::convertUtf32ToUtf8(Common::convertToU32String(str.c_str(), Common::kWindows1250)).c_str();
+	
+	if (charset == "") {
+#ifdef USE_TRANSLATION
+		charset = TransMan.getCurrentCharset();
+#else
+		charset = "ASCII";
+#endif
 	}
+	str = strToUtf8(str, charset);
+
 	if (isSpeaking())
 		stop();
 	debug("say: %s", str.c_str());

@@ -91,10 +91,18 @@ WindowsTextToSpeechManager::~WindowsTextToSpeechManager() {
 	::CoUninitialize();
 }
 
-bool WindowsTextToSpeechManager::say(Common::String str) {
+bool WindowsTextToSpeechManager::say(Common::String str, Common::String charset) {
 	if(_speechState == BROKEN || _speechState == NO_VOICE) {
 		warning("The tts cannot speak in this state");
 		return true;
+	}
+
+	if (charset == "") {
+#ifdef USE_TRANSLATION
+		charset = TransMan.getCurrentCharset();
+#else
+		charset = "ASCII";
+#endif
 	}
 	if (isPaused()) {
 		resume();

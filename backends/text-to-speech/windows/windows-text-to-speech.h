@@ -43,7 +43,7 @@ public:
 	WindowsTextToSpeechManager();
 	virtual ~WindowsTextToSpeechManager();
 
-	virtual bool say(Common::String str);
+	virtual bool say(Common::String str, Common::String charset = "");
 
 	virtual bool stop();
 	virtual bool pause();
