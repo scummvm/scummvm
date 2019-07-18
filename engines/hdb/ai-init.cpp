@@ -1677,24 +1677,29 @@ void AI::loadSaveFile(Common::InSaveFile *in) {
 	}
 
 	// Load AnimTargets
-	_animTargets.resize(in->readUint32LE());
-	for (i = 0; (uint)i < _animTargets.size(); i++) {
-		_animTargets[i]->x = in->readUint16LE();
-		_animTargets[i]->y = in->readUint16LE();
-		_animTargets[i]->start = in->readUint16LE();
-		_animTargets[i]->end = in->readUint16LE();
-		_animTargets[i]->vel = in->readSint16LE();
-		_animTargets[i]->animCycle = in->readUint16LE();
-		_animTargets[i]->animFrame = in->readUint16LE();
-		_animTargets[i]->killAuto = in->readByte();
-		_animTargets[i]->inMap = in->readByte();
-		memset(_animTargets[i]->gfxList, 0, kMaxAnimTFrames * sizeof(Tile *));
+	uint32 animTsize = in->readUint32LE();
+	_animTargets.clear();
+	for (i = 0; i < animTsize; i++) {
+		AnimTarget *a = new AnimTarget;
+
+		a->x = in->readUint16LE();
+		a->y = in->readUint16LE();
+		a->start = in->readUint16LE();
+		a->end = in->readUint16LE();
+		a->vel = in->readSint16LE();
+		a->animCycle = in->readUint16LE();
+		a->animFrame = in->readUint16LE();
+		a->killAuto = in->readByte();
+		a->inMap = in->readByte();
+		memset(a->gfxList, 0, kMaxAnimTFrames * sizeof(Tile *));
+
+		_animTargets.push_back(a);
 	}
 
 	// Load ArrowPaths
 
-	uint32 arrowPathSIze = in->readUint32LE();
-	for (i = 0; (uint)i < arrowPathSIze; i++) {
+	uint32 arrowPathSize = in->readUint32LE();
+	for (i = 0; (uint)i < arrowPathSize; i++) {
 		ArrowPath *arrowPath = new ArrowPath;
 
 		arrowPath->type = in->readUint16LE();
@@ -1706,11 +1711,15 @@ void AI::loadSaveFile(Common::InSaveFile *in) {
 	}
 
 	// Load HereT List
-	_hereList->resize(in->readUint32LE());
-	for (i = 0; (uint)i < _hereList->size(); i++) {
-		_hereList->operator[](i)->x = in->readUint16LE();
-		_hereList->operator[](i)->y = in->readUint16LE();
-		in->read(_hereList->operator[](i)->entName, 32);
+	uint32 hereSize = in->readUint32LE();
+	_hereList->clear();
+	for (i = 0; i < hereSize; i++) {
+		HereT *h = new HereT;
+		h->x = in->readUint16LE();
+		h->y = in->readUint16LE();
+		in->read(h->entName, 32);
+
+		_hereList->push_back(h);
 	}
 
 	// Load Triggers
