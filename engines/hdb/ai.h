@@ -821,6 +821,7 @@ public:
 	void save(Common::OutSaveFile *out);
 	void loadSaveFile(Common::InSaveFile *in);
 	void initAnimInfo();
+	void freeAnimInfo();
 
 	// Entity Functions
 	AIEntity *spawn(AIType type, AIDir dir, int x, int y, const char *funcInit, const char *funcAction, const char *funcUse, AIDir dir2, int level, int value1, int value2, int callInit);
@@ -1326,6 +1327,8 @@ public:
 	Tile *_gfxLaserbeamLR[4];
 	Tile *_gfxLaserbeamLRLeft[4];
 	Tile *_gfxLaserbeamLRRight[4];
+
+	Common::Array<Tile *> _animTiles;
 
 private:
 

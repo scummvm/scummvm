@@ -681,6 +681,7 @@ int AI::checkForTouchplate(int x, int y) {
 void AI::removeEntity(AIEntity *e) {
 	for (uint i = 0; i < _ents->size(); i++)
 		if (_ents->operator[](i) == e) {
+			delete _ents->operator[](i);
 			_ents->remove_at(i);
 			return;
 		}
