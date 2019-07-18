@@ -143,7 +143,8 @@ void DialogInterface::sub_4155D0(int a) {
 		_field18 = 3;
 		_field14 = -1;
 		restoreCursorState();
-		// g_qReaction
+		if (g_dialogReaction)
+			processSavedReaction(&g_dialogReaction, _sender);
 		_sender = nullptr;
 		break;
 	case 4:
