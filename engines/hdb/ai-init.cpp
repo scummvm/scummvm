@@ -939,21 +939,31 @@ AI::~AI() {
 	memset(&_inventory, 0, sizeof(InvEnt) * kMaxInventory);
 
 	// Free Player Graphics
+	for (int i = 0; i < 8; i++) {
+		delete _clubDownGfx[i];
+		delete _clubUpGfx[i];
+		delete _clubLeftGfx[i];
+		delete _clubRightGfx[i];
+		delete _slugAttackGfx[i];
+		delete _pushdownGfx[i];
+		delete _pushupGfx[i];
+		delete _pushleftGfx[i];
+		delete _pushrightGfx[i];
+		delete _stunDownGfx[i];
+		delete _stunUpGfx[i];
+		delete _stunLeftGfx[i];
+		delete _stunRightGfx[i];
+		delete _slugDownGfx[i];
+		delete _slugUpGfx[i];
+		delete _slugLeftGfx[i];
+		delete _slugRightGfx[i];
+	}
 
 	memset(_clubDownGfx, 0, sizeof(_clubDownGfx));
 	memset(_clubUpGfx, 0, sizeof(_clubUpGfx));
 	memset(_clubLeftGfx, 0, sizeof(_clubLeftGfx));
 	memset(_clubRightGfx, 0, sizeof(_clubRightGfx));
 	memset(_slugAttackGfx, 0, sizeof(_slugAttackGfx));
-
-	// Clean up Player Graphics Storage
-	memset(_horrible1Gfx, 0, sizeof(_horrible1Gfx));
-	memset(_horrible2Gfx, 0, sizeof(_horrible2Gfx));
-	memset(_horrible3Gfx, 0, sizeof(_horrible3Gfx));
-	memset(_horrible4Gfx, 0, sizeof(_horrible4Gfx));
-	memset(_plummetGfx, 0, sizeof(_plummetGfx));
-	memset(_dyingGfx, 0, sizeof(_dyingGfx));
-
 	memset(_pushdownGfx, 0, sizeof(_pushdownGfx));
 	memset(_pushupGfx, 0, sizeof(_pushupGfx));
 	memset(_pushleftGfx, 0, sizeof(_pushleftGfx));
@@ -967,6 +977,25 @@ AI::~AI() {
 	memset(_slugLeftGfx, 0, sizeof(_slugLeftGfx));
 	memset(_slugRightGfx, 0, sizeof(_slugRightGfx));
 
+	// Free Player Death Graphics
+	for (int i = 0; i < 12; i++) {
+		delete _horrible1Gfx[i];
+		delete _horrible2Gfx[i];
+		delete _horrible3Gfx[i];
+		delete _horrible4Gfx[i];
+		delete _plummetGfx[i];
+		delete _dyingGfx[i];
+	}
+
+	memset(_horrible1Gfx, 0, sizeof(_horrible1Gfx));
+	memset(_horrible2Gfx, 0, sizeof(_horrible2Gfx));
+	memset(_horrible3Gfx, 0, sizeof(_horrible3Gfx));
+	memset(_horrible4Gfx, 0, sizeof(_horrible4Gfx));
+	memset(_plummetGfx, 0, sizeof(_plummetGfx));
+	memset(_dyingGfx, 0, sizeof(_dyingGfx));
+
+	for (int i = 0; i < 4; i++)
+		delete _waypointGfx[i];
 	memset(_waypointGfx, 0, sizeof(_waypointGfx));
 	delete _debugQMark;
 	_debugQMark = NULL;
