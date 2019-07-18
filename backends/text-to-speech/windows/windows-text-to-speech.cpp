@@ -32,6 +32,7 @@
 #include <sapi.h>
 #include "backends/text-to-speech/windows/sphelper-scummvm.h"
 #include "backends/platform/sdl/win32/win32_wrapper.h"
+#include "backends/platform/sdl/win32/codepage.h"
 
 #include "backends/text-to-speech/windows/windows-text-to-speech.h"
 
@@ -113,7 +114,7 @@ bool WindowsTextToSpeechManager::say(Common::String str, Common::String charset)
 	Common::String pitch= Common::String::format("<pitch absmiddle=\"%d\">", _ttsState->_pitch / 10);
 	str.replace((uint32)0, 0, pitch);
 
-	WCHAR *strW = Win32::ansiToUnicode(str.c_str());
+	WCHAR *strW = Win32::ansiToUnicode(str.c_str(), Win32::getCodePageId(charset));
 	bool result = _voice->Speak(strW, SPF_ASYNC | SPF_PURGEBEFORESPEAK, NULL) != S_OK;
 	free(strW);
 	_speechState = SPEAKING;
