@@ -260,6 +260,7 @@ bool Map::loadMap(char *name) {
 	Common::SeekableReadStream *mapStream = g_hdb->_fileMan->findFirstData(name, TYPE_BINARY);
 	if (mapStream == NULL) {
 		warning("The %s MPC entry can't be found", name);
+		delete mapStream;
 		return false;
 	}
 
