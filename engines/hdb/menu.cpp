@@ -680,6 +680,9 @@ void Menu::freeMenu() {
 	if (_menuBackoutGfx)
 		delete _menuBackoutGfx;
 	_menuBackoutGfx = NULL;
+	if (_menuBackspaceGfx)
+		delete _menuBackspaceGfx;
+	_menuBackspaceGfx = NULL;
 
 	if (_controlButtonGfx)
 		delete _controlButtonGfx;

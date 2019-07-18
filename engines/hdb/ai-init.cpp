@@ -988,9 +988,6 @@ AI::~AI() {
 	for (uint i = 0; i < _animTargets.size(); i++) {
 		delete _animTargets[i];
 	}
-
-	// Free Animating Tiles
-	freeAnimInfo();
 }
 
 bool AI::init() {
@@ -1780,13 +1777,13 @@ void AI::loadSaveFile(Common::InSaveFile *in) {
 
 void AI::initAnimInfo() {
 	if (g_hdb->_map->checkOneTileExistInRange(_useSwitchOff, 2))
-		_animTiles.push_back(g_hdb->_gfx->getTile(_useSwitchOn));
+		g_hdb->_gfx->getTile(_useSwitchOn);
 	if (g_hdb->_map->checkOneTileExistInRange(_useSwitch2Off, 2))
-		_animTiles.push_back(g_hdb->_gfx->getTile(_useSwitch2On));
+		g_hdb->_gfx->getTile(_useSwitch2On);
 	if (g_hdb->_map->checkOneTileExistInRange(_useHolderEmpty, 2))
-		_animTiles.push_back(g_hdb->_gfx->getTile(_useHolderFull));
+		g_hdb->_gfx->getTile(_useHolderFull);
 	if (g_hdb->_map->checkOneTileExistInRange(_useHandswitchOff, 2))
-		_animTiles.push_back(g_hdb->_gfx->getTile(_useHandswitchOn));
+		g_hdb->_gfx->getTile(_useHandswitchOn);
 
 	if (g_hdb->_map->checkOneTileExistInRange(_targetDoorN, 4))
 		g_hdb->_gfx->cacheTileSequence(_targetDoorN, 4);
@@ -1860,22 +1857,17 @@ void AI::initAnimInfo() {
 		g_hdb->_gfx->cacheTileSequence(_blockpole, 4);
 
 	if (g_hdb->_map->checkOneTileExistInRange(_kcHolderWhiteOff, 2))
-		_animTiles.push_back(g_hdb->_gfx->getTile(_kcHolderWhiteOn));
+		g_hdb->_gfx->getTile(_kcHolderWhiteOn);
 	if (g_hdb->_map->checkOneTileExistInRange(_kcHolderBlueOff, 2))
-		_animTiles.push_back(g_hdb->_gfx->getTile(_kcHolderBlueOn));
+		g_hdb->_gfx->getTile(_kcHolderBlueOn);
 	if (g_hdb->_map->checkOneTileExistInRange(_kcHolderRedOff, 2))
-		_animTiles.push_back(g_hdb->_gfx->getTile(_kcHolderRedOn));
+		g_hdb->_gfx->getTile(_kcHolderRedOn);
 	if (g_hdb->_map->checkOneTileExistInRange(_kcHolderGreenOff, 2))
-		_animTiles.push_back(g_hdb->_gfx->getTile(_kcHolderGreenOn));
+		g_hdb->_gfx->getTile(_kcHolderGreenOn);
 	if (g_hdb->_map->checkOneTileExistInRange(_kcHolderPurpleOff, 2))
-		_animTiles.push_back(g_hdb->_gfx->getTile(_kcHolderPurpleOn));
+		g_hdb->_gfx->getTile(_kcHolderPurpleOn);
 	if (g_hdb->_map->checkOneTileExistInRange(_kcHolderBlackOff, 2))
-		_animTiles.push_back(g_hdb->_gfx->getTile(_kcHolderBlackOn));
-}
-
-void AI::freeAnimInfo() {
-	for (uint i = 0; i < _animTiles.size(); i++)
-		delete _animTiles[i];
+		g_hdb->_gfx->getTile(_kcHolderBlackOn);
 }
 
 const char *AITypeStr[] = {
