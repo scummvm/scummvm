@@ -79,6 +79,7 @@ HDBGame::~HDBGame() {
 	delete _fileMan;
 	delete _gfx;
 	delete _lua;
+	delete _menu;
 	delete _map;
 	delete _ai;
 	delete _input;

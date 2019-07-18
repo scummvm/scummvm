@@ -459,7 +459,7 @@ void Gfx::emptyGfxCaches() {
 
 void Gfx::cacheTileSequence(int tileIndex, int count) {
 	for (int i = tileIndex; i < tileIndex + count; i++)
-		getTile(i);
+		g_hdb->_ai->_animTiles.push_back(getTile(i));
 }
 
 int Gfx::getTileIndex(const char *name) {
