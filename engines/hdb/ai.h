@@ -633,9 +633,7 @@ struct DlvEnt {
 		destGfxName[0] = 0;
 	}
 	~DlvEnt() {
-		delete itemGfx;
 		itemGfx = NULL;
-		delete destGfx;
 		destGfx = NULL;
 	}
 };

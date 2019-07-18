@@ -940,23 +940,7 @@ AI::~AI() {
 
 	// Free Player Graphics
 	for (int i = 0; i < 8; i++) {
-		delete _clubDownGfx[i];
-		delete _clubUpGfx[i];
-		delete _clubLeftGfx[i];
-		delete _clubRightGfx[i];
 		delete _slugAttackGfx[i];
-		delete _pushdownGfx[i];
-		delete _pushupGfx[i];
-		delete _pushleftGfx[i];
-		delete _pushrightGfx[i];
-		delete _stunDownGfx[i];
-		delete _stunUpGfx[i];
-		delete _stunLeftGfx[i];
-		delete _stunRightGfx[i];
-		delete _slugDownGfx[i];
-		delete _slugUpGfx[i];
-		delete _slugLeftGfx[i];
-		delete _slugRightGfx[i];
 	}
 
 	memset(_clubDownGfx, 0, sizeof(_clubDownGfx));
@@ -976,16 +960,6 @@ AI::~AI() {
 	memset(_slugUpGfx, 0, sizeof(_slugUpGfx));
 	memset(_slugLeftGfx, 0, sizeof(_slugLeftGfx));
 	memset(_slugRightGfx, 0, sizeof(_slugRightGfx));
-
-	// Free Player Death Graphics
-	for (int i = 0; i < 12; i++) {
-		delete _horrible1Gfx[i];
-		delete _horrible2Gfx[i];
-		delete _horrible3Gfx[i];
-		delete _horrible4Gfx[i];
-		delete _plummetGfx[i];
-		delete _dyingGfx[i];
-	}
 
 	memset(_horrible1Gfx, 0, sizeof(_horrible1Gfx));
 	memset(_horrible2Gfx, 0, sizeof(_horrible2Gfx));

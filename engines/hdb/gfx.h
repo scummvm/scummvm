@@ -60,6 +60,7 @@ struct TileLookup {
 
 struct GfxCache {
 	char name[32];
+	bool status;	// false = tileGfx, true = picGfx
 	union {
 		Tile *tileGfx;
 		Picture *picGfx;
@@ -67,7 +68,7 @@ struct GfxCache {
 	uint32 size;
 	int16 loaded;
 
-	GfxCache() : tileGfx(NULL), size(0), loaded(0) { name[0] = 0; }
+	GfxCache() : status(false), tileGfx(NULL), size(0), loaded(0) { name[0] = 0; }
 };
 
 struct FontInfo {
