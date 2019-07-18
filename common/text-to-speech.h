@@ -197,7 +197,7 @@ public:
 	/**
 	 * Sets the speech rate
 	 *
-	 * @param rate Integer between -100 (slowest) and 100 (fastest)
+	 * @param rate Integer between -100 (slowest) and 100 (fastest), 0 is the default
 	 */
 	virtual void setRate(int rate) { _ttsState->_rate = rate; }
 
@@ -209,7 +209,7 @@ public:
 	/**
 	 * Sets the pitch
 	 *
-	 * @param pitch Integer between -100 (lowest) and 100 (highest)
+	 * @param pitch Integer between -100 (lowest) and 100 (highest), 0 is the default
 	 */
 	virtual void setPitch(int pitch) { _ttsState->_pitch = pitch; }
 
@@ -233,7 +233,7 @@ public:
 	/**
 	 * Sets the speech language
 	 *
-	 * @param language The language identifier as defined by ISO (2 characters long string)
+	 * @param language The language identifier as defined by ISO 639-1
 	 *
 	 * @note After using this method, it is probably a good idea to use setVoice,
 	 * because voices are usually language specific and so it is set to some platform
@@ -261,6 +261,9 @@ public:
 	 */
 	bool popState();
 
+	/**
+	 * Frees the _data field from TTSVoice
+	 */
 	virtual void freeVoiceData(void *data) {}
 
 protected:
