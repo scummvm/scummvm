@@ -1057,7 +1057,6 @@ Picture::Picture() : _width(0), _height(0), _name("") {
 }
 
 Picture::~Picture() {
-	_surface.free();
 }
 
 Graphics::Surface Picture::load(Common::SeekableReadStream *stream) {
@@ -1115,7 +1114,6 @@ Tile::Tile() : _flags(0), _name("") {
 }
 
 Tile::~Tile() {
-	_surface.free();
 }
 
 Graphics::Surface Tile::load(Common::SeekableReadStream *stream) {
