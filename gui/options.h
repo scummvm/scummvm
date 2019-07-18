@@ -301,11 +301,25 @@ protected:
 	StaticTextWidget *_storageUsername;
 	StaticTextWidget *_storageUsedSpaceDesc;
 	StaticTextWidget *_storageUsedSpace;
+	StaticTextWidget *_storageSyncHint;
 	StaticTextWidget *_storageLastSyncDesc;
 	StaticTextWidget *_storageLastSync;
-	ButtonWidget	 *_storageConnectButton;
-	ButtonWidget	 *_storageRefreshButton;
+	ButtonWidget	 *_storageSyncSavesButton;
+	StaticTextWidget *_storageDownloadHint;
 	ButtonWidget	 *_storageDownloadButton;
+	StaticTextWidget *_storageDisconnectHint;
+	ButtonWidget	 *_storageDisconnectButton;
+
+	bool _connectingStorage;
+	StaticTextWidget *_storageWizardNotConnectedHint;
+	StaticTextWidget *_storageWizardOpenLinkHint;
+	StaticTextWidget *_storageWizardLink;
+	StaticTextWidget *_storageWizardCodeHint;
+	EditTextWidget *_storageWizardCodeBox;
+	ButtonWidget	 *_storageWizardPasteButton;
+	ButtonWidget	 *_storageWizardConnectButton;
+	StaticTextWidget *_storageWizardConnectionStatusHint;
+
 	ButtonWidget	 *_runServerButton;
 	StaticTextWidget *_serverInfoLabel;
 	ButtonWidget	 *_rootPathButton;
@@ -319,11 +333,12 @@ protected:
 	bool _serverWasRunning;
 #endif
 
+	void shiftWidget(Widget *widget, const char *widgetName, int32 xOffset, int32 yOffset);
 	void setupCloudTab();
 
 #ifdef USE_LIBCURL
-	void storageInfoCallback(Cloud::Storage::StorageInfoResponse response);
-	void storageListDirectoryCallback(Cloud::Storage::ListDirectoryResponse response);
+	void storageConnectionCallback(Networking::ErrorResponse response);
+	void storageSavesSyncedCallback(Cloud::Storage::BoolResponse response);
 	void storageErrorCallback(Networking::ErrorResponse response);
 #endif
 #endif // USE_CLOUD

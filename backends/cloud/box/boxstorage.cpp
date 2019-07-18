@@ -45,8 +45,8 @@ namespace Box {
 BoxStorage::BoxStorage(Common::String token, Common::String refreshToken):
 	IdStorage(token, refreshToken) {}
 
-BoxStorage::BoxStorage(Common::String code) {
-	getAccessToken(code);
+BoxStorage::BoxStorage(Common::String code, Networking::ErrorCallback cb) {
+	getAccessToken(code, cb);
 }
 
 BoxStorage::~BoxStorage() {}
@@ -225,6 +225,11 @@ BoxStorage *BoxStorage::loadFromConfig(Common::String keyPrefix) {
 	Common::String accessToken = ConfMan.get(keyPrefix + "access_token", ConfMan.kCloudDomain);
 	Common::String refreshToken = ConfMan.get(keyPrefix + "refresh_token", ConfMan.kCloudDomain);
 	return new BoxStorage(accessToken, refreshToken);
+}
+
+void BoxStorage::removeFromConfig(Common::String keyPrefix) {
+	ConfMan.removeKey(keyPrefix + "access_token", ConfMan.kCloudDomain);
+	ConfMan.removeKey(keyPrefix + "refresh_token", ConfMan.kCloudDomain);
 }
 
 Common::String BoxStorage::getRootDirectoryId() {

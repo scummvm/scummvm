@@ -45,8 +45,8 @@ namespace OneDrive {
 OneDriveStorage::OneDriveStorage(Common::String token, Common::String refreshToken):
 	BaseStorage(token, refreshToken) {}
 
-OneDriveStorage::OneDriveStorage(Common::String code) {
-	getAccessToken(code);
+OneDriveStorage::OneDriveStorage(Common::String code, Networking::ErrorCallback cb) {
+	getAccessToken(code, cb);
 }
 
 OneDriveStorage::~OneDriveStorage() {}
@@ -207,6 +207,11 @@ OneDriveStorage *OneDriveStorage::loadFromConfig(Common::String keyPrefix) {
 	Common::String accessToken = ConfMan.get(keyPrefix + "access_token", ConfMan.kCloudDomain);
 	Common::String refreshToken = ConfMan.get(keyPrefix + "refresh_token", ConfMan.kCloudDomain);
 	return new OneDriveStorage(accessToken, refreshToken);
+}
+
+void OneDriveStorage::removeFromConfig(Common::String keyPrefix) {
+	ConfMan.removeKey(keyPrefix + "access_token", ConfMan.kCloudDomain);
+	ConfMan.removeKey(keyPrefix + "refresh_token", ConfMan.kCloudDomain);
 }
 
 } // End of namespace OneDrive

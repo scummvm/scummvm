@@ -263,10 +263,6 @@ public:
 	static const char *const kImageEditSmallButton; ///< Edit recording metadata in recorder onscreen dialog (for 320xY)
 	static const char *const kImageSwitchModeSmallButton; ///< Switch mode button in recorder onscreen dialog (for 320xY)
 	static const char *const kImageFastReplaySmallButton; ///< Fast playback mode button in recorder onscreen dialog (for 320xY)
-	static const char *const kImageDropboxLogo;      ///< Dropbox logo used in the StorageWizardDialog
-	static const char *const kImageOneDriveLogo;      ///< OneDrive logo used in the StorageWizardDialog
-	static const char *const kImageGoogleDriveLogo;      ///< Google Drive logo used in the StorageWizardDialog
-	static const char *const kImageBoxLogo;      ///< Box logo used in the StorageWizardDialog
 
 	/**
 	 * Graphics mode enumeration.

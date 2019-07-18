@@ -51,7 +51,6 @@
 #ifdef USE_LIBCURL
 #include "backends/cloud/cloudmanager.h"
 #include "gui/downloaddialog.h"
-#include "gui/storagewizarddialog.h"
 #endif
 
 #ifdef USE_SDL_NET
@@ -105,14 +104,17 @@ enum {
 
 #ifdef USE_CLOUD
 enum {
-	kConfigureStorageCmd = 'cfst',
-	kRefreshStorageCmd = 'rfst',
+	kSyncSavesStorageCmd = 'ssst',
 	kDownloadStorageCmd = 'dlst',
 	kRunServerCmd = 'rnsv',
 	kCloudTabContainerReflowCmd = 'ctcr',
 	kServerPortClearCmd = 'spcl',
 	kChooseRootDirCmd = 'chrp',
-	kRootPathClearCmd = 'clrp'
+	kRootPathClearCmd = 'clrp',
+	kConnectStorageCmd = 'Cnnt',
+	kOpenUrlStorageCmd = 'OpUr',
+	kPasteCodeStorageCmd = 'PsCd',
+	kDisconnectStorageCmd = 'DcSt',
 };
 #endif
 
@@ -1486,11 +1488,25 @@ GlobalOptionsDialog::GlobalOptionsDialog(LauncherDialog *launcher)
 	_storageUsername = 0;
 	_storageUsedSpaceDesc = 0;
 	_storageUsedSpace = 0;
+	_storageSyncHint = 0;
 	_storageLastSyncDesc = 0;
 	_storageLastSync = 0;
-	_storageConnectButton = 0;
-	_storageRefreshButton = 0;
+	_storageSyncSavesButton = 0;
+	_storageDownloadHint = 0;
 	_storageDownloadButton = 0;
+	_storageDisconnectHint = 0;
+	_storageDisconnectButton = 0;
+
+	_connectingStorage = false;
+	_storageWizardNotConnectedHint = 0;
+	_storageWizardOpenLinkHint = 0;
+	_storageWizardLink = 0;
+	_storageWizardCodeHint = 0;
+	_storageWizardCodeBox = 0;
+	_storageWizardPasteButton = 0;
+	_storageWizardConnectButton = 0;
+	_storageWizardConnectionStatusHint = 0;
+
 	_runServerButton = 0;
 	_serverInfoLabel = 0;
 	_rootPathButton = 0;
@@ -1744,7 +1760,7 @@ void GlobalOptionsDialog::build() {
 	container->setTarget(this);
 	container->setBackgroundType(ThemeEngine::kDialogBackgroundNone);
 
-	_storagePopUpDesc = new StaticTextWidget(container, "GlobalOptions_Cloud_Container.StoragePopupDesc", _("Storage:"), _("Active cloud storage"));
+	_storagePopUpDesc = new StaticTextWidget(container, "GlobalOptions_Cloud_Container.StoragePopupDesc", _("Active storage:"), _("Active cloud storage"));
 	_storagePopUp = new PopUpWidget(container, "GlobalOptions_Cloud_Container.StoragePopup");
 #ifdef USE_LIBCURL
 	Common::StringArray list = CloudMan.listStorages();
@@ -1755,27 +1771,39 @@ void GlobalOptionsDialog::build() {
 #endif
 	_storagePopUp->setSelected(_selectedStorageIndex);
 
+	const char* context = (g_system->getOverlayWidth() > 320 ? nullptr : "lowres");
+
 	_storageUsernameDesc = new StaticTextWidget(container, "GlobalOptions_Cloud_Container.StorageUsernameDesc", _("Username:"), _("Username used by this storage"));
-	_storageUsername = new StaticTextWidget(container, "GlobalOptions_Cloud_Container.StorageUsernameLabel", "<none>");
+	_storageUsername = new StaticTextWidget(container, "GlobalOptions_Cloud_Container.StorageUsernameLabel", "<none>", "", ThemeEngine::kFontStyleNormal);
 
 	_storageUsedSpaceDesc = new StaticTextWidget(container, "GlobalOptions_Cloud_Container.StorageUsedSpaceDesc", _("Used space:"), _("Space used by ScummVM's saved games on this storage"));
-	_storageUsedSpace = new StaticTextWidget(container, "GlobalOptions_Cloud_Container.StorageUsedSpaceLabel", "0 bytes");
+	_storageUsedSpace = new StaticTextWidget(container, "GlobalOptions_Cloud_Container.StorageUsedSpaceLabel", "0 bytes", "", ThemeEngine::kFontStyleNormal);
+	
+	_storageLastSyncDesc = new StaticTextWidget(container, "GlobalOptions_Cloud_Container.StorageLastSyncDesc", _("Last sync:"), _("When was the last time saved games were synced with this storage"));
+	_storageLastSync = new StaticTextWidget(container, "GlobalOptions_Cloud_Container.StorageLastSyncLabel", "<never>", "", ThemeEngine::kFontStyleNormal);
+	_storageSyncHint = new StaticTextWidget(container, "GlobalOptions_Cloud_Container.StorageSyncHint", _c("Saves sync automatically on launch, after saving and on loading.", context), "", ThemeEngine::kFontStyleNormal);
+	_storageSyncSavesButton = new ButtonWidget(container, "GlobalOptions_Cloud_Container.SyncSavesButton", _("Sync now"), _("Start saves sync"), kSyncSavesStorageCmd);
 
-	_storageLastSyncDesc = new StaticTextWidget(container, "GlobalOptions_Cloud_Container.StorageLastSyncDesc", _("Last sync time:"), _("When the last saved games sync for this storage occured"));
-	_storageLastSync = new StaticTextWidget(container, "GlobalOptions_Cloud_Container.StorageLastSyncLabel", "<never>");
+	_storageDownloadHint = new StaticTextWidget(container, "GlobalOptions_Cloud_Container.StorageDownloadHint", _c("You can download game files from your cloud ScummVM folder:", context));
+	_storageDownloadButton = new ButtonWidget(container, "GlobalOptions_Cloud_Container.DownloadButton", _("Download game files"), _("Open downloads manager dialog"), kDownloadStorageCmd);
 
-	_storageConnectButton = new ButtonWidget(container, "GlobalOptions_Cloud_Container.ConnectButton", _("Connect"), _("Open wizard dialog to connect your cloud storage account"), kConfigureStorageCmd);
-	_storageRefreshButton = new ButtonWidget(container, "GlobalOptions_Cloud_Container.RefreshButton", _("Refresh"), _("Refresh current cloud storage information (username and usage)"), kRefreshStorageCmd);
-	_storageDownloadButton = new ButtonWidget(container, "GlobalOptions_Cloud_Container.DownloadButton", _("Download"), _("Open downloads manager dialog"), kDownloadStorageCmd);
+	_storageDisconnectHint = new StaticTextWidget(container, "GlobalOptions_Cloud_Container.StorageDisconnectHint", _c("To change account for this storage, disconnect and connect again:", context));
+	_storageDisconnectButton = new ButtonWidget(container, "GlobalOptions_Cloud_Container.DisconnectButton", _("Disconnect"), _("Stop using this storage on this device"), kDisconnectStorageCmd);
+
+	_storageWizardNotConnectedHint = new StaticTextWidget(container, "GlobalOptions_Cloud_Container.StorageWizardNotConnectedHint", _c("This storage is not connected yet! To connect,", context));
+	_storageWizardOpenLinkHint = new StaticTextWidget(container, "GlobalOptions_Cloud_Container.StorageWizardOpenLinkHint", "1. Open this link:");
+	_storageWizardLink = new ButtonWidget(container, "GlobalOptions_Cloud_Container.StorageWizardLink", "https://cloud.scummvm.org/", _("Open URL"), kOpenUrlStorageCmd);
+	_storageWizardCodeHint = new StaticTextWidget(container, "GlobalOptions_Cloud_Container.StorageWizardCodeHint", _c("2. Get the code and enter it here:", context));
+	_storageWizardCodeBox = new EditTextWidget(container, "GlobalOptions_Cloud_Container.StorageWizardCodeBox", "", 0, 0, 0, ThemeEngine::kFontStyleConsole);
+	_storageWizardPasteButton = new ButtonWidget(container, "GlobalOptions_Cloud_Container.StorageWizardPasteButton", _("Paste"), _("Paste code from clipboard"), kPasteCodeStorageCmd);
+	_storageWizardConnectButton = new ButtonWidget(container, "GlobalOptions_Cloud_Container.StorageWizardConnectButton", _("3. Connect"), _("Connect your cloud storage account"), kConnectStorageCmd);
+	_storageWizardConnectionStatusHint = new StaticTextWidget(container, "GlobalOptions_Cloud_Container.StorageWizardConnectionStatusHint", "...");
 
 	_runServerButton = new ButtonWidget(container, "GlobalOptions_Cloud_Container.RunServerButton", _("Run server"), _("Run local webserver"), kRunServerCmd);
 	_serverInfoLabel = new StaticTextWidget(container, "GlobalOptions_Cloud_Container.ServerInfoLabel", _("Not running"));
 
 	// Root path
-	if (g_system->getOverlayWidth() > 320)
-		_rootPathButton = new ButtonWidget(container, "GlobalOptions_Cloud_Container.RootPathButton", _("/root/ Path:"), _("Specifies which directory the Files Manager can access"), kChooseRootDirCmd);
-	else
-		_rootPathButton = new ButtonWidget(container, "GlobalOptions_Cloud_Container.RootPathButton", _c("/root/ Path:", "lowres"), _("Specifies which directory the Files Manager can access"), kChooseRootDirCmd);
+	_rootPathButton = new ButtonWidget(container, "GlobalOptions_Cloud_Container.RootPathButton", _c("/root/ Path:", context), _("Specifies which directory the Files Manager can access"), kChooseRootDirCmd);
 	_rootPath = new StaticTextWidget(container, "GlobalOptions_Cloud_Container.RootPath", "/foo/bar", _("Specifies which directory the Files Manager can access"));
 
 	_rootPathClearButton = addClearButton(container, "GlobalOptions_Cloud_Container.RootPathClearButton", kRootPathClearCmd);
@@ -1880,6 +1908,17 @@ void GlobalOptionsDialog::clean() {
 #endif
 
 	OptionsDialog::clean();
+}
+
+void GlobalOptionsDialog::shiftWidget(Widget *widget, const char *widgetName, int32 xOffset, int32 yOffset) {
+	if (!widget) return;
+
+	int16 x, y;
+	uint16 w, h;
+	if (!g_gui.xmlEval()->getWidgetData(widgetName, x, y, w, h))
+		warning("%s's position is undefined", widgetName);
+	
+	widget->setPos(x + xOffset, y + yOffset);
 }
 
 void GlobalOptionsDialog::apply() {
@@ -2167,47 +2206,120 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		reflowLayout();
 		break;
 	}
-	case kConfigureStorageCmd:
-	{
-#ifdef NETWORKING_LOCALWEBSERVER_ENABLE_PORT_OVERRIDE
-		// save server's port
-		uint32 port = Networking::LocalWebserver::getPort();
-		if (_serverPort) {
-			uint64 contents = _serverPort->getEditString().asUint64();
-			if (contents != 0)
-				port = contents;
-		}
-		ConfMan.setInt("local_server_port", port);
-		ConfMan.flushToDisk();
-#endif // NETWORKING_LOCALWEBSERVER_ENABLE_PORT_OVERRIDE
-		StorageWizardDialog dialog(_selectedStorageIndex);
+	case kSyncSavesStorageCmd: {
+		CloudMan.syncSaves(
+			new Common::Callback<GlobalOptionsDialog, Cloud::Storage::BoolResponse>(this, &GlobalOptionsDialog::storageSavesSyncedCallback)
+		);
+		break;
+	}
+	case kDownloadStorageCmd: {
+		DownloadDialog dialog(_selectedStorageIndex, _launcher);
 		dialog.runModal();
-		//update container's scrollbar
-		reflowLayout();
 		break;
 	}
-	case kRefreshStorageCmd:
-	{
-		CloudMan.info(
-			new Common::Callback<GlobalOptionsDialog, Cloud::Storage::StorageInfoResponse>(this, &GlobalOptionsDialog::storageInfoCallback),
-			new Common::Callback<GlobalOptionsDialog, Networking::ErrorResponse>(this, &GlobalOptionsDialog::storageErrorCallback)
-		);
-		Common::String dir = CloudMan.savesDirectoryPath();
-		if (dir.lastChar() == '/')
-			dir.deleteLastChar();
-		CloudMan.listDirectory(
-			dir,
-			new Common::Callback<GlobalOptionsDialog, Cloud::Storage::ListDirectoryResponse>(this, &GlobalOptionsDialog::storageListDirectoryCallback),
-			new Common::Callback<GlobalOptionsDialog, Networking::ErrorResponse>(this, &GlobalOptionsDialog::storageErrorCallback)
-		);
-		break;
-	}
-	case kDownloadStorageCmd:
-		{
-			DownloadDialog dialog(_selectedStorageIndex, _launcher);
-			dialog.runModal();
+	case kOpenUrlStorageCmd: {
+		Common::String url = "https://cloud.scummvm.org/";
+		switch (_selectedStorageIndex) {
+		case Cloud::kStorageDropboxId:
+			url += "dropbox";
+			break;
+		case Cloud::kStorageOneDriveId:
+			url += "onedrive";
+			break;
+		case Cloud::kStorageGoogleDriveId:
+			url += "gdrive";
+			break;
+		case Cloud::kStorageBoxId:
+			url += "box";
 			break;
 		}
+
+		if (!g_system->openUrl(url)) {
+			MessageDialog alert(_("Failed to open URL!\nPlease navigate to this page manually."));
+			alert.runModal();
+		}
+		break;
+	}
+	case kPasteCodeStorageCmd: {
+		if (g_system->hasTextInClipboard()) {
+			Common::String message = g_system->getTextFromClipboard();
+			if (!message.empty()) {
+				_storageWizardCodeBox->setEditString(message);
+				_redrawCloudTab = true;
+			}
+		}
+		break;
+	}
+	case kConnectStorageCmd: {
+		Common::String code = "";
+		if (_storageWizardCodeBox)
+			code = _storageWizardCodeBox->getEditString();
+		if (code.size() == 0)
+			return;
+
+		if (CloudMan.isWorking()) {
+			bool cancel = true;
+
+			MessageDialog alert(_("Another Storage is working now. Do you want to interrupt it?"), _("Yes"), _("No"));
+			if (alert.runModal() == GUI::kMessageOK) {
+				if (CloudMan.isDownloading())
+					CloudMan.cancelDownload();
+				if (CloudMan.isSyncing())
+					CloudMan.cancelSync();
+
+				// I believe it still would return `true` here, but just in case
+				if (CloudMan.isWorking()) {
+					MessageDialog alert2(_("Wait until current Storage finishes up and try again."));
+					alert2.runModal();
+				} else {
+					cancel = false;
+				}
+			}
+
+			if (cancel) {
+				return;
+			}
+		}
+
+		if (_storageWizardConnectionStatusHint)
+			_storageWizardConnectionStatusHint->setLabel(_("Connecting..."));
+		CloudMan.connectStorage(
+			_selectedStorageIndex, code,
+			new Common::Callback<GlobalOptionsDialog, Networking::ErrorResponse>(this, &GlobalOptionsDialog::storageConnectionCallback)
+		);
+		_connectingStorage = true;
+		_redrawCloudTab = true;
+		break;
+	}
+	case kDisconnectStorageCmd: {
+		if (_selectedStorageIndex == CloudMan.getStorageIndex() && CloudMan.isWorking()) {
+			bool cancel = true;
+
+			MessageDialog alert(_("This Storage is working now. Do you want to interrupt it?"), _("Yes"), _("No"));
+			if (alert.runModal() == GUI::kMessageOK) {
+				if (CloudMan.isDownloading())
+					CloudMan.cancelDownload();
+				if (CloudMan.isSyncing())
+					CloudMan.cancelSync();
+
+				// I believe it still would return `true` here, but just in case
+				if (CloudMan.isWorking()) {
+					MessageDialog alert2(_("Wait until current Storage finishes up and try again."));
+					alert2.runModal();
+				} else {
+					cancel = false;
+				}
+			}
+
+			if (cancel) {
+				return;
+			}
+		}
+
+		CloudMan.disconnectStorage(_selectedStorageIndex);
+		_redrawCloudTab = true;
+		break;
+	}
 #endif // USE_LIBCURL
 #ifdef USE_SDL_NET
 	case kRunServerCmd:
@@ -2329,24 +2441,29 @@ void GlobalOptionsDialog::setupCloudTab() {
 	if (_storagePopUpDesc) _storagePopUpDesc->setVisible(true);
 	if (_storagePopUp) _storagePopUp->setVisible(true);
 
+	Common::String username = CloudMan.getStorageUsername(_selectedStorageIndex);
+	bool storageConnected = (username != "");
 	bool shown = (_selectedStorageIndex != Cloud::kStorageNoneId);
-	if (_storageUsernameDesc) _storageUsernameDesc->setVisible(shown);
+	bool shownConnectedInfo = (shown && storageConnected);
+	
+	if (_storageUsernameDesc) _storageUsernameDesc->setVisible(shownConnectedInfo);
 	if (_storageUsername) {
-		Common::String username = CloudMan.getStorageUsername(_selectedStorageIndex);
-		if (username == "")
-			username = _("<none>");
 		_storageUsername->setLabel(username);
-		_storageUsername->setVisible(shown);
+		_storageUsername->setVisible(shownConnectedInfo);
 	}
-	if (_storageUsedSpaceDesc) _storageUsedSpaceDesc->setVisible(shown);
+	if (_storageUsedSpaceDesc) _storageUsedSpaceDesc->setVisible(shownConnectedInfo);
 	if (_storageUsedSpace) {
 		uint64 usedSpace = CloudMan.getStorageUsedSpace(_selectedStorageIndex);
 		Common::String usedSpaceNumber, usedSpaceUnits;
 		usedSpaceNumber = Common::getHumanReadableBytes(usedSpace, usedSpaceUnits);
 		_storageUsedSpace->setLabel(Common::String::format("%s %s", usedSpaceNumber.c_str(), _(usedSpaceUnits.c_str())));
-		_storageUsedSpace->setVisible(shown);
+		_storageUsedSpace->setVisible(shownConnectedInfo);
 	}
-	if (_storageLastSyncDesc) _storageLastSyncDesc->setVisible(shown);
+	if (_storageSyncHint) {
+		_storageSyncHint->setVisible(shownConnectedInfo);
+		_storageSyncHint->setEnabled(false);
+	}
+	if (_storageLastSyncDesc) _storageLastSyncDesc->setVisible(shownConnectedInfo);
 	if (_storageLastSync) {
 		Common::String sync = CloudMan.getStorageLastSync(_selectedStorageIndex);
 		if (sync == "") {
@@ -2356,16 +2473,96 @@ void GlobalOptionsDialog::setupCloudTab() {
 				sync = _("<never>");
 		}
 		_storageLastSync->setLabel(sync);
-		_storageLastSync->setVisible(shown);
+		_storageLastSync->setVisible(shownConnectedInfo);
 	}
-	if (_storageConnectButton)
-		_storageConnectButton->setVisible(shown);
-	if (_storageRefreshButton)
-		_storageRefreshButton->setVisible(shown && _selectedStorageIndex == CloudMan.getStorageIndex());
-	if (_storageDownloadButton)
-		_storageDownloadButton->setVisible(shown && _selectedStorageIndex == CloudMan.getStorageIndex());
-	if (!shown)
-		serverLabelPosition = (_storageUsernameDesc ? _storageUsernameDesc->getRelY() : 0);
+	if (_storageSyncSavesButton)
+		_storageSyncSavesButton->setVisible(shownConnectedInfo && _selectedStorageIndex == CloudMan.getStorageIndex());
+
+	{
+		int16 x, y;
+		uint16 w, h;
+		int16 downloadHintY, downloadButtonY, disconnectHintY;
+		if (!g_gui.xmlEval()->getWidgetData("GlobalOptions_Cloud_Container.StorageDownloadHint", x, y, w, h))
+			warning("GlobalOptions_Cloud_Container.StorageDownloadHint's position is undefined");
+		downloadHintY = y;
+		if (!g_gui.xmlEval()->getWidgetData("GlobalOptions_Cloud_Container.DownloadButton", x, y, w, h))
+			warning("GlobalOptions_Cloud_Container.DownloadButton's position is undefined");
+		downloadButtonY = y;
+		if (!g_gui.xmlEval()->getWidgetData("GlobalOptions_Cloud_Container.StorageDisconnectHint", x, y, w, h))
+			warning("GlobalOptions_Cloud_Container.StorageDisconnectHint's position is undefined");
+		disconnectHintY = y;
+
+		bool showDownloadButton = (shownConnectedInfo && _selectedStorageIndex == CloudMan.getStorageIndex() && _selectedStorageIndex != Cloud::kStorageGoogleDriveId); // cannot download via Google Drive
+		if (_storageDownloadHint) _storageDownloadHint->setVisible(showDownloadButton);
+		if (_storageDownloadButton) _storageDownloadButton->setVisible(showDownloadButton);
+		if (_storageDisconnectHint) _storageDisconnectHint->setVisible(shownConnectedInfo);
+		if (_storageDisconnectButton) _storageDisconnectButton->setVisible(shownConnectedInfo);
+
+		if (showDownloadButton) {
+			if (_storageDownloadHint) _storageDownloadHint->setPos(_storageDownloadHint->getRelX(), downloadHintY);
+			if (_storageDownloadButton) _storageDownloadButton->setPos(_storageDownloadButton->getRelX(), downloadButtonY);
+			if (_storageDisconnectHint) _storageDisconnectHint->setPos(_storageDisconnectHint->getRelX(), disconnectHintY);
+			if (_storageDisconnectButton)_storageDisconnectButton->setPos(_storageDisconnectButton->getRelX(), disconnectHintY + downloadButtonY - downloadHintY);
+		} else {
+			if (_storageDisconnectHint) _storageDisconnectHint->setPos(_storageDisconnectHint->getRelX(), downloadHintY);
+			if (_storageDisconnectButton)_storageDisconnectButton->setPos(_storageDisconnectButton->getRelX(), downloadButtonY);
+		}
+
+		if (!shownConnectedInfo) {
+			bool connecting = _connectingStorage;
+			if (_storageWizardNotConnectedHint) _storageWizardNotConnectedHint->setVisible(shown);
+			if (_storageWizardOpenLinkHint) _storageWizardOpenLinkHint->setVisible(shown);
+			if (_storageWizardLink) {
+				_storageWizardLink->setVisible(shown);
+				_storageWizardLink->setEnabled(g_system->hasFeature(OSystem::kFeatureOpenUrl) && !connecting);
+			}
+			if (_storageWizardCodeHint) _storageWizardCodeHint->setVisible(shown);
+			if (_storageWizardCodeBox) {
+				_storageWizardCodeBox->setVisible(shown);
+				_storageWizardCodeBox->setEnabled(!connecting);
+			}
+			if (_storageWizardPasteButton) {
+				_storageWizardPasteButton->setVisible(shown && g_system->hasFeature(OSystem::kFeatureClipboardSupport));
+				_storageWizardPasteButton->setEnabled(!connecting);
+			}
+			if (_storageWizardConnectButton) {
+				_storageWizardConnectButton->setVisible(shown);
+				_storageWizardConnectButton->setEnabled(!connecting);
+			}
+			if (_storageWizardConnectionStatusHint) {
+				_storageWizardConnectionStatusHint->setVisible(shown && _storageWizardConnectionStatusHint->getLabel() != "...");
+				_storageWizardConnectionStatusHint->setEnabled(!connecting);
+			}
+
+			int16 x2, y2;
+			uint16 w2, h2;
+			int16 shiftUp;
+			if (!g_gui.xmlEval()->getWidgetData("GlobalOptions_Cloud_Container.StorageUsernameDesc", x2, y2, w2, h2))
+				warning("GlobalOptions_Cloud_Container.StorageUsernameDesc's position is undefined");
+			shiftUp = y2;
+			if (!g_gui.xmlEval()->getWidgetData("GlobalOptions_Cloud_Container.StorageWizardNotConnectedHint", x2, y2, w2, h2))
+				warning("GlobalOptions_Cloud_Container.StorageWizardNotConnectedHint's position is undefined");
+			shiftUp = y2 - shiftUp;
+
+			shiftWidget(_storageWizardNotConnectedHint, "GlobalOptions_Cloud_Container.StorageWizardNotConnectedHint", 0, -shiftUp);
+			shiftWidget(_storageWizardOpenLinkHint, "GlobalOptions_Cloud_Container.StorageWizardOpenLinkHint", 0, -shiftUp);
+			shiftWidget(_storageWizardLink, "GlobalOptions_Cloud_Container.StorageWizardLink", 0, -shiftUp);
+			shiftWidget(_storageWizardCodeHint, "GlobalOptions_Cloud_Container.StorageWizardCodeHint", 0, -shiftUp);
+			shiftWidget(_storageWizardCodeBox, "GlobalOptions_Cloud_Container.StorageWizardCodeBox", 0, -shiftUp);
+			shiftWidget(_storageWizardPasteButton, "GlobalOptions_Cloud_Container.StorageWizardPasteButton", 0, -shiftUp);
+			shiftWidget(_storageWizardConnectButton, "GlobalOptions_Cloud_Container.StorageWizardConnectButton", 0, -shiftUp);
+			shiftWidget(_storageWizardConnectionStatusHint, "GlobalOptions_Cloud_Container.StorageWizardConnectionStatusHint", 0, -shiftUp);
+		}
+
+		if (!shown)
+			serverLabelPosition = (_storageUsernameDesc ? _storageUsernameDesc->getRelY() : 0);
+		else {
+			if (shownConnectedInfo)
+				serverLabelPosition = (_storageDisconnectButton ? _storageDisconnectButton->getRelY() + _storageDisconnectButton->getHeight() + 16 : 0);
+			else
+				serverLabelPosition = (_storageWizardConnectButton ? _storageWizardConnectButton->getRelY() + _storageWizardConnectButton->getHeight() + 16 : 0);
+		}
+	}
 #else // USE_LIBCURL
 	_selectedStorageIndex = 0;
 
@@ -2387,10 +2584,10 @@ void GlobalOptionsDialog::setupCloudTab() {
 		_storageLastSyncDesc->setVisible(false);
 	if (_storageLastSync)
 		_storageLastSync->setVisible(false);
-	if (_storageConnectButton)
-		_storageConnectButton->setVisible(false);
-	if (_storageRefreshButton)
-		_storageRefreshButton->setVisible(false);
+	if (_storageDisconnectButton)
+		_storageDisconnectButton->setVisible(false);
+	if (_storageSyncSavesButton)
+		_storageSyncSavesButton->setVisible(false);
 	if (_storageDownloadButton)
 		_storageDownloadButton->setVisible(false);
 
@@ -2504,23 +2701,51 @@ void GlobalOptionsDialog::setupCloudTab() {
 	if (_serverPortClearButton)
 		_serverPortClearButton->setVisible(false);
 #endif // USE_SDL_NET
+
+	// temporary hide all local server-related info to see how Cloud looks without it
+	/*
+	if (_runServerButton)
+		_runServerButton->setVisible(false);
+	if (_serverInfoLabel) {
+		_serverInfoLabel->setPos(_serverInfoLabel->getRelX(), serverLabelPosition);
+		_serverInfoLabel->setVisible(false);
+	}
+	if (_rootPathButton)
+		_rootPathButton->setVisible(false);
+	if (_rootPath)
+		_rootPath->setVisible(false);
+	if (_rootPathClearButton)
+		_rootPathClearButton->setVisible(false);
+	if (_serverPortDesc)
+		_serverPortDesc->setVisible(false);
+	if (_serverPort)
+		_serverPort->setVisible(false);
+	if (_serverPortClearButton)
+		_serverPortClearButton->setVisible(false);
+	*/
 }
 
 #ifdef USE_LIBCURL
-void GlobalOptionsDialog::storageInfoCallback(Cloud::Storage::StorageInfoResponse response) {
-	//we could've used response.value.email()
-	//but Storage already notified CloudMan
-	//so we just set the flag to redraw our cloud tab
+void GlobalOptionsDialog::storageConnectionCallback(Networking::ErrorResponse response) {
+	Common::String message = "...";
+	if (!response.failed && !response.interrupted) {
+		// success
+		g_system->displayMessageOnOSD(_("Storage connected."));
+	} else {
+		message = _("Failed to connect storage.");
+		if (response.failed) {
+			message = Common::String(_("Failed to connect storage: ")) + _(response.response.c_str());
+		}
+	}
+
+	if (_storageWizardConnectionStatusHint)
+		_storageWizardConnectionStatusHint->setLabel(message);
+
 	_redrawCloudTab = true;
+	_connectingStorage = false;
 }
 
-void GlobalOptionsDialog::storageListDirectoryCallback(Cloud::Storage::ListDirectoryResponse response) {
-	Common::Array<Cloud::StorageFile> &files = response.value;
-	uint64 totalSize = 0;
-	for (uint32 i = 0; i < files.size(); ++i)
-		if (!files[i].isDirectory())
-			totalSize += files[i].size();
-	CloudMan.setStorageUsedSpace(CloudMan.getStorageIndex(), totalSize);
+void GlobalOptionsDialog::storageSavesSyncedCallback(Cloud::Storage::BoolResponse response) {
 	_redrawCloudTab = true;
 }
 

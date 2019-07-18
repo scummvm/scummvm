@@ -37,19 +37,19 @@ protected:
 	 * Gets token from cloud.scummvm.org using given code.
 	 * Base implementation for storages with common auth procedure.
 	 */
-	virtual void getAccessToken(Common::String code);
+	virtual void getAccessToken(Common::String code, Networking::ErrorCallback callback);
 
 	/**
 	 * Handles JSON response which should contain access token requested 
 	 * with getAccessToken().
 	 */
-	virtual void codeFlowComplete(Networking::JsonResponse response);
+	virtual void codeFlowComplete(Networking::ErrorCallback callback, Networking::JsonResponse response);
 
 	/**
 	 * Handles network errors occurred while getting access token requested
 	 * with getAccessToken().
 	 */
-	virtual void codeFlowFailed(Networking::ErrorResponse error);
+	virtual void codeFlowFailed(Networking::ErrorCallback callback, Networking::ErrorResponse error);
 
 	/**
 	 * Return cloud provider name, used in cloud.scummvm.org endpoints.

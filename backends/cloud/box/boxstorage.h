@@ -55,7 +55,7 @@ protected:
 
 public:
 	/** This constructor uses OAuth code flow to get tokens. */
-	BoxStorage(Common::String code);
+	BoxStorage(Common::String code, Networking::ErrorCallback cb);
 	virtual ~BoxStorage();
 
 	/**
@@ -103,6 +103,11 @@ public:
 	 * @return pointer to the newly created BoxStorage or 0 if some problem occured.
 	 */
 	static BoxStorage *loadFromConfig(Common::String keyPrefix);
+
+	/**
+	 * Remove all BoxStorage-related data from config.
+	 */
+	static void removeFromConfig(Common::String keyPrefix);
 
 	virtual Common::String getRootDirectoryId();
 

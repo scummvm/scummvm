@@ -37,18 +37,19 @@ BaseStorage::BaseStorage(Common::String token, Common::String refreshToken):
 
 BaseStorage::~BaseStorage() {}
 
-void BaseStorage::getAccessToken(Common::String code) {
-	Networking::JsonCallback callback = new Common::Callback<BaseStorage, Networking::JsonResponse>(this, &BaseStorage::codeFlowComplete);
-	Networking::ErrorCallback errorCallback = new Common::Callback<BaseStorage, Networking::ErrorResponse>(this, &BaseStorage::codeFlowFailed);
+void BaseStorage::getAccessToken(Common::String code, Networking::ErrorCallback callback) {
+	Networking::JsonCallback innerCallback = new Common::CallbackBridge<BaseStorage, Networking::ErrorResponse, Networking::JsonResponse>(this, &BaseStorage::codeFlowComplete, callback);
+	Networking::ErrorCallback errorCallback = new Common::CallbackBridge<BaseStorage, Networking::ErrorResponse, Networking::ErrorResponse>(this, &BaseStorage::codeFlowFailed, callback);
 
 	Common::String url = Common::String::format("https://cloud.scummvm.org/%s/token/%s", cloudProvider().c_str(), code.c_str());
-	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(callback, errorCallback, url);
+	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(innerCallback, errorCallback, url);
 
 	addRequest(request);
 }
 
-void BaseStorage::codeFlowComplete(Networking::JsonResponse response) {
+void BaseStorage::codeFlowComplete(Networking::ErrorCallback callback, Networking::JsonResponse response) {
 	bool success = true;
+	Common::String callbackMessage = "OK";
 
 	Common::JSONValue *json = (Common::JSONValue *)response.value;
 	if (json == nullptr) {
@@ -78,6 +79,7 @@ void BaseStorage::codeFlowComplete(Networking::JsonResponse response) {
 		}
 		warning("BaseStorage: response says error occurred: %s", errorMessage.c_str());
 		success = false;
+		callbackMessage = errorMessage;
 	}
 
 	if (success && !Networking::CurlJsonRequest::jsonContainsObject(result, "oauth", "BaseStorage::codeFlowComplete")) {
@@ -110,13 +112,20 @@ void BaseStorage::codeFlowComplete(Networking::JsonResponse response) {
 
 	if (!success)
 		CloudMan.removeStorage(this);
+	if (callback)
+		(*callback)(Networking::ErrorResponse(nullptr, false, !success, callbackMessage, -1));
 	delete json;
+	delete callback;
 }
 
-void BaseStorage::codeFlowFailed(Networking::ErrorResponse error) {
+void BaseStorage::codeFlowFailed(Networking::ErrorCallback callback, Networking::ErrorResponse error) {
 	debug(9, "BaseStorage: code flow failed (%s, %ld):", (error.failed ? "failed" : "interrupted"), error.httpResponseCode);
 	debug(9, "%s", error.response.c_str());
 	CloudMan.removeStorage(this);
+
+	if (callback)
+		(*callback)(error);
+	delete callback;
 }
 
 void BaseStorage::refreshAccessToken(BoolCallback callback, Networking::ErrorCallback errorCallback) {

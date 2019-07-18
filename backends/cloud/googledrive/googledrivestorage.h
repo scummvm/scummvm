@@ -58,7 +58,7 @@ protected:
 
 public:
 	/** This constructor uses OAuth code flow to get tokens. */
-	GoogleDriveStorage(Common::String code);
+	GoogleDriveStorage(Common::String code, Networking::ErrorCallback cb);
 	virtual ~GoogleDriveStorage();
 
 	/**
@@ -105,6 +105,11 @@ public:
 	 * @return pointer to the newly created GoogleDriveStorage or 0 if some problem occured.
 	 */
 	static GoogleDriveStorage *loadFromConfig(Common::String keyPrefix);
+
+	/**
+	 * Remove all GoogleDriveStorage-related data from config.
+	 */
+	static void removeFromConfig(Common::String keyPrefix);
 
 	virtual Common::String getRootDirectoryId();
 

@@ -204,8 +204,16 @@ public:
 	 *
 	 * @param   index   Storage's index
 	 * @param   code    OAuth2 code received from user
+	 * @param	cb		callback to notify of success or error
 	 */
-	void connectStorage(uint32 index, Common::String code);
+	void connectStorage(uint32 index, Common::String code, Networking::ErrorCallback cb = nullptr);
+
+	/**
+	 * Remove Storage with a given index from config.
+	 *
+	 * @param   index   Storage's index
+	 */
+	void disconnectStorage(uint32 index);
 
 	/** Returns ListDirectoryResponse with list of files. */
 	Networking::Request *listDirectory(Common::String path, Storage::ListDirectoryCallback callback, Networking::ErrorCallback errorCallback, bool recursive = false);
