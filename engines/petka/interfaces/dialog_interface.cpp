@@ -138,8 +138,9 @@ void DialogInterface::sub_4155D0(int a) {
 			msg.arg3 = 0;
 			msg.unk = 0;
 			msg.sender = nullptr;
+			_talker->processMessage(msg);
+			_talker = nullptr;
 		}
-		_talker = nullptr;
 		_field18 = 3;
 		_field14 = -1;
 		restoreCursorState();
