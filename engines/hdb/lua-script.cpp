@@ -182,12 +182,16 @@ void LuaScript::loadSaveFile(Common::InSaveFile *in, const char *fName) {
 	_globals.clear();
 
 	// Start reading globals
-	_globals.resize(in->readUint32LE());
-	for (uint i = 0; i < _globals.size(); i++) {
-		in->read(_globals[i]->global, 32);
-		_globals[i]->valueOrString = in->readSint32LE();
-		_globals[i]->value = in->readDoubleLE();
-		in->read(_globals[i]->string, 32);
+	uint32 globalsSize = in->readUint32LE();
+	for (uint i = 0; i < globalsSize; i++) {
+		Global *g = new Global;
+
+		in->read(g->global, 32);
+		g->valueOrString = in->readSint32LE();
+		g->value = in->readDoubleLE();
+		in->read(g->string, 32);
+
+		_globals.push_back(g);
 	}
 
 	lua_getglobal(_state, "LoadState");
