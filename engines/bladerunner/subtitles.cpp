@@ -122,14 +122,14 @@ Subtitles::~Subtitles() {
 //
 void Subtitles::init(void) {
 	// Loading subtitles versioning info if available
-	TextResource *versionTxtResource = new TextResource(_vm);
-	if ( versionTxtResource->open(SUBTITLES_VERSION_TRENAME, false)) {
-		_subtitlesInfo.credits = versionTxtResource->getText((uint32)0);
-		_subtitlesInfo.versionStr = versionTxtResource->getText((uint32)1);
-		_subtitlesInfo.dateOfCompile = versionTxtResource->getText((uint32)2);
-		_subtitlesInfo.languageMode = versionTxtResource->getText((uint32)3);
-		Common::String fontType = versionTxtResource->getText((uint32)4);
-		_subtitlesInfo.fontName = versionTxtResource->getText((uint32)5);
+	TextResource versionTxtResource(_vm);
+	if ( versionTxtResource.open(SUBTITLES_VERSION_TRENAME, false)) {
+		_subtitlesInfo.credits = versionTxtResource.getText((uint32)0);
+		_subtitlesInfo.versionStr = versionTxtResource.getText((uint32)1);
+		_subtitlesInfo.dateOfCompile = versionTxtResource.getText((uint32)2);
+		_subtitlesInfo.languageMode = versionTxtResource.getText((uint32)3);
+		Common::String fontType = versionTxtResource.getText((uint32)4);
+		_subtitlesInfo.fontName = versionTxtResource.getText((uint32)5);
 
 		if (fontType.equalsIgnoreCase("ttf")) {
 			_subtitlesInfo.fontType = Subtitles::kSubtitlesFontTypeTTF;
@@ -147,8 +147,6 @@ void Subtitles::init(void) {
 		       _subtitlesInfo.languageMode.c_str(),
 		       _subtitlesInfo.credits.c_str());
 
-		delete versionTxtResource;
-		versionTxtResource = nullptr;
 	} else {
 		debug("Subtitles version info: N/A");
 	}
