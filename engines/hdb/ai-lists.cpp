@@ -128,6 +128,7 @@ void AI::animateTargets() {
 				if (at->killAuto)
 					autoDeactivate(at->x, at->y);
 
+				delete _animTargets[i];
 				_animTargets.remove_at(i);
 				i--;
 				continue;
