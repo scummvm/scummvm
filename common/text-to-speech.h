@@ -150,7 +150,7 @@ public:
 	 *
 	 * @param str The string to say
 	 */
-	virtual bool say(String str) { return false; }
+	virtual bool say(String str, String charset = "") { return false; }
 
 	/**
 	 * Stops the speech

@@ -42,7 +42,7 @@ public:
 	LinuxTextToSpeechManager();
 	virtual ~LinuxTextToSpeechManager();
 
-	virtual bool say(Common::String str);
+	virtual bool say(Common::String str, Common::String charset = "");
 
 	virtual bool stop();
 	virtual bool pause();
@@ -74,6 +74,7 @@ private:
 	virtual void updateVoices();
 	void createVoice(int typeNumber, Common::TTSVoice::Gender, Common::TTSVoice::Age, char *description);
 	SpeechState _speechState;
+	Common::String strToUtf8(Common::String str, Common::String charset);
 };
 
 #endif
