@@ -542,14 +542,7 @@ Tile *Gfx::getTileGfx(const char *name, int32 size) {
 
 	GfxCache *gc = new GfxCache;
 	strcpy(gc->name, name);
-
-	Common::SeekableReadStream *stream = g_hdb->_fileMan->findFirstData(name, TYPE_TILE32);
-
-	Tile *gfxTile = new Tile;
-	gfxTile->load(stream);
-	delete stream;
-
-	gc->tileGfx = gfxTile;
+	gc->tileGfx = loadTile(name);
 	gc->status = false;
 	if (size == -1)
 		size = g_hdb->_fileMan->getLength(name, TYPE_TILE32);
@@ -583,14 +576,7 @@ Picture *Gfx::getPicGfx(const char *name, int32 size) {
 
 	GfxCache *gc = new GfxCache;
 	strcpy(gc->name, name);
-
-	Common::SeekableReadStream *stream = g_hdb->_fileMan->findFirstData(name, TYPE_TILE32);
-
-	Picture *gfxPic = new Picture;
-	gfxPic->load(stream);
-	delete stream;
-
-	gc->picGfx = gfxPic;
+	gc->picGfx = loadPic(name);
 	gc->status = true;
 	if (size == -1)
 		size = g_hdb->_fileMan->getLength(name, TYPE_PIC);
