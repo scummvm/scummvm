@@ -98,7 +98,7 @@ bool WindowsTextToSpeechManager::say(Common::String str, Common::String charset)
 		return true;
 	}
 
-	if (charset == "") {
+	if (charset.empty()) {
 #ifdef USE_TRANSLATION
 		charset = TransMan.getCurrentCharset();
 #else
