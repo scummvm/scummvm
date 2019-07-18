@@ -833,6 +833,7 @@ Common::Error HDBGame::run() {
 
 	Picture *titlePic = new Picture;
 	titlePic->load(titleStream);
+	delete titleStream;
 
 	Common::SeekableReadStream *tileStream = _fileMan->findFirstData("t32_ground1", TYPE_TILE32);
 	if (tileStream == NULL) {
@@ -842,6 +843,7 @@ Common::Error HDBGame::run() {
 
 	Tile *tile = new Tile;
 	tile->load(tileStream);
+	delete tileStream;
 #endif
 
 	if (ConfMan.hasKey("boot_param")) {
