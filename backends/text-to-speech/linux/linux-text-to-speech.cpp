@@ -128,7 +128,7 @@ bool LinuxTextToSpeechManager::say(Common::String str, Common::String charset) {
 	if (_speechState == BROKEN)
 		return true;
 	
-	if (charset == "") {
+	if (charset.empty()) {
 #ifdef USE_TRANSLATION
 		charset = TransMan.getCurrentCharset();
 #else
