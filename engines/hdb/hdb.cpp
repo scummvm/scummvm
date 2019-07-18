@@ -96,6 +96,8 @@ HDBGame::~HDBGame() {
 		delete _logoGfx;
 		_logoGfx = NULL;
 	}
+	delete _debugLogo;
+	_debugLogo = NULL;
 
 	DebugMan.clearAllDebugChannels();
 }
