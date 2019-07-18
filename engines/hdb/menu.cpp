@@ -27,6 +27,21 @@ namespace HDB {
 
 Menu::~Menu() {
 	freeMenu();
+
+	delete _gCheckEmpty;
+	delete _gCheckOff;
+	delete _gCheckOn;
+	delete _gCheckLeft;
+	delete _gCheckRight;
+
+	delete _contArrowUp;
+	delete _contArrowDown;
+	delete _contArrowLeft;
+	delete _contArrowRight;
+	delete _contAssign;
+
+	delete _warpPlaque;
+	delete _hdbLogoScreen;
 }
 
 bool Menu::init() {
