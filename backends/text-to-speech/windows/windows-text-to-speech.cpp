@@ -79,7 +79,7 @@ void WindowsTextToSpeechManager::init() {
 	_audio->SetFormat(format.FormatId(), format.WaveFormatExPtr());
 	_voice->SetOutput(_audio, FALSE);
 
-	if(_ttsState->_availaibleVoices.size() > 0)
+	if(_ttsState->_availableVoices.size() > 0)
 		_speechState = READY;
 	else
 		_speechState = NO_VOICE;
@@ -180,7 +180,7 @@ bool WindowsTextToSpeechManager::isReady() {
 void WindowsTextToSpeechManager::setVoice(unsigned index) {
 	if(_speechState == BROKEN || _speechState == NO_VOICE)
 		return;
-	_voice->SetVoice((ISpObjectToken *) _ttsState->_availaibleVoices[index].getData());
+	_voice->SetVoice((ISpObjectToken *) _ttsState->_availableVoices[index].getData());
 }
 
 void WindowsTextToSpeechManager::setRate(int rate) {
@@ -211,11 +211,11 @@ int WindowsTextToSpeechManager::getVolume() {
 }
 
 void WindowsTextToSpeechManager::freeVoices() {
-	for(Common::TTSVoice *i = _ttsState->_availaibleVoices.begin(); i < _ttsState->_availaibleVoices.end(); i++) {
+	for(Common::TTSVoice *i = _ttsState->_availableVoices.begin(); i < _ttsState->_availableVoices.end(); i++) {
 		ISpObjectToken *voiceData = (ISpObjectToken *)i->getData();
 		voiceData->Release();
 	}
-	_ttsState->_availaibleVoices.clear();
+	_ttsState->_availableVoices.clear();
 }
 
 void WindowsTextToSpeechManager::setLanguage(Common::String language) {
@@ -290,7 +290,7 @@ void WindowsTextToSpeechManager::createVoice(void *cpVoiceToken) {
 	free(buffer);
 	CoTaskMemFree(data);
 
-	_ttsState->_availaibleVoices.push_back(Common::TTSVoice(gender, Common::TTSVoice::ADULT, (void *) voiceToken, desc));
+	_ttsState->_availableVoices.push_back(Common::TTSVoice(gender, Common::TTSVoice::ADULT, (void *) voiceToken, desc));
 }
 
 int strToInt(Common::String str) {
@@ -340,9 +340,9 @@ void WindowsTextToSpeechManager::updateVoices() {
 	_voice->SetVolume(_ttsState->_volume);
 	cpEnum->Release();
 
-	if(_ttsState->_availaibleVoices.size() == 0) {
+	if(_ttsState->_availableVoices.size() == 0) {
 		_speechState = NO_VOICE;
-		warning("No voice is availaible");
+		warning("No voice is available");
 	} else if (_speechState == NO_VOICE)
 		_speechState = READY;
 }

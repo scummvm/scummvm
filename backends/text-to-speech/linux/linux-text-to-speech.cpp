@@ -184,8 +184,8 @@ bool LinuxTextToSpeechManager::isReady() {
 void LinuxTextToSpeechManager::setVoice(unsigned index) {
 	if (_speechState == BROKEN)
 		return;
-	assert(index < _ttsState->_availaibleVoices.size());
-	Common::TTSVoice voice = _ttsState->_availaibleVoices[index];
+	assert(index < _ttsState->_availableVoices.size());
+	Common::TTSVoice voice = _ttsState->_availableVoices[index];
 	spd_set_voice_type(_connection, *(SPDVoiceType *)(voice.getData()));
 	_ttsState->_activeVoice = index;
 }
@@ -230,7 +230,7 @@ void LinuxTextToSpeechManager::createVoice(int typeNumber, Common::TTSVoice::Gen
 	SPDVoiceType *type = (SPDVoiceType *) malloc(sizeof(SPDVoiceType));
 	*type = static_cast<SPDVoiceType>(typeNumber);
 	Common::TTSVoice voice(gender, age, (void *) type, description);
-	_ttsState->_availaibleVoices.push_back(voice);
+	_ttsState->_availableVoices.push_back(voice);
 }
 
 void LinuxTextToSpeechManager::updateVoices() {
