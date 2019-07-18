@@ -912,6 +912,43 @@ AI::AI() {
 	_clubUpFrames = 0;
 	_clubLeftFrames = 0;
 	_clubRightFrames = 0;
+
+	memset(&_inventory, 0, sizeof(InvEnt) * kMaxInventory);
+
+	// Free Player Graphics
+	for (int i = 0; i < 8; i++)
+		_slugAttackGfx[i] = NULL;
+
+	_weaponSelGfx = NULL;
+	_weaponGfx = NULL;
+
+	memset(_clubDownGfx, 0, sizeof(_clubDownGfx));
+	memset(_clubUpGfx, 0, sizeof(_clubUpGfx));
+	memset(_clubLeftGfx, 0, sizeof(_clubLeftGfx));
+	memset(_clubRightGfx, 0, sizeof(_clubRightGfx));
+	memset(_slugAttackGfx, 0, sizeof(_slugAttackGfx));
+	memset(_pushdownGfx, 0, sizeof(_pushdownGfx));
+	memset(_pushupGfx, 0, sizeof(_pushupGfx));
+	memset(_pushleftGfx, 0, sizeof(_pushleftGfx));
+	memset(_pushrightGfx, 0, sizeof(_pushrightGfx));
+	memset(_stunDownGfx, 0, sizeof(_stunDownGfx));
+	memset(_stunUpGfx, 0, sizeof(_stunUpGfx));
+	memset(_stunLeftGfx, 0, sizeof(_stunLeftGfx));
+	memset(_stunRightGfx, 0, sizeof(_stunRightGfx));
+	memset(_slugDownGfx, 0, sizeof(_slugDownGfx));
+	memset(_slugUpGfx, 0, sizeof(_slugUpGfx));
+	memset(_slugLeftGfx, 0, sizeof(_slugLeftGfx));
+	memset(_slugRightGfx, 0, sizeof(_slugRightGfx));
+
+	memset(_horrible1Gfx, 0, sizeof(_horrible1Gfx));
+	memset(_horrible2Gfx, 0, sizeof(_horrible2Gfx));
+	memset(_horrible3Gfx, 0, sizeof(_horrible3Gfx));
+	memset(_horrible4Gfx, 0, sizeof(_horrible4Gfx));
+	memset(_plummetGfx, 0, sizeof(_plummetGfx));
+	memset(_dyingGfx, 0, sizeof(_dyingGfx));
+
+	memset(_waypointGfx, 0, sizeof(_waypointGfx));
+	_debugQMark = NULL;
 }
 
 AI::~AI() {
@@ -951,31 +988,6 @@ AI::~AI() {
 		delete _weaponGfx;
 		_weaponGfx = NULL;
 	}
-
-	memset(_clubDownGfx, 0, sizeof(_clubDownGfx));
-	memset(_clubUpGfx, 0, sizeof(_clubUpGfx));
-	memset(_clubLeftGfx, 0, sizeof(_clubLeftGfx));
-	memset(_clubRightGfx, 0, sizeof(_clubRightGfx));
-	memset(_slugAttackGfx, 0, sizeof(_slugAttackGfx));
-	memset(_pushdownGfx, 0, sizeof(_pushdownGfx));
-	memset(_pushupGfx, 0, sizeof(_pushupGfx));
-	memset(_pushleftGfx, 0, sizeof(_pushleftGfx));
-	memset(_pushrightGfx, 0, sizeof(_pushrightGfx));
-	memset(_stunDownGfx, 0, sizeof(_stunDownGfx));
-	memset(_stunUpGfx, 0, sizeof(_stunUpGfx));
-	memset(_stunLeftGfx, 0, sizeof(_stunLeftGfx));
-	memset(_stunRightGfx, 0, sizeof(_stunRightGfx));
-	memset(_slugDownGfx, 0, sizeof(_slugDownGfx));
-	memset(_slugUpGfx, 0, sizeof(_slugUpGfx));
-	memset(_slugLeftGfx, 0, sizeof(_slugLeftGfx));
-	memset(_slugRightGfx, 0, sizeof(_slugRightGfx));
-
-	memset(_horrible1Gfx, 0, sizeof(_horrible1Gfx));
-	memset(_horrible2Gfx, 0, sizeof(_horrible2Gfx));
-	memset(_horrible3Gfx, 0, sizeof(_horrible3Gfx));
-	memset(_horrible4Gfx, 0, sizeof(_horrible4Gfx));
-	memset(_plummetGfx, 0, sizeof(_plummetGfx));
-	memset(_dyingGfx, 0, sizeof(_dyingGfx));
 
 	for (int i = 0; i < 4; i++)
 		delete _waypointGfx[i];
