@@ -42,8 +42,14 @@ Gfx::Gfx() {
 }
 
 Gfx::~Gfx() {
-	for (uint i = 0; i < _gfxCache->size(); i++)
-		delete _gfxCache->operator[](i);
+	for (uint i = 0; i < _gfxCache->size(); i++) {
+		GfxCache *cache = _gfxCache->operator[](i);
+		if (cache->status)
+			delete cache->picGfx;
+		else
+			delete cache->tileGfx;
+		delete cache;
+	}
 	delete _gfxCache;
 	for (uint i = 0; i < _charInfoBlocks.size(); i++)
 		delete _charInfoBlocks[i];
@@ -544,6 +550,7 @@ Tile *Gfx::getTileGfx(const char *name, int32 size) {
 	delete stream;
 
 	gc->tileGfx = gfxTile;
+	gc->status = false;
 	if (size == -1)
 		size = g_hdb->_fileMan->getLength(name, TYPE_TILE32);
 	gc->size = size;
@@ -584,6 +591,7 @@ Picture *Gfx::getPicGfx(const char *name, int32 size) {
 	delete stream;
 
 	gc->picGfx = gfxPic;
+	gc->status = true;
 	if (size == -1)
 		size = g_hdb->_fileMan->getLength(name, TYPE_PIC);
 	gc->size = size;
