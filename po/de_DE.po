@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-07-15 14:01+0200\n"
+"POT-Creation-Date: 2019-07-18 10:16+0200\n"
 "PO-Revision-Date: 2019-07-15 17:29+0000\n"
 "Last-Translator: Lothar Serra Mari <serra@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
@@ -3155,11 +3155,11 @@ msgstr "Zwischensequenz \"%s\" nicht gefunden!"
 msgid "Failed to initialize resources"
 msgstr "Konnte Ressourcen nicht initialisieren"
 
-#: engines/bladerunner/bladerunner.cpp:969
+#: engines/bladerunner/bladerunner.cpp:965
 msgid "A required game resource was not found"
 msgstr "Eine benötigte Spiel-Ressource konnte nicht gefunden werden"
 
-#: engines/bladerunner/bladerunner.cpp:2104
+#: engines/bladerunner/bladerunner.cpp:2102
 msgid ""
 "WARNING: This game was saved in Restored Cut Content mode, but you are "
 "playing in Original Content mode. The mode will be adjusted to Restored Cut "
@@ -3170,7 +3170,7 @@ msgstr ""
 "Modus wird für diese Spielesitzung auf \"Entfernte Inhalte wiederherstellen"
 "\" gesetzt, bis Sie das Spiel komplett beenden."
 
-#: engines/bladerunner/bladerunner.cpp:2106
+#: engines/bladerunner/bladerunner.cpp:2104
 msgid ""
 "WARNING: This game was saved in Original Content mode, but you are playing "
 "in Restored Cut Content mode. The mode will be adjusted to Original Content "
@@ -3181,7 +3181,7 @@ msgstr ""
 "Der Modus wird für diese Spielesitzung auf \"Original-Inhalte\" gesetzt, bis "
 "Sie das Spiel komplett beenden."
 
-#: engines/bladerunner/bladerunner.cpp:2108
+#: engines/bladerunner/bladerunner.cpp:2106
 msgid "Continue"
 msgstr "Fortsetzen"
 
@@ -5080,7 +5080,7 @@ msgstr ""
 "Macintosh-Programmdatei für Instrumente in \"Monkey Island\" nicht\n"
 "gefunden. Musik wird abgeschaltet."
 
-#: engines/scumm/imuse/drivers/amiga.cpp:656
+#: engines/scumm/imuse/drivers/amiga.cpp:654
 msgid ""
 "This AMIGA version is missing (at least) the following file(s):\n"
 "\n"
@@ -5089,7 +5089,7 @@ msgstr ""
 "Datei(en):\n"
 "\n"
 
-#: engines/scumm/imuse/drivers/amiga.cpp:661
+#: engines/scumm/imuse/drivers/amiga.cpp:659
 msgid ""
 "\n"
 "Please copy these file(s) into the game data directory.\n"
