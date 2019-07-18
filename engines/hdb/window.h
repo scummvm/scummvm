@@ -325,10 +325,8 @@ private:
 	Picture *_gGfxL, *_gGfxM, *_gGfxR;
 	Picture *_gGfxBL, *_gGfxBM, *_gGfxBR;
 	Picture *_gGfxTitleL, *_gGfxTitleM, *_gGfxTitleR;
-	Picture *_gfxResources, *_gfxDeliveries;
 	Picture *_gfxIndent, *_gfxArrowTo, *_gfxHandright;
 	Picture *_gfxTry, *_gfxAgain, *_gfxInvSelect;
-	Tile *_gfxMonkeystone;
 	Picture *_gfxLevelRestart, *_gfxPausePlaque;
 	Tile *_gemGfx;
 	Picture *_mstoneGfx;

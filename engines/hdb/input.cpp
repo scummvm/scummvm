@@ -49,9 +49,6 @@ bool Input::init() {
 
 void Input::setButtons(uint16 b) {
 	static int changeState = 0;
-	static int drawDlg = 0;
-	static int quit = 0;
-	static int debugOn = 0;
 
 	_buttons = b;
 	if (!b)
