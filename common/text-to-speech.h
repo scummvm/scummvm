@@ -110,7 +110,7 @@ class TTSVoice {
 
 		/**
 		 * Returns the voice description. This description is really tts engine
-		 * specific and might be not be availaible with some tts engines.
+		 * specific and might be not be available with some tts engines.
 		 */
 		String getDescription() { return _description; };
 
@@ -128,7 +128,7 @@ struct TTSState {
 	int _volume;
 	String _language;
 	int _activeVoice;
-	Array<TTSVoice> _availaibleVoices;
+	Array<TTSVoice> _availableVoices;
 	TTSState *_next;
 };
 
@@ -185,14 +185,14 @@ public:
 	/**
 	 * Sets a voice to be used by the TTS.
 	 *
-	 * @param index The index of the voice inside the _ttsState->_availaibleVoices array
+	 * @param index The index of the voice inside the _ttsState->_availableVoices array
 	 */
 	virtual void setVoice(unsigned index) {}
 
 	/**
 	 * Returns the voice, that is used right now
 	 */
-	TTSVoice getVoice() { return _ttsState->_availaibleVoices[_ttsState->_activeVoice]; }
+	TTSVoice getVoice();
 
 	/**
 	 * Sets the speech rate
@@ -247,9 +247,9 @@ public:
 	String getLanguage() { return _ttsState->_language; }
 
 	/**
-	 * Returns array of availaible voices for the current language
+	 * Returns array of available voices for the current language
 	 */
-	Array<TTSVoice> getVoicesArray() { return _ttsState->_availaibleVoices; }
+	Array<TTSVoice> getVoicesArray() { return _ttsState->_availableVoices; }
 
 	/**
 	 * Pushes the current state of the TTS

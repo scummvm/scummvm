@@ -126,5 +126,11 @@ bool TextToSpeechManager::popState() {
 	return false;
 }
 
+TTSVoice TextToSpeechManager::getVoice() {
+	if (!_ttsState->_availableVoices.empty())
+		return _ttsState->_availableVoices[_ttsState->_activeVoice];
+	return TTSVoice();
+}
+
 }
 #endif
