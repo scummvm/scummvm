@@ -41,6 +41,8 @@
 
 namespace Petka {
 
+QReaction *g_dialogReaction = nullptr; // FIXME
+
 QVisibleObject::QVisibleObject()
 	: _resourceId(-1), _z(240) {}
 
@@ -60,17 +62,21 @@ QMessageObject::QMessageObject() {
 	_reaction = nullptr;
 }
 
-static void processSavedReaction(QReaction **reaction, QMessageObject *obj) {
+void processSavedReaction(QReaction **reaction, QMessageObject *sender) {
 	QReaction *r = *reaction;
 	for (uint i = 0; i < r->messages.size(); ++i) {
 		QMessage &msg = r->messages[i];
 		if (msg.opcode == kCheck && g_vm->getQSystem()->findObject(msg.objId)->_status != msg.arg1) {
 			break;
 		}
-		g_vm->getQSystem()->addMessage(msg.objId, msg.opcode, msg.arg1, msg.arg2, msg.arg3, 0, obj);
+		g_vm->getQSystem()->addMessage(msg.objId, msg.opcode, msg.arg1, msg.arg2, msg.arg3, 0, sender);
 		bool processed = true;
 		switch (msg.opcode) {
 		case kDialog:
+			g_dialogReaction = new QReaction();
+			for (uint j = i + 1; j < r->messages.size(); ++j) {
+				g_dialogReaction->messages.push_back(r->messages[j]);
+			}
 			break;
 		case kPlay: {
 			QMessageObject *obj = g_vm->getQSystem()->findObject(msg.objId);
@@ -94,9 +100,7 @@ static void processSavedReaction(QReaction **reaction, QMessageObject *obj) {
 	}
 	if (*reaction != r) {
 		delete r;
-		return;
-	}
-	if (*reaction) {
+	} else if (*reaction) {
 		delete *reaction;
 		*reaction = nullptr;
 	}
@@ -134,6 +138,13 @@ void QMessageObject::processMessage(const QMessage &msg) {
 										   rMsg.sender);
 			bool processed = true;
 			switch (rMsg.opcode) {
+			case kDialog:
+				delete g_dialogReaction;
+				g_dialogReaction = new QReaction();
+				for (uint z = j + 1; z < r.messages.size(); ++z) {
+					g_dialogReaction->messages.push_back(r.messages[z]);
+				}
+				break;
 			case kPlay: {
 				QMessageObject *obj = g_vm->getQSystem()->findObject(rMsg.objId);
 				delete obj->_reaction;
@@ -246,6 +257,20 @@ void QMessageObject::processMessage(const QMessage &msg) {
 	} else {
 		g_vm->getBigDialogue()->setDialog(_id, msg.opcode, -1);
 		g_vm->getQSystem()->_mainInterface->_dialog._sender = this;
+		for (uint i = 0; i < _reactions.size(); ++i) {
+			QReaction &r = _reactions[i];
+			if (r.opcode != msg.opcode ||
+				(r.status != -1 && r.status != _status) ||
+				(r.senderId != -1 && r.senderId != msg.sender->_id)) {
+				continue;
+			}
+			delete g_dialogReaction;
+			g_dialogReaction = new QReaction();
+			for (uint j = 0; j < r.messages.size(); ++j) {
+				g_dialogReaction->messages.push_back(r.messages[j]);
+			}
+			break;
+		}
 		g_vm->getQSystem()->_mainInterface->_dialog.start(msg.arg1, this);
 	}
 
