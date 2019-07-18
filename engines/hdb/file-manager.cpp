@@ -29,12 +29,12 @@ namespace HDB {
 
 FileMan::FileMan() {
 	_mpcFile = new Common::File;
-	for (uint i = 0; i < _dir.size(); i++)
-		delete _dir[i];
 }
 
 FileMan::~FileMan() {
 	delete _mpcFile;
+	for (uint i = 0; i < _dir.size(); i++)
+		delete _dir[i];
 }
 
 bool FileMan::openMPC(const Common::String &filename) {
