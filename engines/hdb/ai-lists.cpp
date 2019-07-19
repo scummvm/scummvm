@@ -259,14 +259,14 @@ int AI::checkFairystones(int tileX, int tileY) {
 
 // Add an action location to the list of possible actions
 // Each action must be paired with another of the same number
-void AI::addToActionList(int actionIndex, int x, int y, char *luaFuncInt, char *luaFuncUse) {
+void AI::addToActionList(int actionIndex, int x, int y, char *luaFuncInit, char *luaFuncUse) {
 
 	if (!_actions[actionIndex].x1) {
 		_actions[actionIndex].x1 = x;
 		_actions[actionIndex].y1 = y;
-		if (luaFuncInt[0] != '*')
-			strcpy(_actions[actionIndex].luaFuncInit, luaFuncInt);
-		if (luaFuncInt[0] != '*')
+		if (luaFuncInit[0] != '*')
+			strcpy(_actions[actionIndex].luaFuncInit, luaFuncInit);
+		if (luaFuncUse[0] != '*')
 			strcpy(_actions[actionIndex].luaFuncUse, luaFuncUse);
 
 		if (_actions[actionIndex].luaFuncInit[0]) {
@@ -280,9 +280,9 @@ void AI::addToActionList(int actionIndex, int x, int y, char *luaFuncInt, char *
 	if (!_actions[actionIndex].x2) {
 		_actions[actionIndex].x2 = x;
 		_actions[actionIndex].y2 = y;
-		if (luaFuncInt[0] != '*')
-			strcpy(_actions[actionIndex].luaFuncInit, luaFuncInt);
-		if (luaFuncInt[0] != '*')
+		if (luaFuncInit[0] != '*')
+			strcpy(_actions[actionIndex].luaFuncInit, luaFuncInit);
+		if (luaFuncUse[0] != '*')
 			strcpy(_actions[actionIndex].luaFuncUse, luaFuncUse);
 
 		if (_actions[actionIndex].luaFuncInit[0]) {
@@ -328,8 +328,10 @@ bool AI::checkActionList(AIEntity *e, int x, int y, bool lookAndGrab) {
 				_actions[i].x1 = _actions[i].y1 = _actions[i].x2 = _actions[i].y2 = 0;
 
 				// Call Lua Use function if it exists
-				if (_actions[i].luaFuncUse[0])
+				if (_actions[i].luaFuncUse[0]) {
 					g_hdb->_lua->callFunction(_actions[i].luaFuncUse, 0);
+				}
+
 			} else if (e == _player && !checkForTouchplate(x, y))
 				addWaypoint(e->tileX, e->tileY, x, y, e->level);
 
