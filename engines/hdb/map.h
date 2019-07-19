@@ -30,6 +30,8 @@ namespace HDB {
 enum {
 	kScreenXTiles = 17,
 	kScreenYTiles = 16,
+	kScreenTileWidth = 16,
+	kScreenTileHeight = 16,
 	kMaxGratings = 250,
 	kMaxForegrounds = 250
 };

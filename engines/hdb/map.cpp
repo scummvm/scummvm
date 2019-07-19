@@ -1114,39 +1114,39 @@ void Map::centerMapXY(int x, int y) {
 	int minx, miny, maxx, maxy;
 
 	// Scan from centerX to right edge
-	maxx = (_width - (16/2)) * kTileWidth;
-	for (int i = checkx + 1; i <= checkx + (16 / 2); i++) {
+	maxx = (_width - (kScreenTileWidth / 2)) * kTileWidth;
+	for (int i = checkx + 1; i <= checkx + (kScreenTileWidth / 2); i++) {
 		if (!getMapBGTileIndex(i, checky)) {
-			maxx = (i - (16 / 2)) * kTileWidth;
+			maxx = (i - (kScreenTileWidth / 2)) * kTileWidth;
 			break;
 		}
 	}
 
 	// Scan from centerX to left edge
 	minx = 0;
-	for (int i = checkx - 1; i >= checkx - (16 / 2); i--) {
+	for (int i = checkx - 1; i >= checkx - (kScreenTileWidth / 2); i--) {
 		if (!getMapBGTileIndex(i, checky)) {
 			// +1 because we don't want to see one whole tile
-			minx = (1 + i + (16 / 2)) * kTileWidth;
+			minx = (1 + i + (kScreenTileWidth / 2)) * kTileWidth;
 			break;
 		}
 	}
 
 	// Scan from centerY to bottom edge
-	maxy = (_height - (16/2)) * kTileHeight;
-	for (int i = checky + 1; i <= checky + (16 / 2); i++) {
+	maxy = (_height - (kScreenTileHeight / 2)) * kTileHeight;
+	for (int i = checky + 1; i <= checky + (kScreenTileHeight / 2); i++) {
 		if (!getMapBGTileIndex(checkx, i)) {
-			maxy = (i - (16 / 2)) * kTileHeight;
+			maxy = (i - (kScreenTileHeight / 2)) * kTileHeight;
 			break;
 		}
 	}
 
 	// Scan from centerY to top edge
 	miny = 0;
-	for (int i = checky - 1; i >= checkx - (16 / 2); i--) {
+	for (int i = checky - 1; i >= checkx - (kScreenTileHeight / 2); i--) {
 		if (!getMapBGTileIndex(checkx, i)) {
-			// +! because we don't want to see one whole tile
-			miny = (1 + i + (16 / 2)) * kTileHeight;
+			// +1 because we don't want to see one whole tile
+			miny = (1 + i + (kScreenTileHeight / 2)) * kTileHeight;
 			break;
 		}
 	}
@@ -1163,8 +1163,8 @@ void Map::centerMapXY(int x, int y) {
 		y = maxy;
 	}
 
-	x -= (480 / 2);
-	y -= (480 / 2);
+	x -= (kScreenDrawWidth / 2);
+	y -= (kScreenDrawHeight / 2);
 
 	setMapXY(x, y);
 }
