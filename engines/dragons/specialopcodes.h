@@ -64,15 +64,23 @@ protected:
 	void spcDeactivatePizzaMakerActor(); // 0x1b
 	void spcPizzaMakerActorStopWorking(); // 0x1c
 
+	void spcSetEngineFlag0x20000(); // 0x21
+	void spcClearEngineFlag0x20000(); // 0x22
+	void spcSetEngineFlag0x200000(); // 0x23
+	void spcClearEngineFlag0x200000(); // 0x24
+
 	void spcFlickerClearFlag0x80(); //0x36
 
 	void spcSetEngineFlag0x2000000(); // 0x3b
 	void spcClearEngineFlag0x2000000(); // 0x3c
 
 	void spcLoadScene1(); // 0x49
+
 	void spcUnk4e();
 	void spcUnk4f();
 	void spcCloseInventory(); // 0x50
+	void spcOpenInventionBook(); // 0x51
+	void spcCloseInventionBook(); // 0x52
 
 	void spcClearEngineFlag0x4000000(); // 0x53
 	void spcSetEngineFlag0x4000000(); // 0x54

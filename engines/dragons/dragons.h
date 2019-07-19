@@ -71,6 +71,7 @@ enum Flags {
 	ENGINE_FLAG_8000     =     0x8000, // speech dialog is playing.
 
 	ENGINE_FLAG_10000    =    0x10000,
+	ENGINE_FLAG_20000    =    0x20000,
 	ENGINE_FLAG_80000    =    0x80000,
 	ENGINE_FLAG_100000   =   0x100000,
 	ENGINE_FLAG_200000   =   0x200000,

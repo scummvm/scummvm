@@ -106,6 +106,7 @@ protected:
 	void opUnk16(ScriptOpCall &scriptOpCall);
 	void opUnk17(ScriptOpCall &scriptOpCall);
 	void opUnk18(ScriptOpCall &scriptOpCall);
+	void opUnk1A(ScriptOpCall &scriptOpCall);
 	void opUnk1B(ScriptOpCall &scriptOpCall);
 	void opSetActorFlag0x1000(ScriptOpCall &scriptOpCall);
 	void opPlayMusic(ScriptOpCall &scriptOpCall);
