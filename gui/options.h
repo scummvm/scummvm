@@ -291,12 +291,13 @@ protected:
 #endif
 
 #ifdef USE_CLOUD
+#ifdef USE_LIBCURL
 	//
 	// Cloud controls
 	//
 	uint32 _selectedStorageIndex;
 	StaticTextWidget *_storagePopUpDesc;
-	PopUpWidget *_storagePopUp;
+	PopUpWidget      *_storagePopUp;
 	StaticTextWidget *_storageUsernameDesc;
 	StaticTextWidget *_storageUsername;
 	StaticTextWidget *_storageUsedSpaceDesc;
@@ -315,32 +316,39 @@ protected:
 	StaticTextWidget *_storageWizardOpenLinkHint;
 	StaticTextWidget *_storageWizardLink;
 	StaticTextWidget *_storageWizardCodeHint;
-	EditTextWidget *_storageWizardCodeBox;
+	EditTextWidget   *_storageWizardCodeBox;
 	ButtonWidget	 *_storageWizardPasteButton;
 	ButtonWidget	 *_storageWizardConnectButton;
 	StaticTextWidget *_storageWizardConnectionStatusHint;
+	bool _redrawCloudTab;
 
+	void addCloudControls(GuiObject *boss, const Common::String &prefix, const char *context = nullptr);
+	void setupCloudTab();
+	void shiftWidget(Widget *widget, const char *widgetName, int32 xOffset, int32 yOffset);
+
+	void storageConnectionCallback(Networking::ErrorResponse response);
+	void storageSavesSyncedCallback(Cloud::Storage::BoolResponse response);
+	void storageErrorCallback(Networking::ErrorResponse response);
+#endif // USE_LIBCURL
+
+#ifdef USE_SDL_NET
+	//
+	// Wi-Fi Sharing controls
+	//
 	ButtonWidget	 *_runServerButton;
 	StaticTextWidget *_serverInfoLabel;
 	ButtonWidget	 *_rootPathButton;
 	StaticTextWidget *_rootPath;
 	ButtonWidget	 *_rootPathClearButton;
 	StaticTextWidget *_serverPortDesc;
-	EditTextWidget *_serverPort;
+	EditTextWidget   *_serverPort;
 	ButtonWidget	 *_serverPortClearButton;
-	bool _redrawCloudTab;
-#ifdef USE_SDL_NET
 	bool _serverWasRunning;
-#endif
 
-	void shiftWidget(Widget *widget, const char *widgetName, int32 xOffset, int32 yOffset);
-	void setupCloudTab();
+	void addWiFiSharingControls(GuiObject *boss, const Common::String &prefix, const char *context = nullptr);
+	void reflowWiFiSharingTabLayout();
+#endif // USE_SDL_NET
 
-#ifdef USE_LIBCURL
-	void storageConnectionCallback(Networking::ErrorResponse response);
-	void storageSavesSyncedCallback(Cloud::Storage::BoolResponse response);
-	void storageErrorCallback(Networking::ErrorResponse response);
-#endif
 #endif // USE_CLOUD
 };
 
