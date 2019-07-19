@@ -151,8 +151,10 @@ void ComposerEngine::playAnimation(uint16 animId, int16 x, int16 y, int16 eventP
 
 	Animation *anim = NULL;
 	loadAnimation(anim, animId, x, y, eventParam);
-	_anims.push_back(anim);
-	runEvent(kEventAnimStarted, animId, eventParam, 0);
+	if (anim != NULL) {
+		_anims.push_back(anim);
+		runEvent(kEventAnimStarted, animId, eventParam, 0);
+	}
 }
 
 void ComposerEngine::stopAnimation(Animation *anim, bool localOnly, bool pipesOnly) {
