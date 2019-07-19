@@ -54,6 +54,8 @@ struct ScriptPatch {
 	{"MAP01.LUA", "if( covert_index < getn(covert_dialog) ) then", "if( covert_index < #covert_dialog ) then"},
 	{"MAP01.LUA", "if( chiste_index < getn( chiste_dialog ) )then", "if( covert_index < #covert_dialog ) then"},
 	{"MAP01.LUA", "strsub(", "string.sub("}, // line 23
+	{"MAP10.LUA", "emptybed_use( %x, %y, %v1, %v2 )", "emptybed_use( x, y, v1, v2 )"},
+	{"MAP10.LUA", "if( getn( beds ) == 0 ) then", "if( #beds == 0 ) then"},
 	{NULL, NULL, NULL},
 };
 
