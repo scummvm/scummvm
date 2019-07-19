@@ -1143,7 +1143,7 @@ void Map::centerMapXY(int x, int y) {
 
 	// Scan from centerY to top edge
 	miny = 0;
-	for (int i = checky - 1; i >= checkx - (kScreenTileHeight / 2); i--) {
+	for (int i = checky - 1; i >= checky - (kScreenTileHeight / 2); i--) {
 		if (!getMapBGTileIndex(checkx, i)) {
 			// +1 because we don't want to see one whole tile
 			miny = (1 + i + (kScreenTileHeight / 2)) * kTileHeight;
