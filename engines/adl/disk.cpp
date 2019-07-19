@@ -25,6 +25,7 @@
 #include "common/memstream.h"
 #include "common/md5.h"
 #include "common/algorithm.h"
+#include "common/bitstream.h"
 
 #include "adl/disk.h"
 
@@ -86,9 +87,6 @@ Common::SeekableReadStream *DataBlock_PC::createReadStream() const {
 const uint kNibTrackLen = 256 * 26;
 
 static bool detectDOS33(Common::SeekableReadStream &f, uint size) {
-	if (f.size() != 232960)
-		return false;
-
 	uint count = 0;
 	uint dos32 = 0, dos33 = 0;
 	uint32 window = 0;
@@ -331,8 +329,150 @@ static Common::SeekableReadStream *readImage_NIB(Common::File &f, bool dos33, ui
 	return new Common::MemoryReadStream(diskImage, imageSize, DisposeAfterUse::YES);
 }
 
+static int getVersion_WOZ(Common::File &f) {
+	f.seek(0);
+	const uint32 fileId = f.readUint32BE();
+
+	if (f.eos() || f.err()) {
+		warning("WOZ: error reading '%s'", f.getName());
+		return 0;
+	}
+
+	if (fileId == MKTAG('W', 'O', 'Z', '1'))
+		return 1;
+	else if (fileId == MKTAG('W', 'O', 'Z', '2'))
+		return 2;
+
+	warning("WOZ: unsupported ID '%s' found in '%s'", tag2str(fileId), f.getName());
+	return 0;
+}
+
+static Common::SeekableReadStream *readTrack_WOZ(Common::File &f, uint track, bool woz2) {
+	f.seek(88 + track * 4);
+	const byte index = f.readByte();
+
+	if (index == 0xff) {
+		warning("WOZ: track %u not found in '%s', skipping", track, f.getName());
+		return nullptr;
+	}
+
+	uint32 offset, byteSize, bitSize;
+
+	if (woz2) {
+		f.seek(256 + index * 8);
+		offset = f.readUint16LE() << 9;
+		byteSize = f.readUint16LE() << 9;
+		bitSize = f.readUint32LE();
+	} else {
+		offset = 256 + index * 6656;
+		f.seek(offset + 6646);
+		byteSize = f.readUint16LE();
+		bitSize = f.readUint16LE();
+	}
+
+	f.seek(offset);
+
+	if (f.eos() || f.err() || byteSize == 0) {
+		warning("WOZ: failed to read track %u in '%s', aborting", track, f.getName());
+		return nullptr;
+	}
+
+	byte *inBuf = (byte *)malloc(byteSize);
+	byte *outBuf = (byte *)malloc(byteSize);
+	uint32 outSize = 0;
+	if (!inBuf || !outBuf) {
+		warning("WOZ: failed to create buffers of size %u for track %u in '%s'", byteSize, track, f.getName());
+		free(inBuf);
+		free(outBuf);
+		return nullptr;
+	}
+
+	if (f.read(inBuf, byteSize) < byteSize) {
+		warning("WOZ: error reading track %u in '%s'", track, f.getName());
+		free(inBuf);
+		free(outBuf);
+		return nullptr;
+	}
+
+	Common::BitStreamMemory8MSB bitStream(new Common::BitStreamMemoryStream(inBuf, byteSize, DisposeAfterUse::YES), DisposeAfterUse::YES); 
+
+	byte nibble = 0;
+	bool stop = false;
+	for (;;) {
+		nibble = (nibble << 1) | bitStream.getBit();
+
+		if (nibble & 0x80) {
+			if (stop)
+				break;
+			nibble = 0;
+		}
+
+		if (bitStream.pos() == bitSize) {
+			bitStream.rewind();
+			if (stop) {
+				warning("WOZ: failed to find sync point for track %u in '%s'", track, f.getName());
+				break;
+			}
+			stop = true;
+		}
+	}
+
+	nibble = 0;
+	uint32 bitsRead = 0;
+	do {
+		nibble = (nibble << 1) | bitStream.getBit();
+		++bitsRead;
+
+		if (nibble & 0x80) {
+			outBuf[outSize++] = nibble;
+			nibble = 0;
+		}
+
+		if (bitStream.pos() == bitSize)
+			bitStream.rewind();
+	} while (bitsRead < bitSize);
+
+	if (nibble != 0)
+		warning("WOZ: failed to sync track %u in '%s'", track, f.getName());
+
+	if (outSize == 0) {
+		warning("WOZ: track %u in '%s' is empty", track, f.getName());
+		free(outBuf);
+		return nullptr;
+	}
+
+	return new Common::MemoryReadStream(outBuf, outSize, DisposeAfterUse::YES);
+}
+
+static Common::SeekableReadStream *readImage_WOZ(Common::File &f, bool dos33, uint tracks = 35) {
+	int version = getVersion_WOZ(f);
+
+	if (version == 0)
+		return nullptr;
+
+	const uint sectorsPerTrack = (dos33 ? 16 : 13);
+	const uint imageSize = tracks * sectorsPerTrack * 256;
+	byte *const diskImage = (byte *)calloc(imageSize, 1);
+	Common::Array<bool> goodSectors(tracks * sectorsPerTrack);
+
+	for (uint track = 0; track < tracks; ++track) {
+		StreamPtr stream(readTrack_WOZ(f, track, version == 2));
+
+		if (stream) {
+			if (!decodeTrack(*stream, stream->size(), dos33, diskImage, tracks, goodSectors))
+				error("WOZ: error reading '%s'", f.getName());
+		}
+	}
+
+	printGoodSectors(goodSectors, sectorsPerTrack);
+
+	return new Common::MemoryReadStream(diskImage, imageSize, DisposeAfterUse::YES);
+}
+
 bool DiskImage::open(const Common::String &filename) {
 	Common::File *f = new Common::File;
+
+	debug(1, "Opening '%s'", filename.c_str());
 
 	if (!f->open(filename)) {
 		warning("Failed to open '%s'", filename.c_str());
@@ -364,6 +504,25 @@ bool DiskImage::open(const Common::String &filename) {
 		_bytesPerSector = 256;
 		f->seek(0);
 		_stream = readImage_NIB(*f, _sectorsPerTrack == 16);
+		delete f;
+	} else if (lcName.hasSuffix(".woz")) {
+		_tracks = 35;
+		_sectorsPerTrack = 13;
+		_bytesPerSector = 256;
+
+		int version = getVersion_WOZ(*f);
+
+		if (version > 0) {
+			StreamPtr bitStream(readTrack_WOZ(*f, 0, version == 2));
+			if (bitStream) {
+				if (detectDOS33(*bitStream, bitStream->size()))
+					_sectorsPerTrack = 16;
+				_stream = readImage_WOZ(*f, _sectorsPerTrack == 16);
+			} else {
+				warning("WOZ: failed to load bitstream for track 0 in '%s'", f->getName());
+			}
+		}
+
 		delete f;
 	} else if (lcName.hasSuffix(".xfd")) {
 		_tracks = 40;
@@ -444,6 +603,22 @@ int32 computeMD5(const Common::FSNode &node, Common::String &md5, uint32 md5Byte
 			md5 = Common::computeStreamMD5AsString(*stream, md5Bytes);
 			delete stream;
 			return 35 * (isDOS33 ? 16 : 13) * 256;
+		}
+
+		return -1;
+	} else if (node.getName().matchString("*.woz", true)) {
+		int version = getVersion_WOZ(f);
+
+		if (version > 0) {
+			StreamPtr bitStream(readTrack_WOZ(f, 0, version == 2));
+			if (bitStream) {
+				bool isDOS33 = detectDOS33(*bitStream, bitStream->size());
+				StreamPtr stream(readImage_WOZ(f, isDOS33, tracks));
+				if (stream) {
+					md5 = Common::computeStreamMD5AsString(*stream, md5Bytes);
+					return 35 * (isDOS33 ? 16 : 13) * 256;
+				}
+			}
 		}
 
 		return -1;

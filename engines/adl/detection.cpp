@@ -309,6 +309,7 @@ struct DiskImageExt {
 };
 
 const DiskImageExt diskImageExts[] = {
+	{ Common::kPlatformApple2, ".woz" },
 	{ Common::kPlatformApple2, ".nib" },
 	{ Common::kPlatformApple2, ".dsk" },
 	{ Common::kPlatformApple2, ".d13" },
