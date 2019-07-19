@@ -1447,7 +1447,7 @@ void OptionsDialog::setupGraphicsTab() {
 
 
 GlobalOptionsDialog::GlobalOptionsDialog(LauncherDialog *launcher)
-	: OptionsDialog(Common::ConfigManager::kApplicationDomain, "GlobalOptions"), _launcher(launcher) {
+	: OptionsDialog(Common::ConfigManager::kApplicationDomain, "GlobalOptions"), CommandSender(nullptr), _launcher(launcher) {
 #ifdef GUI_ENABLE_KEYSDIALOG
 	_keysDialog = 0;
 #endif
@@ -1755,6 +1755,7 @@ void GlobalOptionsDialog::build() {
 	ScrollContainerWidget *container = new ScrollContainerWidget(tab, "GlobalOptions_Cloud.Container", kCloudTabContainerReflowCmd);
 	container->setTarget(this);
 	container->setBackgroundType(ThemeEngine::kDialogBackgroundNone);
+	setTarget(container);
 
 	addCloudControls(container, "GlobalOptions_Cloud_Container.", context);
 #endif USE_LIBCURL
@@ -2329,6 +2330,7 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 
 		CloudMan.disconnectStorage(_selectedStorageIndex);
 		_redrawCloudTab = true;
+		sendCommand(kSetPositionCmd, 0);
 		break;
 	}
 #endif // USE_LIBCURL

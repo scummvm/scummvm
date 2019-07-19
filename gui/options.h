@@ -237,7 +237,7 @@ protected:
 };
 
 
-class GlobalOptionsDialog : public OptionsDialog {
+class GlobalOptionsDialog : public OptionsDialog, public CommandSender {
 public:
 	GlobalOptionsDialog(LauncherDialog *launcher);
 	~GlobalOptionsDialog();
