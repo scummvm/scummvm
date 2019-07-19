@@ -2521,32 +2521,33 @@ void GlobalOptionsDialog::setupCloudTab() {
 
 	// there goes layout for non-connected Storage (connection wizard)
 
-	if (!shownConnectedInfo) {
-		bool connecting = _connectingStorage;
-		if (_storageWizardNotConnectedHint) _storageWizardNotConnectedHint->setVisible(shown);
-		if (_storageWizardOpenLinkHint) _storageWizardOpenLinkHint->setVisible(shown);
-		if (_storageWizardLink) {
-			_storageWizardLink->setVisible(shown);
-			_storageWizardLink->setEnabled(g_system->hasFeature(OSystem::kFeatureOpenUrl) && !connecting);
-		}
-		if (_storageWizardCodeHint) _storageWizardCodeHint->setVisible(shown);
-		if (_storageWizardCodeBox) {
-			_storageWizardCodeBox->setVisible(shown);
-			_storageWizardCodeBox->setEnabled(!connecting);
-		}
-		if (_storageWizardPasteButton) {
-			_storageWizardPasteButton->setVisible(shown && g_system->hasFeature(OSystem::kFeatureClipboardSupport));
-			_storageWizardPasteButton->setEnabled(!connecting);
-		}
-		if (_storageWizardConnectButton) {
-			_storageWizardConnectButton->setVisible(shown);
-			_storageWizardConnectButton->setEnabled(!connecting);
-		}
-		if (_storageWizardConnectionStatusHint) {
-			_storageWizardConnectionStatusHint->setVisible(shown && _storageWizardConnectionStatusHint->getLabel() != "...");
-			_storageWizardConnectionStatusHint->setEnabled(!connecting);
-		}
+	shown = (!shownConnectedInfo && shown);
+	bool wizardEnabled = !_connectingStorage;
+	if (_storageWizardNotConnectedHint) _storageWizardNotConnectedHint->setVisible(shown);
+	if (_storageWizardOpenLinkHint) _storageWizardOpenLinkHint->setVisible(shown);
+	if (_storageWizardLink) {
+		_storageWizardLink->setVisible(shown);
+		_storageWizardLink->setEnabled(g_system->hasFeature(OSystem::kFeatureOpenUrl) && wizardEnabled);
+	}
+	if (_storageWizardCodeHint) _storageWizardCodeHint->setVisible(shown);
+	if (_storageWizardCodeBox) {
+		_storageWizardCodeBox->setVisible(shown);
+		_storageWizardCodeBox->setEnabled(wizardEnabled);
+	}
+	if (_storageWizardPasteButton) {
+		_storageWizardPasteButton->setVisible(shown && g_system->hasFeature(OSystem::kFeatureClipboardSupport));
+		_storageWizardPasteButton->setEnabled(wizardEnabled);
+	}
+	if (_storageWizardConnectButton) {
+		_storageWizardConnectButton->setVisible(shown);
+		_storageWizardConnectButton->setEnabled(wizardEnabled);
+	}
+	if (_storageWizardConnectionStatusHint) {
+		_storageWizardConnectionStatusHint->setVisible(shown && _storageWizardConnectionStatusHint->getLabel() != "...");
+		_storageWizardConnectionStatusHint->setEnabled(wizardEnabled);
+	}
 
+	if (!shownConnectedInfo) {
 		int16 shiftUp;
 		if (!g_gui.xmlEval()->getWidgetData("GlobalOptions_Cloud_Container.StorageUsernameDesc", x, y, w, h))
 			warning("GlobalOptions_Cloud_Container.StorageUsernameDesc's position is undefined");
