@@ -343,6 +343,8 @@ protected:
 	StaticTextWidget *_serverPortDesc;
 	EditTextWidget   *_serverPort;
 	ButtonWidget	 *_serverPortClearButton;
+	StaticTextWidget *_featureDescriptionLine1;
+	StaticTextWidget *_featureDescriptionLine2;
 	bool _serverWasRunning;
 
 	void addWiFiSharingControls(GuiObject *boss, const Common::String &prefix, const char *context = nullptr);

@@ -1514,6 +1514,8 @@ GlobalOptionsDialog::GlobalOptionsDialog(LauncherDialog *launcher)
 	_serverPortDesc = 0;
 	_serverPort = 0;
 	_serverPortClearButton = 0;
+	_featureDescriptionLine1 = 0;
+	_featureDescriptionLine2 = 0;
 	_serverWasRunning = false;
 #endif
 #endif
@@ -1915,6 +1917,9 @@ void GlobalOptionsDialog::addWiFiSharingControls(GuiObject *boss, const Common::
 	_serverPortDesc = new StaticTextWidget(boss, prefix + "ServerPortDesc", _("Server's port:"), _("Port for server to use"));
 	_serverPort = new EditTextWidget(boss, prefix + "ServerPortEditText", Common::String::format("%u", port), 0);
 	_serverPortClearButton = addClearButton(boss, prefix + "ServerPortClearButton", kServerPortClearCmd);
+
+	_featureDescriptionLine1 = new StaticTextWidget(boss, prefix + "FeatureDescriptionLine1", _c("Run server to manage files with browser (in the same Wi-Fi network).", context), "", ThemeEngine::kFontStyleNormal);
+	_featureDescriptionLine2 = new StaticTextWidget(boss, prefix + "FeatureDescriptionLine2", _c("Closing options dialog will stop the server.", context), "", ThemeEngine::kFontStyleNormal);
 	
 	reflowWiFiSharingTabLayout();
 
@@ -2626,6 +2631,17 @@ void GlobalOptionsDialog::reflowWiFiSharingTabLayout() {
 	if (_serverPortClearButton)
 		_serverPortClearButton->setVisible(false);
 #endif // NETWORKING_LOCALWEBSERVER_ENABLE_PORT_OVERRIDE
+
+	// if port override isn't supported, there will be a gap between these lines and options -- it's OK
+
+	if (_featureDescriptionLine1) {
+		_featureDescriptionLine1->setVisible(true);
+		_featureDescriptionLine1->setEnabled(false);
+	}
+	if (_featureDescriptionLine2) {
+		_featureDescriptionLine2->setVisible(true);
+		_featureDescriptionLine2->setEnabled(false);
+	}
 }
 #endif // USE_SDL_NET
 
