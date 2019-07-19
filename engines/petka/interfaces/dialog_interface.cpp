@@ -92,61 +92,27 @@ void DialogInterface::sub_4155D0(int a) {
 	else
 		g_vm->getBigDialogue()->sub40B670(a);
 	switch (g_vm->getBigDialogue()->opcode()) {
-
 	case 1: {
 		const SpeechInfo *info = g_vm->getBigDialogue()->getSpeechInfo();
-		Common::String soundName = g_vm->getSpeechPath() + info->soundName;
-		Sound *s = g_vm->soundMgr()->addSound(soundName, Audio::Mixer::kSpeechSoundType);
 		g_vm->soundMgr()->removeSound(_soundName);
-		_soundName = soundName;
+		if (talkerId != info->speakerId) {
+			sendMsg(kSaid);
+		}
+		_soundName = g_vm->getSpeechPath() + info->soundName;
+		Sound *s = g_vm->soundMgr()->addSound(_soundName, Audio::Mixer::kSpeechSoundType);
 		if (s) {
 			s->play(0);
 		}
 		g_trackedSound = s;
-		if (talkerId != info->speakerId && _talker) {
-			QMessage msg;
-			msg.objId = _talker->_id;
-			msg.opcode = kSaid;
-			msg.arg1 = 0;
-			msg.arg2 = 0;
-			msg.arg3 = 0;
-			msg.unk = 0;
-			msg.sender = nullptr;
-			_talker->processMessage(msg);
-		}
 		_talker = g_vm->getQSystem()->findObject(info->speakerId);
-		QMessage msg;
-		msg.objId = _talker->_id;
-		msg.opcode = kSay;
-		msg.arg1 = 0;
-		msg.arg2 = 0;
-		msg.arg3 = 0;
-		msg.unk = 0;
-		msg.sender = nullptr;
-		_talker->processMessage(msg);
+		if (talkerId != info->speakerId) {
+			sendMsg(kSay);
+		}
 		_field18 = 1;
 		break;
 	}
 	case 3:
-		g_vm->soundMgr()->removeSound(_soundName);
-		if (_talker) {
-			QMessage msg;
-			msg.objId = _talker->_id;
-			msg.opcode = kSaid;
-			msg.arg1 = 0;
-			msg.arg2 = 0;
-			msg.arg3 = 0;
-			msg.unk = 0;
-			msg.sender = nullptr;
-			_talker->processMessage(msg);
-			_talker = nullptr;
-		}
-		_field18 = 3;
-		_field14 = -1;
-		restoreCursorState();
-		if (g_dialogReaction)
-			processSavedReaction(&g_dialogReaction, _sender);
-		_sender = nullptr;
+		end();
 		break;
 	case 4:
 		g_vm->soundMgr()->removeSound(_soundName);
@@ -156,6 +122,32 @@ void DialogInterface::sub_4155D0(int a) {
 	default:
 		break;
 	}
+}
+
+void DialogInterface::sendMsg(uint16 opcode) {
+	if (_talker) {
+		QMessage msg;
+		msg.objId = _talker->_id;
+		msg.opcode = opcode;
+		msg.arg1 = 0;
+		msg.arg2 = 0;
+		msg.arg3 = 0;
+		msg.unk = 0;
+		msg.sender = nullptr;
+		_talker->processMessage(msg);
+	}
+}
+
+void DialogInterface::end() {
+	g_vm->soundMgr()->removeSound(_soundName);
+	sendMsg(kSaid);
+	_talker = nullptr;
+	_field18 = 3;
+	_field14 = -1;
+	restoreCursorState();
+	if (g_dialogReaction)
+		processSavedReaction(&g_dialogReaction, _sender);
+	_sender = nullptr;
 }
 
 } // End of namespace Petka

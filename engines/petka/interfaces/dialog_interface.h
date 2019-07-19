@@ -40,6 +40,9 @@ public:
 
 	void sub_4155D0(int a);
 
+	void sendMsg(uint16 opcode);
+	void end();
+
 public:
 	int _field4;
 	int _field8;
