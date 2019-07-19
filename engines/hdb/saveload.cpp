@@ -104,6 +104,14 @@ Common::Error HDBGame::loadGameState(int slot) {
 	if (!_ai->cinematicsActive())
 		_gfx->turnOffFade();
 
+	debug(1, "Action List Info:");
+	for (int k = 0; k < 20; k++) {
+		debug(1, "Action %d: entityName: %s", k, _ai->_actions[k].entityName);
+		debug(1, "Action %d: x1: %d, y1: %d", k, _ai->_actions[k].x1, _ai->_actions[k].y1);
+		debug(1, "Action %d: x2: %d, y2: %d", k, _ai->_actions[k].x2, _ai->_actions[k].y2);
+		debug(1, "Action %d: luaFuncInit: %s, luaFuncUse: %s", k, _ai->_actions[k].luaFuncInit, _ai->_actions[k].luaFuncUse);
+	}
+
 	return Common::kNoError;
 }
 
