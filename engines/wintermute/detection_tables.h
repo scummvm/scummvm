@@ -253,13 +253,13 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Carol Reed 4 - East Side Story (English)
 	WME_WINENTRY("carolreed4", "",
-		WME_ENTRY1s("data.dcp", "b26377797f060afc2d440d820100c1ce", 529320536), Common::EN_ANY, ADGF_UNSTABLE, WME_1_8_3),
+		WME_ENTRY1s("data.dcp", "b26377797f060afc2d440d820100c1ce", 529320536), Common::EN_ANY, ADGF_UNSTABLE, WME_1_7_2),
 
 	// Carol Reed 4 - East Side Story (Russian)
 	WME_WINENTRY("carolreed4", "",
 		WME_ENTRY1s("data.dcp", "549e6fb7afebcc4a8092e3898a5c5cc3", 618787625), Common::RU_RUS, ADGF_UNSTABLE, WME_1_8_3),
 
-	// Carol Reed 4 - East Side Story (Demo)
+	// Carol Reed 4 - East Side Story (Demo) (English)
 	WME_WINENTRY("carolreed4", "Demo",
 		WME_ENTRY1s("data.dcp", "b3f8b09bb4b05ee3e9d14697525257f9", 59296246), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_7_2),
 
@@ -325,15 +325,15 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Carol Reed 12 - Profound Red
 	WME_WINENTRY("carolreed12", "",
-		WME_ENTRY1s("data.dcp", "edc1e69dc52ec2a65fa431a51c783c2e", 944403699), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+		WME_ENTRY1s("data.dcp", "edc1e69dc52ec2a65fa431a51c783c2e", 944403699), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
 
 	// Carol Reed 13 - The Birdwatcher
 	WME_WINENTRY("carolreed13", "",
-		WME_ENTRY1s("data.dcp", "954392d19f0c928b700f17badd35d488", 1267391173), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+		WME_ENTRY1s("data.dcp", "954392d19f0c928b700f17badd35d488", 1267391173), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
 
 	// Carol Reed 14 - The Fall Of April
 	WME_WINENTRY("carolreed14", "",
-		WME_ENTRY1s("data.dcp", "38c9088dca07c9623562e8efdea4c856", 1256960150), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+		WME_ENTRY1s("data.dcp", "38c9088dca07c9623562e8efdea4c856", 1256960150), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
 
 	// Chivalry is Not Dead
 	WME_WINENTRY("chivalry", "",
