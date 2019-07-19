@@ -149,7 +149,7 @@ static const AdlGameDescription gameFileDescriptions[] = {
 static const AdlGameDescription gameDiskDescriptions[] = {
 	{ // Hi-Res Adventure #1: Mystery House - Apple II - Contains Coarsegold address
 		{
-			"hires1", 0,
+			"hires1", "",
 			{
 				{ "mysthous", 0, "8df0b3b3e609a2e40237e2419c1cb767", 116480 },
 				AD_LISTEND
@@ -164,7 +164,7 @@ static const AdlGameDescription gameDiskDescriptions[] = {
 	},
 	{ // Hi-Res Adventure #1: Mystery House - Apple II - Roberta Williams Anthology
 		{
-			"hires1", 0,
+			"hires1", "",
 			{
 				{ "mysthous", 0, "54d20eb1ef0084ac3c2d16c31c5b7eb7", 143360 },
 				AD_LISTEND
@@ -179,7 +179,7 @@ static const AdlGameDescription gameDiskDescriptions[] = {
 	},
 	{ // Hi-Res Adventure #2: Wizard and the Princess - Apple II - Roberta Williams Anthology
 		{
-			"hires2", 0,
+			"hires2", "",
 			{
 				{ "wizard", 0, "72b114bf8f94fafe5672daac2a70c765", 143360 },
 				AD_LISTEND
@@ -194,7 +194,7 @@ static const AdlGameDescription gameDiskDescriptions[] = {
 	},
 	{ // Hi-Res Adventure #0: Mission Asteroid - Apple II - Roberta Williams Anthology
 		{
-			"hires0", 0,
+			"hires0", "",
 			{
 				{ "mission", 0, "6bc53f51a3c8ee65c020af55fb8bd875", 116480 },
 				AD_LISTEND
@@ -209,7 +209,7 @@ static const AdlGameDescription gameDiskDescriptions[] = {
 	},
 	{ // Hi-Res Adventure #3: Cranston Manor - Apple II
 		{
-			"hires3", 0,
+			"hires3", "",
 			{
 				{ "cranston", 0, "e4d35440791a36e55299c7be1ccd2b04", 116480 },
 				AD_LISTEND
@@ -224,7 +224,7 @@ static const AdlGameDescription gameDiskDescriptions[] = {
 	},
 	{ // Hi-Res Adventure #4: Ulysses and the Golden Fleece - Apple II - Load 'N' Go
 		{
-			"hires4", 0,
+			"hires4", "",
 			{
 				{ "ulyssesa", 0, "1eaeb2f1a773ce2d1cb9f16b2ef09049", 143360 },
 				{ "ulyssesb", 1, "9fa8552255ae651b252844168b8b6617", 143360 },
@@ -240,7 +240,7 @@ static const AdlGameDescription gameDiskDescriptions[] = {
 	},
 	{ // Hi-Res Adventure #4: Ulysses and the Golden Fleece - Atari 8-bit - Re-release
 		{
-			"hires4", 0,
+			"hires4", "",
 			{
 				{ "ulys1b", 0, "bb6aab9a35b41d160b6eefa088165f56", 92160 },
 				{ "ulys1a", 0, "c227eeee34d0bacd62b2d6231c409204", 92160 },
@@ -258,7 +258,7 @@ static const AdlGameDescription gameDiskDescriptions[] = {
 	},
 	{ // Hi-Res Adventure #5: Time Zone - Apple II - Version 1.1 - Roberta Williams Anthology
 		{
-			"hires5", 0,
+			"hires5", "",
 			{
 				{ "tzone1a", 2, "731844b1d19c2801e3a5bc61d109af54", 143360 },
 				{ "tzone1b", 3, "4eaf8d790e3f93097cca9ddbe863df50", 143360 },
@@ -284,9 +284,27 @@ static const AdlGameDescription gameDiskDescriptions[] = {
 	},
 	{ // Hi-Res Adventure #6: The Dark Crystal - Apple II - Roberta Williams Anthology / SierraVenture
 		{
-			"hires6", 0,
+			"hires6", "SierraVenture [version A]",
 			{
 				{ "dark1a", 0, "9a5968a8f378c84454d88f4cd4e143a9", 143360 },
+				{ "dark1b", 3, "1271ff9c3e1bdb4942301dd37dd0ef87", 143360 },
+				{ "dark2a", 4, "090e77563add7b4c9ab25f444d727316", 143360 },
+				{ "dark2b", 5, "f2db96af0955324900b800505af4d91f", 143360 },
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformApple2,
+			ADGF_NO_FLAGS,
+			GUIO2(GAMEOPTION_COLOR_DEFAULT_ON, GAMEOPTION_SCANLINES)
+		},
+		GAME_TYPE_HIRES6,
+		GAME_VER_NONE
+	},
+	{ // Hi-Res Adventure #6: The Dark Crystal - Apple II - SierraVenture
+		{
+			"hires6", "SierraVenture [version B]",
+			{
+				{ "dark1a", 0, "d0b8e808b02564b6ce58b5ea5cc61ead", 143360 },
 				{ "dark1b", 3, "1271ff9c3e1bdb4942301dd37dd0ef87", 143360 },
 				{ "dark2a", 4, "090e77563add7b4c9ab25f444d727316", 143360 },
 				{ "dark2b", 5, "f2db96af0955324900b800505af4d91f", 143360 },
