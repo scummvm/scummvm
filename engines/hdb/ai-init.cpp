@@ -1524,7 +1524,7 @@ void AI::save(Common::OutSaveFile *out) {
 }
 
 void AI::loadSaveFile(Common::InSaveFile *in) {
-	int i, j;
+	int i;
 
 	// Clean everything out
 	restartSystem();
@@ -1666,7 +1666,7 @@ void AI::loadSaveFile(Common::InSaveFile *in) {
 
 		// Clear out all ptrs in entity before writing out
 
-		for (j = 0; j < kMaxAnimFrames; j++)
+		for (int j = 0; j < kMaxAnimFrames; j++)
 			temp->blinkGfx[j] = temp->movedownGfx[j] = temp->moveupGfx[j] =
 			temp->moveleftGfx[j] = temp->moverightGfx[j] = temp->standdownGfx[j] =
 			temp->standupGfx[j] = temp->standleftGfx[j] = temp->standrightGfx[j] =
