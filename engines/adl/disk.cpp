@@ -610,9 +610,9 @@ int32 computeMD5(const Common::FSNode &node, Common::String &md5, uint32 md5Byte
 		int version = getVersion_WOZ(f);
 
 		if (version > 0) {
-			StreamPtr bitStream(readTrack_WOZ(f, 0, version == 2));
-			if (bitStream) {
-				bool isDOS33 = detectDOS33(*bitStream, bitStream->size());
+			StreamPtr nibbles(readTrack_WOZ(f, 0, version == 2));
+			if (nibbles) {
+				bool isDOS33 = detectDOS33(*nibbles, nibbles->size());
 				StreamPtr stream(readImage_WOZ(f, isDOS33, tracks));
 				if (stream) {
 					md5 = Common::computeStreamMD5AsString(*stream, md5Bytes);
