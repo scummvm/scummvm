@@ -2208,6 +2208,8 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		break;
 	}
 	case kPopUpItemSelectedCmd: {
+		if (_storageWizardCodeBox)
+			_storageWizardCodeBox->setEditString("");
 		// update container's scrollbar
 		reflowLayout();
 		break;
@@ -2298,6 +2300,9 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		break;
 	}
 	case kDisconnectStorageCmd: {
+		if (_storageWizardCodeBox)
+			_storageWizardCodeBox->setEditString("");
+
 		if (_selectedStorageIndex == CloudMan.getStorageIndex() && CloudMan.isWorking()) {
 			bool cancel = true;
 
