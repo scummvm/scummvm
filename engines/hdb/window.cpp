@@ -130,6 +130,8 @@ bool Window::init() {
 	_dlvsInfo.x = (kScreenWidth - _gfxInfobar->_width) + 16;
 	_dlvsInfo.y = 272;
 
+	_gemGfx = NULL;
+
 	restartSystem();
 
 	return true;
