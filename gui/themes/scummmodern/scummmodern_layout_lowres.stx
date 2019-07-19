@@ -772,6 +772,14 @@
 						width = 'Globals.Line.Height'
 				/>
 			</layout>
+			<layout type = 'vertical' padding = '0, 0, 0, 0' spacing = '2' center = 'true'>
+				<widget name = 'FeatureDescriptionLine1'
+						height = 'Globals.Line.Height'
+				/>
+				<widget name = 'FeatureDescriptionLine2'
+						height = 'Globals.Line.Height'
+				/>
+			</layout>
 		</layout>
 	</dialog>
 
