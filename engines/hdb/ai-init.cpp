@@ -1691,7 +1691,7 @@ void AI::loadSaveFile(Common::InSaveFile *in) {
 	// Load AnimTargets
 	uint32 animTsize = in->readUint32LE();
 	_animTargets.clear();
-	for (i = 0; i < animTsize; i++) {
+	for (uint32 j = 0; j < animTsize; j++) {
 		AnimTarget *a = new AnimTarget;
 
 		a->x = in->readUint16LE();
@@ -1725,7 +1725,7 @@ void AI::loadSaveFile(Common::InSaveFile *in) {
 	// Load HereT List
 	uint32 hereSize = in->readUint32LE();
 	_hereList->clear();
-	for (i = 0; i < hereSize; i++) {
+	for (uint32 j = 0; j < hereSize; j++) {
 		HereT *h = new HereT;
 		h->x = in->readUint16LE();
 		h->y = in->readUint16LE();
