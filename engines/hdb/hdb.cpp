@@ -929,6 +929,7 @@ Common::Error HDBGame::run() {
 
 			if (!_pauseFlag) {
 				_ai->moveEnts();
+				_ai->animateBridges();
 				_ai->processCallbackList();
 			}
 
