@@ -532,13 +532,15 @@ bool AdlMetaEngine::addFileProps(const FileMap &allFiles, Common::String fname, 
 
 // Based on AdvancedMetaEngine::detectGame
 ADDetectedGames AdlMetaEngine::detectGame(const Common::FSNode &parent, const FileMap &allFiles, Common::Language language, Common::Platform platform, const Common::String &extra) const {
-	// We run the file-based detector first and then add to the returned list
+	// We run the file-based detector first, if it finds a match we do not search for disk images
 	ADDetectedGames matched = AdvancedMetaEngine::detectGame(parent, allFiles, language, platform, extra);
+
+	if (!matched.empty())
+		return matched;
 
 	debug(3, "Starting disk image detection in dir '%s'", parent.getPath().c_str());
 
 	FilePropertiesMap filesProps;
-	bool gotAnyMatchesWithAllFiles = false;
 
 	for (uint g = 0; gameDiskDescriptions[g].desc.gameId != 0; ++g) {
 		ADDetectedGame game(&gameDiskDescriptions[g].desc);
@@ -604,17 +606,20 @@ ADDetectedGames AdlMetaEngine::detectGame(const Common::FSNode &parent, const Fi
 			debug(3, "Matched file: %s", fileName.c_str());
 		}
 
-		if (allFilesPresent && !game.hasUnknownFiles) {
-			debug(2, "Found game: %s (%s/%s) (%d)", game.desc->gameId, getPlatformDescription(game.desc->platform), getLanguageDescription(game.desc->language), g);
-			gotAnyMatchesWithAllFiles = true;
-			matched.push_back(game);
-		} else {
-			if (allFilesPresent && !gotAnyMatchesWithAllFiles) {
-				if (matched.empty() || strcmp(matched.back().desc->gameId, game.desc->gameId) != 0)
+		// This assumes that the detection table groups together games that have the same gameId and platform
+		if (allFilesPresent) {
+			if (!game.hasUnknownFiles) {
+				debug(2, "Found game: %s (%s/%s) (%d)", game.desc->gameId, getPlatformDescription(game.desc->platform), getLanguageDescription(game.desc->language), g);
+				// If we just added an unknown variant for this game and platform, remove it
+				if (!matched.empty() && strcmp(matched.back().desc->gameId, game.desc->gameId) == 0 && matched.back().desc->platform == game.desc->platform)
+					matched.pop_back();
+				matched.push_back(game);
+			} else {
+				debug(5, "Skipping game: %s (%s/%s) (%d)", game.desc->gameId, getPlatformDescription(game.desc->platform), getLanguageDescription(game.desc->language), g);
+				// If we already added a known or unknown variant for this game and platform, don't add another
+				if (matched.empty() || strcmp(matched.back().desc->gameId, game.desc->gameId) != 0 || matched.back().desc->platform != game.desc->platform)
 					matched.push_back(game);
 			}
-
-			debug(5, "Skipping game: %s (%s/%s) (%d)", game.desc->gameId, getPlatformDescription(game.desc->platform), getLanguageDescription(game.desc->language), g);
 		}
 	}
 
