@@ -108,7 +108,7 @@ Common::SeekableReadStream *FileMan::findFirstData(const char *string, DataType 
 	if (pDest)
 		*pDest = '_';
 
-	debug(4, "Looking for Data: '%s' <- '%s'", fname, string);
+	debug(8, "Looking for Data: '%s' <- '%s'", fname, string);
 
 	// Find MPC Entry
 	for (MPCIterator it = _dir.begin(); it != _dir.end(); it++) {
