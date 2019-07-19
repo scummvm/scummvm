@@ -63,8 +63,6 @@ public:
 
 	virtual void setLanguage(Common::String language);
 
-	bool popState();
-
 	void updateState(SpeechState state);
 
 	virtual void freeVoiceData(void *data);

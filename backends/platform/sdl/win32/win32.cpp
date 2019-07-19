@@ -119,6 +119,8 @@ void OSystem_Win32::initBackend() {
 	// Initialize updates manager
 	_updateManager = new Win32UpdateManager();
 #endif
+
+	// Initialize text to speech
 #ifdef USE_WINDOWS_TTS
 	_textToSpeechManager = new WindowsTextToSpeechManager();
 #endif
