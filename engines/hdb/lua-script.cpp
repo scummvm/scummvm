@@ -34,29 +34,29 @@ struct ScriptPatch {
 	const char *search;
 	const char *replace;
 } scriptPatches[] = {
-	{"GLOBAL.LUA", "for i,npc in npcs do", "for i,npc in pairs(npcs) do"},
-	{"GLOBAL.LUA", "setglobal( npcdef.codename..\"_init\", function() return NPC_Init( %npcdef ) end )", "_G[npcdef.codename .. \"_init\"] = function() return NPC_Init( npcdef ) end"},
-	{"GLOBAL.LUA", "setglobal( npcdef.codename..\"_use\", function(x, y, v1, v2) return NPC_Use( %npcdef, x, y, v1, v2 ) end )", "_G[npcdef.codename .. \"_use\"] = function(x, y, v1, v2) return NPC_Use( npcdef, x, y, v1, v2 ) end"},
-	{"GLOBAL.LUA", "if( dtable.counter < getn(dtable) ) then", "if( dtable.counter < #dtable ) then"},
-	{"GLOBAL.LUA", "if( getglobal( \"map\"..tostring(v1)..\"_complete\" ) ) then", "if( _G[\"map\"..tostring(v1)..\"_complete\"] ) then"},
-	{"GLOBAL.LUA", "closefunc = getglobal( npcdef.codename..\"_use\" )", "closefunc = _G[npcdef.codename..\"_use\"]"},
+	{"GLOBAL.LUA", "for i,npc in npcs do", "for i,npc in pairs(npcs) do"}, // 323
+	{"GLOBAL.LUA", "setglobal( npcdef.codename..\"_init\", function() return NPC_Init( %npcdef ) end )", "_G[npcdef.codename .. \"_init\"] = function() return NPC_Init( npcdef ) end"}, // line 317
+	{"GLOBAL.LUA", "setglobal( npcdef.codename..\"_use\", function(x, y, v1, v2) return NPC_Use( %npcdef, x, y, v1, v2 ) end )", "_G[npcdef.codename .. \"_use\"] = function(x, y, v1, v2) return NPC_Use( npcdef, x, y, v1, v2 ) end"}, // line 318
+	{"GLOBAL.LUA", "if( dtable.counter < getn(dtable) ) then", "if( dtable.counter < #dtable ) then"}, // line 254
+	{"GLOBAL.LUA", "if( getglobal( \"map\"..tostring(v1)..\"_complete\" ) ) then", "if( _G[\"map\"..tostring(v1)..\"_complete\"] ) then"}, // line 219
+	{"GLOBAL.LUA", "closefunc = getglobal( npcdef.codename..\"_use\" )", "closefunc = _G[npcdef.codename..\"_use\"]"}, // line 272
 	{"GLOBAL.LUA", "strsub(", "string.sub("}, // line 15
-	{"GLOBAL.LUA", "for i,v in globals() do", "for i,v in pairs(_G) do"},
-	{"GLOBAL.LUA", "return gsub( s, \"\\n\", \"\\\\\\n\" )", "return string.gsub( s, \"\\n\", \"\\\\\\n\" )"},
-	{"GLOBAL.LUA", "for i,v in t do", "for i,v in pairs(t) do"},
+	{"GLOBAL.LUA", "for i,v in globals() do", "for i,v in pairs(_G) do"}, // line 52
+	{"GLOBAL.LUA", "return gsub( s, \"\\n\", \"\\\\\\n\" )", "return string.gsub( s, \"\\n\", \"\\\\\\n\" )"}, // line 10
+	{"GLOBAL.LUA", "for i,v in t do", "for i,v in pairs(t) do"},  // line 43
 	{"GLOBAL.LUA", "if type(v) == 'userdata' or type(v) == 'function' then return end", "if type(v) == 'userdata' or type(v) == 'function' or i == 'package' or i == 'os' or i == 'io' or i == 'string' or i == 'table' or i == 'debug' or i == 'math' or i == 'coroutine' then return end" }, // Line 16
 	{"GLOBAL.LUA", "for npcname,npcdata in npcs do", "for npcname,npcdata in pairs(npcs) do"}, // Line 66
 	{"GLOBAL.LUA", "for dlgname,dlgdata in npcdata.dialog do", "for dlgname,dlgdata in pairs(npcdata.dialog) do"}, // Line 67
 	{"GLOBAL.LUA", "s = format( \"npcs.%s.dialog.%s.counter", "s = string.format( \"npcs.%s.dialog.%s.counter"}, // Line 68
 	{"GLOBAL.LUA", "s = format( \"npcs.%s.dialog.%s.finished = ", "s = string.format( \"npcs.%s.dialog.%s.finished = "}, // line 70
-	{"MAP00.LUA", "tempfunc = function() emptybed_use( %x, %y, %v1, %v2 ) end", "tempfunc = function() emptybed_use(x, y, v1, v2) end"},
-	{"MAP00.LUA", "if( getn( beds ) == 0 ) then", "if( #beds == 0 ) then"},
-	{"MAP01.LUA", "if( covert_index < getn(covert_dialog) ) then", "if( covert_index < #covert_dialog ) then"},
-	{"MAP01.LUA", "if( chiste_index < getn( chiste_dialog ) )then", "if( covert_index < #covert_dialog ) then"},
+	{"MAP00.LUA", "tempfunc = function() emptybed_use( %x, %y, %v1, %v2 ) end", "tempfunc = function() emptybed_use(x, y, v1, v2) end"}, // line 926
+	{"MAP00.LUA", "if( getn( beds ) == 0 ) then", "if( #beds == 0 ) then"}, // line 924
+	{"MAP01.LUA", "if( covert_index < getn(covert_dialog) ) then", "if( covert_index < #covert_dialog ) then"}, // line 766
+	{"MAP01.LUA", "if( chiste_index < getn( chiste_dialog ) )then", "if( covert_index < #covert_dialog ) then"}, // 845
 	{"MAP01.LUA", "strsub(", "string.sub("}, // line 23
-	{"MAP10.LUA", "emptybed_use( %x, %y, %v1, %v2 )", "emptybed_use( x, y, v1, v2 )"},
-	{"MAP10.LUA", "if( getn( beds ) == 0 ) then", "if( #beds == 0 ) then"},
-	{"MAP11.LUA", "mapstring = strsub( LASTMAP, 1, 5 )", "mapstring = string.sub( LASTMAP, 1, 5 )"},
+	{"MAP10.LUA", "emptybed_use( %x, %y, %v1, %v2 )", "emptybed_use( x, y, v1, v2 )"}, // line 121
+	{"MAP10.LUA", "if( getn( beds ) == 0 ) then", "if( #beds == 0 ) then"}, // line 119
+	{"MAP11.LUA", "mapstring = strsub( LASTMAP, 1, 5 )", "mapstring = string.sub( LASTMAP, 1, 5 )"}, // line 51
 	{"MAP21.LUA", "mapstring = strsub( LASTMAP, 1, 5 )", "mapstring = string.sub( LASTMAP, 1, 5 )"}, // line 105
 	{NULL, NULL, NULL}
 };
