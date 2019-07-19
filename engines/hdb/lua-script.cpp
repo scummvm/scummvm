@@ -1872,7 +1872,7 @@ bool LuaScript::callFunction(const char *name, int returns) {
 	lua_getglobal(_state, name);
 
 	if (lua_pcall(_state, 0, returns, -2)) {
-		error("An error occured while executing \"%s\": %s.", name, lua_tostring(_state, -1));
+		error("callFunction: An error occured while executing \"%s\": %s.", name, lua_tostring(_state, -1));
 		lua_pop(_state, -1);
 
 		return false;
@@ -1990,7 +1990,7 @@ bool LuaScript::executeChunk(Common::String &chunk, const Common::String &chunkN
 
 	// Execute Chunk
 	if (lua_pcall(_state, 0, 0, -2)) {
-		error("An error occured while executing \"%s\": %s.", chunkName.c_str(), lua_tostring(_state, -1));
+		error("executeChunk: An error occured while executing \"%s\": %s.", chunkName.c_str(), lua_tostring(_state, -1));
 		lua_pop(_state, -1);
 
 		return false;
