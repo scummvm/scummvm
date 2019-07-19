@@ -32,6 +32,8 @@ namespace HDB {
 enum {
 	kScreenWidth = 640,
 	kScreenHeight = 480,
+	kScreenDrawWidth = (kScreenWidth - 160), // visible pixels wide
+	kScreenDrawHeight = 480,
 	kTileWidth = 32,
 	kTileHeight = 32,
 	kMaxSkies = 10,
