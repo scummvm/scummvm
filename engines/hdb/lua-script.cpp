@@ -1804,7 +1804,7 @@ bool LuaScript::initScript(Common::SeekableReadStream *stream, const char *scrip
 	}
 
 	// Load GLOBAL.LUA and execute it
-
+	_globalLuaStream->seek(0); // Make sure we start from the beginning
 	if (!executeMPC(_globalLuaStream, "global code", "GLOBAL.LUA", _globalLuaLength)) {
 		error("LuaScript::initScript: 'global code' failed to execute");
 		return false;
