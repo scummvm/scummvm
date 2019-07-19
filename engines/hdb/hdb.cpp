@@ -750,6 +750,7 @@ void HDBGame::drawProgressBar() {
 	GameState temp = _gameState;
 	_gameState = GAME_LOADING;
 	paint();
+	g_system->updateScreen();
 	_gameState = temp;
 }
 
