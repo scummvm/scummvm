@@ -732,8 +732,11 @@
 						height = 'Globals.Line.Height'
 				/>
 			</layout>
+		</layout>
+	</dialog>
 
-			<!-- here goes Wi-Fi Sharing -->
+	<dialog name = 'GlobalOptions_WiFiSharing' overlays = 'Dialog.GlobalOptions.TabWidget'>
+		<layout type = 'vertical' padding = '16, 16, 16, 16' spacing = '8'>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '6' center = 'true'>
 				<widget name = 'RunServerButton'
 						type = 'Button'

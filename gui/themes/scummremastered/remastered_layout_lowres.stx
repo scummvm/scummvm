@@ -609,7 +609,7 @@
 		<layout type = 'vertical' padding = '0, 0, 0, 0'>
 			<widget name = 'Container'/>
 		</layout>
-	</dialog>
+	</dialog>	
 
 	<dialog name = 'GlobalOptions_Cloud_Container' overlays = 'GlobalOptions_Cloud.Container'>
 		<layout type = 'vertical' padding = '10, 13, 10, 10' spacing = '8'>
@@ -732,8 +732,11 @@
 						height = 'Globals.Line.Height'
 				/>
 			</layout>
+		</layout>
+	</dialog>
 
-			<!-- here goes Wi-Fi Sharing -->
+	<dialog name = 'GlobalOptions_WiFiSharing' overlays = 'Dialog.GlobalOptions.TabWidget'>
+		<layout type = 'vertical' padding = '16, 16, 16, 16' spacing = '8'>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '6' center = 'true'>
 				<widget name = 'RunServerButton'
 						type = 'Button'
