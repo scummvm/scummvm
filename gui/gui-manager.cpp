@@ -630,10 +630,11 @@ void GuiManager::initTextToSpeech() {
 		return;
 #ifdef USE_TRANSLATION
 	Common::String currentLanguage = TransMan.getCurrentLanguage();
-	if (currentLanguage != "C") {
+	if (currentLanguage == "C")
+		currentLanguage = "en";
+	else
 		currentLanguage.setChar('\0', 2);
-		ttsMan->setLanguage(currentLanguage);
-	}
+	ttsMan->setLanguage(currentLanguage);
 #endif
 	int volume = (ConfMan.getInt("speech_volume", "scummvm") * 100) / 256;
 	if (ConfMan.hasKey("mute", "scummvm") && ConfMan.getBool("mute", "scummvm"))

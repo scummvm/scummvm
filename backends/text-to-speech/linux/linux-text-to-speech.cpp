@@ -256,6 +256,11 @@ void LinuxTextToSpeechManager::updateVoices() {
 	createVoice(SPD_CHILD_MALE, Common::TTSVoice::MALE, Common::TTSVoice::CHILD, voiceInfo[6]);
 	createVoice(SPD_CHILD_FEMALE, Common::TTSVoice::FEMALE, Common::TTSVoice::CHILD, voiceInfo[7]);
 
+	for (int i = 0; i < 8; i++)
+		free(voiceInfo[i]);
+
+	free(voiceInfo);
+
 }
 
 void LinuxTextToSpeechManager::freeVoiceData(void *data) {
