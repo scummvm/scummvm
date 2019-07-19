@@ -58,6 +58,9 @@ struct ScriptPatch {
 	{"MAP10.LUA", "if( getn( beds ) == 0 ) then", "if( #beds == 0 ) then"}, // line 119
 	{"MAP11.LUA", "mapstring = strsub( LASTMAP, 1, 5 )", "mapstring = string.sub( LASTMAP, 1, 5 )"}, // line 51
 	{"MAP21.LUA", "mapstring = strsub( LASTMAP, 1, 5 )", "mapstring = string.sub( LASTMAP, 1, 5 )"}, // line 105
+	{"MAP30.LUA", "if i1 > getn(tiles)", "if i1 > #tiles"}, // line 211
+	{"MAP30.LUA", "if i2 > getn(tiles)", "if i2 > #tiles"}, // line 212
+	{"MAP30.LUA", "if i3 > getn(tiles)", "if i3 > #tiles"}, // line 213
 	{NULL, NULL, NULL}
 };
 
