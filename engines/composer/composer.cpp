@@ -535,7 +535,8 @@ void ComposerEngine::unloadLibrary(uint id) {
 		return;
 	}
 
-	error("tried to unload library %d, which isn't loaded", id);
+	warning("tried to unload library %d, which isn't loaded", id);
+	return;
 }
 
 bool ComposerEngine::hasResource(uint32 tag, uint16 id) {
