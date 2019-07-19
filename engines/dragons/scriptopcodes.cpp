@@ -116,6 +116,7 @@ void ScriptOpcodes::initOpcodes() {
 	OPCODE(0x17, opUnk17);
 	OPCODE(0x18, opUnk18);
 
+	OPCODE(0x1A, opUnk1A);
 	OPCODE(0x1B, opUnk1B);
 	OPCODE(0x1C, opSetActorFlag0x1000);
 
@@ -1029,6 +1030,8 @@ uint16 ScriptOpcodes::getINIField(uint32 iniIndex, uint16 fieldOffset) {
 		case 4 : return ini->actorResourceId;
 		case 6 : return ini->sequenceId;
 		case 0xC  : return ini->sceneId;
+		case 0xE  : return ini->field_e;
+		case 0x10 : return ini->field_10;
 		case 0x12  : return ini->field_12;
 		case 0x14 : return ini->field_14;
 		case 0x16 : return ini->x;
@@ -1046,7 +1049,9 @@ void ScriptOpcodes::setINIField(uint32 iniIndex, uint16 fieldOffset, uint16 valu
 		case 0 : ini->iptIndex_maybe = value; break;
 		case 4 : ini->actorResourceId = value; break;
 		case 6 : ini->sequenceId = value; break;
-		case 0xc  : ini->sceneId = value; break;
+		case 0xc : ini->sceneId = value; break;
+		case 0xe : ini->field_e = value; break;
+		case 0x10 : ini->field_10 = value; break;
 		case 0x12 : ini->field_12 = value; break;
 		case 0x14 : ini->field_14 = value; break;
 		case 0x16 : ini->x = value; break;
@@ -1103,6 +1108,27 @@ void ScriptOpcodes::opUnk18(ScriptOpCall &scriptOpCall) {
 		fieldA = READ_LE_INT16(_vm->_dragonOBD->getFromOpt(fieldA - 1) + 6);
 	}
 	_vm->_talk->displayDialogAroundPoint(dialog,x,y,fieldA,1,field2);
+}
+
+void ScriptOpcodes::opUnk1A(ScriptOpCall &scriptOpCall) {
+	ARG_SKIP(2);
+	ARG_INT16(index);
+	ARG_INT16(field4);
+	ARG_INT16(field6);
+	ARG_INT16(field8);
+	ARG_INT16(fieldA);
+
+	if (scriptOpCall._field8 != 0) {
+		return;
+	}
+
+	assert(index < 8);
+
+	_vm->opCode1A_tbl[index].field0 = field4;
+	_vm->opCode1A_tbl[index].field2 = field6;
+	_vm->opCode1A_tbl[index].field4 = field8;
+	_vm->opCode1A_tbl[index].field6 = fieldA;
+	_vm->opCode1A_tbl[index].field8 = 0;
 }
 
 void ScriptOpcodes::opUnk1B(ScriptOpCall &scriptOpCall) {

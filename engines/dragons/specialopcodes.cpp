@@ -79,6 +79,11 @@ void SpecialOpcodes::initOpcodes() {
 	OPCODE(0x1b, spcDeactivatePizzaMakerActor);
 	OPCODE(0x1c, spcPizzaMakerActorStopWorking);
 
+	OPCODE(0x21, spcSetEngineFlag0x20000);
+	OPCODE(0x22, spcClearEngineFlag0x20000);
+	OPCODE(0x23, spcSetEngineFlag0x200000);
+	OPCODE(0x24, spcClearEngineFlag0x200000);
+
 	OPCODE(0x36, spcFlickerClearFlag0x80);
 
 	OPCODE(0x3b, spcSetEngineFlag0x2000000);
@@ -89,7 +94,8 @@ void SpecialOpcodes::initOpcodes() {
 	OPCODE(0x4e, spcUnk4e);
 	OPCODE(0x4f, spcUnk4f);
 	OPCODE(0x50, spcCloseInventory);
-
+	OPCODE(0x51, spcOpenInventionBook);
+	OPCODE(0x52, spcCloseInventionBook);
 	OPCODE(0x53, spcClearEngineFlag0x4000000);
 	OPCODE(0x54, spcSetEngineFlag0x4000000);
 	OPCODE(0x55, spcSetCursorSequenceIdToZero);
@@ -167,6 +173,22 @@ void SpecialOpcodes::spcPizzaMakerActorStopWorking() {
 	pizzaMakerStopWorking();
 }
 
+void SpecialOpcodes::spcSetEngineFlag0x20000() {
+	_vm->setFlags(ENGINE_FLAG_20000);
+}
+
+void SpecialOpcodes::spcClearEngineFlag0x20000() {
+	_vm->clearFlags(ENGINE_FLAG_20000);
+}
+
+void SpecialOpcodes::spcSetEngineFlag0x200000() {
+	_vm->setFlags(ENGINE_FLAG_200000);
+}
+
+void SpecialOpcodes::spcClearEngineFlag0x200000() {
+	_vm->clearFlags(ENGINE_FLAG_200000);
+}
+
 void SpecialOpcodes::spcFlickerClearFlag0x80() {
 	_vm->_dragonINIResource->getFlickerRecord()->actor->clearFlag(ACTOR_FLAG_80);
 }
@@ -192,6 +214,37 @@ void SpecialOpcodes::spcCloseInventory() {
 		_vm->_inventory->closeInventory();
 		_vm->_inventory->setType(0);
 	}
+}
+
+void SpecialOpcodes::spcOpenInventionBook() {
+	if (_vm->_inventory->getType() == 1) {
+		_vm->_inventory->closeInventory();
+	}
+	error("spcOpenInventionBook"); //TODO
+	DragonINI *pDVar1;
+
+//	DAT_80086f3c = func_ptr_unk;
+//	func_ptr_unk = 0;
+//	fade_related_calls_with_1f();
+//	inventorySequenceId = 2;
+//	actor_update_sequenceID(1,2);
+//	DAT_80083078 = currentSceneId;
+//	if (dragon_ini_maybe_flicker_control != 0xffff) {
+//		pDVar1 = dragon_ini_pointer + (uint)dragon_ini_maybe_flicker_control;
+//		DAT_800864a8 = actors[(uint)pDVar1->actorId].x_pos;
+//		DAT_80086424 = pDVar1->sceneId_maybe;
+//		DAT_800864ac = actors[(uint)pDVar1->actorId].y_pos;
+//		pDVar1->sceneId_maybe = 0;
+//	}
+//	currentSceneId = const_value_2;
+//	load_scene_maybe((uint)const_value_2,0);
+
+	_vm->_inventory->setType(2);
+}
+
+void SpecialOpcodes::spcCloseInventionBook() {
+	error("spcCloseInventionBook");
+	_vm->_inventory->setType(0);
 }
 
 void SpecialOpcodes::spcSetEngineFlag0x4000000() {
