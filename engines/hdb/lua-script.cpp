@@ -57,7 +57,8 @@ struct ScriptPatch {
 	{"MAP10.LUA", "emptybed_use( %x, %y, %v1, %v2 )", "emptybed_use( x, y, v1, v2 )"},
 	{"MAP10.LUA", "if( getn( beds ) == 0 ) then", "if( #beds == 0 ) then"},
 	{"MAP11.LUA", "mapstring = strsub( LASTMAP, 1, 5 )", "mapstring = string.sub( LASTMAP, 1, 5 )"},
-	{NULL, NULL, NULL},
+	{"MAP21.LUA", "mapstring = strsub( LASTMAP, 1, 5 )", "mapstring = string.sub( LASTMAP, 1, 5 )"}, // line 105
+	{NULL, NULL, NULL}
 };
 
 LuaScript::LuaScript() {
