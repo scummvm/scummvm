@@ -38,6 +38,7 @@ public:
 	bool get(uint32 propertyId);
 	void set(uint32 propertyId, bool value);
 	void save(uint numberToWrite, Common::WriteStream *out);
+	void print(char *prefix);
 private:
 	uint _count;
 	byte *_properties;

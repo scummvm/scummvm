@@ -19,6 +19,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
+#include <common/debug.h>
 #include "dragonflg.h"
 #include "bigfile.h"
 
@@ -85,6 +86,18 @@ void Properties::save(uint numberToWrite, Common::WriteStream *out) {
 	out->write(_properties, numberToWrite / 8);
 }
 
+void Properties::print(char *prefix) {
+	char *str = new char[_count + 1];
+	int i = 0;
+	for(; i < _count; i++) {
+		str[i] = get(i) ? '1' : '0';
+	}
+	str[i] = 0;
+	debug("%s: props = %s", prefix, str);
+
+	delete str;
+}
+
 DragonFLG::DragonFLG(BigfileArchive *bigfileArchive) {
 	_data = bigfileArchive->load("dragon.flg", _dataSize);
 	properties = new Properties(288);
@@ -104,6 +117,7 @@ void DragonFLG::set(uint32 propertyId, bool value) {
 }
 
 void DragonFLG::saveState(Common::WriteStream *out) {
+	//properties->print("save");
 	properties->save(128, out); // save first 80 flags.
 }
 
@@ -114,6 +128,7 @@ void DragonFLG::loadState(Common::ReadStream *in) {
 
 	in->read(savedState, 0x10);
 	properties->init(0x10, savedState);
+	//properties->print("load");
 
 }
 
