@@ -62,6 +62,7 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"dreamscape",      "Dreamscape"},
 	{"erinmyers",       "The Death of Erin Myers"},
 	{"escapemansion",   "Escape from the Mansion"},
+	{"everydaygray",    "Everyday Grey"},
 	{"facenoir",        "Face Noir"},
 	{"findinghope",     "Finding Hope"},
 	{"four",            "Four"},
@@ -517,6 +518,11 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Escape from the Mansion
 	WME_WINENTRY("escapemansion", "1.3",
 		WME_ENTRY1s("data.dcp", "1e5d231b56c8a228cd15cb690f50253e", 29261972), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_1),
+
+	// Everyday Grey (work name was Philip Kane)
+	// NOTE: This game seems to be mistakenly marked as 2.5D at Wintermute wiki
+	WME_WINENTRY("everydaygray", "",
+		WME_ENTRY1s("data.dcp", "77afff4101adbddac07ecf22ffbb8212", 24436150), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_1),
 
 	// Face Noir
 	// NOTE: This is a 2.5D game that is out of ScummVM scope	
