@@ -85,6 +85,7 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"onehelluvaday",   "One Helluva Day"},
 	{"openquest",       "Open Quest"},
 	{"paintaria",       "Paintaria"},
+	{"palladion",       "Palladion"},
 	{"pigeons",         "Pigeons in the Park"},
 	{"pizzamorgana",    "Pizza Morgana: Episode 1 - Monsters and Manipulations in the Magical Forest"},
 	{"projectdoom",     "Project: Doom"},
@@ -770,6 +771,11 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Paintaria
 	WME_WINENTRY("paintaria", "",
 		WME_ENTRY1s("data.dcp", "354c08440c98150ff0d4008dd2865880", 48326040), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_1),
+
+	// Palladion (Alpha6h)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("palladion", "Alpha6h",
+		WME_ENTRY1s("Palladion_Alpha6h.exe", "55aec582159410ec6221d4c3fd53db24", 95240860), Common::DE_DEU, ADGF_UNSTABLE | ADGF_DEMO, WME_1_8_6),
 
 	// Pigeons in the Park
 	WME_WINENTRY("pigeons", "",
