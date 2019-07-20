@@ -69,9 +69,6 @@ HDBGame::HDBGame(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst
 	_monkeystone7 = STARS_MONKEYSTONE_7_FAKE;
 	_monkeystone14 = STARS_MONKEYSTONE_14_FAKE;
 	_monkeystone21 = STARS_MONKEYSTONE_21_FAKE;
-
-	DebugMan.addDebugChannel(kDebugExample1, "Example1", "This is just an example to test");
-	DebugMan.addDebugChannel(kDebugExample2, "Example2", "This is also an example");
 }
 
 HDBGame::~HDBGame() {
