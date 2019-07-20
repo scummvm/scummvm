@@ -1824,7 +1824,7 @@ bool LuaScript::initScript(Common::SeekableReadStream *stream, const char *scrip
 	lua_insert(_state, -2);
 
 	if (lua_pcall(_state, 0, 0, -2)) {
-		error("An error occured while executing \"%s\": %s.", "level_init", lua_tostring(_state, -1));
+		error("LuaScript::initScript: An error occured while executing \"%s\": %s.", "level_init", lua_tostring(_state, -1));
 		lua_pop(_state, -1);
 
 		return false;
@@ -1866,7 +1866,7 @@ void LuaScript::call(int args, int returns) {
 		return;
 
 	if (lua_pcall(_state, args, returns, -2)) {
-		error("An error occured while executing: %s.", lua_tostring(_state, -1));
+		error("LuaScript::call: An error occured while executing: %s.", lua_tostring(_state, -1));
 		lua_pop(_state, -1);
 	}
 }
@@ -1879,7 +1879,7 @@ bool LuaScript::callFunction(const char *name, int returns) {
 	lua_getglobal(_state, name);
 
 	if (lua_pcall(_state, 0, returns, -2)) {
-		error("callFunction: An error occured while executing \"%s\": %s.", name, lua_tostring(_state, -1));
+		error("LuaScript::callFunction: An error occured while executing \"%s\": %s.", name, lua_tostring(_state, -1));
 		lua_pop(_state, -1);
 
 		return false;
@@ -1997,7 +1997,7 @@ bool LuaScript::executeChunk(Common::String &chunk, const Common::String &chunkN
 
 	// Execute Chunk
 	if (lua_pcall(_state, 0, 0, -2)) {
-		error("executeChunk: An error occured while executing \"%s\": %s.", chunkName.c_str(), lua_tostring(_state, -1));
+		error("LuaScript::executeChunk: An error occured while executing \"%s\": %s.", chunkName.c_str(), lua_tostring(_state, -1));
 		lua_pop(_state, -1);
 
 		return false;
