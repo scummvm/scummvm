@@ -49,6 +49,7 @@ struct ScriptPatch {
 	{"GLOBAL.LUA", "for dlgname,dlgdata in npcdata.dialog do", "for dlgname,dlgdata in pairs(npcdata.dialog) do"}, // Line 67
 	{"GLOBAL.LUA", "s = format( \"npcs.%s.dialog.%s.counter", "s = string.format( \"npcs.%s.dialog.%s.counter"}, // Line 68
 	{"GLOBAL.LUA", "s = format( \"npcs.%s.dialog.%s.finished = ", "s = string.format( \"npcs.%s.dialog.%s.finished = "}, // line 70
+	{"GLOBAL.LUA", "local mapname = format( \"MAP", "local mapname = string.format( \"MAP"}, // line 225
 	{"MAP00.LUA", "tempfunc = function() emptybed_use( %x, %y, %v1, %v2 ) end", "tempfunc = function() emptybed_use(x, y, v1, v2) end"}, // line 926
 	{"MAP00.LUA", "if( getn( beds ) == 0 ) then", "if( #beds == 0 ) then"}, // line 924
 	{"MAP01.LUA", "if( covert_index < getn(covert_dialog) ) then", "if( covert_index < #covert_dialog ) then"}, // line 766
