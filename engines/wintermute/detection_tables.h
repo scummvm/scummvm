@@ -32,6 +32,7 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"agustin",         "Boredom of Agustin Cordes"},
 	{"alimardan1",      "Alimardan's Mischief"},
 	{"alimardan2",      "Alimardan Meets Merlin"},
+	{"alphapolaris",    "Alpha Polaris"},
 	{"basisoctavus",    "Basis Octavus"},
 	{"bickadoodle",     "Bickadoodle"},
 	{"bookofgron",      "Book of Gron Part One"},
@@ -217,6 +218,54 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("alimardan2", "",
 		WME_ENTRY2s("language.dcp", "0cbb7e1e84a342782c24938af4da1402", 686580,
 					"data.dcp", "e3ffb5d177737a57bb391995d9361055", 413397623), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Alpha Polaris (English) (1.1.0) (1280x800 Steam)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("alphapolaris", "1.1.0 (1280x800 Steam)",
+		WME_ENTRY2s("data.dcp", "2d1bd35749b2538915b53ce79288bceb", 706580987,
+					"data.dcp", "2d1bd35749b2538915b53ce79288bceb", 706580987), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Alpha Polaris (German) (1.1.0) (1280x800 Steam)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("alphapolaris", "1.1.0 (1280x800 Steam)",
+		WME_ENTRY2s("data.dcp", "2d1bd35749b2538915b53ce79288bceb", 706580987,
+					"german_language_pack.dcp", "0ed4ef1647445c73b5915b60f85ed8e4", 19251966), Common::DE_DEU, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Alpha Polaris (Polish) (1.1.0) (1280x800 Steam)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("alphapolaris", "1.1.0 (1280x800 Steam)",
+		WME_ENTRY2s("data.dcp", "2d1bd35749b2538915b53ce79288bceb", 706580987,
+					"polish_language_pack.dcp", "91f80c5f8d522541d666d11b60b0ea6c", 15006039), Common::PL_POL, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Alpha Polaris (Russian) (1.1.0) (1280x800 Steam)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("alphapolaris", "1.1.0 (1280x800 Steam)",
+		WME_ENTRY2s("data.dcp", "2d1bd35749b2538915b53ce79288bceb", 706580987,
+					"russian_language_pack.dcp", "58575db652d371af537b4b8841e962f8", 49395113), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Alpha Polaris (English) (1.1.0) (1280x768 Steam)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("alphapolaris", "1.1.0 (1280x768 Steam)",
+		WME_ENTRY2s("data.dcp", "481b1bff44178ef2f3d879df05f65a96", 706580987,
+					"data.dcp", "481b1bff44178ef2f3d879df05f65a96", 706580987), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Alpha Polaris (German) (1.1.0) (1280x768 Steam)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("alphapolaris", "1.1.0 (1280x768 Steam)",
+		WME_ENTRY2s("data.dcp", "481b1bff44178ef2f3d879df05f65a96", 706580987,
+					"german_language_pack.dcp", "2ffd9b2bdf2c2b3646067644572390c0", 19251966), Common::DE_DEU, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Alpha Polaris (Polish) (1.1.0) (1280x768 Steam)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("alphapolaris", "1.1.0 (1280x768 Steam)",
+		WME_ENTRY2s("data.dcp", "481b1bff44178ef2f3d879df05f65a96", 706580987,
+					"polish_language_pack.dcp", "4a24986189321f39b9f48cbc4889d89a", 15006039), Common::PL_POL, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Alpha Polaris (Russian) (1.1.0) (1280x768 Steam)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("alphapolaris", "1.1.0 (1280x768 Steam)",
+		WME_ENTRY2s("data.dcp", "481b1bff44178ef2f3d879df05f65a96", 706580987,
+					"russian_language_pack.dcp", "f39ad478a711fa4b34d419ed4aac97bf", 49395113), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_3),
 
 	// Basis Octavus
 	// NOTE: This is a 2.5D game that is out of ScummVM scope
