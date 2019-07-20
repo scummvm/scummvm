@@ -203,6 +203,13 @@ bool HDBGame::restartMap() {
 
 		strcpy(_lastMapname, "MAP12");
 	}
+
+	if (!strcmp(_currentLuaName, "MAP06.LUA")) {
+		// Have overtime pay for Hanson
+
+		_ai->setGemAmount(100);
+	}
+
 #endif
 
 	_lua->loadLua(_currentLuaName);
