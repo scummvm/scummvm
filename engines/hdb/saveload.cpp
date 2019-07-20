@@ -153,7 +153,7 @@ void HDBGame::loadGame(Common::InSaveFile *in) {
 	debug(1, "HDBGame::loadGame: start at %u", in->pos());
 
 	// Load Map Name and Time
-	_timeSeconds = in->readUint32LE();;
+	_timeSeconds = in->readUint32LE();
 	_timePlayed = 0;
 	in->read(_inMapName, 32);
 
