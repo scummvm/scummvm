@@ -2064,7 +2064,8 @@ bool AI::checkPlayerCollision(int x, int y, int border) {
 	if (g_hdb->getDebug() == 2 || !_player)
 		return false;
 
-	return (x > (_player->x - 32 + border) && x < (_player->x - 32 - border) && y >(_player->y - 32 + border) && y < (_player->y - 32 - border));
+	return (x > (_player->x - 32 + border) && x < (_player->x + 32 - border) &&
+			y > (_player->y - 32 + border) && y < (_player->y + 32 - border));
 }
 
 void AI::clearDiverters() {
