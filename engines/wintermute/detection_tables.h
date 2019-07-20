@@ -93,6 +93,7 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"projectdoom",     "Project: Doom"},
 	{"projectjoe",      "Project Joe"},
 	{"rebeccacarlson1", "Rebecca Carlson Mystery 01 - Silent Footsteps"},
+	{"reptilesquest",   "On the Tracks of Dinosaurs"},
 	{"reversion1",      "Reversion: The Escape"},
 	{"reversion2",      "Reversion: The Meeting"},
 	{"rhiannon",        "Rhiannon: Curse of the four Branches"},
@@ -850,6 +851,18 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Rebecca Carlson Mystery 01 - Silent Footsteps (Demo)
 	WME_WINENTRY("rebeccacarlson1", "Demo",
 		WME_ENTRY1s("data.dcp", "a46c41edb1ae5e19a3e0fc5cac3ce83b", 212698165), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_3),
+
+	// On the Tracks of Dinosaurs (Beta 2.5) (English)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("reptilesquest", "Beta 2.5",
+		WME_ENTRY2s("data.dcp", "b624d3b19e37c094801a28d817bc3d76", 27345755,
+					"english.dcp", "42188d46ee079b555d578ea2b406fa19", 3897), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_1),
+
+	// On the Tracks of Dinosaurs (Beta 2.5) (Russian)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("reptilesquest", "Beta 2.5",
+		WME_ENTRY2s("data.dcp", "b624d3b19e37c094801a28d817bc3d76", 27345755,
+					"russian.dcp", "90d2bf541ba381bbb3375aa7d31613fb", 42175), Common::RU_RUS, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_1),
 
 	// Reversion: The Escape Version 1.0
 	WME_WINENTRY("reversion1", "Version 1.0",
