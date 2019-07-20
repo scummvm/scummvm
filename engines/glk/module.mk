@@ -182,6 +182,17 @@ MODULE_OBJS := \
 	magnetic/graphics.o \
 	magnetic/magnetic.o \
 	magnetic/sound.o \
+	quest/detection.o \
+	quest/geas_file.o \
+	quest/geas_glk.o \
+	quest/geas_runner.o \
+	quest/geas_state.o \
+	quest/geas_util.o \
+	quest/quest.o \
+	quest/tstring.o \
+	quest/read_file.o \
+	quest/string.o \
+	quest/streams.o \
 	scott/detection.o \
 	scott/scott.o \
 	tads/detection.o \

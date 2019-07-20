@@ -44,6 +44,7 @@ const uint32 INTERPRETER_IDS[INTERPRETER_TADS3 + 1] = {
 	MKTAG('J', 'A', 'C', 'L'),
 	MKTAG('L', 'V', 'L', '9'),
 	MKTAG('M', 'A', 'G', 'N'),
+	MKTAG('Q', 'E', 'S', 'T'),
 	MKTAG('S', 'C', 'A', 'R'),
 	MKTAG('S', 'C', 'O', 'T'),
 	MKTAG('T', 'A', 'D', '2'),
