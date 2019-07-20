@@ -197,6 +197,17 @@ bool HDBGame::restartMap() {
 	_window->restartSystem();
 	_ai->restartSystem();
 	_lua->init();
+
+#if CHEAT_PATCHES
+	if (!strcmp(_currentLuaName, "MAP11.LUA")) {
+		// Let enter the labs
+
+		_lua->saveGlobalNumber("map12_complete", 1);
+
+		strcpy(_lastMapname, "MAP12");
+	}
+#endif
+
 	_lua->loadLua(_currentLuaName);
 
 	_sound->markSoundCacheFreeable();
