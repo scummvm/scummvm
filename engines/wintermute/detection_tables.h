@@ -79,6 +79,7 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"lonelyrobot",     "Project Lonely Robot"},
 	{"looky",           "Looky"},
 	{"julia",           "J.U.L.I.A."},
+	{"mentelrepairs",   "Mental Repairs Inc"},
 	{"mirage",          "Mirage"},
 	{"nighttrain",      "Night Train"},
 	{"oknytt",          "Oknytt"},
@@ -739,6 +740,18 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("looky", "",
 		WME_ENTRY2s("german.dcp", "bf4c2b8c26342342441a6d64934ab832", 107027865,
 					"data.dcp", "50de0beaa5ad621aa9f020df901d1e74", 1342214), Common::DE_DEU, ADGF_UNSTABLE, WME_1_9_1),
+
+	// Mental Repairs Inc (English)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("mentelrepairs", "",
+		WME_ENTRY2s("data.dcp", "414d423bbff697f22fb38932f030e897", 59518068,
+					"english.dcp", "7573eb584e662adbc5fa3b1448e56106", 3160232), Common::EN_ANY, ADGF_UNSTABLE, WME_1_8_6),
+
+	// Mental Repairs Inc (German)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("mentelrepairs", "",
+		WME_ENTRY2s("data.dcp", "414d423bbff697f22fb38932f030e897", 59518068,
+					"german.dcp", "af59a05ef29768e7fced3794a7a380a3", 3249142), Common::DE_DEU, ADGF_UNSTABLE, WME_1_8_6),
 
 	// Mirage
 	WME_WINENTRY("mirage", "",
