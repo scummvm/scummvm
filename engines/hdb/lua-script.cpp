@@ -68,6 +68,9 @@ struct ScriptPatch {
 	{"MAP30.LUA", "if i1 > getn(tiles)", "if i1 > #tiles"}, // line 211
 	{"MAP30.LUA", "if i2 > getn(tiles)", "if i2 > #tiles"}, // line 212
 	{"MAP30.LUA", "if i3 > getn(tiles)", "if i3 > #tiles"}, // line 213
+	{"MAP30.LUA", "if i2 > getn(tiles)", "if i2 > #tiles"}, // line 237
+	{"MAP30.LUA", "if i3 > getn(tiles)", "if i3 > #tiles"}, // line 238
+	{"MAP30.LUA", "if i3 > getn(tiles)", "if i3 > #tiles"}, // line 261
 
 	{NULL, NULL, NULL}
 };
