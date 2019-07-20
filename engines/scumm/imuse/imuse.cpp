@@ -241,11 +241,11 @@ bool IMuseInternal::supportsPercussion(int sound) {
 	case MKTAG('S', 'P', 'K', ' '):
 		return false;
 
-	case MKTAG('A', 'M', 'I', ' '): // Amiga
+	case MKTAG('A', 'M', 'I', ' '): // MI2 Amiga
 		return false;
 
-	case MKTAG('R', 'O', 'L', ' '):
-		return true;
+	case MKTAG('R', 'O', 'L', ' '): // Roland LAPC/MT-32/CM32L track, but also used by INDY4 Amiga
+		return !_isAmiga;
 
 	case MKTAG('M', 'A', 'C', ' '): // Occurs in the Mac version of FOA and MI2
 		// This is MIDI, i.e. uses MIDI style program changes, but without a
