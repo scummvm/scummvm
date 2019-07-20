@@ -34,6 +34,7 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"alimardan2",      "Alimardan Meets Merlin"},
 	{"alphapolaris",    "Alpha Polaris"},
 	{"apeiron",         "Apeiron"},
+	{"artofmurder1",    "Art of Murder 1: FBI Confidential"},
 	{"basisoctavus",    "Basis Octavus"},
 	{"bickadoodle",     "Bickadoodle"},
 	{"bookofgron",      "Book of Gron Part One"},
@@ -273,6 +274,36 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Apeiron
 	WME_WINENTRY("apeiron", "",
 		WME_ENTRY1s("data.dcp", "c0d6190de52b3da9995cbd4b78976bc8", 89912566), Common::SE_SWE, ADGF_UNSTABLE, WME_1_9_1),
+
+	// Art of Murder: FBI Confidential (English)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("artofmurder1", "",
+		WME_ENTRY2s("data.dcp", "7e4c1dc8b1fb08541f7784d6288acfc8", 633692059,
+					"us.dcp", "4a02b65edc45444ac69ff8a514e952b8", 176592548), Common::EN_ANY, ADGF_UNSTABLE, WME_1_8_1),
+
+	// Art of Murder: FBI Confidential (French)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("artofmurder1", "",
+		WME_ENTRY2s("data.dcp", "bba4e56a66fd6406a26515cfc86ac125", 23782002,
+					"fr.dcp", "5665d84d70cb3e20472e1c3eb9d884c3", 125728694), Common::FR_FRA, ADGF_UNSTABLE, WME_1_8_1),
+
+	// Art of Murder: FBI Confidential (German)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("artofmurder1", "",
+		WME_ENTRY2s("data.dcp", "09e57d77b68dafa73a0924f11f61b059", 630742753,
+					"i18n.dcp", "583940f6d3fb4097e7cb1e2cc9a43a7b", 156078991), Common::DE_DEU, ADGF_UNSTABLE, WME_1_8_1),
+
+	// Art of Murder: FBI Confidential (Spanish)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("artofmurder1", "",
+		WME_ENTRY2s("data.dcp", "340f04f9f66a0ab978b78d317544bbed", 23757600,
+					"es.dcp", "47b3a609993b3c18ce5bfb1af734ea3e", 148997124), Common::ES_ESP, ADGF_UNSTABLE, WME_1_8_1),
+
+	// Art of Murder: FBI Confidential (Polish)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("artofmurder1", "",
+		WME_ENTRY2s("data.dcp", "592862a5dd1ae90d53561815a535ab2e", 630734278,
+					"i18n.dcp", "b43bd7b64991ad9d5d285753767fe3f4", 176591837), Common::PL_POL, ADGF_UNSTABLE, WME_1_8_1),
 
 	// Basis Octavus
 	// NOTE: This is a 2.5D game that is out of ScummVM scope
