@@ -776,7 +776,7 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Project Joe (Demo)
 	WME_WINENTRY("projectjoe", "Demo",
-		WME_ENTRY1s("data.dcp", "ada3c08542901295076b5349e655e73f", 160780037), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, LATEST_VERSION),
+		WME_ENTRY1s("data.dcp", "ada3c08542901295076b5349e655e73f", 160780037), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_2_44),
 
 	// Project Lonely Robot (Beta)
 	WME_WINENTRY("lonelyrobot", "Beta",
