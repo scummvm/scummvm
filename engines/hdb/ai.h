@@ -383,7 +383,7 @@ enum CallbackType {
 
 struct AIStateDef {
 	AIState state;
-	const char name[64];
+	const char *name;
 };
 
 struct AIEntity {

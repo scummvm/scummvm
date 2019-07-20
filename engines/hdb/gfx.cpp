@@ -1052,7 +1052,8 @@ void Gfx::drawDebugInfo(Tile *_debugLogo, int fps) {
 	}
 }
 
-Picture::Picture() : _width(0), _height(0), _name("") {
+Picture::Picture() : _width(0), _height(0) {
+	_name[0] = 0;
 	_surface.create(_width, _height, g_hdb->_format);
 }
 
@@ -1109,7 +1110,8 @@ int Picture::drawMasked(int x, int y, int alpha) {
 	return 0;
 }
 
-Tile::Tile() : _flags(0), _name("") {
+Tile::Tile() : _flags(0) {
+	_name[0] = 0;
 	_surface.create(32, 32, g_hdb->_format);
 }
 
