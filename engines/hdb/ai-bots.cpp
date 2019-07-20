@@ -69,7 +69,7 @@ void aiOmniBotAction(AIEntity *e) {
 			if (onEvenTile(e->x, e->y) && g_hdb->getActionMode()) {
 				int xv = 0, yv = 0, result;
 				int shoot = 0;
-				AIEntity *omni;
+
 				// FIXME: Is reloading Player required here?
 				p = g_hdb->_ai->getPlayer();
 
@@ -113,7 +113,7 @@ void aiOmniBotAction(AIEntity *e) {
 				// (2) Check we're not shooting into an Entity unless it's the player
 				AIEntity *hit = g_hdb->_ai->legalMoveOverWater(e->tileX+xv, e->tileY + yv, e->level, &result);
 				if (shoot && !hit && result) {
-					omni = g_hdb->_ai->spawn(AI_OMNIBOT_MISSILE, e->dir, e->tileX + xv, e->tileY + yv, NULL, NULL, NULL, DIR_NONE, e->level, 0, 0, 1);
+					AIEntity *omni = g_hdb->_ai->spawn(AI_OMNIBOT_MISSILE, e->dir, e->tileX + xv, e->tileY + yv, NULL, NULL, NULL, DIR_NONE, e->level, 0, 0, 1);
 					omni->xVel = xv * kPlayerMoveSpeed * 2;
 					omni->yVel = yv * kPlayerMoveSpeed * 2;
 					if (g_hdb->_map->onScreen(e->tileX, e->tileY))
@@ -202,10 +202,9 @@ void aiTurnBotChoose(AIEntity *e) {
 	int xvAhead[5] = { 9, 0, 0, -1, 1 }, yvAhead[5] = { 9, -1, 1, 0, 0 };
 	AIDir turnRight[5] = { DIR_NONE, DIR_RIGHT, DIR_LEFT, DIR_UP, DIR_DOWN };
 	AIState dirState[5] = { STATE_NONE, STATE_MOVEUP, STATE_MOVEDOWN, STATE_MOVELEFT, STATE_MOVERIGHT };
-	int xv, yv;
 
-	xv = xvAhead[e->dir];
-	yv = yvAhead[e->dir];
+	int xv = xvAhead[e->dir];
+	int yv = yvAhead[e->dir];
 	if (g_hdb->_map->getMapBGTileFlags(e->tileX + xv, e->tileY + yv) & (kFlagSolid | kFlagWater)) {
 		e->xVel = e->yVel = 0;
 		e->animFrame = 0;
@@ -359,29 +358,29 @@ void aiRightBotInit2(AIEntity *e) {
 }
 
 void aiRightBotFindGoal(AIEntity *e) {
-	int	xv, yv, xv2, yv2, xv3, yv3;
+	int	xv, yv;
 	int	bg, bg2, bg3;
-	AIEntity *e1, *e2, *e3, *p;
-	int	hit, sx, sy, rotate;
+	AIEntity *e1, *e2, *e3;
+	int	sx, sy;
 
-	int		xvAhead[5]	= { 9, 0, 0,-1, 1 }, yvAhead[5]	= { 9,-1, 1, 0, 0 };
-	int		xvAToR[5]	= { 9, 1,-1,-1, 1 }, yvAToR[5]	= { 9,-1, 1,-1, 1 };
-	int		xvToR[5]	= { 9, 1,-1, 0, 0 }, yvToR[5]	= { 9, 0, 0,-1, 1 };
-	int		xvToL[5]	= { 9,-1, 1, 0, 0 }, yvToL[5]	= { 9, 0, 0, 1,-1 };
+	int	xvAhead[5]	= { 9, 0, 0,-1, 1 }, yvAhead[5]	= { 9,-1, 1, 0, 0 };
+	int	xvAToR[5]	= { 9, 1,-1,-1, 1 }, yvAToR[5]	= { 9,-1, 1,-1, 1 };
+	int	xvToR[5]	= { 9, 1,-1, 0, 0 }, yvToR[5]	= { 9, 0, 0,-1, 1 };
+	int	xvToL[5]	= { 9,-1, 1, 0, 0 }, yvToL[5]	= { 9, 0, 0, 1,-1 };
 
-	p = g_hdb->_ai->getPlayer();
-	rotate = 0;
+	AIEntity *p = g_hdb->_ai->getPlayer();
+	int rotate = 0;
 
 	do {
 		xv = xvAhead[e->dir];	// Search Ahead
 		yv = yvAhead[e->dir];
-		xv2 = xvAToR[e->dir];	// Search Ahead and to the Right
-		yv2 = yvAToR[e->dir];
-		xv3 = xvToR[e->dir];	// Search to the Right
-		yv3 = yvToR[e->dir];
+		int xv2 = xvAToR[e->dir];	// Search Ahead and to the Right
+		int yv2 = yvAToR[e->dir];
+		int xv3 = xvToR[e->dir];	// Search to the Right
+		int yv3 = yvToR[e->dir];
 
 		// Search until we hit a wall...or empty space to our right (and forward)
-		hit = 0;
+		bool hit = false;
 		sx = e->tileX;
 		sy = e->tileY;
 
@@ -405,7 +404,7 @@ void aiRightBotFindGoal(AIEntity *e) {
 				sy += yv;
 				rotate = 0;
 			} else
-				hit = 1;
+				hit = true;
 		}
 
 		// Are we stuck in a corner?
@@ -527,9 +526,7 @@ void aiPushBotAction(AIEntity *e) {
 	int	xvAhead[5] = { 9, 0, 0,-1, 1 }, yvAhead[5] = { 9,-1, 1, 0, 0 };
 	AIDir oneEighty[5] = { DIR_NONE, DIR_DOWN, DIR_UP, DIR_RIGHT, DIR_LEFT };
 
-	uint32 bgFlags, fgFlags;
-	int nx, ny, nx2, ny2, result;
-	AIEntity *e1 = NULL, *e2;
+	AIEntity *e1 = nullptr;
 
 	if (e->goalX) {
 		g_hdb->_ai->animateEntity(e);
@@ -540,9 +537,10 @@ void aiPushBotAction(AIEntity *e) {
 			g_hdb->_ai->killPlayer(DEATH_NORMAL);
 
 		// Where to go next
-		nx = e->tileX + xvAhead[e->dir];
-		ny = e->tileY + yvAhead[e->dir];
+		int nx = e->tileX + xvAhead[e->dir];
+		int ny = e->tileY + yvAhead[e->dir];
 
+		int result;
 		e1 = g_hdb->_ai->legalMove(nx, ny, e->level, &result);
 
 		// Push something
@@ -557,17 +555,17 @@ void aiPushBotAction(AIEntity *e) {
 				return;
 			}
 
-			nx2 = nx + xvAhead[e->dir];
-			ny2 = ny + yvAhead[e->dir];
+			int nx2 = nx + xvAhead[e->dir];
+			int ny2 = ny + yvAhead[e->dir];
 
-			bgFlags = g_hdb->_map->getMapBGTileFlags(nx2, ny2);
-			fgFlags = g_hdb->_map->getMapFGTileFlags(nx2, ny2);
-			e2 = g_hdb->_ai->findEntity(nx2, ny2);
+			uint32 bgFlags = g_hdb->_map->getMapBGTileFlags(nx2, ny2);
+			uint32 fgFlags = g_hdb->_map->getMapFGTileFlags(nx2, ny2);
+			AIEntity *e2 = g_hdb->_ai->findEntity(nx2, ny2);
 			result = (e->level == 1) ? (bgFlags & kFlagSolid) : !(fgFlags & kFlagGrating) && (bgFlags & kFlagSolid);
 
 			// If we're going to push something onto a floating thing, that's ok
 			if (e2 && (e2->state == STATE_FLOATING || e2->state == STATE_MELTED))
-				e2 = NULL;
+				e2 = nullptr;
 
 			// If no walls in front & no entities
 			if (!result && !e2 && e1->state != STATE_EXPLODING) {
@@ -882,8 +880,6 @@ void aiMaintBotAction(AIEntity *e) {
 	AIState useState[5] = {STATE_NONE, STATE_USEUP, STATE_USEDOWN, STATE_USELEFT, STATE_USERIGHT};
 	AIState standState[5] = {STATE_NONE, STATE_STANDUP, STATE_STANDDOWN, STATE_STANDLEFT, STATE_STANDRIGHT};
 	int	xvAhead[5] = {9, 0, 0,-1, 1}, yvAhead[5] = {9,-1, 1, 0, 0};
-	AIEntity *it;
-	int nx, ny;
 	int	whistles[3] = {SND_MBOT_WHISTLE1, SND_MBOT_WHISTLE2, SND_MBOT_WHISTLE3};
 
 	// Waiting at an arrow (or hit by player)?
@@ -903,11 +899,11 @@ void aiMaintBotAction(AIEntity *e) {
 				}
 				break;
 			// Need to USE the object
-			case 30:
+			case 30: {
 				e->state = useState[e->dir];
-				nx = e->tileX + xvAhead[e->dir];
-				ny = e->tileY + yvAhead[e->dir];
-				it = g_hdb->_ai->findEntity(nx, ny);
+				int nx = e->tileX + xvAhead[e->dir];
+				int ny = e->tileY + yvAhead[e->dir];
+				AIEntity *it = g_hdb->_ai->findEntity(nx, ny);
 				if (it) {
 					if (e->onScreen)
 						e->value1 = 1;
@@ -933,6 +929,7 @@ void aiMaintBotAction(AIEntity *e) {
 					break;
 				}
 				break;
+				}
 			// Play a sound if we used something
 			case 25:
 				e->value1 = 0;
@@ -1040,10 +1037,9 @@ void aiFourFirerInit2(AIEntity *e) {
 }
 
 void aiFourFirerAction(AIEntity *e) {
-	AIEntity *p = g_hdb->_ai->getPlayer(), *fire, *hit;
+	AIEntity *p = g_hdb->_ai->getPlayer();
 	AIState state[5] = {STATE_NONE, STATE_STANDUP, STATE_STANDDOWN, STATE_STANDLEFT, STATE_STANDRIGHT};
 	AIDir turn[5] = {DIR_NONE, DIR_RIGHT, DIR_LEFT, DIR_UP, DIR_DOWN};
-	int	shoot, xv, yv, result;
 
 	// Time to turn right?
 	if (!e->value1) {
@@ -1068,24 +1064,28 @@ void aiFourFirerAction(AIEntity *e) {
 		return;
 
 	// Check player direction
-	shoot = xv = yv = 0;
+	bool shoot = false;
+	int xv = 0;
+	int yv = 0;
+
 	switch (e->dir) {
-	case DIR_UP:	if (p->x == e->x && p->y < e->y) { shoot = 1; yv = -1; } break;
-	case DIR_DOWN:	if (p->x == e->x && p->y > e->y) { shoot = 1; yv = 1; } break;
-	case DIR_LEFT:	if (p->y == e->y && p->x < e->x) { shoot = 1; xv = -1; } break;
-	case DIR_RIGHT:	if (p->y == e->y && p->x > e->x) { shoot = 1; xv = 1; } break;
+	case DIR_UP:	if (p->x == e->x && p->y < e->y) { shoot = true; yv = -1; } break;
+	case DIR_DOWN:	if (p->x == e->x && p->y > e->y) { shoot = true; yv = 1; } break;
+	case DIR_LEFT:	if (p->y == e->y && p->x < e->x) { shoot = true; xv = -1; } break;
+	case DIR_RIGHT:	if (p->y == e->y && p->x > e->x) { shoot = true; xv = 1; } break;
 	case DIR_NONE: warning("aiFourFirerAction: DIR_NONE found"); break;
 	}
 
 	// Shoot if needed
 	// Make sure not shooting into solid tile
 	// Make sure if shooting at entity it is the player
-	hit = g_hdb->_ai->legalMoveOverWater(e->tileX + xv, e->tileY + yv, e->level, &result);
+	int result;
+	AIEntity *hit = g_hdb->_ai->legalMoveOverWater(e->tileX + xv, e->tileY + yv, e->level, &result);
 	if (hit && hit->type == AI_GUY)
-		hit = NULL;
+		hit = nullptr;
 
 	if (shoot && !hit && result) {
-		fire = g_hdb->_ai->spawn(AI_OMNIBOT_MISSILE, e->dir, e->tileX + xv, e->tileY + yv, NULL, NULL, NULL, DIR_NONE, e->level, 0, 0, 1);
+		AIEntity *fire = g_hdb->_ai->spawn(AI_OMNIBOT_MISSILE, e->dir, e->tileX + xv, e->tileY + yv, NULL, NULL, NULL, DIR_NONE, e->level, 0, 0, 1);
 		if (g_hdb->_map->onScreen(e->tileX, e->tileY))
 			g_hdb->_sound->playSound(SND_FOUR_FIRE);
 		fire->xVel = xv * kPlayerMoveSpeed * 2;
@@ -1211,7 +1211,7 @@ void aiDeadEyeAction(AIEntity *e) {
 				if (okToMove) {
 					e->moveSpeed = kPlayerMoveSpeed << 1;
 					g_hdb->_ai->setEntityGoal(e, newX, newY);
-					p->tileX & 1 ? g_hdb->_sound->playSound(SND_DEADEYE_ATTACK01) : g_hdb->_sound->playSound(SND_DEADEYE_ATTACK02);
+					(p->tileX & 1) ? g_hdb->_sound->playSound(SND_DEADEYE_ATTACK01) : g_hdb->_sound->playSound(SND_DEADEYE_ATTACK02);
 				}
 				g_hdb->_ai->animateEntity(e);
 				return;
@@ -2407,9 +2407,7 @@ void aiBadFairyInit2(AIEntity *e) {
 void aiBadFairyAction(AIEntity *e) {
 	AIState	state[5] = {STATE_NONE, STATE_MOVEUP, STATE_MOVEDOWN, STATE_MOVELEFT, STATE_MOVERIGHT};
 	int	xvAhead[5] = {9, 0, 0,-1, 1}, yvAhead[5] = {9,-1, 1, 0, 0};
-	int xv, yv;
 	int	result;
-	AIEntity *hit;
 
 	if (e->sequence) {
 		e->sequence--;
@@ -2448,13 +2446,13 @@ void aiBadFairyAction(AIEntity *e) {
 
 					e->dir = d;
 					e->state = state[d];
-					xv = xvAhead[d] * walk;
+					int xv = xvAhead[d] * walk;
 					if (e->tileX + xv < 1)
 						xv = -e->tileX + 1;
 					if (e->tileX + xv > g_hdb->_map->_width)
 						xv = g_hdb->_map->_width - e->tileX - 1;
 
-					yv = yvAhead[d] * walk;
+					int yv = yvAhead[d] * walk;
 					if (e->tileY + yv < 1)
 						yv = -e->tileY + 1;
 					if (e->tileY + yv > g_hdb->_map->_height)
@@ -2466,7 +2464,7 @@ void aiBadFairyAction(AIEntity *e) {
 					if (!g_hdb->getActionMode())
 						e->moveSpeed >>= 1;
 
-					hit = g_hdb->_ai->legalMoveOverWater(e->tileX + e->value1, e->tileY + e->value2, e->level, &result);
+					AIEntity *hit = g_hdb->_ai->legalMoveOverWater(e->tileX + e->value1, e->tileY + e->value2, e->level, &result);
 					uint32 bg_flags = g_hdb->_map->getMapBGTileFlags(e->tileX + e->value1, e->tileY + e->value2);
 					if (hit == p && !g_hdb->_ai->playerDead()) {
 						g_hdb->_ai->killPlayer(DEATH_FRIED);
@@ -2506,7 +2504,7 @@ void aiBadFairyAction(AIEntity *e) {
 		// did we run into a wall, entity, water, slime etc?
 		// if so, pick a new direction!
 		if (onEvenTile(e->x, e->y)) {
-			hit = g_hdb->_ai->legalMoveOverWater(e->tileX + e->value1, e->tileY + e->value2, e->level, &result);
+			AIEntity *hit = g_hdb->_ai->legalMoveOverWater(e->tileX + e->value1, e->tileY + e->value2, e->level, &result);
 			uint32 bg_flags = g_hdb->_map->getMapBGTileFlags(e->tileX + e->value1, e->tileY + e->value2);
 			if (!result || (hit && hit->type != AI_GUY) || (bg_flags & kFlagSpecial)) {
 				g_hdb->_ai->stopEntity(e);
