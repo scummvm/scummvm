@@ -33,6 +33,7 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"alimardan1",      "Alimardan's Mischief"},
 	{"alimardan2",      "Alimardan Meets Merlin"},
 	{"alphapolaris",    "Alpha Polaris"},
+	{"apeiron",         "Apeiron"},
 	{"basisoctavus",    "Basis Octavus"},
 	{"bickadoodle",     "Bickadoodle"},
 	{"bookofgron",      "Book of Gron Part One"},
@@ -267,6 +268,10 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("alphapolaris", "1.1.0 (1280x768 Steam)",
 		WME_ENTRY2s("data.dcp", "481b1bff44178ef2f3d879df05f65a96", 706580987,
 					"russian_language_pack.dcp", "f39ad478a711fa4b34d419ed4aac97bf", 49395113), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Apeiron
+	WME_WINENTRY("apeiron", "",
+		WME_ENTRY1s("data.dcp", "c0d6190de52b3da9995cbd4b78976bc8", 89912566), Common::SE_SWE, ADGF_UNSTABLE, WME_1_9_1),
 
 	// Basis Octavus
 	// NOTE: This is a 2.5D game that is out of ScummVM scope
