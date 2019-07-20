@@ -864,13 +864,17 @@ Common::Error HDBGame::run() {
 		char mapname[10];
 		int arg = ConfMan.getInt("boot_param");
 		int actionMode = MIN(arg / 100, 1);
-		int level = MIN(arg % 100, 30);
+		int level = MIN(arg % 100, 31);
 
 		setActionMode(actionMode);
 
-		debug("Starting level %d in %s", level, getActionMode() ? "Action Mode" : "Puzzle Mode");
+		if (level <= 30)
+			snprintf(mapname, 10, "MAP%02d", level);
+		else
+			strcpy(mapname, "CINE_OUTRO");
 
-		snprintf(mapname, 10, "MAP%02d", level);
+		debug("Starting level %s in %s", mapname, getActionMode() ? "Action Mode" : "Puzzle Mode");
+
 		_ai->clearPersistent();
 		startMap(mapname);
 
