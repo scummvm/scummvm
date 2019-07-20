@@ -108,20 +108,71 @@ public:
 
 	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual int getMaximumSaveSlot() const;
+	virtual SaveStateList listSaves(const char *target) const;
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
 };
 
 bool HDBMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
-		(f == kSupportsLoadingDuringStartup);
+		(f == kSupportsLoadingDuringStartup) ||
+		(f == kSupportsLoadingDuringStartup) ||
+		(f == kSupportsListSaves) ||
+		(f == kSavesSupportMetaInfo) ||
+		(f == kSavesSupportThumbnail) ||
+		(f == kSavesSupportPlayTime);
 }
 
 bool HDB::HDBGame::hasFeature(Engine::EngineFeature f) const {
-	warning("FIXME: quitGame() exits the application, instead of RTL");
-	return (f == kSupportsRTL);
+	return (f == kSupportsRTL) ||
+		   (f == kSupportsLoadingDuringRuntime) ||
+		   (f == kSupportsSavingDuringRuntime);
 }
 
 int HDBMetaEngine::getMaximumSaveSlot() const { return 9; }
+
+SaveStateList HDBMetaEngine::listSaves(const char *target) const {
+	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
+	Common::StringArray filenames;
+	Common::String pattern = target;
+	pattern += ".###";
+
+	filenames = saveFileMan->listSavefiles(pattern);
+
+	SaveStateList saveList;
+	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
+		// Obtain the last 2 digits of the filename, since they correspond to the save slot
+		int slotNum = atoi(file->c_str() + file->size() - 2);
+
+		if (slotNum >= 0 && slotNum <= getMaximumSaveSlot()) {
+			Common::ScopedPtr<Common::InSaveFile> in(saveFileMan->openForLoading(*file));
+			if (in) {
+				SaveStateDescriptor desc;
+				char mapName[32];
+				Graphics::Surface *thumbnail;
+
+				if (!Graphics::loadThumbnail(*in, thumbnail)) {
+					warning("Error loading thumbnail for %s", file->c_str());
+				}
+				desc.setThumbnail(thumbnail);
+
+				uint32 timeSeconds = in->readUint32LE();;
+				in->read(mapName, 32);
+
+				warning("mapName: %s playtime: %d", mapName, timeSeconds);
+
+				desc.setSaveSlot(slotNum);
+				desc.setPlayTime(timeSeconds * 1000);
+				desc.setDescription(mapName);
+
+				saveList.push_back(desc);
+			}
+		}
+	}
+
+	// Sort saves based on slot number.
+	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
+	return saveList;
+}
 
 bool HDBMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	if (desc) {
