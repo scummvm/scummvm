@@ -199,9 +199,10 @@ void aiTurnBotInit2(AIEntity *e) {
 }
 
 void aiTurnBotChoose(AIEntity *e) {
-	int xvAhead[5] = { 9, 0, 0, -1, 1 }, yvAhead[5] = { 9, -1, 1, 0, 0 };
-	AIDir turnRight[5] = { DIR_NONE, DIR_RIGHT, DIR_LEFT, DIR_UP, DIR_DOWN };
-	AIState dirState[5] = { STATE_NONE, STATE_MOVEUP, STATE_MOVEDOWN, STATE_MOVELEFT, STATE_MOVERIGHT };
+	static const int xvAhead[5] = { 9, 0, 0, -1, 1 };
+	static const int yvAhead[5] = { 9, -1, 1, 0, 0 };
+	static const AIDir turnRight[5] = { DIR_NONE, DIR_RIGHT, DIR_LEFT, DIR_UP, DIR_DOWN };
+	static const AIState dirState[5] = { STATE_NONE, STATE_MOVEUP, STATE_MOVEDOWN, STATE_MOVELEFT, STATE_MOVERIGHT };
 
 	int xv = xvAhead[e->dir];
 	int yv = yvAhead[e->dir];
@@ -358,18 +359,22 @@ void aiRightBotInit2(AIEntity *e) {
 }
 
 void aiRightBotFindGoal(AIEntity *e) {
+	static const int xvAhead[5] = { 9, 0, 0,-1, 1 };
+	static const int yvAhead[5] = { 9,-1, 1, 0, 0 };
+	static const int xvAToR[5]  = { 9, 1,-1,-1, 1 };
+	static const int yvAToR[5]  = { 9,-1, 1,-1, 1 };
+	static const int xvToR[5]   = { 9, 1,-1, 0, 0 };
+	static const int yvToR[5]   = { 9, 0, 0,-1, 1 };
+	static const int xvToL[5]   = { 9,-1, 1, 0, 0 };
+	static const int yvToL[5]   = { 9, 0, 0, 1,-1 };
+
+	AIEntity *p = g_hdb->_ai->getPlayer();
+	int rotate = 0;
+
 	int	xv, yv;
 	int	bg, bg2, bg3;
 	AIEntity *e1, *e2, *e3;
 	int	sx, sy;
-
-	int	xvAhead[5]	= { 9, 0, 0,-1, 1 }, yvAhead[5]	= { 9,-1, 1, 0, 0 };
-	int	xvAToR[5]	= { 9, 1,-1,-1, 1 }, yvAToR[5]	= { 9,-1, 1,-1, 1 };
-	int	xvToR[5]	= { 9, 1,-1, 0, 0 }, yvToR[5]	= { 9, 0, 0,-1, 1 };
-	int	xvToL[5]	= { 9,-1, 1, 0, 0 }, yvToL[5]	= { 9, 0, 0, 1,-1 };
-
-	AIEntity *p = g_hdb->_ai->getPlayer();
-	int rotate = 0;
 
 	do {
 		xv = xvAhead[e->dir];	// Search Ahead
@@ -522,9 +527,10 @@ void aiPushBotInit2(AIEntity *e) {
 }
 
 void aiPushBotAction(AIEntity *e) {
-	AIState moveState[5] = { STATE_NONE, STATE_MOVEUP, STATE_MOVEDOWN, STATE_MOVELEFT, STATE_MOVERIGHT };
-	int	xvAhead[5] = { 9, 0, 0,-1, 1 }, yvAhead[5] = { 9,-1, 1, 0, 0 };
-	AIDir oneEighty[5] = { DIR_NONE, DIR_DOWN, DIR_UP, DIR_RIGHT, DIR_LEFT };
+	static const AIState moveState[5] = { STATE_NONE, STATE_MOVEUP, STATE_MOVEDOWN, STATE_MOVELEFT, STATE_MOVERIGHT };
+	static const int xvAhead[5] = { 9, 0, 0,-1, 1 };
+	static const int yvAhead[5] = { 9,-1, 1, 0, 0 };
+	static const AIDir oneEighty[5] = { DIR_NONE, DIR_DOWN, DIR_UP, DIR_RIGHT, DIR_LEFT };
 
 	AIEntity *e1 = nullptr;
 
@@ -710,9 +716,10 @@ void aiRailRiderOnUse(AIEntity *e) {
 }
 
 void aiRailRiderOnAction(AIEntity *e) {
-	int	xv[5] = { 9, 0, 0, -1, 1 }, yv[5] = { 9, -1, 1, 0, 0 };
+	static const int xv[5] = { 9, 0, 0, -1, 1 };
+	static const int yv[5] = { 9, -1, 1, 0, 0 };
+
 	AIEntity*p = g_hdb->_ai->getPlayer();
-	SingleTele t;
 
 	switch (e->sequence) {
 	// Player is boarding
@@ -743,7 +750,7 @@ void aiRailRiderOnAction(AIEntity *e) {
 
 	// New RailRider gfx
 	// Move the RailRider
-	case 2:
+	case 2: {
 		// Done moving to next spot?
 		if (!e->goalX) {
 			ArrowPath *arrowPath = g_hdb->_ai->findArrowPath(e->tileX, e->tileY);
@@ -816,6 +823,7 @@ void aiRailRiderOnAction(AIEntity *e) {
 		}
 		g_hdb->_map->centerMapXY(e->x + 16, e->y + 16);
 
+		SingleTele t;
 		// Did we hit a tunnel entrance?
 		if (onEvenTile(e->x, e->y) && g_hdb->_ai->findTeleporterDest(e->tileX, e->tileY, &t) && !e->value1 && !e->dir2) {
 			// Set tunnel destination
@@ -835,6 +843,7 @@ void aiRailRiderOnAction(AIEntity *e) {
 		} else if (e->dir2 && e->dir2 != (AIDir)(e->tileX + e->tileY))
 			e->dir2 = DIR_NONE;
 		break;
+		}
 	// Waiting for Player to move to Dest
 	case 4:
 		if (!p->goalX) {
@@ -877,10 +886,11 @@ void aiMaintBotInit2(AIEntity *e) {
 }
 
 void aiMaintBotAction(AIEntity *e) {
-	AIState useState[5] = {STATE_NONE, STATE_USEUP, STATE_USEDOWN, STATE_USELEFT, STATE_USERIGHT};
-	AIState standState[5] = {STATE_NONE, STATE_STANDUP, STATE_STANDDOWN, STATE_STANDLEFT, STATE_STANDRIGHT};
-	int	xvAhead[5] = {9, 0, 0,-1, 1}, yvAhead[5] = {9,-1, 1, 0, 0};
-	int	whistles[3] = {SND_MBOT_WHISTLE1, SND_MBOT_WHISTLE2, SND_MBOT_WHISTLE3};
+	static const AIState useState[5]   = {STATE_NONE, STATE_USEUP, STATE_USEDOWN, STATE_USELEFT, STATE_USERIGHT};
+	static const AIState standState[5] = {STATE_NONE, STATE_STANDUP, STATE_STANDDOWN, STATE_STANDLEFT, STATE_STANDRIGHT};
+	static const int xvAhead[5]  = {9, 0, 0,-1, 1};
+	static const int yvAhead[5]  = {9,-1, 1, 0, 0};
+	static const int whistles[3] = {SND_MBOT_WHISTLE1, SND_MBOT_WHISTLE2, SND_MBOT_WHISTLE3};
 
 	// Waiting at an arrow (or hit by player)?
 	if (e->sequence) {
@@ -2534,7 +2544,9 @@ void aiGatePuddleInit2(AIEntity *e) {
 }
 
 void aiGatePuddleAction(AIEntity *e) {
-	int	xva[5] = {9, 0, 0,-1, 1}, yva[5] = {9,-1, 1, 0, 0};
+	static const int xva[5] = {9, 0, 0,-1, 1};
+	static const int yva[5] = {9,-1, 1, 0, 0};
+	
 	AIEntity *p = g_hdb->_ai->getPlayer();
 
 	if (e->goalX) {
