@@ -378,7 +378,7 @@ void AI::processCines() {
 			break;
 
 		case C_USEENTITY:
-			for (Common::Array<AIEntity *>::iterator it = _ents->begin(); it != _ents->end(); it++) {
+			for (Common::Array<AIEntity *>::iterator it = _ents->begin(); it != _ents->end(); ++it) {
 				if ((*it)->entityName && Common::matchString((*it)->entityName, _cine[i]->string, true)) {
 					g_hdb->useEntity((*it));
 				}
