@@ -61,6 +61,9 @@ struct ScriptPatch {
 	{"MAP10.LUA", "if( getn( beds ) == 0 ) then", "if( #beds == 0 ) then"}, // line 119
 	{"MAP10.LUA", "emptybed_use( %x, %y, %v1, %v2 )", "emptybed_use( x, y, v1, v2 )"}, // line 121
 
+	{"MAP19.LUA", "func = getglobal( \"frustrato_nice\"..tostring(frustrato_stage) )", "func = _G[ \"frustrato_nice\"..tostring(frustrato_stage) ]"}, // line 296
+	{"MAP19.LUA", "func = getglobal( \"frustrato_choice\"..tostring(frustrato_stage + 1) )", "func = _G[ \"frustrato_choice\"..tostring(frustrato_stage + 1) ]"}, // line 298
+
 	{"MAP11.LUA", "mapstring = strsub( LASTMAP, 1, 5 )", "mapstring = string.sub( LASTMAP, 1, 5 )"}, // line 51
 
 	{"MAP21.LUA", "mapstring = strsub( LASTMAP, 1, 5 )", "mapstring = string.sub( LASTMAP, 1, 5 )"}, // line 105
