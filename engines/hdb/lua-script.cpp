@@ -65,6 +65,8 @@ struct ScriptPatch {
 
 	{"MAP21.LUA", "mapstring = strsub( LASTMAP, 1, 5 )", "mapstring = string.sub( LASTMAP, 1, 5 )"}, // line 105
 
+	{"MAP29.LUA", "Message( format( \"", "Message( string.format( \""}, // line 195
+
 	{"MAP30.LUA", "if i1 > getn(tiles)", "if i1 > #tiles"}, // line 211
 	{"MAP30.LUA", "if i2 > getn(tiles)", "if i2 > #tiles"}, // line 212
 	{"MAP30.LUA", "if i3 > getn(tiles)", "if i3 > #tiles"}, // line 213
