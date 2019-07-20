@@ -145,6 +145,7 @@ void Input::stylusDown(int x, int y) {
 		g_hdb->_menu->processInput(x, y);
 		break;
 	case GAME_PLAY:
+		{
 		// Is Player Dead? Click on TRY AGAIN
 		if (g_hdb->_ai->playerDead()) {
 			if (y >= kTryRestartY && y <= kTryRestartY + 24) {
@@ -220,6 +221,7 @@ void Input::stylusDown(int x, int y) {
 
 		g_hdb->setTargetXY(worldX, worldY);
 		break;
+		}
 	case GAME_LOADING:
 		break;
 	}
