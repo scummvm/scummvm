@@ -226,6 +226,7 @@ enum CodePage {
 	kWindows1251,
 	kWindows1252,
 	kWindows1253,
+	kWindows1254,
 	kWindows1255,
 	kWindows1257
 };
