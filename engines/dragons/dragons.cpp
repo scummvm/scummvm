@@ -1187,16 +1187,16 @@ void DragonsEngine::loadScene(uint16 sceneId) {
 		_dragonVAR->setVar(1, 1);
 	}
 
-	if (sceneId > 2) { //TODO remove this restriction to enable intro sequence.
+	//if (sceneId > 2) { //TODO remove this restriction to enable intro sequence.
 		_scene->setSceneId(2);
 		byte *obd = _dragonOBD->getFromSpt(3);
 		ScriptOpCall scriptOpCall;
 		scriptOpCall._code = obd + 4;
 		scriptOpCall._codeEnd = scriptOpCall._code + READ_LE_UINT32(obd);
 		_scriptOpcodes->runScript(scriptOpCall);
-	} else {
-		sceneId = 0x12; // HACK the first scene. TODO remove this
-	}
+	//} else {
+//		sceneId = 0x12; // HACK the first scene. TODO remove this
+//	}
 
 	_inventory->loadInventoryItemsFromSave();
 
@@ -1206,7 +1206,7 @@ void DragonsEngine::loadScene(uint16 sceneId) {
 		_scene->setSceneId(getINI(0)->sceneId);
 	}
 	_sceneId1 = sceneId;
-	_scene->loadScene(sceneId, 0x1e);
+	_scene->loadScene(sceneId ? sceneId : 0x12, 0x1e);
 }
 
 void DragonsEngine::reset() {
@@ -1240,8 +1240,8 @@ void DragonsEngine::setSceneUpdateFunction(void (*newUpdateFunction)()) {
 	_sceneUpdateFunction = newUpdateFunction;
 }
 
-//void  (*DragonsEngine::getSceneUpdateFunction())() {
-//	return _sceneUpdateFunction ;
-//}
+void (*DragonsEngine::getSceneUpdateFunction())() {
+	return _sceneUpdateFunction;
+}
 
 } // End of namespace Dragons

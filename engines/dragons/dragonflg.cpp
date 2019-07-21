@@ -95,7 +95,7 @@ void Properties::print(char *prefix) {
 	str[i] = 0;
 	debug("%s: props = %s", prefix, str);
 
-	delete str;
+	delete[] str;
 }
 
 DragonFLG::DragonFLG(BigfileArchive *bigfileArchive) {

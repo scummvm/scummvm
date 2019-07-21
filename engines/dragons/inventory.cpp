@@ -27,6 +27,7 @@
 #include "background.h"
 #include "inventory.h"
 #include "bag.h"
+#include "scene.h"
 
 namespace Dragons {
 
@@ -65,6 +66,11 @@ Inventory::Inventory(DragonsEngine *vm) : _vm(vm) {
 	_screenPositionIndex = 0;
 	_old_showing_value = 0;
 	_bag = NULL;
+
+	inventionBookPrevSceneUpdateFunc = NULL;
+	inventionBookPrevSceneId = 0;
+	inventionBookPrevFlickerINISceneId = 0;
+	inventionBookPrevFlickerINIPosition = Common::Point(0,0);
 }
 
 void Inventory::init(ActorManager *actorManager, BackgroundResourceLoader *backgroundResourceLoader, Bag *bag, DragonINIResource *dragonIniResource) {
@@ -94,7 +100,6 @@ void Inventory::loadScene(uint32 sceneId) {
 	if (!_type) {
 		_sequenceId = _vm->isFlagSet(Dragons::ENGINE_FLAG_400000) ? 1 : 0;
 	}
-	_screenPositionIndex = _vm->_dragonRMS->getInventoryPosition(sceneId);
 
 	if (_sequenceId == 0 && _vm->getVar(7) == 1) {
 		_actor->updateSequence(5);
@@ -102,11 +107,7 @@ void Inventory::loadScene(uint32 sceneId) {
 		_actor->updateSequence(_sequenceId);
 	}
 
-	_actor->x_pos = positionTable[_screenPositionIndex].x;
-	if ((_sequenceId == 0 || _sequenceId == 2) && (_screenPositionIndex == 1 || _screenPositionIndex == 3)) {
-		_actor->x_pos += 0x32;
-	}
-	_actor->y_pos = positionTable[_screenPositionIndex].y;
+	setPositionFromSceneId(sceneId);
 }
 
 void Inventory::updateVisibility() {
@@ -261,6 +262,70 @@ void Inventory::loadInventoryItemsFromSave() {
 			_vm->unkArray_uint16[j++] = i + 1;
 		}
 	}
+}
+
+void Inventory::openInventionBook() {
+	inventionBookPrevSceneUpdateFunc = _vm->getSceneUpdateFunction();
+	_vm->setSceneUpdateFunction(NULL);
+//	fade_related_calls_with_1f();
+	_sequenceId = 2;
+	_actor->updateSequence(2);
+	inventionBookPrevSceneId = _vm->getCurrentSceneId();
+	DragonINI *flicker = _vm->_dragonINIResource->getFlickerRecord();
+	if (flicker && flicker->actor) {
+		inventionBookPrevFlickerINISceneId = flicker->sceneId;
+		inventionBookPrevFlickerINIPosition = Common::Point(flicker->actor->x_pos, flicker->actor->y_pos);
+		flicker->sceneId = 0;
+	}
+	_vm->_scene->setSceneId(2);
+	_vm->_scene->loadScene(2, 0);
+}
+
+void Inventory::closeInventionBook() {
+	uint uVar1;
+	uint uVar2;
+
+	// TODO fade_related_calls_with_1f();
+
+	DragonINI *flicker = _vm->_dragonINIResource->getFlickerRecord();
+	if (flicker && flicker->actor) {
+		flicker->actor->x_pos = inventionBookPrevFlickerINIPosition.x;
+		flicker->actor->y_pos = inventionBookPrevFlickerINIPosition.y;
+		flicker->sceneId = inventionBookPrevFlickerINISceneId;
+	}
+	_vm->_scene->setSceneId(inventionBookPrevSceneId);
+
+	_sequenceId = 0;
+	setActorSequenceId(0);
+	setPositionFromSceneId(inventionBookPrevSceneId);
+	uVar2 = _vm->_scene->getSceneId();
+	if (((((uVar2 == 0x23) || (uVar2 == 0x2d)) || (uVar2 == 0x2e)) || ((uVar2 == 0x31 || (uVar2 == 0x32)))) || (uVar2 == 0x28)) {
+		LAB_80038b9c:
+		if ((uint)_vm->_scene->getSceneId() == 0x27) goto LAB_80038bb8;
+	}
+	else {
+		if (uVar2 != 0x27) {
+			if (((uVar2 != 0x1c) && (uVar2 != 0x1d)) && (uVar1 = uVar2 | 0x8000, uVar2 != 0x21)) goto LAB_80038be8;
+			goto LAB_80038b9c;
+		}
+		LAB_80038bb8:
+		_vm->getINI(0x206)->sceneId = 0;
+	}
+	uVar1 = (uint)_vm->_scene->getSceneId();
+	LAB_80038be8:
+	_vm->_scene->loadScene(uVar1,0x1e);
+	_vm->setSceneUpdateFunction(inventionBookPrevSceneUpdateFunc);
+	return;
+}
+
+void Inventory::setPositionFromSceneId(uint32 sceneId) {
+	_screenPositionIndex = _vm->_dragonRMS->getInventoryPosition(sceneId);
+
+	_actor->x_pos = positionTable[_screenPositionIndex].x;
+	if ((_sequenceId == 0 || _sequenceId == 2) && (_screenPositionIndex == 1 || _screenPositionIndex == 3)) {
+		_actor->x_pos += 0x32;
+	}
+	_actor->y_pos = positionTable[_screenPositionIndex].y;
 }
 
 } // End of namespace Dragons

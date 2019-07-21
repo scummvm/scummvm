@@ -57,6 +57,8 @@ protected:
 
 	void spcUnkC();
 
+	void spcHandleInventionBookTransition(); // 0x12
+	void spcUnk13InventionBookCloseRelated(); //0x13
 	void spcClearEngineFlag8(); // 0x14
 	void spcSetEngineFlag8(); // 0x15
 
@@ -95,6 +97,7 @@ protected:
 	void spcTransitionFromMap(); // 0x6c
 
 	void spcSetCameraXToZero(); //0x7b
+	void spcDiamondIntroSequenceLogic(); //0x7c
 private:
 	void panCamera(int16 mode);
 	void pizzaMakerStopWorking();

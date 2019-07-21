@@ -220,7 +220,9 @@ public:
 
 	void runSceneUpdaterFunction();
 	void setSceneUpdateFunction(void (*newUpdateFunction)());
+	void (*getSceneUpdateFunction())();
 
+	bool checkForActionButtonRelease();
 private:
 	bool savegame(const char *filename, const char *description);
 	bool loadgame(const char *filename);
@@ -236,7 +238,6 @@ private:
 
 	bool isInputEnabled();
 	bool checkForInventoryButtonRelease();
-	bool checkForActionButtonRelease();
 
 	void FUN_8003130c();
 	void FUN_80038890();
