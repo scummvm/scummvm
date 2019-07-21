@@ -1197,6 +1197,7 @@ void AI::animateEntity(AIEntity *e) {
 							addAnimateTarget(e->x, e->y, 0, 3, ANIM_NORMAL, false, false, GROUP_STEAM_PUFF_SIT);
 							removeEntity(e);
 							g_hdb->_sound->playSound(SND_BARREL_MELTING);
+							return;
 						}
 					}
 				} else if ((flags & kFlagLightMelt) && e->type == AI_LIGHTBARREL) {
@@ -1237,11 +1238,12 @@ void AI::animateEntity(AIEntity *e) {
 						return;
 					} else {
 						// Make it float and splash in water
+						e->state = STATE_FLOATING;
 						addAnimateTarget(e->x, e->y, 0, 3, ANIM_NORMAL, false, false, GROUP_WATER_SPLASH_SIT);
 						floatEntity(e, STATE_FLOATING);
 						g_hdb->_sound->playSound(SND_SPLASH);
-						return;
 					}
+				}
 
 				// If it is floating downstream, keep moving it
 				if (flags & (kFlagPushRight | kFlagPushLeft | kFlagPushUp | kFlagPushDown)) {
@@ -1306,7 +1308,6 @@ void AI::animateEntity(AIEntity *e) {
 						e->moveSpeed = kPushMoveSpeed >> 1;
 						setEntityGoal(e, e->tileX + xv, e->tileY + yv);
 						e->state = state;
-						}
 					}
 				}
 			} else if (((flags = g_hdb->_map->getMapBGTileFlags(e->tileX, e->tileY)) & kFlagWater) && (e->type == AI_MAGIC_EGG || e->type == AI_ICE_BLOCK)) {
