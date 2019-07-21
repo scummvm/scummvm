@@ -38,7 +38,7 @@ ActorDialogueQueue::Entry::Entry() {
 	isNotPause = false;
 	isPause = false;
 	actorId = -1;
-	delay = (uint32)(-1);  // original was -1, int
+	delay = -1;
 	sentenceId = -1;
 	animationMode = -1;
 }
@@ -62,13 +62,13 @@ void ActorDialogueQueue::add(int actorId, int sentenceId, int animationMode) {
 		entry.actorId = actorId;
 		entry.sentenceId = sentenceId;
 		entry.animationMode = animationMode;
-		entry.delay = (uint32)(-1);  // original was -1, int
+		entry.delay = -1;
 
 		_entries.push_back(entry);
 	}
 }
 
-void ActorDialogueQueue::addPause(uint32 delay) {
+void ActorDialogueQueue::addPause(int32 delay) {
 	if (_entries.size() < kMaxEntries) {
 		Entry entry;
 		entry.isNotPause = false;
@@ -96,7 +96,7 @@ void ActorDialogueQueue::flush(int a1, bool callScript) {
 	}
 	if (_isPause) {
 		_isPause = false;
-		_delay = 0u;
+		_delay = 0;
 		_timeLast = 0u;
 	}
 	clear();
@@ -116,7 +116,7 @@ bool ActorDialogueQueue::isEmpty() {
 	        && _sentenceId == -1 \
 	        && _animationMode == -1 \
 	        && _animationModePrevious == -1 \
-	        && _delay == 0u \
+	        && _delay == 0 \
 	        && _timeLast == 0u;
 }
 
@@ -126,12 +126,12 @@ void ActorDialogueQueue::tick() {
 			uint32 time = _vm->_time->current();
 			uint32 timeDiff = time - _timeLast; // unsigned difference is intentional
 			_timeLast = time;
-			_delay = ((int32)_delay == -1 || (_delay < timeDiff) ) ? 0u : (_delay - timeDiff);
-			if (_delay > 0u) {
+			_delay = (_delay < 0 || ((uint32)_delay < timeDiff) ) ? 0 : ((uint32)_delay - timeDiff);
+			if (_delay > 0) {
 				return;
 			}
 			_isPause = false;
-			_delay = 0u;
+			_delay = 0;
 			_timeLast = 0u;
 			if (_entries.empty()) {
 				flush(0, true);
@@ -212,7 +212,7 @@ void ActorDialogueQueue::load(SaveFileReadStream &f) {
 		e.actorId = f.readInt();
 		e.sentenceId = f.readInt();
 		e.animationMode = f.readInt();
-		e.delay = (uint32)f.readInt();
+		e.delay = f.readInt();
 	}
 
 	f.skip((kMaxEntries - count) * 24);
@@ -223,7 +223,7 @@ void ActorDialogueQueue::load(SaveFileReadStream &f) {
 	_animationMode = f.readInt();
 	_animationModePrevious = f.readInt();
 	_isPause = f.readBool();
-	_delay = (uint32)f.readInt();
+	_delay = f.readInt();
 	_timeLast = 0u;
 }
 
@@ -235,7 +235,7 @@ void ActorDialogueQueue::clear() {
 	_animationMode = -1;
 	_animationModePrevious = -1;
 	_isPause = false;
-	_delay = 0u;
+	_delay = 0;
 	_timeLast = 0u;
 }
 

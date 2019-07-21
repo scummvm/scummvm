@@ -172,7 +172,7 @@ protected:
 	void Footstep_Sounds_Set(int index, int value);
 	void Footstep_Sound_Override_On(int footstepSoundOverride);
 	void Footstep_Sound_Override_Off();
-	bool Music_Play(int musicId, int volume, int pan, uint32 timeFadeIn, uint32 timePlay, int loop, uint32 timeFadeOut);
+	bool Music_Play(int musicId, int volume, int pan, int32 timeFadeIn, int32 timePlay, int loop, int32 timeFadeOut);
 	void Music_Adjust(int volume, int pan, uint32 delay);
 	void Music_Stop(uint32 delay);
 	bool Music_Is_Playing();
@@ -265,21 +265,21 @@ protected:
 	void Set_Fog_Density(const char *fogName, float density);
 	void ADQ_Flush();
 	void ADQ_Add(int actorId, int sentenceId, int animationMode);
-	void ADQ_Add_Pause(uint32 delay);
+	void ADQ_Add_Pause(int32 delay);
 	void ADQ_Wait_For_All_Queued_Dialogue();
 	bool Game_Over();
 	void Autosave_Game(int textId);
 	void I_Sez(const char *str);
 
-	void AI_Countdown_Timer_Start(int actorId, signed int timer, uint32 seconds);
+	void AI_Countdown_Timer_Start(int actorId, signed int timer, int32 seconds);
 	void AI_Countdown_Timer_Reset(int actorId, int timer);
 	void AI_Movement_Track_Unpause(int actorId);
 	void AI_Movement_Track_Pause(int actorId);
 	void AI_Movement_Track_Repeat(int actorId);
-	void AI_Movement_Track_Append_Run_With_Facing(int actorId, int waypointId, uint32 delay, int angle);
-	void AI_Movement_Track_Append_With_Facing(int actorId, int waypointId, uint32 delay, int angle);
-	void AI_Movement_Track_Append_Run(int actorId, int waypointId, uint32 delay);
-	void AI_Movement_Track_Append(int actorId, int waypointId, uint32 delay);
+	void AI_Movement_Track_Append_Run_With_Facing(int actorId, int waypointId, int32 delay, int angle);
+	void AI_Movement_Track_Append_With_Facing(int actorId, int waypointId, int32 delay, int angle);
+	void AI_Movement_Track_Append_Run(int actorId, int waypointId, int32 delay);
+	void AI_Movement_Track_Append(int actorId, int waypointId, int32 delay);
 	void AI_Movement_Track_Flush(int actorId);
 
 	void ESPER_Add_Photo(const char *name, int photoId, int shapeId);

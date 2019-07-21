@@ -534,8 +534,8 @@ void SceneScriptCT01::PlayerWalkedIn() {
 void SceneScriptCT01::PlayerWalkedOut() {
 	Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 	if (Game_Flag_Query(kFlagCT01toCT12)) {
-		Ambient_Sounds_Remove_Looping_Sound(kSfxCTAMBL1, true);
-		Ambient_Sounds_Remove_Looping_Sound(kSfxCTAMBR1, true);
+		Ambient_Sounds_Remove_Looping_Sound(kSfxCTAMBL1, 1);
+		Ambient_Sounds_Remove_Looping_Sound(kSfxCTAMBR1, 1);
 	} else {
 		Ambient_Sounds_Remove_All_Looping_Sounds(1);
 	}

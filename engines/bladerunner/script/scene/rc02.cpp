@@ -416,8 +416,8 @@ bool SceneScriptRC02::ClickedOnExit(int exitId) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -71.51f, -1238.89f, 108587.15f, 0, true, false, false)) {
 			Game_Flag_Set(kFlagRC02toRC01);
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
-			Ambient_Sounds_Remove_Looping_Sound(kSfxBRBED5,   true);
-			Ambient_Sounds_Remove_Looping_Sound(kSfxWINDLOP8, true);
+			Ambient_Sounds_Remove_Looping_Sound(kSfxBRBED5,   1);
+			Ambient_Sounds_Remove_Looping_Sound(kSfxWINDLOP8, 1);
 			Ambient_Sounds_Adjust_Looping_Sound(kSfxRCRAIN1, 100, -101, 1);
 			Actor_Set_Goal_Number(kActorRunciter, kGoalRunciterDefault);
 			Set_Enter(kSetRC01, kSceneRC01);

@@ -858,7 +858,7 @@ bool Debugger::cmdTimer(int argc, const char **argv) {
 		if (value == 0) {
 			actor->timerReset(timer);
 		} else {
-			actor->timerStart(timer, (uint32)value);
+			actor->timerStart(timer, value);
 		}
 	}
 

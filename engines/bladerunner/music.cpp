@@ -54,7 +54,7 @@ Music::~Music() {
 	_vm->getTimerManager()->removeTimerProc(timerCallbackNext);
 }
 
-bool Music::play(const Common::String &trackName, int volume, int pan, uint32 timeFadeIn, uint32 timePlay, int loop, uint32 timeFadeOut) {
+bool Music::play(const Common::String &trackName, int volume, int pan, int32 timeFadeIn, int32 timePlay, int loop, int32 timeFadeOut) {
 	//Common::StackLock lock(_mutex);
 
 	if (_musicVolume <= 0) {
@@ -63,7 +63,7 @@ bool Music::play(const Common::String &trackName, int volume, int pan, uint32 ti
 
 	int volumeAdjusted = volume * _musicVolume / 100;
 	int volumeStart = volumeAdjusted;
-	if ((int32)timeFadeIn != -1 && timeFadeIn > 0u) {
+	if (timeFadeIn > 0) {
 		volumeStart = 1;
 	}
 
@@ -82,6 +82,9 @@ bool Music::play(const Common::String &trackName, int volume, int pan, uint32 ti
 			_isNextPresent = true;
 		} else {
 			_current.loop = loop;
+			if (timeFadeIn < 0) {
+				timeFadeIn = 0;
+			}
 			adjustVolume(volumeAdjusted, timeFadeIn);
 			adjustPan(volumeAdjusted, timeFadeIn);
 		}
@@ -104,14 +107,14 @@ bool Music::play(const Common::String &trackName, int volume, int pan, uint32 ti
 
 		return false;
 	}
-	if ((int32)timeFadeIn != -1 && timeFadeIn > 0u) {
+	if (timeFadeIn > 0) {
 		adjustVolume(volumeAdjusted, timeFadeIn);
 	}
 	_current.name = trackName;
-	if ((int32)timePlay != -1 && timePlay > 0u) {
+	if (timePlay > 0) {
 		_vm->getTimerManager()->removeTimerProc(timerCallbackFadeOut);
 		_vm->getTimerManager()->installTimerProc(timerCallbackFadeOut, timePlay * 1000 * 1000, this, "BladeRunnerMusicFadeoutTimer");
-	} else if ((int32)timeFadeOut != -1 && timeFadeOut > 0u) {
+	} else if (timeFadeOut > 0) {
 		_vm->getTimerManager()->removeTimerProc(timerCallbackFadeOut);
 		_vm->getTimerManager()->installTimerProc(timerCallbackFadeOut, (_stream->getLength() - timeFadeOut * 1000) * 1000, this, "BladeRunnerMusicFadeoutTimer");
 	}
@@ -200,17 +203,17 @@ void Music::load(SaveFileReadStream &f) {
 	_current.name = f.readStringSz(13);
 	_current.volume = f.readInt();
 	_current.pan = f.readInt();
-	_current.timeFadeIn = (uint32)f.readInt();
-	_current.timePlay = (uint32)f.readInt();
+	_current.timeFadeIn = f.readInt();
+	_current.timePlay = f.readInt();
 	_current.loop = f.readInt();
-	_current.timeFadeOut = (uint32)f.readInt();
+	_current.timeFadeOut = f.readInt();
 	_next.name = f.readStringSz(13);
 	_next.volume = f.readInt();
 	_next.pan = f.readInt();
-	_next.timeFadeIn = (uint32)f.readInt();
-	_next.timePlay = (uint32)f.readInt();
+	_next.timeFadeIn = f.readInt();
+	_next.timePlay = f.readInt();
 	_next.loop = f.readInt();
-	_next.timeFadeOut = (uint32)f.readInt();
+	_next.timeFadeOut = f.readInt();
 
 	stop(2);
 	if (_isPlaying) {
@@ -262,6 +265,9 @@ void Music::ended() {
 void Music::fadeOut() {
 	_vm->getTimerManager()->removeTimerProc(timerCallbackFadeOut);
 	if (_channel >= 0) {
+		if (_current.timeFadeOut < 0) {
+			_current.timeFadeOut = 0;
+		}
 		_vm->_audioMixer->stop(_channel, 60u * _current.timeFadeOut);
 	}
 }

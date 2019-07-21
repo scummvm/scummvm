@@ -88,12 +88,12 @@ private:
 	// Movement
 	bool   _movementTrackPaused;
 	int    _movementTrackNextWaypointId;
-	uint32 _movementTrackNextDelay; // probably not used
-	int    _movementTrackNextAngle; // probably not used
+	int32  _movementTrackNextDelay;  // probably not used
+	int    _movementTrackNextAngle;  // probably not used
 	bool   _movementTrackNextRunning;
 
 	int    _movementTrackWalkingToWaypointId;
-	uint32 _movementTrackDelayOnNextWaypoint;
+	int32  _movementTrackDelayOnNextWaypoint;
 
 	// Animation
 	int _width;
@@ -143,7 +143,7 @@ public:
 	void setFPS(int fps);
 	void increaseFPS();
 
-	void   timerStart(int timerId, uint32 interval);
+	void   timerStart(int timerId, int32 interval);
 	void   timerReset(int timerId);
 	uint32 timerLeft(int timerId);
 	void   timersUpdate();

@@ -1139,8 +1139,8 @@ void ScriptBase::Footstep_Sound_Override_Off() {
 	_vm->_scene->_set->resetFoodstepSoundOverride();
 }
 
-bool ScriptBase::Music_Play(int musicId, int volume, int pan, uint32 timeFadeIn, uint32 timePlay, int loop, uint32 timeFadeOut) {
-	debugC(kDebugScript, "Music_Play(%d, %d, %d, %u, %u, %d, %u)", musicId, volume, pan, timeFadeIn, timePlay, loop, timeFadeOut);
+bool ScriptBase::Music_Play(int musicId, int volume, int pan, int32 timeFadeIn, int32 timePlay, int loop, int32 timeFadeOut) {
+	debugC(kDebugScript, "Music_Play(%d, %d, %d, %d, %d, %d, %d)", musicId, volume, pan, timeFadeIn, timePlay, loop, timeFadeOut);
 	return _vm->_music->play(_vm->_gameInfo->getMusicTrack(musicId), volume, pan, timeFadeIn, timePlay, loop, timeFadeOut);
 }
 
@@ -1657,8 +1657,8 @@ void ScriptBase::ADQ_Add(int actorId, int sentenceId, int animationMode) {
 	_vm->_actorDialogueQueue->add(actorId, sentenceId, animationMode);
 }
 
-void ScriptBase::ADQ_Add_Pause(uint32 delay) {
-	debugC(kDebugScript, "ADQ_Add_Pause(%u)", delay);
+void ScriptBase::ADQ_Add_Pause(int32 delay) {
+	debugC(kDebugScript, "ADQ_Add_Pause(%d)", delay);
 	_vm->_actorDialogueQueue->addPause(delay);
 }
 
@@ -1684,10 +1684,10 @@ void ScriptBase::I_Sez(const char *str) {
 	_vm->ISez(str);
 }
 
-void ScriptBase::AI_Countdown_Timer_Start(int actorId, signed int timer, uint32 seconds) {
-	debugC(kDebugScript, "AI_Countdown_Timer_Start(%d, %d, %u)", actorId, timer, seconds);
+void ScriptBase::AI_Countdown_Timer_Start(int actorId, signed int timer, int32 seconds) {
+	debugC(kDebugScript, "AI_Countdown_Timer_Start(%d, %d, %d)", actorId, timer, seconds);
 	if (timer >= 0 && timer <= 2) {
-		_vm->_actors[actorId]->timerStart(timer, 1000u * seconds);
+		_vm->_actors[actorId]->timerStart(timer, 1000 * seconds);
 	}
 }
 
@@ -1714,24 +1714,24 @@ void ScriptBase::AI_Movement_Track_Repeat(int actorId) {
 	_vm->_actors[actorId]->movementTrackNext(true);
 }
 
-void ScriptBase::AI_Movement_Track_Append_Run_With_Facing(int actorId, int waypointId, uint32 delay, int angle) {
-	debugC(kDebugScript, "AI_Movement_Track_Append_Run_With_Facing(%d, %d, %u, %d)", actorId, waypointId, delay, angle);
-	_vm->_actors[actorId]->_movementTrack->append(waypointId, delay * 1000u, angle, true);
+void ScriptBase::AI_Movement_Track_Append_Run_With_Facing(int actorId, int waypointId, int32 delay, int angle) {
+	debugC(kDebugScript, "AI_Movement_Track_Append_Run_With_Facing(%d, %d, %d, %d)", actorId, waypointId, delay, angle);
+	_vm->_actors[actorId]->_movementTrack->append(waypointId, delay * 1000, angle, true);
 }
 
-void ScriptBase::AI_Movement_Track_Append_With_Facing(int actorId, int waypointId, uint32 delay, int angle) {
-	debugC(kDebugScript, "AI_Movement_Track_Append_With_Facing(%d, %d, %u, %d)", actorId, waypointId, delay, angle);
-	_vm->_actors[actorId]->_movementTrack->append(waypointId, delay * 1000u, angle, false);
+void ScriptBase::AI_Movement_Track_Append_With_Facing(int actorId, int waypointId, int32 delay, int angle) {
+	debugC(kDebugScript, "AI_Movement_Track_Append_With_Facing(%d, %d, %d, %d)", actorId, waypointId, delay, angle);
+	_vm->_actors[actorId]->_movementTrack->append(waypointId, delay * 1000, angle, false);
 }
 
-void ScriptBase::AI_Movement_Track_Append_Run(int actorId, int waypointId, uint32 delay) {
-	debugC(kDebugScript, "AI_Movement_Track_Append_Run(%d, %d, %u)", actorId, waypointId, delay);
-	_vm->_actors[actorId]->_movementTrack->append(waypointId, delay * 1000u, true);
+void ScriptBase::AI_Movement_Track_Append_Run(int actorId, int waypointId, int32 delay) {
+	debugC(kDebugScript, "AI_Movement_Track_Append_Run(%d, %d, %d)", actorId, waypointId, delay);
+	_vm->_actors[actorId]->_movementTrack->append(waypointId, delay * 1000, true);
 }
 
-void ScriptBase::AI_Movement_Track_Append(int actorId, int waypointId, uint32 delay) {
-	debugC(kDebugScript, "AI_Movement_Track_Append(%d, %d, %u)", actorId, waypointId, delay);
-	_vm->_actors[actorId]->_movementTrack->append(waypointId, delay * 1000u, false);
+void ScriptBase::AI_Movement_Track_Append(int actorId, int waypointId, int32 delay) {
+	debugC(kDebugScript, "AI_Movement_Track_Append(%d, %d, %d)", actorId, waypointId, delay);
+	_vm->_actors[actorId]->_movementTrack->append(waypointId, delay * 1000, false);
 }
 
 void ScriptBase::AI_Movement_Track_Flush(int actorId) {

@@ -85,7 +85,7 @@ bool SceneScriptDR06::ClickedOn3DObject(const char *objectName, bool a2) {
 			Game_Flag_Set(kFlagDR06JesterActive);
 		} else {
 			Overlay_Play("DR06over", 0, true, true, 0);
-			Ambient_Sounds_Remove_Looping_Sound(kSfxJESTMOV1, false);
+			Ambient_Sounds_Remove_Looping_Sound(kSfxJESTMOV1, 0);
 			Game_Flag_Reset(kFlagDR06JesterActive);
 		}
 		return true;

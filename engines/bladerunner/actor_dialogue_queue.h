@@ -40,7 +40,7 @@ class ActorDialogueQueue {
 		int    actorId;
 		int    sentenceId;
 		int    animationMode;
-		uint32 delay;
+		int32  delay;
 
 		Entry();
 	};
@@ -54,7 +54,7 @@ class ActorDialogueQueue {
 	int                  _animationMode;
 	int                  _animationModePrevious;
 	bool                 _isPause;
-	uint32               _delay;
+	int32                _delay;
 	uint32               _timeLast;
 
 public:
@@ -62,7 +62,7 @@ public:
 	~ActorDialogueQueue();
 
 	void add(int actorId, int sentenceId, int animationMode);
-	void addPause(uint32 delay);
+	void addPause(int32 delay);
 	void flush(int a1, bool callScript);
 	bool isEmpty();
 	void tick();
