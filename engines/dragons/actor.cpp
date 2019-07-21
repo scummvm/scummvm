@@ -822,4 +822,18 @@ uint16 Actor::pathfindingUnk(int16 actor_x, int16 actor_y, int16 target_x, int16
 		return pointId;
 	}
 
+bool Actor::actorSetSequenceAndWaitAllowSkip(uint16 newSequenceID) {
+	updateSequence(newSequenceID);
+	waitUntilFlag8IsSet();
+
+	while(!isFlagSet(ACTOR_FLAG_4)) {
+		getEngine()->waitForFrames(1);
+		if (getEngine()->checkForActionButtonRelease()) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
 } // End of namespace Dragons

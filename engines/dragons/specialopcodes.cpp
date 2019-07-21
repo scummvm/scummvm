@@ -72,6 +72,8 @@ void SpecialOpcodes::initOpcodes() {
 
 	OPCODE(0xc, spcUnkC);
 
+	OPCODE(0x12, spcHandleInventionBookTransition);
+	OPCODE(0x13, spcUnk13InventionBookCloseRelated);
 	OPCODE(0x14, spcClearEngineFlag8);
 	OPCODE(0x15, spcSetEngineFlag8);
 
@@ -109,6 +111,7 @@ void SpecialOpcodes::initOpcodes() {
 	OPCODE(0x6c, spcTransitionFromMap);
 
 	OPCODE(0x7b, spcSetCameraXToZero);
+	OPCODE(0x7c, spcDiamondIntroSequenceLogic);
 
 }
 
@@ -152,6 +155,26 @@ void SpecialOpcodes::spcUnkC() {
 	//TODO fade_related_calls_with_1f();
 }
 
+void SpecialOpcodes::spcHandleInventionBookTransition() {
+	int16 invType =_vm->_inventory->getType();
+	if (invType == 1) {
+		_vm->_inventory->closeInventory();
+		_vm->_inventory->setType(0);
+	}
+	if (invType == 2) {
+		_vm->_inventory->closeInventionBook();
+		_vm->_inventory->setType(0);
+	}
+	_vm->_cursor->updateSequenceID(1);
+	_vm->setFlags(ENGINE_FLAG_400);
+	_vm->clearFlags(ENGINE_FLAG_10);
+}
+
+void SpecialOpcodes::spcUnk13InventionBookCloseRelated() {
+	_vm->clearFlags(ENGINE_FLAG_400);
+	_vm->setFlags(ENGINE_FLAG_10);
+}
+
 void SpecialOpcodes::spcClearEngineFlag8() {
 	_vm->clearFlags(Dragons::ENGINE_FLAG_8);
 }
@@ -165,11 +188,13 @@ void SpecialOpcodes::spcActivatePizzaMakerActor() {
 }
 
 void SpecialOpcodes::spcDeactivatePizzaMakerActor() {
-	_vm->setSceneUpdateFunction(NULL); //TODO only remove if currently running
+	if (_vm->getSceneUpdateFunction() == pizzaUpdateFunction) {
+		_vm->setSceneUpdateFunction(NULL);
+	}
 }
 
 void SpecialOpcodes::spcPizzaMakerActorStopWorking() {
-	_vm->setSceneUpdateFunction(NULL); //TODO only remove if currently running
+	spcDeactivatePizzaMakerActor();
 	pizzaMakerStopWorking();
 }
 
@@ -220,30 +245,12 @@ void SpecialOpcodes::spcOpenInventionBook() {
 	if (_vm->_inventory->getType() == 1) {
 		_vm->_inventory->closeInventory();
 	}
-	error("spcOpenInventionBook"); //TODO
-	DragonINI *pDVar1;
-
-//	DAT_80086f3c = func_ptr_unk;
-//	func_ptr_unk = 0;
-//	fade_related_calls_with_1f();
-//	inventorySequenceId = 2;
-//	actor_update_sequenceID(1,2);
-//	DAT_80083078 = currentSceneId;
-//	if (dragon_ini_maybe_flicker_control != 0xffff) {
-//		pDVar1 = dragon_ini_pointer + (uint)dragon_ini_maybe_flicker_control;
-//		DAT_800864a8 = actors[(uint)pDVar1->actorId].x_pos;
-//		DAT_80086424 = pDVar1->sceneId_maybe;
-//		DAT_800864ac = actors[(uint)pDVar1->actorId].y_pos;
-//		pDVar1->sceneId_maybe = 0;
-//	}
-//	currentSceneId = const_value_2;
-//	load_scene_maybe((uint)const_value_2,0);
-
+	_vm->_inventory->openInventionBook();
 	_vm->_inventory->setType(2);
 }
 
 void SpecialOpcodes::spcCloseInventionBook() {
-	error("spcCloseInventionBook");
+	_vm->_inventory->closeInventionBook();
 	_vm->_inventory->setType(0);
 }
 
@@ -310,6 +317,123 @@ void SpecialOpcodes::spcSetCameraXToZero() {
 	_vm->_scene->_camera.x = 0;
 }
 
+void SpecialOpcodes::spcDiamondIntroSequenceLogic() {
+	/*
+	bool bVar1;
+	ushort uVar2;
+	undefined4 uVar3;
+	DragonINI *pDVar4;
+	int iVar5;
+	uint uVar6;
+	short sVar7;
+	Actor *actorId;
+	Actor *actorId_00;
+	Actor *actorId_01;
+	Actor *actorId_02;
+	Actor *actorId_03;
+
+	pDVar4 = dragon_ini_pointer;
+	_vm->setUnkFlags(ENGINE_UNK1_FLAG_2);
+	actorId = _vm->getINI(0x257)->actor;
+	actorId_03 = _vm->getINI(0x259)->actor;
+	actorId_01 = _vm->getINI(0x258)->actor;
+	actorId_03->flags = actorId_03->flags | 0x100;
+	actorId_03->priorityLayer = 4;
+	uVar3 = scrFileData_maybe;
+	actorId_00 = _vm->getINI(0x256)->actor; //(uint)(ushort)pDVar4[iVar5 + -1].field_0x1c;
+	uVar2 = *(ushort *)((&actor_dictionary)[(uint)actors[actorId_00].﻿actorFileDictionaryIndex * 2] + 10);
+	_vm->setFlags(ENGINE_FLAG_20000);
+	actorId_02 = _vm->getINI(0x25a)->actor; //(uint)(ushort)pDVar4[DAT_80063ed4 + -1].field_0x1c;
+	iVar5 = (&actor_dictionary)[(uint)actors[actorId_00].﻿actorFileDictionaryIndex * 2];
+	if ((somethingTextAndSpeechAndAnimRelated(actorId_02,1,0,DAT_80063ed8,0x2601) != 2) && (uVar6 = actorId->actorSetSequenceAndWaitAllowSkip(2), (uVar6 & 0xffff) == 0)) {
+		actorId->updateSequence(3);
+		uVar6 = actorId_01->actorSetSequenceAndWaitAllowSkip(0x18);
+		if ((uVar6 & 0xffff) == 0) {
+			sVar7 = 0x2c;
+			do {
+				_vm->waitForFrames(1);
+				uVar6 = _vm->checkForActionButtonRelease();
+				if ((uVar6 & 0xffff) != 0) break;
+				bVar1 = sVar7 != 0;
+				sVar7 = sVar7 + -1;
+			} while (bVar1);
+			//TODO fade_related_calls_with_1f();
+			load_palette_into_frame_buffer(0,(uint)uVar2 + iVar5);
+			camera_x = 0x140;
+			//TODO call_fade_related_1f();
+			uVar6 = actorId_00->actorSetSequenceAndWaitAllowSkip(0);
+			if ((uVar6 & 0xffff) == 0) {
+				playSoundFromTxtIndex(0x42A66);
+				uVar6 = somethingTextAndSpeechAndAnimRelated(actorId_00,1,2,DAT_80063ee0,0x3c01);
+				if ((uVar6 & 0xffff) != 2) {
+					sVar7 = 0x13;
+					do {
+						_vm->waitForFrames(1);
+						uVar6 = _vm->checkForActionButtonRelease();
+						if ((uVar6 & 0xffff) != 0) break;
+						bVar1 = sVar7 != 0;
+						sVar7 = sVar7 + -1;
+					} while (bVar1);
+					//TODO fade_related_calls_with_1f();
+					load_palette_into_frame_buffer(0,uVar3);
+					camera_x = 0;
+					sVar7 = 0xf;
+					//TODO call_fade_related_1f();
+					actorId_01->updateSequence(0x19);
+					do {
+						_vm->waitForFrames(1);
+						uVar6 = _vm->checkForActionButtonRelease();
+						if ((uVar6 & 0xffff) != 0) break;
+						bVar1 = sVar7 != 0;
+						sVar7 = sVar7 + -1;
+					} while (bVar1);
+					actorId->updateSequence(4);
+					sVar7 = 0x17;
+					do {
+						_vm->waitForFrames(1);
+						uVar6 = _vm->checkForActionButtonRelease();
+						if ((uVar6 & 0xffff) != 0) break;
+						bVar1 = sVar7 != 0;
+						sVar7 = sVar7 + -1;
+					} while (bVar1);
+					actorId_03->updateSequence(9);
+					actorId_03->x_pos = 0x82;
+					actorId_03->y_pos = 0xc4;
+					actorId_03->priorityLayer = 4;
+					uVar2 = actors[actorId].flags;
+					bVar1 = false;
+					while ((uVar2 & 4) == 0) {
+						uVar6 = _vm->checkForActionButtonRelease();
+						if ((uVar6 & 0xffff) != 0) {
+							bVar1 = true;
+							break;
+						}
+						uVar2 = actors[actorId].flags;
+					}
+					if (!bVar1) {
+						actorId->updateSequence(5);
+						uVar6 = somethingTextAndSpeechAndAnimRelated(actorId_01,0x10,2,DAT_80063ee4,0x3c01);
+						if (((uVar6 & 0xffff) != 2) && (uVar6 = somethingTextAndSpeechAndAnimRelated(actorId_02,1,0,DAT_80063edc,0x2601), (uVar6 & 0xffff) != 2)) {
+							sVar7 = 0x3b;
+							do {
+								_vm->waitForFrames(1);
+								uVar6 = _vm->checkForActionButtonRelease();
+								if ((uVar6 & 0xffff) != 0) break;
+								bVar1 = sVar7 != 0;
+								sVar7 = sVar7 + -1;
+							} while (bVar1);
+						}
+					}
+				}
+			}
+		}
+	}
+	*/
+	_vm->clearUnkFlags(ENGINE_UNK1_FLAG_2);
+	_vm->clearFlags(ENGINE_FLAG_20000);
+	return;
+}
+
 void SpecialOpcodes::spcLoadScene1() {
 	// TODO spcLoadScene1 knights around the table.
 }
@@ -319,7 +443,7 @@ void SpecialOpcodes::spcTransitionToMap() {
 //	DAT_8006a422 = 0;
 //	DAT_8006a424 = 0;
 //	cursorSequenceId = 0;
-//	ContinueGame?();
+//	_vm->waitForFrames();
 //	engine_flags_maybe = engine_flags_maybe | 0x20000000;
 //	FUN_80023b34(0,0,1);
 }

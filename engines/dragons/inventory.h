@@ -44,6 +44,12 @@ private:
 	Actor *_actor;
 	int16 _type;
 	Bag *_bag;
+
+	void (*inventionBookPrevSceneUpdateFunc)();
+	uint16 inventionBookPrevSceneId;
+	uint16 inventionBookPrevFlickerINISceneId;
+	Common::Point inventionBookPrevFlickerINIPosition;
+
 public:
 	Inventory(DragonsEngine *vm);
 
@@ -78,7 +84,11 @@ public:
 	void draw();
 	uint16 getIniAtPosition(int16 x, int16 y);
 	void loadInventoryItemsFromSave();
+
+	void openInventionBook();
+	void closeInventionBook();
 private:
+	void setPositionFromSceneId(uint32 sceneId);
 	void animateBagIn();
 	void animateBagOut();
 };

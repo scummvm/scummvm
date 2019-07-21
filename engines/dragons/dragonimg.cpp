@@ -61,7 +61,6 @@ DragonIMG::~DragonIMG() {
 
 IMG *DragonIMG::getIMG(uint32 iptId) {
 	iptId &= 0xffff;
-	assert(iptId > 1);
 	assert(iptId < _count);
 	return &_imgObjects[iptId];
 }
