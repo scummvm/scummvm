@@ -61,6 +61,12 @@ struct ScriptPatch {
 	{"MAP10.LUA", "if( getn( beds ) == 0 ) then", "if( #beds == 0 ) then"}, // line 119
 	{"MAP10.LUA", "emptybed_use( %x, %y, %v1, %v2 )", "emptybed_use( x, y, v1, v2 )"}, // line 121
 
+	{"MAP15.LUA", "function cop5_5b()", "function cop5_4b()"}, // line 112
+	{"MAP15.LUA", "function cop5_5c()", "function cop5_4c()"}, // line 115
+	{"MAP15.LUA", "function cop5_5d()", "function cop5_4d()"}, // line 118
+	{"MAP15.LUA", "function cop5_5e()", "function cop5_4e()"}, // line 121
+	{"MAP15.LUA", "function cop5_5f()", "function cop5_4f()"}, // line 124
+
 	{"MAP19.LUA", "func = getglobal( \"frustrato_nice\"..tostring(frustrato_stage) )", "func = _G[ \"frustrato_nice\"..tostring(frustrato_stage) ]"}, // line 296
 	{"MAP19.LUA", "func = getglobal( \"frustrato_choice\"..tostring(frustrato_stage + 1) )", "func = _G[ \"frustrato_choice\"..tostring(frustrato_stage + 1) ]"}, // line 298
 
