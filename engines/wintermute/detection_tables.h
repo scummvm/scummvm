@@ -79,6 +79,8 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"lonelyrobot",     "Project Lonely Robot"},
 	{"looky",           "Looky"},
 	{"julia",           "J.U.L.I.A."},
+	{"juliastars",      "J.U.L.I.A.: Among the Stars"},
+	{"juliastarshd",    "J.U.L.I.A.: Among the Stars HD"},
 	{"mentelrepairs",   "Mental Repairs Inc"},
 	{"mirage",          "Mirage"},
 	{"nighttrain",      "Night Train"},
@@ -709,6 +711,30 @@ static const WMEGameDescription gameDescriptions[] = {
 	// NOTE: This is a 2.5D game that is out of ScummVM scope, however it is reported as completable with VFX low
 	WME_WINENTRY("julia", "Greenlight Demo",
 		WME_ENTRY1s("data.dcp", "4befd448d36b0dae9c3ab1aa7cb8b78d", 7271886), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_3),
+
+	// J.U.L.I.A.: Among the Stars (Steam, January 2017) (English)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("juliastars", "",
+		WME_ENTRY2s("data_sd.dcp", "9949302dfaea943113e2f0ee0dd468be", 4249680,
+					"data_sd.dcp", "9949302dfaea943113e2f0ee0dd468be", 4249680), Common::EN_ANY, ADGF_UNSTABLE, WME_LITE),
+
+	// J.U.L.I.A.: Among the Stars HD (Steam, January 2017) (English)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("juliastarshd", "",
+		WME_ENTRY2s("data_hd.dcp", "fd579fa333f117882190993ea4f3bba5", 5164463,
+					"data_hd.dcp", "fd579fa333f117882190993ea4f3bba5", 5164463), Common::EN_ANY, ADGF_UNSTABLE, WME_LITE),
+
+	// J.U.L.I.A.: Among the Stars (Steam, November 2016) (German)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("juliastars", "",
+		WME_ENTRY2s("data_sd.dcp", "dfaf7e730a66412f68d11cddb0c8737d", 4505667,
+					"german_sd.dcp", "23ceb8625cebfe32aaa5950e89ac68ba", 123326075), Common::DE_DEU, ADGF_UNSTABLE, WME_LITE),
+
+	// J.U.L.I.A.: Among the Stars HD (Steam, November 2016) (German)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("juliastarshd", "",
+		WME_ENTRY2s("data_hd.dcp", "f40b3d0778e37c61cf309d214446d233", 5264780,
+					"german_hd.dcp", "8d85f83a3fc8f1bec4e5ba2158b05b1e", 152499998), Common::DE_DEU, ADGF_UNSTABLE, WME_LITE),
 
 	// K'NOSSOS (Alpha Demo)
 	WME_WINENTRY("knossos", "Alpha Demo",
