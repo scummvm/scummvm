@@ -101,7 +101,7 @@ bool AI::cacheEntGfx(AIEntity *e, bool init) {
 				if (gfxFiles->size() == 0)
 					warning("AI::cacheEntGfx: no files for %s", list[j].name);
 
-				for (Common::Array<const char *>::iterator it = gfxFiles->begin(); it != gfxFiles->end(); it++) {
+				for (Common::Array<const char *>::iterator it = gfxFiles->begin(); it != gfxFiles->end(); ++it) {
 					size = g_hdb->_fileMan->getLength((*it), TYPE_TILE32);
 
 					if (g_hdb->_gfx->selectGfxType((*it))) {
@@ -459,8 +459,11 @@ void AI::stopEntity(AIEntity *e) {
 	// Align with tile boundaries
 	e->x = e->tileX * kTileWidth;
 	e->y = e->tileY * kTileHeight;
-	e->goalX = e->tileX;
-	e->goalY = e->tileY;
+
+	// TODO: Check in the original if also present. Removed as it's useless
+	// e->goalX = e->tileX;
+	// e->goalY = e->tileY;
+
 	e->drawXOff = e->drawYOff = 0;
 	e->goalX = e->goalY = e->xVel = e->yVel = 0;
 
@@ -509,7 +512,7 @@ void AI::stopEntity(AIEntity *e) {
 }
 
 AIEntity *AI::locateEntity(const char *luaName) {
-	for (Common::Array<AIEntity *>::iterator it = _ents->begin(); it != _ents->end(); it++) {
+	for (Common::Array<AIEntity *>::iterator it = _ents->begin(); it != _ents->end(); ++it) {
 		if (Common::matchString((*it)->entityName, luaName)) {
 			return *it;
 		}
@@ -518,13 +521,13 @@ AIEntity *AI::locateEntity(const char *luaName) {
 }
 
 AIEntity *AI::findEntity(int x, int y) {
-	for (Common::Array<AIEntity *>::iterator it = _ents->begin(); it != _ents->end(); it++) {
+	for (Common::Array<AIEntity *>::iterator it = _ents->begin(); it != _ents->end(); ++it) {
 		if ((*it)->tileX == x && (*it)->tileY == y) {
 			return *it;
 		}
 	}
 
-	for (Common::Array<AIEntity *>::iterator it = _floats->begin(); it != _floats->end(); it++) {
+	for (Common::Array<AIEntity *>::iterator it = _floats->begin(); it != _floats->end(); ++it) {
 		if ((*it)->tileX == x && (*it)->tileY == y) {
 			return *it;
 		}
@@ -537,13 +540,13 @@ AIEntity *AI::findEntity(int x, int y) {
 }
 
 AIEntity *AI::findEntityIgnore(int x, int y, AIEntity *ignore) {
-	for (Common::Array<AIEntity *>::iterator it = _ents->begin(); it != _ents->end(); it++) {
+	for (Common::Array<AIEntity *>::iterator it = _ents->begin(); it != _ents->end(); ++it) {
 		if ((*it)->tileX == x && (*it)->tileY == y && (*it) != ignore) {
 			return *it;
 		}
 	}
 
-	for (Common::Array<AIEntity *>::iterator it = _floats->begin(); it != _floats->end(); it++) {
+	for (Common::Array<AIEntity *>::iterator it = _floats->begin(); it != _floats->end(); ++it) {
 		if ((*it)->tileX == x && (*it)->tileY == y && (*it) != ignore) {
 			return *it;
 		}
@@ -556,13 +559,13 @@ AIEntity *AI::findEntityIgnore(int x, int y, AIEntity *ignore) {
 }
 
 AIEntity *AI::findEntityType(AIType type, int x, int y) {
-	for (Common::Array<AIEntity *>::iterator it = _ents->begin(); it != _ents->end(); it++) {
+	for (Common::Array<AIEntity *>::iterator it = _ents->begin(); it != _ents->end(); ++it) {
 		if ((*it)->tileX == x && (*it)->tileY == y && (*it)->type == type) {
 			return *it;
 		}
 	}
 
-	for (Common::Array<AIEntity *>::iterator it = _floats->begin(); it != _floats->end(); it++) {
+	for (Common::Array<AIEntity *>::iterator it = _floats->begin(); it != _floats->end(); ++it) {
 		if ((*it)->tileX == x && (*it)->tileY == y && (*it)->type == type) {
 			return *it;
 		}
@@ -578,7 +581,7 @@ void AI::getEntityXY(const char *entName, int *x, int *y) {
 	AIEntity *e;
 	HereT *h;
 
-	for (Common::Array<AIEntity *>::iterator it = _ents->begin(); it != _ents->end(); it++) {
+	for (Common::Array<AIEntity *>::iterator it = _ents->begin(); it != _ents->end(); ++it) {
 		e = *it;
 		if (e->entityName && !scumm_stricmp(entName, e->entityName)) {
 			*x = e->tileX;
@@ -587,7 +590,7 @@ void AI::getEntityXY(const char *entName, int *x, int *y) {
 		}
 	}
 
-	for (Common::Array<AIEntity *>::iterator jt = _floats->begin(); jt != _floats->end(); jt++) {
+	for (Common::Array<AIEntity *>::iterator jt = _floats->begin(); jt != _floats->end(); ++jt) {
 		e = *jt;
 		if (e->entityName && !scumm_stricmp(entName, e->entityName)) {
 			*x = e->tileX;
@@ -596,7 +599,7 @@ void AI::getEntityXY(const char *entName, int *x, int *y) {
 		}
 	}
 
-	for (Common::Array<HereT *>::iterator kt = _hereList->begin(); kt != _hereList->end(); kt++) {
+	for (Common::Array<HereT *>::iterator kt = _hereList->begin(); kt != _hereList->end(); ++kt) {
 		h = *kt;
 		if (!scumm_stricmp(entName, h->entName)) {
 			*x = h->x;
@@ -607,10 +610,8 @@ void AI::getEntityXY(const char *entName, int *x, int *y) {
 }
 
 bool AI::useLuaEntity(const char *initName) {
-	AIEntity *e;
-
-	for (Common::Array<AIEntity *>::iterator it = _ents->begin(); it != _ents->end(); it++) {
-		e = *it;
+	for (Common::Array<AIEntity *>::iterator it = _ents->begin(); it != _ents->end(); ++it) {
+		AIEntity *e = *it;
 		if (e->entityName && !scumm_stricmp(initName, e->entityName)) {
 			e->aiUse(e);
 			checkActionList(e, e->tileX, e->tileY, true);
@@ -632,10 +633,8 @@ bool AI::useLuaEntity(const char *initName) {
 }
 
 void AI::removeLuaEntity(const char *initName) {
-	AIEntity *e;
-
 	for (uint i = 0; i < _ents->size(); i++) {
-		e = _ents->operator[](i);
+		AIEntity *e = _ents->operator[](i);
 		if (e->entityName && !scumm_stricmp(initName, e->entityName)) {
 			removeEntity(e);
 			i--;
@@ -644,10 +643,8 @@ void AI::removeLuaEntity(const char *initName) {
 }
 
 void AI::animLuaEntity(const char *initName, AIState st) {
-	AIEntity *e;
-
-	for (Common::Array<AIEntity *>::iterator it = _ents->begin(); it != _ents->end(); it++) {
-		e = *it;
+	for (Common::Array<AIEntity *>::iterator it = _ents->begin(); it != _ents->end(); ++it) {
+		AIEntity *e = *it;
 		if (e->entityName && !scumm_stricmp(initName, e->entityName)) {
 			e->state = st;
 			e->animFrame = 0;
@@ -657,10 +654,8 @@ void AI::animLuaEntity(const char *initName, AIState st) {
 }
 
 void AI::setLuaAnimFrame(const char *initName, AIState st, int frame) {
-	AIEntity *e;
-
-	for (Common::Array<AIEntity *>::iterator it = _ents->begin(); it != _ents->end(); it++) {
-		e = *it;
+	for (Common::Array<AIEntity *>::iterator it = _ents->begin(); it != _ents->end(); ++it) {
+		AIEntity *e = *it;
 		if (e->entityName && !scumm_stricmp(initName, e->entityName)) {
 			e->state = st;
 			e->animFrame = frame;
@@ -688,11 +683,9 @@ void AI::removeEntity(AIEntity *e) {
 }
 
 void AI::setEntityGoal(AIEntity *e, int x, int y) {
-	int xv, yv;
-
 	e->xVel = e->yVel = 0;
 
-	xv = x - e->tileX;
+	int xv = x - e->tileX;
 	if (xv < 0) {
 		e->xVel = -e->moveSpeed;
 		e->state = STATE_MOVELEFT;
@@ -703,7 +696,7 @@ void AI::setEntityGoal(AIEntity *e, int x, int y) {
 		e->dir = DIR_RIGHT;
 	}
 
-	yv = y - e->tileY;
+	int yv = y - e->tileY;
 	if (yv < 0) {
 		e->yVel = -e->moveSpeed;
 		e->state = STATE_MOVEUP;
@@ -727,7 +720,7 @@ void AI::setEntityGoal(AIEntity *e, int x, int y) {
 
 // Initializes each entity after map is loaded
 void AI::initAllEnts() {
-	for (Common::Array<AIEntity *>::iterator it = _ents->begin(); it != _ents->end(); it++) {
+	for (Common::Array<AIEntity *>::iterator it = _ents->begin(); it != _ents->end(); ++it) {
 		(*it)->aiInit((*it));
 		if ((*it)->luaFuncInit[0]) {
 			if (g_hdb->_lua->callFunction((*it)->luaFuncInit, 2)) {
@@ -739,8 +732,7 @@ void AI::initAllEnts() {
 		}
 	}
 
-	int i;
-	for (i = 0; i < _numInventory; i++) {
+	for (int i = 0; i < _numInventory; i++) {
 		AIEntity *temp = &_inventory[i].ent;
 
 		// Clear out all ptrs in entity before writing
@@ -774,7 +766,7 @@ void AI::initAllEnts() {
 		cacheEntGfx(temp, false);
 	}
 
-	for (i = 0; i < _numDeliveries; i++) {
+	for (int i = 0; i < _numDeliveries; i++) {
 		_deliveries[i].itemGfx = g_hdb->_gfx->getTileGfx(_deliveries[i].itemGfxName, -1);
 		_deliveries[i].destGfx = g_hdb->_gfx->getTileGfx(_deliveries[i].destGfxName, -1);
 	}
@@ -784,7 +776,6 @@ void AI::initAllEnts() {
 }
 
 void AI::killPlayer(Death method) {
-
 	int x = _player->x, y = _player->y;
 
 	stopEntity(_player);
@@ -893,11 +884,12 @@ void AI::stunEnemy(AIEntity *e, int time) {
 	player in here to move him along his waypoints.
 */
 void AI::animateEntity(AIEntity *e) {
+	static const int xva[5] = {9, 0, 0, -1, 1};
+	static const int yva[5] = {9, -1, 1, 0, 0};
 
 	int bgTileFlags, bgTileIndex;
 	int fgTileFlags;
 	bool result;
-	uint64 flags;
 
 	// Move entity if player is not dead
 	debug(9, "Before animateEntity, e->x: %d, e->y: %d", e->x, e->y);
@@ -952,7 +944,6 @@ void AI::animateEntity(AIEntity *e) {
 		fgTileFlags = g_hdb->_map->getMapFGTileFlags(e->tileX, e->tileY);
 
 		if (e->level == 1 ? ((bgTileFlags & kFlagIce) == kFlagIce) : (((bgTileFlags & kFlagIce) == kFlagIce) && !(fgTileFlags & kFlagGrating))) {
-			int xva[] = {9, 0, 0, -1, 1}, yva[] = {9, -1, 1, 0, 0};
 			int nx, ny, moveOK = 0;
 			AIEntity *hit;
 
@@ -1056,9 +1047,9 @@ void AI::animateEntity(AIEntity *e) {
 
 		// Check if player wants to stop
 		// If yes, sets last waypoint right in front of player
-		int xOff = 0, yOff = 0;
 		if (_numWaypoints > 1) {
-
+			int xOff = 0;
+			int yOff = 0;
 			switch (e->dir) {
 			case DIR_UP:
 				xOff = 0;
@@ -1126,9 +1117,6 @@ void AI::animateEntity(AIEntity *e) {
 			uint16 buttons = g_hdb->_input->getButtons();
 
 			if (e == _player && (buttons & (kButtonUp | kButtonDown | kButtonLeft | kButtonRight))) {
-				int xva[] = {9, 0, 0, -1, 1}, yva[] = {9, -1, 1, 0, 0};
-				int nx, ny, result2;
-
 				if (e->state != STATE_PUSHRIGHT && e->state != STATE_PUSHLEFT && e->state != STATE_PUSHUP && e->state != STATE_PUSHDOWN) {
 					if (buttons & kButtonUp)
 						e->dir = DIR_UP;
@@ -1139,8 +1127,9 @@ void AI::animateEntity(AIEntity *e) {
 					else if (buttons & kButtonRight)
 						e->dir = DIR_RIGHT;
 
-					nx = e->tileX + xva[e->dir];
-					ny = e->tileY + yva[e->dir];
+					int nx = e->tileX + xva[e->dir];
+					int ny = e->tileY + yva[e->dir];
+					int result2;
 					AIEntity *hit = legalMove(nx, ny, e->level, &result2);
 					if (!hit && result2) {
 						switch (e->dir) {
@@ -1180,6 +1169,7 @@ void AI::animateEntity(AIEntity *e) {
 
 			// Checking at the Destination
 
+			uint64 flags;
 			// Can this entity float and it is over-water
 			if (((flags = g_hdb->_map->getMapBGTileFlags(e->tileX, e->tileY)) & kFlagWater) && (e->type == AI_CRATE || e->type == AI_LIGHTBARREL || e->type == AI_BOOMBARREL || e->type == AI_HEAVYBARREL || e->type == AI_FROGSTATUE || e->type == AI_DIVERTER)) {
 				// On a grating and level2?
@@ -1860,7 +1850,7 @@ void AI::moveEnts() {
 	frameDelay = kAnimFrameDelay;
 
 	// Call aiAction for Floating Entities
-	for (Common::Array<AIEntity *>::iterator it = _floats->begin(); it != _floats->end(); it++) {
+	for (Common::Array<AIEntity *>::iterator it = _floats->begin(); it != _floats->end(); ++it) {
 		if ((*it)->aiAction)
 			(*it)->aiAction((*it));
 	}
@@ -1942,15 +1932,13 @@ bool AI::findPath(AIEntity *e) {
 	else
 		max = g_hdb->_map->_height;
 
-	ArrowPath *arrowPath;
-	uint32 flags;
 	while (max--) {
-		arrowPath = findArrowPath(x + xv, y + yv);
+		ArrowPath *arrowPath = findArrowPath(x + xv, y + yv);
 		if (arrowPath) {
 			setEntityGoal(e, arrowPath->tileX, arrowPath->tileY);
 			return true;
 		} else {
-			flags = g_hdb->_map->getMapBGTileFlags(x + xv, y + yv);
+			uint32 flags = g_hdb->_map->getMapBGTileFlags(x + xv, y + yv);
 			if (flags & kFlagSolid)
 				return false;
 		}
@@ -2042,9 +2030,8 @@ AIEntity *AI::legalMoveOverWaterIgnore(int tileX, int tileY, int level, int *res
 }
 
 AIEntity *AI::playerCollision(int topBorder, int bottomBorder, int leftBorder, int rightBorder) {
-	AIEntity *e;
-	for (Common::Array<AIEntity *>::iterator it = _ents->begin(); it != _ents->end(); it++) {
-		e = *it;
+	for (Common::Array<AIEntity *>::iterator it = _ents->begin(); it != _ents->end(); ++it) {
+		AIEntity *e = *it;
 		if (e == _player || !e->onScreen)
 			continue;
 		if (e->x > (_player->x - 32 - leftBorder) && e->x < (_player->x + 32 + rightBorder) && e->y >(_player->y - 32 - topBorder) && e->y < (_player->y + 32 + bottomBorder))
@@ -2069,30 +2056,26 @@ bool AI::checkPlayerCollision(int x, int y, int border) {
 }
 
 void AI::clearDiverters() {
-	AIEntity *e;
-
 	for (uint i = 0; i < _ents->size(); i++) {
-		e = _ents->operator[](i);
+		AIEntity *e = _ents->operator[](i);
 		if (e->type == AI_DIVERTER)
 			e->value1 = e->value2 = 0;
 	}
 }
 
 void AI::laserScan() {
-	AIEntity *e;
-
 	clearDiverters();
 	g_hdb->_map->clearLaserBeams();
 
 	for (uint i = 0; i < _ents->size(); i++) {
-		e = _ents->operator[](i);
+		AIEntity *e = _ents->operator[](i);
 		if (e->type == AI_LASER)
 			aiLaserAction(e);
 	}
 }
 
 void AI::floatEntity(AIEntity *e, AIState state) {
-	for (Common::Array<AIEntity *>::iterator it = _ents->begin(); it != _ents->end(); it++) {
+	for (Common::Array<AIEntity *>::iterator it = _ents->begin(); it != _ents->end(); ++it) {
 		if (e == *it) {
 			_floats->push_back(*it);
 			_ents->erase(it);
@@ -2104,7 +2087,7 @@ void AI::floatEntity(AIEntity *e, AIState state) {
 }
 
 bool AI::checkFloating(int x, int y) {
-	for (Common::Array<AIEntity *>::iterator it = _floats->begin(); it != _floats->end(); it++) {
+	for (Common::Array<AIEntity *>::iterator it = _floats->begin(); it != _floats->end(); ++it) {
 		if ((*it)->tileX == x && (*it)->tileY == y)
 			return true;
 	}
@@ -2246,7 +2229,6 @@ void AI::movePlayer(uint16 buttons) {
 	int	yva[5] = {9,-1, 1, 0, 0};
 	AIEntity *hit;
 	int	xv = 0, yv = 0, nx, ny;
-	int	attackable;
 
 	if (!_player)
 		return;
@@ -2306,7 +2288,7 @@ void AI::movePlayer(uint16 buttons) {
 
 		// Attackable Entity? (we're right up on it)
 		int amt = getGemAmount();
-		attackable = 0;
+		int	attackable = 0;
 		if (hit)
 			switch (hit->type) {
 			case AI_OMNIBOT:
