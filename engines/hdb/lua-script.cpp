@@ -1388,7 +1388,7 @@ static int dofile(lua_State *L) {
 
 	Common::InSaveFile *in = g_hdb->_currentInSaveFile;
 
-	int length = in->size();
+	int length = in->size() - in->pos();
 	char *chunk = new char[length + 1];
 	in->read((void *)chunk, length);
 
