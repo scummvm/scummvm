@@ -650,7 +650,7 @@ void AI::addToTeleportList(int teleIndex, int x, int y, int dir, int level, int 
 
 bool AI::findTeleporterDest(int tileX, int tileY, SingleTele *info) {
 	for (int i = 0; i < _numTeleporters; i++) {
-		if ((_teleporters[i].x1 == tileX) && (_teleporters[i].x1 == tileY)) {
+		if ((_teleporters[i].x1 == tileX) && (_teleporters[i].y1 == tileY)) {
 			info->anim = _teleporters[i].anim2;
 			info->x = _teleporters[i].x2;
 			info->y = _teleporters[i].y2;
@@ -659,7 +659,7 @@ bool AI::findTeleporterDest(int tileX, int tileY, SingleTele *info) {
 			info->usable = _teleporters[i].usable2;
 			return true;
 		}
-		if ((_teleporters[i].x1 == tileX) && (_teleporters[i].x1 == tileY)) {
+		if ((_teleporters[i].x2 == tileX) && (_teleporters[i].y2 == tileY)) {
 			info->anim = _teleporters[i].anim1;
 			info->x = _teleporters[i].x1;
 			info->y = _teleporters[i].y1;
