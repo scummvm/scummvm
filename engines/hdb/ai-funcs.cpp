@@ -1248,7 +1248,7 @@ void AI::animateEntity(AIEntity *e) {
 				// If it is floating downstream, keep moving it
 				if (flags & (kFlagPushRight | kFlagPushLeft | kFlagPushUp | kFlagPushDown)) {
 					int xv = 0, yv = 0;
-					AIState state;
+					AIState state = STATE_NONE;
 
 					if (flags & kFlagPushRight) {
 						e->dir = DIR_RIGHT;
