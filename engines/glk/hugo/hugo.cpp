@@ -172,15 +172,13 @@ Common::Error Hugo::readSaveData(Common::SeekableReadStream *rs) {
 
 	/* Check serial number */
 	if (!hugo_fgets(testserial, 9, rs)) goto RestoreError;
-	if (strcmp(testserial, serial))
-	{
+	if (strcmp(testserial, serial)) {
 		GUIErrorMessage("Save file created by different version.");
 		goto RestoreError;
 	}
 
 	/* Restore variables */
-	for (k=0; k<MAXGLOBALS+MAXLOCALS; k++)
-	{
+	for (k = 0; k<MAXGLOBALS + MAXLOCALS; k++) {
 		if ((lbyte = hugo_fgetc(rs))==EOF || (hbyte = hugo_fgetc(rs))==EOF)
 			goto RestoreError;
 		var[k] = lbyte + hbyte * 256;
@@ -191,23 +189,18 @@ Common::Error Hugo::readSaveData(Common::SeekableReadStream *rs) {
 	if (hugo_fseek(game, objtable*16L, SEEK_SET)) goto RestoreError;
 	i = 0;
 
-	while (i<codeend-(long)(objtable*16L))
-	{
+	while (i<codeend-(long)(objtable*16L)) 	{
 		if ((hbyte = hugo_fgetc(rs))==EOF && hugo_ferror(rs)) goto RestoreError;
 
-		if (hbyte==0)
-		{
+		if (hbyte == 0) {
 			if ((lbyte = hugo_fgetc(rs))==EOF && hugo_ferror(rs)) goto RestoreError;
 			SETMEM(objtable*16L+i, (unsigned char)lbyte);
 			i++;
 
 			/* Skip byte in game file */
 			if (hugo_fgetc(game)==EOF) goto RestoreError;
-		}
-		else
-		{
-			while (hbyte--)
-			{
+		} else {
+			while (hbyte--) {
 				/* Get unchanged game file byte */
 				if ((lbyte = hugo_fgetc(game))==EOF) goto RestoreError;
 				SETMEM(objtable*16L+i, (unsigned char)lbyte);
@@ -259,8 +252,7 @@ Common::Error Hugo::writeGameData(Common::WriteStream *ws) {
 	if (hugo_fputs(serial, ws) == EOF) goto SaveError;
 
 	/* Save variables */
-	for (c = 0; c<MAXGLOBALS + MAXLOCALS; c++)
-	{
+	for (c = 0; c<MAXGLOBALS + MAXLOCALS; c++) {
 		hbyte = (unsigned int)var[c] / 256;
 		lbyte = (unsigned int)var[c] - hbyte * 256;
 		if (hugo_fputc(lbyte, ws) == EOF || hugo_fputc(hbyte, ws) == EOF) goto SaveError;
@@ -275,15 +267,15 @@ Common::Error Hugo::writeGameData(Common::WriteStream *ws) {
 		hbyte = MEM(objtable * 16L + i);
 
 		/* If memory same as original game file */
-		if (lbyte == hbyte && samecount<255) samecount++;
+		if (lbyte == hbyte && samecount < 255)
+			samecount++;
 
 		/* If memory differs (or samecount exceeds 1 byte) */
 		else {
 			if (samecount)
 				if (hugo_fputc(samecount, ws) == EOF) goto SaveError;
 
-			if (lbyte != hbyte)
-			{
+			if (lbyte != hbyte) {
 				if (hugo_fputc(0, ws) == EOF) goto SaveError;
 				if (hugo_fputc(hbyte, ws) == EOF) goto SaveError;
 				samecount = 0;

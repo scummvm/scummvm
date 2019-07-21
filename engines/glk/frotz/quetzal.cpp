@@ -78,8 +78,7 @@ bool Quetzal::save(Common::WriteStream *svf, Processor *proc, const Common::Stri
 			if (c == 0) {
 				// It's a run of equal bytes
 				++j;
-			}
-			else {
+			} else {
 				// Write out any run there may be.
 				if (j > 0) {
 					for (; j > 0x100; j -= 0x100) {

@@ -1038,8 +1038,7 @@ void GlkAPI::gidispatch_call(uint32 funcnum, uint32 numargs, gluniversal_t *argl
                 arglist[3]._opaqueref = dat.window;
                 arglist[4]._uint = dat.val1;
                 arglist[5]._uint = dat.val2;
-            }
-            else {
+            } else {
                 glk_cancel_line_event((Window *)arglist[0]._opaqueref, nullptr);
             }
             break;
@@ -1308,8 +1307,7 @@ void GlkAPI::gidispatch_call(uint32 funcnum, uint32 numargs, gluniversal_t *argl
                 arglist[1]._sint = dat.high_sec;
                 arglist[2]._uint = dat.low_sec;
                 arglist[3]._sint = dat.microsec;
-            }
-            else {
+            } else {
                 glk_current_time(nullptr);
             }
             break;
