@@ -3594,7 +3594,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 
 	// Police Quest 3 EGA
 	// Reported by musiclyinspired in bug report #3046573
-	{"pq3", "", {
+	{"pq3", "EGA", {
 		{"resource.map", 0, "1341f7c9643947414a8e238b88f68d82", 5901},
 		{"resource.000", 0, "7659713720d61d9465a59091b7ee63ea", 402208},
 		{"resource.001", 0, "0284ca44341fbc3cb7a047e49d230234", 703373},
