@@ -333,7 +333,7 @@ protected:
 
 #ifdef USE_SDL_NET
 	//
-	// Wi-Fi Sharing controls
+	// LAN controls
 	//
 	ButtonWidget	 *_runServerButton;
 	StaticTextWidget *_serverInfoLabel;
@@ -347,8 +347,8 @@ protected:
 	StaticTextWidget *_featureDescriptionLine2;
 	bool _serverWasRunning;
 
-	void addWiFiSharingControls(GuiObject *boss, const Common::String &prefix, const char *context = nullptr);
-	void reflowWiFiSharingTabLayout();
+	void addNetworkControls(GuiObject *boss, const Common::String &prefix, const char *context = nullptr);
+	void reflowNetworkTabLayout();
 #endif // USE_SDL_NET
 
 #endif // USE_CLOUD

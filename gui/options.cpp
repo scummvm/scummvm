@@ -1763,10 +1763,10 @@ void GlobalOptionsDialog::build() {
 #endif USE_LIBCURL
 #ifdef USE_SDL_NET
 	//
-	// 8) The Wi-Fi Sharing tab (local "cloud" webserver)
+	// 8) The LAN tab (local "cloud" webserver)
 	//
-	tab->addTab(_c("Wi-Fi Sharing", context));
-	addWiFiSharingControls(tab, "GlobalOptions_WiFiSharing.", context);
+	tab->addTab(_c("LAN", context));
+	addNetworkControls(tab, "GlobalOptions_Network.", context);
 #endif // USE_SDL_NET
 #endif // USE_CLOUD
 
@@ -1903,7 +1903,7 @@ void GlobalOptionsDialog::addCloudControls(GuiObject *boss, const Common::String
 #endif // USE_LIBCURL
 
 #ifdef USE_SDL_NET
-void GlobalOptionsDialog::addWiFiSharingControls(GuiObject *boss, const Common::String &prefix, const char *context) {
+void GlobalOptionsDialog::addNetworkControls(GuiObject *boss, const Common::String &prefix, const char *context) {
 	_runServerButton = new ButtonWidget(boss, prefix + "RunServerButton", _("Run server"), _("Run local webserver"), kRunServerCmd);
 	_serverInfoLabel = new StaticTextWidget(boss, prefix + "ServerInfoLabel", _("Not running"));
 
@@ -1918,10 +1918,10 @@ void GlobalOptionsDialog::addWiFiSharingControls(GuiObject *boss, const Common::
 	_serverPort = new EditTextWidget(boss, prefix + "ServerPortEditText", Common::String::format("%u", port), 0);
 	_serverPortClearButton = addClearButton(boss, prefix + "ServerPortClearButton", kServerPortClearCmd);
 
-	_featureDescriptionLine1 = new StaticTextWidget(boss, prefix + "FeatureDescriptionLine1", _c("Run server to manage files with browser (in the same Wi-Fi network).", context), "", ThemeEngine::kFontStyleNormal);
+	_featureDescriptionLine1 = new StaticTextWidget(boss, prefix + "FeatureDescriptionLine1", _c("Run server to manage files with browser (in the same network).", context), "", ThemeEngine::kFontStyleNormal);
 	_featureDescriptionLine2 = new StaticTextWidget(boss, prefix + "FeatureDescriptionLine2", _c("Closing options dialog will stop the server.", context), "", ThemeEngine::kFontStyleNormal);
 	
-	reflowWiFiSharingTabLayout();
+	reflowNetworkTabLayout();
 
 }
 #endif // USE_SDL_NET
@@ -2403,7 +2403,7 @@ void GlobalOptionsDialog::handleTickle() {
 #ifdef USE_SDL_NET
 	if (LocalServer.isRunning() != _serverWasRunning) {
 		_serverWasRunning = !_serverWasRunning;
-		reflowWiFiSharingTabLayout();
+		reflowNetworkTabLayout();
 	}
 #endif // USE_SDL_NET
 #endif // USE_CLOUD
@@ -2450,7 +2450,7 @@ void GlobalOptionsDialog::reflowLayout() {
 	setupCloudTab();
 #endif // USE_LIBCURL
 #ifdef USE_SDL_NET
-	reflowWiFiSharingTabLayout();
+	reflowNetworkTabLayout();
 #endif // USE_SDL_NET
 #endif // USE_CLOUD
 }
@@ -2592,7 +2592,7 @@ void GlobalOptionsDialog::shiftWidget(Widget *widget, const char *widgetName, in
 #endif // USE_LIBCURL
 
 #ifdef USE_SDL_NET
-void GlobalOptionsDialog::reflowWiFiSharingTabLayout() {
+void GlobalOptionsDialog::reflowNetworkTabLayout() {
 	bool serverIsRunning = LocalServer.isRunning();
 
 	if (_runServerButton) {
