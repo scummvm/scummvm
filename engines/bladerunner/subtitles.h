@@ -75,6 +75,9 @@ class Subtitles {
 	bool              _isVisible;
 	bool              _forceShowWhenNoSpeech;
 	Common::U32String _currentText;
+	Common::U32String _prevText;
+
+	Common::Array<Common::U32String> lines;
 
 	bool _gameSubsResourceEntriesFound[kMaxTextResourceEntries]; // false if a TRE file did not open successfully
 	bool _isSystemActive;                                        // true if the whole subtitles subsystem should be disabled (due to missing required resources)

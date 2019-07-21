@@ -364,8 +364,12 @@ void Subtitles::draw(Graphics::Surface &s) {
 		return;
 	}
 
-	Common::Array<Common::U32String> lines;
-	_font->wordWrapText(_currentText, kTextMaxWidth, lines);
+	// This check is done so that lines won't be re-calculated multiple times for the same text
+	if (_currentText != _prevText) {
+		lines.clear();
+		_prevText = _currentText;
+		_font->wordWrapText(_currentText, kTextMaxWidth, lines);
+	}
 
 	int y = s.h - (kMarginBottom + MAX(kPreferedLine, lines.size()) * _font->getFontHeight());
 
