@@ -116,8 +116,8 @@ void GeasGlkInterface::set_background(String s) {
  * GeasInterface?
  */
 String GeasGlkInterface::get_file(const String &fname) const {
-	Common::File ifs;
-	if (ifs.open(fname)) {
+	Common::File f;
+	if (!f.open(fname)) {
 		glk_put_cstring("Couldn't open ");
 		glk_put_cstring(fname.c_str());
 		g_vm->glk_put_char(0x0a);
@@ -125,10 +125,10 @@ String GeasGlkInterface::get_file(const String &fname) const {
 	}
 
 	// Read entirety of the file
-	char *buf = new char[ifs.size()];
-	ifs.read(buf, ifs.size());
+	char *buf = new char[f.size()];
+	f.read(buf, f.size());
 	
-	String result(buf, buf + ifs.size());
+	String result(buf, buf + f.size());
 	delete[] buf;
 
 	return result;

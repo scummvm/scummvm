@@ -352,10 +352,9 @@ bool decompile(String data, Common::Array<String> &rv);
 bool preprocess(Common::Array<String> v, String fname, Common::Array<String> &rv, GeasInterface *gi);
 
 GeasFile read_geas_file(GeasInterface *gi, const String &filename) {
-	//return GeasFile (split_lines(gi->get_file(s)), gi);
 	String file_contents = gi->get_file(filename);
 
-	if (file_contents == "")
+	if (file_contents.empty())
 		return GeasFile();
 
 	Common::Array<String> data;

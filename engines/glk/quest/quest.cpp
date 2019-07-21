@@ -96,6 +96,7 @@ void Quest::playGame() {
 }
 
 bool Quest::initialize() {
+	Streams::initialize();
 	glk_stylehint_set(wintype_TextBuffer, style_User2, stylehint_ReverseColor, 1);
 
 	// Open the main window
@@ -135,6 +136,7 @@ bool Quest::initialize() {
 }
 
 void Quest::deinitialize() {
+	Streams::deinitialize();
 }
 
 Common::Error Quest::readSaveData(Common::SeekableReadStream *rs) {

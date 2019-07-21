@@ -52,7 +52,7 @@ bool QuestMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &g
 			continue;
 
 		Common::String filename = file->getName();
-		if (!filename.hasSuffixIgnoreCase(".quest"))
+		if (!filename.hasSuffixIgnoreCase(".cas") && !filename.hasSuffixIgnoreCase(".asl"))
 			continue;
 
 		Common::File gameFile;
