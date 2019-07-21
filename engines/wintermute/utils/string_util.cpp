@@ -112,6 +112,9 @@ Common::CodePage StringUtil::mapCodePage(TTextCharset charset) {
 	case CHARSET_GREEK:
 		return Common::kWindows1253;
 
+	case CHARSET_TURKISH:
+		return Common::kWindows1254;
+
 	case CHARSET_HEBREW:
 		return Common::kWindows1255;
 
@@ -156,6 +159,10 @@ Common::CodePage StringUtil::mapCodePage(TTextCharset charset) {
 		case Common::GR_GRE:
 			return Common::kWindows1253;
 
+		//cp1254: Turkish
+		case Common::TR_TUR:
+			return Common::kWindows1254;
+
 		//cp1255: Hebrew
 		case Common::HE_ISR:
 			return Common::kWindows1255;
@@ -165,7 +172,12 @@ Common::CodePage StringUtil::mapCodePage(TTextCharset charset) {
 		case Common::LV_LAT:
 			return Common::kWindows1257;
 
+		case Common::JA_JPN:
+		case Common::KO_KOR:
+		case Common::ZH_CNA:
+		case Common::ZH_TWN:
 		default:
+			warning("Unsupported charset: %d", charset);
 			return Common::kWindows1252;
 		}
 
@@ -176,7 +188,6 @@ Common::CodePage StringUtil::mapCodePage(TTextCharset charset) {
 	case CHARSET_MAC:
 	case CHARSET_SHIFTJIS:
 	case CHARSET_SYMBOL:
-	case CHARSET_TURKISH:
 	case CHARSET_VIETNAMESE:
 	case CHARSET_JOHAB:
 	case CHARSET_ARABIC:
