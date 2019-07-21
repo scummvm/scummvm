@@ -33,13 +33,14 @@
 #include "petka/objects/object_cursor.h"
 #include "petka/objects/object_case.h"
 #include "petka/objects/object_star.h"
+#include "petka/objects/heroes.h"
 #include "petka/q_system.h"
 
 namespace Petka {
 
 QSystem::QSystem()
-	: _cursor(nullptr), _case(nullptr), _star(nullptr), _mainInterface(nullptr),
-	_currInterface(nullptr), _prevInterface(nullptr), _isIniting(0) {}
+	: _cursor(nullptr), _case(nullptr), _star(nullptr), _petka(nullptr), _chapayev(nullptr),
+	_mainInterface(nullptr), _currInterface(nullptr), _prevInterface(nullptr), _isIniting(0) {}
 
 QSystem::~QSystem() {
 
@@ -109,11 +110,19 @@ bool QSystem::init() {
 	if (bgsStream)
 		bgsIni.loadFromStream(*bgsStream);
 
-	uint32 objsCount = stream->readUint32LE();
+	uint32 objsCount = stream->readUint32LE() - 2;
 	uint32 bgsCount = stream->readUint32LE();
 
 	_objs.resize(objsCount);
 	_bgs.resize(bgsCount);
+
+	_petka.reset(new QObjectPetka());
+	readObject(*_petka, *stream, namesIni, castIni);
+	_allObjects.push_back(_petka.get());
+
+	_chapayev.reset(new QObjectChapayev());
+	readObject(*_chapayev, *stream, namesIni, castIni);
+	_allObjects.push_back(_chapayev.get());
 
 	Common::String name;
 	for (uint i = 0; i < objsCount; ++i) {
