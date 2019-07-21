@@ -34,6 +34,8 @@ class PetkaEngine;
 class QObjectCase;
 class QObjectCursor;
 class QObjectStar;
+class QObjectPetka;
+class QObjectChapayev;
 class InterfaceSaveLoad;
 class InterfaceMain;
 class InterfaceStartup;
@@ -61,6 +63,8 @@ public:
 	Common::Array<QObjectBG> _bgs;
 	Common::Array<QMessageObject *> _allObjects;
 	Common::List<QMessage> _messages;
+	Common::ScopedPtr<QObjectPetka> _petka;
+	Common::ScopedPtr<QObjectChapayev> _chapayev;
 	Common::ScopedPtr<QObjectCursor> _cursor;
 	Common::ScopedPtr<QObjectCase> _case;
 	Common::ScopedPtr<QObjectStar> _star;
