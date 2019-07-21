@@ -228,38 +228,60 @@ bool BaseFileManager::registerPackages() {
 			// TODO: Select based on the gameDesc.
 			if (_language != Common::UNK_LANG) {
 				// English
-				if (_language != Common::EN_ANY && (fileName == "english.dcp" || fileName == "xlanguage_en.dcp" || fileName == "english_language_pack.dcp")) {
-					continue;
+				if (fileName == "english.dcp" || fileName == "xlanguage_en.dcp" || fileName == "english_language_pack.dcp") {
+					if (_language != Common::EN_ANY) {
+						continue;
+					}
 				// Chinese
-				} else if (_language != Common::ZH_CNA && (fileName == "chinese.dcp" || fileName == "xlanguage_nz.dcp" || fileName == "chinese_language_pack.dcp")) {
-					continue;
+				} else if (fileName == "chinese.dcp" || fileName == "xlanguage_nz.dcp" || fileName == "chinese_language_pack.dcp") {
+					if (_language != Common::ZH_CNA) {
+						continue;
+					}
 				// Czech
-				} else if (_language != Common::CZ_CZE && (fileName == "czech.dcp" || fileName == "xlanguage_cz.dcp" || fileName == "czech_language_pack.dcp")) {
-					continue;
+				} else if (fileName == "czech.dcp" || fileName == "xlanguage_cz.dcp" || fileName == "czech_language_pack.dcp") {
+					if (_language != Common::CZ_CZE) {
+						continue;
+					}
 				// French
-				} else if (_language != Common::FR_FRA && (fileName == "french.dcp" || fileName == "xlanguage_fr.dcp" || fileName == "french_language_pack.dcp")) {
-					continue;
+				} else if (fileName == "french.dcp" || fileName == "xlanguage_fr.dcp" || fileName == "french_language_pack.dcp") {
+					if (_language != Common::FR_FRA) {
+						continue;
+					}
 				// German
-				} else if (_language != Common::DE_DEU && (fileName == "german.dcp" || fileName == "xlanguage_de.dcp" || fileName == "german_language_pack.dcp")) {
-					continue;
+				} else if (fileName == "german.dcp" || fileName == "xlanguage_de.dcp" || fileName == "german_language_pack.dcp") {
+					if (_language != Common::DE_DEU) {
+						continue;
+					}
 				// Italian
-				} else if (_language != Common::IT_ITA && (fileName == "italian.dcp" || fileName == "xlanguage_it.dcp" || fileName == "italian_language_pack.dcp")) {
-					continue;
+				} else if (fileName == "italian.dcp" || fileName == "xlanguage_it.dcp" || fileName == "italian_language_pack.dcp") {
+					if (_language != Common::IT_ITA) {
+						continue;
+					}
 				// Latvian
-				} else if (_language != Common::LV_LAT && (fileName == "latvian.dcp" || fileName == "xlanguage_lv.dcp" || fileName == "latvian_language_pack.dcp")) {
-					continue;
+				} else if (fileName == "latvian.dcp" || fileName == "xlanguage_lv.dcp" || fileName == "latvian_language_pack.dcp") {
+					if (_language != Common::LV_LAT) {
+						continue;
+					}
 				// Polish
-				} else if (_language != Common::PL_POL && (fileName == "polish.dcp" || fileName == "xlanguage_pl.dcp" || fileName == "polish_language_pack.dcp")) {
-					continue;
+				} else if (fileName == "polish.dcp" || fileName == "xlanguage_pl.dcp" || fileName == "polish_language_pack.dcp") {
+					if (_language != Common::PL_POL) {
+						continue;
+					}
 				// Portuguese
-				} else if (_language != Common::PT_BRA && (fileName == "portuguese.dcp" || fileName == "xlanguage_pt.dcp" || fileName == "portuguese_language_pack.dcp")) {
-					continue;
+				} else if (fileName == "portuguese.dcp" || fileName == "xlanguage_pt.dcp" || fileName == "portuguese_language_pack.dcp") {
+					if (_language != Common::PT_BRA) {
+						continue;
+					}
 				// Russian
-				} else if (_language != Common::RU_RUS && (fileName == "russian.dcp" || fileName == "xlanguage_ru.dcp" || fileName == "russian_language_pack.dcp")) {
-					continue;
+				} else if (fileName == "russian.dcp" || fileName == "xlanguage_ru.dcp" || fileName == "russian_language_pack.dcp") {
+					if (_language != Common::RU_RUS) {
+						continue;
+					}
 				// Spanish
-				} else if (_language != Common::ES_ESP && (fileName == "spanish.dcp" || fileName == "xlanguage_es.dcp" || fileName == "spanish_language_pack.dcp")) {
-					continue;
+				} else if (fileName == "spanish.dcp" || fileName == "xlanguage_es.dcp" || fileName == "spanish_language_pack.dcp") {
+					if (_language != Common::ES_ESP) {
+						continue;
+					}
 				// generic
 				} else if (fileName.hasPrefix("xlanguage_")) {
 					warning("Unknown language package: %s", fileName.c_str());
