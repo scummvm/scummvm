@@ -523,9 +523,63 @@ static const uint16 camelotPatchPeepingTom[] = {
 	PATCH_END
 };
 
-//         script, description,                                       signature                   patch
+// If the butcher's daughter in room 62 closes her window while Arthur interacts
+//  with the relic merchant then the game locks up. The script daughterAppears
+//  attempts to dispose the script peepingTom, but it does so by clearing ego's
+//  script no matter what it is, which breaks the game if the script is buyRelic
+//  or one of the other handsOff merchant scripts.
+//
+// We fix this by calling peepingTom:dispose instead of clearing ego's script.
+//  As this is an earlier SCI game prior to Script:dispose clearing the client
+//  property, we need to do that ourselves in peepingTom:doit when Arthur turns
+//  away from the window, or else peepingTom:client will still point to ego
+//  after disposal, and the subsequent peepingTom:dispose will end ego's script.
+//
+// Applies to: All versions
+// Responsible methods: daughterAppears:changeState(6), peepingTom:doit
+// Fixes bug: #11025
+static const uint16 camelotSignatureRelicMerchantLockup1[] = {
+	0x39, SIG_SELECTOR8(setScript),     // pushi setScript
+	0x78,                               // push1
+	0x76,                               // push0
+	0x81, SIG_MAGICDWORD, 0x00,         // lag 00
+	0x4a, 0x06,                         // send 06 [ ego setScript: 0 ]
+	0x3a,                               // toss
+	SIG_END
+};
+
+static const uint16 camelotPatchRelicMerchantLockup1[] = {
+	0x39, PATCH_SELECTOR8(dispose),     // pushi dispose
+	0x76,                               // push0
+	0x72, PATCH_UINT16(0x01f3),         // lofsa peepingTom
+	0x4a, 0x04,                         // send 04 [ peepingTom dispose: ]
+	PATCH_END
+};
+
+static const uint16 camelotSignatureRelicMerchantLockup2[] = {
+	0x39, SIG_SELECTOR8(setScript),     // pushi setScript
+	0x78,                               // push1
+	0x76,                               // push0
+	0x81, SIG_MAGICDWORD, 0x00,         // lag 00
+	0x4a, 0x06,                         // send 06 [ ego setScript: 0 ]
+	0x48,                               // ret
+	SIG_END
+};
+
+static const uint16 camelotPatchRelicMerchantLockup2[] = {
+	0x39, PATCH_SELECTOR8(dispose),     // pushi dispose
+	0x76,                               // push0
+	0x54, 0x04,                         // self 04 [ self dispose: ]
+	0x76,                               // push0
+	0x69, 0x08,                         // sTop client [ client = 0 ]
+	PATCH_END
+};
+
+//         script, description,                                       signature                             patch
 static const SciScriptPatcherEntry camelotSignatures[] = {
-	{ true,    62, "fix peepingTom Sierra bug",                    1, camelotSignaturePeepingTom, camelotPatchPeepingTom },
+	{ true,    62, "fix peepingTom Sierra bug",                    1, camelotSignaturePeepingTom,           camelotPatchPeepingTom },
+	{ true,   169, "fix relic merchant lockup (1/2)",              1, camelotSignatureRelicMerchantLockup1, camelotPatchRelicMerchantLockup1 },
+	{ true,   169, "fix relic merchant lockup (2/2)",              1, camelotSignatureRelicMerchantLockup2, camelotPatchRelicMerchantLockup2 },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
