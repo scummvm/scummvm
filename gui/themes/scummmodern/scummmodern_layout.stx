@@ -746,7 +746,7 @@
 		</layout>
 	</dialog>
 
-	<dialog name = 'GlobalOptions_WiFiSharing' overlays = 'Dialog.GlobalOptions.TabWidget'>
+	<dialog name = 'GlobalOptions_Network' overlays = 'Dialog.GlobalOptions.TabWidget'>
 		<layout type = 'vertical' padding = '16, 16, 16, 16' spacing = '8'>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' center = 'true'>
 				<widget name = 'RunServerButton'
