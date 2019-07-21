@@ -81,6 +81,7 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"julia",           "J.U.L.I.A."},
 	{"juliastars",      "J.U.L.I.A.: Among the Stars"},
 	{"juliastarshd",    "J.U.L.I.A.: Among the Stars HD"},
+	{"juliauntold",     "J.U.L.I.A.: Untold"},
 	{"mentelrepairs",   "Mental Repairs Inc"},
 	{"mirage",          "Mirage"},
 	{"nighttrain",      "Night Train"},
@@ -735,6 +736,10 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("juliastarshd", "",
 		WME_ENTRY2s("data_hd.dcp", "f40b3d0778e37c61cf309d214446d233", 5264780,
 					"german_hd.dcp", "8d85f83a3fc8f1bec4e5ba2158b05b1e", 152499998), Common::DE_DEU, ADGF_UNSTABLE, WME_LITE),
+
+	// J.U.L.I.A.: Untold
+	WME_WINENTRY("juliauntold", "",
+		WME_ENTRY1s("data.dcp", "fe995e26253f6e0a925dd7850fce17a9", 26459827), Common::EN_ANY, ADGF_UNSTABLE, WME_LITE),
 
 	// K'NOSSOS (Alpha Demo)
 	WME_WINENTRY("knossos", "Alpha Demo",
