@@ -359,6 +359,12 @@ bool BaseGame::initConfManSettings() {
 		}
 	}
 
+	if (ConfMan.hasKey("debug_cursor")) {
+		_debugCursorPos = ConfMan.getBool("debug_cursor");
+	} else {
+		_debugCursorPos = false;
+	}
+
 	if (ConfMan.hasKey("show_fps")) {
 		_debugShowFPS = ConfMan.getBool("show_fps");
 	} else {
@@ -599,7 +605,11 @@ bool BaseGame::initLoop() {
 	}
 	//_gameRef->LOG(0, "%d", _fps);
 
+	int32 oldX = _mousePos.x;
 	getMousePos(&_mousePos);
+	if (_debugCursorPos && _mousePos.x != oldX) {
+		LOG(0, "CURSOR: initLoop delta X %d: from %d to %d", _mousePos.x - oldX, oldX, _mousePos.x);
+	}
 
 	_focusedWindow = nullptr;
 	for (int i = _windows.size() - 1; i >= 0; i--) {
@@ -2383,7 +2393,12 @@ bool BaseGame::scSetProperty(const char *name, ScValue *value) {
 	// MouseX
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "MouseX") == 0) {
+		int32 oldX = _mousePos.x;
 		_mousePos.x = value->getInt();
+		if (_debugCursorPos && _mousePos.x != oldX) {
+			LOG(0, "CURSOR: scSetProperty delta X %d: from %d to %d", _mousePos.x - oldX, oldX, _mousePos.x);
+		}
+		
 		resetMousePos();
 		return STATUS_OK;
 	}

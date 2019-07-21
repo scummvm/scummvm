@@ -2134,6 +2134,10 @@ bool AdGame::validMouse() {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdGame::onMouseLeftDown() {
+	if (_debugCursorPos) {
+		LOG(0, "CURSOR: onMouseLeftDown");
+	}
+
 	if (!validMouse()) {
 		return STATUS_OK;
 	}
@@ -2167,6 +2171,10 @@ bool AdGame::onMouseLeftDown() {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdGame::onMouseLeftUp() {
+	if (_debugCursorPos) {
+		LOG(0, "CURSOR: onMouseLeftUp");
+	}
+
 	if (_activeObject) {
 		_activeObject->handleMouse(MOUSE_RELEASE, MOUSE_BUTTON_LEFT);
 	}

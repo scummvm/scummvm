@@ -166,6 +166,7 @@ public:
 	virtual ~BaseGame();
 
 	bool _debugDebugMode;
+	bool _debugCursorPos;
 
 	int32 _sequence;
 	virtual bool loadFile(const char *filename);
