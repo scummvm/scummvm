@@ -59,7 +59,7 @@ public:
 	 * Returns true if the passed string is a reserved word
 	 */
 	bool has(const String &s) const {
-		return _data.contains(s) && (*this)[s];
+		return _data.contains(s) && _data[s];
 	}
 
 	/**
