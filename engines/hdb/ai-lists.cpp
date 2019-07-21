@@ -162,7 +162,7 @@ void AI::addBridgeExtend(int x, int y, int bridgeType) {
 }
 
 void AI::animateBridges() {
-	int	i, j, tileIndex, xv, yv;
+	int	tileIndex, xv, yv;
 	uint32 flags;
 	bool done;
 
@@ -170,7 +170,7 @@ void AI::animateBridges() {
 	if (!_numBridges)
 		return;
 
-	for (i = 0; i < _numBridges; i++) {
+	for (int i = 0; i < _numBridges; i++) {
 		if (_bridges[i].delay-- > 0)
 			continue;
 
@@ -231,7 +231,7 @@ void AI::animateBridges() {
 			if (!flags || (flags & kFlagMetal) || tileIndex >= 0 || (flags & kFlagSolid)) {
 				if (g_hdb->_map->onScreen(_bridges[i].x, _bridges[i].y))
 					g_hdb->_sound->playSound(SND_BRIDGE_END);
-				for (j = 0; j < _numBridges - 1; j++)
+				for (int j = 0; j < _numBridges - 1; j++)
 					memcpy(&_bridges[i], &_bridges[i + 1], sizeof(Bridge));
 				_numBridges--;
 			}
@@ -250,17 +250,16 @@ void AI::addToFairystones(int index, int tileX, int tileY, int sourceOrDest) {
 }
 
 int AI::checkFairystones(int tileX, int tileY) {
-	int i;
-	for (i = 0; i < kMaxFairystones; i++)
+	for (int i = 0; i < kMaxFairystones; i++) {
 		if (_fairystones[i].destX == tileX && _fairystones[i].destY == tileY)
 			return i;
+	}
 	return -1;
 }
 
 // Add an action location to the list of possible actions
 // Each action must be paired with another of the same number
 void AI::addToActionList(int actionIndex, int x, int y, char *luaFuncInit, char *luaFuncUse) {
-
 	if (!_actions[actionIndex].x1) {
 		_actions[actionIndex].x1 = x;
 		_actions[actionIndex].y1 = y;
@@ -356,7 +355,7 @@ void AI::addToHereList(const char *entName, int x, int y) {
 }
 
 HereT *AI::findHere(int x, int y) {
-	for (Common::Array<HereT *>::iterator it = _hereList->begin(); it != _hereList->end(); it++) {
+	for (Common::Array<HereT *>::iterator it = _hereList->begin(); it != _hereList->end(); ++it) {
 		if ((*it)->x == x && (*it)->y == y)
 			return *it;
 	}
@@ -770,7 +769,7 @@ bool AI::checkTeleportList(AIEntity *e, int x, int y) {
 				g_hdb->_window->stopPanicZone();
 
 			// Is there an attack gem still floating around?
-			for (Common::Array<AIEntity *>::iterator it = _ents->begin(); it != _ents->end(); it++) {
+			for (Common::Array<AIEntity *>::iterator it = _ents->begin(); it != _ents->end(); ++it) {
 				if ((*it)->type == AI_GEM_ATTACK) {
 					int amt = getGemAmount();
 					setGemAmount(amt + 1);
@@ -799,7 +798,7 @@ void AI::addToPathList(int x, int y, int type, AIDir dir) {
 }
 
 ArrowPath *AI::findArrowPath(int x, int y) {
-	for (Common::Array<ArrowPath *>::iterator it = _arrowPaths->begin(); it != _arrowPaths->end(); it++) {
+	for (Common::Array<ArrowPath *>::iterator it = _arrowPaths->begin(); it != _arrowPaths->end(); ++it) {
 		if ((*it)->tileX == x && (*it)->tileY == y)
 			return *it;
 	}
@@ -835,10 +834,8 @@ void AI::addToTriggerList(char *luaFuncInit, char *luaFuncUse, int x, int y, int
 }
 
 bool AI::checkTriggerList(char *entName, int x, int y) {
-	Trigger *t;
-
-	for (Common::Array<Trigger *>::iterator it = _triggerList->begin(); it != _triggerList->end(); it++) {
-		t = *it;
+	for (Common::Array<Trigger *>::iterator it = _triggerList->begin(); it != _triggerList->end(); ++it) {
+		Trigger *t = *it;
 		if (t->x == x && t->y == y) {
 			if (!t->luaFuncUse[0])
 				return false;
