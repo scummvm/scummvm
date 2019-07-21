@@ -32,6 +32,9 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"agustin",         "Boredom of Agustin Cordes"},
 	{"alimardan1",      "Alimardan's Mischief"},
 	{"alimardan2",      "Alimardan Meets Merlin"},
+	{"alphapolaris",    "Alpha Polaris"},
+	{"apeiron",         "Apeiron"},
+	{"artofmurder1",    "Art of Murder 1: FBI Confidential"},
 	{"basisoctavus",    "Basis Octavus"},
 	{"bickadoodle",     "Bickadoodle"},
 	{"bookofgron",      "Book of Gron Part One"},
@@ -61,6 +64,7 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"dreamscape",      "Dreamscape"},
 	{"erinmyers",       "The Death of Erin Myers"},
 	{"escapemansion",   "Escape from the Mansion"},
+	{"everydaygray",    "Everyday Grey"},
 	{"facenoir",        "Face Noir"},
 	{"findinghope",     "Finding Hope"},
 	{"four",            "Four"},
@@ -75,6 +79,10 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"lonelyrobot",     "Project Lonely Robot"},
 	{"looky",           "Looky"},
 	{"julia",           "J.U.L.I.A."},
+	{"juliastars",      "J.U.L.I.A.: Among the Stars"},
+	{"juliastarshd",    "J.U.L.I.A.: Among the Stars HD"},
+	{"juliauntold",     "J.U.L.I.A.: Untold"},
+	{"mentelrepairs",   "Mental Repairs Inc"},
 	{"mirage",          "Mirage"},
 	{"nighttrain",      "Night Train"},
 	{"oknytt",          "Oknytt"},
@@ -82,11 +90,13 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"onehelluvaday",   "One Helluva Day"},
 	{"openquest",       "Open Quest"},
 	{"paintaria",       "Paintaria"},
+	{"palladion",       "Palladion"},
 	{"pigeons",         "Pigeons in the Park"},
 	{"pizzamorgana",    "Pizza Morgana: Episode 1 - Monsters and Manipulations in the Magical Forest"},
 	{"projectdoom",     "Project: Doom"},
 	{"projectjoe",      "Project Joe"},
 	{"rebeccacarlson1", "Rebecca Carlson Mystery 01 - Silent Footsteps"},
+	{"reptilesquest",   "On the Tracks of Dinosaurs"},
 	{"reversion1",      "Reversion: The Escape"},
 	{"reversion2",      "Reversion: The Meeting"},
 	{"rhiannon",        "Rhiannon: Curse of the four Branches"},
@@ -217,6 +227,88 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("alimardan2", "",
 		WME_ENTRY2s("language.dcp", "0cbb7e1e84a342782c24938af4da1402", 686580,
 					"data.dcp", "e3ffb5d177737a57bb391995d9361055", 413397623), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Alpha Polaris (English) (1.1.0) (1280x800 Steam)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("alphapolaris", "1.1.0 (1280x800 Steam)",
+		WME_ENTRY2s("data.dcp", "2d1bd35749b2538915b53ce79288bceb", 706580987,
+					"data.dcp", "2d1bd35749b2538915b53ce79288bceb", 706580987), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Alpha Polaris (German) (1.1.0) (1280x800 Steam)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("alphapolaris", "1.1.0 (1280x800 Steam)",
+		WME_ENTRY2s("data.dcp", "2d1bd35749b2538915b53ce79288bceb", 706580987,
+					"german_language_pack.dcp", "0ed4ef1647445c73b5915b60f85ed8e4", 19251966), Common::DE_DEU, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Alpha Polaris (Polish) (1.1.0) (1280x800 Steam)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("alphapolaris", "1.1.0 (1280x800 Steam)",
+		WME_ENTRY2s("data.dcp", "2d1bd35749b2538915b53ce79288bceb", 706580987,
+					"polish_language_pack.dcp", "91f80c5f8d522541d666d11b60b0ea6c", 15006039), Common::PL_POL, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Alpha Polaris (Russian) (1.1.0) (1280x800 Steam)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("alphapolaris", "1.1.0 (1280x800 Steam)",
+		WME_ENTRY2s("data.dcp", "2d1bd35749b2538915b53ce79288bceb", 706580987,
+					"russian_language_pack.dcp", "58575db652d371af537b4b8841e962f8", 49395113), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Alpha Polaris (English) (1.1.0) (1280x768 Steam)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("alphapolaris", "1.1.0 (1280x768 Steam)",
+		WME_ENTRY2s("data.dcp", "481b1bff44178ef2f3d879df05f65a96", 706580987,
+					"data.dcp", "481b1bff44178ef2f3d879df05f65a96", 706580987), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Alpha Polaris (German) (1.1.0) (1280x768 Steam)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("alphapolaris", "1.1.0 (1280x768 Steam)",
+		WME_ENTRY2s("data.dcp", "481b1bff44178ef2f3d879df05f65a96", 706580987,
+					"german_language_pack.dcp", "2ffd9b2bdf2c2b3646067644572390c0", 19251966), Common::DE_DEU, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Alpha Polaris (Polish) (1.1.0) (1280x768 Steam)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("alphapolaris", "1.1.0 (1280x768 Steam)",
+		WME_ENTRY2s("data.dcp", "481b1bff44178ef2f3d879df05f65a96", 706580987,
+					"polish_language_pack.dcp", "4a24986189321f39b9f48cbc4889d89a", 15006039), Common::PL_POL, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Alpha Polaris (Russian) (1.1.0) (1280x768 Steam)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("alphapolaris", "1.1.0 (1280x768 Steam)",
+		WME_ENTRY2s("data.dcp", "481b1bff44178ef2f3d879df05f65a96", 706580987,
+					"russian_language_pack.dcp", "f39ad478a711fa4b34d419ed4aac97bf", 49395113), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Apeiron
+	WME_WINENTRY("apeiron", "",
+		WME_ENTRY1s("data.dcp", "c0d6190de52b3da9995cbd4b78976bc8", 89912566), Common::SE_SWE, ADGF_UNSTABLE, WME_1_9_1),
+
+	// Art of Murder: FBI Confidential (English)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("artofmurder1", "",
+		WME_ENTRY2s("data.dcp", "7e4c1dc8b1fb08541f7784d6288acfc8", 633692059,
+					"us.dcp", "4a02b65edc45444ac69ff8a514e952b8", 176592548), Common::EN_ANY, ADGF_UNSTABLE, WME_1_8_1),
+
+	// Art of Murder: FBI Confidential (French)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("artofmurder1", "",
+		WME_ENTRY2s("data.dcp", "bba4e56a66fd6406a26515cfc86ac125", 23782002,
+					"fr.dcp", "5665d84d70cb3e20472e1c3eb9d884c3", 125728694), Common::FR_FRA, ADGF_UNSTABLE, WME_1_8_1),
+
+	// Art of Murder: FBI Confidential (German)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("artofmurder1", "",
+		WME_ENTRY2s("data.dcp", "09e57d77b68dafa73a0924f11f61b059", 630742753,
+					"i18n.dcp", "583940f6d3fb4097e7cb1e2cc9a43a7b", 156078991), Common::DE_DEU, ADGF_UNSTABLE, WME_1_8_1),
+
+	// Art of Murder: FBI Confidential (Spanish)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("artofmurder1", "",
+		WME_ENTRY2s("data.dcp", "340f04f9f66a0ab978b78d317544bbed", 23757600,
+					"es.dcp", "47b3a609993b3c18ce5bfb1af734ea3e", 148997124), Common::ES_ESP, ADGF_UNSTABLE, WME_1_8_1),
+
+	// Art of Murder: FBI Confidential (Polish)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("artofmurder1", "",
+		WME_ENTRY2s("data.dcp", "592862a5dd1ae90d53561815a535ab2e", 630734278,
+					"i18n.dcp", "b43bd7b64991ad9d5d285753767fe3f4", 176591837), Common::PL_POL, ADGF_UNSTABLE, WME_1_8_1),
 
 	// Basis Octavus
 	// NOTE: This is a 2.5D game that is out of ScummVM scope
@@ -469,6 +561,11 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("escapemansion", "1.3",
 		WME_ENTRY1s("data.dcp", "1e5d231b56c8a228cd15cb690f50253e", 29261972), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_1),
 
+	// Everyday Grey (work name was Philip Kane)
+	// NOTE: This game seems to be mistakenly marked as 2.5D at Wintermute wiki
+	WME_WINENTRY("everydaygray", "",
+		WME_ENTRY1s("data.dcp", "77afff4101adbddac07ecf22ffbb8212", 24436150), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_1),
+
 	// Face Noir
 	// NOTE: This is a 2.5D game that is out of ScummVM scope	
 	WME_WINENTRY("facenoir", "",
@@ -597,20 +694,52 @@ static const WMEGameDescription gameDescriptions[] = {
 		WME_ENTRY1s("data.dcp", "edb9f9c7a08993c1e28f4e477b5f9830", 116113507), Common::ES_ESP, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_1),
 
 	// J.U.L.I.A. (English)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope, however it is reported as completable with VFX low
 	WME_WINENTRY("julia", "",
-		WME_ENTRY1s("data.dcp", "c2264b4f8fcd132d2913ff5b6076a24f", 10109741), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+		WME_ENTRY1s("data.dcp", "c2264b4f8fcd132d2913ff5b6076a24f", 10109741), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
 
 	// J.U.L.I.A. (English, Bundle in a box-version)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope, however it is reported as completable with VFX low
 	WME_WINENTRY("julia", "Version 1.2",
-		WME_ENTRY1s("data.dcp", "fe90023ccc22f35185b40b910e0d03a2", 10101373), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+		WME_ENTRY1s("data.dcp", "fe90023ccc22f35185b40b910e0d03a2", 10101373), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
 
 	// J.U.L.I.A. (English) (Demo)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope, however it is reported as completable with VFX low
 	WME_WINENTRY("julia", "Demo",
-		WME_ENTRY1s("data.dcp", "f0bbc3394555a9811f6050dae428cab6", 7655237), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, LATEST_VERSION),
+		WME_ENTRY1s("data.dcp", "f0bbc3394555a9811f6050dae428cab6", 7655237), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_3),
 
 	// J.U.L.I.A. (English) (Greenlight Demo)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope, however it is reported as completable with VFX low
 	WME_WINENTRY("julia", "Greenlight Demo",
-		WME_ENTRY1s("data.dcp", "4befd448d36b0dae9c3ab1aa7cb8b78d", 7271886), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, LATEST_VERSION),
+		WME_ENTRY1s("data.dcp", "4befd448d36b0dae9c3ab1aa7cb8b78d", 7271886), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_3),
+
+	// J.U.L.I.A.: Among the Stars (Steam, January 2017) (English)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("juliastars", "",
+		WME_ENTRY2s("data_sd.dcp", "9949302dfaea943113e2f0ee0dd468be", 4249680,
+					"data_sd.dcp", "9949302dfaea943113e2f0ee0dd468be", 4249680), Common::EN_ANY, ADGF_UNSTABLE, WME_LITE),
+
+	// J.U.L.I.A.: Among the Stars HD (Steam, January 2017) (English)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("juliastarshd", "",
+		WME_ENTRY2s("data_hd.dcp", "fd579fa333f117882190993ea4f3bba5", 5164463,
+					"data_hd.dcp", "fd579fa333f117882190993ea4f3bba5", 5164463), Common::EN_ANY, ADGF_UNSTABLE, WME_LITE),
+
+	// J.U.L.I.A.: Among the Stars (Steam, November 2016) (German)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("juliastars", "",
+		WME_ENTRY2s("data_sd.dcp", "dfaf7e730a66412f68d11cddb0c8737d", 4505667,
+					"german_sd.dcp", "23ceb8625cebfe32aaa5950e89ac68ba", 123326075), Common::DE_DEU, ADGF_UNSTABLE, WME_LITE),
+
+	// J.U.L.I.A.: Among the Stars HD (Steam, November 2016) (German)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("juliastarshd", "",
+		WME_ENTRY2s("data_hd.dcp", "f40b3d0778e37c61cf309d214446d233", 5264780,
+					"german_hd.dcp", "8d85f83a3fc8f1bec4e5ba2158b05b1e", 152499998), Common::DE_DEU, ADGF_UNSTABLE, WME_LITE),
+
+	// J.U.L.I.A.: Untold
+	WME_WINENTRY("juliauntold", "",
+		WME_ENTRY1s("data.dcp", "fe995e26253f6e0a925dd7850fce17a9", 26459827), Common::EN_ANY, ADGF_UNSTABLE, WME_LITE),
 
 	// K'NOSSOS (Alpha Demo)
 	WME_WINENTRY("knossos", "Alpha Demo",
@@ -647,6 +776,18 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("looky", "",
 		WME_ENTRY2s("german.dcp", "bf4c2b8c26342342441a6d64934ab832", 107027865,
 					"data.dcp", "50de0beaa5ad621aa9f020df901d1e74", 1342214), Common::DE_DEU, ADGF_UNSTABLE, WME_1_9_1),
+
+	// Mental Repairs Inc (English)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("mentelrepairs", "",
+		WME_ENTRY2s("data.dcp", "414d423bbff697f22fb38932f030e897", 59518068,
+					"english.dcp", "7573eb584e662adbc5fa3b1448e56106", 3160232), Common::EN_ANY, ADGF_UNSTABLE, WME_1_8_6),
+
+	// Mental Repairs Inc (German)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("mentelrepairs", "",
+		WME_ENTRY2s("data.dcp", "414d423bbff697f22fb38932f030e897", 59518068,
+					"german.dcp", "af59a05ef29768e7fced3794a7a380a3", 3249142), Common::DE_DEU, ADGF_UNSTABLE, WME_1_8_6),
 
 	// Mirage
 	WME_WINENTRY("mirage", "",
@@ -711,6 +852,11 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("paintaria", "",
 		WME_ENTRY1s("data.dcp", "354c08440c98150ff0d4008dd2865880", 48326040), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_1),
 
+	// Palladion (Alpha6h)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("palladion", "Alpha6h",
+		WME_ENTRY1s("Palladion_Alpha6h.exe", "55aec582159410ec6221d4c3fd53db24", 95240860), Common::DE_DEU, ADGF_UNSTABLE | ADGF_DEMO, WME_1_8_6),
+
 	// Pigeons in the Park
 	WME_WINENTRY("pigeons", "",
 		WME_ENTRY1s("data.dcp", "9143a5b6ff8206aefe3c4c643add3ec7", 2611100), Common::EN_ANY, ADGF_UNSTABLE, WME_1_8_1),
@@ -727,7 +873,7 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Project Joe (Demo)
 	WME_WINENTRY("projectjoe", "Demo",
-		WME_ENTRY1s("data.dcp", "ada3c08542901295076b5349e655e73f", 160780037), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, LATEST_VERSION),
+		WME_ENTRY1s("data.dcp", "ada3c08542901295076b5349e655e73f", 160780037), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_2_44),
 
 	// Project Lonely Robot (Beta)
 	WME_WINENTRY("lonelyrobot", "Beta",
@@ -740,6 +886,18 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Rebecca Carlson Mystery 01 - Silent Footsteps (Demo)
 	WME_WINENTRY("rebeccacarlson1", "Demo",
 		WME_ENTRY1s("data.dcp", "a46c41edb1ae5e19a3e0fc5cac3ce83b", 212698165), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_3),
+
+	// On the Tracks of Dinosaurs (Beta 2.5) (English)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("reptilesquest", "Beta 2.5",
+		WME_ENTRY2s("data.dcp", "b624d3b19e37c094801a28d817bc3d76", 27345755,
+					"english.dcp", "42188d46ee079b555d578ea2b406fa19", 3897), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_1),
+
+	// On the Tracks of Dinosaurs (Beta 2.5) (Russian)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("reptilesquest", "Beta 2.5",
+		WME_ENTRY2s("data.dcp", "b624d3b19e37c094801a28d817bc3d76", 27345755,
+					"russian.dcp", "90d2bf541ba381bbb3375aa7d31613fb", 42175), Common::RU_RUS, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_1),
 
 	// Reversion: The Escape Version 1.0
 	WME_WINENTRY("reversion1", "Version 1.0",
