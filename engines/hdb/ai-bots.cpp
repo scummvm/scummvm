@@ -1874,7 +1874,7 @@ void aiFatFrogInit2(AIEntity *e) {
 	switch (e->dir) {
 	case DIR_DOWN:
 		if (!g_hdb->_ai->_tileFroglickMiddleUD) {
-			g_hdb->_ai->_tileFroglickMiddleLR = g_hdb->_gfx->loadTile(TILE_FFTONGUE_UD_MIDDLE);
+			g_hdb->_ai->_tileFroglickMiddleUD = g_hdb->_gfx->loadTile(TILE_FFTONGUE_UD_MIDDLE);
 			g_hdb->_ai->_tileFroglickWiggleUD[0] = g_hdb->_gfx->loadTile(TILE_FFTONGUE_UD_WIGGLE_L);
 			g_hdb->_ai->_tileFroglickWiggleUD[1] = g_hdb->_gfx->loadTile(TILE_FFTONGUE_UD_WIGGLE_M);
 			g_hdb->_ai->_tileFroglickWiggleUD[2] = g_hdb->_gfx->loadTile(TILE_FFTONGUE_UD_WIGGLE_R);
