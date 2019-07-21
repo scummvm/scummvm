@@ -305,6 +305,9 @@ public:
 	// FPS Variables
 	Common::Array<uint32> _frames;
 
+	Common::OutSaveFile *_currentOutSaveFile;
+	Common::InSaveFile *_currentInSaveFile;
+
 private:
 
 	uint32 _timePlayed;
