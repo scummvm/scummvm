@@ -87,10 +87,12 @@ void processSavedReaction(QReaction **reaction, QMessageObject *sender) {
 			}
 			break;
 		}
+		/*
 		case kWalk:
 		case kWalkTo:
 		case kWalkVich:
 			break;
+		 */
 		default:
 			processed = false;
 			break;
@@ -155,11 +157,12 @@ void QMessageObject::processMessage(const QMessage &msg) {
 				}
 				break;
 			}
+			/*
 			case kWalk:
 			case kWalkTo:
-				break;
 			case kWalkVich:
 				break;
+			 */
 			default:
 				processed = false;
 			}
