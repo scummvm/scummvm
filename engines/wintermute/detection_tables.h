@@ -691,20 +691,24 @@ static const WMEGameDescription gameDescriptions[] = {
 		WME_ENTRY1s("data.dcp", "edb9f9c7a08993c1e28f4e477b5f9830", 116113507), Common::ES_ESP, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_1),
 
 	// J.U.L.I.A. (English)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope, however it is reported as completable with VFX low
 	WME_WINENTRY("julia", "",
-		WME_ENTRY1s("data.dcp", "c2264b4f8fcd132d2913ff5b6076a24f", 10109741), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+		WME_ENTRY1s("data.dcp", "c2264b4f8fcd132d2913ff5b6076a24f", 10109741), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
 
 	// J.U.L.I.A. (English, Bundle in a box-version)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope, however it is reported as completable with VFX low
 	WME_WINENTRY("julia", "Version 1.2",
-		WME_ENTRY1s("data.dcp", "fe90023ccc22f35185b40b910e0d03a2", 10101373), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+		WME_ENTRY1s("data.dcp", "fe90023ccc22f35185b40b910e0d03a2", 10101373), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
 
 	// J.U.L.I.A. (English) (Demo)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope, however it is reported as completable with VFX low
 	WME_WINENTRY("julia", "Demo",
-		WME_ENTRY1s("data.dcp", "f0bbc3394555a9811f6050dae428cab6", 7655237), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, LATEST_VERSION),
+		WME_ENTRY1s("data.dcp", "f0bbc3394555a9811f6050dae428cab6", 7655237), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_3),
 
 	// J.U.L.I.A. (English) (Greenlight Demo)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope, however it is reported as completable with VFX low
 	WME_WINENTRY("julia", "Greenlight Demo",
-		WME_ENTRY1s("data.dcp", "4befd448d36b0dae9c3ab1aa7cb8b78d", 7271886), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, LATEST_VERSION),
+		WME_ENTRY1s("data.dcp", "4befd448d36b0dae9c3ab1aa7cb8b78d", 7271886), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_3),
 
 	// K'NOSSOS (Alpha Demo)
 	WME_WINENTRY("knossos", "Alpha Demo",
