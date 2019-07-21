@@ -110,8 +110,6 @@ AIEntity *AI::getInvItem(int which) {
 }
 
 int AI::queryInventory(const char *string) {
-	int		i, count;
-
 	if (!scumm_stricmp(string, "monkeystone"))
 		return getMonkeystoneAmount();
 	if (!scumm_stricmp(string, "goo"))
@@ -122,8 +120,8 @@ int AI::queryInventory(const char *string) {
 	if (!_numInventory)
 		return 0;
 
-	count = 0;
-	for (i = _numInventory - 1; i >= 0; i--)
+	int count = 0;
+	for (int i = _numInventory - 1; i >= 0; i--)
 		if (_inventory[i].ent.entityName && strstr(_inventory[i].ent.entityName, string))
 			count++;
 
@@ -131,9 +129,6 @@ int AI::queryInventory(const char *string) {
 }
 
 bool AI::removeInvItem(const char *string, int amount) {
-	int		i, j;
-	int		found;
-
 	// Check specially for Gems, Monkeystones and Goo Cups
 	if (!scumm_stricmp(string, "gem")) {
 		_numGems -= amount;
@@ -149,12 +144,13 @@ bool AI::removeInvItem(const char *string, int amount) {
 	if (!_numInventory)
 		return false;
 
+	bool found;
 	do {
-		found = 0;
+		found = false;
 
-		for (i = _numInventory - 1; i >= 0; i--)
+		for (int i = _numInventory - 1; i >= 0; i--)
 			if (_inventory[i].ent.entityName && strstr(_inventory[i].ent.entityName, string)) {
-				j = i;
+				int j = i;
 				memset(&_inventory[j], 0, sizeof(InvEnt));
 				while (j < _numInventory - 1) {
 					memcpy(&_inventory[j], &_inventory[j + 1], sizeof(InvEnt));
@@ -163,7 +159,7 @@ bool AI::removeInvItem(const char *string, int amount) {
 				}
 				_numInventory--;
 				amount--;
-				found = 1;
+				found = true;
 				if (!amount)
 					break;
 			}
@@ -177,8 +173,6 @@ bool AI::removeInvItem(const char *string, int amount) {
 }
 
 int AI::queryInventoryType(AIType which) {
-	int		i, count;
-
 	if (which == ITEM_MONKEYSTONE)
 		return getMonkeystoneAmount();
 	if (which == ITEM_GOO_CUP)
@@ -189,8 +183,8 @@ int AI::queryInventoryType(AIType which) {
 	if (!_numInventory)
 		return 0;
 
-	count = 0;
-	for (i = 0; i < _numInventory; i++)
+	int count = 0;
+	for (int i = 0; i < _numInventory; i++)
 		if (_inventory[i].ent.type == which)
 			count++;
 
@@ -198,20 +192,16 @@ int AI::queryInventoryType(AIType which) {
 }
 
 int AI::queryInventoryTypeSlot(AIType which) {
-	int i;
-
 	if (!_numInventory)
 		return 0;
 
-	for (i = 0; i < _numInventory; i++)
+	for (int i = 0; i < _numInventory; i++)
 		if (_inventory[i].ent.type == which)
 			return i;
 	return -1;
 }
 
 bool AI::removeInvItemType(AIType which, int amount) {
-	int		i, j, found;
-
 	// Check specially for Gems, Monkeystones and Goo Cups
 	if (which == ITEM_GEM_WHITE) {
 		_numGems -= amount;
@@ -227,12 +217,13 @@ bool AI::removeInvItemType(AIType which, int amount) {
 	if (!_numInventory)
 		return false;
 
+	bool found;
 	do {
-		found = 0;
+		found = false;
 
-		for (i = 0; i < _numInventory; i++)
+		for (int i = 0; i < _numInventory; i++)
 			if (_inventory[i].ent.type == which) {
-				j = i;
+				int j = i;
 				memset(&_inventory[j], 0, sizeof(InvEnt));
 				while (j < _numInventory - 1) {
 					memcpy(&_inventory[j], &_inventory[j + 1], sizeof(InvEnt));
@@ -241,7 +232,7 @@ bool AI::removeInvItemType(AIType which, int amount) {
 				}
 				_numInventory--;
 				amount--;
-				found = 1;
+				found = true;
 				if (!amount)
 					break;
 			}
@@ -255,11 +246,9 @@ bool AI::removeInvItemType(AIType which, int amount) {
 }
 
 bool AI::addItemToInventory(AIType type, int amount, const char *funcInit, const char *funcAction, const char *funcUse) {
-	int		i;
-	AIEntity *e;
-	for (i = 0; i < amount; i++) {
+	for (int i = 0; i < amount; i++) {
 		spawn(type, DIR_UP, 0, 0, funcInit, funcAction, funcUse, DIR_UP, 1, 0, 0, 1);
-		e = findEntity(0, 0);
+		AIEntity *e = findEntity(0, 0);
 		if (!e)
 			return false;
 		if (!addToInventory(e))
@@ -269,9 +258,10 @@ bool AI::addItemToInventory(AIType type, int amount, const char *funcInit, const
 }
 
 void AI::keepInvItem(AIType type) {
-	for (int i = 0; i < _numInventory; i++)
+	for (int i = 0; i < _numInventory; i++) {
 		if (_inventory[i].ent.type == type)
 			_inventory[i].keep = 1;
+	}
 }
 
 void AI::printYouGotMsg(const char *name) {
