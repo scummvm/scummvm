@@ -24,6 +24,10 @@
 
 #include "petka/base.h"
 #include "petka/big_dialogue.h"
+#include "petka/interfaces/main.h"
+#include "petka/interfaces/dialog_interface.h"
+#include "petka/objects/heroes.h"
+#include "petka/q_system.h"
 #include "petka/petka.h"
 
 namespace Petka {
@@ -245,8 +249,10 @@ void BigDialogue::sub40B670(int arg) {
 			if (unk)
 				_ip += 1;
 			else {
-				assert(0);
-				//sendSaidMsgToTalker
+				g_vm->getQSystem()->_mainInterface->_dialog.sendMsg(kSaid);
+				g_vm->getQSystem()->_mainInterface->_dialog._field4 = 1;
+				g_vm->getQSystem()->_mainInterface->_dialog.restoreCursorState();
+				g_vm->getQSystem()->addMessage(g_vm->getQSystem()->_chapayev->_id, kUserMsg, *_ip);
 			}
 			return;
 		case 10:
