@@ -187,7 +187,7 @@ void LuaScript::purgeGlobals() {
 	_globals.clear();
 }
 
-void LuaScript::save(Common::OutSaveFile *out, int slot) {
+void LuaScript::save(Common::OutSaveFile *out) {
 	out->writeUint32LE(_globals.size());
 
 	// Save Globals
@@ -198,15 +198,18 @@ void LuaScript::save(Common::OutSaveFile *out, int slot) {
 		out->write(_globals[i]->string, 32);
 	}
 
-	Common::String saveLuaName = g_hdb->genSaveFileName(slot, true);
+	g_hdb->_currentOutSaveFile = out;
+
 	lua_printstack(_state);
 	lua_getglobal(_state, "SaveState");
 
-	lua_pushstring(_state, saveLuaName.c_str());
+	lua_pushstring(_state, "tempSave"); // the save file will be ignored
 	lua_call(_state, 1, 0);
+
+	g_hdb->_currentOutSaveFile = NULL;
 }
 
-void LuaScript::loadSaveFile(Common::InSaveFile *in, const char *fName) {
+void LuaScript::loadSaveFile(Common::InSaveFile *in) {
 	// Clear out all globals
 	_globals.clear();
 
@@ -223,10 +226,14 @@ void LuaScript::loadSaveFile(Common::InSaveFile *in, const char *fName) {
 		_globals.push_back(g);
 	}
 
+	g_hdb->_currentInSaveFile = in;
+
 	lua_getglobal(_state, "LoadState");
-	lua_pushstring(_state, fName);
+	lua_pushstring(_state, "tempSave");		// it will be ignored
 
 	lua_call(_state, 1, 0);
+
+	g_hdb->_currentInSaveFile = NULL;
 }
 
 void LuaScript::setLuaGlobalValue(const char *name, int value) {
@@ -1342,28 +1349,17 @@ static int playVoice(lua_State *L) {
 }
 
 static int openFile(lua_State *L) {
-
-	const char *fName = lua_tostring(L, 1);
-	const char *mode = lua_tostring(L, 2);
-
 	g_hdb->_lua->checkParameters("openFile", 2);
 
-	lua_pop(L, 2);
+	lua_pop(L, 2); // drop 2 parameters
 
-	if (!scumm_stricmp(mode, "wt")) {
-		Common::OutSaveFile *outLua = g_system->getSavefileManager()->openForSaving(fName);
-		if (!outLua)
-			error("Cannot open %s", fName);
-		lua_pushlightuserdata(L, outLua);
-	} else {
-		error("LUA openFile: Unsupported mode '%s'", mode);
-	}
+	lua_pushlightuserdata(L, 0);
 
 	return 1;
 }
 
 static int write(lua_State *L) {
-	Common::OutSaveFile *out = (Common::OutSaveFile *)lua_topointer(L, 1);
+	Common::OutSaveFile *out = g_hdb->_currentOutSaveFile;
 	const char *data = lua_tostring(L, 2);
 
 	g_hdb->_lua->checkParameters("write", 2);
@@ -1376,30 +1372,21 @@ static int write(lua_State *L) {
 }
 
 static int closeFile(lua_State *L) {
-	Common::OutSaveFile *out = (Common::OutSaveFile *)lua_topointer(L, 1);
-
 	g_hdb->_lua->checkParameters("closeFile", 1);
 
 	lua_pop(L, 1);
 
-	out->finalize();
-
-	delete out;
+	// No op
 
 	return 0;
 }
 
 static int dofile(lua_State *L) {
-	const char *fName = lua_tostring(L, 1);
-
 	g_hdb->_lua->checkParameters("dofile", 1);
 
 	lua_pop(L, 1);
 
-	Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(fName);
-
-	if (!in)
-		error("Lua dofile: cannot open file '%s'", fName);
+	Common::InSaveFile *in = g_hdb->_currentInSaveFile;
 
 	int length = in->size();
 	char *chunk = new char[length + 1];
@@ -1410,9 +1397,7 @@ static int dofile(lua_State *L) {
 	Common::String chunkString(chunk);
 	delete[] chunk;
 
-	delete in;
-
-	if (!g_hdb->_lua->executeChunk(chunkString, fName)) {
+	if (!g_hdb->_lua->executeChunk(chunkString, "saveState")) {
 		return 0;
 	}
 

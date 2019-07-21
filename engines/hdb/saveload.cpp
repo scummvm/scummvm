@@ -60,7 +60,7 @@ Common::Error HDBGame::saveGameState(int slot, const Common::String &desc) {
 
 	// Actual Save Data
 	saveGame(out);
-	_lua->save(out, slot);
+	_lua->save(out);
 
 	out->finalize();
 	if (out->err())
@@ -91,8 +91,7 @@ Common::Error HDBGame::loadGameState(int slot) {
 
 	_lua->loadLua(_currentLuaName); // load the Lua code FIRST! (if no file, it's ok)
 
-	saveFileName = genSaveFileName(slot, true);
-	_lua->loadSaveFile(in, saveFileName.c_str());
+	_lua->loadSaveFile(in);
 
 	delete in;
 
