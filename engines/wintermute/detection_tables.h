@@ -82,7 +82,7 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"juliastars",      "J.U.L.I.A.: Among the Stars"},
 	{"juliastarshd",    "J.U.L.I.A.: Among the Stars HD"},
 	{"juliauntold",     "J.U.L.I.A.: Untold"},
-	{"mentelrepairs",   "Mental Repairs Inc"},
+	{"mentalrepairs",   "Mental Repairs Inc"},
 	{"mirage",          "Mirage"},
 	{"nighttrain",      "Night Train"},
 	{"oknytt",          "Oknytt"},
@@ -779,13 +779,13 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Mental Repairs Inc (English)
 	// NOTE: This is a 2.5D game that is out of ScummVM scope
-	WME_WINENTRY("mentelrepairs", "",
+	WME_WINENTRY("mentalrepairs", "",
 		WME_ENTRY2s("data.dcp", "414d423bbff697f22fb38932f030e897", 59518068,
 					"english.dcp", "7573eb584e662adbc5fa3b1448e56106", 3160232), Common::EN_ANY, ADGF_UNSTABLE, WME_1_8_6),
 
 	// Mental Repairs Inc (German)
 	// NOTE: This is a 2.5D game that is out of ScummVM scope
-	WME_WINENTRY("mentelrepairs", "",
+	WME_WINENTRY("mentalrepairs", "",
 		WME_ENTRY2s("data.dcp", "414d423bbff697f22fb38932f030e897", 59518068,
 					"german.dcp", "af59a05ef29768e7fced3794a7a380a3", 3249142), Common::DE_DEU, ADGF_UNSTABLE, WME_1_8_6),
 
