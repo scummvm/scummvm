@@ -431,8 +431,8 @@ void GameManager2::drawMapExits() {
 		(_currentRoom->getId() >= FLOORDOOR && _currentRoom->getId() <= BST_DOOR))
 		compass();
 	else {
-		int idx;
 		for (int i = 0; i < 25; i++) {
+			int idx;
 			if ((idx = _exitList[i]) != -1) {
 				byte r = _currentRoom->getObject(idx)->_direction;
 				int x = 284 + 7 * (r % 5);
@@ -1068,16 +1068,16 @@ void GameManager2::passageConstruction() {
 		}
 	}
 	_rooms[PYR_ENTRANCE]->setSectionVisible(9, 
-			 _rooms[PYR_ENTRANCE]->isSectionVisible(7) &
+			 _rooms[PYR_ENTRANCE]->isSectionVisible(7) &&
 			!_rooms[PYR_ENTRANCE]->isSectionVisible(1));
 	_rooms[PYR_ENTRANCE]->setSectionVisible(10, 
-			 _rooms[PYR_ENTRANCE]->isSectionVisible(7) &
+			 _rooms[PYR_ENTRANCE]->isSectionVisible(7) &&
 			!_rooms[PYR_ENTRANCE]->isSectionVisible(2));
 	_rooms[PYR_ENTRANCE]->setSectionVisible(11, 
-			 _rooms[PYR_ENTRANCE]->isSectionVisible(8) &
+			 _rooms[PYR_ENTRANCE]->isSectionVisible(8) &&
 			!_rooms[PYR_ENTRANCE]->isSectionVisible(3));
 	_rooms[PYR_ENTRANCE]->setSectionVisible(12, 
-			 _rooms[PYR_ENTRANCE]->isSectionVisible(8) &
+			 _rooms[PYR_ENTRANCE]->isSectionVisible(8) &&
 			!_rooms[PYR_ENTRANCE]->isSectionVisible(4));
 }
 
@@ -1141,8 +1141,8 @@ byte GameManager2::wall(int s, int z, int direction, int stepsForward, int steps
 			{0,0,0,0,0,0,0,0,0,0,0,0}
 		}
 	};
-	int newR;
 	if (stepsRight) {
+		int newR;
 		if (stepsRight > 0)
 			newR = (direction + 1) & 3;
 		else {
@@ -1337,9 +1337,9 @@ void GameManager2::crack(int time) {
 	_cracking = true;
 	_vm->_screen->changeCursor(ResourceManager::kCursorWait);
 	int t = 0;
-	int z;
 	int zv = 0;
 	do {
+		int z;
 		do {
 			wait(1);
 		} while ((z = (g_system->getMillis() - _state._startTime) / 600) == zv);

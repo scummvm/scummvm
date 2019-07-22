@@ -120,7 +120,7 @@ int writePixelData(std::ofstream &output, int imageNum, int skip) {
 	char *buf = new char[length];
 	image.read(buf, length);
 	output.write(buf, length);
-	delete buf;
+	delete[] buf;
 	return length;
 }
 
