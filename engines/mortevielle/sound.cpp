@@ -27,10 +27,15 @@
 
 #include "mortevielle/mortevielle.h"
 #include "mortevielle/sound.h"
+#include "mortevielle/dialogs.h"
 
 #include "audio/audiostream.h"
 #include "audio/decoders/raw.h"
 #include "common/scummsys.h"
+#include "common/config-manager.h"
+#ifdef USE_TTS
+#include "common/text-to-speech.h"
+#endif
 
 namespace Mortevielle {
 
@@ -62,6 +67,14 @@ SoundManager::SoundManager(MortevielleEngine *vm, Audio::Mixer *mixer) {
 	_audioStream = nullptr;
 	_ambiantNoiseBuf = nullptr;
 	_noiseBuf = nullptr;
+#ifdef USE_TTS
+	_ttsMan = g_system->getTextToSpeechManager();
+	_ttsMan->setLanguage(ConfMan.get("language"));
+	_ttsMan->stop();
+	_ttsMan->setRate(0);
+	_ttsMan->setPitch(0);
+	_ttsMan->setVolume(100);
+#endif //USE_TTS
 
 	_soundType = 0;
 	_phonemeNumb = 0;
@@ -196,6 +209,12 @@ void SoundManager::litph(tablint &t, int typ, int tempo) {
 	if (!_buildingSentence) {
 		if (_mixer->isSoundHandleActive(_soundHandle))
 			_mixer->stopHandle(_soundHandle);
+#ifdef USE_TTS
+		if (_ttsMan) {
+			if (_ttsMan->isSpeaking())
+				_ttsMan->stop();
+		}
+#endif // USE_TTS
 		_buildingSentence = true;
 	}
 	int freq = tempo * 252; // 25.2 * 10
@@ -759,14 +778,55 @@ void SoundManager::handlePhoneme() {
  * @remarks	Originally called 'parole'
  */
 void SoundManager::startSpeech(int rep, int ht, int typ) {
+	if (_vm->_soundOff)
+		return;
+
+	if (typ == 0) {
+		// Speech
+#ifdef USE_TTS
+		if (!_ttsMan)
+			return;
+		Common::Array<int> voices;
+		int pitch;
+		bool male;
+		if (ht > 5) {
+			voices = _ttsMan->getVoiceIndicesByGender(Common::TTSVoice::FEMALE);
+			pitch = ht - 6;
+			pitch *= 5;
+			male = false;
+		} else {
+			voices = _ttsMan->getVoiceIndicesByGender(Common::TTSVoice::MALE);
+			pitch = ht - 5;
+			pitch *= 4;
+			male = true;
+		}
+		// If there is no voice available for the given gender, just set it to the 0th
+		// voice
+		if (voices.empty())
+			_ttsMan->setVoice(0);
+		else {
+			_ttsMan->setVoice(voices[0]);
+		}
+		// If the selected voice is a different gender, than we want, just try to
+		// set the pitch so it may sound a little bit closer to the gender we want
+		if (!((_ttsMan->getVoice().getGender() == Common::TTSVoice::MALE) == male)) {
+			if (male)
+				pitch -= 50;
+			else
+				pitch += 50;
+		}
+
+		_ttsMan->setPitch(pitch);
+		_ttsMan->say(_vm->getString(rep + kDialogStringIndex), "CP850");
+#else
+		return;
+#endif // USE_TTS
+	}
 	uint16 savph[501];
 	int tempo;
 
 	// Hack to avoid a crash in the ending version. To be removed when the speech are implemented
 	if ((rep == 141) && (typ == 0))
-		return;
-
-	if (_vm->_soundOff)
 		return;
 
 	_phonemeNumb = rep;
@@ -776,10 +836,11 @@ void SoundManager::startSpeech(int rep, int ht, int typ) {
 		for (int i = 0; i <= 500; ++i)
 			savph[i] = _cfiphBuffer[i];
 		tempo = kTempoNoise;
-	} else if (haut > 5)
+	} else if (haut > 5) {
 		tempo = kTempoF;
-	else
+	} else {
 		tempo = kTempoM;
+	}
 	_vm->_addFix = (float)((tempo - 8)) / 256;
 	cctable(_tbi);
 	switch (typ) {
@@ -810,11 +871,15 @@ void SoundManager::startSpeech(int rep, int ht, int typ) {
 }
 
 void SoundManager::waitSpeech() {
-	while (_mixer->isSoundHandleActive(_soundHandle) && !_vm->keyPressed() && !_vm->_mouseClick && !_vm->shouldQuit())
+#ifdef USE_TTS
+	if (!_ttsMan)
+		return;
+	while (_ttsMan->isSpeaking() && !_vm->keyPressed() && !_vm->_mouseClick && !_vm->shouldQuit())
 		;
 	// In case the handle is still active, stop it.
-	_mixer->stopHandle(_soundHandle);
+	_ttsMan->stop();
 
+#endif // USE_TTS
 	if (!_vm->keyPressed() && !_vm->_mouseClick && !_vm->shouldQuit())
 		g_system->delayMillis(600);
 }
