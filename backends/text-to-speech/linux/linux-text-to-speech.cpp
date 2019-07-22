@@ -28,6 +28,7 @@
 #if defined(USE_LINUX_TTS)
 #include <speech-dispatcher/libspeechd.h>
 #include "backends/platform/sdl/sdl-sys.h"
+//#include <iconv.h>
 
 #include "common/translation.h"
 #include "common/debug.h"
@@ -116,9 +117,40 @@ Common::String LinuxTextToSpeechManager::strToUtf8(Common::String str, Common::S
 	if (conv_text) {
 		result = conv_text;
 		SDL_free(conv_text);
-	}
+	} else if (charset != "ASCII"){
+		warning("Could not convert text from %s to UTF-8, trying ASCII", charset.c_str());
+		return strToUtf8(str, "ASCII");
+	} else
+		warning("Could not convert text to UTF-8");
 
 	return result;
+
+	// ICONV implementation (supports more charsets)
+    /*size_t inbytes = str.size();
+	char *inStr = new char[inbytes + 1];
+	char *in = inStr;
+	strcpy(inStr, str.c_str());
+
+    size_t outbytes = str.size() * 2 - 1;
+	char *destStr = new char[outbytes + 1];
+    char *out = destStr;
+    iconv_t conv = iconv_open("UTF-8//IGNORE", charset.c_str());
+
+    if (conv == (iconv_t)-1) {
+        warning("Could not convert string from: %s to UTF-8", charset.c_str());
+        return "";
+    }
+
+    if (iconv(conv, &in, &inbytes, &out, &outbytes) == (size_t)-1) {
+        warning("Could not convert string from: %s to UTF-8", charset.c_str());
+        return "";
+    }
+
+    destStr[outbytes + 1] = 0;
+	Common::String result = destStr;
+	delete[] inStr;
+	delete[] destStr;
+	return result; */
 #else
 	return Common::String();
 #endif
@@ -135,6 +167,8 @@ bool LinuxTextToSpeechManager::say(Common::String str, Common::String charset) {
 		charset = "ASCII";
 #endif
 	}
+	debug("charset: %s", charset.c_str());
+
 	str = strToUtf8(str, charset);
 
 	if (isSpeaking())
