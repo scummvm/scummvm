@@ -893,6 +893,12 @@ static const WMEGameDescription gameDescriptions[] = {
 		WME_ENTRY2s("data.dcp", "b624d3b19e37c094801a28d817bc3d76", 27345755,
 					"english.dcp", "42188d46ee079b555d578ea2b406fa19", 3897), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_1),
 
+	// On the Tracks of Dinosaurs (Beta 2.5) (Italian)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("reptilesquest", "Beta 2.5",
+		WME_ENTRY2s("data.dcp", "b624d3b19e37c094801a28d817bc3d76", 27345755,
+					"italian.dcp", "361f41b1151119f66de851f07b78b7cc", 4132), Common::IT_ITA, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_1),
+
 	// On the Tracks of Dinosaurs (Beta 2.5) (Russian)
 	// NOTE: This is a 2.5D game that is out of ScummVM scope
 	WME_WINENTRY("reptilesquest", "Beta 2.5",
