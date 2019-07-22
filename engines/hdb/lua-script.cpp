@@ -76,11 +76,14 @@ struct ScriptPatch {
 
 	{"MAP29.LUA", "Message( format( \"", "Message( string.format( \""}, // line 195
 
+	{"MAP30.LUA", "rots = 19 + random( 6 )", "rots = 19 + math.random( 6 )"}, // line 208
 	{"MAP30.LUA", "if i1 > getn(tiles)", "if i1 > #tiles"}, // line 211
 	{"MAP30.LUA", "if i2 > getn(tiles)", "if i2 > #tiles"}, // line 212
 	{"MAP30.LUA", "if i3 > getn(tiles)", "if i3 > #tiles"}, // line 213
+	{"MAP30.LUA", "rots = 13 + random( 4 )", "rots = 13 + math.random( 4 )"}, // line 234
 	{"MAP30.LUA", "if i2 > getn(tiles)", "if i2 > #tiles"}, // line 237
 	{"MAP30.LUA", "if i3 > getn(tiles)", "if i3 > #tiles"}, // line 238
+	{"MAP30.LUA", "rots = 13 + random( 4 )", "rots = 13 + math.random( 4 )"}, // line 258
 	{"MAP30.LUA", "if i3 > getn(tiles)", "if i3 > #tiles"}, // line 261
 
 	{NULL, NULL, NULL}
