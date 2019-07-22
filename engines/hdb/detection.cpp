@@ -109,6 +109,7 @@ public:
 	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual int getMaximumSaveSlot() const;
 	virtual SaveStateList listSaves(const char *target) const;
+	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
 };
 
@@ -172,6 +173,32 @@ SaveStateList HDBMetaEngine::listSaves(const char *target) const {
 	// Sort saves based on slot number.
 	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
 	return saveList;
+}
+
+SaveStateDescriptor HDBMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
+	Common::ScopedPtr<Common::InSaveFile> in(g_system->getSavefileManager()->openForLoading(Common::String::format("%s.%03d", target, slot)));
+
+	if (in) {
+		SaveStateDescriptor desc;
+		char mapName[32];
+		Graphics::Surface *thumbnail;
+
+		if (!Graphics::loadThumbnail(*in, thumbnail)) {
+			warning("Error loading thumbnail");
+		}
+		desc.setThumbnail(thumbnail);
+
+		uint32 timeSeconds = in->readUint32LE();;
+		in->read(mapName, 32);
+
+		desc.setSaveSlot(slot);
+		desc.setPlayTime(timeSeconds * 1000);
+		desc.setDescription(mapName);
+
+		return desc;
+	}
+
+	return SaveStateDescriptor();
 }
 
 bool HDBMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
