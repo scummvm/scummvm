@@ -58,25 +58,25 @@ void WindowsTextToSpeechManager::init() {
 	if (FAILED(::CoInitialize(NULL)))
 		return;
 
-	// init voice
-	HRESULT hr = CoCreateInstance(CLSID_SpVoice, NULL, CLSCTX_ALL, IID_ISpVoice, (void **)&_voice);
-	if (!SUCCEEDED(hr)) {
-		warning("Could not initialize TTS voice");
-		return;
-	}
-	setLanguage("en");
-
 	// init audio
 	CSpStreamFormat format;
 	format.AssignFormat(SPSF_11kHz8BitMono);
 	ISpObjectToken *pToken;
-	hr = SpGetDefaultTokenFromCategoryId(SPCAT_AUDIOOUT, &pToken);
+	HRESULT hr = SpGetDefaultTokenFromCategoryId(SPCAT_AUDIOOUT, &pToken);
 	if (FAILED(hr)) {
 		warning("Could not initialize TTS audio");
 		return;
 	}
 	pToken->CreateInstance(NULL, CLSCTX_ALL, IID_ISpAudio, (void **)&_audio);
 	_audio->SetFormat(format.FormatId(), format.WaveFormatExPtr());
+
+	// init voice
+	hr = CoCreateInstance(CLSID_SpVoice, NULL, CLSCTX_ALL, IID_ISpVoice, (void **)&_voice);
+	if (!SUCCEEDED(hr)) {
+		warning("Could not initialize TTS voice");
+		return;
+	}
+	setLanguage("en");
 	_voice->SetOutput(_audio, FALSE);
 
 	if(_ttsState->_availableVoices.size() > 0)
@@ -211,11 +211,9 @@ int WindowsTextToSpeechManager::getVolume() {
 }
 
 void WindowsTextToSpeechManager::freeVoices() {
-	for(Common::TTSVoice *i = _ttsState->_availableVoices.begin(); i < _ttsState->_availableVoices.end(); i++) {
-		ISpObjectToken *voiceData = (ISpObjectToken *)i->getData();
-		voiceData->Release();
-	}
 	_ttsState->_availableVoices.clear();
+	// The voice data gets freed automaticly, when the reference counting inside TTSVoice
+	// reaches 0, so there is no point in trying to free it here
 }
 
 void WindowsTextToSpeechManager::setLanguage(Common::String language) {
@@ -234,6 +232,11 @@ void WindowsTextToSpeechManager::createVoice(void *cpVoiceToken) {
 	SpGetDescription(voiceToken, &descW);
 	char *buffer = Win32::unicodeToAnsi(descW);
 	Common::String desc = buffer;
+	if (desc == "Sample TTS Voice") {
+		// This is really bad voice, it is basicaly unusable
+		free(buffer);
+		return;
+	}
 	free(buffer);
 
 	// voice attributes
@@ -290,7 +293,7 @@ void WindowsTextToSpeechManager::createVoice(void *cpVoiceToken) {
 	free(buffer);
 	CoTaskMemFree(data);
 
-	_ttsState->_availableVoices.push_back(Common::TTSVoice(gender, Common::TTSVoice::ADULT, (void *) voiceToken, desc));
+	_ttsState->_availableVoices.push_back(Common::TTSVoice(gender, age, (void *) voiceToken, desc));
 }
 
 int strToInt(Common::String str) {
@@ -337,6 +340,11 @@ void WindowsTextToSpeechManager::updateVoices() {
 		else
 			cpVoiceToken->Release();
 	}
+	// stop the test speech, we don't use stop(), because we don't wan't it to set state to READY
+	// and we could easily be in NO_VOICE or BROKEN state here, in which the stop() wouldn't work
+	_audio->SetState(SPAS_STOP, 0);
+	_audio->SetState(SPAS_RUN, 0);
+	_voice->Speak(NULL, SPF_PURGEBEFORESPEAK | SPF_ASYNC | SPF_IS_NOT_XML, 0);
 	_voice->SetVolume(_ttsState->_volume);
 	cpEnum->Release();
 
