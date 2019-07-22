@@ -213,6 +213,12 @@ bool HDBGame::restartMap() {
 		_ai->setGemAmount(100);
 	}
 
+	if (!strcmp(_currentLuaName, "MAP29.LUA")) {
+		// Finish MAP29
+
+		_ai->_numGooCups = 8;
+	}
+
 #endif
 
 	_lua->loadLua(_currentLuaName);
