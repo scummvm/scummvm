@@ -1020,6 +1020,8 @@ void Menu::fillSavegameSlots() {
 		if (!in) {
 			memset(&_saveGames[i], 0, sizeof(Save));
 		} else {
+			Graphics::skipThumbnail(*in);
+
 			strcpy(_saveGames[i].saveID, saveGameFile.c_str());
 			_saveGames[i].seconds = in->readUint32LE();
 			in->read(_saveGames[i].mapName, 32);
