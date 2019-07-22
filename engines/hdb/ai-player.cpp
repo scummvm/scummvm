@@ -107,8 +107,10 @@ void aiPlayerInit2(AIEntity *e) {
 }
 
 void aiPlayerAction(AIEntity *e) {
-	AIState stand[5] = {STATE_NONE, STATE_STANDUP, STATE_STANDDOWN, STATE_STANDLEFT, STATE_STANDRIGHT};
-	int xvAhead[5] = {9, 0, 0, -1, 1}, yvAhead[5] = {9, -1, 1, 0, 0};
+	static const AIState stand[5] = {STATE_NONE, STATE_STANDUP, STATE_STANDDOWN, STATE_STANDLEFT, STATE_STANDRIGHT};
+	static const int xvAhead[5] = {9, 0, 0, -1, 1};
+	static const int yvAhead[5] = {9, -1, 1, 0, 0};
+
 	AIEntity *hit = NULL;
 
 	// Draw the STUN lightning if it exists
@@ -473,9 +475,8 @@ void aiGemAttackInit(AIEntity *e) {
 }
 
 void aiGemAttackAction(AIEntity *e) {
-	int xv[5] = {9, 0, 0, -1, 1}, yv[5] = {9, -1, 1, 0, 0};
-	AIEntity *hit;
-	int		result;
+	static const int xv[5] = {9, 0, 0, -1, 1};
+	static const int yv[5] = {9, -1, 1, 0, 0};
 
 	switch (e->sequence) {
 		// flying out at something
@@ -486,10 +487,10 @@ void aiGemAttackAction(AIEntity *e) {
 			g_hdb->_ai->checkActionList(e, e->tileX, e->tileY, false);
 			g_hdb->_ai->checkAutoList(e, e->tileX, e->tileY);
 
-			hit = g_hdb->_ai->findEntityIgnore(e->tileX, e->tileY, e);
+			AIEntity *hit = g_hdb->_ai->findEntityIgnore(e->tileX, e->tileY, e);
 			uint32 bgFlags = g_hdb->_map->getMapBGTileFlags(e->tileX, e->tileY);
 			uint32 fgFlags = g_hdb->_map->getMapFGTileFlags(e->tileX, e->tileY);
-			result = (e->level == 1 ? (bgFlags & (kFlagSolid)) : !(fgFlags & kFlagGrating) && (bgFlags & (kFlagSolid)));
+			int result = (e->level == 1 ? (bgFlags & (kFlagSolid)) : !(fgFlags & kFlagGrating) && (bgFlags & (kFlagSolid)));
 			if (hit) {
 				switch (hit->type) {
 				case AI_CHICKEN:
@@ -791,30 +792,29 @@ void aiBarrelExplodeAction(AIEntity *e) {
 }
 
 void aiBarrelExplodeSpread(AIEntity *e) {
-	AIEntity *e2;
+	static const int xv1[4] = {-1,  1, -1,  0};
+	static const int yv1[4] = {-1, -1,  0, -1};
+	static const int xv2[4] = {1,  0,  1, -1};
+	static const int yv2[4] = {0,  1,  1,  1};
+
 	int	x = e->tileX;
 	int	y = e->tileY;
-	int	xv, yv;
 	int	index = e->animFrame;
-	int	xv1[4] = {-1,  1, -1,  0};
-	int yv1[4] = {-1, -1,  0, -1};
-	int xv2[4] = {1,  0,  1, -1};
-	int yv2[4] = {0,  1,  1,  1};
 
 	// are we just starting an explosion ring?
 	if (e->animDelay != e->animCycle)
 		return;
 
 	// the animation frame is the index into which set of 2 explosions to spawn
-	xv = xv1[index];
-	yv = yv1[index];
+	int xv = xv1[index];
+	int yv = yv1[index];
 
 	// explosion 1: check to see if we can explode (non-solid tile)
 	// if so, spawn it and mark it in the explosion matrix
 	if (!(g_hdb->_map->getMapBGTileFlags(x + xv, y + yv) & kFlagSolid) && !g_hdb->_map->explosionExist(x + xv, y + yv)) {
 		aiBarrelBlowup(e, x + xv, y + yv);
 		// are we blowing up on another BOOMBARREL?  if so, start it exploding.
-		e2 = g_hdb->_ai->findEntity(x + xv, y + yv);
+		AIEntity *e2 = g_hdb->_ai->findEntity(x + xv, y + yv);
 		if (e2 && e2->state != STATE_EXPLODING) {
 			switch (e2->type) {
 			case AI_GUY:
@@ -858,7 +858,7 @@ void aiBarrelExplodeSpread(AIEntity *e) {
 	if (!(g_hdb->_map->getMapBGTileFlags(x + xv, y + yv) & kFlagSolid) && !g_hdb->_map->explosionExist(x + xv, y + yv)) {
 		aiBarrelBlowup(e, x + xv, y + yv);
 		// are we blowing up on another BOOMBARREL?  if so, start it exploding.
-		e2 = g_hdb->_ai->findEntity(x + xv, y + yv);
+		AIEntity *e2 = g_hdb->_ai->findEntity(x + xv, y + yv);
 		if (e2 && e2->state != STATE_EXPLODING) {
 			switch (e2->type) {
 			case AI_GUY:
@@ -1590,17 +1590,14 @@ void aiMonkeystoneUse(AIEntity *e) {
 }
 
 void aiGemAction(AIEntity *e) {
-	AIEntity *p;
-	int tolerance;
-
 	e->animFrame++;
 	if (e->animFrame >= e->standdownFrames) {
 		e->animFrame = 0;
 
 		// every 4th frame, check for player collision &
 		// add to inventory if it happens
-		p = g_hdb->_ai->getPlayer();
-		tolerance = 16;
+		AIEntity *p = g_hdb->_ai->getPlayer();
+		int tolerance = 16;
 		if (g_hdb->_ai->playerRunning())
 			tolerance = 24;
 

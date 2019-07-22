@@ -171,8 +171,6 @@ bool Gfx::init() {
 }
 
 void Gfx::save(Common::OutSaveFile *out) {
-	int i;
-
 	out->writeSint32LE(_currentSky);
 
 	out->writeByte(_fadeInfo.active);
@@ -183,19 +181,17 @@ void Gfx::save(Common::OutSaveFile *out) {
 	out->writeSint32LE(_fadeInfo.curStep);
 
 	out->writeByte(_snowInfo.active);
-	for (i = 0; i < MAX_SNOW; i++)
+	for (int i = 0; i < MAX_SNOW; i++)
 		out->writeDoubleLE(_snowInfo.x[i]);
-	for (i = 0; i < MAX_SNOW; i++)
+	for (int i = 0; i < MAX_SNOW; i++)
 		out->writeDoubleLE(_snowInfo.y[i]);
-	for (i = 0; i < MAX_SNOW; i++)
+	for (int i = 0; i < MAX_SNOW; i++)
 		out->writeDoubleLE(_snowInfo.yv[i]);
-	for (i = 0; i < MAX_SNOW; i++)
+	for (int i = 0; i < MAX_SNOW; i++)
 		out->writeSint32LE(_snowInfo.xvindex[i]);
 }
 
 void Gfx::loadSaveFile(Common::InSaveFile *in) {
-	int i;
-
 	_currentSky = in->readSint32LE();
 
 	_fadeInfo.active = in->readByte();
@@ -207,13 +203,13 @@ void Gfx::loadSaveFile(Common::InSaveFile *in) {
 
 	_snowInfo.active = in->readByte();
 
-	for (i = 0; i < MAX_SNOW; i++)
+	for (int i = 0; i < MAX_SNOW; i++)
 		_snowInfo.x[i] = in->readDoubleLE();
-	for (i = 0; i < MAX_SNOW; i++)
+	for (int i = 0; i < MAX_SNOW; i++)
 		_snowInfo.y[i] = in->readDoubleLE();
-	for (i = 0; i < MAX_SNOW; i++)
+	for (int i = 0; i < MAX_SNOW; i++)
 		_snowInfo.yv[i] = in->readDoubleLE();
-	for (i = 0; i < MAX_SNOW; i++)
+	for (int i = 0; i < MAX_SNOW; i++)
 		_snowInfo.xvindex[i] = in->readSint32LE();
 
 	setSky(_currentSky);
@@ -387,9 +383,8 @@ void Gfx::updateFade() {
 }
 
 void Gfx::turnOnSnow() {
-	int		i;
 	_snowInfo.active = true;
-	for (i = 0; i < MAX_SNOW; i++) {
+	for (int i = 0; i < MAX_SNOW; i++) {
 		_snowInfo.x[i] = g_hdb->_rnd->getRandomNumber(kScreenWidth - 1);
 		_snowInfo.y[i] = g_hdb->_rnd->getRandomNumber(kScreenHeight - 1);
 		_snowInfo.yv[i] = g_hdb->_rnd->getRandomNumber(2) + 1;
@@ -434,7 +429,6 @@ Tile *Gfx::loadIcon(const char *tileName) {
 }
 
 Tile *Gfx::getTile(int index) {
-
 	if (index < 0 || index > _numTiles) {
 		if (index != 0xFFFF)
 			debug(6, "getTile(%d): wrong index > %d", index, _numTiles);
@@ -535,7 +529,7 @@ bool Gfx::selectGfxType(const char *name) {
 
 Tile *Gfx::getTileGfx(const char *name, int32 size) {
 	// Try to find graphic
-	for (Common::Array<GfxCache *>::iterator it = _gfxCache->begin(); it != _gfxCache->end(); it++) {
+	for (Common::Array<GfxCache *>::iterator it = _gfxCache->begin(); it != _gfxCache->end(); ++it) {
 		if (Common::matchString((*it)->name, name)) {
 			if ((*it)->loaded == -1) {	// Marked for Deletetion?
 				(*it)->loaded = 1;		// Reactivate it
@@ -559,7 +553,7 @@ Tile *Gfx::getTileGfx(const char *name, int32 size) {
 }
 
 void Gfx::markGfxCacheFreeable() {
-	for (Common::Array<GfxCache *>::iterator it = _gfxCache->begin(); it != _gfxCache->end(); it++)
+	for (Common::Array<GfxCache *>::iterator it = _gfxCache->begin(); it != _gfxCache->end(); ++it)
 		(*it)->loaded = -1;
 }
 
@@ -569,7 +563,7 @@ void Gfx::markTileCacheFreeable() {
 
 Picture *Gfx::getPicGfx(const char *name, int32 size) {
 	// Try to find graphic
-	for (Common::Array<GfxCache *>::iterator it = _gfxCache->begin(); it != _gfxCache->end(); it++) {
+	for (Common::Array<GfxCache *>::iterator it = _gfxCache->begin(); it != _gfxCache->end(); ++it) {
 		if (Common::matchString((*it)->name, name)) {
 			if ((*it)->loaded == -1) {	// Marked for Deletetion?
 				(*it)->loaded = 1;		// Reactivate it
@@ -740,12 +734,11 @@ bool Gfx::loadFont(const char *string) {
 	debug(3, "leading: %d", _fontHeader.leading);
 
 	// Loading _charInfoBlocks & creating character surfaces
-	CharInfo *cInfo;
 	int startPos = stream->pos();	// Position after _fontHeader
 	int curPos;						// Position after reading cInfo
 	uint16 *ptr;
 	for (int i = 0; i < _fontHeader.numChars; i++) {
-		cInfo = new CharInfo;
+		CharInfo *cInfo = new CharInfo;
 		cInfo->width = (int16)stream->readUint32LE();
 		cInfo->offset = (int32)stream->readUint32LE();
 
@@ -856,13 +849,12 @@ void Gfx::getDimensions(const char *string, int *pixelsWide, int *lines) {
 	}
 
 	int width, maxWidth, height;
-	unsigned char c;
 	maxWidth = 0;
 	width = _eLeft;
 	height = 1;
 
 	for (int i = 0; i < (int)strlen(string); i++) {
-		c = string[i];
+		unsigned char c = string[i];
 		width += _charInfoBlocks[c]->width + _fontHeader.kerning + kFontIncrement;
 		if (c == ' ')
 			width += kFontSpace;
@@ -909,9 +901,9 @@ int Gfx::stringLength(const char *string) {
 }
 
 void Gfx::centerPrint(const char *string) {
-	int totalWidth = 0, i;
+	int totalWidth = 0;
 
-	for (i = 0; i < (int)strlen(string); i++) {
+	for (int i = 0; i < (int)strlen(string); i++) {
 		if (string[i] == ' ')
 			totalWidth += kFontSpace;
 		else if (string[i] != '\n')
@@ -957,9 +949,8 @@ void Gfx::getCursor(int *x, int *y) {
 }
 
 void Gfx::turnOnBonusStars(int which) {
-	int	i;
 	_starsInfo.active = true;
-	for (i = 0; i < 10; i++)
+	for (int i = 0; i < 10; i++)
 		_starsInfo.starAngle[i] = (36 * (i + 1)) - 10;
 	if (!_starsInfo.gfx[0]) {
 		switch (which) {
@@ -987,8 +978,6 @@ void Gfx::turnOnBonusStars(int which) {
 }
 
 void Gfx::drawBonusStars() {
-	int		i, w, h;
-
 	if (!_starsInfo.active)
 		return;
 
@@ -997,10 +986,10 @@ void Gfx::drawBonusStars() {
 		_starsInfo.anim = 1 - _starsInfo.anim;
 	}
 
-	w = _starsInfo.gfx[0]->_width / 2;
-	h = _starsInfo.gfx[0]->_height / 2;
+	int w = _starsInfo.gfx[0]->_width / 2;
+	int h = _starsInfo.gfx[0]->_height / 2;
 
-	for (i = 0; i < 10; i++) {
+	for (int i = 0; i < 10; i++) {
 		_starsInfo.gfx[_starsInfo.anim]->drawMasked(
 			(int)(480 / 2 + ((float)_starsInfo.radius / 2)) + (int)((double)_starsInfo.radius * _cosines->at(_starsInfo.starAngle[i]) - w),
 			(480 / 2) + (int)((double)_starsInfo.radius * _sines->at(_starsInfo.starAngle[i]) - h)
@@ -1027,8 +1016,6 @@ void Gfx::drawBonusStars() {
 }
 
 void Gfx::drawDebugInfo(Tile *_debugLogo, int fps) {
-	int x, y;
-	AIEntity *p;
 	char buff[64];
 
 	_debugLogo->drawMasked(kScreenWidth - 32, 0);
@@ -1040,12 +1027,14 @@ void Gfx::drawDebugInfo(Tile *_debugLogo, int fps) {
 
 	// Draw Player Info
 	setCursor(0, 16);
+
+	int x, y;
 	g_hdb->_ai->getPlayerXY(&x, &y);
 	sprintf(buff, "Player X: %d, Y: %d", x / kTileWidth, y / kTileHeight);
 	drawText(buff);
 
 	setCursor(0, 32);
-	p = g_hdb->_ai->getPlayer();
+	AIEntity *p = g_hdb->_ai->getPlayer();
 	if (p) {
 		sprintf(buff, "Player height level: %d", p->level);
 		drawText(buff);
@@ -1071,10 +1060,8 @@ Graphics::Surface Picture::load(Common::SeekableReadStream *stream) {
 	_surface.create(_width, _height, g_hdb->_format);
 	stream->readUint32LE(); // Skip Win32 Surface
 
-	uint16 *ptr;
-
 	for (int y = 0; y < _height; y++) {
-		ptr = (uint16 *)_surface.getBasePtr(0, y);
+		uint16 *ptr = (uint16 *)_surface.getBasePtr(0, y);
 		for (int x = 0; x < _width; x++) {
 			*ptr = TO_LE_16(stream->readUint16LE());
 			ptr++;
@@ -1125,10 +1112,8 @@ Graphics::Surface Tile::load(Common::SeekableReadStream *stream) {
 	_surface.create(32, 32, g_hdb->_format);
 	stream->readUint32LE(); // Skip Win32 Surface
 
-	uint16 *ptr;
-
 	for (uint y = 0; y < 32; y++) {
-		ptr = (uint16 *)_surface.getBasePtr(0, y);
+		uint16 *ptr = (uint16 *)_surface.getBasePtr(0, y);
 		for (uint x = 0; x < 32; x++) {
 			*ptr = TO_LE_16(stream->readUint16LE());
 			ptr++;

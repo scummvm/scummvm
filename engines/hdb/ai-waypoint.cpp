@@ -363,29 +363,29 @@ void AI::clearWaypoints() {
 }
 
 bool AI::traceStraightPath(int x1, int y1, int *x2, int *y2, int *level) {
-	int	xVel, yVel, ok, entOK;
-	AIEntity *e;
-
 	// this checks to make sure we're only going vert or horz
 	if (x1 != *x2 && y1 != *y2)
 		return false;
 
 	// this sets a -1, 0, or 1 step value
-	xVel = *x2 - x1;
+	int xVel = *x2 - x1;
 	if (xVel < 0)
 		xVel = -1;
 	if (xVel > 0)
 		xVel = 1;
 
-	yVel = *y2 - y1;
+	int yVel = *y2 - y1;
 	if (yVel < 0)
 		yVel = -1;
 	if (yVel > 0)
 		yVel = 1;
 
+	AIEntity *e;
 	while (1) {
 		// clear tile ahead?
-		entOK = ok = 0;
+		bool entOK = false;
+		bool ok = false;
+
 		uint32 flags = g_hdb->_map->getMapBGTileFlags(x1, y1);
 		if (flags & kFlagStairTop)
 			*level = 2;
@@ -401,23 +401,23 @@ bool AI::traceStraightPath(int x1, int y1, int *x2, int *y2, int *level) {
 					((flags & kFlagRadFloor) == kFlagRadFloor);
 				e = findEntity(x1, y1);
 				if (e && g_hdb->_ai->walkThroughEnt(e->type))
-					entOK = 1;
+					entOK = true;
 				else if (ok && e && (e->state == STATE_FLOATING || e->state == STATE_MELTED || e == _player))
-					entOK = ok = 1;
+					entOK = ok = true;
 				else
-					ok = 0;
+					ok = false;
 			} else if (ok &&
 				((flags & kFlagWater) == kFlagWater ||
 				(flags & kFlagSlime) == kFlagSlime)) {
 				// if it's non-blocking, is there water or slime?
 				e = findEntity(x1, y1);
 				if (e && g_hdb->_ai->walkThroughEnt(e->type))
-					entOK = 1;
+					entOK = true;
 				else
 					if (e && (e->state == STATE_FLOATING || e->state == STATE_MELTED || e == _player))
-						entOK = ok = 1;
+						entOK = ok = true;
 					else
-						ok = 0;
+						ok = false;
 				}
 		} else {
 			// Floor level 2
@@ -432,23 +432,23 @@ bool AI::traceStraightPath(int x1, int y1, int *x2, int *y2, int *level) {
 						((flags & kFlagRadFloor) == kFlagRadFloor);
 					e = findEntity(x1, y1);
 					if (e && g_hdb->_ai->walkThroughEnt(e->type))
-						entOK = 1;
+						entOK = true;
 					else if (ok && e && (e->state == STATE_FLOATING || e->state == STATE_MELTED || e == _player))
-							entOK = ok = 1;
+							entOK = ok = true;
 					else
-						ok = 0;
+						ok = false;
 				} else if (ok &&
 					((flags & kFlagWater) == kFlagWater ||
 					(flags & kFlagSlime) == kFlagSlime)) {
 					// if it's non-blocking, is there water or slime?
 					e = findEntity(x1, y1);
 					if (e && g_hdb->_ai->walkThroughEnt(e->type))
-						entOK = 1;
+						entOK = true;
 					else
 						if (e && (e->state == STATE_FLOATING || e->state == STATE_MELTED || e == _player))
-							entOK = ok = 1;
+							entOK = ok = true;
 						else
-							ok = 0;
+							ok = false;
 				}
 			}
 		}
@@ -529,16 +529,15 @@ Tile *AI::getStandFrameDir(AIEntity *e) {
 }
 
 void AI::drawWayPoints() {
-	int	i;
-	int	mapX, mapY;
 	static int anim = 0;
 	static uint32 delay = g_hdb->getTimeSlice();
 	static int alpha = 255;
 	static int aVel = -4;
 
+	int	mapX, mapY;
 	g_hdb->_map->getMapXY(&mapX, &mapY);
 
-	for (i = 0; i < _numWaypoints; i++) {
+	for (int i = 0; i < _numWaypoints; i++) {
 		int	x = _waypoints[i].x * kTileWidth;
 		int	y = _waypoints[i].y * kTileHeight;
 
@@ -562,6 +561,7 @@ void AI::drawWayPoints() {
 	// don't animate every single game frame...
 	if (delay > g_hdb->getTimeSlice())
 		return;
+
 	delay = g_hdb->getTimeSlice() + 100;
 
 	// cycle the waypoint gfx animation
