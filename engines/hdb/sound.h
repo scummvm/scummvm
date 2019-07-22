@@ -23,6 +23,30 @@
 #ifndef HDB_SOUND_H
 #define HDB_SOUND_H
 
+#define	SFNAME_TITLE		"jungle"
+#define	SFNAME_MENU			"on_a_mission"
+#define	SFNAME_ROBO			"low_techno"
+#define	SFNAME_MEXI			"ambient_mexi_howl"
+#define	SFNAME_BASSO		"amb_walkin_basso"
+#define	SFNAME_WIND			"dangerous_wind"
+#define	SFNAME_INDUSTRO		"industro_hunch"
+#define	SFNAME_JACKIN		"jaround"
+#define	SFNAME_SNEAKERS		"lost_my_sneakers"
+#define	SFNAME_QUIET		"mysterious_quiet"
+#define	SFNAME_JEEBIES		"jeebies5B"
+#define	SFNAME_VIBRACIOUS	"vibracious_(dope_delivery_mix)"
+#define	SFNAME_ROMANTIC		"romantic"
+#define	SFNAME_ARETHERE		"AreWeThereYet_(extended)"
+
+#define	SFNAME_CORRIDOR		"corridor(extended)"
+#define SFNAME_MOKE			"moke_a_doke_doke"
+#define	SFNAME_TILES		"tilesache(extended)"
+#define SFNAME_DARKVIB		"vibracious_(Dark_Delivery_Mix)"
+#define SFNAME_EXPER		"experimentatus_(extended)"
+
+#define		FIRST_VOICE		V00_AIRLOCK_01
+#define		NUM_VOICES		( LAST_SOUND - FIRST_VOICE )
+
 namespace HDB {
 
 enum {
@@ -1381,7 +1405,7 @@ enum SoundType {
 struct SoundLookUp {
 	SoundType idx;
 	char *name;			// name from MSD .h file
-	char*luaName;		// name for Lua code to use
+	char *luaName;		// name for Lua code to use
 };
 
 class Sound {
