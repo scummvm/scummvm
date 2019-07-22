@@ -134,7 +134,7 @@ void HiRes4Engine::putSpace(uint x, uint y) const {
 
 	_display->moveCursorTo(Common::Point(x, y));
 	_display->printChar(' ');
-	_display->copyTextSurface();
+	_display->renderText();
 	delay(2);
 }
 
@@ -167,7 +167,7 @@ void HiRes4Engine::drawText(const Common::String &str, Common::SeekableReadStrea
 		drawChar(c, shapeTable, pos);
 		drawChar(98, shapeTable, pos);
 
-		_display->copyGfxSurface();
+		_display->renderGraphics();
 		delay(15);
 	}
 }
@@ -223,7 +223,7 @@ void HiRes4Engine::runIntroAdvise(Common::SeekableReadStream &menu) {
 			_display->printAsciiString(left);
 			_display->moveCursorTo(Common::Point(19, y));
 			_display->printAsciiString(right);
-			_display->copyTextSurface();
+			_display->renderText();
 			delay(35);
 		} while (x != backupText[i].size() / 2);
 
@@ -245,7 +245,7 @@ void HiRes4Engine::runIntroAdvise(Common::SeekableReadStream &menu) {
 
 		_display->moveCursorTo(Common::Point(32, 18));
 		_display->printChar(_display->asciiToNative(cursor[cursorIdx]));
-		_display->copyTextSurface();
+		_display->renderText();
 		g_system->delayMillis(25);
 		cursorIdx = (cursorIdx + 1) % cursor.size();
 	}
@@ -269,7 +269,7 @@ void HiRes4Engine::runIntroLogo(Common::SeekableReadStream &ms2) {
 			if (x % 7 == 6)
 				display->setPixelPalette(Common::Point(x, y), p);
 		}
-		display->copyGfxSurface();
+		display->renderGraphics();
 
 		if (shouldQuit()) {
 			delete[] logo;
@@ -288,7 +288,7 @@ void HiRes4Engine::runIntroLogo(Common::SeekableReadStream &ms2) {
 			for (p.x = 0; p.x < (int)width; p.x += 7)
 				display->setPixelByte(Common::Point(p.x, p.y - 1), display->getPixelByte(p));
 
-		display->copyGfxSurface();
+		display->renderGraphics();
 
 		Tones tone;
 		tone.push_back(Tone(kClock / 2.0 / ((i * 4 + 1) * 10.0 + 10.0), 12.5));
@@ -314,13 +314,13 @@ void HiRes4Engine::runIntroTitle(Common::SeekableReadStream &menu, Common::Seeka
 	// Draw "TM" with lines
 	_graphics->drawLine(Common::Point(200, 170), Common::Point(200, 174), 0x7f);
 	_graphics->drawLine(Common::Point(198, 170), Common::Point(202, 170), 0x7f);
-	_display->copyGfxSurface();
+	_display->renderGraphics();
 	delay(7);
 	_graphics->drawLine(Common::Point(204, 170), Common::Point(204, 174), 0x7f);
 	_graphics->drawLine(Common::Point(204, 170), Common::Point(207, 173), 0x7f);
 	_graphics->drawLine(Common::Point(207, 173), Common::Point(209, 170), 0x7f);
 	_graphics->drawLine(Common::Point(209, 170), Common::Point(209, 174), 0x7f);
-	_display->copyGfxSurface();
+	_display->renderGraphics();
 	delay(7);
 
 	titleString = readStringAt(menu, 0x46c);

@@ -26,13 +26,8 @@
 #include "common/types.h"
 
 namespace Common {
-class WriteStream;
 class String;
 struct Point;
-}
-
-namespace Graphics {
-struct Surface;
 }
 
 namespace Adl {
@@ -48,10 +43,9 @@ public:
 	virtual ~Display();
 
 	virtual void init() = 0;
-	virtual bool saveThumbnail(Common::WriteStream &out) = 0;
 	void setMode(Mode mode);
-	void copyTextSurface();
-	void copyGfxSurface();
+	virtual void renderText() = 0;
+	virtual void renderGraphics() = 0;
 
 	virtual char asciiToNative(char c) const = 0;
 	virtual void printChar(char c) = 0;
@@ -68,23 +62,13 @@ public:
 	void scrollUp();
 
 protected:
-	Display() :	_textBuf(nullptr), _textSurface(nullptr), _gfxSurface(nullptr), _cursorPos(0),
-	            _mode(kModeText), _splitHeight(0), _textWidth(0), _textHeight(0) { }
+	Display() :	_textBuf(nullptr), _cursorPos(0), _mode(kModeText), _textWidth(0), _textHeight(0) { }
 
-	void createSurfaces(uint gfxWidth, uint gfxHeight, uint splitHeight);
 	void createTextBuffer(uint textWidth, uint textHeight);
 
 	byte *_textBuf;
-	Graphics::Surface *_textSurface;
-	Graphics::Surface *_gfxSurface;
 	uint _cursorPos;
-
-private:
-	virtual void updateTextSurface() = 0;
-	virtual void updateGfxSurface() = 0;
-
 	Mode _mode;
-	uint _splitHeight;
 	uint _textWidth;
 	uint _textHeight;
 };

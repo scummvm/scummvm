@@ -97,7 +97,7 @@ void HiRes5Engine::drawLight(uint index, byte color) const {
 		for (int xDelta = 0; xDelta < 7; ++xDelta)
 			display->putPixel(Common::Point(xCoord[index] + xDelta, yCoord + yDelta), color);
 
-	display->copyGfxSurface();
+	display->renderGraphics();
 }
 
 void HiRes5Engine::animateLights() const {
@@ -248,7 +248,7 @@ void HiRes5Engine::runIntro() {
 
 	display->setMode(Display::kModeGraphics);
 	display->loadFrameBuffer(*stream);
-	display->copyGfxSurface();
+	display->renderGraphics();
 
 	inputKey();
 

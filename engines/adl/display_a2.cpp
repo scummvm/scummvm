@@ -101,183 +101,6 @@ static const byte font[64][5] = {
 	{ 0x00, 0x82, 0x44, 0x28, 0x10 }, { 0x04, 0x02, 0xb2, 0x0a, 0x04 }  // >?
 };
 
-Display_A2::Display_A2() : _showCursor(false) {
-	initGraphics(Display_A2::kGfxWidth * 2, Display_A2::kGfxHeight * 2);
-}
-
-Display_A2::~Display_A2() {
-	delete[] _frameBuf;
-
-	if (_font) {
-		_font->free();
-		delete _font;
-	}
-}
-
-void Display_A2::init() {
-	_monochrome = !ConfMan.getBool("color");
-	_scanlines = ConfMan.getBool("scanlines");
-
-	if (_monochrome)
-		g_system->getPaletteManager()->setPalette(monoPalette, 0, MONO_PALETTE_ENTRIES);
-	else
-		g_system->getPaletteManager()->setPalette(colorPalette, 0, COLOR_PALETTE_ENTRIES);
-
-	showScanlines(_scanlines);
-
-	// We need 2x scaling to properly render the half-pixel shift
-	// of the second palette
-	createSurfaces(Display_A2::kGfxWidth * 2, Display_A2::kGfxHeight * 2, 64);
-	createTextBuffer(Display_A2::kTextWidth, Display_A2::kTextHeight);
-
-	_frameBuf = new byte[Display_A2::kGfxSize];
-	memset(_frameBuf, 0, Display_A2::kGfxSize);
-
-	createFont();
-
-	_startMillis = g_system->getMillis();
-}
-
-bool Display_A2::saveThumbnail(Common::WriteStream &out) {
-	if (_scanlines) {
-		showScanlines(false);
-		g_system->updateScreen();
-	}
-
-	bool retval = Graphics::saveThumbnail(out);
-
-	if (_scanlines) {
-		showScanlines(true);
-		g_system->updateScreen();
-	}
-
-	return retval;
-}
-
-void Display_A2::loadFrameBuffer(Common::ReadStream &stream, byte *dst) {
-	for (uint j = 0; j < 8; ++j) {
-		for (uint i = 0; i < 8; ++i) {
-			stream.read(dst, Display_A2::kGfxPitch);
-			dst += Display_A2::kGfxPitch * 64;
-			stream.read(dst, Display_A2::kGfxPitch);
-			dst += Display_A2::kGfxPitch * 64;
-			stream.read(dst, Display_A2::kGfxPitch);
-			stream.readUint32LE();
-			stream.readUint32LE();
-			dst -= Display_A2::kGfxPitch * 120;
-		}
-		dst -= Display_A2::kGfxPitch * 63;
-	}
-
-	if (stream.eos() || stream.err())
-		error("Failed to read frame buffer");
-}
-
-void Display_A2::loadFrameBuffer(Common::ReadStream &stream) {
-	loadFrameBuffer(stream, _frameBuf);
-}
-
-void Display_A2::putPixel(const Common::Point &p, byte color) {
-	byte offset = p.x / 7;
-	byte mask = 0x80 | (1 << (p.x % 7));
-
-	// Since white and black are in both palettes, we leave
-	// the palette bit alone
-	if ((color & 0x7f) == 0x7f || (color & 0x7f) == 0)
-		mask &= 0x7f;
-
-	// Adjust colors starting with bits '01' or '10' for
-	// odd offsets
-	if (offset & 1) {
-		byte c = color << 1;
-		if (c >= 0x40 && c < 0xc0)
-			color ^= 0x7f;
-	}
-
-	writeFrameBuffer(p, color, mask);
-}
-
-void Display_A2::setPixelByte(const Common::Point &p, byte color) {
-	assert(p.x >= 0 && p.x < Display_A2::kGfxWidth && p.y >= 0 && p.y < Display_A2::kGfxHeight);
-
-	_frameBuf[p.y * Display_A2::kGfxPitch + p.x / 7] = color;
-}
-
-void Display_A2::setPixelBit(const Common::Point &p, byte color) {
-	writeFrameBuffer(p, color, 1 << (p.x % 7));
-}
-
-void Display_A2::setPixelPalette(const Common::Point &p, byte color) {
-	writeFrameBuffer(p, color, 0x80);
-}
-
-byte Display_A2::getPixelByte(const Common::Point &p) const {
-	assert(p.x >= 0 && p.x < Display_A2::kGfxWidth && p.y >= 0 && p.y < Display_A2::kGfxHeight);
-
-	return _frameBuf[p.y * Display_A2::kGfxPitch + p.x / 7];
-}
-
-bool Display_A2::getPixelBit(const Common::Point &p) const {
-	assert(p.x >= 0 && p.x < Display_A2::kGfxWidth && p.y >= 0 && p.y < Display_A2::kGfxHeight);
-
-	byte *b = _frameBuf + p.y * Display_A2::kGfxPitch + p.x / 7;
-	return *b & (1 << (p.x % 7));
-}
-
-void Display_A2::clear(byte color) {
-	byte val = 0;
-
-	byte c = color << 1;
-	if (c >= 0x40 && c < 0xc0)
-		val = 0x7f;
-
-	for (uint i = 0; i < Display_A2::kGfxSize; ++i) {
-		_frameBuf[i] = color;
-		color ^= val;
-	}
-}
-
-// FIXME: This does not currently update the surfaces
-void Display_A2::printChar(char c) {
-	if (c == Display_A2::asciiToNative('\r'))
-		_cursorPos = (_cursorPos / Display_A2::kTextWidth + 1) * Display_A2::kTextWidth;
-	else if (c == Display_A2::asciiToNative('\a')) {
-		copyTextSurface();
-		static_cast<AdlEngine *>(g_engine)->bell();
-	} else if ((byte)c < 0x80 || (byte)c >= 0xa0) {
-		setCharAtCursor(c);
-		++_cursorPos;
-	}
-
-	if (_cursorPos == Display_A2::kTextWidth * Display_A2::kTextHeight)
-		scrollUp();
-}
-
-void Display_A2::showCursor(bool enable) {
-	_showCursor = enable;
-}
-
-void Display_A2::writeFrameBuffer(const Common::Point &p, byte color, byte mask) {
-	assert(p.x >= 0 && p.x < Display_A2::kGfxWidth && p.y >= 0 && p.y < Display_A2::kGfxHeight);
-
-	byte *b = _frameBuf + p.y * Display_A2::kGfxPitch + p.x / 7;
-	color ^= *b;
-	color &= mask;
-	*b ^= color;
-}
-
-void Display_A2::showScanlines(bool enable) {
-	byte pal[COLOR_PALETTE_ENTRIES * 3];
-
-	g_system->getPaletteManager()->grabPalette(pal, 0, COLOR_PALETTE_ENTRIES);
-
-	if (enable) {
-		for (uint i = 0; i < ARRAYSIZE(pal); ++i)
-			pal[i] = pal[i] * (100 - SCANLINE_OPACITY) / 100;
-	}
-
-	g_system->getPaletteManager()->setPalette(pal, COLOR_PALETTE_ENTRIES, COLOR_PALETTE_ENTRIES);
-}
 
 static byte processColorBits(uint16 &bits, bool &odd, bool secondPal) {
 	byte color = 0;
@@ -395,7 +218,82 @@ static void copyEvenSurfaceRows(Graphics::Surface &surf) {
 	}
 }
 
-void Display_A2::updateGfxSurface() {
+class Display_A2_Monitor : public Display_A2 {
+public:
+	Display_A2_Monitor();
+	~Display_A2_Monitor();
+
+	enum {
+		kSplitHeight = 64
+	};
+
+	void init() override;
+	void renderText() override;
+	void renderGraphics() override;
+
+private:
+	void updateTextSurface();
+	void updateGfxSurface();
+	void drawChar(byte c, int x, int y);
+	void createFont();
+	void showScanlines(bool enable);
+	void createSurfaces(uint gfxWidth, uint gfxHeight);
+
+	Graphics::Surface *_textSurface;
+	Graphics::Surface *_gfxSurface;
+	Graphics::Surface *_font;
+	bool _scanlines;
+	bool _monochrome;
+};
+
+Display_A2_Monitor::Display_A2_Monitor() :
+		_textSurface(nullptr),
+		_gfxSurface(nullptr),
+		_font(nullptr),
+		_scanlines(false),
+		_monochrome(false) { }
+
+Display_A2_Monitor::~Display_A2_Monitor() {
+	if (_font) {
+		_font->free();
+		delete _font;
+	}
+
+	_textSurface->free();
+	delete _textSurface;
+
+	_gfxSurface->free();
+	delete _gfxSurface;
+}
+
+void Display_A2_Monitor::createSurfaces(uint gfxWidth, uint gfxHeight) {
+	_gfxSurface = new Graphics::Surface;
+	_gfxSurface->create(gfxWidth, gfxHeight, Graphics::PixelFormat::createFormatCLUT8());
+	_textSurface = new Graphics::Surface;
+	_textSurface->create(gfxWidth, gfxHeight, Graphics::PixelFormat::createFormatCLUT8());
+}
+
+void Display_A2_Monitor::init() {
+	Display_A2::init();
+
+	// We need 2x scaling to properly render the half-pixel shift
+	// of the second palette
+	createSurfaces(Display_A2::kGfxWidth * 2, Display_A2::kGfxHeight * 2);
+
+	_monochrome = !ConfMan.getBool("color");
+	_scanlines = ConfMan.getBool("scanlines");
+
+	if (_monochrome)
+		g_system->getPaletteManager()->setPalette(monoPalette, 0, MONO_PALETTE_ENTRIES);
+	else
+		g_system->getPaletteManager()->setPalette(colorPalette, 0, COLOR_PALETTE_ENTRIES);
+
+	createFont();
+
+	showScanlines(_scanlines);
+}
+
+void Display_A2_Monitor::updateGfxSurface() {
 	byte *src = _frameBuf;
 	byte *dst = (byte *)_gfxSurface->getPixels();
 
@@ -411,7 +309,7 @@ void Display_A2::updateGfxSurface() {
 	copyEvenSurfaceRows(*_gfxSurface);
 }
 
-void Display_A2::updateTextSurface() {
+void Display_A2_Monitor::updateTextSurface() {
 	for (uint row = 0; row < 24; ++row)
 		for (uint col = 0; col < Display_A2::kTextWidth; ++col) {
 			uint charPos = row * Display_A2::kTextWidth + col;
@@ -424,11 +322,7 @@ void Display_A2::updateTextSurface() {
 			r.translate(((c & 0x3f) % 16) * 7 * 2, (c & 0x3f) / 16 * 8 * 2);
 
 			if (!(c & 0x80)) {
-				// Blink text. We subtract _startMillis to make this compatible
-				// with the event recorder, which returns offsetted values on
-				// playback.
-				const uint32 millisPassed = g_system->getMillis() - _startMillis;
-				if (!(c & 0x40) || ((millisPassed / 270) & 1))
+				if (!(c & 0x40) || ((g_system->getMillis() / 270) & 1))
 					r.translate(0, 4 * 8 * 2);
 			}
 
@@ -436,7 +330,29 @@ void Display_A2::updateTextSurface() {
 		}
 }
 
-void Display_A2::drawChar(byte c, int x, int y) {
+void Display_A2_Monitor::renderText() {
+	updateTextSurface();
+
+	if (_mode == Display::kModeText)
+		g_system->copyRectToScreen(_textSurface->getPixels(), _textSurface->pitch, 0, 0, _textSurface->w, _textSurface->h);
+	else if (_mode == Display::kModeMixed)
+		g_system->copyRectToScreen(_textSurface->getBasePtr(0, _textSurface->h - kSplitHeight), _textSurface->pitch, 0, _textSurface->h - kSplitHeight, _textSurface->w, kSplitHeight);
+
+	g_system->updateScreen();
+}
+
+void Display_A2_Monitor::renderGraphics() {
+	updateGfxSurface();
+
+	if (_mode == kModeGraphics)
+		g_system->copyRectToScreen(_gfxSurface->getPixels(), _gfxSurface->pitch, 0, 0, _gfxSurface->w, _gfxSurface->h);
+	else if (_mode == kModeMixed)
+		g_system->copyRectToScreen(_gfxSurface->getPixels(), _gfxSurface->pitch, 0, 0, _gfxSurface->w, _gfxSurface->h - kSplitHeight);
+
+	g_system->updateScreen();
+}
+
+void Display_A2_Monitor::drawChar(byte c, int x, int y) {
 	byte *buf = (byte *)_font->getPixels() + y * _font->pitch + x;
 
 	for (uint row = 0; row < 8; ++row) {
@@ -451,7 +367,7 @@ void Display_A2::drawChar(byte c, int x, int y) {
 	}
 }
 
-void Display_A2::createFont() {
+void Display_A2_Monitor::createFont() {
 	_font = new Graphics::Surface;
 	_font->create(16 * 7 * 2, 4 * 8 * 2 * 2, Graphics::PixelFormat::createFormatCLUT8());
 
@@ -473,5 +389,147 @@ void Display_A2::createFont() {
 
 	copyEvenSurfaceRows(*_font);
 }
+
+void Display_A2_Monitor::showScanlines(bool enable) {
+	byte pal[COLOR_PALETTE_ENTRIES * 3];
+
+	g_system->getPaletteManager()->grabPalette(pal, 0, COLOR_PALETTE_ENTRIES);
+
+	if (enable) {
+		for (uint i = 0; i < ARRAYSIZE(pal); ++i)
+			pal[i] = pal[i] * (100 - SCANLINE_OPACITY) / 100;
+	}
+
+	g_system->getPaletteManager()->setPalette(pal, COLOR_PALETTE_ENTRIES, COLOR_PALETTE_ENTRIES);
+}
+
+Display_A2::Display_A2() : _frameBuf(nullptr), _showCursor(false) {
+	initGraphics(Display_A2::kGfxWidth * 2, Display_A2::kGfxHeight * 2);
+}
+
+Display_A2::~Display_A2() {
+	delete[] _frameBuf;
+}
+
+void Display_A2::init() {
+	createTextBuffer(Display_A2::kTextWidth, Display_A2::kTextHeight);
+
+	_frameBuf = new byte[Display_A2::kGfxSize];
+	memset(_frameBuf, 0, Display_A2::kGfxSize);
+}
+
+void Display_A2::loadFrameBuffer(Common::ReadStream &stream, byte *dst) {
+	for (uint j = 0; j < 8; ++j) {
+		for (uint i = 0; i < 8; ++i) {
+			stream.read(dst, Display_A2::kGfxPitch);
+			dst += Display_A2::kGfxPitch * 64;
+			stream.read(dst, Display_A2::kGfxPitch);
+			dst += Display_A2::kGfxPitch * 64;
+			stream.read(dst, Display_A2::kGfxPitch);
+			stream.readUint32LE();
+			stream.readUint32LE();
+			dst -= Display_A2::kGfxPitch * 120;
+		}
+		dst -= Display_A2::kGfxPitch * 63;
+	}
+
+	if (stream.eos() || stream.err())
+		error("Failed to read frame buffer");
+}
+
+void Display_A2::loadFrameBuffer(Common::ReadStream &stream) {
+	loadFrameBuffer(stream, _frameBuf);
+}
+
+void Display_A2::putPixel(const Common::Point &p, byte color) {
+	byte offset = p.x / 7;
+	byte mask = 0x80 | (1 << (p.x % 7));
+
+	// Since white and black are in both palettes, we leave
+	// the palette bit alone
+	if ((color & 0x7f) == 0x7f || (color & 0x7f) == 0)
+		mask &= 0x7f;
+
+	// Adjust colors starting with bits '01' or '10' for
+	// odd offsets
+	if (offset & 1) {
+		byte c = color << 1;
+		if (c >= 0x40 && c < 0xc0)
+			color ^= 0x7f;
+	}
+
+	writeFrameBuffer(p, color, mask);
+}
+
+void Display_A2::setPixelByte(const Common::Point &p, byte color) {
+	assert(p.x >= 0 && p.x < Display_A2::kGfxWidth && p.y >= 0 && p.y < Display_A2::kGfxHeight);
+
+	_frameBuf[p.y * Display_A2::kGfxPitch + p.x / 7] = color;
+}
+
+void Display_A2::setPixelBit(const Common::Point &p, byte color) {
+	writeFrameBuffer(p, color, 1 << (p.x % 7));
+}
+
+void Display_A2::setPixelPalette(const Common::Point &p, byte color) {
+	writeFrameBuffer(p, color, 0x80);
+}
+
+byte Display_A2::getPixelByte(const Common::Point &p) const {
+	assert(p.x >= 0 && p.x < Display_A2::kGfxWidth && p.y >= 0 && p.y < Display_A2::kGfxHeight);
+
+	return _frameBuf[p.y * Display_A2::kGfxPitch + p.x / 7];
+}
+
+bool Display_A2::getPixelBit(const Common::Point &p) const {
+	assert(p.x >= 0 && p.x < Display_A2::kGfxWidth && p.y >= 0 && p.y < Display_A2::kGfxHeight);
+
+	byte *b = _frameBuf + p.y * Display_A2::kGfxPitch + p.x / 7;
+	return *b & (1 << (p.x % 7));
+}
+
+void Display_A2::clear(byte color) {
+	byte val = 0;
+
+	byte c = color << 1;
+	if (c >= 0x40 && c < 0xc0)
+		val = 0x7f;
+
+	for (uint i = 0; i < Display_A2::kGfxSize; ++i) {
+		_frameBuf[i] = color;
+		color ^= val;
+	}
+}
+
+// FIXME: This does not currently update the surfaces
+void Display_A2::printChar(char c) {
+	if (c == Display_A2::asciiToNative('\r'))
+		_cursorPos = (_cursorPos / Display_A2::kTextWidth + 1) * Display_A2::kTextWidth;
+	else if (c == Display_A2::asciiToNative('\a')) {
+		renderText();
+		static_cast<AdlEngine *>(g_engine)->bell();
+	} else if ((byte)c < 0x80 || (byte)c >= 0xa0) {
+		setCharAtCursor(c);
+		++_cursorPos;
+	}
+
+	if (_cursorPos == Display_A2::kTextWidth * Display_A2::kTextHeight)
+		scrollUp();
+}
+
+void Display_A2::showCursor(bool enable) {
+	_showCursor = enable;
+}
+
+void Display_A2::writeFrameBuffer(const Common::Point &p, byte color, byte mask) {
+	assert(p.x >= 0 && p.x < Display_A2::kGfxWidth && p.y >= 0 && p.y < Display_A2::kGfxHeight);
+
+	byte *b = _frameBuf + p.y * Display_A2::kGfxPitch + p.x / 7;
+	color ^= *b;
+	color &= mask;
+	*b ^= color;
+}
+
+Display_A2 *Display_A2_create() { return new Display_A2_Monitor(); }
 
 } // End of namespace Adl

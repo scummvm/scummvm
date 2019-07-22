@@ -286,7 +286,7 @@ byte AdlEngine::inputKey(bool showCursor) const {
 		if (_inputScript && !_scriptPaused)
 			return _display->asciiToNative('\r');
 
-		_display->copyTextSurface();
+		_display->renderText();
 		g_system->delayMillis(16);
 	}
 
@@ -730,7 +730,7 @@ void AdlEngine::gameLoop() {
 }
 
 Common::Error AdlEngine::run() {
-	_display = new Display_A2();
+	_display = Display_A2_create();
 	_console = new Console(this);
 	_display->init();
 
@@ -964,7 +964,7 @@ Common::Error AdlEngine::saveGameState(int slot, const Common::String &desc) {
 	uint32 playTime = getTotalPlayTime();
 	outFile->writeUint32BE(playTime);
 
-	_display->saveThumbnail(*outFile);
+	Graphics::saveThumbnail(*outFile);
 	saveState(*outFile);
 	outFile->finalize();
 
@@ -1280,7 +1280,7 @@ int AdlEngine::o_restart(ScriptEnv &e) {
 	if (input.size() == 0 || input[0] != _display->asciiToNative('N')) {
 		_isRestarting = true;
 		_graphics->clearScreen();
-		_display->copyGfxSurface();
+		_display->renderGraphics();
 		_display->printString(_strings.pressReturn);
 		initState();
 		_display->printAsciiString(_strings.lineFeeds);

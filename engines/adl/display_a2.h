@@ -42,7 +42,6 @@ public:
 	};
 
 	void init() override;
-	bool saveThumbnail(Common::WriteStream &out) override;
 
 	// Graphics
 	uint getGfxWidth() const { return kGfxWidth; }
@@ -63,22 +62,17 @@ public:
 	void printChar(char c) override;
 	void showCursor(bool enable) override;
 
+protected:
+	byte *_frameBuf;
+	bool _showCursor;
+
 private:
 	void writeFrameBuffer(const Common::Point &p, byte color, byte mask);
-	void updateTextSurface() override;
-	void updateGfxSurface() override;
 
-	void showScanlines(bool enable);
-	void drawChar(byte c, int x, int y);
-	void createFont();
-
-	byte *_frameBuf;
-	bool _scanlines;
-	bool _monochrome;
-	Graphics::Surface *_font;
-	bool _showCursor;
-	uint32 _startMillis;
+	virtual void showScanlines(bool enable) { };
 };
+
+Display_A2 *Display_A2_create();
 
 } // End of namespace Adl
 

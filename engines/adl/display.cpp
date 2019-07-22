@@ -25,27 +25,12 @@
 #include "common/str.h"
 #include "common/system.h"
 
-#include "graphics/surface.h"
-
 #include "adl/display.h"
 
 namespace Adl {
 
 Display::~Display() {
 	delete[] _textBuf;
-	_textSurface->free();
-	delete _textSurface;
-
-	_gfxSurface->free();
-	delete _gfxSurface;
-}
-
-void Display::createSurfaces(uint gfxWidth, uint gfxHeight, uint splitHeight) {
-	_gfxSurface = new Graphics::Surface;
-	_gfxSurface->create(gfxWidth, gfxHeight, Graphics::PixelFormat::createFormatCLUT8());
-	_textSurface = new Graphics::Surface;
-	_textSurface->create(gfxWidth, gfxHeight, Graphics::PixelFormat::createFormatCLUT8());
-	_splitHeight = splitHeight;
 }
 
 void Display::createTextBuffer(uint textWidth, uint textHeight) {
@@ -60,31 +45,9 @@ void Display::setMode(Display::Mode mode) {
 	_mode = mode;
 
 	if (_mode == Display::kModeText || _mode == Display::kModeMixed)
-		copyTextSurface();
+		renderText();
 	if (_mode == Display::kModeGraphics || _mode == Display::kModeMixed)
-		copyGfxSurface();
-}
-
-void Display::copyTextSurface() {
-	updateTextSurface();
-
-	if (_mode == Display::kModeText)
-		g_system->copyRectToScreen(_textSurface->getPixels(), _textSurface->pitch, 0, 0, _textSurface->w, _textSurface->h);
-	else if (_mode == Display::kModeMixed)
-		g_system->copyRectToScreen(_textSurface->getBasePtr(0, _textSurface->h - _splitHeight), _textSurface->pitch, 0, _textSurface->h - _splitHeight, _textSurface->w, _splitHeight);
-
-	g_system->updateScreen();
-}
-
-void Display::copyGfxSurface() {
-	updateGfxSurface();
-
-	if (_mode == kModeGraphics)
-		g_system->copyRectToScreen(_gfxSurface->getPixels(), _gfxSurface->pitch, 0, 0, _gfxSurface->w, _gfxSurface->h);
-	else if (_mode == kModeMixed)
-		g_system->copyRectToScreen(_gfxSurface->getPixels(), _gfxSurface->pitch, 0, 0, _gfxSurface->w, _gfxSurface->h - _splitHeight);
-
-	g_system->updateScreen();
+		renderGraphics();
 }
 
 void Display::home() {
@@ -116,7 +79,7 @@ void Display::printString(const Common::String &str) {
 	for (c = str.begin(); c != str.end(); ++c)
 		printChar(*c);
 
-	copyTextSurface();
+	renderText();
 }
 
 void Display::printAsciiString(const Common::String &str) {
@@ -124,7 +87,7 @@ void Display::printAsciiString(const Common::String &str) {
 	for (c = str.begin(); c != str.end(); ++c)
 		printChar(asciiToNative(*c));
 
-	copyTextSurface();
+	renderText();
 }
 
 void Display::setCharAtCursor(byte c) {

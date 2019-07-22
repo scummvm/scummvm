@@ -200,11 +200,11 @@ void HiRes6Engine::runIntro() {
 
 	display->setMode(Display::kModeGraphics);
 	display->loadFrameBuffer(*stream);
-	display->copyGfxSurface();
+	display->renderGraphics();
 	delay(256 * 8609 / 1000);
 
 	display->loadFrameBuffer(*stream);
-	display->copyGfxSurface();
+	display->renderGraphics();
 	delay(256 * 8609 / 1000);
 
 	display->loadFrameBuffer(*stream);
@@ -220,7 +220,7 @@ void HiRes6Engine::runIntro() {
 
 	delete files;
 
-	display->copyGfxSurface();
+	display->renderGraphics();
 	display->home();
 	display->setMode(Display::kModeMixed);
 	display->moveCursorTo(Common::Point(0, 21));
@@ -328,7 +328,7 @@ void HiRes6Engine::showRoom() {
 	if (!_state.isDark)
 		drawItems();
 
-	_display->copyGfxSurface();
+	_display->renderGraphics();
 	setVar(2, 0xff);
 	printString(_roomData.description);
 }

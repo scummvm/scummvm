@@ -156,7 +156,7 @@ void HiRes1Engine::runIntro() {
 		stream->seek(IDI_HR1_OFS_LOGO_0);
 		_display->setMode(Display::kModeGraphics);
 		static_cast<Display_A2 *>(_display)->loadFrameBuffer(*stream);
-		_display->copyGfxSurface();
+		_display->renderGraphics();
 
 		if (getGameVersion() == GAME_VER_HR1_PD) {
 			// Only the PD version shows a title screen during the load
@@ -239,7 +239,7 @@ void HiRes1Engine::runIntro() {
 	stream.reset(_files->createReadStream(IDS_HR1_EXE_1));
 	stream->seek(0x1800);
 	static_cast<Display_A2 *>(_display)->loadFrameBuffer(*stream);
-	_display->copyGfxSurface();
+	_display->renderGraphics();
 
 	_display->setMode(Display::kModeMixed);
 
@@ -479,7 +479,7 @@ void HiRes1Engine::showRoom() {
 		drawItems();
 	}
 
-	_display->copyGfxSurface();
+	_display->renderGraphics();
 	_messageDelay = false;
 	printString(_roomData.description);
 	_messageDelay = true;

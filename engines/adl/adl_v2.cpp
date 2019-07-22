@@ -112,7 +112,7 @@ void AdlEngine_v2::checkTextOverflow(char c) {
 
 void AdlEngine_v2::handleTextOverflow() {
 	_linesPrinted = 0;
-	_display->copyTextSurface();
+	_display->renderText();
 
 	if (_inputScript) {
 		// Set pause flag to activate regular behaviour of delay and inputKey
@@ -185,7 +185,7 @@ void AdlEngine_v2::printString(const Common::String &str) {
 
 	checkTextOverflow(returnChar);
 	_display->printChar(returnChar);
-	_display->copyTextSurface();
+	_display->renderText();
 }
 
 void AdlEngine_v2::drawItem(Item &item, const Common::Point &pos) {
@@ -263,7 +263,7 @@ void AdlEngine_v2::showRoom() {
 	if (!_state.isDark)
 		drawItems();
 
-	_display->copyGfxSurface();
+	_display->renderGraphics();
 	printString(_roomData.description);
 }
 
