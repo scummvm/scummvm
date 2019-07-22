@@ -20,36 +20,24 @@
  *
  */
 
-#ifndef PETKA_INTERFACE_H
-#define PETKA_INTERFACE_H
+#ifndef PETKA_TEXT_H
+#define PETKA_TEXT_H
 
-#include "common/ustr.h"
 #include "common/rect.h"
-#include "common/array.h"
+#include "common/ustr.h"
+
+#include "petka/objects/object.h"
 
 namespace Petka {
 
-class QVisibleObject;
-class QText;
-
-class Interface {
+class QText : public QVisibleObject {
 public:
-	Interface();
-	virtual ~Interface() {}
+	QText(const Common::U32String &text, uint32 rgb);
 
-	virtual void start() {};
-	virtual void stop() {};
+	void draw();
 
-	virtual void onLeftButtonDown(const Common::Point p) {};
-	virtual void onRightButtonDown(const Common::Point p) {};
-	virtual void onMouseMove(const Common::Point p) {};
-
-	void setText(const Common::U32String &text, uint32 rgb);
-
-public:
-	Common::Array<QVisibleObject *> _objs;
-	QVisibleObject *_objUnderCursor;
-	int _startIndex;
+private:
+	Common::Rect _rect;
 };
 
 } // End of namespace Petka

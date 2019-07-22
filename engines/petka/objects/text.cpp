@@ -20,38 +20,30 @@
  *
  */
 
-#ifndef PETKA_INTERFACE_H
-#define PETKA_INTERFACE_H
+#include "graphics/fontman.h"
+#include "graphics/font.h"
 
-#include "common/ustr.h"
-#include "common/rect.h"
-#include "common/array.h"
+#include "petka/q_manager.h"
+#include "petka/petka.h"
+#include "petka/video.h"
+#include "petka/objects/text.h"
 
 namespace Petka {
 
-class QVisibleObject;
-class QText;
+QText::QText(const Common::U32String &text, uint32 rgb) {
+	_resourceId = -2;
+	_z = 3000;
+	const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kLocalizedFont);
+	_rect = font->getBoundingBox("TEST FONT", 0, 0, 0);
 
-class Interface {
-public:
-	Interface();
-	virtual ~Interface() {}
+	Graphics::Surface *s = g_vm->resMgr()->findOrCreateSurface(-2, _rect.width(), _rect.height());
+	font->drawString(s, "TEST FONT", 0, 0, _rect.width(), rgb);
+}
 
-	virtual void start() {};
-	virtual void stop() {};
-
-	virtual void onLeftButtonDown(const Common::Point p) {};
-	virtual void onRightButtonDown(const Common::Point p) {};
-	virtual void onMouseMove(const Common::Point p) {};
-
-	void setText(const Common::U32String &text, uint32 rgb);
-
-public:
-	Common::Array<QVisibleObject *> _objs;
-	QVisibleObject *_objUnderCursor;
-	int _startIndex;
-};
+void QText::draw() {
+	const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
+	const Graphics::Surface *s = g_vm->resMgr()->loadBitmap(_resourceId);
+	g_vm->videoSystem()->screen().transBlitFrom(*s, Common::Point((640 - _rect.width()) / 2, 480 - _rect.height()));
+}
 
 } // End of namespace Petka
-
-#endif

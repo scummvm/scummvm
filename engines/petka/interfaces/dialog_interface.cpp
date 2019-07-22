@@ -108,6 +108,7 @@ void DialogInterface::sub_4155D0(int a) {
 		if (talkerId != info->speakerId) {
 			sendMsg(kSay);
 		}
+		g_vm->getQSystem()->_mainInterface->setText(info->text, _talker->_dialogColor);
 		_field18 = 1;
 		break;
 	}
