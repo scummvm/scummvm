@@ -89,11 +89,9 @@ bool AI::isOpenDoor(int x, int y) {
 }
 
 bool AI::useTarget(int x, int y, int targetX, int targetY, int newTile, int *worked) {
-	int tileIndex;
-
 	// open a locked door?
 	if (isClosedDoor(targetX, targetY)) {
-		tileIndex = g_hdb->_map->getMapBGTileIndex(targetX, targetY);
+		int tileIndex = g_hdb->_map->getMapBGTileIndex(targetX, targetY);
 
 		addAnimateTarget(targetX, targetY, tileIndex, tileIndex - 3, ANIM_SLOW, false, true, NULL);
 		g_hdb->_map->setMapBGTileIndex(x, y, newTile);
@@ -105,7 +103,7 @@ bool AI::useTarget(int x, int y, int targetX, int targetY, int newTile, int *wor
 
 	// close an open door?
 	if (isOpenDoor(targetX, targetY)) {
-		tileIndex = g_hdb->_map->getMapBGTileIndex(targetX, targetY);
+		int tileIndex = g_hdb->_map->getMapBGTileIndex(targetX, targetY);
 
 		addAnimateTarget(targetX, targetY, tileIndex, tileIndex + 3, ANIM_SLOW, false, true, NULL);
 		g_hdb->_map->setMapBGTileIndex(x, y, newTile);
@@ -116,7 +114,7 @@ bool AI::useTarget(int x, int y, int targetX, int targetY, int newTile, int *wor
 	}
 
 	// open up a bridge?
-	tileIndex = g_hdb->_map->getMapFGTileIndex(targetX, targetY);
+	int tileIndex = g_hdb->_map->getMapFGTileIndex(targetX, targetY);
 	if (tileIndex == _targetBridgeU ||
 		tileIndex == _targetBridgeD ||
 		tileIndex == _targetBridgeL ||
@@ -158,11 +156,9 @@ bool AI::useLockedSwitch(AIEntity *e, int x, int y, int targetX, int targetY, in
 		return false;
 
 	int	amount = queryInventoryType(item);
-	int	worked;
-	bool rtn;
-
 	if (amount) {
-		rtn = useTarget(x, y, targetX, targetY, onTile, &worked);
+		int	worked;
+		bool rtn = useTarget(x, y, targetX, targetY, onTile, &worked);
 		if (worked) {
 			removeInvItemType(item, 1);
 			if (g_hdb->_map->onScreen(x, y))
@@ -182,12 +178,11 @@ bool AI::useLockedSwitchOn(AIEntity *e, int x, int y, int targetX, int targetY, 
 	if (abs(x - _player->tileX) > 1 || abs(y - _player->tileY) > 1)
 		return false;
 
-	int	worked;
-	bool rtn;
 	if (getInvAmount() == 10)
 		return false;
 
-	rtn = useTarget(x, y, targetX, targetY, offTile, &worked);
+	int	worked;
+	bool rtn = useTarget(x, y, targetX, targetY, offTile, &worked);
 	if (worked) {
 		addItemToInventory(item, 1, NULL, NULL, NULL);
 		if (g_hdb->_map->onScreen(x, y))
@@ -203,11 +198,10 @@ bool AI::useCellHolder(AIEntity *e, int x, int y, int targetX, int targetY) {
 		return false;
 
 	int	amount = queryInventoryType(ITEM_CELL);
-	int	worked;
-	bool rtn;
 
 	if (amount) {
-		rtn = useTarget(x, y, targetX, targetY, _useHolderFull, &worked);
+		int	worked;
+		bool rtn = useTarget(x, y, targetX, targetY, _useHolderFull, &worked);
 		if (worked) {
 			removeInvItemType(ITEM_CELL, 1);
 			if (g_hdb->_map->onScreen(x, y))
