@@ -188,7 +188,7 @@ SaveStateDescriptor HDBMetaEngine::querySaveMetaInfos(const char *target, int sl
 		}
 		desc.setThumbnail(thumbnail);
 
-		uint32 timeSeconds = in->readUint32LE();;
+		uint32 timeSeconds = in->readUint32LE();
 		in->read(mapName, 32);
 
 		desc.setSaveSlot(slot);
