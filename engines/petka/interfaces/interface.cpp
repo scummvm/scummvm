@@ -20,11 +20,16 @@
  *
  */
 
+#include "petka/objects/text.h"
 #include "petka/interfaces/interface.h"
 
 namespace Petka {
 
 Interface::Interface()
 	: _objUnderCursor(nullptr), _startIndex(0) {}
+
+void Interface::setText(const Common::U32String &text, uint32 rgb) {
+	_objs.push_back(new QText(text, rgb));
+}
 
 } // End of namespace Petka

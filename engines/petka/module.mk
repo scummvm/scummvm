@@ -21,7 +21,8 @@ MODULE_OBJS = \
     objects/object_case.o \
     objects/object_cursor.o \
     objects/object_star.o \
-    objects/heroes.o
+    objects/heroes.o \
+    objects/text.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_PETKA), DYNAMIC_PLUGIN)
