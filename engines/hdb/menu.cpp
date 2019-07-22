@@ -1101,7 +1101,7 @@ void Menu::processInput(int x, int y) {
 					g_hdb->saveGameState(kAutoSaveSlot, "FIXME"); // Add here date/level name // TODO
 				_starWarp = 0;
 				g_hdb->_sound->playSound(SND_MONKEYSTONE_SECRET_STAR);
-				g_hdb->startMap("map30");
+				g_hdb->startMap("MAP30");
 			} else if (x >= kStarGreenX && x <= kStarGreenX + _starGreenGfx[0]->_width &&
 				y >= kStarGreenY && y <= kStarGreenY + _starGreenGfx[0]->_height &&
 				g_hdb->getStarsMonkeystone14() == STARS_MONKEYSTONE_14) {
@@ -1111,7 +1111,7 @@ void Menu::processInput(int x, int y) {
 					g_hdb->saveGameState(kAutoSaveSlot, "FIXME"); // Add here date/level name // TODO
 				_starWarp = 1;
 				g_hdb->_sound->playSound(SND_MONKEYSTONE_SECRET_STAR);
-				g_hdb->startMap("map30");
+				g_hdb->startMap("MAP30");
 
 			} else if (x >= kStarBlueX && x <= kStarBlueX + _starBlueGfx[0]->_width &&
 				y >= kStarBlueY && y <= kStarBlueY + _starBlueGfx[0]->_height &&
@@ -1122,7 +1122,7 @@ void Menu::processInput(int x, int y) {
 					g_hdb->saveGameState(kAutoSaveSlot, "FIXME"); // Add here date/level name // TODO
 				_starWarp = 2;
 				g_hdb->_sound->playSound(SND_MONKEYSTONE_SECRET_STAR);
-				g_hdb->startMap("map30");
+				g_hdb->startMap("MAP30");
 			}
 		}
 		// secret warp menu? (click on nebula!)
