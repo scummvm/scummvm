@@ -132,5 +132,14 @@ TTSVoice TextToSpeechManager::getVoice() {
 	return TTSVoice();
 }
 
+Array<int> TextToSpeechManager::getVoiceIndicesByGender(TTSVoice::Gender gender) {
+	Array<int> results;
+	for (unsigned i = 0; i < _ttsState->_availableVoices.size(); i++) {
+		if (_ttsState->_availableVoices[i].getGender() == gender)
+			results.push_back(i);
+	}
+	return results;
+}
+
 }
 #endif

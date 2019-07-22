@@ -251,6 +251,8 @@ public:
 	 */
 	Array<TTSVoice> getVoicesArray() { return _ttsState->_availableVoices; }
 
+	Array<int> getVoiceIndicesByGender (TTSVoice::Gender gender);
+
 	/**
 	 * Pushes the current state of the TTS
 	 */
