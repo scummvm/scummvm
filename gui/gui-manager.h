@@ -107,6 +107,7 @@ public:
 	 * only be deleted when that dialog is the top level dialog.
 	 */
 	void addToTrash(GuiObject*, Dialog* parent = 0);
+	static void initTextToSpeech();
 
 	bool _launched;
 
@@ -177,7 +178,6 @@ protected:
 	void giveFocusToDialog(Dialog *dialog);
 	void setLastMousePos(int16 x, int16 y);
 
-	void initTextToSpeech();
 };
 
 } // End of namespace GUI

@@ -61,6 +61,10 @@
 #include "graphics/pixelformat.h"
 #include "image/bmp.h"
 
+#ifdef USE_TTS
+#include "common/text-to-speech.h"
+#endif
+
 #ifdef _WIN32_WCE
 extern bool isSmartphone();
 #endif
@@ -515,6 +519,11 @@ void Engine::pauseEngineIntern(bool pause) {
 void Engine::openMainMenuDialog() {
 	if (!_mainMenuDialog)
 		_mainMenuDialog = new MainMenuDialog(this);
+#ifdef USE_TTS
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	ttsMan->pushState();
+	GUI::GuiManager::initTextToSpeech();
+#endif
 
 	setGameToLoadSlot(-1);
 
@@ -536,6 +545,9 @@ void Engine::openMainMenuDialog() {
 	}
 
 	syncSoundSettings();
+#ifdef USE_TTS
+	ttsMan->popState();
+#endif
 }
 
 bool Engine::warnUserAboutUnsupportedGame() {
