@@ -558,8 +558,16 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 				break;
 			}
 #endif
+#ifdef USE_TTS
+			Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+			ttsMan->pushState();
+#endif
 			// Try to run the game
 			Common::Error result = runGame(plugin, system, specialDebug);
+
+#ifdef USE_TTS
+			ttsMan->popState();
+#endif
 
 #ifdef ENABLE_EVENTRECORDER
 			// Flush Event recorder file. The recorder does not get reinitialized for next game
