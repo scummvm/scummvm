@@ -1040,8 +1040,8 @@ void GameManager1::shock() {
 void GameManager1::drawMapExits() {
 	_vm->renderBox(281, 161, 39, 39, kColorWhite25);
 
-	int idx;
 	for (int i = 0; i < 25; i++) {
+		int idx;
 		if ((idx = _exitList[i]) != -1) {
 			byte r = _currentRoom->getObject(idx)->_direction;
 			int x = 284 + 7 * (r % 5);

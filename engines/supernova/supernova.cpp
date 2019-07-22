@@ -468,10 +468,9 @@ Common::SeekableReadStream *SupernovaEngine::getBlockFromDatFile(Common::String 
 		return nullptr;
 	}
 
-	int part;
 	uint32 gameBlockSize;
 	while (!f.eos()) {
-		part = f.readByte();
+		int part = f.readByte();
 		gameBlockSize = f.readUint32LE();
 		if (f.eos()){
 			GUIErrorMessageFormat(_("Unable to find block for part %d"), _MSPart);
