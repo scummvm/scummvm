@@ -734,9 +734,9 @@ bool Gfx::loadFont(const char *string) {
 	debug(3, "leading: %d", _fontHeader.leading);
 
 	// Loading _charInfoBlocks & creating character surfaces
-	int startPos = stream->pos();	// Position after _fontHeader
-	int curPos;						// Position after reading cInfo
-	uint16 *ptr;
+
+	// Position after _fontHeader
+	int startPos = stream->pos();
 	for (int i = 0; i < _fontHeader.numChars; i++) {
 		CharInfo *cInfo = new CharInfo;
 		cInfo->width = (int16)stream->readUint32LE();
@@ -744,7 +744,8 @@ bool Gfx::loadFont(const char *string) {
 
 		debug(3, "Loaded _charInfoBlocks[%d]: width: %d, offset: %d", i, cInfo->width, cInfo->offset);
 
-		curPos = stream->pos();
+		// Position after reading cInfo
+		int curPos = stream->pos();
 
 		_fontSurfaces[i].create(cInfo->width, _fontHeader.height, g_hdb->_format);
 
@@ -752,7 +753,7 @@ bool Gfx::loadFont(const char *string) {
 		stream->seek(startPos+cInfo->offset);
 
 		for (int y = 0; y < _fontHeader.height; y++) {
-			ptr = (uint16 *)_fontSurfaces[i].getBasePtr(0, y);
+			uint16 *ptr = (uint16 *)_fontSurfaces[i].getBasePtr(0, y);
 			for (int x = 0; x < cInfo->width; x++) {
 				*ptr = TO_LE_16(stream->readUint16LE());
 				ptr++;
@@ -782,11 +783,10 @@ void Gfx::drawText(const char *string) {
 
 	// Word Wrapping
 	int width = _eLeft;
-	unsigned char c;
 	char cr[256];	// Carriage Return Array
 
 	for (int i = 0; i < (int)strlen(string); i++) {
-		c = string[i];
+		unsigned char c = string[i];
 		width += _charInfoBlocks[c]->width + _fontHeader.kerning + kFontIncrement;
 		if (c == ' ')
 			width += kFontSpace;
@@ -806,7 +806,7 @@ void Gfx::drawText(const char *string) {
 
 	// Draw the characters
 	for (int j = 0; j < (int)strlen(string); j++) {
-		c = string[j];
+		unsigned char c = string[j];
 		if (c == '\n' || cr[j]) {
 			_cursorX = _eLeft;
 			_cursorY += _fontHeader.height + _fontHeader.leading;
@@ -848,10 +848,9 @@ void Gfx::getDimensions(const char *string, int *pixelsWide, int *lines) {
 		return;
 	}
 
-	int width, maxWidth, height;
-	maxWidth = 0;
-	width = _eLeft;
-	height = 1;
+	int maxWidth = 0;
+	int width = _eLeft;
+	int height = 1;
 
 	for (int i = 0; i < (int)strlen(string); i++) {
 		unsigned char c = string[i];

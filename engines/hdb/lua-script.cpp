@@ -95,9 +95,9 @@ LuaScript::LuaScript() {
 }
 
 LuaScript::~LuaScript() {
-	if (_state) {
+	if (_state)
 		lua_close(_state);
-	}
+
 	if (_globalLuaStream)
 		delete _globalLuaStream;
 }
@@ -206,7 +206,8 @@ void LuaScript::save(Common::OutSaveFile *out) {
 	lua_printstack(_state);
 	lua_getglobal(_state, "SaveState");
 
-	lua_pushstring(_state, "tempSave"); // the save file will be ignored
+	// the save file will be ignored
+	lua_pushstring(_state, "tempSave");
 	lua_call(_state, 1, 0);
 
 	g_hdb->_currentOutSaveFile = NULL;
@@ -232,7 +233,8 @@ void LuaScript::loadSaveFile(Common::InSaveFile *in) {
 	g_hdb->_currentInSaveFile = in;
 
 	lua_getglobal(_state, "LoadState");
-	lua_pushstring(_state, "tempSave");		// it will be ignored
+	// it will be ignored
+	lua_pushstring(_state, "tempSave");
 
 	lua_call(_state, 1, 0);
 
@@ -405,8 +407,8 @@ static int cinePlaySound(lua_State *L) {
 }
 
 static int cinePlayVoice(lua_State *L) {
-	double	index = lua_tonumber(L, 1);
-	double	actor = lua_tonumber(L, 2);
+	double index = lua_tonumber(L, 1);
+	double actor = lua_tonumber(L, 2);
 
 	g_hdb->_lua->checkParameters("cinePlayVoice", 2);
 
@@ -700,14 +702,11 @@ static int cineCenterTextOut(lua_State *L) {
 }
 
 static int newDelivery(lua_State *L) {
-	const char *itemTextName, *itemGfxName;
-	const char *destTextName, *destGfxName, *id;
-
-	itemTextName = lua_tostring(L, 1);
-	itemGfxName = lua_tostring(L, 2);
-	destTextName = lua_tostring(L, 3);
-	destGfxName = lua_tostring(L, 4);
-	id = lua_tostring(L, 5);
+	const char *itemTextName = lua_tostring(L, 1);
+	const char *itemGfxName = lua_tostring(L, 2);
+	const char *destTextName = lua_tostring(L, 3);
+	const char *destGfxName = lua_tostring(L, 4);
+	const char *id = lua_tostring(L, 5);
 
 	g_hdb->_lua->checkParameters("newDelivery", 5);
 
@@ -736,13 +735,13 @@ static int deliveriesLeft(lua_State *L) {
 }
 
 static int getEntityXY(lua_State *L) {
-	int x, y;
 	const char *initName = lua_tostring(L, 1);
 
 	g_hdb->_lua->checkParameters("getEntityXY", 1);
 
 	lua_pop(L, 1);
 
+	int x, y;
 	g_hdb->_ai->getEntityXY(initName, &x, &y);
 
 	lua_pushnumber(L, x);
@@ -751,8 +750,6 @@ static int getEntityXY(lua_State *L) {
 }
 
 static int setEntity(lua_State *L) {
-	AIEntity *e = NULL;
-
 	const char *entName = lua_tostring(L, 1);
 	double x = lua_tonumber(L, 2);
 	double y = lua_tonumber(L, 3);
@@ -761,7 +758,7 @@ static int setEntity(lua_State *L) {
 	g_hdb->_lua->checkParameters("setEntity", 4);
 
 	lua_pop(L, 4);
-	e = g_hdb->_ai->locateEntity(entName);
+	AIEntity *e = g_hdb->_ai->locateEntity(entName);
 	if (e) {
 		e->x = (int)x * kTileWidth;
 		e->tileX = (int)x;
@@ -777,21 +774,19 @@ static int setEntity(lua_State *L) {
 }
 
 static int setEntDir(lua_State *L) {
-	AIEntity *e;
-	char buff[64];
-
 	const char *entName = lua_tostring(L, 1);
 	double d = lua_tonumber(L, 2);
 
 	g_hdb->_lua->checkParameters("setEntDir", 2);
 
 	lua_pop(L, 2);
-	e = g_hdb->_ai->locateEntity(entName);
+	AIEntity *e = g_hdb->_ai->locateEntity(entName);
 
 	if (e) {
 		int	dd = (int)d;
 		e->dir = (AIDir)dd;
 	} else {
+		char buff[64];
 		sprintf(buff, "Could not SetEntDir on '%s'", entName);
 		g_hdb->_window->openMessageBar(buff, 10);
 	}
@@ -908,13 +903,10 @@ static int setBackground(lua_State *L) {
 }
 
 static int dialog(lua_State *L) {
-	const char *title, *string, *more;
-	double tileIndex;
-
-	title = lua_tostring(L, 1);
-	tileIndex = lua_tonumber(L, 2);
-	string = lua_tostring(L, 3);
-	more = lua_tostring(L, 4);
+	const char *title = lua_tostring(L, 1);
+	double tileIndex = lua_tonumber(L, 2);
+	const char *string = lua_tostring(L, 3);
+	const char *more = lua_tostring(L, 4);
 
 	if (!more || more[0] == '0')
 		more = NULL;
@@ -933,11 +925,11 @@ static int dialogChoice(lua_State *L) {
 	const char *func = lua_tostring(L, 3);
 	const char *choice[10] = {0,0,0,0,0,0,0,0,0,0};
 
-	int	i, amount = lua_gettop(L) - 3;
+	int	amount = lua_gettop(L) - 3;
 	if (amount > 9)
 		amount = 9;
 
-	for (i = 0; i < amount; i++)
+	for (int i = 0; i < amount; i++)
 		choice[i] = lua_tostring(L, 4 + i);
 
 	lua_pop(L, amount + 3);
@@ -947,12 +939,8 @@ static int dialogChoice(lua_State *L) {
 }
 
 static int message(lua_State *L) {
-	const char *title;
-	double	delay;
-
-	title = lua_tostring(L, 1);
-	delay = lua_tonumber(L, 2);
-
+	const char *title = lua_tostring(L, 1);
+	double delay = lua_tonumber(L, 2);
 
 	g_hdb->_lua->checkParameters("message", 2);
 
@@ -963,10 +951,10 @@ static int message(lua_State *L) {
 }
 
 static int animation(lua_State *L) {
-	double	x = lua_tonumber(L, 1);
-	double	y = lua_tonumber(L, 2);
-	double	which = lua_tonumber(L, 3);
-	double	playsnd = lua_tonumber(L, 4);
+	double x = lua_tonumber(L, 1);
+	double y = lua_tonumber(L, 2);
+	double which = lua_tonumber(L, 3);
+	double playsnd = lua_tonumber(L, 4);
 
 	g_hdb->_lua->checkParameters("animation", 4);
 
@@ -1012,16 +1000,16 @@ static int animation(lua_State *L) {
 
 static int spawnEntity(lua_State *L) {
 	double type = lua_tonumber(L, 1);
-	double	dir = lua_tonumber(L, 2);
-	double	x = lua_tonumber(L, 3);
-	double	y = lua_tonumber(L, 4);
+	double dir = lua_tonumber(L, 2);
+	double x = lua_tonumber(L, 3);
+	double y = lua_tonumber(L, 4);
 	const char *funcInit = lua_tostring(L, 5);
 	const char *funcAction = lua_tostring(L, 6);
 	const char *funcUse = lua_tostring(L, 7);
-	double	dir2 = lua_tonumber(L, 8);
-	double	level = lua_tonumber(L, 9);
-	double	value1 = lua_tonumber(L, 10);
-	double	value2 = lua_tonumber(L, 11);
+	double dir2 = lua_tonumber(L, 8);
+	double level = lua_tonumber(L, 9);
+	double value1 = lua_tonumber(L, 10);
+	double value2 = lua_tonumber(L, 11);
 
 	int t = (int)type;
 	int d = (int)dir;
@@ -1036,8 +1024,8 @@ static int spawnEntity(lua_State *L) {
 }
 
 static int addInvItem(lua_State *L) {
-	double	type = lua_tonumber(L, 1);
-	double	amount = lua_tonumber(L, 2);
+	double type = lua_tonumber(L, 1);
+	double amount = lua_tonumber(L, 2);
 	const char *funcInit = lua_tostring(L, 3);
 	const char *funcAction = lua_tostring(L, 4);
 	const char *funcUse = lua_tostring(L, 5);
@@ -1067,17 +1055,17 @@ static int keepInvItem(lua_State *L) {
 }
 
 static int queryInv(lua_State *L) {
-	const char *search;
-	int	result;
-
-	search = lua_tostring(L, 1);		// get the passed-in search string
+	// get the passed-in search string
+	const char *search = lua_tostring(L, 1);
 
 	g_hdb->_lua->checkParameters("queryInv", 1);
 
 	lua_pop(L, 1);
 
-	result = g_hdb->_ai->queryInventory(search);			// call the function & get return value
-	lua_pushnumber(L, result);					// send the return value back to Lua
+	// call the function & get return value
+	int result = g_hdb->_ai->queryInventory(search);
+	// send the return value back to Lua
+	lua_pushnumber(L, result);
 	return 1;
 }
 
@@ -1087,41 +1075,40 @@ static int purgeInv(lua_State *L) {
 }
 
 static int queryInvItem(lua_State *L) {
-	double	search;
-	int	result, s1;
-
-	search = lua_tonumber(L, 1);					// get the passed-in search string
-	s1 = (int)search;
+	// get the passed-in search string
+	double search = lua_tonumber(L, 1);
+	int s1 = (int)search;
 
 	g_hdb->_lua->checkParameters("queryInvItem", 1);
 
 	lua_pop(L, 1);
 
-	result = g_hdb->_ai->queryInventoryType((AIType)s1);	// call the function & get return value
-	lua_pushnumber(L, result);					// send the return value back to Lua
+	// call the function & get return value
+	int result = g_hdb->_ai->queryInventoryType((AIType)s1);
+	// send the return value back to Lua
+	lua_pushnumber(L, result);
 	return 1;
 }
 
 static int removeInv(lua_State *L) {
-	const char *search;
-	int	result;
-
-	search = lua_tostring(L, 1);		// get the passed-in search string
+	// get the passed-in search string
+	const char *search = lua_tostring(L, 1);
 	double number = lua_tonumber(L, 2);
 
 	g_hdb->_lua->checkParameters("removeInv", 2);
 
 	lua_pop(L, 2);
 
-	result = (int)g_hdb->_ai->removeInvItem(search, (int)number);	// call the function & get return value
-	lua_pushnumber(L, result);					// send the return value back to Lua
+	// call the function & get return value
+	int result = (int)g_hdb->_ai->removeInvItem(search, (int)number);
+	// send the return value back to Lua
+	lua_pushnumber(L, result);
 	return 1;
 }
 
 static int removeInvItem(lua_State *L) {
-	int	result;
-
-	double	search = lua_tonumber(L, 1);		// get the passed-in type value
+	// get the passed-in type value
+	double	search = lua_tonumber(L, 1);
 	double	number = lua_tonumber(L, 2);
 
 	g_hdb->_lua->checkParameters("removeInvItem", 2);
@@ -1129,8 +1116,10 @@ static int removeInvItem(lua_State *L) {
 	lua_pop(L, 2);
 
 	int	s = (int)search;
-	result = (int)g_hdb->_ai->removeInvItemType((AIType)s, (int)number);	// call the function & get return value
-	lua_pushnumber(L, result);					// send the return value back to Lua
+	// call the function & get return value
+	int result = (int)g_hdb->_ai->removeInvItemType((AIType)s, (int)number);
+	// send the return value back to Lua
+	lua_pushnumber(L, result);
 	return 1;
 }
 
@@ -1145,22 +1134,18 @@ static int killTrigger(lua_State *L) {
 }
 
 static int startMusic(lua_State *L) {
-	bool error;
-
 	double song = lua_tonumber(L, 1);
 	int s1 = (int)song;
 
 	g_hdb->_lua->checkParameters("startMusic", 1);
 
 	lua_pop(L, 1);
-	error = g_hdb->_sound->startMusic((SoundType)s1);
+	bool error = g_hdb->_sound->startMusic((SoundType)s1);
 
 	return 0;
 }
 
 static int fadeInMusic(lua_State *L) {
-	bool error;
-
 	double song = lua_tonumber(L, 1);
 	int s1 = (int)song;
 	int ramp = (int)lua_tonumber(L, 2);
@@ -1170,7 +1155,7 @@ static int fadeInMusic(lua_State *L) {
 	g_hdb->_lua->checkParameters("fadeInMusic", 2);
 
 	lua_pop(L, 2);
-	error = g_hdb->_sound->fadeInMusic((SoundType)s1, ramp);
+	bool error = g_hdb->_sound->fadeInMusic((SoundType)s1, ramp);
 
 	return 0;
 }
@@ -1240,14 +1225,13 @@ static int startMap(lua_State *L) {
 
 static int saveGlobal(lua_State *L) {
 	const char *global = lua_tostring(L, 1);
-	int type;
 
 	g_hdb->_lua->checkParameters("saveGlobal", 1);
 
 	lua_pop(L, 1);
 
 	lua_getglobal(L, global);
-	type = lua_type(L, 1);
+	int type = lua_type(L, 1);
 	if (type == LUA_TNUMBER) {
 		double value = lua_tonumber(L, 1);
 		g_hdb->_lua->saveGlobalNumber(global, value);
@@ -1798,7 +1782,7 @@ bool LuaScript::initScript(Common::SeekableReadStream *stream, const char *scrip
 
 	// Running the code, the error handler function sets the top of the stack
 	if (lua_pcall(_state, 0, 1, 0) != 0) {
-		// An error occurred, so dislay the reason and exit
+		// An error occurred, so display the reason and exit
 		error("Couldn't prepare luaL_pcall errorhandler:\n%s", lua_tostring(_state, -1));
 		lua_pop(_state, 1);
 
@@ -1814,7 +1798,9 @@ bool LuaScript::initScript(Common::SeekableReadStream *stream, const char *scrip
 	}
 
 	// Load GLOBAL.LUA and execute it
-	_globalLuaStream->seek(0); // Make sure we start from the beginning
+
+	// Make sure we start from the beginning
+	_globalLuaStream->seek(0);
 	if (!executeMPC(_globalLuaStream, "global code", "GLOBAL.LUA", _globalLuaLength)) {
 		error("LuaScript::initScript: 'global code' failed to execute");
 		return false;
@@ -1859,13 +1845,11 @@ void LuaScript::pushString(char *string) {
 }
 
 void LuaScript::pushFunction(char *func) {
-	int type;
-
 	if (!_systemInit)
 		return;
 
 	lua_getglobal(_state, func);
-	type = lua_type(_state, 1);
+	int type = lua_type(_state, 1);
 	if (type != LUA_TFUNCTION && type != LUA_TNUMBER) {
 		warning("pushFunction: Function '%s' doesn't exists", func);
 	}
@@ -1899,13 +1883,11 @@ bool LuaScript::callFunction(const char *name, int returns) {
 }
 
 void LuaScript::invokeLuaFunction(char *luaFunc, int x, int y, int value1, int value2) {
-	int type;
-
 	if (!_systemInit)
 		return;
 
 	lua_getglobal(_state, luaFunc);
-	type = lua_type(_state, 1);
+	int type = lua_type(_state, 1);
 
 #if 0
 	if (!strcmp(luaFunc, "ferretbed_use")) {
