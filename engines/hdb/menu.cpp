@@ -248,12 +248,10 @@ static const char nebulaNames[kNebulaCount][32] = {
 
 
 void Menu::startMenu() {
-	int	i;
-
 	// stuff that gets loaded-in at Title Screen
 	if (!_titleLogo) {
 		_titleLogo = g_hdb->_gfx->loadPic(TITLELOGO);
-		for (i = 0; i < kNebulaCount; i++)
+		for (int i = 0; i < kNebulaCount; i++)
 			_nebulaGfx[i] = g_hdb->_gfx->loadPic(nebulaNames[i]);
 
 		_rocketMain = g_hdb->_gfx->loadPic(MENU_ROCKETSHIP1);
@@ -308,7 +306,7 @@ void Menu::startMenu() {
 
 	// if we're popping back into menu, don't init this
 	if (!_fStars[0].y) {
-		for (i = 0; i < kMaxStars; i++) {
+		for (int i = 0; i < kMaxStars; i++) {
 			_fStars[i].y = -30;
 			_fStars[i].x = g_hdb->_rnd->getRandomNumber(kScreenWidth - 1);
 			_fStars[i].speed = g_hdb->_rnd->getRandomNumber(4) + 1;
@@ -565,7 +563,6 @@ void Menu::drawMenu() {
 		//-------------------------------------------------------------------
 		//	DRAW GAMEFILES MENU
 		//-------------------------------------------------------------------
-		int		i;
 
 		g_hdb->_gfx->draw3DStars();
 		//
@@ -587,8 +584,8 @@ void Menu::drawMenu() {
 
 			drawRocketAndSelections();
 		} else {
-			static int	anim = 0;
-			static	uint32 anim_time = 0;
+			static int anim = 0;
+			static uint32 anim_time = 0;
 
 			drawNebula();
 			_titleLogo->drawMasked(centerPic(_titleLogo), _rocketY + kMTitleY);
@@ -607,9 +604,8 @@ void Menu::drawMenu() {
 					anim = 0;
 			}
 
-			for (i = 0; i < kNumSaveSlots; i++) {
-				char	buff[16];
-				int		seconds = _saveGames[i].seconds;
+			for (int i = 0; i < kNumSaveSlots; i++) {
+				int seconds = _saveGames[i].seconds;
 
 				_slotGfx->drawMasked(kSaveSlotX - 8, i * 32 + (kSaveSlotY - 4));
 				if (seconds || _saveGames[i].mapName[0]) {
@@ -619,6 +615,7 @@ void Menu::drawMenu() {
 					g_hdb->_gfx->drawText(_saveGames[i].mapName);
 
 					g_hdb->_gfx->setCursor(kSaveSlotX + 180, i * 32 + kSaveSlotY);
+					char buff[16];
 					sprintf(buff, "%02d:%02d", seconds / 3600, (seconds / 60) % 60);
 					g_hdb->_gfx->drawText(buff);
 				}
@@ -628,9 +625,6 @@ void Menu::drawMenu() {
 		//-------------------------------------------------------------------
 		//	DRAW WARP MENU
 		//-------------------------------------------------------------------
-		int		i;
-		char	string[32];
-
 		g_hdb->_gfx->draw3DStars();
 		drawNebula();
 		drawWarpScreen();
@@ -638,17 +632,18 @@ void Menu::drawMenu() {
 		_titleLogo->drawMasked(centerPic(_titleLogo), _rocketY + kMTitleY);
 		_menuBackoutGfx->drawMasked(kWarpBackoutX, kWarpBackoutY);
 
-		for (i = 0; i < 10; i++) {
+		char string[32];
+		for (int i = 0; i < 10; i++) {
 			sprintf(string, "Map %2d", i);
 			g_hdb->_gfx->setCursor(kWarpX + 4, i * 16 + kWarpY);
 			g_hdb->_gfx->drawText(string);
 		}
-		for (i = 0; i < 10; i++) {
+		for (int i = 0; i < 10; i++) {
 			sprintf(string, "Map %d", i + 10);
 			g_hdb->_gfx->setCursor(kWarpX + 80, i * 16 + kWarpY);
 			g_hdb->_gfx->drawText(string);
 		}
-		for (i = 0; i < 10; i++) {
+		for (int i = 0; i < 10; i++) {
 			sprintf(string, "Map %d", i + 20);
 			g_hdb->_gfx->setCursor(kWarpX + 160, i * 16 + kWarpY);
 			g_hdb->_gfx->drawText(string);
@@ -674,8 +669,6 @@ void Menu::drawMenu() {
 }
 
 void Menu::freeMenu() {
-	int		i;
-
 	// title sequence stuff
 	if (_titleScreen)
 		delete _titleScreen;
@@ -722,11 +715,12 @@ void Menu::freeMenu() {
 		delete _hdbLogoScreen;
 	_hdbLogoScreen = NULL;
 
-	if (_nebulaGfx[0])
-		for (i = 0; i < kNebulaCount; i++) {
+	if (_nebulaGfx[0]) {
+		for (int i = 0; i < kNebulaCount; i++) {
 			delete _nebulaGfx[i];
 			_nebulaGfx[i] = NULL;
 		}
+	}
 
 	if (_sliderLeft)
 		delete _sliderLeft;
@@ -804,8 +798,6 @@ void Menu::freeMenu() {
 }
 
 bool Menu::startTitle() {
-	int i;
-
 	readConfig();
 
 	_titleScreen = g_hdb->_gfx->loadPic(MONKEYLOGOSCREEN);
@@ -819,7 +811,7 @@ bool Menu::startTitle() {
 	_rocketEx2 = g_hdb->_gfx->loadPic(MENU_EXHAUST2);
 	_titleLogo = g_hdb->_gfx->loadPic(TITLELOGO);
 
-	for (i = 0; i < kNebulaCount; i++)
+	for (int i = 0; i < kNebulaCount; i++)
 		_nebulaGfx[i] = g_hdb->_gfx->loadPic(nebulaNames[i]);
 
 	_titleCycle = 1;	// 1 = Waiting for OOH OOH
@@ -1172,8 +1164,6 @@ void Menu::processInput(int x, int y) {
 		//-------------------------------------------------------------------
 		//	OPTIONS INPUT
 		//-------------------------------------------------------------------
-		int	offset, oldVol;
-
 		int	xit = getMenuKey();
 
 		//
@@ -1184,10 +1174,11 @@ void Menu::processInput(int x, int y) {
 			return;
 		}
 
+		int	offset;
 		// Slider 1
 		if (x >= 0 && x <= kOptionsX + 200 &&
 			y >= kOptionsY + 20 && y <= kOptionsY + 36) {
-			oldVol = g_hdb->_sound->getMusicVolume();
+			int oldVol = g_hdb->_sound->getMusicVolume();
 			if (x < kOptionsX) {
 				if (oldVol) {
 					g_hdb->_sound->stopMusic();
@@ -1243,8 +1234,8 @@ void Menu::processInput(int x, int y) {
 			g_hdb->_sound->playSound(SND_MENU_BACKOUT);
 		}
 
-		int		i;
-		for (i = 0; i < kNumSaveSlots; i++)
+		int i = 0;
+		for (; i < kNumSaveSlots; i++)
 			if (y >= (i * 32 + kSaveSlotY - 4) && y <= (i * 32 + kSaveSlotY + 24))
 				break;
 		if (i >= kNumSaveSlots)
@@ -1253,33 +1244,29 @@ void Menu::processInput(int x, int y) {
 		_saveSlot = i;
 
 		// LOAD GAME!
-		{
-			// clicked on empty slot?
-			if (!_saveGames[i].seconds && !_saveGames[i].mapName[0]) {
-				g_hdb->_sound->playSound(SND_MENU_BACKOUT);
-				return;
-			}
+		// clicked on empty slot?
+		if (!_saveGames[i].seconds && !_saveGames[i].mapName[0]) {
+			g_hdb->_sound->playSound(SND_MENU_BACKOUT);
+			return;
+		}
 
-			g_hdb->_sound->playSound(SND_MENU_ACCEPT);
-			if (g_hdb->loadGameState(_saveSlot).getCode() == Common::kNoError) {
-				_gamefilesActive = false;
+		g_hdb->_sound->playSound(SND_MENU_ACCEPT);
+		if (g_hdb->loadGameState(_saveSlot).getCode() == Common::kNoError) {
+			_gamefilesActive = false;
 
-				freeMenu();
-				g_hdb->setGameState(GAME_PLAY);
-				// if we're at the very start of the level, re-init the level
-				if (!_saveGames[i].seconds) {
-					g_hdb->_lua->callFunction("level_loaded", 0); // call "level_loaded" Lua function, if it exists
-					if (!g_hdb->_ai->cinematicsActive())
-						g_hdb->_gfx->turnOffFade();
-				}
+			freeMenu();
+			g_hdb->setGameState(GAME_PLAY);
+			// if we're at the very start of the level, re-init the level
+			if (!_saveGames[i].seconds) {
+				g_hdb->_lua->callFunction("level_loaded", 0); // call "level_loaded" Lua function, if it exists
+				if (!g_hdb->_ai->cinematicsActive())
+					g_hdb->_gfx->turnOffFade();
 			}
 		}
 	} else if (_warpActive) {
 		//-------------------------------------------------------------------
 		//	WARP INPUT
 		//-------------------------------------------------------------------
-		int		map;
-
 		int	xit = getMenuKey();
 
 		if ((y >= kMenuExitY && x < kMenuExitXLeft) || xit) {
@@ -1288,7 +1275,7 @@ void Menu::processInput(int x, int y) {
 			g_hdb->_sound->playSound(SND_MENU_BACKOUT);
 			_clickDelay = 10;
 		} else if (y >= kWarpY && y < kWarpY + 160) {
-			char	string[16];
+			int map;
 
 			if (x > kWarpX + 160)
 				map = 20;
@@ -1306,6 +1293,7 @@ void Menu::processInput(int x, int y) {
 				g_hdb->_gfx->updateVideo();
 			_warpActive = 0;
 
+			char string[16];
 			if (map < 10)
 				sprintf(string, "MAP0%d", map);
 			else
@@ -1363,9 +1351,7 @@ void Menu::drawNebula() {
 	//
 	// draw the falling stars
 	//
-	int		i;
-
-	for (i = 0; i < kMaxStars; i++) {
+	for (int i = 0; i < kMaxStars; i++) {
 		_fStars[i].y += _fStars[i].speed;
 		if (_fStars[i].y > kScreenHeight) {
 			_fStars[i].y = (g_hdb->_rnd->getRandomNumber(29) + 30) * -1;
@@ -1421,14 +1407,12 @@ void Menu::drawRocketAndSelections() {
 }
 
 void Menu::drawSlider(int x, int y, int offset) {
-	int	i, x1;
-
-	x1 = x;
+	int x1 = x;
 
 	_sliderLeft->drawMasked(x, y);
 	x += _sliderLeft->_width;
 
-	for (i = 0; i < 12; i++) {
+	for (int i = 0; i < 12; i++) {
 		_sliderMid->draw(x, y);
 		x += _sliderMid->_width;
 	}
@@ -1438,14 +1422,12 @@ void Menu::drawSlider(int x, int y, int offset) {
 }
 
 void Menu::drawToggle(int x, int y, bool flag) {
-	int	i, x1;
-
-	x1 = x;
+	int	x1 = x;
 
 	_gCheckLeft->drawMasked(x, y);
 	x += _gCheckLeft->_width;
 
-	for (i = 0; i < 12; i++) {
+	for (int i = 0; i < 12; i++) {
 		_gCheckEmpty->draw(x, y);
 		x += _gCheckEmpty->_width;
 	}

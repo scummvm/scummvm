@@ -61,16 +61,13 @@ void AI::addAnimateTarget(int x, int y, int start, int end, AnimSpeed speed, boo
 	// Set Info if this is not an inMap animation
 	at->inMap = inMap;
 	if (!inMap) {
-
 		char name[32];
-		uint32 size;
-
 		for (int i = start; i <= end; i++) {
 			if (i < 10)
 				snprintf(name, 32, "%s0%d", tileName, i + 1);
 			else
 				snprintf(name, 32, "%s%d", tileName, i + 1);
-			size = g_hdb->_fileMan->getLength(name, TYPE_TILE32);
+			uint32 size = g_hdb->_fileMan->getLength(name, TYPE_TILE32);
 			at->gfxList[i] = g_hdb->_gfx->getTileGfx(name, size);
 		}
 	}
@@ -84,14 +81,11 @@ void AI::addAnimateTarget(int x, int y, int start, int end, AnimSpeed speed, boo
 	Called every frame
 */
 void AI::animateTargets() {
-	AnimTarget *at;
 	int mx, my;
-	int layer;
-
 	g_hdb->_map->getMapXY(&mx, &my);
 
 	for (uint i = 0; i < _animTargets.size(); i++) {
-		at = _animTargets[i];
+		AnimTarget *at = _animTargets[i];
 		debug(9, "AnimTarget #%i: at: at->x: %d, at->y: %d, at->start: %d, at->end: %d, at->vel: %d", i, at->x, at->y, at->start, at->end, at->vel);
 
 		// Draw Non-map stuff every frame
@@ -105,7 +99,7 @@ void AI::animateTargets() {
 
 			if (at->inMap) {
 				// Animate Map Tiles
-				layer = 0; // BG layer
+				int layer = 0; // BG layer
 				if (!(at->start == g_hdb->_map->getMapBGTileIndex(at->x, at->y)))
 					layer = 1;
 
@@ -162,10 +156,6 @@ void AI::addBridgeExtend(int x, int y, int bridgeType) {
 }
 
 void AI::animateBridges() {
-	int	tileIndex, xv, yv;
-	uint32 flags;
-	bool done;
-
 	// out quick!
 	if (!_numBridges)
 		return;
@@ -175,8 +165,9 @@ void AI::animateBridges() {
 			continue;
 
 		_bridges[i].delay = 5;
-		done = false;
-		xv = yv = 0;
+		bool done = false;
+		int xv = 0;
+		int yv = 0;
 
 		switch (_bridges[i].dir) {
 		case DIR_UP:
@@ -220,17 +211,19 @@ void AI::animateBridges() {
 		}
 
 		// is this bridge done extending one chunk?
-		if (done == true) {
+		if (done) {
 			if (g_hdb->_map->onScreen(_bridges[i].x, _bridges[i].y))
 				g_hdb->_sound->playSound(SND_BRIDGE_EXTEND);
 			_bridges[i].anim = 0;
 			_bridges[i].x += xv;
 			_bridges[i].y += yv;
-			tileIndex = g_hdb->_map->getMapFGTileIndex(_bridges[i].x, _bridges[i].y);
-			flags = g_hdb->_map->getMapBGTileFlags(_bridges[i].x, _bridges[i].y);
+			int tileIndex = g_hdb->_map->getMapFGTileIndex(_bridges[i].x, _bridges[i].y);
+			uint32 flags = g_hdb->_map->getMapBGTileFlags(_bridges[i].x, _bridges[i].y);
 			if (!flags || (flags & kFlagMetal) || tileIndex >= 0 || (flags & kFlagSolid)) {
 				if (g_hdb->_map->onScreen(_bridges[i].x, _bridges[i].y))
 					g_hdb->_sound->playSound(SND_BRIDGE_END);
+				// TODO: CHECKME - Using i as an index looks very wrong as the for statement uses j.
+				// This results in copying multiple times the same data
 				for (int j = 0; j < _numBridges - 1; j++)
 					memcpy(&_bridges[i], &_bridges[i + 1], sizeof(Bridge));
 				_numBridges--;
@@ -363,9 +356,6 @@ HereT *AI::findHere(int x, int y) {
 }
 
 void AI::addToAutoList(int x, int y, const char *luaFuncInit, const char *luaFuncUse) {
-
-	const char *get;
-
 	for (int i = 0; i < kMaxAutoActions; i++) {
 		if (!_autoActions[i].x) {
 			_autoActions[i].x = x;
@@ -378,7 +368,7 @@ void AI::addToAutoList(int x, int y, const char *luaFuncInit, const char *luaFun
 
 			if (_autoActions[i].luaFuncInit[0]) {
 				g_hdb->_lua->callFunction(_autoActions[i].luaFuncInit, 2);
-				get = g_hdb->_lua->getStringOffStack();
+				const char *get = g_hdb->_lua->getStringOffStack();
 				if (!get)
 					return;
 				strcpy(&_autoActions[i].entityName[0], get);
