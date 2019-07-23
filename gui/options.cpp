@@ -426,7 +426,6 @@ void OptionsDialog::build() {
 		_subSpeedSlider->setValue(speed);
 		_subSpeedLabel->setValue(speed);
 	}
-
 }
 
 void OptionsDialog::clean() {

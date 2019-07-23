@@ -76,7 +76,13 @@ void WindowsTextToSpeechManager::init() {
 		warning("Could not initialize TTS voice");
 		return;
 	}
+
+#ifdef USE_TRANSLATION
+	setLanguage(TransMan.getCurrentLanguage());
+#else
 	setLanguage("en");
+#endif
+
 	_voice->SetOutput(_audio, FALSE);
 
 	if(_ttsState->_availableVoices.size() > 0)
@@ -86,7 +92,6 @@ void WindowsTextToSpeechManager::init() {
 }
 
 WindowsTextToSpeechManager::~WindowsTextToSpeechManager() {
-	freeVoices();
 	if (_voice)
 		_voice->Release();
 	::CoUninitialize();
@@ -207,16 +212,6 @@ void WindowsTextToSpeechManager::setVolume(unsigned volume) {
 	_ttsState->_volume = volume;
 }
 
-int WindowsTextToSpeechManager::getVolume() {
-	return _ttsState->_volume;
-}
-
-void WindowsTextToSpeechManager::freeVoices() {
-	_ttsState->_availableVoices.clear();
-	// The voice data gets freed automaticly, when the reference counting inside TTSVoice
-	// reaches 0, so there is no point in trying to free it here
-}
-
 void WindowsTextToSpeechManager::setLanguage(Common::String language) {
 	if (language == "C")
 		language = "en";
@@ -322,7 +317,7 @@ Common::String WindowsTextToSpeechManager::lcidToLocale(Common::String lcid) {
 }
 
 void WindowsTextToSpeechManager::updateVoices() {
-	freeVoices();
+	_ttsState->_availableVoices.clear();
 	HRESULT hr = S_OK;
 	ISpObjectToken *cpVoiceToken = nullptr;
 	IEnumSpObjectTokens *cpEnum = nullptr;

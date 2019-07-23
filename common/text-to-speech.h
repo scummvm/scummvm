@@ -228,7 +228,7 @@ public:
 	/**
 	 * Returns the current voice volume
 	 */
-	virtual int getVolume() { return _ttsState->_volume; }
+	int getVolume() { return _ttsState->_volume; }
 
 	/**
 	 * Sets the speech language

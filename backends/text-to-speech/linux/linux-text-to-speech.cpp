@@ -182,7 +182,6 @@ bool LinuxTextToSpeechManager::say(Common::String str, Common::String charset) {
 		return true;
 	}
 	return false;
-
 }
 
 bool LinuxTextToSpeechManager::stop() {
@@ -248,10 +247,6 @@ void LinuxTextToSpeechManager::setVolume(unsigned volume) {
 	_ttsState->_volume = volume;
 }
 
-int LinuxTextToSpeechManager::getVolume() {
-	return (_ttsState->_volume - 50) * 2;
-}
-
 void LinuxTextToSpeechManager::setLanguage(Common::String language) {
 	if (_speechState == BROKEN)
 		return;
@@ -278,6 +273,7 @@ void LinuxTextToSpeechManager::updateVoices() {
 	   it depends on the user to map them to the right voices in speech-dispatcher
 	   configuration
 	*/
+	_ttsState->_availableVoices.clear();
 
 	char **voiceInfo = spd_list_voices(_connection);
 
@@ -294,7 +290,6 @@ void LinuxTextToSpeechManager::updateVoices() {
 		free(voiceInfo[i]);
 
 	free(voiceInfo);
-
 }
 
 void LinuxTextToSpeechManager::freeVoiceData(void *data) {
