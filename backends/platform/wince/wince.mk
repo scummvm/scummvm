@@ -3,7 +3,7 @@ ifdef WRAP_MALLOC
 endif
 
 ifdef DYNAMIC_MODULES
-plugins: backends/platform/wince/stub.o backends/platform/wince/PocketSCUMM.o
+plugins: $(EXECUTABLE) backends/platform/wince/stub.o backends/platform/wince/PocketSCUMM.o
 	$(CXX) -nostdlib backends/platform/wince/stub.o backends/platform/wince/PocketSCUMM.o -L. -lscummvm -o scummvm.exe
 	
 backends/platform/wince/stub.o: $(srcdir)/backends/platform/wince/stub.cpp
