@@ -171,6 +171,7 @@ private:
 	void playTransitionSound(int transitionId);
 
 	void playPrivateAddon();
+	void playObjectDescription(); // for restored content mode
 };
 
 } // End of namespace BladeRunner

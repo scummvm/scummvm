@@ -91,7 +91,11 @@ KIA::KIA(BladeRunnerEngine *vm) {
 
 	_pogoPos = 0;
 
-	_buttons = new UIImagePicker(_vm, 22);
+	if (_vm->_cutContent) {
+		_buttons = new UIImagePicker(_vm, 23); // add description box for objects
+	} else {
+		_buttons = new UIImagePicker(_vm, 22);
+	}
 
 	_crimesSection     = new KIASectionCrimes(_vm, _vm->_playerActor->_clues);
 	_suspectsSection   = new KIASectionSuspects(_vm, _vm->_playerActor->_clues);
@@ -555,6 +559,9 @@ void KIA::playerReset() {
 	_playerPhotographId = -1;
 	_playerImage.free();
 	_playerActorDialogueState = 0;
+	if (_vm->_cutContent) {
+		_buttons->resetImage(22);
+	}
 }
 
 void KIA::playActorDialogue(int actorId, int sentenceId) {
@@ -571,6 +578,9 @@ void KIA::playSliceModel(int sliceModelId) {
 		_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(kSfxBEEP1), 70, 0, 0, 50, 0);
 	}
 	_playerSliceModelId = sliceModelId;
+	if (_vm->_cutContent) {
+		_buttons->defineImage(22, Common::Rect(530, 32, 635, 126), nullptr, nullptr, nullptr, _vm->_textClueTypes->getText(3)); // "OBJECT"
+	}
 }
 
 void KIA::playPhotograph(int photographId) {
@@ -759,6 +769,10 @@ void KIA::createButtons(int sectionId) {
 	case kKIASectionSuspects:
 	case kKIASectionClues:
 		_buttons->defineImage(0, kiaButton6, nullptr, nullptr, _shapes->get(1), _vm->_textKIA->getText(23));
+
+		if (_vm->_cutContent && _playerSliceModelId != -1) {
+			_buttons->defineImage(22, Common::Rect(530, 32, 635, 126), nullptr, nullptr, nullptr, _vm->_textClueTypes->getText(3)); // "OBJECT"
+		}
 
 		if (sectionId == kKIASectionCrimes) {
 			shapeUp = _shapes->get(2);
@@ -1042,6 +1056,12 @@ void KIA::buttonClicked(int buttonId) {
 	case 21:
 		playPrivateAddon();
 		break;
+	case 22:
+		if (_vm->_cutContent) {
+			// play audio description
+			playObjectDescription();
+		}
+		break;
 	}
 }
 
@@ -1279,6 +1299,153 @@ void KIA::playPrivateAddon() {
 	playSliceModel(524);
 	playActorDialogue(kActorBulletBob, 2060);
 	playActorDialogue(kActorBulletBob, 2070);
+}
+
+void KIA::playObjectDescription() {
+	if (_playerSliceModelId == -1) {
+		return;
+	}
+	switch (_playerSliceModelId) {
+	case kModelAnimationShellCasings:
+		playActorDialogue(kActorMcCoy, 8730);
+		break;
+	case kModelAnimationCandy:
+		playActorDialogue(kActorMcCoy, 8735);
+		break;
+	case kModelAnimationToyDog:
+		playActorDialogue(kActorMcCoy, 8740);
+		break;
+	case kModelAnimationChopstickWrapper:
+		playActorDialogue(kActorMcCoy, 8745);
+		break;
+	case kModelAnimationReferenceLetter:
+		playActorDialogue(kActorMcCoy, 8750);
+		break;
+	case kModelAnimationChromeDebris:
+		playActorDialogue(kActorMcCoy, 8755);
+		break;
+	case kModelAnimationLicensePlate:
+		playActorDialogue(kActorMcCoy, 8760);
+		break;
+	case kModelAnimationDragonflyEarring:
+		playActorDialogue(kActorMcCoy, 8765);
+		break;
+	case kModelAnimationDetonatorWire:
+		playActorDialogue(kActorMcCoy, 8770);
+		break;
+	case kModelAnimationKingstonKitchenBox:
+		playActorDialogue(kActorMcCoy, 8775);
+		break;
+	case kModelAnimationTyrellSalesPamphletKIA:
+		playActorDialogue(kActorMcCoy, 8780);
+		break;
+	case kModelAnimationRadiationGoggles:
+		playActorDialogue(kActorMcCoy, 8785);
+		break;
+	case kModelAnimationDogCollar:
+		playActorDialogue(kActorMcCoy, 8790);
+		break;
+	case kModelAnimationMaggieBracelet:
+		playActorDialogue(kActorMcCoy, 8795);
+		break;
+	case kModelAnimationEnvelope:
+		playActorDialogue(kActorMcCoy, 8800);
+		break;
+	case kModelAnimationWeaponsOrderForm:
+		// fall through
+	case kModelAnimationRequisitionForm:
+		// fall through
+	case kModelAnimationOriginalShippingForm:
+		// fall through
+	case kModelAnimationOriginalRequisitionForm:
+		playActorDialogue(kActorMcCoy, 8805); // A requisition form
+		break;
+	case kModelAnimationHysteriaToken:
+		playActorDialogue(kActorMcCoy, 8810);
+		break;
+	case kModelAnimationRagDoll:
+		playActorDialogue(kActorMcCoy, 8815);
+		break;
+	case kModelAnimationCheese:
+		playActorDialogue(kActorMcCoy, 8820);
+		break;
+	case kModelAnimationDragonflyBelt:
+		playActorDialogue(kActorMcCoy, 8825);
+		break;
+	case kModelAnimationStrangeScale:
+		playActorDialogue(kActorMcCoy, 8830);
+		break;
+	case kModelAnimationDektorasCard:
+		playActorDialogue(kActorMcCoy, 8835);
+		break;
+	case kModelAnimationGrigoriansNote:
+		playActorDialogue(kActorMcCoy, 8840);
+		break;
+	case kModelAnimationCollectionReceipt:
+		playActorDialogue(kActorMcCoy, 8845);
+		break;
+	case kModelAnimationGordosLighterReplicant:
+		// fall through
+	case kModelAnimationGordosLighterHuman:
+		playActorDialogue(kActorMcCoy, 8850);
+		break;
+//	case kModelAnimationBadge: // This is never discovered in-game, and uses same model as Holden's badge
+//		playActorDialogue(kActorMcCoy, 8855); // Baker's Badge
+//		break;
+	case kModelAnimationBadge:
+		playActorDialogue(kActorMcCoy, 8860);
+		break;
+	case kModelAnimationLichenDogWrapper:
+		playActorDialogue(kActorMcCoy, 8865);
+		break;
+	case kModelAnimationFolder:
+		playActorDialogue(kActorMcCoy, 8870);
+		break;
+	case kModelAnimationCandyWrapper:
+		playActorDialogue(kActorMcCoy, 8875);
+		break;
+	case kModelAnimationFlaskOfAbsinthe:
+		playActorDialogue(kActorMcCoy, 8880);
+		break;
+	case kModelAnimationPowerSource:
+		playActorDialogue(kActorMcCoy, 8885);
+		break;
+	case kModelAnimationBomb: // TODO - does this ever appear in KIA?
+		playActorDialogue(kActorMcCoy, 8890);
+		break;
+	case kModelAnimationGarterSnake:
+		playActorDialogue(kActorMcCoy, 8895);
+		break;
+	case kModelAnimationSlug:
+		playActorDialogue(kActorMcCoy, 8900);
+		break;
+	case kModelAnimationGoldfish:
+		playActorDialogue(kActorMcCoy, 8905);
+		break;
+	case kModelAnimationDNAEvidence01OutOf6:
+//		fall through
+//	case kModelAnimationDNAEvidence02OutOf6:
+//		fall through
+	case kModelAnimationDNAEvidence03OutOf6:
+//		fall through
+	case kModelAnimationDNAEvidence04OutOf6:
+//		fall through
+//	case kModelAnimationDNAEvidence05OutOf6:
+//		fall through
+	case kModelAnimationDNAEvidenceComplete:
+//		fall through
+	case kModelAnimationSpinnerKeys:
+//		fall through
+	case kModelAnimationBriefcase:
+//		fall through
+	case kModelAnimationCrystalsCigarette:
+//		fall through
+	case kModelAnimationVideoDisc:
+//		fall through
+	default:
+		playActorDialogue(kActorMcCoy, 8525);
+		break;
+	}
 }
 
 } // End of namespace BladeRunner

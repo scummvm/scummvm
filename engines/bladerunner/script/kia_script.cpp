@@ -375,6 +375,9 @@ void KIAScript::SCRIPT_KIA_DLL_Play_Clue_Asset_Script(int notUsed, int clueId) {
 		break;
 	case kClueMaggieBracelet:
 		KIA_Play_Slice_Model(kModelAnimationMaggieBracelet);
+		if (_vm->_cutContent) {
+			KIA_Play_Actor_Dialogue(kActorVoiceOver, 4030);
+		}
 		break;
 	case kClueEnvelope:
 		KIA_Play_Slice_Model(kModelAnimationEnvelope);
