@@ -121,8 +121,6 @@ uint16 Input::getButtons() {
 }
 
 void Input::stylusDown(int x, int y) {
-	int worldX, worldY;
-	GameState gs;
 	static uint32 delay = 0, time;
 
 	// Don't let the screen get clicked too fast
@@ -134,7 +132,7 @@ void Input::stylusDown(int x, int y) {
 	_stylusDown = true;
 	_stylusDownX = x;
 	_stylusDownY = y;
-	gs = g_hdb->getGameState();
+	GameState gs = g_hdb->getGameState();
 
 	switch (gs) {
 	case GAME_TITLE:
@@ -183,9 +181,9 @@ void Input::stylusDown(int x, int y) {
 
 		// Check for map dragging in debug Mode and place player there
 		if ((GAME_PLAY == g_hdb->getGameState()) && g_hdb->getDebug() == 2) {
-			int		mx, my;
-
+			int mx, my;
 			g_hdb->_map->getMapXY(&mx, &my);
+
 			mx = ((mx + _stylusDownY) / kTileWidth) * kTileWidth;
 			my = ((my + _stylusDownY) / kTileHeight) * kTileHeight;
 			g_hdb->_ai->setPlayerXY(mx, my);
@@ -195,6 +193,7 @@ void Input::stylusDown(int x, int y) {
 		}
 
 		// Clicked in the world
+		int worldX, worldY;
 		g_hdb->_map->getMapXY(&worldX, &worldY);
 		worldX = ((worldX + x) / kTileWidth) * kTileWidth;
 		worldY = ((worldY + y) / kTileHeight) * kTileHeight;
@@ -317,6 +316,7 @@ void Input::updateMouseButtons(int l, int m, int r) {
 }
 
 void Input::updateKeys(Common::Event event, bool keyDown) {
+	static int current = 0, last = 0;
 
 	if (keyDown && event.kbd.keycode == _keyQuit) {
 		g_hdb->quitGame();
@@ -326,18 +326,15 @@ void Input::updateKeys(Common::Event event, bool keyDown) {
 	uint16 buttons = getButtons();
 
 	// PAUSE key pressed?
-	{
-		static int	current = 0, last = 0;
-		last = current;
-		if (keyDown && event.kbd.keycode == Common::KEYCODE_p && g_hdb->getGameState() == GAME_PLAY) {
-			current = 1;
-			if (!last) {
-				g_hdb->togglePause();
-				g_hdb->_sound->playSound(SND_POP);
-			}
-		} else
-			current = 0;
-	}
+	last = current;
+	if (keyDown && event.kbd.keycode == Common::KEYCODE_p && g_hdb->getGameState() == GAME_PLAY) {
+		current = 1;
+		if (!last) {
+			g_hdb->togglePause();
+			g_hdb->_sound->playSound(SND_POP);
+		}
+	} else
+		current = 0;
 
 	if (!g_hdb->getPause()) {
 		if (event.kbd.keycode == _keyUp) {
