@@ -43,7 +43,7 @@
  * @param mod   The pressed key modifier as detected by SDL.
  * @param event The ScummVM event to setup.
  */
-void WebOSSdlEventSource::SDLModToOSystemKeyFlags(SDLMod mod,
+void WebOSSdlEventSource::SDLModToOSystemKeyFlags(SDL_Keymod mod,
 		Common::Event &event) {
 	event.kbd.flags = 0;
 
