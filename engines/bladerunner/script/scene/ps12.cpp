@@ -733,11 +733,11 @@ void SceneScriptPS12::SceneLoaded() {
 	Unclickable_Object("PARKMETR16");
 
 	if (!Query_System_Currently_Loading_Game()) {
-		bool targetStateMZ = true;
 #if BLADERUNNER_ORIGINAL_BUGS
+		bool targetStateMZ = true;
 #else
 // every maze target begins as NON-targetable
-		targetStateMZ = false;
+		bool targetStateMZ = false;
 #endif // BLADERUNNER_ORIGINAL_BUGS
 		Item_Add_To_World(kItemPS12Target1,  kModelAnimationFemaleTargetWithGunActive,   kSetPS10_PS11_PS12_PS13,  -691.8f, -9.06f, 587.67f,  200, 72, 36, targetStateMZ, false, false, true);
 		Item_Add_To_World(kItemPS12Target2,  kModelAnimationMaleTargetWithShotgunActive, kSetPS10_PS11_PS12_PS13,  -679.6f, -45.4f, 721.05f,   67, 72, 36, targetStateMZ, false, false, true);
