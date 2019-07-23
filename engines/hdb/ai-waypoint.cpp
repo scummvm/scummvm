@@ -25,16 +25,20 @@
 namespace HDB {
 
 void AI::addWaypoint(int px, int py, int x, int y, int level) {
+	// at the max yet?
 	if (_numWaypoints >= kMaxWaypoints || (playerOnIce() && _player->goalX))
 		return;
 
-	// Check for duplicates
+	// first, let's see if this is a duplicate waypoint
 	int i;
 	for (i = 0; i < _numWaypoints; i++)
 		if (_waypoints[i].x == x && _waypoints[i].y == y)
 			return;
 
-	// Check if path is clear
+	// check to make sure the path is clear...
+	// if it's not, don't add to waypoint list!
+	// The destination x,y might be modified, so
+	// we'll pass in the address to them...
 	int nx = x;
 	int ny = y;
 	if (!_numWaypoints) {
@@ -60,71 +64,13 @@ void AI::addWaypoint(int px, int py, int x, int y, int level) {
 			lvl1 = lvl2 = level;
 
 			if (traceStraightPath(px, py, &tx, &ty, &lvl1)) {
-				if (tx != nx || ty != py) {
-					tx = px;
-					ty = ny;
-					tx2 = nx;
-					ty2 = ny;
-
-					lvl1 = lvl2 = level;
-
-					if (traceStraightPath(px, py, &tx, &ty, &lvl1)) {
-						if (tx != px || ty != ny)
-							return;
-
-						traceStraightPath(tx, ty, &nx, &ny, &lvl2);
-
-						if (tx2 != nx || ty2 != ny)
-							return;
-
-						_waypoints[_numWaypoints].x = tx;
-						_waypoints[_numWaypoints].y = ty;
-						_waypoints[_numWaypoints].level = lvl1;
-						_numWaypoints++;
-						_waypoints[_numWaypoints].x = nx;
-						_waypoints[_numWaypoints].y = ny;
-						_waypoints[_numWaypoints].level = lvl2;
-						_numWaypoints++;
-						g_hdb->_sound->playSound(SND_MENU_SLIDER);
-
-						if (onEvenTile(_player->x, _player->y))
-							setEntityGoal(_player, tx, ty);
-					}
-				}
+				if (tx != nx || ty != py)
+					goto newpath;
 
 				traceStraightPath(tx, ty, &tx2, &ty2, &lvl2);
 
-				if (tx2 != nx || ty2 != ny) {
-					tx = px;
-					ty = ny;
-					tx2 = nx;
-					ty2 = ny;
-
-					lvl1 = lvl2 = level;
-
-					if (traceStraightPath(px, py, &tx, &ty, &lvl1)) {
-						if (tx != px || ty != ny)
-							return;
-
-						traceStraightPath(tx, ty, &nx, &ny, &lvl2);
-
-						if (tx2 != nx || ty2 != ny)
-							return;
-
-						_waypoints[_numWaypoints].x = tx;
-						_waypoints[_numWaypoints].y = ty;
-						_waypoints[_numWaypoints].level = lvl1;
-						_numWaypoints++;
-						_waypoints[_numWaypoints].x = nx;
-						_waypoints[_numWaypoints].y = ny;
-						_waypoints[_numWaypoints].level = lvl2;
-						_numWaypoints++;
-						g_hdb->_sound->playSound(SND_MENU_SLIDER);
-
-						if (onEvenTile(_player->x, _player->y))
-							setEntityGoal(_player, tx, ty);
-					}
-				}
+				if (tx2 != nx || ty2 != ny)
+					goto newpath;
 
 				_waypoints[_numWaypoints].x = tx;
 				_waypoints[_numWaypoints].y = ty;
@@ -139,6 +85,7 @@ void AI::addWaypoint(int px, int py, int x, int y, int level) {
 				if (onEvenTile(_player->x, _player->y))
 					setEntityGoal(_player, tx, ty);
 			} else {
+newpath:
 				tx = px;
 				ty = ny;
 				tx2 = nx;
@@ -199,77 +146,13 @@ void AI::addWaypoint(int px, int py, int x, int y, int level) {
 			lvl1 = lvl2 = level;
 
 			if (traceStraightPath(px, py, &tx, &ty, &lvl1)) {
-				if (tx != nx || ty != py) {
-					tx = px;
-					ty = ny;
-					tx2 = nx;
-					ty2 = ny;
-
-					lvl1 = lvl2 = level;
-
-					if (traceStraightPath(px, py, &tx, &ty, &lvl1)) {
-						if (tx != px || ty != ny)
-							return;
-
-						traceStraightPath(tx, ty, &nx, &ny, &lvl2);
-
-						if (tx2 != nx || ty2 != ny)
-							return;
-
-						if (_numWaypoints < kMaxWaypoints) {
-							_waypoints[_numWaypoints].x = tx;
-							_waypoints[_numWaypoints].y = ty;
-							_waypoints[_numWaypoints].level = lvl1;
-							_numWaypoints++;
-							g_hdb->_sound->playSound(SND_MENU_SLIDER);
-						}
-
-						if (_numWaypoints < kMaxWaypoints) {
-							_waypoints[_numWaypoints].x = nx;
-							_waypoints[_numWaypoints].y = ny;
-							_waypoints[_numWaypoints].level = lvl2;
-							_numWaypoints++;
-							g_hdb->_sound->playSound(SND_MENU_SLIDER);
-						}
-					}
-				}
+				if (tx != nx || ty != py)
+					goto newpath2;
 
 				traceStraightPath(tx, ty, &tx2, &ty2, &lvl2);
 
-				if (tx2 != nx || ty2 != ny) {
-					tx = px;
-					ty = ny;
-					tx2 = nx;
-					ty2 = ny;
-
-					lvl1 = lvl2 = level;
-
-					if (traceStraightPath(px, py, &tx, &ty, &lvl1)) {
-						if (tx != px || ty != ny)
-							return;
-
-						traceStraightPath(tx, ty, &nx, &ny, &lvl2);
-
-						if (tx2 != nx || ty2 != ny)
-							return;
-
-						if (_numWaypoints < kMaxWaypoints) {
-							_waypoints[_numWaypoints].x = tx;
-							_waypoints[_numWaypoints].y = ty;
-							_waypoints[_numWaypoints].level = lvl1;
-							_numWaypoints++;
-							g_hdb->_sound->playSound(SND_MENU_SLIDER);
-						}
-
-						if (_numWaypoints < kMaxWaypoints) {
-							_waypoints[_numWaypoints].x = nx;
-							_waypoints[_numWaypoints].y = ny;
-							_waypoints[_numWaypoints].level = lvl2;
-							_numWaypoints++;
-							g_hdb->_sound->playSound(SND_MENU_SLIDER);
-						}
-					}
-				}
+				if (tx2 != nx || ty2 != ny)
+					goto newpath2;
 
 				if (_numWaypoints < kMaxWaypoints) {
 					_waypoints[_numWaypoints].x = tx;
@@ -287,6 +170,7 @@ void AI::addWaypoint(int px, int py, int x, int y, int level) {
 					g_hdb->_sound->playSound(SND_MENU_SLIDER);
 				}
 			} else {
+newpath2:
 				tx = px;
 				ty = ny;
 				tx2 = nx;
