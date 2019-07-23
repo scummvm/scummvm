@@ -879,7 +879,7 @@ Common::Error HDBGame::run() {
 #endif
 
 	if (ConfMan.hasKey("boot_param")) {
-		char mapname[10];
+		char mapname[11];
 		int arg = ConfMan.getInt("boot_param");
 		int actionMode = MIN(arg / 100, 1);
 		int level = MIN(arg % 100, 31);
