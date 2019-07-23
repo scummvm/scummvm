@@ -202,10 +202,6 @@ void SoundManager::regenbruit() {
 }
 
 void SoundManager::litph(tablint &t, int typ, int tempo) {
-	// Skip speech
-	if (_soundType == 0)
-		return;
-
 	if (!_buildingSentence) {
 		if (_mixer->isSoundHandleActive(_soundHandle))
 			_mixer->stopHandle(_soundHandle);
@@ -226,9 +222,7 @@ void SoundManager::litph(tablint &t, int typ, int tempo) {
 		case 0: {
 			int val = _troctBuf[i];
 			i++;
-			if (_soundType == 0)
-				warning("TODO: vclas");
-			else if (_soundType == 1) {
+			if (_soundType == 1) {
 				debugC(5, kMortevielleSounds, "litph - duson");
 				const static int noiseAdr[] = {0,     17224,
 											   17224, 33676,
@@ -277,10 +271,6 @@ void SoundManager::litph(tablint &t, int typ, int tempo) {
 		case 4:
 			if (_soundType) {
 				i += 2;
-			} else {
-				// Speech
-				warning("TODO: Interphoneme: consonne:%d voyelle:%d", _troctBuf[i], _troctBuf[i + 1]);
-				i += 2;
 			}
 			break;
 		case 6:
@@ -327,13 +317,6 @@ void SoundManager::playSong(const byte* buf, uint size, uint loops) {
 
 void SoundManager::spfrac(int wor) {
 	_queue[2]._rep = (uint)wor >> 12;
-	if ((_soundType == 0) && (_queue[2]._code != 9)) {
-		if (((_queue[2]._code > 4) && (_queue[2]._val != 20) && (_queue[2]._rep != 3) && (_queue[2]._rep != 6) && (_queue[2]._rep != 9)) ||
-				((_queue[2]._code < 5) && ((_queue[2]._val != 19) && (_queue[2]._val != 22) && (_queue[2]._rep != 4) && (_queue[2]._rep != 9)))) {
-			++_queue[2]._rep;
-		}
-	}
-
 	_queue[2]._freq = ((uint)wor >> 6) & 7;
 	_queue[2]._acc = ((uint)wor >> 9) & 7;
 }
@@ -830,21 +813,14 @@ void SoundManager::startSpeech(int rep, int ht, int typ) {
 	uint16 savph[501];
 	int tempo;
 
-	// Hack to avoid a crash in the ending version. To be removed when the speech are implemented
-	if ((rep == 141) && (typ == 0))
-		return;
-
 	_phonemeNumb = rep;
-	int haut = ht;
 	_soundType = typ;
 	if (_soundType != 0) {
 		for (int i = 0; i <= 500; ++i)
 			savph[i] = _cfiphBuffer[i];
 		tempo = kTempoNoise;
-	} else if (haut > 5) {
-		tempo = kTempoF;
 	} else {
-		tempo = kTempoM;
+		return;
 	}
 	_vm->_addFix = (float)((tempo - 8)) / 256;
 	cctable(_tbi);
@@ -862,16 +838,12 @@ void SoundManager::startSpeech(int rep, int ht, int typ) {
 	litph(_tbi, typ, tempo);
 
 	_buildingSentence = false;
-	if (typ != 0) {
-		_audioStream->finish();
-		_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle, _audioStream);
-		_audioStream = nullptr;
-	}
+	_audioStream->finish();
+	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle, _audioStream);
+	_audioStream = nullptr;
 
-	if (_soundType != 0) {
-		for (int i = 0; i <= 500; ++i)
-			_cfiphBuffer[i] = savph[i];
-	}
+	for (int i = 0; i <= 500; ++i)
+		_cfiphBuffer[i] = savph[i];
 	_vm->setPal(_vm->_numpal);
 }
 
