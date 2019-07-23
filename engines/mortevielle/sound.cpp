@@ -848,15 +848,22 @@ void SoundManager::startSpeech(int rep, int ht, int typ) {
 }
 
 void SoundManager::waitSpeech() {
+	if (_soundType == 0) {
 #ifdef USE_TTS
-	if (!_ttsMan)
-		return;
-	while (_ttsMan->isSpeaking() && !_vm->keyPressed() && !_vm->_mouseClick && !_vm->shouldQuit())
-		;
-	// In case the handle is still active, stop it.
-	_ttsMan->stop();
+		if (!_ttsMan)
+			return;
+		while (_ttsMan->isSpeaking() && !_vm->keyPressed() && !_vm->_mouseClick && !_vm->shouldQuit())
+			;
+		// In case the TTS is still speaking, stop it.
+		_ttsMan->stop();
 
 #endif // USE_TTS
+	} else {
+		while (_mixer->isSoundHandleActive(_soundHandle) && !_vm->keyPressed() && !_vm->_mouseClick && !_vm->shouldQuit())
+			;
+		// In case the handle is still active, stop it.
+		_mixer->stopHandle(_soundHandle);
+	}
 	if (!_vm->keyPressed() && !_vm->_mouseClick && !_vm->shouldQuit())
 		g_system->delayMillis(600);
 }
