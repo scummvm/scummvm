@@ -22,13 +22,6 @@ else:
 	sysLibFound = True
 
 try:
-	import shutil
-except ImportError:
-	print "[Error] Shutil python library is required to be installed!"
-else:
-	shutilLibFound = True
-
-try:
 	import struct
 except ImportError:
 	print "[Error] struct python library is required to be installed!"
@@ -44,7 +37,6 @@ else:
 
 if 	(not osLibFound) \
 	or (not sysLibFound) \
-	or (not shutilLibFound) \
 	or (not structLibFound) \
 	or (not imagePilLibFound):
 	sys.stdout.write("[Error] Errors were found when trying to import required python libraries\n")
@@ -53,13 +45,13 @@ if 	(not osLibFound) \
 from struct import *
 
 MY_MODULE_VERSION = "0.80"
-MY_MODULE_NAME = "fonFileLib"
+MY_MODULE_NAME    = "fonFileLib"
 
 class FonHeader(object):
-	maxEntriesInTableOfDetails = -1			# this is probably always the number of entries in table of details, but it won't work for the corrupted TAHOMA18.FON file
-	maxGlyphWidth = -1						# in pixels
-	maxGlyphHeight = -1						# in pixels
-	graphicSegmentByteSize = -1				# Graphic segment byte size
+	maxEntriesInTableOfDetails = -1 # this is probably always the number of entries in table of details, but it won't work for the corrupted TAHOMA18.FON file
+	maxGlyphWidth = -1              # in pixels
+	maxGlyphHeight = -1             # in pixels
+	graphicSegmentByteSize = -1     # Graphic segment byte size
 	
 	def __init__(self):
 		return
@@ -80,9 +72,9 @@ class fonFile(object):
 	# traceModeEnabled is bool to enable more printed debug messages
 	def __init__(self, traceModeEnabled = True):
 		del self.glyphDetailEntriesLst[:]
-		self.glyphPixelData = None		# buffer of pixel data for glyphs
+		self.glyphPixelData = None # buffer of pixel data for glyphs
 		self.simpleFontFileName = 'GENERIC.FON'
-		self.realNumOfCharactersInImageSegment = 0	# this is used for the workaround for the corrupted TAHOME18.FON
+		self.realNumOfCharactersInImageSegment = 0 # this is used for the workaround for the corrupted TAHOME18.FON
 		self.nonEmptyCharacters = 0
 		self.m_traceModeEnabled = traceModeEnabled
 		
@@ -98,7 +90,7 @@ class fonFile(object):
 		# parse FON file fields for header
 		#
 		try:
-			tmpTuple = struct.unpack_from('I', fonBytesBuff, offsInFonFile)	 # unsigned integer 4 bytes
+			tmpTuple = struct.unpack_from('I', fonBytesBuff, offsInFonFile) # unsigned integer 4 bytes
 			self.header().maxEntriesInTableOfDetails = tmpTuple[0]
 			offsInFonFile += 4
 			
@@ -109,15 +101,15 @@ class fonFile(object):
 			else:
 				self.realNumOfCharactersInImageSegment = self.header().maxEntriesInTableOfDetails
 				
-			tmpTuple = struct.unpack_from('I', fonBytesBuff, offsInFonFile)	 # unsigned integer 4 bytes
+			tmpTuple = struct.unpack_from('I', fonBytesBuff, offsInFonFile)  # unsigned integer 4 bytes
 			self.header().maxGlyphWidth = tmpTuple[0]
 			offsInFonFile += 4
 			
-			tmpTuple = struct.unpack_from('I', fonBytesBuff, offsInFonFile)	 # unsigned integer 4 bytes
+			tmpTuple = struct.unpack_from('I', fonBytesBuff, offsInFonFile)  # unsigned integer 4 bytes
 			self.header().maxGlyphHeight = tmpTuple[0]
 			offsInFonFile += 4
 			
-			tmpTuple = struct.unpack_from('I', fonBytesBuff, offsInFonFile)	 # unsigned integer 4 bytes
+			tmpTuple = struct.unpack_from('I', fonBytesBuff, offsInFonFile)  # unsigned integer 4 bytes
 			self.header().graphicSegmentByteSize = tmpTuple[0]
 			offsInFonFile += 4
 			
@@ -132,23 +124,23 @@ class fonFile(object):
 			if self.m_traceModeEnabled:
 				print "[Debug] Font file (FON) glyph details table: "
 			for idx in range(0, self.realNumOfCharactersInImageSegment):
-				tmpTuple = struct.unpack_from('i', fonBytesBuff, offsInFonFile)	 # unsigned integer 4 bytes
+				tmpTuple = struct.unpack_from('i', fonBytesBuff, offsInFonFile)  # unsigned integer 4 bytes
 				tmpXOffset = tmpTuple[0]
 				offsInFonFile += 4
 				
-				tmpTuple = struct.unpack_from('I', fonBytesBuff, offsInFonFile)	 # unsigned integer 4 bytes
+				tmpTuple = struct.unpack_from('I', fonBytesBuff, offsInFonFile)  # unsigned integer 4 bytes
 				tmpYOffset = tmpTuple[0]
 				offsInFonFile += 4
 				
-				tmpTuple = struct.unpack_from('I', fonBytesBuff, offsInFonFile)	 # unsigned integer 4 bytes
+				tmpTuple = struct.unpack_from('I', fonBytesBuff, offsInFonFile)  # unsigned integer 4 bytes
 				tmpWidth = tmpTuple[0]
 				offsInFonFile += 4
 				
-				tmpTuple = struct.unpack_from('I', fonBytesBuff, offsInFonFile)	 # unsigned integer 4 bytes
+				tmpTuple = struct.unpack_from('I', fonBytesBuff, offsInFonFile)  # unsigned integer 4 bytes
 				tmpHeight = tmpTuple[0]
 				offsInFonFile += 4
 				
-				tmpTuple = struct.unpack_from('I', fonBytesBuff, offsInFonFile)	 # unsigned integer 4 bytes
+				tmpTuple = struct.unpack_from('I', fonBytesBuff, offsInFonFile)  # unsigned integer 4 bytes
 				tmpDataOffset = tmpTuple[0]
 				offsInFonFile += 4
 				
@@ -236,7 +228,7 @@ class fonFile(object):
 					tmp8bitR1 =	 ( (pixelColor >> 10) ) << 3
 					tmp8bitG1 =	 ( (pixelColor & 0x3ff) >> 5 ) << 3
 					tmp8bitB1 =	 ( (pixelColor & 0x1f) ) << 3
-					rgbacolour = (tmp8bitR1,tmp8bitG1,tmp8bitB1, 255)	# alpha: 1.0 fully opaque
+					rgbacolour = (tmp8bitR1,tmp8bitG1,tmp8bitB1, 255) # alpha: 1.0 fully opaque
 					#rgbacolour = (255,255,255, 255)   # alpha: 1.0 fully opaque
 					
 				if currX == glyphWidth:
@@ -279,7 +271,7 @@ if __name__ == '__main__':
 	else:
 		print "[Error] No valid input file argument was specified and default input file %s is missing." % (inFONFileName)
 		errorFound = True
-		
+	
 	if not errorFound:
 		try:
 			print "[Info] Opening %s" % (inFONFileName)
@@ -303,4 +295,3 @@ else:
 	#debug
 	#print "[Debug] Running	 %s imported from another module" % (MY_MODULE_NAME)
 	pass
-	

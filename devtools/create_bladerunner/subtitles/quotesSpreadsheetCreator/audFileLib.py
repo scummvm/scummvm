@@ -16,7 +16,7 @@ else:
 	osLibFound = True
 	
 try:
-	import sys 
+	import sys
 except ImportError:
 	print "[Error] sys python library is required to be installed!"
 else:
@@ -201,7 +201,7 @@ class audFile(object):
 		self.header().m_populated = True
 		return True
 		
-	# int AudFile::get_chunk_header(int i, std::fstream& fs, AudFileNS::pos_type startAudFilepos, AudFileNS::pos_type endAudFilepos, AudChunkHeader& outAudChunkHeader)	
+	# int AudFile::get_chunk_header(int i, std::fstream& fs, AudFileNS::pos_type startAudFilepos, AudFileNS::pos_type endAudFilepos, AudChunkHeader& outAudChunkHeader)
 	def get_chunk_header(self, chunkIdx, inAudFileBytesBuffer, inAudFileSize):
 		#fs.seekg(int(startAudFilepos) + int(SIZE_OF_AUD_HEADER_IN_BYTES), fs.beg);
 		#AudFileNS::pos_type rAudPos;
@@ -386,7 +386,7 @@ if __name__ == '__main__':
 	else:
 		print "[Error] No valid input file argument was specified and default input file %s is missing." % (inAUDFileName)
 		errorFound = True
-		
+	
 	if not errorFound:
 		try:
 			print "[Info] Opening %s" % (inAUDFileName)
@@ -410,4 +410,3 @@ else:
 	#debug
 	#print "[Debug] Running %s (%s) imported from another module" % (MY_MODULE_NAME, MY_MODULE_VERSION)
 	pass
-	

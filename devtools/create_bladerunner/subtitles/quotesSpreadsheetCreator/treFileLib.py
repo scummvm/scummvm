@@ -139,7 +139,7 @@ if __name__ == '__main__':
 	else:
 		print "[Error] No valid input file argument was specified and default input file %s is missing." % (inTREFileName)
 		errorFound = True
-		
+	
 	if not errorFound:
 		try:
 			print "[Info] Opening %s" % (inTREFileName)
@@ -162,4 +162,3 @@ else:
 	#debug
 	#print "[Debug] Running %s (%s) imported from another module" % (MY_MODULE_NAME, MY_MODULE_VERSION)
 	pass
-	

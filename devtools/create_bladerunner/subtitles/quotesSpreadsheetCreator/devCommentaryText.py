@@ -98,9 +98,7 @@ if __name__ == '__main__':
 	traceModeEnabled = False
 	devCommentaryTextInstance = devCommentaryText(traceModeEnabled)
 	devCommentaryTextInstance.printTexts()
-	
 else:
 	#debug
 	#print "[Debug] Running	 %s imported from another module" % (my_module_name)
 	pass
-	

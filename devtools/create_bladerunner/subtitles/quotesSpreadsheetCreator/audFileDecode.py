@@ -153,7 +153,7 @@ def aud_decode_ws_chunk(inputChunkBuffer, cb_s, cb_d):
 				outChBuffIter += 1
 		elif switchKey == 1:
 			count += 1
-			for iter in range (count, 0, -1):
+			for iter0 in range (count, 0, -1):
 				inpChBuffIter += 1
 				code = inputChunkBuffer[inpChBuffIter] # int code
 				sample += aud_ws_step_table4[code & 0xf]
@@ -225,4 +225,3 @@ else:
 	#debug
 	#print "[Debug] Running %s (%s) imported from another module" % (MY_MODULE_NAME, MY_MODULE_VERSION)
 	pass
-	

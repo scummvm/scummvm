@@ -197,7 +197,6 @@ if __name__ == '__main__':
 	traceModeEnabled = False
 	pogoTRInstance = pogoTextResource(traceModeEnabled)
 	pogoTRInstance.printPogo()
-	
 else:
 	#debug
 	#print "[Debug] Running	 %s imported from another module" % (my_module_name)
