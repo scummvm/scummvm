@@ -108,6 +108,7 @@ public:
 
 	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual int getMaximumSaveSlot() const;
+	virtual void removeSaveState(const char *target, int slot) const;
 	virtual SaveStateList listSaves(const char *target) const;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
@@ -127,6 +128,11 @@ bool HDB::HDBGame::hasFeature(Engine::EngineFeature f) const {
 	return (f == kSupportsRTL) ||
 		   (f == kSupportsLoadingDuringRuntime) ||
 		   (f == kSupportsSavingDuringRuntime);
+}
+
+void HDBMetaEngine::removeSaveState(const char *target, int slot) const {
+	Common::String fileName = Common::String::format("%s.%03d", target, slot);
+	g_system->getSavefileManager()->removeSavefile(fileName);
 }
 
 int HDBMetaEngine::getMaximumSaveSlot() const { return 9; }
