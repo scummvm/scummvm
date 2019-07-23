@@ -10,15 +10,15 @@ The official English, German, French, Italian and Spanish versions of the game s
 3.  Using git, checkout the latest revision of the ScummVM repository from GitHub.
 
 4.  Make sure you've created a Blade Runner game directory and added Blade Runner in ScummVM as per the instructions in the wiki (the actual required files are __1.TLK, 2.TLK, 3.TLK, A.TLK and SPCHSFX.TLK__: <https://wiki.scummvm.org/index.php?title=User_Manual/Installing_a_game_for_use_with_ScummVM#Blade_Runner>
-For this guide it is assumed that this folder is:
-```
-C:\Westwood\Blade Runner\
-```
+    For this guide it is assumed that this folder is:
+    ```console
+    C:\Westwood\Blade Runner\
+    ```
 
 5.  Create a folder on your HDD to export all speech audio from the game. Eg. create:
-```
-C:\Westwood\Blade Runner\AUDIO_FRA\
-```
+    ```console
+    C:\Westwood\Blade Runner\AUDIO_FRA\
+    ```
 
 6.  Export all speech audio from the game and create an Excel file (xls) with links to the audio files.
     *   You will need to have some free HDD space for this step (around 650MB).
@@ -26,9 +26,9 @@ C:\Westwood\Blade Runner\AUDIO_FRA\
     *   Using a command line interface (eg MSYS2) navigate to the ScummVM repository folder and issue a command like the one below, making sure you specify the correct target language code for your requirements; supported language codes are "EN\_ANY" for English, "FR\_FRA" for French, "DE\_DEU" for German, "IT\_ITA" for Italian, "ES\_ESP" for Spanish and "RU\_RUS" for Russian (version by Fargus Multimedia).
 
     *   In the following example we assume we need to export the audio from the French version of the game. This could take a few minutes to complete. Please refer to the [quotesSpreadsheetCreator](#quotesspreadsheetcreator-quotespreadsheetcreatorpy) section of this document for more command-line options for this tool.
-    ```
-    python2.7 devtools/create_bladerunner/subtitles/quotesSpreadsheetCreator/quoteSpreadsheetCreator.py -op "/c/Westwood/Blade Runner/AUDIO_FRA" -ip "/c/Westwood/Blade Runner" -ian "devtools/create_bladerunner/subtitles/common/actornames.txt" -xwav -ld FR_FRA
-    ```
+        ```bash
+        python2.7 devtools/create_bladerunner/subtitles/quotesSpreadsheetCreator/quoteSpreadsheetCreator.py -op "/c/Westwood/Blade Runner/AUDIO_FRA" -ip "/c/Westwood/Blade Runner" -ian "devtools/create_bladerunner/subtitles/common/actornames.txt" -xwav -ld FR_FRA
+        ```
 
 7.  When you've completed the above step, an Excel file should be created in your current folder, named "out-French.xls". Open this file with a spreadsheet editor app (tested with Microsoft Excel 2007 and LibreOffice Calc 6.2.4) and select the "INGQUO_#.TR#" sheet.
     *   Please keep the column A ("Filename") as is. Do not modify the contents of this column.
@@ -52,27 +52,26 @@ C:\Westwood\Blade Runner\AUDIO_FRA\
 You need to follow these instructions:
 
 1.  Download the online Excel transcript and save it as "englishTranscript.xlsx" into the "devtools\create_bladerunner\subtitles\sampleInput" folder.
-
- __The online Excel file is available here:__
- <https://docs.google.com/spreadsheets/d/17ew0YyhSwqcqZg6bXrIgz0GkA62dhgViHN15lOu5Hj8/edit?usp=sharing>
+    __The online Excel file is available here:__
+    <https://docs.google.com/spreadsheets/d/17ew0YyhSwqcqZg6bXrIgz0GkA62dhgViHN15lOu5Hj8/edit?usp=sharing>
 
 2.  Edit your font glyphs PNG file (or use the provided one in the sampleInput folder). This file should be stored as "subtitlesFont.png" into the "devtools\create\_bladerunner\subtitles\sampleInput" folder.
- 
+
 3.  Create an overrideEncodingSUBLTS.txt file in the sampleInput folder. This is a configuration file for the font file creation. A sample is provided in the sampleInput folder and documentation about this is below in this document (see "override encoding text file" in fontCreator).
- 
+
 4.  Create a configureFontsTranslation.txt in the sampleInput folder. A configuration file for the MIX file creation. A sample is provided in the sampleInput folder and documentation about this is below in this document (see "text configuration file" in mixResourceCreator).  
- 
+
 5.  From the ScummVM root folder run:
-```
-make devtools/create_bladerunner/subtitles
-```
+    ```bash
+    make devtools/create_bladerunner/subtitles
+    ```
 
 6.  You may need to install some required Python 2 libraries such as Pillow (or PIL), xlrd, xlwt and wave (which is part of the Python 2 Standard Library).
- 
+
 7.  Copy the output file "SUBTITLES.MIX", created in the ScummVM root folder, into your Blade Runner game directory.
- 
+
 8.  Launch the Blade Runner game using ScummVM.
- 
+
 ## quotesSpreadsheetCreator (quoteSpreadsheetCreator.py)
 (requires python libs *xlwt* (tested with version 1.3.0), *wave* (included in the Python 2 Standard Library)
 
@@ -88,30 +87,30 @@ __The online Excel file is available here:__
 Syntax Notes:
 
 1.  The "-op" switch should be followed by the path to the folder where the WAV files should be exported; This folder path will also be used as input when the output Excel will be created (for the "INGQUO\_x.TRx" sheet with the in-game quotes).
- 
+
 2.  The "-ip" switch should be followed by the path to the game's folder, where the TLK and MIX files reside.
- 
+
 3.  The "-ian" optional switch is followed by the path to the actornames.txt file -- if this is omitted then the file is assumed to reside in the current working directory.
- 
+
 4.  The "-ld" optional switch is followed by a language description for the language of the game you are exporting Text Resources from. This switch is meaningful when you also use the "-xtre" switch to export Text Resource files.
     *   Valid language values are: EN\_ANY, DE\_DEU, FR\_FRA, IT\_ITA, ES\_ESP, RU\_RUS 
 
     *   Default language value is: EN\_ANY (English)
 
 5.  The "-xwav" optional switch will export __ALL__ game's audio files (AUD) (that are either speech or speech-related) in a WAV format. This is expected to run for a few minutes and take up quite a lot of your HDD space (around 650MB).
- 
+
 6.  The "-xtre" optional switch will add extra sheets to the output Excel with the contents of each of the game's Text Resource files (TRx) (on sheet per TRx file).
- 
+
 7.  The "-xdevs" optional switch will add a sheet for Developer Commentary text and some additional voice-overs from SFX.MIX.
- 
+
 8.  The "-xpogo" optional switch will add a sheet for the POGO text.
- 
+
 9.  You may use all, a subset or none of the "-xwav", "-xtre", "-xpogo", "-xdevs" switches, depending on what you need to do.
- 
+
 10. The "--trace" optional switch enables extra debug messages to be printed. 
 
 Usage:
-```
+```bash
 python2.7 quoteSpreadsheetCreator.py -op folderpath_for_exported_wav_Files [-ip folderpath_for_TLK_Files] [-ian pathToActorNamesTxt] [-m stringPathToReplaceFolderpathInExcelLinks] [-ld languageDescription] [-xwav] [-xtre] [--trace]
 ```
 
@@ -123,7 +122,7 @@ The tool __requires__ a valid path to the actornames.txt file; this file is incl
 A tool to process the aforementioned Excel file with the dialogue transcriptions and output text resource files (TRx) that will be packed along with the external font (see fontCreator tool) into a SUBTITLES.MIX file. Multiple TRx files will be created intermediately in order to fully support subtitles in the game. One TRx file includes all in-game spoken quotes and the rest of them correspond to any VQA video sequence that contain voice acting.
 
 Usage:
-```
+```bash
 python2.7 mixResourceCreator.py -x excelWithTranscriptSheets.xlsx [-ian pathToActorNamesTxt] [-cft pathToConfigureFontsTranslationTxt] [--trace]
 ```
 
@@ -152,26 +151,26 @@ The __text configuration file "configureFontsTranslation.txt"__ is a __text file
     *   a '\#' character after the font type
 
     *   the name of the 8-bit string encoding (codepage) (eg. cp437 or windows-1252) that should be used to store the texts that uses this particular font "type" in the game's TRx text resource files. Valid values can be the standard encodings listed in python's page:
-<https://docs.python.org/2.7/library/codecs.html#standard-encodings>
+        <https://docs.python.org/2.7/library/codecs.html#standard-encodings>
 
     *   a '\#' character after the target Encoding
 
     *   a list of comma separated tuples that specify the mapping of special (out of order) character to placeholder characters from the selected codepage. See fontCreator section for more details on this.
 
     *   For example: 
-    ```
-    fontNameAndOutOfOrderGlyphs=SUBTLS_E#windows-1253#í:Ά,ñ:¥,â:¦,é:§,Ά:£
-    fontNameAndOutOfOrderGlyphs=KIA6PT#cp437#
-    fontNameAndOutOfOrderGlyphs=TAHOMA#cp437#
-    fontNameAndOutOfOrderGlyphs=SYSTEM#latin-1#
-    ```
+        ```text
+        fontNameAndOutOfOrderGlyphs=SUBTLS_E#windows-1253#í:Ά,ñ:¥,â:¦,é:§,Ά:£
+        fontNameAndOutOfOrderGlyphs=KIA6PT#cp437#
+        fontNameAndOutOfOrderGlyphs=TAHOMA#cp437#
+        fontNameAndOutOfOrderGlyphs=SYSTEM#latin-1#
+        ```
 
 Note: for font files (FON) that you have created or edited with the fontCreator tool (e.g for the "SUBTLS\_E.FON" file for subtitles, or another in-game font file eg. KIA6PT, TAHOMA) you __should copy the 8-bit encoding and the comma separated out of order character tuples from the respective "override encoding" text file that you used with the fontCreator tool for each new/ edited font in the configureFontsTranslation.txt fields__. 
- 
+
 Additionally, __all the new and edited fonts (FON files that were output by the fontCreator script) should be in your working directory__ in order to include them in the SUBTITLES.MIX. 
 
-It's important to keep the naming of those files unchanged. __Supported name values for imported FON files__ are: SUBTLS\_E.FON, KIA6PT.FON, TAHOMA18.FON, TAHOMA24.FON and SYSTEM.FON (practically you won't be using the last one). 
-  
+It's important to keep the naming of those files unchanged. __Supported name values for imported FON files__ are: SUBTLS\_E.FON, KIA6PT.FON, TAHOMA18.FON, TAHOMA24.FON and SYSTEM.FON (practically you won't be using the last one).
+
 ## fontCreator (fontCreator.py)
 (requires python Image library *Pillow* (tested with version 5.4.1))
 
@@ -181,12 +180,12 @@ This font tool's code is based off the Monkey Island Special Edition's Translato
 Usage:
 
 Syntax A - To export game fonts to PNG images:
-```
+```bash
 python2.7 fontCreator.py -ip folderpathForMIXFiles
 ```
 
 Syntax B - To create the subtitle's font:
-```
+```bash
 python2.7 fontCreator.py -im imageRowPNGFilename -om targetFONfilename [-oe pathToOverrideEncodingTxt] -pxLL minSpaceBetweenLettersInRowLeftToLeft -pxTT minSpaceBetweenLettersInColumnTopToTop -pxKn kerningForFirstDummyFontLetter -pxWS whiteSpaceWidthInPixels [--trace]
 ```
 
@@ -195,7 +194,7 @@ This tool __requires an override encoding text file__ in its Syntax B mode (subt
 The override encoding file is a __text file that should be saved in a UTF-8 encoding (no BOM)__, that contains the following:
 
 1.  A key "targetEncoding" with a value of the name of the ASCII codepage (8-bit encoding) that should be used for the character fonts (eg windows-1253). Valid values can be the standard encodings listed in python's page:
-<https://docs.python.org/2.7/library/codecs.html#standard-encodings>
+    <https://docs.python.org/2.7/library/codecs.html#standard-encodings>
 
 2.  A key "asciiCharList" with value the "all-characters" string with all the printable characters that will be used in-game, from the specified codepage. Keep in mind that:
     *   The first such character (typically this is the '!' character) should be repeated twice!
@@ -287,10 +286,9 @@ A suggested method of creating decent looking PNG with the row of glyphs for you
 This should get rid of semi-transparent pixels while maintaining the "aliasing" effect. 
 There could be a better way but this should work ok.
 
+## Credits and Special Thanks
+*   All the developer guys from the ScummVM (<https://github.com/scummvm/scummvm>) team, and especially the ones involved in the implementation of the BladeRunner engine for ScummVM (madmoose, peterkohaut, sev and everyone else).
 
-# Credits and Special Thanks
-*   All the developer guys from the ScummVM (https://github.com/scummvm/scummvm) team, and especially the ones involved in the implementation of the BladeRunner engine for ScummVM (madmoose, peterkohaut, sev and everyone else).
+*   The information provided in this blog (<http://westwoodbladerunner.blogspot.ca>) by Michael Liebscher.
 
-*   The information provided in this blog (http://westwoodbladerunner.blogspot.ca) by Michael Liebscher.
-
-*   The creator of br-mixer (https://github.com/bdamer/br-mixer), Ben Damer, who also has a blog entry about the game resource file formats (http://afqa123.com/2015/03/07/deciphering-blade-runner/)
+*   The creator of br-mixer (<https://github.com/bdamer/br-mixer>), Ben Damer, who also has a blog entry about the game resource file formats (<http://afqa123.com/2015/03/07/deciphering-blade-runner/>)
