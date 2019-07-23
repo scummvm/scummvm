@@ -208,25 +208,16 @@ Common::List<Graphics::PixelFormat> OpenGLGraphicsManager::getSupportedFormats()
 	// RGBA4444
 	formats.push_back(Graphics::PixelFormat(2, 4, 4, 4, 4, 12, 8, 4, 0));
 
-#if !USE_FORCED_GLES && !USE_FORCED_GLES2
-#if !USE_FORCED_GL
-	if (!isGLESContext()) {
-#endif
+	// These formats are not natively supported by OpenGL ES implementations,
+	// we convert the pixel format internally.
 #ifdef SCUMM_LITTLE_ENDIAN
-		// RGBA8888
-		formats.push_back(Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
+	// RGBA8888
+	formats.push_back(Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
 #else
-		// ABGR8888
-		formats.push_back(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+	// ABGR8888
+	formats.push_back(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
 #endif
-#if !USE_FORCED_GL
-	}
-#endif
-#endif
-
 	// RGB555, this is used by SCUMM HE 16 bit games.
-	// This is not natively supported by OpenGL ES implementations, we convert
-	// the pixel format internally.
 	formats.push_back(Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0));
 
 	formats.push_back(Graphics::PixelFormat::createFormatCLUT8());
@@ -1109,9 +1100,14 @@ Surface *OpenGLGraphicsManager::createSurface(const Graphics::PixelFormat &forma
 		// OpenGL ES does not support a texture format usable for RGB555.
 		// Since SCUMM uses this pixel format for some games (and there is no
 		// hope for this to change anytime soon) we use pixel format
-		// conversion to a supported texture format. However, this is a one
-		// time exception.
+		// conversion to a supported texture format.
 		return new TextureRGB555();
+#ifdef SCUMM_LITTLE_ENDIAN
+	} else if (isGLESContext() && format == Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0)) { // RGBA8888
+#else
+	} else if (isGLESContext() && format == Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24)) { // ABGR8888
+#endif
+		return new TextureRGBA8888Swap();
 #endif // !USE_FORCED_GL
 	} else {
 		const bool supported = getGLPixelFormat(format, glIntFormat, glFormat, glType);
