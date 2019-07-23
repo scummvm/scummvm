@@ -261,7 +261,8 @@ Common::Error KyraEngine_HoF::go() {
 	_menuDirectlyToLoad &= saveFileLoadable(0);
 
 	if (menuChoice & 1) {
-		startup();
+		if (!shouldQuit())
+			startup();
 		if (!shouldQuit())
 			runLoop();
 		cleanup();
