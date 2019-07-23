@@ -36,6 +36,10 @@
 #include "common/config-manager.h"
 #include "graphics/surface.h"
 #include "graphics/thumbnail.h"
+#include "audio/mixer.h"
+#include "audio/audiostream.h"
+#include "audio/decoders/wave.h"
+#include "audio/decoders/mp3.h"
 
 #include "gui/debugger.h"
 #include "engines/engine.h"
