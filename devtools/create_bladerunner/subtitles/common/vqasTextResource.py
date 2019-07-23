@@ -458,7 +458,7 @@ ALL_VQA_TEXT_RESOURCES_LISTS = [
 #
 #
 #
-class vqasTextResource:
+class vqasTextResource(object):
 	m_traceModeEnabled = True
 	# traceModeEnabled is bool to enable more printed debug messages
 	def __init__(self, traceModeEnabled = True):
@@ -466,20 +466,26 @@ class vqasTextResource:
 		return
 	
 	def printAllVqasTextResource(self):
+		if self.m_traceModeEnabled:
+			print "[Trace] printing all VQAs Text"
 		for (vqaKeyStr, vqaTreList) in ALL_VQA_TEXT_RESOURCES_LISTS:
-			print "VQA prefix: %s" % (vqaKeyStr) 
+			print "VQA prefix: %s" % (vqaKeyStr)
 			for (startFrameTre, endFrameTre, textTre, timeStartTre, timeEndTre, byActorTre) in vqaTreList:
 				print "%s\t%s\t%s\t%s\t%s\t%s" % (startFrameTre, endFrameTre, textTre, timeStartTre, timeEndTre, byActorTre)
 		return
 		
 	def getVqaEntriesList(self, sVQASheetPrefix):
+		if self.m_traceModeEnabled:
+			print "[Trace] getVqaEntriesList()"
 		for (vqaKeyStr, vqaTreList) in ALL_VQA_TEXT_RESOURCES_LISTS:
 			if (vqaKeyStr == sVQASheetPrefix.upper()):
 				return vqaTreList
 		return None
-
+#
+#
+#
 if __name__ == '__main__':
-	#	 main()
+	# main()
 	print "[Debug] Running %s as main module" % (my_module_name)
 	traceModeEnabled = False
 	vqaTRInstance = vqasTextResource(traceModeEnabled)

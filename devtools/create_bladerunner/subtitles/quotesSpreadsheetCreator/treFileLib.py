@@ -7,36 +7,28 @@ shutilLibFound = False
 structLibFound = False
 
 try:
-	import os 
+	import os
 except ImportError:
-	print "[Error] os python library is required to be installed!" 
+	print "[Error] os python library is required to be installed!"
 else:
 	osLibFound = True
 	
 try:
-	import sys 
+	import sys
 except ImportError:
-	print "[Error] sys python library is required to be installed!" 
+	print "[Error] sys python library is required to be installed!"
 else:
 	sysLibFound = True
 
 try:
-	import shutil 
+	import struct
 except ImportError:
-	print "[Error] Shutil python library is required to be installed!" 
-else:
-	shutilLibFound = True
-
-try:
-	import struct 
-except ImportError:
-	print "[Error] struct python library is required to be installed!" 
+	print "[Error] struct python library is required to be installed!"
 else:
 	structLibFound = True
 
 if 	(not osLibFound) \
 	or (not sysLibFound) \
-	or (not shutilLibFound) \
 	or (not structLibFound):
 	sys.stdout.write("[Error] Errors were found when trying to import required python libraries\n")
 	sys.exit(1)
@@ -47,27 +39,27 @@ MY_MODULE_VERSION = "0.50"
 MY_MODULE_NAME = "treFileLib"
 
 
-class TreHeader:
+class TreHeader(object):
 	numOfTextResources = -1
 	def __init__(self):
 		return
 
 
-class treFile:
+class treFile(object):
 	m_header = TreHeader()
 	simpleTextResourceFileName = 'GENERIC.TRE'
 	stringEntriesLst = []  # list of two-value tuples. First value is ID, second value is String content
 	stringOffsets = []
 	m_traceModeEnabled = False
 	
-	# traceModeEnabled is bool to enable more printed debug messages	
+	# traceModeEnabled is bool to enable more printed debug messages
 	def __init__(self, traceModeEnabled = True):
 		del self.stringEntriesLst[:]
 		del self.stringOffsets[:]
 		self.simpleTextResourceFileName = 'GENERIC.TRE'
 		self.m_traceModeEnabled = traceModeEnabled
 		return
-
+		
 	def loadTreFile(self, treBytesBuff, maxLength, treFileName):
 		self.simpleTextResourceFileName = treFileName
 		offsInTreFile = 0
@@ -87,7 +79,7 @@ class treFile:
 				tmpTuple = struct.unpack_from('I', treBytesBuff, offsInTreFile)  # unsigned integer 4 bytes
 				self.stringEntriesLst.append( (tmpTuple[0], '') )
 				offsInTreFile += 4
-
+				
 			# string offsets table (each entry is unsigned integer 4 bytes)
 			for idx in range(0, self.header().numOfTextResources):
 				tmpTuple = struct.unpack_from('I', treBytesBuff, offsInTreFile)  # unsigned integer 4 bytes
@@ -95,13 +87,13 @@ class treFile:
 				offsInTreFile += 4
 			#
 			# strings (all entries are null terminated)
-			#  TODO +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+			#  TODO +++
 			absStartOfIndexTable = 4
 			#absStartOfOffsetTable = absStartOfIndexTable + (self.header().numOfTextResources * 4)
 			#absStartOfStringTable = absStartOfOffsetTable + ((self.header().numOfTextResources+1) * 4)
-
+			
 			#print "[Debug] buffer type: " , type(treBytesBuff) # it is str
-
+			
 			for idx in range(0, self.header().numOfTextResources):
 				currOffset = self.stringOffsets[idx] + absStartOfIndexTable
 				# the buffer (treBytesBuff) where we read the TRE file into, is "str" type but contains multiple null terminated strings
@@ -122,7 +114,7 @@ class treFile:
   		except:
 			print "[Error] Loading Text Resource %s failed!" % (self.simpleTextResourceFileName)
 			return False
-
+			
 	def header(self):
 		return self.m_header
 #
@@ -147,7 +139,7 @@ if __name__ == '__main__':
 	else:
 		print "[Error] No valid input file argument was specified and default input file %s is missing." % (inTREFileName)
 		errorFound = True
-	
+		
 	if not errorFound:
 		try:
 			print "[Info] Opening %s" % (inTREFileName)
@@ -170,3 +162,4 @@ else:
 	#debug
 	#print "[Debug] Running %s (%s) imported from another module" % (MY_MODULE_NAME, MY_MODULE_VERSION)
 	pass
+	
