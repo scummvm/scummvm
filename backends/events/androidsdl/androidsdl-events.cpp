@@ -75,7 +75,7 @@ bool AndroidSdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 	return false;
 }
 
-int AndroidSdlEventSource::mapKey(SDLKey sdlKey, SDLMod mod, Uint16 unicode) {
+int AndroidSdlEventSource::mapKey(SDL_Keycode sdlKey, SDL_Keymod mod, Uint16 unicode) {
 	Common::KeyCode key = SDLToOSystemKeycode(sdlKey);
 
 	if (key >= Common::KEYCODE_F1 && key <= Common::KEYCODE_F9) {

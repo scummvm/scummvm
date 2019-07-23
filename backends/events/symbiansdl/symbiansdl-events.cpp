@@ -164,9 +164,9 @@ bool SymbianSdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 			case GUI::ACTION_VKB:
 			case GUI::ACTION_KEYMAPPER:{
 					GUI::Key &key = GUI::Actions::Instance()->getKeyAction(loop);
-					ev.key.keysym.sym = (SDLKey) key.keycode();
+					ev.key.keysym.sym = (SDL_Keycode) key.keycode();
 					ev.key.keysym.scancode = 0;
-					ev.key.keysym.mod = (SDLMod) key.flags();
+					ev.key.keysym.mod = (SDL_Keymod) key.flags();
 
 					// Translate from SDL keymod event to Scummvm Key Mod Common::Event.
 					// TODO: Make use of SdlEventSource::SDLModToOSystemKeyFlags?
