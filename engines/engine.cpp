@@ -522,7 +522,7 @@ void Engine::openMainMenuDialog() {
 #ifdef USE_TTS
 	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
 	ttsMan->pushState();
-	GUI::GuiManager::initTextToSpeech();
+	g_gui.initTextToSpeech();
 #endif
 
 	setGameToLoadSlot(-1);
