@@ -1065,11 +1065,9 @@ void Window::checkInvSelect(int x, int y) {
 }
 
 void Window::openDeliveries(bool animate) {
-	DlvEnt *d;
-
 	// Load Gfx
 	for (int i = 0; i < g_hdb->_ai->getDeliveriesAmount(); i++) {
-		d = g_hdb->_ai->getDeliveryItem(i);
+		DlvEnt *d = g_hdb->_ai->getDeliveryItem(i);
 		if (d->itemGfxName[0])
 			d->itemGfx = g_hdb->_gfx->loadTile(d->itemGfxName);
 		if (d->destGfxName[0])
@@ -1092,8 +1090,6 @@ void Window::openDeliveries(bool animate) {
 }
 
 void Window::drawDeliveries() {
-	int baseX, drawX, drawY;
-	DlvEnt *d;
 	//static uint32 timer = g_hdb->getTimeSlice() + 300; //unused
 
 	int crazySounds[kNumCrazy] = {
@@ -1139,17 +1135,18 @@ void Window::drawDeliveries() {
 	if (_infobarDimmed > 1)
 		return;
 
-	baseX = drawX = _dlvsInfo.x;
-	drawY = _dlvsInfo.y;
+	int baseX = _dlvsInfo.x;
+	int drawX = _dlvsInfo.x;
+	int drawY = _dlvsInfo.y;
 
 	if (_dlvsInfo.selected >= g_hdb->_ai->getDeliveriesAmount())
 		_dlvsInfo.selected = g_hdb->_ai->getDeliveriesAmount() - 1;
 
 	// Draw Delivery Items
-	int inv;
-	for (inv = 0; inv < g_hdb->_ai->getDeliveriesAmount(); inv++) {
+	int inv = 0;
+	for (; inv < g_hdb->_ai->getDeliveriesAmount(); inv++) {
 		int centerX = baseX + (kScreenWidth - baseX) / 2;
-		d = g_hdb->_ai->getDeliveryItem(inv);
+		DlvEnt *d = g_hdb->_ai->getDeliveryItem(inv);
 		if (_dlvsInfo.animate && inv == g_hdb->_ai->getDeliveriesAmount() - 1) {
 			if (_dlvsInfo.go1) {
 				if (_dlvsInfo.delay1 < g_hdb->getTimeSlice()) {

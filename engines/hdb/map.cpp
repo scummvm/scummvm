@@ -209,13 +209,13 @@ void Map::loadSaveFile(Common::InSaveFile *in) {
 
 int Map::loadTiles() {
 
-	int tile, temp;
+	int temp;
 	int skyIndex = 0;
 
 	// Load all tiles
 	for (uint j = 0; j < _height; j++) {
 		for (uint i = 0; i < _width; i++) {
-			tile = _background[j * _width + i];
+			int tile = _background[j * _width + i];
 			if ((temp = g_hdb->_gfx->isSky(tile)) && !skyIndex) {
 				skyIndex = temp;
 			}
@@ -607,7 +607,6 @@ bool Map::load(Common::SeekableReadStream *stream) {
 	// Scan all icons and init all Entities
 	g_hdb->setupProgressBar(_iconNum);
 	for (int i = 0; i < _iconNum; i++) {
-
 		g_hdb->makeProgress();
 
 		// Don't spawn Action Mode Entities in Puzzle Mode
@@ -811,13 +810,8 @@ bool Map::load(Common::SeekableReadStream *stream) {
 }
 
 void Map::draw() {
-	if (!_mapLoaded) {
+	if (!_mapLoaded)
 		return;
-	}
-
-	int matrixY;
-	int screenX, screenY;
-	int maxTileX, maxTileY;
 
 	// Calculate Tile Offsets and Panning Offsets
 	_mapTileX = _mapX / kTileWidth;
@@ -825,8 +819,8 @@ void Map::draw() {
 	_mapTileXOff = -(_mapX % kTileWidth);
 	_mapTileYOff = -(_mapY % kTileHeight);
 
-	matrixY = _mapTileY * _width;
-	screenY = _mapTileYOff;
+	int matrixY = _mapTileY * _width;
+	int screenY = _mapTileYOff;
 
 	/*
 		Note from Original Source:
@@ -838,8 +832,8 @@ void Map::draw() {
 		when we're at the very bottom of the map.
 	*/
 
-	maxTileX = (_mapTileXOff >= -8) ? kScreenXTiles - 1 : kScreenXTiles;
-	maxTileY = (!_mapTileYOff) ? kScreenYTiles - 1 : kScreenYTiles;
+	int maxTileX = (_mapTileXOff >= -8) ? kScreenXTiles - 1 : kScreenXTiles;
+	int maxTileY = (!_mapTileYOff) ? kScreenYTiles - 1 : kScreenYTiles;
 
 	if (matrixY + (maxTileY - 1)*_width > _height * _width) {
 		return;
@@ -848,7 +842,7 @@ void Map::draw() {
 	_numForegrounds = _numGratings = 0;
 
 	for (int j = 0; j < maxTileY; j++) {
-		screenX = _mapTileXOff;
+		int screenX = _mapTileXOff;
 		for (int i = 0; i < maxTileX; i++) {
 
 			// Draw Background Tile
@@ -900,33 +894,33 @@ void Map::draw() {
 
 	// Animate FAST Map Tiles
 	if (!(_animCycle % kAnimFastFrames)) {
-		for (Common::Array<uint32>::iterator it = _listBGAnimFast.begin(); it != _listBGAnimFast.end(); it++) {
+		for (Common::Array<uint32>::iterator it = _listBGAnimFast.begin(); it != _listBGAnimFast.end(); ++it) {
 			_background[(*it)] = g_hdb->_gfx->animateTile(_background[(*it)]);
 		}
 
-		for (Common::Array<uint32>::iterator it = _listFGAnimFast.begin(); it != _listFGAnimFast.end(); it++) {
+		for (Common::Array<uint32>::iterator it = _listFGAnimFast.begin(); it != _listFGAnimFast.end(); ++it) {
 			_foreground[(*it)] = g_hdb->_gfx->animateTile(_foreground[(*it)]);
 		}
 	}
 
 	// Animate MEDIUM Map Tiles
 	if (!(_animCycle % kAnimMediumFrames)) {
-		for (Common::Array<uint32>::iterator it = _listBGAnimMedium.begin(); it != _listBGAnimMedium.end(); it++) {
+		for (Common::Array<uint32>::iterator it = _listBGAnimMedium.begin(); it != _listBGAnimMedium.end(); ++it) {
 			_background[(*it)] = g_hdb->_gfx->animateTile(_background[(*it)]);
 		}
 
-		for (Common::Array<uint32>::iterator it = _listFGAnimMedium.begin(); it != _listFGAnimMedium.end(); it++) {
+		for (Common::Array<uint32>::iterator it = _listFGAnimMedium.begin(); it != _listFGAnimMedium.end(); ++it) {
 			_foreground[(*it)] = g_hdb->_gfx->animateTile(_foreground[(*it)]);
 		}
 	}
 
 	// Animate SLOW Map Tiles
 	if (!(_animCycle % kAnimSlowFrames)) {
-		for (Common::Array<uint32>::iterator it = _listBGAnimSlow.begin(); it != _listBGAnimSlow.end(); it++) {
+		for (Common::Array<uint32>::iterator it = _listBGAnimSlow.begin(); it != _listBGAnimSlow.end(); ++it) {
 			_background[(*it)] = g_hdb->_gfx->animateTile(_background[(*it)]);
 		}
 
-		for (Common::Array<uint32>::iterator it = _listFGAnimSlow.begin(); it != _listFGAnimSlow.end(); it++) {
+		for (Common::Array<uint32>::iterator it = _listFGAnimSlow.begin(); it != _listFGAnimSlow.end(); ++it) {
 			_foreground[(*it)] = g_hdb->_gfx->animateTile(_foreground[(*it)]);
 		}
 	}
@@ -1009,6 +1003,7 @@ void Map::addBGTileAnimation(int x, int y) {
 	Tile *tile = g_hdb->_gfx->getTile(_background[i]);
 	if (!tile)
 		return;
+
 	uint32 flags = tile->_flags;
 
 	// BACKGROUND
