@@ -181,6 +181,7 @@ void WindowsTextToSpeechManager::setVoice(unsigned index) {
 	if(_speechState == BROKEN || _speechState == NO_VOICE)
 		return;
 	_voice->SetVoice((ISpObjectToken *) _ttsState->_availableVoices[index].getData());
+	_ttsState->_activeVoice = index;
 }
 
 void WindowsTextToSpeechManager::setRate(int rate) {

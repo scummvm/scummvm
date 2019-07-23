@@ -98,6 +98,7 @@ TextToSpeechManager::~TextToSpeechManager() {
 }
 
 void TextToSpeechManager::pushState() {
+	stop();
 	TTSState *newState = new TTSState;
 	newState->_pitch = _ttsState->_pitch;
 	newState->_volume = _ttsState->_volume;
@@ -110,6 +111,7 @@ void TextToSpeechManager::pushState() {
 }
 
 bool TextToSpeechManager::popState() {
+	stop();
 	if (_ttsState->_next == nullptr)
 		return true;
 
@@ -118,11 +120,13 @@ bool TextToSpeechManager::popState() {
 
 	delete oldState;
 
+	// The voice has to be saved, because some backends change it when changing language
+	int voice = _ttsState->_activeVoice;
 	setLanguage(_ttsState->_language);
 	setPitch(_ttsState->_pitch);
 	setVolume(_ttsState->_volume);
 	setRate(_ttsState->_rate);
-	setVoice(_ttsState->_activeVoice);
+	setVoice(voice);
 	return false;
 }
 
