@@ -121,7 +121,7 @@ void SavesSyncRequest::directoryListedCallback(Storage::ListDirectoryResponse re
 			else if (_localFilesTimestamps[name] > file.timestamp())
 				debug(9, "- uploading file %s, because it is %d seconds newer than remote\n\tlocal = %d; \tremote = %d", name.c_str(), _localFilesTimestamps[name] - file.timestamp(), _localFilesTimestamps[name], file.timestamp());
 			else
-				debug(9, "- downloading file %s, because it is %d seconds older than remote\n\tlocal = %d; \tremote = %", name.c_str(), file.timestamp() - _localFilesTimestamps[name], _localFilesTimestamps[name], file.timestamp());
+				debug(9, "- downloading file %s, because it is %d seconds older than remote\n\tlocal = %d; \tremote = %d", name.c_str(), file.timestamp() - _localFilesTimestamps[name], _localFilesTimestamps[name], file.timestamp());
 		}
 	}
 

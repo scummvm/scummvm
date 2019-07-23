@@ -114,7 +114,7 @@ enum {
 	kConnectStorageCmd = 'Cnnt',
 	kOpenUrlStorageCmd = 'OpUr',
 	kPasteCodeStorageCmd = 'PsCd',
-	kDisconnectStorageCmd = 'DcSt',
+	kDisconnectStorageCmd = 'DcSt'
 };
 #endif
 
@@ -1760,7 +1760,7 @@ void GlobalOptionsDialog::build() {
 	setTarget(container);
 
 	addCloudControls(container, "GlobalOptions_Cloud_Container.", context);
-#endif USE_LIBCURL
+#endif // USE_LIBCURL
 #ifdef USE_SDL_NET
 	//
 	// 8) The LAN tab (local "cloud" webserver)
