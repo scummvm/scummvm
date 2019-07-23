@@ -1244,8 +1244,6 @@ void Window::setSelectedDelivery(int which) {
 }
 
 void Window::checkDlvSelect(int x, int y) {
-	int xc, yc;
-
 	if (_dlvsInfo.animate)
 		return;
 
@@ -1253,8 +1251,8 @@ void Window::checkDlvSelect(int x, int y) {
 
 	// Click on a Delivery to select it for inspection?
 	if (x >= _dlvsInfo.x && x < _dlvsInfo.x + _dlvsInfo.width && y >= _dlvsInfo.y && y < _dlvsInfo.y + _dlvsInfo.height) {
-		xc = (x - _dlvsInfo.x) / kDlvItemSpaceX;
-		yc = (y - _dlvsInfo.y) / kDlvItemSpaceY;
+		int xc = (x - _dlvsInfo.x) / kDlvItemSpaceX;
+		int yc = (y - _dlvsInfo.y) / kDlvItemSpaceY;
 		int value = yc * kDlvItemPerLine + xc;
 		if (value < amt)
 			setSelectedDelivery(value);
@@ -1309,8 +1307,6 @@ void Window::loadPanicZoneGfx() {
 }
 
 void Window::drawPanicZone() {
-	int xx, yy;
-
 	if (!_pzInfo.active)
 		return;
 
@@ -1326,46 +1322,48 @@ void Window::drawPanicZone() {
 
 		// Move PANIC ZONE to screen center
 	case PANICZONE_START:
-		xx = g_hdb->_rnd->getRandomNumber(9) - 5;
-		yy = g_hdb->_rnd->getRandomNumber(9) - 5;
-		_pzInfo.x1 += _pzInfo.xv;
-		_pzInfo.y1++;
-		_pzInfo.x2 += _pzInfo.yv;
-		_pzInfo.y2--;
-		if (_pzInfo.x1 > kPanicXStop) {
-			_pzInfo.timer = 30;
-			_pzInfo.sequence++;
+		{
+			int xx = g_hdb->_rnd->getRandomNumber(9) - 5;
+			int yy = g_hdb->_rnd->getRandomNumber(9) - 5;
+			_pzInfo.x1 += _pzInfo.xv;
+			_pzInfo.y1++;
+			_pzInfo.x2 += _pzInfo.yv;
+			_pzInfo.y2--;
+			if (_pzInfo.x1 > kPanicXStop) {
+				_pzInfo.timer = 30;
+				_pzInfo.sequence++;
+			}
+			_pzInfo.gfxPanic->drawMasked(_pzInfo.x1 + xx, _pzInfo.y1 + yy);
+			_pzInfo.gfxZone->drawMasked(_pzInfo.x2 + yy, _pzInfo.y2 + xx);
 		}
-		_pzInfo.gfxPanic->drawMasked(_pzInfo.x1 + xx, _pzInfo.y1 + yy);
-		_pzInfo.gfxZone->drawMasked(_pzInfo.x2 + yy, _pzInfo.y2 + xx);
 		break;
-
 	case PANICZONE_TITLESTOP:
-		xx = g_hdb->_rnd->getRandomNumber(9) - 5;
-		yy = g_hdb->_rnd->getRandomNumber(9) - 5;
-		_pzInfo.gfxPanic->drawMasked(_pzInfo.x1 + xx, _pzInfo.y1 + yy);
-		_pzInfo.gfxZone->drawMasked(_pzInfo.x2 + yy, _pzInfo.y2 + xx);
-		_pzInfo.timer--;
-		if (!_pzInfo.timer) {
-			_pzInfo.sequence++;
+		{
+			int xx = g_hdb->_rnd->getRandomNumber(9) - 5;
+			int yy = g_hdb->_rnd->getRandomNumber(9) - 5;
+			_pzInfo.gfxPanic->drawMasked(_pzInfo.x1 + xx, _pzInfo.y1 + yy);
+			_pzInfo.gfxZone->drawMasked(_pzInfo.x2 + yy, _pzInfo.y2 + xx);
+			_pzInfo.timer--;
+			if (!_pzInfo.timer)
+				_pzInfo.sequence++;
 		}
 		break;
-
 	case PANICZONE_BLASTOFF:
-		xx = g_hdb->_rnd->getRandomNumber(9) - 5;
-		yy = g_hdb->_rnd->getRandomNumber(9) - 5;
-		_pzInfo.y1 -= 10;
-		_pzInfo.y2 += 10;
-		_pzInfo.gfxPanic->drawMasked(_pzInfo.x1 + xx, _pzInfo.y1 + yy);
-		_pzInfo.gfxZone->drawMasked(_pzInfo.x2 + yy, _pzInfo.y2 + xx);
-		if (_pzInfo.y1 < -_pzInfo.gfxPanic->_height &&
-			_pzInfo.y2 > kScreenHeight) {
-			g_hdb->_sound->playSound(SND_PANIC_COUNT);
-			_pzInfo.sequence++;
-			_pzInfo.timer = 30 + g_hdb->getTime();
+		{
+			int xx = g_hdb->_rnd->getRandomNumber(9) - 5;
+			int yy = g_hdb->_rnd->getRandomNumber(9) - 5;
+			_pzInfo.y1 -= 10;
+			_pzInfo.y2 += 10;
+			_pzInfo.gfxPanic->drawMasked(_pzInfo.x1 + xx, _pzInfo.y1 + yy);
+			_pzInfo.gfxZone->drawMasked(_pzInfo.x2 + yy, _pzInfo.y2 + xx);
+			if (_pzInfo.y1 < -_pzInfo.gfxPanic->_height &&
+				_pzInfo.y2 > kScreenHeight) {
+				g_hdb->_sound->playSound(SND_PANIC_COUNT);
+				_pzInfo.sequence++;
+				_pzInfo.timer = 30 + g_hdb->getTime();
+			}
 		}
 		break;
-
 	case PANICZONE_COUNTDOWN:
 		{
 			static int last_seconds = 0, seconds = 0;
@@ -1440,20 +1438,17 @@ void Window::centerTextOut(const char *text, int y, int timer) {
 }
 
 void Window::drawTextOut() {
-	int e1, e2, e3, e4;
-	uint32 time;
-	TOut *t;
-
 	if (_textOutList.empty())
 		return;
 
+	int e1, e2, e3, e4;
 	g_hdb->_gfx->getTextEdges(&e1, &e2, &e3, &e4);
 	g_hdb->_gfx->setTextEdges(0, 480, 0, kScreenHeight);
 
-	time = g_system->getMillis();
+	uint32 time = g_system->getMillis();
 
 	for (uint i = 0; i < _textOutList.size(); i++) {
-		t = _textOutList[i];
+		TOut *t = _textOutList[i];
 		g_hdb->_gfx->setCursor(t->x, t->y);
 		g_hdb->_gfx->drawText(t->text);
 
