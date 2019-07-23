@@ -60,7 +60,6 @@ public:
 	virtual void setPitch(int pitch);
 
 	virtual void setVolume(unsigned volume);
-	virtual int getVolume();
 
 	virtual void setLanguage(Common::String language);
 
@@ -70,7 +69,6 @@ private:
 	void init();
 	virtual void updateVoices();
 	void createVoice(void *cpVoiceToken);
-	void freeVoices();
 	Common::String lcidToLocale(Common::String lcid);
 	SpeechState _speechState;
 };
