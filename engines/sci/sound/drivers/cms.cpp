@@ -334,8 +334,14 @@ void CMSVoice_V0::stop() {
 }
 
 void CMSVoice_V0::programChange(int program) {
-	assert(program < 128);
-	if (program == 127) {
+	if (program > 127) {
+		// I encountered this with PQ2 at the airport (program 204 sent on part 13). The original driver does not really handle that.
+		// In fact, it even interprets this value as signed so it will not point into the instrument data buffer, but into a random
+		// invalid memory location (in the case of 204 it will read a value of 8 from the device init data array). Since there seems
+		// to be no effect on the sound I don't emulate this (mis)behaviour. 
+		warning("CMSVoice_V0::programChange:: Invalid program '%d' requested on midi channel '%d'", program, _assign);
+		program = 0;
+	} else if (program == 127) {
 		// This seems to replace the start of track offset with the current position so that 0xFC (kEndOfTrack)
 		// midi events would not reset the track to the start, but to the current position instead. This cannot
 		// be handled here. All versions of the SCI0 driver that I have seen so far do this. Still, I somehow
