@@ -85,17 +85,16 @@ bool SceneScriptPS06::ClickedOn3DObject(const char *objectName, bool a2) {
 			Actor_Clues_Transfer_New_From_Mainframe(kActorMcCoy);
 			return true;
 		} else {
-			bool tranferedClues = false;
-			tranferedClues = Actor_Clues_Transfer_New_To_Mainframe(kActorMcCoy);
-			if (_vm->_cutContent && !tranferedClues) {
+			bool transferedClues = Actor_Clues_Transfer_New_To_Mainframe(kActorMcCoy);
+			if (_vm->_cutContent && !transferedClues) {
 				Actor_Says(kActorAnsweringMachine, 370,  kAnimationModeTalk); // no clues transfered
 			} else {
 				Ambient_Sounds_Play_Sound(kSfxDATALOAD, 50, 0, 0, 99);
 				Delay(2000);
 			}
 			Actor_Says(kActorAnsweringMachine, 340,  kAnimationModeTalk);     // downloading clues
-			tranferedClues = Actor_Clues_Transfer_New_From_Mainframe(kActorMcCoy);
-			if (_vm->_cutContent && !tranferedClues) {
+			transferedClues = Actor_Clues_Transfer_New_From_Mainframe(kActorMcCoy);
+			if (_vm->_cutContent && !transferedClues) {
 				Actor_Says(kActorAnsweringMachine, 370,  kAnimationModeTalk); // no clues transfered
 			} else {
 				Ambient_Sounds_Play_Sound(kSfxDATALOAD, 50, 0, 0, 99);
@@ -103,7 +102,7 @@ bool SceneScriptPS06::ClickedOn3DObject(const char *objectName, bool a2) {
 			}
 			Ambient_Sounds_Play_Sound(kSfxBEEPNEAT, 80, 0, 0, 99);
 			Actor_Says(kActorAnsweringMachine, 350, kAnimationModeTalk);          // db transfer complete
-			if (_vm->_cutContent && tranferedClues) {
+			if (_vm->_cutContent && transferedClues) {
 				Actor_Says(kActorAnsweringMachine, 360, kAnimationModeTalk);      // new clues added
 			}
 			return true;

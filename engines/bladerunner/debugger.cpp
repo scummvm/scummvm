@@ -220,12 +220,11 @@ bool Debugger::cmdDraw(int argc, const char **argv) {
 	} else {
 		Common::String arg = argv[1];
 
-		int specificObjectId = -1;
 		DebuggerDrawnObject dbgDrawnObj;
 		dbgDrawnObj.type = debuggerObjTypeUndefined;
 
 		if (argc == 3) {
-			specificObjectId = atoi(argv[2]);
+			int specificObjectId = atoi(argv[2]);
 			dbgDrawnObj.objId = specificObjectId;
 			dbgDrawnObj.sceneId = _vm->_scene->getSceneId();
 			dbgDrawnObj.setId = _vm->_scene->getSetId();
@@ -1053,8 +1052,6 @@ const struct OverlayAndScenesVQAsList {
 */
 bool Debugger::cmdOverlay(int argc, const char **argv) {
 	bool invalidSyntax = false;
-	bool modeMixOverlaysAvailableFlg = false;
-	int chapterIdOverlaysAvailableInt = -1;
 
 	if (_vm->_kia->isOpen()
 		|| _vm->_esper->isOpen()
@@ -1070,6 +1067,9 @@ bool Debugger::cmdOverlay(int argc, const char **argv) {
 	if (argc != 1 && argc != 2 && argc != 3 && argc != 5) {
 		invalidSyntax = true;
 	} else {
+		bool modeMixOverlaysAvailableFlg = false;
+		int chapterIdOverlaysAvailableInt = -1;
+
 		if (_vm->_chapters->hasOpenResources()) {
 			chapterIdOverlaysAvailableInt = MIN(_vm->_chapters->currentResourceId(), 3);
 		}
