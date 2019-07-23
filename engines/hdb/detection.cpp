@@ -116,8 +116,8 @@ public:
 bool HDBMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 		(f == kSupportsLoadingDuringStartup) ||
-		(f == kSupportsLoadingDuringStartup) ||
 		(f == kSupportsListSaves) ||
+		(f == kSupportsDeleteSave) ||
 		(f == kSavesSupportMetaInfo) ||
 		(f == kSavesSupportThumbnail) ||
 		(f == kSavesSupportPlayTime);
