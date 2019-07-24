@@ -4,9 +4,6 @@
 ** See Copyright Notice in lua.h
 */
 
-// FIXME: Do not directly use iscntrl from ctype.h.
-#define FORBIDDEN_SYMBOL_EXCEPTION_iscntrl
-
 #include "common/util.h"
 
 #define llex_c
@@ -78,7 +75,7 @@ void luaX_init (lua_State *L) {
 const char *luaX_token2str (LexState *ls, int token) {
   if (token < FIRST_RESERVED) {
     lua_assert(token == cast(unsigned char, token));
-    return (iscntrl(token)) ? luaO_pushfstring(ls->L, "char(%d)", token) :
+    return (Common::isCntrl(token)) ? luaO_pushfstring(ls->L, "char(%d)", token) :
                               luaO_pushfstring(ls->L, "%c", token);
   }
   else
