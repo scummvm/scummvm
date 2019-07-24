@@ -20,6 +20,9 @@
  *
  */
 
+#ifndef WIN32_CODEPAGE_H
+#define WIN32_CODEPAGE_H
+
 #include "common/scummsys.h"
 #include "common/str.h"
 namespace Win32 {
@@ -191,3 +194,5 @@ const CodePageDescription g_cpDescriptions[] = {
 
 int getCodePageId(Common::String name);
 }
+
+#endif // WIN32_CODEPAGE_H
