@@ -216,15 +216,43 @@ void BigDialogue::sub40B670(int arg) {
 	if (!_ip)
 		return;
 	int unk = 1;
+	int unk2;
 label:
+	unk2 = arg;
 	if (arg != -1 && (*_ip >> 24) != 2) {
 		arg = -1;
 	}
 	while (true) {
 		byte op = (*_ip >> 24);
 		switch (op) {
-		case 2:
+		case 2: {
+			if (!unk)
+				return;
+			if (unk2 < 0) {
+				arg = 0;
+				unk2 = 0;
+			}
+			int n = (byte)*_ip;
+			if (n <= unk2)
+				arg = (byte) *_ip - 1;
+			int a1 = 0;
+			int a2 = 1;
+			int a3 = (*_ip >> 8) & 0xFFFF;
+			for (int i = 0; i < n;) {
+				if ((*_ip >> 24) == 10) {
+					++i;
+					if ((a3 & a2) && a1 <= arg)
+						arg++;
+					a2 *= 2;
+					a1++;
+				}
+				_ip += 1;
+			}
+			_ip += arg;
+			unk2 = arg;
+			unk = 0;
 			break;
+		}
 		case 3:
 			_ip = &_code[*_ip & 0xFFFF];
 			break;
