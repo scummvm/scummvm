@@ -20,6 +20,9 @@
  *
  */
 
+#include "common/cosinetables.h"
+#include "common/sinetables.h"
+
 #include "hdb/hdb.h"
 #include "hdb/gfx.h"
 #include "hdb/mpc.h"
@@ -218,6 +221,13 @@ void Gfx::loadSaveFile(Common::InSaveFile *in) {
 	turnOffSnow();
 	if (_snowInfo.active)
 		turnOnSnow();
+}
+
+double Gfx::getSin(int index) {
+	return _sines->at(index);
+}
+double Gfx::getCos(int index) {
+	return _cosines->at(index);
 }
 
 void Gfx::fillScreen(uint32 color) {
