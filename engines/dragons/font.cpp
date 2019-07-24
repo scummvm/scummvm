@@ -56,12 +56,10 @@ Font::~Font() {
 	free(_pixels);
 }
 
-uint16 mapChar(uint16 in) {
-	if (in >= 97) {
-		return in - 0x23;
-	}
-	return in - 0x20;
+uint16 Font::mapChar(uint16 in) {
+	return _map[in - _map[0x03] + 0x05];
 }
+
 Graphics::Surface *Font::render(uint16 *text, uint16 length, byte *palette) {
 	Graphics::Surface *surface = new Graphics::Surface();
 	Graphics::PixelFormat pixelFormat16(2, 5, 5, 5, 1, 10, 5, 0, 15); //TODO move this to a better location.
