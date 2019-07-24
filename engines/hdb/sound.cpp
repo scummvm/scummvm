@@ -21,7 +21,10 @@
  */
 
 #include "common/debug.h"
+#include "audio/audiostream.h"
 #include "audio/mixer.h"
+#include "audio/decoders/wave.h"
+#include "audio/decoders/mp3.h"
 
 #include "hdb/hdb.h"
 #include "hdb/file-manager.h"
