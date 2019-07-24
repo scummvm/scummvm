@@ -64,7 +64,7 @@ bool SXDirectory::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSt
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "Create") == 0) {
 		stack->correctParams(1);
-		const char *path = stack->pop()->getString();
+		//const char *path = stack->pop()->getString();
 
 		if (BaseEngine::instance().getGameId() == "hamlet") {
 			// No need to actually create anything since "gamelet.save" is stored at SavefileManager
@@ -82,7 +82,7 @@ bool SXDirectory::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSt
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Delete") == 0) {
 		stack->correctParams(1);
-		const char *path = stack->pop()->getString();
+		//const char *path = stack->pop()->getString();
 
 		warning("Directory.Delete is not implemented! Returning false...");
 
@@ -95,8 +95,8 @@ bool SXDirectory::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSt
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetFiles") == 0 || strcmp(name, "GetDirectories") == 0) {
 		stack->correctParams(2);
-		const char *path = stack->pop()->getString();
-		const char *mask = stack->pop()->getString();
+		//const char *path = stack->pop()->getString();
+		//const char *mask = stack->pop()->getString();
 
 		stack->pushInt(0);
 		BaseScriptable *array = makeSXArray(_gameRef, stack);
