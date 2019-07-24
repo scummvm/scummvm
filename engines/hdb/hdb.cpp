@@ -36,8 +36,10 @@
 #include "hdb/input.h"
 #include "hdb/lua-script.h"
 #include "hdb/map.h"
+#include "hdb/sound.h"
 #include "hdb/menu.h"
 #include "hdb/mpc.h"
+#include "hdb/window.h"
 
 #define CHEAT_PATCHES 0
 

@@ -23,8 +23,6 @@
 #ifndef HDB_AI_PLAYER_H
 #define HDB_AI_PLAYER_H
 
-#include "hdb/hdb.h"
-
 namespace HDB {
 
 void aiPlayerInit(AIEntity *e);

@@ -24,6 +24,7 @@
 #include "hdb/gfx.h"
 #include "hdb/input.h"
 #include "hdb/lua-script.h"
+#include "hdb/sound.h"
 #include "hdb/menu.h"
 #include "hdb/map.h"
 #include "hdb/mpc.h"

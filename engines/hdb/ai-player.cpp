@@ -23,10 +23,12 @@
 #include "hdb/hdb.h"
 #include "hdb/file-manager.h"
 #include "hdb/gfx.h"
+#include "hdb/sound.h"
 #include "hdb/menu.h"
 #include "hdb/lua-script.h"
 #include "hdb/map.h"
 #include "hdb/mpc.h"
+#include "hdb/window.h"
 
 namespace HDB {
 

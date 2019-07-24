@@ -21,6 +21,8 @@
  */
 
 #include "hdb/hdb.h"
+#include "hdb/sound.h"
+#include "hdb/window.h"
 
 namespace HDB {
 
