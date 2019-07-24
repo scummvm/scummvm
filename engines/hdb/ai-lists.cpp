@@ -24,6 +24,7 @@
 #include "hdb/file-manager.h"
 #include "hdb/gfx.h"
 #include "hdb/lua-script.h"
+#include "hdb/map.h"
 
 namespace HDB {
 

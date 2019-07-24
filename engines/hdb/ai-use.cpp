@@ -21,6 +21,7 @@
  */
 
 #include "hdb/hdb.h"
+#include "hdb/map.h"
 
 namespace HDB {
 

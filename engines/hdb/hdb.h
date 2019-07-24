@@ -46,6 +46,7 @@ class FileMan;
 class Gfx;
 class Input;
 class LuaScript;
+class Map;
 class Menu;
 class Tile;
 class Picture;
@@ -73,7 +74,6 @@ enum {
 
 #include "hdb/ai.h"
 #include "hdb/ai-player.h"
-#include "hdb/map.h"
 #include "hdb/sound.h"
 #include "hdb/window.h"
 

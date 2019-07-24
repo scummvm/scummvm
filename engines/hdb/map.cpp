@@ -23,6 +23,7 @@
 #include "hdb/hdb.h"
 #include "hdb/file-manager.h"
 #include "hdb/gfx.h"
+#include "hdb/map.h"
 
 namespace HDB {
 

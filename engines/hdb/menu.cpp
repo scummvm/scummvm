@@ -25,6 +25,7 @@
 #include "hdb/input.h"
 #include "hdb/lua-script.h"
 #include "hdb/menu.h"
+#include "hdb/map.h"
 #include "hdb/mpc.h"
 
 namespace HDB {
