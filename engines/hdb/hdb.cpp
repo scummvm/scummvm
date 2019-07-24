@@ -32,7 +32,6 @@
 
 #include "hdb/hdb.h"
 #include "hdb/gfx.h"
-#include "hdb/console.h"
 #include "hdb/menu.h"
 #include "hdb/mpc.h"
 
@@ -43,7 +42,6 @@ namespace HDB {
 HDBGame* g_hdb;
 
 HDBGame::HDBGame(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
-	_console = nullptr;
 	_format = Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
 	_systemInit = false;
 	g_hdb = this;
@@ -77,7 +75,6 @@ HDBGame::HDBGame(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst
 }
 
 HDBGame::~HDBGame() {
-	delete _console;
 	delete _fileMan;
 	delete _gfx;
 	delete _lua;
@@ -858,7 +855,6 @@ Common::Error HDBGame::run() {
 
 	// Initializes Graphics
 	initGraphics(kScreenWidth, kScreenHeight, &_format);
-	_console = new Console();
 
 #ifdef USE_MAD
 	Common::SeekableReadStream *soundStream = _fileMan->findFirstData("M00_AIRLOCK_01_MP3", TYPE_BINARY);
