@@ -124,7 +124,6 @@ bool QSystem::init() {
 	readObject(*_chapayev, *stream, namesIni, castIni);
 	_allObjects.push_back(_chapayev.get());
 
-	Common::String name;
 	for (uint i = 0; i < objsCount; ++i) {
 		readObject(_objs[i], *stream, namesIni, castIni);
 		_allObjects.push_back(&_objs[i]);
