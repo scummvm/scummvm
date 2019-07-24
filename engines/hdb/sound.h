@@ -51,7 +51,7 @@ namespace HDB {
 
 enum {
 	kMaxSNDChannels = 32,
-	kSNDFrequency = 22050,
+	kMaxSounds = 5000,
 	kLaserChannel = kMaxSNDChannels - 1,
 	kMusicChannel = kMaxSNDChannels - 2,
 	kVoiceChannel = kMaxSNDChannels - 5
@@ -1408,8 +1408,23 @@ struct SoundLookUp {
 	const char *luaName;		// name for Lua code to use
 };
 
+struct SoundCache {
+	int	loaded;				// -1 = freeable; in memory, 0 = not cached, 1 = cached
+	int32 size;				// size of sound
+	const char *name;				// filename / MSD name
+	const char *luaName;			// name used by Lua for i.d.
+	//void *data;				// actual file data
+	//FSOUND_SAMPLE *sample;			// used to play sound in FMOD
+
+	SoundCache() : loaded(0), size(0), name(nullptr), luaName(nullptr) {
+
+	}
+};
+
 class Sound {
 public:
+
+	Sound();
 
 	void test(); // FIXME. Remove
 
@@ -1450,10 +1465,22 @@ public:
 	bool stopChannel(int channel);
 	int registerSound(const char *name);
 	bool freeSound(int index);
+	const char *getSNDLuaName(int index);
+	int getSNDIndex(const char *name);
+	int getNumSounds() {
+		return _numSounds;
+	}
 
 	SoundType whatSongIsPlaying();
 
 	void markSoundCacheFreeable();
+
+	// Sound Caching System Variables
+
+	SoundCache _soundCache[kMaxSounds];
+	int _numSounds;
+	int _sfxVolume;
+
 };
 
 } // End of Namespace
