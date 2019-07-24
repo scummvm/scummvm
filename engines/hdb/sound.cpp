@@ -1417,7 +1417,12 @@ bool Sound::init() {
 		_soundCache[index2].loaded = false;
 		_soundCache[index2].name = soundList[index].name;
 		_soundCache[index2].luaName = soundList[index].luaName;
-		debug(9, "sName: %s, sLuaName: %s", soundList[index].name, soundList[index].luaName);
+		// FIXME: Create an intuitive way to include #166
+		if (index2 < SND_UNLOCKED_ITEM || index == 166)
+			_soundCache[index2].ext = -1;	// WAV
+		else
+			_soundCache[index2].ext = 1;		// MP3
+		debug(9, "Registering sound: sName: %s, \tsLuaName: %s, \tExtension: %s", soundList[index2].name, soundList[index2].luaName, _soundCache[index2].ext == 1 ? "MP3" : "WAV");
 		index++;
 		if (index > kMaxSounds)
 			error("Reached MAX_SOUNDS in Sound::Init() !");
@@ -1497,7 +1502,6 @@ int Sound::registerSound(const char *name) {
 
 	_soundCache[index].name = name;
 	_soundCache[index].loaded = 0;		// just to be sure!
-
 	return index;
 }
 
@@ -1505,6 +1509,7 @@ bool Sound::freeSound(int index) {
 	if (_soundCache[index].loaded == 1) {
 		warning("STUB: Free the audio stream in cache");
 		_soundCache[index].loaded = 0;
+		_soundCache[index].ext = 0;
 		return true;
 	}
 	return false;

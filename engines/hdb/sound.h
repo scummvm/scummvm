@@ -1413,10 +1413,11 @@ struct SoundCache {
 	int32 size;				// size of sound
 	const char *name;				// filename / MSD name
 	const char *luaName;			// name used by Lua for i.d.
+	int ext;					// 0 = Uninitialized, -1 = WAV, 1 = MP3
 	//void *data;				// actual file data
 	//FSOUND_SAMPLE *sample;			// used to play sound in FMOD
 
-	SoundCache() : loaded(0), size(0), name(nullptr), luaName(nullptr) {
+	SoundCache() : loaded(0), size(0), name(nullptr), luaName(nullptr), ext(0) {
 
 	}
 };
