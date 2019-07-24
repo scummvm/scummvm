@@ -244,8 +244,19 @@ label:
 			_ip += 1;
 			unk = 0;
 			break;
-		case 8:
+		case 8: {
+			if (!unk)
+				return;
+			*_ip = (*_ip & 0xFF00FFFF) | ((byte)(((byte)(*_ip >> 16) + 1) % (int16)*_ip) << 16);
+			int n = *_ip & 0xFF;
+			for (int i = 0; i < n; ++i) {
+				while ((*_ip >> 24) != 10)
+					_ip += 1;
+				_ip += 1;
+			}
+			unk = 0;
 			break;
+		}
 		case 9:
 			if (unk)
 				_ip += 1;
