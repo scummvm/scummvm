@@ -26,13 +26,8 @@
 #include "common/scummsys.h"
 #include "common/system.h"
 #include "common/savefile.h"
-#include "audio/audiostream.h"
-#include "audio/decoders/wave.h"
-#include "audio/decoders/mp3.h"
 
-#include "gui/debugger.h"
 #include "engines/engine.h"
-#include "engines/util.h"
 
 namespace Common {
 	class RandomSource;
