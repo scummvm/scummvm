@@ -111,6 +111,8 @@ struct JoystickState {
 	 * buttons. See JoystickButton.
 	 */
 	int8 button;
+
+	JoystickState() : axis(0), position(0), button(0) {}
 };
 
 /**
