@@ -44,6 +44,8 @@
 namespace HDB {
 class FileMan;
 class Gfx;
+class Input;
+class LuaScript;
 class Menu;
 class Tile;
 class Picture;
@@ -71,8 +73,6 @@ enum {
 
 #include "hdb/ai.h"
 #include "hdb/ai-player.h"
-#include "hdb/input.h"
-#include "hdb/lua-script.h"
 #include "hdb/map.h"
 #include "hdb/sound.h"
 #include "hdb/window.h"
