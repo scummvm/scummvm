@@ -70,7 +70,6 @@ enum {
 
 #include "hdb/ai.h"
 #include "hdb/ai-player.h"
-#include "hdb/console.h"
 #include "hdb/file-manager.h"
 #include "hdb/input.h"
 #include "hdb/lua-script.h"
@@ -338,8 +337,6 @@ private:
 	uint32 _timeSeconds;
 
 	uint32 _tiempo;
-
-	Console *_console;
 
 	// Game Variables
 

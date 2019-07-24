@@ -10,7 +10,6 @@ MODULE_OBJS := \
 	ai-player.o \
 	ai-use.o \
 	ai-waypoint.o \
-	console.o \
 	detection.o \
 	file-manager.o \
 	gfx.o \
