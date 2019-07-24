@@ -96,7 +96,7 @@ void SavesSyncRequest::directoryListedCallback(Storage::ListDirectoryResponse re
 		if (file.isDirectory())
 			continue;
 		totalSize += file.size();
-		if (file.name() == DefaultSaveFileManager::TIMESTAMPS_FILENAME)
+		if (file.name() == DefaultSaveFileManager::TIMESTAMPS_FILENAME || !CloudMan.canSyncFilename(file.name()))
 			continue;
 
 		Common::String name = file.name();
@@ -129,7 +129,7 @@ void SavesSyncRequest::directoryListedCallback(Storage::ListDirectoryResponse re
 
 	//upload files which are unavailable in cloud
 	for (Common::HashMap<Common::String, bool>::iterator i = localFileNotAvailableInCloud.begin(); i != localFileNotAvailableInCloud.end(); ++i) {
-		if (i->_key == DefaultSaveFileManager::TIMESTAMPS_FILENAME)
+		if (i->_key == DefaultSaveFileManager::TIMESTAMPS_FILENAME || !CloudMan.canSyncFilename(i->_key))
 			continue;
 		if (i->_value) {
 			_filesToUpload.push_back(i->_key);

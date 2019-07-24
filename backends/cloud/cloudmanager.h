@@ -227,6 +227,9 @@ public:
 	/** Returns storage's saves directory path with the trailing slash. */
 	Common::String savesDirectoryPath();
 
+	/** Returns whether given filename could be uploaded to or downloaded from storage. */
+	bool canSyncFilename(const Common::String &filename) const;
+
 	/**
 	 * Starts saves syncing process in currently active storage if there is any.
 	 */
