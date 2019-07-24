@@ -4198,6 +4198,35 @@ EOF
 fi
 define_in_config_if_yes "$_ogg" 'USE_OGG'
 echo "$_ogg"
+#
+# Check for TTS
+#
+echocheck "TTS libraries"
+if test "$_tts" = auto ; then
+	_tts=no
+	case $_host_os in
+		mingw*)
+			cat > $TMPC << EOF
+#include <windows.h>
+#include <Servprov.h>
+#include <sapi.h>
+int main(void) { return 0; }
+EOF
+			cc_check -lsapi -lole32 && _tts=yes
+			if test "$_host_os" = "mingw32" ; then
+				_tts=no
+			fi
+			;;
+		linux*)
+			cat > $TMPC << EOF
+#include <speech-dispatcher/libspeechd.h>
+int main(void) { return 0; }
+EOF
+			cc_check -lspeechd && _tts=yes
+			;;
+	esac
+fi
+echo "$_tts"
 
 #
 # Check for Vorbis
