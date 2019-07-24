@@ -69,11 +69,13 @@ SoundManager::SoundManager(MortevielleEngine *vm, Audio::Mixer *mixer) {
 	_noiseBuf = nullptr;
 #ifdef USE_TTS
 	_ttsMan = g_system->getTextToSpeechManager();
-	_ttsMan->setLanguage(ConfMan.get("language"));
-	_ttsMan->stop();
-	_ttsMan->setRate(0);
-	_ttsMan->setPitch(0);
-	_ttsMan->setVolume(100);
+	if (_ttsMan) {
+		_ttsMan->setLanguage(ConfMan.get("language"));
+		_ttsMan->stop();
+		_ttsMan->setRate(0);
+		_ttsMan->setPitch(0);
+		_ttsMan->setVolume(100);
+	}
 #endif //USE_TTS
 
 	_soundType = 0;
@@ -760,30 +762,26 @@ void SoundManager::handlePhoneme() {
  * Start speech
  * @remarks	Originally called 'parole'
  */
-void SoundManager::startSpeech(int rep, int ht, int typ) {
+void SoundManager::startSpeech(int rep, int character, int typ) {
 	if (_vm->_soundOff)
 		return;
+
+	_soundType = typ;
 
 	if (typ == 0) {
 		// Speech
 #ifdef USE_TTS
+		const int haut[9] = { 0, 0, 1, -3, 6, -2, 2, 7, -1 };
 		if (!_ttsMan)
 			return;
 		Common::Array<int> voices;
-		int pitch;
-		int voiceIndex;
+		int pitch = haut[character] * 5;
 		bool male;
-		if (ht > 5) {
+		if (haut[character] > 5) {
 			voices = _ttsMan->getVoiceIndicesByGender(Common::TTSVoice::FEMALE);
-			pitch = ht - 6;
-			voiceIndex = pitch;
-			pitch *= 5;
 			male = false;
 		} else {
 			voices = _ttsMan->getVoiceIndicesByGender(Common::TTSVoice::MALE);
-			pitch = ht - 5;
-			voiceIndex = -pitch;
-			pitch *= 4;
 			male = true;
 		}
 		// If there is no voice available for the given gender, just set it to the 0th
@@ -791,8 +789,8 @@ void SoundManager::startSpeech(int rep, int ht, int typ) {
 		if (voices.empty())
 			_ttsMan->setVoice(0);
 		else {
-			voiceIndex %= voices.size();
-			_ttsMan->setVoice(voices[voiceIndex]);
+			character %= voices.size();
+			_ttsMan->setVoice(voices[character]);
 		}
 		// If the selected voice is a different gender, than we want, just try to
 		// set the pitch so it may sound a little bit closer to the gender we want
@@ -805,22 +803,16 @@ void SoundManager::startSpeech(int rep, int ht, int typ) {
 
 		_ttsMan->setPitch(pitch);
 		_ttsMan->say(_vm->getString(rep + kDialogStringIndex), "CP850");
-#else
-		return;
 #endif // USE_TTS
+		return;
 	}
 	uint16 savph[501];
 	int tempo;
 
 	_phonemeNumb = rep;
-	_soundType = typ;
-	if (_soundType != 0) {
-		for (int i = 0; i <= 500; ++i)
-			savph[i] = _cfiphBuffer[i];
-		tempo = kTempoNoise;
-	} else {
-		return;
-	}
+	for (int i = 0; i <= 500; ++i)
+		savph[i] = _cfiphBuffer[i];
+	tempo = kTempoNoise;
 	_vm->_addFix = (float)((tempo - 8)) / 256;
 	cctable(_tbi);
 	switch (typ) {
