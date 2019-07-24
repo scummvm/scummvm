@@ -43,6 +43,8 @@ public:
 	Font(Common::SeekableReadStream &stream, uint32 mapSize, uint32 pixelOffset, uint32 pixelSize);
 	~Font();
 	Graphics::Surface *render(uint16 *text, uint16 length, byte *palette);
+private:
+	uint16 mapChar(uint16 in);
 };
 
 struct ScreenTextEntry {
@@ -55,7 +57,7 @@ private:
 	DragonsEngine *_vm;
 	Font *_fonts[3];
 	Screen *_screen;
-	Common::List<ScreenTextEntry*> _screenTexts;
+	Common::List<ScreenTextEntry *> _screenTexts;
 	byte *_palettes;
 
 public:
