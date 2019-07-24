@@ -20,6 +20,8 @@
  *
  */
 
+#include "graphics/thumbnail.h"
+
 #include "hdb/hdb.h"
 #include "hdb/ai.h"
 #include "hdb/gfx.h"

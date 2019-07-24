@@ -20,6 +20,7 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "common/random.h"
 
 #include "hdb/hdb.h"
@@ -853,12 +854,7 @@ Common::Error HDBGame::run() {
 	// Initializes Graphics
 	initGraphics(kScreenWidth, kScreenHeight, &_format);
 
-#ifdef USE_MAD
-	Common::SeekableReadStream *soundStream = _fileMan->findFirstData("M00_AIRLOCK_01_MP3", TYPE_BINARY);
-	Audio::SeekableAudioStream *audioStream = Audio::makeMP3Stream(soundStream, DisposeAfterUse::YES);
-	Audio::SoundHandle *handle = new Audio::SoundHandle();
-	g_hdb->_mixer->playStream(Audio::Mixer::kPlainSoundType, handle, audioStream);
-#endif
+	_sound->test();
 
 	start();
 

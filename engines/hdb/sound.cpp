@@ -21,8 +21,10 @@
  */
 
 #include "common/debug.h"
+#include "audio/mixer.h"
 
 #include "hdb/hdb.h"
+#include "hdb/file-manager.h"
 #include "hdb/mpc.h"
 #include "hdb/sound.h"
 
@@ -1386,6 +1388,15 @@ const SoundLookUp soundList[] =  {
 
 	{LAST_SOUND,			NULL,						NULL}
 };
+
+void Sound::test() {
+	#ifdef USE_MAD
+		Common::SeekableReadStream *soundStream = g_hdb->_fileMan->findFirstData("M00_AIRLOCK_01_MP3", TYPE_BINARY);
+		Audio::SeekableAudioStream *audioStream = Audio::makeMP3Stream(soundStream, DisposeAfterUse::YES);
+		Audio::SoundHandle *handle = new Audio::SoundHandle();
+		g_hdb->_mixer->playStream(Audio::Mixer::kPlainSoundType, handle, audioStream);
+	#endif
+}
 
 bool Sound::init() {
 	warning("STUB: Sound::init()");
