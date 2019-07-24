@@ -216,6 +216,7 @@ void BigDialogue::sub40B670(int arg) {
 	if (!_ip)
 		return;
 	int unk = 1;
+label:
 	if (arg != -1 && (*_ip >> 24) != 2) {
 		arg = -1;
 	}
@@ -256,7 +257,15 @@ void BigDialogue::sub40B670(int arg) {
 			}
 			return;
 		case 10:
-			break;
+			do {
+				if (op == 8) {
+					break;
+				}
+				--_ip;
+				op = (*_ip >> 24);
+			} while (op != 2);
+			unk = 1;
+			goto label;
 		default:
 			_ip += 1;
 			unk = 0;
