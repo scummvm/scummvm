@@ -1758,7 +1758,11 @@ bool LuaScript::initScript(Common::SeekableReadStream *stream, const char *scrip
 	lua_pushnumber(_state, 480 - 14);
 	lua_setglobal(_state, "BOTTOM_Y");
 
-	warning("STUB: Stick Sound Names into Lua");
+	for (int j = 0; j < g_hdb->_sound->getNumSounds(); j++) {
+		const char *name = g_hdb->_sound->getSNDLuaName(j);
+		lua_pushnumber(_state, j);
+		lua_setglobal(_state, name);
+	}
 
 	// Set the Entity Spawn Names  in Lua
 	int j = 0;
