@@ -75,8 +75,6 @@ enum {
 }
 
 #include "hdb/ai.h"
-#include "hdb/ai-player.h"
-//#include "hdb/window.h"
 
 struct ADGameDescription;
 
