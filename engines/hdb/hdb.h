@@ -25,10 +25,10 @@
 
 #include "common/scummsys.h"
 #include "common/system.h"
-#include "common/array.h"
-#include "common/events.h"
-#include "common/str.h"
-#include "common/random.h"
+//#include "common/array.h"
+//#include "common/events.h"
+//#include "common/str.h"
+//#include "common/random.h"
 #include "common/savefile.h"
 #include "common/config-manager.h"
 #include "graphics/surface.h"
@@ -41,6 +41,10 @@
 #include "gui/debugger.h"
 #include "engines/engine.h"
 #include "engines/util.h"
+
+namespace Common {
+	class RandomSource;
+}
 
 namespace HDB {
 class AI;

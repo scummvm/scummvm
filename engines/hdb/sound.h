@@ -1416,24 +1416,24 @@ public:
 	void loadSaveFile(Common::InSaveFile *in);
 	void clearPersistent();
 	void setMusicVolume(int value) {
-		debug(9, "STUB: Add Music System Variables");
+		//debug(9, "STUB: Add Music System Variables");
 	}
 	int getMusicVolume() {
-		debug(9, "STUB: Add Music System Variables");
+		//debug(9, "STUB: Add Music System Variables");
 		return 1;
 	}
 	void setSFXVolume(int value) {
-		debug(9, "STUB: Add Music System Variables");
+		//debug(9, "STUB: Add Music System Variables");
 	}
 	int getSFXVolume() {
-		debug(9, "STUB: Add Music System Variables");
+		//debug(9, "STUB: Add Music System Variables");
 		return 1;
 	}
 	void setVoiceStatus(int value) {
-		debug(9, "STUB: Add Music System Variables");
+		//debug(9, "STUB: Add Music System Variables");
 	}
 	int getVoiceStatus() {
-		debug(9, "STUB: Add Music System Variables");
+		//debug(9, "STUB: Add Music System Variables");
 		return 1;
 	}
 

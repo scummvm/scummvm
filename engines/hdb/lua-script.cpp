@@ -20,6 +20,7 @@
  *
  */
 
+#include "common/file.h"
 #include "common/lua/lua.h"
 #include "common/lua/lauxlib.h"
 #include "common/lua/lualib.h"

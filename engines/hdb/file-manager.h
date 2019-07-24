@@ -23,11 +23,9 @@
 #ifndef HDB_FILE_MANAGER_H
 #define HDB_FILE_MANAGER_H
 
-#include "common/array.h"
-#include "common/file.h"
-#include "common/error.h"
-#include "common/stream.h"
-#include "common/memstream.h"
+namespace Common {
+	class File;
+}
 
 #define MPCIterator Common::Array<MPCEntry *>::iterator
 
@@ -70,7 +68,7 @@ public:
 		uint32 id;
 		uint32 dirSize;
 	} _dataHeader;
-	
+
 	bool openMPC(const Common::String &filename);
 	void closeMPC();
 	void seek(int32 offset, int flag);

@@ -22,6 +22,7 @@
 
 #include "common/cosinetables.h"
 #include "common/sinetables.h"
+#include "common/random.h"
 
 #include "hdb/hdb.h"
 #include "hdb/ai.h"
