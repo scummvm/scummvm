@@ -23,7 +23,6 @@
 #include "common/lua/lua.h"
 #include "common/lua/lauxlib.h"
 #include "common/lua/lualib.h"
-#include "common/debug.h"
 
 #include "hdb/hdb.h"
 #include "hdb/file-manager.h"
