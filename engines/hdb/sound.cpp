@@ -24,7 +24,7 @@
 
 namespace HDB {
 
-SoundLookUp soundList[] =  {
+const SoundLookUp soundList[] =  {
 	//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 	//
 	// List of all the sounds we need
