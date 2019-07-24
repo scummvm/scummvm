@@ -7,6 +7,7 @@ MODULE_OBJS := \
     bag.o \
     bigfile.o \
     cursor.o \
+    cutscene.o \
 	detection.o \
     dragonflg.o \
     dragonimg.o \

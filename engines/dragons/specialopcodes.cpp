@@ -21,6 +21,7 @@
  */
 
 #include "dragons/cursor.h"
+#include "dragons/cutscene.h"
 #include "dragons/dragons.h"
 #include "dragons/dragonflg.h"
 #include "dragons/dragonini.h"
@@ -29,6 +30,7 @@
 #include "dragons/specialopcodes.h"
 #include "dragons/scene.h"
 #include "dragons/actor.h"
+#include "talk.h"
 #include "specialopcodes.h"
 
 
@@ -318,124 +320,67 @@ void SpecialOpcodes::spcSetCameraXToZero() {
 }
 
 void SpecialOpcodes::spcDiamondIntroSequenceLogic() {
-	/*
-	bool bVar1;
-	ushort uVar2;
-	undefined4 uVar3;
-	DragonINI *pDVar4;
-	int iVar5;
-	uint uVar6;
-	short sVar7;
 	Actor *actorId;
 	Actor *actorId_00;
 	Actor *actorId_01;
 	Actor *actorId_02;
 	Actor *actorId_03;
 
-	pDVar4 = dragon_ini_pointer;
+//	pDVar4 = dragon_ini_pointer;
 	_vm->setUnkFlags(ENGINE_UNK1_FLAG_2);
 	actorId = _vm->getINI(0x257)->actor;
 	actorId_03 = _vm->getINI(0x259)->actor;
 	actorId_01 = _vm->getINI(0x258)->actor;
-	actorId_03->flags = actorId_03->flags | 0x100;
+	actorId_03->setFlag(ACTOR_FLAG_100);
 	actorId_03->priorityLayer = 4;
-	uVar3 = scrFileData_maybe;
-	actorId_00 = _vm->getINI(0x256)->actor; //(uint)(ushort)pDVar4[iVar5 + -1].field_0x1c;
-	uVar2 = *(ushort *)((&actor_dictionary)[(uint)actors[actorId_00].﻿actorFileDictionaryIndex * 2] + 10);
+//	uVar3 = scrFileData_maybe;
+	actorId_00 = _vm->getINI(0x256)->actor;
+//	uVar2 = *(ushort *)((&actor_dictionary)[(uint)actors[actorId_00].﻿actorFileDictionaryIndex * 2] + 10);
 	_vm->setFlags(ENGINE_FLAG_20000);
-	actorId_02 = _vm->getINI(0x25a)->actor; //(uint)(ushort)pDVar4[DAT_80063ed4 + -1].field_0x1c;
-	iVar5 = (&actor_dictionary)[(uint)actors[actorId_00].﻿actorFileDictionaryIndex * 2];
-	if ((somethingTextAndSpeechAndAnimRelated(actorId_02,1,0,DAT_80063ed8,0x2601) != 2) && (uVar6 = actorId->actorSetSequenceAndWaitAllowSkip(2), (uVar6 & 0xffff) == 0)) {
+	actorId_02 = _vm->getINI(0x25a)->actor;
+//	iVar5 = (&actor_dictionary)[(uint)actors[actorId_00].﻿actorFileDictionaryIndex * 2];
+	if ((_vm->_talk->somethingTextAndSpeechAndAnimRelated(actorId_02,1,0,0x4294a,0x2601) != 2) && !actorId->actorSetSequenceAndWaitAllowSkip(2)) {
 		actorId->updateSequence(3);
-		uVar6 = actorId_01->actorSetSequenceAndWaitAllowSkip(0x18);
-		if ((uVar6 & 0xffff) == 0) {
-			sVar7 = 0x2c;
-			do {
-				_vm->waitForFrames(1);
-				uVar6 = _vm->checkForActionButtonRelease();
-				if ((uVar6 & 0xffff) != 0) break;
-				bVar1 = sVar7 != 0;
-				sVar7 = sVar7 + -1;
-			} while (bVar1);
+		if (!actorId_01->actorSetSequenceAndWaitAllowSkip(0x18)) {
+			_vm->waitForFramesAllowSkip(0x2c);
 			//TODO fade_related_calls_with_1f();
-			load_palette_into_frame_buffer(0,(uint)uVar2 + iVar5);
-			camera_x = 0x140;
+			//TODO load_palette_into_frame_buffer(0,(uint)uVar2 + iVar5);
+			_vm->_scene->_camera.x = 0x140;
 			//TODO call_fade_related_1f();
-			uVar6 = actorId_00->actorSetSequenceAndWaitAllowSkip(0);
-			if ((uVar6 & 0xffff) == 0) {
-				playSoundFromTxtIndex(0x42A66);
-				uVar6 = somethingTextAndSpeechAndAnimRelated(actorId_00,1,2,DAT_80063ee0,0x3c01);
-				if ((uVar6 & 0xffff) != 2) {
-					sVar7 = 0x13;
-					do {
-						_vm->waitForFrames(1);
-						uVar6 = _vm->checkForActionButtonRelease();
-						if ((uVar6 & 0xffff) != 0) break;
-						bVar1 = sVar7 != 0;
-						sVar7 = sVar7 + -1;
-					} while (bVar1);
+			if (!actorId_00->actorSetSequenceAndWaitAllowSkip(0)) {
+				// TODO is this needed playSoundFromTxtIndex(0x42A66);
+				if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(actorId_00,1,2,0x42a66,0x3c01) != 2) {
+					_vm->waitForFramesAllowSkip(0x13);
 					//TODO fade_related_calls_with_1f();
-					load_palette_into_frame_buffer(0,uVar3);
-					camera_x = 0;
-					sVar7 = 0xf;
+					// TODO load_palette_into_frame_buffer(0,uVar3);
+					_vm->_scene->_camera.x = 0;
 					//TODO call_fade_related_1f();
 					actorId_01->updateSequence(0x19);
-					do {
-						_vm->waitForFrames(1);
-						uVar6 = _vm->checkForActionButtonRelease();
-						if ((uVar6 & 0xffff) != 0) break;
-						bVar1 = sVar7 != 0;
-						sVar7 = sVar7 + -1;
-					} while (bVar1);
+					_vm->waitForFramesAllowSkip(0xf);
 					actorId->updateSequence(4);
-					sVar7 = 0x17;
-					do {
-						_vm->waitForFrames(1);
-						uVar6 = _vm->checkForActionButtonRelease();
-						if ((uVar6 & 0xffff) != 0) break;
-						bVar1 = sVar7 != 0;
-						sVar7 = sVar7 + -1;
-					} while (bVar1);
+					_vm->waitForFramesAllowSkip(0x17);
 					actorId_03->updateSequence(9);
 					actorId_03->x_pos = 0x82;
 					actorId_03->y_pos = 0xc4;
 					actorId_03->priorityLayer = 4;
-					uVar2 = actors[actorId].flags;
-					bVar1 = false;
-					while ((uVar2 & 4) == 0) {
-						uVar6 = _vm->checkForActionButtonRelease();
-						if ((uVar6 & 0xffff) != 0) {
-							bVar1 = true;
-							break;
-						}
-						uVar2 = actors[actorId].flags;
-					}
-					if (!bVar1) {
+					if (!actorId->waitUntilFlag4IsSetAllowSkip()) {
 						actorId->updateSequence(5);
-						uVar6 = somethingTextAndSpeechAndAnimRelated(actorId_01,0x10,2,DAT_80063ee4,0x3c01);
-						if (((uVar6 & 0xffff) != 2) && (uVar6 = somethingTextAndSpeechAndAnimRelated(actorId_02,1,0,DAT_80063edc,0x2601), (uVar6 & 0xffff) != 2)) {
-							sVar7 = 0x3b;
-							do {
-								_vm->waitForFrames(1);
-								uVar6 = _vm->checkForActionButtonRelease();
-								if ((uVar6 & 0xffff) != 0) break;
-								bVar1 = sVar7 != 0;
-								sVar7 = sVar7 + -1;
-							} while (bVar1);
+						if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(actorId_01,0x10,2,0x42ac2,0x3c01) != 2 &&
+								_vm->_talk->somethingTextAndSpeechAndAnimRelated(actorId_02,1,0,0x42b56,0x2601) != 2) {
+							_vm->waitForFramesAllowSkip(0x3b);
 						}
 					}
 				}
 			}
 		}
 	}
-	*/
 	_vm->clearUnkFlags(ENGINE_UNK1_FLAG_2);
 	_vm->clearFlags(ENGINE_FLAG_20000);
 	return;
 }
 
 void SpecialOpcodes::spcLoadScene1() {
-	// TODO spcLoadScene1 knights around the table.
+	_vm->_cutScene->scene1();
 }
 
 void SpecialOpcodes::spcTransitionToMap() {

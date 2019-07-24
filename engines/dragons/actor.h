@@ -130,6 +130,7 @@ public:
 	void waitUntilFlag8IsSet();
 	void waitUntilFlag8And4AreSet();
 
+	bool waitUntilFlag4IsSetAllowSkip();
 	bool actorSetSequenceAndWaitAllowSkip(uint16 newSequenceID);
 
 	void clearFlag(uint32 flag);

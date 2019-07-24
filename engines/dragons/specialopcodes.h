@@ -101,6 +101,7 @@ protected:
 private:
 	void panCamera(int16 mode);
 	void pizzaMakerStopWorking();
+
 };
 
 // update functions

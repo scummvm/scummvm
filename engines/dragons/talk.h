@@ -70,6 +70,7 @@ public:
 
 	bool talkToActor(ScriptOpCall &scriptOpCall);
 
+	uint somethingTextAndSpeechAndAnimRelated(Actor *actor,int16 sequenceId1,int16 sequenceId2,uint32 textIndex, uint16 param_5);
 private:
 	void copyTextToBuffer(uint16 *destBuffer, byte *src, uint32 destBufferLength);
 	uint32 wideStrLen(uint16 *text);
