@@ -195,15 +195,30 @@ bool isUpper(int c);
  */
 bool isPrint(int c);
 
-
 /**
  * Test whether the given character is a punctuation character,
- * (i.e not alphanumeric.
+ * (i.e. not alphanumeric).
  *
  * @param c		the character to test
  * @return		true if the character is punctuation, false otherwise.
  */
 bool isPunct(int c);
+
+/**
+ * Test whether the given character is a control character.
+ *
+ * @param c		the character to test
+ * @return		true if the character is a control character, false otherwise.
+ */
+bool isCntrl(int c);
+
+/**
+ * Test whether the given character has a graphical representation.
+ *
+ * @param c		the character to test
+ * @return		true if the character is a graphic, false otherwise.
+ */
+bool isGraph(int c);
 
 } // End of namespace Common
 
