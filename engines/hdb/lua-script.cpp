@@ -29,6 +29,7 @@
 #include "hdb/file-manager.h"
 #include "hdb/lua-script.h"
 #include "hdb/gfx.h"
+#include "hdb/map.h"
 #include "hdb/mpc.h"
 
 namespace HDB {
