@@ -20,6 +20,8 @@
  *
  */
 
+#include "common/random.h"
+
 #include "hdb/hdb.h"
 #include "hdb/ai.h"
 #include "hdb/ai-player.h"

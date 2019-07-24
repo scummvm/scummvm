@@ -23,6 +23,8 @@
 #ifndef HDB_INPUT_H
 #define HDB_INPUT_H
 
+#include "common/events.h"
+
 namespace HDB {
 
 enum Button {

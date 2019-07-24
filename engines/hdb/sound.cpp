@@ -20,6 +20,8 @@
  *
  */
 
+#include "common/debug.h"
+
 #include "hdb/hdb.h"
 #include "hdb/mpc.h"
 #include "hdb/sound.h"

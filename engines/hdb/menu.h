@@ -23,6 +23,8 @@
 #ifndef HDB_MENU_H
 #define HDB_MENU_H
 
+#include "common/events.h"
+
 namespace HDB {
 
 #define	CONFIG_MUSICVOL		"music_volume"
