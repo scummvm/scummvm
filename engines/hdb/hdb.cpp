@@ -858,7 +858,7 @@ Common::Error HDBGame::run() {
 	initGraphics(kScreenWidth, kScreenHeight, &_format);
 	_console = new Console();
 
-#if USE_MAD
+#ifdef USE_MAD
 	Common::SeekableReadStream *soundStream = _fileMan->findFirstData("M00_AIRLOCK_01_MP3", TYPE_BINARY);
 	Audio::SeekableAudioStream *audioStream = Audio::makeMP3Stream(soundStream, DisposeAfterUse::YES);
 	Audio::SoundHandle *handle = new Audio::SoundHandle();
