@@ -793,7 +793,6 @@ void SoundManager::startSpeech(int rep, int ht, int typ) {
 		else {
 			voiceIndex %= voices.size();
 			_ttsMan->setVoice(voices[voiceIndex]);
-			debug("voice set: %d", voices[voiceIndex]);
 		}
 		// If the selected voice is a different gender, than we want, just try to
 		// set the pitch so it may sound a little bit closer to the gender we want
