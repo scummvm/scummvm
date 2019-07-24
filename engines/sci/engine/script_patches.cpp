@@ -632,9 +632,35 @@ static const uint16 camelotPatchGiveMuleMessage[] = {
 	PATCH_END
 };
 
+// In Fatima's house in room 64, "look room" and "look trap" respond with the
+//  wrong messages due to testing the wrong flag. Flag 162 is set when falling
+//  through the trap door and alters responses the next time in the room, but
+//  the script tests flag 137 instead, which is set when entering the room.
+//
+// Sierra fixed the first flag test in Amiga and Atari ST but not the second, so
+//  this patch is applied only once to those versions and twice to PC.
+//
+// Applies to: All versions
+// Responsible method: Rm64:handleEvent
+// Fixes bug: #11028
+static const uint16 camelotSignatureFatimaRoomMessages[] = {
+	0x78,                               // push1
+	0x38, SIG_MAGICDWORD,               // pushi 0089 [ flag 137, always true ]
+	      SIG_UINT16(0x0089),
+	0x45, 0x09, 0x02,                   // callb proc0_9 02 [ is flag 137 set? ]
+	SIG_END
+};
+
+static const uint16 camelotPatchFatimaRoomMessages[] = {
+	PATCH_ADDTOOFFSET(+1),
+	0x38, PATCH_UINT16(0x00a2),         // pushi 00a2 [ flag 162, set by trap ]
+	PATCH_END
+};
+
 //         script, description,                                       signature                             patch
 static const SciScriptPatcherEntry camelotSignatures[] = {
 	{ true,    62, "fix peepingTom Sierra bug",                    1, camelotSignaturePeepingTom,           camelotPatchPeepingTom },
+	{ true,    64, "fix Fatima room messages",                     2, camelotSignatureFatimaRoomMessages,   camelotPatchFatimaRoomMessages },
 	{ true,   158, "fix give mule message",                        1, camelotSignatureGiveMuleMessage,      camelotPatchGiveMuleMessage },
 	{ true,   169, "fix relic merchant lockup (1/2)",              1, camelotSignatureRelicMerchantLockup1, camelotPatchRelicMerchantLockup1 },
 	{ true,   169, "fix relic merchant lockup (2/2)",              1, camelotSignatureRelicMerchantLockup2, camelotPatchRelicMerchantLockup2 },
