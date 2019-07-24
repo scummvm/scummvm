@@ -20,7 +20,9 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "common/random.h"
+#include "graphics/thumbnail.h"
 
 #include "hdb/hdb.h"
 #include "hdb/ai.h"

@@ -1411,6 +1411,8 @@ struct SoundLookUp {
 class Sound {
 public:
 
+	void test(); // FIXME. Remove
+
 	bool init();
 	void save(Common::OutSaveFile *out);
 	void loadSaveFile(Common::InSaveFile *in);

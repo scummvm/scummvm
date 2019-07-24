@@ -23,6 +23,7 @@
 #include "base/plugins.h"
 
 #include "engines/advancedDetector.h"
+#include "graphics/thumbnail.h"
 
 #include "hdb/hdb.h"
 
