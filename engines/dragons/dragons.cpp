@@ -29,6 +29,7 @@
 #include "background.h"
 #include "bigfile.h"
 #include "cursor.h"
+#include "cutscene.h"
 #include "dragonflg.h"
 #include "dragonimg.h"
 #include "dragonini.h"
@@ -66,6 +67,7 @@ DragonsEngine::DragonsEngine(OSystem *syst) : Engine(syst) {
 	_engine = this;
 	_inventory = new Inventory(this);
 	_cursor = new Cursor(this);
+	_cutScene = new CutScene(this);
 	_talk = NULL;
 	_sound = new Sound(this);
 	_fontManager = NULL;
@@ -938,6 +940,15 @@ void DragonsEngine::waitForFrames(uint16 numFrames) {
 		_screen->updateScreen();
 		runSceneUpdaterFunction();
 		updateEvents();
+	}
+}
+
+void DragonsEngine::waitForFramesAllowSkip(uint16 numFrames) {
+	for (int i = 0; i < numFrames; i++) {
+		waitForFrames(1);
+		if (checkForActionButtonRelease()) { // TODO should this be any input?
+			return;
+		}
 	}
 }
 

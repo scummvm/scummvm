@@ -105,6 +105,7 @@ struct opCode1AStruct {
 class BigfileArchive;
 class BackgroundResourceLoader;
 class Cursor;
+class CutScene;
 class DragonFLG;
 class DragonIMG;
 class DragonOBD;
@@ -138,6 +139,7 @@ public:
 	Cursor *_cursor;
 	Talk *_talk;
 	Sound *_sound;
+	CutScene *_cutScene;
 
 	uint16 unkArray_uint16[42];
 	opCode1AStruct opCode1A_tbl[8];
@@ -202,6 +204,8 @@ public:
 	uint16 getCurrentSceneId();
 
 	void waitForFrames(uint16 numFrames);
+	void waitForFramesAllowSkip(uint16 numFrames);
+
 
 	void playSound(uint16 soundId);
 

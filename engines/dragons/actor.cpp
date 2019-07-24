@@ -825,7 +825,10 @@ uint16 Actor::pathfindingUnk(int16 actor_x, int16 actor_y, int16 target_x, int16
 bool Actor::actorSetSequenceAndWaitAllowSkip(uint16 newSequenceID) {
 	updateSequence(newSequenceID);
 	waitUntilFlag8IsSet();
+	return waitUntilFlag4IsSetAllowSkip();
+}
 
+bool Actor::waitUntilFlag4IsSetAllowSkip() {
 	while(!isFlagSet(ACTOR_FLAG_4)) {
 		getEngine()->waitForFrames(1);
 		if (getEngine()->checkForActionButtonRelease()) {
