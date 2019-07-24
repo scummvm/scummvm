@@ -25,8 +25,6 @@
 
 #include "graphics/managed_surface.h"
 
-#include "hdb/hdb.h"
-
 namespace HDB {
 
 struct TileLookup {

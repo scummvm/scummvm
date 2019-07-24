@@ -23,8 +23,6 @@
 #ifndef HDB_INPUT_H
 #define HDB_INPUT_H
 
-#include "common/system.h"
-
 namespace HDB {
 
 enum Button {
@@ -88,4 +86,3 @@ private:
 } // End of Namespace
 
 #endif // !HDB_INPUT_H
-

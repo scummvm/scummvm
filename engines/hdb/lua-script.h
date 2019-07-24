@@ -20,11 +20,6 @@
  *
  */
 
-#include "common/system.h"
-#include "common/file.h"
-
-#include "hdb/hdb.h"
-
 #ifndef HDB_LUA_SCRIPT_H
 #define HDB_LUA_SCRIPT_H
 
