@@ -575,9 +575,67 @@ static const uint16 camelotPatchRelicMerchantLockup2[] = {
 	PATCH_END
 };
 
+// When giving away the mule in room 56, the merchant's first long message is
+//  immediately replaced by the next. mo:handleEvent displays the first and
+//  starts the script getMule, which proceeds to display its own messages
+//  without waiting.
+//
+// We fix this by adding code to getMule to wait for the merchant's message to
+//  complete if you gave away the mule and a message is on screen.
+//
+// Applies to: All versions
+// Responsible method: getMule:changeState(4)
+// Fixes bug: #11026
+static const uint16 camelotSignatureGiveMuleMessage[] = {
+	0x30, SIG_UINT16(0x0023),           // bnt 0023 [ state 4 ]
+	SIG_ADDTOOFFSET(+0x20),
+	SIG_MAGICDWORD,
+	0x32, SIG_UINT16(0x0239),           // jmp 0239 [ end of method ]
+	0x3c,                               // dup
+	0x35, 0x04,                         // ldi 04
+	0x1a,                               // eq?
+	0x30, SIG_UINT16(0x0016),           // bnt 0016 [ state 5 ]
+	0x83, 0x02,                         // lal 02   [ gave away mule? ]
+	0x30, SIG_UINT16(0x000a),           // bnt 000a [ skip state 14 if mule was sold ]
+	0x39, SIG_SELECTOR8(changeState),   // pushi changeState
+	0x78,                               // push1
+	0x39, 0x0e,                         // pushi 0e
+	0x54, 0x06,                         // self 06 [ self changeState: 14 ]
+	0x32, SIG_UINT16(0x0223),           // jmp 0223 [ end of method ]
+	0x35, 0x01,                         // ldi 01
+	0x65, 0x10,                         // aTop cycles [ cycles = 1 ]
+	0x32, SIG_UINT16(0x021c),           // jmp 021c [ end of method ]
+	SIG_END
+};
+
+static const uint16 camelotPatchGiveMuleMessage[] = {
+	0x30, PATCH_UINT16(0x0020),         // bnt 0020 [ state 4 ]
+	PATCH_ADDTOOFFSET(+0x20),
+	0x3c,                               // dup
+	0x35, 0x04,                         // ldi 04
+	0x1a,                               // eq?
+	0x31, 0x1a,                         // bnt 1a [ state 5 ]
+	0x83, 0x02,                         // lal 02 [ gave away mule? ]
+	0x31, 0x13,                         // bnt 13 [ skip state 14 if mule was sold ]
+	0x35, 0x0d,                         // ldi 0d
+	0x65, 0x0a,                         // aTop state [ state = 13 ]
+	0x38, PATCH_UINT16(0x0121),         // pushi talkCue [ same value in all versions ]
+	0x78,                               // push1
+	0x7c,                               // pushSelf
+	0x38, PATCH_UINT16(0x0122),         // pushi tS1 [ same value in all versions ]
+	0x76,                               // push0
+	0x81, 0x6f,                         // lag 6f
+	0x4a, 0x0a,                         // send 0a [ tObj talkCue: self tS1? ]
+	0x2f, 0x03,                         // bt 03   [ don't set cycles if message on screen ]
+	0x78,                               // push1
+	0x69, 0x10,                         // sTop cycles [ cycles = 1 ]
+	PATCH_END
+};
+
 //         script, description,                                       signature                             patch
 static const SciScriptPatcherEntry camelotSignatures[] = {
 	{ true,    62, "fix peepingTom Sierra bug",                    1, camelotSignaturePeepingTom,           camelotPatchPeepingTom },
+	{ true,   158, "fix give mule message",                        1, camelotSignatureGiveMuleMessage,      camelotPatchGiveMuleMessage },
 	{ true,   169, "fix relic merchant lockup (1/2)",              1, camelotSignatureRelicMerchantLockup1, camelotPatchRelicMerchantLockup1 },
 	{ true,   169, "fix relic merchant lockup (2/2)",              1, camelotSignatureRelicMerchantLockup2, camelotPatchRelicMerchantLockup2 },
 	SCI_SIGNATUREENTRY_TERMINATOR
