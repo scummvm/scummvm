@@ -25,14 +25,10 @@
 
 #include "common/scummsys.h"
 #include "common/array.h"
-#include "common/error.h"
-#include "common/file.h"
 #include "common/events.h"
 #include "common/str.h"
 #include "common/random.h"
 #include "common/savefile.h"
-#include "common/sinetables.h"
-#include "common/cosinetables.h"
 #include "common/config-manager.h"
 #include "graphics/surface.h"
 #include "graphics/thumbnail.h"
@@ -44,7 +40,6 @@
 #include "gui/debugger.h"
 #include "engines/engine.h"
 #include "engines/util.h"
-#include "console.h"
 
 namespace HDB {
 class Tile;
@@ -75,6 +70,7 @@ enum {
 
 #include "hdb/ai.h"
 #include "hdb/ai-player.h"
+#include "hdb/console.h"
 #include "hdb/file-manager.h"
 #include "hdb/input.h"
 #include "hdb/lua-script.h"

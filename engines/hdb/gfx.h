@@ -25,6 +25,11 @@
 
 #include "graphics/managed_surface.h"
 
+namespace Common {
+	class SineTable;
+	class CosineTable;
+}
+
 namespace HDB {
 
 struct TileLookup {
@@ -137,12 +142,8 @@ public:
 
 	// Trig Functions
 
-	double getSin(int index) {
-		return _sines->at(index);
-	}
-	double getCos(int index) {
-		return _cosines->at(index);
-	}
+	double getSin(int index);
+	double getCos(int index);
 
 	// Bonus star functions
 
