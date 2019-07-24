@@ -42,10 +42,11 @@
 #include "engines/util.h"
 
 namespace HDB {
+class FileMan;
+class Gfx;
+class Menu;
 class Tile;
 class Picture;
-class Menu;
-class Gfx;
 
 enum {
 	kScreenWidth = 640,
@@ -70,7 +71,6 @@ enum {
 
 #include "hdb/ai.h"
 #include "hdb/ai-player.h"
-#include "hdb/file-manager.h"
 #include "hdb/input.h"
 #include "hdb/lua-script.h"
 #include "hdb/map.h"
