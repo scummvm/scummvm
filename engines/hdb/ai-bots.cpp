@@ -21,6 +21,7 @@
  */
 
 #include "hdb/hdb.h"
+#include "hdb/ai.h"
 #include "hdb/ai-player.h"
 #include "hdb/gfx.h"
 #include "hdb/lua-script.h"

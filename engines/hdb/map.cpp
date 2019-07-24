@@ -21,6 +21,7 @@
  */
 
 #include "hdb/hdb.h"
+#include "hdb/ai.h"
 #include "hdb/file-manager.h"
 #include "hdb/gfx.h"
 #include "hdb/map.h"

@@ -23,8 +23,6 @@
 #ifndef HDB_AI_H
 #define HDB_AI_H
 
-#include "common/system.h"
-
 #define STARS_MONKEYSTONE_7			0xfe257d	// magic value in the config file for the unlocking of the Monkeystone secret #7
 #define STARS_MONKEYSTONE_7_FAKE	0x11887e	// fake value that means it hasn't been unlocked
 #define STARS_MONKEYSTONE_14		0x3341fe	// <same> for the Monkeystone #14

@@ -24,6 +24,7 @@
 #define HDB_HDB_H
 
 #include "common/scummsys.h"
+#include "common/system.h"
 #include "common/array.h"
 #include "common/events.h"
 #include "common/str.h"
@@ -42,6 +43,8 @@
 #include "engines/util.h"
 
 namespace HDB {
+class AI;
+struct AIEntity;
 class FileMan;
 class Gfx;
 class Input;
@@ -73,8 +76,6 @@ enum {
 };
 
 }
-
-#include "hdb/ai.h"
 
 struct ADGameDescription;
 
