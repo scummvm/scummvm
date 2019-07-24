@@ -33,6 +33,8 @@
 #include "hdb/hdb.h"
 #include "hdb/file-manager.h"
 #include "hdb/gfx.h"
+#include "hdb/input.h"
+#include "hdb/lua-script.h"
 #include "hdb/menu.h"
 #include "hdb/mpc.h"
 

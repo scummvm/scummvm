@@ -22,6 +22,7 @@
 
 #include "hdb/hdb.h"
 #include "hdb/gfx.h"
+#include "hdb/input.h"
 #include "hdb/menu.h"
 
 namespace HDB {

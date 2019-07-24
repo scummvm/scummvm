@@ -26,6 +26,7 @@
 #include "hdb/hdb.h"
 #include "hdb/file-manager.h"
 #include "hdb/gfx.h"
+#include "hdb/input.h"
 #include "hdb/mpc.h"
 
 namespace HDB {
