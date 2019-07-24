@@ -46,7 +46,6 @@
 #include "engines/util.h"
 #include "console.h"
 
-#include "hdb/mpc.h"
 #include "hdb/gfx.h"
 #include "hdb/ai.h"
 #include "hdb/ai-player.h"

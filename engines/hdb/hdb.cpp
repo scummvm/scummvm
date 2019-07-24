@@ -33,6 +33,7 @@
 #include "hdb/hdb.h"
 #include "hdb/console.h"
 #include "hdb/menu.h"
+#include "hdb/mpc.h"
 
 #define CHEAT_PATCHES 0
 
