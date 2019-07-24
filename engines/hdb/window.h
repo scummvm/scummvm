@@ -142,7 +142,7 @@ struct DlvsInfo {
 	uint32 delay1, delay2, delay3;
 	bool go1, go2, go3;
 
-	DlvsInfo() : x(0), y(0), width(0), height(0), active(false), selected(0), 
+	DlvsInfo() : x(0), y(0), width(0), height(0), active(false), selected(0),
 		animate(false), delay1(0), delay2(0), delay3(0), go1(false), go2(false), go3(false) {}
 };
 

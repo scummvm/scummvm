@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef HDB_DRAW_MANAGER_H
-#define HDB_DRAW_MANAGER_H
+#ifndef HDB_GFX_H
+#define HDB_GFX_H
 
 #include "graphics/managed_surface.h"
 
@@ -269,4 +269,4 @@ private:
 
 } // End of Namespace HDB
 
-#endif // !HDB_DRAW_MANAGER_H
+#endif // !HDB_GFX_H

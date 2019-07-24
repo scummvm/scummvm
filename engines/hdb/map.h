@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef HDB_MAP_LOADER_H
-#define HDB_MAP_LOADER_H
+#ifndef HDB_MAP_H
+#define HDB_MAP_H
 
 namespace HDB {
 
@@ -183,4 +183,4 @@ private:
 };
 }
 
-#endif // !HDB_MAP_LOADER_H
+#endif // !HDB_MAP_H
