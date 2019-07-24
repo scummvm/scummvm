@@ -104,7 +104,7 @@ public:
 	void playSong(const byte *buf, uint usize, uint loops);
 	void loadAmbiantSounds();
 	void loadNoise();
-	void startSpeech(int rep, int ht, int typ);
+	void startSpeech(int rep, int character, int typ);
 	void waitSpeech();
 };
 

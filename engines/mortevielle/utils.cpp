@@ -1330,7 +1330,6 @@ void MortevielleEngine::displayDiningRoom() {
  * @remarks	Originally called 'sparl'
  */
 void MortevielleEngine::startDialog(int16 rep) {
-	const int haut[9] = { 0, 0, 1, -3, 6, -2, 2, 7, -1 };
 	int key;
 
 	assert(rep >= 0);
@@ -1342,7 +1341,7 @@ void MortevielleEngine::startDialog(int16 rep) {
 
 	key = 0;
 	do {
-		_soundManager->startSpeech(rep, haut[_caff - 69], 0);
+		_soundManager->startSpeech(rep, _caff - 69, 0);
 		key = _dialogManager->waitForF3F8();
 		if (shouldQuit())
 			return;
