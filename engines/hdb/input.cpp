@@ -24,7 +24,9 @@
 #include "hdb/gfx.h"
 #include "hdb/input.h"
 #include "hdb/map.h"
+#include "hdb/sound.h"
 #include "hdb/menu.h"
+#include "hdb/window.h"
 
 namespace HDB {
 

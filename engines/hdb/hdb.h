@@ -50,6 +50,8 @@ class Map;
 class Menu;
 class Tile;
 class Picture;
+class Sound;
+class Window;
 
 enum {
 	kScreenWidth = 640,
@@ -74,8 +76,7 @@ enum {
 
 #include "hdb/ai.h"
 #include "hdb/ai-player.h"
-#include "hdb/sound.h"
-#include "hdb/window.h"
+//#include "hdb/window.h"
 
 struct ADGameDescription;
 

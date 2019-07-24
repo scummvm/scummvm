@@ -28,6 +28,7 @@
 #include "hdb/gfx.h"
 #include "hdb/input.h"
 #include "hdb/mpc.h"
+#include "hdb/sound.h"
 
 namespace HDB {
 
