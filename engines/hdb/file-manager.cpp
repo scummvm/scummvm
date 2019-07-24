@@ -24,6 +24,7 @@
 #include "common/error.h"
 
 #include "hdb/hdb.h"
+#include "hdb/file-manager.h"
 
 namespace HDB {
 
