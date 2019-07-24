@@ -22,6 +22,7 @@
 
 #include "hdb/hdb.h"
 #include "hdb/menu.h"
+#include "hdb/mpc.h"
 
 namespace HDB {
 

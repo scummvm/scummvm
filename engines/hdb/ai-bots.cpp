@@ -21,6 +21,7 @@
  */
 
 #include "hdb/hdb.h"
+#include "hdb/mpc.h"
 
 namespace HDB {
 
@@ -2546,7 +2547,7 @@ void aiGatePuddleInit2(AIEntity *e) {
 void aiGatePuddleAction(AIEntity *e) {
 	static const int xva[5] = {9, 0, 0,-1, 1};
 	static const int yva[5] = {9,-1, 1, 0, 0};
-	
+
 	AIEntity *p = g_hdb->_ai->getPlayer();
 
 	if (e->goalX) {
