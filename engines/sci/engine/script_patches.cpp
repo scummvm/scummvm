@@ -575,6 +575,42 @@ static const uint16 camelotPatchRelicMerchantLockup2[] = {
 	PATCH_END
 };
 
+// The hunter in room 11 doesn't award soul points if you buy his furs with the
+//  "buy furs" command first and "pay" second. Two points are awarded if these
+//  commands are entered in the opposite order.
+//
+// We fix this by adding the missing function call to award the soul points as
+//  Sierra did in later versions. Fortunately, the GiveMoney script contains
+//  redundant code that can be replaced as it is occurs later in the method.
+//
+// Applies to: PC only
+// Responsible method: GiveMoney:changeState(3)
+// Fixes bug: #11027
+static const uint16 camelotSignatureHunterMissingPoints[] = {
+	SIG_MAGICDWORD,
+	0x30, SIG_UINT16(0x0020),           // bnt 0020 [ matches PC only ]
+	0x35, 0x00,                         // ldi 00
+	0xa3, 0x00,                         // sal 00 [ local0 = 0 ]
+	// unnecessary code which is repeated later in the method
+	0x89, 0xdd,                         // lsg dd
+	0x81, 0x84,                         // lag 84
+	0x02,                               // add
+	0xa1, 0xdd,                         // sag dd [ global221 += global132 ]
+	0x35, 0x00,                         // ldi 00
+	0xa1, 0x84,                         // sag 84 [ global132 = 0 ]
+	SIG_END
+};
+
+static const uint16 camelotPatchHunterMissingPoints[] = {
+	PATCH_ADDTOOFFSET(+7),
+	0x38, PATCH_UINT16(0x0003),         // pushi 0003
+	0x38, PATCH_UINT16(0x00f5),         // pushi 00f5 [ point flag 245 ]
+	0x7a,                               // push2 [ soul points ]
+	0x7a,                               // push2 [ +2 points ]
+	0x45, 0x0a, 0x06,                   // callb proc0_10 06 [ +2 soul points ]
+	PATCH_END
+};
+
 // When giving away the mule in room 56, the merchant's first long message is
 //  immediately replaced by the next. mo:handleEvent displays the first and
 //  starts the script getMule, which proceeds to display its own messages
@@ -634,6 +670,7 @@ static const uint16 camelotPatchGiveMuleMessage[] = {
 
 //         script, description,                                       signature                             patch
 static const SciScriptPatcherEntry camelotSignatures[] = {
+	{ true,    11, "fix hunter missing points",                    1, camelotSignatureHunterMissingPoints,  camelotPatchHunterMissingPoints },
 	{ true,    62, "fix peepingTom Sierra bug",                    1, camelotSignaturePeepingTom,           camelotPatchPeepingTom },
 	{ true,   158, "fix give mule message",                        1, camelotSignatureGiveMuleMessage,      camelotPatchGiveMuleMessage },
 	{ true,   169, "fix relic merchant lockup (1/2)",              1, camelotSignatureRelicMerchantLockup1, camelotPatchRelicMerchantLockup1 },
