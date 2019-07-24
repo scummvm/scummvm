@@ -1392,6 +1392,10 @@ const SoundLookUp soundList[] =  {
 	{LAST_SOUND,			NULL,						NULL}
 };
 
+Sound::Sound() {
+	_sfxVolume = 255;
+}
+
 void Sound::test() {
 	#ifdef USE_MAD
 		Common::SeekableReadStream *soundStream = g_hdb->_fileMan->findFirstData("M00_AIRLOCK_01_MP3", TYPE_BINARY);
@@ -1402,7 +1406,27 @@ void Sound::test() {
 }
 
 bool Sound::init() {
-	warning("STUB: Sound::init()");
+	warning("STUB: Initialize songs");
+
+	//
+	// init sound caching system
+	//
+	int index = 0;
+	while (soundList[index].idx != LAST_SOUND) {
+		int index2 = soundList[index].idx;
+		_soundCache[index2].loaded = false;
+		_soundCache[index2].name = soundList[index].name;
+		_soundCache[index2].luaName = soundList[index].luaName;
+		debug(9, "sName: %s, sLuaName: %s", soundList[index].name, soundList[index].luaName);
+		index++;
+		if (index > kMaxSounds)
+			error("Reached MAX_SOUNDS in Sound::Init() !");
+	}
+	_numSounds = index;
+
+	// voices are on by default
+	warning("STUB: Initialize voices");
+
 	return true;
 }
 
@@ -1463,13 +1487,46 @@ void Sound::stopMusic() {
 }
 
 int Sound::registerSound(const char *name) {
-	debug(9, "STUB: Register Sound");
-	return 0;
+	int		index = 0;
+
+	while (_soundCache[index].name) {
+		index++;
+		if (index == kMaxSounds)
+			return -1;
+	}
+
+	_soundCache[index].name = name;
+	_soundCache[index].loaded = 0;		// just to be sure!
+
+	return index;
 }
 
 bool Sound::freeSound(int index) {
-	debug(9, "STUB: Free Sound");
-	return true;
+	if (_soundCache[index].loaded == 1) {
+		warning("STUB: Free the audio stream in cache");
+		_soundCache[index].loaded = 0;
+		return true;
+	}
+	return false;
+}
+
+const char *Sound::getSNDLuaName(int index) {
+	if (index >= kMaxSounds || !_soundCache[index].luaName)
+		return nullptr;
+
+	return _soundCache[index].luaName;
+}
+
+int Sound::getSNDIndex(const char *name) {
+	int		i = 0;
+
+	while (soundList[i].idx != LAST_SOUND) {
+		if (!scumm_stricmp(soundList[i].luaName, name))
+			return i;
+		i++;
+	}
+
+	return 0;
 }
 
 SoundType Sound::whatSongIsPlaying() {
@@ -1478,7 +1535,11 @@ SoundType Sound::whatSongIsPlaying() {
 }
 
 void Sound::markSoundCacheFreeable() {
-	warning("STUB: Sound::markSoundCacheFreeable() ");
+	int	i;
+	for (i = 0; i < kMaxSounds; i++) {
+		if (_soundCache[i].loaded == 1)
+			_soundCache[i].loaded = -1;
+	}
 }
 
 } // End of Namespace
