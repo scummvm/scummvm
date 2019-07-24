@@ -358,6 +358,13 @@ Common::String CloudManager::savesDirectoryPath() {
 	return "";
 }
 
+bool CloudManager::canSyncFilename(const Common::String &filename) const {
+	if (filename == "" || filename[0] == '.')
+		return false;
+
+	return true;
+}
+
 SavesSyncRequest *CloudManager::syncSaves(Storage::BoolCallback callback, Networking::ErrorCallback errorCallback) {
 	Storage *storage = getCurrentStorage();
 	if (storage) {

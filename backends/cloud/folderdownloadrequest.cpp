@@ -26,6 +26,7 @@
 #include "common/debug.h"
 #include "gui/downloaddialog.h"
 #include <backends/networking/curl/connectionmanager.h>
+#include "cloudmanager.h"
 
 namespace Cloud {
 
@@ -73,8 +74,9 @@ void FolderDownloadRequest::directoryListedCallback(Storage::ListDirectoryRespon
 
 	// remove all directories
 	// non-empty directories would be created by DumpFile, and empty ones are just ignored
+	// also skip all hidden files (with names starting with '.') or with other names that are forbidden to sync in CloudManager
 	for (Common::Array<StorageFile>::iterator i = _pendingFiles.begin(); i != _pendingFiles.end();)
-		if (i->isDirectory())
+		if (i->isDirectory() || !CloudMan.canSyncFilename(i->name()))
 			_pendingFiles.erase(i);
 		else {
 			_totalBytes += i->size();
