@@ -29,28 +29,6 @@
 
 namespace HDB {
 
-enum {
-	kScreenWidth = 640,
-	kScreenHeight = 480,
-	kScreenDrawWidth = (kScreenWidth - 160), // visible pixels wide
-	kScreenDrawHeight = 480,
-	kTileWidth = 32,
-	kTileHeight = 32,
-	kMaxSkies = 10,
-	kNum3DStars = 300,
-	kFontSpace = 5,
-	kFontIncrement = 1,
-	kGameFPS = 60,
-	kAnimFrameDelay = kGameFPS / 30,
-	kAnimSlowFrames = kAnimFrameDelay * 10,
-	kAnimMediumFrames = kAnimFrameDelay * 6,
-	kAnimFastFrames = kAnimFrameDelay * 2,
-	kProgressY = (kScreenHeight - 64)
-};
-
-class Tile;
-class Picture;
-
 struct TileLookup {
 	const char *filename;
 	Tile *tData;

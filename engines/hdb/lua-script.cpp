@@ -26,6 +26,7 @@
 #include "common/debug.h"
 
 #include "hdb/lua-script.h"
+#include "hdb/gfx.h"
 #include "hdb/mpc.h"
 
 namespace HDB {
