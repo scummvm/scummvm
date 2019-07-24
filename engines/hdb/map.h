@@ -23,8 +23,6 @@
 #ifndef HDB_MAP_LOADER_H
 #define HDB_MAP_LOADER_H
 
-#include "common/system.h"
-
 namespace HDB {
 
 enum {
