@@ -1404,8 +1404,8 @@ enum SoundType {
 
 struct SoundLookUp {
 	SoundType idx;
-	char *name;			// name from MSD .h file
-	char *luaName;		// name for Lua code to use
+	const char *name;			// name from MSD .h file
+	const char *luaName;		// name for Lua code to use
 };
 
 class Sound {
