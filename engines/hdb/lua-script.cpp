@@ -25,6 +25,7 @@
 #include "common/lua/lualib.h"
 
 #include "hdb/hdb.h"
+#include "hdb/ai.h"
 #include "hdb/file-manager.h"
 #include "hdb/lua-script.h"
 #include "hdb/gfx.h"
