@@ -757,7 +757,7 @@ reg_t kKawaHacks(EngineState *s, int argc, reg_t *argv) {
 }
 reg_t kKawaDbugStr(EngineState *s, int argc, reg_t *argv)
 {
-	debug(Common::String::format(s->_segMan->getString(argv[0]).c_str(), argc - 1, argv + 1).c_str());
+	debug("%s", Common::String::format(s->_segMan->getString(argv[0]).c_str(), argc - 1, argv + 1).c_str());
 	return NULL_REG;
 }
 
