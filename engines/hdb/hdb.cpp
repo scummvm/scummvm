@@ -20,16 +20,6 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "common/system.h"
-#include "common/config-manager.h"
-#include "common/debug.h"
-#include "common/debug-channels.h"
-#include "common/file.h"
-#include "common/error.h"
-#include "common/stream.h"
-#include "common/memstream.h"
-
 #include "hdb/hdb.h"
 #include "hdb/file-manager.h"
 #include "hdb/gfx.h"
@@ -104,8 +94,6 @@ HDBGame::~HDBGame() {
 	}
 	delete _debugLogo;
 	_debugLogo = NULL;
-
-	DebugMan.clearAllDebugChannels();
 }
 
 bool HDBGame::init() {
