@@ -46,7 +46,33 @@
 #include "engines/util.h"
 #include "console.h"
 
-#include "hdb/gfx.h"
+namespace HDB {
+class Tile;
+class Picture;
+class Menu;
+class Gfx;
+
+enum {
+	kScreenWidth = 640,
+	kScreenHeight = 480,
+	kScreenDrawWidth = (kScreenWidth - 160), // visible pixels wide
+	kScreenDrawHeight = 480,
+	kTileWidth = 32,
+	kTileHeight = 32,
+	kMaxSkies = 10,
+	kNum3DStars = 300,
+	kFontSpace = 5,
+	kFontIncrement = 1,
+	kGameFPS = 60,
+	kAnimFrameDelay = kGameFPS / 30,
+	kAnimSlowFrames = kAnimFrameDelay * 10,
+	kAnimMediumFrames = kAnimFrameDelay * 6,
+	kAnimFastFrames = kAnimFrameDelay * 2,
+	kProgressY = (kScreenHeight - 64)
+};
+
+}
+
 #include "hdb/ai.h"
 #include "hdb/ai-player.h"
 #include "hdb/file-manager.h"
@@ -59,8 +85,6 @@
 struct ADGameDescription;
 
 namespace HDB {
-
-class Menu;
 
 enum GameFeatures {
 	ADGF_TALKIE = 1 << 0

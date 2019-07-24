@@ -31,6 +31,7 @@
 #include "common/memstream.h"
 
 #include "hdb/hdb.h"
+#include "hdb/gfx.h"
 #include "hdb/console.h"
 #include "hdb/menu.h"
 #include "hdb/mpc.h"

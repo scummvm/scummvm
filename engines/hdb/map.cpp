@@ -21,6 +21,7 @@
  */
 
 #include "hdb/hdb.h"
+#include "hdb/gfx.h"
 
 namespace HDB {
 
