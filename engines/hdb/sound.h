@@ -47,6 +47,11 @@
 #define		FIRST_VOICE		V00_AIRLOCK_01
 #define		NUM_VOICES		( LAST_SOUND - FIRST_VOICE )
 
+#include "audio/audiostream.h"
+#include "audio/mixer.h"
+#include "audio/decoders/wave.h"
+#include "audio/decoders/mp3.h"
+
 namespace HDB {
 
 enum {
@@ -1408,6 +1413,18 @@ struct SoundLookUp {
 	const char *luaName;		// name for Lua code to use
 };
 
+struct Voice {
+	bool active;
+	int32 length;
+	int index;
+	Audio::SoundHandle *handle;
+
+	Voice() : active(false), length(0), index(0), handle(new Audio::SoundHandle) {}
+	~Voice() {
+		delete handle;
+	}
+};
+
 struct SoundCache {
 	int	loaded;				// -1 = freeable; in memory, 0 = not cached, 1 = cached
 	int32 size;				// size of sound
@@ -1417,9 +1434,7 @@ struct SoundCache {
 	//void *data;				// actual file data
 	//FSOUND_SAMPLE *sample;			// used to play sound in FMOD
 
-	SoundCache() : loaded(0), size(0), name(nullptr), luaName(nullptr), ext(0) {
-
-	}
+	SoundCache() : loaded(0), size(0), name(nullptr), luaName(nullptr), ext(0) {}
 };
 
 class Sound {
@@ -1432,7 +1447,6 @@ public:
 	bool init();
 	void save(Common::OutSaveFile *out);
 	void loadSaveFile(Common::InSaveFile *in);
-	void clearPersistent();
 	void setMusicVolume(int value) {
 		//debug(9, "STUB: Add Music System Variables");
 	}
@@ -1441,18 +1455,19 @@ public:
 		return 1;
 	}
 	void setSFXVolume(int value) {
-		//debug(9, "STUB: Add Music System Variables");
+		_sfxVolume = value;
 	}
 	int getSFXVolume() {
-		//debug(9, "STUB: Add Music System Variables");
-		return 1;
+		return _sfxVolume;
 	}
 	void setVoiceStatus(int value) {
-		//debug(9, "STUB: Add Music System Variables");
+		_voicesOn = value;
 	}
 	int getVoiceStatus() {
-		//debug(9, "STUB: Add Music System Variables");
-		return 1;
+		return _voicesOn;
+	}
+	void clearPersistent() {
+		memset(&_voicePlayed[0], 0, sizeof(_voicePlayed));
 	}
 
 	bool playSound(int index);
@@ -1475,6 +1490,19 @@ public:
 	SoundType whatSongIsPlaying();
 
 	void markSoundCacheFreeable();
+
+	// Voice System Variables
+
+	enum {
+		GUY,
+		OTHER,
+		MAX_VOICES
+	};
+
+	Voice _voices[MAX_VOICES];
+
+	int _voicesOn;
+	byte _voicePlayed[NUM_VOICES];
 
 	// Sound Caching System Variables
 
