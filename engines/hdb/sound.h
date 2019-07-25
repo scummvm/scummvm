@@ -1415,11 +1415,9 @@ struct SoundLookUp {
 
 struct Voice {
 	bool active;
-	int32 length;
-	int index;
 	Audio::SoundHandle *handle;
 
-	Voice() : active(false), length(0), index(0), handle(new Audio::SoundHandle) {}
+	Voice() : active(false), handle(new Audio::SoundHandle) {}
 	~Voice() {
 		delete handle;
 	}
