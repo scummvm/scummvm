@@ -29,6 +29,17 @@
 
 #include "gui/debugger.h"
 
+/*
+ *  This is the namespace of the Petka engine.
+ *
+ *  Status of this engine: In Development
+ *
+ *  Games using this engine:
+ *  - Red Comrades Demo
+ *  - Red Comrades Save the Galaxy
+ *  - Red Comrades 2: For the Great Justice
+ */
+
 struct ADGameDescription;
 
 namespace Common {
