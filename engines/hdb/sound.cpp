@@ -21,10 +21,6 @@
  */
 
 #include "common/debug.h"
-#include "audio/audiostream.h"
-#include "audio/mixer.h"
-#include "audio/decoders/wave.h"
-#include "audio/decoders/mp3.h"
 
 #include "hdb/hdb.h"
 #include "hdb/file-manager.h"
@@ -1430,21 +1426,22 @@ bool Sound::init() {
 	_numSounds = index;
 
 	// voices are on by default
-	warning("STUB: Initialize voices");
+	_voicesOn = 1;
+	memset(&_voicePlayed[0], 0, sizeof(_voicePlayed));
 
 	return true;
 }
 
 void Sound::save(Common::OutSaveFile *out) {
-	warning("STUB: Sound::save()");
+	for (int i = 0; i < NUM_VOICES; i++) {
+		out->writeByte(_voicePlayed[i]);
+	}
 }
 
 void Sound::loadSaveFile(Common::InSaveFile *in) {
-	warning("STUB: Sound::loadSaveFile()");
-}
-
-void Sound::clearPersistent() {
-	warning("STUB: Sound::clearPersistent()");
+	for (int i = 0; i < NUM_VOICES; i++) {
+		_voicePlayed[i] = in->readByte();
+	}
 }
 
 bool Sound::playSound(int index) {
