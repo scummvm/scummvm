@@ -25,6 +25,7 @@
 
 #include "common/substream.h"
 #include "common/system.h"
+#include "common/debug.h"
 
 #include "petka/petka.h"
 #include "petka/sound.h"
@@ -81,6 +82,7 @@ Sound *SoundMgr::addSound(const Common::String &name, Audio::Mixer::SoundType ty
 		return sound;
 	Common::SeekableReadStream *s = g_vm->openFile(name, false);
 	if (s) {
+		debug("SoundMgr: added sound %s", name.c_str());
 		sound = new Sound(g_vm->openFile(name, false), type);
 		_sounds.getVal(name).reset(sound);
 	}
@@ -93,10 +95,12 @@ Sound *SoundMgr::findSound(const Common::String &name) const {
 }
 
 void SoundMgr::removeSound(const Common::String &name) {
-	_sounds.erase(name);
+	debug("SoundMgr::removeSound %s", name.c_str());
+ 	_sounds.erase(name);
 }
 
 void SoundMgr::removeAll() {
+	debug("SoundMgr::removeAll");
 	_sounds.clear(0);
 }
 
