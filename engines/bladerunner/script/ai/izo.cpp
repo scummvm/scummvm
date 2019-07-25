@@ -109,8 +109,28 @@ void AIScriptIzo::CompletedMovementTrack() {
 		// fall through
 	case kGoalIzoRC03Run:
 		Actor_Set_Goal_Number(kActorIzo, kGoalIzoRC03RunAway);
+#if BLADERUNNER_ORIGINAL_BUGS
 		Actor_Set_Goal_Number(kActorSteele, kGoalSteeleApprehendIzo);
+		// causes unwanted repetition of the apprehend
+		// also may cause a freeze if McCoy exits the scene
 		Scene_Exits_Enable();
+#else
+		// prevent re-apprehending of Izo
+		if (Actor_Query_Goal_Number(kActorIzo) != kGoalIzoGetArrested
+		    && Actor_Query_Goal_Number(kActorIzo) != kGoalIzoGotArrested
+		    && Actor_Query_Goal_Number(kActorIzo) != kGoalIzoDie
+		    && Actor_Query_Goal_Number(kActorIzo) != kGoalIzoDieHidden
+		    && Actor_Query_Goal_Number(kActorIzo) != kGoalIzoEscape
+		    && Actor_Query_Goal_Number(kActorSteele) != kGoalSteeleApprehendIzo
+		    && Actor_Query_Goal_Number(kActorSteele) != kGoalSteeleArrestIzo
+		    && Actor_Query_Goal_Number(kActorSteele) != kGoalSteeleIzoBlockedByMcCoy
+		    && Actor_Query_Goal_Number(kActorSteele) != kGoalSteeleShootIzo
+		    && Actor_Query_Goal_Number(kActorSteele) != kGoalSteeleLeaveRC03
+		    && Actor_Query_Goal_Number(kActorSteele) != kGoalSteeleGoToPoliceStation
+		) {
+			Actor_Set_Goal_Number(kActorSteele, kGoalSteeleApprehendIzo);
+		}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		return; //true;
 
 	case kGoalIzoRC03RunAway:
@@ -172,7 +192,25 @@ void AIScriptIzo::ClickedByPlayer() {
 		Actor_Says(kActorMcCoy, 2715, 14);
 		Actor_Set_Goal_Number(kActorIzo, kGoalIzoRC03Run);
 		Actor_Says(kActorMcCoy, 1800, 14);
+#if BLADERUNNER_ORIGINAL_BUGS
 		Actor_Set_Goal_Number(kActorSteele, kGoalSteeleApprehendIzo);
+#else
+		// prevent re-apprehending of Izo
+		if (Actor_Query_Goal_Number(kActorIzo) != kGoalIzoGetArrested
+		    && Actor_Query_Goal_Number(kActorIzo) != kGoalIzoGotArrested
+		    && Actor_Query_Goal_Number(kActorIzo) != kGoalIzoDie
+		    && Actor_Query_Goal_Number(kActorIzo) != kGoalIzoDieHidden
+		    && Actor_Query_Goal_Number(kActorIzo) != kGoalIzoEscape
+		    && Actor_Query_Goal_Number(kActorSteele) != kGoalSteeleApprehendIzo
+		    && Actor_Query_Goal_Number(kActorSteele) != kGoalSteeleArrestIzo
+		    && Actor_Query_Goal_Number(kActorSteele) != kGoalSteeleIzoBlockedByMcCoy
+		    && Actor_Query_Goal_Number(kActorSteele) != kGoalSteeleShootIzo
+		    && Actor_Query_Goal_Number(kActorSteele) != kGoalSteeleLeaveRC03
+		    && Actor_Query_Goal_Number(kActorSteele) != kGoalSteeleGoToPoliceStation
+		) {
+			Actor_Set_Goal_Number(kActorSteele, kGoalSteeleApprehendIzo);
+		}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		return; //true;
 	}
 
