@@ -807,9 +807,7 @@ static uchar *mcmhalo(mcmcx1def *ctx)
 {
     uchar  *chunk;
     int     err;
-#   define  size (MCMCHUNK + sizeof(mcmhdef) + 2*osrndsz(sizeof(mcmon)))
-
-    VARUSED(err);
+#define  size (MCMCHUNK + sizeof(mcmhdef) + 2*osrndsz(sizeof(mcmon)))
 
     MCMGLBCTX(ctx);
 
@@ -829,9 +827,11 @@ static uchar *mcmhalo(mcmcx1def *ctx)
     ctx->mcmcxhpch = (mcmhdef *)chunk;
 /*@@@@*/
     *(mcmon *)(chunk + osrndsz(sizeof(mcmhdef) + MCMCHUNK)) = MCMONINV;
-    return(chunk + sizeof(mcmhdef));
+	VARUSED(err);
 
-#   undef size
+	return(chunk + sizeof(mcmhdef));
+
+#undef size
 }
 
 /* "use" an object - move to most-recent position in LRU chain */

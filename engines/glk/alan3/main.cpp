@@ -228,8 +228,8 @@ char *decodedGameVersion(const byte version[]) {
 
 /*----------------------------------------------------------------------*/
 static void incompatibleDevelopmentVersion(ACodeHeader *hdr) {
-	char str[80];
-	sprintf(str, "Incompatible version of ACODE program. Development versions always require exact match. Game is %ld.%ld%s%ld, interpreter %ld.%ld%s%ld!",
+	Common::String msg = Common::String::format("Incompatible version of ACODE program. "
+		"Development versions always require exact match. Game is %ld.%ld%s%ld, interpreter %ld.%ld%s%ld!",
 	        (long)(hdr->version[0]),
 	        (long)(hdr->version[1]),
 	        decodeState(hdr->version[3]),
@@ -238,19 +238,18 @@ static void incompatibleDevelopmentVersion(ACodeHeader *hdr) {
 	        (long)alan.version.revision,
 	        alan.version.state,
 	        (long)alan.version.correction);
-	apperr(str);
+	apperr(msg.c_str());
 }
 
 
 /*----------------------------------------------------------------------*/
 static void incompatibleVersion(ACodeHeader *hdr) {
-	char str[80];
-	sprintf(str, "Incompatible version of ACODE program. Game is %ld.%ld, interpreter %ld.%ld.",
+	Common::String msg = Common::String::format("Incompatible version of ACODE program. Game is %ld.%ld, interpreter %ld.%ld.",
 	        (long)(hdr->version[0]),
 	        (long)(hdr->version[1]),
 	        (long)alan.version.version,
 	        (long)alan.version.revision);
-	apperr(str);
+	apperr(msg.c_str());
 }
 
 

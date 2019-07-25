@@ -426,7 +426,7 @@ public:
 	/**
 	 * Display an error in the error window, and then exit.
 	 */
-	void fatal_error_handler(const char *str, const char *arg, bool useVal, int val);
+	void NORETURN_PRE fatal_error_handler(const char *str, const char *arg, bool useVal, int val);
 
 	/**
 	 * Display a warning in the error window, and then continue.

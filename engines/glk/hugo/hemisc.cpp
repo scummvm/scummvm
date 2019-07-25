@@ -635,8 +635,6 @@ unsigned int Hugo::Dict() {
 }
 
 void Hugo::FatalError(int n) {
-	char fatalerrorline[64];
-
 #if defined (DEBUGGER)
 	hugo_stopmusic();
 	hugo_stopsample();
@@ -732,8 +730,8 @@ if (n==UNKNOWN_OP_E || n==ILLEGAL_OP_E || n==EXPECT_VAL_E || n==OVERFLOW_E)
 	fprintf(stderr, "\n");
 }
 */
-	sprintf(fatalerrorline, "\nFatal Error:  %s", line);
-	PRINTFATALERROR(fatalerrorline);
+	Common::String msg = Common::String::format("\nFatal Error:  %s", line);
+	PRINTFATALERROR(msg.c_str());
 
 	hugo_closefiles();
 	hugo_blockfree(mem);
