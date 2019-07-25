@@ -1455,7 +1455,36 @@ bool Sound::playSoundEx(int index, int channel, bool loop) {
 }
 
 bool Sound::playVoice(int index, int actor) {
-	warning("STUB: Play Voice");
+	if (!_voicesOn)
+		return false;
+
+	// make sure we aren't playing a line more than once this time (only on CHANNEL 0)
+	if (!actor && _voicePlayed[index - FIRST_VOICE])
+		return false;
+
+	// is voice channel already active?  if so, shut 'er down (automagically called StopVoice via callback)
+	if (_voices[actor].active) {
+		g_hdb->_mixer->stopHandle(*_voices[actor].handle);
+	}
+
+#ifdef USE_MAD
+	Common::SeekableReadStream *stream = g_hdb->_fileMan->findFirstData(soundList[index].name, TYPE_BINARY);
+	if (stream == nullptr)
+		return false;
+	Audio::AudioStream *audioStream = Audio::makeMP3Stream(stream, DisposeAfterUse::YES);
+	if (audioStream == nullptr) {
+		delete stream;
+		return false;
+	}
+
+	g_hdb->_mixer->setChannelVolume(*_voices[actor].handle, _sfxVolume);
+
+	g_hdb->_mixer->playStream(Audio::Mixer::kSpeechSoundType, _voices[actor].handle, audioStream);
+
+	_voices[actor].active = true;
+	_voicePlayed[index - FIRST_VOICE] = 1;
+
+#endif
 	return true;
 }
 
