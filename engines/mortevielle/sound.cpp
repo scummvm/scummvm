@@ -772,25 +772,28 @@ void SoundManager::startSpeech(int rep, int character, int typ) {
 		// Speech
 #ifdef USE_TTS
 		const int haut[9] = { 0, 0, 1, -3, 6, -2, 2, 7, -1 };
+		const int voiceIndices[9] = { 0, 1, 2, 3, 0, 4, 5, 1, 6 };
 		if (!_ttsMan)
 			return;
 		Common::Array<int> voices;
-		int pitch = haut[character] * 5;
+		int pitch = haut[character];
 		bool male;
 		if (haut[character] > 5) {
 			voices = _ttsMan->getVoiceIndicesByGender(Common::TTSVoice::FEMALE);
 			male = false;
+			pitch -= 6;
 		} else {
 			voices = _ttsMan->getVoiceIndicesByGender(Common::TTSVoice::MALE);
 			male = true;
 		}
+		pitch *= 5;
 		// If there is no voice available for the given gender, just set it to the 0th
 		// voice
 		if (voices.empty())
 			_ttsMan->setVoice(0);
 		else {
-			character %= voices.size();
-			_ttsMan->setVoice(voices[character]);
+			int voiceIndex = voiceIndices[character] % voices.size();
+			_ttsMan->setVoice(voices[voiceIndex]);
 		}
 		// If the selected voice is a different gender, than we want, just try to
 		// set the pitch so it may sound a little bit closer to the gender we want
