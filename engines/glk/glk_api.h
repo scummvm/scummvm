@@ -308,9 +308,6 @@ public:
 	const gidispatch_intconst_t *gidispatch_get_class(uint32 index) const;
 	uint32 gidispatch_count_intconst() const;
 	const gidispatch_intconst_t *gidispatch_get_intconst(uint32 index) const;
-	uint32 gidispatch_count_functions() const;
-	gidispatch_function_t *gidispatch_get_function(uint32 index) const;
-	gidispatch_function_t *gidispatch_get_function_by_id(uint32 id) const;
 	const char *gidispatch_prototype(uint32 funcnum) const;
 	void gidispatch_call(uint32 funcnum, uint32 numargs, gluniversal_t *arglist);
 	gidispatch_rock_t gidispatch_get_objrock(void *obj, uint objclass);
