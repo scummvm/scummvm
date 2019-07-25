@@ -165,6 +165,7 @@ _taskbar=auto
 _updates=no
 _libunity=auto
 _dialogs=auto
+_iconv=auto
 # Default option behavior yes/no
 _debug_build=auto
 _release_build=auto
@@ -1139,6 +1140,9 @@ Optional Libraries:
   --with-libcurl-prefix=DIR    prefix where libcurl is installed (optional)
   --disable-libcurl        disable libcurl networking library [autodetect]
 
+  --with-iconv-prefix=DIR    prefix where libiconv is installed (optional)
+  --disable-iconv        disable libiconv encoding conversion library [autodetect]
+
 Some influential environment variables:
   AR                 archiver command
   AS                 assembler command
@@ -1270,6 +1274,8 @@ for ac_option in $@; do
 	--disable-eventrecorder)     _eventrec=no            ;;
 	--enable-text-console)       _text_console=yes       ;;
 	--disable-text-console)      _text_console=no        ;;
+	--enable-iconv)              _iconv=yes              ;;
+	--disable-iconv)             _iconv=no               ;;
 	--with-fluidsynth-prefix=*)
 		arg=`echo $ac_option | cut -d '=' -f 2`
 		FLUIDSYNTH_CFLAGS="-I$arg/include"
@@ -1368,6 +1374,11 @@ for ac_option in $@; do
 		arg=`echo $ac_option | cut -d '=' -f 2`
 		SDL_NET_CFLAGS="-I$arg/include"
 		SDL_NET_LIBS="-L$arg/lib"
+		;;
+	--with-iconv-prefix=*)
+		arg=`echo $ac_option | cut -d '=' -f 2`
+		ICONV_CFLAGS="-I$arg/include"
+		ICONV_LIBS="-L$arg/lib"
 		;;
 	--backend=*)
 		_backend=`echo $ac_option | cut -d '=' -f 2`
@@ -4205,6 +4216,25 @@ if test "$_vorbis" = yes ; then
 fi
 define_in_config_if_yes "$_vorbis" 'USE_VORBIS'
 echo "$_vorbis"
+
+#
+# Check for iconv
+#
+echocheck "Iconv"
+if test "$_iconv" = auto ; then
+	_iconv=no
+	cat > $TMPC << EOF
+#include <iconv.h>
+int main(void) { iconv_t conv = iconv_open("UTF-8//IGNORE", "CP850"); return 0; }
+EOF
+	cc_check $ICONV_CFLAGS $ICONV_LIBS -liconv && _iconv=yes
+fi
+if test "$_iconv" = yes ; then
+	append_var LIBS "$ICONV_LIBS -liconv"
+	append_var INCLUDES "$ICONV_CFLAGS"
+fi
+define_in_config_if_yes "$_iconv" 'USE_ICONV'
+echo "$_iconv"
 
 #
 # Check for Tremor
