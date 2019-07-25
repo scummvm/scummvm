@@ -43,8 +43,6 @@
 #include "petka/interfaces/interface.h"
 #include "petka/q_system.h"
 #include "petka/big_dialogue.h"
-#include "petka.h"
-
 
 namespace Petka {
 
@@ -53,17 +51,26 @@ PetkaEngine *g_vm;
 PetkaEngine::PetkaEngine(OSystem *system, const ADGameDescription *desc)
 	: Engine(system), _console(nullptr), _fileMgr(nullptr), _resMgr(nullptr),
 	_qsystem(nullptr), _vsys(nullptr), _desc(desc), _rnd("petka") {
+
 	DebugMan.addDebugChannel(kPetkaDebugGeneral, "general", "General issues");
+	DebugMan.addDebugChannel(kPetkaDebugMessagingSystem, "resources", "Resources");
+	DebugMan.addDebugChannel(kPetkaDebugMessagingSystem, "message_system", "Engine message system");
+	DebugMan.addDebugChannel(kPetkaDebugDialogs, "dialogs", "Dialogs");
+
 	_part = 0;
 	_chapter = 0;
 	g_vm = this;
+
+	debug("PetkaEngine::ctor");
 }
 
 PetkaEngine::~PetkaEngine() {
+	debug("PetkaEngine::dtor");
 	DebugMan.clearAllDebugChannels();
 }
 
 Common::Error PetkaEngine::run() {
+	debug("PetkaEngine::run");
 	const Graphics::PixelFormat format(2, 5, 6, 5, 0, 11, 5, 0, 0);
 	initGraphics(640, 480, &format);
 
@@ -73,6 +80,7 @@ Common::Error PetkaEngine::run() {
 		if (file->open(videos[i])) {
 			playVideo(file);
 		} else {
+			debugC(kPetkaDebugResources, "Video file %s can't be opened", videos[i]);
 			delete file;
 		}
 	}
@@ -116,12 +124,15 @@ Common::Error PetkaEngine::run() {
 }
 
 Common::SeekableReadStream *PetkaEngine::openFile(const Common::String &name, bool addCurrentPath) {
-	if (name.empty())
+	if (name.empty()) {
+		debug("PetkaEngine::openFile: attempt to open file with empty name");
 		return nullptr;
+	}
 	return _fileMgr->getFileStream(addCurrentPath ? _currentPath + name : name);
 }
 
 void PetkaEngine::loadStores() {
+	debug("PetkaEngine::loadStores");
 	_fileMgr->closeAll();
 
 	_fileMgr->openStore("patch.str");
@@ -131,6 +142,7 @@ void PetkaEngine::loadStores() {
 	Common::ScopedPtr<Common::SeekableReadStream> stream(_fileMgr->getFileStream("PARTS.INI"));
 
 	if (!stream || !parts.loadFromStream(*stream)) {
+		debugC(kPetkaDebugResources, "PARTS.INI opening failed");
 		return;
 	}
 
@@ -213,6 +225,7 @@ byte PetkaEngine::getPart() {
 }
 
 void PetkaEngine::loadPart(byte part) {
+	debug("PetkaEngine::loadPart %d", part);
 	_part = part;
 
 	_soundMgr->removeAll();
