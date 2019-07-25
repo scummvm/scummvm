@@ -50,6 +50,7 @@ MODULE_OBJS += \
 	dct.o \
 	fft.o \
 	rdft.o \
+	encoding.o \
 	sinetables.o
 
 ifdef ENABLE_EVENTRECORDER
