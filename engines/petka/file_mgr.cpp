@@ -24,11 +24,13 @@
 #include "common/file.h"
 #include "common/substream.h"
 
+#include "petka/petka.h"
 #include "petka/file_mgr.h"
 
 namespace Petka {
 
 FileMgr::~FileMgr() {
+	debug("FileMgr::dtor");
 	closeAll();
 }
 
@@ -60,6 +62,9 @@ bool FileMgr::openStore(const Common::String &name) {
 		}
 	}
 	store.file = file.release();
+
+	debug("FileMgr: opened store %s (files count: %d)", name.c_str(), store.descriptions.size());
+
 	return true;
 }
 
@@ -71,9 +76,11 @@ void FileMgr::closeStore(const Common::String &name) {
 			return;
 		}
 	}
+
 }
 
 void FileMgr::closeAll() {
+	debug("FileMgr::closeAll");
 	for (uint i = 0; i < _stores.size(); ++i) {
 		delete _stores[i].file;
 	}
@@ -92,6 +99,7 @@ static Common::String formPath(Common::String name) {
 Common::SeekableReadStream *FileMgr::getFileStream(const Common::String &name) {
 	Common::ScopedPtr<Common::File> file(new Common::File());
 	if (file->open(formPath(name))) {
+		debugC(kPetkaDebugResources, "FileMgr: %s is opened from game directory", name.c_str());
 		return file.release();
 	}
 	for (uint i = 0; i < _stores.size(); ++i) {
@@ -103,6 +111,7 @@ Common::SeekableReadStream *FileMgr::getFileStream(const Common::String &name) {
 
 		}
 	}
+	debugC(kPetkaDebugResources, "FileMgr: %s not found", name.c_str());
 	return nullptr;
 }
 
