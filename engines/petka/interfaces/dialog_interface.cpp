@@ -81,7 +81,7 @@ void DialogInterface::sub_4155D0(int a) {
 		return;
 	int talkerId = -1;
 	if (a == -1 && !_field8) {
-		talkerId = g_vm->getBigDialogue()->getSpeechInfo()->speakerId;
+		talkerId = g_vm->getBigDialogue()->getSpeechInfo(-1)->speakerId;
 	}
 	_field8 = _field4;
 	g_vm->getQSystem()->_cursor.get()->_isShown = 0;
@@ -93,7 +93,7 @@ void DialogInterface::sub_4155D0(int a) {
 		g_vm->getBigDialogue()->sub40B670(a);
 	switch (g_vm->getBigDialogue()->opcode()) {
 	case 1: {
-		const SpeechInfo *info = g_vm->getBigDialogue()->getSpeechInfo();
+		const SpeechInfo *info = g_vm->getBigDialogue()->getSpeechInfo(-1);
 		g_vm->soundMgr()->removeSound(_soundName);
 		if (talkerId != info->speakerId) {
 			sendMsg(kSaid);

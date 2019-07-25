@@ -100,14 +100,39 @@ void BigDialogue::loadSpeechesInfo() {
 	delete[] str;
 }
 
-const SpeechInfo *BigDialogue::getSpeechInfo() {
+const SpeechInfo *BigDialogue::getSpeechInfo(int unk) {
 	if (!_ip)
 		return nullptr;
+	int *oldIp = _ip;
+	int op = *_ip;
 	byte opcode = (byte)(*_ip >> 24);
 	switch (opcode) {
-	case 2:
-		// not implemented
-		break;
+	case 2: {
+		int unk1 = 1;
+		byte arg = (byte)*_ip;
+		if (arg <= unk || unk >= 0) {
+			break;
+		}
+		while (true) {
+			_ip += 1;
+			if (unk == 0 && (unk1 & ((op >> 8) & 0xFFFF)))
+				break;
+			if ((*_ip >> 24) == 0x1) {
+				if (unk1 & ((op >> 8) & 0xFFFF))
+					unk--;
+				unk1 *= 2;
+			}
+		}
+		if ((*_ip >> 24) != 0x7)
+			sub40B670(-1);
+		if ((*_ip >> 24) != 0x7) {
+			_ip = oldIp;
+			break;
+		}
+		uint index = (uint16)*_ip;
+		_ip = oldIp;
+		return &_speeches[index];
+	}
 	case 8:
 		_ip += 1;
 		for (uint i = 0; i < ((*_ip >> 16) & 0xFF); ++i) {
