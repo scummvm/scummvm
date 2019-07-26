@@ -1161,7 +1161,8 @@ void Window::drawDeliveries() {
 				if (_dlvsInfo.delay1 < g_hdb->getTimeSlice()) {
 					// Draw Item
 					_gfxIndent->draw(drawX, drawY);
-					d->itemGfx->drawMasked(drawX, drawY);
+					if (d->itemGfx)
+						d->itemGfx->drawMasked(drawX, drawY);
 
 					g_hdb->_gfx->setCursor(centerX - g_hdb->_gfx->stringLength(d->itemTextName) / 2, kDlvItemTextY);
 					g_hdb->_gfx->drawText(d->itemTextName);
@@ -1190,7 +1191,8 @@ void Window::drawDeliveries() {
 				if (_dlvsInfo.delay3 < g_hdb->getTimeSlice()) {
 					// Draw Delivery
 					_gfxIndent->draw(drawX, drawY + kTileHeight + 16);
-					d->destGfx->drawMasked(drawX, drawY + kTileHeight + 16);
+					if (d->destGfx)
+						d->destGfx->drawMasked(drawX, drawY + kTileHeight + 16);
 
 					g_hdb->_gfx->setCursor(centerX - (g_hdb->_gfx->stringLength(d->destTextName) + g_hdb->_gfx->stringLength("to")) / 2, kDlvItemTextY + 12);
 					g_hdb->_gfx->drawText("to ");
@@ -1204,10 +1206,12 @@ void Window::drawDeliveries() {
 		} else {
 			// Draw Item
 			_gfxIndent->draw(drawX, drawY);
-			d->itemGfx->drawMasked(drawX, drawY);
+			if (d->itemGfx)
+				d->itemGfx->drawMasked(drawX, drawY);
 			// Draw Delivery
 			_gfxIndent->draw(drawX, drawY + kTileHeight + 16);
-			d->destGfx->drawMasked(drawX, drawY + kTileHeight + 16);
+			if (d->destGfx)
+				d->destGfx->drawMasked(drawX, drawY + kTileHeight + 16);
 
 			if (!_dlvsInfo.animate && inv == _dlvsInfo.selected) {
 				g_hdb->_gfx->setCursor(centerX - g_hdb->_gfx->stringLength(d->itemTextName)/2, kDlvItemTextY);
