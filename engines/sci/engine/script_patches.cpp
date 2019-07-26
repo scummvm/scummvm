@@ -104,6 +104,7 @@ static const char *const selectorNameTable[] = {
 	"cycleSpeed",   // system selector
 	"handsOff",     // system selector
 	"handsOn",      // system selector
+	"type",         // system selector
 	"localize",     // Freddy Pharkas
 	"roomFlags",    // Iceman
 	"put",          // Police Quest 1 VGA
@@ -215,6 +216,7 @@ enum ScriptPatcherSelectors {
 	SELECTOR_cycleSpeed,
 	SELECTOR_handsOff,
 	SELECTOR_handsOn,
+	SELECTOR_type,
 	SELECTOR_localize,
 	SELECTOR_roomFlags,
 	SELECTOR_put,
@@ -6622,11 +6624,103 @@ static const uint16 mothergoose256PatchSaveLimit[] = {
 	PATCH_END
 };
 
-//          script, description,                                      signature                         patch
+// Clicking a button on the main menu as the screen fades in causes a message to
+//  be sent to a non-object when coming from the Sierra logo. This also crashes
+//  the original. If returning from a menu then the previous button is clicked.
+//
+// After the main menu screen fades in, IconBar:doit polls for events in a loop
+//  until a mouse click or key press occurs over a button. choices:show then
+//  calls highlightedIcon:message to run the correct action. IconBar:doit
+//  updates this property on each iteration unless the event is a mouse click.
+//  If a button is clicked before polling begins then IconBar:doit exits on its
+//  first iteration without setting highlightedIcon. This property is never
+//  reset and its stale value can get reused when returning from a menu.
+//
+// These problems would be simple to fix in the event polling loop, but that
+//  code is in the IconBar and GameControls classes that affect each screen.
+//  Instead we surround the loop with fixes. The event queue is now drained of
+//  mouse clicks and highlightedIcon is cleared before polling. Afterwards,
+//  highlightedIcon is verified and the loop is repeated if it's not set. This
+//  discards clicks during fade-in, resets state when canceling a subsequent
+//  menu, and prevents timing edge cases from crashing should a click ever
+//  register on the loop's first iteration. We make room for this by overwriting
+//  the code that initializes the cursor when kHaveMouse reports no mouse, as
+//  that doesn't apply to ScummVM. The CD version's menu was rewritten and
+//  doesn't have these problems.
+//
+// Applies to: English PC Floppy
+// Responsible method: choices:show
+// Fixes bug #9681
+static const uint16 mothergoose256SignatureMainMenuCrash[] = {
+	0x43, SIG_MAGICDWORD, 0x27, 0x00,   // callk HaveMouse
+	0x31, 0x0e,                         // bnt 0e [ no mouse ]
+	SIG_ADDTOOFFSET(+0x0b),
+	0x32, SIG_UINT16(0x0036),           // jmp 0036 [ skip no-mouse code ]
+	SIG_ADDTOOFFSET(+0x1a),
+	// no mouse
+	0x76,                               // push0
+	0x63, 0x1e,                         // pToa curIcon
+	0x4a, 0x04,                         // send 04
+	0x04,                               // sub
+	0x36,                               // push
+	0x35, 0x02,                         // ldi 02
+	0x08,                               // div
+	0x02,                               // add
+	0x36,                               // push
+	0x39, 0x08,                         // pushi 08
+	0x76,                               // push0
+	0x63, 0x1e,                         // pToa curIcon
+	0x4a, 0x04,                         // send 04
+	0x36,                               // push
+	0x35, 0x03,                         // ldi 03
+	0x04,                               // sub
+	// event polling loop
+	0x36,                               // push
+	0x81, 0x01,                         // lag 01
+	0x4a, 0x0c,                         // send 0c
+	0x39, SIG_SELECTOR8(doit),          // pushi doit
+	0x76,                               // push0
+	0x39, SIG_SELECTOR8(hide),          // pushi hide
+	0x76,                               // push0
+	0x54, 0x08,                         // self 08 [ self doit: hide: ]
+	SIG_END
+};
+
+static const uint16 mothergoose256PatchMainMenuCrash[] = {
+	PATCH_ADDTOOFFSET(+3),
+	0x33, 0x00,                         // jmp 00 [ always run mouse code ]
+	PATCH_ADDTOOFFSET(+0x0b),
+	0x32, PATCH_UINT16(0x001a),         // jmp 001a [ skip no-mouse code ]
+	PATCH_ADDTOOFFSET(+0x1a),
+	0x76,                               // push0
+	0x69, 0x20,                         // sTop highlightedIcon [ highlightedIcon = 0 ]
+	0x39, PATCH_SELECTOR8(new),         // pushi new
+	0x78,                               // push1
+	0x39, 0x03,                         // pushi 03 [ mouse down/up ]
+	0x51, 0x07,                         // class Event
+	0x4a, 0x06,                         // send 06 [ Event new: 3 ]
+	0x39, PATCH_SELECTOR8(dispose),     // pushi dispose
+	0x76,                               // push0
+	0x39, PATCH_SELECTOR8(type),        // pushi type
+	0x76,                               // push0
+	0x4a, 0x08,                         // send 08 [ event dispose: type? ]
+	0x2f, 0xed,                         // bt ed [ loop until no more mouse down/up events ]
+	0x39, PATCH_SELECTOR8(doit),        // pushi doit
+	0x76,                               // push0
+	0x54, 0x04,                         // self 04 [ self doit: ]
+	0x63, 0x20,                         // pToa highlightedIcon
+	0x31, 0xf7,                         // bnt f7 [ repeat event loop until highlightedIcon is set ]
+	PATCH_ADDTOOFFSET(+3),
+	0x54, 0x04,                         // self 04 [ self hide: ]
+	PATCH_END
+};
+
+//          script, description,                                      signature                             patch
 static const SciScriptPatcherEntry mothergoose256Signatures[] = {
-	{  true,     0, "replay save issue",                           1, mothergoose256SignatureReplay,    mothergoose256PatchReplay },
-	{  true,     0, "save limit dialog (SCI1.1)",                  1, mothergoose256SignatureSaveLimit, mothergoose256PatchSaveLimit },
-	{  true,   994, "save limit dialog (SCI1)",                    1, mothergoose256SignatureSaveLimit, mothergoose256PatchSaveLimit },
+	{  true,     0, "replay save issue",                           1, mothergoose256SignatureReplay,        mothergoose256PatchReplay },
+	{  true,     0, "save limit dialog (SCI1.1)",                  1, mothergoose256SignatureSaveLimit,     mothergoose256PatchSaveLimit },
+	{  true,   994, "save limit dialog (SCI1)",                    1, mothergoose256SignatureSaveLimit,     mothergoose256PatchSaveLimit },
+	{  true,    90, "main menu button crash",                      1, mothergoose256SignatureMainMenuCrash, mothergoose256PatchMainMenuCrash },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
