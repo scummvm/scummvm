@@ -1464,7 +1464,7 @@ void Sound::setMusicVolume(int volume) {
 }
 
 bool Sound::playSound(int index) {
-
+#if 0
 	if (index > _numSounds || !_sfxVolume)
 		return false;
 
@@ -1507,11 +1507,12 @@ bool Sound::playSound(int index) {
 	g_hdb->_mixer->setChannelVolume(_handles[soundChannel], _sfxVolume);
 
 	g_hdb->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_handles[soundChannel], _soundCache[index].audioStream);
-
+#endif
 	return true;
 }
 
 bool Sound::playSoundEx(int index, int channel, bool loop) {
+#if 0
 	if (g_hdb->_mixer->isSoundHandleActive(_handles[channel]))
 		return false;
 
@@ -1548,7 +1549,7 @@ bool Sound::playSoundEx(int index, int channel, bool loop) {
 	} else {
 		g_hdb->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_handles[channel], _soundCache[index].audioStream);
 	}
-
+#endif
 	return true;
 }
 
