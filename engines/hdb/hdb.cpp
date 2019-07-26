@@ -171,8 +171,14 @@ void HDBGame::changeGameState() {
 		_ai->clearPersistent();
 		_timePlayed = 0;
 		_timeSeconds = 0;
-		if (!startMap("CINE_INTRO"))
-			error("Can't load CINE_INTRO");
+
+		if (!isDemo()) {
+			if (!startMap("CINE_INTRO"))
+				error("Can't load CINE_INTRO");
+		} else {
+			if (!startMap("CINE_INTRO_DEMO"))
+				error("Can't load CINE_INTRO_DEMO");
+		}
 		_gameState = GAME_PLAY;
 		break;
 	case GAME_PLAY:
