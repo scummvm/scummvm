@@ -81,7 +81,7 @@ bool confirmWindowsVersion(int majorVersion, int minorVersion) {
 	return VerifyVersionInfoFunc(&versionInfo, VER_MAJORVERSION | VER_MINORVERSION, conditionMask);
 }
 
-wchar_t *ansiToUnicode(const char *s, uint codePage) {
+wchar_t *ansiToUnicode(const char *s, unsigned int codePage) {
 	DWORD size = MultiByteToWideChar(codePage, 0, s, -1, NULL, 0);
 
 	if (size > 0) {
@@ -93,7 +93,7 @@ wchar_t *ansiToUnicode(const char *s, uint codePage) {
 	return NULL;
 }
 
-char *unicodeToAnsi(const wchar_t *s, uint codePage) {
+char *unicodeToAnsi(const wchar_t *s, unsigned int codePage) {
 	DWORD size = WideCharToMultiByte(codePage, 0, s, -1, NULL, 0, 0, 0);
 
 	if (size > 0) {
@@ -105,7 +105,7 @@ char *unicodeToAnsi(const wchar_t *s, uint codePage) {
 	return NULL;
 }
 
-uint getCurrentCharset() {
+unsigned int getCurrentCharset() {
 #ifdef USE_TRANSLATION
 	Common::String charset = TransMan.getCurrentCharset();
 	if (charset == "iso-8859-2")

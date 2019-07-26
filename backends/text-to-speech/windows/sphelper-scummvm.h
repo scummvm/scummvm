@@ -1371,7 +1371,7 @@ public:
     WAVEFORMATEX  * m_pCoMemWaveFormatEx; 
 
 
-    static CoMemCopyWFEX(const WAVEFORMATEX * pSrc, WAVEFORMATEX ** ppCoMemWFEX)
+    static HRESULT CoMemCopyWFEX(const WAVEFORMATEX * pSrc, WAVEFORMATEX ** ppCoMemWFEX)
     {
         ULONG cb = sizeof(WAVEFORMATEX) + pSrc->cbSize;
         *ppCoMemWFEX = (WAVEFORMATEX *)::CoTaskMemAlloc(cb);

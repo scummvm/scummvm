@@ -45,7 +45,7 @@ bool confirmWindowsVersion(int majorVersion, int minorVersion);
  *
  * @note Return value must be freed by the caller.
  */
-wchar_t *ansiToUnicode(const char *s, uint codePage = CP_ACP);
+wchar_t *ansiToUnicode(const char *s, unsigned int codePage = CP_ACP);
 /**
  * Converts a Windows wide-character string into a C string.
  * Used to interact with Win32 Unicode APIs with no ANSI fallback.
@@ -55,9 +55,9 @@ wchar_t *ansiToUnicode(const char *s, uint codePage = CP_ACP);
  *
  * @note Return value must be freed by the caller.
  */
-char *unicodeToAnsi(const wchar_t *s, uint codePage = CP_ACP);
+char *unicodeToAnsi(const wchar_t *s, unsigned int codePage = CP_ACP);
 
-uint getCurrentCharset();
+unsigned int getCurrentCharset();
 
 }
 

@@ -390,7 +390,7 @@ int main(int argc, char *argv[]) {
 #endif
 	}
 
-	bool updatesEnabled = false, curlEnabled = false, sdlnetEnabled = false;
+	bool updatesEnabled = false, curlEnabled = false, sdlnetEnabled = false, ttsEnabled = false;
 	for (FeatureList::const_iterator i = setup.features.begin(); i != setup.features.end(); ++i) {
 		if (i->enable) {
 			if (!strcmp(i->name, "updates"))
@@ -399,6 +399,8 @@ int main(int argc, char *argv[]) {
 				curlEnabled = true;
 			else if (!strcmp(i->name, "sdlnet"))
 				sdlnetEnabled = true;
+			else if (!strcmp(i->name, "tts"))
+				ttsEnabled = true;
 		}
 	}
 
@@ -422,6 +424,11 @@ int main(int argc, char *argv[]) {
 			setup.libraries.push_back("iphlpapi");
 		}
 		setup.libraries.push_back("winmm");
+	}
+
+	if (ttsEnabled) {
+		setup.libraries.push_back("sapi");
+		setup.defines.push_back("USE_WINDOWS_TTS");
 	}
 
 	setup.defines.push_back("SDL_BACKEND");
@@ -1088,7 +1095,8 @@ const Feature s_features[] = {
 	{         "dialogs",                "USE_SYSDIALOGS",  "", true,  "System dialogs support"},
 	{      "langdetect",                "USE_DETECTLANG",  "", true,  "System language detection support" }, // This feature actually depends on "translation", there
 	                                                                                                         // is just no current way of properly detecting this...
-	{    "text-console", "USE_TEXT_CONSOLE_FOR_DEBUGGER",  "", false, "Text console debugger" } // This feature is always applied in xcode projects
+	{    "text-console", "USE_TEXT_CONSOLE_FOR_DEBUGGER",  "", false, "Text console debugger" }, // This feature is always applied in xcode projects
+	{             "tts",                       "USE_TTS",  "", false, "Text to speech support"}
 };
 
 const Tool s_tools[] = {
