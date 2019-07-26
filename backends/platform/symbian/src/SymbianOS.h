@@ -50,28 +50,6 @@ public:
 
 	void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0);
 
-	// Vibration support
-#ifdef USE_VIBRA_SE_PXXX
-	/**
-	 * Intialize the vibration api used if present and supported
-	 */
-	void initializeVibration();
-
-	/**
-	 * Turn vibration on, repeat no time
-	 * @param vibraLength number of repetitions
-	 */
-	void vibrationOn(int vibraLength);
-
-	/**
-	 * Turns the vibration off
-	 */
-	void vibrationOff();
-
-protected:
-	SonyEricsson::CVibration* _vibrationApi;
-#endif // USE_VIBRA_SE_PXXX
-
 protected:
 	/**
 	 * Used to intialized special game mappings
