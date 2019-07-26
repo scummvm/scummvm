@@ -57,7 +57,7 @@ namespace HDB {
 enum {
 	kMaxSNDChannels = 32,
 	kMaxSounds = 5000,
-	kLaserChannel = kMaxSNDChannels - 1,
+	kLaserChannel = kMaxSNDChannels - 1
 };
 
 enum SoundType {
