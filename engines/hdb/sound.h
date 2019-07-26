@@ -58,8 +58,6 @@ enum {
 	kMaxSNDChannels = 32,
 	kMaxSounds = 5000,
 	kLaserChannel = kMaxSNDChannels - 1,
-	kMusicChannel = kMaxSNDChannels - 2,
-	kVoiceChannel = kMaxSNDChannels - 5
 };
 
 enum SoundType {
@@ -1429,11 +1427,10 @@ struct SoundCache {
 	int32 size;				// size of sound
 	const char *name;				// filename / MSD name
 	const char *luaName;			// name used by Lua for i.d.
-	int ext;					// 0 = Uninitialized, -1 = WAV, 1 = MP3
-	//void *data;				// actual file data
-	//FSOUND_SAMPLE *sample;			// used to play sound in FMOD
+	int ext;				// 0 = Uninitialized, -1 = WAV, 1 = MP3
+	Audio::SeekableAudioStream *audioStream;
 
-	SoundCache() : loaded(0), size(0), name(nullptr), luaName(nullptr), ext(0) {}
+	SoundCache() : loaded(0), size(0), name(nullptr), luaName(nullptr), ext(0), audioStream(nullptr) {}
 };
 
 struct Song {
@@ -1534,6 +1531,7 @@ public:
 	SoundCache _soundCache[kMaxSounds];
 	int _numSounds;
 	int _sfxVolume;
+	Audio::SoundHandle _handles[kMaxSNDChannels];
 
 };
 
