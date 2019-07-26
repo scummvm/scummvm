@@ -69,17 +69,8 @@ static const char *cineTypeStr[] = {
 };
 
 void AI::processCines() {
-
-	AIEntity *e;
-	Picture *p;
-	const char *title;
-	bool complete, bailOut;
-
-	if (!_cineActive) {
+	if (!_cineActive)
 		return;
-	}
-
-	bailOut = complete = false;
 
 	// Make sure Dialogs are timing out
 	g_hdb->_window->checkDialogClose(0, 0);
@@ -96,45 +87,52 @@ void AI::processCines() {
 	if (g_hdb->getPause())
 		return;
 
+	bool bailOut = false;
+	bool complete = false;
+
 	for (uint i = 0; i < _cine.size(); i++) {
 		debug(3, "processCines: [%d] %s now: %d  start: %d delay: %d", i, cineTypeStr[_cine[i]->cmdType],
 				g_system->getMillis(), _cine[i]->start, _cine[i]->delay);
 
 		switch (_cine[i]->cmdType) {
 		case C_STOPCINE:
-			char func[64];
-			memset(func, 0, 64);
+			{
+				char func[64];
+				memset(func, 0, 64);
 
-			if (_cine[i]->title)
-				strcpy(func, _cine[i]->title);
+				if (_cine[i]->title)
+					strcpy(func, _cine[i]->title);
 
-			cineCleanup();
-			if (func[0])
-				g_hdb->_lua->callFunction(func, 0);
+				cineCleanup();
+				if (func[0])
+					g_hdb->_lua->callFunction(func, 0);
+			}
 			break;
-		case C_STARTMAP:
-			title = _cine[i]->title;
-			cineFreeGfx();			// free all gfx alloc'ed during cine
-			_cineActive = false;
-			_playerLock = false;
-			_cameraLock = false;
-			g_hdb->_window->setInfobarDark(0);
-			g_hdb->_gfx->setPointerState(1);
-			_cine.resize(0);
-			_numCineFreeList = 0;
-			_numCineBlitList = 0;
-			// if cine is aborted and an abort function was specified, call it
-			if (_cineAborted && _cineAbortFunc)
-				g_hdb->_lua->callFunction(_cineAbortFunc, 0);
-			g_hdb->changeMap(title);
-			return;
+		case C_STARTMAP: 
+			{
+				const char *title = _cine[i]->title;
+				// free all gfx alloc'ed during cine
+				cineFreeGfx();
+				_cineActive = false;
+				_playerLock = false;
+				_cameraLock = false;
+				g_hdb->_window->setInfobarDark(0);
+				g_hdb->_gfx->setPointerState(1);
+				_cine.resize(0);
+				_numCineFreeList = 0;
+				_numCineBlitList = 0;
+				// if cine is aborted and an abort function was specified, call it
+				if (_cineAborted && _cineAbortFunc)
+					g_hdb->_lua->callFunction(_cineAbortFunc, 0);
+				g_hdb->changeMap(title);
+				return;
+			}
 			break;
 		case C_LOCKPLAYER:
 			_playerLock = true;
 			complete = true;
-			if (_player) {
+			if (_player)
 				stopEntity(_player);
-			}
 			clearWaypoints();
 			break;
 		case C_UNLOCKPLAYER:
@@ -149,11 +147,13 @@ void AI::processCines() {
 			complete = true;
 			break;
 		case C_RESETCAMERA:
-			int px, py;
-			_cameraLock = false;
-			g_hdb->_ai->getPlayerXY(&px, &py);
-			g_hdb->_map->centerMapXY(px + 16, py + 16);
-			complete = true;
+			{
+				_cameraLock = false;
+				int px, py;
+				g_hdb->_ai->getPlayerXY(&px, &py);
+				g_hdb->_map->centerMapXY(px + 16, py + 16);
+				complete = true;
+			}
 			break;
 		case C_MOVECAMERA:
 			_cameraLock = true;
@@ -178,20 +178,17 @@ void AI::processCines() {
 			if (!(_cine[i]->start)) {
 				_cine[i]->start = 1;
 				_cine[i]->delay = g_system->getMillis() + _cine[i]->delay * 1000;
-			} else {
-				if (_cine[i]->delay < g_system->getMillis()) {
-					complete = true;
-				} else {
-					bailOut = true;
-				}
-			}
+			} else if (_cine[i]->delay < g_system->getMillis())
+				complete = true;
+			else
+				bailOut = true;
 			break;
 		case C_WAITUNTILDONE:
-			if (!i) {
+			if (!i)
 				complete = true;
-			} else {
+			else
 				bailOut = true;
-			}
+
 			break;
 		case C_SETENTITY:
 			_cine[i]->e = locateEntity(_cine[i]->string);
@@ -202,33 +199,31 @@ void AI::processCines() {
 				_cine[i]->e->y = (int)_cine[i]->y;
 				_cine[i]->e->level = (int)_cine[i]->x2;
 				debug(2, "Found '%s' in setEntity", _cine[i]->string);
-			} else {
+			} else
 				warning("Can't locate '%s' in setEntity", _cine[i]->string);
-			}
+
 			complete = true;
 			break;
 		case C_MOVEENTITY:
 			if (!_cine[i]->start) {
-				e = locateEntity(_cine[i]->title);
+				AIEntity *e = locateEntity(_cine[i]->title);
 				if (e) {
 					_cine[i]->e = e;
 					_cine[i]->e->moveSpeed = _cine[i]->speed;
 					_cine[i]->e->level = (int)_cine[i]->x2;
 					setEntityGoal(_cine[i]->e, (int)_cine[i]->x, (int)_cine[i]->y);
 					_cine[i]->start = 1;
-				} else {
+				} else
 					warning("Can't locate '%s' in moveEntity", _cine[i]->title);
-				}
 			} else {
 				debug(3, "C_MOVEENTITY: %d, %s tileX: %d, goalX: %d tileY %d, goalY: %d", i, AIType2Str(_cine[i]->e->type), _cine[i]->e->tileX, _cine[i]->e->goalX, _cine[i]->e->tileY, _cine[i]->e->goalY);
-				if (!_cine[i]->e->goalX) {
+				if (!_cine[i]->e->goalX)
 					complete = true;
-				}
 			}
 			break;
 		case C_ANIMENTITY:
 			if (!_cine[i]->start) {
-				e = locateEntity(_cine[i]->title);
+				AIEntity *e = locateEntity(_cine[i]->title);
 				if (e) {
 					_cine[i]->e = e;
 					e->state = (AIState)_cine[i]->speed;
@@ -243,7 +238,7 @@ void AI::processCines() {
 					complete = true;
 				}
 			} else {
-				e = _cine[i]->e;
+				AIEntity *e = _cine[i]->e;
 				if (!e->animFrame && e->animDelay == e->animCycle) {
 					e->state = STATE_STANDDOWN;
 					e->animFrame = 0;
@@ -253,94 +248,94 @@ void AI::processCines() {
 			}
 			break;
 		case C_SETANIMFRAME:
-			e = locateEntity(_cine[i]->title);
-			if (e) {
-				e->state = (AIState)_cine[i]->start;
-				e->animFrame = _cine[i]->end;
-				e->animDelay = e->animCycle;
-				animEntFrames(e);
-				e->state = STATE_NONE;
-				complete = true;
+			{
+				AIEntity *e = locateEntity(_cine[i]->title);
+				if (e) {
+					e->state = (AIState)_cine[i]->start;
+					e->animFrame = _cine[i]->end;
+					e->animDelay = e->animCycle;
+					animEntFrames(e);
+					e->state = STATE_NONE;
+					complete = true;
+				}
 			}
 			break;
 		case C_ENTITYFACE:
-		{
-			e = locateEntity(_cine[i]->title);
+			{
+				AIEntity *e = locateEntity(_cine[i]->title);
 
-			if (e) {
-				int d = (int)_cine[i]->x;
-				e->dir = (AIDir)d;
-				switch (e->dir) {
-				case DIR_UP:
-					e->state = STATE_STANDUP;
-					break;
-				case DIR_DOWN:
-					e->state = STATE_STANDDOWN;
-					break;
-				case DIR_LEFT:
-					e->state = STATE_STANDLEFT;
-					break;
-				case DIR_RIGHT:
-					e->state = STATE_STANDRIGHT;
-					break;
-				default:
-					warning("AI-CINEMATIC: processCines: DIR_NONE");
-				}
-			} else {
-				warning("Can't find %s to ENTITYFACE", _cine[i]->title);
+				if (e) {
+					int d = (int)_cine[i]->x;
+					e->dir = (AIDir)d;
+					switch (e->dir) {
+					case DIR_UP:
+						e->state = STATE_STANDUP;
+						break;
+					case DIR_DOWN:
+						e->state = STATE_STANDDOWN;
+						break;
+					case DIR_LEFT:
+						e->state = STATE_STANDLEFT;
+						break;
+					case DIR_RIGHT:
+						e->state = STATE_STANDRIGHT;
+						break;
+					default:
+						warning("AI-CINEMATIC: processCines: DIR_NONE");
+					}
+				} else
+					warning("Can't find %s to ENTITYFACE", _cine[i]->title);
+
+				complete = true;
 			}
-			complete = true;
 			break;
-		}
 		case C_DIALOG:
 			if (_cine[i]->start) {
 				g_hdb->_window->openDialog(_cine[i]->title, -1, _cine[i]->string, 0, NULL);
 				g_hdb->_window->setDialogDelay(_cine[i]->delay);
 				_cine[i]->start = 0;
-			} else {
-				if (g_hdb->_window->getDialogDelay() < g_hdb->getTimeSlice())
-					complete = true;
-			}
+			} else if (g_hdb->_window->getDialogDelay() < g_hdb->getTimeSlice())
+				complete = true;
 			break;
 		case C_TEXTOUT:
 			if (!_cine[i]->start) {
 				g_hdb->_window->textOut(_cine[i]->title, _cine[i]->x, _cine[i]->y, _cine[i]->end);
 				_cine[i]->start = 1;
-			} else {
-				if (!g_hdb->_window->textOutActive())
-					complete = true;
-			}
+			} else if (!g_hdb->_window->textOutActive())
+				complete = true;
 			break;
 		case C_CENTERTEXTOUT:
 			if (!_cine[i]->start) {
 				g_hdb->_window->centerTextOut(_cine[i]->title, _cine[i]->y, _cine[i]->end);
 				_cine[i]->start = 1;
-			} else {
-				if (!g_hdb->_window->textOutActive())
-					complete = true;
-			}
+			} else if (!g_hdb->_window->textOutActive())
+				complete = true;
 			break;
 		case C_DRAWPIC:
-
-			if ((p = cineFindInBlitList(_cine[i]->id)) == NULL) {
-				p = g_hdb->_gfx->loadPic(_cine[i]->string);
-				cineAddToFreeList(p);
-				cineAddToBlitList(_cine[i]->id, p, (int)_cine[i]->x, (int)_cine[i]->y, false);
+			{
+				Picture *p = cineFindInBlitList(_cine[i]->id);
+				if (p == NULL) {
+					p = g_hdb->_gfx->loadPic(_cine[i]->string);
+					cineAddToFreeList(p);
+					cineAddToBlitList(_cine[i]->id, p, (int)_cine[i]->x, (int)_cine[i]->y, false);
+				}
+				_cine[i]->pic = p;
+				_cine[i]->pic->draw((int)_cine[i]->x, (int)_cine[i]->y);
+				complete = true;
 			}
-			_cine[i]->pic = p;
-			_cine[i]->pic->draw((int)_cine[i]->x, (int)_cine[i]->y);
-			complete = true;
 			break;
 		case C_DRAWMASKEDPIC:
-
-			if ((p = cineFindInBlitList(_cine[i]->id)) == NULL) {
-				p = g_hdb->_gfx->loadPic(_cine[i]->string);
-				cineAddToFreeList(p);
-				cineAddToBlitList(_cine[i]->id, p, (int)_cine[i]->x, (int)_cine[i]->y, true);
+			{
+				Picture *p = cineFindInBlitList(_cine[i]->id);
+				if (p == NULL) {
+					p = g_hdb->_gfx->loadPic(_cine[i]->string);
+					cineAddToFreeList(p);
+					cineAddToBlitList(_cine[i]->id, p, (int)_cine[i]->x, (int)_cine[i]->y, true);
+				}
+				_cine[i]->pic = p;
+				_cine[i]->pic->drawMasked((int)_cine[i]->x, (int)_cine[i]->y);
+				complete = true;
 			}
-			_cine[i]->pic = p;
-			_cine[i]->pic->drawMasked((int)_cine[i]->x, (int)_cine[i]->y);
-			complete = true;
 			break;
 
 		case C_MOVEPIC:
@@ -385,9 +380,8 @@ void AI::processCines() {
 
 		case C_USEENTITY:
 			for (Common::Array<AIEntity *>::iterator it = _ents->begin(); it != _ents->end(); ++it) {
-				if ((*it)->entityName && Common::matchString((*it)->entityName, _cine[i]->string, true)) {
+				if ((*it)->entityName && Common::matchString((*it)->entityName, _cine[i]->string, true))
 					g_hdb->useEntity((*it));
-				}
 			}
 			for (int k = 0; k < kMaxActions; k++) {
 				if (_actions[k].entityName && Common::matchString(_actions[k].entityName, _cine[i]->string, true)) {
@@ -413,34 +407,32 @@ void AI::processCines() {
 			if (!_cine[i]->start) {
 				g_hdb->_gfx->setFade(true, (bool)_cine[i]->end, _cine[i]->speed);
 				_cine[i]->start = 1;
-			} else if (!g_hdb->_gfx->isFadeActive()) {
+			} else if (!g_hdb->_gfx->isFadeActive())
 				complete = true;
-			}
 			break;
 		case C_FADEOUT:
 			if (!_cine[i]->start) {
 				g_hdb->_gfx->setFade(false, (bool)_cine[i]->end, _cine[i]->speed);
 				_cine[i]->start = 1;
-			} else if (!g_hdb->_gfx->isFadeActive()) {
+			} else if (!g_hdb->_gfx->isFadeActive())
+				complete = true;
+			break;
+		case C_SPAWNENTITY:
+			{
+				int x2 = (int)_cine[i]->x2;
+				int y2 = (int)_cine[i]->y2;
+				spawn((AIType)x2, (AIDir)y2, (int)_cine[i]->x, (int)_cine[i]->y, _cine[i]->title, _cine[i]->string,
+					_cine[i]->id, (AIDir)_cine[i]->start, (int)_cine[i]->end, (int)_cine[i]->delay, (int)_cine[i]->speed, 1);
 				complete = true;
 			}
 			break;
-		case C_SPAWNENTITY:
-		{
-			int x2, y2;
-			x2 = (int)_cine[i]->x2;
-			y2 = (int)_cine[i]->y2;
-			spawn((AIType)x2, (AIDir)y2, (int)_cine[i]->x, (int)_cine[i]->y, _cine[i]->title, _cine[i]->string,
-				_cine[i]->id, (AIDir)_cine[i]->start, (int)_cine[i]->end, (int)_cine[i]->delay, (int)_cine[i]->speed, 1);
-			complete = true;
-			break;
-		}
-		break;
 		case C_REMOVEENTITY:
-			e = locateEntity(_cine[i]->string);
-			if (e)
-				removeEntity(e);
-			complete = true;
+			{
+				AIEntity *e = locateEntity(_cine[i]->string);
+				if (e)
+					removeEntity(e);
+				complete = true;
+			}
 			break;
 		case C_CLEAR_FG:
 			g_hdb->_map->setMapFGTileIndex((int)_cine[i]->x, (int)_cine[i]->y, -1);
@@ -466,16 +458,13 @@ void AI::processCines() {
 			break;
 		}
 
-		if (bailOut) {
+		if (bailOut)
 			return;
-		}
 
-		if (complete) {
-			if (_cine.size()) {
-				_cine.remove_at(i);
-				i--;
-				complete = false;
-			}
+		if (complete && _cine.size()) {
+			_cine.remove_at(i);
+			i--;
+			complete = false;
 		}
 	}
 }
@@ -553,9 +542,9 @@ void AI::cineAddToFreeList(Picture *pic) {
 }
 
 void AI::cineFreeGfx() {
-	for (int i = 0; i < _numCineFreeList; i++) {
+	for (int i = 0; i < _numCineFreeList; i++)
 		delete _cineFreeList[i];
-	}
+
 	_numCineFreeList = 0;
 }
 
@@ -843,7 +832,7 @@ void AI::cinePlayVoice(int index, int actor) {
 void AI::cineFadeIn(bool isBlack, int steps) {
 	CineCommand *cmd = new CineCommand;
 	cmd->speed = steps;
-	cmd->end = (int) isBlack;
+	cmd->end = (int)isBlack;
 	cmd->start = 0;
 	cmd->cmdType = C_FADEIN;
 	_cine.push_back(cmd);
@@ -852,7 +841,7 @@ void AI::cineFadeIn(bool isBlack, int steps) {
 void AI::cineFadeOut(bool isBlack, int steps) {
 	CineCommand *cmd = new CineCommand;
 	cmd->speed = steps;
-	cmd->end = (int) isBlack;
+	cmd->end = (int)isBlack;
 	cmd->start = 0;
 	cmd->cmdType = C_FADEOUT;
 	_cine.push_back(cmd);
