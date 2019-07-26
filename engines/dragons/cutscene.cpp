@@ -219,7 +219,8 @@ void CutScene::scene1() {
 //																									puVar3[3] = 1;
 
 																									// EnableVSyncEvent();
-																									// system_palette_related(2,0);
+																									changeBackgroundPosition(
+																											2, 0);
 																									_vm->_actorManager->clearActorFlags(2);
 																									DAT_80072de8 = _vm->_actorManager->loadActor(0x82,0,0x60,0x114,1);
 																									DAT_80072dec = _vm->_actorManager->loadActor(0x82,2,0x91,0x113,1);
@@ -353,7 +354,7 @@ void CutScene::FUN_8003d8e8(uint16 resourceId, uint16 sequenceId, int16 x, uint3
 	//DisableVSyncEvent();
 	DAT_80072de8 = _vm->_actorManager->loadActor(resourceId, sequenceId, x, 199, 3);
 	//EnableVSyncEvent();
-	//TODO system_palette_related(3,param_4 & 0xffff);
+	changeBackgroundPosition(3, param_4);
 
 }
 
@@ -417,7 +418,7 @@ void CutScene::FUN_8003d388() {
 		DAT_800830dc = _vm->_actorManager->loadActor(0xaa,3,0xf4,199,1);
 		DAT_800830dc->setFlag(ACTOR_FLAG_8000);
 	}
-	// system_palette_related(0,0);
+	changeBackgroundPosition(0, 0);
 	_vm->waitForFramesAllowSkip(0xe);
 }
 
@@ -430,7 +431,7 @@ void CutScene::FUN_8003d7fc() {
 	DAT_80072df0 = _vm->_actorManager->loadActor(0x81,6,2,199,1);
 	DAT_80072df4 = _vm->_actorManager->loadActor(0x81,0,2,199,1);
 	DAT_80072df8 = _vm->_actorManager->loadActor(0x81,2,2,199,1);
-	//TODO system_palette_related(1,0);
+	changeBackgroundPosition(1, 0);
 	_vm->waitForFrames(0xf);
 	//call_fade_related_1f();
 
@@ -449,6 +450,54 @@ uint16 CutScene::FUN_8003dab8(uint32 textId,uint16 x,uint16 y,uint16 param_4,int
 void CutScene::cursorInventoryClearFlag400() {
 	_vm->_cursor->clearActorFlag400();
 	_vm->_inventory->clearActorFlag400();
+}
+
+void CutScene::changeBackgroundPosition(uint16 newPosition, int16 sParm2)
+{
+	//TODO handle palette changes here.
+	//undefined *puVar3;
+
+	if (newPosition == 1) {
+		//DAT_8006a420 = 1;
+		//DAT_8006a422 = 2;
+		_vm->_scene->_camera.x = sParm2 + 0x3c0;
+		//DAT_8006a424 = 0;
+		//load_palette_into_frame_buffer(0,&SYSTEM_PALETTE_3);
+		for (int i = 2; i < 0x17; i++) {
+			Actor *actor = _vm->_actorManager->getActor(i);
+			actor->x_pos += 0x3c0;
+		}
+	}
+	else {
+		if (newPosition < 2) {
+			if (newPosition != 0) {
+				return;
+			}
+			//puVar3 = &SYSTEM_PALETTE_1;
+			//DAT_8006a422 = 0;
+			//DAT_8006a424 = 0;
+			_vm->_scene->_camera.x = 0;
+		}
+		else {
+			if (newPosition == 2) {
+				//puVar3 = &SYSTEM_PALETTE_4;
+				//DAT_8006a422 = 2;
+				//DAT_8006a424 = 3;
+				_vm->_scene->_camera.x = 0;
+			}
+			else {
+				if (newPosition != 3) {
+					return;
+				}
+				//puVar3 = &SYSTEM_PALETTE_2;
+				//DAT_8006a422 = 2;
+				//DAT_8006a424 = 0;
+				_vm->_scene->_camera.x = sParm2;
+			}
+		}
+		//DAT_8006a420 = 1;
+		//load_palette_into_frame_buffer(0,puVar3);
+	}
 }
 
 } // End of namespace Dragons

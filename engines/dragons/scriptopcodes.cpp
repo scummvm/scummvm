@@ -853,7 +853,7 @@ void ScriptOpcodes::opUnk12LoadScene(ScriptOpCall &scriptOpCall) {
 	}
 
 	//TODO fade_related_calls_with_1f();
-	// func_ptr_unk = 0;
+	_vm->setSceneUpdateFunction(NULL);
 	// PauseCDMusic();
 
 	if (newSceneID != 0) {
