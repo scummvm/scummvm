@@ -156,7 +156,6 @@ void aiPlayerAction(AIEntity *e) {
 				g_hdb->_ai->stunEnemy(hit, 8);
 				break;
 			default:
-				debug(9, "STUB: stunEnemy: Play sound");
 				break;
 			}
 
@@ -188,7 +187,6 @@ void aiPlayerAction(AIEntity *e) {
 				g_hdb->_ai->stunEnemy(hit, 8);
 				break;
 			default:
-				debug(9, "STUB: stunEnemy: Play sound");
 				break;
 			}
 	}
@@ -209,7 +207,6 @@ void aiPlayerAction(AIEntity *e) {
 			case STATE_GRABLEFT:	e->draw = e->standleftGfx[0];	e->state = STATE_STANDLEFT; break;
 			case STATE_GRABRIGHT:	e->draw = e->standrightGfx[0];	e->state = STATE_STANDRIGHT; break;
 			default:
-				debug(9, "STUB: stunEnemy: Play sound");
 				break;
 			}
 			e->animDelay = 1;
@@ -230,7 +227,6 @@ void aiPlayerAction(AIEntity *e) {
 		case STATE_ATK_CLUB_LEFT:	cycleFrames(e, g_hdb->_ai->_clubLeftFrames); break;
 		case STATE_ATK_CLUB_RIGHT:	cycleFrames(e, g_hdb->_ai->_clubRightFrames); break;
 		default:
-			debug(9, "STUB: stunEnemy: Play sound");
 			break;
 		}
 		// Whack!
@@ -241,7 +237,6 @@ void aiPlayerAction(AIEntity *e) {
 			case DIR_LEFT:	hit = g_hdb->_ai->playerCollision(16, 16, 32, 0); break;
 			case DIR_RIGHT:	hit = g_hdb->_ai->playerCollision(16, 16, 0, 32); break;
 			default:
-				warning("aiPlayerAction: DIR_NONE found");
 				break;
 			}
 
@@ -275,7 +270,7 @@ void aiPlayerAction(AIEntity *e) {
 				case AI_SHOCKBOT:
 				case AI_GATEPUDDLE:
 					g_hdb->_ai->stunEnemy(hit, 2);
-					warning("STUB: Play MetalorFlesh SND");
+					g_hdb->_sound->playSound(g_hdb->_ai->metalOrFleshSND(hit));
 					break;
 				default:
 					break;
@@ -291,7 +286,6 @@ void aiPlayerAction(AIEntity *e) {
 			case STATE_ATK_CLUB_LEFT:	e->draw = e->standleftGfx[0]; break;
 			case STATE_ATK_CLUB_RIGHT:	e->draw = e->standrightGfx[0]; break;
 			default:
-				debug(9, "STUB: stunEnemy: Play sound");
 				break;
 			}
 			g_hdb->_ai->setPlayerInvisible(false);
@@ -367,7 +361,6 @@ void aiPlayerAction(AIEntity *e) {
 		}
 		return;
 	default:
-		debug(9, "STUB: stunEnemy: Play sound");
 		break;
 	}
 
@@ -956,7 +949,7 @@ void aiSlugAttackAction(AIEntity *e) {
 	result = (e->level == 1 ? (bg_flags & (kFlagSolid)) : !(fg_flags & kFlagGrating) && (bg_flags & (kFlagSolid)));
 	if (hit) {
 		g_hdb->_sound->playSound(SND_SLUG_HIT);
-		warning("STUB: Play MetalOrFleshSnd");
+		g_hdb->_sound->playSound(g_hdb->_ai->metalOrFleshSND(hit));
 		switch (hit->type) {
 		case AI_MEERKAT:
 			if (hit->sequence > 2) {		// out of the ground?

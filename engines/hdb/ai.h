@@ -832,6 +832,7 @@ public:
 	void initAllEnts();
 	void killPlayer(Death method);
 	void stunEnemy(AIEntity *e, int time);
+	int metalOrFleshSND(AIEntity *e);
 	int tileDistance(AIEntity *e1, AIEntity *e2) {
 		return abs(e1->tileX - e2->tileX) + abs(e1->tileY - e2->tileY);
 	}

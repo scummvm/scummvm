@@ -864,9 +864,31 @@ void AI::stunEnemy(AIEntity *e, int time) {
 			g_hdb->_sound->playSound(SND_CHICKEN_DEATH);
 			// fallthrough
 		default:
-			warning("STUB: stunEnemy: MetalOrFleshSnd");
+			g_hdb->_sound->playSound(g_hdb->_ai->metalOrFleshSND(e));
 			break;
 		}
+}
+
+int AI::metalOrFleshSND(AIEntity *e) {
+	switch (e->type) {
+	case AI_OMNIBOT:
+	case AI_TURNBOT:
+	case AI_SHOCKBOT:
+	case AI_RIGHTBOT:
+	case AI_PUSHBOT:
+	case AI_LISTENBOT:
+	case AI_MAINTBOT:
+		return SND_CLUB_HIT_METAL;
+	case AI_DEADEYE:
+	case AI_MEERKAT:
+	case AI_FATFROG:
+	case AI_GOODFAIRY:
+	case AI_BADFAIRY:
+	case AI_ICEPUFF:
+	case AI_BUZZFLY:
+	default:
+		return SND_CLUB_HIT_FLESH;
+	}
 }
 
 /*
@@ -2162,7 +2184,54 @@ bool AI::walkThroughEnt(AIType type) {
 
 // Play special sound for every item you get
 void AI::getItemSound(AIType type) {
-	warning("STUB: AI: getItemSound required");
+	switch (type) {
+	case ITEM_GOO_CUP: g_hdb->_sound->playSound(SND_GET_GOO);
+		break;
+	case ITEM_GEM_WHITE:
+	case ITEM_GEM_BLUE:
+	case ITEM_GEM_RED:
+	case ITEM_GEM_GREEN:
+		g_hdb->_sound->playSound(SND_GET_GEM);
+		break;
+	case ITEM_CLUB:
+		g_hdb->_sound->playSound(SND_GET_CLUB);
+		break;
+	case ITEM_SLUGSLINGER:
+		g_hdb->_sound->playSound(SND_GET_SLUG);
+		break;
+	case ITEM_ROBOSTUNNER:
+		g_hdb->_sound->playSound(SND_GET_STUNNER);
+		break;
+	case ITEM_CELL:
+	case ITEM_TRANSCEIVER:
+	case ITEM_TEACUP:
+	case ITEM_COOKIE:
+	case ITEM_BURGER:
+	case ITEM_PDA:
+	case ITEM_BOOK:
+	case ITEM_CLIPBOARD:
+	case ITEM_NOTE:
+	case ITEM_CABKEY:
+	case ITEM_DOLLYTOOL1:
+	case ITEM_DOLLYTOOL2:
+	case ITEM_DOLLYTOOL3:
+	case ITEM_DOLLYTOOL4:
+	case ITEM_SEED:
+	case ITEM_SODA:
+	case ITEM_ROUTER:
+	case ITEM_SLICER:
+	case ITEM_CHICKEN:
+	case ITEM_PACKAGE:
+	case ITEM_ENV_RED:
+	case ITEM_ENV_BLUE:
+	case ITEM_ENV_GREEN:
+		if (g_hdb->_sound->getVoiceStatus())
+			g_hdb->_sound->playVoice(GUY_GOT_SOMETHING, 1);
+		else
+			g_hdb->_sound->playSound(SND_GET_THING);
+		break;
+	default: g_hdb->_sound->playSound(SND_GET_THING);
+	}
 }
 
 void AI::lookAtEntity(AIEntity *e) {
