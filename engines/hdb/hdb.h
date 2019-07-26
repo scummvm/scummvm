@@ -26,6 +26,7 @@
 #include "common/scummsys.h"
 #include "common/system.h"
 #include "common/savefile.h"
+#include "common/fs.h"
 
 #include "engines/engine.h"
 
@@ -145,6 +146,7 @@ public:
 	~HDBGame();
 
 	virtual bool hasFeature(Engine::EngineFeature f) const;
+	virtual void initializePath(const Common::FSNode &gamePath);
 
 	virtual Common::Error run();
 

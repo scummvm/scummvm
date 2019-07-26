@@ -1436,6 +1436,28 @@ struct SoundCache {
 	SoundCache() : loaded(0), size(0), name(nullptr), luaName(nullptr), ext(0) {}
 };
 
+struct Song {
+	bool playing;
+	SoundType song;
+	const char *sndMusic;
+	Audio::SoundHandle *handle;
+
+	bool fadingOut;
+	int fadeOutVol;
+	int	fadeOutRamp;
+
+	bool fadingIn;
+	int	fadeInVol;
+	int	fadeInRamp;
+
+	Song() : playing(false), song(SONG_NONE), sndMusic(nullptr), handle(new Audio::SoundHandle()),
+		fadingOut(false), fadeOutVol(0), fadeOutRamp(0),
+		fadingIn(false), fadeInVol(0), fadeInRamp(0) {}
+	~Song() {
+		delete handle;
+	}
+};
+
 class Sound {
 public:
 
@@ -1446,12 +1468,9 @@ public:
 	bool init();
 	void save(Common::OutSaveFile *out);
 	void loadSaveFile(Common::InSaveFile *in);
-	void setMusicVolume(int value) {
-		//debug(9, "STUB: Add Music System Variables");
-	}
+	void setMusicVolume(int value);
 	int getMusicVolume() {
-		//debug(9, "STUB: Add Music System Variables");
-		return 1;
+		return _musicVolume;
 	}
 	void setSFXVolume(int value) {
 		_sfxVolume = value;
@@ -1476,6 +1495,8 @@ public:
 	bool fadeInMusic(SoundType song, int ramp);
 	void fadeOutMusic(int ramp);
 	void stopMusic();
+	bool beginMusic(SoundType song, bool fadeIn, int ramp);
+	void updateMusic();
 	bool songPlaying(SoundType song);
 	bool stopChannel(int channel);
 	int registerSound(const char *name);
@@ -1502,6 +1523,11 @@ public:
 
 	int _voicesOn;
 	byte _voicePlayed[NUM_VOICES];
+
+	// Music System Variables
+
+	Song _song1, _song2;
+	int _musicVolume;
 
 	// Sound Caching System Variables
 
