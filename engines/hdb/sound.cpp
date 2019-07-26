@@ -1464,12 +1464,91 @@ void Sound::setMusicVolume(int volume) {
 }
 
 bool Sound::playSound(int index) {
-	debug(9, "STUB: Play Sound");
+
+	if (index > _numSounds || !_sfxVolume)
+		return false;
+
+	// is sound in memory at least?
+	if (_soundCache[index].loaded == -1)
+		_soundCache[index].loaded = 1;
+
+	// is sound marked as cached?
+	if (!_soundCache[index].loaded) {
+
+		Common::SeekableReadStream *stream = g_hdb->_fileMan->findFirstData(_soundCache[index].name, TYPE_BINARY);
+		if (stream == nullptr)
+			return false;
+
+		if (_soundCache[index].ext) {
+#ifdef USE_MAD
+			_soundCache[index].audioStream = Audio::makeMP3Stream(stream, DisposeAfterUse::YES);
+			_soundCache[index].loaded = 1;
+#endif // USE_MAD
+		} else {
+			_soundCache[index].audioStream = Audio::makeWAVStream(stream, DisposeAfterUse::YES);
+			_soundCache[index].loaded = 1;
+		}
+	}
+
+	int soundChannel = 0;
+
+	// Select Free Audio Handle
+	for (int i = 0; i < kLaserChannel; i++) {
+		if (!g_hdb->_mixer->isSoundHandleActive(_handles[i])) {
+			soundChannel = i;
+			break;
+		}
+	}
+
+	// If no free handles found
+	if (soundChannel == kLaserChannel)
+		return false;
+
+	g_hdb->_mixer->setChannelVolume(_handles[soundChannel], _sfxVolume);
+
+	g_hdb->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_handles[soundChannel], _soundCache[index].audioStream);
+
 	return true;
 }
 
 bool Sound::playSoundEx(int index, int channel, bool loop) {
-	debug(9, "STUB: Play SoundEx");
+	if (g_hdb->_mixer->isSoundHandleActive(_handles[channel]))
+		return false;
+
+	if (index > _numSounds || !_sfxVolume)
+		return false;
+
+	// is sound in memory at least?
+	if (_soundCache[index].loaded == -1)
+		_soundCache[index].loaded = 1;
+
+	// is sound marked as cached?
+	if (!_soundCache[index].loaded) {
+
+		Common::SeekableReadStream *stream = g_hdb->_fileMan->findFirstData(_soundCache[index].name, TYPE_BINARY);
+		if (stream == nullptr)
+			return false;
+
+		if (_soundCache[index].ext) {
+#ifdef USE_MAD
+			_soundCache[index].audioStream = Audio::makeMP3Stream(stream, DisposeAfterUse::YES);
+			_soundCache[index].loaded = 1;
+#endif // USE_MAD
+		} else {
+			_soundCache[index].audioStream = Audio::makeWAVStream(stream, DisposeAfterUse::YES);
+			_soundCache[index].loaded = 1;
+		}
+	}
+
+	g_hdb->_mixer->setChannelVolume(_handles[channel], _sfxVolume);
+
+	if (loop) {
+		Audio::AudioStream *loopingStream = new Audio::LoopingAudioStream(_soundCache[index].audioStream, 0, DisposeAfterUse::YES);
+		g_hdb->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_handles[channel], loopingStream);
+	} else {
+		g_hdb->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_handles[channel], _soundCache[index].audioStream);
+	}
+
 	return true;
 }
 
@@ -1549,7 +1628,7 @@ bool Sound::songPlaying(SoundType song) {
 }
 
 bool Sound::stopChannel(int channel) {
-	debug(9, "STUB: Stop Channel");
+	g_hdb->_mixer->stopHandle(_handles[channel]);
 
 	return true;
 }
@@ -1674,7 +1753,7 @@ int Sound::registerSound(const char *name) {
 
 bool Sound::freeSound(int index) {
 	if (_soundCache[index].loaded == 1) {
-		warning("STUB: Free the audio stream in cache");
+		delete _soundCache[index].audioStream;
 		_soundCache[index].loaded = 0;
 		_soundCache[index].ext = 0;
 		return true;
