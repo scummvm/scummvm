@@ -29,7 +29,7 @@ class LinuxmotoSdlGraphicsManager : public SurfaceSdlGraphicsManager {
 public:
 	LinuxmotoSdlGraphicsManager(SdlEventSource *sdlEventSource, SdlWindow *window);
 
-	virtual void initSize(uint w, uint h) override;
+	virtual void initSize(uint w, uint h, const Graphics::PixelFormat *format = NULL) override;
 	virtual void setGraphicsModeIntern() override;
 	virtual int getGraphicsModeScale(int mode) const override;
 	virtual void internUpdateScreen() override;
