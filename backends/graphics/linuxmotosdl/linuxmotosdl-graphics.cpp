@@ -71,10 +71,8 @@ int LinuxmotoSdlGraphicsManager::getGraphicsModeScale(int mode) const {
 	return scale;
 }
 
-void LinuxmotoSdlGraphicsManager::setGraphicsModeIntern() {
-	Common::StackLock lock(_graphicsMutex);
+ScalerProc *LinuxmotoSdlGraphicsManager::getGraphicsScalerProc(int mode) const {
 	ScalerProc *newScalerProc = 0;
-
 	switch (_videoMode.mode) {
 	case GFX_NORMAL:
 		newScalerProc = Normal1x;
@@ -82,22 +80,9 @@ void LinuxmotoSdlGraphicsManager::setGraphicsModeIntern() {
 	case GFX_HALF:
 		newScalerProc = DownscaleAllByHalf;
 		break;
-
-	default:
-		error("Unknown gfx mode %d", _videoMode.mode);
 	}
 
-	_scalerProc = newScalerProc;
-
-	if (!_screen || !_hwscreen)
-		return;
-
-	// Blit everything to the screen
-	_forceFull = true;
-
-	// Even if the old and new scale factors are the same, we may have a
-	// different scaler for the cursor now.
-	blitCursor();
+	return newScalerProc;
 }
 
 void LinuxmotoSdlGraphicsManager::initSize(uint w, uint h, const Graphics::PixelFormat *format) {

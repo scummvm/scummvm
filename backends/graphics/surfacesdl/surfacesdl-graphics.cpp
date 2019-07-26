@@ -674,12 +674,8 @@ bool SurfaceSdlGraphicsManager::setGraphicsMode(int mode) {
 	return true;
 }
 
-void SurfaceSdlGraphicsManager::setGraphicsModeIntern() {
-	Common::StackLock lock(_graphicsMutex);
+ScalerProc *SurfaceSdlGraphicsManager::getGraphicsScalerProc(int mode) const {
 	ScalerProc *newScalerProc = 0;
-
-	updateShader();
-
 	switch (_videoMode.mode) {
 	case GFX_NORMAL:
 		newScalerProc = Normal1x;
@@ -722,8 +718,19 @@ void SurfaceSdlGraphicsManager::setGraphicsModeIntern() {
 		newScalerProc = DotMatrix;
 		break;
 #endif // USE_SCALERS
+	}
 
-	default:
+	return newScalerProc;
+}
+
+void SurfaceSdlGraphicsManager::setGraphicsModeIntern() {
+	Common::StackLock lock(_graphicsMutex);
+
+	updateShader();
+
+	ScalerProc *newScalerProc = getGraphicsScalerProc(_videoMode.mode);
+
+	if (!newScalerProc) {
 		error("Unknown gfx mode %d", _videoMode.mode);
 	}
 

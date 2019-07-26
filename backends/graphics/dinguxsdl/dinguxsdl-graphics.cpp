@@ -67,10 +67,8 @@ int DINGUXSdlGraphicsManager::getGraphicsModeScale(int mode) const {
 	return scale;
 }
 
-void DINGUXSdlGraphicsManager::setGraphicsModeIntern() {
-	Common::StackLock lock(_graphicsMutex);
+ScalerProc *DINGUXSdlGraphicsManager::getGraphicsScalerProc(int mode) const {
 	ScalerProc *newScalerProc = 0;
-
 	switch (_videoMode.mode) {
 	case GFX_NORMAL:
 		newScalerProc = Normal1x;
@@ -80,22 +78,9 @@ void DINGUXSdlGraphicsManager::setGraphicsModeIntern() {
 		newScalerProc = DownscaleAllByHalf;
 		break;
 #endif
-
-	default:
-		error("Unknown gfx mode %d", _videoMode.mode);
 	}
 
-	_scalerProc = newScalerProc;
-
-	if (!_screen || !_hwScreen)
-		return;
-
-	// Blit everything to the screen
-	_forceRedraw = true;
-
-	// Even if the old and new scale factors are the same, we may have a
-	// different scaler for the cursor now.
-	blitCursor();
+	return newScalerProc;
 }
 
 void DINGUXSdlGraphicsManager::initSize(uint w, uint h, const Graphics::PixelFormat *format) {
