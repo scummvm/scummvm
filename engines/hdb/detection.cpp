@@ -64,9 +64,30 @@ static const ADGameDescription gameDescriptions[] = {
 	{
 		"hdb",
 		"",
+		AD_ENTRY1s("hyperspace.mpc", "39d3c9dbc9614f370ad9430307c043f9", 45645305),
+		Common::EN_ANY,
+		Common::kPlatformLinux,
+		ADGF_NO_FLAGS,
+		GUIO1(GUIO_NONE)
+	},
+	// PocketPC Arm
+	{
+		"hdb",
+		"",
+		AD_ENTRY1s("hyperspace.msd", "a62468904beb3efe16d4d64f3955a32e", 6825555),
+		Common::EN_ANY,
+		Common::kPlatformUnknown, // PPC
+		ADGF_NO_FLAGS,
+		GUIO1(GUIO_NONE)
+	},
+
+	// Demos
+	{
+		"hdb",
+		"",
 		AD_ENTRY1s("hyperdemo.mpc", "d8743b3b8be56486bcfb1398b2f2aad4", 13816461),
 		Common::EN_ANY,
-		Common::kPlatformUnknown,
+		Common::kPlatformLinux,
 		ADGF_DEMO,
 		GUIO1(GUIO_NONE)
 	},
@@ -75,7 +96,7 @@ static const ADGameDescription gameDescriptions[] = {
 		"",
 		AD_ENTRY1s("hyperdemo.mpc", "f3bc878e179f00b8666a9846f3d9f9f5", 5236568),
 		Common::EN_ANY,
-		Common::kPlatformUnknown,
+		Common::kPlatformUnknown, // FIXME
 		ADGF_DEMO,
 		GUIO1(GUIO_NONE)
 	},
@@ -86,6 +107,24 @@ static const ADGameDescription gameDescriptions[] = {
 		AD_ENTRY1s("hyperdemo.mpc", "7bc533e8f1866931c884f1bc09353744", 13906865),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
+		ADGF_DEMO,
+		GUIO1(GUIO_NONE)
+	},
+	{
+		"hdb",
+		"",
+		AD_ENTRY1s("hyperdemo.msd", "312525298ca9f5ac904883d1ce19dc0f", 3088651),
+		Common::EN_ANY,
+		Common::kPlatformUnknown, // PPC
+		ADGF_DEMO,
+		GUIO1(GUIO_NONE)
+	},
+	{
+		"hdb",
+		"alt",
+		AD_ENTRY1s("hyperdemo.msd", "2d4457b284a940b7058b36e5706b9951", 3094241),
+		Common::EN_ANY,
+		Common::kPlatformUnknown, // PPC
 		ADGF_DEMO,
 		GUIO1(GUIO_NONE)
 	},
