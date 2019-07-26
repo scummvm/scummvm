@@ -2326,7 +2326,6 @@ void aiGoodFairyAction(AIEntity *e) {
 	static const int yvAhead[5] = {9,-1, 1, 0, 0};
 
 	int	result;
-	AIEntity *hit;
 
 	if (e->sequence) {
 		e->sequence--;
@@ -2352,7 +2351,7 @@ void aiGoodFairyAction(AIEntity *e) {
 						(g_hdb->_ai->findEntityType(AI_LIGHTBARREL, e->tileX + xv, e->tileY + yv) != NULL))
 						return;
 					int spawnOK;
-					hit = g_hdb->_ai->legalMove(e->tileX + xv, e->tileY + yv, e->level, &spawnOK);
+					AIEntity *hit = g_hdb->_ai->legalMove(e->tileX + xv, e->tileY + yv, e->level, &spawnOK);
 					uint32 bg_flags = g_hdb->_map->getMapBGTileFlags(e->tileX + xv, e->tileY + yv);
 					if (hit || !spawnOK || (bg_flags & kFlagSpecial))
 						return;
@@ -2431,7 +2430,7 @@ void aiGoodFairyAction(AIEntity *e) {
 					e->moveSpeed = kPlayerMoveSpeed;
 
 					// make sure we can move over water & white gems, but not fg_hdb->_ai->y blockers and solids
-					hit = g_hdb->_ai->legalMoveOverWater(e->tileX + e->value1, e->tileY + e->value2, e->level, &result);
+					AIEntity *hit = g_hdb->_ai->legalMoveOverWater(e->tileX + e->value1, e->tileY + e->value2, e->level, &result);
 					if (hit && ((hit->type == ITEM_GEM_WHITE) || (hit->type == AI_GUY)))
 						hit = NULL;
 					uint32 bg_flags = g_hdb->_map->getMapBGTileFlags(e->tileX + e->value1, e->tileY + e->value2);
@@ -2461,14 +2460,12 @@ void aiGoodFairyAction(AIEntity *e) {
 		// did we run into a wall, entity, water, slime etc?
 		// if so, pick a new direction!
 		if (onEvenTile(e->x, e->y)) {
-
-			int	index;
 			// did we hit a Fg_hdb->_ai->YSTONE??? if so - teleport the thing at the other end to here!
-			index = g_hdb->_ai->checkFairystones(e->tileX, e->tileY);
+			int index = g_hdb->_ai->checkFairystones(e->tileX, e->tileY);
 			if (index >= 0) {
 				int	sx, sy;
 				g_hdb->_ai->getFairystonesSrc(index, &sx, &sy);
-				hit = g_hdb->_ai->findEntity(sx, sy);
+				AIEntity *hit = g_hdb->_ai->findEntity(sx, sy);
 				if (hit && (hit != g_hdb->_ai->getPlayer())) {
 					hit->tileX = e->tileX;
 					hit->tileY = e->tileY;
@@ -2488,7 +2485,7 @@ void aiGoodFairyAction(AIEntity *e) {
 			// (1) we're gonna hit a solid wall; ok to move over water/slime
 			// (2) ok to move thru white gems
 			// (3) cannot move thru SPECIAL flagged tiles (fg_hdb->_ai->y blockers)
-			hit = g_hdb->_ai->legalMoveOverWater(e->tileX + e->value1, e->tileY + e->value2, e->level, &result);
+			AIEntity *hit = g_hdb->_ai->legalMoveOverWater(e->tileX + e->value1, e->tileY + e->value2, e->level, &result);
 			uint32 bg_flags = g_hdb->_map->getMapBGTileFlags(e->tileX + e->value1, e->tileY + e->value2);
 			if (!result || (hit && hit->type != ITEM_GEM_WHITE && hit->type != AI_GUY) || (bg_flags & kFlagSpecial)) {
 				g_hdb->_ai->stopEntity(e);
@@ -2499,9 +2496,10 @@ void aiGoodFairyAction(AIEntity *e) {
 			}
 		}
 		g_hdb->_ai->animateEntity(e);
-	} else
+	} else {
 		// if not, start looking around!
 		e->sequence = 20;
+	}
 }
 
 //-------------------------------------------------------------------
@@ -2872,7 +2870,8 @@ void aiIcePuffInit(AIEntity *e) {
 }
 
 void aiIcePuffInit2(AIEntity *e) {
-	e->draw = e->blinkGfx[3];	// empty frame
+	// empty frame
+	e->draw = e->blinkGfx[3];
 }
 
 void aiIcePuffAction(AIEntity *e) {
@@ -2882,16 +2881,28 @@ void aiIcePuffAction(AIEntity *e) {
 	case STATE_ICEP_PEEK:
 		e->sequence--;
 		switch (e->sequence) {
-		case 20: e->draw = e->blinkGfx[0]; break;	// underground
-		case 16: e->draw = e->blinkGfx[1]; break;	// peek - looking
-		case 12: e->draw = e->blinkGfx[2]; break;	// peek - blinking
-		case  8: e->draw = e->blinkGfx[1]; break;	// peek - looking
-		case  4: e->draw = e->blinkGfx[0]; break;	// peek - looking
-		case  3:
+		case 20: // underground
+			e->draw = e->blinkGfx[0];
+			break;
+		case 16: // peek - looking
+			e->draw = e->blinkGfx[1];
+			break;
+		case 12: // peek - blinking
+			e->draw = e->blinkGfx[2];
+			break;
+		case 8: // peek - looking
+			e->draw = e->blinkGfx[1];
+			break;
+		case 4: // peek - looking
+			e->draw = e->blinkGfx[0];
+			break;
+		case 3:
 			if (e->onScreen && !g_hdb->_rnd->getRandomNumber(5))
 				g_hdb->_sound->playSound(SND_ICEPUFF_WARNING);
 			break;
-		case  0: e->draw = e->blinkGfx[3];			// underground
+		case 0:
+			// underground
+			e->draw = e->blinkGfx[3];
 			e->sequence = 30;
 			break;
 		}
@@ -2954,8 +2965,10 @@ void aiIcePuffAction(AIEntity *e) {
 
 		e->animFrame++;
 		if (e->animFrame == e->standdownFrames && e->state != STATE_ICEP_DISAPPEAR) {
-			e->dir2 = e->dir;				// dir2 = direction snowball is moving
-			aiIcePuffSnowballInit(e);	// throw it!
+			// dir2 = direction snowball is moving
+			e->dir2 = e->dir;
+			// throw it!
+			aiIcePuffSnowballInit(e);
 			e->animFrame = 0;
 			e->state = STATE_ICEP_DISAPPEAR;
 		} else if (e->animFrame == e->special1Frames) {
@@ -2975,8 +2988,10 @@ void aiIcePuffAction(AIEntity *e) {
 
 		e->animFrame++;
 		if (e->animFrame == e->standdownFrames && e->state != STATE_ICEP_DISAPPEAR) {
-			e->dir2 = e->dir;				// dir2 = direction snowball is moving
-			aiIcePuffSnowballInit(e);	// throw it!
+			// dir2 = direction snowball is moving
+			e->dir2 = e->dir;
+			// throw it!
+			aiIcePuffSnowballInit(e);
 			e->animFrame = 0;
 			e->state = STATE_ICEP_DISAPPEAR;
 		} else if (e->animFrame == e->special1Frames) {
@@ -2996,8 +3011,10 @@ void aiIcePuffAction(AIEntity *e) {
 
 		e->animFrame++;
 		if (e->animFrame == e->standdownFrames && e->state != STATE_ICEP_DISAPPEAR) {
-			e->dir2 = e->dir;				// dir2 = direction snowball is moving
-			aiIcePuffSnowballInit(e);	// throw it!
+			// dir2 = direction snowball is moving
+			e->dir2 = e->dir;
+			// throw it!
+			aiIcePuffSnowballInit(e);
 			e->animFrame = 0;
 			e->state = STATE_ICEP_DISAPPEAR;
 		} else if (e->animFrame == e->special1Frames) {
@@ -3030,8 +3047,7 @@ void aiBuzzflyInit(AIEntity *e) {
 
 void aiBuzzflyInit2(AIEntity *e) {
 	e->draw = g_hdb->_ai->getStandFrameDir(e);
-	for (int i = 0; i < e->movedownFrames; i++)
-	{
+	for (int i = 0; i < e->movedownFrames; i++) {
 		e->standdownGfx[i] = e->movedownGfx[i];
 		e->standupGfx[i] = e->moveupGfx[i];
 		e->standleftGfx[i] = e->moveleftGfx[i];
@@ -3092,7 +3108,7 @@ void aiDragonInit(AIEntity *e) {
 	e->sequence = 0;	// 0 = sleeping
 	e->aiAction = aiDragonAction;
 	e->aiDraw = aiDragonDraw;
-	e->animCycle = 10;		// time between flaps
+	e->animCycle = 10;	// time between flaps
 
 	// need to save the dragon's coords and type in the blocking entity for gem-hit-blocking detection
 	AIEntity *block = spawnBlocking(e->tileX - 1, e->tileY, e->level);
@@ -3128,7 +3144,8 @@ void aiDragonInit2(AIEntity *e) {
 }
 
 void aiDragonWake(AIEntity *e) {
-	e->sequence = 1;	// woke up, start flapping and breathing!
+	// woke up, start flapping and breathing!
+	e->sequence = 1;
 	e->animFrame = 0;
 	e->animDelay = e->animCycle;
 }
@@ -3141,7 +3158,7 @@ void aiDragonAction(AIEntity *e) {
 	AIEntity *p = g_hdb->_ai->getPlayer();
 
 	switch (e->sequence) {
-		// Sleeping, waiting for the player to wake him up
+	// Sleeping, waiting for the player to wake him up
 	case 0:
 		if (e->onScreen &&
 			p->tileX >= e->tileX - 1 &&
@@ -3157,7 +3174,7 @@ void aiDragonAction(AIEntity *e) {
 		}
 		break;
 
-		// Woke up - flapping wings 3 times!
+	// Woke up - flapping wings 3 times!
 	case 1:
 		e->animDelay--;
 
@@ -3174,7 +3191,7 @@ void aiDragonAction(AIEntity *e) {
 		}
 		break;
 
-		// Start breathing fire!
+	// Start breathing fire!
 	case 2:
 		e->animDelay--;
 
@@ -3192,7 +3209,7 @@ void aiDragonAction(AIEntity *e) {
 
 		break;
 
-		// Breathing fire!
+	// Breathing fire!
 	case 3:
 		{
 			if (hitPlayer(e->x, e->y + 32)) {
@@ -3260,23 +3277,23 @@ void aiDragonAction(AIEntity *e) {
 
 void aiDragonDraw(AIEntity *e, int mx, int my) {
 	switch (e->sequence) {
-		// sleeping
+	// sleeping
 	case 0:
 		g_hdb->_ai->_gfxDragonAsleep->drawMasked(e->x - 32 - mx, e->y - 96 - my);
 		break;
-		// flapping 3 times
+	// flapping 3 times
 	case 1:
 		g_hdb->_ai->_gfxDragonFlap[e->animFrame & 1]->drawMasked(e->x - 32 - mx, e->y - 96 - my);
 		break;
-		// start breathing (very short)
+	// start breathing (very short)
 	case 2:
 		g_hdb->_ai->_gfxDragonBreathe[0]->drawMasked(e->x - 32 - mx, e->y - 96 - my);
 		break;
-		// breathing
+	// breathing
 	case 3:
 		g_hdb->_ai->_gfxDragonBreathe[(e->animFrame & 1) + 1]->drawMasked(e->x - 32 - mx, e->y - 96 - my);
 		break;
-		// flapping 3 times
+	// flapping 3 times
 	case 4:
 		g_hdb->_ai->_gfxDragonBreathe[e->animFrame & 1]->drawMasked(e->x - 32 - mx, e->y - 96 - my);
 		break;
