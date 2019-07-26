@@ -153,11 +153,6 @@ bool Gfx::init() {
 	_tileSkyClouds = getTileIndex(TILE_SKY_CLOUDS); // Not completely sure about this filename.
 	_skyClouds = NULL;
 
-	/*
-		TODO: Setup Gamma Table
-	*/
-	warning("STUB: Gfx::init() gamma missing");
-
 	// Load Mouse Pointer and Display Cursor
 	_mousePointer[0] = loadPic(PIC_MOUSE_CURSOR1);
 	_mousePointer[1] = loadPic(PIC_MOUSE_CURSOR2);
