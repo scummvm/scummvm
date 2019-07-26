@@ -101,6 +101,24 @@ void DINGUXSdlGraphicsManager::setGraphicsModeIntern() {
 void DINGUXSdlGraphicsManager::initSize(uint w, uint h, const Graphics::PixelFormat *format) {
 	assert(_transactionMode == kTransactionActive);
 
+#ifdef USE_RGB_COLOR
+	// Avoid redundant format changes
+	Graphics::PixelFormat newFormat;
+	if (!format)
+		newFormat = Graphics::PixelFormat::createFormatCLUT8();
+	else
+		newFormat = *format;
+
+	assert(newFormat.bytesPerPixel > 0);
+
+	if (newFormat != _videoMode.format) {
+		_videoMode.format = newFormat;
+		_transactionDetails.formatChanged = true;
+		_screenFormat = newFormat;
+	}
+#endif
+
+
 	// Avoid redundant res changes
 	if ((int)w == _videoMode.screenWidth && (int)h == _videoMode.screenHeight)
 		return;
