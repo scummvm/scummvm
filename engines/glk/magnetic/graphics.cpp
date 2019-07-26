@@ -302,6 +302,7 @@ int16 Magnetic::find_name_in_header(const Common::String &name, bool upper) {
 
 void Magnetic::extract_frame(const picture *pic) {
 	uint32 i, x, y, bit_x, mask, ywb, yw, value, values[4];
+	values[0] = values[1] = values[2] = values[3] = 0;
 
 	if (pic->width * pic->height > MAX_PICTURE_SIZE) {
 		error("picture too large");
