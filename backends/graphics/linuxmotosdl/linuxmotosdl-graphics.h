@@ -33,7 +33,7 @@ public:
 	virtual void setGraphicsModeIntern() override;
 	virtual int getGraphicsModeScale(int mode) const override;
 	virtual void internUpdateScreen() override;
-	virtual const OSystem::GraphicsMode *getSupportedGraphicsModes() const override;
+	virtual ScalerProc *getGraphicsScalerProc(int mode) const override;
 	virtual int getDefaultGraphicsMode() const override;
 	virtual bool loadGFXMode() override;
 	virtual void drawMouse() override;
