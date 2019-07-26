@@ -1331,7 +1331,7 @@ void AI::animateEntity(AIEntity *e) {
 						e->state = state;
 					}
 				}
-			} else if (((flags = g_hdb->_map->getMapBGTileFlags(e->tileX, e->tileY)) & kFlagWater) && (e->type == AI_MAGIC_EGG || e->type == AI_ICE_BLOCK)) {
+			} else if ((flags & kFlagWater) && (e->type == AI_MAGIC_EGG || e->type == AI_ICE_BLOCK)) {
 				// And no foreground tile is there
 				if (g_hdb->_map->getMapFGTileIndex(e->tileX, e->tileY) < 0 && !checkFloating(e->tileX, e->tileY)) {
 					if ((flags & kFlagSlime) == kFlagSlime) {
