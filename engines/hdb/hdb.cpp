@@ -32,8 +32,8 @@
 #include "hdb/input.h"
 #include "hdb/lua-script.h"
 #include "hdb/map.h"
-#include "hdb/sound.h"
 #include "hdb/menu.h"
+#include "hdb/sound.h"
 #include "hdb/mpc.h"
 #include "hdb/window.h"
 
@@ -150,6 +150,11 @@ bool HDBGame::init() {
 	_loadingScreenGfx = _gfx->loadPic(PIC_LOADSCREEN);
 
 	return true;
+}
+
+void HDBGame::initializePath(const Common::FSNode &gamePath) {
+	Engine::initializePath(gamePath);
+	SearchMan.addDirectory("music", gamePath.getChild("music"));
 }
 
 void HDBGame::changeGameState() {
@@ -855,8 +860,6 @@ Common::Error HDBGame::run() {
 
 	// Initializes Graphics
 	initGraphics(kScreenWidth, kScreenHeight, &_format);
-
-	_sound->test();
 
 	start();
 

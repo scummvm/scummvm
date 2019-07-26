@@ -21,10 +21,13 @@
  */
 
 #include "common/debug.h"
+#include "common/file.h"
+#include "common/fs.h"
 
 #include "hdb/hdb.h"
 #include "hdb/file-manager.h"
 #include "hdb/mpc.h"
+#include "hdb/menu.h"
 #include "hdb/sound.h"
 
 namespace HDB {
@@ -1390,6 +1393,7 @@ const SoundLookUp soundList[] =  {
 
 Sound::Sound() {
 	_sfxVolume = 255;
+	_musicVolume = 255;
 }
 
 void Sound::test() {
@@ -1402,7 +1406,7 @@ void Sound::test() {
 }
 
 bool Sound::init() {
-	warning("STUB: Initialize songs");
+	_song1.playing = _song2.playing = false;
 
 	//
 	// init sound caching system
@@ -1440,6 +1444,22 @@ void Sound::save(Common::OutSaveFile *out) {
 void Sound::loadSaveFile(Common::InSaveFile *in) {
 	for (int i = 0; i < NUM_VOICES; i++) {
 		_voicePlayed[i] = in->readByte();
+	}
+}
+
+void Sound::setMusicVolume(int volume) {
+	_musicVolume = volume;
+	if (_song1.playing) {
+		if (_song1.fadingIn)
+			_song1.fadeInVol = volume;
+		if (!_song1.fadingOut)
+			g_hdb->_mixer->setChannelVolume(*_song1.handle, volume);
+	}
+	if (_song2.playing) {
+		if (_song2.fadingIn)
+			_song1.fadeInVol = volume;
+		if (!_song2.fadingOut)
+			g_hdb->_mixer->setChannelVolume(*_song2.handle, volume);
 	}
 }
 
@@ -1488,32 +1508,154 @@ bool Sound::playVoice(int index, int actor) {
 }
 
 bool Sound::startMusic(SoundType song) {
-	warning("STUB: Start Music");
-	return true;
+	g_hdb->_menu->saveSong(song);
+
+	if (!_musicVolume)
+		return false;
+
+	return beginMusic(song, false, 0);
 }
 
 bool Sound::fadeInMusic(SoundType song, int ramp) {
-	warning("STUB: Fade In Music");
-	return true;
+	g_hdb->_menu->saveSong(song);
+
+	if (!_musicVolume)
+		return false;
+
+	stopMusic();
+	return beginMusic(song, false, ramp);
 }
 
 void Sound::fadeOutMusic(int ramp) {
-	warning("STUB: Fade Out Music");
-	return;
+	if (_song1.playing) {
+		_song1.fadeOutRamp = ramp;
+		_song1.fadingOut = true;
+		_song1.fadeOutVol = _musicVolume;
+	} else if (_song2.playing) {
+		_song2.fadeOutRamp = ramp;
+		_song2.fadingOut = true;
+		_song2.fadeOutVol = _musicVolume;
+	}
 }
 
 bool Sound::songPlaying(SoundType song) {
-	warning("STUB: Check if Song is playing");
-	return true;
+	if (_song1.playing && _song1.song == song)
+		return true;
+
+	if (_song2.playing && _song2.song == song)
+		return true;
+
+	return false;
 }
 
 bool Sound::stopChannel(int channel) {
 	debug(9, "STUB: Stop Channel");
+
 	return true;
 }
 
 void Sound::stopMusic() {
-	debug(9, "STUB: Stop Music");
+	if (_song1.playing) {
+		_song1.playing = false;
+		g_hdb->_mixer->stopHandle(*_song1.handle);
+	}
+	if (_song2.playing) {
+		_song2.playing = false;
+		g_hdb->_mixer->stopHandle(*_song2.handle);
+	}
+}
+
+bool Sound::beginMusic(SoundType song, bool fadeIn, int ramp) {
+	if (!_song1.playing) {
+		// Start fading out SONG2 if its playing
+		if (_song2.playing) {
+			_song2.fadeOutRamp = ramp;
+			_song2.fadingOut = true;
+			_song2.fadeOutVol = _musicVolume;
+		}
+
+		// Load up the song
+#ifdef USE_MAD
+		Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember(soundList[song].name);
+		if (stream == nullptr)
+			return false;
+
+		Audio::SeekableAudioStream *audioStream = Audio::makeMP3Stream(stream, DisposeAfterUse::YES);
+		Audio::AudioStream *loopingStream = new Audio::LoopingAudioStream(audioStream, 0, DisposeAfterUse::YES);
+
+		g_hdb->_mixer->setChannelVolume(*_song1.handle, _musicVolume);
+
+		// do we need to fade-in this song?
+		if (fadeIn) {
+			_song1.fadeInRamp = ramp;
+			_song1.fadingIn = true;
+			_song1.fadeInVol = 0;
+			g_hdb->_mixer->setChannelVolume(*_song1.handle, 0);
+		}
+
+		g_hdb->_mixer->playStream(Audio::Mixer::kMusicSoundType, _song1.handle, loopingStream);
+		_song1.playing = true;
+#endif
+	} else if (!_song2.playing) {
+		// Start fading out SONG1 if its playing
+		if (_song1.playing) {
+			_song1.fadeOutRamp = ramp;
+			_song1.fadingOut = true;
+			_song1.fadeOutVol = _musicVolume;
+		}
+
+		// Load up the song
+#ifdef USE_MAD
+		Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember(soundList[song].name);
+		if (stream == nullptr)
+			return false;
+
+		Audio::SeekableAudioStream *audioStream = Audio::makeMP3Stream(stream, DisposeAfterUse::YES);
+		Audio::AudioStream *loopingStream = new Audio::LoopingAudioStream(audioStream, 0, DisposeAfterUse::YES);
+
+		g_hdb->_mixer->setChannelVolume(*_song2.handle, _musicVolume);
+
+		// do we need to fade-in this song?
+		if (fadeIn) {
+			_song2.fadeInRamp = ramp;
+			_song2.fadingIn = true;
+			_song2.fadeInVol = 0;
+			g_hdb->_mixer->setChannelVolume(*_song2.handle, 0);
+		}
+
+		g_hdb->_mixer->playStream(Audio::Mixer::kMusicSoundType, _song2.handle, loopingStream);
+		_song2.playing = true;
+#endif
+	} else
+		return false;
+
+	return true;
+}
+
+void Sound::updateMusic() {
+
+	if (_song1.playing) {
+		if (_song1.fadingOut) {
+			_song1.fadeOutVol = 0;
+			_song1.playing = false;
+			g_hdb->_mixer->stopHandle(*_song1.handle);
+		} else if (_song1.fadingIn) {
+			_song1.fadeInVol = _musicVolume;
+			_song1.fadingIn = false;
+		}
+	}
+
+	if (_song2.playing) {
+		if (_song2.fadingOut) {
+			_song2.fadeOutVol = 0;
+			_song2.playing = false;
+			g_hdb->_mixer->stopHandle(*_song2.handle);
+		} else if (_song2.fadingIn) {
+			_song2.fadeInVol = _musicVolume;
+			_song2.fadingIn = false;
+		}
+	}
+
 }
 
 int Sound::registerSound(const char *name) {
@@ -1560,7 +1702,12 @@ int Sound::getSNDIndex(const char *name) {
 }
 
 SoundType Sound::whatSongIsPlaying() {
-	debug(9, "STUB: whatSongIsPlaying");
+	if (_song1.playing)
+		return _song1.song;
+
+	if (_song2.playing)
+		return _song2.song;
+
 	return SONG_NONE;
 }
 

@@ -24,6 +24,8 @@
 #define HDB_MENU_H
 
 #include "common/events.h"
+#include "hdb/ai.h"
+#include "hdb/sound.h"
 
 namespace HDB {
 
