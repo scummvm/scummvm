@@ -76,6 +76,7 @@ public:
 
 	void updateVisibility();
 	void setActorFlag400();
+	void clearActorFlag400();
 	void setPriority(uint16 priority);
 
 	void openInventory();

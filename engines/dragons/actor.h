@@ -129,6 +129,7 @@ public:
 	void walkPath();
 	void waitUntilFlag8IsSet();
 	void waitUntilFlag8And4AreSet();
+	void waitUntilFlag8SetThenSet1000AndWaitFor4();
 
 	bool waitUntilFlag4IsSetAllowSkip();
 	bool actorSetSequenceAndWaitAllowSkip(uint16 newSequenceID);

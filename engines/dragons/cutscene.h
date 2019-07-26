@@ -41,6 +41,13 @@ private:
 	Actor *DAT_80072df4;
 	Actor *DAT_80072df8;
 	Actor *DAT_80072dfc;
+	Actor *DAT_800830bc;
+	Actor *DAT_800830b8;
+	Actor *DAT_80072e0c;
+	Actor *DAT_800830a0;
+	Actor *DAT_800830d4;
+	Actor *DAT_800830dc;
+	Actor *DAT_80072e04;
 
 	uint16 DAT_80063514; //flags
 public:
@@ -56,6 +63,8 @@ private:
 	void FUN_8003d7d4();
 	void FUN_8003d388();
 	void FUN_8003d7fc();
+	uint16 FUN_8003dab8(uint32 textId,uint16 x,uint16 y,uint16 param_4,int16 param_5);
+	void cursorInventoryClearFlag400();
 };
 
 } // End of namespace Dragons
