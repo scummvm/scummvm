@@ -1055,6 +1055,14 @@ void Gfx::drawDebugInfo(Tile *_debugLogo, int fps) {
 		sprintf(buff, "Player height level: %d", p->level);
 		drawText(buff);
 	}
+
+	setCursor(0, 48);
+	sprintf(buff, "Map Name: %s", g_hdb->getInMapName());
+	drawText(buff);
+
+	setCursor(0, 64);
+	g_hdb->getActionMode() ? sprintf(buff, "Action Mode") : sprintf(buff, "Puzzle Mode");
+	drawText(buff);
 }
 
 Picture::Picture() : _width(0), _height(0) {
