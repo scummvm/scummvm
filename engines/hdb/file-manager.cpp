@@ -70,7 +70,7 @@ bool FileMan::openMPC(const Common::String &filename) {
 			MPCEntry *dirEntry = new MPCEntry();
 
 			for (int i = 0; i < 64; i++) {
-				dirEntry->filename[i] = _mpcFile->readByte();
+				dirEntry->filename[i] = tolower(_mpcFile->readByte());
 			}
 
 			dirEntry->offset = _mpcFile->readUint32LE();
@@ -111,21 +111,24 @@ Common::SeekableReadStream *FileMan::findFirstData(const char *string, DataType 
 
 	debug(8, "Looking for Data: '%s' <- '%s'", fname, string);
 
+	Common::String fnameS(fname);
+	fnameS.toLowercase();
+
 	// Find MPC Entry
 	for (MPCIterator it = _dir.begin(); it != _dir.end(); it++) {
 		fileString = (*it)->filename;
-		if (fileString.equals(fname)) {
+		if (fileString.equals(fnameS)) {
 			if ((*it)->type == type) {
 				file = *it;
 				break;
 			} else {
-				debug(4, "Found Data but type mismatch: '%s', target: %d, found: %d", fname, type, (*it)->type);
+				debug(4, "Found Data but type mismatch: '%s', target: %d, found: %d", fnameS.c_str(), type, (*it)->type);
 			}
 		}
 	}
 
 	if (file == NULL) {
-		debug(4, "Couldn't find Data: '%s'", fname);
+		debug(4, "Couldn't find Data: '%s'", fnameS.c_str());
 		return NULL;
 	}
 
@@ -149,10 +152,13 @@ int32 FileMan::getLength(const char *string, DataType type) {
 	if (pDest)
 		*pDest = '_';
 
+	Common::String fnameS(fname);
+	fnameS.toLowercase();
+
 	// Find MPC Entry
 	for (MPCIterator it = _dir.begin(); it != _dir.end(); it++) {
 		fileString = (*it)->filename;
-		if (fileString.contains(fname)) {
+		if (fileString.contains(fnameS)) {
 			if ((*it)->type == type) {
 				file = *it;
 				break;
@@ -171,9 +177,12 @@ int FileMan::getCount(const char *subString, DataType type) {
 	int count = 0;
 	Common::String fileString;
 
+	Common::String fnameS(subString);
+	fnameS.toLowercase();
+
 	for (MPCIterator it = _dir.begin(); it != _dir.end(); it++) {
 		fileString = (*it)->filename;
-		if (fileString.contains(subString)) {
+		if (fileString.contains(fnameS)) {
 			if ((*it)->type == type) {
 				count++;
 			}
@@ -187,10 +196,13 @@ Common::Array<const char *> *FileMan::findFiles(const char *string, DataType typ
 	Common::Array<const char *> *result = new Common::Array<const char *>;
 	Common::String fileString;
 
+	Common::String fnameS(string);
+	fnameS.toLowercase();
+
 	// Find MPC Entry
 	for (MPCIterator it = _dir.begin(); it != _dir.end(); it++) {
 		fileString = (*it)->filename;
-		if (fileString.contains(string)) {
+		if (fileString.contains(fnameS)) {
 			if ((*it)->type == type) {
 				result->push_back((*it)->filename);
 			}
