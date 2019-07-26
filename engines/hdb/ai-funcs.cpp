@@ -46,9 +46,8 @@ AIEntity *AI::spawn(AIType type, AIDir dir, int x, int y, const char *funcInit, 
 	e->y = y * kTileHeight;
 	e->tileY = y;
 	e->moveSpeed = kPlayerMoveSpeed; // Default Speed
-	if (!g_hdb->getActionMode()) {
+	if (!g_hdb->getActionMode())
 		e->moveSpeed /= 2;
-	}
 
 	// Other variables
 	e->dir2 = dir2;
@@ -61,15 +60,14 @@ AIEntity *AI::spawn(AIType type, AIDir dir, int x, int y, const char *funcInit, 
 	e->animDelay = e->animCycle;
 	e->animFrame = 0;
 
-	if (funcInit) {
+	if (funcInit)
 		strcpy(e->luaFuncInit, funcInit);
-	}
-	if (funcAction) {
+
+	if (funcAction)
 		strcpy(e->luaFuncAction, funcAction);
-	}
-	if (funcUse) {
+
+	if (funcUse)
 		strcpy(e->luaFuncUse, funcUse);
-	}
 
 	if (e->luaFuncInit[0] == '*')
 		e->luaFuncInit[0] = 0;
@@ -82,11 +80,10 @@ AIEntity *AI::spawn(AIType type, AIDir dir, int x, int y, const char *funcInit, 
 	e->movedownFrames = e->moveupFrames = e->moveleftFrames = e->moverightFrames = 0;
 	e->blinkFrames = 0;
 
-	if (!cacheEntGfx(e, (bool)callInit)) {
+	if (!cacheEntGfx(e, (bool)callInit))
 		return NULL;
-	} else {
+	else
 		_ents->push_back(e);
-	}
 
 	return e;
 }
@@ -94,9 +91,8 @@ AIEntity *AI::spawn(AIType type, AIDir dir, int x, int y, const char *funcInit, 
 bool AI::cacheEntGfx(AIEntity *e, bool init) {
 	int i = 0;
 	while (true) {
-		if (aiEntList[i].type == END_AI_TYPES) {
+		if (aiEntList[i].type == END_AI_TYPES)
 			return false;
-		}
 
 		// Load Gfx for corresponding Entity
 		if (aiEntList[i].type == e->type) {
@@ -173,13 +169,17 @@ bool AI::cacheEntGfx(AIEntity *e, bool init) {
 							_pushrightFrames++;
 							break;
 						case STATE_GRABUP:
-							_getGfx[DIR_UP] = gfx; break;
+							_getGfx[DIR_UP] = gfx;
+							break;
 						case STATE_GRABDOWN:
-							_getGfx[DIR_DOWN] = gfx; break;
+							_getGfx[DIR_DOWN] = gfx;
+							break;
 						case STATE_GRABLEFT:
-							_getGfx[DIR_LEFT] = gfx; break;
+							_getGfx[DIR_LEFT] = gfx;
+							break;
 						case STATE_GRABRIGHT:
-							_getGfx[DIR_RIGHT] = gfx; break;
+							_getGfx[DIR_RIGHT] = gfx;
+							break;
 
 						case STATE_ATK_STUN_UP:
 							_stunUpGfx[_stunUpFrames] = gfx;
@@ -427,26 +427,22 @@ bool AI::cacheEntGfx(AIEntity *e, bool init) {
 			e->aiInit2 = aiEntList[i].initFunc2;
 			if (init) {
 				e->aiInit(e);
-				if (e->aiInit2) {
+				if (e->aiInit2)
 					e->aiInit2(e);
-				}
+
 				if (e->luaFuncInit[0]) {
 					g_hdb->_lua->callFunction(e->luaFuncInit, 2);
 
 					const char *str1 = g_hdb->_lua->getStringOffStack();
 					const char *str2 = g_hdb->_lua->getStringOffStack();
-					if (str1) {
+					if (str1)
 						strcpy(e->entityName, str1);
-					}
-					if (str2) {
+
+					if (str2)
 						strcpy(e->printedName, str2);
-					}
 				}
-			} else {
-				if (e->aiInit2) {
-					e->aiInit2(e);
-				}
-			}
+			} else if (e->aiInit2)
+				e->aiInit2(e);
 
 			break; // Entity Initiated
 		}
@@ -523,24 +519,21 @@ void AI::stopEntity(AIEntity *e) {
 
 AIEntity *AI::locateEntity(const char *luaName) {
 	for (Common::Array<AIEntity *>::iterator it = _ents->begin(); it != _ents->end(); ++it) {
-		if (Common::matchString((*it)->entityName, luaName)) {
+		if (Common::matchString((*it)->entityName, luaName))
 			return *it;
-		}
 	}
 	return NULL;
 }
 
 AIEntity *AI::findEntity(int x, int y) {
 	for (Common::Array<AIEntity *>::iterator it = _ents->begin(); it != _ents->end(); ++it) {
-		if ((*it)->tileX == x && (*it)->tileY == y) {
+		if ((*it)->tileX == x && (*it)->tileY == y)
 			return *it;
-		}
 	}
 
 	for (Common::Array<AIEntity *>::iterator it = _floats->begin(); it != _floats->end(); ++it) {
-		if ((*it)->tileX == x && (*it)->tileY == y) {
+		if ((*it)->tileX == x && (*it)->tileY == y)
 			return *it;
-		}
 	}
 
 	if (g_hdb->_map->laserBeamExist(x, y))
@@ -551,15 +544,13 @@ AIEntity *AI::findEntity(int x, int y) {
 
 AIEntity *AI::findEntityIgnore(int x, int y, AIEntity *ignore) {
 	for (Common::Array<AIEntity *>::iterator it = _ents->begin(); it != _ents->end(); ++it) {
-		if ((*it)->tileX == x && (*it)->tileY == y && (*it) != ignore) {
+		if ((*it)->tileX == x && (*it)->tileY == y && (*it) != ignore)
 			return *it;
-		}
 	}
 
 	for (Common::Array<AIEntity *>::iterator it = _floats->begin(); it != _floats->end(); ++it) {
-		if ((*it)->tileX == x && (*it)->tileY == y && (*it) != ignore) {
+		if ((*it)->tileX == x && (*it)->tileY == y && (*it) != ignore)
 			return *it;
-		}
 	}
 
 	if (g_hdb->_map->laserBeamExist(x, y) && ignore->type != AI_LASERBEAM)
@@ -570,15 +561,13 @@ AIEntity *AI::findEntityIgnore(int x, int y, AIEntity *ignore) {
 
 AIEntity *AI::findEntityType(AIType type, int x, int y) {
 	for (Common::Array<AIEntity *>::iterator it = _ents->begin(); it != _ents->end(); ++it) {
-		if ((*it)->tileX == x && (*it)->tileY == y && (*it)->type == type) {
+		if ((*it)->tileX == x && (*it)->tileY == y && (*it)->type == type)
 			return *it;
-		}
 	}
 
 	for (Common::Array<AIEntity *>::iterator it = _floats->begin(); it != _floats->end(); ++it) {
-		if ((*it)->tileX == x && (*it)->tileY == y && (*it)->type == type) {
+		if ((*it)->tileX == x && (*it)->tileY == y && (*it)->type == type)
 			return *it;
-		}
 	}
 
 	if (g_hdb->_map->laserBeamExist(x, y) && type == AI_LASERBEAM)
@@ -588,11 +577,8 @@ AIEntity *AI::findEntityType(AIType type, int x, int y) {
 }
 
 void AI::getEntityXY(const char *entName, int *x, int *y) {
-	AIEntity *e;
-	HereT *h;
-
 	for (Common::Array<AIEntity *>::iterator it = _ents->begin(); it != _ents->end(); ++it) {
-		e = *it;
+		AIEntity *e = *it;
 		if (e->entityName && !scumm_stricmp(entName, e->entityName)) {
 			*x = e->tileX;
 			*y = e->tileY;
@@ -601,7 +587,7 @@ void AI::getEntityXY(const char *entName, int *x, int *y) {
 	}
 
 	for (Common::Array<AIEntity *>::iterator jt = _floats->begin(); jt != _floats->end(); ++jt) {
-		e = *jt;
+		AIEntity *e = *jt;
 		if (e->entityName && !scumm_stricmp(entName, e->entityName)) {
 			*x = e->tileX;
 			*y = e->tileY;
@@ -610,7 +596,7 @@ void AI::getEntityXY(const char *entName, int *x, int *y) {
 	}
 
 	for (Common::Array<HereT *>::iterator kt = _hereList->begin(); kt != _hereList->end(); ++kt) {
-		h = *kt;
+		HereT *h = *kt;
 		if (!scumm_stricmp(entName, h->entName)) {
 			*x = h->x;
 			*y = h->y;
@@ -684,12 +670,13 @@ int AI::checkForTouchplate(int x, int y) {
 }
 
 void AI::removeEntity(AIEntity *e) {
-	for (uint i = 0; i < _ents->size(); i++)
+	for (uint i = 0; i < _ents->size(); i++) {
 		if (_ents->operator[](i) == e) {
 			delete _ents->operator[](i);
 			_ents->remove_at(i);
 			return;
 		}
+	}
 }
 
 void AI::setEntityGoal(AIEntity *e, int x, int y) {
@@ -736,9 +723,8 @@ void AI::initAllEnts() {
 			if (g_hdb->_lua->callFunction((*it)->luaFuncInit, 2)) {
 				strcpy((*it)->entityName, g_hdb->_lua->getStringOffStack());
 				strcpy((*it)->printedName, g_hdb->_lua->getStringOffStack());
-			} else {
+			} else
 				warning("'%s' doesn't exists", (*it)->luaFuncInit);
-			}
 		}
 	}
 
@@ -836,11 +822,7 @@ void AI::killPlayer(Death method) {
 }
 
 void AI::stunEnemy(AIEntity *e, int time) {
-	int ns = 0;
-
-	if (e->stunnedWait)
-		ns = 1;
-
+	bool ns = (e->stunnedWait != 0);
 	e->stunnedWait = g_hdb->getTimeSlice() + 1000 * time;
 
 	// Already stunned? If not, play sound
@@ -897,9 +879,7 @@ void AI::animateEntity(AIEntity *e) {
 	static const int xva[5] = {9, 0, 0, -1, 1};
 	static const int yva[5] = {9, -1, 1, 0, 0};
 
-	int bgTileFlags, bgTileIndex;
-	int fgTileFlags;
-	bool result;
+	int bgTileFlags, fgTileFlags;
 
 	// Move entity if player is not dead
 	debug(9, "Before animateEntity, e->x: %d, e->y: %d", e->x, e->y);
@@ -925,7 +905,6 @@ void AI::animateEntity(AIEntity *e) {
 			standing on a Touchplate will activate
 			something WHILE standing on it
 		*/
-		int bgtile;
 		switch (e->type) {
 		case AI_CRATE:
 		case AI_BOOMBARREL:
@@ -934,16 +913,18 @@ void AI::animateEntity(AIEntity *e) {
 		case AI_MAGIC_EGG:
 		case AI_ICE_BLOCK:
 		case AI_FROGSTATUE:
-			bgtile = g_hdb->_ai->checkForTouchplate(e->tileX, e->tileY);
-			if (bgtile && !e->touchpWait && e->touchpX != e->tileX && e->touchpY != e->tileY) {
-				if (g_hdb->_ai->checkActionList(e, e->tileX, e->tileY, false)) {
-					e->touchpTile = bgtile;
-					e->touchpX = e->tileX;
-					e->touchpY = e->tileY;
-					e->touchpWait = kPlayerTouchPWait;
+			{
+				int bgtile = g_hdb->_ai->checkForTouchplate(e->tileX, e->tileY);
+				if (bgtile && !e->touchpWait && e->touchpX != e->tileX && e->touchpY != e->tileY) {
+					if (g_hdb->_ai->checkActionList(e, e->tileX, e->tileY, false)) {
+						e->touchpTile = bgtile;
+						e->touchpX = e->tileX;
+						e->touchpY = e->tileY;
+						e->touchpWait = kPlayerTouchPWait;
+					}
 				}
+				_laserRescan = true;
 			}
-			_laserRescan = true;
 			break;
 		default:
 			break;
@@ -1013,7 +994,7 @@ void AI::animateEntity(AIEntity *e) {
 			if we're on a waypoint, nevermind!
 		*/
 		if (e == _player) {
-			result = e->x == (e->goalX * kTileWidth) && e->y == (e->goalY * kTileWidth);
+			bool result = e->x == (e->goalX * kTileWidth) && e->y == (e->goalY * kTileWidth);
 			if (!result) {
 				int xv = 0, yv = 0;
 				switch (e->dir) {
@@ -1095,9 +1076,9 @@ void AI::animateEntity(AIEntity *e) {
 	}
 
 	// Check for moving up/down stair levels
-	bgTileIndex = g_hdb->_map->getMapBGTileIndex(e->tileX, e->tileY);
+	int bgTileIndex = g_hdb->_map->getMapBGTileIndex(e->tileX, e->tileY); // CHECKME: unused?
 	bgTileFlags = g_hdb->_map->getMapBGTileFlags(e->tileX, e->tileY);
-	fgTileFlags = g_hdb->_map->getMapFGTileFlags(e->tileX, e->tileY);
+	fgTileFlags = g_hdb->_map->getMapFGTileFlags(e->tileX, e->tileY); // CHECKME: unused?
 	if (bgTileFlags & kFlagStairTop)
 		e->level = 2;
 	else if (bgTileFlags & kFlagStairBot)
@@ -1105,6 +1086,7 @@ void AI::animateEntity(AIEntity *e) {
 
 	// Reached goal?
 	// Cinematic require less accuracy for NPCs
+	bool result;
 	if (_cineActive && e != _player)
 		result = (abs(e->x - (e->goalX * kTileWidth)) <= abs(e->xVel)) && (abs(e->y - (e->goalY * kTileHeight)) <= abs(e->yVel));
 	else
@@ -1125,7 +1107,6 @@ void AI::animateEntity(AIEntity *e) {
 			e->tileY = e->goalY;
 
 			uint16 buttons = g_hdb->_input->getButtons();
-
 			if (e == _player && (buttons & (kButtonUp | kButtonDown | kButtonLeft | kButtonRight))) {
 				if (e->state != STATE_PUSHRIGHT && e->state != STATE_PUSHLEFT && e->state != STATE_PUSHUP && e->state != STATE_PUSHDOWN) {
 					if (buttons & kButtonUp)
@@ -1179,9 +1160,9 @@ void AI::animateEntity(AIEntity *e) {
 
 			// Checking at the Destination
 
-			uint64 flags;
+			uint64 flags = g_hdb->_map->getMapBGTileFlags(e->tileX, e->tileY);
 			// Can this entity float and it is over-water
-			if (((flags = g_hdb->_map->getMapBGTileFlags(e->tileX, e->tileY)) & kFlagWater) && (e->type == AI_CRATE || e->type == AI_LIGHTBARREL || e->type == AI_BOOMBARREL || e->type == AI_HEAVYBARREL || e->type == AI_FROGSTATUE || e->type == AI_DIVERTER)) {
+			if ((flags & kFlagWater) && (e->type == AI_CRATE || e->type == AI_LIGHTBARREL || e->type == AI_BOOMBARREL || e->type == AI_HEAVYBARREL || e->type == AI_FROGSTATUE || e->type == AI_DIVERTER)) {
 				// On a grating and level2?
 				if ((g_hdb->_map->getMapFGTileFlags(e->tileX, e->tileY) & kFlagGrating) && e->level == 2) {
 					animEntFrames(e);
@@ -1218,17 +1199,25 @@ void AI::animateEntity(AIEntity *e) {
 					}
 				} else if (flags & kFlagSlide) {
 					int xv = 0, yv = 0;
-					AIEntity *hit;
 
 					switch (e->dir) {
-					case DIR_UP:	yv = -1; break;
-					case DIR_DOWN:	yv = 1; break;
-					case DIR_LEFT:	xv = -1; break;
-					case DIR_RIGHT: xv = 1; break;
-					case DIR_NONE:	break;
+					case DIR_UP:
+						yv = -1;
+						break;
+					case DIR_DOWN:
+						yv = 1;
+						break;
+					case DIR_LEFT:
+						xv = -1;
+						break;
+					case DIR_RIGHT:
+						xv = 1;
+						break;
+					case DIR_NONE:
+						break;
 					}
 
-					hit = findEntityIgnore(e->tileX + xv, e->tileY + yv, &_dummyLaser);
+					AIEntity *hit = findEntityIgnore(e->tileX + xv, e->tileY + yv, &_dummyLaser);
 					if (!hit) {
 						e->state = STATE_SLIDING;
 						if ((flags & kFlagAnimFast) == kFlagAnimFast)
@@ -1346,6 +1335,8 @@ void AI::animateEntity(AIEntity *e) {
 }
 
 void AI::animEntFrames(AIEntity *e) {
+	static int click = 0;
+
 	int max = 1;
 	// Set current graphic to draw
 	switch (e->state) {
@@ -1427,7 +1418,6 @@ void AI::animEntFrames(AIEntity *e) {
 		break;
 	case STATE_HORRIBLE2:
 	{
-		static int		click = 0;
 		e->draw = _horrible2Gfx[e->animFrame];
 		max = _horrible2Frames;
 		click++;
@@ -1439,7 +1429,6 @@ void AI::animEntFrames(AIEntity *e) {
 	}
 	case STATE_HORRIBLE3:
 	{
-		static int		click = 0;
 		e->draw = _horrible3Gfx[e->animFrame];
 		max = _horrible3Frames;
 		click++;
@@ -1516,7 +1505,8 @@ void AI::animEntFrames(AIEntity *e) {
 	case STATE_EXPLODING:
 		e->draw = e->special1Gfx[e->animFrame];
 		max = e->special1Frames;
-		if (e->type == AI_BOOMBARREL) {			// while exploding, call this function
+		if (e->type == AI_BOOMBARREL) {
+			// while exploding, call this function
 			aiBarrelExplodeSpread(e);
 			if (e->animFrame == max - 1) {
 				removeEntity(e);
@@ -1642,26 +1632,24 @@ void AI::animEntFrames(AIEntity *e) {
 	// Cycle animation frames
 	if (e->animDelay-- > 0)
 		return;
-	e->animDelay = e->animCycle;
 
+	e->animDelay = e->animCycle;
 	e->animFrame++;
-	if (e->animFrame == max) {
+	if (e->animFrame == max)
 		e->animFrame = 0;
-	}
 }
 
 void AI::drawEnts(int x, int y, int w, int h) {
-
-	int debugFlag = g_hdb->getDebug();
 	static int stunAnim = 0;
 	static uint32 stunTimer = g_hdb->getTimeSlice();
+
+	int debugFlag = g_hdb->getDebug();
 
 	// Draw Floating Entities
 	for (uint i = 0; i < _floats->size(); i++) {
 		AIEntity *e = _floats->operator[](i);
-		if (e->aiDraw) {
+		if (e->aiDraw)
 			e->aiDraw(e, x, y);
-		}
 
 		if ((e->x > x - kTileWidth) && (e->x < x + w) && (e->y > y - kTileHeight) && (e->y < y + h)) {
 			e->draw->drawMasked(e->x - x + e->drawXOff, e->y - y + e->drawYOff);
@@ -1736,11 +1724,10 @@ void AI::drawEnts(int x, int y, int w, int h) {
 						debugN(5, "at %d %d", e->x, e->y);
 
 						e->draw->drawMasked(e->x - x + e->drawXOff, e->y - y + e->drawYOff);
-					} else if (debugFlag) {
+					} else if (debugFlag)
 						_debugQMark->drawMasked(e->x - x, e->y - y);
-					} else {
+					else
 						debugN(5, "no draw function");
-					}
 
 					if (e->stunnedWait)
 						g_hdb->_ai->_stunnedGfx[stunAnim]->drawMasked(e->x - x, e->y - y);
@@ -1761,9 +1748,8 @@ void AI::drawEnts(int x, int y, int w, int h) {
 	}
 
 	// Draw player last
-	if (_player && _player->level < 2 && !_playerInvisible && _player->draw) {
+	if (_player && _player->level < 2 && !_playerInvisible && _player->draw)
 		_player->draw->drawMasked(_player->x - x + _player->drawXOff, _player->y - y + _player->drawYOff);
-	}
 }
 
 void AI::drawLevel2Ents() {
@@ -1779,9 +1765,8 @@ void AI::drawLevel2Ents() {
 			debug(5, "AI::drawLevel2Ents: tile '%s' at %d,%d", _entsLevel2[i].draw->getName(), _entsLevel2[i].x, _entsLevel2[i].y);
 
 			_entsLevel2[i].draw->drawMasked(_entsLevel2[i].x, _entsLevel2[i].y);
-		} else if (debugFlag) {
+		} else if (debugFlag)
 			_debugQMark->drawMasked(_entsLevel2[i].x, _entsLevel2[i].y );
-		}
 
 		if (_entsLevel2[i].stunnedWait)
 			 g_hdb->_ai->_stunnedGfx[_stunAnim]->drawMasked(_entsLevel2[i].x , _entsLevel2[i].y);
@@ -1842,18 +1827,26 @@ void AI::entityFace(const char *luaName, int dir) {
 	e->dir = (AIDir)dir;
 
 	switch (e->dir) {
-	case DIR_UP: e->state = STATE_STANDUP; break;
-	case DIR_DOWN: e->state = STATE_STANDDOWN; break;
-	case DIR_LEFT: e->state = STATE_STANDLEFT; break;
-	case DIR_RIGHT: e->state = STATE_STANDRIGHT; break;
-	case DIR_NONE: break;
+	case DIR_UP:
+		e->state = STATE_STANDUP;
+		break;
+	case DIR_DOWN:
+		e->state = STATE_STANDDOWN;
+		break;
+	case DIR_LEFT:
+		e->state = STATE_STANDLEFT;
+		break;
+	case DIR_RIGHT:
+		e->state = STATE_STANDRIGHT;
+		break;
+	case DIR_NONE:
+		break;
 	}
 }
 
 void AI::moveEnts() {
 	static int frameDelay = kAnimFrameDelay;
-	static int startLaserSound = false;
-	AIEntity *e;
+	static bool startLaserSound = false;
 
 	if (frameDelay-- > 0)
 		return;
@@ -1868,7 +1861,7 @@ void AI::moveEnts() {
 
 	// Call aiAction for all other Entities
 	for (uint i = 0; i < _ents->size(); i++) {
-		e = _ents->operator[](i);
+		AIEntity *e = _ents->operator[](i);
 		if (e->aiAction) {
 			// NPC Touchplate Counter
 			if (e != _player && e->touchpWait) {
@@ -1886,10 +1879,8 @@ void AI::moveEnts() {
 			// Stunned Entity Timer
 			if (!e->stunnedWait)
 				e->aiAction(e);
-			else {
-				if (e->stunnedWait < (int32)g_hdb->getTimeSlice())
-					e->stunnedWait = 0;
-			}
+			else if (e->stunnedWait < (int32)g_hdb->getTimeSlice())
+				e->stunnedWait = 0;
 		}
 	}
 
@@ -1903,23 +1894,21 @@ void AI::moveEnts() {
 	if (_laserOnScreen)
 		startLaserSound = true;
 	if (!_laserOnScreen && startLaserSound) {
-		startLaserSound = 0;
+		startLaserSound = false;
 		g_hdb->_sound->stopChannel(kLaserChannel);
 	}
 }
 
 bool AI::findPath(AIEntity *e) {
-	int x, y, xv = 0, yv = 0, max;
-	ArrowPath *here;
-
 	// Initial Pointing Direction to search in
-	x = e->tileX;
-	y = e->tileY;
-	here = findArrowPath(x, y);
+	int x = e->tileX;
+	int y = e->tileY;
+	ArrowPath *here = findArrowPath(x, y);
 	// Only look for GO arrows at this first location
 	if (here && here->type == 1)
 		e->dir = here->dir;
 
+	int xv = 0, yv = 0;
 	switch (e->dir) {
 	case DIR_UP:
 		yv = -1;
@@ -1938,6 +1927,7 @@ bool AI::findPath(AIEntity *e) {
 		break;
 	}
 
+	int max;
 	if (xv)
 		max = g_hdb->_map->_width;
 	else
@@ -1968,11 +1958,10 @@ AIEntity *AI::legalMove(int tileX, int tileY, int level, int *result) {
 	if (hit && hit->state != STATE_FLOATING) {
 		// If player and entity are not at the same level, are they on stairs?
 		if (hit->level != level) {
-			if (level == 1 && !(bgFlags & kFlagStairTop)) {
+			if (level == 1 && !(bgFlags & kFlagStairTop))
 				hit = NULL;
-			} else if (level == 2 && !(bgFlags & kFlagStairBot)) {
+			else if (level == 2 && !(bgFlags & kFlagStairBot))
 				hit = NULL;
-			}
 		}
 	}
 
@@ -2025,6 +2014,7 @@ AIEntity *AI::legalMoveOverWater(int tileX, int tileY, int level, int *result) {
 		*result = 0;
 	else
 		*result = 1;
+
 	return hit;
 }
 
@@ -2037,6 +2027,7 @@ AIEntity *AI::legalMoveOverWaterIgnore(int tileX, int tileY, int level, int *res
 		*result = 0;
 	else
 		*result = 1;
+
 	return hit;
 }
 
@@ -2045,6 +2036,7 @@ AIEntity *AI::playerCollision(int topBorder, int bottomBorder, int leftBorder, i
 		AIEntity *e = *it;
 		if (e == _player || !e->onScreen)
 			continue;
+
 		if (e->x > (_player->x - 32 - leftBorder) && e->x < (_player->x + 32 + rightBorder) && e->y >(_player->y - 32 - topBorder) && e->y < (_player->y + 32 + bottomBorder))
 			return e;
 	}
@@ -2179,33 +2171,29 @@ void AI::lookAtEntity(AIEntity *e) {
 
 // Change player direction to XY
 void AI::lookAtXY(int x, int y) {
-	int distX, distY;
-
-	distX = abs(_player->tileX - x);
-	distY = abs(_player->tileY - y);
+	int distX = abs(_player->tileX - x);
+	int distY = abs(_player->tileY - y);
 
 	if (distX > distY) {
 		// X takes precedence
-		if (x < _player->tileX) {
+		if (x < _player->tileX)
 			_player->dir = DIR_LEFT;
-		} else if (x > _player->tileX) {
+		else if (x > _player->tileX)
 			_player->dir = DIR_RIGHT;
-		} else if (y < _player->tileY) {
+		else if (y < _player->tileY)
 			_player->dir = DIR_UP;
-		} else {
+		else
 			_player->dir = DIR_DOWN;
-		}
 	} else {
 		// Y takes precedence
-		if (y < _player->tileY) {
+		if (y < _player->tileY)
 			_player->dir = DIR_UP;
-		} else if (y > _player->tileY) {
+		else if (y > _player->tileY)
 			_player->dir = DIR_DOWN;
-		} else if (x < _player->tileX) {
+		else if (x < _player->tileX)
 			_player->dir = DIR_LEFT;
-		} else {
+		else
 			_player->dir = DIR_RIGHT;
-		}
 	}
 
 	switch (_player->dir) {
@@ -2231,15 +2219,16 @@ void AI::lookAtXY(int x, int y) {
 }
 
 void AI::movePlayer(uint16 buttons) {
-	AIState stateList[] = {STATE_ATK_CLUB_UP,	STATE_ATK_CLUB_DOWN, STATE_ATK_CLUB_LEFT, STATE_ATK_CLUB_RIGHT,
-							STATE_ATK_STUN_UP,	STATE_ATK_STUN_DOWN, STATE_ATK_STUN_LEFT, STATE_ATK_STUN_RIGHT,
-							STATE_ATK_SLUG_UP,	STATE_ATK_SLUG_DOWN, STATE_ATK_SLUG_LEFT, STATE_ATK_SLUG_RIGHT,
-							STATE_PUSHUP,		STATE_PUSHDOWN,		 STATE_PUSHLEFT,	  STATE_PUSHRIGHT,
-							STATE_GRABUP,		STATE_GRABDOWN,		 STATE_GRABLEFT,	  STATE_GRABRIGHT};
-	int	xva[5] = {9, 0, 0,-1, 1};
-	int	yva[5] = {9,-1, 1, 0, 0};
-	AIEntity *hit;
-	int	xv = 0, yv = 0, nx, ny;
+	static const AIState stateList[] = {
+		STATE_ATK_CLUB_UP,	STATE_ATK_CLUB_DOWN, STATE_ATK_CLUB_LEFT, STATE_ATK_CLUB_RIGHT,
+		STATE_ATK_STUN_UP,	STATE_ATK_STUN_DOWN, STATE_ATK_STUN_LEFT, STATE_ATK_STUN_RIGHT,
+		STATE_ATK_SLUG_UP,	STATE_ATK_SLUG_DOWN, STATE_ATK_SLUG_LEFT, STATE_ATK_SLUG_RIGHT,
+		STATE_PUSHUP,		STATE_PUSHDOWN,		 STATE_PUSHLEFT,	  STATE_PUSHRIGHT,
+		STATE_GRABUP,		STATE_GRABDOWN,		 STATE_GRABLEFT,	  STATE_GRABRIGHT
+	};
+
+	static const int xva[5] = {9, 0, 0,-1, 1};
+	static const int yva[5] = {9,-1, 1, 0, 0};
 
 	if (!_player)
 		return;
@@ -2267,9 +2256,9 @@ void AI::movePlayer(uint16 buttons) {
 			return;
 
 		// Are we trying to use something? An ACTION, AUTO, LUA?
-		nx = _player->tileX + xva[_player->dir];
-		ny = _player->tileY + yva[_player->dir];
-		hit = findEntity(nx, ny);
+		int nx = _player->tileX + xva[_player->dir];
+		int ny = _player->tileY + yva[_player->dir];
+		AIEntity *hit = findEntity(nx, ny);
 
 		// the reason to check for no entity or an AI_NONE is because
 		// there's a possibility that an actual entity and a LUA entity
@@ -2283,7 +2272,7 @@ void AI::movePlayer(uint16 buttons) {
 			case STATE_STANDRIGHT:
 				if (checkForTouchplate(nx, ny))
 					break;
-
+				// TODO: CHECKME - Uselessly redundant call - nx and ny are not modified by the call
 				if (checkForTouchplate(nx, ny))
 					break;
 				if (checkActionList(_player, nx, ny, true))
@@ -2299,7 +2288,7 @@ void AI::movePlayer(uint16 buttons) {
 
 		// Attackable Entity? (we're right up on it)
 		int amt = getGemAmount();
-		int	attackable = 0;
+		bool attackable = false;
 		if (hit)
 			switch (hit->type) {
 			case AI_OMNIBOT:
@@ -2318,7 +2307,7 @@ void AI::movePlayer(uint16 buttons) {
 			case AI_BUZZFLY:
 			case AI_DRAGON:
 			case AI_NONE:
-				attackable = 1;
+				attackable = true;
 				break;
 			default:
 				break;
@@ -2385,8 +2374,8 @@ void AI::movePlayer(uint16 buttons) {
 		// If this is the last gem, throw it and signal that it should come back
 
 		if (amt && (attackable || !hit)) {
-			xv = xva[_player->dir];
-			yv = yva[_player->dir];
+			int xv = xva[_player->dir];
+			int yv = yva[_player->dir];
 			nx = _player->tileX + xv;
 			ny = _player->tileY + yv;
 
@@ -2415,9 +2404,10 @@ void AI::movePlayer(uint16 buttons) {
 		return;
 
 	// Is a dialog active?
-	if (g_hdb->_window->dialogActive())
+	if (g_hdb->_window->dialogActive()) {
 		if (!cinematicsActive())
 			return;
+	}
 
 	// is a choice dialog active?
 	if (g_hdb->_window->dialogChoiceActive()) {
@@ -2429,6 +2419,7 @@ void AI::movePlayer(uint16 buttons) {
 	if (_playerLock || _numWaypoints)
 		return;
 
+	int	xv = 0, yv = 0;
 	if (buttons & kButtonUp)
 		yv = -1;
 	else if (buttons & kButtonDown)
@@ -2443,13 +2434,13 @@ void AI::movePlayer(uint16 buttons) {
 	}
 
 	// Check if we can move there
-	nx = _player->tileX + xv;
-	if (!nx)	// Don't allow moving to X-cooridinate 0
+	int nx = _player->tileX + xv;
+	if (!nx)	// Don't allow moving to X-coordinate 0
 		return;
-	ny = _player->tileY + yv;
+	int ny = _player->tileY + yv;
 
 	int moveOK;
-	hit = legalMove(nx, ny, _player->level, &moveOK);
+	AIEntity *hit = legalMove(nx, ny, _player->level, &moveOK);
 	if (hit && walkThroughEnt(hit->type))
 		hit = NULL;
 
@@ -2474,8 +2465,8 @@ void AI::movePlayer(uint16 buttons) {
 }
 
 void AI::playerUse() {
-	int	xv[5] = {9, 0, 0,-1, 1};
-	int	yv[5] = {9,-1, 1, 0, 0};
+	static const int xv[5] = {9, 0, 0,-1, 1};
+	static const int yv[5] = {9,-1, 1, 0, 0};
 
 	g_hdb->setTargetXY(kTileWidth * (_player->tileX + xv[_player->dir]), kTileWidth * (_player->tileY + yv[_player->dir]));
 }
