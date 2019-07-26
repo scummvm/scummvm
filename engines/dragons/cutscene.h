@@ -65,6 +65,7 @@ private:
 	void FUN_8003d7fc();
 	uint16 FUN_8003dab8(uint32 textId,uint16 x,uint16 y,uint16 param_4,int16 param_5);
 	void cursorInventoryClearFlag400();
+	void changeBackgroundPosition(uint16 newPosition, int16 sParm2);
 };
 
 } // End of namespace Dragons
