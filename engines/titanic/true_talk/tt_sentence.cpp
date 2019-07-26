@@ -251,10 +251,10 @@ bool TTsentence::fn4(int mode, int wordId, const TTconceptNode *node) const {
 
 	switch (mode) {
 	case 1:
-		return node->_concept1P && node->_concept1P->getWordId() == wordId;
+		return node->_concept1P && getWordId(node->_concept1P) == wordId;
 
 	case 5:
-		return node->_concept5P && node->_concept5P->getWordId() == wordId;
+		return node->_concept5P && getWordId(node->_concept5P) == wordId;
 
 	default:
 		return false;

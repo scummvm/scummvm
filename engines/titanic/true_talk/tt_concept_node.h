@@ -64,10 +64,10 @@ public:
 	bool createConcept(int mode, int conceptIndex, TTword *word);
 
 	int concept1WordId() const {
-		return _concept1P ? _concept1P->getWordId() : 0;
+		return getWordId(_concept1P);
 	}
 	int concept5WordId() const {
-		return _concept5P ? _concept5P->getWordId() : 0;
+		return getWordId(_concept5P);
 	}
 };
 
