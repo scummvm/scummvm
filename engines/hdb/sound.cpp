@@ -1430,7 +1430,7 @@ bool Sound::init() {
 		_soundCache[index2].loaded = false;
 		_soundCache[index2].name = soundList[index].name;
 		_soundCache[index2].luaName = soundList[index].luaName;
-		if (index2 <= SND_UNLOCKED_ITEM || index == SND_BEEPBEEPBEEP)
+		if (!scumm_stricmp(_soundCache[index2].name, ".wav"))
 			_soundCache[index2].ext = -1;	// WAV
 		else
 			_soundCache[index2].ext = 1;		// MP3
