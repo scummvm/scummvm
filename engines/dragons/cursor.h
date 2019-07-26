@@ -60,6 +60,7 @@ public:
 	void selectPreviousCursor();
 	void selectNextCursor();
 	void setActorFlag400();
+	void clearActorFlag400();
 	byte *getPalette();
 private:
 	int16 updateIniFromScene();

@@ -122,6 +122,10 @@ void Inventory::setActorFlag400() {
 	_actor->setFlag(ACTOR_FLAG_400);
 }
 
+void Inventory::clearActorFlag400() {
+	_actor->clearFlag(ACTOR_FLAG_400);
+}
+
 void Inventory::setPriority(uint16 priority) {
 	_actor->priorityLayer = priority;
 }

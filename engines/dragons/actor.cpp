@@ -576,6 +576,16 @@ void Actor::waitUntilFlag8And4AreSet() {
 	}
 }
 
+void Actor::waitUntilFlag8SetThenSet1000AndWaitFor4() {
+	waitUntilFlag8IsSet();
+
+	setFlag(ACTOR_FLAG_1000);
+
+	while(!isFlagSet(ACTOR_FLAG_4)) {
+		getEngine()->waitForFrames(1);
+	}
+}
+
 void Actor::clearFlag(uint32 flag) {
 	flags &= ~flag;
 }

@@ -347,6 +347,10 @@ void Cursor::setActorFlag400() {
 	_actor->setFlag(ACTOR_FLAG_400);
 }
 
+void Cursor::clearActorFlag400() {
+	_actor->clearFlag(ACTOR_FLAG_400);
+}
+
 byte *Cursor::getPalette() {
 	return _actor->_actorResource->getPalette();
 }
