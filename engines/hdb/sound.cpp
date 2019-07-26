@@ -1413,8 +1413,7 @@ bool Sound::init() {
 		_soundCache[index2].loaded = false;
 		_soundCache[index2].name = soundList[index].name;
 		_soundCache[index2].luaName = soundList[index].luaName;
-		// FIXME: Create an intuitive way to include #166
-		if (index2 < SND_UNLOCKED_ITEM || index == 166)
+		if (index2 <= SND_UNLOCKED_ITEM || index == SND_BEEPBEEPBEEP)
 			_soundCache[index2].ext = -1;	// WAV
 		else
 			_soundCache[index2].ext = 1;		// MP3
