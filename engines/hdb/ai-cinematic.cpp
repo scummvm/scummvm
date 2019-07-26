@@ -454,7 +454,6 @@ void AI::processCines() {
 			complete = true;
 			break;
 		default:
-			warning("STUB: AI::PROCESSCINES incomplete for %d", _cine[i]->cmdType);
 			break;
 		}
 
