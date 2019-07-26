@@ -139,8 +139,9 @@ void BaseStorage::refreshAccessToken(BoolCallback callback, Networking::ErrorCal
 	if (errorCallback == nullptr)
 		errorCallback = getErrorPrintingCallback();
 
-	Common::String url = Common::String::format("https://cloud.scummvm.org/%s/refresh?code=%s", cloudProvider().c_str(), _refreshToken.c_str());
+	Common::String url = Common::String::format("https://cloud.scummvm.org/%s/refresh", cloudProvider().c_str());
 	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(innerCallback, errorCallback, url);
+	request->addHeader("X-ScummVM-Refresh-Token: " + _refreshToken);
 	addRequest(request);
 }
 
