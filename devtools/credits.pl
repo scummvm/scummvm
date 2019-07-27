@@ -652,6 +652,10 @@ begin_credits("Credits");
 				add_person("Vincent Hamm", "yaz0r", "(retired)");
 			end_section();
 
+			begin_section("Cryomni3D");
+				add_person("Philippe Valembois", "lePhilousophe", "");
+			end_section();
+
 			begin_section("Draci");
 				add_person("Denis Kasak", "dkasak13", "");
 				add_person("Robert &Scaron;palek", "spalek", "");
