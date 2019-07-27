@@ -22,6 +22,7 @@
 #include "cutscene.h"
 #include "dragons.h"
 #include "dragons/actor.h"
+#include "dragons/background.h"
 #include "dragons/inventory.h"
 #include "dragons/cursor.h"
 #include "dragons/dragonini.h"
@@ -458,10 +459,10 @@ void CutScene::changeBackgroundPosition(uint16 newPosition, int16 sParm2)
 	//undefined *puVar3;
 
 	if (newPosition == 1) {
-		//DAT_8006a420 = 1;
-		//DAT_8006a422 = 2;
+		_vm->_scene->setBgLayerPriority(1);
+		_vm->_scene->setMgLayerPriority(2);
 		_vm->_scene->_camera.x = sParm2 + 0x3c0;
-		//DAT_8006a424 = 0;
+		_vm->_scene->setFgLayerPriority(0);
 		//load_palette_into_frame_buffer(0,&SYSTEM_PALETTE_3);
 		for (int i = 2; i < 0x17; i++) {
 			Actor *actor = _vm->_actorManager->getActor(i);
@@ -474,15 +475,15 @@ void CutScene::changeBackgroundPosition(uint16 newPosition, int16 sParm2)
 				return;
 			}
 			//puVar3 = &SYSTEM_PALETTE_1;
-			//DAT_8006a422 = 0;
-			//DAT_8006a424 = 0;
+			_vm->_scene->setMgLayerPriority(0);
+			_vm->_scene->setFgLayerPriority(0);
 			_vm->_scene->_camera.x = 0;
 		}
 		else {
 			if (newPosition == 2) {
 				//puVar3 = &SYSTEM_PALETTE_4;
-				//DAT_8006a422 = 2;
-				//DAT_8006a424 = 3;
+				_vm->_scene->setMgLayerPriority(2);
+				_vm->_scene->setFgLayerPriority(3);
 				_vm->_scene->_camera.x = 0;
 			}
 			else {
@@ -490,12 +491,12 @@ void CutScene::changeBackgroundPosition(uint16 newPosition, int16 sParm2)
 					return;
 				}
 				//puVar3 = &SYSTEM_PALETTE_2;
-				//DAT_8006a422 = 2;
-				//DAT_8006a424 = 0;
+				_vm->_scene->setMgLayerPriority(2);
+				_vm->_scene->setFgLayerPriority(0);
 				_vm->_scene->_camera.x = sParm2;
 			}
 		}
-		//DAT_8006a420 = 1;
+		_vm->_scene->setBgLayerPriority(1);
 		//load_palette_into_frame_buffer(0,puVar3);
 	}
 }

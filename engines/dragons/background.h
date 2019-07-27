@@ -61,6 +61,8 @@ private:
 	Graphics::Surface *_layer[3];
 	Common::Point *_points1;
 	Common::Point *_points2;
+	uint8 layerPriority[3];
+
 public:
 	Background();
 	~Background();
@@ -71,6 +73,14 @@ public:
 	Graphics::Surface *getBgLayer() { return _layer[0]; }
 	Graphics::Surface *getMgLayer() { return _layer[1]; }
 	Graphics::Surface *getFgLayer() { return _layer[2]; }
+	uint8 getBgLayerPriority() { return layerPriority[0]; }
+	uint8 getMgLayerPriority() { return layerPriority[1]; }
+	uint8 getFgLayerPriority() { return layerPriority[2]; }
+
+	void setBgLayerPriority(uint8 newPriority) { layerPriority[0] = newPriority; }
+	void setMgLayerPriority(uint8 newPriority) { layerPriority[1] = newPriority; }
+	void setFgLayerPriority(uint8 newPriority) { layerPriority[2] = newPriority; }
+
 	int16 getPriorityAtPoint(Common::Point pos);
 	Common::Point getPoint2(uint32 pointIndex);
 	byte *getPalette() { return _palette; }

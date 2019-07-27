@@ -146,6 +146,10 @@ bool Background::load(byte *dataStart, uint32 size) {
 		_layer[i] = loadGfxLayer(_tileMap[i], _tileDataOffset);
 	}
 
+	layerPriority[0] = 1;
+	layerPriority[1] = 2;
+	layerPriority[2] = 3;
+
 	return false;
 }
 
