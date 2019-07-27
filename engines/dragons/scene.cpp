@@ -317,13 +317,13 @@ void Scene::draw() {
 	Common::Rect rect(_camera.x, _camera.y, _camera.x + 320, _camera.y + 200);
 
 	for(uint16 priority = 1; priority < 16; priority++) {
-		if (priority == 1) {
+		if (priority == _stage->getBgLayerPriority()) {
 			_screen->copyRectToSurface(*_stage->getBgLayer(), 0, 0, rect);
-		} else if (priority == 2) {
+		} else if (priority == _stage->getMgLayerPriority()) {
 			_screen->copyRectToSurface(*_stage->getMgLayer(), 0, 0, rect);
-		} else if (priority == 3) {
+		} else if (priority == _stage->getFgLayerPriority()) {
 			_screen->copyRectToSurface(*_stage->getFgLayer(), 0, 0, rect);
-		} else if (priority == 4) { //TODO check if this is the correct priority
+		} else if (priority == 5) {
 			if (_vm->isFlagSet(ENGINE_FLAG_80)) {
 				_vm->_inventory->draw();
 			}
@@ -422,6 +422,18 @@ void Scene::resetActorFrameFlags() {
 		actor->frame_flags &= ~ACTOR_FRAME_FLAG_10;
 		actor->frame_flags &= ~ACTOR_FRAME_FLAG_20;
 	}
+}
+
+void Scene::setBgLayerPriority(uint8 newPriority) {
+	_stage->setBgLayerPriority(newPriority);
+}
+
+void Scene::setMgLayerPriority(uint8 newPriority) {
+	_stage->setMgLayerPriority(newPriority);
+}
+
+void Scene::setFgLayerPriority(uint8 newPriority) {
+	_stage->setFgLayerPriority(newPriority);
 }
 
 } // End of namespace Dragons

@@ -89,7 +89,7 @@ public:
 	ActorFrame *frame;
 	Graphics::Surface *surface;
 	uint16 field_c;
-	int16 field_e;
+	int16 field_e; // might be the amount to scale actor sprite.
 	uint16 sequenceTimer;
 	uint16 _sequenceID;
 	int16 _sequenceID2;
