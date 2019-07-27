@@ -4,11 +4,12 @@ For a more comprehensive changelog of the latest experimental code, see:
 #### 2.1.0 (2019-??-??)
 
  New games:
-   - Might and Magic IV - Clouds of Xeen.
-   - Might and Magic V - Darkside of Xeen.
-   - Might and Magic - World of Xeen.
-   - Might and Magic - World of Xeen 2 CD Talkie.
-   - Might and Magic - Swords of Xeen.
+   - Added support for Might and Magic IV - Clouds of Xeen.
+   - Added support for Might and Magic V - Darkside of Xeen.
+   - Added support for Might and Magic - World of Xeen.
+   - Added support for Might and Magic - World of Xeen 2 CD Talkie.
+   - Added support for Might and Magic - Swords of Xeen.
+   - Added support for Versailles 1685.
 
  New ports:
    - Added Nintendo Switch port.
