@@ -44,6 +44,7 @@ public:
 		_windowWidth(0),
 		_windowHeight(0),
 		_overlayVisible(false),
+		_gameScreenShakeOffset(0),
 		_forceRedraw(false),
 		_cursorVisible(false),
 		_cursorX(0),
@@ -71,6 +72,14 @@ public:
 		_activeArea.height = getHeight();
 		_overlayVisible = false;
 		_forceRedraw = true;
+	}
+
+	virtual void setShakePos(int shakeOffset) override {
+		if (_gameScreenShakeOffset != shakeOffset) {
+			_gameScreenShakeOffset = shakeOffset;
+			recalculateDisplayAreas();
+			_cursorNeedsRedraw = true;
+		}
 	}
 
 protected:
@@ -195,6 +204,7 @@ protected:
 			_activeArea.height = getHeight();
 		}
 	}
+
 	/**
 	 * Sets the position of the hardware mouse cursor in the host system,
 	 * relative to the window.
@@ -270,6 +280,11 @@ protected:
 	 * is visible or not.
 	 */
 	bool _overlayVisible;
+
+	/**
+	 * The offset by which the screen is moved vertically.
+	 */
+	int _gameScreenShakeOffset;
 
 	/**
 	 * The scaled draw rectangle for the game surface within the window.
@@ -375,8 +390,8 @@ private:
 			}
 		}
 
-		drawRect.left = (_windowWidth - width) / 2;
-		drawRect.top = (_windowHeight - height) / 2;
+		drawRect.left = ((_windowWidth - width) / 2);
+		drawRect.top = ((_windowHeight - height) / 2) + _gameScreenShakeOffset;
 		drawRect.setWidth(width);
 		drawRect.setHeight(height);
 	}

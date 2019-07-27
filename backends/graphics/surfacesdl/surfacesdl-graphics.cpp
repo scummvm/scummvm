@@ -155,7 +155,7 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 	_scalerProc(0), _screenChangeCount(0),
 	_mouseData(nullptr), _mouseSurface(nullptr),
 	_mouseOrigSurface(nullptr), _cursorDontScale(false), _cursorPaletteDisabled(true),
-	_currentShakePos(0), _newShakePos(0),
+	_currentShakePos(0),
 	_paletteDirtyStart(0), _paletteDirtyEnd(0),
 	_screenIsLocked(false),
 	_graphicsMutex(0),
@@ -825,7 +825,7 @@ int SurfaceSdlGraphicsManager::getStretchMode() const {
 void SurfaceSdlGraphicsManager::initSize(uint w, uint h, const Graphics::PixelFormat *format) {
 	assert(_transactionMode == kTransactionActive);
 
-	_newShakePos = 0;
+	_gameScreenShakeOffset = 0;
 
 #ifdef USE_RGB_COLOR
 	//avoid redundant format changes
@@ -1205,20 +1205,24 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 	ScalerProc *scalerProc;
 	int scale1;
 
+#if !SDL_VERSION_ATLEAST(2, 0, 0)
 	// If the shake position changed, fill the dirty area with blackness
-	if (_currentShakePos != _newShakePos ||
+	// When building with SDL2, the shake offset is added to the active rect instead,
+	// so this isn't needed there.
+	if (_currentShakePos != _gameScreenShakeOffset ||
 		(_cursorNeedsRedraw && _mouseBackup.y <= _currentShakePos)) {
-		SDL_Rect blackrect = {0, 0, (Uint16)(_videoMode.screenWidth * _videoMode.scaleFactor), (Uint16)(_newShakePos * _videoMode.scaleFactor)};
+		SDL_Rect blackrect = {0, 0, (Uint16)(_videoMode.screenWidth * _videoMode.scaleFactor), (Uint16)(_gameScreenShakeOffset * _videoMode.scaleFactor)};
 
 		if (_videoMode.aspectRatioCorrection && !_overlayVisible)
 			blackrect.h = real2Aspect(blackrect.h - 1) + 1;
 
 		SDL_FillRect(_hwScreen, &blackrect, 0);
 
-		_currentShakePos = _newShakePos;
+		_currentShakePos = _gameScreenShakeOffset;
 
 		_forceRedraw = true;
 	}
+#endif
 
 	// Check whether the palette was changed in the meantime and update the
 	// screen surface accordingly.
@@ -1752,12 +1756,6 @@ void SurfaceSdlGraphicsManager::setCursorPalette(const byte *colors, uint start,
 
 	_cursorPaletteDisabled = false;
 	blitCursor();
-}
-
-void SurfaceSdlGraphicsManager::setShakePos(int shake_pos) {
-	assert(_transactionMode == kTransactionNone);
-
-	_newShakePos = shake_pos;
 }
 
 void SurfaceSdlGraphicsManager::setFocusRectangle(const Common::Rect &rect) {

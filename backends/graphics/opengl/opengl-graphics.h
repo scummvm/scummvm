@@ -93,8 +93,6 @@ public:
 	virtual void copyRectToScreen(const void *buf, int pitch, int x, int y, int w, int h) override;
 	virtual void fillScreen(uint32 col) override;
 
-	virtual void setShakePos(int shakeOffset) override;
-
 	virtual void updateScreen() override;
 
 	virtual Graphics::Surface *lockScreen() override;
@@ -332,11 +330,6 @@ protected:
 	 * The game palette if in CLUT8 mode.
 	 */
 	byte _gamePalette[3 * 256];
-
-	/**
-	 * The offset by which the screen is moved vertically.
-	 */
-	int _gameScreenShakeOffset;
 
 	//
 	// Overlay

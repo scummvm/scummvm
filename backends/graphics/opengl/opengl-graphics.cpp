@@ -56,7 +56,7 @@ OpenGLGraphicsManager::OpenGLGraphicsManager()
     : _currentState(), _oldState(), _transactionMode(kTransactionNone), _screenChangeID(1 << (sizeof(int) * 8 - 2)),
       _pipeline(nullptr), _stretchMode(STRETCH_FIT),
       _defaultFormat(), _defaultFormatAlpha(),
-      _gameScreen(nullptr), _gameScreenShakeOffset(0), _overlay(nullptr),
+      _gameScreen(nullptr), _overlay(nullptr),
       _cursor(nullptr),
       _cursorHotspotX(0), _cursorHotspotY(0),
       _cursorHotspotXScaled(0), _cursorHotspotYScaled(0), _cursorWidthScaled(0), _cursorHeightScaled(0),
@@ -456,13 +456,6 @@ void OpenGLGraphicsManager::fillScreen(uint32 col) {
 	_gameScreen->fill(col);
 }
 
-void OpenGLGraphicsManager::setShakePos(int shakeOffset) {
-	if (_gameScreenShakeOffset != shakeOffset) {
-		_gameScreenShakeOffset = shakeOffset;
-		_forceRedraw = true;
-	}
-}
-
 void OpenGLGraphicsManager::updateScreen() {
 	if (!_gameScreen) {
 		return;
@@ -508,13 +501,11 @@ void OpenGLGraphicsManager::updateScreen() {
 		_backBuffer.enableScissorTest(true);
 	}
 
-	const GLfloat shakeOffset = _gameScreenShakeOffset * (GLfloat)_gameDrawRect.height() / _gameScreen->getHeight();
-
 	// Alpha blending is disabled when drawing the screen
 	_backBuffer.enableBlend(Framebuffer::kBlendModeDisabled);
 
 	// First step: Draw the (virtual) game screen.
-	g_context.getActivePipeline()->drawTexture(_gameScreen->getGLTexture(), _gameDrawRect.left, _gameDrawRect.top + shakeOffset, _gameDrawRect.width(), _gameDrawRect.height());
+	g_context.getActivePipeline()->drawTexture(_gameScreen->getGLTexture(), _gameDrawRect.left, _gameDrawRect.top, _gameDrawRect.width(), _gameDrawRect.height());
 
 	// Second step: Draw the overlay if visible.
 	if (_overlayVisible) {
@@ -526,13 +517,9 @@ void OpenGLGraphicsManager::updateScreen() {
 	if (_cursorVisible && _cursor) {
 		_backBuffer.enableBlend(Framebuffer::kBlendModePremultipliedTransparency);
 
-		// Adjust game screen shake position, but only when the overlay is not
-		// visible.
-		const GLfloat cursorOffset = _overlayVisible ? 0 : shakeOffset;
-
 		g_context.getActivePipeline()->drawTexture(_cursor->getGLTexture(),
 		                         _cursorX - _cursorHotspotXScaled,
-		                         _cursorY - _cursorHotspotYScaled + cursorOffset,
+		                         _cursorY - _cursorHotspotYScaled,
 		                         _cursorWidthScaled, _cursorHeightScaled);
 	}
 

@@ -498,12 +498,17 @@ void WINCESdlGraphicsManager::internUpdateScreen() {
 	}
 
 	// If the shake position changed, fill the dirty area with blackness
-	if (_currentShakePos != _newShakePos) {
-		SDL_Rect blackrect = {0, 0, _videoMode.screenWidth *_scaleFactorXm / _scaleFactorXd, _newShakePos *_scaleFactorYm / _scaleFactorYd};
+	if (_currentShakePos != _gameScreenShakeOffset ||
+		(_cursorNeedsRedraw && _mouseBackup.y <= _currentShakePos)) {
+		SDL_Rect blackrect = {0, 0, (Uint16)(_videoMode.screenWidth * _scaleFactorXm / _scaleFactorXd), (Uint16)(_gameScreenShakeOffset * _scaleFactorYm / _scaleFactorYd)};
+
 		if (_videoMode.aspectRatioCorrection)
 			blackrect.h = real2Aspect(blackrect.h - 1) + 1;
+
 		SDL_FillRect(_hwScreen, &blackrect, 0);
-		_currentShakePos = _newShakePos;
+
+		_currentShakePos = _gameScreenShakeOffset;
+
 		_forceRedraw = true;
 	}
 

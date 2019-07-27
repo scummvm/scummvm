@@ -88,6 +88,8 @@ ScalerProc *LinuxmotoSdlGraphicsManager::getGraphicsScalerProc(int mode) const {
 void LinuxmotoSdlGraphicsManager::initSize(uint w, uint h, const Graphics::PixelFormat *format) {
 	assert(_transactionMode == kTransactionActive);
 
+	_gameScreenShakeOffset = 0;
+
 #ifdef USE_RGB_COLOR
 	// Avoid redundant format changes
 	Graphics::PixelFormat newFormat;
@@ -247,15 +249,16 @@ void LinuxmotoSdlGraphicsManager::internUpdateScreen() {
 #endif
 
 	// If the shake position changed, fill the dirty area with blackness
-	if (_currentShakePos != _newShakePos) {
-		SDL_Rect blackrect = {0, 0, _videoMode.screenWidth * _videoMode.scaleFactor, _newShakePos * _videoMode.scaleFactor};
+	if (_currentShakePos != _gameScreenShakeOffset ||
+		(_cursorNeedsRedraw && _mouseBackup.y <= _currentShakePos)) {
+		SDL_Rect blackrect = {0, 0, (Uint16)(_videoMode.screenWidth * _videoMode.scaleFactor), (Uint16)(_gameScreenShakeOffset * _videoMode.scaleFactor)};
 
 		if (_videoMode.aspectRatioCorrection && !_overlayVisible)
 			blackrect.h = real2Aspect(blackrect.h - 1) + 1;
 
 		SDL_FillRect(_hwscreen, &blackrect, 0);
 
-		_currentShakePos = _newShakePos;
+		_currentShakePos = _gameScreenShakeOffset;
 
 		_forceFull = true;
 	}

@@ -126,7 +126,6 @@ public:
 	virtual void unlockScreen() override;
 	virtual void fillScreen(uint32 col) override;
 	virtual void updateScreen() override;
-	virtual void setShakePos(int shakeOffset) override;
 	virtual void setFocusRectangle(const Common::Rect& rect) override;
 	virtual void clearFocusRectangle() override;
 
@@ -348,8 +347,8 @@ protected:
 	};
 
 	// Shake mode
+	// This is always set to 0 when building with SDL2.
 	int _currentShakePos;
-	int _newShakePos;
 
 	// Palette data
 	SDL_Color *_currentPalette;
