@@ -5,11 +5,12 @@ Programmcodes finden Sie auf Englisch unter:
 #### 2.1.0 (??.??.2019)
 
  Neue Spiele:
-   - Might and Magic IV - Clouds of Xeen.
-   - Might and Magic V - Darkside of Xeen.
-   - Might and Magic - World of Xeen.
-   - Might and Magic - World of Xeen 2 CD Talkie (mit Sprachausgabe).
-   - Might and Magic - Swords of Xeen.
+   - Unterstützung für Might and Magic IV - Clouds of Xeen hinzugefügt.
+   - Unterstützung für Might and Magic V - Darkside of Xeen hinzugefügt.
+   - Unterstützung für Might and Magic - World of Xeen hinzugefügt.
+   - Unterstützung für Might and Magic - World of Xeen 2 CD Talkie (mit Sprachausgabe) hinzugefügt.
+   - Unterstützung für Might and Magic - Swords of Xeen hinzugefügt.
+   - Unterstützung für Versailles 1685 hinzugefügt.
 
  Neue Portierungen:
    - Portierung auf Nintendo Switch hinzugefügt.
